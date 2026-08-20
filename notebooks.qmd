@@ -1,0 +1,65 @@
+---
+title: "Notebooks"
+subtitle: "Twelve notebooks, one per section, each runnable cold in Colab"
+---
+
+Every section of the workshop has a notebook. They are **English-primary**, with a
+one-line Spanish summary under each heading — *cada encabezado lleva un resumen en
+español.*
+
+## How they are built
+
+Each notebook follows the same shape, so you always know where you are:
+
+1. **Header** — the section title, its objectives, and an *Open in Colab* badge.
+2. **Setup** — installs and imports only what this section needs, and loads its own
+   data. Self-contained: no local files, no dependency on any other notebook.
+3. **Explanation and code**, alternating, building up rather than dumping a wall of
+   code at you.
+4. **Exercises** — `# TODO` stubs taken from the handbook, each followed by a
+   folded solution cell. Open it after you have tried.
+5. **Closing** — the Kahoot check for that section, and a link back here.
+
+::: {.callout-important appearance="simple"}
+The notebooks are committed with **no outputs and no execution counts**. Every
+number you see is one you produced. The expected results are quoted in the prose
+so you can tell whether yours are right — and if yours differ, that is worth
+investigating rather than dismissing.
+:::
+
+## The notebooks
+
+{{< include _includes/notebooks-en.md >}}
+
+## Running them somewhere other than Colab
+
+The notebooks only need the scientific Python stack. Locally:
+
+```bash
+git clone {{< var repo.url >}}.git
+cd {{< var repo.name >}}
+uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+```
+
+`scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits and
+the photographs, so most sections work with no network at all. Sections 07, 08 and
+10 fetch a CSV from GitHub the first time they run.
+
+## What each notebook needs
+
+| Notebook | Beyond NumPy | Network |
+|---|---|---|
+| 00 | `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — all three CSVs |
+| 01 | `scikit-learn`, `scikit-image`, `scipy.linalg` | no |
+| 02 | — | no |
+| 03 | `scikit-learn` | no |
+| 04 | `scikit-image` | no |
+| 05 | — | no |
+| 06 | `scikit-learn`, `scikit-image` | no |
+| 07 | `pandas` | yes — California housing |
+| 08 | `pandas` | yes — airline passengers |
+| 09 | `scikit-image`, `scipy` | no |
+| 10 | `pandas` | yes — NYC taxi trips |
+| 11 | `scikit-learn` | no |
+
+: Colab already has every one of these installed. {tbl-colwidths="[16,54,30]"}

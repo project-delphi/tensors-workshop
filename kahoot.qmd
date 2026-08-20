@@ -1,0 +1,101 @@
+---
+title: "Kahoot"
+subtitle: "Three 6-question knowledge checks, and how to run them"
+---
+
+Three quizzes sit at the three natural seams of the workshop: after the shape and
+vocabulary work, after the einsum and pseudoinverse stretch, and after the
+decompositions. Each sits right after the blocks that supply its content, while
+the material is still fresh, and **before** the next context switch — a break or a
+new Part — so it reinforces rather than interrupts.
+
+::: {.kahoot-note}
+**Facilitators: import each spreadsheet into kahoot.it *before* the session.**
+Create → Add question → Import → Import spreadsheet. Doing it live costs several
+minutes you do not have. Then paste the three join URLs into `_variables.yml` and
+re-render, and every link on this site and in both decks will point at the real
+quiz.
+:::
+
+## Quiz 1 — {{< var kahoot.q1.title_en >}} {#quiz-1}
+
+*{{< var kahoot.q1.title_es >}}*
+
+|  |  |
+|---|---|
+| **Runs after** | Section 04 — Reshape and transpose, before the first break |
+| **Covers** | Sections 01, 03, 04 |
+| **Length** | {{< var kahoot.q1.questions >}} questions, ~5 min including the podium |
+| **Import file** | [`{{< var kahoot.q1.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q1.xlsx >}}) |
+| **Join link** | [`{{< var kahoot.q1.url >}}`]({{< var kahoot.q1.url >}}){.todo} |
+
+: {tbl-colwidths="[20,80]"}
+
+Everyone has just used *order*, *axis*, *shape*, *slice*, *fiber*, *variance*,
+*reshape* and *transpose* — this is the moment those words are freshest. Two
+questions reach back into the exercises specifically: the NaN question is section
+03's zero-variance pixels, and the last one is section 04's reshape-versus-transpose.
+
+## Quiz 2 — {{< var kahoot.q2.title_en >}} {#quiz-2}
+
+*{{< var kahoot.q2.title_es >}}*
+
+|  |  |
+|---|---|
+| **Runs after** | Section 07 — Inverses and the pseudoinverse, before the recursion demo |
+| **Covers** | Sections 06, 07 |
+| **Length** | {{< var kahoot.q2.questions >}} questions, ~5 min |
+| **Import file** | [`{{< var kahoot.q2.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q2.xlsx >}}) |
+| **Join link** | [`{{< var kahoot.q2.url >}}`]({{< var kahoot.q2.url >}}){.todo} |
+
+: {tbl-colwidths="[20,80]"}
+
+::: {.callout-warning appearance="simple"}
+**Two questions here are ahead of the material.** Quiz 2 asks about Euclidean
+distance and cosine similarity, which the handbook never defines directly. The
+bridge is section 06's TODO 4 — the 1797×1797 digit similarity matrix built with
+one `einsum`. Say the two words out loud during that exercise, or expect the last
+two questions to land cold.
+:::
+
+## Quiz 3 — {{< var kahoot.q3.title_en >}} {#quiz-3}
+
+*{{< var kahoot.q3.title_es >}}*
+
+|  |  |
+|---|---|
+| **Runs after** | Section 10 — Tucker decomposition, immediately before the wrap-up |
+| **Covers** | Sections 09, 10 |
+| **Length** | {{< var kahoot.q3.questions >}} questions, ~5 min |
+| **Import file** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
+| **Join link** | [`{{< var kahoot.q3.url >}}`]({{< var kahoot.q3.url >}}){.todo} |
+
+: {tbl-colwidths="[20,80]"}
+
+Run it while the taxi-tensor rush-hour result is still on screen. Its final
+question names hour 18, so it **must** come after section 10's TODO 6 — running it
+early gives the answer away. It doubles as a live rehearsal of the wrap-up's own
+recap, so segue straight from the podium into the wrap-up.
+
+## Running them
+
+- **Budget 5 minutes each, including the podium.** Groups want to see the
+  leaderboard, and that is fine — it is the payoff.
+- **Do not import live.** See the note at the top of this page.
+- **These add 15 minutes**, taking the workshop from 180 to
+  {{< var workshop.minutes >}}.
+
+## If you are running out of time
+
+The handbook's cutting order, in order:
+
+1. **Quiz 2** — the least novel of the three; the pseudoinverse and distance get
+   re-covered narratively in the wrap-up.
+2. TODO 4 of section 09 (true deconvolution — the most technically demanding).
+3. The RNN snippet in section 08.
+4. Question 5 of either group block.
+5. **Quiz 1.**
+
+**Never cut** section 01's *Three Operations That Matter*, section 10, or **Quiz
+3** — the last is the cheapest way to check whether Tucker and CP actually landed
+before students leave.

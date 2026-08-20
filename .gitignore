@@ -10,3 +10,11 @@ venv/
 
 # Excel lock files
 ~$*.xlsx
+
+/.quarto/
+
+# Quarto
+/.quarto/
+/.luarc.json
+*_files/
+/_freeze/

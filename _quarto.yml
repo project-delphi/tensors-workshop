@@ -1,0 +1,67 @@
+project:
+  type: website
+  output-dir: docs
+  # Explicit render list. Without it Quarto sweeps up notebooks/*.ipynb and
+  # tries to EXECUTE them (needs Jupyter + every dependency, and would bake
+  # outputs into the committed files), and renders every README.md as a page.
+  render:
+    - index.qmd
+    - notebooks.qmd
+    - kahoot.qmd
+    - es/index.qmd
+    - slides/en/index.qmd
+    - slides/es/index.qmd
+    - tensors_workshop_plan_with_quizzes.md
+  resources:
+    - .nojekyll
+    - kahoot/*.xlsx
+    - notebooks/*.ipynb
+
+website:
+  title: "Tensors for Machine Learning"
+  description: "A 3-hour workshop on tensors for machine learning, in English and Spanish."
+  site-url: https://project-delphi.github.io/tensors-workshop
+  repo-url: https://github.com/project-delphi/tensors-workshop
+  favicon: favicon.svg
+  navbar:
+    background: primary
+    search: true
+    left:
+      - href: index.qmd
+        text: Home
+      - href: tensors_workshop_plan_with_quizzes.md
+        text: Handbook
+      - href: notebooks.qmd
+        text: Notebooks
+      - href: kahoot.qmd
+        text: Kahoot
+      - text: Slides
+        menu:
+          - href: slides/en/index.qmd
+            text: "Slides (EN)"
+          - href: slides/es/index.qmd
+            text: "Slides (ES)"
+    right:
+      - text: "EN"
+        href: index.qmd
+      - text: "ES"
+        href: es/index.qmd
+      - icon: github
+        href: https://github.com/project-delphi/tensors-workshop
+        aria-label: "Source on GitHub"
+  page-footer:
+    left: "Tensors for Machine Learning · Built with [Quarto](https://quarto.org)"
+    right: "[Source](https://github.com/project-delphi/tensors-workshop)"
+
+format:
+  html:
+    theme:
+      - cosmo
+      - custom.scss
+    toc: true
+    toc-depth: 3
+    anchor-sections: true
+    code-copy: true
+    code-overflow: wrap
+    link-external-newwindow: true
+    link-external-filter: '^(?:http:|https:)\/\/project-delphi\.github\.io'
