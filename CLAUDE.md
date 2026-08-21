@@ -30,6 +30,44 @@ byte-exact — the generators are deterministic pure Python — unlike the rende
 gate under Publishing, which cannot be. A hand-edit is caught, but only once
 you push.
 
+## No commits on main
+
+Work goes on a branch and reaches `main` through a pull request. Two guards
+enforce this, and both need to be enabled per clone:
+
+```bash
+git config core.hooksPath .githooks    # required once per clone
+```
+
+`.githooks/pre-commit` is the one that actually holds the line: it runs inside
+git, knows the branch exactly, and refuses any commit made while HEAD is
+`main`. At your own terminal, `ALLOW_MAIN_COMMIT=1` overrides it for one commit
+and `--no-verify` skips it entirely.
+
+`.claude/settings.json` adds a PreToolUse hook — `.claude/hooks/no_commit_on_main.py`
+— so Claude's commit-creating commands on `main` are denied before they run,
+rather than surfacing as a failed commit. It does **not** honor
+`ALLOW_MAIN_COMMIT`: that hatch is for a human at a terminal, and an agent must
+not self-authorize a bypass. Ask for a branch instead. The hook is automatic,
+but a session started before the file existed needs `/hooks` opened once, or a
+restart, to load it. Without `python3` it cannot check anything, so it blocks
+any command mentioning "commit" rather than waving it through.
+
+Which guard covers what:
+
+| | `pre-commit` | Claude hook |
+|---|---|---|
+| `git commit` | yes | yes |
+| `git cherry-pick`, `revert`, `am` | **no** — git runs no `pre-commit` for these | yes |
+| `git merge`, `rebase`, force-push | no | no |
+| Your own terminal | yes | no |
+| A fresh clone before `core.hooksPath` | no | yes |
+
+Closing the remaining gaps needs a GitHub ruleset on `origin`; that is
+deliberately not part of this setup. Deciding which repo a shell command will
+commit into is not decidable in general, so treat the Claude hook as an early,
+explanatory failure rather than the boundary.
+
 ## Commands
 
 ```bash

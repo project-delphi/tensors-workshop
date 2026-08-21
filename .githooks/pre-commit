@@ -1,0 +1,33 @@
+#!/bin/sh
+# Refuse commits made directly on a protected branch. Work happens on a
+# branch and reaches main through a pull request.
+#
+# Enable in a fresh clone with:
+#   git config core.hooksPath .githooks
+#
+# Deliberate override for a one-off:
+#   ALLOW_MAIN_COMMIT=1 git commit ...
+
+protected="main"
+
+if [ -n "$ALLOW_MAIN_COMMIT" ]; then
+	exit 0
+fi
+
+branch=$(git symbolic-ref --quiet --short HEAD) || exit 0  # detached HEAD, rebase
+
+for p in $protected; do
+	if [ "$branch" = "$p" ]; then
+		cat >&2 <<MSG
+pre-commit: refusing to commit on '$branch'.
+
+  git switch -c <branch-name>    # move to a branch, then commit
+  git stash                      # or park the changes first
+
+Then open a PR. Override for this commit only with ALLOW_MAIN_COMMIT=1.
+MSG
+		exit 1
+	fi
+done
+
+exit 0
