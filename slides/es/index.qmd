@@ -55,9 +55,13 @@ faltantes, variables en escalas incompatibles, píxeles que nunca cambian.
 | III | Indexación y broadcasting · Reshape y transposición | 30 |
 | 🎯 | **Kahoot 1** + pausa | 10 |
 | III | Diseño de un pipeline de vídeo *(grupo)* | 15 |
-| IV | einsum · Pseudoinversa | 30 |
+| IV | Contracción con einsum | 15 |
+| — | Pausa | 5 |
+| IV | Inversas y la pseudoinversa | 15 |
 | 🎯 | **Kahoot 2** | 5 |
-| IV | Recursión · Convolución · Tucker | 40 |
+| IV | Recursión · Convolución | 25 |
+| — | Pausa | 5 |
+| IV | Descomposición de Tucker | 15 |
 | 🎯 | **Kahoot 3** + cierre | 10 |
 
 ## Dos ritmos, y una advertencia

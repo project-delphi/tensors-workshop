@@ -56,9 +56,13 @@ on incompatible scales, pixels that never change.
 | III | Indexing & broadcasting · Reshape & transpose | 30 |
 | 🎯 | **Kahoot 1** + break | 10 |
 | III | Video pipeline design *(group)* | 15 |
-| IV | einsum · Pseudoinverse | 30 |
+| IV | Contraction with einsum | 15 |
+| — | Break | 5 |
+| IV | Inverses and the pseudoinverse | 15 |
 | 🎯 | **Kahoot 2** | 5 |
-| IV | Recursion · Convolution · Tucker | 40 |
+| IV | Recursion · Convolution | 25 |
+| — | Break | 5 |
+| IV | Tucker decomposition | 15 |
 | 🎯 | **Kahoot 3** + wrap-up | 10 |
 
 ## Two rhythms, and one warning

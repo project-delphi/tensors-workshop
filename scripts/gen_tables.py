@@ -80,8 +80,9 @@ def html_table(lang: str, prefix: str) -> str:
              t["slides_en"], t["slides_es"], t["nb"], t["quiz"]]
 
     # `table-responsive` keeps the table scrolling inside itself on a phone
-    # rather than scrolling the whole page. The pages wrap the include in a
-    # `.column-page` div to give eight columns of links room to breathe.
+    # rather than scrolling the whole page. Widening it past the body column is
+    # not possible here — Quarto places <main> in `column-body` regardless of
+    # page-layout — so custom.scss keeps the link cells on one line instead.
     out = ['<div class="table-responsive">',
            '<table class="table table-sm table-striped section-table">',
            "<thead><tr>" + "".join(f"<th>{html.escape(h)}</th>" for h in heads)

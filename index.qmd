@@ -73,8 +73,9 @@ they actually run.
 
 {{< include _includes/sections-en.md >}}
 
-**Not shown:** three 5-minute breaks and a 5-minute welcome, which bring the
-session to {{< var workshop.minutes >}} minutes.
+**Not shown:** the three 5-minute breaks. The twelve sections come to 165
+minutes; the three quizzes add 15 and the breaks another 15, which is how the
+session reaches {{< var workshop.minutes >}} minutes.
 
 ## A note on language
 

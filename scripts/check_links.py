@@ -225,6 +225,62 @@ def check_landing_parity() -> None:
           f"with slide anchors and notebook links")
 
 
+def check_solution_independence() -> None:
+    """No visible cell may depend on a name bound only inside a folded solution.
+
+    This is the bug that does not show up when you run a notebook top to bottom
+    with everything executed: the solution cell defines `psf`/`noisy`, a later
+    visible cell uses them, and it works — until a student who solved the
+    exercise themselves, or never opened the solution, hits NameError on it.
+    """
+    import ast
+    import builtins
+    print(f"\n[7] Visible cells do not depend on folded solutions")
+    checked = 0
+    for s in SECTIONS:
+        path = NBDIR / f"{s['n']}-{s['slug']}.ipynb"
+        if not path.exists():
+            continue
+        import json
+        nb = json.loads(path.read_text(encoding="utf-8"))
+        visible_bound: set[str] = set(dir(builtins))
+        solution_bound: set[str] = set()
+        for c in nb["cells"]:
+            if c["cell_type"] != "code":
+                continue
+            src = "\n".join(l for l in "".join(c["source"]).split("\n")
+                             if not l.startswith(("#@title", "%", "!")))
+            try:
+                tree = ast.parse(src)
+            except SyntaxError:
+                continue
+            is_solution = "solution" in c["metadata"].get("tags", [])
+            loads = {n.id for n in ast.walk(tree)
+                     if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+            binds = {n.id for n in ast.walk(tree)
+                     if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
+            binds |= {n.name for n in ast.walk(tree)
+                      if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
+            binds |= {(a.asname or a.name).split(".")[0]
+                      for n in ast.walk(tree)
+                      if isinstance(n, (ast.Import, ast.ImportFrom))
+                      for a in n.names}
+            if is_solution:
+                solution_bound |= binds
+            else:
+                # `- binds` matters: a cell that defines a name itself before
+                # using it is self-sufficient, even if a solution happens to use
+                # the same name. That is exactly how s09-20 was fixed.
+                leaked = (loads & solution_bound) - visible_bound - binds
+                for name in sorted(leaked):
+                    fail(f"{path.name}: visible cell {c['id']} uses `{name}`, "
+                         f"which only a folded solution cell defines")
+                visible_bound |= binds
+                checked += 1
+    print(f"      {checked} visible code cells across {len(SECTIONS)} notebooks "
+          f"are self-sufficient")
+
+
 def check_kahoot_urls() -> None:
     """Not a failure: the default sends students to kahoot.it, where the PIN on
     the facilitator's screen works. It is a reminder that the direct join links
@@ -250,6 +306,8 @@ def main() -> int:
         check_links()
         check_decks()
         check_landing_parity()
+    check_solution_independence()
+    if not only_nb:
         check_kahoot_urls()
 
     print()

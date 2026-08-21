@@ -68,8 +68,8 @@ Taxi Trips and the Airline Passengers series are downloaded once.
 | 11 | Wrap-up and take-homes | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | — |
 <!-- END sections-en -->
 
-The 🎯 quizzes run after sections 04, 07 and 10. Not shown: three 5-minute
-breaks, which bring the session to 195 minutes.
+The 🎯 quizzes run after sections 04, 07 and 10. The twelve sections come to 165
+minutes; the three quizzes add 15 and three 5-minute breaks another 15, for 195.
 
 ## Run it locally
 
@@ -186,8 +186,9 @@ trabajo.
 | 11 | Cierre y ejercicios para casa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | — |
 <!-- END sections-es -->
 
-Los cuestionarios 🎯 se ejecutan después de las secciones 04, 07 y 10. No
-aparecen las tres pausas de 5 minutos, que llevan la sesión a 195 minutos.
+Los cuestionarios 🎯 se ejecutan después de las secciones 04, 07 y 10. Las doce
+secciones suman 165 minutos; los tres cuestionarios añaden 15 y las tres pausas
+de 5 minutos otros 15: en total, 195.
 
 ## Ejecutarlo en local
 

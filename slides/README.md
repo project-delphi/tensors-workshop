@@ -65,8 +65,12 @@ stay in English** in both decks.
 ## Adding a section
 
 1. Add it to `sections:` in [`_variables.yml`](../_variables.yml).
-2. Regenerate the tables and notebooks:
-   `uv run --with pyyaml,nbformat python scripts/gen_tables.py scripts/gen_notebooks.py`
+2. Regenerate the tables and the notebooks — two separate commands, since
+   neither script reads its arguments:
+   ```bash
+   uv run --with pyyaml python scripts/gen_tables.py
+   uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
+   ```
 3. Add `# NN · Title {#sec-NN-slug}` and its slides to **both** decks.
 4. `quarto render && uv run --with pyyaml,nbformat python scripts/check_links.py`
 

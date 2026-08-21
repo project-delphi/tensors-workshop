@@ -3,8 +3,8 @@
 #
 # Read three ways:
 #   1. `{{< var … >}}` shortcodes in .qmd pages and both slide decks
-#   2. scripts/gen_content.py, which generates the notebooks, the section
-#      tables and the README tables from it
+#   2. scripts/gen_tables.py (section and README tables) and
+#      scripts/gen_notebooks.py (the twelve notebooks), which generate from it
 #   3. scripts/check_links.py, which verifies the rendered output against it
 #
 # Change a value here and it changes everywhere. Do not hard-code these

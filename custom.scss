@@ -38,7 +38,10 @@ h2 {
 // The link columns must never wrap: "Colab · src" broken across two lines
 // makes every row twice as tall for no gain. Let the Section column absorb
 // whatever width is left instead.
-.section-table td:nth-last-child(-n+5),
+// `tr:not(.kahoot-row)` matters: a Kahoot row has only two cells (the 🎯 and a
+// colspan=7), so an unscoped nth-last-child would make its long checkpoint text
+// nowrap and force the table wider than its column on a narrow screen.
+.section-table tr:not(.kahoot-row) td:nth-last-child(-n+5),
 .section-table th:nth-last-child(-n+5) { white-space: nowrap; }
 .section-table td small { color: #64748b; }
 table { font-size: .93rem; }

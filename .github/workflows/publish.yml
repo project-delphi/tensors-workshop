@@ -27,6 +27,13 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          # Pinned deliberately. The staleness check below compares rendered
+          # bytes, and Quarto's output carries version-dependent artifacts (the
+          # hashed site_libs/bootstrap-<hash>.min.css, for one). On "latest" the
+          # first release after a commit would fail an otherwise-correct PR.
+          # Bump this together with a re-render.
+          version: 1.6.40
 
       - uses: actions/setup-python@v5
         with:
@@ -52,16 +59,20 @@ jobs:
 
       - name: Fail if the committed output is stale
         run: |
-          # sitemap.xml carries <lastmod> taken from file mtimes, which a fresh
-          # checkout resets — it differs on every CI run by design.
-          if ! git diff --quiet -- . ':(exclude)docs/sitemap.xml'; then
+          # `git status --porcelain`, not `git diff` — a new section produces a
+          # new notebooks/NN-*.ipynb and new rendered pages, and `git diff`
+          # cannot see files that were never added. sitemap.xml is excluded
+          # because its <lastmod> comes from file mtimes, which a fresh checkout
+          # resets, so it differs on every CI run by design.
+          DRIFT=$(git status --porcelain -- . ':(exclude)docs/sitemap.xml')
+          if [ -n "$DRIFT" ]; then
             echo "::error::Rendered output differs from what was committed."
             echo "Run these locally and commit the result:"
             echo "  uv run --with pyyaml,nbformat python scripts/gen_tables.py"
             echo "  uv run --with pyyaml,nbformat python scripts/gen_notebooks.py"
             echo "  quarto render"
             echo
-            git diff --stat -- . ':(exclude)docs/sitemap.xml'
+            echo "$DRIFT"
             exit 1
           fi
           echo "docs/ and all generated files are up to date."

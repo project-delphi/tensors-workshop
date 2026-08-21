@@ -1374,16 +1374,24 @@ print(err(noisy), err(recovered))     # 0.1157 -> 0.0815
 
 Because it fails badly. Blurring destroys high-frequency detail, so inverting it
 divides by numbers very close to zero and amplifies noise enormously."""),
-        code("""K = np.fft.fft2(psf, s=img.shape)
+        code("""# Self-contained: rebuilds the blur and the noise rather than reusing names
+# from the exercise above, so this cell runs whether or not you opened the
+# solution — and whatever you called your own variables.
+psf = np.ones((9, 9)); psf /= psf.sum()
+blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
+noisy = blurred + 0.002 * np.random.default_rng(0).standard_normal(blurred.shape)
+
+K = np.fft.fft2(psf, s=img.shape)
 naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, K)))
+
 c = 25
 err = lambda a: np.linalg.norm((a - img)[c:-c, c:-c]) / np.linalg.norm(img[c:-c, c:-c])
-print(err(noisy), err(recovered), err(naive))
-# 0.1157   0.0815   ~2.49
+print(err(noisy), err(naive))     # 0.1157   ~2.49
 #
-# The naive inverse is roughly TWENTY TIMES WORSE than the blurred image it
-# started from. Cropping the border does not rescue it either (~2.51 uncropped):
-# this is not an edge artifact, it is noise amplified across the whole image."""),
+# Richardson-Lucy got that 0.1157 down to 0.0815. The naive inverse takes it to
+# ~2.49 — roughly TWENTY TIMES WORSE than the blurred image it started from.
+# Cropping the border does not rescue it either (~2.51 uncropped): this is not
+# an edge artifact, it is noise amplified across the whole image."""),
         md("""## What just happened
 
 **This is the same lesson as section 07.** A direct inverse either does not exist
