@@ -1,9 +1,15 @@
-# Line endings are load-bearing here. .github/workflows/publish.yml re-runs the
-# generators and fails on ANY diff, and the generators emit LF. A checkout that
-# rewrote line endings — Git for Windows with core.autocrlf=true, say — makes
-# every generated file read as drifted, so the gate goes red on a tree nobody
-# touched. Normalize to LF in the index and in the working tree, everywhere,
-# rather than relying on each clone being configured correctly.
+# Keep CRLF out of the index. .github/workflows/publish.yml re-runs the
+# generators on Linux — where Python writes LF — and fails on any diff from
+# `git status --porcelain -- notebooks _includes README.md`.
+#
+# core.autocrlf=true is NOT the hazard: it normalizes CRLF back to LF when
+# staging, so that clone's status stays clean. The hazard is autocrlf=false
+# (or unset, off Windows) on a machine whose Python writes CRLF in text mode —
+# native Windows does. That commits CRLF, CI regenerates the same files with
+# LF, and the gate goes red for everyone.
+#
+# Setting eol=lf here overrides autocrlf whatever each clone has it set to,
+# which beats asking every contributor to configure their own.
 * text=auto eol=lf
 
 # Binary: never rewrite these bytes, never try to diff them.

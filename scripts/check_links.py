@@ -100,10 +100,14 @@ def harvest(path: pathlib.Path) -> Harvester:
 
 def check_links() -> None:
     pages = sorted(DOCS.rglob("*.html"))
+    step(f"Internal links across {len(pages)} pages")
     if not pages:
         fail("docs/ has no HTML — run `quarto render` first")
+        # Emit the second heading on the way out too. Bailing without it would
+        # renumber every check that follows — the very drift `step` exists to
+        # prevent — on the one run where docs/ is empty.
+        step("Colab URLs")
         return
-    step(f"Internal links across {len(pages)} pages")
 
     harvested = {p: harvest(p) for p in pages}
     ids_by_page = {p: h.ids for p, h in harvested.items()}

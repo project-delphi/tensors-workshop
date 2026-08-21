@@ -25,8 +25,10 @@ the `.qmd` pages and both decks, the two generator scripts, and the checker.
 | `notebooks/*.ipynb` — body cells | `scripts/content.py` |
 | `docs/` | `quarto render` |
 
-CI reruns both generators and fails if the working tree changes, so a hand-edit
-is caught but only after you push.
+CI reruns both generators and fails if the working tree changes. This gate *is*
+byte-exact — the generators are deterministic pure Python — unlike the render
+gate under Publishing, which cannot be. A hand-edit is caught, but only once
+you push.
 
 ## Commands
 
@@ -76,8 +78,8 @@ a page. Adding a page means adding it there.
 - Clone into the Linux filesystem (`~/code/...`), **not** `/mnt/c/...`. Quarto
   renders far slower across the 9p mount and `quarto preview`'s file watching is
   unreliable there. `localhost:4200` is reachable from the Windows browser.
-- Keep LF line endings: `git config core.autocrlf false`. The generators emit
-  LF and CI diffs the tree byte-for-byte, so CRLF makes every generated file
-  look drifted.
+- Line endings need no setup: `.gitattributes` pins `eol=lf`, which overrides
+  `core.autocrlf` however a clone has it. Don't "fix" it with
+  `core.autocrlf=false` — that's the setting that lets CRLF reach the index.
 - `python` may not exist; use `python3`, or `uv run` as above.
 - Install Quarto with the Linux `.deb` inside WSL, not the Windows build.
