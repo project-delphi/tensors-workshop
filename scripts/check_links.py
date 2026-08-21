@@ -4,19 +4,24 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Five checks, each of which catches a mistake that is otherwise invisible:
+Seven checks, each of which catches a mistake that is otherwise invisible.
+They are printed numbered in the order they actually run, which is the order
+below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
-  1. Internal links resolve — including the #fragment, so a link to
-     kahoot.html#quiz-2 fails if that anchor is not on the page.
-  2. Colab URLs are well-formed AND point at a notebook that exists. A badge
-     with the wrong filename still opens *something* in Colab, so this one
-     never surfaces on its own.
-  3. Both decks carry every section anchor. Adding a section to the English
-     deck and forgetting the Spanish one is the single most likely way these
-     two files drift.
-  4. Notebooks are valid, have no outputs or execution counts, and each badge
-     points at its own file.
-  5. The EN and ES landing pages list the same twelve sections.
+  - Notebooks are valid, have no outputs or execution counts, and each badge
+    points at its own file. [nb]
+  - Internal links resolve — including the #fragment, so a link to
+    kahoot.html#quiz-2 fails if that anchor is not on the page.
+  - Colab URLs are well-formed AND point at a notebook that exists. A badge
+    with the wrong filename still opens *something* in Colab, so this one
+    never surfaces on its own.
+  - Both decks carry every section anchor. Adding a section to the English
+    deck and forgetting the Spanish one is the single most likely way these
+    two files drift.
+  - The EN and ES landing pages list the same twelve sections.
+  - No visible cell depends on a name bound only inside a folded solution
+    cell. [nb]
+  - Kahoot join URLs. A reminder, NOT a failure — see check_kahoot_urls.
 
 Exit code is non-zero on any failure, so CI can gate on it.
 """
@@ -50,6 +55,22 @@ def fail(msg: str) -> None:
     print(f"  FAIL  {msg}")
 
 
+_step = 0
+
+
+def step(title: str) -> None:
+    """Print the next heading, numbered in the order the checks actually run.
+
+    Hard-coded numbers drifted once already: they were assigned in definition
+    order while main() called the checks in another, so a passing run counted
+    off 4, 1, 3, 5, 7, 6. Counting here means the numbering is right by
+    construction, including under --notebooks-only, which runs only a subset.
+    """
+    global _step
+    _step += 1
+    print(f"\n[{_step}] {title}")
+
+
 class Harvester(html.parser.HTMLParser):
     """Collect every link and every id from one page."""
 
@@ -75,14 +96,18 @@ def harvest(path: pathlib.Path) -> Harvester:
     return h
 
 
-# ── 1 + 2: links ─────────────────────────────────────────────────────────────
+# ── links ────────────────────────────────────────────────────────────────────
 
 def check_links() -> None:
     pages = sorted(DOCS.rglob("*.html"))
+    step(f"Internal links across {len(pages)} pages")
     if not pages:
         fail("docs/ has no HTML — run `quarto render` first")
+        # Emit the second heading on the way out too. Bailing without it would
+        # renumber every check that follows — the very drift `step` exists to
+        # prevent — on the one run where docs/ is empty.
+        step("Colab URLs")
         return
-    print(f"\n[1] Internal links across {len(pages)} pages")
 
     harvested = {p: harvest(p) for p in pages}
     ids_by_page = {p: h.ids for p, h in harvested.items()}
@@ -142,7 +167,7 @@ def check_links() -> None:
                          f"has no anchor #{url.fragment}")
 
     print(f"      {n_internal} internal links checked (path + fragment)")
-    print(f"\n[2] Colab URLs")
+    step("Colab URLs")
     print(f"      {n_colab} Colab URLs, all well-formed, "
           f"{len(seen_notebooks)}/{len(SECTIONS)} notebooks referenced")
     for s in SECTIONS:
@@ -151,10 +176,10 @@ def check_links() -> None:
             fail(f"no page on the site links to notebooks/{name}")
 
 
-# ── 3: both decks carry every section ────────────────────────────────────────
+# ── both decks carry every section ───────────────────────────────────────────
 
 def check_decks() -> None:
-    print(f"\n[3] Section anchors in both decks")
+    step("Section anchors in both decks")
     expected = [f"sec-{s['n']}-{s['slug']}" for s in SECTIONS]
     expected += [f"sec-kahoot-{q}" for q in (1, 2, 3)]
     found = {}
@@ -180,11 +205,11 @@ def check_decks() -> None:
     print(f"      {len(expected)} anchors present in both decks, no extras in either")
 
 
-# ── 4: notebooks ─────────────────────────────────────────────────────────────
+# ── notebooks ────────────────────────────────────────────────────────────────
 
 def check_notebooks() -> None:
     import json
-    print(f"\n[4] Notebooks")
+    step("Notebooks")
     try:
         import nbformat
     except ImportError:
@@ -225,10 +250,10 @@ def check_notebooks() -> None:
           f"counts, badges self-consistent")
 
 
-# ── 5: EN and ES landing pages agree ─────────────────────────────────────────
+# ── EN and ES landing pages agree ────────────────────────────────────────────
 
 def check_landing_parity() -> None:
-    print(f"\n[5] EN / ES landing pages")
+    step("EN / ES landing pages")
     en, es = DOCS / "index.html", DOCS / "es" / "index.html"
     if not (en.exists() and es.exists()):
         fail("a landing page is missing")
@@ -256,7 +281,7 @@ def check_solution_independence() -> None:
     """
     import ast
     import builtins
-    print(f"\n[7] Visible cells do not depend on folded solutions")
+    step("Visible cells do not depend on folded solutions")
     checked = 0
     for s in SECTIONS:
         path = NBDIR / f"{s['n']}-{s['slug']}.ipynb"
@@ -315,7 +340,7 @@ def check_kahoot_urls() -> None:
     """Not a failure: the default sends students to kahoot.it, where the PIN on
     the facilitator's screen works. It is a reminder that the direct join links
     have not been pasted in yet."""
-    print(f"\n[6] Kahoot join URLs")
+    step("Kahoot join URLs")
     todo = [q for q in ("q1", "q2", "q3")
             if V["kahoot"][q]["url"] == V["kahoot"]["default_url"]]
     if todo:
