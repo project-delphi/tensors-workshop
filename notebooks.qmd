@@ -38,7 +38,7 @@ The notebooks only need the scientific Python stack. Locally:
 ```bash
 git clone {{< var repo.url >}}.git
 cd {{< var repo.name >}}
-uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,matplotlib,jupyterlab jupyter lab
 ```
 
 `scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits and

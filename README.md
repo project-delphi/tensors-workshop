@@ -85,7 +85,7 @@ Only Quarto is needed to build the site — the notebooks are **not** executed a
 render time. To run the notebooks locally instead of in Colab:
 
 ```bash
-uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,matplotlib,jupyterlab jupyter lab
 ```
 
 ### Regenerating the derived files

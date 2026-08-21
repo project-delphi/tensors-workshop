@@ -753,7 +753,7 @@
     "href": "notebooks.html#running-them-somewhere-other-than-colab",
     "title": "Notebooks",
     "section": "Running them somewhere other than Colab",
-    "text": "Running them somewhere other than Colab\nThe notebooks only need the scientific Python stack. Locally:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab\nscikit-learn and scikit-image ship the tumour data, the handwritten digits and the photographs, so most sections work with no network at all. Sections 07, 08 and 10 fetch a CSV from GitHub the first time they run."
+    "text": "Running them somewhere other than Colab\nThe notebooks only need the scientific Python stack. Locally:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,scikit-learn,scikit-image,scipy,matplotlib,jupyterlab jupyter lab\nscikit-learn and scikit-image ship the tumour data, the handwritten digits and the photographs, so most sections work with no network at all. Sections 07, 08 and 10 fetch a CSV from GitHub the first time they run."
   },
   {
     "objectID": "notebooks.html#what-each-notebook-needs",

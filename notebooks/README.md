@@ -71,7 +71,7 @@ change disappears the next time anyone regenerates.
 ## Running them somewhere other than Colab
 
 ```bash
-uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,matplotlib,jupyterlab jupyter lab
 ```
 
 `scikit-learn` and `scikit-image` ship the tumour data, the digits and the
