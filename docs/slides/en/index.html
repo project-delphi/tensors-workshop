@@ -10,7 +10,7 @@
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-97af773cfbe0d0670e77fe96929c7f4c.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
-  <title>Tensors for Machine Learning – Placeholder (en)</title>
+  <title>Tensors for Machine Learning</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -28,8 +28,73 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-bbe7401fe57d4b791b917637bb662036.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-a11f6572855da8090dcc41ec2604ebbf.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -127,22 +192,1148 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Placeholder (en)</h1>
+  <h1 class="title">Tensors for Machine Learning</h1>
+  <p class="subtitle">A 3-hour workshop, plus three Kahoot knowledge checks</p>
 
 <div class="quarto-title-authors">
 </div>
 
 </section>
-<section id="placeholder" class="slide level2">
-<h2>Placeholder</h2>
-<p>Full deck lands in Phase 3.</p>
-
+<section>
+<section id="sec-title" class="title-slide slide level1 center">
+<h1>Before we start</h1>
+<p><strong>You have read</strong> <em>Deep Learning</em>, Chapter 2 — Linear Algebra. You know matrices.</p>
+<p><strong>This workshop assumes no previous knowledge of tensor theory.</strong></p>
+<aside class="notes">
+<p>Say this out loud: nobody is expected to know tensor theory. Every new term is defined the first time it appears. Students are ESL (Colombia) — speak slowly, avoid idiom, and name the Spanish cognates early: eje, descomposición, contracción, convolución.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="all-the-data-here-is-real" class="slide level2">
+<h2>All the data here is real</h2>
+<div>
+<ul>
+<li class="fragment">Real tumour measurements, real handwritten digits, real histology</li>
+<li class="fragment">Real taxi trips, real airline traffic</li>
+<li class="fragment"><strong>Nothing is invented with random numbers</strong></li>
+</ul>
+</div>
+<div class="fragment">
+<p>Real data contains problems random data never shows — missing values, features on incompatible scales, pixels that never change.</p>
+<p><strong>Finding those problems is part of the work.</strong></p>
+</div>
+</section>
+<section id="agenda-minutes" class="slide level2">
+<h2>Agenda — 195 minutes</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Part</th>
+<th>Segment</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>—</td>
+<td>Setup and welcome</td>
+<td>5</td>
+</tr>
+<tr class="even">
+<td>I</td>
+<td>What a tensor is</td>
+<td>20</td>
+</tr>
+<tr class="odd">
+<td>II</td>
+<td>Thinking in N dimensions <em>(group)</em></td>
+<td>20</td>
+</tr>
+<tr class="even">
+<td>III</td>
+<td>Indexing &amp; broadcasting · Reshape &amp; transpose</td>
+<td>30</td>
+</tr>
+<tr class="odd">
+<td>🎯</td>
+<td><strong>Kahoot 1</strong> + break</td>
+<td>10</td>
+</tr>
+<tr class="even">
+<td>III</td>
+<td>Video pipeline design <em>(group)</em></td>
+<td>15</td>
+</tr>
+<tr class="odd">
+<td>IV</td>
+<td>einsum · Pseudoinverse</td>
+<td>30</td>
+</tr>
+<tr class="even">
+<td>🎯</td>
+<td><strong>Kahoot 2</strong></td>
+<td>5</td>
+</tr>
+<tr class="odd">
+<td>IV</td>
+<td>Recursion · Convolution · Tucker</td>
+<td>40</td>
+</tr>
+<tr class="even">
+<td>🎯</td>
+<td><strong>Kahoot 3</strong> + wrap-up</td>
+<td>10</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="two-rhythms-and-one-warning" class="slide level2">
+<h2>Two rhythms, and one warning</h2>
+<p><strong>Exercise blocks</strong> — 10 min coding, 5 min explanation.</p>
+<p><strong>Group blocks</strong> — 10 min discussion, then share-back.</p>
+<div class="fragment">
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The word “rank”</strong></p>
+</div>
+<div class="callout-content">
+<p>Chapter 2: <em>rank</em> = number of independent columns. Tensor theory: <em>rank</em> often = number of axes.</p>
+<p><strong>Today: “order” for the number of axes. “Rank” only in Chapter 2’s sense.</strong></p>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Give this warning at the start of Part I, not later. It is the single most reliable source of confusion in the whole workshop.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section></section>
+<section>
+<section id="sec-00-setup-and-data" class="title-slide slide level1 center">
+<h1>00 · Setup and welcome</h1>
+<p><em>5 min · run this before anything else</em></p>
+</section>
+<section id="three-downloads-one-first-cell" class="slide level2">
+<h2>Three downloads, one first cell</h2>
+<div id="feecba8d" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>HOUSING <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"</span></span>
+<span id="cb1-2"><a></a>TAXIS   <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"</span></span>
+<span id="cb1-3"><a></a>FLIGHTS <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"</span></span>
+<span id="cb1-4"><a></a></span>
+<span id="cb1-5"><a></a>housing <span class="op">=</span> pd.read_csv(HOUSING)</span>
+<span id="cb1-6"><a></a>taxis   <span class="op">=</span> pd.read_csv(TAXIS)</span>
+<span id="cb1-7"><a></a>flights <span class="op">=</span> pd.read_csv(FLIGHTS)</span>
+<span id="cb1-8"><a></a><span class="bu">print</span>(housing.shape, taxis.shape, flights.shape)   <span class="co"># (20640, 10) (6433, 14) (144, 3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>If this fails, say so in Discord now</strong> — not in two hours.</p>
+<aside class="notes">
+<p>Confirm in the first 5 minutes that everyone’s download succeeded. A student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the repo as a fallback.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="to-the-notebook" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>00 · Setup and welcome</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">Open in Colab</a></p>
+<p>Everything else in the library ships offline: <code>load_breast_cancer</code>, <code>load_digits</code>, <code>data.camera()</code>, <code>data.astronaut()</code>.</p>
+</section></section>
+<section>
+<section id="sec-01-what-a-tensor-is" class="title-slide slide level1 center">
+<h1>01 · What a tensor is</h1>
+<p><em>Part I · 20 min · demo</em></p>
+</section>
+<section id="the-vocabulary" class="slide level2">
+<h2>The vocabulary</h2>
+<table class="caption-top">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Spanish</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tensor</strong></td>
+<td>Array of numbers with any number of axes</td>
+<td><em>tensor</em></td>
+</tr>
+<tr class="even">
+<td><strong>Axis</strong></td>
+<td>One direction along which data is arranged</td>
+<td><em>eje</em></td>
+</tr>
+<tr class="odd">
+<td><strong>Order</strong></td>
+<td>How many axes a tensor has</td>
+<td><em>orden</em></td>
+</tr>
+<tr class="even">
+<td><strong>Shape</strong></td>
+<td>The size along each axis</td>
+<td><em>forma</em></td>
+</tr>
+<tr class="odd">
+<td><strong>Slice</strong></td>
+<td>Fix one index, keep the rest</td>
+<td><em>corte</em></td>
+</tr>
+<tr class="even">
+<td><strong>Fiber</strong></td>
+<td>Fix every index except one</td>
+<td><em>fibra</em></td>
+</tr>
+<tr class="odd">
+<td><strong>Unfolding</strong></td>
+<td>Rearranging a tensor into a matrix</td>
+<td><em>desplegado</em></td>
+</tr>
+<tr class="even">
+<td><strong>Contraction</strong></td>
+<td>Multiply and sum over a shared axis</td>
+<td><em>contracción</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="shape-is-a-tuple-order-is-its-length" class="slide level2">
+<h2>Shape is a tuple; order is its length</h2>
+<div id="658c0903" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a>scalar <span class="op">=</span> np.array(<span class="fl">3.0</span>)                     <span class="co"># order 0   shape ()</span></span>
+<span id="cb2-2"><a></a>vector <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])            <span class="co"># order 1   shape (3,)</span></span>
+<span id="cb2-3"><a></a>matrix <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">3.</span>, <span class="fl">4.</span>]])    <span class="co"># order 2   shape (2, 2)</span></span>
+<span id="cb2-4"><a></a>tensor <span class="op">=</span> rng.standard_normal((<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>))    <span class="co"># order 3   shape (2, 3, 4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<div id="e8ff2790" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a>digits.images.shape              <span class="co"># (1797, 8, 8)  — images, height, width</span></span>
+<span id="cb3-2"><a></a>photo.shape                      <span class="co"># (512, 512, 3) — height, width, colour</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="fragment">
+<p><strong>Both are order 3. Their axes mean completely different things.</strong></p>
+<p>The shape alone never tells you what the axes mean.</p>
+</div>
+</section>
+<section id="three-operations" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Three operations</h2>
+<p><strong>Slice</strong> — fix one index. <strong>Fiber</strong> — fix all but one.</p>
+<div id="8e6dce9f" class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb4-1" class="hljs-ln-code"><a></a>photo[:, :, <span class="dv">0</span>].shape       <span class="co"># (512, 512) — a slice: one colour channel</span></span>
+<span id="cb4-2" class="hljs-ln-code"><a></a>photo[<span class="dv">100</span>, <span class="dv">200</span>, :].shape   <span class="co"># (3,)       — a fiber: one pixel's colours</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="three-operations-1" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Three operations</h2>
+<p><strong>Unfolding</strong> — turn any tensor into a matrix.</p>
+<div id="1a53bee1" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb5-1" class="hljs-ln-code"><a></a><span class="kw">def</span> unfold(T, axis):</span>
+<span id="cb5-2" class="hljs-ln-code"><a></a>    <span class="cf">return</span> np.moveaxis(T, axis, <span class="dv">0</span>).reshape(T.shape[axis], <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb5-3" class="hljs-ln-code"><a></a></span>
+<span id="cb5-4" class="hljs-ln-code"><a></a>unfold(photo, <span class="dv">0</span>).shape   <span class="co"># (512, 1536)</span></span>
+<span id="cb5-5" class="hljs-ln-code"><a></a>unfold(photo, <span class="dv">2</span>).shape   <span class="co"># (3, 262144) — each colour channel is one row</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Unfolding loses nothing.</strong> Every matrix tool you know now applies.</p>
+</div>
+</section>
+<section id="three-operations-2" class="slide level2" data-auto-animate="true">
+<h2 data-id="quarto-animate-title">Three operations</h2>
+<p><strong>Contraction</strong> — multiply along a shared axis and sum over it.</p>
+<div id="964cb343" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb6-1" class="hljs-ln-code"><a></a>np.einsum(<span class="st">'i,i-&gt;'</span>, a, b)          <span class="co"># dot product      (eq 2.8)</span></span>
+<span id="cb6-2" class="hljs-ln-code"><a></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)      <span class="co"># matrix product   (eq 2.5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>The rule, in one sentence</strong></p>
+</div>
+<div class="callout-content">
+<p>An index in the inputs but <strong>not</strong> after the arrow is <strong>summed over</strong>. An index after the arrow is <strong>kept</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="the-map-of-factorizations" class="slide level2">
+<h2>The map of factorizations</h2>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Works on</th>
+<th>Where today</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>LU</td>
+<td>Square matrix</td>
+<td>now</td>
+</tr>
+<tr class="even">
+<td>QR</td>
+<td>Any matrix</td>
+<td>now</td>
+</tr>
+<tr class="odd">
+<td>Eigendecomposition</td>
+<td>Square matrix</td>
+<td>§08</td>
+</tr>
+<tr class="even">
+<td>SVD</td>
+<td>Any matrix</td>
+<td>§07, §10</td>
+</tr>
+<tr class="odd">
+<td>PCA</td>
+<td>Data matrix</td>
+<td>§11</td>
+</tr>
+<tr class="even">
+<td><strong>Pseudoinverse</strong></td>
+<td>Any matrix</td>
+<td>§07</td>
+</tr>
+<tr class="odd">
+<td><strong>Tucker / CP</strong></td>
+<td><strong>Tensor, any order</strong></td>
+<td>§10</td>
+</tr>
+</tbody>
+</table>
+<div class="fragment">
+<p>Everything but the last row works on <strong>two axes</strong>. Real data has more.</p>
+</div>
+</section>
+<section id="to-the-notebook-1" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>01 · What a tensor is</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb">Open in Colab</a></p>
+<aside class="notes">
+<p>Do not rush Part I. It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, never Part I.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="sec-02-thinking-in-n-dimensions" class="title-slide slide level1 center">
+<h1>02 · Thinking in N dimensions</h1>
+<p><em>Part II · 20 min · group discussion · no code</em></p>
+</section>
+<section id="your-task" class="slide level2">
+<h2>Your task</h2>
+<blockquote>
+<p>A grayscale image is a matrix. Almost nothing in ML is a single grayscale image. Each thing you add — colour, many examples, time — adds an axis, and each axis means something different.</p>
+</blockquote>
+<p><strong>Argue about which axis goes where, and why.</strong></p>
+<p>10 minutes in your breakout channel, then share-back.</p>
+</section>
+<section id="the-five-questions" class="slide level2">
+<h2>The five questions</h2>
+<div>
+<ol type="1">
+<li class="fragment"><code>(H, W)</code> → colour image → batch → video → batch of videos. What does each new axis <em>count</em>? <strong>Do not say “we add a dimension.”</strong></li>
+<li class="fragment">A batch axis and a time axis look identical in code. What differs in <strong>meaning</strong>? What happens if you shuffle each?</li>
+<li class="fragment">Real videos have different lengths. Two ways to batch them — what does each <strong>lose or invent</strong>?</li>
+<li class="fragment">Cells photographed every 10 min for 48 h: frame interval → ? field of view → ? number of dishes → ?</li>
+<li class="fragment">Is there a limit on how many axes a tensor can have?</li>
+</ol>
+</div>
+</section>
+<section id="share-back" class="slide level2">
+<h2>Share-back</h2>
+<div id="d2854257" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>gray_image      <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>))            <span class="co"># (H, W)</span></span>
+<span id="cb7-2"><a></a>color_image     <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))         <span class="co"># (H, W, C)      + colour</span></span>
+<span id="cb7-3"><a></a>batch_of_images <span class="op">=</span> np.zeros((<span class="dv">32</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))     <span class="co"># (N, H, W, C)   + many examples</span></span>
+<span id="cb7-4"><a></a>video           <span class="op">=</span> np.zeros((<span class="dv">16</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))     <span class="co"># (T, H, W, C)   + ordered time</span></span>
+<span id="cb7-5"><a></a>batch_of_videos <span class="op">=</span> np.zeros((<span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))  <span class="co"># (N, T, H, W, C)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Question 2 is the point.</strong> Shuffling axis 0 is harmless for a batch and <strong>destroys</strong> a video.</p>
+<p>Chapter 2’s notation has no concept of “order matters between elements.” That is genuinely new today.</p>
+</div>
+</section>
+<section id="to-the-notebook-2" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>02 · Thinking in N dimensions</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb">Open in Colab</a></p>
+<aside class="notes">
+<p>Group blocks need firmer facilitation than exercise blocks. If a group is still on question 1 with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch. Pre-assign breakout groups before the session.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="sec-03-indexing-and-broadcasting" class="title-slide slide level1 center">
+<h1>03 · Indexing and broadcasting</h1>
+<p><em>Part III · 15 min · exercise</em></p>
+</section>
+<section id="why-this-matters" class="slide level2">
+<h2>Why this matters</h2>
+<p>569 real patients, 30 real measurements of tumour cell nuclei.</p>
+<div>
+<ul>
+<li class="fragment">Selecting the wrong column <strong>does not produce an error</strong></li>
+<li class="fragment">It returns a <em>different real measurement</em></li>
+<li class="fragment">Your analysis continues and gives a confident, wrong answer</li>
+</ul>
+</div>
+<div class="fragment">
+<p>In research: results nobody can reproduce. In a clinical tool: a wrong recommendation about a real person.</p>
+</div>
+</section>
+<section id="the-exercise" class="slide level2">
+<h2>The exercise</h2>
+<div id="dba82ec3" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Extract "mean radius" using names.index(...). Do not hard-code a number.</span></span>
+<span id="cb8-2"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: The 5 patients with the LARGEST mean radius, full profiles, ONE operation.</span></span>
+<span id="cb8-3"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Boolean indexing — malignant (y == 0) vs benign (y == 1). Real difference?</span></span>
+<span id="cb8-4"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Standardize with broadcasting: (D - mean) / std. LOOK AT THE RESULT.</span></span>
+<span id="cb8-5"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 7: You will find NaN. How many pixels have std == 0, and why?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="two-real-results" class="slide level2">
+<h2>Two real results</h2>
+<div id="c75235cb" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="bu">print</span>(radius[y <span class="op">==</span> <span class="dv">0</span>].mean(), radius[y <span class="op">==</span> <span class="dv">1</span>].mean())   <span class="co"># 17.5 vs 12.1</span></span>
+<span id="cb9-2"><a></a><span class="bu">print</span>((std <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())                               <span class="co"># 3</span></span>
+<span id="cb9-3"><a></a>Z <span class="op">=</span> (D <span class="op">-</span> mean) <span class="op">/</span> np.where(std <span class="op">==</span> <span class="dv">0</span>, <span class="fl">1.0</span>, std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Malignant tumours really do have a larger mean radius</strong> — 17.5 against 12.1.</p>
+</div>
+<div class="fragment">
+<p><strong>Three pixels are always dark</strong> in all 1797 digit images — corners where nobody writes. Standard deviation exactly zero → <code>NaN</code>.</p>
+<p><strong>Random data would never have shown you this.</strong></p>
+</div>
+</section>
+<section id="to-the-notebook-3" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>03 · Indexing and broadcasting real data</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-04-reshape-and-transpose" class="title-slide slide level1 center">
+<h1>04 · Reshape and transpose</h1>
+<p><em>Part III · 15 min · exercise</em></p>
+</section>
+<section id="why-this-matters-1" class="slide level2">
+<h2>Why this matters</h2>
+<p>Microscopes and cameras order their axes according to the <strong>hardware</strong>, not according to what a model expects.</p>
+<div class="fragment">
+<p>Getting this wrong does not crash. The model runs on scrambled data and returns <strong>confident, meaningless output</strong>.</p>
+</div>
+<div class="fragment">
+<p>The famous version: a model trained in TensorFlow (<code>NHWC</code>) deployed into PyTorch (<code>NCHW</code>) with no transpose.</p>
+</div>
+</section>
+<section id="same-shape-different-data" class="slide level2">
+<h2>Same shape, different data</h2>
+<div id="b98d2d81" class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>chw   <span class="op">=</span> np.transpose(photo, (<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))      <span class="co"># (3, 512, 512) — correct</span></span>
+<span id="cb10-2"><a></a>wrong <span class="op">=</span> photo.reshape(<span class="dv">3</span>, <span class="dv">512</span>, <span class="dv">512</span>)          <span class="co"># (3, 512, 512) — runs, but scrambles</span></span>
+<span id="cb10-3"><a></a></span>
+<span id="cb10-4"><a></a>np.array_equal(chw, wrong)                  <span class="co"># False</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Reshape only reinterprets numbers in memory order.</strong> <strong>Transpose moves them according to axis meaning.</strong></p>
+</div>
+</section>
+<section id="when-two-axes-share-a-size" class="slide level2">
+<h2>When two axes share a size</h2>
+<div id="469d2cf7" class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a>batch <span class="op">=</span> np.stack([photo, photo, photo])      <span class="co"># (3, 512, 512, 3)</span></span>
+<span id="cb11-2"><a></a>nchw  <span class="op">=</span> np.transpose(batch, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>))    <span class="co"># (3, 3, 512, 512)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>Two axes now both have size 3. <strong>How do you know which is which?</strong></p>
+</div>
+<div class="fragment">
+<p>You do not. <strong>Only your own tracking can tell you.</strong> Nothing in the array records it.</p>
+</div>
+</section>
+<section id="to-the-notebook-4" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>04 · Reshape and transpose real images</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-kahoot-1" class="title-slide slide level1 center" data-background-color="#b3541e">
+<h1>🎯 Kahoot 1</h1>
 
 </section>
+<section id="kahoot-1" class="slide level2">
+<h2>Kahoot 1 — Tensor Vocabulary &amp; Shapes</h2>
+<p><strong>6 questions · about 5 minutes</strong></p>
+<h3 id="join-at">Join at <strong>kahoot.it</strong></h3>
+<h3 id="pin-on-screen">PIN on screen</h3>
+<p><em>Covers: order, axis, shape, slice, fiber, variance, reshape, transpose</em></p>
+<p><a href="https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-1">Quiz details</a></p>
+<aside class="notes">
+<p>Run this before the break, right after section 04. Everyone has just used order, axis, shape, slice, fiber, variance, reshape and transpose — this is the moment those words are freshest.</p>
+<p>IMPORT THE .xlsx AHEAD OF TIME. Create → Add question → Import → Import spreadsheet. Do not do this live.</p>
+<p>Budget 5 minutes including the podium. Groups want to see the leaderboard, and that is fine — it is the payoff.</p>
+<p>Two questions reach into the exercises: the NaN question is section 03’s zero-variance pixels, and the last is section 04’s reshape-versus-transpose.</p>
+<p>If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="sec-05-video-pipeline-design" class="title-slide slide level1 center">
+<h1>05 · Video pipeline design</h1>
+<p><em>Part III · 15 min · group discussion</em></p>
+</section>
+<section id="design-both-pipelines" class="slide level2">
+<h2>Design both pipelines</h2>
+<p><em>raw file → decoded frames → preprocessed batch → model input → model output</em></p>
+<p><strong>Tech</strong> — a short-video app computing one embedding per video from sampled frames.</p>
+<p><strong>Biotech</strong> — a surgical-video model labelling the current phase of an operation.</p>
+<div class="fragment">
+<p><strong>There is no single correct answer.</strong></p>
+</div>
+</section>
+<section id="the-five-questions-1" class="slide level2">
+<h2>The five questions</h2>
+<div>
+<ol type="1">
+<li class="fragment">Sketch the shape at each of the five stages, for both. Where must they differ?</li>
+<li class="fragment">30 seconds against 4 hours. Give the exact preprocessed batch shape. What does an invented or wasted value <strong>represent</strong>?</li>
+<li class="fragment">Three camera angles at once. <strong>Where does that axis go?</strong></li>
+<li class="fragment">8 frames sampled from 900 — which operation from §03, and what is lost?</li>
+<li class="fragment">Which frames matter most? <strong>What could learn that weighting?</strong></li>
+</ol>
+</div>
+</section>
+<section id="where-they-diverge" class="slide level2">
+<h2>Where they diverge</h2>
+<div id="c518a0de" class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="co"># Tech: time is DESTROYED on purpose</span></span>
+<span id="cb12-2"><a></a><span class="co"># preprocessed (32, 8, 224, 224, 3)  -&gt;  output (32, 512)      N, embedding</span></span>
+<span id="cb12-3"><a></a></span>
+<span id="cb12-4"><a></a><span class="co"># Biotech: time SURVIVES, one label per timestep</span></span>
+<span id="cb12-5"><a></a><span class="co"># preprocessed (4, 64, 224, 224, 3)  -&gt;  output (4, 64, 12)    N, T, classes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Q5 is attention</strong> — §11 builds it from two <code>einsum</code> calls, and the padding mask from Q2 turns out to be the same mask attention needs.</p>
+</div>
+</section>
+<section id="to-the-notebook-5" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>05 · Video pipeline design</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-06-contraction-with-einsum" class="title-slide slide level1 center">
+<h1>06 · Contraction with einsum</h1>
+<p><em>Part IV · 15 min · exercise</em></p>
+</section>
+<section id="why-this-matters-2" class="slide level2">
+<h2>Why this matters</h2>
+<p>Recommendation and search rank items by the dot product between a user vector and <strong>every</strong> item vector — millions of items, many times per second.</p>
+<p><strong>That contraction <em>is</em> the ranking signal.</strong></p>
+<p>Sum over the wrong axis and every user gets wrong results.</p>
+</section>
+<section id="one-letter-for-a-batch" class="slide level2">
+<h2>One letter for a batch</h2>
+<div id="d5ad86d2" class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a>gray       <span class="op">=</span> np.einsum(<span class="st">'hwc,c-&gt;hw'</span>,   photo, w)      <span class="co"># (512, 512)</span></span>
+<span id="cb13-2"><a></a>gray_batch <span class="op">=</span> np.einsum(<span class="st">'nhwc,c-&gt;nhw'</span>, batch, w)      <span class="co"># (2, 512, 512)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><code>c</code> is in the inputs but not after the arrow → <strong>summed over</strong>. <code>n</code>, <code>h</code>, <code>w</code> are after the arrow → <strong>kept</strong>.</p>
+</div>
+<div class="fragment">
+<p><strong>Adding a batch axis costs exactly one letter.</strong></p>
+</div>
+</section>
+<section id="chapter-2-rewritten" class="slide level2">
+<h2>Chapter 2, rewritten</h2>
+<div id="8cfadfb4" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a>np.einsum(<span class="st">'ii-&gt;'</span>, A)           <span class="co"># trace          == np.trace(A)      (eq 2.48)</span></span>
+<span id="cb14-2"><a></a>np.einsum(<span class="st">'ij-&gt;ji'</span>, A)         <span class="co"># transpose      == A.T              (eq 2.3)</span></span>
+<span id="cb14-3"><a></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)   <span class="co"># matrix product == A @ B            (eq 2.5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>The same expression works for one image or for a million, and <strong>it reads like the mathematics in Chapter 2.</strong></p>
+</div>
+</section>
+<section id="every-pair-of-1797-images" class="slide level2">
+<h2>Every pair of 1797 images</h2>
+<div id="9b64e3ab" class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a>D <span class="op">=</span> load_digits().images.reshape(<span class="dv">1797</span>, <span class="op">-</span><span class="dv">1</span>)     <span class="co"># (1797, 64)</span></span>
+<span id="cb15-2"><a></a>S <span class="op">=</span> np.einsum(<span class="st">'id,jd-&gt;ij'</span>, D, D)               <span class="co"># (1797, 1797) — 3.2M scores</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>Normalize the rows first and the same contraction becomes <strong>cosine similarity</strong>.</p>
+<p><span class="math display">\[\text{cos}(u, v) = \frac{u \cdot v}{\lVert u \rVert \, \lVert v \rVert}
+\qquad
+d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
+<aside class="notes">
+<p>Say “Euclidean distance” and “cosine similarity” out loud here. Kahoot 2 asks about both and the handbook never defines them anywhere else — this exercise is the only bridge.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="to-the-notebook-6" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>06 · Contraction with einsum</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-07-inverses-and-pseudoinverse" class="title-slide slide level1 center">
+<h1>07 · Inverses and the pseudoinverse</h1>
+<p><em>Part IV · 15 min · exercise</em></p>
+</section>
+<section id="step-1-square-matrices" class="slide level2">
+<h2>Step 1 — square matrices</h2>
+<div id="b79392c6" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a>Singular <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">4.</span>]])   <span class="co"># column 2 = 2 x column 1</span></span>
+<span id="cb16-2"><a></a>np.linalg.inv(Singular)                      <span class="co"># LinAlgError</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><span class="math inline">\(A^{-1}\)</span> exists <strong>only</strong> when the columns are linearly independent.</p>
+</div>
+</section>
+<section id="step-2-non-square-matrices" class="slide level2">
+<h2>Step 2 — non-square matrices</h2>
+<p>In machine learning <code>A</code> is almost never square: one row per example, one column per feature, <strong>always far more examples than features</strong>.</p>
+<div class="fragment">
+<p>The <strong>Moore-Penrose pseudoinverse</strong> is defined for <em>every</em> matrix:</p>
+<p><span class="math display">\[A^{+} = V D^{+} U^{\top}\]</span></p>
+<div id="72aa8dab" class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a>A_plus <span class="op">=</span> np.linalg.pinv(A)</span>
+<span id="cb17-2"><a></a>U, S_, Vt <span class="op">=</span> np.linalg.svd(A, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb17-3"><a></a>np.allclose(A_plus, Vt.T <span class="op">@</span> np.diag(<span class="dv">1</span> <span class="op">/</span> S_) <span class="op">@</span> U.T)     <span class="co"># True — eq 2.47</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</section>
+<section id="what-ab-gives-you" class="slide level2">
+<h2>What <span class="math inline">\(A^{+}b\)</span> gives you</h2>
+<div>
+<ul>
+<li class="fragment"><strong>Tall</strong> (too many equations, no exact solution) → the <code>x</code> making <code>Ax</code> as <strong>close as possible</strong> to <code>b</code>. <strong>Least squares.</strong></li>
+<li class="fragment"><strong>Wide</strong> (too few equations, infinitely many solutions) → the valid solution with the <strong>smallest norm</strong>.</li>
+</ul>
+</div>
+<div class="fragment">
+<p><strong>Step 3 — tensors?</strong> No single tensor inverse everyone uses. In practice: <strong>unfold → pseudoinverse → fold back.</strong> It works because unfolding loses nothing.</p>
+</div>
+</section>
+<section id="equations-no-solution" class="slide level2">
+<h2>20,433 equations, no solution</h2>
+<div id="8c95adcd" class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a>d <span class="op">=</span> housing.dropna()                                <span class="co"># 20433 rows; 207 had NaN</span></span>
+<span id="cb18-2"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(d)), d[feats].to_numpy(<span class="bu">float</span>)])   <span class="co"># (20433, 7)</span></span>
+<span id="cb18-3"><a></a></span>
+<span id="cb18-4"><a></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y</span>
+<span id="cb18-5"><a></a>w_lstsq, <span class="op">*</span>_ <span class="op">=</span> np.linalg.lstsq(X, y, rcond<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb18-6"><a></a>np.allclose(w, w_lstsq)                             <span class="co"># True</span></span>
+<span id="cb18-7"><a></a></span>
+<span id="cb18-8"><a></a>rmse <span class="op">=</span> np.sqrt(((X <span class="op">@</span> w <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>).mean())           <span class="co"># ~75,980</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>No straight line passes through 20,433 points.</strong> The pseudoinverse gives the best possible answer instead. Largest coefficient: <code>median_income</code>. Sensible.</p>
+<aside class="notes">
+<p>TODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="to-the-notebook-7" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>07 · Inverses and the pseudoinverse</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-kahoot-2" class="title-slide slide level1 center" data-background-color="#b3541e">
+<h1>🎯 Kahoot 2</h1>
+
+</section>
+<section id="kahoot-2" class="slide level2">
+<h2>Kahoot 2 — Einsum, Distance &amp; the Pseudoinverse</h2>
+<p><strong>6 questions · about 5 minutes</strong></p>
+<h3 id="join-at-1">Join at <strong>kahoot.it</strong></h3>
+<h3 id="pin-on-screen-1">PIN on screen</h3>
+<p><em>Covers: contraction, the pseudoinverse, singular matrices, distance</em></p>
+<p><a href="https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2">Quiz details</a></p>
+<aside class="notes">
+<p>Run this right after section 07, before the recursion demo. It covers contraction (§06), the pseudoinverse and singular matrices (§07), and distance/similarity — the digit-similarity matrix from §06 TODO 4 is the bridge between the two.</p>
+<p>WARNING: two questions ask about Euclidean distance and cosine similarity, which the handbook never defines directly. If you did not say those words during §06, expect them to land cold.</p>
+<p>THIS IS THE FIRST QUIZ TO CUT if you are over time — the pseudoinverse and distance both get re-covered narratively in the wrap-up.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="sec-08-recursion-with-matrices" class="title-slide slide level1 center">
+<h1>08 · Recursion with matrices</h1>
+<p><em>Part IV · 10 min · demo</em></p>
+</section>
+<section id="apply-the-same-matrix-again-and-again" class="slide level2">
+<h2>Apply the same matrix again and again</h2>
+<div id="a69d9cac" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a>F <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">0</span>]])              <span class="co"># f(n) = f(n-1) + f(n-2)</span></span>
+<span id="cb19-2"><a></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb19-3"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb19-4"><a></a>    v <span class="op">=</span> F <span class="op">@</span> v</span>
+<span id="cb19-5"><a></a>v[<span class="dv">1</span>]                                         <span class="co"># 55</span></span>
+<span id="cb19-6"><a></a>np.linalg.matrix_power(F, <span class="dv">10</span>)[<span class="dv">0</span>, <span class="dv">1</span>]          <span class="co"># 55 — same answer, one step</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="power-iteration-finds-an-eigenvector" class="slide level2">
+<h2>Power iteration finds an eigenvector</h2>
+<div id="673474e0" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a>x <span class="op">=</span> rng.standard_normal(<span class="dv">2</span>)<span class="op">;</span> x <span class="op">/=</span> np.linalg.norm(x)</span>
+<span id="cb20-2"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb20-3"><a></a>    x <span class="op">=</span> A <span class="op">@</span> x</span>
+<span id="cb20-4"><a></a>    x <span class="op">/=</span> np.linalg.norm(x)</span>
+<span id="cb20-5"><a></a></span>
+<span id="cb20-6"><a></a>x <span class="op">@</span> A <span class="op">@</span> x                       <span class="co"># 5.000000</span></span>
+<span id="cb20-7"><a></a>np.linalg.eig(A)[<span class="dv">0</span>].<span class="bu">max</span>()       <span class="co"># 5.000000 — identical</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Repeated application of a matrix converges to its dominant eigenvector.</strong> This is how PageRank ranks web pages.</p>
+</div>
+</section>
+<section id="forecasting-real-airline-traffic" class="slide level2">
+<h2>Forecasting real airline traffic</h2>
+<div id="cc90e735" class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>y <span class="op">=</span> flights[<span class="st">'passengers'</span>].to_numpy(<span class="bu">float</span>)     <span class="co"># 144 real months, 1949–1960</span></span>
+<span id="cb21-2"><a></a>rows <span class="op">=</span> np.array([y[i:i<span class="op">+</span><span class="dv">12</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(y) <span class="op">-</span> <span class="dv">12</span>)])</span>
+<span id="cb21-3"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(rows)), rows])</span>
+<span id="cb21-4"><a></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y[<span class="dv">12</span>:]                <span class="co"># least squares, exactly as in §07</span></span>
+<span id="cb21-5"><a></a></span>
+<span id="cb21-6"><a></a>history <span class="op">=</span> <span class="bu">list</span>(y[<span class="op">-</span><span class="dv">12</span>:])</span>
+<span id="cb21-7"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):                           <span class="co"># feed predictions back in</span></span>
+<span id="cb21-8"><a></a>    history.append(w[<span class="dv">0</span>] <span class="op">+</span> np.dot(w[<span class="dv">1</span>:], history[<span class="op">-</span><span class="dv">12</span>:]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><code>[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]</code></p>
+<p><strong>Low in winter, peaking in summer</strong> — learned from 132 real training windows.</p>
+</div>
+</section>
+<section id="that-is-a-recurrent-neural-network" class="slide level2">
+<h2>That is a recurrent neural network</h2>
+<div id="bcc8d977" class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a>h <span class="op">=</span> np.zeros(<span class="dv">4</span>)</span>
+<span id="cb22-2"><a></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">6</span>):</span>
+<span id="cb22-3"><a></a>    h <span class="op">=</span> np.tanh(W <span class="op">@</span> h <span class="op">+</span> U <span class="op">@</span> xs[t])    <span class="co"># same W and U every step — the recursion</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>A hidden state, updated by the same weights at every step.</strong></p>
+<aside class="notes">
+<p>If badly over time, this RNN snippet is third on the cutting list — after Kahoot 2 and §09 TODO 4.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="to-the-notebook-8" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>08 · Recursion with matrices and vectors</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-09-convolution-and-deconvolution" class="title-slide slide level1 center">
+<h1>09 · Convolution and deconvolution</h1>
+<p><em>Part IV · 15 min · exercise</em></p>
+</section>
+<section id="three-modes-three-output-sizes" class="slide level2">
+<h2>Three modes, three output sizes</h2>
+<div id="3c78b168" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a>np.convolve(x, k, <span class="st">'full'</span>)    <span class="co"># length 5+3-1 = 7</span></span>
+<span id="cb23-2"><a></a>np.convolve(x, k, <span class="st">'valid'</span>)   <span class="co"># length 5-3+1 = 3</span></span>
+<span id="cb23-3"><a></a>np.convolve(x, k, <span class="st">'same'</span>)    <span class="co"># length 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><code>valid</code> uses only positions where the kernel fits completely — this is why convolution <strong>shrinks</strong> an image by <code>kernel_size - 1</code>.</p>
+</div>
+</section>
+<section id="what-everyone-gets-wrong" class="slide level2">
+<h2>What everyone gets wrong</h2>
+<div class="callout callout-warning callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Warning</strong></p>
+</div>
+<div class="callout-content">
+<p>True convolution <strong>flips</strong> the kernel. Correlation does not. <strong>What deep learning libraries call “convolution” is actually correlation.</strong></p>
+</div>
+</div>
+</div>
+<div id="700469c2" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a>np.correlate(x, k, <span class="st">'valid'</span>)          <span class="co"># [-2. -2. -2.]</span></span>
+<span id="cb24-2"><a></a>np.convolve(x, k[::<span class="op">-</span><span class="dv">1</span>], <span class="st">'valid'</span>)     <span class="co"># [-2. -2. -2.] — same, with k flipped</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>It makes no practical difference — the network <em>learns</em> the kernel — but the names are inconsistent and you should know it.</p>
+</div>
+</section>
+<section id="convolution-is-a-matrix-product" class="slide level2">
+<h2>Convolution is a matrix product</h2>
+<div id="d06b9bab" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a>C <span class="op">=</span> toeplitz(col, row)                          <span class="co"># (7, 5)</span></span>
+<span id="cb25-2"><a></a>np.allclose(C <span class="op">@</span> x, np.convolve(x, k, <span class="st">'full'</span>))   <span class="co"># True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>A <strong>Toeplitz</strong> matrix: the same few numbers reused across the whole matrix.</p>
+<p><strong>That reuse is exactly why CNNs need so many fewer parameters</strong> than fully connected networks.</p>
+</div>
+</section>
+<section id="deconvolution-means-two-things" class="slide level2">
+<h2>“Deconvolution” means two things</h2>
+<div>
+<ol type="1">
+<li class="fragment"><strong>Transposed convolution</strong> — the upsampling layer in a decoder or GAN. Makes things <em>bigger</em>. <strong>Not a true inverse</strong>; the name is historical.</li>
+<li class="fragment"><strong>True deconvolution</strong> — recovering the original from a blurred one. A genuine inverse problem, and where §07 comes back.</li>
+</ol>
+</div>
+</section>
+<section id="deconvolving-a-real-photograph" class="slide level2">
+<h2>Deconvolving a real photograph</h2>
+<div id="3169e581" class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a>recovered <span class="op">=</span> richardson_lucy(np.clip(noisy, <span class="dv">0</span>, <span class="dv">1</span>), psf, num_iter<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb26-2"><a></a></span>
+<span id="cb26-3"><a></a>c <span class="op">=</span> <span class="dv">25</span>   <span class="co"># IGNORE THE BORDER — deconvolution always creates edge artifacts</span></span>
+<span id="cb26-4"><a></a>err <span class="op">=</span> <span class="kw">lambda</span> a: np.linalg.norm((a<span class="op">-</span>img)[c:<span class="op">-</span>c,c:<span class="op">-</span>c]) <span class="op">/</span> np.linalg.norm(img[c:<span class="op">-</span>c,c:<span class="op">-</span>c])</span>
+<span id="cb26-5"><a></a><span class="bu">print</span>(err(noisy), err(recovered))     <span class="co"># 0.1157 -&gt; 0.0815</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><strong>Error reduced by about 30%.</strong></p>
+<div class="callout callout-important callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Important</strong></p>
+</div>
+<div class="callout-content">
+<p>Flag the 25-pixel crop <strong>before</strong> the exercise. Students who skip it will conclude deconvolution failed. It did not.</p>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>This is the hardest thing in the workshop. TODO 4 is second on the cutting list. Say the border-crop warning out loud before they start, not after.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</div>
+</section>
+<section id="why-not-just-invert-the-blur" class="slide level2">
+<h2>Why not just invert the blur?</h2>
+<div id="0900716d" class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>K <span class="op">=</span> np.fft.fft2(psf, s<span class="op">=</span>img.shape)</span>
+<span id="cb27-2"><a></a>naive <span class="op">=</span> np.real(np.fft.ifft2(np.fft.fft2(noisy) <span class="op">/</span> np.where(<span class="bu">abs</span>(K) <span class="op">&lt;</span> <span class="fl">1e-3</span>, <span class="fl">1e-3</span>, K)))</span>
+<span id="cb27-3"><a></a>err(naive)     <span class="co"># ~2.49 — about twenty times WORSE than the blur we started from</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p>Blurring destroys high-frequency detail, so inverting divides by numbers very close to zero and <strong>amplifies noise enormously</strong>.</p>
+</div>
+<div class="fragment">
+<p><strong>Same lesson as §07:</strong> a direct inverse either does not exist or is unusable, so you find the best stable answer instead.</p>
+</div>
+</section>
+<section id="to-the-notebook-9" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>09 · Convolution and deconvolution</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb">Open in Colab</a></p>
+</section></section>
+<section>
+<section id="sec-10-tucker-decomposition" class="title-slide slide level1 center">
+<h1>10 · Tucker decomposition</h1>
+<p><em>Part IV · 15 min · exercise</em></p>
+</section>
+<section id="pca-generalized-to-every-axis" class="slide level2">
+<h2>PCA generalized to every axis</h2>
+<p>PCA compresses a <strong>matrix</strong> — two axes. Real data often has more.</p>
+<p><strong>Tucker</strong>: one <strong>factor matrix per axis</strong>, plus a small <strong>core tensor</strong> describing how the factors combine.</p>
+<div class="fragment">
+<p><strong>HOSVD</strong> uses only tools you already have:</p>
+<div>
+<ol type="1">
+<li class="fragment"><strong>Unfold</strong> the tensor along each axis <em>(§01)</em></li>
+<li class="fragment"><strong>SVD</strong> on each unfolding; keep the top components</li>
+<li class="fragment"><strong>Contract</strong> the tensor against all factors to get the core <em>(§06)</em></li>
+</ol>
+</div>
+</div>
+</section>
+<section id="a-real-order-3-tensor" class="slide level2">
+<h2>A real order-3 tensor</h2>
+<p><strong>pickup borough × dropoff borough × hour of day</strong>, from 6,433 real NYC taxi trips.</p>
+<div id="074a8a6b" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
+<span id="cb28-2"><a></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
+<span id="cb28-3"><a></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><code>T[i, j, k]</code> = trips from borough <code>i</code> to borough <code>j</code> picked up during hour <code>k</code>.</p>
+</div>
+</section>
+<section id="three-axes-one-einsum" class="slide level2">
+<h2>Three axes, one einsum</h2>
+<div id="6b0a07d8" class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>Us <span class="op">=</span> [np.linalg.svd(unfold(T, ax), full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>] <span class="cf">for</span> ax <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
+<span id="cb29-2"><a></a>Us <span class="op">=</span> [Us[i][:, :r[i]] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]                     <span class="co"># r = (2, 2, 3)</span></span>
+<span id="cb29-3"><a></a></span>
+<span id="cb29-4"><a></a>core  <span class="op">=</span> np.einsum(<span class="st">'ijk,ia,jb,kc-&gt;abc'</span>, T, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])   <span class="co"># (2, 2, 3)</span></span>
+<span id="cb29-5"><a></a>recon <span class="op">=</span> np.einsum(<span class="st">'abc,ia,jb,kc-&gt;ijk'</span>, core, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])</span>
+<span id="cb29-6"><a></a></span>
+<span id="cb29-7"><a></a>error <span class="op">=</span> np.linalg.norm(T <span class="op">-</span> recon) <span class="op">/</span> np.linalg.norm(T)            <span class="co"># 0.067</span></span>
+<span id="cb29-8"><a></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))           <span class="co"># 4.71</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><code>'ijk,ia,jb,kc-&gt;abc'</code> contracts <strong>three axes in one expression.</strong> <strong>That is why einsum came first.</strong></p>
+</div>
+</section>
+<section id="what-it-found-by-itself" class="slide level2">
+<h2>What it found by itself</h2>
+<p><strong>4.7× fewer numbers, 6.7% error.</strong> But that is not the point.</p>
+<div class="fragment">
+<div id="d91cd916" class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a></a>np.<span class="bu">abs</span>(Us[<span class="dv">2</span>][:, <span class="dv">0</span>]).argmax()      <span class="co"># 18</span></span>
+<span id="cb30-2"><a></a>T.<span class="bu">sum</span>(axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>)).argmax()       <span class="co"># 18 — the same hour, from raw counts</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div class="fragment">
+<p><strong>The decomposition discovered evening rush hour by itself.</strong></p>
+<p>Nobody told it about time, traffic or commuting. It found the dominant pattern along that axis because that is what a decomposition does.</p>
+</div>
+</section>
+<section id="to-the-notebook-10" class="slide level2">
+<h2>To the notebook</h2>
+<p><strong>10 · Tucker decomposition on real data</strong></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb">Open in Colab</a></p>
+<aside class="notes">
+<p>Never cut section 10. In tech, Tucker and CP compress neural network weight tensors so models run on phones. In biotech, on (genes × samples × conditions), they find structure PCA cannot reach — PCA can only ever see two axes.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="sec-kahoot-3" class="title-slide slide level1 center" data-background-color="#b3541e">
+<h1>🎯 Kahoot 3</h1>
+
+</section>
+<section id="kahoot-3" class="slide level2">
+<h2>Kahoot 3 — Convolution &amp; Tensor Decompositions</h2>
+<p><strong>6 questions · about 5 minutes</strong></p>
+<h3 id="join-at-2">Join at <strong>kahoot.it</strong></h3>
+<h3 id="pin-on-screen-2">PIN on screen</h3>
+<p><em>Covers: convolution, correlation, Tucker, CP, HOSVD</em></p>
+<p><a href="https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-3">Quiz details</a></p>
+<aside class="notes">
+<p>Run this right after section 10, while the taxi-tensor rush-hour result is still on screen.</p>
+<p>ITS LAST QUESTION NAMES HOUR 18 — it must come AFTER §10 TODO 6, never before, or it gives the answer away.</p>
+<p>NEVER CUT THIS ONE. It is the cheapest way to check whether Tucker and CP actually landed before students leave. It also doubles as a live rehearsal of the wrap-up’s own recap, so segue straight from the podium into the wrap-up.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section></section>
+<section>
+<section id="sec-11-wrap-up-and-take-homes" class="title-slide slide level1 center">
+<h1>11 · Wrap-up</h1>
+<p><em>5 min</em></p>
+</section>
+<section id="what-you-did-today" class="slide level2">
+<h2>What you did today</h2>
+<div>
+<ul>
+<li class="fragment"><strong>§01</strong> — the vocabulary, and that unfolding loses nothing</li>
+<li class="fragment"><strong>§02, §05</strong> — a batch axis and a time axis behave differently even when the shapes look identical</li>
+<li class="fragment"><strong>§03, §04</strong> — real tumour data and real medical images, and real problems: zero-variance pixels, reshape silently destroying an image</li>
+<li class="fragment"><strong>§06–§10</strong> — contractions; an unsolvable 20,433-equation system; recursion that forecasts real airline traffic; a deconvolved photograph; a taxi tensor compressed 4.7×, which found rush hour on its own</li>
+</ul>
+</div>
+</section>
+<section id="one-idea-connects-07-09-and-10" class="slide level2">
+<h2>One idea connects §07, §09 and §10</h2>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>When a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation.</strong></p>
+</div>
+<div class="callout-content">
+
+</div>
+</div>
+</div>
+<div>
+<ul>
+<li class="fragment"><strong>Pseudoinverse</strong> — for linear systems</li>
+<li class="fragment"><strong>Richardson-Lucy</strong> — for blurred images</li>
+<li class="fragment"><strong>Tucker</strong> — for tensors too large to keep in full</li>
+</ul>
+</div>
+<aside class="notes">
+<p>Stating this connection explicitly is what makes the second half feel like one lesson rather than four separate blocks. Do not skip it.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="where-to-go-next" class="slide level2">
+<h2>Where to go next</h2>
+<ul>
+<li><code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — <strong>identical syntax</strong> to today</li>
+<li><a href="https://tensorly.org"><code>tensorly</code></a> — proper Tucker and CP</li>
+<li><code>np.linalg</code> — the rest of Chapter 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code></li>
+<li><code>scipy.signal</code>, <code>skimage.restoration</code> — convolution and deconvolution beyond today</li>
+</ul>
+<div class="fragment">
+<p><strong>Three take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, and CP compared to Tucker.</p>
+</div>
+</section>
+<section id="thank-you" class="slide level2">
+<h2>Thank you</h2>
+<p><strong>Questions welcome in Discord — in Spanish or English.</strong></p>
+<p><a href="https://project-delphi.github.io/tensors-workshop/">Workshop site</a> · <a href="https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html">Handbook</a> · <a href="https://project-delphi.github.io/tensors-workshop/notebooks.html">All notebooks</a> · <a href="../es/">Estas diapositivas en español</a></p>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-
+<p><a href="https://project-delphi.github.io/tensors-workshop">Workshop site</a> · <a href="../es/">Español</a></p>
 </div>
 </div></div>
 
@@ -168,7 +1359,7 @@
       // https://revealjs.com/config/
       Reveal.initialize({
 'controlsAuto': true,
-'previewLinksAuto': false,
+'previewLinksAuto': true,
 'pdfSeparateFragments': false,
 'autoAnimateEasing': "ease",
 'autoAnimateDuration': 1,
@@ -195,7 +1386,7 @@
         progress: true,
 
         // Display the page number of the current slide
-        slideNumber: false,
+        slideNumber: 'c/t',
 
         // 'all', 'print', or 'speaker'
         showSlideNumber: 'all',
@@ -320,9 +1511,9 @@
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1050,
+        width: 1280,
 
-        height: 700,
+        height: 760,
 
         // Factor of the display size that should remain empty around the content
         margin: 0.1,
