@@ -3,7 +3,7 @@
 
 **🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix D, which now also covers the quizzes.
 
-**Before you arrive:** you have read *Deep Learning* (Goodfellow, Bengio & Courville), **Chapter 2 — Linear Algebra**. You know matrices. This workshop assumes **no previous knowledge of tensor theory**.
+**Before you arrive:** you have read *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)* (Goodfellow, Bengio & Courville), **Chapter 2 — Linear Algebra**. You know matrices. This workshop assumes **no previous knowledge of tensor theory**.
 
 **What you will learn:** what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.
 
@@ -689,7 +689,7 @@ What you did today:
 
 ## Further Reading
 
-Chapter 2 of *Deep Learning* (Goodfellow, Bengio & Courville) is the spine for the linear algebra above, but it doesn't cover Tucker or CP at all. This is where to go next.
+[Chapter 2](https://www.deeplearningbook.org/contents/linear_algebra.html) of *Deep Learning* (Goodfellow, Bengio & Courville) is the spine for the linear algebra above, but it doesn't cover Tucker or CP at all. This is where to go next.
 
 ### Linear algebra, to go deeper
 

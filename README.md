@@ -18,8 +18,9 @@ factorizing tensors.**
 
 ## Who it is for
 
-You have read *Deep Learning* (Goodfellow, Bengio & Courville), **Chapter 2 —
-Linear Algebra**. You know matrices. The workshop assumes **no previous
+You have read *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)*
+(Goodfellow, Bengio & Courville), **Chapter 2 — Linear Algebra**. You know
+matrices. The workshop assumes **no previous
 knowledge of tensor theory**, and every new term is defined where it first
 appears.
 
@@ -144,8 +145,9 @@ convolucionar y factorizar tensores.**
 
 ## Para quién es
 
-Has leído *Deep Learning* (Goodfellow, Bengio y Courville), **capítulo 2 —
-Álgebra lineal**. Sabes qué es una matriz. El taller **no supone ningún
+Has leído *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)*
+(Goodfellow, Bengio y Courville), **capítulo 2 — Álgebra lineal**. Sabes qué es
+una matriz. El taller **no supone ningún
 conocimiento previo de teoría de tensores**, y cada término nuevo se define
 donde aparece por primera vez.
 
