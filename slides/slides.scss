@@ -21,16 +21,13 @@ $code-block-font-size: 0.62em;
 
 .reveal pre code { max-height: 62vh; }
 
-// Section-divider slides (the `#` headings) get an ink background so the deck
-// visibly breaks into sections when you skim it in the overview (press `o`).
-.reveal .slide-background.section-divider { background-color: #2f4858; }
-
-// The three Kahoot slides are deliberately loud — they are a stop sign for the
-// facilitator, not a content slide.
-.reveal section[id^="sec-kahoot"] h1,
-.reveal section[id^="sec-kahoot"] h2,
-.reveal section[id^="sec-kahoot"] h3 { color: #ffffff; }
-.reveal section[id^="sec-kahoot"] a  { color: #ffe8d6; }
+// The three Kahoot divider slides are deliberately loud — they are a stop sign
+// for the facilitator, not a content slide. The orange itself comes from
+// `background-color` on the heading in the .qmd; this only fixes the contrast.
+//
+// Scoped to h1 on purpose: the `sec-kahoot-N` id lands on the divider section,
+// which holds nothing but that h1. The details slide after it is `kahoot-N` and
+// renders on white, which is what you want behind a link and a PIN.
 
 .reveal .callout { font-size: .8em; }
 .reveal .footer { font-size: .5em; opacity: .75; }

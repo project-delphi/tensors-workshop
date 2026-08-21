@@ -14,7 +14,11 @@ venv/
 /.quarto/
 
 # Quarto
-/.quarto/
 /.luarc.json
-*_files/
 /_freeze/
+# Anchored to the source tree on purpose. An unanchored `*_files/` would also
+# match Quarto's per-page resource dirs under docs/, and files git ignores are
+# invisible to `git status --porcelain` — so the publish workflow's staleness
+# gate would go green while Pages served a page whose assets were never
+# committed.
+/*_files/

@@ -116,14 +116,28 @@ def check_links() -> None:
                     fail(f"{page.relative_to(DOCS)}: no anchor #{url.fragment} on this page")
                 continue
 
-            target = (page.parent / urllib.parse.unquote(url.path)).resolve()
+            path_part = urllib.parse.unquote(url.path)
+            if path_part.startswith("/"):
+                # `page.parent / "/foo"` silently discards page.parent and
+                # resolves against the filesystem root, reporting a valid link
+                # as broken. Root-relative means relative to the site root.
+                target = (DOCS / path_part.lstrip("/")).resolve()
+            else:
+                target = (page.parent / path_part).resolve()
+            if not target.is_relative_to(DOCS.resolve()):
+                fail(f"{page.relative_to(DOCS)}: {raw} escapes docs/")
+                continue
             if target.is_dir():
                 target = target / "index.html"
             if not target.exists():
                 fail(f"{page.relative_to(DOCS)}: broken link {raw}")
                 continue
             if url.fragment and target.suffix == ".html":
-                if url.fragment not in ids_by_page.setdefault(target, harvest(target).ids):
+                # Not setdefault(): Python evaluates the default eagerly, so
+                # harvest() would re-parse the page on every cache hit — ~600x.
+                if target not in ids_by_page:
+                    ids_by_page[target] = harvest(target).ids
+                if url.fragment not in ids_by_page[target]:
                     fail(f"{page.relative_to(DOCS)}: {raw} — page exists but "
                          f"has no anchor #{url.fragment}")
 
@@ -147,12 +161,16 @@ def check_decks() -> None:
     for lang in ("en", "es"):
         deck = DOCS / "slides" / lang / "index.html"
         if not deck.exists():
+            # `continue`, not `return`: bailing out here would skip the other
+            # deck and the parity comparison, which is the point of this check.
             fail(f"missing deck {deck.relative_to(DOCS)}")
-            return
+            continue
         found[lang] = harvest(deck).ids
         for anchor in expected:
             if anchor not in found[lang]:
                 fail(f"slides/{lang}: missing anchor #{anchor}")
+    if len(found) < 2:
+        return
     only_en = {a for a in found["en"] if a.startswith("sec-")} - found["es"]
     only_es = {a for a in found["es"] if a.startswith("sec-")} - found["en"]
     for a in sorted(only_en):
@@ -193,8 +211,11 @@ def check_notebooks() -> None:
                 fail(f"{name}: cell {c.get('id')} has committed outputs")
             if c.get("execution_count") is not None:
                 fail(f"{name}: cell {c.get('id')} has a stale execution count")
-        badge = "".join(nb["cells"][0]["source"])
-        if f"{REPO['colab_base']}/{name})" not in badge:
+        first = nb["cells"][0] if nb.get("cells") else None
+        badge = "".join(first.get("source", [])) if first else ""
+        if not badge:
+            fail(f"{name}: has no first cell to carry the Colab badge")
+        elif f"{REPO['colab_base']}/{name})" not in badge:
             fail(f"{name}: header badge does not point at this notebook")
     extra = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in SECTIONS}
@@ -249,10 +270,13 @@ def check_solution_independence() -> None:
             if c["cell_type"] != "code":
                 continue
             src = "\n".join(l for l in "".join(c["source"]).split("\n")
-                             if not l.startswith(("#@title", "%", "!")))
+                             if not l.lstrip().startswith(("#@title", "%", "!")))
             try:
                 tree = ast.parse(src)
-            except SyntaxError:
+            except SyntaxError as e:
+                # Do not `continue` quietly: skipping a cell drops its bindings
+                # from visible_bound and manufactures a false positive later.
+                fail(f"{path.name}: cell {c['id']} does not parse — {e}")
                 continue
             is_solution = "solution" in c["metadata"].get("tags", [])
             loads = {n.id for n in ast.walk(tree)
@@ -265,6 +289,12 @@ def check_solution_independence() -> None:
                       for n in ast.walk(tree)
                       if isinstance(n, (ast.Import, ast.ImportFrom))
                       for a in n.names}
+            # Parameters bind, they do not load. Without this, the `err = lambda
+            # a: ...` idiom in notebook 09 false-positives as soon as any
+            # solution cell happens to bind a name matching a parameter.
+            binds |= {n.arg for n in ast.walk(tree) if isinstance(n, ast.arg)}
+            binds |= {n.name for n in ast.walk(tree)
+                      if isinstance(n, ast.ExceptHandler) and n.name}
             if is_solution:
                 solution_bound |= binds
             else:
