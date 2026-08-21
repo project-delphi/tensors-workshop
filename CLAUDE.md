@@ -39,12 +39,16 @@ enforce this, and both need to be enabled per clone:
 git config core.hooksPath .githooks    # required once per clone
 ```
 
-`.githooks/pre-commit` then refuses any commit made while HEAD is `main`
-(`ALLOW_MAIN_COMMIT=1` overrides it for one commit; `--no-verify` skips it
-entirely). `.claude/settings.json` adds a PreToolUse hook that denies Claude's
-`git commit` calls on `main` before they run — that one is automatic, but a
-session started before the file existed needs `/hooks` opened once, or a
-restart, to load it.
+`.githooks/pre-commit` then refuses any commit made while HEAD is `main`.
+At your own terminal, `ALLOW_MAIN_COMMIT=1` overrides it for one commit and
+`--no-verify` skips it entirely.
+
+`.claude/settings.json` adds a PreToolUse hook — `.claude/hooks/no_commit_on_main.py`
+— that denies Claude's `git commit` calls on `main` before they run. It does
+**not** honor `ALLOW_MAIN_COMMIT`: the escape hatch is for a human at a
+terminal, and an agent must not self-authorize a bypass. Ask for a branch
+instead. The hook is automatic, but a session started before the file existed
+needs `/hooks` opened once, or a restart, to load it.
 
 Neither guard covers `git merge`, `git rebase`, or a force-push, so still do
 integration on GitHub.
