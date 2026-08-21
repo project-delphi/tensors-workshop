@@ -28,10 +28,8 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
-          # Pinned deliberately. The staleness check below compares rendered
-          # bytes, and Quarto's output carries version-dependent artifacts (the
-          # hashed site_libs/bootstrap-<hash>.min.css, for one). On "latest" the
-          # first release after a commit would fail an otherwise-correct PR.
+          # Pinned so CI renders what the author rendered. Version drift changes
+          # markup and would surface as spurious out-of-date reports below.
           # Bump this together with a re-render.
           version: 1.6.40
 
@@ -45,34 +43,39 @@ jobs:
         run: python -m pip install --quiet pyyaml nbformat
 
       - name: Regenerate derived files
-        # Catches a notebook or a section table edited by hand instead of
+        # Pure Python and deterministic, so this one CAN be byte-exact: it
+        # catches a notebook or a section table edited by hand instead of
         # through _variables.yml.
         run: |
           python scripts/gen_tables.py
           python scripts/gen_notebooks.py
+          DRIFT=$(git status --porcelain -- notebooks _includes README.md)
+          if [ -n "$DRIFT" ]; then
+            echo "::error::Generated files differ from what was committed."
+            echo "Run scripts/gen_tables.py and scripts/gen_notebooks.py, then commit."
+            echo "$DRIFT"
+            exit 1
+          fi
+
+      - name: Check the committed site
+        # Runs against docs/ AS COMMITTED, before any re-render — this is what
+        # GitHub Pages is actually serving right now.
+        run: python scripts/check_links.py
+
+      - name: Keep a copy of the committed site
+        run: cp -R docs "$RUNNER_TEMP/docs-committed"
 
       - name: Render site
         uses: quarto-dev/quarto-actions/render@v2
 
-      - name: Check links, Colab URLs, decks and notebooks
+      - name: Check the fresh render
         run: python scripts/check_links.py
 
-      - name: Fail if the committed output is stale
-        run: |
-          # `git status --porcelain`, not `git diff` — a new section produces a
-          # new notebooks/NN-*.ipynb and new rendered pages, and `git diff`
-          # cannot see files that were never added. sitemap.xml is excluded
-          # because its <lastmod> comes from file mtimes, which a fresh checkout
-          # resets, so it differs on every CI run by design.
-          DRIFT=$(git status --porcelain -- . ':(exclude)docs/sitemap.xml')
-          if [ -n "$DRIFT" ]; then
-            echo "::error::Rendered output differs from what was committed."
-            echo "Run these locally and commit the result:"
-            echo "  uv run --with pyyaml,nbformat python scripts/gen_tables.py"
-            echo "  uv run --with pyyaml,nbformat python scripts/gen_notebooks.py"
-            echo "  quarto render"
-            echo
-            echo "$DRIFT"
-            exit 1
-          fi
-          echo "docs/ and all generated files are up to date."
+      - name: Fail if the committed pages are out of date
+        # NOT a byte comparison. Quarto compiles the theme SCSS at render time
+        # and names it by content hash, and that compilation differs between
+        # macOS and ubuntu-latest even at the same pinned version — so every
+        # page linking to it differs too. compare_render.py normalizes those
+        # hashes away and compares the rest, which still catches the case this
+        # gate exists for: prose edited without re-rendering.
+        run: python scripts/compare_render.py "$RUNNER_TEMP/docs-committed" docs
