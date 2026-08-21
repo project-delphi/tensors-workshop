@@ -30,6 +30,25 @@ byte-exact — the generators are deterministic pure Python — unlike the rende
 gate under Publishing, which cannot be. A hand-edit is caught, but only once
 you push.
 
+## No commits on main
+
+Work goes on a branch and reaches `main` through a pull request. Two guards
+enforce this, and both need to be enabled per clone:
+
+```bash
+git config core.hooksPath .githooks    # required once per clone
+```
+
+`.githooks/pre-commit` then refuses any commit made while HEAD is `main`
+(`ALLOW_MAIN_COMMIT=1` overrides it for one commit; `--no-verify` skips it
+entirely). `.claude/settings.json` adds a PreToolUse hook that denies Claude's
+`git commit` calls on `main` before they run — that one is automatic, but a
+session started before the file existed needs `/hooks` opened once, or a
+restart, to load it.
+
+Neither guard covers `git merge`, `git rebase`, or a force-push, so still do
+integration on GitHub.
+
 ## Commands
 
 ```bash
