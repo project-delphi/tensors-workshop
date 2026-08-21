@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/no_commit_on_main.py\"",
+            "command": "command -v python3 >/dev/null 2>&1 && exec python3 \"${CLAUDE_PROJECT_DIR}/.claude/hooks/no_commit_on_main.py\"; f=0; while IFS= read -r l; do case $l in *commit*) f=1;; esac; done; [ $f -eq 0 ] || { echo \"no-commit-on-main: python3 not found, cannot check the branch\" >&2; exit 2; }; exit 0",
             "statusMessage": "Checking branch"
           }
         ]
