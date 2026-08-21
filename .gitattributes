@@ -1,0 +1,14 @@
+# Line endings are load-bearing here. .github/workflows/publish.yml re-runs the
+# generators and fails on ANY diff, and the generators emit LF. A checkout that
+# rewrote line endings — Git for Windows with core.autocrlf=true, say — makes
+# every generated file read as drifted, so the gate goes red on a tree nobody
+# touched. Normalize to LF in the index and in the working tree, everywhere,
+# rather than relying on each clone being configured correctly.
+* text=auto eol=lf
+
+# Binary: never rewrite these bytes, never try to diff them.
+*.xlsx binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
