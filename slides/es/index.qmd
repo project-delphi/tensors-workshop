@@ -1054,6 +1054,7 @@ sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
 - [`tensorly`](https://tensorly.org) — Tucker y CP de verdad
 - `np.linalg` — el resto del capítulo 2: `eig`, `lstsq`, `pinv`, `qr`
 - `scipy.signal`, `skimage.restoration` — convolución y deconvolución más allá de hoy
+- [Lecturas adicionales](../../tensors_workshop_plan_with_quizzes.md#further-reading) — libros y los artículos originales de Tucker, CP y SVD (en inglés)
 
 . . .
 

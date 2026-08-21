@@ -1040,6 +1040,7 @@ lesson rather than four separate blocks. Do not skip it.
 - [`tensorly`](https://tensorly.org) — proper Tucker and CP
 - `np.linalg` — the rest of Chapter 2: `eig`, `lstsq`, `pinv`, `qr`
 - `scipy.signal`, `skimage.restoration` — convolution and deconvolution beyond today
+- [Further Reading](../../tensors_workshop_plan_with_quizzes.md#further-reading) — books and the seminal papers behind Tucker, CP and SVD
 
 . . .
 

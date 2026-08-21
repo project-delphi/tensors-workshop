@@ -657,7 +657,7 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one expression. That is why `einsum` came first.
 
-**Where this is used.** In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use `tensorly`, which implements both properly.
+**Where this is used.** In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use [`tensorly`](https://tensorly.org), which implements both properly — see [Further Reading](#tensors-specifically) for the Kolda & Bader survey and the theorem (Eckart–Young) underneath both decompositions.
 
 ---
 
@@ -680,10 +680,33 @@ What you did today:
 
 **Where to go next**
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
-- `tensorly` — proper Tucker and CP decompositions.
 - `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
 - The take-home notebooks below.
+- **[Further Reading](#further-reading)** — books, the seminal Tucker/CP/SVD papers, and `tensorly`, for going deeper than today's 195 minutes.
+
+---
+
+## Further Reading
+
+Chapter 2 of *Deep Learning* (Goodfellow, Bengio & Courville) is the spine for the linear algebra above, but it doesn't cover Tucker or CP at all. This is where to go next.
+
+### Linear algebra, to go deeper
+
+- Strang, G. — *[Introduction to Linear Algebra](https://math.mit.edu/~gs/linearalgebra/)* — the accessible one. [Author's page](https://math.mit.edu/~gs/).
+- Trefethen, L. N. & Bau, D. — *[Numerical Linear Algebra](https://people.maths.ox.ac.uk/trefethen/text.html)* — the one that takes SVD seriously. [Trefethen's page](https://people.maths.ox.ac.uk/trefethen/).
+- Golub, G. H. & Van Loan, C. F. — *[Matrix Computations](https://www.press.jhu.edu/books/title/10678/matrix-computations)* — the reference, for when something is numerically wrong. [Golub biography](https://mathshistory.st-andrews.ac.uk/Biographies/Golub/) · [Van Loan's page](https://as.cornell.edu/people/charles-van-loan).
+
+### Tensors specifically
+
+- Kolda, T. G. & Bader, B. W. (2009). [*Tensor Decompositions and Applications*](https://doi.org/10.1137/07070111X), SIAM Review 51(3), 455–500 — the survey. If you read one thing after this workshop, it is this. [Kolda's page](https://www.mathsci.ai/) · [Bader's publications](https://scholar.google.com/citations?user=OJQ8pq0AAAAJ).
+- Tucker, L. R. (1966). [*Some mathematical notes on three-mode factor analysis*](https://doi.org/10.1007/BF02289464), Psychometrika 31, 279–311 — Block 6's decomposition, from the source.
+- Carroll, J. D. & Chang, J.-J. (1970). [*Analysis of individual differences in multidimensional scaling via an N-way generalization of "Eckart-Young" decomposition*](https://doi.org/10.1007/BF02310791), Psychometrika 35, 283–319, and Harshman, R. A. (1970). [*Foundations of the PARAFAC procedure*](https://www.psychology.uwo.ca/faculty/harshman/wpppfac0.pdf), UCLA Working Papers in Phonetics 16, 1–84 — CP/PARAFAC, discovered independently and twice: Carroll & Chang arrived at it as a generalization of Eckart–Young, Harshman from psychometrics, and called it PARAFAC. [Harshman's page](https://psychology.uwo.ca/faculty/harshman/).
+- Eckart, C. & Young, G. (1936). [*The approximation of one matrix by another of lower rank*](https://doi.org/10.1007/BF02288367), Psychometrika 1, 211–218 — the truncated SVD is the optimal low-rank approximation. This is the theorem underneath Tucker and CP both.
+
+### Software
+
+- [`tensorly`](https://tensorly.org) docs — [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html) and [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html) implementations, used in Block 6 and Appendix C. Created by [Jean Kossaifi](https://jeankossaifi.com/).
 
 ---
 

@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1bcb5723683496fb4ab1b4e88a311b33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-25ade3afdaba4a3ecd299d1cd340a49b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -226,6 +226,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#kahoot-quiz-3-convolution-tensor-decompositions-5-min" id="toc-kahoot-quiz-3-convolution-tensor-decompositions-5-min" class="nav-link" data-scroll-target="#kahoot-quiz-3-convolution-tensor-decompositions-5-min">🆕 Kahoot Quiz 3 — Convolution &amp; Tensor Decompositions (5 min)</a></li>
   <li><a href="#wrap-up-5-min" id="toc-wrap-up-5-min" class="nav-link" data-scroll-target="#wrap-up-5-min">Wrap-Up (5 min)</a></li>
+  <li><a href="#further-reading" id="toc-further-reading" class="nav-link" data-scroll-target="#further-reading">Further Reading</a>
+  <ul class="collapse">
+  <li><a href="#linear-algebra-to-go-deeper" id="toc-linear-algebra-to-go-deeper" class="nav-link" data-scroll-target="#linear-algebra-to-go-deeper">Linear algebra, to go deeper</a></li>
+  <li><a href="#tensors-specifically" id="toc-tensors-specifically" class="nav-link" data-scroll-target="#tensors-specifically">Tensors specifically</a></li>
+  <li><a href="#software" id="toc-software" class="nav-link" data-scroll-target="#software">Software</a></li>
+  </ul></li>
   <li><a href="#appendix-a-take-home-how-many-principal-components-are-enough" id="toc-appendix-a-take-home-how-many-principal-components-are-enough" class="nav-link" data-scroll-target="#appendix-a-take-home-how-many-principal-components-are-enough">Appendix A — Take-Home: How Many Principal Components Are Enough?</a></li>
   <li><a href="#appendix-b-take-home-attention-is-two-contractions" id="toc-appendix-b-take-home-attention-is-two-contractions" class="nav-link" data-scroll-target="#appendix-b-take-home-attention-is-two-contractions">Appendix B — Take-Home: Attention Is Two Contractions</a></li>
   <li><a href="#appendix-c-take-home-cp-decomposition-compared-to-tucker" id="toc-appendix-c-take-home-cp-decomposition-compared-to-tucker" class="nav-link" data-scroll-target="#appendix-c-take-home-cp-decomposition-compared-to-tucker">Appendix C — Take-Home: CP Decomposition, Compared to Tucker</a></li>
@@ -1025,7 +1031,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))            <span class="co"># 4.71</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>The result: 4.7× fewer numbers, 6.7% error.</strong> But the important part is TODO 6. The strongest pattern in the hour factor peaks at <strong>hour 18</strong> — and that is also the busiest hour in the raw data. <strong>The decomposition discovered evening rush hour by itself.</strong> Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.</p>
 <p>Look at the einsum strings: <code>'ijk,ia,jb,kc-&gt;abc'</code> contracts three axes in one expression. That is why <code>einsum</code> came first.</p>
-<p><strong>Where this is used.</strong> In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use <code>tensorly</code>, which implements both properly.</p>
+<p><strong>Where this is used.</strong> In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use <a href="https://tensorly.org"><code>tensorly</code></a>, which implements both properly — see <a href="#tensors-specifically">Further Reading</a> for the Kolda &amp; Bader survey and the theorem (Eckart–Young) underneath both decompositions.</p>
 <hr>
 </section>
 </section>
@@ -1044,8 +1050,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Part IV</strong> — wrote contractions with <code>einsum</code>; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.</li>
 </ol>
 <p><strong>One idea connects Blocks 4, 5 and 6:</strong> when a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.</p>
-<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>tensorly</code> — proper Tucker and CP decompositions. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below.</p>
+<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below. - <strong><a href="#further-reading">Further Reading</a></strong> — books, the seminal Tucker/CP/SVD papers, and <code>tensorly</code>, for going deeper than today’s 195 minutes.</p>
 <hr>
+</section>
+<section id="further-reading" class="level2">
+<h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<p>Chapter 2 of <em>Deep Learning</em> (Goodfellow, Bengio &amp; Courville) is the spine for the linear algebra above, but it doesn’t cover Tucker or CP at all. This is where to go next.</p>
+<section id="linear-algebra-to-go-deeper" class="level3">
+<h3 class="anchored" data-anchor-id="linear-algebra-to-go-deeper">Linear algebra, to go deeper</h3>
+<ul>
+<li>Strang, G. — <em><a href="https://math.mit.edu/~gs/linearalgebra/">Introduction to Linear Algebra</a></em> — the accessible one. <a href="https://math.mit.edu/~gs/">Author’s page</a>.</li>
+<li>Trefethen, L. N. &amp; Bau, D. — <em><a href="https://people.maths.ox.ac.uk/trefethen/text.html">Numerical Linear Algebra</a></em> — the one that takes SVD seriously. <a href="https://people.maths.ox.ac.uk/trefethen/">Trefethen’s page</a>.</li>
+<li>Golub, G. H. &amp; Van Loan, C. F. — <em><a href="https://www.press.jhu.edu/books/title/10678/matrix-computations">Matrix Computations</a></em> — the reference, for when something is numerically wrong. <a href="https://mathshistory.st-andrews.ac.uk/Biographies/Golub/">Golub biography</a> · <a href="https://as.cornell.edu/people/charles-van-loan">Van Loan’s page</a>.</li>
+</ul>
+</section>
+<section id="tensors-specifically" class="level3">
+<h3 class="anchored" data-anchor-id="tensors-specifically">Tensors specifically</h3>
+<ul>
+<li>Kolda, T. G. &amp; Bader, B. W. (2009). <a href="https://doi.org/10.1137/07070111X"><em>Tensor Decompositions and Applications</em></a>, SIAM Review 51(3), 455–500 — the survey. If you read one thing after this workshop, it is this. <a href="https://www.mathsci.ai/">Kolda’s page</a> · <a href="https://scholar.google.com/citations?user=OJQ8pq0AAAAJ">Bader’s publications</a>.</li>
+<li>Tucker, L. R. (1966). <a href="https://doi.org/10.1007/BF02289464"><em>Some mathematical notes on three-mode factor analysis</em></a>, Psychometrika 31, 279–311 — Block 6’s decomposition, from the source.</li>
+<li>Carroll, J. D. &amp; Chang, J.-J. (1970). <a href="https://doi.org/10.1007/BF02310791"><em>Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition</em></a>, Psychometrika 35, 283–319, and Harshman, R. A. (1970). <a href="https://www.psychology.uwo.ca/faculty/harshman/wpppfac0.pdf"><em>Foundations of the PARAFAC procedure</em></a>, UCLA Working Papers in Phonetics 16, 1–84 — CP/PARAFAC, discovered independently and twice: Carroll &amp; Chang arrived at it as a generalization of Eckart–Young, Harshman from psychometrics, and called it PARAFAC. <a href="https://psychology.uwo.ca/faculty/harshman/">Harshman’s page</a>.</li>
+<li>Eckart, C. &amp; Young, G. (1936). <a href="https://doi.org/10.1007/BF02288367"><em>The approximation of one matrix by another of lower rank</em></a>, Psychometrika 1, 211–218 — the truncated SVD is the optimal low-rank approximation. This is the theorem underneath Tucker and CP both.</li>
+</ul>
+</section>
+<section id="software" class="level3">
+<h3 class="anchored" data-anchor-id="software">Software</h3>
+<ul>
+<li><a href="https://tensorly.org"><code>tensorly</code></a> docs — <a href="https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html">Tucker</a> and <a href="https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html">CP</a> implementations, used in Block 6 and Appendix C. Created by <a href="https://jeankossaifi.com/">Jean Kossaifi</a>.</li>
+</ul>
+<hr>
+</section>
 </section>
 <section id="appendix-a-take-home-how-many-principal-components-are-enough" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-a-take-home-how-many-principal-components-are-enough">Appendix A — Take-Home: How Many Principal Components Are Enough?</h2>
