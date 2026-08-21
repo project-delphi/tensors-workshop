@@ -18,8 +18,9 @@ factorizing tensors.**
 
 ## Who it is for
 
-You have read *Deep Learning* (Goodfellow, Bengio & Courville), **Chapter 2 —
-Linear Algebra**. You know matrices. The workshop assumes **no previous
+You have read *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)*
+(Goodfellow, Bengio & Courville), **Chapter 2 — Linear Algebra**. You know
+matrices. The workshop assumes **no previous
 knowledge of tensor theory**, and every new term is defined where it first
 appears.
 
@@ -125,6 +126,12 @@ docs/                   rendered site (committed — this is what Pages serves)
 Directory READMEs: [`notebooks/`](notebooks/README.md) ·
 [`slides/`](slides/README.md) · [`kahoot/`](kahoot/README.md)
 
+## Further reading
+
+Books, the seminal Tucker/CP/SVD papers (with DOIs and author pages), and the
+`tensorly` docs: see **[Further Reading](https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html#further-reading)**
+in the Handbook.
+
 ---
 
 # Tensores para Aprendizaje Automático
@@ -138,8 +145,9 @@ convolucionar y factorizar tensores.**
 
 ## Para quién es
 
-Has leído *Deep Learning* (Goodfellow, Bengio y Courville), **capítulo 2 —
-Álgebra lineal**. Sabes qué es una matriz. El taller **no supone ningún
+Has leído *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)*
+(Goodfellow, Bengio y Courville), **capítulo 2 — Álgebra lineal**. Sabes qué es
+una matriz. El taller **no supone ningún
 conocimiento previo de teoría de tensores**, y cada término nuevo se define
 donde aparece por primera vez.
 
@@ -208,3 +216,10 @@ GitHub Pages sirve la carpeta **`docs/` de `main`**, así que `docs/` está en e
 repositorio. `.github/workflows/publish.yml` vuelve a renderizar en cada push y
 falla si el `docs/` publicado está desactualizado o si algún enlace está roto.
 Renderiza y haz commit de `docs/` junto con tu cambio.
+
+## Lectura adicional
+
+Libros, los artículos originales de Tucker/CP/SVD (con DOI y páginas de los
+autores) y la documentación de `tensorly`: consulta
+**[Further Reading](https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html#further-reading)**
+en el Handbook (en inglés).

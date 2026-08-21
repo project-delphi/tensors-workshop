@@ -26,7 +26,7 @@ workshop:
   subtitle_en: "A 3-hour workshop, plus three Kahoot knowledge checks"
   subtitle_es: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
   minutes: 195
-  book: "Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
+  book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
 
 # ── Kahoot quizzes ───────────────────────────────────────────────────────────
 # `url` is the live join/share link. It does not exist until the facilitator
