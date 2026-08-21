@@ -19,7 +19,8 @@ the `.qmd` pages and both decks, the two generator scripts, and the checker.
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (all section tables, incl. the ones in README.md) | `scripts/gen_tables.py` |
+| `_includes/*.md` (every section table) | `scripts/gen_tables.py` |
+| The marker-delimited table regions inside `README.md` and `notebooks/README.md` — the rest of both files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — scaffolding: header, objectives, Colab badge, Kahoot footer | `scripts/gen_notebooks.py` |
 | `notebooks/*.ipynb` — body cells | `scripts/content.py` |
 | `docs/` | `quarto render` |
@@ -39,11 +40,16 @@ uv run --with pyyaml,nbformat python scripts/check_links.py     # verifies docs/
 uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 ```
 
-`check_links.py` is the test suite — five checks, non-zero exit on any failure.
-It validates internal links *including fragments*, that every Colab badge points
-at its own existing notebook, that both decks carry every section anchor, that
-notebooks have no outputs or execution counts, and that EN and ES list the same
-twelve sections. Run it after any content change; there is no pytest here.
+`check_links.py` is the test suite — there is no pytest here. Six checks by
+default, non-zero exit on any failure: internal links resolve *including the
+`#fragment`*; every Colab badge points at its own existing notebook; both decks
+carry every section anchor; notebooks are valid with no outputs or execution
+counts; EN and ES list the same twelve sections; and no visible notebook cell
+depends on a name bound only inside a folded solution cell (easy to introduce,
+invisible when you run the notebook top to bottom). `--notebooks-only` runs the
+notebook and solution-independence checks alone. A seventh, the Kahoot join
+URLs, only prints a TODO — that output is not a failure. Run it after any
+content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them
 locally: `uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab`.
