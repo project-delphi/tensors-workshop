@@ -54,7 +54,7 @@ that output is **not** a failure. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them
-locally: `uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab`.
+locally: `uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,matplotlib,jupyterlab jupyter lab`.
 
 ## Publishing
 

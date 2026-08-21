@@ -628,18 +628,17 @@ print(np.array_equal(nchw[:, 0], nchw[:, 1]))  # False — the 3 colour channels
 > 🇪🇸 El que se ejecuta sin error y aun así está mal."""),
         code("""# TODO 5: photo.reshape(3, 512, 512) runs WITHOUT error but is wrong.
 #         Run it, compare against TODO 2, and explain the difference.
-#         If you can, display both with matplotlib and look at them."""),
+#         Display both with matplotlib and look at them."""),
         solution("""chw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct
 wrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — runs, but scrambles
 
 print(chw.shape == wrong.shape)             # True  — identical shapes
 print(np.array_equal(chw, wrong))           # False — completely different data
 
-# Optional, and worth doing once:
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-# ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
-# ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")"""),
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
+ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")"""),
         md("""## What just happened
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them
@@ -1314,10 +1313,10 @@ psf = np.ones((9, 9)); psf /= psf.sum()
 blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
 print(blurred.shape)                                    # (512, 512) — 'same' keeps it
 
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 3, figsize=(12, 4))
-# for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
-#     a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 3, figsize=(12, 4))
+for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
+    a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
 
 # 'valid' shrinks by kernel_size - 1 = 2 in each direction: 512 -> 510."""),
         md("""## Exercise 2 — transposed convolution
@@ -1651,10 +1650,9 @@ print(n95_scaled)
 # PCA KNOWS NOTHING ABOUT UNITS. Features on different scales must be
 # standardized first.
 
-# TODO 5:
-# Z = Xs @ np.linalg.svd(Xs, full_matrices=False)[2][:2].T
-# import matplotlib.pyplot as plt
-# plt.scatter(Z[:, 0], Z[:, 1], c=y, s=8, cmap="coolwarm")"""),
+Z = Xs @ np.linalg.svd(Xs, full_matrices=False)[2][:2].T
+import matplotlib.pyplot as plt
+plt.scatter(Z[:, 0], Z[:, 1], c=y, s=8, cmap="coolwarm")"""),
         md("""---
 
 ## Take-home B — Attention is two contractions
