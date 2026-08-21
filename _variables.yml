@@ -1,0 +1,204 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Single source of truth for the whole site.
+#
+# Read three ways:
+#   1. `{{< var … >}}` shortcodes in .qmd pages and both slide decks
+#   2. scripts/gen_tables.py (section and README tables) and
+#      scripts/gen_notebooks.py (the twelve notebooks), which generate from it
+#   3. scripts/check_links.py, which verifies the rendered output against it
+#
+# Change a value here and it changes everywhere. Do not hard-code these
+# anywhere else — the EN and ES decks are kept in sync precisely because both
+# read this file.
+# ─────────────────────────────────────────────────────────────────────────────
+
+repo:
+  user: project-delphi
+  name: tensors-workshop
+  branch: main
+  url: https://github.com/project-delphi/tensors-workshop
+  colab_base: https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks
+  site: https://project-delphi.github.io/tensors-workshop
+
+workshop:
+  title_en: "Tensors for Machine Learning"
+  title_es: "Tensores para Aprendizaje Automático"
+  subtitle_en: "A 3-hour workshop, plus three Kahoot knowledge checks"
+  subtitle_es: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
+  minutes: 195
+  book: "Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
+
+# ── Kahoot quizzes ───────────────────────────────────────────────────────────
+# `url` is the live join/share link. It does not exist until the facilitator
+# imports the .xlsx into kahoot.it (Create → Add question → Import → Import
+# spreadsheet). Paste the three real URLs here and nothing else needs editing.
+kahoot:
+  join: "kahoot.it"
+  # Replaced per quiz once each .xlsx has been imported and has a real
+  # join link. The default is functional: students enter the PIN there.
+  default_url: "https://kahoot.it/"
+  q1:
+    n: 1
+    title_en: "Tensor Vocabulary & Shapes"
+    title_es: "Vocabulario de tensores y formas"
+    xlsx: "kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx"
+    url: "https://kahoot.it/"          # TODO: paste the Kahoot 1 join URL
+    after: "04"
+    covers: ["01", "03", "04"]
+    questions: 6
+  q2:
+    n: 2
+    title_en: "Einsum, Distance & the Pseudoinverse"
+    title_es: "Einsum, distancia y la pseudoinversa"
+    xlsx: "kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx"
+    url: "https://kahoot.it/"          # TODO: paste the Kahoot 2 join URL
+    after: "07"
+    covers: ["06", "07"]
+    questions: 6
+  q3:
+    n: 3
+    title_en: "Convolution & Tensor Decompositions"
+    title_es: "Convolución y descomposiciones tensoriales"
+    xlsx: "kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"
+    url: "https://kahoot.it/"          # TODO: paste the Kahoot 3 join URL
+    after: "10"
+    covers: ["09", "10"]
+    questions: 6
+
+# ── Sections ─────────────────────────────────────────────────────────────────
+# The section spine is the handbook's own 195-minute schedule table, breaks
+# excluded. `n` is authoritative: it fixes the notebook filename prefix, the
+# slide anchor (#sec-NN-slug) and the row order in every table on the site.
+sections:
+  s00:
+    n: "00"
+    slug: "setup-and-data"
+    part: "—"
+    minutes: 5
+    format_en: "setup"
+    format_es: "preparación"
+    title_en: "Setup and welcome"
+    title_es: "Preparación y bienvenida"
+    summary_en: "Load every dataset and confirm your runtime works before anything else."
+    summary_es: "Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de empezar."
+  s01:
+    n: "01"
+    slug: "what-a-tensor-is"
+    part: "I"
+    minutes: 20
+    format_en: "demo"
+    format_es: "demostración"
+    title_en: "What a tensor is"
+    title_es: "Qué es un tensor"
+    summary_en: "The vocabulary, shape in NumPy, and the three operations that matter."
+    summary_es: "El vocabulario, la forma en NumPy y las tres operaciones que importan."
+  s02:
+    n: "02"
+    slug: "thinking-in-n-dimensions"
+    part: "II"
+    minutes: 20
+    format_en: "group"
+    format_es: "grupo"
+    title_en: "Thinking in N dimensions"
+    title_es: "Pensar en N dimensiones"
+    summary_en: "Argue about what each axis means, and why a batch axis differs from a time axis."
+    summary_es: "Discutir qué significa cada eje y por qué un eje de lote difiere de un eje temporal."
+  s03:
+    n: "03"
+    slug: "indexing-and-broadcasting"
+    part: "III"
+    minutes: 15
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Indexing and broadcasting real data"
+    title_es: "Indexación y broadcasting con datos reales"
+    summary_en: "Select the right column of real tumour data, then meet zero-variance pixels."
+    summary_es: "Seleccionar la columna correcta de datos reales de tumores y encontrar píxeles de varianza cero."
+  s04:
+    n: "04"
+    slug: "reshape-and-transpose"
+    part: "III"
+    minutes: 15
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Reshape and transpose real images"
+    title_es: "Reshape y transposición de imágenes reales"
+    summary_en: "HWC to CHW, NHWC to NCHW, and why reshape silently destroys an image."
+    summary_es: "De HWC a CHW, de NHWC a NCHW, y por qué reshape destruye una imagen en silencio."
+  s05:
+    n: "05"
+    slug: "video-pipeline-design"
+    part: "III"
+    minutes: 15
+    format_en: "group"
+    format_es: "grupo"
+    title_en: "Video pipeline design"
+    title_es: "Diseño de un pipeline de vídeo"
+    summary_en: "Design the tensor shape at every stage of two real video systems."
+    summary_es: "Diseñar la forma del tensor en cada etapa de dos sistemas de vídeo reales."
+  s06:
+    n: "06"
+    slug: "contraction-with-einsum"
+    part: "IV"
+    minutes: 15
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Contraction with einsum"
+    title_es: "Contracción con einsum"
+    summary_en: "One notation for the dot product, the matrix product, and a batch of images."
+    summary_es: "Una sola notación para el producto punto, el producto matricial y un lote de imágenes."
+  s07:
+    n: "07"
+    slug: "inverses-and-pseudoinverse"
+    part: "IV"
+    minutes: 15
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Inverses and the pseudoinverse"
+    title_es: "Inversas y la pseudoinversa"
+    summary_en: "Solve a 20,433-equation system that has no exact solution."
+    summary_es: "Resolver un sistema de 20.433 ecuaciones que no tiene solución exacta."
+  s08:
+    n: "08"
+    slug: "recursion-with-matrices"
+    part: "IV"
+    minutes: 10
+    format_en: "demo"
+    format_es: "demostración"
+    title_en: "Recursion with matrices and vectors"
+    title_es: "Recursión con matrices y vectores"
+    summary_en: "Apply one matrix again and again: Fibonacci, eigenvectors, and a real forecast."
+    summary_es: "Aplicar una misma matriz una y otra vez: Fibonacci, autovectores y un pronóstico real."
+  s09:
+    n: "09"
+    slug: "convolution-and-deconvolution"
+    part: "IV"
+    minutes: 15
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Convolution and deconvolution"
+    title_es: "Convolución y deconvolución"
+    summary_en: "Convolution is a structured matrix product, and blur can be partly undone."
+    summary_es: "La convolución es un producto matricial estructurado, y el desenfoque se puede deshacer en parte."
+  s10:
+    n: "10"
+    slug: "tucker-decomposition"
+    part: "IV"
+    minutes: 15
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Tucker decomposition on real data"
+    title_es: "Descomposición de Tucker con datos reales"
+    summary_en: "PCA generalized to every axis, on a real tensor of New York taxi trips."
+    summary_es: "PCA generalizado a todos los ejes, sobre un tensor real de viajes en taxi de Nueva York."
+  s11:
+    n: "11"
+    slug: "wrap-up-and-take-homes"
+    part: "—"
+    minutes: 5
+    format_en: "wrap-up"
+    format_es: "cierre"
+    title_en: "Wrap-up and take-homes"
+    title_es: "Cierre y ejercicios para casa"
+    summary_en: "What connects Blocks 4, 5 and 6, plus three take-home exercises."
+    summary_es: "Qué conecta los bloques 4, 5 y 6, más tres ejercicios para casa."

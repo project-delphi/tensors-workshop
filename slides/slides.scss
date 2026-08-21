@@ -1,0 +1,33 @@
+/*-- scss:defaults --*/
+// Shared by the EN and ES decks. Both `@import` this one file, so a change to
+// the look lands in both languages at once — the same reason _variables.yml
+// owns every URL.
+$body-bg:          #ffffff;
+$body-color:       #1f2933;
+$link-color:       #2c5f8a;
+$presentation-heading-color: #2f4858;
+$presentation-heading-font: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+$presentation-font-size-root: 30px;
+$code-block-font-size: 0.62em;
+
+/*-- scss:rules --*/
+// Slides carry bullets, not paragraphs. Anything longer than a line or two is
+// a sign the point belongs in the notebook instead.
+.reveal p, .reveal li { line-height: 1.4; }
+.reveal ul { margin-bottom: .4em; }
+
+.reveal table { font-size: .62em; }
+.reveal table th { background: rgba(47, 72, 88, .07); }
+
+.reveal pre code { max-height: 62vh; }
+
+// The three Kahoot divider slides are deliberately loud — they are a stop sign
+// for the facilitator, not a content slide. The orange itself comes from
+// `background-color` on the heading in the .qmd; this only fixes the contrast.
+//
+// Scoped to h1 on purpose: the `sec-kahoot-N` id lands on the divider section,
+// which holds nothing but that h1. The details slide after it is `kahoot-N` and
+// renders on white, which is what you want behind a link and a PIN.
+
+.reveal .callout { font-size: .8em; }
+.reveal .footer { font-size: .5em; opacity: .75; }

@@ -1,0 +1,101 @@
+---
+title: "Tensores para Aprendizaje Automático"
+subtitle: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
+lang: es
+toc: false
+---
+
+::: {.callout-note appearance="simple"}
+🇬🇧 Prefer English? [This page in English](../index.qmd). El taller se imparte en
+inglés, pero puedes preguntar en español cuando quieras.
+:::
+
+## Qué es esto
+
+Un taller de {{< var workshop.minutes >}} minutos que te lleva de «sé lo que es una
+matriz» a «sé manipular, resolver, convolucionar y factorizar tensores». Está
+construido **solo con datos reales**: medidas reales de tumores, dígitos
+manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva
+York, tráfico aéreo real. No hay nada inventado con números aleatorios, porque los
+datos reales contienen problemas que los aleatorios nunca muestran: valores
+faltantes, variables en escalas incompatibles, píxeles que nunca cambian.
+Encontrar esos problemas es parte del trabajo.
+
+Todo procede de un único documento fuente, el
+[manual](../tensors_workshop_plan_with_quizzes.html): las diapositivas, los cuadernos
+y esta página se generan a partir de él.
+
+## Para quién es
+
+Has leído *{{< var workshop.book >}}*. Sabes qué es una matriz. Este taller **no
+supone ningún conocimiento previo de teoría de tensores**, y cada término nuevo se
+define donde aparece por primera vez.
+
+## Requisitos previos
+
+- El álgebra lineal del capítulo 2 de {{< var workshop.book >}}: vectores,
+  matrices, el producto matricial, la inversa, la descomposición espectral y la
+  SVD.
+- Una cuenta de Google para ejecutar los cuadernos en Colab. No hay que instalar
+  nada.
+- Al principio se descargan tres archivos CSV. **Ejecuta el
+  [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) antes de la
+  sesión** y avisa enseguida si falla: una descarga que falla en silencio te dejará
+  atascado en las secciones 07 y 10.
+
+## Cómo ejecutar los cuadernos
+
+Haz clic en cualquier enlace **Colab** de la tabla. El cuaderno se abre en tu
+navegador, ya conectado a un entorno de ejecución gratuito.
+
+1. Cada cuaderno es **autónomo**. Su celda de preparación instala e importa
+   exactamente lo que esa sección necesita y carga sus propios datos, así que
+   puedes abrir cualquiera en frío, en cualquier orden, sin haber ejecutado los
+   demás.
+2. Ejecuta primero la celda de preparación (▶ o `Shift+Enter`).
+3. Trabaja las celdas `# TODO`. Cada una tiene debajo una celda de solución,
+   plegada: ábrela después de intentarlo, no antes.
+4. Colab avisará de que el cuaderno no lo escribió Google. Es lo esperado; el
+   código fuente está [en GitHub]({{< var repo.url >}}/tree/{{< var repo.branch >}}/notebooks).
+
+::: {.callout-tip appearance="simple"}
+Los cambios que hagas en Colab **no** se guardan en este repositorio. Usa
+*Archivo → Guardar una copia en Drive* para conservar tu trabajo.
+:::
+
+## Cómo trabajamos
+
+Cuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:
+
+- **Bloques de ejercicios**: 10 minutos programando y 5 de explicación.
+- **Bloques de grupo**: 10 minutos de discusión en tu canal y luego puesta en común.
+
+## Las secciones
+
+Lee una fila de izquierda a derecha: las diapositivas en cualquiera de los dos
+idiomas, el cuaderno que hay que ejecutar y el control de Kahoot que lo cubre. Las
+filas 🎯 son los tres cuestionarios, en el orden real en que se ejecutan.
+
+{{< include ../_includes/sections-es.md >}}
+
+**No aparecen** en la tabla: las tres pausas de 5 minutos. Las doce secciones
+suman 165 minutos; los tres cuestionarios añaden 15 y las pausas otros 15, que
+es como la sesión llega a {{< var workshop.minutes >}} minutos.
+
+## Una nota sobre el idioma
+
+El taller se imparte en inglés, pero muchos términos son casi idénticos en
+español: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*,
+*decomposition/descomposición*, *factorization/factorización*,
+*contraction/contracción*, *convolution/convolución*, *recursion/recursión*.
+
+**Pregunta en español o en inglés**, lo que te permita preguntar más rápido. Las
+[diapositivas están en los dos idiomas](../slides/es/index.qmd) y cada
+encabezado de los cuadernos lleva un resumen de una línea en español.
+
+## Dónde seguir
+
+- [Manual](../tensors_workshop_plan_with_quizzes.html): el texto completo del
+  estudiante y las notas del facilitador, incluidos los tres apéndices para casa.
+- [Cuadernos](../notebooks.qmd): los doce, con sus insignias de Colab.
+- [Kahoot](../kahoot.qmd): los tres cuestionarios y cómo ejecutarlos.

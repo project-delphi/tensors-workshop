@@ -1,0 +1,96 @@
+---
+title: "Tensors for Machine Learning"
+subtitle: "A 3-hour workshop, plus three Kahoot knowledge checks"
+toc: false
+---
+
+::: {.callout-note appearance="simple"}
+🇪🇸 ¿Prefieres español? [Esta página en español](es/index.qmd). Las preguntas son
+bienvenidas en español o en inglés.
+:::
+
+## What this is
+
+A {{< var workshop.minutes >}}-minute workshop that takes you from "I know matrices"
+to "I can manipulate, solve, convolve and factorize tensors." It is built around
+**real data only** — real tumour measurements, real handwritten digits, real
+histology images, real New York taxi trips, real airline traffic. Nothing is
+invented with random numbers, because real data contains problems that random
+data never shows: missing values, features on incompatible scales, pixels that
+never change. Finding those problems is part of the work.
+
+Everything here comes from one source document, the
+[handbook](tensors_workshop_plan_with_quizzes.md) — the slides, the notebooks and
+this page are all generated from it.
+
+## Who it is for
+
+You have read *{{< var workshop.book >}}*. You know matrices. This workshop
+assumes **no previous knowledge of tensor theory**, and every new term is defined
+where it first appears.
+
+## Prerequisites
+
+- The linear algebra in {{< var workshop.book >}} — vectors, matrices, the matrix
+  product, the inverse, eigendecomposition, SVD.
+- A Google account, so you can run the notebooks in Colab. Nothing to install.
+- Three CSV files are downloaded at the start. **Run
+  [notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) before the
+  session** and say so immediately if it fails — a silent download failure will
+  leave you stuck at sections 07 and 10.
+
+## How to run the notebooks
+
+Click any **Colab** link in the table below. The notebook opens in your browser,
+already connected to a free runtime.
+
+1. Every notebook is **self-contained**. Its setup cell installs and imports
+   exactly what that section needs and loads its own data, so you can open any one
+   of them cold, in any order, without having run the others.
+2. Run the setup cell first (▶ or `Shift+Enter`).
+3. Work through the `# TODO` cells. Each has a solution cell underneath, folded
+   away — open it after you have tried, not before.
+4. Colab will warn that the notebook was not authored by Google. That is expected;
+   the source is [on GitHub]({{< var repo.url >}}/tree/{{< var repo.branch >}}/notebooks).
+
+::: {.callout-tip appearance="simple"}
+Changes you make in Colab are **not** saved back to this repo. Use
+*File → Save a copy in Drive* to keep your work.
+:::
+
+## How we work
+
+Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:
+
+- **Exercise blocks** — 10 minutes coding, then 5 minutes explanation.
+- **Group blocks** — 10 minutes discussion in your breakout channel, then share-back.
+
+## The sections
+
+Read across a row: the slides in either language, the notebook to run, and the
+Kahoot check that covers it. The 🎯 rows are the three quizzes, shown in the order
+they actually run.
+
+{{< include _includes/sections-en.md >}}
+
+**Not shown:** the three 5-minute breaks. The twelve sections come to 165
+minutes; the three quizzes add 15 and the breaks another 15, which is how the
+session reaches {{< var workshop.minutes >}} minutes.
+
+## A note on language
+
+This workshop is taught in English, but many terms are nearly identical in
+Spanish: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*,
+*decomposition/descomposición*, *factorization/factorización*,
+*contraction/contracción*, *convolution/convolución*, *recursion/recursión*.
+
+**Ask questions in Spanish or English** — whichever lets you ask faster. The
+[slide deck exists in both languages](slides/es/index.qmd), and every notebook
+heading carries a one-line Spanish summary.
+
+## Where to go next
+
+- [Handbook](tensors_workshop_plan_with_quizzes.md) — the full student text and
+  facilitator notes, including the three take-home appendices.
+- [Notebooks](notebooks.qmd) — all twelve, with Colab badges.
+- [Kahoot](kahoot.qmd) — the three quizzes and how to run them.

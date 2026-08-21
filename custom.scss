@@ -1,0 +1,85 @@
+/*-- scss:defaults --*/
+// A restrained palette: slate ink, one indigo accent, one warm accent reserved
+// for the Kahoot checkpoints so they are findable at a glance in a long page.
+$primary:        #2f4858 !default;
+$link-color:     #2c5f8a !default;
+$body-color:     #1f2933 !default;
+$body-bg:        #ffffff !default;
+$code-bg:        #f6f8fa !default;
+$code-color:     #1f2933 !default;
+$border-color:   #dfe3e8 !default;
+
+$kahoot-accent:  #b3541e;
+
+$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$font-family-monospace:  "SFMono-Regular", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace !default;
+
+$font-size-root:  17px !default;
+$line-height-base: 1.65 !default;
+$h1-font-size:    2.05rem !default;
+$h2-font-size:    1.5rem !default;
+$h3-font-size:    1.2rem !default;
+$table-striped-bg: rgba(0, 0, 0, .022) !default;
+
+/*-- scss:rules --*/
+// Long prose is easier to read narrow; the section tables still get full width.
+main p, main li { max-width: 46rem; }
+
+h2 {
+  margin-top: 2.2rem;
+  padding-bottom: .3rem;
+  border-bottom: 1px solid $border-color;
+}
+
+// Section tables carry 8 columns of links — keep them compact and scrollable
+// on a phone rather than letting the page scroll sideways.
+.table-responsive { overflow-x: auto; }
+
+// The link columns must never wrap: "Colab · src" broken across two lines
+// makes every row twice as tall for no gain. Let the Section column absorb
+// whatever width is left instead.
+// `tr:not(.kahoot-row)` matters: a Kahoot row has only two cells (the 🎯 and a
+// colspan=7), so an unscoped nth-last-child would make its long checkpoint text
+// nowrap and force the table wider than its column on a narrow screen.
+.section-table tr:not(.kahoot-row) td:nth-last-child(-n+5),
+.section-table th:nth-last-child(-n+5) { white-space: nowrap; }
+.section-table td small { color: #64748b; }
+table { font-size: .93rem; }
+table th { font-weight: 600; white-space: nowrap; }
+table td:first-child { font-variant-numeric: tabular-nums; color: #64748b; }
+
+// The three Kahoot checkpoints, in the tables and inline.
+tr.kahoot-row td {
+  background: rgba(179, 84, 30, .07);
+  font-weight: 500;
+}
+.kahoot-note {
+  border-left: 4px solid $kahoot-accent;
+  background: rgba(179, 84, 30, .06);
+  padding: .7rem 1rem;
+  margin: 1.4rem 0;
+  border-radius: 0 4px 4px 0;
+}
+.kahoot-note p { margin-bottom: 0; max-width: none; }
+
+// Placeholder Kahoot URLs are meant to be conspicuous until they are replaced.
+code.todo, .todo > code { color: $kahoot-accent; font-weight: 600; }
+
+// Language switcher. The two right-hand nav items are the EN/ES pair; boxing
+// them separates them from the section links, and Quarto's own `.active` class
+// marks whichever language you are currently reading.
+.navbar-nav.navbar-nav-scroll ~ .navbar-nav .nav-link,
+.navbar .navbar-nav:last-of-type .nav-link {
+  &[href$="index.html"], &[href="./"], &[href="../"] {
+    letter-spacing: .06em;
+    font-size: .82rem;
+  }
+}
+.navbar .nav-link.active {
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+.navbar-brand { font-weight: 600; letter-spacing: -.01em; }
+main a { text-underline-offset: 2px; }

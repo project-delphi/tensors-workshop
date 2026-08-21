@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.40">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>tensors_workshop_plan_with_quizzes – Tensors for Machine Learning</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-1bcb5723683496fb4ab1b4e88a311b33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Tensors for Machine Learning</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./tensors_workshop_plan_with_quizzes.html" aria-current="page"> 
+<span class="menu-text">Handbook</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./notebooks.html"> 
+<span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./kahoot.html"> 
+<span class="menu-text">Kahoot</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-slides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Slides</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-slides">    
+        <li>
+    <a class="dropdown-item" href="./slides/en/index.html">
+ <span class="dropdown-text">Slides (EN)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./slides/es/index.html">
+ <span class="dropdown-text">Slides (ES)</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">EN</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./es/index.html"> 
+<span class="menu-text">ES</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/project-delphi/tensors-workshop"> <i class="bi bi-github" role="img" aria-label="Source on GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#tensors-for-machine-learning" id="toc-tensors-for-machine-learning" class="nav-link active" data-scroll-target="#tensors-for-machine-learning">Tensors for Machine Learning</a>
+  <ul class="collapse">
+  <li><a href="#a-3-hour-workshop-3-kahoot-checks-student-handbook" id="toc-a-3-hour-workshop-3-kahoot-checks-student-handbook" class="nav-link" data-scroll-target="#a-3-hour-workshop-3-kahoot-checks-student-handbook">A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook</a></li>
+  <li><a href="#the-data-we-use" id="toc-the-data-we-use" class="nav-link" data-scroll-target="#the-data-we-use">The Data We Use</a></li>
+  <li><a href="#schedule-195-minutes-incl.-3-kahoot-checks" id="toc-schedule-195-minutes-incl.-3-kahoot-checks" class="nav-link" data-scroll-target="#schedule-195-minutes-incl.-3-kahoot-checks">Schedule (195 minutes, incl.&nbsp;3 Kahoot checks)</a></li>
+  </ul></li>
+  <li><a href="#part-i-what-a-tensor-is-20-min" id="toc-part-i-what-a-tensor-is-20-min" class="nav-link" data-scroll-target="#part-i-what-a-tensor-is-20-min">PART I — What a Tensor Is (20 min)</a>
+  <ul class="collapse">
+  <li><a href="#vocabulary" id="toc-vocabulary" class="nav-link" data-scroll-target="#vocabulary">1.1 Vocabulary</a></li>
+  <li><a href="#shape-in-numpy" id="toc-shape-in-numpy" class="nav-link" data-scroll-target="#shape-in-numpy">1.2 Shape in NumPy</a></li>
+  <li><a href="#the-three-operations-that-matter" id="toc-the-three-operations-that-matter" class="nav-link" data-scroll-target="#the-three-operations-that-matter">1.3 The Three Operations That Matter</a></li>
+  <li><a href="#the-map-of-factorizations" id="toc-the-map-of-factorizations" class="nav-link" data-scroll-target="#the-map-of-factorizations">1.4 The Map of Factorizations</a></li>
+  </ul></li>
+  <li><a href="#part-ii-group-discussion-thinking-in-n-dimensions-20-min" id="toc-part-ii-group-discussion-thinking-in-n-dimensions-20-min" class="nav-link" data-scroll-target="#part-ii-group-discussion-thinking-in-n-dimensions-20-min">PART II — Group Discussion: Thinking in N Dimensions (20 min)</a></li>
+  <li><a href="#part-iii-working-with-tensor-axes" id="toc-part-iii-working-with-tensor-axes" class="nav-link" data-scroll-target="#part-iii-working-with-tensor-axes">PART III — Working With Tensor Axes</a>
+  <ul class="collapse">
+  <li><a href="#block-1-indexing-and-broadcasting-real-data-15-min" id="toc-block-1-indexing-and-broadcasting-real-data-15-min" class="nav-link" data-scroll-target="#block-1-indexing-and-broadcasting-real-data-15-min">Block 1 — Indexing and Broadcasting Real Data (15 min)</a></li>
+  <li><a href="#block-2-reshape-and-transpose-real-images-15-min" id="toc-block-2-reshape-and-transpose-real-images-15-min" class="nav-link" data-scroll-target="#block-2-reshape-and-transpose-real-images-15-min">Block 2 — Reshape and Transpose Real Images (15 min)</a></li>
+  <li><a href="#kahoot-quiz-1-tensor-vocabulary-shapes-5-min" id="toc-kahoot-quiz-1-tensor-vocabulary-shapes-5-min" class="nav-link" data-scroll-target="#kahoot-quiz-1-tensor-vocabulary-shapes-5-min">🆕 Kahoot Quiz 1 — Tensor Vocabulary &amp; Shapes (5 min)</a></li>
+  <li><a href="#break-5-min" id="toc-break-5-min" class="nav-link" data-scroll-target="#break-5-min">Break (5 min)</a></li>
+  <li><a href="#group-exercise-video-pipeline-design-15-min" id="toc-group-exercise-video-pipeline-design-15-min" class="nav-link" data-scroll-target="#group-exercise-video-pipeline-design-15-min">Group Exercise — Video Pipeline Design (15 min)</a></li>
+  </ul></li>
+  <li><a href="#part-iv-computing-with-tensors" id="toc-part-iv-computing-with-tensors" class="nav-link" data-scroll-target="#part-iv-computing-with-tensors">PART IV — Computing With Tensors</a>
+  <ul class="collapse">
+  <li><a href="#block-3-contraction-with-einsum-15-min" id="toc-block-3-contraction-with-einsum-15-min" class="nav-link" data-scroll-target="#block-3-contraction-with-einsum-15-min">Block 3 — Contraction With <code>einsum</code> (15 min)</a></li>
+  <li><a href="#block-4-inverses-and-the-pseudoinverse-15-min" id="toc-block-4-inverses-and-the-pseudoinverse-15-min" class="nav-link" data-scroll-target="#block-4-inverses-and-the-pseudoinverse-15-min">Block 4 — Inverses and the Pseudoinverse (15 min)</a>
+  <ul class="collapse">
+  <li><a href="#the-theory-in-three-steps" id="toc-the-theory-in-three-steps" class="nav-link" data-scroll-target="#the-theory-in-three-steps">The theory, in three steps</a></li>
+  </ul></li>
+  <li><a href="#kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min" id="toc-kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min" class="nav-link" data-scroll-target="#kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min">🆕 Kahoot Quiz 2 — Einsum, Distance &amp; the Pseudoinverse (5 min)</a></li>
+  <li><a href="#recursion-with-matrices-and-vectors-10-min-demo" id="toc-recursion-with-matrices-and-vectors-10-min-demo" class="nav-link" data-scroll-target="#recursion-with-matrices-and-vectors-10-min-demo">Recursion With Matrices and Vectors (10 min — demo)</a></li>
+  <li><a href="#block-5-convolution-and-deconvolution-15-min" id="toc-block-5-convolution-and-deconvolution-15-min" class="nav-link" data-scroll-target="#block-5-convolution-and-deconvolution-15-min">Block 5 — Convolution and Deconvolution (15 min)</a>
+  <ul class="collapse">
+  <li><a href="#the-theory" id="toc-the-theory" class="nav-link" data-scroll-target="#the-theory">The theory</a></li>
+  </ul></li>
+  <li><a href="#break-5-min-1" id="toc-break-5-min-1" class="nav-link" data-scroll-target="#break-5-min-1">Break (5 min)</a></li>
+  <li><a href="#block-6-tucker-decomposition-on-real-data-15-min" id="toc-block-6-tucker-decomposition-on-real-data-15-min" class="nav-link" data-scroll-target="#block-6-tucker-decomposition-on-real-data-15-min">Block 6 — Tucker Decomposition on Real Data (15 min)</a>
+  <ul class="collapse">
+  <li><a href="#the-theory-1" id="toc-the-theory-1" class="nav-link" data-scroll-target="#the-theory-1">The theory</a></li>
+  </ul></li>
+  <li><a href="#kahoot-quiz-3-convolution-tensor-decompositions-5-min" id="toc-kahoot-quiz-3-convolution-tensor-decompositions-5-min" class="nav-link" data-scroll-target="#kahoot-quiz-3-convolution-tensor-decompositions-5-min">🆕 Kahoot Quiz 3 — Convolution &amp; Tensor Decompositions (5 min)</a></li>
+  <li><a href="#wrap-up-5-min" id="toc-wrap-up-5-min" class="nav-link" data-scroll-target="#wrap-up-5-min">Wrap-Up (5 min)</a></li>
+  <li><a href="#appendix-a-take-home-how-many-principal-components-are-enough" id="toc-appendix-a-take-home-how-many-principal-components-are-enough" class="nav-link" data-scroll-target="#appendix-a-take-home-how-many-principal-components-are-enough">Appendix A — Take-Home: How Many Principal Components Are Enough?</a></li>
+  <li><a href="#appendix-b-take-home-attention-is-two-contractions" id="toc-appendix-b-take-home-attention-is-two-contractions" class="nav-link" data-scroll-target="#appendix-b-take-home-attention-is-two-contractions">Appendix B — Take-Home: Attention Is Two Contractions</a></li>
+  <li><a href="#appendix-c-take-home-cp-decomposition-compared-to-tucker" id="toc-appendix-c-take-home-cp-decomposition-compared-to-tucker" class="nav-link" data-scroll-target="#appendix-c-take-home-cp-decomposition-compared-to-tucker">Appendix C — Take-Home: CP Decomposition, Compared to Tucker</a></li>
+  <li><a href="#appendix-d-facilitator-notes" id="toc-appendix-d-facilitator-notes" class="nav-link" data-scroll-target="#appendix-d-facilitator-notes">Appendix D — Facilitator Notes</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="tensors-for-machine-learning" class="level1">
+<h1>Tensors for Machine Learning</h1>
+<section id="a-3-hour-workshop-3-kahoot-checks-student-handbook" class="level2">
+<h2 class="anchored" data-anchor-id="a-3-hour-workshop-3-kahoot-checks-student-handbook">A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook</h2>
+<p><strong>🆕 Facilitator note on this edit.</strong> Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to <strong>195 minutes (3h15)</strong>. If you need to hold the line at 180 minutes, see the cutting order in Appendix D, which now also covers the quizzes.</p>
+<p><strong>Before you arrive:</strong> you have read <em>Deep Learning</em> (Goodfellow, Bengio &amp; Courville), <strong>Chapter 2 — Linear Algebra</strong>. You know matrices. This workshop assumes <strong>no previous knowledge of tensor theory</strong>.</p>
+<p><strong>What you will learn:</strong> what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.</p>
+<p><strong>How we work:</strong> Notebooks on <strong>GitHub</strong>, run in <strong>Colab</strong>, discussion in <strong>Discord</strong>. Two rhythms: - <strong>Exercise blocks</strong> — 10 minutes coding, then 5 minutes explanation. - <strong>Group blocks</strong> — 10 minutes discussion in your breakout channel, then share-back.</p>
+<p><strong>A note on language.</strong> This workshop is taught in English, but many terms are nearly identical in Spanish: <em>tensor/tensor</em>, <em>matrix/matriz</em>, <em>axis/eje</em>, <em>dimension/dimensión</em>, <em>decomposition/descomposición</em>, <em>factorization/factorización</em>, <em>contraction/contracción</em>, <em>convolution/convolución</em>, <em>recursion/recursión</em>. Every new term is defined when it first appears. <strong>Ask questions in Spanish or English</strong> in the Discord threads — whichever lets you ask faster.</p>
+<hr>
+</section>
+<section id="the-data-we-use" class="level2">
+<h2 class="anchored" data-anchor-id="the-data-we-use">The Data We Use</h2>
+<p>All data in this workshop is <strong>real</strong>. Nothing is invented with random numbers, because real data contains problems that random data never shows — missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.</p>
+<p><strong>Included inside the libraries</strong> (no download, works offline):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>What it is</th>
+<th>Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>load_breast_cancer()</code></td>
+<td>569 real patients, 30 measurements from tumour cell images</td>
+<td><code>(569, 30)</code></td>
+</tr>
+<tr class="even">
+<td><code>load_digits()</code></td>
+<td>1797 real handwritten digits</td>
+<td><code>(1797, 8, 8)</code></td>
+</tr>
+<tr class="odd">
+<td><code>data.camera()</code>, <code>data.astronaut()</code></td>
+<td>Real photographs</td>
+<td><code>(512, 512)</code>, <code>(512, 512, 3)</code></td>
+</tr>
+<tr class="even">
+<td><code>data.immunohistochemistry()</code>, <code>data.cell()</code></td>
+<td>Real histology and microscopy images</td>
+<td><code>(512, 512, 3)</code>, <code>(660, 550)</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Downloaded once at the start</strong> (needs internet, takes a few seconds):</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Dataset</th>
+<th>What it is</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>California Housing</td>
+<td>20,640 real housing districts from the 1990 US census</td>
+<td>Pseudoinverse, least squares</td>
+</tr>
+<tr class="even">
+<td>NYC Taxi Trips</td>
+<td>6,433 real taxi journeys in New York</td>
+<td>Tensor factorization</td>
+</tr>
+<tr class="odd">
+<td>Airline Passengers</td>
+<td>144 months of real airline traffic, 1949–1960</td>
+<td>Recursion, forecasting</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Run this first cell now.</strong> If it fails, say so in Discord immediately.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> load_digits, load_breast_cancer</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage <span class="im">import</span> data</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> signal</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.linalg <span class="im">import</span> lu, toeplitz</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>HOUSING <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>TAXIS   <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>FLIGHTS <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>housing <span class="op">=</span> pd.read_csv(HOUSING)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>taxis   <span class="op">=</span> pd.read_csv(TAXIS)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> pd.read_csv(FLIGHTS)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(housing.shape, taxis.shape, flights.shape)   <span class="co"># (20640, 10) (6433, 14) (144, 3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<hr>
+</section>
+<section id="schedule-195-minutes-incl.-3-kahoot-checks" class="level2">
+<h2 class="anchored" data-anchor-id="schedule-195-minutes-incl.-3-kahoot-checks">Schedule (195 minutes, incl.&nbsp;3 Kahoot checks)</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Part</th>
+<th>Segment</th>
+<th>Format</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>—</td>
+<td>Setup and welcome</td>
+<td>—</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
+<td><strong>I</strong></td>
+<td>What a tensor is: theory and NumPy</td>
+<td>demo</td>
+<td>20 min</td>
+</tr>
+<tr class="odd">
+<td><strong>II</strong></td>
+<td>Group discussion — Thinking in N dimensions</td>
+<td>group</td>
+<td>20 min</td>
+</tr>
+<tr class="even">
+<td><strong>III</strong></td>
+<td>Block 1 — Indexing and broadcasting real data</td>
+<td>exercise</td>
+<td>15 min</td>
+</tr>
+<tr class="odd">
+<td><strong>III</strong></td>
+<td>Block 2 — Reshape and transpose real images</td>
+<td>exercise</td>
+<td>15 min</td>
+</tr>
+<tr class="even">
+<td>🆕 —</td>
+<td><strong>Kahoot Quiz 1 — Tensor Vocabulary &amp; Shapes</strong></td>
+<td>quiz</td>
+<td>5 min</td>
+</tr>
+<tr class="odd">
+<td>—</td>
+<td>Break</td>
+<td>—</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
+<td><strong>III</strong></td>
+<td>Group exercise — Video pipeline design</td>
+<td>group</td>
+<td>15 min</td>
+</tr>
+<tr class="odd">
+<td><strong>IV</strong></td>
+<td>Block 3 — Contraction with <code>einsum</code></td>
+<td>exercise</td>
+<td>15 min</td>
+</tr>
+<tr class="even">
+<td>—</td>
+<td>Break</td>
+<td>—</td>
+<td>5 min</td>
+</tr>
+<tr class="odd">
+<td><strong>IV</strong></td>
+<td>Block 4 — Inverses and the pseudoinverse</td>
+<td>exercise</td>
+<td>15 min</td>
+</tr>
+<tr class="even">
+<td>🆕 —</td>
+<td><strong>Kahoot Quiz 2 — Einsum, Distance &amp; the Pseudoinverse</strong></td>
+<td>quiz</td>
+<td>5 min</td>
+</tr>
+<tr class="odd">
+<td><strong>IV</strong></td>
+<td>Recursion with matrices and vectors</td>
+<td>demo</td>
+<td>10 min</td>
+</tr>
+<tr class="even">
+<td><strong>IV</strong></td>
+<td>Block 5 — Convolution and deconvolution</td>
+<td>exercise</td>
+<td>15 min</td>
+</tr>
+<tr class="odd">
+<td>—</td>
+<td>Break</td>
+<td>—</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
+<td><strong>IV</strong></td>
+<td>Block 6 — Tucker decomposition on real data</td>
+<td>exercise</td>
+<td>15 min</td>
+</tr>
+<tr class="odd">
+<td>🆕 —</td>
+<td><strong>Kahoot Quiz 3 — Convolution &amp; Tensor Decompositions</strong></td>
+<td>quiz</td>
+<td>5 min</td>
+</tr>
+<tr class="even">
+<td>—</td>
+<td>Wrap-up</td>
+<td>—</td>
+<td>5 min</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Why these three spots.</strong> Each quiz sits right after the block(s) that supply its content, while the material is still fresh, and before the next context switch (a break or a new Part) — so it reinforces rather than interrupts. Quiz 1 closes out Part III’s shape/vocabulary work; Quiz 2 closes out the einsum/pseudoinverse stretch of Part IV; Quiz 3 closes out the decomposition stretch of Part IV, right before the Wrap-up recap.</p>
+<hr>
+</section>
+</section>
+<section id="part-i-what-a-tensor-is-20-min" class="level1">
+<h1>PART I — What a Tensor Is (20 min)</h1>
+<section id="vocabulary" class="level2">
+<h2 class="anchored" data-anchor-id="vocabulary">1.1 Vocabulary</h2>
+<p>Keep this table open for the whole workshop.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Term</th>
+<th>Plain meaning</th>
+<th>Spanish</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Tensor</strong></td>
+<td>An array of numbers with any number of axes</td>
+<td><em>tensor</em></td>
+<td>A colour image</td>
+</tr>
+<tr class="even">
+<td><strong>Axis</strong> (pl. axes)</td>
+<td>One direction along which data is arranged</td>
+<td><em>eje</em></td>
+<td>Height; width; colour</td>
+</tr>
+<tr class="odd">
+<td><strong>Mode</strong></td>
+<td>Another word for axis, used in tensor theory</td>
+<td><em>modo</em></td>
+<td>“mode-0 unfolding”</td>
+</tr>
+<tr class="even">
+<td><strong>Order</strong></td>
+<td>How many axes a tensor has</td>
+<td><em>orden</em></td>
+<td>A matrix has order 2</td>
+</tr>
+<tr class="odd">
+<td><strong>Shape</strong></td>
+<td>The size along each axis, as a tuple</td>
+<td><em>forma</em></td>
+<td><code>(512, 512, 3)</code></td>
+</tr>
+<tr class="even">
+<td><strong>Slice</strong></td>
+<td>Fix one index, keep the rest</td>
+<td><em>corte</em></td>
+<td>One colour channel</td>
+</tr>
+<tr class="odd">
+<td><strong>Fiber</strong></td>
+<td>Fix every index except one</td>
+<td><em>fibra</em></td>
+<td>The 3 colour values of one pixel</td>
+</tr>
+<tr class="even">
+<td><strong>Unfolding</strong></td>
+<td>Rearranging a tensor into a matrix</td>
+<td><em>desplegado</em></td>
+<td>Needed for decompositions</td>
+</tr>
+<tr class="odd">
+<td><strong>Contraction</strong></td>
+<td>Multiply and sum over a shared axis</td>
+<td><em>contracción</em></td>
+<td>The dot product</td>
+</tr>
+<tr class="even">
+<td><strong>Decomposition</strong></td>
+<td>Writing one tensor as a product of simpler ones</td>
+<td><em>descomposición</em></td>
+<td>SVD, PCA, Tucker</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>Warning about the word “rank”.</strong> In Chapter 2, <em>rank</em> means the number of independent columns of a matrix. In tensor theory, <em>rank</em> often means the number of axes. To avoid confusion, this workshop says <strong>order</strong> for the number of axes, and <strong>rank</strong> only in Chapter 2’s sense.</p>
+</section>
+<section id="shape-in-numpy" class="level2">
+<h2 class="anchored" data-anchor-id="shape-in-numpy">1.2 Shape in NumPy</h2>
+<p>Every NumPy array has <code>.shape</code>, a tuple giving the size along each axis. The length of that tuple is <code>.ndim</code>, the number of axes.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>scalar <span class="op">=</span> np.array(<span class="fl">3.0</span>)                     <span class="co"># book: a           — order 0</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>vector <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])            <span class="co"># book: x, x_i      — order 1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>matrix <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">3.</span>, <span class="fl">4.</span>]])    <span class="co"># book: A, A_{i,j}  — order 2</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>tensor <span class="op">=</span> np.random.randn(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)          <span class="co"># book: A_{i,j,k}   — order 3</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> name, arr <span class="kw">in</span> [(<span class="st">"scalar"</span>, scalar), (<span class="st">"vector"</span>, vector),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">"matrix"</span>, matrix), (<span class="st">"tensor"</span>, tensor)]:</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>name<span class="sc">:8s}</span><span class="ss"> shape=</span><span class="sc">{</span><span class="bu">str</span>(arr.shape)<span class="sc">:12s}</span><span class="ss"> ndim=</span><span class="sc">{</span>arr<span class="sc">.</span>ndim<span class="sc">}</span><span class="ss">  size=</span><span class="sc">{</span>arr<span class="sc">.</span>size<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co"># scalar   shape=()          ndim=0  size=1</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># vector   shape=(3,)        ndim=1  size=3</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># matrix   shape=(2, 2)      ndim=2  size=4</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># tensor   shape=(2, 3, 4)   ndim=3  size=24</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>A scalar has <code>shape=()</code>, an empty tuple — there are no axes to measure. And <code>size</code> is always the product of the numbers in <code>shape</code>: 2 × 3 × 4 = 24.</p>
+<p>Now with real data:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>digits <span class="op">=</span> load_digits()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(digits.images.shape)      <span class="co"># (1797, 8, 8)  — 1797 handwritten digits, 8x8 pixels</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(photo.shape)               <span class="co"># (512, 512, 3) — height, width, colour</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Both are order 3, but their axes mean completely different things. <code>digits.images</code> counts <em>images</em> along axis 0; <code>photo</code> counts <em>colours</em> along axis 2. <strong>The shape alone never tells you what the axes mean.</strong> You must know, and you must keep track.</p>
+</section>
+<section id="the-three-operations-that-matter" class="level2">
+<h2 class="anchored" data-anchor-id="the-three-operations-that-matter">1.3 The Three Operations That Matter</h2>
+<p><strong>Slices and fibers</strong> — fixing indices takes a tensor apart.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>photo[:, :, <span class="dv">0</span>].shape       <span class="co"># (512, 512) — a slice: one colour channel, still an image</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>photo[<span class="dv">100</span>, <span class="dv">200</span>, :].shape   <span class="co"># (3,)       — a fiber: the 3 colour values of one pixel</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Unfolding</strong> — every tensor decomposition begins by turning the tensor into a matrix, one axis at a time. Move axis <em>k</em> to the front, then flatten everything else into one long axis.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> unfold(T, axis):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.moveaxis(T, axis, <span class="dv">0</span>).reshape(T.shape[axis], <span class="op">-</span><span class="dv">1</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(unfold(photo, <span class="dv">0</span>).shape)   <span class="co"># (512, 1536) — rows are the height axis</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(unfold(photo, <span class="dv">2</span>).shape)   <span class="co"># (3, 262144) — rows are the 3 colour channels</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Unfolding <strong>loses nothing</strong>. It only rearranges. The mode-2 unfolding says “each colour channel is one row of 262,144 numbers” — and now every matrix tool you know, including SVD, can be applied to it.</p>
+<p><strong>Contraction</strong> — multiply along a shared axis and sum over it. The dot product (eq. 2.8) and the matrix product (eq. 2.5) are both contractions. <code>np.einsum</code> writes them directly:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])<span class="op">;</span> b <span class="op">=</span> np.array([<span class="fl">4.</span>, <span class="fl">5.</span>, <span class="fl">6.</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>np.einsum(<span class="st">'i,i-&gt;'</span>, a, b)          <span class="co"># dot product, sum over i          (eq 2.8)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">3.</span>, <span class="fl">4.</span>]])<span class="op">;</span> B <span class="op">=</span> np.array([[<span class="fl">5.</span>, <span class="fl">6.</span>], [<span class="fl">7.</span>, <span class="fl">8.</span>]])</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)      <span class="co"># matrix product, sum over k       (eq 2.5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>The rule, in one sentence:</strong> an index that appears in the inputs but <strong>not</strong> after the arrow is summed over; an index that appears after the arrow is kept.</p>
+</section>
+<section id="the-map-of-factorizations" class="level2">
+<h2 class="anchored" data-anchor-id="the-map-of-factorizations">1.4 The Map of Factorizations</h2>
+<p>A <strong>factorization</strong> writes one object as a product of simpler objects. You met two in Chapter 2. Here is the whole family we will use today:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Works on</th>
+<th>What it gives you</th>
+<th>Where today</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>LU</strong></td>
+<td>Square matrix</td>
+<td>Gaussian elimination, saved for reuse</td>
+<td>Below</td>
+</tr>
+<tr class="even">
+<td><strong>QR / Gram-Schmidt</strong></td>
+<td>Any matrix</td>
+<td>Perpendicular, unit-length directions</td>
+<td>Below</td>
+</tr>
+<tr class="odd">
+<td><strong>Eigendecomposition</strong></td>
+<td>Square matrix</td>
+<td>Directions that only get scaled (§2.7)</td>
+<td>Recursion demo</td>
+</tr>
+<tr class="even">
+<td><strong>SVD</strong></td>
+<td>Any matrix</td>
+<td>The most general matrix factorization (§2.8)</td>
+<td>Blocks 4 and 6</td>
+</tr>
+<tr class="odd">
+<td><strong>PCA</strong></td>
+<td>Data matrix</td>
+<td>Compression to fewer features (§2.12)</td>
+<td>Take-home A</td>
+</tr>
+<tr class="even">
+<td><strong>Pseudoinverse</strong></td>
+<td>Any matrix</td>
+<td>“Inverse” when no true inverse exists (§2.9)</td>
+<td>Block 4</td>
+</tr>
+<tr class="odd">
+<td><strong>Tucker / CP</strong></td>
+<td><strong>Tensor, any order</strong></td>
+<td>PCA generalized to every axis</td>
+<td>Block 6</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="fl">4.</span>, <span class="fl">3.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">1.</span>, <span class="fl">1.</span>], [<span class="fl">6.</span>, <span class="fl">3.</span>, <span class="fl">5.</span>]])</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>P, L, U <span class="op">=</span> lu(A)                            <span class="co"># LU: A = P L U</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.allclose(P <span class="op">@</span> L <span class="op">@</span> U, A))            <span class="co"># True</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(A)                      <span class="co"># QR: orthonormal directions</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.allclose(Q.T <span class="op">@</span> Q, np.eye(<span class="dv">3</span>)))      <span class="co"># True — book eq 2.37</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>LU</strong> is Gaussian elimination stored as two triangular matrices, so <code>Ax = b</code> can be solved cheaply many times for different <code>b</code>. <strong>QR</strong> (computed by Gram-Schmidt, or more stably by other methods) produces <em>orthonormal</em> directions — mutually perpendicular, each of length 1. It is used for orthogonal weight initialization in neural networks and for stable least-squares.</p>
+<p>Everything in that table above the double line works on <strong>matrices</strong> — two axes. Real data often has more. That is what Block 6 addresses.</p>
+<hr>
+</section>
+</section>
+<section id="part-ii-group-discussion-thinking-in-n-dimensions-20-min" class="level1">
+<h1>PART II — Group Discussion: Thinking in N Dimensions (20 min)</h1>
+<p>Go to your breakout channel. <strong>No code.</strong> Sketch on the shared board. 10 minutes discussion, then share-back.</p>
+<blockquote class="blockquote">
+<p>A grayscale image is a matrix: two axes, height and width. Almost nothing in machine learning is a single grayscale image. Each thing you add — colour, many examples, time — adds an axis, and each axis means something different. Your task is to argue about which axis goes where, and why.</p>
+</blockquote>
+<ol type="1">
+<li>Start from a grayscale image <code>(H, W)</code>. What is the shape of <strong>(a)</strong> one colour image, <strong>(b)</strong> a batch of colour images, <strong>(c)</strong> one video, <strong>(d)</strong> a batch of videos? For each step, say what the new axis <em>counts</em>. Do not say “we add a dimension.”</li>
+<li>A batch axis and a time axis both look like ordinary integer indices in code. What is different about their <strong>meaning</strong>? Think about what happens if you shuffle the order along each one.</li>
+<li>Batching requires every example to have the same shape, but real videos have different numbers of frames. Propose two ways to build one batched tensor from videos of different lengths. What does each one lose or invent?</li>
+<li>Photographing the same dish of cells every 10 minutes for 48 hours gives a tensor with the same shape as a video. Which experimental choice maps to which axis: frame interval → ? field of view → ? number of dishes → ?</li>
+<li>Is there a mathematical limit on how many axes a tensor can have? If not, what actually limits you when you are writing the code?</li>
+</ol>
+<p><strong>Share-back:</strong></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>gray_image      <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>))            <span class="co"># (H, W)</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>color_image     <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))          <span class="co"># (H, W, C)      + colour</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>batch_of_images <span class="op">=</span> np.zeros((<span class="dv">32</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))      <span class="co"># (N, H, W, C)   + many examples</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>video           <span class="op">=</span> np.zeros((<span class="dv">16</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))      <span class="co"># (T, H, W, C)   + ordered time</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>batch_of_videos <span class="op">=</span> np.zeros((<span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))   <span class="co"># (N, T, H, W, C)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The key idea is question 2. <code>batch_of_images</code> and <code>video</code> have the same <em>kind</em> of shape tuple, but shuffling axis 0 is harmless for a batch — examples are independent, order carries no information — and destroys a video, where order <strong>is</strong> the information. Chapter 2’s notation has no concept of “order matters between elements.” That is genuinely new today.</p>
+<hr>
+</section>
+<section id="part-iii-working-with-tensor-axes" class="level1">
+<h1>PART III — Working With Tensor Axes</h1>
+<section id="block-1-indexing-and-broadcasting-real-data-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="block-1-indexing-and-broadcasting-real-data-15-min">Block 1 — Indexing and Broadcasting Real Data (15 min)</h2>
+<p><strong>Why this matters.</strong> The <code>breast_cancer</code> data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column does not produce an error — it returns a <em>different real measurement</em>, and your analysis continues and gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.</p>
+<p><strong>In tech</strong>, the identical operation runs on a <code>(users, items)</code> matrix to pull one user’s history before making a recommendation.</p>
+<p><strong>Exercise (10 min)</strong></p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>bc <span class="op">=</span> load_breast_cancer()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> bc.data, bc.target          <span class="co"># (569, 30); y: 0 = malignant, 1 = benign</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> <span class="bu">list</span>(bc.feature_names)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Print X.shape. Say out loud what each axis means.</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Extract the column "mean radius" for all patients -&gt; shape (569,).</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         Find its position with names.index(...). Do not hard-code a number.</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Find the 5 patients with the LARGEST mean radius, then extract their</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         full 30-measurement profiles as one (5, 30) array, in ONE operation.</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Using boolean indexing, compare mean radius for malignant (y == 0)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="co">#         against benign (y == 1) patients. Is there a real difference?</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="co"># --- broadcasting, on real images ---</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>images <span class="op">=</span> load_digits().images          <span class="co"># (1797, 8, 8)</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> images.reshape(<span class="bu">len</span>(images), <span class="op">-</span><span class="dv">1</span>)    <span class="co"># (1797, 64)</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 5: Compute the mean and std of each of the 64 pixels across all images.</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Standardize with broadcasting: (D - mean) / std.</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="co">#         RUN IT AND LOOK AT THE RESULT before continuing.</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 7: You will find NaN. How many pixels have std == 0, and why would a real</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="co">#         handwritten digit image contain such pixels? Fix it, then verify no NaN.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Explanation (5 min)</strong></p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>i <span class="op">=</span> names.index(<span class="st">"mean radius"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>radius <span class="op">=</span> X[:, i]                                   <span class="co"># book notation A_{:,j}</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>top5 <span class="op">=</span> np.argsort(radius)[<span class="op">-</span><span class="dv">5</span>:]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>profiles <span class="op">=</span> X[top5, :]                               <span class="co"># (5, 30)</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(radius[y <span class="op">==</span> <span class="dv">0</span>].mean(), radius[y <span class="op">==</span> <span class="dv">1</span>].mean()) <span class="co"># 17.5 vs 12.1</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>mean, std <span class="op">=</span> D.mean(axis<span class="op">=</span><span class="dv">0</span>), D.std(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>((std <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())                             <span class="co"># 3</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>Z <span class="op">=</span> (D <span class="op">-</span> mean) <span class="op">/</span> np.where(std <span class="op">==</span> <span class="dv">0</span>, <span class="fl">1.0</span>, std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Two real results. <strong>Malignant tumours really do have a larger mean radius</strong> — 17.5 against 12.1. And <strong>three pixels are always dark in all 1797 digit images</strong>: they sit in corners where nobody writes. Their standard deviation is exactly zero, so dividing produces NaN. Random data would never have shown you this.</p>
+</section>
+<section id="block-2-reshape-and-transpose-real-images-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="block-2-reshape-and-transpose-real-images-15-min">Block 2 — Reshape and Transpose Real Images (15 min)</h2>
+<p><strong>Why this matters.</strong> Microscopes and cameras order their axes according to the hardware, not according to what a model expects. Getting this wrong does not crash — the model runs on scrambled data and returns confident, meaningless output. In a drug screen, that is a wrong decision about whether a compound works. The famous version in tech: a model trained in TensorFlow (<code>NHWC</code>) deployed into PyTorch (<code>NCHW</code>) with no transpose.</p>
+<p><strong>Exercise (10 min)</strong></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry()   <span class="co"># (512, 512, 3) real histology</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>cells <span class="op">=</span> data.cell()                    <span class="co"># (660, 550)    real microscopy, grayscale</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Print both shapes. Which one has no colour axis?</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Convert `photo` from (H, W, C) to (C, H, W) with np.transpose.</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Stack `photo` three times into a batch of shape (3, 512, 512, 3).</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         Which axis is the batch axis?</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Convert that batch from NHWC to NCHW -&gt; (3, 3, 512, 512).</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         Two axes now both have size 3. How do you know which is which?</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 5: photo.reshape(3, 512, 512) runs WITHOUT error but is wrong.</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co">#         Run it, compare against </span><span class="al">TODO</span><span class="co"> 2, and explain the difference.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Explanation (5 min)</strong></p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>chw   <span class="op">=</span> np.transpose(photo, (<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))      <span class="co"># (3, 512, 512) — correct</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>batch <span class="op">=</span> np.stack([photo, photo, photo])      <span class="co"># (3, 512, 512, 3)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>nchw  <span class="op">=</span> np.transpose(batch, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>))    <span class="co"># (3, 3, 512, 512)</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>wrong <span class="op">=</span> photo.reshape(<span class="dv">3</span>, <span class="dv">512</span>, <span class="dv">512</span>)           <span class="co"># runs, but scrambles the image</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Reshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning.</strong> Both give shape <code>(3, 512, 512)</code>; only one is the image. And TODO 4 makes the deeper point: once two axes share a size, the shape cannot tell you which is which. Only your own tracking can.</p>
+</section>
+<section id="kahoot-quiz-1-tensor-vocabulary-shapes-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="kahoot-quiz-1-tensor-vocabulary-shapes-5-min">🆕 Kahoot Quiz 1 — Tensor Vocabulary &amp; Shapes (5 min)</h2>
+<p><strong>Run this before the break, right after Block 2.</strong> Everyone has just used order, axis, shape, slice, fiber, variance, reshape, and transpose — this is the moment those words are freshest. Launch <code>kahoot_quiz_1_vocabulary_shapes.xlsx</code> (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.</p>
+</section>
+<section id="break-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="break-5-min">Break (5 min)</h2>
+</section>
+<section id="group-exercise-video-pipeline-design-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="group-exercise-video-pipeline-design-15-min">Group Exercise — Video Pipeline Design (15 min)</h2>
+<p>Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.</p>
+<blockquote class="blockquote">
+<p>Design the tensor shape at each stage — <em>raw file → decoded frames → preprocessed batch → model input → model output</em> — for <strong>both</strong> systems: - <strong>Tech:</strong> a short-video app computing one embedding per video from sampled frames, to choose what to play next. - <strong>Biotech:</strong> a surgical-video model that labels the current phase of an operation from an operating-room camera.</p>
+</blockquote>
+<ol type="1">
+<li>Sketch the shape at each of the five stages, for both. Where are they the same, and where must they differ?</li>
+<li>Clips have different lengths — 30 seconds against 4 hours. Take one strategy your group proposed in Part II and give the exact shape of the preprocessed batch. What does an invented or wasted value in that tensor represent?</li>
+<li>The surgical system adds <strong>three camera angles</strong> recording at once. Where does that axis go, and why does its position change how easy the rest of the pipeline is to write?</li>
+<li>The recommender samples 8 frames out of 900. Which operation from Block 1 does that, and what is lost?</li>
+<li>Both systems must decide <strong>which frames matter most</strong>. What kind of mechanism could learn that weighting?</li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="part-iv-computing-with-tensors" class="level1">
+<h1>PART IV — Computing With Tensors</h1>
+<section id="block-3-contraction-with-einsum-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="block-3-contraction-with-einsum-15-min">Block 3 — Contraction With <code>einsum</code> (15 min)</h2>
+<p><strong>Why this matters.</strong> Recommendation and search systems rank items by the dot product between a user vector and every item vector — one user against millions of items, many times per second. That contraction <em>is</em> the ranking signal. Sum over the wrong axis and every user gets wrong results.</p>
+<p><strong>Exercise (10 min)</strong></p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry().astype(<span class="bu">float</span>)        <span class="co"># (512, 512, 3)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>batch <span class="op">=</span> np.stack([photo, data.astronaut().astype(<span class="bu">float</span>)]) <span class="co"># (2, 512, 512, 3)</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.array([<span class="fl">0.2125</span>, <span class="fl">0.7154</span>, <span class="fl">0.0721</span>])                    <span class="co"># RGB -&gt; grayscale weights</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: With einsum, convert `photo` to grayscale by contracting the colour</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">#         axis against w. Result shape (512, 512).</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Do the same for the whole batch in ONE einsum call -&gt; (2, 512, 512).</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Write these Chapter 2 operations as einsum and check each against NumPy:</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">#           (a) trace          (eq 2.48)</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">#           (b) transpose      (eq 2.3)</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">#           (c) matrix product (eq 2.5)</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Flatten the digits to (1797, 64) and compute the (1797, 1797) similarity</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#         matrix between every pair of digit images with one einsum.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Explanation (5 min)</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>gray       <span class="op">=</span> np.einsum(<span class="st">'hwc,c-&gt;hw'</span>,   photo, w)     <span class="co"># (512, 512)</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>gray_batch <span class="op">=</span> np.einsum(<span class="st">'nhwc,c-&gt;nhw'</span>, batch, w)      <span class="co"># (2, 512, 512)</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>np.einsum(<span class="st">'ii-&gt;'</span>, A)           <span class="co"># trace          == np.trace(A)</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>np.einsum(<span class="st">'ij-&gt;ji'</span>, A)         <span class="co"># transpose      == A.T</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)   <span class="co"># matrix product == A @ B</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>c</code> appears in the inputs but not after the arrow, so it is <strong>summed over</strong> — that is the contraction. <code>n</code>, <code>h</code>, <code>w</code> appear after the arrow, so they are <strong>kept</strong>. Adding a batch axis costs exactly one letter. This is why <code>einsum</code> is worth learning: the same expression works for one image or for a million, and it reads like the mathematics in Chapter 2.</p>
+</section>
+<section id="block-4-inverses-and-the-pseudoinverse-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="block-4-inverses-and-the-pseudoinverse-15-min">Block 4 — Inverses and the Pseudoinverse (15 min)</h2>
+<section id="the-theory-in-three-steps" class="level3">
+<h3 class="anchored" data-anchor-id="the-theory-in-three-steps">The theory, in three steps</h3>
+<p><strong>Step 1 — square matrices.</strong> Chapter 2 §2.3 defines <code>A⁻¹</code> for a square matrix, with <code>A⁻¹A = I</code>. But this only exists when the columns are linearly independent. A matrix with dependent columns is <strong>singular</strong> and has no inverse:</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.array([[<span class="fl">2.</span>, <span class="fl">1.</span>], [<span class="fl">1.</span>, <span class="fl">3.</span>]])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>np.linalg.inv(S) <span class="op">@</span> S                       <span class="co"># ≈ identity, fine</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>Singular <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">4.</span>]])  <span class="co"># column 2 = 2 × column 1</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>np.linalg.inv(Singular)                     <span class="co"># raises LinAlgError</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Step 2 — non-square matrices.</strong> <code>A⁻¹</code> is not even defined. But we still need to solve <code>Ax = b</code>, and in machine learning <code>A</code> is almost never square: it has one row per example and one column per feature, and there are always far more examples than features.</p>
+<p>The <strong>Moore-Penrose pseudoinverse</strong> <code>A⁺</code> (Chapter 2 §2.9) is the answer. It is defined for <em>every</em> matrix — square or not, singular or not — and it is computed from the SVD (eq. 2.47):</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.random.randn(<span class="dv">5</span>, <span class="dv">3</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>A_plus <span class="op">=</span> np.linalg.pinv(A)</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(A.shape, A_plus.shape)               <span class="co"># (5, 3) (3, 5) — note the shape flips</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>U, S_, Vt <span class="op">=</span> np.linalg.svd(A, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.allclose(A_plus, Vt.T <span class="op">@</span> np.diag(<span class="dv">1</span><span class="op">/</span>S_) <span class="op">@</span> U.T))   <span class="co"># True — this is eq 2.47</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>It satisfies four conditions that define it uniquely — all verified to be <code>True</code>:</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>np.allclose(A <span class="op">@</span> A_plus <span class="op">@</span> A, A)            <span class="co"># 1</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>np.allclose(A_plus <span class="op">@</span> A <span class="op">@</span> A_plus, A_plus)  <span class="co"># 2</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>np.allclose((A <span class="op">@</span> A_plus).T, A <span class="op">@</span> A_plus)   <span class="co"># 3</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>np.allclose((A_plus <span class="op">@</span> A).T, A_plus <span class="op">@</span> A)   <span class="co"># 4</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>What <code>A⁺</code> gives you depends on the shape, exactly as Chapter 2 §2.9 says: - <strong>More rows than columns</strong> (too many equations, usually no exact solution) → <code>x = A⁺b</code> gives the <code>x</code> that makes <code>Ax</code> as <strong>close as possible</strong> to <code>b</code>. This is least squares. - <strong>More columns than rows</strong> (too few equations, infinitely many solutions) → <code>x = A⁺b</code> gives the valid solution with the <strong>smallest norm</strong>.</p>
+<p><strong>Step 3 — what about tensors?</strong> This is a fair question with an honest answer. There is no single tensor inverse that everyone uses. Several definitions exist (based on the Einstein product, or the t-product for order-3 tensors), and they are active research. <strong>In practice, in machine learning, you unfold the tensor into a matrix, use the matrix pseudoinverse, and fold the result back.</strong> That works because unfolding loses nothing:</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> np.random.randn(<span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">5</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>M <span class="op">=</span> unfold(T, <span class="dv">0</span>)                       <span class="co"># (4, 15)</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>M_plus <span class="op">=</span> np.linalg.pinv(M)             <span class="co"># (15, 4)</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>np.allclose(M <span class="op">@</span> M_plus <span class="op">@</span> M, M)          <span class="co"># True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is a general lesson worth remembering: <strong>when a tensor problem is hard, unfold it to a matrix, solve it there, and fold back.</strong></p>
+<p><strong>Exercise (10 min)</strong> — real California housing data.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Predict house value from district features. 20,640 real districts.</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(housing.shape)                                   <span class="co"># (20640, 10)</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(housing[<span class="st">'total_bedrooms'</span>].isnull().<span class="bu">sum</span>())         <span class="co"># 207 missing values!</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Drop rows with missing values. How many rows remain?</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Build X from these columns, and add a column of ones for the bias:</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         ['housing_median_age','total_rooms','total_bedrooms',</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co">#          'population','households','median_income']</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         Target y = 'median_house_value'. Print X.shape. Is X square?</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Try np.linalg.inv(X). What happens, and why?</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Solve for the weights with the pseudoinverse: w = pinv(X) @ y.</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 5: Check your answer against np.linalg.lstsq. Do they agree?</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Compute the RMSE of the predictions. Which feature has the largest</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">#         coefficient, and does that make sense for house prices?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Explanation (5 min)</strong></p>
+<div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>d <span class="op">=</span> housing.dropna()                                     <span class="co"># 20433 rows remain</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>feats <span class="op">=</span> [<span class="st">'housing_median_age'</span>,<span class="st">'total_rooms'</span>,<span class="st">'total_bedrooms'</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>         <span class="st">'population'</span>,<span class="st">'households'</span>,<span class="st">'median_income'</span>]</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(d)), d[feats].to_numpy(<span class="bu">float</span>)])   <span class="co"># (20433, 7)</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> d[<span class="st">'median_house_value'</span>].to_numpy(<span class="bu">float</span>)</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>w_lstsq, <span class="op">*</span>_ <span class="op">=</span> np.linalg.lstsq(X, y, rcond<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>np.allclose(w, w_lstsq)                                   <span class="co"># True</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>rmse <span class="op">=</span> np.sqrt(((X <span class="op">@</span> w <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>).mean())                 <span class="co"># ≈ 75,980</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>X</code> is 20433 × 7 — very tall, so <code>np.linalg.inv</code> cannot even be called. There is <strong>no exact solution</strong>: no straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead, and <code>lstsq</code> agrees exactly because it solves the same problem. The largest coefficient belongs to <code>median_income</code> (about 47,700 per unit), which is the sensible result — income predicts house prices.</p>
+</section>
+</section>
+<section id="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min">🆕 Kahoot Quiz 2 — Einsum, Distance &amp; the Pseudoinverse (5 min)</h2>
+<p><strong>Run this right after Block 4, before the recursion demo.</strong> It covers contraction (Block 3’s <code>einsum</code>), the pseudoinverse and singular matrices (Block 4), and distance/similarity — the digit-similarity matrix from Block 3 TODO 4 is the natural bridge between the two. Launch <code>kahoot_quiz_2_distance_pseudoinverse.xlsx</code> (6 questions, ~5 min).</p>
+</section>
+<section id="recursion-with-matrices-and-vectors-10-min-demo" class="level2">
+<h2 class="anchored" data-anchor-id="recursion-with-matrices-and-vectors-10-min-demo">Recursion With Matrices and Vectors (10 min — demo)</h2>
+<p><strong>Recursion</strong> means defining something in terms of itself. With matrices this becomes: apply the same matrix again and again. Three examples, increasing in usefulness.</p>
+<p><strong>1. Fibonacci as repeated matrix multiplication.</strong> The rule <code>f(n) = f(n-1) + f(n-2)</code> is one matrix applied repeatedly:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">0</span>]])</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> F <span class="op">@</span> v</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(v[<span class="dv">1</span>])                                  <span class="co"># 55</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.linalg.matrix_power(F, <span class="dv">10</span>)[<span class="dv">0</span>, <span class="dv">1</span>])   <span class="co"># 55 — same answer, one step</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>2. Power iteration — recursion that finds an eigenvector.</strong> Multiply any starting vector by <code>A</code> repeatedly, rescaling each time. It converges to the eigenvector with the largest eigenvalue (Chapter 2 §2.7):</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="fl">4.</span>, <span class="fl">1.</span>], [<span class="fl">2.</span>, <span class="fl">3.</span>]])</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.random.randn(<span class="dv">2</span>)<span class="op">;</span> x <span class="op">/=</span> np.linalg.norm(x)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> A <span class="op">@</span> x</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    x <span class="op">/=</span> np.linalg.norm(x)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x <span class="op">@</span> A <span class="op">@</span> x)                    <span class="co"># 5.000000</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.linalg.eig(A)[<span class="dv">0</span>].<span class="bu">max</span>())    <span class="co"># 5.000000 — identical</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is how PageRank ranks web pages, and it is why eigenvectors matter far beyond Chapter 2: <strong>repeated application of a matrix converges to its dominant eigenvector.</strong></p>
+<p><strong>3. Recursion on real data — forecasting airline traffic.</strong> This combines recursion with the pseudoinverse from Block 4. We fit a model that predicts each month from the previous 12, then apply it <em>to its own output</em> to forecast forward:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> flights[<span class="st">'passengers'</span>].to_numpy(<span class="bu">float</span>)     <span class="co"># 144 real months, 1949–1960</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="dv">12</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>rows <span class="op">=</span> np.array([y[i:i<span class="op">+</span>p] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(y) <span class="op">-</span> p)])</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(rows)), rows])</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y[p:]                  <span class="co"># least squares, exactly as in Block 4</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>history <span class="op">=</span> <span class="bu">list</span>(y[<span class="op">-</span>p:])</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):                             <span class="co"># recursion: feed predictions back in</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    nxt <span class="op">=</span> w[<span class="dv">0</span>] <span class="op">+</span> np.dot(w[<span class="dv">1</span>:], history[<span class="op">-</span>p:])</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    history.append(nxt)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.<span class="bu">round</span>(history[<span class="op">-</span><span class="dv">12</span>:], <span class="dv">1</span>))</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co"># [465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>The forecast reproduces the seasonal shape of real air travel — low in winter, peaking in summer — because the model learned it from 132 real training windows. <strong>This is exactly the structure of a recurrent neural network</strong>: a hidden state, updated by the same weights at every step.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>W, U <span class="op">=</span> np.random.randn(<span class="dv">4</span>, <span class="dv">4</span>) <span class="op">*</span> <span class="fl">0.5</span>, np.random.randn(<span class="dv">4</span>, <span class="dv">3</span>) <span class="op">*</span> <span class="fl">0.5</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> np.zeros(<span class="dv">4</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">6</span>):</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> np.tanh(W <span class="op">@</span> h <span class="op">+</span> U <span class="op">@</span> xs[t])    <span class="co"># same W and U every step — that is the recursion</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="block-5-convolution-and-deconvolution-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="block-5-convolution-and-deconvolution-15-min">Block 5 — Convolution and Deconvolution (15 min)</h2>
+<section id="the-theory" class="level3">
+<h3 class="anchored" data-anchor-id="the-theory">The theory</h3>
+<p><strong>Convolution</strong> slides a small array (the <strong>kernel</strong>, or <strong>filter</strong>) across a larger one, multiplying and summing at each position. It is the operation at the heart of every convolutional neural network, and it is also how every blur, sharpen, and edge-detection filter works.</p>
+<div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>, <span class="fl">4.</span>, <span class="fl">5.</span>])</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="op">-</span><span class="fl">1.</span>])</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>np.convolve(x, k, <span class="st">'full'</span>)    <span class="co"># [ 1.  2.  2.  2.  2. -4. -5.]  length 5+3-1 = 7</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>np.convolve(x, k, <span class="st">'valid'</span>)   <span class="co"># [ 2.  2.  2.]                  length 5-3+1 = 3</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>np.convolve(x, k, <span class="st">'same'</span>)    <span class="co"># [ 2.  2.  2.  2. -4.]          length 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Three modes, three output sizes. <code>valid</code> uses only positions where the kernel fits completely — this is why convolution <strong>shrinks</strong> an image by <code>kernel_size - 1</code>.</p>
+<p>⚠️ <strong>A detail that confuses everyone.</strong> True convolution flips the kernel; <strong>correlation</strong> does not. What deep learning libraries call “convolution” is actually correlation. It makes no practical difference, because the network <em>learns</em> the kernel — but you should know the names are inconsistent.</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>np.correlate(x, k, <span class="st">'valid'</span>)          <span class="co"># [-2. -2. -2.]</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>np.convolve(x, k[::<span class="op">-</span><span class="dv">1</span>], <span class="st">'valid'</span>)     <span class="co"># [-2. -2. -2.] — the same, with k flipped</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Convolution is a matrix multiplication.</strong> This is the connection back to Chapter 2. Any convolution can be written as multiplication by a <strong>Toeplitz</strong> matrix — a matrix where the kernel is shifted along each row:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>col <span class="op">=</span> np.zeros(<span class="dv">7</span>)<span class="op">;</span> col[:<span class="dv">3</span>] <span class="op">=</span> k</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>row <span class="op">=</span> np.zeros(<span class="dv">5</span>)<span class="op">;</span> row[<span class="dv">0</span>] <span class="op">=</span> k[<span class="dv">0</span>]</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>C <span class="op">=</span> toeplitz(col, row)                       <span class="co"># (7, 5)</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>np.allclose(C <span class="op">@</span> x, np.convolve(x, k, <span class="st">'full'</span>))   <span class="co"># True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>So convolution is not a new kind of operation. It is a <strong>structured matrix multiplication</strong> — one where the same few numbers are reused across the whole matrix. That reuse is exactly why CNNs need so many fewer parameters than fully connected networks.</p>
+<p><strong>Deconvolution</strong> means two different things, and you must keep them separate:</p>
+<ol type="1">
+<li><strong>Transposed convolution</strong> — the upsampling layer in a decoder or GAN. It makes things <em>bigger</em>. It is not a true inverse; the name is historical and misleading.</li>
+<li><strong>True deconvolution</strong> — recovering the original signal from a blurred one. This is a genuine inverse problem, and it is where Block 4 comes back.</li>
+</ol>
+<p><strong>Exercise (10 min)</strong></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>img <span class="op">=</span> data.camera().astype(<span class="bu">float</span>) <span class="op">/</span> <span class="fl">255.</span>      <span class="co"># real photograph, 512x512</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>sobel <span class="op">=</span> np.array([[<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>],[<span class="op">-</span><span class="dv">2</span>,<span class="dv">0</span>,<span class="dv">2</span>],[<span class="op">-</span><span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">1</span>]], <span class="bu">float</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Convolve `img` with `sobel` in 'valid' mode. What shape comes out,</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co">#         and by how much did it shrink?</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Blur the image with a 9x9 averaging kernel (all entries equal,</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         summing to 1), mode='same'. Display it next to the original.</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3 (transposed convolution): upsample this 2x2 array to 3x3 by adding</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         small * kernel into an output array at each position:</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">#             small = np.array([[1., 2.], [3., 4.]]); ker = np.ones((2, 2))</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">#         What shape do you get? Why is this called "deconvolution" in CNNs</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">#         even though it does not undo anything?</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4 (true deconvolution): add small noise to the blurred image, then try to</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">#         recover the original with skimage.restoration.richardson_lucy(...,</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co">#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 25-pixel</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co">#         border. Did it improve?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Explanation (5 min)</strong></p>
+<div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> signal.convolve2d(img, sobel, mode<span class="op">=</span><span class="st">'valid'</span>)     <span class="co"># (510, 510) — shrank by 2</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>psf <span class="op">=</span> np.ones((<span class="dv">9</span>, <span class="dv">9</span>))<span class="op">;</span> psf <span class="op">/=</span> psf.<span class="bu">sum</span>()</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>blurred <span class="op">=</span> signal.convolve2d(img, psf, mode<span class="op">=</span><span class="st">'same'</span>, boundary<span class="op">=</span><span class="st">'symm'</span>)</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>noisy <span class="op">=</span> blurred <span class="op">+</span> <span class="fl">0.002</span> <span class="op">*</span> np.random.default_rng(<span class="dv">0</span>).standard_normal(blurred.shape)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimage.restoration <span class="im">import</span> richardson_lucy</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>recovered <span class="op">=</span> richardson_lucy(np.clip(noisy, <span class="dv">0</span>, <span class="dv">1</span>), psf, num_iter<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="dv">25</span>   <span class="co"># ignore the border: deconvolution always creates edge artifacts</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>err <span class="op">=</span> <span class="kw">lambda</span> a: np.linalg.norm((a<span class="op">-</span>img)[c:<span class="op">-</span>c,c:<span class="op">-</span>c]) <span class="op">/</span> np.linalg.norm(img[c:<span class="op">-</span>c,c:<span class="op">-</span>c])</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(err(noisy), err(recovered))     <span class="co"># 0.1157 -&gt; 0.0815</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Deconvolution <strong>reduced the error by about 30%</strong>. Two lessons worth keeping:</p>
+<p><strong>First, you must ignore the border.</strong> Deconvolution creates strong artifacts at the edges, where the algorithm has no information about what lies outside the image. If you measure error over the whole image, the artifacts dominate and it looks like the method failed. It did not.</p>
+<p><strong>Second, why not just invert the blur directly?</strong> Because it fails badly. Blurring destroys high-frequency detail, so inverting it divides by numbers very close to zero and amplifies noise enormously:</p>
+<div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>K <span class="op">=</span> np.fft.fft2(psf, s<span class="op">=</span>img.shape)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>naive <span class="op">=</span> np.real(np.fft.ifft2(np.fft.fft2(noisy) <span class="op">/</span> np.where(<span class="bu">abs</span>(K) <span class="op">&lt;</span> <span class="fl">1e-3</span>, <span class="fl">1e-3</span>, K)))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># relative error ≈ 1.4 — far WORSE than the blurred image we started from</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>This is the same lesson as Block 4.</strong> A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine: every fluorescence microscope blurs its images by a known amount (the <em>point spread function</em>), and deconvolution is standard practice before cells are counted or measured.</p>
+</section>
+</section>
+<section id="break-5-min-1" class="level2">
+<h2 class="anchored" data-anchor-id="break-5-min-1">Break (5 min)</h2>
+</section>
+<section id="block-6-tucker-decomposition-on-real-data-15-min" class="level2">
+<h2 class="anchored" data-anchor-id="block-6-tucker-decomposition-on-real-data-15-min">Block 6 — Tucker Decomposition on Real Data (15 min)</h2>
+<section id="the-theory-1" class="level3">
+<h3 class="anchored" data-anchor-id="the-theory-1">The theory</h3>
+<p>PCA compresses a <strong>matrix</strong> — two axes. Real data often has more. <strong>Tucker decomposition</strong> generalizes PCA to a tensor of any order: one <strong>factor matrix per axis</strong>, plus a small <strong>core tensor</strong> describing how the factors combine.</p>
+<p>The way to compute it, called <strong>HOSVD</strong>, uses only tools you already have: 1. Unfold the tensor along each axis (Part I). 2. Run SVD on each unfolding; keep the top components. These are the factor matrices. 3. Contract the original tensor against all factor matrices to get the core (Block 3).</p>
+<p>The related <strong>CP decomposition</strong> instead writes the tensor as a sum of simple rank-1 pieces. Tucker is usually more accurate at the same size; CP is often easier to interpret.</p>
+<p><strong>Our real tensor.</strong> From 6,433 real New York taxi trips we build a genuine order-3 tensor: <strong>pickup borough × dropoff borough × hour of day.</strong></p>
+<p><strong>Exercise (10 min)</strong></p>
+<div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>taxis[<span class="st">'hour'</span>] <span class="op">=</span> pd.to_datetime(taxis[<span class="st">'pickup'</span>]).dt.hour</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>sub <span class="op">=</span> taxis.dropna(subset<span class="op">=</span>[<span class="st">'pickup_borough'</span>, <span class="st">'dropoff_borough'</span>])</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>pb <span class="op">=</span> <span class="bu">sorted</span>(sub[<span class="st">'pickup_borough'</span>].unique())</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>db <span class="op">=</span> <span class="bu">sorted</span>(sub[<span class="st">'dropoff_borough'</span>].unique())</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Print T.shape and T.sum(). What does the entry T[i, j, k] mean?</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Which hour has the most trips overall? (Sum over the first two axes.)</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Unfold T along each axis and print the three shapes. Confirm the total</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">#         number of entries is the same each time — unfolding loses nothing.</span></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Run SVD on each unfolding, keep the top (2, 2, 3) components, and build</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">#         the core tensor with ONE einsum call.</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 5: Reconstruct T from the core and factors, again with one einsum.</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co">#         Compute the relative error and the compression ratio.</span></span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Look at the first column of the hour factor matrix. At which hour is it</span></span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="co">#         largest? Does that match what you found in </span><span class="al">TODO</span><span class="co"> 2?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>Explanation (5 min)</strong></p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>Us <span class="op">=</span> [np.linalg.svd(unfold(T, ax), full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>] <span class="cf">for</span> ax <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> (<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>Us <span class="op">=</span> [Us[i][:, :r[i]] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>core  <span class="op">=</span> np.einsum(<span class="st">'ijk,ia,jb,kc-&gt;abc'</span>, T, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])   <span class="co"># (2, 2, 3)</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>recon <span class="op">=</span> np.einsum(<span class="st">'abc,ia,jb,kc-&gt;ijk'</span>, core, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.linalg.norm(T <span class="op">-</span> recon) <span class="op">/</span> np.linalg.norm(T)            <span class="co"># 0.067</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))            <span class="co"># 4.71</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>The result: 4.7× fewer numbers, 6.7% error.</strong> But the important part is TODO 6. The strongest pattern in the hour factor peaks at <strong>hour 18</strong> — and that is also the busiest hour in the raw data. <strong>The decomposition discovered evening rush hour by itself.</strong> Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.</p>
+<p>Look at the einsum strings: <code>'ijk,ia,jb,kc-&gt;abc'</code> contracts three axes in one expression. That is why <code>einsum</code> came first.</p>
+<p><strong>Where this is used.</strong> In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use <code>tensorly</code>, which implements both properly.</p>
+<hr>
+</section>
+</section>
+<section id="kahoot-quiz-3-convolution-tensor-decompositions-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="kahoot-quiz-3-convolution-tensor-decompositions-5-min">🆕 Kahoot Quiz 3 — Convolution &amp; Tensor Decompositions (5 min)</h2>
+<p><strong>Run this right after Block 6, before the Wrap-up.</strong> It covers convolution/correlation (Block 5) and Tucker/CP decomposition (Block 6) while the taxi-tensor rush-hour result is still on screen. Launch <code>kahoot_quiz_3_convolution_decompositions.xlsx</code> (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up’s own recap, so segue straight from the quiz into it.</p>
+<hr>
+</section>
+<section id="wrap-up-5-min" class="level2">
+<h2 class="anchored" data-anchor-id="wrap-up-5-min">Wrap-Up (5 min)</h2>
+<p>What you did today:</p>
+<ol type="1">
+<li><strong>Part I</strong> — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing anything.</li>
+<li><strong>Part II</strong> — argued about what axes <em>mean</em>, and found that a batch axis and a time axis behave differently even when the shapes look identical.</li>
+<li><strong>Part III</strong> — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.</li>
+<li><strong>Part IV</strong> — wrote contractions with <code>einsum</code>; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.</li>
+</ol>
+<p><strong>One idea connects Blocks 4, 5 and 6:</strong> when a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.</p>
+<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>tensorly</code> — proper Tucker and CP decompositions. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below.</p>
+<hr>
+</section>
+<section id="appendix-a-take-home-how-many-principal-components-are-enough" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-a-take-home-how-many-principal-components-are-enough">Appendix A — Take-Home: How Many Principal Components Are Enough?</h2>
+<p>Real data contains a trap here. Find it.</p>
+<div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>bc <span class="op">=</span> load_breast_cancer()<span class="op">;</span> X, y <span class="op">=</span> bc.data, bc.target</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Center X, run np.linalg.svd, and compute the fraction of variance each</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a><span class="co">#         component explains (variance is proportional to S**2).</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: How many components explain 95% of the variance? The answer will look</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="co">#         TOO GOOD. Do not trust it yet.</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Print X.var(axis=0). The 30 measurements use different units — some are</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a><span class="co">#         areas in the thousands, some are ratios below 1. What is that doing?</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Redo everything on standardized data: (X - mean) / std. How many now?</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 5: Scatter-plot the first 2 components, coloured by y. Do the two groups separate?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="sourceCode" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>Xc <span class="op">=</span> X <span class="op">-</span> X.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.linalg.svd(Xc, full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">1</span>]</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>n95 <span class="op">=</span> np.argmax(np.cumsum(S<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(S<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>()) <span class="op">&gt;=</span> <span class="fl">0.95</span>) <span class="op">+</span> <span class="dv">1</span>      <span class="co"># 1  (!)</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>Xs <span class="op">=</span> (X <span class="op">-</span> X.mean(axis<span class="op">=</span><span class="dv">0</span>)) <span class="op">/</span> X.std(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>S2 <span class="op">=</span> np.linalg.svd(Xs, full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">1</span>]</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>n95_scaled <span class="op">=</span> np.argmax(np.cumsum(S2<span class="op">**</span><span class="dv">2</span><span class="op">/</span>(S2<span class="op">**</span><span class="dv">2</span>).<span class="bu">sum</span>()) <span class="op">&gt;=</span> <span class="fl">0.95</span>) <span class="op">+</span> <span class="dv">1</span>   <span class="co"># 10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+Without standardizing, the first component appears to explain <strong>98.2%</strong> of the variance. It is an illusion: <code>worst area</code> has a variance around 323,000 while smoothness values sit below 1, so PCA reports the largest <em>unit</em>, not the largest <em>pattern</em>. After standardizing, the first component explains 44% and <strong>10 components</strong> are needed. <strong>PCA knows nothing about units. Features on different scales must be standardized first.</strong>
+</details>
+</section>
+<section id="appendix-b-take-home-attention-is-two-contractions" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-b-take-home-attention-is-two-contractions">Appendix B — Take-Home: Attention Is Two Contractions</h2>
+<p>Attention is the mechanism that answers question 5 from the video-pipeline discussion: <em>which parts of a sequence matter most?</em> Protein language models use it so every amino acid can look at every other one; recommenders use it to weight a user’s past interactions.</p>
+<div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">6</span>)</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>batch, seq_len, dim <span class="op">=</span> <span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">16</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>Q, K, V <span class="op">=</span> (np.random.randn(batch, seq_len, dim) <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>))</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> softmax(x, axis<span class="op">=-</span><span class="dv">1</span>):</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> x <span class="op">-</span> x.<span class="bu">max</span>(axis<span class="op">=</span>axis, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    e <span class="op">=</span> np.exp(x)<span class="op">;</span> <span class="cf">return</span> e <span class="op">/</span> e.<span class="bu">sum</span>(axis<span class="op">=</span>axis, keepdims<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: With einsum, compute scores[b,i,j] = how much position i attends to</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">#         position j. Shape (4, 12, 12). Scale by 1/sqrt(dim).</span></span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Apply softmax on the correct axis so each row of weights sums to 1.</span></span>
+<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: With einsum, combine V using those weights -&gt; (4, 12, 16).</span></span>
+<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Suppose the last 3 positions are padding, not real data. Build a mask,</span></span>
+<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="co">#         set those scores to -np.inf BEFORE the softmax, and verify the padded</span></span>
+<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="co">#         positions receive exactly zero weight.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="sourceCode" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>scores  <span class="op">=</span> np.einsum(<span class="st">'bid,bjd-&gt;bij'</span>, Q, K) <span class="op">/</span> np.sqrt(dim)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> softmax(scores, axis<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>output  <span class="op">=</span> np.einsum(<span class="st">'bij,bjd-&gt;bid'</span>, weights, V)</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> np.zeros((seq_len, seq_len))<span class="op">;</span> mask[:, <span class="op">-</span><span class="dv">3</span>:] <span class="op">=</span> <span class="op">-</span>np.inf</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>weights_masked <span class="op">=</span> softmax(scores <span class="op">+</span> mask, axis<span class="op">=-</span><span class="dv">1</span>)     <span class="co"># padded positions get weight 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<code>scores</code> is Chapter 2’s dot product (eq. 2.8); <code>output</code> is Chapter 2’s linear combination (eq. 2.28). Attention is two contractions built from ideas you have already read. TODO 4 solves the variable-length problem from Part II: <strong>the mask is how real models handle sequences and videos of different lengths.</strong>
+</details>
+</section>
+<section id="appendix-c-take-home-cp-decomposition-compared-to-tucker" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-c-take-home-cp-decomposition-compared-to-tucker">Appendix C — Take-Home: CP Decomposition, Compared to Tucker</h2>
+<div class="sourceCode" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Build one rank-1 tensor with einsum from three random vectors of</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="co">#         length 4, 5 and 24. What shape is it? How many numbers define it?</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Compare that against 4*5*24. What is the compression of ONE rank-1 piece?</span></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: pip install tensorly, run tensorly.decomposition.parafac on the taxi</span></span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co">#         tensor T with rank=3, and compare its error against your Tucker result.</span></span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Which was more accurate at similar size? Why might that be?</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>
+Solution sketch
+</summary>
+<div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>a, b, c <span class="op">=</span> np.random.randn(<span class="dv">4</span>), np.random.randn(<span class="dv">5</span>), np.random.randn(<span class="dv">24</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>rank1 <span class="op">=</span> np.einsum(<span class="st">'i,j,k-&gt;ijk'</span>, a, b, c)     <span class="co"># (4, 5, 24) from only 33 numbers</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+Tucker is usually more accurate at equal size, because its dense core can represent interactions between components on different axes — something CP’s strict sum of rank-1 pieces cannot do. CP is often preferred when interpretability matters, because each component is one simple pattern per axis.
+</details>
+<hr>
+</section>
+<section id="appendix-d-facilitator-notes" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-d-facilitator-notes">Appendix D — Facilitator Notes</h2>
+<p><em>(Students may ignore this section.)</em></p>
+<p><strong>Structure.</strong> Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Blocks 4, 5 and 6 share one theme — <em>no exact inverse exists, so find the best stable approximation</em> — and stating that connection explicitly at the wrap-up is what makes the second half feel like one lesson rather than four.</p>
+<p><strong>Do not rush Part I.</strong> It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.</p>
+<p><strong>Language.</strong> Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — <em>eje</em>, <em>descomposición</em>, <em>contracción</em>, <em>convolución</em> — it removes friction immediately. Invite questions in either language. Warn about the two meanings of “rank” at the start of Part I.</p>
+<p><strong>Verified numbers.</strong> Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18. If a student gets something different, it is worth investigating rather than dismissing.</p>
+<p><strong>The downloads.</strong> Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone’s download succeeded — a student who silently fails will be stuck at Blocks 4 and 6. Have the three CSVs mirrored in the workshop repo as a fallback.</p>
+<p><strong>Pre-assign breakout groups</strong> before the session; assigning them live costs 3–5 minutes, twice.</p>
+<p><strong>Group blocks need firmer facilitation than exercise blocks.</strong> If a group is still on question 1 with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.</p>
+<p><strong>🆕 The three Kahoot quizzes.</strong> Each is 6 questions in <code>kahoot_quiz_1_vocabulary_shapes.xlsx</code>, <code>kahoot_quiz_2_distance_pseudoinverse.xlsx</code>, and <code>kahoot_quiz_3_convolution_decompositions.xlsx</code>, sitting after Blocks 2, 4, and 6 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don’t do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that’s fine, it’s the payoff. These add 15 minutes total, taking the workshop from 180 to 195 minutes.</p>
+<p><strong>Cutting for time.</strong> In order: drop <strong>Kahoot Quiz 2</strong> (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Block 5 (true deconvolution — the most technically demanding), then the RNN snippet in the recursion demo, then question 5 of either group block, then <strong>Kahoot Quiz 1</strong>. Never cut Part I §1.3, Block 6, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.</p>
+<p><strong>Known rough edges.</strong> Block 5 TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 25-pixel crop clearly <em>before</em> the exercise starts, not after. Block 4 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("^(?:http:|https:)\/\/project-delphi\.github\.io");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Tensors for Machine Learning · Built with <a href="https://quarto.org">Quarto</a></p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="https://github.com/project-delphi/tensors-workshop">Source</a></p>
+</div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

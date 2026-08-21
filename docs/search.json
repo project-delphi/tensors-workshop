@@ -1,0 +1,1255 @@
+[
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html",
+    "href": "tensors_workshop_plan_with_quizzes.html",
+    "title": "Tensors for Machine Learning",
+    "section": "",
+    "text": "🆕 Facilitator note on this edit. Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to 195 minutes (3h15). If you need to hold the line at 180 minutes, see the cutting order in Appendix D, which now also covers the quizzes.\nBefore you arrive: you have read Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. You know matrices. This workshop assumes no previous knowledge of tensor theory.\nWhat you will learn: what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.\nHow we work: Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms: - Exercise blocks — 10 minutes coding, then 5 minutes explanation. - Group blocks — 10 minutes discussion in your breakout channel, then share-back.\nA note on language. This workshop is taught in English, but many terms are nearly identical in Spanish: tensor/tensor, matrix/matriz, axis/eje, dimension/dimensión, decomposition/descomposición, factorization/factorización, contraction/contracción, convolution/convolución, recursion/recursión. Every new term is defined when it first appears. Ask questions in Spanish or English in the Discord threads — whichever lets you ask faster.\n\n\n\n\nAll data in this workshop is real. Nothing is invented with random numbers, because real data contains problems that random data never shows — missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.\nIncluded inside the libraries (no download, works offline):\n\n\n\n\n\n\n\n\nDataset\nWhat it is\nShape\n\n\n\n\nload_breast_cancer()\n569 real patients, 30 measurements from tumour cell images\n(569, 30)\n\n\nload_digits()\n1797 real handwritten digits\n(1797, 8, 8)\n\n\ndata.camera(), data.astronaut()\nReal photographs\n(512, 512), (512, 512, 3)\n\n\ndata.immunohistochemistry(), data.cell()\nReal histology and microscopy images\n(512, 512, 3), (660, 550)\n\n\n\nDownloaded once at the start (needs internet, takes a few seconds):\n\n\n\n\n\n\n\n\nDataset\nWhat it is\nUsed for\n\n\n\n\nCalifornia Housing\n20,640 real housing districts from the 1990 US census\nPseudoinverse, least squares\n\n\nNYC Taxi Trips\n6,433 real taxi journeys in New York\nTensor factorization\n\n\nAirline Passengers\n144 months of real airline traffic, 1949–1960\nRecursion, forecasting\n\n\n\nRun this first cell now. If it fails, say so in Discord immediately.\nimport numpy as np\nimport pandas as pd\nfrom sklearn.datasets import load_digits, load_breast_cancer\nfrom skimage import data\nfrom scipy import signal\nfrom scipy.linalg import lu, toeplitz\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\n\n\n\n\n\n\n\n\n\n\n\n\nPart\nSegment\nFormat\nTime\n\n\n\n\n—\nSetup and welcome\n—\n5 min\n\n\nI\nWhat a tensor is: theory and NumPy\ndemo\n20 min\n\n\nII\nGroup discussion — Thinking in N dimensions\ngroup\n20 min\n\n\nIII\nBlock 1 — Indexing and broadcasting real data\nexercise\n15 min\n\n\nIII\nBlock 2 — Reshape and transpose real images\nexercise\n15 min\n\n\n🆕 —\nKahoot Quiz 1 — Tensor Vocabulary & Shapes\nquiz\n5 min\n\n\n—\nBreak\n—\n5 min\n\n\nIII\nGroup exercise — Video pipeline design\ngroup\n15 min\n\n\nIV\nBlock 3 — Contraction with einsum\nexercise\n15 min\n\n\n—\nBreak\n—\n5 min\n\n\nIV\nBlock 4 — Inverses and the pseudoinverse\nexercise\n15 min\n\n\n🆕 —\nKahoot Quiz 2 — Einsum, Distance & the Pseudoinverse\nquiz\n5 min\n\n\nIV\nRecursion with matrices and vectors\ndemo\n10 min\n\n\nIV\nBlock 5 — Convolution and deconvolution\nexercise\n15 min\n\n\n—\nBreak\n—\n5 min\n\n\nIV\nBlock 6 — Tucker decomposition on real data\nexercise\n15 min\n\n\n🆕 —\nKahoot Quiz 3 — Convolution & Tensor Decompositions\nquiz\n5 min\n\n\n—\nWrap-up\n—\n5 min\n\n\n\nWhy these three spots. Each quiz sits right after the block(s) that supply its content, while the material is still fresh, and before the next context switch (a break or a new Part) — so it reinforces rather than interrupts. Quiz 1 closes out Part III’s shape/vocabulary work; Quiz 2 closes out the einsum/pseudoinverse stretch of Part IV; Quiz 3 closes out the decomposition stretch of Part IV, right before the Wrap-up recap."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#a-3-hour-workshop-3-kahoot-checks-student-handbook",
+    "href": "tensors_workshop_plan_with_quizzes.html#a-3-hour-workshop-3-kahoot-checks-student-handbook",
+    "title": "Tensors for Machine Learning",
+    "section": "",
+    "text": "🆕 Facilitator note on this edit. Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to 195 minutes (3h15). If you need to hold the line at 180 minutes, see the cutting order in Appendix D, which now also covers the quizzes.\nBefore you arrive: you have read Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. You know matrices. This workshop assumes no previous knowledge of tensor theory.\nWhat you will learn: what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.\nHow we work: Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms: - Exercise blocks — 10 minutes coding, then 5 minutes explanation. - Group blocks — 10 minutes discussion in your breakout channel, then share-back.\nA note on language. This workshop is taught in English, but many terms are nearly identical in Spanish: tensor/tensor, matrix/matriz, axis/eje, dimension/dimensión, decomposition/descomposición, factorization/factorización, contraction/contracción, convolution/convolución, recursion/recursión. Every new term is defined when it first appears. Ask questions in Spanish or English in the Discord threads — whichever lets you ask faster."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#the-data-we-use",
+    "href": "tensors_workshop_plan_with_quizzes.html#the-data-we-use",
+    "title": "Tensors for Machine Learning",
+    "section": "",
+    "text": "All data in this workshop is real. Nothing is invented with random numbers, because real data contains problems that random data never shows — missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.\nIncluded inside the libraries (no download, works offline):\n\n\n\n\n\n\n\n\nDataset\nWhat it is\nShape\n\n\n\n\nload_breast_cancer()\n569 real patients, 30 measurements from tumour cell images\n(569, 30)\n\n\nload_digits()\n1797 real handwritten digits\n(1797, 8, 8)\n\n\ndata.camera(), data.astronaut()\nReal photographs\n(512, 512), (512, 512, 3)\n\n\ndata.immunohistochemistry(), data.cell()\nReal histology and microscopy images\n(512, 512, 3), (660, 550)\n\n\n\nDownloaded once at the start (needs internet, takes a few seconds):\n\n\n\n\n\n\n\n\nDataset\nWhat it is\nUsed for\n\n\n\n\nCalifornia Housing\n20,640 real housing districts from the 1990 US census\nPseudoinverse, least squares\n\n\nNYC Taxi Trips\n6,433 real taxi journeys in New York\nTensor factorization\n\n\nAirline Passengers\n144 months of real airline traffic, 1949–1960\nRecursion, forecasting\n\n\n\nRun this first cell now. If it fails, say so in Discord immediately.\nimport numpy as np\nimport pandas as pd\nfrom sklearn.datasets import load_digits, load_breast_cancer\nfrom skimage import data\nfrom scipy import signal\nfrom scipy.linalg import lu, toeplitz\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)"
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#schedule-195-minutes-incl.-3-kahoot-checks",
+    "href": "tensors_workshop_plan_with_quizzes.html#schedule-195-minutes-incl.-3-kahoot-checks",
+    "title": "Tensors for Machine Learning",
+    "section": "",
+    "text": "Part\nSegment\nFormat\nTime\n\n\n\n\n—\nSetup and welcome\n—\n5 min\n\n\nI\nWhat a tensor is: theory and NumPy\ndemo\n20 min\n\n\nII\nGroup discussion — Thinking in N dimensions\ngroup\n20 min\n\n\nIII\nBlock 1 — Indexing and broadcasting real data\nexercise\n15 min\n\n\nIII\nBlock 2 — Reshape and transpose real images\nexercise\n15 min\n\n\n🆕 —\nKahoot Quiz 1 — Tensor Vocabulary & Shapes\nquiz\n5 min\n\n\n—\nBreak\n—\n5 min\n\n\nIII\nGroup exercise — Video pipeline design\ngroup\n15 min\n\n\nIV\nBlock 3 — Contraction with einsum\nexercise\n15 min\n\n\n—\nBreak\n—\n5 min\n\n\nIV\nBlock 4 — Inverses and the pseudoinverse\nexercise\n15 min\n\n\n🆕 —\nKahoot Quiz 2 — Einsum, Distance & the Pseudoinverse\nquiz\n5 min\n\n\nIV\nRecursion with matrices and vectors\ndemo\n10 min\n\n\nIV\nBlock 5 — Convolution and deconvolution\nexercise\n15 min\n\n\n—\nBreak\n—\n5 min\n\n\nIV\nBlock 6 — Tucker decomposition on real data\nexercise\n15 min\n\n\n🆕 —\nKahoot Quiz 3 — Convolution & Tensor Decompositions\nquiz\n5 min\n\n\n—\nWrap-up\n—\n5 min\n\n\n\nWhy these three spots. Each quiz sits right after the block(s) that supply its content, while the material is still fresh, and before the next context switch (a break or a new Part) — so it reinforces rather than interrupts. Quiz 1 closes out Part III’s shape/vocabulary work; Quiz 2 closes out the einsum/pseudoinverse stretch of Part IV; Quiz 3 closes out the decomposition stretch of Part IV, right before the Wrap-up recap."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#vocabulary",
+    "href": "tensors_workshop_plan_with_quizzes.html#vocabulary",
+    "title": "Tensors for Machine Learning",
+    "section": "1.1 Vocabulary",
+    "text": "1.1 Vocabulary\nKeep this table open for the whole workshop.\n\n\n\n\n\n\n\n\n\nTerm\nPlain meaning\nSpanish\nExample\n\n\n\n\nTensor\nAn array of numbers with any number of axes\ntensor\nA colour image\n\n\nAxis (pl. axes)\nOne direction along which data is arranged\neje\nHeight; width; colour\n\n\nMode\nAnother word for axis, used in tensor theory\nmodo\n“mode-0 unfolding”\n\n\nOrder\nHow many axes a tensor has\norden\nA matrix has order 2\n\n\nShape\nThe size along each axis, as a tuple\nforma\n(512, 512, 3)\n\n\nSlice\nFix one index, keep the rest\ncorte\nOne colour channel\n\n\nFiber\nFix every index except one\nfibra\nThe 3 colour values of one pixel\n\n\nUnfolding\nRearranging a tensor into a matrix\ndesplegado\nNeeded for decompositions\n\n\nContraction\nMultiply and sum over a shared axis\ncontracción\nThe dot product\n\n\nDecomposition\nWriting one tensor as a product of simpler ones\ndescomposición\nSVD, PCA, Tucker\n\n\n\n⚠️ Warning about the word “rank”. In Chapter 2, rank means the number of independent columns of a matrix. In tensor theory, rank often means the number of axes. To avoid confusion, this workshop says order for the number of axes, and rank only in Chapter 2’s sense."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#shape-in-numpy",
+    "href": "tensors_workshop_plan_with_quizzes.html#shape-in-numpy",
+    "title": "Tensors for Machine Learning",
+    "section": "1.2 Shape in NumPy",
+    "text": "1.2 Shape in NumPy\nEvery NumPy array has .shape, a tuple giving the size along each axis. The length of that tuple is .ndim, the number of axes.\nscalar = np.array(3.0)                     # book: a           — order 0\nvector = np.array([1., 2., 3.])            # book: x, x_i      — order 1\nmatrix = np.array([[1., 2.], [3., 4.]])    # book: A, A_{i,j}  — order 2\ntensor = np.random.randn(2, 3, 4)          # book: A_{i,j,k}   — order 3\n\nfor name, arr in [(\"scalar\", scalar), (\"vector\", vector),\n                  (\"matrix\", matrix), (\"tensor\", tensor)]:\n    print(f\"{name:8s} shape={str(arr.shape):12s} ndim={arr.ndim}  size={arr.size}\")\n\n# scalar   shape=()          ndim=0  size=1\n# vector   shape=(3,)        ndim=1  size=3\n# matrix   shape=(2, 2)      ndim=2  size=4\n# tensor   shape=(2, 3, 4)   ndim=3  size=24\nA scalar has shape=(), an empty tuple — there are no axes to measure. And size is always the product of the numbers in shape: 2 × 3 × 4 = 24.\nNow with real data:\ndigits = load_digits()\nprint(digits.images.shape)      # (1797, 8, 8)  — 1797 handwritten digits, 8x8 pixels\n\nphoto = data.immunohistochemistry()\nprint(photo.shape)               # (512, 512, 3) — height, width, colour\nBoth are order 3, but their axes mean completely different things. digits.images counts images along axis 0; photo counts colours along axis 2. The shape alone never tells you what the axes mean. You must know, and you must keep track."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#the-three-operations-that-matter",
+    "href": "tensors_workshop_plan_with_quizzes.html#the-three-operations-that-matter",
+    "title": "Tensors for Machine Learning",
+    "section": "1.3 The Three Operations That Matter",
+    "text": "1.3 The Three Operations That Matter\nSlices and fibers — fixing indices takes a tensor apart.\nphoto[:, :, 0].shape       # (512, 512) — a slice: one colour channel, still an image\nphoto[100, 200, :].shape   # (3,)       — a fiber: the 3 colour values of one pixel\nUnfolding — every tensor decomposition begins by turning the tensor into a matrix, one axis at a time. Move axis k to the front, then flatten everything else into one long axis.\ndef unfold(T, axis):\n    return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)\n\nprint(unfold(photo, 0).shape)   # (512, 1536) — rows are the height axis\nprint(unfold(photo, 2).shape)   # (3, 262144) — rows are the 3 colour channels\nUnfolding loses nothing. It only rearranges. The mode-2 unfolding says “each colour channel is one row of 262,144 numbers” — and now every matrix tool you know, including SVD, can be applied to it.\nContraction — multiply along a shared axis and sum over it. The dot product (eq. 2.8) and the matrix product (eq. 2.5) are both contractions. np.einsum writes them directly:\na = np.array([1., 2., 3.]); b = np.array([4., 5., 6.])\nnp.einsum('i,i-&gt;', a, b)          # dot product, sum over i          (eq 2.8)\n\nA = np.array([[1., 2.], [3., 4.]]); B = np.array([[5., 6.], [7., 8.]])\nnp.einsum('ik,kj-&gt;ij', A, B)      # matrix product, sum over k       (eq 2.5)\nThe rule, in one sentence: an index that appears in the inputs but not after the arrow is summed over; an index that appears after the arrow is kept."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#the-map-of-factorizations",
+    "href": "tensors_workshop_plan_with_quizzes.html#the-map-of-factorizations",
+    "title": "Tensors for Machine Learning",
+    "section": "1.4 The Map of Factorizations",
+    "text": "1.4 The Map of Factorizations\nA factorization writes one object as a product of simpler objects. You met two in Chapter 2. Here is the whole family we will use today:\n\n\n\n\n\n\n\n\n\nMethod\nWorks on\nWhat it gives you\nWhere today\n\n\n\n\nLU\nSquare matrix\nGaussian elimination, saved for reuse\nBelow\n\n\nQR / Gram-Schmidt\nAny matrix\nPerpendicular, unit-length directions\nBelow\n\n\nEigendecomposition\nSquare matrix\nDirections that only get scaled (§2.7)\nRecursion demo\n\n\nSVD\nAny matrix\nThe most general matrix factorization (§2.8)\nBlocks 4 and 6\n\n\nPCA\nData matrix\nCompression to fewer features (§2.12)\nTake-home A\n\n\nPseudoinverse\nAny matrix\n“Inverse” when no true inverse exists (§2.9)\nBlock 4\n\n\nTucker / CP\nTensor, any order\nPCA generalized to every axis\nBlock 6\n\n\n\nA = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])\n\nP, L, U = lu(A)                            # LU: A = P L U\nprint(np.allclose(P @ L @ U, A))            # True\n\nQ, R = np.linalg.qr(A)                      # QR: orthonormal directions\nprint(np.allclose(Q.T @ Q, np.eye(3)))      # True — book eq 2.37\nLU is Gaussian elimination stored as two triangular matrices, so Ax = b can be solved cheaply many times for different b. QR (computed by Gram-Schmidt, or more stably by other methods) produces orthonormal directions — mutually perpendicular, each of length 1. It is used for orthogonal weight initialization in neural networks and for stable least-squares.\nEverything in that table above the double line works on matrices — two axes. Real data often has more. That is what Block 6 addresses."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#block-1-indexing-and-broadcasting-real-data-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#block-1-indexing-and-broadcasting-real-data-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Block 1 — Indexing and Broadcasting Real Data (15 min)",
+    "text": "Block 1 — Indexing and Broadcasting Real Data (15 min)\nWhy this matters. The breast_cancer data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column does not produce an error — it returns a different real measurement, and your analysis continues and gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.\nIn tech, the identical operation runs on a (users, items) matrix to pull one user’s history before making a recommendation.\nExercise (10 min)\nbc = load_breast_cancer()\nX, y = bc.data, bc.target          # (569, 30); y: 0 = malignant, 1 = benign\nnames = list(bc.feature_names)\n\n# TODO 1: Print X.shape. Say out loud what each axis means.\n# TODO 2: Extract the column \"mean radius\" for all patients -&gt; shape (569,).\n#         Find its position with names.index(...). Do not hard-code a number.\n# TODO 3: Find the 5 patients with the LARGEST mean radius, then extract their\n#         full 30-measurement profiles as one (5, 30) array, in ONE operation.\n# TODO 4: Using boolean indexing, compare mean radius for malignant (y == 0)\n#         against benign (y == 1) patients. Is there a real difference?\n\n# --- broadcasting, on real images ---\nimages = load_digits().images          # (1797, 8, 8)\nD = images.reshape(len(images), -1)    # (1797, 64)\n\n# TODO 5: Compute the mean and std of each of the 64 pixels across all images.\n# TODO 6: Standardize with broadcasting: (D - mean) / std.\n#         RUN IT AND LOOK AT THE RESULT before continuing.\n# TODO 7: You will find NaN. How many pixels have std == 0, and why would a real\n#         handwritten digit image contain such pixels? Fix it, then verify no NaN.\nExplanation (5 min)\ni = names.index(\"mean radius\")\nradius = X[:, i]                                   # book notation A_{:,j}\ntop5 = np.argsort(radius)[-5:]\nprofiles = X[top5, :]                               # (5, 30)\nprint(radius[y == 0].mean(), radius[y == 1].mean()) # 17.5 vs 12.1\n\nmean, std = D.mean(axis=0), D.std(axis=0)\nprint((std == 0).sum())                             # 3\nZ = (D - mean) / np.where(std == 0, 1.0, std)\nTwo real results. Malignant tumours really do have a larger mean radius — 17.5 against 12.1. And three pixels are always dark in all 1797 digit images: they sit in corners where nobody writes. Their standard deviation is exactly zero, so dividing produces NaN. Random data would never have shown you this."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#block-2-reshape-and-transpose-real-images-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#block-2-reshape-and-transpose-real-images-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Block 2 — Reshape and Transpose Real Images (15 min)",
+    "text": "Block 2 — Reshape and Transpose Real Images (15 min)\nWhy this matters. Microscopes and cameras order their axes according to the hardware, not according to what a model expects. Getting this wrong does not crash — the model runs on scrambled data and returns confident, meaningless output. In a drug screen, that is a wrong decision about whether a compound works. The famous version in tech: a model trained in TensorFlow (NHWC) deployed into PyTorch (NCHW) with no transpose.\nExercise (10 min)\nphoto = data.immunohistochemistry()   # (512, 512, 3) real histology\ncells = data.cell()                    # (660, 550)    real microscopy, grayscale\n\n# TODO 1: Print both shapes. Which one has no colour axis?\n# TODO 2: Convert `photo` from (H, W, C) to (C, H, W) with np.transpose.\n# TODO 3: Stack `photo` three times into a batch of shape (3, 512, 512, 3).\n#         Which axis is the batch axis?\n# TODO 4: Convert that batch from NHWC to NCHW -&gt; (3, 3, 512, 512).\n#         Two axes now both have size 3. How do you know which is which?\n# TODO 5: photo.reshape(3, 512, 512) runs WITHOUT error but is wrong.\n#         Run it, compare against TODO 2, and explain the difference.\nExplanation (5 min)\nchw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct\nbatch = np.stack([photo, photo, photo])      # (3, 512, 512, 3)\nnchw  = np.transpose(batch, (0, 3, 1, 2))    # (3, 3, 512, 512)\nwrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image\nReshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning. Both give shape (3, 512, 512); only one is the image. And TODO 4 makes the deeper point: once two axes share a size, the shape cannot tell you which is which. Only your own tracking can."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#kahoot-quiz-1-tensor-vocabulary-shapes-5-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#kahoot-quiz-1-tensor-vocabulary-shapes-5-min",
+    "title": "Tensors for Machine Learning",
+    "section": "🆕 Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)",
+    "text": "🆕 Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)\nRun this before the break, right after Block 2. Everyone has just used order, axis, shape, slice, fiber, variance, reshape, and transpose — this is the moment those words are freshest. Launch kahoot_quiz_1_vocabulary_shapes.xlsx (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#break-5-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#break-5-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Break (5 min)",
+    "text": "Break (5 min)"
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#group-exercise-video-pipeline-design-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#group-exercise-video-pipeline-design-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Group Exercise — Video Pipeline Design (15 min)",
+    "text": "Group Exercise — Video Pipeline Design (15 min)\nBack to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.\n\nDesign the tensor shape at each stage — raw file → decoded frames → preprocessed batch → model input → model output — for both systems: - Tech: a short-video app computing one embedding per video from sampled frames, to choose what to play next. - Biotech: a surgical-video model that labels the current phase of an operation from an operating-room camera.\n\n\nSketch the shape at each of the five stages, for both. Where are they the same, and where must they differ?\nClips have different lengths — 30 seconds against 4 hours. Take one strategy your group proposed in Part II and give the exact shape of the preprocessed batch. What does an invented or wasted value in that tensor represent?\nThe surgical system adds three camera angles recording at once. Where does that axis go, and why does its position change how easy the rest of the pipeline is to write?\nThe recommender samples 8 frames out of 900. Which operation from Block 1 does that, and what is lost?\nBoth systems must decide which frames matter most. What kind of mechanism could learn that weighting?"
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#block-3-contraction-with-einsum-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#block-3-contraction-with-einsum-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Block 3 — Contraction With einsum (15 min)",
+    "text": "Block 3 — Contraction With einsum (15 min)\nWhy this matters. Recommendation and search systems rank items by the dot product between a user vector and every item vector — one user against millions of items, many times per second. That contraction is the ranking signal. Sum over the wrong axis and every user gets wrong results.\nExercise (10 min)\nphoto = data.immunohistochemistry().astype(float)        # (512, 512, 3)\nbatch = np.stack([photo, data.astronaut().astype(float)]) # (2, 512, 512, 3)\nw = np.array([0.2125, 0.7154, 0.0721])                    # RGB -&gt; grayscale weights\n\n# TODO 1: With einsum, convert `photo` to grayscale by contracting the colour\n#         axis against w. Result shape (512, 512).\n# TODO 2: Do the same for the whole batch in ONE einsum call -&gt; (2, 512, 512).\n# TODO 3: Write these Chapter 2 operations as einsum and check each against NumPy:\n#           (a) trace          (eq 2.48)\n#           (b) transpose      (eq 2.3)\n#           (c) matrix product (eq 2.5)\n# TODO 4: Flatten the digits to (1797, 64) and compute the (1797, 1797) similarity\n#         matrix between every pair of digit images with one einsum.\nExplanation (5 min)\ngray       = np.einsum('hwc,c-&gt;hw',   photo, w)     # (512, 512)\ngray_batch = np.einsum('nhwc,c-&gt;nhw', batch, w)      # (2, 512, 512)\n\nnp.einsum('ii-&gt;', A)           # trace          == np.trace(A)\nnp.einsum('ij-&gt;ji', A)         # transpose      == A.T\nnp.einsum('ik,kj-&gt;ij', A, B)   # matrix product == A @ B\nc appears in the inputs but not after the arrow, so it is summed over — that is the contraction. n, h, w appear after the arrow, so they are kept. Adding a batch axis costs exactly one letter. This is why einsum is worth learning: the same expression works for one image or for a million, and it reads like the mathematics in Chapter 2."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#block-4-inverses-and-the-pseudoinverse-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#block-4-inverses-and-the-pseudoinverse-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Block 4 — Inverses and the Pseudoinverse (15 min)",
+    "text": "Block 4 — Inverses and the Pseudoinverse (15 min)\n\nThe theory, in three steps\nStep 1 — square matrices. Chapter 2 §2.3 defines A⁻¹ for a square matrix, with A⁻¹A = I. But this only exists when the columns are linearly independent. A matrix with dependent columns is singular and has no inverse:\nS = np.array([[2., 1.], [1., 3.]])\nnp.linalg.inv(S) @ S                       # ≈ identity, fine\n\nSingular = np.array([[1., 2.], [2., 4.]])  # column 2 = 2 × column 1\nnp.linalg.inv(Singular)                     # raises LinAlgError\nStep 2 — non-square matrices. A⁻¹ is not even defined. But we still need to solve Ax = b, and in machine learning A is almost never square: it has one row per example and one column per feature, and there are always far more examples than features.\nThe Moore-Penrose pseudoinverse A⁺ (Chapter 2 §2.9) is the answer. It is defined for every matrix — square or not, singular or not — and it is computed from the SVD (eq. 2.47):\nA = np.random.randn(5, 3)\nA_plus = np.linalg.pinv(A)\nprint(A.shape, A_plus.shape)               # (5, 3) (3, 5) — note the shape flips\n\nU, S_, Vt = np.linalg.svd(A, full_matrices=False)\nprint(np.allclose(A_plus, Vt.T @ np.diag(1/S_) @ U.T))   # True — this is eq 2.47\nIt satisfies four conditions that define it uniquely — all verified to be True:\nnp.allclose(A @ A_plus @ A, A)            # 1\nnp.allclose(A_plus @ A @ A_plus, A_plus)  # 2\nnp.allclose((A @ A_plus).T, A @ A_plus)   # 3\nnp.allclose((A_plus @ A).T, A_plus @ A)   # 4\nWhat A⁺ gives you depends on the shape, exactly as Chapter 2 §2.9 says: - More rows than columns (too many equations, usually no exact solution) → x = A⁺b gives the x that makes Ax as close as possible to b. This is least squares. - More columns than rows (too few equations, infinitely many solutions) → x = A⁺b gives the valid solution with the smallest norm.\nStep 3 — what about tensors? This is a fair question with an honest answer. There is no single tensor inverse that everyone uses. Several definitions exist (based on the Einstein product, or the t-product for order-3 tensors), and they are active research. In practice, in machine learning, you unfold the tensor into a matrix, use the matrix pseudoinverse, and fold the result back. That works because unfolding loses nothing:\nT = np.random.randn(4, 3, 5)\nM = unfold(T, 0)                       # (4, 15)\nM_plus = np.linalg.pinv(M)             # (15, 4)\nnp.allclose(M @ M_plus @ M, M)          # True\nThis is a general lesson worth remembering: when a tensor problem is hard, unfold it to a matrix, solve it there, and fold back.\nExercise (10 min) — real California housing data.\n# Predict house value from district features. 20,640 real districts.\nprint(housing.shape)                                   # (20640, 10)\nprint(housing['total_bedrooms'].isnull().sum())         # 207 missing values!\n\n# TODO 1: Drop rows with missing values. How many rows remain?\n# TODO 2: Build X from these columns, and add a column of ones for the bias:\n#         ['housing_median_age','total_rooms','total_bedrooms',\n#          'population','households','median_income']\n#         Target y = 'median_house_value'. Print X.shape. Is X square?\n# TODO 3: Try np.linalg.inv(X). What happens, and why?\n# TODO 4: Solve for the weights with the pseudoinverse: w = pinv(X) @ y.\n# TODO 5: Check your answer against np.linalg.lstsq. Do they agree?\n# TODO 6: Compute the RMSE of the predictions. Which feature has the largest\n#         coefficient, and does that make sense for house prices?\nExplanation (5 min)\nd = housing.dropna()                                     # 20433 rows remain\nfeats = ['housing_median_age','total_rooms','total_bedrooms',\n         'population','households','median_income']\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\ny = d['median_house_value'].to_numpy(float)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                                   # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980\nX is 20433 × 7 — very tall, so np.linalg.inv cannot even be called. There is no exact solution: no straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead, and lstsq agrees exactly because it solves the same problem. The largest coefficient belongs to median_income (about 47,700 per unit), which is the sensible result — income predicts house prices."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min",
+    "title": "Tensors for Machine Learning",
+    "section": "🆕 Kahoot Quiz 2 — Einsum, Distance & the Pseudoinverse (5 min)",
+    "text": "🆕 Kahoot Quiz 2 — Einsum, Distance & the Pseudoinverse (5 min)\nRun this right after Block 4, before the recursion demo. It covers contraction (Block 3’s einsum), the pseudoinverse and singular matrices (Block 4), and distance/similarity — the digit-similarity matrix from Block 3 TODO 4 is the natural bridge between the two. Launch kahoot_quiz_2_distance_pseudoinverse.xlsx (6 questions, ~5 min)."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#recursion-with-matrices-and-vectors-10-min-demo",
+    "href": "tensors_workshop_plan_with_quizzes.html#recursion-with-matrices-and-vectors-10-min-demo",
+    "title": "Tensors for Machine Learning",
+    "section": "Recursion With Matrices and Vectors (10 min — demo)",
+    "text": "Recursion With Matrices and Vectors (10 min — demo)\nRecursion means defining something in terms of itself. With matrices this becomes: apply the same matrix again and again. Three examples, increasing in usefulness.\n1. Fibonacci as repeated matrix multiplication. The rule f(n) = f(n-1) + f(n-2) is one matrix applied repeatedly:\nF = np.array([[1, 1], [1, 0]])\nv = np.array([1, 0])\nfor _ in range(10):\n    v = F @ v\nprint(v[1])                                  # 55\nprint(np.linalg.matrix_power(F, 10)[0, 1])   # 55 — same answer, one step\n2. Power iteration — recursion that finds an eigenvector. Multiply any starting vector by A repeatedly, rescaling each time. It converges to the eigenvector with the largest eigenvalue (Chapter 2 §2.7):\nA = np.array([[4., 1.], [2., 3.]])\nx = np.random.randn(2); x /= np.linalg.norm(x)\nfor _ in range(50):\n    x = A @ x\n    x /= np.linalg.norm(x)\n\nprint(x @ A @ x)                    # 5.000000\nprint(np.linalg.eig(A)[0].max())    # 5.000000 — identical\nThis is how PageRank ranks web pages, and it is why eigenvectors matter far beyond Chapter 2: repeated application of a matrix converges to its dominant eigenvector.\n3. Recursion on real data — forecasting airline traffic. This combines recursion with the pseudoinverse from Block 4. We fit a model that predicts each month from the previous 12, then apply it to its own output to forecast forward:\ny = flights['passengers'].to_numpy(float)     # 144 real months, 1949–1960\np = 12\nrows = np.array([y[i:i+p] for i in range(len(y) - p)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[p:]                  # least squares, exactly as in Block 4\n\nhistory = list(y[-p:])\nfor _ in range(12):                             # recursion: feed predictions back in\n    nxt = w[0] + np.dot(w[1:], history[-p:])\n    history.append(nxt)\n\nprint(np.round(history[-12:], 1))\n# [465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nThe forecast reproduces the seasonal shape of real air travel — low in winter, peaking in summer — because the model learned it from 132 real training windows. This is exactly the structure of a recurrent neural network: a hidden state, updated by the same weights at every step.\nW, U = np.random.randn(4, 4) * 0.5, np.random.randn(4, 3) * 0.5\nh = np.zeros(4)\nfor t in range(6):\n    h = np.tanh(W @ h + U @ xs[t])    # same W and U every step — that is the recursion"
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#block-5-convolution-and-deconvolution-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#block-5-convolution-and-deconvolution-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Block 5 — Convolution and Deconvolution (15 min)",
+    "text": "Block 5 — Convolution and Deconvolution (15 min)\n\nThe theory\nConvolution slides a small array (the kernel, or filter) across a larger one, multiplying and summing at each position. It is the operation at the heart of every convolutional neural network, and it is also how every blur, sharpen, and edge-detection filter works.\nx = np.array([1., 2., 3., 4., 5.])\nk = np.array([1., 0., -1.])\n\nnp.convolve(x, k, 'full')    # [ 1.  2.  2.  2.  2. -4. -5.]  length 5+3-1 = 7\nnp.convolve(x, k, 'valid')   # [ 2.  2.  2.]                  length 5-3+1 = 3\nnp.convolve(x, k, 'same')    # [ 2.  2.  2.  2. -4.]          length 5\nThree modes, three output sizes. valid uses only positions where the kernel fits completely — this is why convolution shrinks an image by kernel_size - 1.\n⚠️ A detail that confuses everyone. True convolution flips the kernel; correlation does not. What deep learning libraries call “convolution” is actually correlation. It makes no practical difference, because the network learns the kernel — but you should know the names are inconsistent.\nnp.correlate(x, k, 'valid')          # [-2. -2. -2.]\nnp.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — the same, with k flipped\nConvolution is a matrix multiplication. This is the connection back to Chapter 2. Any convolution can be written as multiplication by a Toeplitz matrix — a matrix where the kernel is shifted along each row:\ncol = np.zeros(7); col[:3] = k\nrow = np.zeros(5); row[0] = k[0]\nC = toeplitz(col, row)                       # (7, 5)\nnp.allclose(C @ x, np.convolve(x, k, 'full'))   # True\nSo convolution is not a new kind of operation. It is a structured matrix multiplication — one where the same few numbers are reused across the whole matrix. That reuse is exactly why CNNs need so many fewer parameters than fully connected networks.\nDeconvolution means two different things, and you must keep them separate:\n\nTransposed convolution — the upsampling layer in a decoder or GAN. It makes things bigger. It is not a true inverse; the name is historical and misleading.\nTrue deconvolution — recovering the original signal from a blurred one. This is a genuine inverse problem, and it is where Block 4 comes back.\n\nExercise (10 min)\nimg = data.camera().astype(float) / 255.      # real photograph, 512x512\nsobel = np.array([[-1,0,1],[-2,0,2],[-1,0,1]], float)\n\n# TODO 1: Convolve `img` with `sobel` in 'valid' mode. What shape comes out,\n#         and by how much did it shrink?\n# TODO 2: Blur the image with a 9x9 averaging kernel (all entries equal,\n#         summing to 1), mode='same'. Display it next to the original.\n# TODO 3 (transposed convolution): upsample this 2x2 array to 3x3 by adding\n#         small * kernel into an output array at each position:\n#             small = np.array([[1., 2.], [3., 4.]]); ker = np.ones((2, 2))\n#         What shape do you get? Why is this called \"deconvolution\" in CNNs\n#         even though it does not undo anything?\n# TODO 4 (true deconvolution): add small noise to the blurred image, then try to\n#         recover the original with skimage.restoration.richardson_lucy(...,\n#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 25-pixel\n#         border. Did it improve?\nExplanation (5 min)\nedges = signal.convolve2d(img, sobel, mode='valid')     # (510, 510) — shrank by 2\n\npsf = np.ones((9, 9)); psf /= psf.sum()\nblurred = signal.convolve2d(img, psf, mode='same', boundary='symm')\nnoisy = blurred + 0.002 * np.random.default_rng(0).standard_normal(blurred.shape)\n\nfrom skimage.restoration import richardson_lucy\nrecovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)\n\nc = 25   # ignore the border: deconvolution always creates edge artifacts\nerr = lambda a: np.linalg.norm((a-img)[c:-c,c:-c]) / np.linalg.norm(img[c:-c,c:-c])\nprint(err(noisy), err(recovered))     # 0.1157 -&gt; 0.0815\nDeconvolution reduced the error by about 30%. Two lessons worth keeping:\nFirst, you must ignore the border. Deconvolution creates strong artifacts at the edges, where the algorithm has no information about what lies outside the image. If you measure error over the whole image, the artifacts dominate and it looks like the method failed. It did not.\nSecond, why not just invert the blur directly? Because it fails badly. Blurring destroys high-frequency detail, so inverting it divides by numbers very close to zero and amplifies noise enormously:\nK = np.fft.fft2(psf, s=img.shape)\nnaive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) &lt; 1e-3, 1e-3, K)))\n# relative error ≈ 1.4 — far WORSE than the blurred image we started from\nThis is the same lesson as Block 4. A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine: every fluorescence microscope blurs its images by a known amount (the point spread function), and deconvolution is standard practice before cells are counted or measured."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#break-5-min-1",
+    "href": "tensors_workshop_plan_with_quizzes.html#break-5-min-1",
+    "title": "Tensors for Machine Learning",
+    "section": "Break (5 min)",
+    "text": "Break (5 min)"
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#block-6-tucker-decomposition-on-real-data-15-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#block-6-tucker-decomposition-on-real-data-15-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Block 6 — Tucker Decomposition on Real Data (15 min)",
+    "text": "Block 6 — Tucker Decomposition on Real Data (15 min)\n\nThe theory\nPCA compresses a matrix — two axes. Real data often has more. Tucker decomposition generalizes PCA to a tensor of any order: one factor matrix per axis, plus a small core tensor describing how the factors combine.\nThe way to compute it, called HOSVD, uses only tools you already have: 1. Unfold the tensor along each axis (Part I). 2. Run SVD on each unfolding; keep the top components. These are the factor matrices. 3. Contract the original tensor against all factor matrices to get the core (Block 3).\nThe related CP decomposition instead writes the tensor as a sum of simple rank-1 pieces. Tucker is usually more accurate at the same size; CP is often easier to interpret.\nOur real tensor. From 6,433 real New York taxi trips we build a genuine order-3 tensor: pickup borough × dropoff borough × hour of day.\nExercise (10 min)\ntaxis['hour'] = pd.to_datetime(taxis['pickup']).dt.hour\nsub = taxis.dropna(subset=['pickup_borough', 'dropoff_borough'])\npb = sorted(sub['pickup_borough'].unique())\ndb = sorted(sub['dropoff_borough'].unique())\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n# TODO 1: Print T.shape and T.sum(). What does the entry T[i, j, k] mean?\n# TODO 2: Which hour has the most trips overall? (Sum over the first two axes.)\n# TODO 3: Unfold T along each axis and print the three shapes. Confirm the total\n#         number of entries is the same each time — unfolding loses nothing.\n# TODO 4: Run SVD on each unfolding, keep the top (2, 2, 3) components, and build\n#         the core tensor with ONE einsum call.\n# TODO 5: Reconstruct T from the core and factors, again with one einsum.\n#         Compute the relative error and the compression ratio.\n# TODO 6: Look at the first column of the hour factor matrix. At which hour is it\n#         largest? Does that match what you found in TODO 2?\nExplanation (5 min)\nUs = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]\nr = (2, 2, 3)\nUs = [Us[i][:, :r[i]] for i in range(3)]\n\ncore  = np.einsum('ijk,ia,jb,kc-&gt;abc', T, Us[0], Us[1], Us[2])   # (2, 2, 3)\nrecon = np.einsum('abc,ia,jb,kc-&gt;ijk', core, Us[0], Us[1], Us[2])\n\nerror = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067\nratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71\nThe result: 4.7× fewer numbers, 6.7% error. But the important part is TODO 6. The strongest pattern in the hour factor peaks at hour 18 — and that is also the busiest hour in the raw data. The decomposition discovered evening rush hour by itself. Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.\nLook at the einsum strings: 'ijk,ia,jb,kc-&gt;abc' contracts three axes in one expression. That is why einsum came first.\nWhere this is used. In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use tensorly, which implements both properly."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#kahoot-quiz-3-convolution-tensor-decompositions-5-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#kahoot-quiz-3-convolution-tensor-decompositions-5-min",
+    "title": "Tensors for Machine Learning",
+    "section": "🆕 Kahoot Quiz 3 — Convolution & Tensor Decompositions (5 min)",
+    "text": "🆕 Kahoot Quiz 3 — Convolution & Tensor Decompositions (5 min)\nRun this right after Block 6, before the Wrap-up. It covers convolution/correlation (Block 5) and Tucker/CP decomposition (Block 6) while the taxi-tensor rush-hour result is still on screen. Launch kahoot_quiz_3_convolution_decompositions.xlsx (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up’s own recap, so segue straight from the quiz into it."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#wrap-up-5-min",
+    "href": "tensors_workshop_plan_with_quizzes.html#wrap-up-5-min",
+    "title": "Tensors for Machine Learning",
+    "section": "Wrap-Up (5 min)",
+    "text": "Wrap-Up (5 min)\nWhat you did today:\n\nPart I — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing anything.\nPart II — argued about what axes mean, and found that a batch axis and a time axis behave differently even when the shapes look identical.\nPart III — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.\nPart IV — wrote contractions with einsum; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.\n\nOne idea connects Blocks 4, 5 and 6: when a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.\nWhere to go next - torch.einsum / tf.einsum / jnp.einsum — identical syntax to what you used today. - tensorly — proper Tucker and CP decompositions. - np.linalg — the rest of Chapter 2: eigendecomposition, lstsq, pinv, qr. - scipy.signal and skimage.restoration — convolution and deconvolution beyond today. - The take-home notebooks below."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#appendix-a-take-home-how-many-principal-components-are-enough",
+    "href": "tensors_workshop_plan_with_quizzes.html#appendix-a-take-home-how-many-principal-components-are-enough",
+    "title": "Tensors for Machine Learning",
+    "section": "Appendix A — Take-Home: How Many Principal Components Are Enough?",
+    "text": "Appendix A — Take-Home: How Many Principal Components Are Enough?\nReal data contains a trap here. Find it.\nbc = load_breast_cancer(); X, y = bc.data, bc.target\n\n# TODO 1: Center X, run np.linalg.svd, and compute the fraction of variance each\n#         component explains (variance is proportional to S**2).\n# TODO 2: How many components explain 95% of the variance? The answer will look\n#         TOO GOOD. Do not trust it yet.\n# TODO 3: Print X.var(axis=0). The 30 measurements use different units — some are\n#         areas in the thousands, some are ratios below 1. What is that doing?\n# TODO 4: Redo everything on standardized data: (X - mean) / std. How many now?\n# TODO 5: Scatter-plot the first 2 components, coloured by y. Do the two groups separate?\n\n\nSolution\n\nXc = X - X.mean(axis=0)\nS = np.linalg.svd(Xc, full_matrices=False)[1]\nn95 = np.argmax(np.cumsum(S**2/(S**2).sum()) &gt;= 0.95) + 1      # 1  (!)\n\nXs = (X - X.mean(axis=0)) / X.std(axis=0)\nS2 = np.linalg.svd(Xs, full_matrices=False)[1]\nn95_scaled = np.argmax(np.cumsum(S2**2/(S2**2).sum()) &gt;= 0.95) + 1   # 10\nWithout standardizing, the first component appears to explain 98.2% of the variance. It is an illusion: worst area has a variance around 323,000 while smoothness values sit below 1, so PCA reports the largest unit, not the largest pattern. After standardizing, the first component explains 44% and 10 components are needed. PCA knows nothing about units. Features on different scales must be standardized first."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#appendix-b-take-home-attention-is-two-contractions",
+    "href": "tensors_workshop_plan_with_quizzes.html#appendix-b-take-home-attention-is-two-contractions",
+    "title": "Tensors for Machine Learning",
+    "section": "Appendix B — Take-Home: Attention Is Two Contractions",
+    "text": "Appendix B — Take-Home: Attention Is Two Contractions\nAttention is the mechanism that answers question 5 from the video-pipeline discussion: which parts of a sequence matter most? Protein language models use it so every amino acid can look at every other one; recommenders use it to weight a user’s past interactions.\nnp.random.seed(6)\nbatch, seq_len, dim = 4, 12, 16\nQ, K, V = (np.random.randn(batch, seq_len, dim) for _ in range(3))\n\ndef softmax(x, axis=-1):\n    x = x - x.max(axis=axis, keepdims=True)\n    e = np.exp(x); return e / e.sum(axis=axis, keepdims=True)\n\n# TODO 1: With einsum, compute scores[b,i,j] = how much position i attends to\n#         position j. Shape (4, 12, 12). Scale by 1/sqrt(dim).\n# TODO 2: Apply softmax on the correct axis so each row of weights sums to 1.\n# TODO 3: With einsum, combine V using those weights -&gt; (4, 12, 16).\n# TODO 4: Suppose the last 3 positions are padding, not real data. Build a mask,\n#         set those scores to -np.inf BEFORE the softmax, and verify the padded\n#         positions receive exactly zero weight.\n\n\nSolution\n\nscores  = np.einsum('bid,bjd-&gt;bij', Q, K) / np.sqrt(dim)\nweights = softmax(scores, axis=-1)\noutput  = np.einsum('bij,bjd-&gt;bid', weights, V)\n\nmask = np.zeros((seq_len, seq_len)); mask[:, -3:] = -np.inf\nweights_masked = softmax(scores + mask, axis=-1)     # padded positions get weight 0\nscores is Chapter 2’s dot product (eq. 2.8); output is Chapter 2’s linear combination (eq. 2.28). Attention is two contractions built from ideas you have already read. TODO 4 solves the variable-length problem from Part II: the mask is how real models handle sequences and videos of different lengths."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#appendix-c-take-home-cp-decomposition-compared-to-tucker",
+    "href": "tensors_workshop_plan_with_quizzes.html#appendix-c-take-home-cp-decomposition-compared-to-tucker",
+    "title": "Tensors for Machine Learning",
+    "section": "Appendix C — Take-Home: CP Decomposition, Compared to Tucker",
+    "text": "Appendix C — Take-Home: CP Decomposition, Compared to Tucker\n# TODO 1: Build one rank-1 tensor with einsum from three random vectors of\n#         length 4, 5 and 24. What shape is it? How many numbers define it?\n# TODO 2: Compare that against 4*5*24. What is the compression of ONE rank-1 piece?\n# TODO 3: pip install tensorly, run tensorly.decomposition.parafac on the taxi\n#         tensor T with rank=3, and compare its error against your Tucker result.\n# TODO 4: Which was more accurate at similar size? Why might that be?\n\n\nSolution sketch\n\na, b, c = np.random.randn(4), np.random.randn(5), np.random.randn(24)\nrank1 = np.einsum('i,j,k-&gt;ijk', a, b, c)     # (4, 5, 24) from only 33 numbers\nTucker is usually more accurate at equal size, because its dense core can represent interactions between components on different axes — something CP’s strict sum of rank-1 pieces cannot do. CP is often preferred when interpretability matters, because each component is one simple pattern per axis."
+  },
+  {
+    "objectID": "tensors_workshop_plan_with_quizzes.html#appendix-d-facilitator-notes",
+    "href": "tensors_workshop_plan_with_quizzes.html#appendix-d-facilitator-notes",
+    "title": "Tensors for Machine Learning",
+    "section": "Appendix D — Facilitator Notes",
+    "text": "Appendix D — Facilitator Notes\n(Students may ignore this section.)\nStructure. Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Blocks 4, 5 and 6 share one theme — no exact inverse exists, so find the best stable approximation — and stating that connection explicitly at the wrap-up is what makes the second half feel like one lesson rather than four.\nDo not rush Part I. It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.\nLanguage. Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — eje, descomposición, contracción, convolución — it removes friction immediately. Invite questions in either language. Warn about the two meanings of “rank” at the start of Part I.\nVerified numbers. Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18. If a student gets something different, it is worth investigating rather than dismissing.\nThe downloads. Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone’s download succeeded — a student who silently fails will be stuck at Blocks 4 and 6. Have the three CSVs mirrored in the workshop repo as a fallback.\nPre-assign breakout groups before the session; assigning them live costs 3–5 minutes, twice.\nGroup blocks need firmer facilitation than exercise blocks. If a group is still on question 1 with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.\n🆕 The three Kahoot quizzes. Each is 6 questions in kahoot_quiz_1_vocabulary_shapes.xlsx, kahoot_quiz_2_distance_pseudoinverse.xlsx, and kahoot_quiz_3_convolution_decompositions.xlsx, sitting after Blocks 2, 4, and 6 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don’t do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that’s fine, it’s the payoff. These add 15 minutes total, taking the workshop from 180 to 195 minutes.\nCutting for time. In order: drop Kahoot Quiz 2 (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Block 5 (true deconvolution — the most technically demanding), then the RNN snippet in the recursion demo, then question 5 of either group block, then Kahoot Quiz 1. Never cut Part I §1.3, Block 6, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.\nKnown rough edges. Block 5 TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 25-pixel crop clearly before the exercise starts, not after. Block 4 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result."
+  },
+  {
+    "objectID": "slides/en/index.html#all-the-data-here-is-real",
+    "href": "slides/en/index.html#all-the-data-here-is-real",
+    "title": "Tensors for Machine Learning",
+    "section": "All the data here is real",
+    "text": "All the data here is real\n\n\nReal tumour measurements, real handwritten digits, real histology\nReal taxi trips, real airline traffic\nNothing is invented with random numbers\n\n\n\nReal data contains problems random data never shows — missing values, features on incompatible scales, pixels that never change.\nFinding those problems is part of the work."
+  },
+  {
+    "objectID": "slides/en/index.html#agenda-minutes",
+    "href": "slides/en/index.html#agenda-minutes",
+    "title": "Tensors for Machine Learning",
+    "section": "Agenda — 195 minutes",
+    "text": "Agenda — 195 minutes\n\n\n\nPart\nSegment\nTime\n\n\n\n\n—\nSetup and welcome\n5\n\n\nI\nWhat a tensor is\n20\n\n\nII\nThinking in N dimensions (group)\n20\n\n\nIII\nIndexing & broadcasting · Reshape & transpose\n30\n\n\n🎯\nKahoot 1 + break\n10\n\n\nIII\nVideo pipeline design (group)\n15\n\n\nIV\nContraction with einsum\n15\n\n\n—\nBreak\n5\n\n\nIV\nInverses and the pseudoinverse\n15\n\n\n🎯\nKahoot 2\n5\n\n\nIV\nRecursion · Convolution\n25\n\n\n—\nBreak\n5\n\n\nIV\nTucker decomposition\n15\n\n\n🎯\nKahoot 3 + wrap-up\n10"
+  },
+  {
+    "objectID": "slides/en/index.html#two-rhythms-and-one-warning",
+    "href": "slides/en/index.html#two-rhythms-and-one-warning",
+    "title": "Tensors for Machine Learning",
+    "section": "Two rhythms, and one warning",
+    "text": "Two rhythms, and one warning\nExercise blocks — 10 min coding, 5 min explanation.\nGroup blocks — 10 min discussion, then share-back.\n\n\n\n\n\n\n\nThe word “rank”\n\n\nChapter 2: rank = number of independent columns. Tensor theory: rank often = number of axes.\nToday: “order” for the number of axes. “Rank” only in Chapter 2’s sense.\n\n\n\n\nGive this warning at the start of Part I, not later. It is the single most reliable source of confusion in the whole workshop."
+  },
+  {
+    "objectID": "slides/en/index.html#three-downloads-one-first-cell",
+    "href": "slides/en/index.html#three-downloads-one-first-cell",
+    "title": "Tensors for Machine Learning",
+    "section": "Three downloads, one first cell",
+    "text": "Three downloads, one first cell\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\nIf this fails, say so in Discord now — not in two hours.\n\nConfirm in the first 5 minutes that everyone’s download succeeded. A student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the repo as a fallback."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook",
+    "href": "slides/en/index.html#to-the-notebook",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n00 · Setup and welcome\nOpen in Colab\nEverything else in the library ships offline: load_breast_cancer, load_digits, data.camera(), data.astronaut()."
+  },
+  {
+    "objectID": "slides/en/index.html#the-vocabulary",
+    "href": "slides/en/index.html#the-vocabulary",
+    "title": "Tensors for Machine Learning",
+    "section": "The vocabulary",
+    "text": "The vocabulary\n\n\n\n\n\n\n\n\nTerm\nPlain meaning\nSpanish\n\n\n\n\nTensor\nArray of numbers with any number of axes\ntensor\n\n\nAxis\nOne direction along which data is arranged\neje\n\n\nOrder\nHow many axes a tensor has\norden\n\n\nShape\nThe size along each axis\nforma\n\n\nSlice\nFix one index, keep the rest\ncorte\n\n\nFiber\nFix every index except one\nfibra\n\n\nUnfolding\nRearranging a tensor into a matrix\ndesplegado\n\n\nContraction\nMultiply and sum over a shared axis\ncontracción"
+  },
+  {
+    "objectID": "slides/en/index.html#shape-is-a-tuple-order-is-its-length",
+    "href": "slides/en/index.html#shape-is-a-tuple-order-is-its-length",
+    "title": "Tensors for Machine Learning",
+    "section": "Shape is a tuple; order is its length",
+    "text": "Shape is a tuple; order is its length\n\nscalar = np.array(3.0)                     # order 0   shape ()\nvector = np.array([1., 2., 3.])            # order 1   shape (3,)\nmatrix = np.array([[1., 2.], [3., 4.]])    # order 2   shape (2, 2)\ntensor = rng.standard_normal((2, 3, 4))    # order 3   shape (2, 3, 4)\n\n\n\ndigits.images.shape              # (1797, 8, 8)  — images, height, width\nphoto.shape                      # (512, 512, 3) — height, width, colour\n\n\n\nBoth are order 3. Their axes mean completely different things.\nThe shape alone never tells you what the axes mean."
+  },
+  {
+    "objectID": "slides/en/index.html#three-operations",
+    "href": "slides/en/index.html#three-operations",
+    "title": "Tensors for Machine Learning",
+    "section": "Three operations",
+    "text": "Three operations\nSlice — fix one index. Fiber — fix all but one.\n\nphoto[:, :, 0].shape       # (512, 512) — a slice: one colour channel\nphoto[100, 200, :].shape   # (3,)       — a fiber: one pixel's colours"
+  },
+  {
+    "objectID": "slides/en/index.html#three-operations-1",
+    "href": "slides/en/index.html#three-operations-1",
+    "title": "Tensors for Machine Learning",
+    "section": "Three operations",
+    "text": "Three operations\nUnfolding — turn any tensor into a matrix.\n\ndef unfold(T, axis):\n    return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)\n\nunfold(photo, 0).shape   # (512, 1536)\nunfold(photo, 2).shape   # (3, 262144) — each colour channel is one row\n\n\nUnfolding loses nothing. Every matrix tool you know now applies."
+  },
+  {
+    "objectID": "slides/en/index.html#three-operations-2",
+    "href": "slides/en/index.html#three-operations-2",
+    "title": "Tensors for Machine Learning",
+    "section": "Three operations",
+    "text": "Three operations\nContraction — multiply along a shared axis and sum over it.\n\nnp.einsum('i,i-&gt;', a, b)          # dot product      (eq 2.8)\nnp.einsum('ik,kj-&gt;ij', A, B)      # matrix product   (eq 2.5)\n\n\n\n\n\n\n\n\nThe rule, in one sentence\n\n\nAn index in the inputs but not after the arrow is summed over. An index after the arrow is kept."
+  },
+  {
+    "objectID": "slides/en/index.html#the-map-of-factorizations",
+    "href": "slides/en/index.html#the-map-of-factorizations",
+    "title": "Tensors for Machine Learning",
+    "section": "The map of factorizations",
+    "text": "The map of factorizations\n\n\n\nMethod\nWorks on\nWhere today\n\n\n\n\nLU\nSquare matrix\nnow\n\n\nQR\nAny matrix\nnow\n\n\nEigendecomposition\nSquare matrix\n§08\n\n\nSVD\nAny matrix\n§07, §10\n\n\nPCA\nData matrix\n§11\n\n\nPseudoinverse\nAny matrix\n§07\n\n\nTucker / CP\nTensor, any order\n§10\n\n\n\n\nEverything but the last row works on two axes. Real data has more."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-1",
+    "href": "slides/en/index.html#to-the-notebook-1",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n01 · What a tensor is\nOpen in Colab\n\nDo not rush Part I. It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, never Part I."
+  },
+  {
+    "objectID": "slides/en/index.html#your-task",
+    "href": "slides/en/index.html#your-task",
+    "title": "Tensors for Machine Learning",
+    "section": "Your task",
+    "text": "Your task\n\nA grayscale image is a matrix. Almost nothing in ML is a single grayscale image. Each thing you add — colour, many examples, time — adds an axis, and each axis means something different.\n\nArgue about which axis goes where, and why.\n10 minutes in your breakout channel, then share-back."
+  },
+  {
+    "objectID": "slides/en/index.html#the-five-questions",
+    "href": "slides/en/index.html#the-five-questions",
+    "title": "Tensors for Machine Learning",
+    "section": "The five questions",
+    "text": "The five questions\n\n\n(H, W) → colour image → batch → video → batch of videos. What does each new axis count? Do not say “we add a dimension.”\nA batch axis and a time axis look identical in code. What differs in meaning? What happens if you shuffle each?\nReal videos have different lengths. Two ways to batch them — what does each lose or invent?\nCells photographed every 10 min for 48 h: frame interval → ? field of view → ? number of dishes → ?\nIs there a limit on how many axes a tensor can have?"
+  },
+  {
+    "objectID": "slides/en/index.html#share-back",
+    "href": "slides/en/index.html#share-back",
+    "title": "Tensors for Machine Learning",
+    "section": "Share-back",
+    "text": "Share-back\n\ngray_image      = np.zeros((28, 28))            # (H, W)\ncolor_image     = np.zeros((28, 28, 3))         # (H, W, C)      + colour\nbatch_of_images = np.zeros((32, 28, 28, 3))     # (N, H, W, C)   + many examples\nvideo           = np.zeros((16, 28, 28, 3))     # (T, H, W, C)   + ordered time\nbatch_of_videos = np.zeros((8, 16, 28, 28, 3))  # (N, T, H, W, C)\n\n\nQuestion 2 is the point. Shuffling axis 0 is harmless for a batch and destroys a video.\nChapter 2’s notation has no concept of “order matters between elements.” That is genuinely new today."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-2",
+    "href": "slides/en/index.html#to-the-notebook-2",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n02 · Thinking in N dimensions\nOpen in Colab\n\nGroup blocks need firmer facilitation than exercise blocks. If a group is still on question 1 with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch. Pre-assign breakout groups before the session."
+  },
+  {
+    "objectID": "slides/en/index.html#why-this-matters",
+    "href": "slides/en/index.html#why-this-matters",
+    "title": "Tensors for Machine Learning",
+    "section": "Why this matters",
+    "text": "Why this matters\n569 real patients, 30 real measurements of tumour cell nuclei.\n\n\nSelecting the wrong column does not produce an error\nIt returns a different real measurement\nYour analysis continues and gives a confident, wrong answer\n\n\n\nIn research: results nobody can reproduce. In a clinical tool: a wrong recommendation about a real person."
+  },
+  {
+    "objectID": "slides/en/index.html#the-exercise",
+    "href": "slides/en/index.html#the-exercise",
+    "title": "Tensors for Machine Learning",
+    "section": "The exercise",
+    "text": "The exercise\n\n# TODO 2: Extract \"mean radius\" using names.index(...). Do not hard-code a number.\n# TODO 3: The 5 patients with the LARGEST mean radius, full profiles, ONE operation.\n# TODO 4: Boolean indexing — malignant (y == 0) vs benign (y == 1). Real difference?\n# TODO 6: Standardize with broadcasting: (D - mean) / std. LOOK AT THE RESULT.\n# TODO 7: You will find NaN. How many pixels have std == 0, and why?"
+  },
+  {
+    "objectID": "slides/en/index.html#two-real-results",
+    "href": "slides/en/index.html#two-real-results",
+    "title": "Tensors for Machine Learning",
+    "section": "Two real results",
+    "text": "Two real results\n\nprint(radius[y == 0].mean(), radius[y == 1].mean())   # 17.5 vs 12.1\nprint((std == 0).sum())                               # 3\nZ = (D - mean) / np.where(std == 0, 1.0, std)\n\n\nMalignant tumours really do have a larger mean radius — 17.5 against 12.1.\n\n\nThree pixels are always dark in all 1797 digit images — corners where nobody writes. Standard deviation exactly zero → NaN.\nRandom data would never have shown you this."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-3",
+    "href": "slides/en/index.html#to-the-notebook-3",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n03 · Indexing and broadcasting real data\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#why-this-matters-1",
+    "href": "slides/en/index.html#why-this-matters-1",
+    "title": "Tensors for Machine Learning",
+    "section": "Why this matters",
+    "text": "Why this matters\nMicroscopes and cameras order their axes according to the hardware, not according to what a model expects.\n\nGetting this wrong does not crash. The model runs on scrambled data and returns confident, meaningless output.\n\n\nThe famous version: a model trained in TensorFlow (NHWC) deployed into PyTorch (NCHW) with no transpose."
+  },
+  {
+    "objectID": "slides/en/index.html#same-shape-different-data",
+    "href": "slides/en/index.html#same-shape-different-data",
+    "title": "Tensors for Machine Learning",
+    "section": "Same shape, different data",
+    "text": "Same shape, different data\n\nchw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct\nwrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — runs, but scrambles\n\nnp.array_equal(chw, wrong)                  # False\n\n\nReshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning."
+  },
+  {
+    "objectID": "slides/en/index.html#when-two-axes-share-a-size",
+    "href": "slides/en/index.html#when-two-axes-share-a-size",
+    "title": "Tensors for Machine Learning",
+    "section": "When two axes share a size",
+    "text": "When two axes share a size\n\nbatch = np.stack([photo, photo, photo])      # (3, 512, 512, 3)\nnchw  = np.transpose(batch, (0, 3, 1, 2))    # (3, 3, 512, 512)\n\n\nTwo axes now both have size 3. How do you know which is which?\n\n\nYou do not. Only your own tracking can tell you. Nothing in the array records it."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-4",
+    "href": "slides/en/index.html#to-the-notebook-4",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n04 · Reshape and transpose real images\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#kahoot-1",
+    "href": "slides/en/index.html#kahoot-1",
+    "title": "Tensors for Machine Learning",
+    "section": "Kahoot 1 — Tensor Vocabulary & Shapes",
+    "text": "Kahoot 1 — Tensor Vocabulary & Shapes\n6 questions · about 5 minutes\nJoin at kahoot.it\nPIN on screen\nCovers: order, axis, shape, slice, fiber, variance, reshape, transpose\nQuiz details\n\nRun this before the break, right after section 04. Everyone has just used order, axis, shape, slice, fiber, variance, reshape and transpose — this is the moment those words are freshest.\nIMPORT THE .xlsx AHEAD OF TIME. Create → Add question → Import → Import spreadsheet. Do not do this live.\nBudget 5 minutes including the podium. Groups want to see the leaderboard, and that is fine — it is the payoff.\nTwo questions reach into the exercises: the NaN question is section 03’s zero-variance pixels, and the last is section 04’s reshape-versus-transpose.\nIf you are badly over time, this is the last quiz to cut — cut Kahoot 2 first."
+  },
+  {
+    "objectID": "slides/en/index.html#design-both-pipelines",
+    "href": "slides/en/index.html#design-both-pipelines",
+    "title": "Tensors for Machine Learning",
+    "section": "Design both pipelines",
+    "text": "Design both pipelines\nraw file → decoded frames → preprocessed batch → model input → model output\nTech — a short-video app computing one embedding per video from sampled frames.\nBiotech — a surgical-video model labelling the current phase of an operation.\n\nThere is no single correct answer."
+  },
+  {
+    "objectID": "slides/en/index.html#the-five-questions-1",
+    "href": "slides/en/index.html#the-five-questions-1",
+    "title": "Tensors for Machine Learning",
+    "section": "The five questions",
+    "text": "The five questions\n\n\nSketch the shape at each of the five stages, for both. Where must they differ?\n30 seconds against 4 hours. Give the exact preprocessed batch shape. What does an invented or wasted value represent?\nThree camera angles at once. Where does that axis go?\n8 frames sampled from 900 — which operation from §03, and what is lost?\nWhich frames matter most? What could learn that weighting?"
+  },
+  {
+    "objectID": "slides/en/index.html#where-they-diverge",
+    "href": "slides/en/index.html#where-they-diverge",
+    "title": "Tensors for Machine Learning",
+    "section": "Where they diverge",
+    "text": "Where they diverge\n\n# Tech: time is DESTROYED on purpose\n# preprocessed (32, 8, 224, 224, 3)  -&gt;  output (32, 512)      N, embedding\n\n# Biotech: time SURVIVES, one label per timestep\n# preprocessed (4, 64, 224, 224, 3)  -&gt;  output (4, 64, 12)    N, T, classes\n\n\nQ5 is attention — §11 builds it from two einsum calls, and the padding mask from Q2 turns out to be the same mask attention needs."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-5",
+    "href": "slides/en/index.html#to-the-notebook-5",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n05 · Video pipeline design\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#why-this-matters-2",
+    "href": "slides/en/index.html#why-this-matters-2",
+    "title": "Tensors for Machine Learning",
+    "section": "Why this matters",
+    "text": "Why this matters\nRecommendation and search rank items by the dot product between a user vector and every item vector — millions of items, many times per second.\nThat contraction is the ranking signal.\nSum over the wrong axis and every user gets wrong results."
+  },
+  {
+    "objectID": "slides/en/index.html#one-letter-for-a-batch",
+    "href": "slides/en/index.html#one-letter-for-a-batch",
+    "title": "Tensors for Machine Learning",
+    "section": "One letter for a batch",
+    "text": "One letter for a batch\n\ngray       = np.einsum('hwc,c-&gt;hw',   photo, w)      # (512, 512)\ngray_batch = np.einsum('nhwc,c-&gt;nhw', batch, w)      # (2, 512, 512)\n\n\nc is in the inputs but not after the arrow → summed over. n, h, w are after the arrow → kept.\n\n\nAdding a batch axis costs exactly one letter."
+  },
+  {
+    "objectID": "slides/en/index.html#chapter-2-rewritten",
+    "href": "slides/en/index.html#chapter-2-rewritten",
+    "title": "Tensors for Machine Learning",
+    "section": "Chapter 2, rewritten",
+    "text": "Chapter 2, rewritten\n\nnp.einsum('ii-&gt;', A)           # trace          == np.trace(A)      (eq 2.48)\nnp.einsum('ij-&gt;ji', A)         # transpose      == A.T              (eq 2.3)\nnp.einsum('ik,kj-&gt;ij', A, B)   # matrix product == A @ B            (eq 2.5)\n\n\nThe same expression works for one image or for a million, and it reads like the mathematics in Chapter 2."
+  },
+  {
+    "objectID": "slides/en/index.html#every-pair-of-1797-images",
+    "href": "slides/en/index.html#every-pair-of-1797-images",
+    "title": "Tensors for Machine Learning",
+    "section": "Every pair of 1797 images",
+    "text": "Every pair of 1797 images\n\nD = load_digits().images.reshape(1797, -1)     # (1797, 64)\nS = np.einsum('id,jd-&gt;ij', D, D)               # (1797, 1797) — 3.2M scores\n\n\nNormalize the rows first and the same contraction becomes cosine similarity.\n\\[\\text{cos}(u, v) = \\frac{u \\cdot v}{\\lVert u \\rVert \\, \\lVert v \\rVert}\n\\qquad\nd(u,v) = \\sqrt{\\textstyle\\sum_i (u_i - v_i)^2}\\]\n\nSay “Euclidean distance” and “cosine similarity” out loud here. Kahoot 2 asks about both and the handbook never defines them anywhere else — this exercise is the only bridge."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-6",
+    "href": "slides/en/index.html#to-the-notebook-6",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n06 · Contraction with einsum\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#step-1-square-matrices",
+    "href": "slides/en/index.html#step-1-square-matrices",
+    "title": "Tensors for Machine Learning",
+    "section": "Step 1 — square matrices",
+    "text": "Step 1 — square matrices\n\nSingular = np.array([[1., 2.], [2., 4.]])   # column 2 = 2 x column 1\nnp.linalg.inv(Singular)                      # LinAlgError\n\n\n\\(A^{-1}\\) exists only when the columns are linearly independent."
+  },
+  {
+    "objectID": "slides/en/index.html#step-2-non-square-matrices",
+    "href": "slides/en/index.html#step-2-non-square-matrices",
+    "title": "Tensors for Machine Learning",
+    "section": "Step 2 — non-square matrices",
+    "text": "Step 2 — non-square matrices\nIn machine learning A is almost never square: one row per example, one column per feature, always far more examples than features.\n\nThe Moore-Penrose pseudoinverse is defined for every matrix:\n\\[A^{+} = V D^{+} U^{\\top}\\]\n\nA_plus = np.linalg.pinv(A)\nU, S_, Vt = np.linalg.svd(A, full_matrices=False)\nnp.allclose(A_plus, Vt.T @ np.diag(1 / S_) @ U.T)     # True — eq 2.47"
+  },
+  {
+    "objectID": "slides/en/index.html#what-ab-gives-you",
+    "href": "slides/en/index.html#what-ab-gives-you",
+    "title": "Tensors for Machine Learning",
+    "section": "What \\(A^{+}b\\) gives you",
+    "text": "What \\(A^{+}b\\) gives you\n\n\nTall (too many equations, no exact solution) → the x making Ax as close as possible to b. Least squares.\nWide (too few equations, infinitely many solutions) → the valid solution with the smallest norm.\n\n\n\nStep 3 — tensors? No single tensor inverse everyone uses. In practice: unfold → pseudoinverse → fold back. It works because unfolding loses nothing."
+  },
+  {
+    "objectID": "slides/en/index.html#equations-no-solution",
+    "href": "slides/en/index.html#equations-no-solution",
+    "title": "Tensors for Machine Learning",
+    "section": "20,433 equations, no solution",
+    "text": "20,433 equations, no solution\n\nd = housing.dropna()                                # 20433 rows; 207 had NaN\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                             # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75,980\n\n\nNo straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead. Largest coefficient: median_income. Sensible.\n\nTODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-7",
+    "href": "slides/en/index.html#to-the-notebook-7",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n07 · Inverses and the pseudoinverse\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#kahoot-2",
+    "href": "slides/en/index.html#kahoot-2",
+    "title": "Tensors for Machine Learning",
+    "section": "Kahoot 2 — Einsum, Distance & the Pseudoinverse",
+    "text": "Kahoot 2 — Einsum, Distance & the Pseudoinverse\n6 questions · about 5 minutes\nJoin at kahoot.it\nPIN on screen\nCovers: contraction, the pseudoinverse, singular matrices, distance\nQuiz details\n\nRun this right after section 07, before the recursion demo. It covers contraction (§06), the pseudoinverse and singular matrices (§07), and distance/similarity — the digit-similarity matrix from §06 TODO 4 is the bridge between the two.\nWARNING: two questions ask about Euclidean distance and cosine similarity, which the handbook never defines directly. If you did not say those words during §06, expect them to land cold.\nTHIS IS THE FIRST QUIZ TO CUT if you are over time — the pseudoinverse and distance both get re-covered narratively in the wrap-up."
+  },
+  {
+    "objectID": "slides/en/index.html#apply-the-same-matrix-again-and-again",
+    "href": "slides/en/index.html#apply-the-same-matrix-again-and-again",
+    "title": "Tensors for Machine Learning",
+    "section": "Apply the same matrix again and again",
+    "text": "Apply the same matrix again and again\n\nF = np.array([[1, 1], [1, 0]])              # f(n) = f(n-1) + f(n-2)\nv = np.array([1, 0])\nfor _ in range(10):\n    v = F @ v\nv[1]                                         # 55\nnp.linalg.matrix_power(F, 10)[0, 1]          # 55 — same answer, one step"
+  },
+  {
+    "objectID": "slides/en/index.html#power-iteration-finds-an-eigenvector",
+    "href": "slides/en/index.html#power-iteration-finds-an-eigenvector",
+    "title": "Tensors for Machine Learning",
+    "section": "Power iteration finds an eigenvector",
+    "text": "Power iteration finds an eigenvector\n\nx = rng.standard_normal(2); x /= np.linalg.norm(x)\nfor _ in range(50):\n    x = A @ x\n    x /= np.linalg.norm(x)\n\nx @ A @ x                       # 5.000000\nnp.linalg.eig(A)[0].max()       # 5.000000 — identical\n\n\nRepeated application of a matrix converges to its dominant eigenvector. This is how PageRank ranks web pages."
+  },
+  {
+    "objectID": "slides/en/index.html#forecasting-real-airline-traffic",
+    "href": "slides/en/index.html#forecasting-real-airline-traffic",
+    "title": "Tensors for Machine Learning",
+    "section": "Forecasting real airline traffic",
+    "text": "Forecasting real airline traffic\n\ny = flights['passengers'].to_numpy(float)     # 144 real months, 1949–1960\nrows = np.array([y[i:i+12] for i in range(len(y) - 12)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[12:]                # least squares, exactly as in §07\n\nhistory = list(y[-12:])\nfor _ in range(12):                           # feed predictions back in\n    history.append(w[0] + np.dot(w[1:], history[-12:]))\n\n\n[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nLow in winter, peaking in summer — learned from 132 real training windows."
+  },
+  {
+    "objectID": "slides/en/index.html#that-is-a-recurrent-neural-network",
+    "href": "slides/en/index.html#that-is-a-recurrent-neural-network",
+    "title": "Tensors for Machine Learning",
+    "section": "That is a recurrent neural network",
+    "text": "That is a recurrent neural network\n\nh = np.zeros(4)\nfor t in range(6):\n    h = np.tanh(W @ h + U @ xs[t])    # same W and U every step — the recursion\n\nA hidden state, updated by the same weights at every step.\n\nIf badly over time, this RNN snippet is third on the cutting list — after Kahoot 2 and §09 TODO 4."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-8",
+    "href": "slides/en/index.html#to-the-notebook-8",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n08 · Recursion with matrices and vectors\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#three-modes-three-output-sizes",
+    "href": "slides/en/index.html#three-modes-three-output-sizes",
+    "title": "Tensors for Machine Learning",
+    "section": "Three modes, three output sizes",
+    "text": "Three modes, three output sizes\n\nnp.convolve(x, k, 'full')    # length 5+3-1 = 7\nnp.convolve(x, k, 'valid')   # length 5-3+1 = 3\nnp.convolve(x, k, 'same')    # length 5\n\n\nvalid uses only positions where the kernel fits completely — this is why convolution shrinks an image by kernel_size - 1."
+  },
+  {
+    "objectID": "slides/en/index.html#what-everyone-gets-wrong",
+    "href": "slides/en/index.html#what-everyone-gets-wrong",
+    "title": "Tensors for Machine Learning",
+    "section": "What everyone gets wrong",
+    "text": "What everyone gets wrong\n\n\n\n\n\n\nWarning\n\n\nTrue convolution flips the kernel. Correlation does not. What deep learning libraries call “convolution” is actually correlation.\n\n\n\n\nnp.correlate(x, k, 'valid')          # [-2. -2. -2.]\nnp.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — same, with k flipped\n\n\nIt makes no practical difference — the network learns the kernel — but the names are inconsistent and you should know it."
+  },
+  {
+    "objectID": "slides/en/index.html#convolution-is-a-matrix-product",
+    "href": "slides/en/index.html#convolution-is-a-matrix-product",
+    "title": "Tensors for Machine Learning",
+    "section": "Convolution is a matrix product",
+    "text": "Convolution is a matrix product\n\nC = toeplitz(col, row)                          # (7, 5)\nnp.allclose(C @ x, np.convolve(x, k, 'full'))   # True\n\n\nA Toeplitz matrix: the same few numbers reused across the whole matrix.\nThat reuse is exactly why CNNs need so many fewer parameters than fully connected networks."
+  },
+  {
+    "objectID": "slides/en/index.html#deconvolution-means-two-things",
+    "href": "slides/en/index.html#deconvolution-means-two-things",
+    "title": "Tensors for Machine Learning",
+    "section": "“Deconvolution” means two things",
+    "text": "“Deconvolution” means two things\n\n\nTransposed convolution — the upsampling layer in a decoder or GAN. Makes things bigger. Not a true inverse; the name is historical.\nTrue deconvolution — recovering the original from a blurred one. A genuine inverse problem, and where §07 comes back."
+  },
+  {
+    "objectID": "slides/en/index.html#deconvolving-a-real-photograph",
+    "href": "slides/en/index.html#deconvolving-a-real-photograph",
+    "title": "Tensors for Machine Learning",
+    "section": "Deconvolving a real photograph",
+    "text": "Deconvolving a real photograph\n\nrecovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)\n\nc = 25   # IGNORE THE BORDER — deconvolution always creates edge artifacts\nerr = lambda a: np.linalg.norm((a-img)[c:-c,c:-c]) / np.linalg.norm(img[c:-c,c:-c])\nprint(err(noisy), err(recovered))     # 0.1157 -&gt; 0.0815\n\n\nError reduced by about 30%.\n\n\n\n\n\n\nImportant\n\n\nFlag the 25-pixel crop before the exercise. Students who skip it will conclude deconvolution failed. It did not.\n\n\n\n\nThis is the hardest thing in the workshop. TODO 4 is second on the cutting list. Say the border-crop warning out loud before they start, not after."
+  },
+  {
+    "objectID": "slides/en/index.html#why-not-just-invert-the-blur",
+    "href": "slides/en/index.html#why-not-just-invert-the-blur",
+    "title": "Tensors for Machine Learning",
+    "section": "Why not just invert the blur?",
+    "text": "Why not just invert the blur?\n\nK = np.fft.fft2(psf, s=img.shape)\nnaive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) &lt; 1e-3, 1e-3, K)))\nerr(naive)     # ~2.49 — about twenty times WORSE than the blur we started from\n\n\nBlurring destroys high-frequency detail, so inverting divides by numbers very close to zero and amplifies noise enormously.\n\n\nSame lesson as §07: a direct inverse either does not exist or is unusable, so you find the best stable answer instead."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-9",
+    "href": "slides/en/index.html#to-the-notebook-9",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n09 · Convolution and deconvolution\nOpen in Colab"
+  },
+  {
+    "objectID": "slides/en/index.html#pca-generalized-to-every-axis",
+    "href": "slides/en/index.html#pca-generalized-to-every-axis",
+    "title": "Tensors for Machine Learning",
+    "section": "PCA generalized to every axis",
+    "text": "PCA generalized to every axis\nPCA compresses a matrix — two axes. Real data often has more.\nTucker: one factor matrix per axis, plus a small core tensor describing how the factors combine.\n\nHOSVD uses only tools you already have:\n\n\nUnfold the tensor along each axis (§01)\nSVD on each unfolding; keep the top components\nContract the tensor against all factors to get the core (§06)"
+  },
+  {
+    "objectID": "slides/en/index.html#a-real-order-3-tensor",
+    "href": "slides/en/index.html#a-real-order-3-tensor",
+    "title": "Tensors for Machine Learning",
+    "section": "A real order-3 tensor",
+    "text": "A real order-3 tensor\npickup borough × dropoff borough × hour of day, from 6,433 real NYC taxi trips.\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n\nT[i, j, k] = trips from borough i to borough j picked up during hour k."
+  },
+  {
+    "objectID": "slides/en/index.html#three-axes-one-einsum",
+    "href": "slides/en/index.html#three-axes-one-einsum",
+    "title": "Tensors for Machine Learning",
+    "section": "Three axes, one einsum",
+    "text": "Three axes, one einsum\n\nUs = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]\nUs = [Us[i][:, :r[i]] for i in range(3)]                     # r = (2, 2, 3)\n\ncore  = np.einsum('ijk,ia,jb,kc-&gt;abc', T, Us[0], Us[1], Us[2])   # (2, 2, 3)\nrecon = np.einsum('abc,ia,jb,kc-&gt;ijk', core, Us[0], Us[1], Us[2])\n\nerror = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067\nratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71\n\n\n'ijk,ia,jb,kc-&gt;abc' contracts three axes in one expression. That is why einsum came first."
+  },
+  {
+    "objectID": "slides/en/index.html#what-it-found-by-itself",
+    "href": "slides/en/index.html#what-it-found-by-itself",
+    "title": "Tensors for Machine Learning",
+    "section": "What it found by itself",
+    "text": "What it found by itself\n4.7× fewer numbers, 6.7% error. But that is not the point.\n\n\nnp.abs(Us[2][:, 0]).argmax()      # 18\nT.sum(axis=(0, 1)).argmax()       # 18 — the same hour, from raw counts\n\n\n\nThe decomposition discovered evening rush hour by itself.\nNobody told it about time, traffic or commuting. It found the dominant pattern along that axis because that is what a decomposition does."
+  },
+  {
+    "objectID": "slides/en/index.html#to-the-notebook-10",
+    "href": "slides/en/index.html#to-the-notebook-10",
+    "title": "Tensors for Machine Learning",
+    "section": "To the notebook",
+    "text": "To the notebook\n10 · Tucker decomposition on real data\nOpen in Colab\n\nNever cut section 10. In tech, Tucker and CP compress neural network weight tensors so models run on phones. In biotech, on (genes × samples × conditions), they find structure PCA cannot reach — PCA can only ever see two axes."
+  },
+  {
+    "objectID": "slides/en/index.html#kahoot-3",
+    "href": "slides/en/index.html#kahoot-3",
+    "title": "Tensors for Machine Learning",
+    "section": "Kahoot 3 — Convolution & Tensor Decompositions",
+    "text": "Kahoot 3 — Convolution & Tensor Decompositions\n6 questions · about 5 minutes\nJoin at kahoot.it\nPIN on screen\nCovers: convolution, correlation, Tucker, CP, HOSVD\nQuiz details\n\nRun this right after section 10, while the taxi-tensor rush-hour result is still on screen.\nITS LAST QUESTION NAMES HOUR 18 — it must come AFTER §10 TODO 6, never before, or it gives the answer away.\nNEVER CUT THIS ONE. It is the cheapest way to check whether Tucker and CP actually landed before students leave. It also doubles as a live rehearsal of the wrap-up’s own recap, so segue straight from the podium into the wrap-up."
+  },
+  {
+    "objectID": "slides/en/index.html#what-you-did-today",
+    "href": "slides/en/index.html#what-you-did-today",
+    "title": "Tensors for Machine Learning",
+    "section": "What you did today",
+    "text": "What you did today\n\n\n§01 — the vocabulary, and that unfolding loses nothing\n§02, §05 — a batch axis and a time axis behave differently even when the shapes look identical\n§03, §04 — real tumour data and real medical images, and real problems: zero-variance pixels, reshape silently destroying an image\n§06–§10 — contractions; an unsolvable 20,433-equation system; recursion that forecasts real airline traffic; a deconvolved photograph; a taxi tensor compressed 4.7×, which found rush hour on its own"
+  },
+  {
+    "objectID": "slides/en/index.html#one-idea-connects-07-09-and-10",
+    "href": "slides/en/index.html#one-idea-connects-07-09-and-10",
+    "title": "Tensors for Machine Learning",
+    "section": "One idea connects §07, §09 and §10",
+    "text": "One idea connects §07, §09 and §10\n\n\n\n\n\n\nWhen a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation.\n\n\n\n\n\n\n\n\nPseudoinverse — for linear systems\nRichardson-Lucy — for blurred images\nTucker — for tensors too large to keep in full\n\n\n\nStating this connection explicitly is what makes the second half feel like one lesson rather than four separate blocks. Do not skip it."
+  },
+  {
+    "objectID": "slides/en/index.html#where-to-go-next",
+    "href": "slides/en/index.html#where-to-go-next",
+    "title": "Tensors for Machine Learning",
+    "section": "Where to go next",
+    "text": "Where to go next\n\ntorch.einsum / tf.einsum / jnp.einsum — identical syntax to today\ntensorly — proper Tucker and CP\nnp.linalg — the rest of Chapter 2: eig, lstsq, pinv, qr\nscipy.signal, skimage.restoration — convolution and deconvolution beyond today\n\n\nThree take-homes in notebook 11: the PCA scaling trap, attention as two contractions, and CP compared to Tucker."
+  },
+  {
+    "objectID": "slides/en/index.html#thank-you",
+    "href": "slides/en/index.html#thank-you",
+    "title": "Tensors for Machine Learning",
+    "section": "Thank you",
+    "text": "Thank you\nQuestions welcome in Discord — in Spanish or English.\nWorkshop site · Handbook · All notebooks · Estas diapositivas en español"
+  },
+  {
+    "objectID": "kahoot.html",
+    "href": "kahoot.html",
+    "title": "Kahoot",
+    "section": "",
+    "text": "Three quizzes sit at the three natural seams of the workshop: after the shape and vocabulary work, after the einsum and pseudoinverse stretch, and after the decompositions. Each sits right after the blocks that supply its content, while the material is still fresh, and before the next context switch — a break or a new Part — so it reinforces rather than interrupts."
+  },
+  {
+    "objectID": "kahoot.html#quiz-1",
+    "href": "kahoot.html#quiz-1",
+    "title": "Kahoot",
+    "section": "Quiz 1 — Tensor Vocabulary & Shapes",
+    "text": "Quiz 1 — Tensor Vocabulary & Shapes\nVocabulario de tensores y formas\n\n\n\n\n\n\n\nRuns after\nSection 04 — Reshape and transpose, before the first break\n\n\nCovers\nSections 01, 03, 04\n\n\nLength\n6 questions, ~5 min including the podium\n\n\nImport file\nkahoot/kahoot_quiz_1_vocabulary_shapes.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\nEveryone has just used order, axis, shape, slice, fiber, variance, reshape and transpose — this is the moment those words are freshest. Two questions reach back into the exercises specifically: the NaN question is section 03’s zero-variance pixels, and the last one is section 04’s reshape-versus-transpose."
+  },
+  {
+    "objectID": "kahoot.html#quiz-2",
+    "href": "kahoot.html#quiz-2",
+    "title": "Kahoot",
+    "section": "Quiz 2 — Einsum, Distance & the Pseudoinverse",
+    "text": "Quiz 2 — Einsum, Distance & the Pseudoinverse\nEinsum, distancia y la pseudoinversa\n\n\n\n\n\n\n\nRuns after\nSection 07 — Inverses and the pseudoinverse, before the recursion demo\n\n\nCovers\nSections 06, 07\n\n\nLength\n6 questions, ~5 min\n\n\nImport file\nkahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\n\n\n\n\n\n\nTwo questions here are ahead of the material. Quiz 2 asks about Euclidean distance and cosine similarity, which the handbook never defines directly. The bridge is section 06’s TODO 4 — the 1797×1797 digit similarity matrix built with one einsum. Say the two words out loud during that exercise, or expect the last two questions to land cold."
+  },
+  {
+    "objectID": "kahoot.html#quiz-3",
+    "href": "kahoot.html#quiz-3",
+    "title": "Kahoot",
+    "section": "Quiz 3 — Convolution & Tensor Decompositions",
+    "text": "Quiz 3 — Convolution & Tensor Decompositions\nConvolución y descomposiciones tensoriales\n\n\n\n\n\n\n\nRuns after\nSection 10 — Tucker decomposition, immediately before the wrap-up\n\n\nCovers\nSections 09, 10\n\n\nLength\n6 questions, ~5 min\n\n\nImport file\nkahoot/kahoot_quiz_3_convolution_decompositions.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\nRun it while the taxi-tensor rush-hour result is still on screen. Its final question names hour 18, so it must come after section 10’s TODO 6 — running it early gives the answer away. It doubles as a live rehearsal of the wrap-up’s own recap, so segue straight from the podium into the wrap-up."
+  },
+  {
+    "objectID": "kahoot.html#running-them",
+    "href": "kahoot.html#running-them",
+    "title": "Kahoot",
+    "section": "Running them",
+    "text": "Running them\n\nBudget 5 minutes each, including the podium. Groups want to see the leaderboard, and that is fine — it is the payoff.\nDo not import live. See the note at the top of this page.\nThese add 15 minutes, taking the workshop from 180 to 195."
+  },
+  {
+    "objectID": "kahoot.html#if-you-are-running-out-of-time",
+    "href": "kahoot.html#if-you-are-running-out-of-time",
+    "title": "Kahoot",
+    "section": "If you are running out of time",
+    "text": "If you are running out of time\nThe handbook’s cutting order, in order:\n\nQuiz 2 — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.\nTODO 4 of section 09 (true deconvolution — the most technically demanding).\nThe RNN snippet in section 08.\nQuestion 5 of either group block.\nQuiz 1.\n\nNever cut section 01’s Three Operations That Matter, section 10, or Quiz 3 — the last is the cheapest way to check whether Tucker and CP actually landed before students leave."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Tensors for Machine Learning",
+    "section": "",
+    "text": "🇪🇸 ¿Prefieres español? Esta página en español. Las preguntas son bienvenidas en español o en inglés."
+  },
+  {
+    "objectID": "index.html#what-this-is",
+    "href": "index.html#what-this-is",
+    "title": "Tensors for Machine Learning",
+    "section": "What this is",
+    "text": "What this is\nA 195-minute workshop that takes you from “I know matrices” to “I can manipulate, solve, convolve and factorize tensors.” It is built around real data only — real tumour measurements, real handwritten digits, real histology images, real New York taxi trips, real airline traffic. Nothing is invented with random numbers, because real data contains problems that random data never shows: missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.\nEverything here comes from one source document, the handbook — the slides, the notebooks and this page are all generated from it."
+  },
+  {
+    "objectID": "index.html#who-it-is-for",
+    "href": "index.html#who-it-is-for",
+    "title": "Tensors for Machine Learning",
+    "section": "Who it is for",
+    "text": "Who it is for\nYou have read Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. You know matrices. This workshop assumes no previous knowledge of tensor theory, and every new term is defined where it first appears."
+  },
+  {
+    "objectID": "index.html#prerequisites",
+    "href": "index.html#prerequisites",
+    "title": "Tensors for Machine Learning",
+    "section": "Prerequisites",
+    "text": "Prerequisites\n\nThe linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra — vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD.\nA Google account, so you can run the notebooks in Colab. Nothing to install.\nThree CSV files are downloaded at the start. Run notebook 00 before the session and say so immediately if it fails — a silent download failure will leave you stuck at sections 07 and 10."
+  },
+  {
+    "objectID": "index.html#how-to-run-the-notebooks",
+    "href": "index.html#how-to-run-the-notebooks",
+    "title": "Tensors for Machine Learning",
+    "section": "How to run the notebooks",
+    "text": "How to run the notebooks\nClick any Colab link in the table below. The notebook opens in your browser, already connected to a free runtime.\n\nEvery notebook is self-contained. Its setup cell installs and imports exactly what that section needs and loads its own data, so you can open any one of them cold, in any order, without having run the others.\nRun the setup cell first (▶ or Shift+Enter).\nWork through the # TODO cells. Each has a solution cell underneath, folded away — open it after you have tried, not before.\nColab will warn that the notebook was not authored by Google. That is expected; the source is on GitHub.\n\n\n\n\n\n\n\nChanges you make in Colab are not saved back to this repo. Use File → Save a copy in Drive to keep your work."
+  },
+  {
+    "objectID": "index.html#how-we-work",
+    "href": "index.html#how-we-work",
+    "title": "Tensors for Machine Learning",
+    "section": "How we work",
+    "text": "How we work\nNotebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:\n\nExercise blocks — 10 minutes coding, then 5 minutes explanation.\nGroup blocks — 10 minutes discussion in your breakout channel, then share-back."
+  },
+  {
+    "objectID": "index.html#the-sections",
+    "href": "index.html#the-sections",
+    "title": "Tensors for Machine Learning",
+    "section": "The sections",
+    "text": "The sections\nRead across a row: the slides in either language, the notebook to run, and the Kahoot check that covers it. The 🎯 rows are the three quizzes, shown in the order they actually run.\n\n\n\n\n\n\n#\n\n\nSection\n\n\nFormat\n\n\nMin\n\n\nSlides EN\n\n\nSlides ES\n\n\nNotebook\n\n\nKahoot\n\n\n\n\n\n\n00\n\n\nSetup and welcomeLoad every dataset and confirm your runtime works before anything else.\n\n\nsetup\n\n\n5\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n01\n\n\nWhat a tensor isThe vocabulary, shape in NumPy, and the three operations that matter.\n\n\ndemo\n\n\n20\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ1\n\n\n\n\n02\n\n\nThinking in N dimensionsArgue about what each axis means, and why a batch axis differs from a time axis.\n\n\ngroup\n\n\n20\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n03\n\n\nIndexing and broadcasting real dataSelect the right column of real tumour data, then meet zero-variance pixels.\n\n\nexercise\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ1\n\n\n\n\n04\n\n\nReshape and transpose real imagesHWC to CHW, NHWC to NCHW, and why reshape silently destroys an image.\n\n\nexercise\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ1\n\n\n\n\n🎯\n\n\nKahoot 1 — Tensor Vocabulary & Shapes · 6 questions · 5 min — covers sections 01, 03, 04\n\n\n\n\n05\n\n\nVideo pipeline designDesign the tensor shape at every stage of two real video systems.\n\n\ngroup\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n06\n\n\nContraction with einsumOne notation for the dot product, the matrix product, and a batch of images.\n\n\nexercise\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ2\n\n\n\n\n07\n\n\nInverses and the pseudoinverseSolve a 20,433-equation system that has no exact solution.\n\n\nexercise\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ2\n\n\n\n\n🎯\n\n\nKahoot 2 — Einsum, Distance & the Pseudoinverse · 6 questions · 5 min — covers sections 06, 07\n\n\n\n\n08\n\n\nRecursion with matrices and vectorsApply one matrix again and again: Fibonacci, eigenvectors, and a real forecast.\n\n\ndemo\n\n\n10\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n09\n\n\nConvolution and deconvolutionConvolution is a structured matrix product, and blur can be partly undone.\n\n\nexercise\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ3\n\n\n\n\n10\n\n\nTucker decomposition on real dataPCA generalized to every axis, on a real tensor of New York taxi trips.\n\n\nexercise\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ3\n\n\n\n\n🎯\n\n\nKahoot 3 — Convolution & Tensor Decompositions · 6 questions · 5 min — covers sections 09, 10\n\n\n\n\n11\n\n\nWrap-up and take-homesWhat connects Blocks 4, 5 and 6, plus three take-home exercises.\n\n\nwrap-up\n\n\n5\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n\nNot shown: the three 5-minute breaks. The twelve sections come to 165 minutes; the three quizzes add 15 and the breaks another 15, which is how the session reaches 195 minutes."
+  },
+  {
+    "objectID": "index.html#a-note-on-language",
+    "href": "index.html#a-note-on-language",
+    "title": "Tensors for Machine Learning",
+    "section": "A note on language",
+    "text": "A note on language\nThis workshop is taught in English, but many terms are nearly identical in Spanish: tensor/tensor, matrix/matriz, axis/eje, dimension/dimensión, decomposition/descomposición, factorization/factorización, contraction/contracción, convolution/convolución, recursion/recursión.\nAsk questions in Spanish or English — whichever lets you ask faster. The slide deck exists in both languages, and every notebook heading carries a one-line Spanish summary."
+  },
+  {
+    "objectID": "index.html#where-to-go-next",
+    "href": "index.html#where-to-go-next",
+    "title": "Tensors for Machine Learning",
+    "section": "Where to go next",
+    "text": "Where to go next\n\nHandbook — the full student text and facilitator notes, including the three take-home appendices.\nNotebooks — all twelve, with Colab badges.\nKahoot — the three quizzes and how to run them."
+  },
+  {
+    "objectID": "notebooks.html",
+    "href": "notebooks.html",
+    "title": "Notebooks",
+    "section": "",
+    "text": "Every section of the workshop has a notebook. They are English-primary, with a one-line Spanish summary under each heading — cada encabezado lleva un resumen en español."
+  },
+  {
+    "objectID": "notebooks.html#how-they-are-built",
+    "href": "notebooks.html#how-they-are-built",
+    "title": "Notebooks",
+    "section": "How they are built",
+    "text": "How they are built\nEach notebook follows the same shape, so you always know where you are:\n\nHeader — the section title, its objectives, and an Open in Colab badge.\nSetup — installs and imports only what this section needs, and loads its own data. Self-contained: no local files, no dependency on any other notebook.\nExplanation and code, alternating, building up rather than dumping a wall of code at you.\nExercises — # TODO stubs taken from the handbook, each followed by a folded solution cell. Open it after you have tried.\nClosing — the Kahoot check for that section, and a link back here.\n\n\n\n\n\n\n\nThe notebooks are committed with no outputs and no execution counts. Every number you see is one you produced. The expected results are quoted in the prose so you can tell whether yours are right — and if yours differ, that is worth investigating rather than dismissing."
+  },
+  {
+    "objectID": "notebooks.html#the-notebooks",
+    "href": "notebooks.html#the-notebooks",
+    "title": "Notebooks",
+    "section": "The notebooks",
+    "text": "The notebooks\n\n\n\n\n#\nNotebook\nCovers\nColab\n\n\n\n\n00\n00-setup-and-data.ipynb\nSetup and welcome — Load every dataset and confirm your runtime works before anything else.\n\n\n\n01\n01-what-a-tensor-is.ipynb\nWhat a tensor is — The vocabulary, shape in NumPy, and the three operations that matter.\n\n\n\n02\n02-thinking-in-n-dimensions.ipynb\nThinking in N dimensions — Argue about what each axis means, and why a batch axis differs from a time axis.\n\n\n\n03\n03-indexing-and-broadcasting.ipynb\nIndexing and broadcasting real data — Select the right column of real tumour data, then meet zero-variance pixels.\n\n\n\n04\n04-reshape-and-transpose.ipynb\nReshape and transpose real images — HWC to CHW, NHWC to NCHW, and why reshape silently destroys an image.\n\n\n\n05\n05-video-pipeline-design.ipynb\nVideo pipeline design — Design the tensor shape at every stage of two real video systems.\n\n\n\n06\n06-contraction-with-einsum.ipynb\nContraction with einsum — One notation for the dot product, the matrix product, and a batch of images.\n\n\n\n07\n07-inverses-and-pseudoinverse.ipynb\nInverses and the pseudoinverse — Solve a 20,433-equation system that has no exact solution.\n\n\n\n08\n08-recursion-with-matrices.ipynb\nRecursion with matrices and vectors — Apply one matrix again and again: Fibonacci, eigenvectors, and a real forecast.\n\n\n\n09\n09-convolution-and-deconvolution.ipynb\nConvolution and deconvolution — Convolution is a structured matrix product, and blur can be partly undone.\n\n\n\n10\n10-tucker-decomposition.ipynb\nTucker decomposition on real data — PCA generalized to every axis, on a real tensor of New York taxi trips.\n\n\n\n11\n11-wrap-up-and-take-homes.ipynb\nWrap-up and take-homes — What connects Blocks 4, 5 and 6, plus three take-home exercises."
+  },
+  {
+    "objectID": "notebooks.html#running-them-somewhere-other-than-colab",
+    "href": "notebooks.html#running-them-somewhere-other-than-colab",
+    "title": "Notebooks",
+    "section": "Running them somewhere other than Colab",
+    "text": "Running them somewhere other than Colab\nThe notebooks only need the scientific Python stack. Locally:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab\nscikit-learn and scikit-image ship the tumour data, the handwritten digits and the photographs, so most sections work with no network at all. Sections 07, 08 and 10 fetch a CSV from GitHub the first time they run."
+  },
+  {
+    "objectID": "notebooks.html#what-each-notebook-needs",
+    "href": "notebooks.html#what-each-notebook-needs",
+    "title": "Notebooks",
+    "section": "What each notebook needs",
+    "text": "What each notebook needs\n\nColab already has every one of these installed.\n\n\n\n\n\n\n\nNotebook\nBeyond NumPy\nNetwork\n\n\n\n\n00\npandas, scikit-learn, scikit-image, scipy\nyes — all three CSVs\n\n\n01\nscikit-learn, scikit-image, scipy.linalg\nno\n\n\n02\n—\nno\n\n\n03\nscikit-learn\nno\n\n\n04\nscikit-image\nno\n\n\n05\n—\nno\n\n\n06\nscikit-learn, scikit-image\nno\n\n\n07\npandas\nyes — California housing\n\n\n08\npandas\nyes — airline passengers\n\n\n09\nscikit-image, scipy\nno\n\n\n10\npandas\nyes — NYC taxi trips\n\n\n11\nscikit-learn\nno"
+  },
+  {
+    "objectID": "es/index.html",
+    "href": "es/index.html",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "",
+    "text": "🇬🇧 Prefer English? This page in English. El taller se imparte en inglés, pero puedes preguntar en español cuando quieras."
+  },
+  {
+    "objectID": "es/index.html#qué-es-esto",
+    "href": "es/index.html#qué-es-esto",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Qué es esto",
+    "text": "Qué es esto\nUn taller de 195 minutos que te lleva de «sé lo que es una matriz» a «sé manipular, resolver, convolucionar y factorizar tensores». Está construido solo con datos reales: medidas reales de tumores, dígitos manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva York, tráfico aéreo real. No hay nada inventado con números aleatorios, porque los datos reales contienen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del trabajo.\nTodo procede de un único documento fuente, el manual: las diapositivas, los cuadernos y esta página se generan a partir de él."
+  },
+  {
+    "objectID": "es/index.html#para-quién-es",
+    "href": "es/index.html#para-quién-es",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Para quién es",
+    "text": "Para quién es\nHas leído Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. Sabes qué es una matriz. Este taller no supone ningún conocimiento previo de teoría de tensores, y cada término nuevo se define donde aparece por primera vez."
+  },
+  {
+    "objectID": "es/index.html#requisitos-previos",
+    "href": "es/index.html#requisitos-previos",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Requisitos previos",
+    "text": "Requisitos previos\n\nEl álgebra lineal del capítulo 2 de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD.\nUna cuenta de Google para ejecutar los cuadernos en Colab. No hay que instalar nada.\nAl principio se descargan tres archivos CSV. Ejecuta el cuaderno 00 antes de la sesión y avisa enseguida si falla: una descarga que falla en silencio te dejará atascado en las secciones 07 y 10."
+  },
+  {
+    "objectID": "es/index.html#cómo-ejecutar-los-cuadernos",
+    "href": "es/index.html#cómo-ejecutar-los-cuadernos",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Cómo ejecutar los cuadernos",
+    "text": "Cómo ejecutar los cuadernos\nHaz clic en cualquier enlace Colab de la tabla. El cuaderno se abre en tu navegador, ya conectado a un entorno de ejecución gratuito.\n\nCada cuaderno es autónomo. Su celda de preparación instala e importa exactamente lo que esa sección necesita y carga sus propios datos, así que puedes abrir cualquiera en frío, en cualquier orden, sin haber ejecutado los demás.\nEjecuta primero la celda de preparación (▶ o Shift+Enter).\nTrabaja las celdas # TODO. Cada una tiene debajo una celda de solución, plegada: ábrela después de intentarlo, no antes.\nColab avisará de que el cuaderno no lo escribió Google. Es lo esperado; el código fuente está en GitHub.\n\n\n\n\n\n\n\nLos cambios que hagas en Colab no se guardan en este repositorio. Usa Archivo → Guardar una copia en Drive para conservar tu trabajo."
+  },
+  {
+    "objectID": "es/index.html#cómo-trabajamos",
+    "href": "es/index.html#cómo-trabajamos",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Cómo trabajamos",
+    "text": "Cómo trabajamos\nCuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:\n\nBloques de ejercicios: 10 minutos programando y 5 de explicación.\nBloques de grupo: 10 minutos de discusión en tu canal y luego puesta en común."
+  },
+  {
+    "objectID": "es/index.html#las-secciones",
+    "href": "es/index.html#las-secciones",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Las secciones",
+    "text": "Las secciones\nLee una fila de izquierda a derecha: las diapositivas en cualquiera de los dos idiomas, el cuaderno que hay que ejecutar y el control de Kahoot que lo cubre. Las filas 🎯 son los tres cuestionarios, en el orden real en que se ejecutan.\n\n\n\n\n\n\n#\n\n\nSección\n\n\nFormato\n\n\nMin\n\n\nDiapos EN\n\n\nDiapos ES\n\n\nCuaderno\n\n\nKahoot\n\n\n\n\n\n\n00\n\n\nPreparación y bienvenidaCarga todos los conjuntos de datos y confirma que tu entorno funciona antes de empezar.\n\n\npreparación\n\n\n5\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n01\n\n\nQué es un tensorEl vocabulario, la forma en NumPy y las tres operaciones que importan.\n\n\ndemostración\n\n\n20\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ1\n\n\n\n\n02\n\n\nPensar en N dimensionesDiscutir qué significa cada eje y por qué un eje de lote difiere de un eje temporal.\n\n\ngrupo\n\n\n20\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n03\n\n\nIndexación y broadcasting con datos realesSeleccionar la columna correcta de datos reales de tumores y encontrar píxeles de varianza cero.\n\n\nejercicio\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ1\n\n\n\n\n04\n\n\nReshape y transposición de imágenes realesDe HWC a CHW, de NHWC a NCHW, y por qué reshape destruye una imagen en silencio.\n\n\nejercicio\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ1\n\n\n\n\n🎯\n\n\nKahoot 1 — Vocabulario de tensores y formas · 6 preguntas · 5 min — cubre las secciones 01, 03, 04\n\n\n\n\n05\n\n\nDiseño de un pipeline de vídeoDiseñar la forma del tensor en cada etapa de dos sistemas de vídeo reales.\n\n\ngrupo\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n06\n\n\nContracción con einsumUna sola notación para el producto punto, el producto matricial y un lote de imágenes.\n\n\nejercicio\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ2\n\n\n\n\n07\n\n\nInversas y la pseudoinversaResolver un sistema de 20.433 ecuaciones que no tiene solución exacta.\n\n\nejercicio\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ2\n\n\n\n\n🎯\n\n\nKahoot 2 — Einsum, distancia y la pseudoinversa · 6 preguntas · 5 min — cubre las secciones 06, 07\n\n\n\n\n08\n\n\nRecursión con matrices y vectoresAplicar una misma matriz una y otra vez: Fibonacci, autovectores y un pronóstico real.\n\n\ndemostración\n\n\n10\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n09\n\n\nConvolución y deconvoluciónLa convolución es un producto matricial estructurado, y el desenfoque se puede deshacer en parte.\n\n\nejercicio\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ3\n\n\n\n\n10\n\n\nDescomposición de Tucker con datos realesPCA generalizado a todos los ejes, sobre un tensor real de viajes en taxi de Nueva York.\n\n\nejercicio\n\n\n15\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\nQ3\n\n\n\n\n🎯\n\n\nKahoot 3 — Convolución y descomposiciones tensoriales · 6 preguntas · 5 min — cubre las secciones 09, 10\n\n\n\n\n11\n\n\nCierre y ejercicios para casaQué conecta los bloques 4, 5 y 6, más tres ejercicios para casa.\n\n\ncierre\n\n\n5\n\n\nEN\n\n\nES\n\n\nColab · src\n\n\n—\n\n\n\n\n\nNo aparecen en la tabla: las tres pausas de 5 minutos. Las doce secciones suman 165 minutos; los tres cuestionarios añaden 15 y las pausas otros 15, que es como la sesión llega a 195 minutos."
+  },
+  {
+    "objectID": "es/index.html#una-nota-sobre-el-idioma",
+    "href": "es/index.html#una-nota-sobre-el-idioma",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Una nota sobre el idioma",
+    "text": "Una nota sobre el idioma\nEl taller se imparte en inglés, pero muchos términos son casi idénticos en español: tensor/tensor, matrix/matriz, axis/eje, dimension/dimensión, decomposition/descomposición, factorization/factorización, contraction/contracción, convolution/convolución, recursion/recursión.\nPregunta en español o en inglés, lo que te permita preguntar más rápido. Las diapositivas están en los dos idiomas y cada encabezado de los cuadernos lleva un resumen de una línea en español."
+  },
+  {
+    "objectID": "es/index.html#dónde-seguir",
+    "href": "es/index.html#dónde-seguir",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Dónde seguir",
+    "text": "Dónde seguir\n\nManual: el texto completo del estudiante y las notas del facilitador, incluidos los tres apéndices para casa.\nCuadernos: los doce, con sus insignias de Colab.\nKahoot: los tres cuestionarios y cómo ejecutarlos."
+  },
+  {
+    "objectID": "slides/es/index.html#todos-los-datos-son-reales",
+    "href": "slides/es/index.html#todos-los-datos-son-reales",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Todos los datos son reales",
+    "text": "Todos los datos son reales\n\n\nMedidas reales de tumores, dígitos manuscritos reales, histología real\nViajes reales en taxi, tráfico aéreo real\nNada está inventado con números aleatorios\n\n\n\nLos datos reales tienen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian.\nEncontrar esos problemas es parte del trabajo."
+  },
+  {
+    "objectID": "slides/es/index.html#programa-minutos",
+    "href": "slides/es/index.html#programa-minutos",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Programa — 195 minutos",
+    "text": "Programa — 195 minutos\n\n\n\nParte\nSegmento\nTiempo\n\n\n\n\n—\nPreparación y bienvenida\n5\n\n\nI\nQué es un tensor\n20\n\n\nII\nPensar en N dimensiones (grupo)\n20\n\n\nIII\nIndexación y broadcasting · Reshape y transposición\n30\n\n\n🎯\nKahoot 1 + pausa\n10\n\n\nIII\nDiseño de un pipeline de vídeo (grupo)\n15\n\n\nIV\nContracción con einsum\n15\n\n\n—\nPausa\n5\n\n\nIV\nInversas y la pseudoinversa\n15\n\n\n🎯\nKahoot 2\n5\n\n\nIV\nRecursión · Convolución\n25\n\n\n—\nPausa\n5\n\n\nIV\nDescomposición de Tucker\n15\n\n\n🎯\nKahoot 3 + cierre\n10"
+  },
+  {
+    "objectID": "slides/es/index.html#dos-ritmos-y-una-advertencia",
+    "href": "slides/es/index.html#dos-ritmos-y-una-advertencia",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Dos ritmos, y una advertencia",
+    "text": "Dos ritmos, y una advertencia\nBloques de ejercicios — 10 min programando, 5 de explicación.\nBloques de grupo — 10 min de discusión y puesta en común.\n\n\n\n\n\n\n\nLa palabra «rango»\n\n\nCapítulo 2: rango = número de columnas independientes. Teoría de tensores: rango suele significar el número de ejes.\nHoy: «orden» para el número de ejes. «Rango» solo en el sentido del capítulo 2.\n\n\n\n\nDa esta advertencia al principio de la parte I, no después. Es la fuente de confusión más fiable de todo el taller."
+  },
+  {
+    "objectID": "slides/es/index.html#tres-descargas-una-primera-celda",
+    "href": "slides/es/index.html#tres-descargas-una-primera-celda",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Tres descargas, una primera celda",
+    "text": "Tres descargas, una primera celda\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\nSi esto falla, dilo en Discord ahora, no dentro de dos horas.\n\nConfirma en los primeros 5 minutos que a todo el mundo le funcionó la descarga. Quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio como alternativa."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno",
+    "href": "slides/es/index.html#al-cuaderno",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n00 · Preparación y bienvenida\nAbrir en Colab\nEl resto viene dentro de las librerías y funciona sin conexión: load_breast_cancer, load_digits, data.camera(), data.astronaut()."
+  },
+  {
+    "objectID": "slides/es/index.html#el-vocabulario",
+    "href": "slides/es/index.html#el-vocabulario",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "El vocabulario",
+    "text": "El vocabulario\n\n\n\n\n\n\n\n\nTérmino\nSignificado\nInglés\n\n\n\n\nTensor\nArray de números con cualquier número de ejes\ntensor\n\n\nEje\nUna dirección a lo largo de la cual se ordenan los datos\naxis\n\n\nOrden\nCuántos ejes tiene un tensor\norder\n\n\nForma\nEl tamaño a lo largo de cada eje\nshape\n\n\nCorte\nFijar un índice y conservar el resto\nslice\n\n\nFibra\nFijar todos los índices menos uno\nfiber\n\n\nDesplegado\nReorganizar un tensor como matriz\nunfolding\n\n\nContracción\nMultiplicar y sumar sobre un eje compartido\ncontraction"
+  },
+  {
+    "objectID": "slides/es/index.html#la-forma-es-una-tupla-el-orden-es-su-longitud",
+    "href": "slides/es/index.html#la-forma-es-una-tupla-el-orden-es-su-longitud",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "La forma es una tupla; el orden es su longitud",
+    "text": "La forma es una tupla; el orden es su longitud\n\nscalar = np.array(3.0)                     # orden 0   forma ()\nvector = np.array([1., 2., 3.])            # orden 1   forma (3,)\nmatrix = np.array([[1., 2.], [3., 4.]])    # orden 2   forma (2, 2)\ntensor = rng.standard_normal((2, 3, 4))    # orden 3   forma (2, 3, 4)\n\n\n\ndigits.images.shape              # (1797, 8, 8)  — imágenes, alto, ancho\nphoto.shape                      # (512, 512, 3) — alto, ancho, color\n\n\n\nLos dos son de orden 3. Sus ejes significan cosas completamente distintas.\nLa forma por sí sola nunca te dice qué significan los ejes."
+  },
+  {
+    "objectID": "slides/es/index.html#tres-operaciones",
+    "href": "slides/es/index.html#tres-operaciones",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Tres operaciones",
+    "text": "Tres operaciones\nCorte — fija un índice. Fibra — fija todos menos uno.\n\nphoto[:, :, 0].shape       # (512, 512) — un corte: un canal de color\nphoto[100, 200, :].shape   # (3,)       — una fibra: los colores de un píxel"
+  },
+  {
+    "objectID": "slides/es/index.html#tres-operaciones-1",
+    "href": "slides/es/index.html#tres-operaciones-1",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Tres operaciones",
+    "text": "Tres operaciones\nDesplegado — convertir cualquier tensor en una matriz.\n\ndef unfold(T, axis):\n    return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)\n\nunfold(photo, 0).shape   # (512, 1536)\nunfold(photo, 2).shape   # (3, 262144) — cada canal de color es una fila\n\n\nEl desplegado no pierde nada. Ahora sirve cualquier herramienta matricial que ya conoces."
+  },
+  {
+    "objectID": "slides/es/index.html#tres-operaciones-2",
+    "href": "slides/es/index.html#tres-operaciones-2",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Tres operaciones",
+    "text": "Tres operaciones\nContracción — multiplicar sobre un eje compartido y sumar sobre él.\n\nnp.einsum('i,i-&gt;', a, b)          # producto punto     (ec. 2.8)\nnp.einsum('ik,kj-&gt;ij', A, B)      # producto matricial (ec. 2.5)\n\n\n\n\n\n\n\n\nLa regla, en una frase\n\n\nUn índice que está en las entradas pero no después de la flecha se suma. Un índice que aparece después de la flecha se conserva."
+  },
+  {
+    "objectID": "slides/es/index.html#el-mapa-de-las-factorizaciones",
+    "href": "slides/es/index.html#el-mapa-de-las-factorizaciones",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "El mapa de las factorizaciones",
+    "text": "El mapa de las factorizaciones\n\n\n\nMétodo\nActúa sobre\nDónde hoy\n\n\n\n\nLU\nMatriz cuadrada\nahora\n\n\nQR\nCualquier matriz\nahora\n\n\nDescomposición espectral\nMatriz cuadrada\n§08\n\n\nSVD\nCualquier matriz\n§07, §10\n\n\nPCA\nMatriz de datos\n§11\n\n\nPseudoinversa\nCualquier matriz\n§07\n\n\nTucker / CP\nTensor de cualquier orden\n§10\n\n\n\n\nTodo salvo la última fila trabaja con dos ejes. Los datos reales tienen más."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-1",
+    "href": "slides/es/index.html#al-cuaderno-1",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n01 · Qué es un tensor\nAbrir en Colab\n\nNo corras con la parte I. Es el primer contacto con la teoría de tensores y todos los bloques posteriores usan su vocabulario. Si vas con retraso, recorta los apéndices, nunca la parte I."
+  },
+  {
+    "objectID": "slides/es/index.html#vuestra-tarea",
+    "href": "slides/es/index.html#vuestra-tarea",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Vuestra tarea",
+    "text": "Vuestra tarea\n\nUna imagen en escala de grises es una matriz. Casi nada en aprendizaje automático es una sola imagen en gris. Cada cosa que añades — color, muchos ejemplos, tiempo — añade un eje, y cada eje significa algo distinto.\n\nDiscutid qué eje va dónde, y por qué.\n10 minutos en vuestro canal y luego puesta en común."
+  },
+  {
+    "objectID": "slides/es/index.html#las-cinco-preguntas",
+    "href": "slides/es/index.html#las-cinco-preguntas",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Las cinco preguntas",
+    "text": "Las cinco preguntas\n\n\n(H, W) → imagen en color → lote → vídeo → lote de vídeos. ¿Qué cuenta cada eje nuevo? No digáis «añadimos una dimensión».\nUn eje de lote y un eje temporal son idénticos en el código. ¿Qué cambia en su significado? ¿Qué pasa si barajas cada uno?\nLos vídeos reales tienen longitudes distintas. Dos formas de agruparlos en lote: ¿qué pierde o inventa cada una?\nCélulas fotografiadas cada 10 min durante 48 h: ¿intervalo entre fotogramas → ? ¿campo de visión → ? ¿número de placas → ?\n¿Hay un límite al número de ejes de un tensor?"
+  },
+  {
+    "objectID": "slides/es/index.html#puesta-en-común",
+    "href": "slides/es/index.html#puesta-en-común",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Puesta en común",
+    "text": "Puesta en común\n\ngray_image      = np.zeros((28, 28))            # (H, W)\ncolor_image     = np.zeros((28, 28, 3))         # (H, W, C)      + color\nbatch_of_images = np.zeros((32, 28, 28, 3))     # (N, H, W, C)   + muchos ejemplos\nvideo           = np.zeros((16, 28, 28, 3))     # (T, H, W, C)   + tiempo ordenado\nbatch_of_videos = np.zeros((8, 16, 28, 28, 3))  # (N, T, H, W, C)\n\n\nLa pregunta 2 es la clave. Barajar el eje 0 es inofensivo en un lote y destruye un vídeo.\nLa notación del capítulo 2 no tiene ningún concepto de «el orden entre elementos importa». Eso sí es nuevo hoy."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-2",
+    "href": "slides/es/index.html#al-cuaderno-2",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n02 · Pensar en N dimensiones\nAbrir en Colab\n\nLos bloques de grupo necesitan más mano firme que los de ejercicios. Si un grupo sigue en la pregunta 1 a falta de 5 minutos, entra en su canal y diles que dibujen cualquier cosa, aunque la forma esté mal. La puesta en común importa más que un dibujo correcto. Asigna los grupos antes de la sesión."
+  },
+  {
+    "objectID": "slides/es/index.html#por-qué-importa",
+    "href": "slides/es/index.html#por-qué-importa",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Por qué importa",
+    "text": "Por qué importa\n569 pacientes reales, 30 medidas reales de núcleos de células tumorales.\n\n\nElegir la columna equivocada no da ningún error\nDevuelve otra medida real\nTu análisis continúa y da una respuesta segura y equivocada\n\n\n\nEn investigación: resultados que nadie puede reproducir. En una herramienta clínica: una recomendación errónea sobre una persona real."
+  },
+  {
+    "objectID": "slides/es/index.html#el-ejercicio",
+    "href": "slides/es/index.html#el-ejercicio",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "El ejercicio",
+    "text": "El ejercicio\n\n# TODO 2: Extrae \"mean radius\" con names.index(...). No escribas un número fijo.\n# TODO 3: Los 5 pacientes con mayor \"mean radius\", perfil completo, UNA operación.\n# TODO 4: Indexación booleana — maligno (y == 0) frente a benigno (y == 1).\n# TODO 6: Estandariza con broadcasting: (D - mean) / std. MIRA EL RESULTADO.\n# TODO 7: Aparecerán NaN. ¿Cuántos píxeles tienen std == 0, y por qué?"
+  },
+  {
+    "objectID": "slides/es/index.html#dos-resultados-reales",
+    "href": "slides/es/index.html#dos-resultados-reales",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Dos resultados reales",
+    "text": "Dos resultados reales\n\nprint(radius[y == 0].mean(), radius[y == 1].mean())   # 17.5 frente a 12.1\nprint((std == 0).sum())                               # 3\nZ = (D - mean) / np.where(std == 0, 1.0, std)\n\n\nLos tumores malignos sí tienen un radio medio mayor: 17,5 frente a 12,1.\n\n\nTres píxeles están siempre oscuros en las 1797 imágenes de dígitos: esquinas donde nadie escribe. Desviación típica exactamente cero → NaN.\nCon datos aleatorios nunca habrías visto esto."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-3",
+    "href": "slides/es/index.html#al-cuaderno-3",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n03 · Indexación y broadcasting con datos reales\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#por-qué-importa-1",
+    "href": "slides/es/index.html#por-qué-importa-1",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Por qué importa",
+    "text": "Por qué importa\nLos microscopios y las cámaras ordenan sus ejes según el hardware, no según lo que espera un modelo.\n\nEquivocarse no provoca ningún fallo. El modelo se ejecuta sobre datos revueltos y devuelve resultados seguros y sin sentido.\n\n\nLa versión famosa: un modelo entrenado en TensorFlow (NHWC) desplegado en PyTorch (NCHW) sin transponer."
+  },
+  {
+    "objectID": "slides/es/index.html#la-misma-forma-datos-distintos",
+    "href": "slides/es/index.html#la-misma-forma-datos-distintos",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "La misma forma, datos distintos",
+    "text": "La misma forma, datos distintos\n\nchw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correcto\nwrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — se ejecuta, pero revuelve\n\nnp.array_equal(chw, wrong)                  # False\n\n\nreshape solo reinterpreta los números en el orden en que están en memoria. transpose los mueve según el significado de cada eje."
+  },
+  {
+    "objectID": "slides/es/index.html#cuando-dos-ejes-tienen-el-mismo-tamaño",
+    "href": "slides/es/index.html#cuando-dos-ejes-tienen-el-mismo-tamaño",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Cuando dos ejes tienen el mismo tamaño",
+    "text": "Cuando dos ejes tienen el mismo tamaño\n\nbatch = np.stack([photo, photo, photo])      # (3, 512, 512, 3)\nnchw  = np.transpose(batch, (0, 3, 1, 2))    # (3, 3, 512, 512)\n\n\nAhora dos ejes miden 3. ¿Cómo sabes cuál es cuál?\n\n\nNo lo sabes. Solo tu propio seguimiento puede decírtelo. Nada en el array lo registra."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-4",
+    "href": "slides/es/index.html#al-cuaderno-4",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n04 · Reshape y transposición de imágenes reales\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#kahoot-1",
+    "href": "slides/es/index.html#kahoot-1",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Kahoot 1 — Vocabulario de tensores y formas",
+    "text": "Kahoot 1 — Vocabulario de tensores y formas\n6 preguntas · unos 5 minutos\nEntrad en kahoot.it\nPIN en pantalla\nCubre: orden, eje, forma, corte, fibra, varianza, reshape, transposición\nDetalles del cuestionario\n\nEjecútalo antes de la pausa, justo después de la sección 04. Todos acaban de usar orden, eje, forma, corte, fibra, varianza, reshape y transposición: es el momento en que esas palabras están más frescas.\nIMPORTA EL .xlsx CON ANTELACIÓN. Create → Add question → Import → Import spreadsheet. No lo hagas en directo.\nCalcula 5 minutos incluido el podio. Los grupos quieren ver la clasificación, y está bien: es la recompensa.\nDos preguntas vienen de los ejercicios: la de los NaN es la de los píxeles de varianza cero de la sección 03, y la última es reshape frente a transposición de la sección 04.\nSi vas muy justo de tiempo, este es el último cuestionario que hay que recortar: recorta antes el Kahoot 2."
+  },
+  {
+    "objectID": "slides/es/index.html#diseñad-las-dos-tuberías",
+    "href": "slides/es/index.html#diseñad-las-dos-tuberías",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Diseñad las dos tuberías",
+    "text": "Diseñad las dos tuberías\narchivo → fotogramas decodificados → lote preprocesado → entrada del modelo → salida del modelo\nTecnología — una app de vídeos cortos que calcula un embedding por vídeo a partir de fotogramas muestreados.\nBiotecnología — un modelo que etiqueta la fase actual de una operación quirúrgica.\n\nNo hay una única respuesta correcta."
+  },
+  {
+    "objectID": "slides/es/index.html#las-cinco-preguntas-1",
+    "href": "slides/es/index.html#las-cinco-preguntas-1",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Las cinco preguntas",
+    "text": "Las cinco preguntas\n\n\nDibujad la forma en cada una de las cinco etapas, para los dos sistemas. ¿Dónde tienen que diferir?\n30 segundos frente a 4 horas. Dad la forma exacta del lote preprocesado. ¿Qué representa un valor inventado o desperdiciado?\nTres ángulos de cámara a la vez. ¿Dónde va ese eje?\n8 fotogramas muestreados de 900: ¿qué operación de la §03 es esa, y qué se pierde?\n¿Qué fotogramas importan más? ¿Qué mecanismo podría aprender ese peso?"
+  },
+  {
+    "objectID": "slides/es/index.html#dónde-divergen",
+    "href": "slides/es/index.html#dónde-divergen",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Dónde divergen",
+    "text": "Dónde divergen\n\n# Tecnología: el tiempo SE DESTRUYE a propósito\n# preprocesado (32, 8, 224, 224, 3)  -&gt;  salida (32, 512)      N, embedding\n\n# Biotecnología: el tiempo SOBREVIVE, una etiqueta por instante\n# preprocesado (4, 64, 224, 224, 3)  -&gt;  salida (4, 64, 12)    N, T, clases\n\n\nLa respuesta a la pregunta 5 es la atención — la §11 la construye con dos llamadas a einsum, y la máscara de relleno de la pregunta 2 resulta ser la misma máscara que necesita la atención."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-5",
+    "href": "slides/es/index.html#al-cuaderno-5",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n05 · Diseño de un pipeline de vídeo\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#por-qué-importa-2",
+    "href": "slides/es/index.html#por-qué-importa-2",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Por qué importa",
+    "text": "Por qué importa\nLos sistemas de recomendación y de búsqueda ordenan los resultados con el producto punto entre el vector de un usuario y todos los vectores de artículos: millones, muchas veces por segundo.\nEsa contracción es la señal de ranking.\nSuma sobre el eje equivocado y todos los usuarios reciben resultados erróneos."
+  },
+  {
+    "objectID": "slides/es/index.html#una-letra-para-todo-un-lote",
+    "href": "slides/es/index.html#una-letra-para-todo-un-lote",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Una letra para todo un lote",
+    "text": "Una letra para todo un lote\n\ngray       = np.einsum('hwc,c-&gt;hw',   photo, w)      # (512, 512)\ngray_batch = np.einsum('nhwc,c-&gt;nhw', batch, w)      # (2, 512, 512)\n\n\nc está en las entradas pero no tras la flecha → se suma. n, h, w están tras la flecha → se conservan.\n\n\nAñadir un eje de lote cuesta exactamente una letra."
+  },
+  {
+    "objectID": "slides/es/index.html#el-capítulo-2-reescrito",
+    "href": "slides/es/index.html#el-capítulo-2-reescrito",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "El capítulo 2, reescrito",
+    "text": "El capítulo 2, reescrito\n\nnp.einsum('ii-&gt;', A)           # traza              == np.trace(A)   (ec. 2.48)\nnp.einsum('ij-&gt;ji', A)         # transpuesta        == A.T           (ec. 2.3)\nnp.einsum('ik,kj-&gt;ij', A, B)   # producto matricial == A @ B         (ec. 2.5)\n\n\nLa misma expresión sirve para una imagen o para un millón, y se lee como las matemáticas del capítulo 2."
+  },
+  {
+    "objectID": "slides/es/index.html#todos-los-pares-de-1797-imágenes",
+    "href": "slides/es/index.html#todos-los-pares-de-1797-imágenes",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Todos los pares de 1797 imágenes",
+    "text": "Todos los pares de 1797 imágenes\n\nD = load_digits().images.reshape(1797, -1)     # (1797, 64)\nS = np.einsum('id,jd-&gt;ij', D, D)               # (1797, 1797) — 3,2 M de puntuaciones\n\n\nNormaliza antes las filas y la misma contracción se convierte en la similitud del coseno.\n\\[\\text{cos}(u, v) = \\frac{u \\cdot v}{\\lVert u \\rVert \\, \\lVert v \\rVert}\n\\qquad\nd(u,v) = \\sqrt{\\textstyle\\sum_i (u_i - v_i)^2}\\]\n\nDi «distancia euclídea» y «similitud del coseno» en voz alta aquí. El Kahoot 2 pregunta por las dos y el manual no las define en ningún otro sitio: este ejercicio es el único puente."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-6",
+    "href": "slides/es/index.html#al-cuaderno-6",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n06 · Contracción con einsum\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#paso-1-matrices-cuadradas",
+    "href": "slides/es/index.html#paso-1-matrices-cuadradas",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Paso 1 — matrices cuadradas",
+    "text": "Paso 1 — matrices cuadradas\n\nSingular = np.array([[1., 2.], [2., 4.]])   # columna 2 = 2 x columna 1\nnp.linalg.inv(Singular)                      # LinAlgError\n\n\n\\(A^{-1}\\) existe solo si las columnas son linealmente independientes."
+  },
+  {
+    "objectID": "slides/es/index.html#paso-2-matrices-no-cuadradas",
+    "href": "slides/es/index.html#paso-2-matrices-no-cuadradas",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Paso 2 — matrices no cuadradas",
+    "text": "Paso 2 — matrices no cuadradas\nEn aprendizaje automático A casi nunca es cuadrada: una fila por ejemplo, una columna por variable, y siempre muchísimos más ejemplos que variables.\n\nLa pseudoinversa de Moore-Penrose está definida para cualquier matriz:\n\\[A^{+} = V D^{+} U^{\\top}\\]\n\nA_plus = np.linalg.pinv(A)\nU, S_, Vt = np.linalg.svd(A, full_matrices=False)\nnp.allclose(A_plus, Vt.T @ np.diag(1 / S_) @ U.T)     # True — ec. 2.47"
+  },
+  {
+    "objectID": "slides/es/index.html#qué-te-da-ab",
+    "href": "slides/es/index.html#qué-te-da-ab",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Qué te da \\(A^{+}b\\)",
+    "text": "Qué te da \\(A^{+}b\\)\n\n\nAlta (demasiadas ecuaciones, sin solución exacta) → la x que hace Ax lo más cercano posible a b. Mínimos cuadrados.\nAncha (pocas ecuaciones, infinitas soluciones) → la solución válida de norma más pequeña.\n\n\n\nPaso 3 — ¿y los tensores? No hay una única inversa tensorial aceptada por todos. En la práctica: desplegar → pseudoinversa → volver a plegar. Funciona porque el desplegado no pierde nada."
+  },
+  {
+    "objectID": "slides/es/index.html#ecuaciones-ninguna-solución",
+    "href": "slides/es/index.html#ecuaciones-ninguna-solución",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "20.433 ecuaciones, ninguna solución",
+    "text": "20.433 ecuaciones, ninguna solución\n\nd = housing.dropna()                                # 20433 filas; 207 tenían NaN\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                             # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75.980\n\n\nNinguna recta pasa por 20.433 puntos. La pseudoinversa da la mejor respuesta posible. El coeficiente mayor es median_income: tiene todo el sentido.\n\nEl TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-7",
+    "href": "slides/es/index.html#al-cuaderno-7",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n07 · Inversas y la pseudoinversa\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#kahoot-2",
+    "href": "slides/es/index.html#kahoot-2",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Kahoot 2 — Einsum, distancia y la pseudoinversa",
+    "text": "Kahoot 2 — Einsum, distancia y la pseudoinversa\n6 preguntas · unos 5 minutos\nEntrad en kahoot.it\nPIN en pantalla\nCubre: contracción, pseudoinversa, matrices singulares, distancia\nDetalles del cuestionario\n\nEjecútalo justo después de la sección 07, antes de la demostración de recursión. Cubre la contracción (§06), la pseudoinversa y las matrices singulares (§07), y distancia/similitud: la matriz de similitud de dígitos del TODO 4 de la §06 es el puente entre ambas.\nAVISO: dos preguntas son sobre distancia euclídea y similitud del coseno, que el manual no define directamente. Si no dijiste esas palabras durante la §06, espera que caigan en frío.\nESTE ES EL PRIMER CUESTIONARIO QUE HAY QUE RECORTAR si vas mal de tiempo: la pseudoinversa y la distancia se repasan de forma narrativa en el cierre."
+  },
+  {
+    "objectID": "slides/es/index.html#aplicar-la-misma-matriz-una-y-otra-vez",
+    "href": "slides/es/index.html#aplicar-la-misma-matriz-una-y-otra-vez",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Aplicar la misma matriz una y otra vez",
+    "text": "Aplicar la misma matriz una y otra vez\n\nF = np.array([[1, 1], [1, 0]])              # f(n) = f(n-1) + f(n-2)\nv = np.array([1, 0])\nfor _ in range(10):\n    v = F @ v\nv[1]                                         # 55\nnp.linalg.matrix_power(F, 10)[0, 1]          # 55 — misma respuesta, en un paso"
+  },
+  {
+    "objectID": "slides/es/index.html#la-iteración-de-potencias-halla-un-autovector",
+    "href": "slides/es/index.html#la-iteración-de-potencias-halla-un-autovector",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "La iteración de potencias halla un autovector",
+    "text": "La iteración de potencias halla un autovector\n\nx = rng.standard_normal(2); x /= np.linalg.norm(x)\nfor _ in range(50):\n    x = A @ x\n    x /= np.linalg.norm(x)\n\nx @ A @ x                       # 5.000000\nnp.linalg.eig(A)[0].max()       # 5.000000 — idéntico\n\n\nAplicar una matriz repetidamente converge a su autovector dominante. Así ordena PageRank las páginas web."
+  },
+  {
+    "objectID": "slides/es/index.html#pronosticar-tráfico-aéreo-real",
+    "href": "slides/es/index.html#pronosticar-tráfico-aéreo-real",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Pronosticar tráfico aéreo real",
+    "text": "Pronosticar tráfico aéreo real\n\ny = flights['passengers'].to_numpy(float)     # 144 meses reales, 1949–1960\nrows = np.array([y[i:i+12] for i in range(len(y) - 12)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[12:]                # mínimos cuadrados, igual que en §07\n\nhistory = list(y[-12:])\nfor _ in range(12):                           # realimenta sus propias predicciones\n    history.append(w[0] + np.dot(w[1:], history[-12:]))\n\n\n[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nBaja en invierno, máxima en verano, aprendido de 132 ventanas reales."
+  },
+  {
+    "objectID": "slides/es/index.html#eso-es-una-red-neuronal-recurrente",
+    "href": "slides/es/index.html#eso-es-una-red-neuronal-recurrente",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Eso es una red neuronal recurrente",
+    "text": "Eso es una red neuronal recurrente\n\nh = np.zeros(4)\nfor t in range(6):\n    h = np.tanh(W @ h + U @ xs[t])    # las mismas W y U en cada paso — la recursión\n\nUn estado oculto, actualizado por los mismos pesos en cada paso.\n\nSi vas muy mal de tiempo, este fragmento de RNN es el tercero en la lista de recortes, después del Kahoot 2 y del TODO 4 de la §09."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-8",
+    "href": "slides/es/index.html#al-cuaderno-8",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n08 · Recursión con matrices y vectores\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#tres-modos-tres-tamaños-de-salida",
+    "href": "slides/es/index.html#tres-modos-tres-tamaños-de-salida",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Tres modos, tres tamaños de salida",
+    "text": "Tres modos, tres tamaños de salida\n\nnp.convolve(x, k, 'full')    # longitud 5+3-1 = 7\nnp.convolve(x, k, 'valid')   # longitud 5-3+1 = 3\nnp.convolve(x, k, 'same')    # longitud 5\n\n\nvalid usa solo las posiciones donde el núcleo cabe entero: por eso la convolución encoge una imagen en kernel_size - 1."
+  },
+  {
+    "objectID": "slides/es/index.html#lo-que-todo-el-mundo-confunde",
+    "href": "slides/es/index.html#lo-que-todo-el-mundo-confunde",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Lo que todo el mundo confunde",
+    "text": "Lo que todo el mundo confunde\n\n\n\n\n\n\nAdvertencia\n\n\nLa convolución verdadera invierte el núcleo. La correlación no. Lo que las librerías de deep learning llaman «convolución» es correlación.\n\n\n\n\nnp.correlate(x, k, 'valid')          # [-2. -2. -2.]\nnp.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — igual, con k invertido\n\n\nEn la práctica da lo mismo — la red aprende el núcleo —, pero los nombres son incoherentes y conviene saberlo."
+  },
+  {
+    "objectID": "slides/es/index.html#la-convolución-es-un-producto-matricial",
+    "href": "slides/es/index.html#la-convolución-es-un-producto-matricial",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "La convolución es un producto matricial",
+    "text": "La convolución es un producto matricial\n\nC = toeplitz(col, row)                          # (7, 5)\nnp.allclose(C @ x, np.convolve(x, k, 'full'))   # True\n\n\nUna matriz de Toeplitz: los mismos pocos números reutilizados por toda la matriz.\nEsa reutilización es exactamente por lo que las CNN necesitan muchísimos menos parámetros que una red totalmente conectada."
+  },
+  {
+    "objectID": "slides/es/index.html#deconvolución-significa-dos-cosas",
+    "href": "slides/es/index.html#deconvolución-significa-dos-cosas",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "«Deconvolución» significa dos cosas",
+    "text": "«Deconvolución» significa dos cosas\n\n\nConvolución transpuesta — la capa de sobremuestreo de un decodificador o una GAN. Hace las cosas más grandes. No es una inversa verdadera; el nombre es histórico.\nDeconvolución verdadera — recuperar el original a partir del borroso. Un problema inverso de verdad, y donde vuelve la §07."
+  },
+  {
+    "objectID": "slides/es/index.html#deconvolucionar-una-fotografía-real",
+    "href": "slides/es/index.html#deconvolucionar-una-fotografía-real",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Deconvolucionar una fotografía real",
+    "text": "Deconvolucionar una fotografía real\n\nrecovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)\n\nc = 25   # IGNORA EL BORDE — la deconvolución siempre crea artefactos en los bordes\nerr = lambda a: np.linalg.norm((a-img)[c:-c,c:-c]) / np.linalg.norm(img[c:-c,c:-c])\nprint(err(noisy), err(recovered))     # 0.1157 -&gt; 0.0815\n\n\nEl error se reduce alrededor de un 30 %.\n\n\n\n\n\n\nImportante\n\n\nAvisa del recorte de 25 píxeles antes del ejercicio. Quien se lo salte concluirá que la deconvolución falló. No falló.\n\n\n\n\nEs lo más difícil del taller. El TODO 4 es el segundo en la lista de recortes. Di lo del recorte del borde en voz alta antes de que empiecen, no después."
+  },
+  {
+    "objectID": "slides/es/index.html#por-qué-no-invertir-el-desenfoque-sin-más",
+    "href": "slides/es/index.html#por-qué-no-invertir-el-desenfoque-sin-más",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "¿Por qué no invertir el desenfoque sin más?",
+    "text": "¿Por qué no invertir el desenfoque sin más?\n\nK = np.fft.fft2(psf, s=img.shape)\nnaive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) &lt; 1e-3, 1e-3, K)))\nerr(naive)     # ~2.49 — unas veinte veces PEOR que el desenfoque de partida\n\n\nEl desenfoque destruye el detalle de alta frecuencia, así que invertirlo divide por números casi nulos y amplifica el ruido enormemente.\n\n\nLa misma lección que en §07: si la inversa directa no existe o es inutilizable, buscas la mejor respuesta estable."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-9",
+    "href": "slides/es/index.html#al-cuaderno-9",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n09 · Convolución y deconvolución\nAbrir en Colab"
+  },
+  {
+    "objectID": "slides/es/index.html#pca-generalizado-a-todos-los-ejes",
+    "href": "slides/es/index.html#pca-generalizado-a-todos-los-ejes",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "PCA generalizado a todos los ejes",
+    "text": "PCA generalizado a todos los ejes\nPCA comprime una matriz: dos ejes. Los datos reales suelen tener más.\nTucker: una matriz de factores por eje, más un pequeño tensor núcleo que describe cómo se combinan.\n\nHOSVD usa solo herramientas que ya tienes:\n\n\nDesplegar el tensor a lo largo de cada eje (§01)\nSVD sobre cada desplegado; quedarse con las componentes principales\nContraer el tensor contra todos los factores para obtener el núcleo (§06)"
+  },
+  {
+    "objectID": "slides/es/index.html#un-tensor-real-de-orden-3",
+    "href": "slides/es/index.html#un-tensor-real-de-orden-3",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Un tensor real de orden 3",
+    "text": "Un tensor real de orden 3\nbarrio de origen × barrio de destino × hora del día, a partir de 6.433 viajes reales en taxi de Nueva York.\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n\nT[i, j, k] = viajes del barrio i al barrio j recogidos durante la hora k."
+  },
+  {
+    "objectID": "slides/es/index.html#tres-ejes-un-solo-einsum",
+    "href": "slides/es/index.html#tres-ejes-un-solo-einsum",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Tres ejes, un solo einsum",
+    "text": "Tres ejes, un solo einsum\n\nUs = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]\nUs = [Us[i][:, :r[i]] for i in range(3)]                     # r = (2, 2, 3)\n\ncore  = np.einsum('ijk,ia,jb,kc-&gt;abc', T, Us[0], Us[1], Us[2])   # (2, 2, 3)\nrecon = np.einsum('abc,ia,jb,kc-&gt;ijk', core, Us[0], Us[1], Us[2])\n\nerror = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067\nratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71\n\n\n'ijk,ia,jb,kc-&gt;abc' contrae tres ejes en una sola expresión. Por eso einsum vino primero."
+  },
+  {
+    "objectID": "slides/es/index.html#lo-que-encontró-por-sí-solo",
+    "href": "slides/es/index.html#lo-que-encontró-por-sí-solo",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Lo que encontró por sí solo",
+    "text": "Lo que encontró por sí solo\n4,7× menos números, 6,7 % de error. Pero eso no es lo importante.\n\n\nnp.abs(Us[2][:, 0]).argmax()      # 18\nT.sum(axis=(0, 1)).argmax()       # 18 — la misma hora, desde los datos crudos\n\n\n\nLa descomposición descubrió la hora punta de la tarde por sí sola.\nNadie le habló del tiempo, ni del tráfico, ni de los desplazamientos al trabajo. Encontró el patrón dominante de ese eje porque eso es lo que hace una descomposición."
+  },
+  {
+    "objectID": "slides/es/index.html#al-cuaderno-10",
+    "href": "slides/es/index.html#al-cuaderno-10",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Al cuaderno",
+    "text": "Al cuaderno\n10 · Descomposición de Tucker con datos reales\nAbrir en Colab\n\nNunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores de pesos de las redes neuronales para que los modelos corran en móviles. En biotecnología, sobre datos (genes × muestras × condiciones), encuentran estructura que PCA no alcanza: PCA solo puede ver dos ejes."
+  },
+  {
+    "objectID": "slides/es/index.html#kahoot-3",
+    "href": "slides/es/index.html#kahoot-3",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Kahoot 3 — Convolución y descomposiciones tensoriales",
+    "text": "Kahoot 3 — Convolución y descomposiciones tensoriales\n6 preguntas · unos 5 minutos\nEntrad en kahoot.it\nPIN en pantalla\nCubre: convolución, correlación, Tucker, CP, HOSVD\nDetalles del cuestionario\n\nEjecútalo justo después de la sección 10, con el resultado de la hora punta del tensor de taxis todavía en pantalla.\nSU ÚLTIMA PREGUNTA NOMBRA LA HORA 18: tiene que ir DESPUÉS del TODO 6 de la §10, nunca antes, o revela la respuesta.\nNUNCA RECORTES ESTE. Es la forma más barata de comprobar si Tucker y CP han calado antes de que se vayan. Además hace de ensayo en directo del propio repaso del cierre, así que enlaza directamente del podio con el cierre."
+  },
+  {
+    "objectID": "slides/es/index.html#lo-que-hiciste-hoy",
+    "href": "slides/es/index.html#lo-que-hiciste-hoy",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Lo que hiciste hoy",
+    "text": "Lo que hiciste hoy\n\n\n§01 — el vocabulario, y que el desplegado no pierde nada\n§02, §05 — un eje de lote y un eje temporal se comportan de forma distinta aunque las formas parezcan idénticas\n§03, §04 — datos reales de tumores e imágenes médicas reales, y problemas reales: píxeles de varianza cero, y reshape destruyendo una imagen en silencio\n§06–§10 — contracciones; un sistema irresoluble de 20.433 ecuaciones; recursión que pronostica tráfico aéreo real; una fotografía deconvolucionada; un tensor de taxis comprimido 4,7×, que encontró la hora punta por sí solo"
+  },
+  {
+    "objectID": "slides/es/index.html#una-idea-conecta-07-09-y-10",
+    "href": "slides/es/index.html#una-idea-conecta-07-09-y-10",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Una idea conecta §07, §09 y §10",
+    "text": "Una idea conecta §07, §09 y §10\n\n\n\n\n\n\nCuando un problema no tiene respuesta exacta ni inversa verdadera, no te rindes: buscas la mejor aproximación estable.\n\n\n\n\n\n\n\n\nPseudoinversa — para sistemas lineales\nRichardson-Lucy — para imágenes borrosas\nTucker — para tensores demasiado grandes para guardarlos enteros\n\n\n\nEnunciar esta conexión de forma explícita es lo que hace que la segunda mitad se sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes."
+  },
+  {
+    "objectID": "slides/es/index.html#dónde-seguir",
+    "href": "slides/es/index.html#dónde-seguir",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Dónde seguir",
+    "text": "Dónde seguir\n\ntorch.einsum / tf.einsum / jnp.einsum — sintaxis idéntica a la de hoy\ntensorly — Tucker y CP de verdad\nnp.linalg — el resto del capítulo 2: eig, lstsq, pinv, qr\nscipy.signal, skimage.restoration — convolución y deconvolución más allá de hoy\n\n\nTres ejercicios para casa en el cuaderno 11: la trampa de escala de PCA, la atención como dos contracciones, y CP frente a Tucker."
+  },
+  {
+    "objectID": "slides/es/index.html#gracias",
+    "href": "slides/es/index.html#gracias",
+    "title": "Tensores para Aprendizaje Automático",
+    "section": "Gracias",
+    "text": "Gracias\nLas preguntas son bienvenidas en Discord, en español o en inglés.\nSitio del taller · Manual · Todos los cuadernos · These slides in English"
+  }
+]
