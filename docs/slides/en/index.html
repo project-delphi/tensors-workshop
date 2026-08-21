@@ -337,7 +337,7 @@
 </section>
 <section id="three-downloads-one-first-cell" class="slide level2">
 <h2>Three downloads, one first cell</h2>
-<div id="feecba8d" class="cell">
+<div id="code-00-setup-and-data-1" class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a>HOUSING <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"</span></span>
 <span id="cb1-2"><a></a>TAXIS   <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"</span></span>
 <span id="cb1-3"><a></a>FLIGHTS <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"</span></span>
@@ -434,14 +434,14 @@
 </section>
 <section id="shape-is-a-tuple-order-is-its-length" class="slide level2">
 <h2>Shape is a tuple; order is its length</h2>
-<div id="658c0903" class="cell">
+<div id="code-01-what-a-tensor-is-1" class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a>scalar <span class="op">=</span> np.array(<span class="fl">3.0</span>)                     <span class="co"># order 0   shape ()</span></span>
 <span id="cb2-2"><a></a>vector <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])            <span class="co"># order 1   shape (3,)</span></span>
 <span id="cb2-3"><a></a>matrix <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">3.</span>, <span class="fl">4.</span>]])    <span class="co"># order 2   shape (2, 2)</span></span>
 <span id="cb2-4"><a></a>tensor <span class="op">=</span> rng.standard_normal((<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>))    <span class="co"># order 3   shape (2, 3, 4)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
-<div id="e8ff2790" class="cell">
+<div id="code-01-what-a-tensor-is-2" class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a>digits.images.shape              <span class="co"># (1797, 8, 8)  — images, height, width</span></span>
 <span id="cb3-2"><a></a>photo.shape                      <span class="co"># (512, 512, 3) — height, width, colour</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -454,7 +454,7 @@
 <section id="three-operations" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Three operations</h2>
 <p><strong>Slice</strong> — fix one index. <strong>Fiber</strong> — fix all but one.</p>
-<div id="8e6dce9f" class="cell">
+<div id="code-01-what-a-tensor-is-3" class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb4-1" class="hljs-ln-code"><a></a>photo[:, :, <span class="dv">0</span>].shape       <span class="co"># (512, 512) — a slice: one colour channel</span></span>
 <span id="cb4-2" class="hljs-ln-code"><a></a>photo[<span class="dv">100</span>, <span class="dv">200</span>, :].shape   <span class="co"># (3,)       — a fiber: one pixel's colours</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -462,7 +462,7 @@
 <section id="three-operations-1" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Three operations</h2>
 <p><strong>Unfolding</strong> — turn any tensor into a matrix.</p>
-<div id="1a53bee1" class="cell">
+<div id="code-01-what-a-tensor-is-4" class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb5-1" class="hljs-ln-code"><a></a><span class="kw">def</span> unfold(T, axis):</span>
 <span id="cb5-2" class="hljs-ln-code"><a></a>    <span class="cf">return</span> np.moveaxis(T, axis, <span class="dv">0</span>).reshape(T.shape[axis], <span class="op">-</span><span class="dv">1</span>)</span>
 <span id="cb5-3" class="hljs-ln-code"><a></a></span>
@@ -476,7 +476,7 @@
 <section id="three-operations-2" class="slide level2" data-auto-animate="true">
 <h2 data-id="quarto-animate-title">Three operations</h2>
 <p><strong>Contraction</strong> — multiply along a shared axis and sum over it.</p>
-<div id="964cb343" class="cell">
+<div id="code-01-what-a-tensor-is-5" class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode numberSource python number-lines code-with-copy" data-id="quarto-animate-code"><code class="sourceCode python hljs"><span id="cb6-1" class="hljs-ln-code"><a></a>np.einsum(<span class="st">'i,i-&gt;'</span>, a, b)          <span class="co"># dot product      (eq 2.8)</span></span>
 <span id="cb6-2" class="hljs-ln-code"><a></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)      <span class="co"># matrix product   (eq 2.5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -593,7 +593,7 @@
 </section>
 <section id="share-back" class="slide level2">
 <h2>Share-back</h2>
-<div id="d2854257" class="cell">
+<div id="code-02-thinking-in-n-dimensions-1" class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>gray_image      <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>))            <span class="co"># (H, W)</span></span>
 <span id="cb7-2"><a></a>color_image     <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))         <span class="co"># (H, W, C)      + colour</span></span>
 <span id="cb7-3"><a></a>batch_of_images <span class="op">=</span> np.zeros((<span class="dv">32</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))     <span class="co"># (N, H, W, C)   + many examples</span></span>
@@ -644,7 +644,7 @@
 </section>
 <section id="the-exercise" class="slide level2">
 <h2>The exercise</h2>
-<div id="dba82ec3" class="cell">
+<div id="code-03-indexing-and-broadcasting-1" class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Extract "mean radius" using names.index(...). Do not hard-code a number.</span></span>
 <span id="cb8-2"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: The 5 patients with the LARGEST mean radius, full profiles, ONE operation.</span></span>
 <span id="cb8-3"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Boolean indexing — malignant (y == 0) vs benign (y == 1). Real difference?</span></span>
@@ -654,7 +654,7 @@
 </section>
 <section id="two-real-results" class="slide level2">
 <h2>Two real results</h2>
-<div id="c75235cb" class="cell">
+<div id="code-03-indexing-and-broadcasting-2" class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="bu">print</span>(radius[y <span class="op">==</span> <span class="dv">0</span>].mean(), radius[y <span class="op">==</span> <span class="dv">1</span>].mean())   <span class="co"># 17.5 vs 12.1</span></span>
 <span id="cb9-2"><a></a><span class="bu">print</span>((std <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())                               <span class="co"># 3</span></span>
 <span id="cb9-3"><a></a>Z <span class="op">=</span> (D <span class="op">-</span> mean) <span class="op">/</span> np.where(std <span class="op">==</span> <span class="dv">0</span>, <span class="fl">1.0</span>, std)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -689,7 +689,7 @@
 </section>
 <section id="same-shape-different-data" class="slide level2">
 <h2>Same shape, different data</h2>
-<div id="b98d2d81" class="cell">
+<div id="code-04-reshape-and-transpose-1" class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>chw   <span class="op">=</span> np.transpose(photo, (<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))      <span class="co"># (3, 512, 512) — correct</span></span>
 <span id="cb10-2"><a></a>wrong <span class="op">=</span> photo.reshape(<span class="dv">3</span>, <span class="dv">512</span>, <span class="dv">512</span>)          <span class="co"># (3, 512, 512) — runs, but scrambles</span></span>
 <span id="cb10-3"><a></a></span>
@@ -701,7 +701,7 @@
 </section>
 <section id="when-two-axes-share-a-size" class="slide level2">
 <h2>When two axes share a size</h2>
-<div id="469d2cf7" class="cell">
+<div id="code-04-reshape-and-transpose-2" class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a>batch <span class="op">=</span> np.stack([photo, photo, photo])      <span class="co"># (3, 512, 512, 3)</span></span>
 <span id="cb11-2"><a></a>nchw  <span class="op">=</span> np.transpose(batch, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>))    <span class="co"># (3, 3, 512, 512)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -775,7 +775,7 @@
 </section>
 <section id="where-they-diverge" class="slide level2">
 <h2>Where they diverge</h2>
-<div id="c518a0de" class="cell">
+<div id="code-05-video-pipeline-design-1" class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="co"># Tech: time is DESTROYED on purpose</span></span>
 <span id="cb12-2"><a></a><span class="co"># preprocessed (32, 8, 224, 224, 3)  -&gt;  output (32, 512)      N, embedding</span></span>
 <span id="cb12-3"><a></a></span>
@@ -804,7 +804,7 @@
 </section>
 <section id="one-letter-for-a-batch" class="slide level2">
 <h2>One letter for a batch</h2>
-<div id="d5ad86d2" class="cell">
+<div id="code-06-contraction-with-einsum-1" class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a>gray       <span class="op">=</span> np.einsum(<span class="st">'hwc,c-&gt;hw'</span>,   photo, w)      <span class="co"># (512, 512)</span></span>
 <span id="cb13-2"><a></a>gray_batch <span class="op">=</span> np.einsum(<span class="st">'nhwc,c-&gt;nhw'</span>, batch, w)      <span class="co"># (2, 512, 512)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -817,7 +817,7 @@
 </section>
 <section id="chapter-2-rewritten" class="slide level2">
 <h2>Chapter 2, rewritten</h2>
-<div id="8cfadfb4" class="cell">
+<div id="code-06-contraction-with-einsum-2" class="cell">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a>np.einsum(<span class="st">'ii-&gt;'</span>, A)           <span class="co"># trace          == np.trace(A)      (eq 2.48)</span></span>
 <span id="cb14-2"><a></a>np.einsum(<span class="st">'ij-&gt;ji'</span>, A)         <span class="co"># transpose      == A.T              (eq 2.3)</span></span>
 <span id="cb14-3"><a></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)   <span class="co"># matrix product == A @ B            (eq 2.5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -828,7 +828,7 @@
 </section>
 <section id="every-pair-of-1797-images" class="slide level2">
 <h2>Every pair of 1797 images</h2>
-<div id="9b64e3ab" class="cell">
+<div id="code-06-contraction-with-einsum-3" class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a>D <span class="op">=</span> load_digits().images.reshape(<span class="dv">1797</span>, <span class="op">-</span><span class="dv">1</span>)     <span class="co"># (1797, 64)</span></span>
 <span id="cb15-2"><a></a>S <span class="op">=</span> np.einsum(<span class="st">'id,jd-&gt;ij'</span>, D, D)               <span class="co"># (1797, 1797) — 3.2M scores</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -864,7 +864,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="step-1-square-matrices" class="slide level2">
 <h2>Step 1 — square matrices</h2>
-<div id="b79392c6" class="cell">
+<div id="code-07-inverses-and-pseudoinverse-1" class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a>Singular <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">4.</span>]])   <span class="co"># column 2 = 2 x column 1</span></span>
 <span id="cb16-2"><a></a>np.linalg.inv(Singular)                      <span class="co"># LinAlgError</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -878,7 +878,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <div class="fragment">
 <p>The <strong>Moore-Penrose pseudoinverse</strong> is defined for <em>every</em> matrix:</p>
 <p><span class="math display">\[A^{+} = V D^{+} U^{\top}\]</span></p>
-<div id="72aa8dab" class="cell">
+<div id="code-07-inverses-and-pseudoinverse-2" class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a>A_plus <span class="op">=</span> np.linalg.pinv(A)</span>
 <span id="cb17-2"><a></a>U, S_, Vt <span class="op">=</span> np.linalg.svd(A, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
 <span id="cb17-3"><a></a>np.allclose(A_plus, Vt.T <span class="op">@</span> np.diag(<span class="dv">1</span> <span class="op">/</span> S_) <span class="op">@</span> U.T)     <span class="co"># True — eq 2.47</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -899,7 +899,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="equations-no-solution" class="slide level2">
 <h2>20,433 equations, no solution</h2>
-<div id="8c95adcd" class="cell">
+<div id="code-07-inverses-and-pseudoinverse-3" class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a>d <span class="op">=</span> housing.dropna()                                <span class="co"># 20433 rows; 207 had NaN</span></span>
 <span id="cb18-2"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(d)), d[feats].to_numpy(<span class="bu">float</span>)])   <span class="co"># (20433, 7)</span></span>
 <span id="cb18-3"><a></a></span>
@@ -966,7 +966,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="apply-the-same-matrix-again-and-again" class="slide level2">
 <h2>Apply the same matrix again and again</h2>
-<div id="a69d9cac" class="cell">
+<div id="code-08-recursion-with-matrices-1" class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a>F <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">0</span>]])              <span class="co"># f(n) = f(n-1) + f(n-2)</span></span>
 <span id="cb19-2"><a></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>])</span>
 <span id="cb19-3"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
@@ -977,7 +977,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="power-iteration-finds-an-eigenvector" class="slide level2">
 <h2>Power iteration finds an eigenvector</h2>
-<div id="673474e0" class="cell">
+<div id="code-08-recursion-with-matrices-2" class="cell">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a>x <span class="op">=</span> rng.standard_normal(<span class="dv">2</span>)<span class="op">;</span> x <span class="op">/=</span> np.linalg.norm(x)</span>
 <span id="cb20-2"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
 <span id="cb20-3"><a></a>    x <span class="op">=</span> A <span class="op">@</span> x</span>
@@ -992,7 +992,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="forecasting-real-airline-traffic" class="slide level2">
 <h2>Forecasting real airline traffic</h2>
-<div id="cc90e735" class="cell">
+<div id="code-08-recursion-with-matrices-3" class="cell">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>y <span class="op">=</span> flights[<span class="st">'passengers'</span>].to_numpy(<span class="bu">float</span>)     <span class="co"># 144 real months, 1949–1960</span></span>
 <span id="cb21-2"><a></a>rows <span class="op">=</span> np.array([y[i:i<span class="op">+</span><span class="dv">12</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(y) <span class="op">-</span> <span class="dv">12</span>)])</span>
 <span id="cb21-3"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(rows)), rows])</span>
@@ -1009,7 +1009,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="that-is-a-recurrent-neural-network" class="slide level2">
 <h2>That is a recurrent neural network</h2>
-<div id="bcc8d977" class="cell">
+<div id="code-08-recursion-with-matrices-4" class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a>h <span class="op">=</span> np.zeros(<span class="dv">4</span>)</span>
 <span id="cb22-2"><a></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">6</span>):</span>
 <span id="cb22-3"><a></a>    h <span class="op">=</span> np.tanh(W <span class="op">@</span> h <span class="op">+</span> U <span class="op">@</span> xs[t])    <span class="co"># same W and U every step — the recursion</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1041,7 +1041,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="three-modes-three-output-sizes" class="slide level2">
 <h2>Three modes, three output sizes</h2>
-<div id="3c78b168" class="cell">
+<div id="code-09-convolution-and-deconvolution-1" class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a>np.convolve(x, k, <span class="st">'full'</span>)    <span class="co"># length 5+3-1 = 7</span></span>
 <span id="cb23-2"><a></a>np.convolve(x, k, <span class="st">'valid'</span>)   <span class="co"># length 5-3+1 = 3</span></span>
 <span id="cb23-3"><a></a>np.convolve(x, k, <span class="st">'same'</span>)    <span class="co"># length 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1065,7 +1065,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </div>
 </div>
 </div>
-<div id="700469c2" class="cell">
+<div id="code-09-convolution-and-deconvolution-2" class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a>np.correlate(x, k, <span class="st">'valid'</span>)          <span class="co"># [-2. -2. -2.]</span></span>
 <span id="cb24-2"><a></a>np.convolve(x, k[::<span class="op">-</span><span class="dv">1</span>], <span class="st">'valid'</span>)     <span class="co"># [-2. -2. -2.] — same, with k flipped</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1075,7 +1075,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="convolution-is-a-matrix-product" class="slide level2">
 <h2>Convolution is a matrix product</h2>
-<div id="d06b9bab" class="cell">
+<div id="code-09-convolution-and-deconvolution-3" class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a>C <span class="op">=</span> toeplitz(col, row)                          <span class="co"># (7, 5)</span></span>
 <span id="cb25-2"><a></a>np.allclose(C <span class="op">@</span> x, np.convolve(x, k, <span class="st">'full'</span>))   <span class="co"># True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1095,7 +1095,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="deconvolving-a-real-photograph" class="slide level2">
 <h2>Deconvolving a real photograph</h2>
-<div id="3169e581" class="cell">
+<div id="code-09-convolution-and-deconvolution-4" class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a>recovered <span class="op">=</span> richardson_lucy(np.clip(noisy, <span class="dv">0</span>, <span class="dv">1</span>), psf, num_iter<span class="op">=</span><span class="dv">50</span>)</span>
 <span id="cb26-2"><a></a></span>
 <span id="cb26-3"><a></a>c <span class="op">=</span> <span class="dv">25</span>   <span class="co"># IGNORE THE BORDER — deconvolution always creates edge artifacts</span></span>
@@ -1134,7 +1134,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="why-not-just-invert-the-blur" class="slide level2">
 <h2>Why not just invert the blur?</h2>
-<div id="0900716d" class="cell">
+<div id="code-09-convolution-and-deconvolution-5" class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>K <span class="op">=</span> np.fft.fft2(psf, s<span class="op">=</span>img.shape)</span>
 <span id="cb27-2"><a></a>naive <span class="op">=</span> np.real(np.fft.ifft2(np.fft.fft2(noisy) <span class="op">/</span> np.where(<span class="bu">abs</span>(K) <span class="op">&lt;</span> <span class="fl">1e-3</span>, <span class="fl">1e-3</span>, K)))</span>
 <span id="cb27-3"><a></a>err(naive)     <span class="co"># ~2.49 — about twenty times WORSE than the blur we started from</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1174,7 +1174,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="a-real-order-3-tensor" class="slide level2">
 <h2>A real order-3 tensor</h2>
 <p><strong>pickup borough × dropoff borough × hour of day</strong>, from 6,433 real NYC taxi trips.</p>
-<div id="074a8a6b" class="cell">
+<div id="code-10-tucker-decomposition-1" class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
 <span id="cb28-2"><a></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
 <span id="cb28-3"><a></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1185,7 +1185,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </section>
 <section id="three-axes-one-einsum" class="slide level2">
 <h2>Three axes, one einsum</h2>
-<div id="6b0a07d8" class="cell">
+<div id="code-10-tucker-decomposition-2" class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>Us <span class="op">=</span> [np.linalg.svd(unfold(T, ax), full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>] <span class="cf">for</span> ax <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
 <span id="cb29-2"><a></a>Us <span class="op">=</span> [Us[i][:, :r[i]] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]                     <span class="co"># r = (2, 2, 3)</span></span>
 <span id="cb29-3"><a></a></span>
@@ -1203,7 +1203,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <h2>What it found by itself</h2>
 <p><strong>4.7× fewer numbers, 6.7% error.</strong> But that is not the point.</p>
 <div class="fragment">
-<div id="d91cd916" class="cell">
+<div id="code-10-tucker-decomposition-3" class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a></a>np.<span class="bu">abs</span>(Us[<span class="dv">2</span>][:, <span class="dv">0</span>]).argmax()      <span class="co"># 18</span></span>
 <span id="cb30-2"><a></a>T.<span class="bu">sum</span>(axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>)).argmax()       <span class="co"># 18 — the same hour, from raw counts</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>

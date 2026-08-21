@@ -88,6 +88,7 @@ confusión más fiable de todo el taller.
 ## Tres descargas, una primera celda
 
 ```{python}
+#| label: code-00-setup-and-data-1
 #| echo: true
 HOUSING = "https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"
 TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
@@ -136,6 +137,7 @@ El resto viene dentro de las librerías y funciona sin conexión:
 ## La forma es una tupla; el orden es su longitud
 
 ```{python}
+#| label: code-01-what-a-tensor-is-1
 #| echo: true
 scalar = np.array(3.0)                     # orden 0   forma ()
 vector = np.array([1., 2., 3.])            # orden 1   forma (3,)
@@ -146,6 +148,7 @@ tensor = rng.standard_normal((2, 3, 4))    # orden 3   forma (2, 3, 4)
 . . .
 
 ```{python}
+#| label: code-01-what-a-tensor-is-2
 #| echo: true
 digits.images.shape              # (1797, 8, 8)  — imágenes, alto, ancho
 photo.shape                      # (512, 512, 3) — alto, ancho, color
@@ -162,6 +165,7 @@ La forma por sí sola nunca te dice qué significan los ejes.
 **Corte** — fija un índice. **Fibra** — fija todos menos uno.
 
 ```{python}
+#| label: code-01-what-a-tensor-is-3
 #| echo: true
 photo[:, :, 0].shape       # (512, 512) — un corte: un canal de color
 photo[100, 200, :].shape   # (3,)       — una fibra: los colores de un píxel
@@ -172,6 +176,7 @@ photo[100, 200, :].shape   # (3,)       — una fibra: los colores de un píxel
 **Desplegado** — convertir cualquier tensor en una matriz.
 
 ```{python}
+#| label: code-01-what-a-tensor-is-4
 #| echo: true
 def unfold(T, axis):
     return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
@@ -190,6 +195,7 @@ que ya conoces.
 **Contracción** — multiplicar sobre un eje compartido y sumar sobre él.
 
 ```{python}
+#| label: code-01-what-a-tensor-is-5
 #| echo: true
 np.einsum('i,i->', a, b)          # producto punto     (ec. 2.8)
 np.einsum('ik,kj->ij', A, B)      # producto matricial (ec. 2.5)
@@ -262,6 +268,7 @@ apéndices, nunca la parte I.
 ## Puesta en común
 
 ```{python}
+#| label: code-02-thinking-in-n-dimensions-1
 #| echo: true
 gray_image      = np.zeros((28, 28))            # (H, W)
 color_image     = np.zeros((28, 28, 3))         # (H, W, C)      + color
@@ -313,6 +320,7 @@ En una herramienta clínica: una recomendación errónea sobre una persona real.
 ## El ejercicio
 
 ```{python}
+#| label: code-03-indexing-and-broadcasting-1
 #| echo: true
 # TODO 2: Extrae "mean radius" con names.index(...). No escribas un número fijo.
 # TODO 3: Los 5 pacientes con mayor "mean radius", perfil completo, UNA operación.
@@ -324,6 +332,7 @@ En una herramienta clínica: una recomendación errónea sobre una persona real.
 ## Dos resultados reales
 
 ```{python}
+#| label: code-03-indexing-and-broadcasting-2
 #| echo: true
 print(radius[y == 0].mean(), radius[y == 1].mean())   # 17.5 frente a 12.1
 print((std == 0).sum())                               # 3
@@ -369,6 +378,7 @@ PyTorch (`NCHW`) sin transponer.
 ## La misma forma, datos distintos
 
 ```{python}
+#| label: code-04-reshape-and-transpose-1
 #| echo: true
 chw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correcto
 wrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — se ejecuta, pero revuelve
@@ -384,6 +394,7 @@ np.array_equal(chw, wrong)                  # False
 ## Cuando dos ejes tienen el mismo tamaño
 
 ```{python}
+#| label: code-04-reshape-and-transpose-2
 #| echo: true
 batch = np.stack([photo, photo, photo])      # (3, 512, 512, 3)
 nchw  = np.transpose(batch, (0, 3, 1, 2))    # (3, 3, 512, 512)
@@ -472,6 +483,7 @@ quirúrgica.
 ## Dónde divergen
 
 ```{python}
+#| label: code-05-video-pipeline-design-1
 #| echo: true
 # Tecnología: el tiempo SE DESTRUYE a propósito
 # preprocesado (32, 8, 224, 224, 3)  ->  salida (32, 512)      N, embedding
@@ -509,6 +521,7 @@ Suma sobre el eje equivocado y todos los usuarios reciben resultados erróneos.
 ## Una letra para todo un lote
 
 ```{python}
+#| label: code-06-contraction-with-einsum-1
 #| echo: true
 gray       = np.einsum('hwc,c->hw',   photo, w)      # (512, 512)
 gray_batch = np.einsum('nhwc,c->nhw', batch, w)      # (2, 512, 512)
@@ -526,6 +539,7 @@ gray_batch = np.einsum('nhwc,c->nhw', batch, w)      # (2, 512, 512)
 ## El capítulo 2, reescrito
 
 ```{python}
+#| label: code-06-contraction-with-einsum-2
 #| echo: true
 np.einsum('ii->', A)           # traza              == np.trace(A)   (ec. 2.48)
 np.einsum('ij->ji', A)         # transpuesta        == A.T           (ec. 2.3)
@@ -540,6 +554,7 @@ matemáticas del capítulo 2.**
 ## Todos los pares de 1797 imágenes
 
 ```{python}
+#| label: code-06-contraction-with-einsum-3
 #| echo: true
 D = load_digits().images.reshape(1797, -1)     # (1797, 64)
 S = np.einsum('id,jd->ij', D, D)               # (1797, 1797) — 3,2 M de puntuaciones
@@ -573,6 +588,7 @@ ejercicio es el único puente.
 ## Paso 1 — matrices cuadradas
 
 ```{python}
+#| label: code-07-inverses-and-pseudoinverse-1
 #| echo: true
 Singular = np.array([[1., 2.], [2., 4.]])   # columna 2 = 2 x columna 1
 np.linalg.inv(Singular)                      # LinAlgError
@@ -594,6 +610,7 @@ La **pseudoinversa de Moore-Penrose** está definida para *cualquier* matriz:
 $$A^{+} = V D^{+} U^{\top}$$
 
 ```{python}
+#| label: code-07-inverses-and-pseudoinverse-2
 #| echo: true
 A_plus = np.linalg.pinv(A)
 U, S_, Vt = np.linalg.svd(A, full_matrices=False)
@@ -618,6 +635,7 @@ porque el desplegado no pierde nada.
 ## 20.433 ecuaciones, ninguna solución
 
 ```{python}
+#| label: code-07-inverses-and-pseudoinverse-3
 #| echo: true
 d = housing.dropna()                                # 20433 filas; 207 tenían NaN
 X = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)
@@ -680,6 +698,7 @@ pseudoinversa y la distancia se repasan de forma narrativa en el cierre.
 ## Aplicar la misma matriz una y otra vez
 
 ```{python}
+#| label: code-08-recursion-with-matrices-1
 #| echo: true
 F = np.array([[1, 1], [1, 0]])              # f(n) = f(n-1) + f(n-2)
 v = np.array([1, 0])
@@ -692,6 +711,7 @@ np.linalg.matrix_power(F, 10)[0, 1]          # 55 — misma respuesta, en un pas
 ## La iteración de potencias halla un autovector
 
 ```{python}
+#| label: code-08-recursion-with-matrices-2
 #| echo: true
 x = rng.standard_normal(2); x /= np.linalg.norm(x)
 for _ in range(50):
@@ -710,6 +730,7 @@ Así ordena PageRank las páginas web.
 ## Pronosticar tráfico aéreo real
 
 ```{python}
+#| label: code-08-recursion-with-matrices-3
 #| echo: true
 y = flights['passengers'].to_numpy(float)     # 144 meses reales, 1949–1960
 rows = np.array([y[i:i+12] for i in range(len(y) - 12)])
@@ -730,6 +751,7 @@ for _ in range(12):                           # realimenta sus propias prediccio
 ## Eso es una red neuronal recurrente
 
 ```{python}
+#| label: code-08-recursion-with-matrices-4
 #| echo: true
 h = np.zeros(4)
 for t in range(6):
@@ -756,6 +778,7 @@ recortes, después del Kahoot 2 y del TODO 4 de la §09.
 ## Tres modos, tres tamaños de salida
 
 ```{python}
+#| label: code-09-convolution-and-deconvolution-1
 #| echo: true
 np.convolve(x, k, 'full')    # longitud 5+3-1 = 7
 np.convolve(x, k, 'valid')   # longitud 5-3+1 = 3
@@ -775,6 +798,7 @@ La convolución verdadera **invierte** el núcleo. La correlación no.
 :::
 
 ```{python}
+#| label: code-09-convolution-and-deconvolution-2
 #| echo: true
 np.correlate(x, k, 'valid')          # [-2. -2. -2.]
 np.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — igual, con k invertido
@@ -788,6 +812,7 @@ incoherentes y conviene saberlo.
 ## La convolución es un producto matricial
 
 ```{python}
+#| label: code-09-convolution-and-deconvolution-3
 #| echo: true
 C = toeplitz(col, row)                          # (7, 5)
 np.allclose(C @ x, np.convolve(x, k, 'full'))   # True
@@ -814,6 +839,7 @@ parámetros** que una red totalmente conectada.
 ## Deconvolucionar una fotografía real
 
 ```{python}
+#| label: code-09-convolution-and-deconvolution-4
 #| echo: true
 recovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)
 
@@ -839,6 +865,7 @@ Di lo del recorte del borde en voz alta antes de que empiecen, no después.
 ## ¿Por qué no invertir el desenfoque sin más?
 
 ```{python}
+#| label: code-09-convolution-and-deconvolution-5
 #| echo: true
 K = np.fft.fft2(psf, s=img.shape)
 naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, K)))
@@ -888,6 +915,7 @@ que describe cómo se combinan.
 viajes reales en taxi de Nueva York.
 
 ```{python}
+#| label: code-10-tucker-decomposition-1
 #| echo: true
 T = np.zeros((len(pb), len(db), 24))
 for (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():
@@ -901,6 +929,7 @@ for (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).siz
 ## Tres ejes, un solo einsum
 
 ```{python}
+#| label: code-10-tucker-decomposition-2
 #| echo: true
 Us = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]
 Us = [Us[i][:, :r[i]] for i in range(3)]                     # r = (2, 2, 3)
@@ -924,6 +953,7 @@ ratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71
 . . .
 
 ```{python}
+#| label: code-10-tucker-decomposition-3
 #| echo: true
 np.abs(Us[2][:, 0]).argmax()      # 18
 T.sum(axis=(0, 1)).argmax()       # 18 — la misma hora, desde los datos crudos

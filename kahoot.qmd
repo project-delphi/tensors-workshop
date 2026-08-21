@@ -12,9 +12,13 @@ new Part — so it reinforces rather than interrupts.
 ::: {.kahoot-note}
 **Facilitators: import each spreadsheet into kahoot.it *before* the session.**
 Create → Add question → Import → Import spreadsheet. Doing it live costs several
-minutes you do not have. Then paste the three join URLs into `_variables.yml` and
-re-render, and every link on this site and in both decks will point at the real
-quiz.
+minutes you do not have.
+
+The three **join links below still point at `kahoot.it` itself** — which works,
+because students enter the PIN from your screen there. Once each quiz exists,
+paste its direct join URL into the `url:` field of `_variables.yml` and
+re-render: every link on this site, in both decks and in all twelve notebooks
+reads from that one file.
 :::
 
 ## Quiz 1 — {{< var kahoot.q1.title_en >}} {#quiz-1}
@@ -27,7 +31,7 @@ quiz.
 | **Covers** | Sections 01, 03, 04 |
 | **Length** | {{< var kahoot.q1.questions >}} questions, ~5 min including the podium |
 | **Import file** | [`{{< var kahoot.q1.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q1.xlsx >}}) |
-| **Join link** | [`{{< var kahoot.q1.url >}}`]({{< var kahoot.q1.url >}}){.todo} |
+| **Join link** | [{{< var kahoot.q1.url >}}]({{< var kahoot.q1.url >}}) |
 
 : {tbl-colwidths="[20,80]"}
 
@@ -46,7 +50,7 @@ questions reach back into the exercises specifically: the NaN question is sectio
 | **Covers** | Sections 06, 07 |
 | **Length** | {{< var kahoot.q2.questions >}} questions, ~5 min |
 | **Import file** | [`{{< var kahoot.q2.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q2.xlsx >}}) |
-| **Join link** | [`{{< var kahoot.q2.url >}}`]({{< var kahoot.q2.url >}}){.todo} |
+| **Join link** | [{{< var kahoot.q2.url >}}]({{< var kahoot.q2.url >}}) |
 
 : {tbl-colwidths="[20,80]"}
 
@@ -68,7 +72,7 @@ two questions to land cold.
 | **Covers** | Sections 09, 10 |
 | **Length** | {{< var kahoot.q3.questions >}} questions, ~5 min |
 | **Import file** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
-| **Join link** | [`{{< var kahoot.q3.url >}}`]({{< var kahoot.q3.url >}}){.todo} |
+| **Join link** | [{{< var kahoot.q3.url >}}]({{< var kahoot.q3.url >}}) |
 
 : {tbl-colwidths="[20,80]"}
 

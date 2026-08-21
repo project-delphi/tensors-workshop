@@ -35,8 +35,12 @@ Then paste the three join URLs into
 ```yaml
 kahoot:
   q1:
-    url: "TODO-PASTE-KAHOOT-1-JOIN-URL"   # <- replace these three
+    url: "https://kahoot.it/"   # <- replace these three with the real join URLs
 ```
+
+Until you do, every quiz link points at `kahoot.it` itself, which still works —
+students enter the PIN from your screen. `scripts/check_links.py` reports how
+many are still on the fallback.
 
 Every link on the site, in both slide decks and in all twelve notebooks points
 at that one file, so three edits cover everything.

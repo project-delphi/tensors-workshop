@@ -1,0 +1,67 @@
+name: Publish
+
+# GitHub Pages serves the docs/ folder on main, so docs/ is committed and this
+# workflow does not upload anything — it is the guard that keeps what is
+# committed honest. It re-renders from scratch, regenerates every derived file,
+# and fails if the result differs from what was pushed.
+#
+# (If you would rather have Actions itself publish, switch Pages to the
+# "GitHub Actions" source and add an actions/deploy-pages step. Then docs/ no
+# longer needs committing and the drift check below becomes unnecessary.)
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  render:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install checker dependencies
+        # Quarto never executes the notebooks, so the scientific stack is not
+        # needed here — only what the generators and the checker import.
+        run: python -m pip install --quiet pyyaml nbformat
+
+      - name: Regenerate derived files
+        # Catches a notebook or a section table edited by hand instead of
+        # through _variables.yml.
+        run: |
+          python scripts/gen_tables.py
+          python scripts/gen_notebooks.py
+
+      - name: Render site
+        uses: quarto-dev/quarto-actions/render@v2
+
+      - name: Check links, Colab URLs, decks and notebooks
+        run: python scripts/check_links.py
+
+      - name: Fail if the committed output is stale
+        run: |
+          # sitemap.xml carries <lastmod> taken from file mtimes, which a fresh
+          # checkout resets — it differs on every CI run by design.
+          if ! git diff --quiet -- . ':(exclude)docs/sitemap.xml'; then
+            echo "::error::Rendered output differs from what was committed."
+            echo "Run these locally and commit the result:"
+            echo "  uv run --with pyyaml,nbformat python scripts/gen_tables.py"
+            echo "  uv run --with pyyaml,nbformat python scripts/gen_notebooks.py"
+            echo "  quarto render"
+            echo
+            git diff --stat -- . ':(exclude)docs/sitemap.xml'
+            exit 1
+          fi
+          echo "docs/ and all generated files are up to date."

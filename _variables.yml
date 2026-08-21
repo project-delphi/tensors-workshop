@@ -34,12 +34,15 @@ workshop:
 # spreadsheet). Paste the three real URLs here and nothing else needs editing.
 kahoot:
   join: "kahoot.it"
+  # Replaced per quiz once each .xlsx has been imported and has a real
+  # join link. The default is functional: students enter the PIN there.
+  default_url: "https://kahoot.it/"
   q1:
     n: 1
     title_en: "Tensor Vocabulary & Shapes"
     title_es: "Vocabulario de tensores y formas"
     xlsx: "kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx"
-    url: "TODO-PASTE-KAHOOT-1-JOIN-URL"
+    url: "https://kahoot.it/"          # TODO: paste the Kahoot 1 join URL
     after: "04"
     covers: ["01", "03", "04"]
     questions: 6
@@ -48,7 +51,7 @@ kahoot:
     title_en: "Einsum, Distance & the Pseudoinverse"
     title_es: "Einsum, distancia y la pseudoinversa"
     xlsx: "kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx"
-    url: "TODO-PASTE-KAHOOT-2-JOIN-URL"
+    url: "https://kahoot.it/"          # TODO: paste the Kahoot 2 join URL
     after: "07"
     covers: ["06", "07"]
     questions: 6
@@ -57,7 +60,7 @@ kahoot:
     title_en: "Convolution & Tensor Decompositions"
     title_es: "Convolución y descomposiciones tensoriales"
     xlsx: "kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"
-    url: "TODO-PASTE-KAHOOT-3-JOIN-URL"
+    url: "https://kahoot.it/"          # TODO: paste the Kahoot 3 join URL
     after: "10"
     covers: ["09", "10"]
     questions: 6

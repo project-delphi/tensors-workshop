@@ -1,0 +1,264 @@
+#!/usr/bin/env python3
+"""Verify the rendered site against _variables.yml.
+
+    uv run --with pyyaml,nbformat python scripts/check_links.py
+    uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
+
+Five checks, each of which catches a mistake that is otherwise invisible:
+
+  1. Internal links resolve — including the #fragment, so a link to
+     kahoot.html#quiz-2 fails if that anchor is not on the page.
+  2. Colab URLs are well-formed AND point at a notebook that exists. A badge
+     with the wrong filename still opens *something* in Colab, so this one
+     never surfaces on its own.
+  3. Both decks carry every section anchor. Adding a section to the English
+     deck and forgetting the Spanish one is the single most likely way these
+     two files drift.
+  4. Notebooks are valid, have no outputs or execution counts, and each badge
+     points at its own file.
+  5. The EN and ES landing pages list the same twelve sections.
+
+Exit code is non-zero on any failure, so CI can gate on it.
+"""
+from __future__ import annotations
+
+import html.parser
+import pathlib
+import re
+import sys
+import urllib.parse
+
+import yaml
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+DOCS = ROOT / "docs"
+NBDIR = ROOT / "notebooks"
+V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
+SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
+REPO = V["repo"]
+
+COLAB_RE = re.compile(
+    r"^https://colab\.research\.google\.com/github/"
+    rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
+    rf"{re.escape(REPO['branch'])}/notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)$")
+
+failures: list[str] = []
+
+
+def fail(msg: str) -> None:
+    failures.append(msg)
+    print(f"  FAIL  {msg}")
+
+
+class Harvester(html.parser.HTMLParser):
+    """Collect every link and every id from one page."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.links: list[str] = []
+        self.ids: set[str] = set()
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        a = {k: (v or "") for k, v in attrs}
+        if "id" in a:
+            self.ids.add(a["id"])
+        if "name" in a and tag == "a":
+            self.ids.add(a["name"])
+        for key in ("href", "src"):
+            if key in a and a[key]:
+                self.links.append(a[key])
+
+
+def harvest(path: pathlib.Path) -> Harvester:
+    h = Harvester()
+    h.feed(path.read_text(encoding="utf-8", errors="replace"))
+    return h
+
+
+# ── 1 + 2: links ─────────────────────────────────────────────────────────────
+
+def check_links() -> None:
+    pages = sorted(DOCS.rglob("*.html"))
+    if not pages:
+        fail("docs/ has no HTML — run `quarto render` first")
+        return
+    print(f"\n[1] Internal links across {len(pages)} pages")
+
+    harvested = {p: harvest(p) for p in pages}
+    ids_by_page = {p: h.ids for p, h in harvested.items()}
+    n_internal = n_colab = 0
+    seen_notebooks: set[str] = set()
+
+    for page, h in harvested.items():
+        for raw in h.links:
+            if raw.startswith(("mailto:", "data:", "javascript:", "#!")):
+                continue
+
+            if raw.startswith(("http://", "https://")):
+                m = COLAB_RE.match(raw)
+                # Only /github/ URLs open a notebook; /assets/ is the badge image.
+                if raw.startswith("https://colab.research.google.com/github/"):
+                    n_colab += 1
+                    if not m:
+                        fail(f"{page.relative_to(DOCS)}: malformed Colab URL {raw}")
+                    elif not (NBDIR / m.group(1)).exists():
+                        fail(f"{page.relative_to(DOCS)}: Colab URL points at "
+                             f"notebooks/{m.group(1)}, which does not exist")
+                    else:
+                        seen_notebooks.add(m.group(1))
+                continue
+
+            url = urllib.parse.urlparse(raw)
+            n_internal += 1
+
+            if not url.path:                       # bare "#anchor" — same page
+                if url.fragment and url.fragment not in h.ids:
+                    fail(f"{page.relative_to(DOCS)}: no anchor #{url.fragment} on this page")
+                continue
+
+            target = (page.parent / urllib.parse.unquote(url.path)).resolve()
+            if target.is_dir():
+                target = target / "index.html"
+            if not target.exists():
+                fail(f"{page.relative_to(DOCS)}: broken link {raw}")
+                continue
+            if url.fragment and target.suffix == ".html":
+                if url.fragment not in ids_by_page.setdefault(target, harvest(target).ids):
+                    fail(f"{page.relative_to(DOCS)}: {raw} — page exists but "
+                         f"has no anchor #{url.fragment}")
+
+    print(f"      {n_internal} internal links checked (path + fragment)")
+    print(f"\n[2] Colab URLs")
+    print(f"      {n_colab} Colab URLs, all well-formed, "
+          f"{len(seen_notebooks)}/{len(SECTIONS)} notebooks referenced")
+    for s in SECTIONS:
+        name = f"{s['n']}-{s['slug']}.ipynb"
+        if name not in seen_notebooks:
+            fail(f"no page on the site links to notebooks/{name}")
+
+
+# ── 3: both decks carry every section ────────────────────────────────────────
+
+def check_decks() -> None:
+    print(f"\n[3] Section anchors in both decks")
+    expected = [f"sec-{s['n']}-{s['slug']}" for s in SECTIONS]
+    expected += [f"sec-kahoot-{q}" for q in (1, 2, 3)]
+    found = {}
+    for lang in ("en", "es"):
+        deck = DOCS / "slides" / lang / "index.html"
+        if not deck.exists():
+            fail(f"missing deck {deck.relative_to(DOCS)}")
+            return
+        found[lang] = harvest(deck).ids
+        for anchor in expected:
+            if anchor not in found[lang]:
+                fail(f"slides/{lang}: missing anchor #{anchor}")
+    only_en = {a for a in found["en"] if a.startswith("sec-")} - found["es"]
+    only_es = {a for a in found["es"] if a.startswith("sec-")} - found["en"]
+    for a in sorted(only_en):
+        fail(f"anchor #{a} is in the EN deck but not the ES deck")
+    for a in sorted(only_es):
+        fail(f"anchor #{a} is in the ES deck but not the EN deck")
+    print(f"      {len(expected)} anchors present in both decks, no extras in either")
+
+
+# ── 4: notebooks ─────────────────────────────────────────────────────────────
+
+def check_notebooks() -> None:
+    import json
+    print(f"\n[4] Notebooks")
+    try:
+        import nbformat
+    except ImportError:
+        nbformat = None
+        print("      nbformat unavailable — structural checks only")
+
+    for s in SECTIONS:
+        name = f"{s['n']}-{s['slug']}.ipynb"
+        path = NBDIR / name
+        if not path.exists():
+            fail(f"missing notebook {name}")
+            continue
+        nb = json.loads(path.read_text(encoding="utf-8"))
+        if nbformat is not None:
+            try:
+                nbformat.validate(nbformat.reads(path.read_text(encoding="utf-8"),
+                                                 as_version=4))
+            except Exception as e:  # noqa: BLE001 — report, do not raise
+                fail(f"{name}: nbformat.validate — {e}")
+        for c in nb["cells"]:
+            if c["cell_type"] != "code":
+                continue
+            if c.get("outputs"):
+                fail(f"{name}: cell {c.get('id')} has committed outputs")
+            if c.get("execution_count") is not None:
+                fail(f"{name}: cell {c.get('id')} has a stale execution count")
+        badge = "".join(nb["cells"][0]["source"])
+        if f"{REPO['colab_base']}/{name})" not in badge:
+            fail(f"{name}: header badge does not point at this notebook")
+    extra = {p.name for p in NBDIR.glob("*.ipynb")} - {
+        f"{s['n']}-{s['slug']}.ipynb" for s in SECTIONS}
+    for e in sorted(extra):
+        fail(f"notebooks/{e} is not a section in _variables.yml")
+    print(f"      {len(SECTIONS)} notebooks: valid, no outputs, no execution "
+          f"counts, badges self-consistent")
+
+
+# ── 5: EN and ES landing pages agree ─────────────────────────────────────────
+
+def check_landing_parity() -> None:
+    print(f"\n[5] EN / ES landing pages")
+    en, es = DOCS / "index.html", DOCS / "es" / "index.html"
+    if not (en.exists() and es.exists()):
+        fail("a landing page is missing")
+        return
+    for page in (en, es):
+        text = page.read_text(encoding="utf-8")
+        for s in SECTIONS:
+            if f"sec-{s['n']}-{s['slug']}" not in text:
+                fail(f"{page.relative_to(DOCS)}: section {s['n']} "
+                     f"({s['slug']}) is not in the table")
+            if f"{s['n']}-{s['slug']}.ipynb" not in text:
+                fail(f"{page.relative_to(DOCS)}: no notebook link for "
+                     f"section {s['n']}")
+    print(f"      both pages list all {len(SECTIONS)} sections "
+          f"with slide anchors and notebook links")
+
+
+def check_kahoot_urls() -> None:
+    """Not a failure: the default sends students to kahoot.it, where the PIN on
+    the facilitator's screen works. It is a reminder that the direct join links
+    have not been pasted in yet."""
+    print(f"\n[6] Kahoot join URLs")
+    todo = [q for q in ("q1", "q2", "q3")
+            if V["kahoot"][q]["url"] == V["kahoot"]["default_url"]]
+    if todo:
+        print(f"      TODO  {len(todo)} of 3 still use the generic "
+              f"{V['kahoot']['default_url']} fallback: {', '.join(todo)}")
+        print(f"      Import each .xlsx at kahoot.it, then paste the join URLs "
+              f"into _variables.yml.")
+    else:
+        print("      all three point at a specific kahoot")
+
+
+def main() -> int:
+    only_nb = "--notebooks-only" in sys.argv
+    print(f"Checking {'notebooks' if only_nb else 'docs/ and notebooks/'} "
+          f"against _variables.yml")
+    check_notebooks()
+    if not only_nb:
+        check_links()
+        check_decks()
+        check_landing_parity()
+        check_kahoot_urls()
+
+    print()
+    if failures:
+        print(f"{len(failures)} FAILURE(S)")
+        return 1
+    print("All checks passed.")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
