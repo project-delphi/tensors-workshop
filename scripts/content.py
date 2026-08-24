@@ -499,40 +499,7 @@ order **is** the information.
 Chapter 2's notation has no concept of "order matters between elements." That is
 genuinely new today.
 
-Each step below adds exactly one axis — the one highlighted in red — onto the
-tensor above it.
-
-> 🇪🇸 Cada fila añade exactamente un eje — el resaltado en rojo — sobre el de
-> arriba."""),
-        code("""import matplotlib.pyplot as plt
-
-# name, axis labels in order, the one that's new at this step
-stages = [
-    ("gray_image",      ["H", "W"],              None),
-    ("color_image",     ["H", "W", "C"],          "C"),
-    ("batch_of_images", ["N", "H", "W", "C"],     "N"),
-    ("video",           ["T", "H", "W", "C"],     "T"),
-    ("batch_of_videos", ["N", "T", "H", "W", "C"], "N"),
-]
-
-fig, ax = plt.subplots(figsize=(7.5, 3.5))
-for row, (name, axes, new) in enumerate(stages):
-    y = len(stages) - row
-    for col, axis in enumerate(axes):
-        color = "#C44E52" if axis == new else "#4C72B0"
-        ax.add_patch(plt.Rectangle((col, y - 0.4), 0.9, 0.8,
-                                    facecolor=color, edgecolor="black"))
-        ax.text(col + 0.45, y, axis, ha="center", va="center",
-                color="white", fontweight="bold")
-    ax.text(-0.2, y, name, ha="right", va="center", fontsize=9)
-
-ax.set_xlim(-3.2, 5)
-ax.set_ylim(0.3, len(stages) + 0.7)
-ax.axis("off")
-ax.set_title("Same batch/time-shaped tuple, different axis added each step")
-plt.tight_layout()
-plt.show()"""),
-        md("""### The other four, briefly
+### The other four, briefly
 
 - **Q3** — pad every video to the longest and carry a mask (invents frames that
   were never recorded, and you must remember to ignore them), or sample a fixed
