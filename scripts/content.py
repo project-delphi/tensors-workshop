@@ -138,7 +138,7 @@ CONTENT["01"] = {
         "Read `.shape`, `.ndim` and `.size` off any array and say what each axis means.",
         "Take slices and fibers, and unfold a tensor into a matrix without losing anything.",
         "Write a dot product and a matrix product as `einsum` contractions.",
-        "Place LU, QR, eigendecomposition, SVD, PCA, the pseudoinverse and Tucker in one map.",
+        "Place LU, QR, eigendecomposition, SVD, the pseudoinverse and Tucker in one map.",
     ],
     "setup": """import numpy as np
 from sklearn.datasets import load_digits
@@ -164,7 +164,7 @@ Keep this table open for the whole workshop.
 | **Fiber** | Fix every index except one | *fibra* | The 3 colour values of one pixel |
 | **Unfolding** | Rearranging a tensor into a matrix | *desplegado* | Needed for decompositions |
 | **Contraction** | Multiply and sum over a shared axis | *contracción* | The dot product |
-| **Decomposition** | Writing one tensor as a product of simpler ones | *descomposición* | SVD, PCA, Tucker |
+| **Decomposition** | Writing one tensor as a product of simpler ones | *descomposición* | SVD, Tucker |
 
 ⚠️ **Warning about the word "rank".** In Chapter 2, *rank* means the number of
 independent columns of a matrix. In tensor theory, *rank* often means the number
@@ -288,7 +288,6 @@ two in Chapter 2. Here is the whole family we will use today.
 | **QR / Gram-Schmidt** | Any matrix | Perpendicular, unit-length directions | Below |
 | **Eigendecomposition** | Square matrix | Directions that only get scaled (§2.7) | Section 08 |
 | **SVD** | Any matrix | The most general matrix factorization (§2.8) | Sections 07 and 10 |
-| **PCA** | Data matrix | Compression to fewer features (§2.12) | Section 11, take-home A |
 | **Pseudoinverse** | Any matrix | "Inverse" when no true inverse exists (§2.9) | Section 07 |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | Section 10 |"""),
         code("""A3 = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])

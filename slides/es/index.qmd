@@ -225,7 +225,6 @@ Un índice que aparece después de la flecha **se conserva**.
 | QR | Cualquier matriz | ahora |
 | Descomposición espectral | Matriz cuadrada | §08 |
 | SVD | Cualquier matriz | §07, §10 |
-| PCA | Matriz de datos | §11 |
 | **Pseudoinversa** | Cualquier matriz | §07 |
 | **Tucker / CP** | **Tensor de cualquier orden** | §10 |
 
