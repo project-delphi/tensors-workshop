@@ -226,6 +226,7 @@ Un índice que aparece después de la flecha **se conserva**.
 | Descomposición espectral | Matriz cuadrada | §08 |
 | SVD | Cualquier matriz | §07, §10 |
 | **Pseudoinversa** | Cualquier matriz | §07 |
+| Cholesky | Matriz simétrica definida positiva | §11 |
 | **Tucker / CP** | **Tensor de cualquier orden** | §10 |
 
 . . .
@@ -1051,16 +1052,16 @@ sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
 
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — **sintaxis idéntica** a la de hoy
 - [`tensorly`](https://tensorly.org) — Tucker y CP de verdad
-- `np.linalg` — el resto del capítulo 2: `eig`, `lstsq`, `pinv`, `qr`
+- `np.linalg` — el resto del capítulo 2: `eig`, `lstsq`, `pinv`, `qr`, `cholesky`
 - `scipy.signal`, `skimage.restoration` — convolución y deconvolución más allá de hoy
 - [Lecturas adicionales](../../tensors_workshop_plan_with_quizzes.md#further-reading) — libros y los artículos originales de Tucker, CP y SVD (en inglés)
 
 . . .
 
-**Tres ejercicios para casa** en el
+**Cuatro ejercicios para casa** en el
 [cuaderno 11]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb):
-la trampa de escala de PCA, la atención como dos contracciones, y CP frente a
-Tucker.
+la trampa de escala de PCA, la atención como dos contracciones, CP frente a
+Tucker, y construir portafolios correlacionados con Cholesky.
 
 ## Gracias
 

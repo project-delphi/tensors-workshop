@@ -91,6 +91,6 @@ heading carries a one-line Spanish summary.
 ## Where to go next
 
 - [Handbook](tensors_workshop_plan_with_quizzes.md) — the full student text and
-  facilitator notes, including the three take-home appendices.
+  facilitator notes, including the four take-home appendices.
 - [Notebooks](notebooks.qmd) — all twelve, with Colab badges.
 - [Kahoot](kahoot.qmd) — the three quizzes and how to run them.

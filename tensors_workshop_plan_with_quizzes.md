@@ -1,7 +1,7 @@
 # Tensors for Machine Learning
 ## A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook
 
-**🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix D, which now also covers the quizzes.
+**🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.
 
 **Before you arrive:** you have read *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)* (Goodfellow, Bengio & Courville), **Chapter 2 — Linear Algebra**. You know matrices. This workshop assumes **no previous knowledge of tensor theory**.
 
@@ -185,6 +185,7 @@ A **factorization** writes one object as a product of simpler objects. You met t
 | **SVD** | Any matrix | The most general matrix factorization (§2.8) | Blocks 4 and 6 |
 | **PCA** | Data matrix | Compression to fewer features (§2.12) | Take-home A |
 | **Pseudoinverse** | Any matrix | "Inverse" when no true inverse exists (§2.9) | Block 4 |
+| **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Appendix D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | Block 6 |
 
 ```python
@@ -680,7 +681,7 @@ What you did today:
 
 **Where to go next**
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
-- `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`.
+- `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
 - The take-home notebooks below.
 - **[Further Reading](#further-reading)** — books, the seminal Tucker/CP/SVD papers, and `tensorly`, for going deeper than today's 195 minutes.
@@ -796,9 +797,68 @@ rank1 = np.einsum('i,j,k->ijk', a, b, c)     # (4, 5, 24) from only 33 numbers
 Tucker is usually more accurate at equal size, because its dense core can represent interactions between components on different axes — something CP's strict sum of rank-1 pieces cannot do. CP is often preferred when interpretability matters, because each component is one simple pattern per axis.
 </details>
 
+## Appendix D — Take-Home: Cholesky Builds Correlated Data
+
+Every factorization above takes something apart. Cholesky is the exception: you use it to build. Given a covariance matrix `Sigma` that is symmetric and positive-definite, `np.linalg.cholesky` returns a lower-triangular `L` with `L @ L.T == Sigma`. Feed `L` independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.
+
+```python
+vol = np.array([0.012, 0.015, 0.010])
+corr = np.array([[1.00, 0.85, 0.20],
+                  [0.85, 1.00, 0.20],
+                  [0.20, 0.20, 1.00]])
+Sigma = np.outer(vol, vol) * corr
+
+weights = np.array([0.4, 0.4, 0.2])
+mu = np.array([0.00030, 0.00035, 0.00020])
+n_days, n_paths, initial_value = 252, 20_000, 100.0
+
+rng = np.random.default_rng(5)
+sample_sizes = [100, 1_000, 100_000]
+
+# TODO 1: L = np.linalg.cholesky(Sigma). Verify np.allclose(L @ L.T, Sigma).
+# TODO 2: For each n in sample_sizes, draw z = rng.standard_normal((3, n)),
+#         build x = L @ z, and track the Frobenius error between np.cov(x)
+#         and Sigma as n grows. For the largest n, print np.cov(z) (≈ identity)
+#         and np.cov(x) (≈ Sigma).
+# TODO 3: Simulate a correlated portfolio: z_paths = rng.standard_normal(
+#         (3, n_days * n_paths)); correlated_asset_returns = mu[:, None] +
+#         L @ z_paths, reshaped to (3, n_paths, n_days); combine with weights
+#         into daily portfolio returns; compound into terminal_correlated.
+# TODO 4: Repeat with independent_scale = np.diag(np.sqrt(np.diag(Sigma)))
+#         instead of L, reusing the SAME z_paths, to get terminal_independent.
+# TODO 5: Plot both terminal distributions as overlaid histograms.
+# TODO 6: Compare std, 5th and 1st percentiles of both distributions.
+```
+
+<details><summary>Solution</summary>
+
+```python
+L = np.linalg.cholesky(Sigma)
+print(np.allclose(L @ L.T, Sigma))          # True
+
+errors = []
+for n in sample_sizes:
+    z = rng.standard_normal((3, n))
+    x = L @ z
+    errors.append(np.linalg.norm(np.cov(x) - Sigma))
+print(errors[0] > errors[1] > errors[2])    # True — error shrinks as n grows
+
+z_paths = rng.standard_normal((3, n_days * n_paths))
+correlated_asset_returns = (mu[:, None] + L @ z_paths).reshape(3, n_paths, n_days)
+portfolio_returns_correlated = np.einsum('a,apd->pd', weights, correlated_asset_returns)
+terminal_correlated = initial_value * np.prod(1 + portfolio_returns_correlated, axis=1)
+
+independent_scale = np.diag(np.sqrt(np.diag(Sigma)))
+independent_asset_returns = (mu[:, None] + independent_scale @ z_paths).reshape(3, n_paths, n_days)
+portfolio_returns_independent = np.einsum('a,apd->pd', weights, independent_asset_returns)
+terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent, axis=1)
+```
+`Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma` — independent noise in, correlated noise out. With the parameters above, the correlated simulation's terminal-value standard deviation is **≈18.8** against **≈13.6** for the independent one (39% more spread); its 5th percentile is **≈79.7** against **≈86.9**, and its 1st percentile **≈70.7** against **≈79.9** — the correlated portfolio's bad days are genuinely worse, even though every individual asset's volatility, mean and median terminal value are essentially unchanged between the two simulations. **This is not a general law that correlation increases risk** — it is specific to this book, where every pair is positively correlated; a negatively correlated pair would understate risk if ignored, not overstate it. What generalizes is only that assuming independence when assets are not independent distorts the tails.
+</details>
+
 ---
 
-## Appendix D — Facilitator Notes
+## Appendix E — Facilitator Notes
 
 *(Students may ignore this section.)*
 

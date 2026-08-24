@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-25ade3afdaba4a3ecd299d1cd340a49b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-f4cf1fec901e556396c37504de3dde0d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -235,7 +235,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#appendix-a-take-home-how-many-principal-components-are-enough" id="toc-appendix-a-take-home-how-many-principal-components-are-enough" class="nav-link" data-scroll-target="#appendix-a-take-home-how-many-principal-components-are-enough">Appendix A — Take-Home: How Many Principal Components Are Enough?</a></li>
   <li><a href="#appendix-b-take-home-attention-is-two-contractions" id="toc-appendix-b-take-home-attention-is-two-contractions" class="nav-link" data-scroll-target="#appendix-b-take-home-attention-is-two-contractions">Appendix B — Take-Home: Attention Is Two Contractions</a></li>
   <li><a href="#appendix-c-take-home-cp-decomposition-compared-to-tucker" id="toc-appendix-c-take-home-cp-decomposition-compared-to-tucker" class="nav-link" data-scroll-target="#appendix-c-take-home-cp-decomposition-compared-to-tucker">Appendix C — Take-Home: CP Decomposition, Compared to Tucker</a></li>
-  <li><a href="#appendix-d-facilitator-notes" id="toc-appendix-d-facilitator-notes" class="nav-link" data-scroll-target="#appendix-d-facilitator-notes">Appendix D — Facilitator Notes</a></li>
+  <li><a href="#appendix-d-take-home-cholesky-builds-correlated-data" id="toc-appendix-d-take-home-cholesky-builds-correlated-data" class="nav-link" data-scroll-target="#appendix-d-take-home-cholesky-builds-correlated-data">Appendix D — Take-Home: Cholesky Builds Correlated Data</a></li>
+  <li><a href="#appendix-e-facilitator-notes" id="toc-appendix-e-facilitator-notes" class="nav-link" data-scroll-target="#appendix-e-facilitator-notes">Appendix E — Facilitator Notes</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -250,7 +251,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Tensors for Machine Learning</h1>
 <section id="a-3-hour-workshop-3-kahoot-checks-student-handbook" class="level2">
 <h2 class="anchored" data-anchor-id="a-3-hour-workshop-3-kahoot-checks-student-handbook">A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook</h2>
-<p><strong>🆕 Facilitator note on this edit.</strong> Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to <strong>195 minutes (3h15)</strong>. If you need to hold the line at 180 minutes, see the cutting order in Appendix D, which now also covers the quizzes.</p>
+<p><strong>🆕 Facilitator note on this edit.</strong> Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to <strong>195 minutes (3h15)</strong>. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.</p>
 <p><strong>Before you arrive:</strong> you have read <em><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a></em> (Goodfellow, Bengio &amp; Courville), <strong>Chapter 2 — Linear Algebra</strong>. You know matrices. This workshop assumes <strong>no previous knowledge of tensor theory</strong>.</p>
 <p><strong>What you will learn:</strong> what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.</p>
 <p><strong>How we work:</strong> Notebooks on <strong>GitHub</strong>, run in <strong>Colab</strong>, discussion in <strong>Discord</strong>. Two rhythms: - <strong>Exercise blocks</strong> — 10 minutes coding, then 5 minutes explanation. - <strong>Group blocks</strong> — 10 minutes discussion in your breakout channel, then share-back.</p>
@@ -665,6 +666,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>Block 4</td>
 </tr>
 <tr class="odd">
+<td><strong>Cholesky</strong></td>
+<td>Symmetric positive-definite matrix</td>
+<td>A “square root” of a covariance matrix, for <em>building</em> correlated data</td>
+<td>Appendix D</td>
+</tr>
+<tr class="even">
 <td><strong>Tucker / CP</strong></td>
 <td><strong>Tensor, any order</strong></td>
 <td>PCA generalized to every axis</td>
@@ -1050,7 +1057,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><strong>Part IV</strong> — wrote contractions with <code>einsum</code>; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.</li>
 </ol>
 <p><strong>One idea connects Blocks 4, 5 and 6:</strong> when a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.</p>
-<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below. - <strong><a href="#further-reading">Further Reading</a></strong> — books, the seminal Tucker/CP/SVD papers, and <code>tensorly</code>, for going deeper than today’s 195 minutes.</p>
+<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>, <code>cholesky</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below. - <strong><a href="#further-reading">Further Reading</a></strong> — books, the seminal Tucker/CP/SVD papers, and <code>tensorly</code>, for going deeper than today’s 195 minutes.</p>
 <hr>
 </section>
 <section id="further-reading" class="level2">
@@ -1155,10 +1162,65 @@ Solution sketch
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>rank1 <span class="op">=</span> np.einsum(<span class="st">'i,j,k-&gt;ijk'</span>, a, b, c)     <span class="co"># (4, 5, 24) from only 33 numbers</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 Tucker is usually more accurate at equal size, because its dense core can represent interactions between components on different axes — something CP’s strict sum of rank-1 pieces cannot do. CP is often preferred when interpretability matters, because each component is one simple pattern per axis.
 </details>
+</section>
+<section id="appendix-d-take-home-cholesky-builds-correlated-data" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-d-take-home-cholesky-builds-correlated-data">Appendix D — Take-Home: Cholesky Builds Correlated Data</h2>
+<p>Every factorization above takes something apart. Cholesky is the exception: you use it to build. Given a covariance matrix <code>Sigma</code> that is symmetric and positive-definite, <code>np.linalg.cholesky</code> returns a lower-triangular <code>L</code> with <code>L @ L.T == Sigma</code>. Feed <code>L</code> independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>vol <span class="op">=</span> np.array([<span class="fl">0.012</span>, <span class="fl">0.015</span>, <span class="fl">0.010</span>])</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> np.array([[<span class="fl">1.00</span>, <span class="fl">0.85</span>, <span class="fl">0.20</span>],</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>                  [<span class="fl">0.85</span>, <span class="fl">1.00</span>, <span class="fl">0.20</span>],</span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>                  [<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">1.00</span>]])</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>Sigma <span class="op">=</span> np.outer(vol, vol) <span class="op">*</span> corr</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> np.array([<span class="fl">0.4</span>, <span class="fl">0.4</span>, <span class="fl">0.2</span>])</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> np.array([<span class="fl">0.00030</span>, <span class="fl">0.00035</span>, <span class="fl">0.00020</span>])</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>n_days, n_paths, initial_value <span class="op">=</span> <span class="dv">252</span>, <span class="dv">20_000</span>, <span class="fl">100.0</span></span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>rng <span class="op">=</span> np.random.default_rng(<span class="dv">5</span>)</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>sample_sizes <span class="op">=</span> [<span class="dv">100</span>, <span class="dv">1_000</span>, <span class="dv">100_000</span>]</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: L = np.linalg.cholesky(Sigma). Verify np.allclose(L @ L.T, Sigma).</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: For each n in sample_sizes, draw z = rng.standard_normal((3, n)),</span></span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a><span class="co">#         build x = L @ z, and track the Frobenius error between np.cov(x)</span></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a><span class="co">#         and Sigma as n grows. For the largest n, print np.cov(z) (≈ identity)</span></span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a><span class="co">#         and np.cov(x) (≈ Sigma).</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Simulate a correlated portfolio: z_paths = rng.standard_normal(</span></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a><span class="co">#         (3, n_days * n_paths)); correlated_asset_returns = mu[:, None] +</span></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a><span class="co">#         L @ z_paths, reshaped to (3, n_paths, n_days); combine with weights</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a><span class="co">#         into daily portfolio returns; compound into terminal_correlated.</span></span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Repeat with independent_scale = np.diag(np.sqrt(np.diag(Sigma)))</span></span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a><span class="co">#         instead of L, reusing the SAME z_paths, to get terminal_independent.</span></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 5: Plot both terminal distributions as overlaid histograms.</span></span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Compare std, 5th and 1st percentiles of both distributions.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> np.linalg.cholesky(Sigma)</span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.allclose(L <span class="op">@</span> L.T, Sigma))          <span class="co"># True</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>errors <span class="op">=</span> []</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> n <span class="kw">in</span> sample_sizes:</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>    z <span class="op">=</span> rng.standard_normal((<span class="dv">3</span>, n))</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> L <span class="op">@</span> z</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    errors.append(np.linalg.norm(np.cov(x) <span class="op">-</span> Sigma))</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(errors[<span class="dv">0</span>] <span class="op">&gt;</span> errors[<span class="dv">1</span>] <span class="op">&gt;</span> errors[<span class="dv">2</span>])    <span class="co"># True — error shrinks as n grows</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>z_paths <span class="op">=</span> rng.standard_normal((<span class="dv">3</span>, n_days <span class="op">*</span> n_paths))</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>correlated_asset_returns <span class="op">=</span> (mu[:, <span class="va">None</span>] <span class="op">+</span> L <span class="op">@</span> z_paths).reshape(<span class="dv">3</span>, n_paths, n_days)</span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>portfolio_returns_correlated <span class="op">=</span> np.einsum(<span class="st">'a,apd-&gt;pd'</span>, weights, correlated_asset_returns)</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>terminal_correlated <span class="op">=</span> initial_value <span class="op">*</span> np.prod(<span class="dv">1</span> <span class="op">+</span> portfolio_returns_correlated, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>independent_scale <span class="op">=</span> np.diag(np.sqrt(np.diag(Sigma)))</span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>independent_asset_returns <span class="op">=</span> (mu[:, <span class="va">None</span>] <span class="op">+</span> independent_scale <span class="op">@</span> z_paths).reshape(<span class="dv">3</span>, n_paths, n_days)</span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>portfolio_returns_independent <span class="op">=</span> np.einsum(<span class="st">'a,apd-&gt;pd'</span>, weights, independent_asset_returns)</span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a>terminal_independent <span class="op">=</span> initial_value <span class="op">*</span> np.prod(<span class="dv">1</span> <span class="op">+</span> portfolio_returns_independent, axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<code>Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma</code> — independent noise in, correlated noise out. With the parameters above, the correlated simulation’s terminal-value standard deviation is <strong>≈18.8</strong> against <strong>≈13.6</strong> for the independent one (39% more spread); its 5th percentile is <strong>≈79.7</strong> against <strong>≈86.9</strong>, and its 1st percentile <strong>≈70.7</strong> against <strong>≈79.9</strong> — the correlated portfolio’s bad days are genuinely worse, even though every individual asset’s volatility, mean and median terminal value are essentially unchanged between the two simulations. <strong>This is not a general law that correlation increases risk</strong> — it is specific to this book, where every pair is positively correlated; a negatively correlated pair would understate risk if ignored, not overstate it. What generalizes is only that assuming independence when assets are not independent distorts the tails.
+</details>
 <hr>
 </section>
-<section id="appendix-d-facilitator-notes" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-d-facilitator-notes">Appendix D — Facilitator Notes</h2>
+<section id="appendix-e-facilitator-notes" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-e-facilitator-notes">Appendix E — Facilitator Notes</h2>
 <p><em>(Students may ignore this section.)</em></p>
 <p><strong>Structure.</strong> Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Blocks 4, 5 and 6 share one theme — <em>no exact inverse exists, so find the best stable approximation</em> — and stating that connection explicitly at the wrap-up is what makes the second half feel like one lesson rather than four.</p>
 <p><strong>Do not rush Part I.</strong> It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.</p>
