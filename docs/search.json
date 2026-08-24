@@ -221,7 +221,7 @@
     "href": "slides/en/index.html#to-the-notebook",
     "title": "Tensors for Machine Learning",
     "section": "To the notebook",
-    "text": "To the notebook\n00 · Setup and welcome\nOpen in Colab\nEverything else in the library ships offline: load_breast_cancer, load_digits, data.camera(), data.astronaut()."
+    "text": "To the notebook\n\n\n00 · Setup and welcome\nOpen in Colab\nEverything else in the library ships offline: load_breast_cancer, load_digits, data.camera(), data.astronaut()."
   },
   {
     "objectID": "slides/en/index.html#the-vocabulary",
@@ -235,7 +235,7 @@
     "href": "slides/en/index.html#shape-is-a-tuple-order-is-its-length",
     "title": "Tensors for Machine Learning",
     "section": "Shape is a tuple; order is its length",
-    "text": "Shape is a tuple; order is its length\n\nscalar = np.array(3.0)                     # order 0   shape ()\nvector = np.array([1., 2., 3.])            # order 1   shape (3,)\nmatrix = np.array([[1., 2.], [3., 4.]])    # order 2   shape (2, 2)\ntensor = rng.standard_normal((2, 3, 4))    # order 3   shape (2, 3, 4)\n\n\n\ndigits.images.shape              # (1797, 8, 8)  — images, height, width\nphoto.shape                      # (512, 512, 3) — height, width, colour\n\n\n\nBoth are order 3. Their axes mean completely different things.\nThe shape alone never tells you what the axes mean."
+    "text": "Shape is a tuple; order is its length\n\nscalar = np.array(3.0)                     # order 0   shape ()\nvector = np.array([1., 2., 3.])            # order 1   shape (3,)\nmatrix = np.array([[1., 2.], [3., 4.]])    # order 2   shape (2, 2)\ntensor = rng.standard_normal((2, 3, 4))    # order 3   shape (2, 3, 4)\n\n\n\n\n\ndigits.images.shape              # (1797, 8, 8)  — images, height, width\nphoto.shape                      # (512, 512, 3) — height, width, colour\n\n\n\n\n\n\nBoth are order 3. Their axes mean completely different things.\nThe shape alone never tells you what the axes mean."
   },
   {
     "objectID": "slides/en/index.html#three-operations",
@@ -305,7 +305,7 @@
     "href": "slides/en/index.html#why-this-matters",
     "title": "Tensors for Machine Learning",
     "section": "Why this matters",
-    "text": "Why this matters\n569 real patients, 30 real measurements of tumour cell nuclei.\n\n\nSelecting the wrong column does not produce an error\nIt returns a different real measurement\nYour analysis continues and gives a confident, wrong answer\n\n\n\nIn research: results nobody can reproduce. In a clinical tool: a wrong recommendation about a real person."
+    "text": "Why this matters\n\n\n569 real patients, 30 real measurements of tumour cell nuclei.\n\n\nSelecting the wrong column does not produce an error\nIt returns a different real measurement\nYour analysis continues and gives a confident, wrong answer\n\n\n\n\n\n\nIn research: results nobody can reproduce. In a clinical tool: a wrong recommendation about a real person."
   },
   {
     "objectID": "slides/en/index.html#the-exercise",
@@ -333,7 +333,7 @@
     "href": "slides/en/index.html#why-this-matters-1",
     "title": "Tensors for Machine Learning",
     "section": "Why this matters",
-    "text": "Why this matters\nMicroscopes and cameras order their axes according to the hardware, not according to what a model expects.\n\nGetting this wrong does not crash. The model runs on scrambled data and returns confident, meaningless output.\n\n\nThe famous version: a model trained in TensorFlow (NHWC) deployed into PyTorch (NCHW) with no transpose."
+    "text": "Why this matters\n\n\nMicroscopes and cameras order their axes according to the hardware, not according to what a model expects.\n. . .\nGetting this wrong does not crash. The model runs on scrambled data and returns confident, meaningless output.\n. . .\nThe famous version: a model trained in TensorFlow (NHWC) deployed into PyTorch (NCHW) with no transpose."
   },
   {
     "objectID": "slides/en/index.html#same-shape-different-data",
@@ -452,7 +452,7 @@
     "href": "slides/en/index.html#equations-no-solution",
     "title": "Tensors for Machine Learning",
     "section": "20,433 equations, no solution",
-    "text": "20,433 equations, no solution\n\nd = housing.dropna()                                # 20433 rows; 207 had NaN\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                             # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75,980\n\n\nNo straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead. Largest coefficient: median_income. Sensible.\n\nTODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something."
+    "text": "20,433 equations, no solution\n\n\n\nd = housing.dropna()                                # 20433 rows; 207 had NaN\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                             # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75,980\n\n\n\n\n\nNo straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead. Largest coefficient: median_income. Sensible.\n\nTODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something."
   },
   {
     "objectID": "slides/en/index.html#to-the-notebook-7",
@@ -487,7 +487,7 @@
     "href": "slides/en/index.html#forecasting-real-airline-traffic",
     "title": "Tensors for Machine Learning",
     "section": "Forecasting real airline traffic",
-    "text": "Forecasting real airline traffic\n\ny = flights['passengers'].to_numpy(float)     # 144 real months, 1949–1960\nrows = np.array([y[i:i+12] for i in range(len(y) - 12)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[12:]                # least squares, exactly as in §07\n\nhistory = list(y[-12:])\nfor _ in range(12):                           # feed predictions back in\n    history.append(w[0] + np.dot(w[1:], history[-12:]))\n\n\n[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nLow in winter, peaking in summer — learned from 132 real training windows."
+    "text": "Forecasting real airline traffic\n\n\n\ny = flights['passengers'].to_numpy(float)     # 144 real months, 1949–1960\nrows = np.array([y[i:i+12] for i in range(len(y) - 12)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[12:]                # least squares, exactly as in §07\n\nhistory = list(y[-12:])\nfor _ in range(12):                           # feed predictions back in\n    history.append(w[0] + np.dot(w[1:], history[-12:]))\n\n\n\n\n\n[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nLow in winter, peaking in summer — learned from 132 real training windows."
   },
   {
     "objectID": "slides/en/index.html#that-is-a-recurrent-neural-network",
@@ -564,7 +564,7 @@
     "href": "slides/en/index.html#a-real-order-3-tensor",
     "title": "Tensors for Machine Learning",
     "section": "A real order-3 tensor",
-    "text": "A real order-3 tensor\npickup borough × dropoff borough × hour of day, from 6,433 real NYC taxi trips.\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n\nT[i, j, k] = trips from borough i to borough j picked up during hour k."
+    "text": "A real order-3 tensor\n\n\npickup borough × dropoff borough × hour of day, from 6,433 real NYC taxi trips.\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n\n\n\n\nT[i, j, k] = trips from borough i to borough j picked up during hour k."
   },
   {
     "objectID": "slides/en/index.html#three-axes-one-einsum",
@@ -858,7 +858,7 @@
     "href": "slides/es/index.html#al-cuaderno",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Al cuaderno",
-    "text": "Al cuaderno\n00 · Preparación y bienvenida\nAbrir en Colab\nEl resto viene dentro de las librerías y funciona sin conexión: load_breast_cancer, load_digits, data.camera(), data.astronaut()."
+    "text": "Al cuaderno\n\n\n00 · Preparación y bienvenida\nAbrir en Colab\nEl resto viene dentro de las librerías y funciona sin conexión: load_breast_cancer, load_digits, data.camera(), data.astronaut()."
   },
   {
     "objectID": "slides/es/index.html#el-vocabulario",
@@ -872,7 +872,7 @@
     "href": "slides/es/index.html#la-forma-es-una-tupla-el-orden-es-su-longitud",
     "title": "Tensores para Aprendizaje Automático",
     "section": "La forma es una tupla; el orden es su longitud",
-    "text": "La forma es una tupla; el orden es su longitud\n\nscalar = np.array(3.0)                     # orden 0   forma ()\nvector = np.array([1., 2., 3.])            # orden 1   forma (3,)\nmatrix = np.array([[1., 2.], [3., 4.]])    # orden 2   forma (2, 2)\ntensor = rng.standard_normal((2, 3, 4))    # orden 3   forma (2, 3, 4)\n\n\n\ndigits.images.shape              # (1797, 8, 8)  — imágenes, alto, ancho\nphoto.shape                      # (512, 512, 3) — alto, ancho, color\n\n\n\nLos dos son de orden 3. Sus ejes significan cosas completamente distintas.\nLa forma por sí sola nunca te dice qué significan los ejes."
+    "text": "La forma es una tupla; el orden es su longitud\n\nscalar = np.array(3.0)                     # orden 0   forma ()\nvector = np.array([1., 2., 3.])            # orden 1   forma (3,)\nmatrix = np.array([[1., 2.], [3., 4.]])    # orden 2   forma (2, 2)\ntensor = rng.standard_normal((2, 3, 4))    # orden 3   forma (2, 3, 4)\n\n\n\n\n\ndigits.images.shape              # (1797, 8, 8)  — imágenes, alto, ancho\nphoto.shape                      # (512, 512, 3) — alto, ancho, color\n\n\n\n\n\n\nLos dos son de orden 3. Sus ejes significan cosas completamente distintas.\nLa forma por sí sola nunca te dice qué significan los ejes."
   },
   {
     "objectID": "slides/es/index.html#tres-operaciones",
@@ -942,7 +942,7 @@
     "href": "slides/es/index.html#por-qué-importa",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Por qué importa",
-    "text": "Por qué importa\n569 pacientes reales, 30 medidas reales de núcleos de células tumorales.\n\n\nElegir la columna equivocada no da ningún error\nDevuelve otra medida real\nTu análisis continúa y da una respuesta segura y equivocada\n\n\n\nEn investigación: resultados que nadie puede reproducir. En una herramienta clínica: una recomendación errónea sobre una persona real."
+    "text": "Por qué importa\n\n\n569 pacientes reales, 30 medidas reales de núcleos de células tumorales.\n\n\nElegir la columna equivocada no da ningún error\nDevuelve otra medida real\nTu análisis continúa y da una respuesta segura y equivocada\n\n\n\n\n\n\nEn investigación: resultados que nadie puede reproducir. En una herramienta clínica: una recomendación errónea sobre una persona real."
   },
   {
     "objectID": "slides/es/index.html#el-ejercicio",
@@ -970,7 +970,7 @@
     "href": "slides/es/index.html#por-qué-importa-1",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Por qué importa",
-    "text": "Por qué importa\nLos microscopios y las cámaras ordenan sus ejes según el hardware, no según lo que espera un modelo.\n\nEquivocarse no provoca ningún fallo. El modelo se ejecuta sobre datos revueltos y devuelve resultados seguros y sin sentido.\n\n\nLa versión famosa: un modelo entrenado en TensorFlow (NHWC) desplegado en PyTorch (NCHW) sin transponer."
+    "text": "Por qué importa\n\n\nLos microscopios y las cámaras ordenan sus ejes según el hardware, no según lo que espera un modelo.\n. . .\nEquivocarse no provoca ningún fallo. El modelo se ejecuta sobre datos revueltos y devuelve resultados seguros y sin sentido.\n. . .\nLa versión famosa: un modelo entrenado en TensorFlow (NHWC) desplegado en PyTorch (NCHW) sin transponer."
   },
   {
     "objectID": "slides/es/index.html#la-misma-forma-datos-distintos",
@@ -1089,7 +1089,7 @@
     "href": "slides/es/index.html#ecuaciones-ninguna-solución",
     "title": "Tensores para Aprendizaje Automático",
     "section": "20.433 ecuaciones, ninguna solución",
-    "text": "20.433 ecuaciones, ninguna solución\n\nd = housing.dropna()                                # 20433 filas; 207 tenían NaN\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                             # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75.980\n\n\nNinguna recta pasa por 20.433 puntos. La pseudoinversa da la mejor respuesta posible. El coeficiente mayor es median_income: tiene todo el sentido.\n\nEl TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo."
+    "text": "20.433 ecuaciones, ninguna solución\n\n\n\nd = housing.dropna()                                # 20433 filas; 207 tenían NaN\nX = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)\n\nw = np.linalg.pinv(X) @ y\nw_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)\nnp.allclose(w, w_lstsq)                             # True\n\nrmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75.980\n\n\n\n\n\nNinguna recta pasa por 20.433 puntos. La pseudoinversa da la mejor respuesta posible. El coeficiente mayor es median_income: tiene todo el sentido.\n\nEl TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo."
   },
   {
     "objectID": "slides/es/index.html#al-cuaderno-7",
@@ -1124,7 +1124,7 @@
     "href": "slides/es/index.html#pronosticar-tráfico-aéreo-real",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Pronosticar tráfico aéreo real",
-    "text": "Pronosticar tráfico aéreo real\n\ny = flights['passengers'].to_numpy(float)     # 144 meses reales, 1949–1960\nrows = np.array([y[i:i+12] for i in range(len(y) - 12)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[12:]                # mínimos cuadrados, igual que en §07\n\nhistory = list(y[-12:])\nfor _ in range(12):                           # realimenta sus propias predicciones\n    history.append(w[0] + np.dot(w[1:], history[-12:]))\n\n\n[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nBaja en invierno, máxima en verano, aprendido de 132 ventanas reales."
+    "text": "Pronosticar tráfico aéreo real\n\n\n\ny = flights['passengers'].to_numpy(float)     # 144 meses reales, 1949–1960\nrows = np.array([y[i:i+12] for i in range(len(y) - 12)])\nX = np.column_stack([np.ones(len(rows)), rows])\nw = np.linalg.pinv(X) @ y[12:]                # mínimos cuadrados, igual que en §07\n\nhistory = list(y[-12:])\nfor _ in range(12):                           # realimenta sus propias predicciones\n    history.append(w[0] + np.dot(w[1:], history[-12:]))\n\n\n\n\n\n[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]\nBaja en invierno, máxima en verano, aprendido de 132 ventanas reales."
   },
   {
     "objectID": "slides/es/index.html#eso-es-una-red-neuronal-recurrente",
@@ -1201,7 +1201,7 @@
     "href": "slides/es/index.html#un-tensor-real-de-orden-3",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Un tensor real de orden 3",
-    "text": "Un tensor real de orden 3\nbarrio de origen × barrio de destino × hora del día, a partir de 6.433 viajes reales en taxi de Nueva York.\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n\nT[i, j, k] = viajes del barrio i al barrio j recogidos durante la hora k."
+    "text": "Un tensor real de orden 3\n\n\nbarrio de origen × barrio de destino × hora del día, a partir de 6.433 viajes reales en taxi de Nueva York.\n\nT = np.zeros((len(pb), len(db), 24))\nfor (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():\n    T[pb.index(p), db.index(d), h] = v\n\n\n\n\n\nT[i, j, k] = viajes del barrio i al barrio j recogidos durante la hora k."
   },
   {
     "objectID": "slides/es/index.html#tres-ejes-un-solo-einsum",

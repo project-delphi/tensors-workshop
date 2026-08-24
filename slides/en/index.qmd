@@ -119,12 +119,21 @@ in the repo as a fallback.
 
 ## To the notebook
 
+::: {.columns}
+::: {.column width="60%"}
 **00 · Setup and welcome**
 
 [Open in Colab]({{< var repo.colab_base >}}/00-setup-and-data.ipynb)
 
 Everything else in the library ships offline: `load_breast_cancer`,
 `load_digits`, `data.camera()`, `data.astronaut()`.
+:::
+::: {.column width="40%"}
+![](../../images/camera.png){fig-alt="Grayscale thumbnail of the scikit-image camera photograph, a standard offline test image shipped with the library." width="220"}
+
+![](../../images/astronaut.png){fig-alt="Small colour thumbnail of the scikit-image astronaut photograph, another standard offline test image shipped with the library." width="220"}
+:::
+:::
 
 # 01 · What a tensor is {#sec-01-what-a-tensor-is}
 
@@ -156,12 +165,19 @@ tensor = rng.standard_normal((2, 3, 4))    # order 3   shape (2, 3, 4)
 
 . . .
 
+::: {.columns}
+::: {.column width="60%"}
 ```{python}
 #| label: code-01-what-a-tensor-is-2
 #| echo: true
 digits.images.shape              # (1797, 8, 8)  — images, height, width
 photo.shape                      # (512, 512, 3) — height, width, colour
 ```
+:::
+::: {.column width="40%"}
+![](../../images/digits-grid.png){fig-alt="Grid of eight real handwritten digits from the scikit-learn digits dataset, each an 8 by 8 pixel grayscale image shown with nearest-neighbour scaling so individual pixels stay visible — this is what shape (1797, 8, 8) means: 1797 such images." width="260"}
+:::
+:::
 
 . . .
 
@@ -312,12 +328,19 @@ Pre-assign breakout groups before the session.
 
 ## Why this matters
 
+::: {.columns}
+::: {.column width="55%"}
 569 real patients, 30 real measurements of tumour cell nuclei.
 
 ::: {.incremental}
 - Selecting the wrong column **does not produce an error**
 - It returns a *different real measurement*
 - Your analysis continues and gives a confident, wrong answer
+:::
+:::
+::: {.column width="45%"}
+![](../../images/breast-cancer.png){fig-alt="Scatter plot of mean radius against mean texture for 569 patients in the scikit-learn breast cancer dataset, coloured by malignant versus benign diagnosis; two of the dataset's 30 measurements, not the full picture." width="300"}
+:::
 :::
 
 . . .
@@ -370,6 +393,8 @@ writes. Standard deviation exactly zero → `NaN`.
 
 ## Why this matters
 
+::: {.columns}
+::: {.column width="60%"}
 Microscopes and cameras order their axes according to the **hardware**, not
 according to what a model expects.
 
@@ -382,6 +407,13 @@ Getting this wrong does not crash. The model runs on scrambled data and returns
 
 The famous version: a model trained in TensorFlow (`NHWC`) deployed into
 PyTorch (`NCHW`) with no transpose.
+:::
+::: {.column width="40%"}
+![](../../images/immunohistochemistry.png){fig-alt="Colour immunohistochemistry-stained tissue image from scikit-image, an example microscopy image whose colour channels are ordered by the imaging hardware." width="240"}
+
+![](../../images/cell.png){fig-alt="Grayscale microscopy image of a single cell from scikit-image, another example of hardware-ordered image axes." width="240"}
+:::
+:::
 
 ## Same shape, different data
 
@@ -633,6 +665,8 @@ loses nothing.
 
 ## 20,433 equations, no solution
 
+::: {.columns}
+::: {.column width="55%"}
 ```{python}
 #| label: code-07-inverses-and-pseudoinverse-3
 #| echo: true
@@ -645,6 +679,11 @@ np.allclose(w, w_lstsq)                             # True
 
 rmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75,980
 ```
+:::
+::: {.column width="45%"}
+![](../../images/california-housing.png){fig-alt="Scatter map of California housing districts plotted by longitude and latitude, coloured by median house value, showing the coastal concentration of expensive housing in the same dataset used for the least-squares fit." width="300"}
+:::
+:::
 
 . . .
 
@@ -727,6 +766,8 @@ This is how PageRank ranks web pages.
 
 ## Forecasting real airline traffic
 
+::: {.columns}
+::: {.column width="55%"}
 ```{python}
 #| label: code-08-recursion-with-matrices-3
 #| echo: true
@@ -739,6 +780,11 @@ history = list(y[-12:])
 for _ in range(12):                           # feed predictions back in
     history.append(w[0] + np.dot(w[1:], history[-12:]))
 ```
+:::
+::: {.column width="45%"}
+![](../../images/airline-passengers.png){fig-alt="Line chart of monthly airline passenger counts from 1949 to 1960, the 144-month series used for the forecast, showing a rising trend with a repeating yearly summer peak." width="300"}
+:::
+:::
 
 . . .
 
@@ -907,6 +953,8 @@ describing how the factors combine.
 
 ## A real order-3 tensor
 
+::: {.columns}
+::: {.column width="55%"}
 **pickup borough × dropoff borough × hour of day**, from 6,433 real NYC taxi
 trips.
 
@@ -917,6 +965,11 @@ T = np.zeros((len(pb), len(db), 24))
 for (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():
     T[pb.index(p), db.index(d), h] = v
 ```
+:::
+::: {.column width="45%"}
+![](../../images/nyc-taxi-pickups-by-hour.png){fig-alt="Bar chart of NYC taxi pickup counts by hour of day from the same 6,433-trip dataset, rising through the day to a peak around hour 18, the evening rush the Tucker decomposition later rediscovers on its own." width="300"}
+:::
+:::
 
 . . .
 
