@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-ffec8635838ac961ee4969b1dce14e71.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-c0ee31b37f7c3492c9f97e956bede215.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1170,6 +1170,75 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="sec-10-tucker-decomposition" class="title-slide slide level1 center">
 <h1>10 · Tucker decomposition</h1>
 <p><em>Part IV · 15 min · exercise</em></p>
+</section>
+<section id="what-different-factorizations-buy-you" class="slide level2 factorization-ladder">
+<h2>What different factorizations buy you</h2>
+<blockquote>
+<p>A factorization picks the atoms, the rule for combining them, and the property you buy. The object never changes — only which question becomes trivial.</p>
+</blockquote>
+<div class="columns">
+<div class="column" style="width:25%;">
+<p><strong>100</strong></p>
+<ul>
+<li><span class="math inline">\(2^2 \cdot 5^2\)</span> → divisors, gcd</li>
+<li><span class="math inline">\(4 \cdot 25\)</span> → arithmetic</li>
+<li><span class="math inline">\(64 + 32 + 4\)</span> → storage</li>
+<li><span class="math inline">\(6^2 + 8^2\)</span> → geometry</li>
+</ul>
+<p>Product or sum; prime factorization is unique up to ordering.</p>
+</div><div class="column" style="width:25%;">
+<p><strong><span class="math inline">\(x^2 - 4x - 5\)</span></strong></p>
+<ul>
+<li>standard → intercept, coefficients</li>
+<li><span class="math inline">\((x-5)(x+1)\)</span> → roots, sign</li>
+<li><span class="math inline">\((x-2)^2 - 9\)</span> → vertex, range</li>
+</ul>
+<p>Completing the square: the scalar bridge to diagonalizing quadratic forms.</p>
+</div><div class="column" style="width:25%;">
+<p><strong>Matrix <span class="math inline">\(A\)</span></strong></p>
+<ul>
+<li>LU → elimination, repeated solves</li>
+<li>QR → orthogonality, least squares</li>
+<li>Cholesky → SPD solves, covariance</li>
+<li>SVD → low-rank structure, conditioning</li>
+<li>NMF → nonnegative parts</li>
+</ul>
+<p><span class="math inline">\(AB^{\top} = (AM)(BM^{-\top})^{\top}\)</span> — generic factors are not unique without additional structure or conventions.</p>
+</div><div class="column" style="width:25%;">
+<p><strong>Tensor <span class="math inline">\(\mathcal{X}\)</span></strong></p>
+<ul>
+<li>CP → interpretable rank-1 components</li>
+<li>Tucker / HOSVD → multilinear compression, subspaces</li>
+<li>Tensor Train → scalable high-order storage</li>
+</ul>
+<p>Essentially unique up to permutation and compensating scale, under suitable conditions — sufficient: <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span>.</p>
+</div></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Matrix multiplication is itself a tensor; its CP rank is the multiplication count. The <span class="math inline">\(2 \times 2\)</span> case has rank 7, not 8 — that is Strassen. At the top of the ladder, the factorization is the algorithm.</p>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Prime factorization is unique up to ordering — the cleanest case on the slide. Generic low-rank matrix factors have gauge freedom (the <span class="math inline">\(M\)</span>/<span class="math inline">\(M^{-\top}\)</span> pair); extra structure or a convention — positive pivots, orthonormal columns, a positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can be essentially unique under suitable identifiability conditions, up to permutation and a compensating nonzero scaling across modes; over the reals, sign flips are a special case of that scaling. Kruskal’s <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span> is a <em>sufficient</em> condition, not a necessary one, and it says nothing about whether the decomposition is easy to find. Worth saying if there is time: computing tensor rank is NP-hard in general, tensor rank can exceed every individual mode dimension, and a best rank-<span class="math inline">\(R\)</span> approximation need not even exist — none of that is true of matrices.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="pca-generalized-to-every-axis" class="slide level2">
 <h2>PCA generalized to every axis</h2>

@@ -31,3 +31,29 @@ $code-block-font-size: 0.62em;
 
 .reveal .callout { font-size: .8em; }
 .reveal .footer { font-size: .5em; opacity: .75; }
+
+// Section 10's four-rung overview slide (numbers / polynomial / matrix /
+// tensor) packs more text than any other single slide in the deck. Scoped to
+// this class, shared by both language decks, so nothing else shrinks. Sizes
+// below are the largest that still fit one slide with no overflow, checked
+// against a rendered 1280x760 screenshot — not shrunk further than needed.
+.reveal section.factorization-ladder blockquote {
+  font-size: .68em;
+  margin: .2em 0 .6em;
+}
+.reveal section.factorization-ladder .columns { gap: .6em; }
+.reveal section.factorization-ladder .column {
+  font-size: .64em;
+  line-height: 1.3;
+}
+.reveal section.factorization-ladder .column p { margin: .25em 0; }
+.reveal section.factorization-ladder .column ul {
+  margin: 0 0 .3em;
+  padding-left: 1em;
+}
+.reveal section.factorization-ladder .column li { margin-bottom: .1em; }
+.reveal section.factorization-ladder .callout-tip {
+  font-size: .6em;
+  padding: .3em .6em;
+  margin-top: .3em;
+}

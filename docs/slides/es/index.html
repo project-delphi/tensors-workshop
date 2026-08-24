@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-ffec8635838ac961ee4969b1dce14e71.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-c0ee31b37f7c3492c9f97e956bede215.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1170,6 +1170,75 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="sec-10-tucker-decomposition" class="title-slide slide level1 center">
 <h1>10 · Descomposición de Tucker</h1>
 <p><em>Parte IV · 15 min · ejercicio</em></p>
+</section>
+<section id="qué-aporta-cada-factorización" class="slide level2 factorization-ladder">
+<h2>Qué aporta cada factorización</h2>
+<blockquote>
+<p>Una factorización elige los átomos, la regla para combinarlos y la propiedad que compras a cambio. El objeto nunca cambia — solo cambia qué pregunta se vuelve trivial.</p>
+</blockquote>
+<div class="columns">
+<div class="column" style="width:25%;">
+<p><strong>100</strong></p>
+<ul>
+<li><span class="math inline">\(2^2 \cdot 5^2\)</span> → divisores, mcd</li>
+<li><span class="math inline">\(4 \cdot 25\)</span> → aritmética</li>
+<li><span class="math inline">\(64 + 32 + 4\)</span> → almacenamiento</li>
+<li><span class="math inline">\(6^2 + 8^2\)</span> → geometría</li>
+</ul>
+<p>Producto o suma; la factorización en primos es única salvo el orden.</p>
+</div><div class="column" style="width:25%;">
+<p><strong><span class="math inline">\(x^2 - 4x - 5\)</span></strong></p>
+<ul>
+<li>estándar → intercepto, coeficientes</li>
+<li><span class="math inline">\((x-5)(x+1)\)</span> → raíces, signo</li>
+<li><span class="math inline">\((x-2)^2 - 9\)</span> → vértice, rango</li>
+</ul>
+<p>Completar el cuadrado: el puente escalar a diagonalizar formas cuadráticas.</p>
+</div><div class="column" style="width:25%;">
+<p><strong>Matriz <span class="math inline">\(A\)</span></strong></p>
+<ul>
+<li>LU → eliminación, sistemas repetidos</li>
+<li>QR → ortogonalidad, mínimos cuadrados</li>
+<li>Cholesky → sistemas SPD, covarianza</li>
+<li>SVD → estructura de bajo rango, condicionamiento</li>
+<li>NMF → partes no negativas</li>
+</ul>
+<p><span class="math inline">\(AB^{\top} = (AM)(BM^{-\top})^{\top}\)</span> — los factores genéricos no son únicos sin estructura o convenciones adicionales.</p>
+</div><div class="column" style="width:25%;">
+<p><strong>Tensor <span class="math inline">\(\mathcal{X}\)</span></strong></p>
+<ul>
+<li>CP → componentes interpretables de rango 1</li>
+<li>Tucker / HOSVD → compresión multilineal, subespacios</li>
+<li>Tensor Train → almacenamiento escalable de orden alto</li>
+</ul>
+<p>Esencialmente único salvo permutación y escala compensatoria, bajo condiciones adecuadas — suficiente: <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span>.</p>
+</div></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>El producto matricial es en sí mismo un tensor; su rango CP es el número de multiplicaciones. El caso <span class="math inline">\(2 \times 2\)</span> tiene rango 7, no 8 — eso es Strassen. En lo más alto de la escalera, la factorización es el algoritmo.</p>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>La factorización en primos es única salvo el orden — el caso más limpio de la diapositiva. Los factores genéricos de una matriz de bajo rango tienen libertad de gauge (el par <span class="math inline">\(M\)</span>/<span class="math inline">\(M^{-\top}\)</span>); una estructura adicional o una convención — pivotes positivos, columnas ortonormales, diagonal positiva — es lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente único bajo condiciones de identificabilidad adecuadas, salvo permutación y una escala compensatoria no nula entre modos; sobre los reales, los cambios de signo son un caso particular de esa escala. La condición de Kruskal <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span> es <em>suficiente</em>, no necesaria, y no dice nada sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango tensorial puede superar cada dimensión individual de los ejes, y una mejor aproximación de rango <span class="math inline">\(R\)</span> puede no existir siquiera — nada de eso es cierto para matrices.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="pca-generalizado-a-todos-los-ejes" class="slide level2">
 <h2>PCA generalizado a todos los ejes</h2>
