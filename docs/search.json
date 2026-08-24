@@ -263,7 +263,7 @@
     "href": "slides/en/index.html#the-map-of-factorizations",
     "title": "Tensors for Machine Learning",
     "section": "The map of factorizations",
-    "text": "The map of factorizations\n\n\n\nMethod\nWorks on\nWhere today\n\n\n\n\nLU\nSquare matrix\nnow\n\n\nQR\nAny matrix\nnow\n\n\nEigendecomposition\nSquare matrix\n§08\n\n\nSVD\nAny matrix\n§07, §10\n\n\nPCA\nData matrix\n§11\n\n\nPseudoinverse\nAny matrix\n§07\n\n\nTucker / CP\nTensor, any order\n§10\n\n\n\n\nEverything but the last row works on two axes. Real data has more."
+    "text": "The map of factorizations\n\n\n\nMethod\nWorks on\nWhere today\n\n\n\n\nLU\nSquare matrix\nnow\n\n\nQR\nAny matrix\nnow\n\n\nEigendecomposition\nSquare matrix\n§08\n\n\nSVD\nAny matrix\n§07, §10\n\n\nPseudoinverse\nAny matrix\n§07\n\n\nTucker / CP\nTensor, any order\n§10\n\n\n\n\nEverything but the last row works on two axes. Real data has more."
   },
   {
     "objectID": "slides/en/index.html#to-the-notebook-1",
@@ -900,7 +900,7 @@
     "href": "slides/es/index.html#el-mapa-de-las-factorizaciones",
     "title": "Tensores para Aprendizaje Automático",
     "section": "El mapa de las factorizaciones",
-    "text": "El mapa de las factorizaciones\n\n\n\nMétodo\nActúa sobre\nDónde hoy\n\n\n\n\nLU\nMatriz cuadrada\nahora\n\n\nQR\nCualquier matriz\nahora\n\n\nDescomposición espectral\nMatriz cuadrada\n§08\n\n\nSVD\nCualquier matriz\n§07, §10\n\n\nPCA\nMatriz de datos\n§11\n\n\nPseudoinversa\nCualquier matriz\n§07\n\n\nTucker / CP\nTensor de cualquier orden\n§10\n\n\n\n\nTodo salvo la última fila trabaja con dos ejes. Los datos reales tienen más."
+    "text": "El mapa de las factorizaciones\n\n\n\nMétodo\nActúa sobre\nDónde hoy\n\n\n\n\nLU\nMatriz cuadrada\nahora\n\n\nQR\nCualquier matriz\nahora\n\n\nDescomposición espectral\nMatriz cuadrada\n§08\n\n\nSVD\nCualquier matriz\n§07, §10\n\n\nPseudoinversa\nCualquier matriz\n§07\n\n\nTucker / CP\nTensor de cualquier orden\n§10\n\n\n\n\nTodo salvo la última fila trabaja con dos ejes. Los datos reales tienen más."
   },
   {
     "objectID": "slides/es/index.html#al-cuaderno-1",

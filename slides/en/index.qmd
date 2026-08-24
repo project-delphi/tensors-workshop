@@ -225,7 +225,6 @@ An index after the arrow is **kept**.
 | QR | Any matrix | now |
 | Eigendecomposition | Square matrix | §08 |
 | SVD | Any matrix | §07, §10 |
-| PCA | Data matrix | §11 |
 | **Pseudoinverse** | Any matrix | §07 |
 | **Tucker / CP** | **Tensor, any order** | §10 |
 
