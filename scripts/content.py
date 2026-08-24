@@ -79,6 +79,30 @@ of the work.**
 If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, you are ready.
 **If it failed, say so in Discord immediately** — a silent download failure will
 leave you stuck at sections 07 and 10, an hour from now, with no obvious cause."""),
+        md("""## See it, not just its shape
+
+> 🇪🇸 Confírmalo con los ojos, no solo con `.shape`.
+
+A shape can match on paper for reasons that are actually bugs — a truncated
+download, a wrong dtype, a colour image read as grayscale. All five still
+report *some* shape. Looking at them costs one glance."""),
+        code("""import matplotlib.pyplot as plt
+
+samples = [
+    ("digits[0]", load_digits().images[0], "gray"),
+    ("camera()", data.camera(), "gray"),
+    ("astronaut()", data.astronaut(), None),
+    ("immunohistochemistry()", data.immunohistochemistry(), None),
+    ("cell()", data.cell(), "gray"),
+]
+fig, axes = plt.subplots(1, len(samples), figsize=(12, 2.6))
+for ax, (title, img, cmap) in zip(axes, samples):
+    ax.imshow(img, cmap=cmap)
+    ax.set_title(title, fontsize=9)
+    ax.axis("off")
+fig.suptitle("Bundled data — no download, should look like real images")
+plt.tight_layout()
+plt.show()"""),
         md("""## Exercise 1 — check the data you did not download
 
 > 🇪🇸 Comprueba los datos que vienen dentro de las librerías."""),
@@ -225,6 +249,49 @@ print(data.astronaut().shape)       # (512, 512, 3)  axis 0 = height
 ### Slices and fibers — fixing indices takes a tensor apart"""),
         code("""print(photo[:, :, 0].shape)       # (512, 512) — a slice: one colour channel, still an image
 print(photo[100, 200, :].shape)   # (3,)       — a fiber: the 3 colour values of one pixel"""),
+        md("""Same picture, same two indexing operations — see them together. Drag the
+sliders and watch the marked pixel move on both panels at once, while its
+fiber (three numbers, one per colour) redraws on the right.
+
+> 🇪🇸 Mueve los deslizadores: el mismo píxel se marca en el corte y en la
+> imagen completa, y su fibra (tres números, uno por color) se redibuja."""),
+        code("""# Colab renders ipywidgets through its own widget manager rather than the
+# classic Jupyter one; this call is a no-op outside Colab, which is why it is
+# guarded rather than assumed.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_slice_and_fiber(row, col):
+    plt.close('all')
+    fig, axes = plt.subplots(1, 3, figsize=(11, 3.2))
+
+    axes[0].imshow(photo)
+    axes[0].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[0].set_title('photo — the fiber, marked')
+    axes[0].axis('off')
+
+    axes[1].imshow(photo[:, :, 0], cmap='gray')
+    axes[1].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[1].set_title('photo[:, :, 0] — a slice')
+    axes[1].axis('off')
+
+    fiber = photo[row, col, :]
+    axes[2].bar(['R', 'G', 'B'], fiber, color=['#C44E52', '#55A868', '#4C72B0'])
+    axes[2].set_title(f'photo[{row}, {col}, :] — the fiber')
+    axes[2].set_ylim(0, 255)
+
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_slice_and_fiber,
+                  row=widgets.IntSlider(min=0, max=511, step=1, value=100, description='row'),
+                  col=widgets.IntSlider(min=0, max=511, step=1, value=200, description='col'));"""),
         md("""### Unfolding — every decomposition begins here
 
 Every tensor decomposition begins by turning the tensor into a matrix, one axis
@@ -432,7 +499,40 @@ order **is** the information.
 Chapter 2's notation has no concept of "order matters between elements." That is
 genuinely new today.
 
-### The other four, briefly
+Each step below adds exactly one axis — the one highlighted in red — onto the
+tensor above it.
+
+> 🇪🇸 Cada fila añade exactamente un eje — el resaltado en rojo — sobre el de
+> arriba."""),
+        code("""import matplotlib.pyplot as plt
+
+# name, axis labels in order, the one that's new at this step
+stages = [
+    ("gray_image",      ["H", "W"],              None),
+    ("color_image",     ["H", "W", "C"],          "C"),
+    ("batch_of_images", ["N", "H", "W", "C"],     "N"),
+    ("video",           ["T", "H", "W", "C"],     "T"),
+    ("batch_of_videos", ["N", "T", "H", "W", "C"], "N"),
+]
+
+fig, ax = plt.subplots(figsize=(7.5, 3.5))
+for row, (name, axes, new) in enumerate(stages):
+    y = len(stages) - row
+    for col, axis in enumerate(axes):
+        color = "#C44E52" if axis == new else "#4C72B0"
+        ax.add_patch(plt.Rectangle((col, y - 0.4), 0.9, 0.8,
+                                    facecolor=color, edgecolor="black"))
+        ax.text(col + 0.45, y, axis, ha="center", va="center",
+                color="white", fontweight="bold")
+    ax.text(-0.2, y, name, ha="right", va="center", fontsize=9)
+
+ax.set_xlim(-3.2, 5)
+ax.set_ylim(0.3, len(stages) + 0.7)
+ax.axis("off")
+ax.set_title("Same batch/time-shaped tuple, different axis added each step")
+plt.tight_layout()
+plt.show()"""),
+        md("""### The other four, briefly
 
 - **Q3** — pad every video to the longest and carry a mask (invents frames that
   were never recorded, and you must remember to ignore them), or sample a fixed
