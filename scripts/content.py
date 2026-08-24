@@ -138,7 +138,7 @@ CONTENT["01"] = {
         "Read `.shape`, `.ndim` and `.size` off any array and say what each axis means.",
         "Take slices and fibers, and unfold a tensor into a matrix without losing anything.",
         "Write a dot product and a matrix product as `einsum` contractions.",
-        "Place LU, QR, eigendecomposition, SVD, PCA, the pseudoinverse and Tucker in one map.",
+        "Place LU, QR, eigendecomposition, SVD, the pseudoinverse, Cholesky and Tucker in one map.",
     ],
     "setup": """import numpy as np
 from sklearn.datasets import load_digits
@@ -164,7 +164,7 @@ Keep this table open for the whole workshop.
 | **Fiber** | Fix every index except one | *fibra* | The 3 colour values of one pixel |
 | **Unfolding** | Rearranging a tensor into a matrix | *desplegado* | Needed for decompositions |
 | **Contraction** | Multiply and sum over a shared axis | *contracción* | The dot product |
-| **Decomposition** | Writing one tensor as a product of simpler ones | *descomposición* | SVD, PCA, Tucker |
+| **Decomposition** | Writing one tensor as a product of simpler ones | *descomposición* | SVD, Tucker |
 
 ⚠️ **Warning about the word "rank".** In Chapter 2, *rank* means the number of
 independent columns of a matrix. In tensor theory, *rank* often means the number
@@ -288,8 +288,8 @@ two in Chapter 2. Here is the whole family we will use today.
 | **QR / Gram-Schmidt** | Any matrix | Perpendicular, unit-length directions | Below |
 | **Eigendecomposition** | Square matrix | Directions that only get scaled (§2.7) | Section 08 |
 | **SVD** | Any matrix | The most general matrix factorization (§2.8) | Sections 07 and 10 |
-| **PCA** | Data matrix | Compression to fewer features (§2.12) | Section 11, take-home A |
 | **Pseudoinverse** | Any matrix | "Inverse" when no true inverse exists (§2.9) | Section 07 |
+| **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Section 11, take-home D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | Section 10 |"""),
         code("""A3 = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
 
@@ -1548,6 +1548,7 @@ CONTENT["11"] = {
         "Find the scaling trap in PCA on real, unstandardized data (take-home A).",
         "Build attention out of two contractions, and mask padded positions (take-home B).",
         "Compare a CP decomposition against the Tucker one you built (take-home C).",
+        "Build correlated data from independent noise with Cholesky, and see why ignoring covariance understates portfolio risk (take-home D).",
     ],
     "setup": """import numpy as np
 from sklearn.datasets import load_breast_cancer
@@ -1586,10 +1587,11 @@ large to keep in full.
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — **identical syntax** to what you
   used today.
 - [`tensorly`](https://tensorly.org) — proper Tucker and CP decompositions.
-- `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`.
+- `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`,
+  `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution
   beyond today.
-- The three take-homes below."""),
+- The four take-homes below."""),
         md("""### Optional: the same contraction in PyTorch
 
 Everything today was NumPy, because that is what the workshop's real datasets
@@ -1730,6 +1732,157 @@ print(round(480 / 33, 1))                                   # 14.5x for one piec
 # strict sum of rank-1 pieces cannot do. CP is often preferred when
 # interpretability matters, because each component is one simple pattern per
 # axis."""),
+        md("""---
+
+## Take-home D — Cholesky: the factorization that builds
+
+> 🇪🇸 Ejercicio para casa D: Cholesky, la factorización que construye.
+
+Every factorization used today — LU, QR, eigendecomposition, SVD — takes an
+existing object **apart**. Cholesky is the one exception: you use it to
+**build**. Given a covariance matrix `Sigma` that is symmetric and
+positive-definite, `np.linalg.cholesky` finds a lower-triangular `L` with
+`L @ L.T == Sigma`. Feed `L` independent Gaussian noise and it hands back
+correlated draws with *exactly* that covariance.
+
+`Sigma[i, j]` is the **covariance** between asset `i` and asset `j` — how much
+they move together, in the assets' own units. Its diagonal `Sigma[i, i]` is
+each asset's own variance. **Correlation** (`corr`) is the same relationship
+rescaled to sit between -1 and 1, so it is comparable between assets of
+different volatility; `Sigma = outer(vol, vol) * corr` puts the original scale
+back in.
+
+If `z` is independent noise (`Cov(z) = I`) and `x = L @ z`, then
+`Cov(x) = L Cov(z) L.T = L L.T = Sigma` — which is exactly why `L` turns
+independent draws into correlated ones.
+
+> 🇪🇸 `Sigma[i, j]` es la covarianza entre el activo `i` y el `j`: cuánto se
+> mueven juntos. La diagonal es la varianza de cada activo. `corr` es la misma
+> relación reescalada entre -1 y 1. Si `z` es ruido independiente
+> (`Cov(z) = I`) y `x = L @ z`, entonces `Cov(x) = L Cov(z) L.T = L L.T =
+> Sigma`: por eso `L` convierte ruido independiente en ruido correlacionado."""),
+        code("""vol = np.array([0.012, 0.015, 0.010])
+corr = np.array([[1.00, 0.85, 0.20],
+                  [0.85, 1.00, 0.20],
+                  [0.20, 0.20, 1.00]])
+Sigma = np.outer(vol, vol) * corr
+
+weights = np.array([0.4, 0.4, 0.2])
+mu = np.array([0.00030, 0.00035, 0.00020])
+n_days, n_paths, initial_value = 252, 20_000, 100.0
+
+rng = np.random.default_rng(5)
+sample_sizes = [100, 1_000, 100_000]
+
+# TODO 1: L = np.linalg.cholesky(Sigma). Verify np.allclose(L @ L.T, Sigma) is
+#         True, and print L and the reconstruction L @ L.T, both rounded.
+
+# TODO 2: For each n in sample_sizes, draw z = rng.standard_normal((3, n)),
+#         build x = L @ z, and compute the Frobenius error between np.cov(x)
+#         and Sigma. Confirm it shrinks as n grows. For the LARGEST n, also
+#         print np.cov(z) (should look like the identity) and np.cov(x)
+#         (should look like Sigma) — that is the whole trick, made visible.
+
+# TODO 3: Simulate a CORRECT correlated portfolio. Draw
+#         z_paths = rng.standard_normal((3, n_days * n_paths)), build
+#         correlated_asset_returns = mu[:, None] + L @ z_paths, reshape to
+#         (3, n_paths, n_days), combine with `weights` into one daily
+#         portfolio return per path per day, and compound each path into
+#         terminal_correlated = initial_value * prod(1 + daily_returns).
+
+# TODO 4: Simulate the SAME portfolio again but WRONG: replace L with
+#         independent_scale = np.diag(np.sqrt(np.diag(Sigma))) — same
+#         individual volatilities, zero cross-asset correlation — and reuse
+#         the SAME z_paths. Produce terminal_independent the same way.
+
+# TODO 5: Plot terminal_correlated and terminal_independent as overlaid
+#         histograms (density=True) on the same axes, labelled and legended.
+
+# TODO 6: Compare std, and the 5th and 1st percentiles, of both. Which
+#         distribution has the fatter left tail — and why, given that no
+#         individual asset's volatility ever changed?"""),
+        solution("""L = np.linalg.cholesky(Sigma)
+print(np.allclose(L @ L.T, Sigma))          # True
+print(np.round(L, 4))
+print(np.round(L @ L.T, 6))                 # matches Sigma
+
+errors = []
+for n in sample_sizes:
+    z = rng.standard_normal((3, n))
+    x = L @ z
+    err = np.linalg.norm(np.cov(x) - Sigma)
+    errors.append(err)
+    print(n, err)
+print(errors[0] > errors[1] > errors[2])    # True — error shrinks as n grows
+
+print(np.round(np.cov(z), 3))               # close to the identity
+print(np.round(np.cov(x), 6))               # close to Sigma
+# Cov(x) = Cov(Lz) = L Cov(z) L.T ~ L I L.T = L L.T = Sigma. Independent noise
+# in, correlated noise out — Cholesky is the "square root" that makes it work.
+
+z_paths = rng.standard_normal((3, n_days * n_paths))
+
+correlated_asset_returns = (mu[:, None] + L @ z_paths).reshape(3, n_paths, n_days)
+portfolio_returns_correlated = np.einsum('a,apd->pd', weights, correlated_asset_returns)
+terminal_correlated = initial_value * np.prod(1 + portfolio_returns_correlated, axis=1)
+
+independent_scale = np.diag(np.sqrt(np.diag(Sigma)))
+independent_asset_returns = (mu[:, None] + independent_scale @ z_paths).reshape(3, n_paths, n_days)
+portfolio_returns_independent = np.einsum('a,apd->pd', weights, independent_asset_returns)
+terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent, axis=1)
+
+import matplotlib.pyplot as plt
+plt.hist(terminal_independent, bins=80, density=True, alpha=0.6,
+         label="Assets simulated independently")
+plt.hist(terminal_correlated, bins=80, density=True, alpha=0.6,
+         label="Correct correlated simulation")
+plt.xlabel("Terminal portfolio value")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+print(terminal_correlated.std(), terminal_independent.std())               # ~18.8  ~13.6
+print(np.percentile(terminal_correlated, [1, 5]))                           # ~70.7 ~79.7
+print(np.percentile(terminal_independent, [1, 5]))                          # ~79.9 ~86.9
+
+# EVERY asset kept its own individual volatility in BOTH simulations —
+# independent_scale used the SAME diagonal as Sigma. The only thing that
+# changed is whether the simulation lets the three assets fall together.
+# Ignoring the positive covariance did not touch any single asset's risk; it
+# erased real cross-asset comovement and manufactured DIVERSIFICATION THAT
+# ISN'T THERE — the correlated portfolio's distribution is wider and its
+# lower tail is worse.
+#
+# This is NOT "correlation always increases risk." It is specific to THIS
+# positively-correlated book: a negatively correlated pair would do the
+# opposite, and ignoring it would UNDERSTATE diversification, not overstate
+# it. What generalizes is only this: assuming independence when assets are
+# not independent gets the TAILS of the distribution wrong."""),
+        md("""### What the comparison shows
+
+**Every individual asset kept the same volatility in both simulations.** The
+only thing that changed is whether the simulation lets the three assets move
+together. Ignoring the positive covariance did not touch any single asset's
+risk; it erased real cross-asset comovement and manufactured diversification
+that was never there — the correlated portfolio's terminal-value distribution
+is wider, and its bad days are worse, than the (wrong) independent one.
+
+**This is not "correlation always increases risk."** It is specific to this
+book, where every pair is positively correlated. A negatively correlated pair
+would do the opposite: ignoring it would make the simulation *understate*
+diversification, not overstate it. What is general is only this: **assuming
+independence when assets are not independent gets the tails of the
+distribution wrong.**
+
+> 🇪🇸 Cada activo conservó su propia volatilidad en ambas simulaciones — lo
+> único que cambió es si la simulación permite que los tres se muevan juntos.
+> Ignorar la covarianza positiva no tocó el riesgo individual: borró el
+> comovimiento real y fabricó una diversificación que no existía. Esto **no**
+> significa que "la correlación siempre aumenta el riesgo" — es específico de
+> esta cartera, donde todo está correlacionado positivamente. Con correlación
+> negativa ocurriría lo contrario. Lo único general es que **asumir
+> independencia cuando los activos no lo son distorsiona las colas de la
+> distribución.**"""),
         md("""## Thank you
 
 > 🇪🇸 Gracias por venir. Pregunta en Discord en español o en inglés — lo que te

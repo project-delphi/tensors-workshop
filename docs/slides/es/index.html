@@ -559,14 +559,14 @@
 <td>§07, §10</td>
 </tr>
 <tr class="odd">
-<td>PCA</td>
-<td>Matriz de datos</td>
-<td>§11</td>
-</tr>
-<tr class="even">
 <td><strong>Pseudoinversa</strong></td>
 <td>Cualquier matriz</td>
 <td>§07</td>
+</tr>
+<tr class="even">
+<td>Cholesky</td>
+<td>Matriz simétrica definida positiva</td>
+<td>§11</td>
 </tr>
 <tr class="odd">
 <td><strong>Tucker / CP</strong></td>
@@ -1371,12 +1371,12 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <ul>
 <li><code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — <strong>sintaxis idéntica</strong> a la de hoy</li>
 <li><a href="https://tensorly.org"><code>tensorly</code></a> — Tucker y CP de verdad</li>
-<li><code>np.linalg</code> — el resto del capítulo 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code></li>
+<li><code>np.linalg</code> — el resto del capítulo 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>, <code>cholesky</code></li>
 <li><code>scipy.signal</code>, <code>skimage.restoration</code> — convolución y deconvolución más allá de hoy</li>
 <li><a href="../../tensors_workshop_plan_with_quizzes.html#further-reading">Lecturas adicionales</a> — libros y los artículos originales de Tucker, CP y SVD (en inglés)</li>
 </ul>
 <div class="fragment">
-<p><strong>Tres ejercicios para casa</strong> en el <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">cuaderno 11</a>: la trampa de escala de PCA, la atención como dos contracciones, y CP frente a Tucker.</p>
+<p><strong>Cuatro ejercicios para casa</strong> en el <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">cuaderno 11</a>: la trampa de escala de PCA, la atención como dos contracciones, CP frente a Tucker, y construir portafolios correlacionados con Cholesky.</p>
 </div>
 </section>
 <section id="gracias" class="slide level2">
