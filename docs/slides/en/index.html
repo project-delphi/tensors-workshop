@@ -553,6 +553,11 @@
 <td>§07</td>
 </tr>
 <tr class="even">
+<td>Cholesky</td>
+<td>Symmetric positive-definite matrix</td>
+<td>§11</td>
+</tr>
+<tr class="odd">
 <td><strong>Tucker / CP</strong></td>
 <td><strong>Tensor, any order</strong></td>
 <td>§10</td>
@@ -1331,12 +1336,12 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <ul>
 <li><code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — <strong>identical syntax</strong> to today</li>
 <li><a href="https://tensorly.org"><code>tensorly</code></a> — proper Tucker and CP</li>
-<li><code>np.linalg</code> — the rest of Chapter 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code></li>
+<li><code>np.linalg</code> — the rest of Chapter 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>, <code>cholesky</code></li>
 <li><code>scipy.signal</code>, <code>skimage.restoration</code> — convolution and deconvolution beyond today</li>
 <li><a href="../../tensors_workshop_plan_with_quizzes.html#further-reading">Further Reading</a> — books and the seminal papers behind Tucker, CP and SVD</li>
 </ul>
 <div class="fragment">
-<p><strong>Three take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, and CP compared to Tucker.</p>
+<p><strong>Four take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, CP compared to Tucker, and building correlated portfolios with Cholesky.</p>
 </div>
 </section>
 <section id="thank-you" class="slide level2">

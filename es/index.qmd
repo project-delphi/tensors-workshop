@@ -96,6 +96,6 @@ encabezado de los cuadernos lleva un resumen de una línea en español.
 ## Dónde seguir
 
 - [Manual](../tensors_workshop_plan_with_quizzes.html): el texto completo del
-  estudiante y las notas del facilitador, incluidos los tres apéndices para casa.
+  estudiante y las notas del facilitador, incluidos los cuatro apéndices para casa.
 - [Cuadernos](../notebooks.qmd): los doce, con sus insignias de Colab.
 - [Kahoot](../kahoot.qmd): los tres cuestionarios y cómo ejecutarlos.
