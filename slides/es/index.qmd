@@ -164,19 +164,16 @@ tensor = rng.standard_normal((2, 3, 4))    # orden 3   forma (2, 3, 4)
 
 . . .
 
-::: {.columns}
-::: {.column width="60%"}
 ```{python}
 #| label: code-01-what-a-tensor-is-2
 #| echo: true
 digits.images.shape              # (1797, 8, 8)  — imágenes, alto, ancho
 photo.shape                      # (512, 512, 3) — alto, ancho, color
 ```
-:::
-::: {.column width="40%"}
+
+. . .
+
 ![](../../images/digits-grid.png){fig-alt="Cuadrícula de ocho dígitos manuscritos reales del conjunto de datos digits de scikit-learn, cada uno una imagen en escala de grises de 8 por 8 píxeles mostrada sin suavizado para que se vean los píxeles individuales — esto es lo que significa la forma (1797, 8, 8): 1797 imágenes como estas." width="260"}
-:::
-:::
 
 . . .
 
@@ -674,8 +671,6 @@ porque el desplegado no pierde nada.
 
 ## 20.433 ecuaciones, ninguna solución
 
-::: {.columns}
-::: {.column width="55%"}
 ```{python}
 #| label: code-07-inverses-and-pseudoinverse-3
 #| echo: true
@@ -688,11 +683,10 @@ np.allclose(w, w_lstsq)                             # True
 
 rmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75.980
 ```
-:::
-::: {.column width="45%"}
+
+. . .
+
 ![](../../images/california-housing.png){fig-alt="Mapa de dispersión de distritos de vivienda de California según longitud y latitud, coloreado por el valor medio de la vivienda, que muestra la concentración de viviendas caras en la costa dentro del mismo conjunto de datos usado en el ajuste por mínimos cuadrados." width="300"}
-:::
-:::
 
 . . .
 
@@ -776,8 +770,6 @@ Así ordena PageRank las páginas web.
 
 ## Pronosticar tráfico aéreo real
 
-::: {.columns}
-::: {.column width="55%"}
 ```{python}
 #| label: code-08-recursion-with-matrices-3
 #| echo: true
@@ -790,11 +782,10 @@ history = list(y[-12:])
 for _ in range(12):                           # realimenta sus propias predicciones
     history.append(w[0] + np.dot(w[1:], history[-12:]))
 ```
-:::
-::: {.column width="45%"}
+
+. . .
+
 ![](../../images/airline-passengers.png){fig-alt="Gráfico de líneas del número mensual de pasajeros de aerolínea entre 1949 y 1960, la serie de 144 meses usada en el pronóstico, con una tendencia creciente y un pico veraniego que se repite cada año." width="300"}
-:::
-:::
 
 . . .
 
@@ -965,8 +956,6 @@ que describe cómo se combinan.
 
 ## Un tensor real de orden 3
 
-::: {.columns}
-::: {.column width="55%"}
 **barrio de origen × barrio de destino × hora del día**, a partir de 6.433
 viajes reales en taxi de Nueva York.
 
@@ -977,11 +966,10 @@ T = np.zeros((len(pb), len(db), 24))
 for (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():
     T[pb.index(p), db.index(d), h] = v
 ```
-:::
-::: {.column width="45%"}
+
+. . .
+
 ![](../../images/nyc-taxi-pickups-by-hour.png){fig-alt="Gráfico de barras de las recogidas de taxi por hora del día del mismo conjunto de 6.433 viajes, que sube a lo largo del día hasta un pico alrededor de la hora 18, la hora punta que la descomposición de Tucker vuelve a descubrir por sí sola." width="300"}
-:::
-:::
 
 . . .
 
