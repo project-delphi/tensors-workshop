@@ -1546,9 +1546,11 @@ CONTENT["11"] = {
         "State the one idea that connects the pseudoinverse, deconvolution and Tucker.",
         "Find the scaling trap in PCA on real, unstandardized data (take-home A).",
         "Build attention out of two contractions, and mask padded positions (take-home B).",
-        "Compare a CP decomposition against the Tucker one you built (take-home C).",
+        "Run a real CP decomposition and read its components as trip types nobody labelled (take-home C).",
+        "Trade parameter count against reconstruction error with a rank slider, on a real dense tensor (optional appendix).",
     ],
     "setup": """import numpy as np
+import pandas as pd
 from sklearn.datasets import load_breast_cancer
 
 rng = np.random.default_rng(0)""",
@@ -1706,29 +1708,232 @@ print(weights_masked[..., -3:].max())                # 0.0 — exactly zero weig
         code("""# TODO 1: Build one rank-1 tensor with einsum from three random vectors of
 #         length 4, 5 and 24. What shape is it? How many numbers define it?
 
-# TODO 2: Compare that against 4*5*24. What is the compression of ONE rank-1 piece?
-
-# TODO 3: pip install tensorly, run tensorly.decomposition.parafac on the taxi
-#         tensor T with rank=3, and compare its error against your Tucker result.
-
-# TODO 4: Which was more accurate at similar size? Why might that be?"""),
+# TODO 2: Compare that against 4*5*24. What is the compression of ONE rank-1 piece?"""),
         solution("""a, b, c = rng.standard_normal(4), rng.standard_normal(5), rng.standard_normal(24)
 rank1 = np.einsum('i,j,k->ijk', a, b, c)     # (4, 5, 24) from only 33 numbers
 print(rank1.shape, len(a) + len(b) + len(c), 4 * 5 * 24)   # (4,5,24) 33 480
 print(round(480 / 33, 1))                                   # 14.5x for one piece
 
-# TODO 3 — needs the taxi tensor from section 10:
-# %pip install -q tensorly
-# import tensorly as tl
-# from tensorly.decomposition import parafac
-# cp = parafac(tl.tensor(T), rank=3)
-# err = tl.norm(tl.cp_to_tensor(cp) - T) / tl.norm(T)
+# A full CP decomposition is a SUM of R pieces like this one, not just a single
+# rank-1 term. The cells below build a real rank-3 CP model on real data — no
+# more commented-out pseudocode."""),
+        md("""## Now decompose a real tensor with CP
 
-# TUCKER IS USUALLY MORE ACCURATE AT EQUAL SIZE, because its dense core can
-# represent interactions between components on different axes — something CP's
-# strict sum of rank-1 pieces cannot do. CP is often preferred when
-# interpretability matters, because each component is one simple pattern per
-# axis."""),
+> 🇪🇸 Ahora sí: una descomposición CP real sobre un tensor real.
+
+This take-home is separate from section 10's notebook, so it rebuilds the same
+real taxi tensor here rather than assuming section 10 already ran."""),
+        code("""TAXIS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
+taxis = pd.read_csv(TAXIS)
+taxis['hour'] = pd.to_datetime(taxis['pickup']).dt.hour
+sub = taxis.dropna(subset=['pickup_borough', 'dropoff_borough'])
+pb = sorted(sub['pickup_borough'].unique())
+db = sorted(sub['dropoff_borough'].unique())
+
+T = np.zeros((len(pb), len(db), 24))
+for (p, d, h), v in sub.groupby(['pickup_borough', 'dropoff_borough', 'hour']).size().items():
+    T[pb.index(p), db.index(d), h] = v
+
+print(T.shape, pb, db)   # (4, 5, 24) — the same real taxi tensor as section 10,
+                         # rebuilt here so this notebook stands on its own"""),
+        md("""CP needs a library here rather than the by-hand HOSVD from section 10: an ALS
+loop short enough to read is also too short to be a reliable optimizer, and
+getting that wrong would teach the wrong lesson. [`tensorly`](https://tensorly.org)
+is not part of Colab's default image, so the install is explicit, the same way
+section 10 tells you it borrowed the idea from a real library rather than
+hiding it.
+
+> 🇪🇸 CP necesita aquí una librería en vez del HOSVD hecho a mano de la sección
+> 10: un bucle ALS lo bastante corto para leerse también es demasiado corto
+> para ser un optimizador confiable. `tensorly` no viene instalado por defecto
+> en Colab, así que la instalación es explícita."""),
+        code("""%pip install -q tensorly
+
+import tensorly as tl
+from tensorly.decomposition import parafac
+
+R = 3   # three real, checkable trip patterns fit this tensor's size
+cp_weights, cp_factors = parafac(tl.tensor(T), rank=R, init='svd',
+                                  random_state=0, n_iter_max=500, tol=1e-9)
+Fpb, Fdb, Fhr = cp_factors                       # (4, 3), (5, 3), (24, 3)
+
+cp_recon = tl.cp_to_tensor((cp_weights, cp_factors))
+cp_error = np.linalg.norm(cp_recon - T) / np.linalg.norm(T)
+print(f"CP rank {R}: relative reconstruction error = {cp_error:.3f}")
+print("Section 10's Tucker, rank (2, 2, 3), measured 0.067 on this same tensor.")"""),
+        md("""## What CP's uniqueness buys you, and what it does not
+
+> 🇪🇸 Lo que la unicidad de CP te da, y lo que no te da.
+
+PCA and Tucker's factor matrices are only defined up to an arbitrary rotation
+within each subspace of similar size — ask for the "second principal
+component" of near-equal-variance data and the answer is unstable. **CP has no
+such freedom**, under a condition on the factor matrices called the Kruskal
+condition, which this tensor satisfies. A CP component is only free to move in
+three limited ways: the three components can be listed in any **order**; a
+scalar can move between the three factor vectors of one component as long as
+their **product** is unchanged; and because these are real (not just
+positive) numbers, an even number of those factors can flip **sign** together.
+None of that changes what one component *looks like* — it is still one
+coherent pattern per axis, not a rotated mixture of several. That is why the
+components below are worth reading individually, and why the code below uses
+`abs()` before asking which entry is strongest — the strongest entry does not
+move, only its sign might.
+
+**Analysts benefit because CP exposes one interpretable pattern per axis —
+pickup, dropoff and hour together — that can be read as a coherent trip type,
+the way PCA's freely-rotating components cannot be.**"""),
+        code("""# Colab renders ipywidgets through its own widget manager rather than the
+# classic Jupyter one; this call is a no-op outside Colab, which is why it is
+# guarded rather than assumed.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_component(component):
+    r = component - 1   # the slider shows 1..R for students; factors are 0-indexed
+    plt.close('all')
+    fig, axes = plt.subplots(1, 3, figsize=(12, 3.2))
+    axes[0].bar(pb, Fpb[:, r], color='#4C72B0')
+    axes[0].set_title('Pickup borough'); axes[0].tick_params(axis='x', rotation=40)
+    axes[1].bar(db, Fdb[:, r], color='#DD8452')
+    axes[1].set_title('Dropoff borough'); axes[1].tick_params(axis='x', rotation=40)
+    axes[2].bar(range(24), Fhr[:, r], color='#55A868')
+    axes[2].set_title('Hour of day'); axes[2].set_xlabel('hour')
+    fig.suptitle(f'CP component {component} of {R}')
+    plt.tight_layout()
+    plt.show()
+
+    print(f"Strongest pickup borough:  {pb[np.argmax(np.abs(Fpb[:, r]))]}")
+    print(f"Strongest dropoff borough: {db[np.argmax(np.abs(Fdb[:, r]))]}")
+    print(f"Peak hour:                 {int(np.argmax(np.abs(Fhr[:, r])))}")
+
+# TODO 3: Flip through all three components (1, 2, 3). Does each one read as
+#         a different, nameable kind of trip? Which hour is each one busiest?
+widgets.interact(show_component,
+                  component=widgets.IntSlider(min=1, max=R, step=1, value=1,
+                                               description='Component'));"""),
+        md("""---
+
+## After the workshop — Tucker compression for deployment
+
+> 🇪🇸 Después del taller — compresión de Tucker para producción.
+
+**Optional — run this after the workshop.** Section 10 ran one fixed Tucker
+rank. Here a **rank slider** drives the trade-off live, on a real dense array,
+so you can feel the curve instead of reading one number on it.
+
+One honest note before the code: this is **not** a neural network's weights.
+A small, stable, seconds-to-download real conv-weight file that both fits a
+free Colab CPU and is not already engineered to be maximally compact turned
+out not to exist — the two real options checked while building this notebook
+(a modern efficient architecture, and a small classifier trained from scratch
+on this workshop's own data) were **already so parameter-efficient that Tucker
+found almost nothing left to compress**, which is itself real and worth
+knowing, just not the point of this appendix. So instead this is a
+**comparable dense tensor**: real NYC taxi trips again, but counted over
+**pickup borough × dropoff borough × hour × weekday** — a genuine order-4
+array, the same shape of thing an on-device cache or a recommender's usage
+table has to fit in memory. The Tucker math, the slider, and the trade-off it
+shows are identical to compressing a weight tensor; only the source of the
+numbers differs, and it seemed better to say that plainly than to relabel taxi
+trips as something they are not.
+
+**Deployment engineers benefit because Tucker lets them choose a point on this
+curve explicitly** — cut most of an array's storage and pay only a measured,
+bounded increase in error, rather than guessing at a fixed compression
+level."""),
+        code("""TAXIS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
+taxis = pd.read_csv(TAXIS)
+taxis['hour'] = pd.to_datetime(taxis['pickup']).dt.hour
+taxis['weekday'] = pd.to_datetime(taxis['pickup']).dt.weekday
+sub = taxis.dropna(subset=['pickup_borough', 'dropoff_borough'])
+pb2 = sorted(sub['pickup_borough'].unique())
+db2 = sorted(sub['dropoff_borough'].unique())
+
+demand = np.zeros((len(pb2), len(db2), 24, 7))
+for (p, d, h, wd), v in sub.groupby(
+        ['pickup_borough', 'dropoff_borough', 'hour', 'weekday']).size().items():
+    demand[pb2.index(p), db2.index(d), h, wd] = v
+
+print(demand.shape, int(demand.sum()))   # (4, 5, 24, 7), same trips as above"""),
+        code("""def unfold(T, axis):
+    return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
+
+# Precompute BOTH SVD bases once. The slider below only re-slices and
+# re-contracts these small matrices — it never redoes an SVD, which is what
+# keeps it responsive. Only the two time axes are compressed; pickup and
+# dropoff borough stay exact, the way section 10's kernel spatial dims would
+# stay exact in a channel-mode Tucker compression of a real conv layer.
+basis_hour    = np.linalg.svd(unfold(demand, 2), full_matrices=False)[0]   # (24, 24)
+basis_weekday = np.linalg.svd(unfold(demand, 3), full_matrices=False)[0]   # (7, 7)
+
+n_pb, n_db, n_hour, n_weekday = demand.shape
+original_params = demand.size
+
+# Sweep every achievable rank once, up front, so the widget only ever looks
+# values up rather than recomputing them.
+ranks = list(range(1, n_hour + 1))
+compressed_list, ratio_list, error_list, madds_list = [], [], [], []
+for k in ranks:
+    r_hour, r_weekday = k, min(k, n_weekday)
+    Uh, Uw = basis_hour[:, :r_hour], basis_weekday[:, :r_weekday]
+    core  = np.einsum('ijhw,hc,wd->ijcd', demand, Uh, Uw)
+    recon = np.einsum('ijcd,hc,wd->ijhw', core, Uh, Uw)
+    compressed = core.size + Uh.size + Uw.size
+    compressed_list.append(compressed)
+    ratio_list.append(original_params / compressed)
+    error_list.append(np.linalg.norm(demand - recon) / np.linalg.norm(demand))
+    # Multiply-adds to RE-EXPAND the compressed factors back to the full
+    # array — the cost a deployed system pays each time it reads the cache.
+    # This is not a network FLOP count; it is specifically that one contraction.
+    madds_list.append(n_pb * n_db * n_hour * r_weekday * (r_hour + n_weekday))
+
+print(f"original parameters: {original_params} "
+      f"(pickup {n_pb} x dropoff {n_db} x hour {n_hour} x weekday {n_weekday})")"""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def tucker_tradeoff(k):
+    i = k - 1
+    plt.close('all')
+    fig, ax1 = plt.subplots(figsize=(6.5, 3.2))
+    ax1.plot(ranks, error_list, color='#C44E52')
+    ax1.scatter([k], [error_list[i]], color='#C44E52', zorder=5)
+    ax1.set_xlabel('rank k (shared by the hour and weekday axes)')
+    ax1.set_ylabel('relative error', color='#C44E52')
+    ax2 = ax1.twinx()
+    ax2.plot(ranks, ratio_list, color='#4C72B0')
+    ax2.scatter([k], [ratio_list[i]], color='#4C72B0', zorder=5)
+    ax2.set_ylabel('compression ratio (x)', color='#4C72B0')
+    plt.tight_layout()
+    plt.show()
+
+    print(f"rank k = {k}")
+    print(f"compressed parameters: {compressed_list[i]}  (of {original_params} original)")
+    print(f"compression ratio:     {ratio_list[i]:.2f}x")
+    print(f"relative error:        {error_list[i]:.3f}")
+    print(f"reconstruction MAdds:  {madds_list[i]}  "
+          f"(multiply-adds to re-expand the factors back to the full array)")
+
+# Move the slider from 1 to n_hour. Both ends are worth visiting: rank 1 is
+# the cheapest possible model, and the top end (hour AND weekday both at
+# their true dimension) should reconstruct the tensor exactly — a check on
+# the implementation, not just on the trade-off.
+widgets.interact(tucker_tradeoff,
+                  k=widgets.IntSlider(min=1, max=n_hour, step=1, value=4,
+                                       description='rank k'));"""),
         md("""## Thank you
 
 > 🇪🇸 Gracias por venir. Pregunta en Discord en español o en inglés — lo que te
