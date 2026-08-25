@@ -124,7 +124,7 @@
 </tr>
 <tr>
 <td>11</td>
-<td><strong>Cierre y ejercicios para casa</strong><br><small>Qué conecta los bloques 4, 5 y 6, más cuatro ejercicios para casa.</small></td>
+<td><strong>Cierre y ejercicios para casa</strong><br><small>Qué conecta los bloques 4, 5 y 6, más cinco ejercicios para casa.</small></td>
 <td>cierre</td>
 <td>5</td>
 <td><a href="../slides/en/#sec-11-wrap-up-and-take-homes">EN</a></td>
