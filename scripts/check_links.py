@@ -20,9 +20,11 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     two files drift.
   - The EN and ES landing pages list the same twelve sections.
   - Every section's `start` and `end` still match what the running clock
-    derives from `minutes` and the quizzes and breaks between them. These are
-    written out in _variables.yml because `{{< var >}}` cannot add numbers, so
-    nothing but this check stops them drifting when a `minutes` changes.
+    derives from `minutes` and the quizzes and breaks between them, and the
+    `agenda` rows both decks print still spell that clock out segment for
+    segment. The start/end pair is written out in _variables.yml because
+    `{{< var >}}` cannot add numbers, so nothing but this check stops it
+    drifting when a `minutes` changes.
   - The deck timer's total still matches workshop.minutes. Quarto has no
     passthrough for reveal's `totalTime`, so the number lives in JavaScript
     and nothing else would notice it going stale.
@@ -279,42 +281,49 @@ def check_landing_parity() -> None:
 
 
 def check_schedule() -> None:
-    """Recompute the running clock and compare it with the written `start`/`end`.
+    """Compare the running clock with the written `start`/`end` and the agenda.
 
-    Walk the sections in order, adding each one's `minutes`, plus
+    timeline.py walks the sections in order, adding each one's `minutes`, plus
     `schedule.quiz_minutes` after a section a quiz follows and
-    `schedule.break_minutes` after one in `schedule.break_after`. The total has
-    to land on `workshop.minutes`, which is the check that catches a break or a
-    quiz going missing rather than a single offset being mistyped.
+    `schedule.break_minutes` after one in `schedule.break_after`. Three things
+    have to agree with that walk: each section's written `start`/`end`; the
+    total, which is what catches a break or a quiz going missing rather than a
+    single offset being mistyped; and `agenda`, whose rows have to account for
+    every segment exactly once and in order, since the table both decks print
+    is generated straight from them.
     """
+    from timeline import (ScheduleError, agenda_rows,  # noqa: PLC0415
+                          clock, section_windows, total_minutes)
+
     step("Section start and end times")
-    sched = V["schedule"]
-    quizzes = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
-    break_after = set(sched["break_after"])
-
-    def clock(m: int) -> str:
-        return f"+{m // 60:02d}:{m % 60:02d}"
-
-    minute = 0
-    for s in SECTIONS:
-        want = (clock(minute), clock(minute + s["minutes"]))
+    windows = section_windows()
+    for s, start, end in windows:
+        want = (clock(start, "+"), clock(end, "+"))
         got = (s.get("start"), s.get("end"))
         if got != want:
             fail(f"section {s['n']}: start/end is {got[0]}–{got[1]}, "
                  f"derived {want[0]}–{want[1]}")
-        minute += s["minutes"]
-        if any(q["after"] == s["n"] for q in quizzes):
-            minute += sched["quiz_minutes"]
-        if s["n"] in break_after:
-            minute += sched["break_minutes"]
 
-    total = V["workshop"]["minutes"]
+    minute, total = total_minutes(), V["workshop"]["minutes"]
     if minute != total:
         fail(f"sections + quizzes + breaks come to {minute} min, "
              f"workshop.minutes says {total}")
     else:
-        print(f"      {len(SECTIONS)} sections end at {clock(minute)}"
+        print(f"      {len(windows)} sections end at {clock(minute)}"
               f" — {total} min including quizzes and breaks")
+
+    # gen_tables.py raises rather than writing a wrong agenda, so this fails
+    # only on a tree where _variables.yml has moved on and the generator has
+    # not been rerun — the same state CI's regenerate gate catches, one push
+    # later.
+    try:
+        rows = agenda_rows("en")
+    except ScheduleError as e:
+        fail(str(e))
+    else:
+        print(f"      {len(rows)} agenda rows account for all {len(windows)} "
+              f"sections, 3 quizzes and "
+              f"{len(V['schedule']['break_after'])} breaks, in clock order")
 
 
 def check_deck_total() -> None:
@@ -446,4 +455,5 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
     sys.exit(main())

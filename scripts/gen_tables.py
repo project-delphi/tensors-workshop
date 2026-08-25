@@ -10,6 +10,7 @@ they are generated here instead and included with `{{< include >}}`.
 Outputs (all overwritten, none hand-edited):
     _includes/sections-en.md      _includes/sections-es.md
     _includes/notebooks-en.md
+    _includes/agenda-en.md        _includes/agenda-es.md
     _includes/readme-sections.md  _includes/readme-sections-es.md
 """
 from __future__ import annotations
@@ -36,6 +37,7 @@ L = {
         quiz_row="Kahoot {n} — {title} · {q} questions · 5 min",
         covers="covers sections {covers}",
         nb_head=("#", "Notebook", "Covers", "Colab"),
+        agenda_head=("Start Time", "Duration (min)", "Part", "Segment Name"),
     ),
     "es": dict(
         num="#", section="Sección", fmt="Formato", min="Min",
@@ -44,6 +46,7 @@ L = {
         quiz_row="Kahoot {n} — {title} · {q} preguntas · 5 min",
         covers="cubre las secciones {covers}",
         nb_head=("#", "Cuaderno", "Contenido", "Colab"),
+        agenda_head=("Hora de inicio", "Duración (min)", "Parte", "Segmento"),
     ),
 }
 
@@ -139,6 +142,26 @@ def notebooks_table(lang: str) -> str:
     return "\n".join(rows) + "\n"
 
 
+def agenda_table(lang: str) -> str:
+    """The agenda both decks show, as a pipe table.
+
+    Every number in it — start time, duration, Part — is derived by
+    timeline.py; `_variables.yml` only says which segments share a row and what
+    to call them. The clock used to be written out by hand in both decks, where
+    the check that verifies each section's start/end could not see it: bump a
+    `minutes` and the rows below it kept the old times while the heading above
+    them, a `{{< var >}}`, updated. A facilitator got two schedules.
+    """
+    from timeline import agenda_rows  # noqa: PLC0415  (sibling module)
+
+    t = L[lang]
+    rows = ["| " + " | ".join(t["agenda_head"]) + " |", "|---|---|---|---|"]
+    for r in agenda_rows(lang):
+        rows.append(f"| {r['start']} | {r['minutes']} | {r['part']} "
+                    f"| {r['label']} |")
+    return "\n".join(rows) + "\n"
+
+
 def readme_table(lang: str) -> str:
     """Markdown table for the READMEs — absolute URLs, since GitHub renders
     these outside the site."""
@@ -181,14 +204,24 @@ def inject(path: pathlib.Path, marker: str, body: str) -> None:
 
 
 def main() -> int:
+    from timeline import ScheduleError, total_minutes  # noqa: PLC0415
+
     INCLUDES.mkdir(exist_ok=True)
-    written = {
-        "sections-en.md": BANNER + html_table("en", ""),
-        "sections-es.md": BANNER + html_table("es", "../"),
-        "notebooks-en.md": BANNER + notebooks_table("en"),
-        "readme-sections.md": BANNER + readme_table("en"),
-        "readme-sections-es.md": BANNER + readme_table("es"),
-    }
+    try:
+        written = {
+            "sections-en.md": BANNER + html_table("en", ""),
+            "sections-es.md": BANNER + html_table("es", "../"),
+            "notebooks-en.md": BANNER + notebooks_table("en"),
+            "agenda-en.md": BANNER + "\n" + agenda_table("en"),
+            "agenda-es.md": BANNER + "\n" + agenda_table("es"),
+            "readme-sections.md": BANNER + readme_table("en"),
+            "readme-sections-es.md": BANNER + readme_table("es"),
+        }
+    except ScheduleError as e:
+        # Nothing is written on the way out: half-regenerated includes would
+        # leave the two decks disagreeing, which is the failure this whole
+        # change exists to make impossible.
+        sys.exit(str(e))
     for name, body in written.items():
         (INCLUDES / name).write_text(body, encoding="utf-8")
         print(f"  wrote _includes/{name}")
@@ -199,11 +232,13 @@ def main() -> int:
     if nb_readme.exists():
         inject(nb_readme, "notebooks", notebooks_table("en"))
 
+    taught = sum(s["minutes"] for s in SECTIONS)
     print(f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, "
-          f"{sum(s['minutes'] for s in SECTIONS)} + 15 quiz + 15 break = "
-          f"{sum(s['minutes'] for s in SECTIONS) + 30} min")
+          f"{taught} taught + {total_minutes() - taught} quiz and break "
+          f"= {total_minutes()} min")
     return 0
 
 
 if __name__ == "__main__":
+    sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
     sys.exit(main())

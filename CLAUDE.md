@@ -11,15 +11,19 @@ revealjs decks and three Kahoot spreadsheets.
 ## The one rule that matters
 
 `_variables.yml` is the single source of truth (repo coordinates, the twelve
-sections, the three quizzes). Three things read it: `{{< var >}}` shortcodes in
-the `.qmd` pages and both decks, the two generator scripts, and the checker.
+sections, the three quizzes, the agenda). Three things read it: `{{< var >}}`
+shortcodes in the `.qmd` pages and both decks, the two generator scripts, and
+the checker. The generator and the checker both need the running clock —
+what time each section starts, once the quizzes and breaks between them are
+counted — and both get it from `scripts/timeline.py` rather than walking it
+twice.
 
 **Never hand-edit generated output.** Change `_variables.yml` (or
 `scripts/content.py` for notebook teaching content), then regenerate:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (every section table) | `scripts/gen_tables.py` |
+| `_includes/*.md` (every section table, and the agenda both decks show) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md` and `notebooks/README.md` — the rest of both files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — scaffolding: header, objectives, Colab badge, Kahoot footer | `scripts/gen_notebooks.py` |
 | `notebooks/*.ipynb` — body cells | `scripts/content.py` |
@@ -86,12 +90,13 @@ non-zero: notebooks are valid with no outputs or execution counts; internal
 links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
 same twelve sections; each section's written `start`/`end` still matches the
-running clock derived from `minutes` plus the quizzes and breaks between them;
-the deck timer's total still matches `workshop.minutes`; and no visible
-notebook cell depends on a name bound only inside a folded solution cell (easy
-to introduce, invisible when you run the notebook top to bottom). The ninth,
-Kahoot join URLs, only prints a TODO — that output is **not** a failure.
-`--notebooks-only` runs the notebook and
+running clock derived from `minutes` plus the quizzes and breaks between them,
+and the `agenda` rows still account for every segment of that clock exactly
+once and in order; the deck timer's total still matches `workshop.minutes`;
+and no visible notebook cell depends on a name bound only inside a folded
+solution cell (easy to introduce, invisible when you run the notebook top to
+bottom). The ninth, Kahoot join URLs, only prints a TODO — that output is
+**not** a failure. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them

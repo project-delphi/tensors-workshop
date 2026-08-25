@@ -143,22 +143,7 @@ histología, que skimage documenta sin restricciones de copyright conocidas.
 
 ## Programa — {{< var workshop.minutes >}} minutos
 
-| Hora de inicio | Duración (min) | Parte | Segmento |
-|---|---|---|---|
-| 00:00 | 5 | — | Preparación y bienvenida |
-| 00:05 | 20 | I | Qué es un tensor |
-| 00:25 | 20 | II | Pensar en N dimensiones *(grupo)* |
-| 00:45 | 30 | III | Indexación y broadcasting · Reshape y transposición |
-| 01:15 | 10 | 🎯 | **Kahoot 1** + pausa |
-| 01:25 | 15 | III | Diseño de un pipeline de vídeo *(grupo)* |
-| 01:40 | 15 | IV | Contracción con einsum |
-| 01:55 | 5 | — | Pausa |
-| 02:00 | 15 | IV | Inversas y la pseudoinversa |
-| 02:15 | 5 | 🎯 | **Kahoot 2** |
-| 02:20 | 25 | IV | Recursión · Convolución |
-| 02:45 | 5 | — | Pausa |
-| 02:50 | 15 | IV | Descomposición de Tucker |
-| 03:05 | 10 | 🎯 | **Kahoot 3** + cierre |
+{{< include ../../_includes/agenda-es.md >}}
 
 ## Dos ritmos, y una advertencia
 
