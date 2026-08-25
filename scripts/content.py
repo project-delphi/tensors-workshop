@@ -79,6 +79,35 @@ of the work.**
 If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, you are ready.
 **If it failed, say so in Discord immediately** — a silent download failure will
 leave you stuck at sections 07 and 10, an hour from now, with no obvious cause."""),
+        md("""## See it, not just its shape
+
+> 🇪🇸 Confírmalo con los ojos, no solo con `.shape`.
+
+A shape can match on paper for reasons that are actually bugs — a truncated
+download, a stale cached file, a column that came back silently empty. These
+three files just came over the network; a glance at each is cheaper than
+discovering a bad download at section 07 or 10, an hour from now."""),
+        code("""import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.2))
+
+sc = axes[0].scatter(housing["longitude"], housing["latitude"],
+                      c=housing["median_house_value"], cmap="viridis", s=4)
+axes[0].set_title("housing — location, coloured by price")
+fig.colorbar(sc, ax=axes[0], fraction=0.046)
+
+axes[1].hist(taxis["fare"].dropna(), bins=30, color="#4C72B0")
+axes[1].set_title("taxis — fare distribution")
+axes[1].set_xlabel("fare ($)")
+
+by_year = flights.groupby("year")["passengers"].sum()
+axes[2].plot(by_year.index, by_year.values, marker="o", color="#55A868")
+axes[2].set_title("flights — passengers per year")
+
+fig.suptitle("Real California geography, real fares, real growth — "
+             "if these look right, the downloads worked")
+plt.tight_layout()
+plt.show()"""),
         md("""## Exercise 1 — check the data you did not download
 
 > 🇪🇸 Comprueba los datos que vienen dentro de las librerías."""),
@@ -138,7 +167,7 @@ CONTENT["01"] = {
         "Read `.shape`, `.ndim` and `.size` off any array and say what each axis means.",
         "Take slices and fibers, and unfold a tensor into a matrix without losing anything.",
         "Write a dot product and a matrix product as `einsum` contractions.",
-        "Place LU, QR, eigendecomposition, SVD, the pseudoinverse and Tucker in one map.",
+        "Place LU, QR, eigendecomposition, SVD, the pseudoinverse, Cholesky and Tucker in one map.",
     ],
     "setup": """import numpy as np
 from sklearn.datasets import load_digits
@@ -225,6 +254,49 @@ print(data.astronaut().shape)       # (512, 512, 3)  axis 0 = height
 ### Slices and fibers — fixing indices takes a tensor apart"""),
         code("""print(photo[:, :, 0].shape)       # (512, 512) — a slice: one colour channel, still an image
 print(photo[100, 200, :].shape)   # (3,)       — a fiber: the 3 colour values of one pixel"""),
+        md("""Same picture, same two indexing operations — see them together. Drag the
+sliders and watch the marked pixel move on both panels at once, while its
+fiber (three numbers, one per colour) redraws on the right.
+
+> 🇪🇸 Mueve los deslizadores: el mismo píxel se marca en el corte y en la
+> imagen completa, y su fibra (tres números, uno por color) se redibuja."""),
+        code("""# Colab renders ipywidgets through its own widget manager rather than the
+# classic Jupyter one; this call is a no-op outside Colab, which is why it is
+# guarded rather than assumed.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_slice_and_fiber(row, col):
+    plt.close('all')
+    fig, axes = plt.subplots(1, 3, figsize=(11, 3.2))
+
+    axes[0].imshow(photo)
+    axes[0].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[0].set_title('photo — the fiber, marked')
+    axes[0].axis('off')
+
+    axes[1].imshow(photo[:, :, 0], cmap='gray')
+    axes[1].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[1].set_title('photo[:, :, 0] — a slice')
+    axes[1].axis('off')
+
+    fiber = photo[row, col, :]
+    axes[2].bar(['R', 'G', 'B'], fiber, color=['#C44E52', '#55A868', '#4C72B0'])
+    axes[2].set_title(f'photo[{row}, {col}, :] — the fiber')
+    axes[2].set_ylim(0, 255)
+
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_slice_and_fiber,
+                  row=widgets.IntSlider(min=0, max=511, step=1, value=100, description='row'),
+                  col=widgets.IntSlider(min=0, max=511, step=1, value=200, description='col'));"""),
         md("""### Unfolding — every decomposition begins here
 
 Every tensor decomposition begins by turning the tensor into a matrix, one axis
@@ -289,6 +361,7 @@ two in Chapter 2. Here is the whole family we will use today.
 | **Eigendecomposition** | Square matrix | Directions that only get scaled (§2.7) | Section 08 |
 | **SVD** | Any matrix | The most general matrix factorization (§2.8) | Sections 07 and 10 |
 | **Pseudoinverse** | Any matrix | "Inverse" when no true inverse exists (§2.9) | Section 07 |
+| **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Section 11, take-home D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | Section 10 |"""),
         code("""A3 = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
 
@@ -509,6 +582,37 @@ print(radius[y == 0].mean(), radius[y == 1].mean()) # 17.5 vs 12.1
 
 # A real result: MALIGNANT TUMOURS REALLY DO HAVE A LARGER MEAN RADIUS,
 # 17.5 against 12.1. Random data would never have shown you that."""),
+        md("""`radius` was one column out of 30, picked because it happens to separate the
+two groups well. Drag the slider below to look at all 30 — most separate far
+less cleanly.
+
+> 🇪🇸 Mueve el deslizador para ver las 30 medidas, una por una. La mayoría
+> separa malignos de benignos mucho peor que el radio."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_feature(i):
+    plt.close('all')
+    col = X[:, i]
+    fig, ax = plt.subplots(figsize=(6, 3))
+    ax.hist(col[y == 0], bins=30, alpha=0.6, label='malignant', color='#C44E52')
+    ax.hist(col[y == 1], bins=30, alpha=0.6, label='benign', color='#4C72B0')
+    ax.set_title(names[i])
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+    print(f"malignant mean: {col[y == 0].mean():.3f}   "
+          f"benign mean: {col[y == 1].mean():.3f}")
+
+widgets.interact(show_feature,
+                  i=widgets.IntSlider(min=0, max=len(names) - 1, step=1, value=0,
+                                       description='feature'));"""),
         md("""## Broadcasting, on real images
 
 > 🇪🇸 Broadcasting sobre imágenes reales.
@@ -545,7 +649,17 @@ print(np.isnan(Z).any())                            # False
 # THREE PIXELS ARE ALWAYS DARK in all 1797 digit images: they sit in corners
 # where nobody writes. Their standard deviation is exactly zero, so dividing
 # produces NaN. np.where leaves those columns as plain centred zeros, which is
-# the honest thing to do with a feature that carries no information."""),
+# the honest thing to do with a feature that carries no information.
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(3, 3))
+ax.imshow(D.mean(axis=0).reshape(8, 8), cmap='gray')
+zero_rows, zero_cols = np.where((std == 0).reshape(8, 8))
+ax.scatter(zero_cols, zero_rows, s=250, marker='s',
+           facecolors='none', edgecolors='#C44E52', linewidths=2)
+ax.set_title('zero-variance pixels, marked')
+ax.axis('off')
+plt.show()"""),
         md("""## What just happened
 
 Two real results, neither of which random data could have produced:
@@ -627,18 +741,18 @@ print(np.array_equal(nchw[:, 0], nchw[:, 1]))  # False — the 3 colour channels
 > 🇪🇸 El que se ejecuta sin error y aun así está mal."""),
         code("""# TODO 5: photo.reshape(3, 512, 512) runs WITHOUT error but is wrong.
 #         Run it, compare against TODO 2, and explain the difference.
-#         If you can, display both with matplotlib and look at them."""),
+#         Then display both with matplotlib and look at them."""),
         solution("""chw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct
 wrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — runs, but scrambles
 
 print(chw.shape == wrong.shape)             # True  — identical shapes
 print(np.array_equal(chw, wrong))           # False — completely different data
 
-# Optional, and worth doing once:
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-# ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
-# ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")"""),
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
+ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")
+plt.show()"""),
         md("""## What just happened
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them
@@ -1060,7 +1174,26 @@ print(name, round(coef))                                  # median_income 47748
 # because it solves the same problem.
 #
 # The largest coefficient belongs to median_income, which is the sensible
-# result — income predicts house prices."""),
+# result — income predicts house prices.
+
+import matplotlib.pyplot as plt
+pred = X @ w
+residuals = pred - y
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+axes[0].scatter(y, pred, s=3, alpha=0.2, color="#4C72B0")
+lims = [min(y.min(), pred.min()), max(y.max(), pred.max())]
+axes[0].plot(lims, lims, color="#C44E52", linewidth=1)
+axes[0].set_xlabel("actual"); axes[0].set_ylabel("predicted")
+axes[0].set_title("predicted vs actual")
+axes[1].hist(residuals, bins=60, color="#55A868")
+axes[1].set_xlabel("prediction - actual"); axes[1].set_title("residuals")
+plt.tight_layout()
+plt.show()
+
+# No straight line fits 20,433 points exactly, and the residuals show it: they
+# are not tightly clustered at zero, and the predicted-vs-actual scatter fans
+# out badly at the high end. LEAST SQUARES MINIMIZES THE AVERAGE SQUARED ERROR
+# ACROSS ALL POINTS — it says nothing about any one prediction being close."""),
         md("""## Exercise 3 — the tensor version
 
 > 🇪🇸 La versión tensorial: despliega, resuelve, vuelve a plegar."""),
@@ -1131,6 +1264,34 @@ for _ in range(50):
 
 print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical"""),
+        code("""import matplotlib.pyplot as plt
+
+xv = rng.standard_normal(2); xv /= np.linalg.norm(xv)
+checkpoints = {}
+for step in range(1, 51):
+    xv = A @ xv
+    xv /= np.linalg.norm(xv)
+    if step in (1, 2, 5, 10, 50):
+        checkpoints[step] = xv.copy()
+
+eigvals, eigvecs = np.linalg.eig(A)
+dominant = eigvecs[:, np.argmax(eigvals)].real
+dominant /= np.linalg.norm(dominant)
+
+fig, ax = plt.subplots(figsize=(4, 4))
+theta = np.linspace(0, 2 * np.pi, 200)
+ax.plot(np.cos(theta), np.sin(theta), color="lightgray", linewidth=1)
+for step, v in checkpoints.items():
+    ax.annotate("", xy=v, xytext=(0, 0), arrowprops=dict(
+        arrowstyle="->", color="#4C72B0", alpha=0.3 + 0.7 * step / 50))
+    ax.text(v[0] * 1.15, v[1] * 1.15, str(step), fontsize=8, ha="center")
+for sign in (1, -1):
+    ax.annotate("", xy=sign * dominant, xytext=(0, 0),
+                arrowprops=dict(arrowstyle="->", color="#C44E52", linewidth=2))
+ax.set_xlim(-1.3, 1.3); ax.set_ylim(-1.3, 1.3); ax.set_aspect("equal")
+ax.set_title("power iteration converges to the eigenvector\\n(red = the true dominant eigenvector, both signs)")
+plt.tight_layout()
+plt.show()"""),
         md("""This is how PageRank ranks web pages, and it is why eigenvectors matter far
 beyond Chapter 2: **repeated application of a matrix converges to its dominant
 eigenvector.**"""),
@@ -1153,6 +1314,39 @@ for _ in range(12):                           # recursion: feed predictions back
 
 print(np.round(history[-12:], 1))
 # [465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]"""),
+        md("""The forecast above extrapolates 12 months **past the end of the dataset**, so
+there is nothing to check it against. To see the forecast next to real numbers,
+hold out the last 12 months, fit on everything before them, and forecast those
+same 12 months back.
+
+> 🇪🇸 El pronóstico anterior se extiende 12 meses **más allá del final de los
+> datos**, así que no hay nada real con qué compararlo. Para ver el pronóstico
+> junto a números reales, se retienen los últimos 12 meses, se ajusta con todo
+> lo anterior, y se pronostican esos mismos 12 meses."""),
+        code("""y_train, y_test = y[:-12], y[-12:]
+rows_tr = np.array([y_train[i:i+p] for i in range(len(y_train) - p)])
+X_tr = np.column_stack([np.ones(len(rows_tr)), rows_tr])
+w_tr = np.linalg.pinv(X_tr) @ y_train[p:]
+
+hist_tr = list(y_train[-p:])
+for _ in range(12):
+    hist_tr.append(w_tr[0] + np.dot(w_tr[1:], hist_tr[-p:]))
+forecast_holdout = np.array(hist_tr[-12:])
+
+import matplotlib.pyplot as plt
+months = np.arange(1, 13)
+fig, ax = plt.subplots(figsize=(6, 3.2))
+ax.plot(months, y_test, marker="o", label="actual", color="#4C72B0")
+ax.plot(months, forecast_holdout, marker="o", label="forecast", color="#C44E52")
+ax.set_xlabel("month (held out, never seen while fitting)")
+ax.set_ylabel("passengers")
+ax.set_title("forecast vs. actual — last 12 months held out")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+mape = (np.abs(forecast_holdout - y_test) / y_test).mean()
+print(f"mean absolute percentage error: {mape:.1%}")"""),
         md("""The forecast reproduces the seasonal shape of real air travel — low in winter,
 peaking in summer — because the model learned it from 132 real training windows.
 
@@ -1313,12 +1507,46 @@ psf = np.ones((9, 9)); psf /= psf.sum()
 blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
 print(blurred.shape)                                    # (512, 512) — 'same' keeps it
 
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 3, figsize=(12, 4))
-# for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
-#     a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 3, figsize=(12, 4))
+for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
+    a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+plt.show()
 
 # 'valid' shrinks by kernel_size - 1 = 2 in each direction: 512 -> 510."""),
+        md("""See the blur trade-off live: a bigger averaging kernel removes more detail,
+and it shrinks a `'valid'`-mode output by more (`kernel_size - 1` per side).
+
+> 🇪🇸 El deslizador muestra el compromiso del desenfoque: un kernel más grande
+> elimina más detalle, y en modo `'valid'` recorta más el resultado."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_blur(k):
+    psf_k = np.ones((k, k)); psf_k /= psf_k.sum()
+    blurred_k = signal.convolve2d(img, psf_k, mode='same', boundary='symm')
+    valid_k = signal.convolve2d(img, psf_k, mode='valid')
+
+    plt.close('all')
+    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    axes[0].imshow(blurred_k, cmap='gray')
+    axes[0].set_title(f"{k}x{k} kernel, mode='same' — {blurred_k.shape}")
+    axes[1].imshow(valid_k, cmap='gray')
+    axes[1].set_title(f"{k}x{k} kernel, mode='valid' — {valid_k.shape}")
+    for a in axes:
+        a.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_blur,
+                  k=widgets.IntSlider(min=1, max=25, step=2, value=9,
+                                       description='kernel size'));"""),
         md("""## Exercise 2 — transposed convolution
 
 > 🇪🇸 Convolución transpuesta: hace las cosas más grandes, no las deshace."""),
@@ -1418,6 +1646,8 @@ CONTENT["10"] = {
     ],
     "setup": """import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from skimage import data
 
 TAXIS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
 taxis = pd.read_csv(TAXIS)
@@ -1427,6 +1657,76 @@ def unfold(T, axis):
 
 print(taxis.shape)                       # (6433, 14) — 6,433 real NYC taxi trips""",
     "cells": [
+        md("""## Rank you can see
+
+> 🇪🇸 Antes de generalizar a tensores, comprimamos una sola matriz: una
+> imagen real. La SVD truncada de rango k conserva las k direcciones
+> singulares más fuertes y descarta el resto — por Eckart–Young, es la mejor
+> aproximación de rango k posible en norma de Frobenius.
+
+Before generalizing to tensors, let's compress a single matrix — a real
+image. The rank-`k` truncated SVD keeps only the `k` strongest singular
+directions and drops the rest. By the **Eckart–Young theorem**, that
+truncation is the *optimal* rank-`k` approximation to the original matrix in
+Frobenius norm — no other rank-`k` matrix is closer.
+
+We'll reconstruct a 512×512 grayscale photograph (`skimage.data.camera()`) at
+`k = 1, 5, 20, 50` and full rank, and compare three things side by side: how
+much storage each reconstruction needs, how much of the image's Frobenius
+energy it retains, and how it actually looks."""),
+        code("""img = data.camera().astype(float)
+m, n = img.shape                          # (512, 512)
+
+U, s, Vt = np.linalg.svd(img, full_matrices=False)
+
+ks = [1, 5, 20, 50, min(m, n)]
+total_energy = np.sum(s**2)
+
+fig, axes = plt.subplots(1, len(ks), figsize=(15, 3.5))
+for ax, k in zip(axes, ks):
+    recon = (U[:, :k] * s[:k]) @ Vt[:k, :]
+    stored = k * (m + n + 1)                          # mk + k + nk
+    storage_pct = 100 * stored / (m * n)
+    factor = (m * n) / stored
+    energy_pct = 100 * np.sum(s[:k]**2) / total_energy
+    label = "full rank" if k == min(m, n) else f"k={k}"
+    ax.imshow(recon, cmap="gray", vmin=0, vmax=255)
+    ax.set_title(f"{label}\\n{storage_pct:.1f}% storage, {factor:.1f}x\\n{energy_pct:.1f}% energy",
+                 fontsize=9)
+    ax.axis("off")
+plt.tight_layout()
+plt.show()
+
+for k in ks:
+    stored = k * (m + n + 1)
+    print(f"k={k:>3}  storage={100*stored/(m*n):6.2f}%  "
+          f"{(m*n)/stored:6.2f}x  energy={100*np.sum(s[:k]**2)/total_energy:6.2f}%")
+# k=  1  storage=  0.39%  255.75x  energy= 87.01%
+# k=  5  storage=  1.96%   51.15x  energy= 97.04%
+# k= 20  storage=  7.82%   12.79x  energy= 98.98%
+# k= 50  storage= 19.55%    5.12x  energy= 99.60%
+# k=512  storage=200.20%    0.50x  energy=100.00%"""),
+        md("""## Storage, energy, and what your eyes see
+
+> 🇪🇸 El almacenamiento, la energía retenida y la calidad perceptual no son
+> la misma curva. Con muy pocos componentes ya se retiene casi toda la
+> energía, y la imagen es reconocible con una fracción minúscula del
+> almacenamiento original. La misma idea — quedarse con las direcciones más
+> fuertes y descartar el resto — es exactamente lo que Tucker/HOSVD hace a
+> continuación, un eje del tensor a la vez.
+
+At `k = 1`, under 0.4% of the storage already recovers 87% of the energy —
+but the picture is barely recognisable. By `k = 20`, storage is still under
+8% of the original and the picture is already unmistakably the photograph,
+while the energy curve hasn't yet reached its final digit. At full rank, the
+factorized `U`, `s`, `Vt` together need *more* numbers than the dense image
+itself (about 200% of its storage) — factorizing only pays off once you
+truncate. The same idea — keep the strongest singular directions, drop the
+rest — is what Tucker/HOSVD does next, one tensor axis at a time.
+
+**The picture is recognisable at `k = 20` — under 8% of the storage — long
+before the numbers claim it should be. Energy retained and perceptual
+quality are not the same curve.**"""),
         md("""## The theory
 
 > 🇪🇸 PCA comprime una **matriz**: dos ejes. La descomposición de Tucker
@@ -1505,6 +1805,52 @@ recon = np.einsum('abc,ia,jb,kc->ijk', core, Us[0], Us[1], Us[2])
 error = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067
 ratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71
 print(core.shape, round(error, 3), round(ratio, 2))"""),
+        md("""The exercise above fixed one rank, (2, 2, 3). Move the slider to see the
+whole error/compression trade-off, not just that one point on it.
+
+> 🇪🇸 El ejercicio anterior fijó un solo rango, (2, 2, 3). Mueve el
+> deslizador para ver toda la curva de compensación, no solo ese punto."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+# Precompute the full SVD basis for each axis once; the slider only re-slices
+# and re-contracts these small matrices, which is what keeps it responsive.
+bases = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]
+max_rank = min(u.shape[1] for u in bases)
+
+ks, errors, ratios = list(range(1, max_rank + 1)), [], []
+for kk in ks:
+    Uk = [bases[ax][:, :kk] for ax in range(3)]
+    core_k = np.einsum('ijk,ia,jb,kc->abc', T, *Uk)
+    recon_k = np.einsum('abc,ia,jb,kc->ijk', core_k, *Uk)
+    errors.append(np.linalg.norm(T - recon_k) / np.linalg.norm(T))
+    ratios.append(T.size / (core_k.size + sum(u.size for u in Uk)))
+
+def show_rank(k):
+    i = k - 1
+    plt.close('all')
+    fig, ax1 = plt.subplots(figsize=(6, 3.2))
+    ax1.plot(ks, errors, color='#C44E52')
+    ax1.scatter([k], [errors[i]], color='#C44E52', zorder=5)
+    ax1.set_xlabel('rank k (shared across all three axes)')
+    ax1.set_ylabel('relative error', color='#C44E52')
+    ax2 = ax1.twinx()
+    ax2.plot(ks, ratios, color='#4C72B0')
+    ax2.scatter([k], [ratios[i]], color='#4C72B0', zorder=5)
+    ax2.set_ylabel('compression ratio (x)', color='#4C72B0')
+    plt.tight_layout()
+    plt.show()
+    print(f"rank k={k}: error={errors[i]:.3f}, compression={ratios[i]:.2f}x")
+
+widgets.interact(show_rank,
+                  k=widgets.IntSlider(min=1, max=max_rank, step=1, value=2,
+                                       description='rank k'));"""),
         md("""## Exercise 3 — what did it find?
 
 > 🇪🇸 ¿Qué encontró la descomposición por sí sola?
@@ -1547,11 +1893,14 @@ CONTENT["11"] = {
         "Find the scaling trap in PCA on real, unstandardized data (take-home A).",
         "Build attention out of two contractions, and mask padded positions (take-home B).",
         "Run a real CP decomposition and read its components as trip types nobody labelled (take-home C).",
+        "Build correlated data from independent noise with Cholesky, and see why ignoring covariance understates portfolio risk (take-home D).",
+        "Denoise a real voice recording by truncating the SVD of its STFT, and measure the result in SNR rather than by ear (take-home E).",
         "Trade parameter count against reconstruction error with a rank slider, on a real dense tensor (optional appendix).",
     ],
     "setup": """import numpy as np
 import pandas as pd
 from sklearn.datasets import load_breast_cancer
+from scipy import signal
 
 rng = np.random.default_rng(0)""",
     "cells": [
@@ -1587,10 +1936,11 @@ large to keep in full.
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — **identical syntax** to what you
   used today.
 - [`tensorly`](https://tensorly.org) — proper Tucker and CP decompositions.
-- `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`.
+- `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`,
+  `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution
   beyond today.
-- The three take-homes below."""),
+- The five take-homes below."""),
         md("""### Optional: the same contraction in PyTorch
 
 Everything today was NumPy, because that is what the workshop's real datasets
@@ -1640,7 +1990,8 @@ print(np.sort(X.var(axis=0))[[0, -1]])             # ~0.0000075 up to ~324000
 
 Xs = (X - X.mean(axis=0)) / X.std(axis=0)
 S2 = np.linalg.svd(Xs, full_matrices=False)[1]
-n95_scaled = np.argmax(np.cumsum(S2**2 / (S2**2).sum()) >= 0.95) + 1   # 10
+frac_scaled = S2**2 / (S2**2).sum()
+n95_scaled = np.argmax(np.cumsum(frac_scaled) >= 0.95) + 1   # 10
 print(n95_scaled)
 
 # Without standardizing, the first component appears to explain 98.2% of the
@@ -1652,10 +2003,28 @@ print(n95_scaled)
 # PCA KNOWS NOTHING ABOUT UNITS. Features on different scales must be
 # standardized first.
 
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(6.5, 3.5))
+n_show = 15
+ax.plot(range(1, n_show + 1), np.cumsum(frac[:n_show]), marker="o",
+        label="unstandardized", color="#C44E52")
+ax.plot(range(1, n_show + 1), np.cumsum(frac_scaled[:n_show]), marker="o",
+        label="standardized", color="#4C72B0")
+ax.axhline(0.95, color="gray", linestyle="--", linewidth=1, label="95% threshold")
+ax.set_xlabel("number of components"); ax.set_ylabel("cumulative variance explained")
+ax.set_title("The scree plot IS the standardisation trap")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
 # TODO 5:
-# Z = Xs @ np.linalg.svd(Xs, full_matrices=False)[2][:2].T
-# import matplotlib.pyplot as plt
-# plt.scatter(Z[:, 0], Z[:, 1], c=y, s=8, cmap="coolwarm")"""),
+Z = Xs @ np.linalg.svd(Xs, full_matrices=False)[2][:2].T
+fig, ax = plt.subplots(figsize=(5, 4))
+ax.scatter(Z[:, 0], Z[:, 1], c=y, s=8, cmap="coolwarm")
+ax.set_xlabel("component 1"); ax.set_ylabel("component 2")
+ax.set_title("standardized data — malignant/benign in 2 components")
+plt.tight_layout()
+plt.show()"""),
         md("""---
 
 ## Take-home B — Attention is two contractions
@@ -1818,6 +2187,365 @@ def show_component(component):
 widgets.interact(show_component,
                   component=widgets.IntSlider(min=1, max=R, step=1, value=1,
                                                description='Component'));"""),
+        md("""---
+
+## Take-home D — Cholesky: the factorization that builds
+
+> 🇪🇸 Ejercicio para casa D: Cholesky, la factorización que construye.
+
+Every factorization used today — LU, QR, eigendecomposition, SVD — takes an
+existing object **apart**. Cholesky is the one exception: you use it to
+**build**. Given a covariance matrix `Sigma` that is symmetric and
+positive-definite, `np.linalg.cholesky` finds a lower-triangular `L` with
+`L @ L.T == Sigma`. Feed `L` independent Gaussian noise and it hands back
+correlated draws with *exactly* that covariance.
+
+`Sigma[i, j]` is the **covariance** between asset `i` and asset `j` — how much
+they move together, in the assets' own units. Its diagonal `Sigma[i, i]` is
+each asset's own variance. **Correlation** (`corr`) is the same relationship
+rescaled to sit between -1 and 1, so it is comparable between assets of
+different volatility; `Sigma = outer(vol, vol) * corr` puts the original scale
+back in.
+
+If `z` is independent noise (`Cov(z) = I`) and `x = L @ z`, then
+`Cov(x) = L Cov(z) L.T = L L.T = Sigma` — which is exactly why `L` turns
+independent draws into correlated ones.
+
+> 🇪🇸 `Sigma[i, j]` es la covarianza entre el activo `i` y el `j`: cuánto se
+> mueven juntos. La diagonal es la varianza de cada activo. `corr` es la misma
+> relación reescalada entre -1 y 1. Si `z` es ruido independiente
+> (`Cov(z) = I`) y `x = L @ z`, entonces `Cov(x) = L Cov(z) L.T = L L.T =
+> Sigma`: por eso `L` convierte ruido independiente en ruido correlacionado."""),
+        code("""vol = np.array([0.012, 0.015, 0.010])
+corr = np.array([[1.00, 0.85, 0.20],
+                  [0.85, 1.00, 0.20],
+                  [0.20, 0.20, 1.00]])
+Sigma = np.outer(vol, vol) * corr
+
+weights = np.array([0.4, 0.4, 0.2])
+mu = np.array([0.00030, 0.00035, 0.00020])
+n_days, n_paths, initial_value = 252, 20_000, 100.0
+
+rng = np.random.default_rng(5)
+sample_sizes = [100, 1_000, 100_000]
+
+# TODO 1: L = np.linalg.cholesky(Sigma). Verify np.allclose(L @ L.T, Sigma) is
+#         True, and print L and the reconstruction L @ L.T, both rounded.
+
+# TODO 2: For each n in sample_sizes, draw z = rng.standard_normal((3, n)),
+#         build x = L @ z, and compute the Frobenius error between np.cov(x)
+#         and Sigma. Confirm it shrinks as n grows. For the LARGEST n, also
+#         print np.cov(z) (should look like the identity) and np.cov(x)
+#         (should look like Sigma) — that is the whole trick, made visible.
+
+# TODO 3: Simulate a CORRECT correlated portfolio. Draw
+#         z_paths = rng.standard_normal((3, n_days * n_paths)), build
+#         correlated_asset_returns = mu[:, None] + L @ z_paths, reshape to
+#         (3, n_paths, n_days), combine with `weights` into one daily
+#         portfolio return per path per day, and compound each path into
+#         terminal_correlated = initial_value * prod(1 + daily_returns).
+
+# TODO 4: Simulate the SAME portfolio again but WRONG: replace L with
+#         independent_scale = np.diag(np.sqrt(np.diag(Sigma))) — same
+#         individual volatilities, zero cross-asset correlation — and reuse
+#         the SAME z_paths. Produce terminal_independent the same way.
+
+# TODO 5: Plot terminal_correlated and terminal_independent as overlaid
+#         histograms (density=True) on the same axes, labelled and legended.
+
+# TODO 6: Compare std, and the 5th and 1st percentiles, of both. Which
+#         distribution has the fatter left tail — and why, given that no
+#         individual asset's volatility ever changed?"""),
+        solution("""L = np.linalg.cholesky(Sigma)
+print(np.allclose(L @ L.T, Sigma))          # True
+print(np.round(L, 4))
+print(np.round(L @ L.T, 6))                 # matches Sigma
+
+errors = []
+for n in sample_sizes:
+    z = rng.standard_normal((3, n))
+    x = L @ z
+    err = np.linalg.norm(np.cov(x) - Sigma)
+    errors.append(err)
+    print(n, err)
+print(errors[0] > errors[1] > errors[2])    # True — error shrinks as n grows
+
+print(np.round(np.cov(z), 3))               # close to the identity
+print(np.round(np.cov(x), 6))               # close to Sigma
+# Cov(x) = Cov(Lz) = L Cov(z) L.T ~ L I L.T = L L.T = Sigma. Independent noise
+# in, correlated noise out — Cholesky is the "square root" that makes it work.
+
+z_paths = rng.standard_normal((3, n_days * n_paths))
+
+correlated_asset_returns = (mu[:, None] + L @ z_paths).reshape(3, n_paths, n_days)
+portfolio_returns_correlated = np.einsum('a,apd->pd', weights, correlated_asset_returns)
+terminal_correlated = initial_value * np.prod(1 + portfolio_returns_correlated, axis=1)
+
+independent_scale = np.diag(np.sqrt(np.diag(Sigma)))
+independent_asset_returns = (mu[:, None] + independent_scale @ z_paths).reshape(3, n_paths, n_days)
+portfolio_returns_independent = np.einsum('a,apd->pd', weights, independent_asset_returns)
+terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent, axis=1)
+
+import matplotlib.pyplot as plt
+plt.hist(terminal_independent, bins=80, density=True, alpha=0.6,
+         label="Assets simulated independently")
+plt.hist(terminal_correlated, bins=80, density=True, alpha=0.6,
+         label="Correct correlated simulation")
+plt.xlabel("Terminal portfolio value")
+plt.ylabel("Density")
+plt.legend()
+plt.show()
+
+print(terminal_correlated.std(), terminal_independent.std())               # ~18.8  ~13.6
+print(np.percentile(terminal_correlated, [1, 5]))                           # ~70.7 ~79.7
+print(np.percentile(terminal_independent, [1, 5]))                          # ~79.9 ~86.9
+
+# EVERY asset kept its own individual volatility in BOTH simulations —
+# independent_scale used the SAME diagonal as Sigma. The only thing that
+# changed is whether the simulation lets the three assets fall together.
+# Ignoring the positive covariance did not touch any single asset's risk; it
+# erased real cross-asset comovement and manufactured DIVERSIFICATION THAT
+# ISN'T THERE — the correlated portfolio's distribution is wider and its
+# lower tail is worse.
+#
+# This is NOT "correlation always increases risk." It is specific to THIS
+# positively-correlated book: a negatively correlated pair would do the
+# opposite, and ignoring it would UNDERSTATE diversification, not overstate
+# it. What generalizes is only this: assuming independence when assets are
+# not independent gets the TAILS of the distribution wrong."""),
+        md("""### What the comparison shows
+
+**Every individual asset kept the same volatility in both simulations.** The
+only thing that changed is whether the simulation lets the three assets move
+together. Ignoring the positive covariance did not touch any single asset's
+risk; it erased real cross-asset comovement and manufactured diversification
+that was never there — the correlated portfolio's terminal-value distribution
+is wider, and its bad days are worse, than the (wrong) independent one.
+
+**This is not "correlation always increases risk."** It is specific to this
+book, where every pair is positively correlated. A negatively correlated pair
+would do the opposite: ignoring it would make the simulation *understate*
+diversification, not overstate it. What is general is only this: **assuming
+independence when assets are not independent gets the tails of the
+distribution wrong.**
+
+> 🇪🇸 Cada activo conservó su propia volatilidad en ambas simulaciones — lo
+> único que cambió es si la simulación permite que los tres se muevan juntos.
+> Ignorar la covarianza positiva no tocó el riesgo individual: borró el
+> comovimiento real y fabricó una diversificación que no existía. Esto **no**
+> significa que "la correlación siempre aumenta el riesgo" — es específico de
+> esta cartera, donde todo está correlacionado positivamente. Con correlación
+> negativa ocurriría lo contrario. Lo único general es que **asumir
+> independencia cuando los activos no lo son distorsiona las colas de la
+> distribución.**"""),
+        md("""---
+
+## Take-home E — Audio denoising by rank reduction
+
+> 🇪🇸 Ejercicio para casa E: eliminar ruido de audio reduciendo el rango.
+
+Section 10 used truncated SVDs of matrix unfoldings to build a Tucker
+approximation of a real taxi tensor. This take-home applies the same
+low-rank idea to the frequency × time matrix produced from sound.
+
+**The recording is real**: a five-second CC0 voice sample by Bart Massey, from
+[`pdx-cs-sound/wavs`](https://github.com/pdx-cs-sound/wavs), pinned to commit
+`ed5ebcbbbc2d11f0adddc9b50b78d581c29f738c` so the file this notebook fetches
+cannot silently change under you. It downloads at runtime and is checked
+against a known SHA-256 — if the download is corrupted or does not match the
+pinned file, `fetch_verified_wav` below raises instead of quietly handing you
+something else. **The noise is not real** — it is added on purpose, with a
+fixed seed and a target signal-to-noise ratio, precisely so there is a known
+clean reference to measure against. Do not confuse the two: the recording is
+real data, exactly like every other dataset today; the noise is the
+controlled experiment.
+
+### Why a waveform becomes a matrix
+
+A recording is one axis: amplitude over time. The **short-time Fourier
+transform** (STFT) slices it into overlapping windows and Fourier-transforms
+each one, producing a matrix `Z` with two axes — **frequency × time**. Row `i`
+is "how much of frequency `f_i` is present"; column `j` is "during time window
+`t_j`." Nothing earlier today paired frequency against time this way.
+
+Because `Z` is a matrix, the SVD from sections 07 and 10 applies unchanged —
+except `Z` is **complex**, and truncating its SVD keeps both magnitude and
+phase. Reconstructing from magnitude alone would throw phase away and produce
+audible distortion, so the truncated matrix goes straight into the inverse
+STFT.
+
+Speech energy concentrates in a handful of dominant frequency-time patterns —
+a few singular vectors carry most of the signal. Broadband, unstructured noise
+has no such structure: it tends to spread its energy across many singular
+directions, including many smaller ones. Keeping only the largest `k`
+singular values keeps most of the speech and discards a disproportionate
+share of the noise.
+
+> 🇪🇸 La STFT convierte una onda de una dimensión (amplitud en el tiempo) en
+> una matriz de dos ejes: frecuencia × tiempo. La voz concentra su energía en
+> pocas direcciones singulares dominantes; el ruido de banda ancha tiende a
+> repartir su energía entre muchas direcciones singulares, incluidas muchas
+> pequeñas. Por eso conservar solo las `k` mayores retiene la voz y descarta
+> una parte desproporcionada del ruido — pero **esto no es un eliminador de
+> ruido universal**: la comprobación real es el SNR medido, no cómo suena.
+
+**This is not a universal denoiser.** It only works to the extent that the
+noise really is broadband relative to a structured signal — narrowband noise,
+or noise correlated with the signal, is not separated this way. The proof
+either way is the measured SNR below, not how it sounds."""),
+        code("""VOICE_URL = "https://raw.githubusercontent.com/pdx-cs-sound/wavs/ed5ebcbbbc2d11f0adddc9b50b78d581c29f738c/voice.wav"
+VOICE_SHA256 = "2c4b4d9d5f90715fdbf599869a465d521638f40ca978b186df96f1543a4d67dc"
+
+def fetch_verified_wav(url, expected_sha256):
+    \"\"\"Download a WAV and refuse to proceed if it does not match the pinned
+    checksum. No silent fallback to synthetic data on failure.\"\"\"
+    import hashlib
+    import io
+    import urllib.request
+    from scipy.io import wavfile
+    raw = urllib.request.urlopen(url, timeout=30).read()
+    got = hashlib.sha256(raw).hexdigest()
+    if got != expected_sha256:
+        raise ValueError(
+            f"checksum mismatch for {url}: expected {expected_sha256}, got "
+            f"{got}. Refusing to use unverified audio data.")
+    return wavfile.read(io.BytesIO(raw))
+
+def snr_db(reference, estimate):
+    \"\"\"Energy-based SNR in dB. `reference` is always the real clean signal.\"\"\"
+    return 10 * np.log10(np.sum(reference**2) / np.sum((estimate - reference)**2))
+
+# TODO 1: fs, clean_i16 = fetch_verified_wav(VOICE_URL, VOICE_SHA256).
+#         Convert to float in [-1, 1] (divide by 32768), and average channels
+#         to mono if clean.ndim > 1. Print fs, duration in seconds, and shape.
+
+# TODO 2: With rng = np.random.default_rng(42) and TARGET_SNR_DB = 5.0, build
+#         additive noise scaled from the CLEAN SIGNAL'S OWN MEAN POWER (not an
+#         arbitrary standard deviation) so that clean + noise lands at the
+#         target SNR. Verify with snr_db(clean, noisy)."""),
+        solution("""fs, clean_i16 = fetch_verified_wav(VOICE_URL, VOICE_SHA256)
+clean = clean_i16.astype(np.float64) / 32768.0
+if clean.ndim > 1:
+    clean = clean.mean(axis=1)
+print(fs, round(len(clean) / fs, 3), clean.shape)      # 48000 4.949 (237568,)
+
+rng = np.random.default_rng(42)
+TARGET_SNR_DB = 5.0
+noise = rng.standard_normal(clean.shape)
+scale = np.sqrt(np.mean(clean**2) / (np.mean(noise**2) * 10**(TARGET_SNR_DB / 10)))
+noisy = clean + scale * noise
+print(round(snr_db(clean, noisy), 2))                   # 5.0 -- exactly the target, by construction
+
+# fetch_verified_wav is not decorative: it raises ValueError instead of
+# silently returning something else if the download is corrupted or does not
+# match the pinned file. voice.wav ITSELF is real -- a five-second CC0
+# recording. The noise added here is the controlled, synthetic part of the
+# experiment: it exists only so `clean` is a known reference an SNR can be
+# measured against."""),
+        code("""# TODO 3: f, t, Z = signal.stft(noisy, fs=fs, nperseg=1024, noverlap=512).
+#         Z is COMPLEX -- frequency bins x time frames. Print Z.shape and the
+#         full possible rank, min(Z.shape).
+
+# TODO 4: U, s, Vh = np.linalg.svd(Z, full_matrices=False), on the COMPLEX
+#         matrix directly so phase survives truncation, not magnitude alone.
+#         For k in [2, 5, 10, 20, 40, 80, len(s)]: build
+#         Z_k = (U[:, :k] * s[:k]) @ Vh[:k, :], run
+#         signal.istft(Z_k, fs=fs, nperseg=1024, noverlap=512), align its
+#         length to `clean`, and print k, the retained singular-value energy
+#         sum(s[:k]**2) / sum(s**2), and snr_db(clean, reconstruction).
+
+# TODO 5: Pick the k with the best SNR among the candidates above. Report its
+#         retained energy, its SNR, and the improvement over the noisy SNR
+#         from TODO 2.
+
+# TODO 6: Build ONE common peak-scale factor from
+#         max(|noisy|, |denoised|, |clean|) and make playback-only copies
+#         scaled by it -- SNR itself is computed on the unscaled signals
+#         above, never on these copies. Then display Audio players for the
+#         noisy ("before") and denoised ("after") copies. You may run this
+#         cell to listen, but do not save its Audio output into the tracked
+#         notebook: Audio() output contains embedded base64 data and must
+#         not be committed."""),
+        solution("""f, t, Z = signal.stft(noisy, fs=fs, nperseg=1024, noverlap=512)
+full_rank = min(Z.shape)
+print(Z.shape, full_rank)                               # (513, 465) 465
+
+U, s, Vh = np.linalg.svd(Z, full_matrices=False)
+for k in [2, 5, 10, 20, 40, 80, len(s)]:
+    Zk = (U[:, :k] * s[:k]) @ Vh[:k, :]
+    _, x_rec = signal.istft(Zk, fs=fs, nperseg=1024, noverlap=512)
+    n = min(len(x_rec), len(clean))
+    energy = np.sum(s[:k]**2) / np.sum(s**2)
+    print(k, round(energy * 100, 1), round(snr_db(clean[:n], x_rec[:n]), 2))
+# k    energy%  SNR dB
+# 2     33.2     2.29
+# 5     51.1     4.76
+# 10    61.9     6.78
+# 20    70.1     8.48
+# 40    78.3     9.08   <- best of these candidates
+# 80    87.1     7.68   <- WORSE than k=40: noise has leaked back in
+# 465  100.0     5.00   <- full rank matches `noisy` to numerical precision
+
+k = 40
+Zk = (U[:, :k] * s[:k]) @ Vh[:k, :]
+_, x_rec = signal.istft(Zk, fs=fs, nperseg=1024, noverlap=512)
+n = min(len(x_rec), len(clean))
+denoised, clean_a, noisy_a = x_rec[:n], clean[:n], noisy[:n]
+
+snr_before = snr_db(clean_a, noisy_a)
+snr_after = snr_db(clean_a, denoised)
+print(round(snr_before, 2), round(snr_after, 2), round(snr_after - snr_before, 2))
+# 5.0 9.08 4.08
+
+peak = max(np.abs(clean_a).max(), np.abs(noisy_a).max(), np.abs(denoised).max())
+noisy_play = noisy_a / peak
+denoised_play = denoised / peak
+
+from IPython.display import Audio, display
+display(Audio(noisy_play, rate=fs))       # "before"
+display(Audio(denoised_play, rate=fs))    # "after"
+
+# k=40 keeps 40 of 465 possible components -- 8.6% of full rank -- and
+# recovers 4.08 dB of SNR: real, but modest, not a miracle. k=2 and k=5 keep
+# too little of the SPEECH itself to beat the noisy baseline by much. k=80
+# already lets enough noise back into smaller-but-still-significant singular
+# directions that SNR gets WORSE than at k=40 -- more components is not
+# always better. At the full rank of 465 the reconstruction matches `noisy`
+# to numerical precision: proof that whatever denoising happened at k=40
+# came specifically from truncating, not from the STFT -> SVD -> ISTFT round
+# trip itself."""),
+        md("""### What the numbers say
+
+Keeping 40 of 465 possible singular directions (8.6% of full rank, 78.3% of
+the singular-value energy) raised the SNR from 5.00 dB to 9.08 dB — a real
+**+4.08 dB** improvement, not a dramatic one. Fewer components (`k=2`, `k=5`)
+discard too much of the speech itself; more (`k=80`) already lets noise back
+in, and SNR gets worse again. At the full rank the reconstruction matches the
+noisy signal to numerical precision, which is the honest control: the
+denoising is entirely a property of truncating, not of the STFT/SVD/ISTFT
+machinery itself.
+
+**Do not generalize this to "truncated SVD removes noise."** It suppresses
+noise that is broadband and unstructured relative to a signal that
+concentrates in a few dominant directions — the same low-rank argument
+section 10 used on the taxi tensor, applied here to sound instead of trip
+counts. Narrowband noise, or noise correlated with the speech itself, would
+not separate out this way, and the only way to know which situation you are
+in is to measure the SNR, the way this take-home just did.
+
+> 🇪🇸 Conservar 40 de 465 direcciones singulares posibles (8.6% del rango
+> completo, 78.3% de la energía de los valores singulares) subió el SNR de
+> 5.00 dB a 9.08 dB — una mejora real de **+4.08 dB**, no espectacular. Menos
+> componentes descartan demasiada voz; más vuelven a dejar entrar ruido y el
+> SNR empeora. En el rango completo la reconstrucción coincide con la señal
+> ruidosa hasta la precisión numérica, lo cual es el control honesto: la
+> reducción de ruido es una propiedad de truncar, no del mecanismo
+> STFT/SVD/ISTFT en sí. **No generalices esto a "la SVD truncada siempre
+> elimina el ruido."** Solo funciona cuando el ruido es de banda ancha y no
+> estructurado frente a una señal que se concentra en pocas direcciones
+> dominantes — el mismo argumento de bajo rango que la sección 10 usó con el
+> tensor de taxis, aplicado aquí al sonido. La única forma de saberlo es
+> medir el SNR, como se acaba de hacer."""),
         md("""---
 
 ## After the workshop — Tucker compression for deployment

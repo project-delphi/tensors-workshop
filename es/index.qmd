@@ -42,6 +42,11 @@ define donde aparece por primera vez.
   [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) antes de la
   sesión** y avisa enseguida si falla: una descarga que falla en silencio te dejará
   atascado en las secciones 07 y 10.
+- **Trabajo previo obligatorio:** completa
+  [`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}}) antes
+  de la sesión — 14 cuadernos breves de Colab, bilingües (~2–3 horas en total),
+  que cubren exactamente el álgebra lineal anterior, de vectores a PCA. Este
+  taller avanza rápido y da por hecho que ya lo hiciste.
 
 ## Cómo ejecutar los cuadernos
 
@@ -96,6 +101,6 @@ encabezado de los cuadernos lleva un resumen de una línea en español.
 ## Dónde seguir
 
 - [Manual](../tensors_workshop_plan_with_quizzes.html): el texto completo del
-  estudiante y las notas del facilitador, incluidos los tres apéndices para casa.
+  estudiante y las notas del facilitador, incluidos los cuatro apéndices para casa.
 - [Cuadernos](../notebooks.qmd): los doce, con sus insignias de Colab.
 - [Kahoot](../kahoot.qmd): los tres cuestionarios y cómo ejecutarlos.

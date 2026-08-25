@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-ffec8635838ac961ee4969b1dce14e71.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-c0ee31b37f7c3492c9f97e956bede215.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -384,9 +384,15 @@
 </section>
 <section id="to-the-notebook" class="slide level2">
 <h2>To the notebook</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <p><strong>00 · Setup and welcome</strong></p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">Open in Colab</a></p>
 <p>Everything else in the library ships offline: <code>load_breast_cancer</code>, <code>load_digits</code>, <code>data.camera()</code>, <code>data.astronaut()</code>.</p>
+</div><div class="column" style="width:40%;">
+<p><img data-src="../../images/camera.png" alt="Grayscale thumbnail of the scikit-image camera photograph, a standard offline test image shipped with the library." width="220"></p>
+<p><img data-src="../../images/astronaut.png" alt="Small colour thumbnail of the scikit-image astronaut photograph, another standard offline test image shipped with the library." width="220"></p>
+</div></div>
 </section></section>
 <section>
 <section id="sec-01-what-a-tensor-is" class="title-slide slide level1 center">
@@ -465,6 +471,9 @@
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a>digits.images.shape              <span class="co"># (1797, 8, 8)  — images, height, width</span></span>
 <span id="cb3-2"><a></a>photo.shape                      <span class="co"># (512, 512, 3) — height, width, colour</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div class="fragment">
+<p><img data-src="../../images/digits-grid.png" alt="Grid of eight real handwritten digits from the scikit-learn digits dataset, each an 8 by 8 pixel grayscale image shown with nearest-neighbour scaling so individual pixels stay visible — this is what shape (1797, 8, 8) means: 1797 such images." width="260"></p>
 </div>
 <div class="fragment">
 <p><strong>Both are order 3. Their axes mean completely different things.</strong></p>
@@ -553,6 +562,11 @@
 <td>§07</td>
 </tr>
 <tr class="even">
+<td>Cholesky</td>
+<td>Symmetric positive-definite matrix</td>
+<td>§11</td>
+</tr>
+<tr class="odd">
 <td><strong>Tucker / CP</strong></td>
 <td><strong>Tensor, any order</strong></td>
 <td>§10</td>
@@ -645,6 +659,8 @@
 </section>
 <section id="why-this-matters" class="slide level2">
 <h2>Why this matters</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
 <p>569 real patients, 30 real measurements of tumour cell nuclei.</p>
 <div>
 <ul>
@@ -653,6 +669,9 @@
 <li class="fragment">Your analysis continues and gives a confident, wrong answer</li>
 </ul>
 </div>
+</div><div class="column" style="width:45%;">
+<p><img data-src="../../images/breast-cancer.png" alt="Scatter plot of mean radius against mean texture for 569 patients in the scikit-learn breast cancer dataset, coloured by malignant versus benign diagnosis; two of the dataset's 30 measurements, not the full picture." width="300"></p>
+</div></div>
 <div class="fragment">
 <p>In research: results nobody can reproduce. In a clinical tool: a wrong recommendation about a real person.</p>
 </div>
@@ -694,13 +713,17 @@
 </section>
 <section id="why-this-matters-1" class="slide level2">
 <h2>Why this matters</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <p>Microscopes and cameras order their axes according to the <strong>hardware</strong>, not according to what a model expects.</p>
-<div class="fragment">
+<p>. . .</p>
 <p>Getting this wrong does not crash. The model runs on scrambled data and returns <strong>confident, meaningless output</strong>.</p>
-</div>
-<div class="fragment">
+<p>. . .</p>
 <p>The famous version: a model trained in TensorFlow (<code>NHWC</code>) deployed into PyTorch (<code>NCHW</code>) with no transpose.</p>
-</div>
+</div><div class="column" style="width:40%;">
+<p><img data-src="../../images/immunohistochemistry.png" alt="Colour immunohistochemistry-stained tissue image from scikit-image, an example microscopy image whose colour channels are ordered by the imaging hardware." width="240"></p>
+<p><img data-src="../../images/cell.png" alt="Grayscale microscopy image of a single cell from scikit-image, another example of hardware-ordered image axes." width="240"></p>
+</div></div>
 </section>
 <section id="same-shape-different-data" class="slide level2">
 <h2>Same shape, different data</h2>
@@ -925,6 +948,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <span id="cb18-8"><a></a>rmse <span class="op">=</span> np.sqrt(((X <span class="op">@</span> w <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>).mean())           <span class="co"># ~75,980</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
+<p><img data-src="../../images/california-housing.png" alt="Scatter map of California housing districts plotted by longitude and latitude, coloured by median house value, showing the coastal concentration of expensive housing in the same dataset used for the least-squares fit." width="300"></p>
+</div>
+<div class="fragment">
 <p><strong>No straight line passes through 20,433 points.</strong> The pseudoinverse gives the best possible answer instead. Largest coefficient: <code>median_income</code>. Sensible.</p>
 <aside class="notes">
 <p>TODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something.</p>
@@ -1016,6 +1042,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <span id="cb21-6"><a></a>history <span class="op">=</span> <span class="bu">list</span>(y[<span class="op">-</span><span class="dv">12</span>:])</span>
 <span id="cb21-7"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):                           <span class="co"># feed predictions back in</span></span>
 <span id="cb21-8"><a></a>    history.append(w[<span class="dv">0</span>] <span class="op">+</span> np.dot(w[<span class="dv">1</span>:], history[<span class="op">-</span><span class="dv">12</span>:]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><img data-src="../../images/airline-passengers.png" alt="Line chart of monthly airline passenger counts from 1949 to 1960, the 144-month series used for the forecast, showing a rising trend with a repeating yearly summer peak." width="300"></p>
 </div>
 <div class="fragment">
 <p><code>[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]</code></p>
@@ -1171,6 +1200,75 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <h1>10 · Tucker decomposition</h1>
 <p><em>Part IV · 15 min · exercise</em></p>
 </section>
+<section id="what-different-factorizations-buy-you" class="slide level2 factorization-ladder">
+<h2>What different factorizations buy you</h2>
+<blockquote>
+<p>A factorization picks the atoms, the rule for combining them, and the property you buy. The object never changes — only which question becomes trivial.</p>
+</blockquote>
+<div class="columns">
+<div class="column" style="width:25%;">
+<p><strong>100</strong></p>
+<ul>
+<li><span class="math inline">\(2^2 \cdot 5^2\)</span> → divisors, gcd</li>
+<li><span class="math inline">\(4 \cdot 25\)</span> → arithmetic</li>
+<li><span class="math inline">\(64 + 32 + 4\)</span> → storage</li>
+<li><span class="math inline">\(6^2 + 8^2\)</span> → geometry</li>
+</ul>
+<p>Product or sum; prime factorization is unique up to ordering.</p>
+</div><div class="column" style="width:25%;">
+<p><strong><span class="math inline">\(x^2 - 4x - 5\)</span></strong></p>
+<ul>
+<li>standard → intercept, coefficients</li>
+<li><span class="math inline">\((x-5)(x+1)\)</span> → roots, sign</li>
+<li><span class="math inline">\((x-2)^2 - 9\)</span> → vertex, range</li>
+</ul>
+<p>Completing the square: the scalar bridge to diagonalizing quadratic forms.</p>
+</div><div class="column" style="width:25%;">
+<p><strong>Matrix <span class="math inline">\(A\)</span></strong></p>
+<ul>
+<li>LU → elimination, repeated solves</li>
+<li>QR → orthogonality, least squares</li>
+<li>Cholesky → SPD solves, covariance</li>
+<li>SVD → low-rank structure, conditioning</li>
+<li>NMF → nonnegative parts</li>
+</ul>
+<p><span class="math inline">\(AB^{\top} = (AM)(BM^{-\top})^{\top}\)</span> — generic factors are not unique without additional structure or conventions.</p>
+</div><div class="column" style="width:25%;">
+<p><strong>Tensor <span class="math inline">\(\mathcal{X}\)</span></strong></p>
+<ul>
+<li>CP → interpretable rank-1 components</li>
+<li>Tucker / HOSVD → multilinear compression, subspaces</li>
+<li>Tensor Train → scalable high-order storage</li>
+</ul>
+<p>Essentially unique up to permutation and compensating scale, under suitable conditions — sufficient: <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span>.</p>
+</div></div>
+<div class="callout callout-tip callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<p><strong>Tip</strong></p>
+</div>
+<div class="callout-content">
+<p>Matrix multiplication is itself a tensor; its CP rank is the multiplication count. The <span class="math inline">\(2 \times 2\)</span> case has rank 7, not 8 — that is Strassen. At the top of the ladder, the factorization is the algorithm.</p>
+</div>
+</div>
+</div>
+<aside class="notes">
+<p>Prime factorization is unique up to ordering — the cleanest case on the slide. Generic low-rank matrix factors have gauge freedom (the <span class="math inline">\(M\)</span>/<span class="math inline">\(M^{-\top}\)</span> pair); extra structure or a convention — positive pivots, orthonormal columns, a positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can be essentially unique under suitable identifiability conditions, up to permutation and a compensating nonzero scaling across modes; over the reals, sign flips are a special case of that scaling. Kruskal’s <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span> is a <em>sufficient</em> condition, not a necessary one, and it says nothing about whether the decomposition is easy to find. Worth saying if there is time: computing tensor rank is NP-hard in general, tensor rank can exceed every individual mode dimension, and a best rank-<span class="math inline">\(R\)</span> approximation need not even exist — none of that is true of matrices.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
 <section id="pca-generalized-to-every-axis" class="slide level2">
 <h2>PCA generalized to every axis</h2>
 <p>PCA compresses a <strong>matrix</strong> — two axes. Real data often has more.</p>
@@ -1193,6 +1291,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
 <span id="cb28-2"><a></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
 <span id="cb28-3"><a></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><img data-src="../../images/nyc-taxi-pickups-by-hour.png" alt="Bar chart of NYC taxi pickup counts by hour of day from the same 6,433-trip dataset, rising through the day to a peak around hour 18, the evening rush the Tucker decomposition later rediscovers on its own." width="300"></p>
 </div>
 <div class="fragment">
 <p><code>T[i, j, k]</code> = trips from borough <code>i</code> to borough <code>j</code> picked up during hour <code>k</code>.</p>
@@ -1331,12 +1432,12 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <ul>
 <li><code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — <strong>identical syntax</strong> to today</li>
 <li><a href="https://tensorly.org"><code>tensorly</code></a> — proper Tucker and CP</li>
-<li><code>np.linalg</code> — the rest of Chapter 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code></li>
+<li><code>np.linalg</code> — the rest of Chapter 2: <code>eig</code>, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>, <code>cholesky</code></li>
 <li><code>scipy.signal</code>, <code>skimage.restoration</code> — convolution and deconvolution beyond today</li>
 <li><a href="../../tensors_workshop_plan_with_quizzes.html#further-reading">Further Reading</a> — books and the seminal papers behind Tucker, CP and SVD</li>
 </ul>
 <div class="fragment">
-<p><strong>Three take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, and CP compared to Tucker.</p>
+<p><strong>Four take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, CP compared to Tucker, and building correlated portfolios with Cholesky.</p>
 </div>
 </section>
 <section id="thank-you" class="slide level2">

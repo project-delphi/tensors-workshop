@@ -124,7 +124,7 @@
 </tr>
 <tr>
 <td>11</td>
-<td><strong>Wrap-up and take-homes</strong><br><small>What connects Blocks 4, 5 and 6, plus three take-home exercises.</small></td>
+<td><strong>Wrap-up and take-homes</strong><br><small>What connects Blocks 4, 5 and 6, plus five take-home exercises.</small></td>
 <td>wrap-up</td>
 <td>5</td>
 <td><a href="slides/en/#sec-11-wrap-up-and-take-homes">EN</a></td>
