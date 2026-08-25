@@ -2,6 +2,13 @@
 // Shared by the EN and ES decks. Both `@import` this one file, so a change to
 // the look lands in both languages at once — the same reason _variables.yml
 // owns every URL.
+// `$backgroundColor` is the revealjs variable; `$body-bg` is the HTML-format
+// one and reveal ignores it. Without an explicit background here reveal reads
+// the slide background as transparent, scores it as dark, and puts
+// `has-dark-background` on every section — which paints the body text white on
+// a white page. Pages happened to hide it; `quarto preview` on a machine set to
+// dark mode does not.
+$backgroundColor:  #ffffff;
 $body-bg:          #ffffff;
 $body-color:       #1f2933;
 $link-color:       #2c5f8a;
@@ -56,4 +63,86 @@ $code-block-font-size: 0.62em;
   font-size: .6em;
   padding: .3em .6em;
   margin-top: .3em;
+}
+
+// The dataset grid on "Nothing here is invented" / "Aquí no hay nada
+// inventado" — eight cells (seven dataset cards plus a text cell) that have to
+// land on one 1280x760 slide alongside a heading and two lines of prose.
+// Sizes below are the largest that still fit with no overflow, checked against
+// rendered screenshots of both decks — not shrunk further than needed.
+//
+// Four fixed columns rather than `auto-fit`: reveal.js scales the whole
+// 1280x760 canvas to the viewport, so the layout never reflows while
+// presenting and `auto-fit` would only mis-column at the design width. The
+// media query below is for the non-scaled contexts — print, and reveal's
+// scroll view — where the canvas really can be narrow.
+.reveal section.data-slide {
+  p { margin: .25em 0 .4em; }
+
+  .dataset-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: .55em .6em;
+    margin: .5em 0 .6em;
+  }
+
+  .ds {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;                 // let a long dataset name shrink, not push
+  }
+
+  // `object-fit: cover` keeps every card on the same baseline even though the
+  // waveform is a plot and the rest are photographs.
+  .ds img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 3px;
+    margin: 0 0 .3em;
+    display: block;
+  }
+
+  .ds p {
+    margin: 0;
+    line-height: 1.25;
+    max-width: none;
+  }
+
+  // The dataset name: the one thing on the card that must survive being read
+  // from the back of the room.
+  .ds a {
+    font-size: .52em;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(44, 95, 138, .35);
+  }
+
+  // Counts, shapes and section numbers — supporting detail, deliberately quiet.
+  .ds p:last-child {
+    font-size: .42em;
+    opacity: .72;
+    margin-top: .12em;
+  }
+
+  // The eighth cell carries no image, so it needs the height back as padding
+  // or it floats against the top of its row.
+  .ds-more {
+    justify-content: center;
+    padding: .3em .1em 0;
+    p { font-size: .46em; margin: .18em 0; }
+    p:first-child { opacity: .72; }
+    p:last-child { opacity: 1; }
+
+    // `.ds a` above is .52em, and em compounds: inside a .46em paragraph that
+    // renders at a quarter of body size and is unreadable from the room. These
+    // links sit in running text, so match the text instead.
+    a { font-size: 1em; }
+  }
+}
+
+@media (max-width: 800px) {
+  .reveal section.data-slide .dataset-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }

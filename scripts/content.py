@@ -35,7 +35,10 @@ CONTENT["00"] = {
         "Know which data ships inside the libraries and which is downloaded.",
         "Recognise the shapes you will be working with all day.",
     ],
-    "setup": f"""# Nothing to install — Colab already has all of this.
+    "setup": f"""# Section 05 decodes a real video and Colab does not reliably ship an
+# ffmpeg backend, so install it now. Everything else below is already here.
+%pip install -q "imageio[ffmpeg]"
+
 import numpy as np
 import pandas as pd
 from sklearn.datasets import load_digits, load_breast_cancer
@@ -48,7 +51,23 @@ from scipy.linalg import lu, toeplitz
 housing = pd.read_csv(HOUSING)
 taxis   = pd.read_csv(TAXIS)
 flights = pd.read_csv(FLIGHTS)
-print(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)""",
+print(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)
+
+# Section 05's video is 5.9 MB, so don't pull it now -- just prove the backend
+# imports and the host answers. Better to find out here than in two hours.
+import imageio_ffmpeg, urllib.request
+VIDEO_URL = ("https://upload.wikimedia.org/wikipedia/commons/1/1e/"
+             "Tormenta_en_l%27Almadrava.webm")
+req = urllib.request.Request(VIDEO_URL, headers={{
+    "User-Agent": "tensors-workshop/1.0 "
+                  "(https://github.com/project-delphi/tensors-workshop)",
+    "Range": "bytes=0-1023"}})
+got = urllib.request.urlopen(req, timeout=30).read()
+# Assert rather than print the length: a proxy that ignores Range would quietly
+# pull all 5.9 MB here and still look like a pass, which is the opposite of what
+# this cell is for.
+assert len(got) == 1024, f"expected a 1 KB range, got {{len(got)}} bytes"
+print("1024 bytes of video reachable | ffmpeg", imageio_ffmpeg.get_ffmpeg_version())""",
     "cells": [
         md("""## All the data here is real
 
@@ -76,7 +95,19 @@ of the work.**
 | NYC Taxi Trips | 6,433 real taxi journeys in New York | Tensor factorization (section 10) |
 | Airline Passengers | 144 months of real airline traffic, 1949–1960 | Recursion, forecasting (section 08) |
 
-If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, you are ready.
+
+### Downloaded later, by the section that needs it
+
+Neither of these is fetched now — the setup cell above only checks that the
+video host answers and that an ffmpeg backend is present.
+
+| Dataset | What it is | Used for |
+|---|---|---|
+| Storm video | 24 seconds of breaking waves, 720 frames at 960×540 | Video pipeline design (section 05, 5.9 MB) |
+| Voice recording | A five-second CC0 voice sample | Audio denoising (take-home E, in notebook 11) |
+
+If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, then a
+`1024 bytes of video reachable` line with an ffmpeg version, you are ready.
 **If it failed, say so in Discord immediately** — a silent download failure will
 leave you stuck at sections 07 and 10, an hour from now, with no obvious cause."""),
         md("""## See it, not just its shape
@@ -773,12 +804,103 @@ That is everything the first Kahoot asks about."""),
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["05"] = {
     "objectives": [
+        "Read the shape of a real decoded video and say what each of its four axes counts.",
         "Design the tensor shape at each of five pipeline stages, for two different systems.",
         "Apply one ragged-length strategy from section 02 and give the exact batched shape.",
         "Decide where a new axis goes, and say how that choice affects the rest of the pipeline.",
     ],
-    "setup": """import numpy as np   # only needed for the share-back sketches""",
+    "setup": """%pip install -q "imageio[ffmpeg]"
+
+import hashlib
+import io
+import urllib.request
+
+import numpy as np
+import imageio.v3 as iio
+import matplotlib.pyplot as plt
+
+# A real clip, pinned. "Tormenta en l'Almadrava" by Nicolas Vigier, CC0:
+# https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm
+# 24 seconds of breaking waves at 960x540. The SHA-256 is checked below, so the
+# file this notebook decodes cannot silently change under you -- the same
+# guarantee section 11 puts on its voice recording.
+VIDEO_URL = ("https://upload.wikimedia.org/wikipedia/commons/1/1e/"
+             "Tormenta_en_l%27Almadrava.webm")
+VIDEO_SHA256 = "e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b"
+
+# Wikimedia answers the default `Python-urllib/3.x` User-Agent with a 403, so
+# this identifies itself the way their policy asks.
+UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
+
+
+def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
+    \"\"\"Download a video, refuse to proceed if it does not match the pinned
+    checksum, and decode only every `stride`-th frame, up to `n_frames`.
+
+    Note what is and is not saved. `imiter` still decodes frames in order --
+    it reaches frame 675 by decoding all 676 before it -- but it only ever
+    RETAINS 16 of them, and it stops as soon as it has them. Holding all 720
+    would be a 1.1 GB array. Sampling frames rather than keeping them all is
+    exactly the decision the design exercise below asks you to make
+    deliberately, for two systems, and to say what it costs.
+    \"\"\"
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    raw = urllib.request.urlopen(req, timeout=120).read()
+    got = hashlib.sha256(raw).hexdigest()
+    if got != expected_sha256:
+        raise ValueError(
+            f"checksum mismatch for {url}: expected {expected_sha256}, got "
+            f"{got}. Refusing to use unverified video data.")
+    frames = []
+    for i, frame in enumerate(
+            iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")):
+        if i % stride == 0:
+            frames.append(frame)
+            if len(frames) == n_frames:
+                break
+    return np.stack(frames)
+
+
+clip = fetch_verified_video(VIDEO_URL, VIDEO_SHA256)
+# The cells below index clip[15] and quote this shape, so a short stream should
+# fail here, where the cause is visible, not as an IndexError further down.
+assert clip.shape == (16, 540, 960, 3), f"unexpected clip shape {clip.shape}"
+print(clip.shape, clip.dtype)   # (16, 540, 960, 3) uint8""",
     "cells": [
+        md("""## The tensor you are designing around
+
+> 🇪🇸 Antes de diseñar en abstracto: un vídeo real, ya descargado y
+> decodificado. `(16, 540, 960, 3)` son 16 fotogramas muestreados de 720.
+
+The setup cell just downloaded 24 seconds of a storm and decoded **16 frames
+sampled out of 720**. That is a real order-4 tensor, and every number in it was
+measured by a camera:
+
+| Axis | Length | What it counts |
+|---|---|---|
+| 0 | 16 | frames kept, out of 720 |
+| 1 | 540 | rows of pixels |
+| 2 | 960 | columns of pixels |
+| 3 | 3 | colour channels |
+
+Everything below is a *design* exercise about videos you do not have. Do it
+against this shape rather than an imagined one — and note that the pipeline has
+already made one of the choices you are about to argue about. `stride=45`
+threw away 704 frames. Nothing warned you."""),
+        code("""fig, axes = plt.subplots(1, 4, figsize=(13, 2.6))
+for ax, k in zip(axes, [0, 5, 10, 15]):
+    ax.imshow(clip[k])
+    ax.set_title(f"clip[{k}]  (frame {k * 45} of 720)", fontsize=9)
+    ax.axis("off")
+fig.suptitle("Four of the 16 sampled frames -- the waves are not the same twice")
+plt.tight_layout()
+plt.show()
+
+# Axis 0 is the only axis where order is information. Shuffle axis 1 and you
+# get a scrambled picture that is obviously broken; shuffle axis 0 and you get
+# 16 perfectly valid frames in a meaningless order -- and nothing raises.
+print(clip.shape, clip.nbytes // 1024**2, "MB for 16 frames")
+print("all 720 would be", clip.nbytes * 45 // 1024**2, "MB")"""),
         md("""## Another discussion block
 
 > 🇪🇸 Otro bloque de discusión: 10 minutos de diseño, 5 de puesta en común.

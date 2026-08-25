@@ -34,20 +34,92 @@ nuevo se define la primera vez que aparece. Habla despacio y evita modismos;
 nombra pronto los cognados: eje, descomposición, contracción, convolución.
 :::
 
-## Todos los datos son reales
+## Aquí no hay nada inventado {#todos-los-datos-son-reales .data-slide}
 
-::: {.incremental}
-- Medidas reales de tumores, dígitos manuscritos reales, histología real
-- Viajes reales en taxi, tráfico aéreo real
-- **Nada está inventado con números aleatorios**
+Once conjuntos de datos. Todos medidos sobre algo que existe.
+
+::: {.dataset-grid}
+::: {.ds}
+![](../../images/ds-nyc-taxi.jpg){fig-alt="Taxis amarillos en fila en una avenida de Manhattan, la ciudad cuyos 6.433 registros de viajes forman el conjunto de datos taxis."}
+
+[Viajes en taxi de Nueva York](https://github.com/mwaskom/seaborn-data)
+
+6.433 viajes · §10
 :::
 
-. . .
+::: {.ds}
+![](../../images/ds-airliner.jpg){fig-alt="Un avión de pasajeros Douglas DC-3 en vuelo, el aparato de la época de 1949 a 1960 cuyos totales mensuales de pasajeros cuenta el conjunto de datos flights."}
 
-Los datos reales tienen problemas que los aleatorios nunca muestran: valores
-faltantes, variables en escalas incompatibles, píxeles que nunca cambian.
+[Pasajeros aéreos](https://github.com/mwaskom/seaborn-data)
 
-**Encontrar esos problemas es parte del trabajo.**
+144 meses, 1949–60 · §08
+:::
+
+::: {.ds}
+![](../../images/ds-digits.png){fig-alt="Ocho dígitos manuscritos de load_digits de scikit-learn, cada uno de 8 por 8 píxeles, mostrados sin suavizado para que se vean los píxeles individuales."}
+
+[Dígitos manuscritos](https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset)
+
+1.797 de 8×8 · §01 §03 §06
+:::
+
+::: {.ds}
+![](../../images/ds-breast-cancer.jpg){fig-alt="Dos vistas de histopatología teñida de un carcinoma ductal invasivo de mama, el tipo de preparación del que se tomaron las medidas de los núcleos tumorales."}
+
+[Tumores de mama](https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-wisconsin-diagnostic-dataset)
+
+569 pacientes, 30 medidas · §03 §11
+:::
+
+::: {.ds}
+![](../../images/ds-cell.jpg){fig-alt="Una célula flotando en solución salina, captada como un mapa cuantitativo de fase recuperado de un holograma digital."}
+
+[Microscopía celular](https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.cell)
+
+Imagen de fase 660×550 · §04
+:::
+
+::: {.ds}
+![](../../images/ds-video.jpg){fig-alt="Tres fotogramas de un vídeo de una tormenta en l'Almadrava, separados por dos segundos; las olas cambian de un fotograma a otro, y eso es lo que hace que el eje temporal lleve información."}
+
+[Vídeo de una tormenta](https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm)
+
+24 s a 960×540 · §05
+:::
+
+::: {.ds}
+![](../../images/ds-audio.png){fig-alt="La onda de una grabación de voz de cinco segundos, amplitud frente a tiempo, con ráfagas de habla separadas por silencios."}
+
+[Grabación de voz](https://github.com/pdx-cs-sound/wavs)
+
+4,9 s a 48 kHz · §11
+:::
+
+::: {.ds .ds-more}
+**También hoy**
+
+[Vivienda en California](https://github.com/ageron/handson-ml2/blob/master/datasets/housing/housing.csv) · §07
+
+[Fotografías, histología](https://scikit-image.org/docs/stable/api/skimage.data.html) · §01 §04 §06 §09 §10
+:::
+:::
+
+Los datos reales fallan como los números aleatorios nunca fallan: valores
+faltantes, escalas incompatibles, píxeles que nunca cambian. **Encontrarlo es
+el trabajo.**
+
+::: {.notes}
+Lo importante de la cuadrícula es que cada tarjeta es un enlace: quien quiera
+puede ir a ver la fuente, y varios lo harán. Menciona los dos casos que
+sorprenden: los dígitos son el conjunto UCI de 8x8, no MNIST, y la célula es
+una imagen de fase de un holograma, no una preparación teñida.
+
+Créditos de las imágenes, todas CC0 y ninguna obligatoria: taxis Ferdinand
+Stohr, DC-3 Bernard Spragg, histopatología Mikael Haggstrom MD (Wikimedia
+Commons); tormenta Nicolas Vigier (Commons); voz Bart Massey. Los dígitos, la
+célula y la onda se generan a partir de los propios datos con
+scripts/gen_thumbnails.py.
+:::
 
 ## Programa — {{< var workshop.minutes >}} minutos
 
@@ -107,6 +179,10 @@ taxis   = pd.read_csv(TAXIS)
 flights = pd.read_csv(FLIGHTS)
 print(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)
 ```
+
+La misma celda instala el backend de ffmpeg que necesita §05 y comprueba el
+servidor del vídeo, para que un decodificador ausente aparezca ahora y no dos
+horas más tarde.
 
 **Si esto falla, dilo en Discord ahora**, no dentro de dos horas.
 
@@ -1175,10 +1251,11 @@ sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
 
 . . .
 
-**Cuatro ejercicios para casa** en el
+**Cinco ejercicios para casa** en el
 [cuaderno 11]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb):
 la trampa de escala de PCA, la atención como dos contracciones, CP frente a
-Tucker, y construir portafolios correlacionados con Cholesky.
+Tucker, construir portafolios correlacionados con Cholesky, y eliminar el ruido
+de una grabación de voz real reduciendo el rango.
 
 ## Gracias
 

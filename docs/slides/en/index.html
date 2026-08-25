@@ -7,7 +7,7 @@
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-97af773cfbe0d0670e77fe96929c7f4c.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
   <title>Tensors for Machine Learning</title>
@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-c0ee31b37f7c3492c9f97e956bede215.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-a0b18568998a1b37783ebddf699421b9.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -218,19 +218,66 @@
           display:block!important;
       }</style></aside>
 </section>
-<section id="all-the-data-here-is-real" class="slide level2">
-<h2>All the data here is real</h2>
-<div>
-<ul>
-<li class="fragment">Real tumour measurements, real handwritten digits, real histology</li>
-<li class="fragment">Real taxi trips, real airline traffic</li>
-<li class="fragment"><strong>Nothing is invented with random numbers</strong></li>
-</ul>
+<section id="all-the-data-here-is-real" class="slide level2 data-slide">
+<h2>Nothing here is invented</h2>
+<p>Eleven datasets. Every one measured off something that exists.</p>
+<div class="dataset-grid">
+<div class="ds">
+<p><img data-src="../../images/ds-nyc-taxi.jpg" alt="Yellow taxis queuing on a Manhattan avenue, the city whose 6,433 trip records make up the taxis dataset."></p>
+<p><a href="https://github.com/mwaskom/seaborn-data">NYC taxi trips</a></p>
+<p>6,433 journeys · §10</p>
 </div>
-<div class="fragment">
-<p>Real data contains problems random data never shows — missing values, features on incompatible scales, pixels that never change.</p>
-<p><strong>Finding those problems is part of the work.</strong></p>
+<div class="ds">
+<p><img data-src="../../images/ds-airliner.jpg" alt="A Douglas DC-3 airliner in flight, the aircraft of the 1949 to 1960 era whose monthly passenger totals the flights dataset counts."></p>
+<p><a href="https://github.com/mwaskom/seaborn-data">Airline passengers</a></p>
+<p>144 months, 1949–60 · §08</p>
 </div>
+<div class="ds">
+<p><img data-src="../../images/ds-digits.png" alt="Eight handwritten digits from scikit-learn's load_digits, each 8 by 8 pixels, shown unsmoothed so the individual pixels stay visible."></p>
+<p><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset">Handwritten digits</a></p>
+<p>1,797 at 8×8 · §01 §03 §06</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-breast-cancer.jpg" alt="Two stained histopathology views of invasive ductal carcinoma of the breast, the kind of slide the tumour nucleus measurements were taken from."></p>
+<p><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-wisconsin-diagnostic-dataset">Breast tumours</a></p>
+<p>569 patients, 30 measures · §03 §11</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-cell.jpg" alt="A single cell floating in saline, imaged as a quantitative phase map recovered from a digital hologram."></p>
+<p><a href="https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.cell">Cell microscopy</a></p>
+<p>660×550 phase image · §04</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-video.jpg" alt="Three frames from footage of a storm at l'Almadrava, two seconds apart; the breaking waves differ from frame to frame, which is what makes the time axis carry information."></p>
+<p><a href="https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm">Storm footage</a></p>
+<p>24 s at 960×540 · §05</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-audio.png" alt="The waveform of a five-second voice recording, amplitude against time, with bursts of speech separated by quieter gaps."></p>
+<p><a href="https://github.com/pdx-cs-sound/wavs">Voice recording</a></p>
+<p>4.9 s at 48 kHz · §11</p>
+</div>
+<div class="ds ds-more">
+<p><strong>Also today</strong></p>
+<p><a href="https://github.com/ageron/handson-ml2/blob/master/datasets/housing/housing.csv">California housing</a> · §07</p>
+<p><a href="https://scikit-image.org/docs/stable/api/skimage.data.html">Photographs, histology</a> · §01 §04 §06 §09 §10</p>
+</div>
+</div>
+<p>Real data breaks in ways random numbers never do — missing values, mismatched scales, pixels that never change. <strong>Finding that is the work.</strong></p>
+<aside class="notes">
+<p>The point of the grid is that every card is a link: students can go and look at the source themselves, and several will. Name the two that surprise people — the digits are the UCI 8x8 set, not MNIST, and the cell is a phase image from a hologram rather than a stained slide.</p>
+<p>Image credits, all CC0 and none required: taxis Ferdinand Stohr, DC-3 Bernard Spragg, histopathology Mikael Haggstrom MD (Wikimedia Commons); storm Nicolas Vigier (Commons); voice Bart Massey. Digits, cell and waveform are rendered from the data itself by scripts/gen_thumbnails.py.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="agenda-minutes" class="slide level2">
 <h2>Agenda — 195 minutes</h2>
@@ -367,9 +414,11 @@
 <span id="cb1-7"><a></a>flights <span class="op">=</span> pd.read_csv(FLIGHTS)</span>
 <span id="cb1-8"><a></a><span class="bu">print</span>(housing.shape, taxis.shape, flights.shape)   <span class="co"># (20640, 10) (6433, 14) (144, 3)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>The same cell installs the ffmpeg backend §05 needs and pings the video host, so a missing decoder surfaces now rather than two hours in.</p>
 <p><strong>If this fails, say so in Discord now</strong> — not in two hours.</p>
 <aside class="notes">
 <p>Confirm in the first 5 minutes that everyone’s download succeeded. A student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the repo as a fallback.</p>
+<p>The <code>%pip install "imageio[ffmpeg]"</code> line pulls about 20 MB. On a slow venue network start this cell before you start talking.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -1437,7 +1486,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <li><a href="../../tensors_workshop_plan_with_quizzes.html#further-reading">Further Reading</a> — books and the seminal papers behind Tucker, CP and SVD</li>
 </ul>
 <div class="fragment">
-<p><strong>Four take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, CP compared to Tucker, and building correlated portfolios with Cholesky.</p>
+<p><strong>Five take-homes</strong> in <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">notebook 11</a>: the PCA scaling trap, attention as two contractions, CP compared to Tucker, building correlated portfolios with Cholesky, and denoising a real voice recording by rank reduction.</p>
 </div>
 </section>
 <section id="thank-you" class="slide level2">

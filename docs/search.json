@@ -199,8 +199,8 @@
     "objectID": "slides/en/index.html#all-the-data-here-is-real",
     "href": "slides/en/index.html#all-the-data-here-is-real",
     "title": "Tensors for Machine Learning",
-    "section": "All the data here is real",
-    "text": "All the data here is real\n\n\nReal tumour measurements, real handwritten digits, real histology\nReal taxi trips, real airline traffic\nNothing is invented with random numbers\n\n\n\nReal data contains problems random data never shows — missing values, features on incompatible scales, pixels that never change.\nFinding those problems is part of the work."
+    "section": "Nothing here is invented",
+    "text": "Nothing here is invented\nEleven datasets. Every one measured off something that exists.\n\n\n\nNYC taxi trips\n6,433 journeys · §10\n\n\n\nAirline passengers\n144 months, 1949–60 · §08\n\n\n\nHandwritten digits\n1,797 at 8×8 · §01 §03 §06\n\n\n\nBreast tumours\n569 patients, 30 measures · §03 §11\n\n\n\nCell microscopy\n660×550 phase image · §04\n\n\n\nStorm footage\n24 s at 960×540 · §05\n\n\n\nVoice recording\n4.9 s at 48 kHz · §11\n\n\nAlso today\nCalifornia housing · §07\nPhotographs, histology · §01 §04 §06 §09 §10\n\n\nReal data breaks in ways random numbers never do — missing values, mismatched scales, pixels that never change. Finding that is the work.\n\nThe point of the grid is that every card is a link: students can go and look at the source themselves, and several will. Name the two that surprise people — the digits are the UCI 8x8 set, not MNIST, and the cell is a phase image from a hologram rather than a stained slide.\nImage credits, all CC0 and none required: taxis Ferdinand Stohr, DC-3 Bernard Spragg, histopathology Mikael Haggstrom MD (Wikimedia Commons); storm Nicolas Vigier (Commons); voice Bart Massey. Digits, cell and waveform are rendered from the data itself by scripts/gen_thumbnails.py."
   },
   {
     "objectID": "slides/en/index.html#agenda-minutes",
@@ -221,7 +221,7 @@
     "href": "slides/en/index.html#three-downloads-one-first-cell",
     "title": "Tensors for Machine Learning",
     "section": "Three downloads, one first cell",
-    "text": "Three downloads, one first cell\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\nIf this fails, say so in Discord now — not in two hours.\n\nConfirm in the first 5 minutes that everyone’s download succeeded. A student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the repo as a fallback."
+    "text": "Three downloads, one first cell\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\nThe same cell installs the ffmpeg backend §05 needs and pings the video host, so a missing decoder surfaces now rather than two hours in.\nIf this fails, say so in Discord now — not in two hours.\n\nConfirm in the first 5 minutes that everyone’s download succeeded. A student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the repo as a fallback.\nThe %pip install \"imageio[ffmpeg]\" line pulls about 20 MB. On a slow venue network start this cell before you start talking."
   },
   {
     "objectID": "slides/en/index.html#to-the-notebook",
@@ -627,7 +627,7 @@
     "href": "slides/en/index.html#where-to-go-next",
     "title": "Tensors for Machine Learning",
     "section": "Where to go next",
-    "text": "Where to go next\n\ntorch.einsum / tf.einsum / jnp.einsum — identical syntax to today\ntensorly — proper Tucker and CP\nnp.linalg — the rest of Chapter 2: eig, lstsq, pinv, qr, cholesky\nscipy.signal, skimage.restoration — convolution and deconvolution beyond today\nFurther Reading — books and the seminal papers behind Tucker, CP and SVD\n\n\nFour take-homes in notebook 11: the PCA scaling trap, attention as two contractions, CP compared to Tucker, and building correlated portfolios with Cholesky."
+    "text": "Where to go next\n\ntorch.einsum / tf.einsum / jnp.einsum — identical syntax to today\ntensorly — proper Tucker and CP\nnp.linalg — the rest of Chapter 2: eig, lstsq, pinv, qr, cholesky\nscipy.signal, skimage.restoration — convolution and deconvolution beyond today\nFurther Reading — books and the seminal papers behind Tucker, CP and SVD\n\n\nFive take-homes in notebook 11: the PCA scaling trap, attention as two contractions, CP compared to Tucker, building correlated portfolios with Cholesky, and denoising a real voice recording by rank reduction."
   },
   {
     "objectID": "slides/en/index.html#thank-you",
@@ -843,8 +843,8 @@
     "objectID": "slides/es/index.html#todos-los-datos-son-reales",
     "href": "slides/es/index.html#todos-los-datos-son-reales",
     "title": "Tensores para Aprendizaje Automático",
-    "section": "Todos los datos son reales",
-    "text": "Todos los datos son reales\n\n\nMedidas reales de tumores, dígitos manuscritos reales, histología real\nViajes reales en taxi, tráfico aéreo real\nNada está inventado con números aleatorios\n\n\n\nLos datos reales tienen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian.\nEncontrar esos problemas es parte del trabajo."
+    "section": "Aquí no hay nada inventado",
+    "text": "Aquí no hay nada inventado\nOnce conjuntos de datos. Todos medidos sobre algo que existe.\n\n\n\nViajes en taxi de Nueva York\n6.433 viajes · §10\n\n\n\nPasajeros aéreos\n144 meses, 1949–60 · §08\n\n\n\nDígitos manuscritos\n1.797 de 8×8 · §01 §03 §06\n\n\n\nTumores de mama\n569 pacientes, 30 medidas · §03 §11\n\n\n\nMicroscopía celular\nImagen de fase 660×550 · §04\n\n\n\nVídeo de una tormenta\n24 s a 960×540 · §05\n\n\n\nGrabación de voz\n4,9 s a 48 kHz · §11\n\n\nTambién hoy\nVivienda en California · §07\nFotografías, histología · §01 §04 §06 §09 §10\n\n\nLos datos reales fallan como los números aleatorios nunca fallan: valores faltantes, escalas incompatibles, píxeles que nunca cambian. Encontrarlo es el trabajo.\n\nLo importante de la cuadrícula es que cada tarjeta es un enlace: quien quiera puede ir a ver la fuente, y varios lo harán. Menciona los dos casos que sorprenden: los dígitos son el conjunto UCI de 8x8, no MNIST, y la célula es una imagen de fase de un holograma, no una preparación teñida.\nCréditos de las imágenes, todas CC0 y ninguna obligatoria: taxis Ferdinand Stohr, DC-3 Bernard Spragg, histopatología Mikael Haggstrom MD (Wikimedia Commons); tormenta Nicolas Vigier (Commons); voz Bart Massey. Los dígitos, la célula y la onda se generan a partir de los propios datos con scripts/gen_thumbnails.py."
   },
   {
     "objectID": "slides/es/index.html#programa-minutos",
@@ -865,7 +865,7 @@
     "href": "slides/es/index.html#tres-descargas-una-primera-celda",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Tres descargas, una primera celda",
-    "text": "Tres descargas, una primera celda\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\nSi esto falla, dilo en Discord ahora, no dentro de dos horas.\n\nConfirma en los primeros 5 minutos que a todo el mundo le funcionó la descarga. Quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio como alternativa."
+    "text": "Tres descargas, una primera celda\n\nHOUSING = \"https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv\"\nTAXIS   = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv\"\nFLIGHTS = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv\"\n\nhousing = pd.read_csv(HOUSING)\ntaxis   = pd.read_csv(TAXIS)\nflights = pd.read_csv(FLIGHTS)\nprint(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)\n\nLa misma celda instala el backend de ffmpeg que necesita §05 y comprueba el servidor del vídeo, para que un decodificador ausente aparezca ahora y no dos horas más tarde.\nSi esto falla, dilo en Discord ahora, no dentro de dos horas.\n\nConfirma en los primeros 5 minutos que a todo el mundo le funcionó la descarga. Quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio como alternativa."
   },
   {
     "objectID": "slides/es/index.html#al-cuaderno",
@@ -1271,7 +1271,7 @@
     "href": "slides/es/index.html#dónde-seguir",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Dónde seguir",
-    "text": "Dónde seguir\n\ntorch.einsum / tf.einsum / jnp.einsum — sintaxis idéntica a la de hoy\ntensorly — Tucker y CP de verdad\nnp.linalg — el resto del capítulo 2: eig, lstsq, pinv, qr, cholesky\nscipy.signal, skimage.restoration — convolución y deconvolución más allá de hoy\nLecturas adicionales — libros y los artículos originales de Tucker, CP y SVD (en inglés)\n\n\nCuatro ejercicios para casa en el cuaderno 11: la trampa de escala de PCA, la atención como dos contracciones, CP frente a Tucker, y construir portafolios correlacionados con Cholesky."
+    "text": "Dónde seguir\n\ntorch.einsum / tf.einsum / jnp.einsum — sintaxis idéntica a la de hoy\ntensorly — Tucker y CP de verdad\nnp.linalg — el resto del capítulo 2: eig, lstsq, pinv, qr, cholesky\nscipy.signal, skimage.restoration — convolución y deconvolución más allá de hoy\nLecturas adicionales — libros y los artículos originales de Tucker, CP y SVD (en inglés)\n\n\nCinco ejercicios para casa en el cuaderno 11: la trampa de escala de PCA, la atención como dos contracciones, CP frente a Tucker, construir portafolios correlacionados con Cholesky, y eliminar el ruido de una grabación de voz real reduciendo el rango."
   },
   {
     "objectID": "slides/es/index.html#gracias",
