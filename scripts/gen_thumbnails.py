@@ -2,8 +2,8 @@
 slide in both decks.
 
 Unlike `gen_tables.py` and `gen_notebooks.py`, this is **not** part of the CI
-regenerate gate: it needs the network, and re-fetching six files from
-Wikimedia on every push would be both slow and rude. It exists so the images in
+regenerate gate: it needs the network, and re-fetching five files from
+Wikimedia and one from GitHub on every push would be both slow and rude. It exists so the images in
 `images/ds-*` are reproducible artifacts with recorded provenance rather
 than mystery binaries — the gap the older `images/*.png` files still have.
 
@@ -32,8 +32,10 @@ IMAGES = Path(__file__).resolve().parent.parent / "images"
 # 403, so every fetch here identifies itself. The notebooks do the same.
 UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
 
-# Card thumbnails are displayed ~186px wide in a 1280x760 deck; generate at
-# roughly 2x so they stay sharp on a projector and on a retina display.
+# Card thumbnails are displayed ~230px wide in a 1280x760 deck — five columns
+# of the grid, less the 95% max-width the reveal theme puts on every image.
+# Generate at roughly 2x so they stay sharp on a projector and on a retina
+# display. `.ds img` in slides/slides.scss pins the box to this 20:13.
 CARD = (400, 260)
 
 # ─── sources ────────────────────────────────────────────────────────────────
@@ -123,7 +125,7 @@ def cover(img, size=CARD):
 
 def save(img, name: str, lossless: bool = False) -> None:
     """Photographs go out as JPEG: the same card as PNG is ~190 KB against
-    ~30 KB, and eight of them share one slide. Pass `lossless=True` for the
+    ~30 KB, and nine of them share one slide. Pass `lossless=True` for the
     flat-colour cards — the digit sheet and the waveform are nothing but hard
     edges, JPEG rings around every one of them, and they compress smaller as
     PNG anyway."""

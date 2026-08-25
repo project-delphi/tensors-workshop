@@ -129,11 +129,12 @@ the digits are the UCI 8x8 set, not MNIST, and the cell is a phase image from a
 hologram rather than a stained slide — the histology card beside it is the
 stained one.
 
-Image credits, all CC0 and none required: taxis Ferdinand Stohr, DC-3 Bernard
+Image credits, none of them required: taxis Ferdinand Stohr, DC-3 Bernard
 Spragg, histopathology Mikael Haggstrom MD, tract housing Alfred Twu (Wikimedia
-Commons); storm Nicolas Vigier (Commons); voice Bart Massey. Digits, cell,
-histology and waveform are rendered from the data itself by
-scripts/gen_thumbnails.py.
+Commons); storm Nicolas Vigier (Commons); voice Bart Massey — all CC0. Digits,
+cell, histology and waveform are rendered from the data itself by
+scripts/gen_thumbnails.py; those are CC0 too, except the histology, which
+skimage documents as having no known copyright restrictions.
 :::
 
 ## Agenda — {{< var workshop.minutes >}} minutes

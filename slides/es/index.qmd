@@ -129,11 +129,12 @@ sorprenden: los dígitos son el conjunto UCI de 8x8, no MNIST, y la célula es
 una imagen de fase de un holograma, no una preparación teñida — la tarjeta de
 histología que tiene al lado sí lo es.
 
-Créditos de las imágenes, todas CC0 y ninguna obligatoria: taxis Ferdinand
-Stohr, DC-3 Bernard Spragg, histopatología Mikael Haggstrom MD, viviendas en
-serie Alfred Twu (Wikimedia Commons); tormenta Nicolas Vigier (Commons); voz
-Bart Massey. Los dígitos, la célula, la histología y la onda se generan a
-partir de los propios datos con scripts/gen_thumbnails.py.
+Créditos de las imágenes, ninguno obligatorio: taxis Ferdinand Stohr, DC-3
+Bernard Spragg, histopatología Mikael Haggstrom MD, viviendas en serie Alfred
+Twu (Wikimedia Commons); tormenta Nicolas Vigier (Commons); voz Bart Massey —
+todas CC0. Los dígitos, la célula, la histología y la onda se generan a partir
+de los propios datos con scripts/gen_thumbnails.py; también son CC0, salvo la
+histología, que skimage documenta sin restricciones de copyright conocidas.
 :::
 
 ## Programa — {{< var workshop.minutes >}} minutos
