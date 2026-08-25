@@ -37,6 +37,11 @@ summary.
   [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
   **before** the session — a silent download failure leaves you stuck at
   sections 07 and 10, an hour in.
+- **Required pre-work:** work through
+  [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)
+  before the session — 14 short bilingual Colab notebooks (~2–3 hours total)
+  covering exactly the linear algebra above, vectors through PCA. This
+  workshop moves fast through material that assumes you've done this review.
 
 ## All the data is real
 
@@ -165,6 +170,11 @@ resumen de una línea en español.
   [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
   **antes** de la sesión: una descarga que falla en silencio te deja atascado en
   las secciones 07 y 10, una hora después.
+- **Trabajo previo obligatorio:** completa
+  [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)
+  antes de la sesión — 14 cuadernos breves de Colab, bilingües (~2–3 horas en
+  total), que cubren exactamente el álgebra lineal anterior, de vectores a
+  PCA. Este taller avanza rápido y da por hecho que ya lo hiciste.
 
 ## Todos los datos son reales
 

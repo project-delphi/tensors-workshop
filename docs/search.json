@@ -697,7 +697,7 @@
     "href": "index.html#prerequisites",
     "title": "Tensors for Machine Learning",
     "section": "Prerequisites",
-    "text": "Prerequisites\n\nThe linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra — vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD.\nA Google account, so you can run the notebooks in Colab. Nothing to install.\nThree CSV files are downloaded at the start. Run notebook 00 before the session and say so immediately if it fails — a silent download failure will leave you stuck at sections 07 and 10."
+    "text": "Prerequisites\n\nThe linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra — vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD.\nA Google account, so you can run the notebooks in Colab. Nothing to install.\nThree CSV files are downloaded at the start. Run notebook 00 before the session and say so immediately if it fails — a silent download failure will leave you stuck at sections 07 and 10.\nRequired pre-work: work through linear-algebra-deep-learning before the session — 14 short bilingual Colab notebooks (~2–3 hours total) covering exactly the linear algebra above, vectors through PCA. This workshop moves fast through material that assumes you’ve done this review."
   },
   {
     "objectID": "index.html#how-to-run-the-notebooks",
@@ -795,7 +795,7 @@
     "href": "es/index.html#requisitos-previos",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Requisitos previos",
-    "text": "Requisitos previos\n\nEl álgebra lineal del capítulo 2 de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD.\nUna cuenta de Google para ejecutar los cuadernos en Colab. No hay que instalar nada.\nAl principio se descargan tres archivos CSV. Ejecuta el cuaderno 00 antes de la sesión y avisa enseguida si falla: una descarga que falla en silencio te dejará atascado en las secciones 07 y 10."
+    "text": "Requisitos previos\n\nEl álgebra lineal del capítulo 2 de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD.\nUna cuenta de Google para ejecutar los cuadernos en Colab. No hay que instalar nada.\nAl principio se descargan tres archivos CSV. Ejecuta el cuaderno 00 antes de la sesión y avisa enseguida si falla: una descarga que falla en silencio te dejará atascado en las secciones 07 y 10.\nTrabajo previo obligatorio: completa linear-algebra-deep-learning antes de la sesión — 14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren exactamente el álgebra lineal anterior, de vectores a PCA. Este taller avanza rápido y da por hecho que ya lo hiciste."
   },
   {
     "objectID": "es/index.html#cómo-ejecutar-los-cuadernos",
