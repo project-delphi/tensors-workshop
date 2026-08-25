@@ -582,6 +582,37 @@ print(radius[y == 0].mean(), radius[y == 1].mean()) # 17.5 vs 12.1
 
 # A real result: MALIGNANT TUMOURS REALLY DO HAVE A LARGER MEAN RADIUS,
 # 17.5 against 12.1. Random data would never have shown you that."""),
+        md("""`radius` was one column out of 30, picked because it happens to separate the
+two groups well. Drag the slider below to look at all 30 — most separate far
+less cleanly.
+
+> 🇪🇸 Mueve el deslizador para ver las 30 medidas, una por una. La mayoría
+> separa malignos de benignos mucho peor que el radio."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_feature(i):
+    plt.close('all')
+    col = X[:, i]
+    fig, ax = plt.subplots(figsize=(6, 3))
+    ax.hist(col[y == 0], bins=30, alpha=0.6, label='malignant', color='#C44E52')
+    ax.hist(col[y == 1], bins=30, alpha=0.6, label='benign', color='#4C72B0')
+    ax.set_title(names[i])
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+    print(f"malignant mean: {col[y == 0].mean():.3f}   "
+          f"benign mean: {col[y == 1].mean():.3f}")
+
+widgets.interact(show_feature,
+                  i=widgets.IntSlider(min=0, max=len(names) - 1, step=1, value=0,
+                                       description='feature'));"""),
         md("""## Broadcasting, on real images
 
 > 🇪🇸 Broadcasting sobre imágenes reales.
@@ -618,7 +649,17 @@ print(np.isnan(Z).any())                            # False
 # THREE PIXELS ARE ALWAYS DARK in all 1797 digit images: they sit in corners
 # where nobody writes. Their standard deviation is exactly zero, so dividing
 # produces NaN. np.where leaves those columns as plain centred zeros, which is
-# the honest thing to do with a feature that carries no information."""),
+# the honest thing to do with a feature that carries no information.
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(3, 3))
+ax.imshow(D.mean(axis=0).reshape(8, 8), cmap='gray')
+zero_rows, zero_cols = np.where((std == 0).reshape(8, 8))
+ax.scatter(zero_cols, zero_rows, s=250, marker='s',
+           facecolors='none', edgecolors='#C44E52', linewidths=2)
+ax.set_title('zero-variance pixels, marked')
+ax.axis('off')
+plt.show()"""),
         md("""## What just happened
 
 Two real results, neither of which random data could have produced:
@@ -700,18 +741,18 @@ print(np.array_equal(nchw[:, 0], nchw[:, 1]))  # False — the 3 colour channels
 > 🇪🇸 El que se ejecuta sin error y aun así está mal."""),
         code("""# TODO 5: photo.reshape(3, 512, 512) runs WITHOUT error but is wrong.
 #         Run it, compare against TODO 2, and explain the difference.
-#         If you can, display both with matplotlib and look at them."""),
+#         Then display both with matplotlib and look at them."""),
         solution("""chw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct
 wrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — runs, but scrambles
 
 print(chw.shape == wrong.shape)             # True  — identical shapes
 print(np.array_equal(chw, wrong))           # False — completely different data
 
-# Optional, and worth doing once:
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-# ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
-# ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")"""),
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
+ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")
+plt.show()"""),
         md("""## What just happened
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them
