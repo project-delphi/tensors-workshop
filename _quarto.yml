@@ -16,6 +16,7 @@ project:
     - .nojekyll
     - kahoot/*.xlsx
     - notebooks/*.ipynb
+    - images/**
 
 website:
   title: "Tensors for Machine Learning"

@@ -384,9 +384,15 @@
 </section>
 <section id="al-cuaderno" class="slide level2">
 <h2>Al cuaderno</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <p><strong>00 · Preparación y bienvenida</strong></p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">Abrir en Colab</a></p>
 <p>El resto viene dentro de las librerías y funciona sin conexión: <code>load_breast_cancer</code>, <code>load_digits</code>, <code>data.camera()</code>, <code>data.astronaut()</code>.</p>
+</div><div class="column" style="width:40%;">
+<p><img data-src="../../images/camera.png" alt="Miniatura en escala de grises de la fotografía «camera» de scikit-image, una imagen de prueba estándar incluida sin conexión en la librería." width="220"></p>
+<p><img data-src="../../images/astronaut.png" alt="Pequeña miniatura en color de la fotografía «astronaut» de scikit-image, otra imagen de prueba estándar incluida sin conexión en la librería." width="220"></p>
+</div></div>
 </section></section>
 <section>
 <section id="sec-01-what-a-tensor-is" class="title-slide slide level1 center">
@@ -465,6 +471,9 @@
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a></a>digits.images.shape              <span class="co"># (1797, 8, 8)  — imágenes, alto, ancho</span></span>
 <span id="cb3-2"><a></a>photo.shape                      <span class="co"># (512, 512, 3) — alto, ancho, color</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div class="fragment">
+<p><img data-src="../../images/digits-grid.png" alt="Cuadrícula de ocho dígitos manuscritos reales del conjunto de datos digits de scikit-learn, cada uno una imagen en escala de grises de 8 por 8 píxeles mostrada sin suavizado para que se vean los píxeles individuales — esto es lo que significa la forma (1797, 8, 8): 1797 imágenes como estas." width="260"></p>
 </div>
 <div class="fragment">
 <p><strong>Los dos son de orden 3. Sus ejes significan cosas completamente distintas.</strong></p>
@@ -650,6 +659,8 @@
 </section>
 <section id="por-qué-importa" class="slide level2">
 <h2>Por qué importa</h2>
+<div class="columns">
+<div class="column" style="width:55%;">
 <p>569 pacientes reales, 30 medidas reales de núcleos de células tumorales.</p>
 <div>
 <ul>
@@ -658,6 +669,9 @@
 <li class="fragment">Tu análisis continúa y da una respuesta segura y equivocada</li>
 </ul>
 </div>
+</div><div class="column" style="width:45%;">
+<p><img data-src="../../images/breast-cancer.png" alt="Diagrama de dispersión del radio medio frente a la textura media para 569 pacientes del conjunto de datos breast cancer de scikit-learn, coloreado por diagnóstico maligno o benigno; dos de las 30 medidas del conjunto, no el conjunto completo." width="300"></p>
+</div></div>
 <div class="fragment">
 <p>En investigación: resultados que nadie puede reproducir. En una herramienta clínica: una recomendación errónea sobre una persona real.</p>
 </div>
@@ -699,13 +713,17 @@
 </section>
 <section id="por-qué-importa-1" class="slide level2">
 <h2>Por qué importa</h2>
+<div class="columns">
+<div class="column" style="width:60%;">
 <p>Los microscopios y las cámaras ordenan sus ejes según el <strong>hardware</strong>, no según lo que espera un modelo.</p>
-<div class="fragment">
+<p>. . .</p>
 <p>Equivocarse no provoca ningún fallo. El modelo se ejecuta sobre datos revueltos y devuelve <strong>resultados seguros y sin sentido</strong>.</p>
-</div>
-<div class="fragment">
+<p>. . .</p>
 <p>La versión famosa: un modelo entrenado en TensorFlow (<code>NHWC</code>) desplegado en PyTorch (<code>NCHW</code>) sin transponer.</p>
-</div>
+</div><div class="column" style="width:40%;">
+<p><img data-src="../../images/immunohistochemistry.png" alt="Imagen en color de tejido teñido por inmunohistoquímica de scikit-image, un ejemplo de imagen de microscopía cuyos canales de color están ordenados según el hardware de captura." width="240"></p>
+<p><img data-src="../../images/cell.png" alt="Imagen de microscopía en escala de grises de una célula de scikit-image, otro ejemplo de ejes de imagen ordenados por el hardware." width="240"></p>
+</div></div>
 </section>
 <section id="la-misma-forma-datos-distintos" class="slide level2">
 <h2>La misma forma, datos distintos</h2>
@@ -930,6 +948,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <span id="cb18-8"><a></a>rmse <span class="op">=</span> np.sqrt(((X <span class="op">@</span> w <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>).mean())           <span class="co"># ~75.980</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
+<p><img data-src="../../images/california-housing.png" alt="Mapa de dispersión de distritos de vivienda de California según longitud y latitud, coloreado por el valor medio de la vivienda, que muestra la concentración de viviendas caras en la costa dentro del mismo conjunto de datos usado en el ajuste por mínimos cuadrados." width="300"></p>
+</div>
+<div class="fragment">
 <p><strong>Ninguna recta pasa por 20.433 puntos.</strong> La pseudoinversa da la mejor respuesta posible. El coeficiente mayor es <code>median_income</code>: tiene todo el sentido.</p>
 <aside class="notes">
 <p>El TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo.</p>
@@ -1021,6 +1042,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <span id="cb21-6"><a></a>history <span class="op">=</span> <span class="bu">list</span>(y[<span class="op">-</span><span class="dv">12</span>:])</span>
 <span id="cb21-7"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):                           <span class="co"># realimenta sus propias predicciones</span></span>
 <span id="cb21-8"><a></a>    history.append(w[<span class="dv">0</span>] <span class="op">+</span> np.dot(w[<span class="dv">1</span>:], history[<span class="op">-</span><span class="dv">12</span>:]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><img data-src="../../images/airline-passengers.png" alt="Gráfico de líneas del número mensual de pasajeros de aerolínea entre 1949 y 1960, la serie de 144 meses usada en el pronóstico, con una tendencia creciente y un pico veraniego que se repite cada año." width="300"></p>
 </div>
 <div class="fragment">
 <p><code>[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]</code></p>
@@ -1198,6 +1222,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
 <span id="cb28-2"><a></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
 <span id="cb28-3"><a></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="fragment">
+<p><img data-src="../../images/nyc-taxi-pickups-by-hour.png" alt="Gráfico de barras de las recogidas de taxi por hora del día del mismo conjunto de 6.433 viajes, que sube a lo largo del día hasta un pico alrededor de la hora 18, la hora punta que la descomposición de Tucker vuelve a descubrir por sí sola." width="300"></p>
 </div>
 <div class="fragment">
 <p><code>T[i, j, k]</code> = viajes del barrio <code>i</code> al barrio <code>j</code> recogidos durante la hora <code>k</code>.</p>
