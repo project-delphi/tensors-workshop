@@ -57,7 +57,7 @@ Eleven datasets. Every one measured off something that exists.
 :::
 
 ::: {.ds}
-![](../../images/ds-digits.jpg){fig-alt="Eight handwritten digits from scikit-learn's load_digits, each 8 by 8 pixels, shown unsmoothed so the individual pixels stay visible."}
+![](../../images/ds-digits.png){fig-alt="Eight handwritten digits from scikit-learn's load_digits, each 8 by 8 pixels, shown unsmoothed so the individual pixels stay visible."}
 
 [Handwritten digits](https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset)
 

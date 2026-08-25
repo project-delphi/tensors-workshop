@@ -56,7 +56,7 @@ Once conjuntos de datos. Todos medidos sobre algo que existe.
 :::
 
 ::: {.ds}
-![](../../images/ds-digits.jpg){fig-alt="Ocho dígitos manuscritos de load_digits de scikit-learn, cada uno de 8 por 8 píxeles, mostrados sin suavizado para que se vean los píxeles individuales."}
+![](../../images/ds-digits.png){fig-alt="Ocho dígitos manuscritos de load_digits de scikit-learn, cada uno de 8 por 8 píxeles, mostrados sin suavizado para que se vean los píxeles individuales."}
 
 [Dígitos manuscritos](https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset)
 

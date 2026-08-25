@@ -62,8 +62,12 @@ req = urllib.request.Request(VIDEO_URL, headers={{
     "User-Agent": "tensors-workshop/1.0 "
                   "(https://github.com/project-delphi/tensors-workshop)",
     "Range": "bytes=0-1023"}})
-print(len(urllib.request.urlopen(req, timeout=30).read()), "bytes of video reachable",
-      "| ffmpeg", imageio_ffmpeg.get_ffmpeg_version())""",
+got = urllib.request.urlopen(req, timeout=30).read()
+# Assert rather than print the length: a proxy that ignores Range would quietly
+# pull all 5.9 MB here and still look like a pass, which is the opposite of what
+# this cell is for.
+assert len(got) == 1024, f"expected a 1 KB range, got {{len(got)}} bytes"
+print("1024 bytes of video reachable | ffmpeg", imageio_ffmpeg.get_ffmpeg_version())""",
     "cells": [
         md("""## All the data here is real
 
@@ -90,8 +94,17 @@ of the work.**
 | California Housing | 20,640 real housing districts, 1990 US census | Pseudoinverse, least squares (section 07) |
 | NYC Taxi Trips | 6,433 real taxi journeys in New York | Tensor factorization (section 10) |
 | Airline Passengers | 144 months of real airline traffic, 1949–1960 | Recursion, forecasting (section 08) |
-| Storm video | 24 seconds of breaking waves, 720 frames at 960×540 | Video pipeline design (section 05) |
-| Voice recording | A five-second CC0 voice sample | Audio denoising (take-home E) |
+
+
+### Downloaded later, by the section that needs it
+
+Neither of these is fetched now — the setup cell above only checks that the
+video host answers and that an ffmpeg backend is present.
+
+| Dataset | What it is | Used for |
+|---|---|---|
+| Storm video | 24 seconds of breaking waves, 720 frames at 960×540 | Video pipeline design (section 05, 5.9 MB) |
+| Voice recording | A five-second CC0 voice sample | Audio denoising (take-home E, in notebook 11) |
 
 If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, then a
 `1024 bytes of video reachable` line with an ffmpeg version, you are ready.
@@ -824,10 +837,11 @@ def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
     \"\"\"Download a video, refuse to proceed if it does not match the pinned
     checksum, and decode only every `stride`-th frame, up to `n_frames`.
 
-    Streaming with `imiter` instead of decoding the whole file is the point,
-    not an optimisation: all 720 frames at once would be a 1.1 GB array. What
-    this function does in three lines -- sample frames rather than keep them
-    all -- is exactly the decision the design exercise below asks you to make
+    Note what is and is not saved. `imiter` still decodes frames in order --
+    it reaches frame 675 by decoding all 676 before it -- but it only ever
+    RETAINS 16 of them, and it stops as soon as it has them. Holding all 720
+    would be a 1.1 GB array. Sampling frames rather than keeping them all is
+    exactly the decision the design exercise below asks you to make
     deliberately, for two systems, and to say what it costs.
     \"\"\"
     req = urllib.request.Request(url, headers={"User-Agent": UA})
@@ -848,6 +862,9 @@ def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
 
 
 clip = fetch_verified_video(VIDEO_URL, VIDEO_SHA256)
+# The cells below index clip[15] and quote this shape, so a short stream should
+# fail here, where the cause is visible, not as an IndexError further down.
+assert clip.shape == (16, 540, 960, 3), f"unexpected clip shape {clip.shape}"
 print(clip.shape, clip.dtype)   # (16, 540, 960, 3) uint8""",
     "cells": [
         md("""## The tensor you are designing around

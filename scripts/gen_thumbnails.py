@@ -4,15 +4,19 @@ slide in both decks.
 Unlike `gen_tables.py` and `gen_notebooks.py`, this is **not** part of the CI
 regenerate gate: it needs the network, and re-fetching five files from
 Wikimedia on every push would be both slow and rude. It exists so the images in
-`images/ds-*.png` are reproducible artifacts with recorded provenance rather
+`images/ds-*` are reproducible artifacts with recorded provenance rather
 than mystery binaries — the gap the older `images/*.png` files still have.
 
 Every source below is CC0. That is deliberate: the slide shows seven datasets
 at once, and a deck is a bad place to owe seven attribution lines. Credit is
 given anyway, in the speaker notes and here.
 
-    uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg \
-        python scripts/gen_thumbnails.py
+    uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
+scikit-learn,scikit-image python scripts/gen_thumbnails.py
+
+Photographic cards are written as `images/ds-*.jpg`; the two flat-colour ones
+(the waveform and the digit sheet) are `images/ds-*.png`, because JPEG rings
+around hard edges and those two are all hard edges.
 """
 
 from __future__ import annotations
@@ -33,24 +37,29 @@ UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
 CARD = (400, 260)
 
 # ─── sources ────────────────────────────────────────────────────────────────
-# name -> (url, sha256 or None, credit). A `None` checksum means the file is
-# large and Wikimedia serves it unchanged; the licence page is the record.
+# name -> (url, sha256, credit). Pinned like the video and the audio: a Commons
+# file can be overwritten by a later upload under the same name, and silently
+# regenerating a card from a different photograph is exactly the kind of change
+# nobody would catch in a binary diff.
 PHOTOS = {
     "ds-nyc-taxi": (
         "https://upload.wikimedia.org/wikipedia/commons/6/6a/"
         "Yellow_Cabs_in_NYC_%28Unsplash%29.jpg",
+        "2541280bcd1425c5dc22eebeddc427f6049d4ca89847074c272c033a17f1ccac",
         "Ferdinand Stohr, CC0 - "
         "commons.wikimedia.org/wiki/File:Yellow_Cabs_in_NYC_(Unsplash).jpg",
     ),
     "ds-airliner": (
         "https://upload.wikimedia.org/wikipedia/commons/2/2b/"
         "Douglas_DC-3_Airliner._%2816055221680%29.jpg",
+        "f7505879ef9371fb3f42de150439829c5ac74e95e3c5b3e181dea0ffb4ada1d5",
         "Bernard Spragg NZ, CC0 - "
         "commons.wikimedia.org/wiki/File:Douglas_DC-3_Airliner._(16055221680).jpg",
     ),
     "ds-breast-cancer": (
         "https://upload.wikimedia.org/wikipedia/commons/e/ef/"
         "Histopathology_of_invasive_ductal_carcinoma_of_the_breast.jpg",
+        "9cebd18130cf05d0d401f885f913451f0b4623c6dd4b049d0b8b17760afb6172",
         "Mikael Haggstrom MD, CC0 - commons.wikimedia.org/wiki/"
         "File:Histopathology_of_invasive_ductal_carcinoma_of_the_breast.jpg",
     ),
@@ -104,12 +113,18 @@ def cover(img, size=CARD):
     return img.crop((left, top, left + tw, top + th)).convert("RGB")
 
 
-def save(img, name: str) -> None:
-    # Photographs go out as JPEG: the same card as PNG is ~190 KB against
-    # ~30 KB here, and eight of them share one slide. The waveform stays PNG —
-    # flat colour compresses better losslessly and shows no ringing.
-    out = IMAGES / f"{name}.jpg"
-    img.save(out, "JPEG", quality=82, optimize=True, progressive=True)
+def save(img, name: str, lossless: bool = False) -> None:
+    """Photographs go out as JPEG: the same card as PNG is ~190 KB against
+    ~30 KB, and eight of them share one slide. Pass `lossless=True` for the
+    flat-colour cards — the digit sheet and the waveform are nothing but hard
+    edges, JPEG rings around every one of them, and they compress smaller as
+    PNG anyway."""
+    if lossless:
+        out = IMAGES / f"{name}.png"
+        img.save(out, "PNG", optimize=True)
+    else:
+        out = IMAGES / f"{name}.jpg"
+        img.save(out, "JPEG", quality=82, optimize=True, progressive=True)
     print(f"  {out.relative_to(IMAGES.parent)}  "
           f"{img.size[0]}x{img.size[1]}  {out.stat().st_size // 1024} KB")
 
@@ -117,8 +132,8 @@ def save(img, name: str) -> None:
 def photos() -> None:
     from PIL import Image
     print("Wikimedia photographs (CC0)")
-    for name, (url, credit) in PHOTOS.items():
-        img = Image.open(io.BytesIO(get(url)))
+    for name, (url, sha256, credit) in PHOTOS.items():
+        img = Image.open(io.BytesIO(get(url, sha256)))
         save(cover(img), name)
         print(f"      {credit}")
 
@@ -177,7 +192,7 @@ def digits() -> None:
         sheet.paste(tile.convert("RGB"),
                     (k % cols * (cw + gap) + (cw - tile.width) // 2,
                      k // cols * (ch + gap) + (ch - tile.height) // 2))
-    save(sheet, "ds-digits")
+    save(sheet, "ds-digits", lossless=True)
 
 
 def cell() -> None:
