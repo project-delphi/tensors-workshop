@@ -664,7 +664,7 @@ CONTENT["05"] = {
         "Apply one ragged-length strategy from section 02 and give the exact batched shape.",
         "Decide where a new axis goes, and say how that choice affects the rest of the pipeline.",
     ],
-    "setup": """import numpy as np   # only needed for the share-back sketches""",
+    "setup": """import numpy as np   # only needed for the padding-mask solution below""",
     "cells": [
         md("""## Another discussion block
 
@@ -741,43 +741,6 @@ code."""),
 # The five stages look alike until the output. The recommender destroys the time
 # axis on purpose; the surgical model must keep it, because the answer to
 # "what phase are we in?" changes during the operation."""),
-        md("""Same five stages, drawn side by side. The two pipelines only diverge at the
-last box — that is the entire lesson of this section in one picture.
-
-> 🇪🇸 Las mismas cinco etapas, dibujadas una junto a otra. Las dos tuberías
-> solo se separan en la última casilla."""),
-        code("""import matplotlib.pyplot as plt
-
-stages  = ["raw file", "decoded\\nframes", "preprocessed\\nbatch",
-           "model\\ninput", "model\\noutput"]
-tech    = ["bytes", "(900,1080,\\n1920,3)", "(32,8,224,\\n224,3)",
-           "(32,8,224,\\n224,3)", "(32,512)"]
-biotech = ["bytes", "(432000,1080,\\n1920,3)", "(4,64,224,\\n224,3)",
-           "(4,64,224,\\n224,3)", "(4,64,12)"]
-
-fig, ax = plt.subplots(figsize=(11, 3.5))
-for row, (label, vals, color) in enumerate(
-        [("tech", tech, "#4C72B0"), ("biotech", biotech, "#55A868")]):
-    y = 1 - row
-    for i, val in enumerate(vals):
-        x = i * 2.2
-        ax.add_patch(plt.Rectangle((x, y - 0.35), 1.9, 0.7,
-                                    facecolor=color, edgecolor="black", alpha=0.85))
-        ax.text(x + 0.95, y, val, ha="center", va="center",
-                color="white", fontsize=8, fontweight="bold")
-        if i < len(vals) - 1:
-            ax.annotate("", xy=(x + 2.15, y), xytext=(x + 1.95, y),
-                        arrowprops=dict(arrowstyle="->", color="gray"))
-    ax.text(-0.3, y, label, ha="right", va="center", fontsize=10, fontweight="bold")
-for i, stage in enumerate(stages):
-    ax.text(i * 2.2 + 0.95, 1.55, stage, ha="center", va="bottom", fontsize=9)
-
-ax.set_xlim(-2.5, 5 * 2.2)
-ax.set_ylim(-0.6, 1.9)
-ax.axis("off")
-ax.set_title("Same five stages — the output box is where they differ")
-plt.tight_layout()
-plt.show()"""),
         md("""## Exercise 2 — ragged lengths, and the extra camera
 
 > 🇪🇸 Longitudes distintas y la cámara adicional."""),
@@ -799,6 +762,30 @@ plt.show()"""),
 #   batch: (4, 64, 224, 224, 3)  — fits easily.
 #   Nothing is invented; a great deal is DISCARDED, and the 4-hour clip is
 #   sampled 500x more sparsely than the 30-second one. That bias is real.
+#
+# The full padded tensor above is too big to build, but the MASK is not — one
+# bit per frame instead of a (224, 224, 3) image per frame — so build that:
+
+durations_s = [30, 45, 2 * 60, 4 * 60 * 60]     # 30s, 45s, 2min, 4h
+lengths = [int(d * 30) for d in durations_s]    # frames at 30fps
+T_max = max(lengths)
+
+mask = np.zeros((4, T_max), dtype=bool)
+for i, n in enumerate(lengths):
+    mask[i, :n] = True                          # True = a real, recorded frame
+
+wasted = 1 - mask.sum() / mask.size
+print(lengths, "padded to", T_max, "-> wasted fraction", f"{wasted:.1%}")
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(10, 2.5))
+ax.imshow(mask, aspect="auto", cmap="Greys", interpolation="nearest")
+ax.set_yticks(range(4)); ax.set_yticklabels(["30s", "45s", "2min", "4h"])
+ax.set_xlabel("frame index (0 to 432,000)")
+ax.set_title(f"real frames (black) vs invented padding (white) — "
+             f"{wasted:.1%} of this tensor is invented")
+plt.tight_layout()
+plt.show()
 
 # TODO 3 — two placements:
 #   (N, CAM, T, H, W, C)  = (4, 3, 64, 224, 224, 3)
@@ -881,17 +868,7 @@ print(gray.shape, gray_batch.shape)
 
 # `c` appears in the inputs but not after the arrow, so it is SUMMED OVER —
 # that is the contraction. `n`, `h`, `w` appear after the arrow, so they are
-# KEPT. Adding a batch axis costs exactly one letter.
-
-import matplotlib.pyplot as plt
-fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-axes[0].imshow(photo / 255); axes[0].set_title("photo — axes h, w, c")
-axes[1].imshow(gray, cmap="gray"); axes[1].set_title("'hwc,c->hw' — c is gone")
-for a in axes:
-    a.axis("off")
-fig.suptitle("c: in the input, missing after the arrow -> SUMMED.  h, w: KEPT.")
-plt.tight_layout()
-plt.show()"""),
+# KEPT. Adding a batch axis costs exactly one letter."""),
         md("""## Exercise 2 — Chapter 2, rewritten as contractions
 
 > 🇪🇸 Las operaciones del capítulo 2, escritas como contracciones."""),
