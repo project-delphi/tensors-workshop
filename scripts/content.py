@@ -84,23 +84,28 @@ leave you stuck at sections 07 and 10, an hour from now, with no obvious cause."
 > 🇪🇸 Confírmalo con los ojos, no solo con `.shape`.
 
 A shape can match on paper for reasons that are actually bugs — a truncated
-download, a wrong dtype, a colour image read as grayscale. All five still
-report *some* shape. Looking at them costs one glance."""),
+download, a stale cached file, a column that came back silently empty. These
+three files just came over the network; a glance at each is cheaper than
+discovering a bad download at section 07 or 10, an hour from now."""),
         code("""import matplotlib.pyplot as plt
 
-samples = [
-    ("digits[0]", load_digits().images[0], "gray"),
-    ("camera()", data.camera(), "gray"),
-    ("astronaut()", data.astronaut(), None),
-    ("immunohistochemistry()", data.immunohistochemistry(), None),
-    ("cell()", data.cell(), "gray"),
-]
-fig, axes = plt.subplots(1, len(samples), figsize=(12, 2.6))
-for ax, (title, img, cmap) in zip(axes, samples):
-    ax.imshow(img, cmap=cmap)
-    ax.set_title(title, fontsize=9)
-    ax.axis("off")
-fig.suptitle("Bundled data — no download, should look like real images")
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.2))
+
+sc = axes[0].scatter(housing["longitude"], housing["latitude"],
+                      c=housing["median_house_value"], cmap="viridis", s=4)
+axes[0].set_title("housing — location, coloured by price")
+fig.colorbar(sc, ax=axes[0], fraction=0.046)
+
+axes[1].hist(taxis["fare"].dropna(), bins=30, color="#4C72B0")
+axes[1].set_title("taxis — fare distribution")
+axes[1].set_xlabel("fare ($)")
+
+by_year = flights.groupby("year")["passengers"].sum()
+axes[2].plot(by_year.index, by_year.values, marker="o", color="#55A868")
+axes[2].set_title("flights — passengers per year")
+
+fig.suptitle("Real California geography, real fares, real growth — "
+             "if these look right, the downloads worked")
 plt.tight_layout()
 plt.show()"""),
         md("""## Exercise 1 — check the data you did not download
