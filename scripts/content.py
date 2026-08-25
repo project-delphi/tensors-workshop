@@ -1507,12 +1507,46 @@ psf = np.ones((9, 9)); psf /= psf.sum()
 blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
 print(blurred.shape)                                    # (512, 512) — 'same' keeps it
 
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 3, figsize=(12, 4))
-# for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
-#     a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 3, figsize=(12, 4))
+for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
+    a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+plt.show()
 
 # 'valid' shrinks by kernel_size - 1 = 2 in each direction: 512 -> 510."""),
+        md("""See the blur trade-off live: a bigger averaging kernel removes more detail,
+and it shrinks a `'valid'`-mode output by more (`kernel_size - 1` per side).
+
+> 🇪🇸 El deslizador muestra el compromiso del desenfoque: un kernel más grande
+> elimina más detalle, y en modo `'valid'` recorta más el resultado."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_blur(k):
+    psf_k = np.ones((k, k)); psf_k /= psf_k.sum()
+    blurred_k = signal.convolve2d(img, psf_k, mode='same', boundary='symm')
+    valid_k = signal.convolve2d(img, psf_k, mode='valid')
+
+    plt.close('all')
+    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    axes[0].imshow(blurred_k, cmap='gray')
+    axes[0].set_title(f"{k}x{k} kernel, mode='same' — {blurred_k.shape}")
+    axes[1].imshow(valid_k, cmap='gray')
+    axes[1].set_title(f"{k}x{k} kernel, mode='valid' — {valid_k.shape}")
+    for a in axes:
+        a.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_blur,
+                  k=widgets.IntSlider(min=1, max=25, step=2, value=9,
+                                       description='kernel size'));"""),
         md("""## Exercise 2 — transposed convolution
 
 > 🇪🇸 Convolución transpuesta: hace las cosas más grandes, no las deshace."""),
@@ -1699,6 +1733,52 @@ recon = np.einsum('abc,ia,jb,kc->ijk', core, Us[0], Us[1], Us[2])
 error = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067
 ratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71
 print(core.shape, round(error, 3), round(ratio, 2))"""),
+        md("""The exercise above fixed one rank, (2, 2, 3). Move the slider to see the
+whole error/compression trade-off, not just that one point on it.
+
+> 🇪🇸 El ejercicio anterior fijó un solo rango, (2, 2, 3). Mueve el
+> deslizador para ver toda la curva de compensación, no solo ese punto."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+# Precompute the full SVD basis for each axis once; the slider only re-slices
+# and re-contracts these small matrices, which is what keeps it responsive.
+bases = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]
+max_rank = min(u.shape[1] for u in bases)
+
+ks, errors, ratios = list(range(1, max_rank + 1)), [], []
+for kk in ks:
+    Uk = [bases[ax][:, :kk] for ax in range(3)]
+    core_k = np.einsum('ijk,ia,jb,kc->abc', T, *Uk)
+    recon_k = np.einsum('abc,ia,jb,kc->ijk', core_k, *Uk)
+    errors.append(np.linalg.norm(T - recon_k) / np.linalg.norm(T))
+    ratios.append(T.size / (core_k.size + sum(u.size for u in Uk)))
+
+def show_rank(k):
+    i = k - 1
+    plt.close('all')
+    fig, ax1 = plt.subplots(figsize=(6, 3.2))
+    ax1.plot(ks, errors, color='#C44E52')
+    ax1.scatter([k], [errors[i]], color='#C44E52', zorder=5)
+    ax1.set_xlabel('rank k (shared across all three axes)')
+    ax1.set_ylabel('relative error', color='#C44E52')
+    ax2 = ax1.twinx()
+    ax2.plot(ks, ratios, color='#4C72B0')
+    ax2.scatter([k], [ratios[i]], color='#4C72B0', zorder=5)
+    ax2.set_ylabel('compression ratio (x)', color='#4C72B0')
+    plt.tight_layout()
+    plt.show()
+    print(f"rank k={k}: error={errors[i]:.3f}, compression={ratios[i]:.2f}x")
+
+widgets.interact(show_rank,
+                  k=widgets.IntSlider(min=1, max=max_rank, step=1, value=2,
+                                       description='rank k'));"""),
         md("""## Exercise 3 — what did it find?
 
 > 🇪🇸 ¿Qué encontró la descomposición por sí sola?
