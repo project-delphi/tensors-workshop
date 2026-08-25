@@ -1061,7 +1061,26 @@ print(name, round(coef))                                  # median_income 47748
 # because it solves the same problem.
 #
 # The largest coefficient belongs to median_income, which is the sensible
-# result — income predicts house prices."""),
+# result — income predicts house prices.
+
+import matplotlib.pyplot as plt
+pred = X @ w
+residuals = pred - y
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+axes[0].scatter(y, pred, s=3, alpha=0.2, color="#4C72B0")
+lims = [min(y.min(), pred.min()), max(y.max(), pred.max())]
+axes[0].plot(lims, lims, color="#C44E52", linewidth=1)
+axes[0].set_xlabel("actual"); axes[0].set_ylabel("predicted")
+axes[0].set_title("predicted vs actual")
+axes[1].hist(residuals, bins=60, color="#55A868")
+axes[1].set_xlabel("prediction - actual"); axes[1].set_title("residuals")
+plt.tight_layout()
+plt.show()
+
+# No straight line fits 20,433 points exactly, and the residuals show it: they
+# are not tightly clustered at zero, and the predicted-vs-actual scatter fans
+# out badly at the high end. LEAST SQUARES MINIMIZES THE AVERAGE SQUARED ERROR
+# ACROSS ALL POINTS — it says nothing about any one prediction being close."""),
         md("""## Exercise 3 — the tensor version
 
 > 🇪🇸 La versión tensorial: despliega, resuelve, vuelve a plegar."""),
@@ -1132,6 +1151,34 @@ for _ in range(50):
 
 print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical"""),
+        code("""import matplotlib.pyplot as plt
+
+xv = rng.standard_normal(2); xv /= np.linalg.norm(xv)
+checkpoints = {}
+for step in range(1, 51):
+    xv = A @ xv
+    xv /= np.linalg.norm(xv)
+    if step in (1, 2, 5, 10, 50):
+        checkpoints[step] = xv.copy()
+
+eigvals, eigvecs = np.linalg.eig(A)
+dominant = eigvecs[:, np.argmax(eigvals)].real
+dominant /= np.linalg.norm(dominant)
+
+fig, ax = plt.subplots(figsize=(4, 4))
+theta = np.linspace(0, 2 * np.pi, 200)
+ax.plot(np.cos(theta), np.sin(theta), color="lightgray", linewidth=1)
+for step, v in checkpoints.items():
+    ax.annotate("", xy=v, xytext=(0, 0), arrowprops=dict(
+        arrowstyle="->", color="#4C72B0", alpha=0.3 + 0.7 * step / 50))
+    ax.text(v[0] * 1.15, v[1] * 1.15, str(step), fontsize=8, ha="center")
+for sign in (1, -1):
+    ax.annotate("", xy=sign * dominant, xytext=(0, 0),
+                arrowprops=dict(arrowstyle="->", color="#C44E52", linewidth=2))
+ax.set_xlim(-1.3, 1.3); ax.set_ylim(-1.3, 1.3); ax.set_aspect("equal")
+ax.set_title("power iteration converges to the eigenvector\\n(red = the true dominant eigenvector, both signs)")
+plt.tight_layout()
+plt.show()"""),
         md("""This is how PageRank ranks web pages, and it is why eigenvectors matter far
 beyond Chapter 2: **repeated application of a matrix converges to its dominant
 eigenvector.**"""),
@@ -1154,6 +1201,39 @@ for _ in range(12):                           # recursion: feed predictions back
 
 print(np.round(history[-12:], 1))
 # [465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]"""),
+        md("""The forecast above extrapolates 12 months **past the end of the dataset**, so
+there is nothing to check it against. To see the forecast next to real numbers,
+hold out the last 12 months, fit on everything before them, and forecast those
+same 12 months back.
+
+> 🇪🇸 El pronóstico anterior se extiende 12 meses **más allá del final de los
+> datos**, así que no hay nada real con qué compararlo. Para ver el pronóstico
+> junto a números reales, se retienen los últimos 12 meses, se ajusta con todo
+> lo anterior, y se pronostican esos mismos 12 meses."""),
+        code("""y_train, y_test = y[:-12], y[-12:]
+rows_tr = np.array([y_train[i:i+p] for i in range(len(y_train) - p)])
+X_tr = np.column_stack([np.ones(len(rows_tr)), rows_tr])
+w_tr = np.linalg.pinv(X_tr) @ y_train[p:]
+
+hist_tr = list(y_train[-p:])
+for _ in range(12):
+    hist_tr.append(w_tr[0] + np.dot(w_tr[1:], hist_tr[-p:]))
+forecast_holdout = np.array(hist_tr[-12:])
+
+import matplotlib.pyplot as plt
+months = np.arange(1, 13)
+fig, ax = plt.subplots(figsize=(6, 3.2))
+ax.plot(months, y_test, marker="o", label="actual", color="#4C72B0")
+ax.plot(months, forecast_holdout, marker="o", label="forecast", color="#C44E52")
+ax.set_xlabel("month (held out, never seen while fitting)")
+ax.set_ylabel("passengers")
+ax.set_title("forecast vs. actual — last 12 months held out")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+mape = (np.abs(forecast_holdout - y_test) / y_test).mean()
+print(f"mean absolute percentage error: {mape:.1%}")"""),
         md("""The forecast reproduces the seasonal shape of real air travel — low in winter,
 peaking in summer — because the model learned it from 132 real training windows.
 
