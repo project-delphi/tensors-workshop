@@ -1894,9 +1894,11 @@ CONTENT["11"] = {
         "Build attention out of two contractions, and mask padded positions (take-home B).",
         "Compare a CP decomposition against the Tucker one you built (take-home C).",
         "Build correlated data from independent noise with Cholesky, and see why ignoring covariance understates portfolio risk (take-home D).",
+        "Denoise a real voice recording by truncating the SVD of its STFT, and measure the result in SNR rather than by ear (take-home E).",
     ],
     "setup": """import numpy as np
 from sklearn.datasets import load_breast_cancer
+from scipy import signal
 
 rng = np.random.default_rng(0)""",
     "cells": [
@@ -1936,7 +1938,7 @@ large to keep in full.
   `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution
   beyond today.
-- The four take-homes below."""),
+- The five take-homes below."""),
         md("""### Optional: the same contraction in PyTorch
 
 Everything today was NumPy, because that is what the workshop's real datasets
@@ -2247,6 +2249,214 @@ distribution wrong.**
 > negativa ocurriría lo contrario. Lo único general es que **asumir
 > independencia cuando los activos no lo son distorsiona las colas de la
 > distribución.**"""),
+        md("""---
+
+## Take-home E — Audio denoising by rank reduction
+
+> 🇪🇸 Ejercicio para casa E: eliminar ruido de audio reduciendo el rango.
+
+Section 10 used truncated SVDs of matrix unfoldings to build a Tucker
+approximation of a real taxi tensor. This take-home applies the same
+low-rank idea to the frequency × time matrix produced from sound.
+
+**The recording is real**: a five-second CC0 voice sample by Bart Massey, from
+[`pdx-cs-sound/wavs`](https://github.com/pdx-cs-sound/wavs), pinned to commit
+`ed5ebcbbbc2d11f0adddc9b50b78d581c29f738c` so the file this notebook fetches
+cannot silently change under you. It downloads at runtime and is checked
+against a known SHA-256 — if the download is corrupted or does not match the
+pinned file, `fetch_verified_wav` below raises instead of quietly handing you
+something else. **The noise is not real** — it is added on purpose, with a
+fixed seed and a target signal-to-noise ratio, precisely so there is a known
+clean reference to measure against. Do not confuse the two: the recording is
+real data, exactly like every other dataset today; the noise is the
+controlled experiment.
+
+### Why a waveform becomes a matrix
+
+A recording is one axis: amplitude over time. The **short-time Fourier
+transform** (STFT) slices it into overlapping windows and Fourier-transforms
+each one, producing a matrix `Z` with two axes — **frequency × time**. Row `i`
+is "how much of frequency `f_i` is present"; column `j` is "during time window
+`t_j`." Nothing earlier today paired frequency against time this way.
+
+Because `Z` is a matrix, the SVD from sections 07 and 10 applies unchanged —
+except `Z` is **complex**, and truncating its SVD keeps both magnitude and
+phase. Reconstructing from magnitude alone would throw phase away and produce
+audible distortion, so the truncated matrix goes straight into the inverse
+STFT.
+
+Speech energy concentrates in a handful of dominant frequency-time patterns —
+a few singular vectors carry most of the signal. Broadband, unstructured noise
+has no such structure: it tends to spread its energy across many singular
+directions, including many smaller ones. Keeping only the largest `k`
+singular values keeps most of the speech and discards a disproportionate
+share of the noise.
+
+> 🇪🇸 La STFT convierte una onda de una dimensión (amplitud en el tiempo) en
+> una matriz de dos ejes: frecuencia × tiempo. La voz concentra su energía en
+> pocas direcciones singulares dominantes; el ruido de banda ancha tiende a
+> repartir su energía entre muchas direcciones singulares, incluidas muchas
+> pequeñas. Por eso conservar solo las `k` mayores retiene la voz y descarta
+> una parte desproporcionada del ruido — pero **esto no es un eliminador de
+> ruido universal**: la comprobación real es el SNR medido, no cómo suena.
+
+**This is not a universal denoiser.** It only works to the extent that the
+noise really is broadband relative to a structured signal — narrowband noise,
+or noise correlated with the signal, is not separated this way. The proof
+either way is the measured SNR below, not how it sounds."""),
+        code("""VOICE_URL = "https://raw.githubusercontent.com/pdx-cs-sound/wavs/ed5ebcbbbc2d11f0adddc9b50b78d581c29f738c/voice.wav"
+VOICE_SHA256 = "2c4b4d9d5f90715fdbf599869a465d521638f40ca978b186df96f1543a4d67dc"
+
+def fetch_verified_wav(url, expected_sha256):
+    \"\"\"Download a WAV and refuse to proceed if it does not match the pinned
+    checksum. No silent fallback to synthetic data on failure.\"\"\"
+    import hashlib
+    import io
+    import urllib.request
+    from scipy.io import wavfile
+    raw = urllib.request.urlopen(url, timeout=30).read()
+    got = hashlib.sha256(raw).hexdigest()
+    if got != expected_sha256:
+        raise ValueError(
+            f"checksum mismatch for {url}: expected {expected_sha256}, got "
+            f"{got}. Refusing to use unverified audio data.")
+    return wavfile.read(io.BytesIO(raw))
+
+def snr_db(reference, estimate):
+    \"\"\"Energy-based SNR in dB. `reference` is always the real clean signal.\"\"\"
+    return 10 * np.log10(np.sum(reference**2) / np.sum((estimate - reference)**2))
+
+# TODO 1: fs, clean_i16 = fetch_verified_wav(VOICE_URL, VOICE_SHA256).
+#         Convert to float in [-1, 1] (divide by 32768), and average channels
+#         to mono if clean.ndim > 1. Print fs, duration in seconds, and shape.
+
+# TODO 2: With rng = np.random.default_rng(42) and TARGET_SNR_DB = 5.0, build
+#         additive noise scaled from the CLEAN SIGNAL'S OWN MEAN POWER (not an
+#         arbitrary standard deviation) so that clean + noise lands at the
+#         target SNR. Verify with snr_db(clean, noisy)."""),
+        solution("""fs, clean_i16 = fetch_verified_wav(VOICE_URL, VOICE_SHA256)
+clean = clean_i16.astype(np.float64) / 32768.0
+if clean.ndim > 1:
+    clean = clean.mean(axis=1)
+print(fs, round(len(clean) / fs, 3), clean.shape)      # 48000 4.949 (237568,)
+
+rng = np.random.default_rng(42)
+TARGET_SNR_DB = 5.0
+noise = rng.standard_normal(clean.shape)
+scale = np.sqrt(np.mean(clean**2) / (np.mean(noise**2) * 10**(TARGET_SNR_DB / 10)))
+noisy = clean + scale * noise
+print(round(snr_db(clean, noisy), 2))                   # 5.0 -- exactly the target, by construction
+
+# fetch_verified_wav is not decorative: it raises ValueError instead of
+# silently returning something else if the download is corrupted or does not
+# match the pinned file. voice.wav ITSELF is real -- a five-second CC0
+# recording. The noise added here is the controlled, synthetic part of the
+# experiment: it exists only so `clean` is a known reference an SNR can be
+# measured against."""),
+        code("""# TODO 3: f, t, Z = signal.stft(noisy, fs=fs, nperseg=1024, noverlap=512).
+#         Z is COMPLEX -- frequency bins x time frames. Print Z.shape and the
+#         full possible rank, min(Z.shape).
+
+# TODO 4: U, s, Vh = np.linalg.svd(Z, full_matrices=False), on the COMPLEX
+#         matrix directly so phase survives truncation, not magnitude alone.
+#         For k in [2, 5, 10, 20, 40, 80, len(s)]: build
+#         Z_k = (U[:, :k] * s[:k]) @ Vh[:k, :], run
+#         signal.istft(Z_k, fs=fs, nperseg=1024, noverlap=512), align its
+#         length to `clean`, and print k, the retained singular-value energy
+#         sum(s[:k]**2) / sum(s**2), and snr_db(clean, reconstruction).
+
+# TODO 5: Pick the k with the best SNR among the candidates above. Report its
+#         retained energy, its SNR, and the improvement over the noisy SNR
+#         from TODO 2.
+
+# TODO 6: Build ONE common peak-scale factor from
+#         max(|noisy|, |denoised|, |clean|) and make playback-only copies
+#         scaled by it -- SNR itself is computed on the unscaled signals
+#         above, never on these copies. Then display Audio players for the
+#         noisy ("before") and denoised ("after") copies. You may run this
+#         cell to listen, but do not save its Audio output into the tracked
+#         notebook: Audio() output contains embedded base64 data and must
+#         not be committed."""),
+        solution("""f, t, Z = signal.stft(noisy, fs=fs, nperseg=1024, noverlap=512)
+full_rank = min(Z.shape)
+print(Z.shape, full_rank)                               # (513, 465) 465
+
+U, s, Vh = np.linalg.svd(Z, full_matrices=False)
+for k in [2, 5, 10, 20, 40, 80, len(s)]:
+    Zk = (U[:, :k] * s[:k]) @ Vh[:k, :]
+    _, x_rec = signal.istft(Zk, fs=fs, nperseg=1024, noverlap=512)
+    n = min(len(x_rec), len(clean))
+    energy = np.sum(s[:k]**2) / np.sum(s**2)
+    print(k, round(energy * 100, 1), round(snr_db(clean[:n], x_rec[:n]), 2))
+# k    energy%  SNR dB
+# 2     33.2     2.29
+# 5     51.1     4.76
+# 10    61.9     6.78
+# 20    70.1     8.48
+# 40    78.3     9.08   <- best of these candidates
+# 80    87.1     7.68   <- WORSE than k=40: noise has leaked back in
+# 465  100.0     5.00   <- full rank matches `noisy` to numerical precision
+
+k = 40
+Zk = (U[:, :k] * s[:k]) @ Vh[:k, :]
+_, x_rec = signal.istft(Zk, fs=fs, nperseg=1024, noverlap=512)
+n = min(len(x_rec), len(clean))
+denoised, clean_a, noisy_a = x_rec[:n], clean[:n], noisy[:n]
+
+snr_before = snr_db(clean_a, noisy_a)
+snr_after = snr_db(clean_a, denoised)
+print(round(snr_before, 2), round(snr_after, 2), round(snr_after - snr_before, 2))
+# 5.0 9.08 4.08
+
+peak = max(np.abs(clean_a).max(), np.abs(noisy_a).max(), np.abs(denoised).max())
+noisy_play = noisy_a / peak
+denoised_play = denoised / peak
+
+from IPython.display import Audio, display
+display(Audio(noisy_play, rate=fs))       # "before"
+display(Audio(denoised_play, rate=fs))    # "after"
+
+# k=40 keeps 40 of 465 possible components -- 8.6% of full rank -- and
+# recovers 4.08 dB of SNR: real, but modest, not a miracle. k=2 and k=5 keep
+# too little of the SPEECH itself to beat the noisy baseline by much. k=80
+# already lets enough noise back into smaller-but-still-significant singular
+# directions that SNR gets WORSE than at k=40 -- more components is not
+# always better. At the full rank of 465 the reconstruction matches `noisy`
+# to numerical precision: proof that whatever denoising happened at k=40
+# came specifically from truncating, not from the STFT -> SVD -> ISTFT round
+# trip itself."""),
+        md("""### What the numbers say
+
+Keeping 40 of 465 possible singular directions (8.6% of full rank, 78.3% of
+the singular-value energy) raised the SNR from 5.00 dB to 9.08 dB — a real
+**+4.08 dB** improvement, not a dramatic one. Fewer components (`k=2`, `k=5`)
+discard too much of the speech itself; more (`k=80`) already lets noise back
+in, and SNR gets worse again. At the full rank the reconstruction matches the
+noisy signal to numerical precision, which is the honest control: the
+denoising is entirely a property of truncating, not of the STFT/SVD/ISTFT
+machinery itself.
+
+**Do not generalize this to "truncated SVD removes noise."** It suppresses
+noise that is broadband and unstructured relative to a signal that
+concentrates in a few dominant directions — the same low-rank argument
+section 10 used on the taxi tensor, applied here to sound instead of trip
+counts. Narrowband noise, or noise correlated with the speech itself, would
+not separate out this way, and the only way to know which situation you are
+in is to measure the SNR, the way this take-home just did.
+
+> 🇪🇸 Conservar 40 de 465 direcciones singulares posibles (8.6% del rango
+> completo, 78.3% de la energía de los valores singulares) subió el SNR de
+> 5.00 dB a 9.08 dB — una mejora real de **+4.08 dB**, no espectacular. Menos
+> componentes descartan demasiada voz; más vuelven a dejar entrar ruido y el
+> SNR empeora. En el rango completo la reconstrucción coincide con la señal
+> ruidosa hasta la precisión numérica, lo cual es el control honesto: la
+> reducción de ruido es una propiedad de truncar, no del mecanismo
+> STFT/SVD/ISTFT en sí. **No generalices esto a "la SVD truncada siempre
+> elimina el ruido."** Solo funciona cuando el ruido es de banda ancha y no
+> estructurado frente a una señal que se concentra en pocas direcciones
+> dominantes — el mismo argumento de bajo rango que la sección 10 usó con el
+> tensor de taxis, aplicado aquí al sonido. La única forma de saberlo es
+> medir el SNR, como se acaba de hacer."""),
         md("""## Thank you
 
 > 🇪🇸 Gracias por venir. Pregunta en Discord en español o en inglés — lo que te
