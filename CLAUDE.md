@@ -80,16 +80,18 @@ uv run --with pyyaml,nbformat python scripts/check_links.py     # verifies docs/
 uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 ```
 
-`check_links.py` is the test suite — there is no pytest here. It prints eight
-numbered checks, in the order they run. Seven can fail, and any failure exits
+`check_links.py` is the test suite — there is no pytest here. It prints nine
+numbered checks, in the order they run. Eight can fail, and any failure exits
 non-zero: notebooks are valid with no outputs or execution counts; internal
 links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
-same twelve sections; the deck timer's total still matches `workshop.minutes`;
-and no visible notebook cell depends on a name bound only inside a folded
-solution cell (easy to introduce, invisible when you run the notebook top to
-bottom). The eighth, Kahoot join URLs, only prints a TODO —
-that output is **not** a failure. `--notebooks-only` runs the notebook and
+same twelve sections; each section's written `start`/`end` still matches the
+running clock derived from `minutes` plus the quizzes and breaks between them;
+the deck timer's total still matches `workshop.minutes`; and no visible
+notebook cell depends on a name bound only inside a folded solution cell (easy
+to introduce, invisible when you run the notebook top to bottom). The ninth,
+Kahoot join URLs, only prints a TODO — that output is **not** a failure.
+`--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them

@@ -66,16 +66,37 @@ kahoot:
     covers: ["09", "10"]
     questions: 6
 
+# ── Schedule ─────────────────────────────────────────────────────────────────
+# What sits *between* the sections. The twelve sections come to 165 minutes;
+# these two fill the remaining 30 and are the whole reason a section's `start`
+# is not just the sum of the `minutes` before it. Each quiz already declares
+# the section it follows (`kahoot.qN.after`), so only the breaks are listed.
+schedule:
+  quiz_minutes: 5
+  break_minutes: 5
+  # Sections after which the room takes a break. After 04 the break follows
+  # Kahoot 1, which is why the agenda shows a single 10-minute block there.
+  break_after: ["04", "06", "09"]
+
 # ── Sections ─────────────────────────────────────────────────────────────────
 # The section spine is the handbook's own 195-minute schedule table, breaks
 # excluded. `n` is authoritative: it fixes the notebook filename prefix, the
 # slide anchor (#sec-NN-slug) and the row order in every table on the site.
+#
+# `start` and `end` are the running clock offsets both decks print on the
+# section title slides. They are derived — walk the sections in order, adding
+# `schedule` time after the ones that are followed by a quiz or a break — but
+# they are written out here rather than computed, because `{{< var >}}` can
+# only look a value up, not add one. check_links.py recomputes them and fails
+# if they have drifted, so editing a `minutes` without re-deriving is caught.
 sections:
   s00:
     n: "00"
     slug: "setup-and-data"
     part: "—"
     minutes: 5
+    start: "+00:00"
+    end: "+00:05"
     format_en: "setup"
     format_es: "preparación"
     title_en: "Setup and welcome"
@@ -87,6 +108,8 @@ sections:
     slug: "what-a-tensor-is"
     part: "I"
     minutes: 20
+    start: "+00:05"
+    end: "+00:25"
     format_en: "demo"
     format_es: "demostración"
     title_en: "What a tensor is"
@@ -98,6 +121,8 @@ sections:
     slug: "thinking-in-n-dimensions"
     part: "II"
     minutes: 20
+    start: "+00:25"
+    end: "+00:45"
     format_en: "group"
     format_es: "grupo"
     title_en: "Thinking in N dimensions"
@@ -109,6 +134,8 @@ sections:
     slug: "indexing-and-broadcasting"
     part: "III"
     minutes: 15
+    start: "+00:45"
+    end: "+01:00"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Indexing and broadcasting real data"
@@ -120,6 +147,8 @@ sections:
     slug: "reshape-and-transpose"
     part: "III"
     minutes: 15
+    start: "+01:00"
+    end: "+01:15"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Reshape and transpose real images"
@@ -131,6 +160,8 @@ sections:
     slug: "video-pipeline-design"
     part: "III"
     minutes: 15
+    start: "+01:25"
+    end: "+01:40"
     format_en: "group"
     format_es: "grupo"
     title_en: "Video pipeline design"
@@ -142,6 +173,8 @@ sections:
     slug: "contraction-with-einsum"
     part: "IV"
     minutes: 15
+    start: "+01:40"
+    end: "+01:55"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Contraction with einsum"
@@ -153,6 +186,8 @@ sections:
     slug: "inverses-and-pseudoinverse"
     part: "IV"
     minutes: 15
+    start: "+02:00"
+    end: "+02:15"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Inverses and the pseudoinverse"
@@ -164,6 +199,8 @@ sections:
     slug: "recursion-with-matrices"
     part: "IV"
     minutes: 10
+    start: "+02:20"
+    end: "+02:30"
     format_en: "demo"
     format_es: "demostración"
     title_en: "Recursion with matrices and vectors"
@@ -175,6 +212,8 @@ sections:
     slug: "convolution-and-deconvolution"
     part: "IV"
     minutes: 15
+    start: "+02:30"
+    end: "+02:45"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Convolution and deconvolution"
@@ -186,6 +225,8 @@ sections:
     slug: "tucker-decomposition"
     part: "IV"
     minutes: 15
+    start: "+02:50"
+    end: "+03:05"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Tucker decomposition on real data"
@@ -197,6 +238,8 @@ sections:
     slug: "wrap-up-and-take-homes"
     part: "—"
     minutes: 5
+    start: "+03:10"
+    end: "+03:15"
     format_en: "wrap-up"
     format_es: "cierre"
     title_en: "Wrap-up and take-homes"

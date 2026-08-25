@@ -187,7 +187,13 @@ reliable source of confusion in the whole workshop.
 {{< var sections.s00.part >}}
 :::
 
-*5 min · run this before anything else*
+*run this before anything else*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s00.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s00.start >}} · End: {{< var sections.s00.end >}}]{.pace-window}
+:::
 
 ## Three downloads, one first cell
 
@@ -242,7 +248,13 @@ Everything else in the library ships offline: `load_breast_cancer`,
 {{< var sections.s01.part >}}
 :::
 
-*Part I · 20 min · demo*
+*Part I · demo*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s01.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s01.start >}} · End: {{< var sections.s01.end >}}]{.pace-window}
+:::
 
 ## The vocabulary
 
@@ -369,7 +381,13 @@ never Part I.
 {{< var sections.s02.part >}}
 :::
 
-*Part II · 20 min · group discussion · no code*
+*Part II · group discussion · no code*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s02.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s02.start >}} · End: {{< var sections.s02.end >}}]{.pace-window}
+:::
 
 ## Your task
 
@@ -434,7 +452,13 @@ Pre-assign breakout groups before the session.
 {{< var sections.s03.part >}}
 :::
 
-*Part III · 15 min · exercise*
+*Part III · exercise*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s03.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s03.start >}} · End: {{< var sections.s03.end >}}]{.pace-window}
+:::
 
 ## Why this matters
 
@@ -503,7 +527,13 @@ writes. Standard deviation exactly zero → `NaN`.
 {{< var sections.s04.part >}}
 :::
 
-*Part III · 15 min · exercise*
+*Part III · exercise*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s04.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s04.start >}} · End: {{< var sections.s04.end >}}]{.pace-window}
+:::
 
 ## Why this matters
 
@@ -606,7 +636,13 @@ If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
 {{< var sections.s05.part >}}
 :::
 
-*Part III · 15 min · group discussion*
+*Part III · group discussion*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s05.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s05.start >}} · End: {{< var sections.s05.end >}}]{.pace-window}
+:::
 
 ## Design both pipelines
 
@@ -661,7 +697,13 @@ from Q2 turns out to be the same mask attention needs.
 {{< var sections.s06.part >}}
 :::
 
-*Part IV · 15 min · exercise*
+*Part IV · exercise*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s06.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s06.start >}} · End: {{< var sections.s06.end >}}]{.pace-window}
+:::
 
 ## Why this matters
 
@@ -740,7 +782,13 @@ the only bridge.
 {{< var sections.s07.part >}}
 :::
 
-*Part IV · 15 min · exercise*
+*Part IV · exercise*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s07.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s07.start >}} · End: {{< var sections.s07.end >}}]{.pace-window}
+:::
 
 ## Step 1 — square matrices
 
@@ -857,7 +905,13 @@ distance both get re-covered narratively in the wrap-up.
 {{< var sections.s08.part >}}
 :::
 
-*Part IV · 10 min · demo*
+*Part IV · demo*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s08.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s08.start >}} · End: {{< var sections.s08.end >}}]{.pace-window}
+:::
 
 ## Apply the same matrix again and again
 
@@ -945,7 +999,13 @@ If badly over time, this RNN snippet is third on the cutting list — after Kaho
 {{< var sections.s09.part >}}
 :::
 
-*Part IV · 15 min · exercise*
+*Part IV · exercise*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s09.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s09.start >}} · End: {{< var sections.s09.end >}}]{.pace-window}
+:::
 
 ## Three modes, three output sizes
 
@@ -1064,7 +1124,13 @@ you find the best stable answer instead.
 {{< var sections.s10.part >}}
 :::
 
-*Part IV · 15 min · exercise*
+*Part IV · exercise*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s10.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s10.start >}} · End: {{< var sections.s10.end >}}]{.pace-window}
+:::
 
 ## What different factorizations buy you {.factorization-ladder}
 
@@ -1262,7 +1328,11 @@ wrap-up's own recap, so segue straight from the podium into the wrap-up.
 {{< var sections.s11.part >}}
 :::
 
-*5 min*
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s11.minutes >}} min** allocated]{.pace-duration}
+
+[Start: {{< var sections.s11.start >}} · End: {{< var sections.s11.end >}}]{.pace-window}
+:::
 
 ## What you did today
 
