@@ -80,14 +80,15 @@ uv run --with pyyaml,nbformat python scripts/check_links.py     # verifies docs/
 uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 ```
 
-`check_links.py` is the test suite — there is no pytest here. It prints seven
-numbered checks, in the order they run. Six can fail, and any failure exits
+`check_links.py` is the test suite — there is no pytest here. It prints eight
+numbered checks, in the order they run. Seven can fail, and any failure exits
 non-zero: notebooks are valid with no outputs or execution counts; internal
 links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
-same twelve sections; and no visible notebook cell depends on a name bound only
-inside a folded solution cell (easy to introduce, invisible when you run the
-notebook top to bottom). The seventh, Kahoot join URLs, only prints a TODO —
+same twelve sections; the deck timer's total still matches `workshop.minutes`;
+and no visible notebook cell depends on a name bound only inside a folded
+solution cell (easy to introduce, invisible when you run the notebook top to
+bottom). The eighth, Kahoot join URLs, only prints a TODO —
 that output is **not** a failure. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
@@ -122,6 +123,22 @@ prose or `_variables.yml` change.
 Quarto is pinned to **1.6.40** in the workflow. Use that version locally; a
 different one changes markup and the staleness gate goes red. Bump the pin and
 re-render together.
+
+`slides/deck-pace.html` is pulled into both decks with `include-after-body`.
+It draws the audience-facing timer and the section breadcrumb, and it owns
+`TOTAL_SECONDS` — Quarto has no passthrough for reveal's `totalTime`, so
+setting `total-time:` in a deck header silently does nothing. Two traps live
+in that file: Quarto runs its **shortcode parser over included HTML**, so a
+bare `var` shortcode written out in a comment there crashes the render with
+`Cannot get Attr from TypeNil`; and reveal wraps each section into a `.stack`
+at init, so the level-1 slides are *not* top-level children by the time
+scripts run.
+
+A section's part number reaches the breadcrumb through a hidden
+`::: {.sec-part}` div on each title slide. It cannot be a `data-` attribute on
+the heading: a `var` shortcode inside a heading's `{...}` is not parsed as an
+attribute at all — pandoc folds the whole brace into the heading text and
+auto-generates an id from it, which silently destroys every `#sec-NN` anchor.
 
 `_quarto.yml` has an explicit `render:` list on purpose — without it Quarto
 sweeps up every notebook and tries to execute them, and renders every README as

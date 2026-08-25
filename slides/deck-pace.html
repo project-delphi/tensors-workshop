@@ -1,0 +1,186 @@
+<!--
+  Audience-facing pace chrome for both decks, pulled in by `include-after-body`.
+
+  Two things reveal does not give you for free:
+
+    1. A timer the *room* can see. Reveal has `totalTime`, but it drives the
+       speaker view only — the students never see it, and neither does anyone
+       watching a recording.
+    2. A breadcrumb saying which section is on screen. The deck's `footer:` is
+       a single global string; there is no per-section variant.
+
+  One file serves EN and ES: everything language-dependent is chosen off
+  <html lang>, so the two decks cannot drift the way two copies would. All
+  styling lives in slides.scss — this file only builds nodes and keeps them
+  current.
+-->
+<script>
+(function () {
+  "use strict";
+
+  // The whole workshop, in seconds: 195 minutes. This is the one place it is
+  // written — Quarto has no passthrough for reveal's `totalTime`, so setting it
+  // in the deck header does nothing (it silently never reaches the config).
+  // We hand it to Reveal.configure() below, which drives the speaker view's
+  // pacing clock as well as the audience timer here. check_links.py fails if
+  // this stops matching workshop.minutes in _variables.yml.
+  var TOTAL_SECONDS = 11700;
+
+  // Survives a reload — a facilitator who refreshes mid-workshop should not
+  // silently get a clock that restarts at zero. sessionStorage rather than
+  // localStorage so opening the deck again tomorrow starts fresh.
+  var STORAGE_KEY = "tensors-workshop-deck-start";
+
+  function pad(n) { return (n < 10 ? "0" : "") + n; }
+
+  // Always minutes and seconds; hours only once there are any. The remaining
+  // side of a 195-minute workshop is over an hour for most of the room's day,
+  // and "182:26" is harder to read at a glance than "3:02:26".
+  function hms(seconds) {
+    seconds = Math.max(0, Math.round(seconds));
+    var h = Math.floor(seconds / 3600);
+    var m = Math.floor((seconds % 3600) / 60);
+    var s = seconds % 60;
+    return h ? h + ":" + pad(m) + ":" + pad(s) : pad(m) + ":" + pad(s);
+  }
+
+  // Reveal may or may not have finished initialising when an after-body script
+  // runs, depending on how fast the deck's own assets load. Cover all three
+  // orderings rather than betting on one.
+  function whenReady(fn) {
+    if (window.Reveal && Reveal.isReady && Reveal.isReady()) { fn(); return; }
+    if (window.Reveal && Reveal.on) { Reveal.on("ready", fn); return; }
+    setTimeout(function () { whenReady(fn); }, 50);
+  }
+
+  whenReady(function () {
+    var reveal = document.querySelector(".reveal");
+    if (!reveal) { return; }
+
+    var es = (document.documentElement.lang || "en").slice(0, 2) === "es";
+    var total = TOTAL_SECONDS;
+    // Gives the speaker view the same clock the room is looking at.
+    if (Reveal.configure) { Reveal.configure({ totalTime: total }); }
+
+    // ── The timer ───────────────────────────────────────────────────────
+    // Top right: the slide number and reveal's controls both live along the
+    // bottom edge, and the progress bar takes the top edge's full width but
+    // only 3px of its height.
+    var timer = document.createElement("div");
+    timer.className = "deck-timer";
+    timer.title = es
+      ? "Tiempo transcurrido y restante · clic para reiniciar"
+      : "Elapsed and remaining time · click to reset";
+
+    var elapsedEl = document.createElement("span");
+    elapsedEl.className = "deck-timer-elapsed";
+    var remainingEl = document.createElement("span");
+    remainingEl.className = "deck-timer-remaining";
+    timer.appendChild(elapsedEl);
+    timer.appendChild(remainingEl);
+    reveal.appendChild(timer);
+
+    function readStart() {
+      try {
+        var stored = window.sessionStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          var n = parseInt(stored, 10);
+          if (!isNaN(n)) { return n; }
+        }
+      } catch (e) { /* private windows throw on access, not just on write */ }
+      return null;
+    }
+
+    function writeStart(value) {
+      try { window.sessionStorage.setItem(STORAGE_KEY, String(value)); }
+      catch (e) { /* the timer still works, it just won't survive a reload */ }
+    }
+
+    var startedAt = readStart();
+    if (startedAt === null) { startedAt = Date.now(); writeStart(startedAt); }
+
+    function tick() {
+      var elapsed = (Date.now() - startedAt) / 1000;
+      var remaining = total - elapsed;
+      var over = remaining < 0;
+      elapsedEl.textContent = hms(elapsed);
+      remainingEl.textContent =
+        (over ? "+" : "") + hms(Math.abs(remaining)) +
+        (es ? (over ? " de más" : " restante") : (over ? " over" : " left"));
+      timer.classList.toggle("over", over);
+    }
+
+    // Clicking resets, for the gap between opening the deck and actually
+    // starting. A click rather than a key: every unclaimed letter is one
+    // reveal might bind later, and a mis-hit there would change slide.
+    timer.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      startedAt = Date.now();
+      writeStart(startedAt);
+      tick();
+    });
+
+    tick();
+    setInterval(tick, 1000);
+
+    // ── The section breadcrumb ──────────────────────────────────────────
+    // Walk every section in document order, not just the top-level ones. The
+    // rendered HTML is flat — a level-1 title slide, then its level-2 slides
+    // as siblings — but reveal's init wraps each group in a `.stack` to make
+    // it a vertical column, so by the time this runs the level-1 slides sit
+    // one level down. Iterating all descendants works before or after that
+    // rewrite, and saves walking back up from the current slide.
+    var slides = reveal.querySelectorAll(".slides section");
+    var crumbText = "";
+    Array.prototype.forEach.call(slides, function (slide) {
+      // `.stack` wrappers are neither level, and must not take a crumb.
+      var isSlide = slide.classList.contains("level1") ||
+                    slide.classList.contains("level2");
+      if (slide.classList.contains("level1")) {
+        var heading = slide.querySelector("h1");
+        var title = heading ? heading.textContent.trim() : "";
+        // Drop the "01 · " prefix: the slide number already tells the room
+        // where it is, and the part is about to be spelled out anyway.
+        title = title.replace(/^\d+\s*·\s*/, "");
+        // A hidden marker on the title slide, not an attribute on the
+        // heading: a var shortcode inside a heading's `{...}` is not parsed
+        // as an attribute, and takes the #sec-NN anchor down with it.
+        // (Quarto runs its shortcode parser over this file too, so the
+        // shortcode cannot be written out literally here either.)
+        var marker = slide.querySelector(".sec-part");
+        var part = marker ? marker.textContent.trim() : "";
+        // Sections 00 and 11 sit outside the four parts and carry "—".
+        crumbText = (part && part !== "—")
+          ? (es ? "Parte " : "Part ") + part + ": " + title
+          : title;
+      }
+      if (isSlide) { slide.dataset.crumb = crumbText; }
+    });
+
+    var footer = document.querySelector(".reveal .footer");
+    if (!footer) { return; }
+    var crumb = document.createElement("span");
+    crumb.className = "deck-crumb";
+    // Into the footer's <p>, not the footer itself: quarto wraps the footer
+    // text in a paragraph, and a span placed beside a block element gets its
+    // own line — the crumb would sit on a second row above the links.
+    (footer.querySelector("p") || footer).insertBefore(
+      crumb, (footer.querySelector("p") || footer).firstChild);
+
+    function updateCrumb() {
+      // getCurrentSlide() returns the slide itself, never its `.stack`, so
+      // the label tagged on above is already the right one.
+      var slide = Reveal.getCurrentSlide && Reveal.getCurrentSlide();
+      var text = (slide && slide.dataset) ? (slide.dataset.crumb || "") : "";
+      crumb.textContent = text;
+      // Empty on the opening slides: an empty span would still draw its
+      // separator and leave a bullet floating at the start of the footer.
+      crumb.classList.toggle("empty", text === "");
+    }
+
+    Reveal.on("slidechanged", updateCrumb);
+    updateCrumb();
+  });
+})();
+</script>

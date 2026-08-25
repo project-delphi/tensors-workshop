@@ -4,7 +4,7 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Seven checks, each of which catches a mistake that is otherwise invisible.
+Eight checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
@@ -19,6 +19,9 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     deck and forgetting the Spanish one is the single most likely way these
     two files drift.
   - The EN and ES landing pages list the same twelve sections.
+  - The deck timer's total still matches workshop.minutes. Quarto has no
+    passthrough for reveal's `totalTime`, so the number lives in JavaScript
+    and nothing else would notice it going stale.
   - No visible cell depends on a name bound only inside a folded solution
     cell. [nb]
   - Kahoot join URLs. A reminder, NOT a failure — see check_kahoot_urls.
@@ -271,6 +274,30 @@ def check_landing_parity() -> None:
           f"with slide anchors and notebook links")
 
 
+def check_deck_total() -> None:
+    """The deck timer's total must still be workshop.minutes, in seconds.
+
+    `total-time` in the deck header is silently ignored by Quarto — it never
+    reaches the reveal config — so slides/deck-pace.html hard-codes the number
+    and hands it to Reveal.configure(). That makes it the one number about the
+    workshop's length that lives outside _variables.yml, and the only thing
+    that would catch it drifting is this check.
+    """
+    step("Deck timer total")
+    src = (ROOT / "slides" / "deck-pace.html").read_text(encoding="utf-8")
+    m = re.search(r"var TOTAL_SECONDS = (\d+);", src)
+    if not m:
+        fail("slides/deck-pace.html: no `var TOTAL_SECONDS = <n>;` found")
+        return
+    got, want = int(m.group(1)), V["workshop"]["minutes"] * 60
+    if got != want:
+        fail(f"deck-pace.html TOTAL_SECONDS is {got}, "
+             f"workshop.minutes ({V['workshop']['minutes']}) wants {want}")
+    else:
+        print(f"      TOTAL_SECONDS {got} = {V['workshop']['minutes']} min, "
+              f"matching workshop.minutes")
+
+
 def check_solution_independence() -> None:
     """No visible cell may depend on a name bound only inside a folded solution.
 
@@ -361,6 +388,7 @@ def main() -> int:
         check_links()
         check_decks()
         check_landing_parity()
+        check_deck_total()
     check_solution_independence()
     if not only_nb:
         check_kahoot_urls()

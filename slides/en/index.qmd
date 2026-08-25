@@ -6,6 +6,12 @@ format:
     theme: [default, ../slides.scss]
     slide-number: c/t
     show-slide-number: all
+    progress: true
+    # The audience-facing timer and the section breadcrumb. One shared
+    # file for both decks; it picks its language off <html lang>.
+    include-after-body: ../deck-pace.html
+    # The audience-facing timer and the section breadcrumb. One shared
+    # file for both decks; it picks its language off <html lang>.
     # Not `auto`: that intercepts every http(s) link and opens it in an
     # in-deck iframe whenever the deck is fullscreen — i.e. exactly when
     # presenting. Colab and GitHub both send X-Frame-Options, so clicking
@@ -179,6 +185,10 @@ reliable source of confusion in the whole workshop.
 
 # 00 · Setup and welcome {#sec-00-setup-and-data}
 
+::: {.sec-part}
+{{< var sections.s00.part >}}
+:::
+
 *5 min · run this before anything else*
 
 ## Three downloads, one first cell
@@ -229,6 +239,10 @@ Everything else in the library ships offline: `load_breast_cancer`,
 :::
 
 # 01 · What a tensor is {#sec-01-what-a-tensor-is}
+
+::: {.sec-part}
+{{< var sections.s01.part >}}
+:::
 
 *Part I · 20 min · demo*
 
@@ -353,6 +367,10 @@ never Part I.
 
 # 02 · Thinking in N dimensions {#sec-02-thinking-in-n-dimensions}
 
+::: {.sec-part}
+{{< var sections.s02.part >}}
+:::
+
 *Part II · 20 min · group discussion · no code*
 
 ## Your task
@@ -413,6 +431,10 @@ Pre-assign breakout groups before the session.
 :::
 
 # 03 · Indexing and broadcasting {#sec-03-indexing-and-broadcasting}
+
+::: {.sec-part}
+{{< var sections.s03.part >}}
+:::
 
 *Part III · 15 min · exercise*
 
@@ -478,6 +500,10 @@ writes. Standard deviation exactly zero → `NaN`.
 [Open in Colab]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb)
 
 # 04 · Reshape and transpose {#sec-04-reshape-and-transpose}
+
+::: {.sec-part}
+{{< var sections.s04.part >}}
+:::
 
 *Part III · 15 min · exercise*
 
@@ -578,6 +604,10 @@ If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
 
 # 05 · Video pipeline design {#sec-05-video-pipeline-design}
 
+::: {.sec-part}
+{{< var sections.s05.part >}}
+:::
+
 *Part III · 15 min · group discussion*
 
 ## Design both pipelines
@@ -628,6 +658,10 @@ from Q2 turns out to be the same mask attention needs.
 [Open in Colab]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb)
 
 # 06 · Contraction with einsum {#sec-06-contraction-with-einsum}
+
+::: {.sec-part}
+{{< var sections.s06.part >}}
+:::
 
 *Part IV · 15 min · exercise*
 
@@ -703,6 +737,10 @@ the only bridge.
 [Open in Colab]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb)
 
 # 07 · Inverses and the pseudoinverse {#sec-07-inverses-and-pseudoinverse}
+
+::: {.sec-part}
+{{< var sections.s07.part >}}
+:::
 
 *Part IV · 15 min · exercise*
 
@@ -817,6 +855,10 @@ distance both get re-covered narratively in the wrap-up.
 
 # 08 · Recursion with matrices {#sec-08-recursion-with-matrices}
 
+::: {.sec-part}
+{{< var sections.s08.part >}}
+:::
+
 *Part IV · 10 min · demo*
 
 ## Apply the same matrix again and again
@@ -900,6 +942,10 @@ If badly over time, this RNN snippet is third on the cutting list — after Kaho
 [Open in Colab]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb)
 
 # 09 · Convolution and deconvolution {#sec-09-convolution-and-deconvolution}
+
+::: {.sec-part}
+{{< var sections.s09.part >}}
+:::
 
 *Part IV · 15 min · exercise*
 
@@ -1015,6 +1061,10 @@ you find the best stable answer instead.
 [Open in Colab]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb)
 
 # 10 · Tucker decomposition {#sec-10-tucker-decomposition}
+
+::: {.sec-part}
+{{< var sections.s10.part >}}
+:::
 
 *Part IV · 15 min · exercise*
 
@@ -1209,6 +1259,10 @@ wrap-up's own recap, so segue straight from the podium into the wrap-up.
 :::
 
 # 11 · Wrap-up {#sec-11-wrap-up-and-take-homes}
+
+::: {.sec-part}
+{{< var sections.s11.part >}}
+:::
 
 *5 min*
 
