@@ -1641,7 +1641,8 @@ print(np.sort(X.var(axis=0))[[0, -1]])             # ~0.0000075 up to ~324000
 
 Xs = (X - X.mean(axis=0)) / X.std(axis=0)
 S2 = np.linalg.svd(Xs, full_matrices=False)[1]
-n95_scaled = np.argmax(np.cumsum(S2**2 / (S2**2).sum()) >= 0.95) + 1   # 10
+frac_scaled = S2**2 / (S2**2).sum()
+n95_scaled = np.argmax(np.cumsum(frac_scaled) >= 0.95) + 1   # 10
 print(n95_scaled)
 
 # Without standardizing, the first component appears to explain 98.2% of the
@@ -1653,10 +1654,28 @@ print(n95_scaled)
 # PCA KNOWS NOTHING ABOUT UNITS. Features on different scales must be
 # standardized first.
 
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(6.5, 3.5))
+n_show = 15
+ax.plot(range(1, n_show + 1), np.cumsum(frac[:n_show]), marker="o",
+        label="unstandardized", color="#C44E52")
+ax.plot(range(1, n_show + 1), np.cumsum(frac_scaled[:n_show]), marker="o",
+        label="standardized", color="#4C72B0")
+ax.axhline(0.95, color="gray", linestyle="--", linewidth=1, label="95% threshold")
+ax.set_xlabel("number of components"); ax.set_ylabel("cumulative variance explained")
+ax.set_title("The scree plot IS the standardisation trap")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
 # TODO 5:
-# Z = Xs @ np.linalg.svd(Xs, full_matrices=False)[2][:2].T
-# import matplotlib.pyplot as plt
-# plt.scatter(Z[:, 0], Z[:, 1], c=y, s=8, cmap="coolwarm")"""),
+Z = Xs @ np.linalg.svd(Xs, full_matrices=False)[2][:2].T
+fig, ax = plt.subplots(figsize=(5, 4))
+ax.scatter(Z[:, 0], Z[:, 1], c=y, s=8, cmap="coolwarm")
+ax.set_xlabel("component 1"); ax.set_ylabel("component 2")
+ax.set_title("standardized data — malignant/benign in 2 components")
+plt.tight_layout()
+plt.show()"""),
         md("""---
 
 ## Take-home B — Attention is two contractions
