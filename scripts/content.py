@@ -79,6 +79,35 @@ of the work.**
 If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, you are ready.
 **If it failed, say so in Discord immediately** — a silent download failure will
 leave you stuck at sections 07 and 10, an hour from now, with no obvious cause."""),
+        md("""## See it, not just its shape
+
+> 🇪🇸 Confírmalo con los ojos, no solo con `.shape`.
+
+A shape can match on paper for reasons that are actually bugs — a truncated
+download, a stale cached file, a column that came back silently empty. These
+three files just came over the network; a glance at each is cheaper than
+discovering a bad download at section 07 or 10, an hour from now."""),
+        code("""import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.2))
+
+sc = axes[0].scatter(housing["longitude"], housing["latitude"],
+                      c=housing["median_house_value"], cmap="viridis", s=4)
+axes[0].set_title("housing — location, coloured by price")
+fig.colorbar(sc, ax=axes[0], fraction=0.046)
+
+axes[1].hist(taxis["fare"].dropna(), bins=30, color="#4C72B0")
+axes[1].set_title("taxis — fare distribution")
+axes[1].set_xlabel("fare ($)")
+
+by_year = flights.groupby("year")["passengers"].sum()
+axes[2].plot(by_year.index, by_year.values, marker="o", color="#55A868")
+axes[2].set_title("flights — passengers per year")
+
+fig.suptitle("Real California geography, real fares, real growth — "
+             "if these look right, the downloads worked")
+plt.tight_layout()
+plt.show()"""),
         md("""## Exercise 1 — check the data you did not download
 
 > 🇪🇸 Comprueba los datos que vienen dentro de las librerías."""),
@@ -225,6 +254,49 @@ print(data.astronaut().shape)       # (512, 512, 3)  axis 0 = height
 ### Slices and fibers — fixing indices takes a tensor apart"""),
         code("""print(photo[:, :, 0].shape)       # (512, 512) — a slice: one colour channel, still an image
 print(photo[100, 200, :].shape)   # (3,)       — a fiber: the 3 colour values of one pixel"""),
+        md("""Same picture, same two indexing operations — see them together. Drag the
+sliders and watch the marked pixel move on both panels at once, while its
+fiber (three numbers, one per colour) redraws on the right.
+
+> 🇪🇸 Mueve los deslizadores: el mismo píxel se marca en el corte y en la
+> imagen completa, y su fibra (tres números, uno por color) se redibuja."""),
+        code("""# Colab renders ipywidgets through its own widget manager rather than the
+# classic Jupyter one; this call is a no-op outside Colab, which is why it is
+# guarded rather than assumed.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_slice_and_fiber(row, col):
+    plt.close('all')
+    fig, axes = plt.subplots(1, 3, figsize=(11, 3.2))
+
+    axes[0].imshow(photo)
+    axes[0].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[0].set_title('photo — the fiber, marked')
+    axes[0].axis('off')
+
+    axes[1].imshow(photo[:, :, 0], cmap='gray')
+    axes[1].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[1].set_title('photo[:, :, 0] — a slice')
+    axes[1].axis('off')
+
+    fiber = photo[row, col, :]
+    axes[2].bar(['R', 'G', 'B'], fiber, color=['#C44E52', '#55A868', '#4C72B0'])
+    axes[2].set_title(f'photo[{row}, {col}, :] — the fiber')
+    axes[2].set_ylim(0, 255)
+
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_slice_and_fiber,
+                  row=widgets.IntSlider(min=0, max=511, step=1, value=100, description='row'),
+                  col=widgets.IntSlider(min=0, max=511, step=1, value=200, description='col'));"""),
         md("""### Unfolding — every decomposition begins here
 
 Every tensor decomposition begins by turning the tensor into a matrix, one axis
@@ -510,6 +582,37 @@ print(radius[y == 0].mean(), radius[y == 1].mean()) # 17.5 vs 12.1
 
 # A real result: MALIGNANT TUMOURS REALLY DO HAVE A LARGER MEAN RADIUS,
 # 17.5 against 12.1. Random data would never have shown you that."""),
+        md("""`radius` was one column out of 30, picked because it happens to separate the
+two groups well. Drag the slider below to look at all 30 — most separate far
+less cleanly.
+
+> 🇪🇸 Mueve el deslizador para ver las 30 medidas, una por una. La mayoría
+> separa malignos de benignos mucho peor que el radio."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_feature(i):
+    plt.close('all')
+    col = X[:, i]
+    fig, ax = plt.subplots(figsize=(6, 3))
+    ax.hist(col[y == 0], bins=30, alpha=0.6, label='malignant', color='#C44E52')
+    ax.hist(col[y == 1], bins=30, alpha=0.6, label='benign', color='#4C72B0')
+    ax.set_title(names[i])
+    ax.legend()
+    plt.tight_layout()
+    plt.show()
+    print(f"malignant mean: {col[y == 0].mean():.3f}   "
+          f"benign mean: {col[y == 1].mean():.3f}")
+
+widgets.interact(show_feature,
+                  i=widgets.IntSlider(min=0, max=len(names) - 1, step=1, value=0,
+                                       description='feature'));"""),
         md("""## Broadcasting, on real images
 
 > 🇪🇸 Broadcasting sobre imágenes reales.
@@ -546,7 +649,17 @@ print(np.isnan(Z).any())                            # False
 # THREE PIXELS ARE ALWAYS DARK in all 1797 digit images: they sit in corners
 # where nobody writes. Their standard deviation is exactly zero, so dividing
 # produces NaN. np.where leaves those columns as plain centred zeros, which is
-# the honest thing to do with a feature that carries no information."""),
+# the honest thing to do with a feature that carries no information.
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(3, 3))
+ax.imshow(D.mean(axis=0).reshape(8, 8), cmap='gray')
+zero_rows, zero_cols = np.where((std == 0).reshape(8, 8))
+ax.scatter(zero_cols, zero_rows, s=250, marker='s',
+           facecolors='none', edgecolors='#C44E52', linewidths=2)
+ax.set_title('zero-variance pixels, marked')
+ax.axis('off')
+plt.show()"""),
         md("""## What just happened
 
 Two real results, neither of which random data could have produced:
@@ -628,18 +741,18 @@ print(np.array_equal(nchw[:, 0], nchw[:, 1]))  # False — the 3 colour channels
 > 🇪🇸 El que se ejecuta sin error y aun así está mal."""),
         code("""# TODO 5: photo.reshape(3, 512, 512) runs WITHOUT error but is wrong.
 #         Run it, compare against TODO 2, and explain the difference.
-#         If you can, display both with matplotlib and look at them."""),
+#         Then display both with matplotlib and look at them."""),
         solution("""chw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct
 wrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — runs, but scrambles
 
 print(chw.shape == wrong.shape)             # True  — identical shapes
 print(np.array_equal(chw, wrong))           # False — completely different data
 
-# Optional, and worth doing once:
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 2, figsize=(8, 4))
-# ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
-# ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")"""),
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 2, figsize=(8, 4))
+ax[0].imshow(chw[0],   cmap="gray"); ax[0].set_title("transpose — a channel")
+ax[1].imshow(wrong[0], cmap="gray"); ax[1].set_title("reshape — nonsense")
+plt.show()"""),
         md("""## What just happened
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them
@@ -1061,7 +1174,26 @@ print(name, round(coef))                                  # median_income 47748
 # because it solves the same problem.
 #
 # The largest coefficient belongs to median_income, which is the sensible
-# result — income predicts house prices."""),
+# result — income predicts house prices.
+
+import matplotlib.pyplot as plt
+pred = X @ w
+residuals = pred - y
+fig, axes = plt.subplots(1, 2, figsize=(9, 3.5))
+axes[0].scatter(y, pred, s=3, alpha=0.2, color="#4C72B0")
+lims = [min(y.min(), pred.min()), max(y.max(), pred.max())]
+axes[0].plot(lims, lims, color="#C44E52", linewidth=1)
+axes[0].set_xlabel("actual"); axes[0].set_ylabel("predicted")
+axes[0].set_title("predicted vs actual")
+axes[1].hist(residuals, bins=60, color="#55A868")
+axes[1].set_xlabel("prediction - actual"); axes[1].set_title("residuals")
+plt.tight_layout()
+plt.show()
+
+# No straight line fits 20,433 points exactly, and the residuals show it: they
+# are not tightly clustered at zero, and the predicted-vs-actual scatter fans
+# out badly at the high end. LEAST SQUARES MINIMIZES THE AVERAGE SQUARED ERROR
+# ACROSS ALL POINTS — it says nothing about any one prediction being close."""),
         md("""## Exercise 3 — the tensor version
 
 > 🇪🇸 La versión tensorial: despliega, resuelve, vuelve a plegar."""),
@@ -1132,6 +1264,34 @@ for _ in range(50):
 
 print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical"""),
+        code("""import matplotlib.pyplot as plt
+
+xv = rng.standard_normal(2); xv /= np.linalg.norm(xv)
+checkpoints = {}
+for step in range(1, 51):
+    xv = A @ xv
+    xv /= np.linalg.norm(xv)
+    if step in (1, 2, 5, 10, 50):
+        checkpoints[step] = xv.copy()
+
+eigvals, eigvecs = np.linalg.eig(A)
+dominant = eigvecs[:, np.argmax(eigvals)].real
+dominant /= np.linalg.norm(dominant)
+
+fig, ax = plt.subplots(figsize=(4, 4))
+theta = np.linspace(0, 2 * np.pi, 200)
+ax.plot(np.cos(theta), np.sin(theta), color="lightgray", linewidth=1)
+for step, v in checkpoints.items():
+    ax.annotate("", xy=v, xytext=(0, 0), arrowprops=dict(
+        arrowstyle="->", color="#4C72B0", alpha=0.3 + 0.7 * step / 50))
+    ax.text(v[0] * 1.15, v[1] * 1.15, str(step), fontsize=8, ha="center")
+for sign in (1, -1):
+    ax.annotate("", xy=sign * dominant, xytext=(0, 0),
+                arrowprops=dict(arrowstyle="->", color="#C44E52", linewidth=2))
+ax.set_xlim(-1.3, 1.3); ax.set_ylim(-1.3, 1.3); ax.set_aspect("equal")
+ax.set_title("power iteration converges to the eigenvector\\n(red = the true dominant eigenvector, both signs)")
+plt.tight_layout()
+plt.show()"""),
         md("""This is how PageRank ranks web pages, and it is why eigenvectors matter far
 beyond Chapter 2: **repeated application of a matrix converges to its dominant
 eigenvector.**"""),
@@ -1154,6 +1314,39 @@ for _ in range(12):                           # recursion: feed predictions back
 
 print(np.round(history[-12:], 1))
 # [465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]"""),
+        md("""The forecast above extrapolates 12 months **past the end of the dataset**, so
+there is nothing to check it against. To see the forecast next to real numbers,
+hold out the last 12 months, fit on everything before them, and forecast those
+same 12 months back.
+
+> 🇪🇸 El pronóstico anterior se extiende 12 meses **más allá del final de los
+> datos**, así que no hay nada real con qué compararlo. Para ver el pronóstico
+> junto a números reales, se retienen los últimos 12 meses, se ajusta con todo
+> lo anterior, y se pronostican esos mismos 12 meses."""),
+        code("""y_train, y_test = y[:-12], y[-12:]
+rows_tr = np.array([y_train[i:i+p] for i in range(len(y_train) - p)])
+X_tr = np.column_stack([np.ones(len(rows_tr)), rows_tr])
+w_tr = np.linalg.pinv(X_tr) @ y_train[p:]
+
+hist_tr = list(y_train[-p:])
+for _ in range(12):
+    hist_tr.append(w_tr[0] + np.dot(w_tr[1:], hist_tr[-p:]))
+forecast_holdout = np.array(hist_tr[-12:])
+
+import matplotlib.pyplot as plt
+months = np.arange(1, 13)
+fig, ax = plt.subplots(figsize=(6, 3.2))
+ax.plot(months, y_test, marker="o", label="actual", color="#4C72B0")
+ax.plot(months, forecast_holdout, marker="o", label="forecast", color="#C44E52")
+ax.set_xlabel("month (held out, never seen while fitting)")
+ax.set_ylabel("passengers")
+ax.set_title("forecast vs. actual — last 12 months held out")
+ax.legend()
+plt.tight_layout()
+plt.show()
+
+mape = (np.abs(forecast_holdout - y_test) / y_test).mean()
+print(f"mean absolute percentage error: {mape:.1%}")"""),
         md("""The forecast reproduces the seasonal shape of real air travel — low in winter,
 peaking in summer — because the model learned it from 132 real training windows.
 
@@ -1314,12 +1507,46 @@ psf = np.ones((9, 9)); psf /= psf.sum()
 blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
 print(blurred.shape)                                    # (512, 512) — 'same' keeps it
 
-# import matplotlib.pyplot as plt
-# fig, ax = plt.subplots(1, 3, figsize=(12, 4))
-# for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
-#     a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(1, 3, figsize=(12, 4))
+for a, im, t in zip(ax, [img, edges, blurred], ["original", "sobel", "blurred"]):
+    a.imshow(im, cmap="gray"); a.set_title(t); a.axis("off")
+plt.show()
 
 # 'valid' shrinks by kernel_size - 1 = 2 in each direction: 512 -> 510."""),
+        md("""See the blur trade-off live: a bigger averaging kernel removes more detail,
+and it shrinks a `'valid'`-mode output by more (`kernel_size - 1` per side).
+
+> 🇪🇸 El deslizador muestra el compromiso del desenfoque: un kernel más grande
+> elimina más detalle, y en modo `'valid'` recorta más el resultado."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_blur(k):
+    psf_k = np.ones((k, k)); psf_k /= psf_k.sum()
+    blurred_k = signal.convolve2d(img, psf_k, mode='same', boundary='symm')
+    valid_k = signal.convolve2d(img, psf_k, mode='valid')
+
+    plt.close('all')
+    fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+    axes[0].imshow(blurred_k, cmap='gray')
+    axes[0].set_title(f"{k}x{k} kernel, mode='same' — {blurred_k.shape}")
+    axes[1].imshow(valid_k, cmap='gray')
+    axes[1].set_title(f"{k}x{k} kernel, mode='valid' — {valid_k.shape}")
+    for a in axes:
+        a.axis('off')
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_blur,
+                  k=widgets.IntSlider(min=1, max=25, step=2, value=9,
+                                       description='kernel size'));"""),
         md("""## Exercise 2 — transposed convolution
 
 > 🇪🇸 Convolución transpuesta: hace las cosas más grandes, no las deshace."""),
@@ -1578,6 +1805,52 @@ recon = np.einsum('abc,ia,jb,kc->ijk', core, Us[0], Us[1], Us[2])
 error = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067
 ratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71
 print(core.shape, round(error, 3), round(ratio, 2))"""),
+        md("""The exercise above fixed one rank, (2, 2, 3). Move the slider to see the
+whole error/compression trade-off, not just that one point on it.
+
+> 🇪🇸 El ejercicio anterior fijó un solo rango, (2, 2, 3). Mueve el
+> deslizador para ver toda la curva de compensación, no solo ese punto."""),
+        code("""try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+# Precompute the full SVD basis for each axis once; the slider only re-slices
+# and re-contracts these small matrices, which is what keeps it responsive.
+bases = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]
+max_rank = min(u.shape[1] for u in bases)
+
+ks, errors, ratios = list(range(1, max_rank + 1)), [], []
+for kk in ks:
+    Uk = [bases[ax][:, :kk] for ax in range(3)]
+    core_k = np.einsum('ijk,ia,jb,kc->abc', T, *Uk)
+    recon_k = np.einsum('abc,ia,jb,kc->ijk', core_k, *Uk)
+    errors.append(np.linalg.norm(T - recon_k) / np.linalg.norm(T))
+    ratios.append(T.size / (core_k.size + sum(u.size for u in Uk)))
+
+def show_rank(k):
+    i = k - 1
+    plt.close('all')
+    fig, ax1 = plt.subplots(figsize=(6, 3.2))
+    ax1.plot(ks, errors, color='#C44E52')
+    ax1.scatter([k], [errors[i]], color='#C44E52', zorder=5)
+    ax1.set_xlabel('rank k (shared across all three axes)')
+    ax1.set_ylabel('relative error', color='#C44E52')
+    ax2 = ax1.twinx()
+    ax2.plot(ks, ratios, color='#4C72B0')
+    ax2.scatter([k], [ratios[i]], color='#4C72B0', zorder=5)
+    ax2.set_ylabel('compression ratio (x)', color='#4C72B0')
+    plt.tight_layout()
+    plt.show()
+    print(f"rank k={k}: error={errors[i]:.3f}, compression={ratios[i]:.2f}x")
+
+widgets.interact(show_rank,
+                  k=widgets.IntSlider(min=1, max=max_rank, step=1, value=2,
+                                       description='rank k'));"""),
         md("""## Exercise 3 — what did it find?
 
 > 🇪🇸 ¿Qué encontró la descomposición por sí sola?
