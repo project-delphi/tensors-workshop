@@ -81,7 +81,7 @@ $code-block-font-size: 0.62em;
 
   .dataset-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: .55em .6em;
     margin: .5em 0 .6em;
   }
@@ -96,7 +96,11 @@ $code-block-font-size: 0.62em;
   // waveform is a plot and the rest are photographs.
   .ds img {
     width: 100%;
-    height: 150px;
+    // Ten cards across five columns land at about 210px of canvas width, and
+    // the thumbnails are generated at 400x260. 135px is that same 20:13, so
+    // `cover` below has nothing left to crop and every card shows its whole
+    // frame. Change one of the three and this stops being true.
+    height: 135px;
     object-fit: cover;
     border-radius: 3px;
     margin: 0 0 .3em;
@@ -125,7 +129,7 @@ $code-block-font-size: 0.62em;
     margin-top: .12em;
   }
 
-  // The eighth cell carries no image, so it needs the height back as padding
+  // The tenth cell carries no image, so it needs the height back as padding
   // or it floats against the top of its row.
   .ds-more {
     justify-content: center;

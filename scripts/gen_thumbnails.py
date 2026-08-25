@@ -2,13 +2,13 @@
 slide in both decks.
 
 Unlike `gen_tables.py` and `gen_notebooks.py`, this is **not** part of the CI
-regenerate gate: it needs the network, and re-fetching five files from
+regenerate gate: it needs the network, and re-fetching six files from
 Wikimedia on every push would be both slow and rude. It exists so the images in
 `images/ds-*` are reproducible artifacts with recorded provenance rather
 than mystery binaries — the gap the older `images/*.png` files still have.
 
-Every source below is CC0. That is deliberate: the slide shows seven datasets
-at once, and a deck is a bad place to owe seven attribution lines. Credit is
+Every source below is CC0. That is deliberate: the slide shows nine datasets
+at once, and a deck is a bad place to owe nine attribution lines. Credit is
 given anyway, in the speaker notes and here.
 
     uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
@@ -62,6 +62,14 @@ PHOTOS = {
         "9cebd18130cf05d0d401f885f913451f0b4623c6dd4b049d0b8b17760afb6172",
         "Mikael Haggstrom MD, CC0 - commons.wikimedia.org/wiki/"
         "File:Histopathology_of_invasive_ductal_carcinoma_of_the_breast.jpg",
+    ),
+    "ds-housing": (
+        "https://upload.wikimedia.org/wikipedia/commons/4/46/"
+        "South-Los-Angeles-subdivision-houses-near-Darby-Park-"
+        "Aerial-view-from-north-August-2014.jpg",
+        "44a70a2531890f4b01371a52405d88710d5a4cfca2ecb936f3441cdbdca25923",
+        "Alfred Twu, CC0 - commons.wikimedia.org/wiki/File:South-Los-Angeles-"
+        "subdivision-houses-near-Darby-Park-Aerial-view-from-north-August-2014.jpg",
     ),
 }
 
@@ -224,6 +232,19 @@ def cell() -> None:
     save(cover(img), "ds-cell")
 
 
+def histology() -> None:
+    """skimage.data.immunohistochemistry(): colonic glands, with FHL2 expression
+    revealed in brown by DAB over a blue haematoxylin counterstain. Acquired at
+    the Center for Microscopy and Molecular Imaging; no known copyright
+    restrictions. Already an 8-bit RGB photograph, so unlike `cell()` it needs
+    no percentile stretch — the crop is the whole treatment."""
+    from PIL import Image
+    from skimage import data
+
+    print("Histology, rendered from skimage.data.immunohistochemistry()")
+    save(cover(Image.fromarray(data.immunohistochemistry())), "ds-histology")
+
+
 def video() -> None:
     """A strip of frames from the exact clip section 05 decodes — a still of a
     single frame would not show that the time axis is the point."""
@@ -254,5 +275,6 @@ if __name__ == "__main__":
     photos()
     digits()
     cell()
+    histology()
     audio()
     video()
