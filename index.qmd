@@ -38,6 +38,11 @@ where it first appears.
   [notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) before the
   session** and say so immediately if it fails — a silent download failure will
   leave you stuck at sections 07 and 10.
+- **Required pre-work:** work through
+  [`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}}) before
+  the session — 14 short bilingual Colab notebooks (~2–3 hours total) covering
+  exactly the linear algebra above, vectors through PCA. This workshop moves
+  fast through material that assumes you've done this review.
 
 ## How to run the notebooks
 
