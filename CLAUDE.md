@@ -92,7 +92,13 @@ that output is **not** a failure. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them
-locally: `uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab`.
+locally: `uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab`.
+
+`matplotlib` and `ipywidgets` both ship with Colab but not with a local
+`jupyterlab` install. Nearly every section now plots something, and the sliders
+in sections 01, 03, 09, 10 and 11 need `ipywidgets` on top of that. Notebook
+cells that need `tensorly` install it themselves with `%pip install -q
+tensorly`, so it is not in this list.
 
 ## Publishing
 
@@ -102,6 +108,16 @@ the publisher: it re-renders and runs `scripts/compare_render.py`, which
 compares committed vs fresh HTML with Quarto's content-hashed asset names
 normalized away (a byte-exact gate is impossible — SCSS compilation differs
 between macOS and ubuntu-latest at the same version).
+
+**That gate only walks `*.html`, and it is the only staleness check there is.**
+`notebooks/*.ipynb` are `resources:` in `_quarto.yml`, not `render:` targets —
+Quarto copies them into `docs/notebooks/` verbatim. So a notebook change that
+is committed without a re-render leaves `docs/notebooks/` serving the old copy,
+and nothing fails: the regenerate gate compares `notebooks/` against
+`content.py` and never looks in `docs/`, while `compare_render.py` skips
+non-HTML entirely. This has already happened once, to nine of the twelve
+notebooks at once. Re-render after *any* notebook change, not only after a
+prose or `_variables.yml` change.
 
 Quarto is pinned to **1.6.40** in the workflow. Use that version locally; a
 different one changes markup and the staleness gate goes red. Bump the pin and

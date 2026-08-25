@@ -7,7 +7,7 @@
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-97af773cfbe0d0670e77fe96929c7f4c.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
   <title>Tensors for Machine Learning – Tensores para Aprendizaje Automático</title>
@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-c0ee31b37f7c3492c9f97e956bede215.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-1f7156b7eb7fb19db9aad27633679fe9.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -218,100 +218,177 @@
           display:block!important;
       }</style></aside>
 </section>
-<section id="todos-los-datos-son-reales" class="slide level2">
-<h2>Todos los datos son reales</h2>
-<div>
-<ul>
-<li class="fragment">Medidas reales de tumores, dígitos manuscritos reales, histología real</li>
-<li class="fragment">Viajes reales en taxi, tráfico aéreo real</li>
-<li class="fragment"><strong>Nada está inventado con números aleatorios</strong></li>
-</ul>
+<section id="todos-los-datos-son-reales" class="slide level2 data-slide">
+<h2>Aquí no hay nada inventado</h2>
+<p>Once conjuntos de datos. Todos medidos sobre algo que existe.</p>
+<div class="dataset-grid">
+<div class="ds">
+<p><img data-src="../../images/ds-nyc-taxi.jpg" alt="Taxis amarillos en fila en una avenida de Manhattan, la ciudad cuyos 6.433 registros de viajes forman el conjunto de datos taxis."></p>
+<p><a href="https://github.com/mwaskom/seaborn-data">Viajes en taxi de Nueva York</a></p>
+<p>6.433 viajes · §10</p>
 </div>
-<div class="fragment">
-<p>Los datos reales tienen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian.</p>
-<p><strong>Encontrar esos problemas es parte del trabajo.</strong></p>
+<div class="ds">
+<p><img data-src="../../images/ds-airliner.jpg" alt="Un avión de pasajeros Douglas DC-3 en vuelo, el aparato de la época de 1949 a 1960 cuyos totales mensuales de pasajeros cuenta el conjunto de datos flights."></p>
+<p><a href="https://github.com/mwaskom/seaborn-data">Pasajeros aéreos</a></p>
+<p>144 meses, 1949–60 · §08</p>
 </div>
+<div class="ds">
+<p><img data-src="../../images/ds-digits.png" alt="Ocho dígitos manuscritos de load_digits de scikit-learn, cada uno de 8 por 8 píxeles, mostrados sin suavizado para que se vean los píxeles individuales."></p>
+<p><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset">Dígitos manuscritos</a></p>
+<p>1.797 de 8×8 · §01 §03 §06</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-breast-cancer.jpg" alt="Dos vistas de histopatología teñida de un carcinoma ductal invasivo de mama, el tipo de preparación del que se tomaron las medidas de los núcleos tumorales."></p>
+<p><a href="https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-wisconsin-diagnostic-dataset">Tumores de mama</a></p>
+<p>569 pacientes, 30 medidas · §03 §11</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-cell.jpg" alt="Una célula flotando en solución salina, captada como un mapa cuantitativo de fase recuperado de un holograma digital."></p>
+<p><a href="https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.cell">Microscopía celular</a></p>
+<p>Imagen de fase 660×550 · §04</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-video.jpg" alt="Tres fotogramas de un vídeo de una tormenta en l'Almadrava, separados por dos segundos; las olas cambian de un fotograma a otro, y eso es lo que hace que el eje temporal lleve información."></p>
+<p><a href="https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm">Vídeo de una tormenta</a></p>
+<p>24 s a 960×540 · §05</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-audio.png" alt="La onda de una grabación de voz de cinco segundos, amplitud frente a tiempo, con ráfagas de habla separadas por silencios."></p>
+<p><a href="https://github.com/pdx-cs-sound/wavs">Grabación de voz</a></p>
+<p>4,9 s a 48 kHz · §11</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-housing.jpg" alt="Vista aérea de hileras de viviendas en serie en el sur de California, el tipo de distrito cuyo valor mediano y recuentos por manzana forman el conjunto de datos de vivienda."></p>
+<p><a href="https://github.com/ageron/handson-ml2/blob/master/datasets/housing/housing.csv">Vivienda en California</a></p>
+<p>20.640 distritos · §07</p>
+</div>
+<div class="ds">
+<p><img data-src="../../images/ds-histology.jpg" alt="Glándulas del colon teñidas por inmunohistoquímica; la señal marrón de DAB marca la expresión de FHL2 sobre un contraste azul de hematoxilina."></p>
+<p><a href="https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.immunohistochemistry">Histología teñida</a></p>
+<p>512×512 RGB · §01 §04 §06</p>
+</div>
+<div class="ds ds-more">
+<p><strong>También hoy</strong></p>
+<p><a href="https://scikit-image.org/docs/stable/api/skimage.data.html">Fotografías</a> · §01 §06 §09 §10</p>
+</div>
+</div>
+<p>Los datos reales fallan como los números aleatorios nunca fallan: valores faltantes, escalas incompatibles, píxeles que nunca cambian. <strong>Encontrarlo es el trabajo.</strong></p>
+<aside class="notes">
+<p>Lo importante de la cuadrícula es que cada tarjeta es un enlace: quien quiera puede ir a ver la fuente, y varios lo harán. Menciona los dos casos que sorprenden: los dígitos son el conjunto UCI de 8x8, no MNIST, y la célula es una imagen de fase de un holograma, no una preparación teñida — la tarjeta de histología que tiene al lado sí lo es.</p>
+<p>Créditos de las imágenes, ninguno obligatorio: taxis Ferdinand Stohr, DC-3 Bernard Spragg, histopatología Mikael Haggstrom MD, viviendas en serie Alfred Twu (Wikimedia Commons); tormenta Nicolas Vigier (Commons); voz Bart Massey — todas CC0. Los dígitos, la célula, la histología y la onda se generan a partir de los propios datos con scripts/gen_thumbnails.py; también son CC0, salvo la histología, que skimage documenta sin restricciones de copyright conocidas.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="programa-minutos" class="slide level2">
 <h2>Programa — 195 minutos</h2>
 <table class="caption-top">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
 <thead>
 <tr class="header">
+<th>Hora de inicio</th>
+<th>Duración (min)</th>
 <th>Parte</th>
 <th>Segmento</th>
-<th>Tiempo</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
+<td>00:00</td>
+<td>5</td>
 <td>—</td>
 <td>Preparación y bienvenida</td>
-<td>5</td>
 </tr>
 <tr class="even">
+<td>00:05</td>
+<td>20</td>
 <td>I</td>
 <td>Qué es un tensor</td>
-<td>20</td>
 </tr>
 <tr class="odd">
+<td>00:25</td>
+<td>20</td>
 <td>II</td>
 <td>Pensar en N dimensiones <em>(grupo)</em></td>
-<td>20</td>
 </tr>
 <tr class="even">
+<td>00:45</td>
+<td>30</td>
 <td>III</td>
 <td>Indexación y broadcasting · Reshape y transposición</td>
-<td>30</td>
 </tr>
 <tr class="odd">
+<td>01:15</td>
+<td>10</td>
 <td>🎯</td>
 <td><strong>Kahoot 1</strong> + pausa</td>
-<td>10</td>
 </tr>
 <tr class="even">
+<td>01:25</td>
+<td>15</td>
 <td>III</td>
 <td>Diseño de un pipeline de vídeo <em>(grupo)</em></td>
-<td>15</td>
 </tr>
 <tr class="odd">
+<td>01:40</td>
+<td>15</td>
 <td>IV</td>
 <td>Contracción con einsum</td>
-<td>15</td>
 </tr>
 <tr class="even">
+<td>01:55</td>
+<td>5</td>
 <td>—</td>
 <td>Pausa</td>
-<td>5</td>
 </tr>
 <tr class="odd">
+<td>02:00</td>
+<td>15</td>
 <td>IV</td>
 <td>Inversas y la pseudoinversa</td>
-<td>15</td>
 </tr>
 <tr class="even">
+<td>02:15</td>
+<td>5</td>
 <td>🎯</td>
 <td><strong>Kahoot 2</strong></td>
-<td>5</td>
 </tr>
 <tr class="odd">
+<td>02:20</td>
+<td>25</td>
 <td>IV</td>
 <td>Recursión · Convolución</td>
-<td>25</td>
 </tr>
 <tr class="even">
+<td>02:45</td>
+<td>5</td>
 <td>—</td>
 <td>Pausa</td>
-<td>5</td>
 </tr>
 <tr class="odd">
+<td>02:50</td>
+<td>15</td>
 <td>IV</td>
 <td>Descomposición de Tucker</td>
-<td>15</td>
 </tr>
 <tr class="even">
+<td>03:05</td>
+<td>10</td>
 <td>🎯</td>
 <td><strong>Kahoot 3</strong> + cierre</td>
-<td>10</td>
 </tr>
 </tbody>
 </table>
@@ -367,6 +444,7 @@
 <span id="cb1-7"><a></a>flights <span class="op">=</span> pd.read_csv(FLIGHTS)</span>
 <span id="cb1-8"><a></a><span class="bu">print</span>(housing.shape, taxis.shape, flights.shape)   <span class="co"># (20640, 10) (6433, 14) (144, 3)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>La misma celda instala el backend de ffmpeg que necesita §05 y comprueba el servidor del vídeo, para que un decodificador ausente aparezca ahora y no dos horas más tarde.</p>
 <p><strong>Si esto falla, dilo en Discord ahora</strong>, no dentro de dos horas.</p>
 <aside class="notes">
 <p>Confirma en los primeros 5 minutos que a todo el mundo le funcionó la descarga. Quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio como alternativa.</p>
@@ -1437,7 +1515,7 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <li><a href="../../tensors_workshop_plan_with_quizzes.html#further-reading">Lecturas adicionales</a> — libros y los artículos originales de Tucker, CP y SVD (en inglés)</li>
 </ul>
 <div class="fragment">
-<p><strong>Cuatro ejercicios para casa</strong> en el <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">cuaderno 11</a>: la trampa de escala de PCA, la atención como dos contracciones, CP frente a Tucker, y construir portafolios correlacionados con Cholesky.</p>
+<p><strong>Cinco ejercicios para casa</strong> en el <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">cuaderno 11</a>: la trampa de escala de PCA, la atención como dos contracciones, CP frente a Tucker, construir portafolios correlacionados con Cholesky, y eliminar el ruido de una grabación de voz real reduciendo el rango.</p>
 </div>
 </section>
 <section id="gracias" class="slide level2">

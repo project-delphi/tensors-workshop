@@ -35,39 +35,126 @@ avoid idiom, and name the Spanish cognates early: eje, descomposición,
 contracción, convolución.
 :::
 
-## All the data here is real
+## Nothing here is invented {#all-the-data-here-is-real .data-slide}
 
-::: {.incremental}
-- Real tumour measurements, real handwritten digits, real histology
-- Real taxi trips, real airline traffic
-- **Nothing is invented with random numbers**
+Eleven datasets. Every one measured off something that exists.
+
+::: {.dataset-grid}
+::: {.ds}
+![](../../images/ds-nyc-taxi.jpg){fig-alt="Yellow taxis queuing on a Manhattan avenue, the city whose 6,433 trip records make up the taxis dataset."}
+
+[NYC taxi trips](https://github.com/mwaskom/seaborn-data)
+
+6,433 journeys · §10
 :::
 
-. . .
+::: {.ds}
+![](../../images/ds-airliner.jpg){fig-alt="A Douglas DC-3 airliner in flight, the aircraft of the 1949 to 1960 era whose monthly passenger totals the flights dataset counts."}
 
-Real data contains problems random data never shows — missing values, features
-on incompatible scales, pixels that never change.
+[Airline passengers](https://github.com/mwaskom/seaborn-data)
 
-**Finding those problems is part of the work.**
+144 months, 1949–60 · §08
+:::
+
+::: {.ds}
+![](../../images/ds-digits.png){fig-alt="Eight handwritten digits from scikit-learn's load_digits, each 8 by 8 pixels, shown unsmoothed so the individual pixels stay visible."}
+
+[Handwritten digits](https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset)
+
+1,797 at 8×8 · §01 §03 §06
+:::
+
+::: {.ds}
+![](../../images/ds-breast-cancer.jpg){fig-alt="Two stained histopathology views of invasive ductal carcinoma of the breast, the kind of slide the tumour nucleus measurements were taken from."}
+
+[Breast tumours](https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-wisconsin-diagnostic-dataset)
+
+569 patients, 30 measures · §03 §11
+:::
+
+::: {.ds}
+![](../../images/ds-cell.jpg){fig-alt="A single cell floating in saline, imaged as a quantitative phase map recovered from a digital hologram."}
+
+[Cell microscopy](https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.cell)
+
+660×550 phase image · §04
+:::
+
+::: {.ds}
+![](../../images/ds-video.jpg){fig-alt="Three frames from footage of a storm at l'Almadrava, two seconds apart; the breaking waves differ from frame to frame, which is what makes the time axis carry information."}
+
+[Storm footage](https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm)
+
+24 s at 960×540 · §05
+:::
+
+::: {.ds}
+![](../../images/ds-audio.png){fig-alt="The waveform of a five-second voice recording, amplitude against time, with bursts of speech separated by quieter gaps."}
+
+[Voice recording](https://github.com/pdx-cs-sound/wavs)
+
+4.9 s at 48 kHz · §11
+:::
+
+::: {.ds}
+![](../../images/ds-housing.jpg){fig-alt="An aerial view of rows of tract housing in southern California, the kind of district whose median value and block counts make up the housing dataset."}
+
+[California housing](https://github.com/ageron/handson-ml2/blob/master/datasets/housing/housing.csv)
+
+20,640 districts · §07
+:::
+
+::: {.ds}
+![](../../images/ds-histology.jpg){fig-alt="Immunohistochemically stained colonic glands, the brown DAB signal marking FHL2 expression against a blue haematoxylin counterstain."}
+
+[Stained histology](https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.immunohistochemistry)
+
+512×512 RGB · §01 §04 §06
+:::
+
+::: {.ds .ds-more}
+**Also today**
+
+[Photographs](https://scikit-image.org/docs/stable/api/skimage.data.html) · §01 §06 §09 §10
+:::
+:::
+
+Real data breaks in ways random numbers never do — missing values, mismatched
+scales, pixels that never change. **Finding that is the work.**
+
+::: {.notes}
+The point of the grid is that every card is a link: students can go and look at
+the source themselves, and several will. Name the two that surprise people —
+the digits are the UCI 8x8 set, not MNIST, and the cell is a phase image from a
+hologram rather than a stained slide — the histology card beside it is the
+stained one.
+
+Image credits, none of them required: taxis Ferdinand Stohr, DC-3 Bernard
+Spragg, histopathology Mikael Haggstrom MD, tract housing Alfred Twu (Wikimedia
+Commons); storm Nicolas Vigier (Commons); voice Bart Massey — all CC0. Digits,
+cell, histology and waveform are rendered from the data itself by
+scripts/gen_thumbnails.py; those are CC0 too, except the histology, which
+skimage documents as having no known copyright restrictions.
+:::
 
 ## Agenda — {{< var workshop.minutes >}} minutes
 
-| Part | Segment | Time |
-|---|---|---|
-| — | Setup and welcome | 5 |
-| I | What a tensor is | 20 |
-| II | Thinking in N dimensions *(group)* | 20 |
-| III | Indexing & broadcasting · Reshape & transpose | 30 |
-| 🎯 | **Kahoot 1** + break | 10 |
-| III | Video pipeline design *(group)* | 15 |
-| IV | Contraction with einsum | 15 |
-| — | Break | 5 |
-| IV | Inverses and the pseudoinverse | 15 |
-| 🎯 | **Kahoot 2** | 5 |
-| IV | Recursion · Convolution | 25 |
-| — | Break | 5 |
-| IV | Tucker decomposition | 15 |
-| 🎯 | **Kahoot 3** + wrap-up | 10 |
+| Start Time | Duration (min) | Part | Segment Name |
+|---|---|---|---|
+| 00:00 | 5 | — | Setup and welcome |
+| 00:05 | 20 | I | What a tensor is |
+| 00:25 | 20 | II | Thinking in N dimensions *(group)* |
+| 00:45 | 30 | III | Indexing & broadcasting · Reshape & transpose |
+| 01:15 | 10 | 🎯 | **Kahoot 1** + break |
+| 01:25 | 15 | III | Video pipeline design *(group)* |
+| 01:40 | 15 | IV | Contraction with einsum |
+| 01:55 | 5 | — | Break |
+| 02:00 | 15 | IV | Inverses and the pseudoinverse |
+| 02:15 | 5 | 🎯 | **Kahoot 2** |
+| 02:20 | 25 | IV | Recursion · Convolution |
+| 02:45 | 5 | — | Break |
+| 02:50 | 15 | IV | Tucker decomposition |
+| 03:05 | 10 | 🎯 | **Kahoot 3** + wrap-up |
 
 ## Two rhythms, and one warning
 
@@ -109,12 +196,18 @@ flights = pd.read_csv(FLIGHTS)
 print(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)
 ```
 
+The same cell installs the ffmpeg backend §05 needs and pings the video host,
+so a missing decoder surfaces now rather than two hours in.
+
 **If this fails, say so in Discord now** — not in two hours.
 
 ::: {.notes}
 Confirm in the first 5 minutes that everyone's download succeeded. A student who
 silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored
 in the repo as a fallback.
+
+The `%pip install "imageio[ffmpeg]"` line pulls about 20 MB. On a slow venue
+network start this cell before you start talking.
 :::
 
 ## To the notebook
@@ -1159,9 +1252,10 @@ lesson rather than four separate blocks. Do not skip it.
 
 . . .
 
-**Four take-homes** in [notebook 11]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb):
-the PCA scaling trap, attention as two contractions, CP compared to Tucker, and
-building correlated portfolios with Cholesky.
+**Five take-homes** in [notebook 11]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb):
+the PCA scaling trap, attention as two contractions, CP compared to Tucker,
+building correlated portfolios with Cholesky, and denoising a real voice
+recording by rank reduction.
 
 ## Thank you
 
