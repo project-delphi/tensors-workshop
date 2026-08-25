@@ -925,6 +925,80 @@ you find the best stable answer instead.
 
 *Part IV · 15 min · exercise*
 
+## What different factorizations buy you {.factorization-ladder}
+
+> A factorization picks the atoms, the rule for combining them, and the
+> property you buy. The object never changes — only which question becomes
+> trivial.
+
+::: {.columns}
+::: {.column width="25%"}
+**100**
+
+- $2^2 \cdot 5^2$ → divisors, gcd
+- $4 \cdot 25$ → arithmetic
+- $64 + 32 + 4$ → storage
+- $6^2 + 8^2$ → geometry
+
+Product or sum; prime factorization is unique up to ordering.
+:::
+
+::: {.column width="25%"}
+**$x^2 - 4x - 5$**
+
+- standard → intercept, coefficients
+- $(x-5)(x+1)$ → roots, sign
+- $(x-2)^2 - 9$ → vertex, range
+
+Completing the square: the scalar bridge to diagonalizing quadratic forms.
+:::
+
+::: {.column width="25%"}
+**Matrix $A$**
+
+- LU → elimination, repeated solves
+- QR → orthogonality, least squares
+- Cholesky → SPD solves, covariance
+- SVD → low-rank structure, conditioning
+- NMF → nonnegative parts
+
+$AB^{\top} = (AM)(BM^{-\top})^{\top}$ — generic factors are not unique
+without additional structure or conventions.
+:::
+
+::: {.column width="25%"}
+**Tensor $\mathcal{X}$**
+
+- CP → interpretable rank-1 components
+- Tucker / HOSVD → multilinear compression, subspaces
+- Tensor Train → scalable high-order storage
+
+Essentially unique up to permutation and compensating scale, under suitable
+conditions — sufficient: $k_A + k_B + k_C \ge 2R + 2$.
+:::
+:::
+
+::: {.callout-tip}
+Matrix multiplication is itself a tensor; its CP rank is the multiplication
+count. The $2 \times 2$ case has rank 7, not 8 — that is Strassen. At the top
+of the ladder, the factorization is the algorithm.
+:::
+
+::: {.notes}
+Prime factorization is unique up to ordering — the cleanest case on the slide.
+Generic low-rank matrix factors have gauge freedom (the $M$/$M^{-\top}$ pair);
+extra structure or a convention — positive pivots, orthonormal columns, a
+positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can
+be essentially unique under suitable identifiability conditions, up to
+permutation and a compensating nonzero scaling across modes; over the reals,
+sign flips are a special case of that scaling. Kruskal's
+$k_A + k_B + k_C \ge 2R + 2$ is a *sufficient* condition, not a necessary one,
+and it says nothing about whether the decomposition is easy to find. Worth
+saying if there is time: computing tensor rank is NP-hard in general, tensor
+rank can exceed every individual mode dimension, and a best rank-$R$
+approximation need not even exist — none of that is true of matrices.
+:::
+
 ## PCA generalized to every axis
 
 PCA compresses a **matrix** — two axes. Real data often has more.

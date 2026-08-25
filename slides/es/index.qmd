@@ -937,6 +937,82 @@ inutilizable, buscas la mejor respuesta estable.
 
 *Parte IV · 15 min · ejercicio*
 
+## Qué aporta cada factorización {.factorization-ladder}
+
+> Una factorización elige los átomos, la regla para combinarlos y la
+> propiedad que compras a cambio. El objeto nunca cambia — solo cambia qué
+> pregunta se vuelve trivial.
+
+::: {.columns}
+::: {.column width="25%"}
+**100**
+
+- $2^2 \cdot 5^2$ → divisores, mcd
+- $4 \cdot 25$ → aritmética
+- $64 + 32 + 4$ → almacenamiento
+- $6^2 + 8^2$ → geometría
+
+Producto o suma; la factorización en primos es única salvo el orden.
+:::
+
+::: {.column width="25%"}
+**$x^2 - 4x - 5$**
+
+- estándar → intercepto, coeficientes
+- $(x-5)(x+1)$ → raíces, signo
+- $(x-2)^2 - 9$ → vértice, rango
+
+Completar el cuadrado: el puente escalar a diagonalizar formas cuadráticas.
+:::
+
+::: {.column width="25%"}
+**Matriz $A$**
+
+- LU → eliminación, sistemas repetidos
+- QR → ortogonalidad, mínimos cuadrados
+- Cholesky → sistemas SPD, covarianza
+- SVD → estructura de bajo rango, condicionamiento
+- NMF → partes no negativas
+
+$AB^{\top} = (AM)(BM^{-\top})^{\top}$ — los factores genéricos no son únicos
+sin estructura o convenciones adicionales.
+:::
+
+::: {.column width="25%"}
+**Tensor $\mathcal{X}$**
+
+- CP → componentes interpretables de rango 1
+- Tucker / HOSVD → compresión multilineal, subespacios
+- Tensor Train → almacenamiento escalable de orden alto
+
+Esencialmente único salvo permutación y escala compensatoria, bajo
+condiciones adecuadas — suficiente: $k_A + k_B + k_C \ge 2R + 2$.
+:::
+:::
+
+::: {.callout-tip}
+El producto matricial es en sí mismo un tensor; su rango CP es el número de
+multiplicaciones. El caso $2 \times 2$ tiene rango 7, no 8 — eso es Strassen.
+En lo más alto de la escalera, la factorización es el algoritmo.
+:::
+
+::: {.notes}
+La factorización en primos es única salvo el orden — el caso más limpio de la
+diapositiva. Los factores genéricos de una matriz de bajo rango tienen
+libertad de gauge (el par $M$/$M^{-\top}$); una estructura adicional o una
+convención — pivotes positivos, columnas ortonormales, diagonal positiva — es
+lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente
+único bajo condiciones de identificabilidad adecuadas, salvo permutación y una
+escala compensatoria no nula entre modos; sobre los reales, los cambios de
+signo son un caso particular de esa escala. La condición de Kruskal
+$k_A + k_B + k_C \ge 2R + 2$ es *suficiente*, no necesaria, y no dice nada
+sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si
+hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango
+tensorial puede superar cada dimensión individual de los ejes, y una mejor
+aproximación de rango $R$ puede no existir siquiera — nada de eso es cierto
+para matrices.
+:::
+
 ## PCA generalizado a todos los ejes
 
 PCA comprime una **matriz**: dos ejes. Los datos reales suelen tener más.
