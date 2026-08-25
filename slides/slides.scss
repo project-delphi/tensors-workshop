@@ -66,12 +66,12 @@ $code-block-font-size: 0.62em;
 }
 
 // The dataset grid on "Nothing here is invented" / "Aquí no hay nada
-// inventado" — eight cells (seven dataset cards plus a text cell) that have to
+// inventado" — ten cells (nine dataset cards plus a text cell) that have to
 // land on one 1280x760 slide alongside a heading and two lines of prose.
 // Sizes below are the largest that still fit with no overflow, checked against
 // rendered screenshots of both decks — not shrunk further than needed.
 //
-// Four fixed columns rather than `auto-fit`: reveal.js scales the whole
+// Five fixed columns rather than `auto-fit`: reveal.js scales the whole
 // 1280x760 canvas to the viewport, so the layout never reflows while
 // presenting and `auto-fit` would only mis-column at the design width. The
 // media query below is for the non-scaled contexts — print, and reveal's
@@ -81,7 +81,7 @@ $code-block-font-size: 0.62em;
 
   .dataset-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: .55em .6em;
     margin: .5em 0 .6em;
   }
@@ -96,7 +96,14 @@ $code-block-font-size: 0.62em;
   // waveform is a plot and the rest are photographs.
   .ds img {
     width: 100%;
-    height: 150px;
+    // Match the 400x260 the thumbnails are generated at, so `cover` below
+    // never has anything to crop. As a ratio rather than a pixel height
+    // because the card width is not obvious: the theme's `.reveal img` sets
+    // `max-width: 95%`, which beats the `width: 100%` above, so the image is
+    // 95% of a column and any hand-computed height is wrong the moment the
+    // column count changes.
+    aspect-ratio: 20 / 13;
+    height: auto;
     object-fit: cover;
     border-radius: 3px;
     margin: 0 0 .3em;
@@ -125,7 +132,7 @@ $code-block-font-size: 0.62em;
     margin-top: .12em;
   }
 
-  // The eighth cell carries no image, so it needs the height back as padding
+  // The tenth cell carries no image, so it needs the height back as padding
   // or it floats against the top of its row.
   .ds-more {
     justify-content: center;
