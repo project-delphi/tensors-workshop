@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-d253f57c0d0b3fa1c28ec50151896808.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-7fccabe481a83cea0c0e714e7e97de9f.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1809,6 +1809,12 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
       // localStorage so opening the deck again tomorrow starts fresh.
       var STORAGE_KEY = "tensors-workshop-deck-start";
 
+      // sessionStorage lives until the *tab* closes, not until the workshop ends.
+      // Open the deck in the morning to check it, leave the tab open, present
+      // from it that afternoon, and the room's first sight of the timer would be
+      // hours into the amber. Anything this old is a leftover, not a session.
+      var STALE_AFTER_SECONDS = 11700 * 2;
+
       function pad(n) { return (n < 10 ? "0" : "") + n; }
 
       // Always minutes and seconds; hours only once there are any. The remaining
@@ -1837,13 +1843,16 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 
         var es = (document.documentElement.lang || "en").slice(0, 2) === "es";
         var total = TOTAL_SECONDS;
-        // Gives the speaker view the same clock the room is looking at.
+        // Gives the speaker view the same *total* the room is counting against.
+        // Not the same clock: reveal's pacing timer starts when reveal does,
+        // while the one below starts from the stored value, so a reset here does
+        // not move the speaker view's.
         if (Reveal.configure) { Reveal.configure({ totalTime: total }); }
 
         // ── The timer ───────────────────────────────────────────────────────
-        // Top right: the slide number and reveal's controls both live along the
-        // bottom edge, and the progress bar takes the top edge's full width but
-        // only 3px of its height.
+        // Top right, because reveal puts *everything* along the bottom edge: the
+        // footer, the slide number, the controls, and the progress bar (which is
+        // `bottom: 0` in reveal.css, not top). The top edge is the only one free.
         var timer = document.createElement("div");
         timer.className = "deck-timer";
         timer.title = es
@@ -1863,7 +1872,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
             var stored = window.sessionStorage.getItem(STORAGE_KEY);
             if (stored) {
               var n = parseInt(stored, 10);
-              if (!isNaN(n)) { return n; }
+              if (!isNaN(n) && (Date.now() - n) / 1000 < STALE_AFTER_SECONDS) {
+                return n;
+              }
             }
           } catch (e) { /* private windows throw on access, not just on write */ }
           return null;
@@ -1937,16 +1948,33 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
         });
 
         var footer = document.querySelector(".reveal .footer");
-        if (!footer) { return; }
-        var crumb = document.createElement("span");
-        crumb.className = "deck-crumb";
-        // Into the footer's <p>, not the footer itself: quarto wraps the footer
-        // text in a paragraph, and a span placed beside a block element gets its
-        // own line — the crumb would sit on a second row above the links.
-        (footer.querySelector("p") || footer).insertBefore(
-          crumb, (footer.querySelector("p") || footer).firstChild);
+        var crumb = null;
+        if (footer) {
+          crumb = document.createElement("span");
+          crumb.className = "deck-crumb";
+          // Into the footer's <p>, not the footer itself: quarto wraps the footer
+          // text in a paragraph, and a span placed beside a block element gets
+          // its own line — the crumb would sit on a row above the links.
+          var host = footer.querySelector("p") || footer;
+          host.insertBefore(crumb, host.firstChild);
+        }
 
-        function updateCrumb() {
+        // The three Kahoot dividers paint themselves #b3541e. Quarto flips its own
+        // footer and slide number to light text on a slide like that, but the
+        // timer hangs off `.reveal` rather than off the slide, so nothing would
+        // ever tell it — and it would sit navy-on-orange for the whole quiz.
+        function updateContrast() {
+          var slide = Reveal.getCurrentSlide && Reveal.getCurrentSlide();
+          var background = (slide && Reveal.getSlideBackground)
+            ? Reveal.getSlideBackground(slide) : null;
+          timer.classList.toggle("has-dark-background",
+            !!(background &&
+               background.classList.contains("has-dark-background")));
+        }
+
+        function updateChrome() {
+          updateContrast();
+          if (!crumb) { return; }
           // getCurrentSlide() returns the slide itself, never its `.stack`, so
           // the label tagged on above is already the right one.
           var slide = Reveal.getCurrentSlide && Reveal.getCurrentSlide();
@@ -1957,8 +1985,8 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
           crumb.classList.toggle("empty", text === "");
         }
 
-        Reveal.on("slidechanged", updateCrumb);
-        updateCrumb();
+        Reveal.on("slidechanged", updateChrome);
+        updateChrome();
       });
     })();
     </script>

@@ -165,10 +165,10 @@ $code-block-font-size: 0.62em;
 // screen — the title slide already says "Part I · demo" in its subtitle.
 .reveal .sec-part { display: none; }
 
-// Top right, because reveal already owns the bottom edge: the slide number
-// sits bottom-right, the controls bottom-right of that, and the progress bar
-// runs the full width of the top in 3px. Fixed rather than absolute so it
-// stays put through reveal's content scaling.
+// Top right, because reveal already owns the bottom edge entirely: the
+// footer, the slide number, the controls, and the progress bar, which
+// reveal.css pins to `bottom: 0`. Fixed rather than absolute so it stays put
+// through reveal's content scaling.
 .reveal .deck-timer {
   position: fixed;
   top: 14px;
@@ -204,6 +204,17 @@ $code-block-font-size: 0.62em;
     color: #b06a00;
     opacity: 1;
   }
+
+  // The three Kahoot dividers. deck-pace.html puts this class on when the
+  // slide behind the timer is dark, the way quarto does for its own footer —
+  // without it the navy digits sit on #b3541e and cannot be read.
+  &.has-dark-background {
+    background: rgba(255, 255, 255, .16);
+
+    .deck-timer-elapsed,
+    .deck-timer-remaining { color: #ffffff; }
+    &.over .deck-timer-remaining { color: #ffd08a; }
+  }
 }
 
 // The breadcrumb shares the footer with the site and language links rather
@@ -222,9 +233,17 @@ $code-block-font-size: 0.62em;
   &.empty::after { content: none; }
 }
 
-// Neither belongs in a PDF: `?print-pdf` renders every slide onto one page,
-// where a fixed-position timer stamps itself over the first one and a live
-// clock means nothing anyway.
+// On a dark slide quarto paints the whole footer light. An explicit colour on
+// the crumb would win that inheritance and leave it navy on #b3541e, so hand
+// the decision back to the footer whenever quarto has made one.
+.reveal .footer.has-dark-background .deck-crumb,
+.reveal .footer.has-light-background .deck-crumb { color: inherit; }
+
+// Neither belongs in a PDF. The crumb is the subtler of the two: under
+// `?print-pdf` quarto skips its footer handlers and reveal fires no
+// `slidechanged`, so updateChrome() runs exactly once and stamps whichever
+// section was current onto every printed page.
 @media print {
-  .reveal .deck-timer { display: none; }
+  .reveal .deck-timer,
+  .reveal .footer .deck-crumb { display: none; }
 }

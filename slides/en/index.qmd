@@ -10,8 +10,6 @@ format:
     # The audience-facing timer and the section breadcrumb. One shared
     # file for both decks; it picks its language off <html lang>.
     include-after-body: ../deck-pace.html
-    # The audience-facing timer and the section breadcrumb. One shared
-    # file for both decks; it picks its language off <html lang>.
     # Not `auto`: that intercepts every http(s) link and opens it in an
     # in-deck iframe whenever the deck is fullscreen — i.e. exactly when
     # presenting. Colab and GitHub both send X-Frame-Options, so clicking
