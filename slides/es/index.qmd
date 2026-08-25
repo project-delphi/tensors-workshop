@@ -118,12 +118,21 @@ tres CSV replicados en el repositorio como alternativa.
 
 ## Al cuaderno
 
+::: {.columns}
+::: {.column width="60%"}
 **00 · Preparación y bienvenida**
 
 [Abrir en Colab]({{< var repo.colab_base >}}/00-setup-and-data.ipynb)
 
 El resto viene dentro de las librerías y funciona sin conexión:
 `load_breast_cancer`, `load_digits`, `data.camera()`, `data.astronaut()`.
+:::
+::: {.column width="40%"}
+![](../../images/camera.png){fig-alt="Miniatura en escala de grises de la fotografía «camera» de scikit-image, una imagen de prueba estándar incluida sin conexión en la librería." width="220"}
+
+![](../../images/astronaut.png){fig-alt="Pequeña miniatura en color de la fotografía «astronaut» de scikit-image, otra imagen de prueba estándar incluida sin conexión en la librería." width="220"}
+:::
+:::
 
 # 01 · Qué es un tensor {#sec-01-what-a-tensor-is}
 
@@ -161,6 +170,10 @@ tensor = rng.standard_normal((2, 3, 4))    # orden 3   forma (2, 3, 4)
 digits.images.shape              # (1797, 8, 8)  — imágenes, alto, ancho
 photo.shape                      # (512, 512, 3) — alto, ancho, color
 ```
+
+. . .
+
+![](../../images/digits-grid.png){fig-alt="Cuadrícula de ocho dígitos manuscritos reales del conjunto de datos digits de scikit-learn, cada uno una imagen en escala de grises de 8 por 8 píxeles mostrada sin suavizado para que se vean los píxeles individuales — esto es lo que significa la forma (1797, 8, 8): 1797 imágenes como estas." width="260"}
 
 . . .
 
@@ -226,6 +239,7 @@ Un índice que aparece después de la flecha **se conserva**.
 | Descomposición espectral | Matriz cuadrada | §08 |
 | SVD | Cualquier matriz | §07, §10 |
 | **Pseudoinversa** | Cualquier matriz | §07 |
+| Cholesky | Matriz simétrica definida positiva | §11 |
 | **Tucker / CP** | **Tensor de cualquier orden** | §10 |
 
 . . .
@@ -311,12 +325,19 @@ dibujo correcto. Asigna los grupos antes de la sesión.
 
 ## Por qué importa
 
+::: {.columns}
+::: {.column width="55%"}
 569 pacientes reales, 30 medidas reales de núcleos de células tumorales.
 
 ::: {.incremental}
 - Elegir la columna equivocada **no da ningún error**
 - Devuelve *otra medida real*
 - Tu análisis continúa y da una respuesta segura y equivocada
+:::
+:::
+::: {.column width="45%"}
+![](../../images/breast-cancer.png){fig-alt="Diagrama de dispersión del radio medio frente a la textura media para 569 pacientes del conjunto de datos breast cancer de scikit-learn, coloreado por diagnóstico maligno o benigno; dos de las 30 medidas del conjunto, no el conjunto completo." width="300"}
+:::
 :::
 
 . . .
@@ -369,6 +390,8 @@ donde nadie escribe. Desviación típica exactamente cero → `NaN`.
 
 ## Por qué importa
 
+::: {.columns}
+::: {.column width="60%"}
 Los microscopios y las cámaras ordenan sus ejes según el **hardware**, no según
 lo que espera un modelo.
 
@@ -381,6 +404,13 @@ y devuelve **resultados seguros y sin sentido**.
 
 La versión famosa: un modelo entrenado en TensorFlow (`NHWC`) desplegado en
 PyTorch (`NCHW`) sin transponer.
+:::
+::: {.column width="40%"}
+![](../../images/immunohistochemistry.png){fig-alt="Imagen en color de tejido teñido por inmunohistoquímica de scikit-image, un ejemplo de imagen de microscopía cuyos canales de color están ordenados según el hardware de captura." width="240"}
+
+![](../../images/cell.png){fig-alt="Imagen de microscopía en escala de grises de una célula de scikit-image, otro ejemplo de ejes de imagen ordenados por el hardware." width="240"}
+:::
+:::
 
 ## La misma forma, datos distintos
 
@@ -656,6 +686,10 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75.980
 
 . . .
 
+![](../../images/california-housing.png){fig-alt="Mapa de dispersión de distritos de vivienda de California según longitud y latitud, coloreado por el valor medio de la vivienda, que muestra la concentración de viviendas caras en la costa dentro del mismo conjunto de datos usado en el ajuste por mínimos cuadrados." width="300"}
+
+. . .
+
 **Ninguna recta pasa por 20.433 puntos.** La pseudoinversa da la mejor respuesta
 posible. El coeficiente mayor es `median_income`: tiene todo el sentido.
 
@@ -748,6 +782,10 @@ history = list(y[-12:])
 for _ in range(12):                           # realimenta sus propias predicciones
     history.append(w[0] + np.dot(w[1:], history[-12:]))
 ```
+
+. . .
+
+![](../../images/airline-passengers.png){fig-alt="Gráfico de líneas del número mensual de pasajeros de aerolínea entre 1949 y 1960, la serie de 144 meses usada en el pronóstico, con una tendencia creciente y un pico veraniego que se repite cada año." width="300"}
 
 . . .
 
@@ -1007,6 +1045,10 @@ for (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).siz
 
 . . .
 
+![](../../images/nyc-taxi-pickups-by-hour.png){fig-alt="Gráfico de barras de las recogidas de taxi por hora del día del mismo conjunto de 6.433 viajes, que sube a lo largo del día hasta un pico alrededor de la hora 18, la hora punta que la descomposición de Tucker vuelve a descubrir por sí sola." width="300"}
+
+. . .
+
 `T[i, j, k]` = viajes del barrio `i` al barrio `j` recogidos durante la hora `k`.
 
 ## Tres ejes, un solo einsum
@@ -1127,16 +1169,16 @@ sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
 
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — **sintaxis idéntica** a la de hoy
 - [`tensorly`](https://tensorly.org) — Tucker y CP de verdad
-- `np.linalg` — el resto del capítulo 2: `eig`, `lstsq`, `pinv`, `qr`
+- `np.linalg` — el resto del capítulo 2: `eig`, `lstsq`, `pinv`, `qr`, `cholesky`
 - `scipy.signal`, `skimage.restoration` — convolución y deconvolución más allá de hoy
 - [Lecturas adicionales](../../tensors_workshop_plan_with_quizzes.md#further-reading) — libros y los artículos originales de Tucker, CP y SVD (en inglés)
 
 . . .
 
-**Tres ejercicios para casa** en el
+**Cuatro ejercicios para casa** en el
 [cuaderno 11]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb):
-la trampa de escala de PCA, la atención como dos contracciones, y CP frente a
-Tucker.
+la trampa de escala de PCA, la atención como dos contracciones, CP frente a
+Tucker, y construir portafolios correlacionados con Cholesky.
 
 ## Gracias
 

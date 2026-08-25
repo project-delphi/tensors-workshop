@@ -27,6 +27,7 @@ workshop:
   subtitle_es: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
   minutes: 195
   book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
+  prereq_repo_url: "https://github.com/Laverde97/linear-algebra-deep-learning"
 
 # ── Kahoot quizzes ───────────────────────────────────────────────────────────
 # `url` is the live join/share link. It does not exist until the facilitator
@@ -200,5 +201,5 @@ sections:
     format_es: "cierre"
     title_en: "Wrap-up and take-homes"
     title_es: "Cierre y ejercicios para casa"
-    summary_en: "What connects Blocks 4, 5 and 6, plus three take-home exercises."
-    summary_es: "Qué conecta los bloques 4, 5 y 6, más tres ejercicios para casa."
+    summary_en: "What connects Blocks 4, 5 and 6, plus four take-home exercises."
+    summary_es: "Qué conecta los bloques 4, 5 y 6, más cuatro ejercicios para casa."
