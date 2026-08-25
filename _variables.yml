@@ -78,6 +78,63 @@ schedule:
   # Kahoot 1, which is why the agenda shows a single 10-minute block there.
   break_after: ["04", "06", "09"]
 
+# ── Agenda ───────────────────────────────────────────────────────────────────
+# The agenda table both decks show, one entry per row. Everything numeric —
+# the start time, the duration and the Part column — is derived from
+# `sections`, `kahoot` and `schedule` by scripts/timeline.py; only the label is
+# written here, because the agenda abbreviates: two sections share one row as
+# "Recursion · Convolution" rather than printing both full titles.
+#
+# `items` says what the row covers, in run order, using the ids the rest of the
+# file already uses: "00".."11" for a section, "q1".."q3" for a quiz, and
+# "break-NN" for the break `schedule.break_after` puts after section NN.
+# Together the rows have to spell out the whole running clock — every section,
+# quiz and break exactly once, in order — and timeline.py refuses to build the
+# table otherwise, so a section cannot be added above without being placed here.
+agenda:
+  - items: ["00"]
+    label_en: "Setup and welcome"
+    label_es: "Preparación y bienvenida"
+  - items: ["01"]
+    label_en: "What a tensor is"
+    label_es: "Qué es un tensor"
+  - items: ["02"]
+    label_en: "Thinking in N dimensions *(group)*"
+    label_es: "Pensar en N dimensiones *(grupo)*"
+  - items: ["03", "04"]
+    label_en: "Indexing & broadcasting · Reshape & transpose"
+    label_es: "Indexación y broadcasting · Reshape y transposición"
+  - items: ["q1", "break-04"]
+    label_en: "**Kahoot 1** + break"
+    label_es: "**Kahoot 1** + pausa"
+  - items: ["05"]
+    label_en: "Video pipeline design *(group)*"
+    label_es: "Diseño de un pipeline de vídeo *(grupo)*"
+  - items: ["06"]
+    label_en: "Contraction with einsum"
+    label_es: "Contracción con einsum"
+  - items: ["break-06"]
+    label_en: "Break"
+    label_es: "Pausa"
+  - items: ["07"]
+    label_en: "Inverses and the pseudoinverse"
+    label_es: "Inversas y la pseudoinversa"
+  - items: ["q2"]
+    label_en: "**Kahoot 2**"
+    label_es: "**Kahoot 2**"
+  - items: ["08", "09"]
+    label_en: "Recursion · Convolution"
+    label_es: "Recursión · Convolución"
+  - items: ["break-09"]
+    label_en: "Break"
+    label_es: "Pausa"
+  - items: ["10"]
+    label_en: "Tucker decomposition"
+    label_es: "Descomposición de Tucker"
+  - items: ["q3", "11"]
+    label_en: "**Kahoot 3** + wrap-up"
+    label_es: "**Kahoot 3** + cierre"
+
 # ── Sections ─────────────────────────────────────────────────────────────────
 # The section spine is the handbook's own 195-minute schedule table, breaks
 # excluded. `n` is authoritative: it fixes the notebook filename prefix, the
