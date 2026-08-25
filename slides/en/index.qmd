@@ -139,22 +139,22 @@ skimage documents as having no known copyright restrictions.
 
 ## Agenda — {{< var workshop.minutes >}} minutes
 
-| Part | Segment | Time |
-|---|---|---|
-| — | Setup and welcome | 5 |
-| I | What a tensor is | 20 |
-| II | Thinking in N dimensions *(group)* | 20 |
-| III | Indexing & broadcasting · Reshape & transpose | 30 |
-| 🎯 | **Kahoot 1** + break | 10 |
-| III | Video pipeline design *(group)* | 15 |
-| IV | Contraction with einsum | 15 |
-| — | Break | 5 |
-| IV | Inverses and the pseudoinverse | 15 |
-| 🎯 | **Kahoot 2** | 5 |
-| IV | Recursion · Convolution | 25 |
-| — | Break | 5 |
-| IV | Tucker decomposition | 15 |
-| 🎯 | **Kahoot 3** + wrap-up | 10 |
+| Start Time | Duration (min) | Part | Segment Name |
+|---|---|---|---|
+| 00:00 | 5 | — | Setup and welcome |
+| 00:05 | 20 | I | What a tensor is |
+| 00:25 | 20 | II | Thinking in N dimensions *(group)* |
+| 00:45 | 30 | III | Indexing & broadcasting · Reshape & transpose |
+| 01:15 | 10 | 🎯 | **Kahoot 1** + break |
+| 01:25 | 15 | III | Video pipeline design *(group)* |
+| 01:40 | 15 | IV | Contraction with einsum |
+| 01:55 | 5 | — | Break |
+| 02:00 | 15 | IV | Inverses and the pseudoinverse |
+| 02:15 | 5 | 🎯 | **Kahoot 2** |
+| 02:20 | 25 | IV | Recursion · Convolution |
+| 02:45 | 5 | — | Break |
+| 02:50 | 15 | IV | Tucker decomposition |
+| 03:05 | 10 | 🎯 | **Kahoot 3** + wrap-up |
 
 ## Two rhythms, and one warning
 

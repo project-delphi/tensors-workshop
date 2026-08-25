@@ -207,7 +207,7 @@
     "href": "slides/en/index.html#agenda-minutes",
     "title": "Tensors for Machine Learning",
     "section": "Agenda — 195 minutes",
-    "text": "Agenda — 195 minutes\n\n\n\nPart\nSegment\nTime\n\n\n\n\n—\nSetup and welcome\n5\n\n\nI\nWhat a tensor is\n20\n\n\nII\nThinking in N dimensions (group)\n20\n\n\nIII\nIndexing & broadcasting · Reshape & transpose\n30\n\n\n🎯\nKahoot 1 + break\n10\n\n\nIII\nVideo pipeline design (group)\n15\n\n\nIV\nContraction with einsum\n15\n\n\n—\nBreak\n5\n\n\nIV\nInverses and the pseudoinverse\n15\n\n\n🎯\nKahoot 2\n5\n\n\nIV\nRecursion · Convolution\n25\n\n\n—\nBreak\n5\n\n\nIV\nTucker decomposition\n15\n\n\n🎯\nKahoot 3 + wrap-up\n10"
+    "text": "Agenda — 195 minutes\n\n\n\nStart Time\nDuration (min)\nPart\nSegment Name\n\n\n\n\n00:00\n5\n—\nSetup and welcome\n\n\n00:05\n20\nI\nWhat a tensor is\n\n\n00:25\n20\nII\nThinking in N dimensions (group)\n\n\n00:45\n30\nIII\nIndexing & broadcasting · Reshape & transpose\n\n\n01:15\n10\n🎯\nKahoot 1 + break\n\n\n01:25\n15\nIII\nVideo pipeline design (group)\n\n\n01:40\n15\nIV\nContraction with einsum\n\n\n01:55\n5\n—\nBreak\n\n\n02:00\n15\nIV\nInverses and the pseudoinverse\n\n\n02:15\n5\n🎯\nKahoot 2\n\n\n02:20\n25\nIV\nRecursion · Convolution\n\n\n02:45\n5\n—\nBreak\n\n\n02:50\n15\nIV\nTucker decomposition\n\n\n03:05\n10\n🎯\nKahoot 3 + wrap-up"
   },
   {
     "objectID": "slides/en/index.html#two-rhythms-and-one-warning",
@@ -851,7 +851,7 @@
     "href": "slides/es/index.html#programa-minutos",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Programa — 195 minutos",
-    "text": "Programa — 195 minutos\n\n\n\nParte\nSegmento\nTiempo\n\n\n\n\n—\nPreparación y bienvenida\n5\n\n\nI\nQué es un tensor\n20\n\n\nII\nPensar en N dimensiones (grupo)\n20\n\n\nIII\nIndexación y broadcasting · Reshape y transposición\n30\n\n\n🎯\nKahoot 1 + pausa\n10\n\n\nIII\nDiseño de un pipeline de vídeo (grupo)\n15\n\n\nIV\nContracción con einsum\n15\n\n\n—\nPausa\n5\n\n\nIV\nInversas y la pseudoinversa\n15\n\n\n🎯\nKahoot 2\n5\n\n\nIV\nRecursión · Convolución\n25\n\n\n—\nPausa\n5\n\n\nIV\nDescomposición de Tucker\n15\n\n\n🎯\nKahoot 3 + cierre\n10"
+    "text": "Programa — 195 minutos\n\n\n\n\n\n\n\n\n\nHora de inicio\nDuración (min)\nParte\nSegmento\n\n\n\n\n00:00\n5\n—\nPreparación y bienvenida\n\n\n00:05\n20\nI\nQué es un tensor\n\n\n00:25\n20\nII\nPensar en N dimensiones (grupo)\n\n\n00:45\n30\nIII\nIndexación y broadcasting · Reshape y transposición\n\n\n01:15\n10\n🎯\nKahoot 1 + pausa\n\n\n01:25\n15\nIII\nDiseño de un pipeline de vídeo (grupo)\n\n\n01:40\n15\nIV\nContracción con einsum\n\n\n01:55\n5\n—\nPausa\n\n\n02:00\n15\nIV\nInversas y la pseudoinversa\n\n\n02:15\n5\n🎯\nKahoot 2\n\n\n02:20\n25\nIV\nRecursión · Convolución\n\n\n02:45\n5\n—\nPausa\n\n\n02:50\n15\nIV\nDescomposición de Tucker\n\n\n03:05\n10\n🎯\nKahoot 3 + cierre"
   },
   {
     "objectID": "slides/es/index.html#dos-ritmos-y-una-advertencia",
