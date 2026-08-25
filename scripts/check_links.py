@@ -309,7 +309,7 @@ def check_schedule() -> None:
         fail(f"sections + quizzes + breaks come to {minute} min, "
              f"workshop.minutes says {total}")
     else:
-        print(f"      {len(windows)} sections end at {clock(minute)}"
+        print(f"      {len(windows)} sections end at {clock(minute, '+')}"
               f" — {total} min including quizzes and breaks")
 
     # gen_tables.py raises rather than writing a wrong agenda, so this fails

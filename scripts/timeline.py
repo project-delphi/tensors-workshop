@@ -77,6 +77,8 @@ def agenda_rows(lang: str) -> list[dict]:
     """
     schedule = atoms()
     lengths = dict(schedule)
+    for row in V["agenda"]:
+        _validate(row)
     declared = [i for row in V["agenda"] for i in row["items"]]
     expected = [name for name, _ in schedule]
     if declared != expected:
@@ -95,6 +97,22 @@ def agenda_rows(lang: str) -> list[dict]:
     return rows
 
 
+def _validate(row: dict) -> None:
+    """A row needs items and a label in *both* languages.
+
+    Both, whichever language is being generated: check_links.py asks for the
+    English rows only, and a Spanish label left off a new row would otherwise
+    reach the deck as a KeyError out of the generator rather than a failing
+    check.
+    """
+    if not row.get("items"):
+        raise ScheduleError("_variables.yml `agenda`: a row lists no `items`")
+    for key in ("label_en", "label_es"):
+        if not row.get(key):
+            raise ScheduleError(f"_variables.yml `agenda`: the row for "
+                                f"{', '.join(row['items'])} has no `{key}`")
+
+
 def _part(items: list[str]) -> str:
     """The Part column: 🎯 for any row with a quiz in it, else the sections'
     own part — one value, since a row only ever groups sections that share
@@ -105,23 +123,48 @@ def _part(items: list[str]) -> str:
     return " · ".join(parts) if parts else "—"
 
 
+def _surplus(a: list[str], b: list[str]) -> list[str]:
+    """The items of `a` that `b` does not cover, repeats counted separately.
+
+    Membership alone would report nothing for a segment listed twice — every
+    id would be present in both lists — so the counts have to be consumed.
+    """
+    left: dict[str, int] = {}
+    for i in b:
+        left[i] = left.get(i, 0) + 1
+    out = []
+    for i in a:
+        if left.get(i):
+            left[i] -= 1
+        else:
+            out.append(i)
+    return out
+
+
 def _mismatch(declared: list[str], expected: list[str]) -> str:
     """Say which agenda item is wrong, not just that one is.
 
-    A missing or unknown item names itself. A row simply put in the wrong
-    place has neither — nothing is missing and nothing is extra — so that case
-    falls through to the first position where the two lists diverge.
+    A segment never listed, listed twice, or not in the schedule at all names
+    itself. A row simply put in the wrong place does none of those — the two
+    lists hold exactly the same ids — so it falls through to the first
+    position where they diverge, and a plain length difference to the counts.
     """
-    missing = [i for i in expected if i not in declared]
-    extra = [i for i in declared if i not in expected]
+    missing = _surplus(expected, declared)
+    surplus = _surplus(declared, expected)
+    known = set(expected)
     detail = []
     if missing:
         detail.append(f"never listed: {', '.join(missing)}")
-    if extra:
-        detail.append(f"listed but not in the schedule: {', '.join(extra)}")
+    if repeated := [i for i in surplus if i in known]:
+        detail.append(f"listed more than once: {', '.join(repeated)}")
+    if unknown := [i for i in surplus if i not in known]:
+        detail.append(f"not in the schedule at all: {', '.join(unknown)}")
     if not detail:
-        i = next(i for i, (d, e) in enumerate(zip(declared, expected)) if d != e)
-        detail.append(f"item {i + 1} is {declared[i]!r}, the clock reaches "
-                      f"{expected[i]!r} there")
+        i = next((i for i, (d, e) in enumerate(zip(declared, expected))
+                  if d != e), None)
+        detail.append(
+            f"item {i + 1} is {declared[i]!r}, the clock reaches "
+            f"{expected[i]!r} there" if i is not None else
+            f"{len(declared)} items listed, the clock has {len(expected)}")
     return ("_variables.yml `agenda` does not match the running clock — "
             + "; ".join(detail))
