@@ -1419,6 +1419,8 @@ CONTENT["10"] = {
     ],
     "setup": """import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+from skimage import data
 
 TAXIS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
 taxis = pd.read_csv(TAXIS)
@@ -1428,6 +1430,76 @@ def unfold(T, axis):
 
 print(taxis.shape)                       # (6433, 14) — 6,433 real NYC taxi trips""",
     "cells": [
+        md("""## Rank you can see
+
+> 🇪🇸 Antes de generalizar a tensores, comprimamos una sola matriz: una
+> imagen real. La SVD truncada de rango k conserva las k direcciones
+> singulares más fuertes y descarta el resto — por Eckart–Young, es la mejor
+> aproximación de rango k posible en norma de Frobenius.
+
+Before generalizing to tensors, let's compress a single matrix — a real
+image. The rank-`k` truncated SVD keeps only the `k` strongest singular
+directions and drops the rest. By the **Eckart–Young theorem**, that
+truncation is the *optimal* rank-`k` approximation to the original matrix in
+Frobenius norm — no other rank-`k` matrix is closer.
+
+We'll reconstruct a 512×512 grayscale photograph (`skimage.data.camera()`) at
+`k = 1, 5, 20, 50` and full rank, and compare three things side by side: how
+much storage each reconstruction needs, how much of the image's Frobenius
+energy it retains, and how it actually looks."""),
+        code("""img = data.camera().astype(float)
+m, n = img.shape                          # (512, 512)
+
+U, s, Vt = np.linalg.svd(img, full_matrices=False)
+
+ks = [1, 5, 20, 50, min(m, n)]
+total_energy = np.sum(s**2)
+
+fig, axes = plt.subplots(1, len(ks), figsize=(15, 3.5))
+for ax, k in zip(axes, ks):
+    recon = (U[:, :k] * s[:k]) @ Vt[:k, :]
+    stored = k * (m + n + 1)                          # mk + k + nk
+    storage_pct = 100 * stored / (m * n)
+    factor = (m * n) / stored
+    energy_pct = 100 * np.sum(s[:k]**2) / total_energy
+    label = "full rank" if k == min(m, n) else f"k={k}"
+    ax.imshow(recon, cmap="gray", vmin=0, vmax=255)
+    ax.set_title(f"{label}\\n{storage_pct:.1f}% storage, {factor:.1f}x\\n{energy_pct:.1f}% energy",
+                 fontsize=9)
+    ax.axis("off")
+plt.tight_layout()
+plt.show()
+
+for k in ks:
+    stored = k * (m + n + 1)
+    print(f"k={k:>3}  storage={100*stored/(m*n):6.2f}%  "
+          f"{(m*n)/stored:6.2f}x  energy={100*np.sum(s[:k]**2)/total_energy:6.2f}%")
+# k=  1  storage=  0.39%  255.75x  energy= 87.01%
+# k=  5  storage=  1.96%   51.15x  energy= 97.04%
+# k= 20  storage=  7.82%   12.79x  energy= 98.98%
+# k= 50  storage= 19.55%    5.12x  energy= 99.60%
+# k=512  storage=200.20%    0.50x  energy=100.00%"""),
+        md("""## Storage, energy, and what your eyes see
+
+> 🇪🇸 El almacenamiento, la energía retenida y la calidad perceptual no son
+> la misma curva. Con muy pocos componentes ya se retiene casi toda la
+> energía, y la imagen es reconocible con una fracción minúscula del
+> almacenamiento original. La misma idea — quedarse con las direcciones más
+> fuertes y descartar el resto — es exactamente lo que Tucker/HOSVD hace a
+> continuación, un eje del tensor a la vez.
+
+At `k = 1`, under 0.4% of the storage already recovers 87% of the energy —
+but the picture is barely recognisable. By `k = 20`, storage is still under
+8% of the original and the picture is already unmistakably the photograph,
+while the energy curve hasn't yet reached its final digit. At full rank, the
+factorized `U`, `s`, `Vt` together need *more* numbers than the dense image
+itself (about 200% of its storage) — factorizing only pays off once you
+truncate. The same idea — keep the strongest singular directions, drop the
+rest — is what Tucker/HOSVD does next, one tensor axis at a time.
+
+**The picture is recognisable at `k = 20` — under 8% of the storage — long
+before the numbers claim it should be. Energy retained and perceptual
+quality are not the same curve.**"""),
         md("""## The theory
 
 > 🇪🇸 PCA comprime una **matriz**: dos ejes. La descomposición de Tucker
