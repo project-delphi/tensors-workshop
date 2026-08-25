@@ -4,7 +4,7 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Seven checks, each of which catches a mistake that is otherwise invisible.
+Eight checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
@@ -19,6 +19,10 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     deck and forgetting the Spanish one is the single most likely way these
     two files drift.
   - The EN and ES landing pages list the same twelve sections.
+  - Every section's `start` and `end` still match what the running clock
+    derives from `minutes` and the quizzes and breaks between them. These are
+    written out in _variables.yml because `{{< var >}}` cannot add numbers, so
+    nothing but this check stops them drifting when a `minutes` changes.
   - No visible cell depends on a name bound only inside a folded solution
     cell. [nb]
   - Kahoot join URLs. A reminder, NOT a failure — see check_kahoot_urls.
@@ -271,6 +275,45 @@ def check_landing_parity() -> None:
           f"with slide anchors and notebook links")
 
 
+def check_schedule() -> None:
+    """Recompute the running clock and compare it with the written `start`/`end`.
+
+    Walk the sections in order, adding each one's `minutes`, plus
+    `schedule.quiz_minutes` after a section a quiz follows and
+    `schedule.break_minutes` after one in `schedule.break_after`. The total has
+    to land on `workshop.minutes`, which is the check that catches a break or a
+    quiz going missing rather than a single offset being mistyped.
+    """
+    step("Section start and end times")
+    sched = V["schedule"]
+    quizzes = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
+    break_after = set(sched["break_after"])
+
+    def clock(m: int) -> str:
+        return f"+{m // 60:02d}:{m % 60:02d}"
+
+    minute = 0
+    for s in SECTIONS:
+        want = (clock(minute), clock(minute + s["minutes"]))
+        got = (s.get("start"), s.get("end"))
+        if got != want:
+            fail(f"section {s['n']}: start/end is {got[0]}–{got[1]}, "
+                 f"derived {want[0]}–{want[1]}")
+        minute += s["minutes"]
+        if any(q["after"] == s["n"] for q in quizzes):
+            minute += sched["quiz_minutes"]
+        if s["n"] in break_after:
+            minute += sched["break_minutes"]
+
+    total = V["workshop"]["minutes"]
+    if minute != total:
+        fail(f"sections + quizzes + breaks come to {minute} min, "
+             f"workshop.minutes says {total}")
+    else:
+        print(f"      {len(SECTIONS)} sections end at {clock(minute)}"
+              f" — {total} min including quizzes and breaks")
+
+
 def check_solution_independence() -> None:
     """No visible cell may depend on a name bound only inside a folded solution.
 
@@ -361,6 +404,7 @@ def main() -> int:
         check_links()
         check_decks()
         check_landing_parity()
+        check_schedule()
     check_solution_independence()
     if not only_nb:
         check_kahoot_urls()

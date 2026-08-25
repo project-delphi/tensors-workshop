@@ -179,7 +179,13 @@ confusión más fiable de todo el taller.
 
 # 00 · Preparación y bienvenida {#sec-00-setup-and-data}
 
-*5 min · ejecuta esto antes que nada*
+*ejecuta esto antes que nada*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s00.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s00.start >}} · Fin: {{< var sections.s00.end >}}]{.pace-window}
+:::
 
 ## Tres descargas, una primera celda
 
@@ -228,7 +234,13 @@ El resto viene dentro de las librerías y funciona sin conexión:
 
 # 01 · Qué es un tensor {#sec-01-what-a-tensor-is}
 
-*Parte I · 20 min · demostración*
+*Parte I · demostración*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s01.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s01.start >}} · Fin: {{< var sections.s01.end >}}]{.pace-window}
+:::
 
 ## El vocabulario
 
@@ -352,7 +364,13 @@ apéndices, nunca la parte I.
 
 # 02 · Pensar en N dimensiones {#sec-02-thinking-in-n-dimensions}
 
-*Parte II · 20 min · discusión en grupo · sin código*
+*Parte II · discusión en grupo · sin código*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s02.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s02.start >}} · Fin: {{< var sections.s02.end >}}]{.pace-window}
+:::
 
 ## Vuestra tarea
 
@@ -413,7 +431,13 @@ dibujo correcto. Asigna los grupos antes de la sesión.
 
 # 03 · Indexación y broadcasting {#sec-03-indexing-and-broadcasting}
 
-*Parte III · 15 min · ejercicio*
+*Parte III · ejercicio*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s03.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s03.start >}} · Fin: {{< var sections.s03.end >}}]{.pace-window}
+:::
 
 ## Por qué importa
 
@@ -478,7 +502,13 @@ donde nadie escribe. Desviación típica exactamente cero → `NaN`.
 
 # 04 · Reshape y transposición {#sec-04-reshape-and-transpose}
 
-*Parte III · 15 min · ejercicio*
+*Parte III · ejercicio*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s04.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s04.start >}} · Fin: {{< var sections.s04.end >}}]{.pace-window}
+:::
 
 ## Por qué importa
 
@@ -579,7 +609,13 @@ recorta antes el Kahoot 2.
 
 # 05 · Diseño de un pipeline de vídeo {#sec-05-video-pipeline-design}
 
-*Parte III · 15 min · discusión en grupo*
+*Parte III · discusión en grupo*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s05.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s05.start >}} · Fin: {{< var sections.s05.end >}}]{.pace-window}
+:::
 
 ## Diseñad las dos tuberías
 
@@ -635,7 +671,13 @@ misma máscara que necesita la atención.
 
 # 06 · Contracción con einsum {#sec-06-contraction-with-einsum}
 
-*Parte IV · 15 min · ejercicio*
+*Parte IV · ejercicio*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s06.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s06.start >}} · Fin: {{< var sections.s06.end >}}]{.pace-window}
+:::
 
 ## Por qué importa
 
@@ -712,7 +754,13 @@ ejercicio es el único puente.
 
 # 07 · Inversas y la pseudoinversa {#sec-07-inverses-and-pseudoinverse}
 
-*Parte IV · 15 min · ejercicio*
+*Parte IV · ejercicio*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s07.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s07.start >}} · Fin: {{< var sections.s07.end >}}]{.pace-window}
+:::
 
 ## Paso 1 — matrices cuadradas
 
@@ -826,7 +874,13 @@ pseudoinversa y la distancia se repasan de forma narrativa en el cierre.
 
 # 08 · Recursión con matrices {#sec-08-recursion-with-matrices}
 
-*Parte IV · 10 min · demostración*
+*Parte IV · demostración*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s08.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s08.start >}} · Fin: {{< var sections.s08.end >}}]{.pace-window}
+:::
 
 ## Aplicar la misma matriz una y otra vez
 
@@ -910,7 +964,13 @@ recortes, después del Kahoot 2 y del TODO 4 de la §09.
 
 # 09 · Convolución y deconvolución {#sec-09-convolution-and-deconvolution}
 
-*Parte IV · 15 min · ejercicio*
+*Parte IV · ejercicio*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s09.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s09.start >}} · Fin: {{< var sections.s09.end >}}]{.pace-window}
+:::
 
 ## Tres modos, tres tamaños de salida
 
@@ -1027,7 +1087,13 @@ inutilizable, buscas la mejor respuesta estable.
 
 # 10 · Descomposición de Tucker {#sec-10-tucker-decomposition}
 
-*Parte IV · 15 min · ejercicio*
+*Parte IV · ejercicio*
+
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s10.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s10.start >}} · Fin: {{< var sections.s10.end >}}]{.pace-window}
+:::
 
 ## Qué aporta cada factorización {.factorization-ladder}
 
@@ -1225,7 +1291,11 @@ del cierre, así que enlaza directamente del podio con el cierre.
 
 # 11 · Cierre {#sec-11-wrap-up-and-take-homes}
 
-*5 min*
+::: {.pace-badge}
+[[⏱️]{.pace-icon}**{{< var sections.s11.minutes >}} min** asignados]{.pace-duration}
+
+[Inicio: {{< var sections.s11.start >}} · Fin: {{< var sections.s11.end >}}]{.pace-window}
+:::
 
 ## Lo que hiciste hoy
 

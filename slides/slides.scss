@@ -153,3 +153,51 @@ $code-block-font-size: 0.62em;
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+// The pace badge under every section title. Two facts the facilitator needs
+// mid-flight and nobody else does: how many minutes this section is allocated,
+// and where it should sit on the running clock counted from minute zero. A
+// glance says whether the room is ahead or behind.
+//
+// `$presentation-heading-color` rather than a new colour: the deck already has
+// exactly three (heading, link, Kahoot orange) and a pace indicator does not
+// earn a fourth. The tint is that same colour at low alpha, so the badge reads
+// as part of the title block rather than as a callout competing with it.
+//
+// Inline-block so the box is only as wide as its text: the title slides are
+// left-aligned, and a band running the full 1280px under a four-word heading
+// reads as a broken table rather than as a badge.
+.reveal .pace-badge {
+  display: inline-block;
+  margin: .6em 0 0;
+  padding: .32em .8em .36em;
+  border-left: 3px solid rgba(47, 72, 88, .45);
+  border-radius: 0 4px 4px 0;
+  background: rgba(47, 72, 88, .06);
+  text-align: left;
+
+  p {
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  // The stopwatch renders with no right side bearing, so the space that is
+  // in the markdown disappears against the digit next to it. Own the gap here
+  // rather than reaching for a non-breaking space in both decks.
+  .pace-icon { margin-right: .3em; }
+
+  // The allocation. The one number worth reading from the room.
+  .pace-duration {
+    font-size: .62em;
+    font-weight: 600;
+    color: $presentation-heading-color;
+  }
+
+  // The clock window — facilitator detail, deliberately quieter than the
+  // allocation above it and never the thing a student reads first.
+  .pace-window {
+    font-size: .5em;
+    opacity: .7;
+    font-variant-numeric: tabular-nums;
+  }
+}
