@@ -185,13 +185,32 @@
     // footer and slide number to light text on a slide like that, but the
     // timer hangs off `.reveal` rather than off the slide, so nothing would
     // ever tell it — and it would sit navy-on-orange for the whole quiz.
+    //
+    // Measured off the painted colour, NOT off reveal's `has-dark-background`
+    // class. That class is set once at init from the computed background, and
+    // if the theme CSS has not applied by then reveal reads every slide as
+    // transparent and marks the whole deck dark — the failure CLAUDE.md
+    // describes. Trusting it would turn the timer white on a white slide on
+    // exactly those loads.
+    function isDark(element) {
+      var match = element
+        ? getComputedStyle(element).backgroundColor.match(/rgba?\(([^)]+)\)/)
+        : null;
+      if (!match) { return false; }
+      var parts = match[1].split(",").map(parseFloat);
+      // Fully transparent means nothing was painted over the deck's own
+      // background, and that is #ffffff.
+      if (parts.length > 3 && parts[3] === 0) { return false; }
+      // Rec. 601 luma, the same rough split reveal uses.
+      var luma = (parts[0] * 299 + parts[1] * 587 + parts[2] * 114) / 1000;
+      return luma < 128;
+    }
+
     function updateContrast() {
       var slide = Reveal.getCurrentSlide && Reveal.getCurrentSlide();
       var background = (slide && Reveal.getSlideBackground)
         ? Reveal.getSlideBackground(slide) : null;
-      timer.classList.toggle("has-dark-background",
-        !!(background &&
-           background.classList.contains("has-dark-background")));
+      timer.classList.toggle("has-dark-background", isDark(background));
     }
 
     function updateChrome() {
