@@ -79,6 +79,35 @@ of the work.**
 If the setup cell above printed `(20640, 10) (6433, 14) (144, 3)`, you are ready.
 **If it failed, say so in Discord immediately** — a silent download failure will
 leave you stuck at sections 07 and 10, an hour from now, with no obvious cause."""),
+        md("""## See it, not just its shape
+
+> 🇪🇸 Confírmalo con los ojos, no solo con `.shape`.
+
+A shape can match on paper for reasons that are actually bugs — a truncated
+download, a stale cached file, a column that came back silently empty. These
+three files just came over the network; a glance at each is cheaper than
+discovering a bad download at section 07 or 10, an hour from now."""),
+        code("""import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(1, 3, figsize=(12, 3.2))
+
+sc = axes[0].scatter(housing["longitude"], housing["latitude"],
+                      c=housing["median_house_value"], cmap="viridis", s=4)
+axes[0].set_title("housing — location, coloured by price")
+fig.colorbar(sc, ax=axes[0], fraction=0.046)
+
+axes[1].hist(taxis["fare"].dropna(), bins=30, color="#4C72B0")
+axes[1].set_title("taxis — fare distribution")
+axes[1].set_xlabel("fare ($)")
+
+by_year = flights.groupby("year")["passengers"].sum()
+axes[2].plot(by_year.index, by_year.values, marker="o", color="#55A868")
+axes[2].set_title("flights — passengers per year")
+
+fig.suptitle("Real California geography, real fares, real growth — "
+             "if these look right, the downloads worked")
+plt.tight_layout()
+plt.show()"""),
         md("""## Exercise 1 — check the data you did not download
 
 > 🇪🇸 Comprueba los datos que vienen dentro de las librerías."""),
@@ -225,6 +254,49 @@ print(data.astronaut().shape)       # (512, 512, 3)  axis 0 = height
 ### Slices and fibers — fixing indices takes a tensor apart"""),
         code("""print(photo[:, :, 0].shape)       # (512, 512) — a slice: one colour channel, still an image
 print(photo[100, 200, :].shape)   # (3,)       — a fiber: the 3 colour values of one pixel"""),
+        md("""Same picture, same two indexing operations — see them together. Drag the
+sliders and watch the marked pixel move on both panels at once, while its
+fiber (three numbers, one per colour) redraws on the right.
+
+> 🇪🇸 Mueve los deslizadores: el mismo píxel se marca en el corte y en la
+> imagen completa, y su fibra (tres números, uno por color) se redibuja."""),
+        code("""# Colab renders ipywidgets through its own widget manager rather than the
+# classic Jupyter one; this call is a no-op outside Colab, which is why it is
+# guarded rather than assumed.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+import ipywidgets as widgets
+import matplotlib.pyplot as plt
+
+def show_slice_and_fiber(row, col):
+    plt.close('all')
+    fig, axes = plt.subplots(1, 3, figsize=(11, 3.2))
+
+    axes[0].imshow(photo)
+    axes[0].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[0].set_title('photo — the fiber, marked')
+    axes[0].axis('off')
+
+    axes[1].imshow(photo[:, :, 0], cmap='gray')
+    axes[1].scatter([col], [row], color='#C44E52', s=70, edgecolor='white')
+    axes[1].set_title('photo[:, :, 0] — a slice')
+    axes[1].axis('off')
+
+    fiber = photo[row, col, :]
+    axes[2].bar(['R', 'G', 'B'], fiber, color=['#C44E52', '#55A868', '#4C72B0'])
+    axes[2].set_title(f'photo[{row}, {col}, :] — the fiber')
+    axes[2].set_ylim(0, 255)
+
+    plt.tight_layout()
+    plt.show()
+
+widgets.interact(show_slice_and_fiber,
+                  row=widgets.IntSlider(min=0, max=511, step=1, value=100, description='row'),
+                  col=widgets.IntSlider(min=0, max=511, step=1, value=200, description='col'));"""),
         md("""### Unfolding — every decomposition begins here
 
 Every tensor decomposition begins by turning the tensor into a matrix, one axis
