@@ -1,5 +1,9 @@
-# Tensors for Machine Learning
-## A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook
+---
+title: "Tensors for Machine Learning"
+subtitle: "A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook"
+title-block-banner: images/hero-band.png
+title-block-banner-color: body
+---
 
 **🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.
 
@@ -138,6 +142,10 @@ photo = data.immunohistochemistry()
 print(photo.shape)               # (512, 512, 3) — height, width, colour
 ```
 
+![](images/fig-ladder.png){.column-page fig-alt="Five real arrays in a row, climbing from order 0 to order 4: a single grey square holding one pixel of the camera photograph, a long thin strip holding one row of it, one handwritten digit as an eight-by-eight grid of grey squares with white gutters ruled between them, a stained histology photograph shown as three separated colour planes, and sixteen frames of a storm clip stacked in a pile. Each is labelled with its shape, ndim and size."}
+
+*The same climb, in arrays you will meet today. `shape` grows by one number at each rung; the last two rungs both have a `3` in them, and the two threes mean nothing like each other.*
+
 Both are order 3, but their axes mean completely different things. `digits.images` counts *images* along axis 0; `photo` counts *colours* along axis 2. **The shape alone never tells you what the axes mean.** You must know, and you must keep track.
 
 ## 1.3 The Three Operations That Matter
@@ -199,6 +207,10 @@ print(np.allclose(Q.T @ Q, np.eye(3)))      # True — book eq 2.37
 ```
 
 **LU** is Gaussian elimination stored as two triangular matrices, so `Ax = b` can be solved cheaply many times for different `b`. **QR** (computed by Gram-Schmidt, or more stably by other methods) produces *orthonormal* directions — mutually perpendicular, each of length 1. It is used for orthogonal weight initialization in neural networks and for stable least-squares.
+
+![](images/fig-factorization-map.png){.column-page fig-alt="One eight-by-eight handwritten digit factorized three ways, each row showing the original matrix and its factors as small heatmaps: A equals P times L times U, with L visibly lower triangular and U upper triangular; A equals Q times R; and A equals U times Sigma times V transpose, with Sigma empty apart from its diagonal. Below a dividing line, a pile of four slices of the real taxi tensor, labelled as having any number of axes, pointing to Block 6."}
+
+*The same 8×8 digit, factorized three ways. The shapes are the point: `L` really is lower triangular, `U` upper, and `Σ` is empty apart from its diagonal. Below the line is an object none of them can touch.*
 
 Everything in that table above the double line works on **matrices** — two axes. Real data often has more. That is what Block 6 addresses.
 
@@ -320,6 +332,10 @@ Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is
 > Design the tensor shape at each stage — *raw file → decoded frames → preprocessed batch → model input → model output* — for **both** systems:
 > - **Tech:** a short-video app computing one embedding per video from sampled frames, to choose what to play next.
 > - **Biotech:** a surgical-video model that labels the current phase of an operation from an operating-room camera.
+
+![](images/fig-video-stack.gif){.column-page fig-alt="Two video panes side by side, both cycling through the same eight frames of a storm at a rocky shore. The left pane, labelled clip, plays them in order and the swell builds steadily. The right pane, labelled clip permuted, plays the identical frames in a shuffled order and the sea jumps between shots."}
+
+*Both panes hold the same eight frames, the same shape and the same sum. Only the order of axis 0 differs, and no arithmetic in this workshop can tell you which one is the video.*
 
 1. Sketch the shape at each of the five stages, for both. Where are they the same, and where must they differ?
 2. Clips have different lengths — 30 seconds against 4 hours. Take one strategy your group proposed in Part II and give the exact shape of the preprocessed batch. What does an invented or wasted value in that tensor represent?
@@ -653,6 +669,10 @@ recon = np.einsum('abc,ia,jb,kc->ijk', core, Us[0], Us[1], Us[2])
 error = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067
 ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 ```
+
+![](images/fig-tucker-taxi.png){.column-page fig-alt="The taxi tensor decomposed. Along the top, T as a pile of four heatmap slices equals a small core G times three factor matrices A, B and C, each labelled with its shape. Below, two bar charts against hour of day: the raw pickup counts, and the first column of the hour factor. Both have their tallest bar at hour 18, drawn in red."}
+
+*480 numbers become 102. The two charts are TODO 6: the busiest hour in the raw counts, and the peak of the hour factor the decomposition built without ever being told what an hour is.*
 
 **The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition discovered evening rush hour by itself.** Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.
 

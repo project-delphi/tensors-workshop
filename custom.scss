@@ -83,3 +83,153 @@ code.todo, .todo > code { color: $kahoot-accent; font-weight: 600; }
 
 .navbar-brand { font-weight: 600; letter-spacing: -.01em; }
 main a { text-underline-offset: 2px; }
+
+// ─── page texture ───────────────────────────────────────────────────────────
+// A lattice of points, one every 24px, at about 5% of the ink. It is meant to
+// be noticed only if you go looking: the handbook is a long read, and the job
+// here is to stop a wall of prose reading as a blank sheet, not to decorate it.
+// Inline SVG rather than a file — two hundred bytes, crisp at any zoom, and one
+// less thing for `check_links.py` to resolve.
+$lattice: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24'%3E%3Ccircle cx='1' cy='1' r='1' fill='%232f4858' fill-opacity='.055'/%3E%3C/svg%3E";
+
+body {
+  background-color: $body-bg;
+  background-image: url("#{$lattice}");
+}
+
+// Code, tables and callouts all paint their own ground, so the lattice stops at
+// their edges rather than showing through the text.
+pre, .table-responsive, .callout { background-color: $body-bg; }
+
+// ─── the title banner ───────────────────────────────────────────────────────
+// `title-block-banner: images/hero-band.png` puts the band behind the title.
+//
+// It is sized with `contain`, not `cover`, and sits along the bottom edge. The
+// band is a 7:1 strip of five panels and it only means anything whole — `cover`
+// shows all five only while the banner is a wider shape than the band itself,
+// which is above about 1800px, and at every width below that it crops to the
+// middle and the banner becomes one giant handwritten nought sitting behind the
+// title. `contain` never crops, needs no breakpoint guessed against a banner
+// height that depends on the title's own wrapping, and puts the text on clean
+// paper instead of over the artwork.
+//
+// Quarto writes `background-image` and `background-size: cover` into an inline
+// `<style>` in each page's head, under `.quarto-title-block
+// .quarto-title-banner` — two classes, and after this stylesheet. Overriding
+// the size therefore needs a third class-or-element in the selector, which is
+// what `body` is doing here.
+body .quarto-title-block .quarto-title-banner {
+  position: relative;
+  // Paper, explicitly: Quarto's own banner ground is the dark `$primary`, and
+  // `contain` leaves most of it showing.
+  background-color: $body-bg;
+  background-size: contain;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  border-bottom: 1px solid $border-color;
+  padding-top: 3.2rem;
+  // Reserve exactly the height the band will take: it is 7.06:1, and 100/7.06
+  // is 14.2. Anything less and the strip climbs over the subtitle.
+  padding-bottom: calc(14.2vw + 1.6rem);
+
+  // The band assembles itself once, left to right: a curtain of paper the width
+  // of the banner, retracting to the right. `forwards` is the point — the
+  // animation holds its final state, so the banner ends up showing the whole arc
+  // and stays there. It runs on the page's own paint, so there is no second
+  // asset to download and nothing still animating once it is done.
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: $body-bg;
+    animation: hero-reveal 1.5s cubic-bezier(.33, 0, .2, 1) forwards;
+    pointer-events: none;
+  }
+
+  // The title has to sit above the curtain, or it is wiped in with the band.
+  > * { position: relative; z-index: 1; }
+
+  .title {
+    color: $primary;
+    letter-spacing: -.015em;
+  }
+  .subtitle {
+    color: #52606d;
+    font-size: 1.02rem;
+    margin-top: .35rem;
+  }
+}
+
+@keyframes hero-reveal {
+  from { clip-path: inset(0 0 0 0); }
+  to   { clip-path: inset(0 0 0 100%); }
+}
+
+// ─── figures ────────────────────────────────────────────────────────────────
+// The figures are wider than the 46rem the prose is set to, and shrinking a
+// five-panel band to the text measure makes its labels unreadable. Only
+// paragraphs that hold nothing but an image are let out; a paragraph with an
+// inline image in it stays at the reading width.
+main img { max-width: 100%; height: auto; }
+main p:has(> img:only-child) {
+  max-width: none;
+  margin: 1.8rem 0 .6rem;
+  text-align: center;
+}
+
+// The line under a figure. Quarto leaves it a plain paragraph, which is what we
+// want — it is a caption by position, and `em` is enough to mark it.
+main p:has(> img:only-child) + p > em:only-child {
+  display: block;
+  max-width: 46rem;
+  color: #52606d;
+  font-size: .92rem;
+  line-height: 1.55;
+}
+
+// ─── the dataset strip on the landing pages ─────────────────────────────────
+.app-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 1.1rem;
+  margin: 1.4rem 0 2rem;
+  max-width: 62rem;
+}
+.app-card {
+  img {
+    width: 100%;
+    aspect-ratio: 20 / 13;   // the shape gen_thumbnails.py renders the cards at
+    object-fit: cover;
+    border-radius: 3px;
+    border: 1px solid $border-color;
+  }
+  p {
+    max-width: none;
+    margin: .45rem 0 0;
+    font-size: .85rem;
+    line-height: 1.4;
+    color: #64748b;
+  }
+  strong { color: $body-color; font-weight: 600; }
+}
+
+// ─── motion ─────────────────────────────────────────────────────────────────
+// Two things move on this site, and for anyone who has asked the operating
+// system for less movement neither should.
+//
+// The banner's curtain is simply removed — the band is a still image underneath
+// it, so skipping the reveal leaves exactly the finished state the animation
+// would have ended on. The video figure is swapped for the still it was
+// rendered from; Quarto resolves a `url()` in this file against the project
+// root and copies the file next to the compiled stylesheet, which is why that
+// path is written as if from the root and works from both the English and the
+// Spanish pages.
+@media (prefers-reduced-motion: reduce) {
+  body .quarto-title-block .quarto-title-banner::after {
+    animation: none;
+    clip-path: inset(0 0 0 100%);
+  }
+  main img[src$="fig-video-stack.gif"] {
+    content: url("images/fig-video-stack.jpg");
+  }
+}

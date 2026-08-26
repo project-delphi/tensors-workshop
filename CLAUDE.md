@@ -27,12 +27,31 @@ twice.
 | The marker-delimited table regions inside `README.md` and `notebooks/README.md` — the rest of both files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — scaffolding: header, objectives, Colab badge, Kahoot footer | `scripts/gen_notebooks.py` |
 | `notebooks/*.ipynb` — body cells | `scripts/content.py` |
+| `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
+| `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `docs/` | `quarto render` |
 
-CI reruns both generators and fails if the working tree changes. This gate *is*
-byte-exact — the generators are deterministic pure Python — unlike the render
-gate under Publishing, which cannot be. A hand-edit is caught, but only once
-you push.
+CI reruns `gen_tables.py` and `gen_notebooks.py` and fails if the working tree
+changes. This gate *is* byte-exact — both are deterministic pure Python —
+unlike the render gate under Publishing, which cannot be. A hand-edit is
+caught, but only once you push.
+
+**The two image generators are not in that gate**, deliberately: they need the
+network and a scientific stack the workflow does not install. So nothing will
+tell you an image is stale — rerun them by hand when their inputs change. Both
+are still deterministic, and both record where every pixel came from, which is
+the actual point:
+
+- `gen_thumbnails.py` builds the nine dataset cards from SHA-256-pinned CC0
+  sources. Pinning matters: a Commons file can be overwritten under the same
+  name, and a card silently regenerated from a different photograph is not
+  something a binary diff will show you.
+- `gen_figures.py` builds the banner and the handbook's four figures, and
+  imports the pin, the palette and the fetcher from `gen_thumbnails.py` rather
+  than repeating them. Every figure is drawn from an array the workshop
+  actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
+  so the numbers printed on a figure are the numbers the exercise prints, and
+  they stay that way.
 
 ## No commits on main
 
@@ -82,6 +101,12 @@ uv run --with pyyaml python scripts/gen_tables.py
 uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
 uv run --with pyyaml,nbformat python scripts/check_links.py     # verifies docs/
 uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
+
+# The image generators. Network, heavy deps, not run by CI — see above.
+uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
+scikit-learn,scikit-image python scripts/gen_thumbnails.py
+uv run --with numpy,pandas,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
+scikit-learn,scikit-image python scripts/gen_figures.py
 ```
 
 `check_links.py` is the test suite — there is no pytest here. It prints nine
