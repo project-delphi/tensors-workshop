@@ -479,13 +479,22 @@ def _op(ax, x, y, glyph):
 
 
 def _cube(ax, slices, x, y, cell, *, cmap, label, sub=None, offset,
-          label_above=False):
+          label_above=False, signed=False):
     """A tensor as the pile of matrices it is — every slice along the last
     axis, drawn back to front. Real counts, not a wireframe.
 
     Scaled to the 92nd percentile rather than the maximum: one borough pair at
     one hour dwarfs the rest, and against that every other cell renders as
     blank paper. Clipping the top lets the shape of the data show.
+
+    `signed` is for a tensor that is not a pile of counts. A Tucker core holds
+    both signs, and its dominant entry carries the whole energy of the
+    decomposition: anchored at zero it would clip flat against every other
+    negative cell, and — worse, because the core is drawn in the same diverging
+    colormap as the factor matrices beside it — a zero in this panel would
+    render deep blue while a zero in the panel next to it renders white. One
+    figure cannot say two things with one colour. So centre the range on zero,
+    the way `_block` does, and clip symmetrically.
     """
     import numpy as np
 
@@ -493,11 +502,17 @@ def _cube(ax, slices, x, y, cell, *, cmap, label, sub=None, offset,
     n = slices.shape[2]
     w, h = cols * cell, rows * cell
     dx, dy = offset
-    v = float(np.percentile(slices, 92)) or 1.0
+    v = float(np.percentile(np.abs(slices) if signed else slices, 92))
+    # Not `or 1.0`: that catches an exact zero and nothing else. A non-positive
+    # percentile would reach imshow as vmin > vmax, which matplotlib does not
+    # reject — it silently inverts the mapping instead.
+    if not v > 0:
+        v = 1.0
+    lo = None if signed else 0.0
     for k in range(n - 1, -1, -1):
         _block_raw(ax, slices[:, :, k], x + k * dx,
                    y - dy * (n - 1) / 2 + k * dy, w, h, cmap=cmap, v=v,
-                   z=2 + (n - k), lo=0.0)
+                   z=2 + (n - k), lo=lo)
     cx = x + (w + dx * (n - 1)) / 2
     half = h / 2 + dy * (n - 1) / 2
     if label_above:
@@ -786,7 +801,8 @@ def fig_tucker_taxi(arrays) -> Path:
                sub="(4, 5, 24)\n480 numbers") + gap
     _op(ax, x - gap / 2, y, "=")
     x += _cube(ax, core, x, y, cell, cmap=cmap, offset=(0.014, 0.010),
-               label="G", label_above=True, sub="(2, 2, 3)\ncore") + gap
+               label="G", label_above=True, sub="(2, 2, 3)\ncore",
+               signed=True) + gap
     for U, name, sub in ((Us[0], "A", "(4, 2)\npickup"),
                          (Us[1], "B", "(5, 2)\ndropoff"),
                          (Us[2], "C", "(24, 3)\nhour")):
