@@ -2,6 +2,8 @@
 title: "Tensors for Machine Learning"
 subtitle: "A 3-hour workshop, plus three Kahoot knowledge checks"
 toc: false
+title-block-banner: images/hero-band.png
+title-block-banner-color: body
 ---
 
 ::: {.callout-note appearance="simple"}
@@ -69,6 +71,49 @@ Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:
 
 - **Exercise blocks** — 10 minutes coding, then 5 minutes explanation.
 - **Group blocks** — 10 minutes discussion in your breakout channel, then share-back.
+
+## Where the data comes from
+
+Every dataset here is real, and every one of them is something someone actually
+measured. Nothing in this workshop is invented with random numbers.
+
+::: {.app-strip}
+::: {.app-card}
+![](images/ds-nyc-taxi.jpg){fig-alt="Yellow taxis queuing on a Manhattan avenue, the city whose 6,433 trip records make up the taxis dataset."}
+
+**NYC taxi trips**<br>Tucker decomposition
+:::
+
+::: {.app-card}
+![](images/ds-housing.jpg){fig-alt="An aerial view of rows of tract housing in southern California, the kind of district whose median value and block counts make up the housing dataset."}
+
+**California housing**<br>Least squares, pseudoinverse
+:::
+
+::: {.app-card}
+![](images/ds-video.jpg){fig-alt="Three frames from footage of a storm at l'Almadrava, two seconds apart; the breaking waves differ from frame to frame, which is what makes the time axis carry information."}
+
+**Storm footage**<br>Video pipeline design
+:::
+
+::: {.app-card}
+![](images/ds-histology.jpg){fig-alt="Immunohistochemically stained colonic glands, the brown DAB signal marking FHL2 expression against a blue haematoxylin counterstain."}
+
+**Histology slides**<br>Reshape and transpose
+:::
+
+::: {.app-card}
+![](images/ds-breast-cancer.jpg){fig-alt="Two stained histopathology views of invasive ductal carcinoma of the breast, the kind of slide the tumour nucleus measurements were taken from."}
+
+**Tumour measurements**<br>Indexing and broadcasting
+:::
+
+::: {.app-card}
+![](images/ds-airliner.jpg){fig-alt="A Douglas DC-3 airliner in flight, the aircraft of the 1949 to 1960 era whose monthly passenger totals the flights dataset counts."}
+
+**Airline traffic**<br>Recursion and forecasting
+:::
+:::
 
 ## The sections
 

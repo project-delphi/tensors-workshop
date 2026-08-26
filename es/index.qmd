@@ -3,6 +3,8 @@ title: "Tensores para Aprendizaje Automático"
 subtitle: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
 lang: es
 toc: false
+title-block-banner: ../images/hero-band.png
+title-block-banner-color: body
 ---
 
 ::: {.callout-note appearance="simple"}
@@ -74,6 +76,49 @@ Cuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:
 
 - **Bloques de ejercicios**: 10 minutos programando y 5 de explicación.
 - **Bloques de grupo**: 10 minutos de discusión en tu canal y luego puesta en común.
+
+## De dónde vienen los datos
+
+Todos los conjuntos de datos son reales, y cada uno es algo que alguien midió de
+verdad. Nada en este taller se inventa con números aleatorios.
+
+::: {.app-strip}
+::: {.app-card}
+![](../images/ds-nyc-taxi.jpg){fig-alt="Taxis amarillos en una avenida de Manhattan, la ciudad cuyos 6.433 viajes forman el conjunto de datos de taxis."}
+
+**Viajes en taxi de Nueva York**<br>Descomposición de Tucker
+:::
+
+::: {.app-card}
+![](../images/ds-housing.jpg){fig-alt="Vista aérea de hileras de viviendas en el sur de California, el tipo de distrito cuyo valor mediano forma el conjunto de datos de vivienda."}
+
+**Vivienda en California**<br>Mínimos cuadrados, pseudoinversa
+:::
+
+::: {.app-card}
+![](../images/ds-video.jpg){fig-alt="Tres fotogramas de una tormenta en l'Almadrava, separados por dos segundos; las olas cambian entre fotogramas, y por eso el eje temporal lleva información."}
+
+**Grabación de una tormenta**<br>Diseño de un pipeline de vídeo
+:::
+
+::: {.app-card}
+![](../images/ds-histology.jpg){fig-alt="Glándulas colónicas teñidas por inmunohistoquímica, con la señal marrón de DAB marcando la expresión de FHL2 sobre un contraste azul de hematoxilina."}
+
+**Cortes de histología**<br>Reshape y transposición
+:::
+
+::: {.app-card}
+![](../images/ds-breast-cancer.jpg){fig-alt="Dos vistas histopatológicas de carcinoma ductal invasivo de mama, el tipo de preparación del que proceden las mediciones de núcleos tumorales."}
+
+**Mediciones de tumores**<br>Indexación y broadcasting
+:::
+
+::: {.app-card}
+![](../images/ds-airliner.jpg){fig-alt="Un Douglas DC-3 en vuelo, el avión de la era 1949-1960 cuyos totales mensuales de pasajeros cuenta el conjunto de datos de vuelos."}
+
+**Tráfico aéreo**<br>Recursión y pronóstico
+:::
+:::
 
 ## Las secciones
 

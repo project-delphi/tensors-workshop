@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-1bcb5723683496fb4ab1b4e88a311b33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-136e8daf172060a9a0784e51513fd2fe.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -67,6 +67,13 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(../images/hero-band.png);
+background-size: cover;
+      }
+</style>
 
 
 </head>
@@ -74,7 +81,7 @@ ul.task-list li input[type="checkbox"] {
 <body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -142,31 +149,32 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Tensores para Aprendizaje Automático</h1>
+            <p class="subtitle lead">Un taller de 3 horas, más tres controles de conocimiento con Kahoot</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default">
-<div class="quarto-title">
-<h1 class="title">Tensores para Aprendizaje Automático</h1>
-<p class="subtitle lead">Un taller de 3 horas, más tres controles de conocimiento con Kahoot</p>
-</div>
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
-<div class="quarto-title-meta">
-
-    
-  
-    
-  </div>
-  
-
-
-</header>
 
 
 <div class="callout callout-style-simple callout-note">
@@ -224,6 +232,36 @@ ul.task-list li input[type="checkbox"] {
 <li><strong>Bloques de ejercicios</strong>: 10 minutos programando y 5 de explicación.</li>
 <li><strong>Bloques de grupo</strong>: 10 minutos de discusión en tu canal y luego puesta en común.</li>
 </ul>
+</section>
+<section id="de-dónde-vienen-los-datos" class="level2">
+<h2 class="anchored" data-anchor-id="de-dónde-vienen-los-datos">De dónde vienen los datos</h2>
+<p>Todos los conjuntos de datos son reales, y cada uno es algo que alguien midió de verdad. Nada en este taller se inventa con números aleatorios.</p>
+<div class="app-strip">
+<div class="app-card">
+<p><img src="../images/ds-nyc-taxi.jpg" class="img-fluid" alt="Taxis amarillos en una avenida de Manhattan, la ciudad cuyos 6.433 viajes forman el conjunto de datos de taxis."></p>
+<p><strong>Viajes en taxi de Nueva York</strong><br>Descomposición de Tucker</p>
+</div>
+<div class="app-card">
+<p><img src="../images/ds-housing.jpg" class="img-fluid" alt="Vista aérea de hileras de viviendas en el sur de California, el tipo de distrito cuyo valor mediano forma el conjunto de datos de vivienda."></p>
+<p><strong>Vivienda en California</strong><br>Mínimos cuadrados, pseudoinversa</p>
+</div>
+<div class="app-card">
+<p><img src="../images/ds-video.jpg" class="img-fluid" alt="Tres fotogramas de una tormenta en l'Almadrava, separados por dos segundos; las olas cambian entre fotogramas, y por eso el eje temporal lleva información."></p>
+<p><strong>Grabación de una tormenta</strong><br>Diseño de un pipeline de vídeo</p>
+</div>
+<div class="app-card">
+<p><img src="../images/ds-histology.jpg" class="img-fluid" alt="Glándulas colónicas teñidas por inmunohistoquímica, con la señal marrón de DAB marcando la expresión de FHL2 sobre un contraste azul de hematoxilina."></p>
+<p><strong>Cortes de histología</strong><br>Reshape y transposición</p>
+</div>
+<div class="app-card">
+<p><img src="../images/ds-breast-cancer.jpg" class="img-fluid" alt="Dos vistas histopatológicas de carcinoma ductal invasivo de mama, el tipo de preparación del que proceden las mediciones de núcleos tumorales."></p>
+<p><strong>Mediciones de tumores</strong><br>Indexación y broadcasting</p>
+</div>
+<div class="app-card">
+<p><img src="../images/ds-airliner.jpg" class="img-fluid" alt="Un Douglas DC-3 en vuelo, el avión de la era 1949-1960 cuyos totales mensuales de pasajeros cuenta el conjunto de datos de vuelos."></p>
+<p><strong>Tráfico aéreo</strong><br>Recursión y pronóstico</p>
+</div>
+</div>
 </section>
 <section id="las-secciones" class="level2">
 <h2 class="anchored" data-anchor-id="las-secciones">Las secciones</h2>

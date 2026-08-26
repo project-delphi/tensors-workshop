@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>tensors_workshop_plan_with_quizzes – Tensors for Machine Learning</title>
+<title>Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-1bcb5723683496fb4ab1b4e88a311b33.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-136e8daf172060a9a0784e51513fd2fe.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,6 +101,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
+<style>
+
+      .quarto-title-block .quarto-title-banner {
+        background-image: url(images/hero-band.png);
+background-size: cover;
+      }
+</style>
 
 
 </head>
@@ -108,7 +115,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -176,7 +183,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Tensors for Machine Learning</h1>
+            <p class="subtitle lead">A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook</p>
+                      </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
@@ -184,12 +208,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#tensors-for-machine-learning" id="toc-tensors-for-machine-learning" class="nav-link active" data-scroll-target="#tensors-for-machine-learning">Tensors for Machine Learning</a>
-  <ul class="collapse">
-  <li><a href="#a-3-hour-workshop-3-kahoot-checks-student-handbook" id="toc-a-3-hour-workshop-3-kahoot-checks-student-handbook" class="nav-link" data-scroll-target="#a-3-hour-workshop-3-kahoot-checks-student-handbook">A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook</a></li>
-  <li><a href="#the-data-we-use" id="toc-the-data-we-use" class="nav-link" data-scroll-target="#the-data-we-use">The Data We Use</a></li>
+  <li><a href="#the-data-we-use" id="toc-the-data-we-use" class="nav-link active" data-scroll-target="#the-data-we-use">The Data We Use</a></li>
   <li><a href="#schedule-195-minutes-incl.-3-kahoot-checks" id="toc-schedule-195-minutes-incl.-3-kahoot-checks" class="nav-link" data-scroll-target="#schedule-195-minutes-incl.-3-kahoot-checks">Schedule (195 minutes, incl.&nbsp;3 Kahoot checks)</a></li>
-  </ul></li>
   <li><a href="#part-i-what-a-tensor-is-20-min" id="toc-part-i-what-a-tensor-is-20-min" class="nav-link" data-scroll-target="#part-i-what-a-tensor-is-20-min">PART I — What a Tensor Is (20 min)</a>
   <ul class="collapse">
   <li><a href="#vocabulary" id="toc-vocabulary" class="nav-link" data-scroll-target="#vocabulary">1.1 Vocabulary</a></li>
@@ -242,22 +262,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+<main class="content quarto-banner-title-block page-columns page-full" id="quarto-document-content">
 
 
 
 
-<section id="tensors-for-machine-learning" class="level1">
-<h1>Tensors for Machine Learning</h1>
-<section id="a-3-hour-workshop-3-kahoot-checks-student-handbook" class="level2">
-<h2 class="anchored" data-anchor-id="a-3-hour-workshop-3-kahoot-checks-student-handbook">A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook</h2>
+
 <p><strong>🆕 Facilitator note on this edit.</strong> Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to <strong>195 minutes (3h15)</strong>. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.</p>
 <p><strong>Before you arrive:</strong> you have read <em><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a></em> (Goodfellow, Bengio &amp; Courville), <strong>Chapter 2 — Linear Algebra</strong>. You know matrices. This workshop assumes <strong>no previous knowledge of tensor theory</strong>.</p>
 <p><strong>What you will learn:</strong> what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.</p>
 <p><strong>How we work:</strong> Notebooks on <strong>GitHub</strong>, run in <strong>Colab</strong>, discussion in <strong>Discord</strong>. Two rhythms: - <strong>Exercise blocks</strong> — 10 minutes coding, then 5 minutes explanation. - <strong>Group blocks</strong> — 10 minutes discussion in your breakout channel, then share-back.</p>
 <p><strong>A note on language.</strong> This workshop is taught in English, but many terms are nearly identical in Spanish: <em>tensor/tensor</em>, <em>matrix/matriz</em>, <em>axis/eje</em>, <em>dimension/dimensión</em>, <em>decomposition/descomposición</em>, <em>factorization/factorización</em>, <em>contraction/contracción</em>, <em>convolution/convolución</em>, <em>recursion/recursión</em>. Every new term is defined when it first appears. <strong>Ask questions in Spanish or English</strong> in the Discord threads — whichever lets you ask faster.</p>
 <hr>
-</section>
 <section id="the-data-we-use" class="level2">
 <h2 class="anchored" data-anchor-id="the-data-we-use">The Data We Use</h2>
 <p>All data in this workshop is <strong>real</strong>. Nothing is invented with random numbers, because real data contains problems that random data never shows — missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.</p>
@@ -479,8 +495,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong>Why these three spots.</strong> Each quiz sits right after the block(s) that supply its content, while the material is still fresh, and before the next context switch (a break or a new Part) — so it reinforces rather than interrupts. Quiz 1 closes out Part III’s shape/vocabulary work; Quiz 2 closes out the einsum/pseudoinverse stretch of Part IV; Quiz 3 closes out the decomposition stretch of Part IV, right before the Wrap-up recap.</p>
 <hr>
 </section>
-</section>
-<section id="part-i-what-a-tensor-is-20-min" class="level1">
+<section id="part-i-what-a-tensor-is-20-min" class="level1 page-columns page-full">
 <h1>PART I — What a Tensor Is (20 min)</h1>
 <section id="vocabulary" class="level2">
 <h2 class="anchored" data-anchor-id="vocabulary">1.1 Vocabulary</h2>
@@ -565,7 +580,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </table>
 <p>⚠️ <strong>Warning about the word “rank”.</strong> In Chapter 2, <em>rank</em> means the number of independent columns of a matrix. In tensor theory, <em>rank</em> often means the number of axes. To avoid confusion, this workshop says <strong>order</strong> for the number of axes, and <strong>rank</strong> only in Chapter 2’s sense.</p>
 </section>
-<section id="shape-in-numpy" class="level2">
+<section id="shape-in-numpy" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="shape-in-numpy">1.2 Shape in NumPy</h2>
 <p>Every NumPy array has <code>.shape</code>, a tuple giving the size along each axis. The length of that tuple is <code>.ndim</code>, the number of axes.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>scalar <span class="op">=</span> np.array(<span class="fl">3.0</span>)                     <span class="co"># book: a           — order 0</span></span>
@@ -588,6 +603,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(photo.shape)               <span class="co"># (512, 512, 3) — height, width, colour</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p class="page-columns page-full"><img src="images/fig-ladder.png" class="column-page img-fluid" alt="Five real arrays in a row, climbing from order 0 to order 4: a single grey square holding one pixel of the camera photograph, a long thin strip holding one row of it, one handwritten digit as an eight-by-eight grid of grey squares with white gutters ruled between them, a stained histology photograph shown as three separated colour planes, and sixteen frames of a storm clip stacked in a pile. Each is labelled with its shape, ndim and size."></p>
+<p><em>The same climb, in arrays you will meet today. <code>shape</code> grows by one number at each rung; the last two rungs both have a <code>3</code> in them, and the two threes mean nothing like each other.</em></p>
 <p>Both are order 3, but their axes mean completely different things. <code>digits.images</code> counts <em>images</em> along axis 0; <code>photo</code> counts <em>colours</em> along axis 2. <strong>The shape alone never tells you what the axes mean.</strong> You must know, and you must keep track.</p>
 </section>
 <section id="the-three-operations-that-matter" class="level2">
@@ -610,7 +627,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)      <span class="co"># matrix product, sum over k       (eq 2.5)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>The rule, in one sentence:</strong> an index that appears in the inputs but <strong>not</strong> after the arrow is summed over; an index that appears after the arrow is kept.</p>
 </section>
-<section id="the-map-of-factorizations" class="level2">
+<section id="the-map-of-factorizations" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="the-map-of-factorizations">1.4 The Map of Factorizations</h2>
 <p>A <strong>factorization</strong> writes one object as a product of simpler objects. You met two in Chapter 2. Here is the whole family we will use today:</p>
 <table class="caption-top table">
@@ -687,6 +704,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(A)                      <span class="co"># QR: orthonormal directions</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.allclose(Q.T <span class="op">@</span> Q, np.eye(<span class="dv">3</span>)))      <span class="co"># True — book eq 2.37</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>LU</strong> is Gaussian elimination stored as two triangular matrices, so <code>Ax = b</code> can be solved cheaply many times for different <code>b</code>. <strong>QR</strong> (computed by Gram-Schmidt, or more stably by other methods) produces <em>orthonormal</em> directions — mutually perpendicular, each of length 1. It is used for orthogonal weight initialization in neural networks and for stable least-squares.</p>
+<p class="page-columns page-full"><img src="images/fig-factorization-map.png" class="column-page img-fluid" alt="One eight-by-eight handwritten digit factorized three ways, each row showing the original matrix and its factors as small heatmaps: A equals P times L times U, with L visibly lower triangular and U upper triangular; A equals Q times R; and A equals U times Sigma times V transpose, with Sigma empty apart from its diagonal. Below a dividing line, a pile of four slices of the real taxi tensor, labelled as having any number of axes, pointing to Block 6."></p>
+<p><em>The same 8×8 digit, factorized three ways. The shapes are the point: <code>L</code> really is lower triangular, <code>U</code> upper, and <code>Σ</code> is empty apart from its diagonal. Below the line is an object none of them can touch.</em></p>
 <p>Everything in that table above the double line works on <strong>matrices</strong> — two axes. Real data often has more. That is what Block 6 addresses.</p>
 <hr>
 </section>
@@ -713,7 +732,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The key idea is question 2. <code>batch_of_images</code> and <code>video</code> have the same <em>kind</em> of shape tuple, but shuffling axis 0 is harmless for a batch — examples are independent, order carries no information — and destroys a video, where order <strong>is</strong> the information. Chapter 2’s notation has no concept of “order matters between elements.” That is genuinely new today.</p>
 <hr>
 </section>
-<section id="part-iii-working-with-tensor-axes" class="level1">
+<section id="part-iii-working-with-tensor-axes" class="level1 page-columns page-full">
 <h1>PART III — Working With Tensor Axes</h1>
 <section id="block-1-indexing-and-broadcasting-real-data-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="block-1-indexing-and-broadcasting-real-data-15-min">Block 1 — Indexing and Broadcasting Real Data (15 min)</h2>
@@ -782,12 +801,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="break-5-min" class="level2">
 <h2 class="anchored" data-anchor-id="break-5-min">Break (5 min)</h2>
 </section>
-<section id="group-exercise-video-pipeline-design-15-min" class="level2">
+<section id="group-exercise-video-pipeline-design-15-min" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="group-exercise-video-pipeline-design-15-min">Group Exercise — Video Pipeline Design (15 min)</h2>
 <p>Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.</p>
 <blockquote class="blockquote">
 <p>Design the tensor shape at each stage — <em>raw file → decoded frames → preprocessed batch → model input → model output</em> — for <strong>both</strong> systems: - <strong>Tech:</strong> a short-video app computing one embedding per video from sampled frames, to choose what to play next. - <strong>Biotech:</strong> a surgical-video model that labels the current phase of an operation from an operating-room camera.</p>
 </blockquote>
+<p class="page-columns page-full"><img src="images/fig-video-stack.gif" class="column-page img-fluid" alt="Two video panes side by side, both cycling through the same eight frames of a storm at a rocky shore. The left pane, labelled clip, plays them in order and the swell builds steadily. The right pane, labelled clip permuted, plays the identical frames in a shuffled order and the sea jumps between shots."></p>
+<p><em>Both panes hold the same eight frames, the same shape and the same sum. Only the order of axis 0 differs, and no arithmetic in this workshop can tell you which one is the video.</em></p>
 <ol type="1">
 <li>Sketch the shape at each of the five stages, for both. Where are they the same, and where must they differ?</li>
 <li>Clips have different lengths — 30 seconds against 4 hours. Take one strategy your group proposed in Part II and give the exact shape of the preprocessed batch. What does an invented or wasted value in that tensor represent?</li>
@@ -798,7 +819,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <hr>
 </section>
 </section>
-<section id="part-iv-computing-with-tensors" class="level1">
+<section id="part-iv-computing-with-tensors" class="level1 page-columns page-full">
 <h1>PART IV — Computing With Tensors</h1>
 <section id="block-3-contraction-with-einsum-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="block-3-contraction-with-einsum-15-min">Block 3 — Contraction With <code>einsum</code> (15 min)</h2>
@@ -998,9 +1019,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="break-5-min-1" class="level2">
 <h2 class="anchored" data-anchor-id="break-5-min-1">Break (5 min)</h2>
 </section>
-<section id="block-6-tucker-decomposition-on-real-data-15-min" class="level2">
+<section id="block-6-tucker-decomposition-on-real-data-15-min" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="block-6-tucker-decomposition-on-real-data-15-min">Block 6 — Tucker Decomposition on Real Data (15 min)</h2>
-<section id="the-theory-1" class="level3">
+<section id="the-theory-1" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="the-theory-1">The theory</h3>
 <p>PCA compresses a <strong>matrix</strong> — two axes. Real data often has more. <strong>Tucker decomposition</strong> generalizes PCA to a tensor of any order: one <strong>factor matrix per axis</strong>, plus a small <strong>core tensor</strong> describing how the factors combine.</p>
 <p>The way to compute it, called <strong>HOSVD</strong>, uses only tools you already have: 1. Unfold the tensor along each axis (Part I). 2. Run SVD on each unfolding; keep the top components. These are the factor matrices. 3. Contract the original tensor against all factor matrices to get the core (Block 3).</p>
@@ -1036,6 +1057,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.linalg.norm(T <span class="op">-</span> recon) <span class="op">/</span> np.linalg.norm(T)            <span class="co"># 0.067</span></span>
 <span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))            <span class="co"># 4.71</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p class="page-columns page-full"><img src="images/fig-tucker-taxi.png" class="column-page img-fluid" alt="The taxi tensor decomposed. Along the top, T as a pile of four heatmap slices equals a small core G times three factor matrices A, B and C, each labelled with its shape. Below, two bar charts against hour of day: the raw pickup counts, and the first column of the hour factor. Both have their tallest bar at hour 18, drawn in red."></p>
+<p><em>480 numbers become 102. The two charts are TODO 6: the busiest hour in the raw counts, and the peak of the hour factor the decomposition built without ever being told what an hour is.</em></p>
 <p><strong>The result: 4.7× fewer numbers, 6.7% error.</strong> But the important part is TODO 6. The strongest pattern in the hour factor peaks at <strong>hour 18</strong> — and that is also the busiest hour in the raw data. <strong>The decomposition discovered evening rush hour by itself.</strong> Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.</p>
 <p>Look at the einsum strings: <code>'ijk,ia,jb,kc-&gt;abc'</code> contracts three axes in one expression. That is why <code>einsum</code> came first.</p>
 <p><strong>Where this is used.</strong> In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use <a href="https://tensorly.org"><code>tensorly</code></a>, which implements both properly — see <a href="#tensors-specifically">Further Reading</a> for the Kolda &amp; Bader survey and the theorem (Eckart–Young) underneath both decompositions.</p>
