@@ -1079,7 +1079,17 @@ print(gray.shape, gray_batch.shape)
 
 # `c` appears in the inputs but not after the arrow, so it is SUMMED OVER —
 # that is the contraction. `n`, `h`, `w` appear after the arrow, so they are
-# KEPT. Adding a batch axis costs exactly one letter."""),
+# KEPT. Adding a batch axis costs exactly one letter.
+
+import matplotlib.pyplot as plt
+fig, axes = plt.subplots(1, 2, figsize=(8, 4))
+axes[0].imshow(photo / 255); axes[0].set_title("photo — axes h, w, c")
+axes[1].imshow(gray, cmap="gray"); axes[1].set_title("'hwc,c->hw' — c is gone")
+for a in axes:
+    a.axis("off")
+fig.suptitle("c: in the input, missing after the arrow -> SUMMED.  h, w: KEPT.")
+plt.tight_layout()
+plt.show()"""),
         md("""## Exercise 2 — Chapter 2, rewritten as contractions
 
 > 🇪🇸 Las operaciones del capítulo 2, escritas como contracciones."""),
