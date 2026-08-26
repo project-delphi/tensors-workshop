@@ -102,34 +102,41 @@ body {
 pre, .table-responsive, .callout { background-color: $body-bg; }
 
 // ─── the title banner ───────────────────────────────────────────────────────
-// `title-block-banner: images/hero-band.gif` puts the band behind the title.
+// `title-block-banner: images/hero-band.png` puts the band behind the title.
 //
-// Quarto centres the title block inside the content column, so the text lands
-// in the middle of the band rather than at one end — which is why the veil that
-// keeps it readable is a full-width overlay here rather than a fade baked into
-// the image. `background-image` takes the gradient first and the image second,
-// so the flat white wash is painted over the band; Quarto sets the image itself
-// in an inline style, and a `background-color` under it would hide it entirely.
+// It is sized with `contain`, not `cover`, and sits along the bottom edge. The
+// band is a 7:1 strip of five panels and it only means anything whole — `cover`
+// shows all five only while the banner is a wider shape than the band itself,
+// which is above about 1800px, and at every width below that it crops to the
+// middle and the banner becomes one giant handwritten nought sitting behind the
+// title. `contain` never crops, needs no breakpoint guessed against a banner
+// height that depends on the title's own wrapping, and puts the text on clean
+// paper instead of over the artwork.
 //
-// The height is set to about what the band's own 2400x420 comes out at once
-// `cover` has scaled it to the content width, so almost nothing is cropped.
-$banner-veil: rgba(255, 255, 255, .74);
-
-.quarto-title-banner {
+// Quarto writes `background-image` and `background-size: cover` into an inline
+// `<style>` in each page's head, under `.quarto-title-block
+// .quarto-title-banner` — two classes, and after this stylesheet. Overriding
+// the size therefore needs a third class-or-element in the selector, which is
+// what `body` is doing here.
+body .quarto-title-block .quarto-title-banner {
   position: relative;
-  background-size: cover;
-  background-position: center center;
+  // Paper, explicitly: Quarto's own banner ground is the dark `$primary`, and
+  // `contain` leaves most of it showing.
+  background-color: $body-bg;
+  background-size: contain;
+  background-position: center bottom;
   background-repeat: no-repeat;
-  box-shadow: inset 0 0 0 100vmax $banner-veil;
   border-bottom: 1px solid $border-color;
-  padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-top: 3.2rem;
+  // Reserve exactly the height the band will take: it is 7.06:1, and 100/7.06
+  // is 14.2. Anything less and the strip climbs over the subtitle.
+  padding-bottom: calc(14.2vw + 1.6rem);
 
   // The band assembles itself once, left to right: a curtain of paper the width
   // of the banner, retracting to the right. `forwards` is the point — the
-  // animation holds its final state, so the banner ends up showing the whole
-  // arc and stays there. It runs on the page's own paint, so there is no second
-  // asset to download and nothing to keep animating once it is done.
+  // animation holds its final state, so the banner ends up showing the whole arc
+  // and stays there. It runs on the page's own paint, so there is no second
+  // asset to download and nothing still animating once it is done.
   &::after {
     content: "";
     position: absolute;
@@ -218,7 +225,10 @@ main p:has(> img:only-child) + p > em:only-child {
 // path is written as if from the root and works from both the English and the
 // Spanish pages.
 @media (prefers-reduced-motion: reduce) {
-  .quarto-title-banner::after { animation: none; clip-path: inset(0 0 0 100%); }
+  body .quarto-title-block .quarto-title-banner::after {
+    animation: none;
+    clip-path: inset(0 0 0 100%);
+  }
   main img[src$="fig-video-stack.gif"] {
     content: url("images/fig-video-stack.jpg");
   }
