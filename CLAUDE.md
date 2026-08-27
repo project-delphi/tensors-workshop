@@ -18,15 +18,20 @@ what time each section starts, once the quizzes and breaks between them are
 counted — and both get it from `scripts/timeline.py` rather than walking it
 twice.
 
-**Never hand-edit generated output.** Change `_variables.yml` (or
-`scripts/content.py` for notebook teaching content), then regenerate:
+**Never hand-edit generated scaffolding.** For notebooks, that rule applies
+only to the centrally owned header, Setup preamble, Setup code and footer.
+Teaching body cells are deliberately edited directly in the `.ipynb` file,
+including in Colab with Gemini, and the notebook normalizer preserves them.
+
+Change `_variables.yml` for shared facts/objectives or `scripts/content.py`
+for Setup code, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
 | `_includes/*.md` (every section table, and the agenda both decks show) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md` and `notebooks/README.md` — the rest of both files is hand-maintained | `scripts/gen_tables.py` |
-| `notebooks/*.ipynb` — scaffolding: header, objectives, Colab badge, Kahoot footer | `scripts/gen_notebooks.py` |
-| `notebooks/*.ipynb` — body cells | `scripts/content.py` |
+| `notebooks/*.ipynb` — header/objectives/Colab badge, Setup preamble, Setup code and footer | `scripts/gen_notebooks.py` using `_variables.yml` + `scripts/content.py` |
+| `notebooks/*.ipynb` — teaching body cells | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `docs/` | `quarto render` |

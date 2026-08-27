@@ -54,19 +54,34 @@ dismissing**.
 Every code cell has been executed against the real datasets. The handbook's
 verified numbers all reproduce.
 
-## Do not edit these files directly
+## Editing notebooks with Colab and Gemini
 
-They are generated:
+The teaching body of each notebook is editable directly. Edits made in Colab,
+including edits made with Gemini, no longer need to be retyped into
+`scripts/content.py`.
 
-```bash
-uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
-```
+Ownership is split deliberately:
 
-Teaching content lives in [`scripts/content.py`](../scripts/content.py);
-the header, Colab badge and Kahoot footer are built by
-[`scripts/gen_notebooks.py`](../scripts/gen_notebooks.py) from
-[`_variables.yml`](../_variables.yml). Editing a notebook by hand means your
-change disappears the next time anyone regenerates.
+- Generated: header, objectives, Colab badge, Setup preamble, Setup code, footer.
+- Notebook-owned: teaching cells between Setup and the footer.
+
+Shared objectives and workshop facts live in `_variables.yml`.
+Central Setup code lives in `scripts/content.py`.
+
+### Colab to GitHub workflow
+
+1. Open the notebook from its Open in Colab badge.
+2. Edit the teaching body with Gemini or by hand.
+3. Use File > Save a copy in GitHub and save to your feature branch.
+4. Run `uv run --with pyyaml,nbformat python scripts/gen_notebooks.py`.
+5. Run `uv run --with pyyaml,nbformat python scripts/check_links.py`.
+6. Render with the repository-pinned Quarto version.
+7. Review the diff and open a pull request.
+
+The normalizer removes outputs, execution counts and transient Colab per-cell
+metadata while preserving teaching cells and folded-solution metadata.
+
+Running `gen_notebooks.py` twice must produce no additional changes.
 
 ## Running them somewhere other than Colab
 

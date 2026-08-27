@@ -1,26 +1,34 @@
 #!/usr/bin/env python3
-"""Generate the twelve section notebooks from _variables.yml + CONTENT below.
+"""Normalize the twelve section notebooks in place.
 
     uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
 
-Why generated rather than hand-written: every notebook needs the same header
-(title, Spanish summary, objectives, Colab badge pointing at its own path on
-GitHub) and the same footer (its Kahoot check, a link back to the site). Those
-are exactly the things that rot when twelve files are edited by hand, and the
-Colab badge is the worst of them — a badge pointing at the wrong notebook still
-opens something, so the mistake is invisible until a student hits it.
+This script owns only the notebook scaffolding:
+- header, objectives and Colab badge
+- Setup preamble
+- Setup code
+- footer
 
-So: this file owns the *scaffolding*, CONTENT owns the *teaching*, and
-_variables.yml owns every fact that appears in more than one place.
+Teaching body cells live directly in notebooks/*.ipynb and may be edited in
+Colab, including with Gemini. Those body cells are preserved in place.
 
-Notebooks are written with no outputs and no execution counts, on purpose. The
-handbook quotes its verified numbers in the prose instead, so a student can
-check their own result without being shown it first.
+_variables.yml owns shared facts and bilingual objectives.
+scripts/content.py owns only centrally maintained Setup code.
+
+Normalization removes outputs, execution counts and transient Colab per-cell
+metadata while preserving meaningful metadata such as folded solutions.
+
+Existing valid body cell ids are preserved. Missing, invalid or duplicate ids
+receive stable content-derived ids.
+
+Running the normalizer twice must be an exact no-op.
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import pathlib
+import re
 import sys
 
 import yaml
@@ -83,10 +91,10 @@ def quiz_after(n: str) -> dict | None:
     return next((q for q in QUIZZES if q["after"] == n), None)
 
 
-def header_cell(s: dict, objectives: list[str]) -> dict:
+def header_cell(s: dict) -> dict:
     badge = ("[![Open In Colab](https://colab.research.google.com/assets/"
              f"colab-badge.svg)]({colab_url(s)})")
-    objs = "\n".join(f"- {o}" for o in objectives)
+    objs = "\n".join(f"- {o}" for o in s["objectives_en"])
     part = f"Part {s['part']} · " if s["part"] != "—" else ""
     return md(f"""# {s['n']} · {s['title_en']}
 
@@ -135,34 +143,150 @@ Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
     return md(body)
 
 
-def build(s: dict, spec: dict) -> dict:
-    """Assemble one notebook. Cell ids are derived from the section number and
-    position so that regenerating an unchanged notebook produces a byte-identical
-    file — otherwise every run would show up as a diff."""
-    cells = [header_cell(s, spec["objectives"])]
-    if spec.get("setup"):
-        cells.append(md("## Setup\n\nRun this first. It installs and imports "
-                        "everything this notebook needs, and nothing else.\n\n"
-                        "> 🇪🇸 Ejecuta esto primero: instala e importa todo lo "
-                        "que este cuaderno necesita."))
-        cells.append(code(spec["setup"]))
-    cells += spec["cells"]
-    cells.append(footer_cell(s))
-    for i, cell in enumerate(cells):
-        cell["id"] = f"s{s['n']}-{i:02d}"
-    return {
-        "cells": cells,
-        "metadata": {
-            "colab": {"name": notebook_name(s), "provenance": [],
-                      "toc_visible": True},
-            "kernelspec": {"display_name": "Python 3", "language": "python",
-                           "name": "python3"},
-            "language_info": {"name": "python"},
-        },
-        "nbformat": 4,
-        "nbformat_minor": 5,
-    }
+SETUP_PREAMBLE = """## Setup
 
+Run this first. It installs and imports everything this notebook needs, and nothing else.
+
+> 🇪🇸 Ejecuta esto primero: instala e importa todo lo que este cuaderno necesita."""
+
+
+def _valid_cell_id(value: object) -> bool:
+    """Return whether *value* is a valid nbformat v4 cell id."""
+    return (
+        isinstance(value, str)
+        and 1 <= len(value) <= 64
+        and re.fullmatch(r"[A-Za-z0-9_-]+", value) is not None
+    )
+
+
+def _generated_body_id(s: dict, cell: dict) -> str:
+    """Stable id for a body cell that arrived from Colab without a usable id.
+
+    Existing valid ids are preserved. Only missing, invalid or duplicate ids
+    come through here, so inserting a new cell does not renumber later cells.
+    """
+    payload = json.dumps(
+        {
+            "cell_type": cell.get("cell_type"),
+            "source": cell.get("source", []),
+        },
+        ensure_ascii=False,
+        sort_keys=True,
+    ).encode("utf-8")
+    digest = hashlib.sha1(payload).hexdigest()[:12]
+    return f"s{s['n']}-b-{digest}"
+
+
+def _normalize_cell(cell: dict) -> dict:
+    """Remove execution state and Colab-only per-cell metadata.
+
+    Teaching metadata is deliberately left alone. In particular this preserves
+    the metadata used by folded solution cells: cellView, jupyter.source_hidden
+    and the solution/hide-input tags.
+    """
+    metadata = cell.setdefault("metadata", {})
+    for key in ("colab", "outputId", "executionInfo"):
+        metadata.pop(key, None)
+
+    if cell.get("cell_type") == "code":
+        cell["execution_count"] = None
+        cell["outputs"] = []
+    else:
+        cell.pop("execution_count", None)
+        cell.pop("outputs", None)
+
+    return cell
+
+
+def _rewrite_cell_ids(s: dict, cells: list[dict]) -> None:
+    """Preserve good ids and deterministically repair only unusable ones."""
+    used: set[str] = set()
+
+    for cell in cells:
+        current = cell.get("id")
+        if _valid_cell_id(current) and current not in used:
+            used.add(current)
+            continue
+
+        base = _generated_body_id(s, cell)
+        candidate = base
+        suffix = 2
+        while candidate in used:
+            candidate = f"{base}-{suffix}"
+            suffix += 1
+
+        cell["id"] = candidate
+        used.add(candidate)
+
+
+def normalize_notebook(s: dict, spec: dict, path: pathlib.Path) -> dict:
+    """Refresh owned scaffolding while preserving the notebook body in place.
+
+    Ownership boundary:
+      * cell 0: generated header
+      * Setup preamble + Setup code: generated when ``spec["setup"]`` exists
+      * body cells: notebook-owned; source and meaningful metadata are preserved
+      * final cell: generated footer
+
+    Body cells are normalized only for execution state and Colab's transient
+    per-cell metadata.
+    """
+    if not path.exists():
+        raise FileNotFoundError(
+            f"cannot normalize missing notebook: {path.relative_to(ROOT)}"
+        )
+
+    nb = json.loads(path.read_text(encoding="utf-8"))
+    old_cells = nb.get("cells")
+
+    if not isinstance(old_cells, list):
+        raise ValueError(
+            f"{path.relative_to(ROOT)} has no valid cells list"
+        )
+
+    has_setup = bool(spec.get("setup"))
+    minimum_cells = 4 if has_setup else 2
+    if len(old_cells) < minimum_cells:
+        raise ValueError(
+            f"{path.relative_to(ROOT)} has {len(old_cells)} cells; "
+            f"expected at least {minimum_cells}"
+        )
+
+    # Preserve the existing scaffold ids so this migration is byte-stable on
+    # today's untouched notebooks.
+    header = header_cell(s)
+    header["id"] = old_cells[0].get("id")
+
+    cells: list[dict] = [header]
+
+    if has_setup:
+        setup_md = md(SETUP_PREAMBLE)
+        setup_md["id"] = old_cells[1].get("id")
+
+        setup_code = code(spec["setup"])
+        setup_code["id"] = old_cells[2].get("id")
+
+        body = old_cells[3:-1]
+        cells.extend((setup_md, setup_code))
+    else:
+        body = old_cells[1:-1]
+
+    # This is the key ownership change: teaching cells come from the notebook,
+    # not from spec["cells"] / content.py.
+    cells.extend(body)
+
+    footer = footer_cell(s)
+    footer["id"] = old_cells[-1].get("id")
+    cells.append(footer)
+
+    for cell in cells:
+        _normalize_cell(cell)
+
+    _rewrite_cell_ids(s, cells)
+
+    # Preserve notebook-level metadata and nbformat fields exactly as they were.
+    nb["cells"] = cells
+    return nb
 
 def main() -> int:
     from content import CONTENT  # noqa: PLC0415  (sibling module, see below)
@@ -173,8 +297,11 @@ def main() -> int:
         sys.exit(f"no CONTENT for section(s): {', '.join(missing)}")
 
     for s in SECTIONS:
-        nb = build(s, CONTENT[s["n"]])
         path = NBDIR / notebook_name(s)
+        try:
+            nb = normalize_notebook(s, CONTENT[s["n"]], path)
+        except (FileNotFoundError, ValueError) as exc:
+            sys.exit(str(exc))
         path.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n",
                         encoding="utf-8")
         n_code = sum(c["cell_type"] == "code" for c in nb["cells"])
