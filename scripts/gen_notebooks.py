@@ -185,8 +185,14 @@ def _normalize_cell(cell: dict) -> dict:
     and the solution/hide-input tags.
     """
     metadata = cell.setdefault("metadata", {})
-    for key in ("colab", "outputId", "executionInfo"):
+    for key in ("colab", "outputId", "executionInfo", "id"):
         metadata.pop(key, None)
+
+    # Colab may drop cellView when saving a notebook back to GitHub.
+    # Restore the metadata required to keep solution cells folded.
+    if "solution" in metadata.get("tags", []):
+        metadata["cellView"] = "form"
+        metadata.setdefault("jupyter", {})["source_hidden"] = True
 
     if cell.get("cell_type") == "code":
         cell["execution_count"] = None
