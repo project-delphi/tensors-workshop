@@ -58,7 +58,6 @@ CONTENT["01"] = {
     "setup": """import numpy as np
 from sklearn.datasets import load_digits
 from skimage import data
-from scipy.linalg import lu
 
 rng = np.random.default_rng(0)""",
 }
