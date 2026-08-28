@@ -153,9 +153,32 @@ CONTENT["04"] = {
     "setup": """import numpy as np
 from skimage import data
 
-photo = data.immunohistochemistry()   # (512, 512, 3) real histology
+# Real images distributed with scikit-image.
+photo = data.immunohistochemistry()   # (512, 512, 3) real histology, RGB
 cells = data.cell()                   # (660, 550)    real microscopy, grayscale
-print(photo.shape, cells.shape)""",
+astronaut = data.astronaut()          # (512, 512, 3) real RGB photograph
+coffee = data.coffee()                # (400, 600, 3) real RGB photograph
+
+
+def center_crop_rgb(img, size=256):
+    # Deterministic centre crop so distinct real RGB images can be stacked.
+    h, w, c = img.shape
+    if c != 3 or h < size or w < size:
+        raise ValueError(
+            f"expected RGB image at least {size}x{size}, got {img.shape}"
+        )
+
+    r0 = (h - size) // 2
+    c0 = (w - size) // 2
+    return img[r0:r0 + size, c0:c0 + size]
+
+
+rgb_sources = [photo, astronaut, coffee]
+
+print("histology:", photo.shape)
+print("microscopy:", cells.shape)
+print("astronaut:", astronaut.shape)
+print("coffee:", coffee.shape)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
