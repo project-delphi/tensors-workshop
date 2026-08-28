@@ -193,53 +193,54 @@ import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
 
-# A real clip, pinned. "Tormenta en l'Almadrava" by Nicolas Vigier, CC0:
+# Real clip: "Tormenta en l'Almadrava" by Nicolas Vigier, CC0.
 # https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm
-# 24 seconds of breaking waves at 960x540. The SHA-256 is checked below, so the
-# file this notebook decodes cannot silently change under you -- the same
-# guarantee section 11 puts on its voice recording.
-VIDEO_URL = ("https://upload.wikimedia.org/wikipedia/commons/1/1e/"
-             "Tormenta_en_l%27Almadrava.webm")
+VIDEO_URL = (
+    "https://upload.wikimedia.org/wikipedia/commons/1/1e/"
+    "Tormenta_en_l%27Almadrava.webm"
+)
 VIDEO_SHA256 = "e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b"
-
-# Wikimedia answers the default `Python-urllib/3.x` User-Agent with a 403, so
-# this identifies itself the way their policy asks.
 UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
 
 
 def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
-    \"\"\"Download a video, refuse to proceed if it does not match the pinned
-    checksum, and decode only every `stride`-th frame, up to `n_frames`.
-
-    Note what is and is not saved. `imiter` still decodes frames in order --
-    it reaches frame 675 by decoding all 676 before it -- but it only ever
-    RETAINS 16 of them, and it stops as soon as it has them. Holding all 720
-    would be a 1.1 GB array. Sampling frames rather than keeping them all is
-    exactly the decision the design exercise below asks you to make
-    deliberately, for two systems, and to say what it costs.
-    \"\"\"
+    # Verify the real file, decode the whole stream, retain only sparse frames.
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     raw = urllib.request.urlopen(req, timeout=120).read()
+
     got = hashlib.sha256(raw).hexdigest()
     if got != expected_sha256:
         raise ValueError(
-            f"checksum mismatch for {url}: expected {expected_sha256}, got "
-            f"{got}. Refusing to use unverified video data.")
-    frames = []
+            f"checksum mismatch: expected {expected_sha256}, got {got}"
+        )
+
+    kept_frames = []
+    kept_source_indices = []
+    total_frames = 0
+
     for i, frame in enumerate(
-            iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")):
-        if i % stride == 0:
-            frames.append(frame)
-            if len(frames) == n_frames:
-                break
-    return np.stack(frames)
+        iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")
+    ):
+        total_frames = i + 1
+        if i % stride == 0 and len(kept_frames) < n_frames:
+            kept_frames.append(frame)
+            kept_source_indices.append(i)
+
+    clip = np.stack(kept_frames)
+    return clip, np.asarray(kept_source_indices), total_frames
 
 
-clip = fetch_verified_video(VIDEO_URL, VIDEO_SHA256)
-# The cells below index clip[15] and quote this shape, so a short stream should
-# fail here, where the cause is visible, not as an IndexError further down.
+clip, kept_source_indices, total_frames = fetch_verified_video(
+    VIDEO_URL, VIDEO_SHA256
+)
+
 assert clip.shape == (16, 540, 960, 3), f"unexpected clip shape {clip.shape}"
-print(clip.shape, clip.dtype)   # (16, 540, 960, 3) uint8""",
+assert total_frames == 720, f"unexpected frame count {total_frames}"
+
+print("retained tensor:", clip.shape, clip.dtype)
+print("source frames:", total_frames)
+print("source indices retained:", kept_source_indices.tolist())
+print("RAM retained:", f"{clip.nbytes / 1024**2:.1f} MB")""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
