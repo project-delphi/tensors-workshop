@@ -64,9 +64,77 @@ rng = np.random.default_rng(0)""",
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["02"] = {
-    "setup": """import numpy as np
+    "setup": """%pip install -q "imageio[ffmpeg]"
 
-rng = np.random.default_rng(0)""",
+import hashlib
+import io
+import urllib.request
+
+import imageio.v3 as iio
+import numpy as np
+from sklearn.datasets import load_digits
+from skimage import data
+
+rng = np.random.default_rng(0)
+
+# Real image data: handwritten digits
+digits = load_digits()
+digit_batch = digits.images[:8].astype(np.float32)   # (N, H, W)
+digit_labels = digits.target[:8]
+real_digit = digit_batch[0]
+real_photo = data.astronaut()                        # real RGB photograph
+
+# Real video data: "Tormenta en l'Almadrava" by Nicolas Vigier, CC0.
+# Same pinned source/checksum used by notebook 05.
+VIDEO_URL = (
+    "https://upload.wikimedia.org/wikipedia/commons/1/1e/"
+    "Tormenta_en_l%27Almadrava.webm"
+)
+VIDEO_SHA256 = "e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b"
+UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
+
+
+def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
+    # Download, checksum, and retain sampled frames from a real video.
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    raw = urllib.request.urlopen(req, timeout=120).read()
+
+    got = hashlib.sha256(raw).hexdigest()
+    if got != expected_sha256:
+        raise ValueError(
+            f"checksum mismatch: expected {expected_sha256}, got {got}"
+        )
+
+    frames = []
+    for i, frame in enumerate(
+        iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")
+    ):
+        if i % stride == 0:
+            frames.append(frame)
+            if len(frames) == n_frames:
+                break
+
+    return np.stack(frames)
+
+
+real_video = fetch_verified_video(VIDEO_URL, VIDEO_SHA256)
+assert real_video.shape == (16, 540, 960, 3), real_video.shape
+
+# Build a real temporal tensor with the same shape as digit_batch: (8, 8, 8).
+# Take 8 sampled video frames, a centered 8x8 crop, and average RGB.
+r0 = real_video.shape[1] // 2 - 4
+c0 = real_video.shape[2] // 2 - 4
+video_patch = (
+    real_video[:8, r0:r0 + 8, c0:c0 + 8]
+    .mean(axis=3)
+    .astype(np.float32)
+)
+
+print("real_digit :", real_digit.shape, real_digit.dtype)
+print("digit_batch:", digit_batch.shape, digit_batch.dtype)
+print("real_photo :", real_photo.shape, real_photo.dtype)
+print("real_video :", real_video.shape, real_video.dtype)
+print("video_patch:", video_patch.shape, video_patch.dtype)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
