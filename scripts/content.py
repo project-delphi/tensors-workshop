@@ -289,16 +289,56 @@ print("B =\\n", B)""",
 CONTENT["07"] = {
     "setup": """import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+import plotly.express as px
+import plotly.graph_objects as go
+from IPython.display import display
+from sklearn.datasets import load_digits
 
-HOUSING = "https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"
-housing = pd.read_csv(HOUSING)
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
 
-def unfold(T, axis):
+HOUSING = (
+    "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
+    "datasets/housing/housing.csv"
+)
+housing = pd.read_csv(HOUSING).dropna().reset_index(drop=True)
+
+features = [
+    "housing_median_age",
+    "total_rooms",
+    "total_bedrooms",
+    "population",
+    "households",
+    "median_income",
+]
+
+X_raw = housing[features].to_numpy(float)
+feature_mean = X_raw.mean(axis=0)
+feature_std = X_raw.std(axis=0)
+X_scaled = (X_raw - feature_mean) / feature_std
+
+# Bias + six standardized real features -> 7 columns.
+X = np.column_stack([np.ones(len(housing)), X_scaled])
+y = housing["median_house_value"].to_numpy(float)
+column_names = ["bias"] + features
+
+# Real image tensor for Exercise 3.
+digits = load_digits()
+digit_tensor = digits.images.astype(float)  # (1797, 8, 8)
+
+def unfold(T, axis=0):
     return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
 
-rng = np.random.default_rng(0)
-print(housing.shape)                                   # (20640, 10)
-print(housing['total_bedrooms'].isnull().sum())        # 207 missing values!""",
+print("housing rows:", len(housing))
+print("housing design matrix:", X.shape)
+print("digit tensor:", digit_tensor.shape)
+print("interactive charts: Plotly enabled (hover, zoom, pan)")""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
