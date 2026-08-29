@@ -246,15 +246,43 @@ print("RAM retained:", f"{clip.nbytes / 1024**2:.1f} MB")""",
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["06"] = {
     "setup": """import numpy as np
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display
 from sklearn.datasets import load_digits
 from skimage import data
 
-photo = data.immunohistochemistry().astype(float)         # (512, 512, 3)
-batch = np.stack([photo, data.astronaut().astype(float)])  # (2, 512, 512, 3)
-w = np.array([0.2125, 0.7154, 0.0721])                     # RGB -> grayscale weights
-A = np.array([[1., 2.], [3., 4.]])
-B = np.array([[5., 6.], [7., 8.]])
-print(photo.shape, batch.shape)""",
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+# Real colour images.
+photo = data.immunohistochemistry().astype(float)          # (512, 512, 3)
+batch = np.stack([photo, data.astronaut().astype(float)]) # (2, 512, 512, 3)
+w = np.array([0.2125, 0.7154, 0.0721])                    # RGB -> grayscale weights
+
+# Real handwritten digits (UCI Optical Recognition dataset, packaged by sklearn).
+digits = load_digits()
+digit_images = digits.images.astype(float)                 # (1797, 8, 8)
+
+# Small 2x2 matrices for Exercise 2 are NOT invented numbers:
+# they are central pixel patches from two real digit images.
+A = digit_images[0, 2:4, 2:4]
+B = digit_images[1, 2:4, 2:4]
+
+print("photo:", photo.shape, "batch:", batch.shape)
+print("digits:", digit_images.shape, "labels:", digits.target.shape)
+print(
+    "Exercise 2 patches come from digit labels:",
+    digits.target[0],
+    "and",
+    digits.target[1],
+)
+print("A =\\n", A)
+print("B =\\n", B)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
