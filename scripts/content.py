@@ -345,12 +345,34 @@ print("interactive charts: Plotly enabled (hover, zoom, pan)")""",
 CONTENT["08"] = {
     "setup": """import numpy as np
 import pandas as pd
+import ipywidgets as widgets
+import plotly.express as px
+import plotly.graph_objects as go
+from IPython.display import display
+
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
 
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
 flights = pd.read_csv(FLIGHTS)
 
+y = flights["passengers"].to_numpy(float)
+labels = (
+    flights["year"].astype(str)
+    + "-"
+    + flights["month"].astype(str).str[:3]
+).to_numpy()
+
 rng = np.random.default_rng(0)
-print(flights.shape)                       # (144, 3) — 144 real months, 1949-1960""",
+
+print("real months / meses reales:", len(y))
+print("range / periodo:", labels[0], "→", labels[-1])
+print("passengers min/max:", int(y.min()), int(y.max()))
+print("interactive charts: Plotly + ipywidgets enabled")""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
