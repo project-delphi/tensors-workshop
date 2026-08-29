@@ -382,10 +382,42 @@ from scipy import signal
 from scipy.linalg import toeplitz
 from skimage import data
 from skimage.restoration import richardson_lucy
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display
 
-img = data.camera().astype(float) / 255.      # real photograph, 512x512
-sobel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], float)
-print(img.shape, img.min(), img.max())""",
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+img = data.camera().astype(float) / 255.0
+patch = img[176:336, 176:336]
+work = img[128:384, 128:384]
+scanline = img[256, 220:252].copy()
+
+sobel_x = np.array([
+    [-1., 0., 1.],
+    [-2., 0., 2.],
+    [-1., 0., 1.],
+])
+
+kernel_1d = np.array([1., 0., -1.])
+
+def convmtx_full_1d(kernel, n):
+    m = len(kernel)
+    col = np.zeros(n + m - 1)
+    col[:m] = kernel
+    row = np.zeros(n)
+    row[0] = kernel[0]
+    return toeplitz(col, row)
+
+print("full image / imagen completa:", img.shape)
+print("real patch / recorte real:", patch.shape)
+print("deconvolution crop / recorte deconvolución:", work.shape)
+print("real scanline / fila real:", scanline.shape)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
