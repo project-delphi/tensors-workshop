@@ -425,7 +425,15 @@ CONTENT["10"] = {
     "setup": """import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from skimage import data
+import ipywidgets as widgets
+from IPython.display import display
+
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
 
 TAXIS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
 taxis = pd.read_csv(TAXIS)
@@ -433,7 +441,41 @@ taxis = pd.read_csv(TAXIS)
 def unfold(T, axis):
     return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
 
-print(taxis.shape)                       # (6433, 14) — 6,433 real NYC taxi trips""",
+def hosvd_bases(T):
+    return [
+        np.linalg.svd(unfold(T, axis), full_matrices=False)[0]
+        for axis in range(T.ndim)
+    ]
+
+taxis["pickup_dt"] = pd.to_datetime(taxis["pickup"], errors="coerce")
+taxis["hour"] = taxis["pickup_dt"].dt.hour
+
+sub = taxis.dropna(
+    subset=["pickup_borough", "dropoff_borough", "hour"]
+).copy()
+sub["hour"] = sub["hour"].astype(int)
+
+pickup_names = sorted(sub["pickup_borough"].unique())
+dropoff_names = sorted(sub["dropoff_borough"].unique())
+
+pickup_index = {name: i for i, name in enumerate(pickup_names)}
+dropoff_index = {name: i for i, name in enumerate(dropoff_names)}
+
+T = np.zeros(
+    (len(pickup_names), len(dropoff_names), 24),
+    dtype=float,
+)
+
+for (p, d, h), count in sub.groupby(
+    ["pickup_borough", "dropoff_borough", "hour"]
+).size().items():
+    T[pickup_index[p], dropoff_index[d], int(h)] = float(count)
+
+print("taxi rows / filas:", len(taxis))
+print("usable trips / viajes utilizables:", int(T.sum()))
+print("tensor shape / forma:", T.shape)
+print("pickup boroughs / origen:", pickup_names)
+print("dropoff boroughs / destino:", dropoff_names)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
