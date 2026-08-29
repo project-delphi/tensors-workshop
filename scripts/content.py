@@ -480,10 +480,41 @@ print("dropoff boroughs / destino:", dropoff_names)""",
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["11"] = {
-    "setup": """import numpy as np
-import pandas as pd
-from sklearn.datasets import load_breast_cancer
-from scipy import signal
+    "setup": """import hashlib
+import io
+import subprocess
+import sys
+import urllib.request
 
-rng = np.random.default_rng(0)""",
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+
+from IPython.display import Audio, display
+from scipy import signal
+from sklearn.datasets import load_breast_cancer
+
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+rng = np.random.default_rng(0)
+
+def softmax(x, axis=-1):
+    x = x - np.max(x, axis=axis, keepdims=True)
+    e = np.exp(x)
+    return e / np.sum(e, axis=axis, keepdims=True)
+
+def snr_db(reference, estimate):
+    reference = np.asarray(reference)
+    estimate = np.asarray(estimate)
+    return 10 * np.log10(
+        np.sum(reference**2) /
+        np.sum((estimate - reference)**2)
+    )
+
+print("Setup ready / Preparación lista")""",
 }
