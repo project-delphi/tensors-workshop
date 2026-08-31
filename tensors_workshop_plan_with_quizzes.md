@@ -13,7 +13,7 @@ title-block-banner-color: body
 
 **How we work:** Notebooks on **GitHub**, run in **Colab**, discussion in **Discord**. Two rhythms:
 - **Exercise blocks** — 10 minutes coding, then 5 minutes explanation.
-- **Group blocks** — 10 minutes discussion in your breakout channel, then share-back.
+- **Group block** (video pipeline design, Part III) — 10 minutes discussion in your breakout channel, then share-back.
 
 **A note on language.** This workshop is taught in English, but many terms are nearly identical in Spanish: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*, *decomposition/descomposición*, *factorization/factorización*, *contraction/contracción*, *convolution/convolución*, *recursion/recursión*. Every new term is defined when it first appears. **Ask questions in Spanish or English** in the Discord threads — whichever lets you ask faster.
 
@@ -68,7 +68,7 @@ print(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144
 |---|---|---|---|
 | — | Setup and welcome | — | 5 min |
 | **I** | What a tensor is: theory and NumPy | demo | 20 min |
-| **II** | Group discussion — Thinking in N dimensions | group | 20 min |
+| **II** | Thinking in N dimensions | demo | 20 min |
 | **III** | Block 1 — Indexing and broadcasting real data | exercise | 15 min |
 | **III** | Block 2 — Reshape and transpose real images | exercise | 15 min |
 | 🆕 — | **Kahoot Quiz 1 — Tensor Vocabulary & Shapes** | quiz | 5 min |
@@ -216,29 +216,13 @@ Everything in that table above the double line works on **matrices** — two axe
 
 ---
 
-# PART II — Group Discussion: Thinking in N Dimensions (20 min)
+# PART II — Thinking in N Dimensions (20 min)
 
-Go to your breakout channel. **No code.** Sketch on the shared board. 10 minutes discussion, then share-back.
+A live coding demo in the notebook, on real image and video tensors. Open it in Colab and run the Setup cell first — it downloads and checksums the real video clip used by the exercises. Three exercises:
 
-> A grayscale image is a matrix: two axes, height and width. Almost nothing in machine learning is a single grayscale image. Each thing you add — colour, many examples, time — adds an axis, and each axis means something different. Your task is to argue about which axis goes where, and why.
-
-1. Start from a grayscale image `(H, W)`. What is the shape of **(a)** one colour image, **(b)** a batch of colour images, **(c)** one video, **(d)** a batch of videos? For each step, say what the new axis *counts*. Do not say "we add a dimension."
-2. A batch axis and a time axis both look like ordinary integer indices in code. What is different about their **meaning**? Think about what happens if you shuffle the order along each one.
-3. Batching requires every example to have the same shape, but real videos have different numbers of frames. Propose two ways to build one batched tensor from videos of different lengths. What does each one lose or invent?
-4. Photographing the same dish of cells every 10 minutes for 48 hours gives a tensor with the same shape as a video. Which experimental choice maps to which axis: frame interval → ? field of view → ? number of dishes → ?
-5. Is there a mathematical limit on how many axes a tensor can have? If not, what actually limits you when you are writing the code?
-
-**Share-back:**
-
-```python
-gray_image      = np.zeros((28, 28))            # (H, W)
-color_image     = np.zeros((28, 28, 3))          # (H, W, C)      + colour
-batch_of_images = np.zeros((32, 28, 28, 3))      # (N, H, W, C)   + many examples
-video           = np.zeros((16, 28, 28, 3))      # (T, H, W, C)   + ordered time
-batch_of_videos = np.zeros((8, 16, 28, 28, 3))   # (N, T, H, W, C)
-```
-
-The key idea is question 2. `batch_of_images` and `video` have the same *kind* of shape tuple, but shuffling axis 0 is harmless for a batch — examples are independent, order carries no information — and destroys a video, where order **is** the information. Chapter 2's notation has no concept of "order matters between elements." That is genuinely new today.
+1. **Read the axes on real tensors.** `digits.images` is `(1797, 8, 8)` and a photo is `(512, 512, 3)` — both order 3, but axis 0 counts whole images in one and rows of pixels in the other. `digit_batch` and `video_patch` are *both* `(8, 8, 8)`. Before running anything, say what every axis counts.
+2. **Shuffle a batch vs shuffle time.** Shuffling axis 0 is harmless for a batch — examples are independent, order carries no information — and destroys a video, where order **is** the information. The same operation, a completely different meaning. Chapter 2's notation has no concept of "order matters between elements." That is genuinely new today.
+3. **Batch clips of different lengths.** Real videos have different frame counts, but a batch tensor is rectangular. Take three real clips of length 4, 7 and 5, pad them into one `(3, 7, 135, 240, 3)` order-5 batch, and carry a Boolean `(3, 7)` validity mask so `valid.sum() == 16` — the padding stays visible instead of being averaged into the data.
 
 ---
 
@@ -338,7 +322,7 @@ Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is
 *Both panes hold the same eight frames, the same shape and the same sum. Only the order of axis 0 differs, and no arithmetic in this workshop can tell you which one is the video.*
 
 1. Sketch the shape at each of the five stages, for both. Where are they the same, and where must they differ?
-2. Clips have different lengths — 30 seconds against 4 hours. Take one strategy your group proposed in Part II and give the exact shape of the preprocessed batch. What does an invented or wasted value in that tensor represent?
+2. Clips have different lengths — 30 seconds against 4 hours. Take the padding-and-mask strategy from Part II and give the exact shape of the preprocessed batch. What does an invented or wasted value in that tensor represent?
 3. The surgical system adds **three camera angles** recording at once. Where does that axis go, and why does its position change how easy the rest of the pipeline is to write?
 4. The recommender samples 8 frames out of 900. Which operation from Block 1 does that, and what is lost?
 5. Both systems must decide **which frames matter most**. What kind of mechanism could learn that weighting?
@@ -693,7 +677,7 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 What you did today:
 
 1. **Part I** — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing anything.
-2. **Part II** — argued about what axes *mean*, and found that a batch axis and a time axis behave differently even when the shapes look identical.
+2. **Part II** — worked through what axes mean and why batch and time axes are semantically different.
 3. **Part III** — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.
 4. **Part IV** — wrote contractions with `einsum`; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.
 
@@ -892,12 +876,12 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 
 **The downloads.** Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone's download succeeded — a student who silently fails will be stuck at Blocks 4 and 6. Have the three CSVs mirrored in the workshop repo as a fallback.
 
-**Pre-assign breakout groups** before the session; assigning them live costs 3–5 minutes, twice.
+**Pre-assign the breakout groups** for the video-pipeline block before the session; assigning them live costs 3–5 minutes.
 
-**Group blocks need firmer facilitation than exercise blocks.** If a group is still on question 1 with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.
+**The group block needs firmer facilitation than exercise blocks.** If a group is still on the first design question with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.
 
 **🆕 The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after Blocks 2, 4, and 6 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes total, taking the workshop from 180 to 195 minutes.
 
-**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Block 5 (true deconvolution — the most technically demanding), then the RNN snippet in the recursion demo, then question 5 of either group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, Block 6, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
+**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Block 5 (true deconvolution — the most technically demanding), then the RNN snippet in the recursion demo, then question 5 of the video-pipeline group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, Block 6, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
 
 **Known rough edges.** Block 5 TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 25-pixel crop clearly *before* the exercise starts, not after. Block 4 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.

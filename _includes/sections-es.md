@@ -26,7 +26,7 @@
 <tr>
 <td>02</td>
 <td><strong>Pensar en N dimensiones</strong><br><small>Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.</small></td>
-<td>grupo</td>
+<td>demostración</td>
 <td>20</td>
 <td><a href="../slides/en/#sec-02-thinking-in-n-dimensions">EN</a></td>
 <td><a href="../slides/es/#sec-02-thinking-in-n-dimensions">ES</a></td>

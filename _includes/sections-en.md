@@ -26,7 +26,7 @@
 <tr>
 <td>02</td>
 <td><strong>Thinking in N dimensions</strong><br><small>Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.</small></td>
-<td>group</td>
+<td>demo</td>
 <td>20</td>
 <td><a href="slides/en/#sec-02-thinking-in-n-dimensions">EN</a></td>
 <td><a href="slides/es/#sec-02-thinking-in-n-dimensions">ES</a></td>

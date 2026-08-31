@@ -95,6 +95,7 @@ def header_cell(s: dict) -> dict:
     badge = ("[![Open In Colab](https://colab.research.google.com/assets/"
              f"colab-badge.svg)]({colab_url(s)})")
     objs = "\n".join(f"- {o}" for o in s["objectives_en"])
+    objs_es = "\n".join(f"> - {o}" for o in s["objectives_es"])
     part = f"Part {s['part']} · " if s["part"] != "—" else ""
     return md(f"""# {s['n']} · {s['title_en']}
 
@@ -109,6 +110,10 @@ def header_cell(s: dict) -> dict:
 ## What you will be able to do
 
 {objs}
+
+> 🇪🇸 **Lo que podrás hacer:**
+
+{objs_es}
 """)
 
 
@@ -131,7 +136,8 @@ Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
 - [Import file (`.xlsx`)]({REPO['url']}/blob/{REPO['branch']}/{q['xlsx']})
 """
     else:
-        body = "---\n\n## Done with this section\n"
+        body = ("---\n\n## Done with this section\n"
+                "\n> 🇪🇸 **Fin de esta sección.**\n")
     if nxt:
         body += (f"\nNext up: **{nxt['n']} · {nxt['title_en']}** — "
                  f"[open in Colab]({colab_url(nxt)}).\n")
@@ -290,7 +296,11 @@ def normalize_notebook(s: dict, spec: dict, path: pathlib.Path) -> dict:
 
     _rewrite_cell_ids(s, cells)
 
-    # Preserve notebook-level metadata and nbformat fields exactly as they were.
+    # Preserve notebook-level metadata and nbformat fields, except widget state
+    # left over from prior executions. This is committed output stored at the
+    # notebook level; kernelspec, language_info, colab, and other metadata stay.
+    nb.get("metadata", {}).pop("widgets", None)
+
     nb["cells"] = cells
     return nb
 

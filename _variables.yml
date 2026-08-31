@@ -99,8 +99,8 @@ agenda:
     label_en: "What a tensor is"
     label_es: "Qué es un tensor"
   - items: ["02"]
-    label_en: "Thinking in N dimensions *(group)*"
-    label_es: "Pensar en N dimensiones *(grupo)*"
+    label_en: "Thinking in N dimensions"
+    label_es: "Pensar en N dimensiones"
   - items: ["03", "04"]
     label_en: "Indexing & broadcasting · Reshape & transpose"
     label_es: "Indexación y broadcasting · Reshape y transposición"
@@ -198,8 +198,8 @@ sections:
     minutes: 20
     start: "+00:25"
     end: "+00:45"
-    format_en: "group"
-    format_es: "grupo"
+    format_en: "demo"
+    format_es: "demostración"
     title_en: "Thinking in N dimensions"
     title_es: "Pensar en N dimensiones"
     summary_en: "Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis."
