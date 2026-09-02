@@ -19,19 +19,21 @@ counted — and both get it from `scripts/timeline.py` rather than walking it
 twice.
 
 **Never hand-edit generated scaffolding.** For notebooks, that rule applies
-only to the centrally owned header, Setup preamble, Setup code and footer.
-Teaching body cells are deliberately edited directly in the `.ipynb` file,
-including in Colab with Gemini, and the notebook normalizer preserves them.
+only to the centrally owned header (cell 0) and footer (final cell). Every
+cell between them -- including the entire Setup section (its heading, its
+prose and its code) -- is a teaching body cell, edited directly in the
+`.ipynb` file, including in Colab with Gemini, and the notebook normalizer
+preserves them.
 
-Change `_variables.yml` for shared facts/objectives or `scripts/content.py`
-for Setup code, then run the appropriate generator:
+Change `_variables.yml` for shared facts, objectives and the bilingual header
+text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
 | `_includes/*.md` (every section table, and the agenda both decks show) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md` and `notebooks/README.md` — the rest of both files is hand-maintained | `scripts/gen_tables.py` |
-| `notebooks/*.ipynb` — header/objectives/Colab badge, Setup preamble, Setup code and footer | `scripts/gen_notebooks.py` using `_variables.yml` + `scripts/content.py` |
-| `notebooks/*.ipynb` — teaching body cells | the notebook itself; editable directly in Colab/Gemini |
+| `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
+| `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `docs/` | `quarto render` |
@@ -151,9 +153,9 @@ between macOS and ubuntu-latest at the same version).
 `notebooks/*.ipynb` are `resources:` in `_quarto.yml`, not `render:` targets —
 Quarto copies them into `docs/notebooks/` verbatim. So a notebook change that
 is committed without a re-render leaves `docs/notebooks/` serving the old copy,
-and nothing fails: the regenerate gate compares `notebooks/` against
-`content.py` and never looks in `docs/`, while `compare_render.py` skips
-non-HTML entirely. This has already happened once, to nine of the twelve
+and nothing fails: the regenerate gate reruns `scripts/gen_notebooks.py` and
+only fails if the tracked `notebooks/` drift from the normalizer's output,
+never looking in `docs/`, while `compare_render.py` skips non-HTML entirely. This has already happened once, to nine of the twelve
 notebooks at once. Re-render after *any* notebook change, not only after a
 prose or `_variables.yml` change.
 

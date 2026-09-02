@@ -3,17 +3,22 @@
 
     uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
 
-This script owns only the notebook scaffolding:
-- header, objectives and Colab badge
-- Setup preamble
-- Setup code
-- footer
+gen_notebooks.py owns exactly two cells plus structural hygiene:
 
-Teaching body cells live directly in notebooks/*.ipynb and may be edited in
-Colab, including with Gemini. Those body cells are preserved in place.
+- cell 0: the bilingual header -- title, intro, objectives, Colab badge
+- the final cell: the bilingual footer -- next-section link, Kahoot block, nav
+- per-cell metadata hygiene and stable cell ids, and removal of stale
+  notebook-level widget state
 
-_variables.yml owns shared facts and bilingual objectives.
-scripts/content.py owns only centrally maintained Setup code.
+Everything between cell 0 and the final cell is notebook-owned teaching-body
+content, preserved here in place and in order. That explicitly includes the
+entire Setup section: its heading, its explanatory prose and its code. Those
+cells are edited directly in notebooks/*.ipynb, including in Colab with Gemini.
+
+_variables.yml owns the bilingual header text: intro_en / intro_es,
+objectives_en / objectives_es, optional format_line_en / format_line_es, and
+workshop.closing_en / closing_es. gen_notebooks.py no longer reads
+CONTENT["NN"]["setup"] from scripts/content.py.
 
 Normalization removes outputs, execution counts and transient Colab per-cell
 metadata while preserving meaningful metadata such as folded solutions.
@@ -39,35 +44,13 @@ V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 QUIZZES = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
 REPO = V["repo"]
+WORKSHOP = V["workshop"]
 
 # ── cell constructors ────────────────────────────────────────────────────────
 
 
 def md(text: str) -> dict:
     return {"cell_type": "markdown", "metadata": {}, "source": _lines(text)}
-
-
-def code(text: str) -> dict:
-    return {"cell_type": "code", "execution_count": None, "metadata": {},
-            "outputs": [], "source": _lines(text)}
-
-
-def solution(text: str, title: str = "Solution — try it yourself first") -> dict:
-    """A folded solution cell.
-
-    `cellView: form` is what Colab honours: it collapses the body behind the
-    `#@title` line, so the answer is one deliberate click away rather than
-    sitting in view above the exercise. `jupyter.source_hidden` does the same
-    in JupyterLab, and `tags` keeps nbconvert in step.
-    """
-    body = f"#@title {title} {{ display-mode: 'form' }}\n" + text
-    cell = code(body)
-    cell["metadata"] = {
-        "cellView": "form",
-        "jupyter": {"source_hidden": True},
-        "tags": ["solution", "hide-input"],
-    }
-    return cell
 
 
 def _lines(text: str) -> list[str]:
@@ -94,14 +77,45 @@ def quiz_after(n: str) -> dict | None:
 def header_cell(s: dict) -> dict:
     badge = ("[![Open In Colab](https://colab.research.google.com/assets/"
              f"colab-badge.svg)]({colab_url(s)})")
-    objs = "\n".join(f"- {o}" for o in s["objectives_en"])
-    objs_es = "\n".join(f"> - {o}" for o in s["objectives_es"])
     part = f"Part {s['part']} · " if s["part"] != "—" else ""
+    if s.get("format_line_en") and s.get("format_line_es"):
+        fmt_line = f"{s['format_line_en']} / {s['format_line_es']}"
+    elif s.get("format_line_en"):
+        fmt_line = s["format_line_en"]
+    else:
+        fmt_line = f"{part}{s['format_en']} · {s['minutes']} min"
+
+    objs_en = "\n".join(f"- {o}" for o in s["objectives_en"])
+    objs_es = "\n".join(f"> - {o}" for o in s["objectives_es"])
+
+    if s.get("intro_en"):
+        # Sections 01-11: merged bilingual header. Intro prose is authored in
+        # _variables.yml (intro_en / intro_es).
+        return md(f"""# {s['n']} · {s['title_en']} / {s['title_es']}
+
+{badge}
+
+*{fmt_line}*
+
+{s['intro_en'].rstrip(chr(10))}
+
+{s['intro_es'].rstrip(chr(10))}
+
+## What you will be able to do / Lo que podrás hacer
+
+{objs_en}
+
+> 🇪🇸
+>
+{objs_es}
+""")
+
+    # Section 00: single-language header with an ES summary callout.
     return md(f"""# {s['n']} · {s['title_en']}
 
 {badge}
 
-*{part}{s['format_en']} · {s['minutes']} min*
+*{fmt_line}*
 
 > 🇪🇸 **{s['title_es']}** — {s['summary_es']}
 
@@ -109,10 +123,10 @@ def header_cell(s: dict) -> dict:
 
 ## What you will be able to do
 
-{objs}
+{objs_en}
 
 > 🇪🇸 **Lo que podrás hacer:**
-
+>
 {objs_es}
 """)
 
@@ -121,6 +135,11 @@ def footer_cell(s: dict) -> dict:
     q = quiz_after(s["n"])
     site = REPO["site"]
     nxt = next((x for x in SECTIONS if x["n"] > s["n"]), None)
+
+    if s.get("intro_en"):
+        return _footer_bilingual(q, nxt, site)
+
+    # Section 00: single-language footer.
     if q:
         body = f"""---
 
@@ -149,11 +168,57 @@ Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
     return md(body)
 
 
-SETUP_PREAMBLE = """## Setup
+def _footer_bilingual(q: dict | None, nxt: dict | None, site: str) -> dict:
+    """Merged bilingual footer for sections 01-11."""
+    nav = ("[← Workshop site / Sitio del taller]"
+           f"({site}/) · "
+           "[All notebooks / Todos los notebooks]"
+           f"({site}/notebooks.html) · "
+           "[Handbook / Manual]"
+           f"({site}/tensors_workshop_plan_with_quizzes.html)")
 
-Run this first. It installs and imports everything this notebook needs, and nothing else.
+    parts = ["---", ""]
+    if q:
+        parts += [
+            "## Time for Kahoot 🎯 / Hora de Kahoot 🎯",
+            "",
+            f"**Kahoot {q['n']} — {q['title_en']} / {q['title_es']}**  ",
+            f"{q['questions']} questions / {q['questions']} preguntas · "
+            "about 5 minutes / unos 5 minutos.",
+            "",
+            f"Join at **{V['kahoot']['join']}** with the PIN on the "
+            "facilitator's screen.",
+            "",
+            f"> 🇪🇸 Entra a **{V['kahoot']['join']}** con el PIN que aparece "
+            "en la pantalla del facilitador.",
+            "",
+            "- [Quiz details and facilitator notes]"
+            f"({site}/kahoot.html#quiz-{q['n']})",
+            "- [Import file (`.xlsx`)]"
+            f"({REPO['url']}/blob/{REPO['branch']}/{q['xlsx']})",
+            "",
+        ]
+    elif nxt:
+        parts += ["## Done with this section / Fin de esta sección", ""]
+    else:
+        parts += ["## Done with the workshop / Fin del taller 🎉", ""]
 
-> 🇪🇸 Ejecuta esto primero: instala e importa todo lo que este cuaderno necesita."""
+    if nxt:
+        parts += [
+            f"Next / Siguiente: **{nxt['n']} · {nxt['title_en']} / "
+            f"{nxt['title_es']}** — [open in Colab]({colab_url(nxt)}).",
+            "",
+        ]
+    else:
+        parts += [
+            WORKSHOP["closing_en"],
+            "",
+            WORKSHOP["closing_es"].rstrip(chr(10)),
+            "",
+        ]
+
+    parts.append(nav)
+    return md("\n".join(parts))
 
 
 def _valid_cell_id(value: object) -> bool:
@@ -231,17 +296,17 @@ def _rewrite_cell_ids(s: dict, cells: list[dict]) -> None:
         used.add(candidate)
 
 
-def normalize_notebook(s: dict, spec: dict, path: pathlib.Path) -> dict:
-    """Refresh owned scaffolding while preserving the notebook body in place.
+def normalize_notebook(s: dict, path: pathlib.Path) -> dict:
+    """Regenerate the header and footer; preserve every other cell in place.
 
     Ownership boundary:
-      * cell 0: generated header
-      * Setup preamble + Setup code: generated when ``spec["setup"]`` exists
-      * body cells: notebook-owned; source and meaningful metadata are preserved
-      * final cell: generated footer
+      * cell 0: generated bilingual header
+      * final cell: generated bilingual footer
+      * every cell between them: notebook-owned teaching-body content
+        (including the whole Setup section), preserved in source and order;
+        only execution state and transient Colab per-cell metadata are cleaned
 
-    Body cells are normalized only for execution state and Colab's transient
-    per-cell metadata.
+    Cell 0 and the final cell keep their existing ids so the rewrite is stable.
     """
     if not path.exists():
         raise FileNotFoundError(
@@ -256,66 +321,41 @@ def normalize_notebook(s: dict, spec: dict, path: pathlib.Path) -> dict:
             f"{path.relative_to(ROOT)} has no valid cells list"
         )
 
-    has_setup = bool(spec.get("setup"))
-    minimum_cells = 4 if has_setup else 2
-    if len(old_cells) < minimum_cells:
+    if len(old_cells) < 2:
         raise ValueError(
             f"{path.relative_to(ROOT)} has {len(old_cells)} cells; "
-            f"expected at least {minimum_cells}"
+            f"expected at least a header and a footer"
         )
 
-    # Preserve the existing scaffold ids so this migration is byte-stable on
-    # today's untouched notebooks.
     header = header_cell(s)
     header["id"] = old_cells[0].get("id")
 
-    cells: list[dict] = [header]
-
-    if has_setup:
-        setup_md = md(SETUP_PREAMBLE)
-        setup_md["id"] = old_cells[1].get("id")
-
-        setup_code = code(spec["setup"])
-        setup_code["id"] = old_cells[2].get("id")
-
-        body = old_cells[3:-1]
-        cells.extend((setup_md, setup_code))
-    else:
-        body = old_cells[1:-1]
-
-    # This is the key ownership change: teaching cells come from the notebook,
-    # not from spec["cells"] / content.py.
-    cells.extend(body)
-
     footer = footer_cell(s)
     footer["id"] = old_cells[-1].get("id")
-    cells.append(footer)
+
+    # Everything between cell 0 and the final cell is notebook-owned.
+    cells: list[dict] = [header, *old_cells[1:-1], footer]
 
     for cell in cells:
         _normalize_cell(cell)
 
     _rewrite_cell_ids(s, cells)
 
-    # Preserve notebook-level metadata and nbformat fields, except widget state
-    # left over from prior executions. This is committed output stored at the
-    # notebook level; kernelspec, language_info, colab, and other metadata stay.
+    # Drop stale widget state left at the notebook level by prior executions;
+    # kernelspec, language_info, colab and other metadata are kept.
     nb.get("metadata", {}).pop("widgets", None)
 
     nb["cells"] = cells
     return nb
 
-def main() -> int:
-    from content import CONTENT  # noqa: PLC0415  (sibling module, see below)
 
+def main() -> int:
     NBDIR.mkdir(exist_ok=True)
-    missing = [s["n"] for s in SECTIONS if s["n"] not in CONTENT]
-    if missing:
-        sys.exit(f"no CONTENT for section(s): {', '.join(missing)}")
 
     for s in SECTIONS:
         path = NBDIR / notebook_name(s)
         try:
-            nb = normalize_notebook(s, CONTENT[s["n"]], path)
+            nb = normalize_notebook(s, path)
         except (FileNotFoundError, ValueError) as exc:
             sys.exit(str(exc))
         path.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n",
