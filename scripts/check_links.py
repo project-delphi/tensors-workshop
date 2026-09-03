@@ -9,7 +9,7 @@ They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
   - Notebooks are valid, have no outputs or execution counts, and each badge
-    points at its own file. [nb]
+    points at its own file — the twelve sections and the extras alike. [nb]
   - Internal links resolve — including the #fragment, so a link to
     kahoot.html#quiz-2 fails if that anchor is not on the page.
   - Colab URLs are well-formed AND point at a notebook that exists. A badge
@@ -18,7 +18,9 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
   - Both decks carry every section anchor. Adding a section to the English
     deck and forgetting the Spanish one is the single most likely way these
     two files drift.
-  - The EN and ES landing pages list the same twelve sections.
+  - The EN and ES landing pages list the same twelve sections. Extras are
+    deliberately absent from both this check and the deck check above: an
+    extra is take-home material with no slide and no place in the agenda.
   - Every section's `start` and `end` still match what the running clock
     derives from `minutes` and the quizzes and breaks between them, and the
     `agenda` rows both decks print still spell that clock out segment for
@@ -49,6 +51,11 @@ DOCS = ROOT / "docs"
 NBDIR = ROOT / "notebooks"
 V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
+# Extras are notebooks that are not sections: take-home deep dives, off the
+# clock. They are notebooks everywhere a notebook is checked, and nowhere a
+# section is checked — no deck anchor, no landing-page row, no agenda segment.
+EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
+NOTEBOOKS = SECTIONS + EXTRAS
 REPO = V["repo"]
 
 COLAB_RE = re.compile(
@@ -178,8 +185,8 @@ def check_links() -> None:
     print(f"      {n_internal} internal links checked (path + fragment)")
     step("Colab URLs")
     print(f"      {n_colab} Colab URLs, all well-formed, "
-          f"{len(seen_notebooks)}/{len(SECTIONS)} notebooks referenced")
-    for s in SECTIONS:
+          f"{len(seen_notebooks)}/{len(NOTEBOOKS)} notebooks referenced")
+    for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         if name not in seen_notebooks:
             fail(f"no page on the site links to notebooks/{name}")
@@ -225,7 +232,7 @@ def check_notebooks() -> None:
         nbformat = None
         print("      nbformat unavailable — structural checks only")
 
-    for s in SECTIONS:
+    for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         path = NBDIR / name
         if not path.exists():
@@ -251,12 +258,14 @@ def check_notebooks() -> None:
             fail(f"{name}: has no first cell to carry the Colab badge")
         elif f"{REPO['colab_base']}/{name})" not in badge:
             fail(f"{name}: header badge does not point at this notebook")
-    extra = {p.name for p in NBDIR.glob("*.ipynb")} - {
-        f"{s['n']}-{s['slug']}.ipynb" for s in SECTIONS}
-    for e in sorted(extra):
-        fail(f"notebooks/{e} is not a section in _variables.yml")
-    print(f"      {len(SECTIONS)} notebooks: valid, no outputs, no execution "
-          f"counts, badges self-consistent")
+    unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
+        f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
+    for e in sorted(unknown):
+        fail(f"notebooks/{e} is neither a section nor an extra "
+             f"in _variables.yml")
+    print(f"      {len(NOTEBOOKS)} notebooks ({len(SECTIONS)} sections, "
+          f"{len(EXTRAS)} extras): valid, no outputs, no execution counts, "
+          f"badges self-consistent")
 
 
 # ── EN and ES landing pages agree ────────────────────────────────────────────
@@ -362,7 +371,7 @@ def check_solution_independence() -> None:
     import builtins
     step("Visible cells do not depend on folded solutions")
     checked = 0
-    for s in SECTIONS:
+    for s in NOTEBOOKS:
         path = NBDIR / f"{s['n']}-{s['slug']}.ipynb"
         if not path.exists():
             continue
@@ -411,8 +420,8 @@ def check_solution_independence() -> None:
                          f"which only a folded solution cell defines")
                 visible_bound |= binds
                 checked += 1
-    print(f"      {checked} visible code cells across {len(SECTIONS)} notebooks "
-          f"are self-sufficient")
+    print(f"      {checked} visible code cells across {len(NOTEBOOKS)} "
+          f"notebooks are self-sufficient")
 
 
 def check_kahoot_urls() -> None:

@@ -5,13 +5,19 @@ The EN and ES landing pages, the notebooks page and the READMEs all show the
 same 12 sections. Writing those tables by hand is how bilingual sites drift, so
 they are generated here instead and included with `{{< include >}}`.
 
+The `extras` — take-home deep dives that are not sections — get their own three
+tables. They are deliberately narrower: no Slides column, because an extra has
+no `#sec-NN` anchor in either deck, and no Quiz column, because no Kahoot
+covers one.
+
     uv run --with pyyaml python scripts/gen_tables.py
 
 Outputs (all overwritten, none hand-edited):
     _includes/sections-en.md      _includes/sections-es.md
-    _includes/notebooks-en.md
+    _includes/notebooks-en.md     _includes/notebooks-extra-en.md
     _includes/agenda-en.md        _includes/agenda-es.md
     _includes/readme-sections.md  _includes/readme-sections-es.md
+    _includes/extras-en.md        _includes/extras-es.md
 """
 from __future__ import annotations
 
@@ -26,6 +32,7 @@ INCLUDES = ROOT / "_includes"
 V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
 
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
+EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
 QUIZZES = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
 REPO = V["repo"]
 
@@ -37,6 +44,7 @@ L = {
         quiz_row="Kahoot {n} — {title} · {q} questions · 5 min",
         covers="covers sections {covers}",
         nb_head=("#", "Notebook", "Covers", "Colab"),
+        extra_head=("#", "Deep dive", "Colab"),
         agenda_head=("Start Time", "Duration (min)", "Part", "Segment Name"),
     ),
     "es": dict(
@@ -46,6 +54,7 @@ L = {
         quiz_row="Kahoot {n} — {title} · {q} preguntas · 5 min",
         covers="cubre las secciones {covers}",
         nb_head=("#", "Cuaderno", "Contenido", "Colab"),
+        extra_head=("#", "Estudio a fondo", "Colab"),
         agenda_head=("Hora de inicio", "Duración (min)", "Parte", "Segmento"),
     ),
 }
@@ -142,6 +151,35 @@ def notebooks_table(lang: str) -> str:
     return "\n".join(rows) + "\n"
 
 
+def extras_notebooks_table(lang: str) -> str:
+    """The extras, for the notebooks page — same shape as `notebooks_table`
+    with the Covers column folded into the Deep dive one, since three columns
+    is all an extra has to say."""
+    t = L[lang]
+    title_key, sum_key = f"title_{lang}", f"summary_{lang}"
+    rows = ["| " + " | ".join(t["extra_head"]) + " |", "|---|---|---|"]
+    for s in EXTRAS:
+        badge = (f"[![Open In Colab](https://colab.research.google.com/assets/"
+                 f"colab-badge.svg)]({colab_url(s)})")
+        rows.append(
+            f"| {s['n']} | [`{notebook_name(s)}`]"
+            f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)}) "
+            f"— {s[title_key]} — {s[sum_key]} | {badge} |")
+    return "\n".join(rows) + "\n"
+
+
+def extras_readme_table(lang: str) -> str:
+    """The extras, for the READMEs — absolute URLs, and no Slides or Quiz
+    column, because an extra has neither."""
+    t = L[lang]
+    title_key = f"title_{lang}"
+    rows = ["| " + " | ".join(t["extra_head"]) + " |", "|---|---|---|"]
+    for s in EXTRAS:
+        rows.append(f"| {s['n']} | {s[title_key]} "
+                    f"| [Colab]({colab_url(s)}) |")
+    return "\n".join(rows) + "\n"
+
+
 def agenda_table(lang: str) -> str:
     """The agenda both decks show, as a pipe table.
 
@@ -212,10 +250,13 @@ def main() -> int:
             "sections-en.md": BANNER + html_table("en", ""),
             "sections-es.md": BANNER + html_table("es", "../"),
             "notebooks-en.md": BANNER + notebooks_table("en"),
+            "notebooks-extra-en.md": BANNER + extras_notebooks_table("en"),
             "agenda-en.md": BANNER + "\n" + agenda_table("en"),
             "agenda-es.md": BANNER + "\n" + agenda_table("es"),
             "readme-sections.md": BANNER + readme_table("en"),
             "readme-sections-es.md": BANNER + readme_table("es"),
+            "extras-en.md": BANNER + extras_readme_table("en"),
+            "extras-es.md": BANNER + extras_readme_table("es"),
         }
     except ScheduleError as e:
         # Nothing is written on the way out: half-regenerated includes would
@@ -229,6 +270,8 @@ def main() -> int:
     if readme.exists():
         inject(readme, "sections-en", readme_table("en"))
         inject(readme, "sections-es", readme_table("es"))
+        inject(readme, "extras-en", extras_readme_table("en"))
+        inject(readme, "extras-es", extras_readme_table("es"))
     if nb_readme.exists():
         inject(nb_readme, "notebooks", notebooks_table("en"))
 
@@ -236,6 +279,7 @@ def main() -> int:
     print(f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, "
           f"{taught} taught + {total_minutes() - taught} quiz and break "
           f"= {total_minutes()} min")
+    print(f"{len(EXTRAS)} extras, off the clock")
     return 0
 
 

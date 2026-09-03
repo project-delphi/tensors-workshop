@@ -1,7 +1,13 @@
 #!/usr/bin/env python3
-"""Normalize the twelve section notebooks in place.
+"""Normalize the notebooks in place: the twelve sections and the extras.
 
     uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
+
+An *extra* is a notebook that is not a section — a take-home deep dive declared
+under `extras:` in _variables.yml rather than `sections:`. It carries no
+`minutes`, `start`/`end` or `part`, which is what keeps it out of the running
+clock, and it gets no Kahoot block. Everything else about it — the header, the
+ownership boundary, the normalization — is identical to a section.
 
 gen_notebooks.py owns exactly two cells plus structural hygiene:
 
@@ -42,6 +48,8 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 NBDIR = ROOT / "notebooks"
 V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
+EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
+NOTEBOOKS = SECTIONS + EXTRAS
 QUIZZES = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
 REPO = V["repo"]
 WORKSHOP = V["workshop"]
@@ -74,23 +82,43 @@ def quiz_after(n: str) -> dict | None:
     return next((q for q in QUIZZES if q["after"] == n), None)
 
 
+def is_extra(s: dict) -> bool:
+    """An extra is what a section is missing: no `minutes` on the clock."""
+    return "minutes" not in s
+
+
+def next_notebook(s: dict) -> dict | None:
+    """The notebook `s` hands off to — within its own group.
+
+    Sections chain through the sections and stop at 11; extras chain through
+    the extras. Section 11 must not point at extra 12: the workshop ends there,
+    and the take-home deep dives are reached from the site, not from the end of
+    the last section.
+    """
+    group = EXTRAS if is_extra(s) else SECTIONS
+    return next((x for x in group if x["n"] > s["n"]), None)
+
+
 def header_cell(s: dict) -> dict:
     badge = ("[![Open In Colab](https://colab.research.google.com/assets/"
              f"colab-badge.svg)]({colab_url(s)})")
-    part = f"Part {s['part']} · " if s["part"] != "—" else ""
     if s.get("format_line_en") and s.get("format_line_es"):
         fmt_line = f"{s['format_line_en']} / {s['format_line_es']}"
     elif s.get("format_line_en"):
         fmt_line = s["format_line_en"]
     else:
-        fmt_line = f"{part}{s['format_en']} · {s['minutes']} min"
+        # An extra has neither `part` nor `minutes` — it is not on the clock —
+        # so both fall away and the line is the format alone.
+        part = f"Part {s['part']} · " if s.get("part", "—") != "—" else ""
+        mins = f" · {s['minutes']} min" if s.get("minutes") else ""
+        fmt_line = f"{part}{s['format_en']}{mins}"
 
     objs_en = "\n".join(f"- {o}" for o in s["objectives_en"])
     objs_es = "\n".join(f"> - {o}" for o in s["objectives_es"])
 
     if s.get("intro_en"):
-        # Sections 01-11: merged bilingual header. Intro prose is authored in
-        # _variables.yml (intro_en / intro_es).
+        # Sections 01-11 and the extras: merged bilingual header. Intro
+        # prose is authored in _variables.yml (intro_en / intro_es).
         return md(f"""# {s['n']} · {s['title_en']} / {s['title_es']}
 
 {badge}
@@ -134,10 +162,10 @@ def header_cell(s: dict) -> dict:
 def footer_cell(s: dict) -> dict:
     q = quiz_after(s["n"])
     site = REPO["site"]
-    nxt = next((x for x in SECTIONS if x["n"] > s["n"]), None)
+    nxt = next_notebook(s)
 
     if s.get("intro_en"):
-        return _footer_bilingual(q, nxt, site)
+        return _footer_bilingual(q, nxt, site, extra=is_extra(s))
 
     # Section 00: single-language footer.
     if q:
@@ -168,8 +196,14 @@ Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
     return md(body)
 
 
-def _footer_bilingual(q: dict | None, nxt: dict | None, site: str) -> dict:
-    """Merged bilingual footer for sections 01-11."""
+def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
+                      extra: bool = False) -> dict:
+    """Merged bilingual footer for sections 01-11 and for the extras.
+
+    An extra never gets a Kahoot block — `q` is always None for one — and the
+    last extra closes on a link back to the site rather than on the workshop's
+    closing words, which belong to section 11 and are said once.
+    """
     nav = ("[← Workshop site / Sitio del taller]"
            f"({site}/) · "
            "[All notebooks / Todos los notebooks]"
@@ -198,15 +232,34 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str) -> dict:
             f"({REPO['url']}/blob/{REPO['branch']}/{q['xlsx']})",
             "",
         ]
+    elif extra:
+        parts += ["## Done with this deep dive / Fin de este estudio a fondo",
+                  ""]
     elif nxt:
         parts += ["## Done with this section / Fin de esta sección", ""]
     else:
         parts += ["## Done with the workshop / Fin del taller 🎉", ""]
 
-    if nxt:
+    if nxt and extra:
+        parts += [
+            f"Next deep dive / Siguiente estudio a fondo: **{nxt['n']} · "
+            f"{nxt['title_en']} / {nxt['title_es']}** — "
+            f"[open in Colab]({colab_url(nxt)}).",
+            "",
+        ]
+    elif nxt:
         parts += [
             f"Next / Siguiente: **{nxt['n']} · {nxt['title_en']} / "
             f"{nxt['title_es']}** — [open in Colab]({colab_url(nxt)}).",
+            "",
+        ]
+    elif extra:
+        parts += [
+            f"That is the last deep dive. Everything else is back on "
+            f"[the workshop site]({site}/).",
+            "",
+            f"> 🇪🇸 Ese es el último estudio a fondo. Todo lo demás está en "
+            f"[el sitio del taller]({site}/).",
             "",
         ]
     else:
@@ -352,7 +405,7 @@ def normalize_notebook(s: dict, path: pathlib.Path) -> dict:
 def main() -> int:
     NBDIR.mkdir(exist_ok=True)
 
-    for s in SECTIONS:
+    for s in NOTEBOOKS:
         path = NBDIR / notebook_name(s)
         try:
             nb = normalize_notebook(s, path)
@@ -371,9 +424,10 @@ def main() -> int:
     except ImportError:
         print("\nnbformat not available — skipping validation")
         return 0
-    for s in SECTIONS:
+    for s in NOTEBOOKS:
         nbformat.validate(nbformat.read(NBDIR / notebook_name(s), as_version=4))
-    print(f"\nnbformat.validate: {len(SECTIONS)}/{len(SECTIONS)} valid")
+    print(f"\nnbformat.validate: {len(NOTEBOOKS)}/{len(NOTEBOOKS)} valid "
+          f"({len(SECTIONS)} sections, {len(EXTRAS)} extras)")
     return 0
 
 

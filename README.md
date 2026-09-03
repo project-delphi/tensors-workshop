@@ -77,6 +77,19 @@ Taxi Trips and the Airline Passengers series are downloaded once.
 The 🎯 quizzes run after sections 04, 07 and 10. The twelve sections come to 165
 minutes; the three quizzes add 15 and three 5-minute breaks another 15, for 195.
 
+## Going further
+
+Two **deep dives** ship with the workshop without being part of it. They are
+take-home material: no slides, no Kahoot, and no place on the 195-minute clock,
+which does not move to make room for them.
+
+<!-- BEGIN extras-en -->
+| # | Deep dive | Colab |
+|---|---|---|
+| 12 | Matrix factorizations | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb) |
+| 13 | Tensor factorizations | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb) |
+<!-- END extras-en -->
+
 ## Run it locally
 
 ```bash
@@ -96,12 +109,12 @@ uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter la
 ### Regenerating the derived files
 
 `_variables.yml` is the single source of truth: repo coordinates, the twelve
-sections, the three quizzes. Two scripts read it, and **nothing they produce
-should be edited by hand**:
+sections, the two take-home extras, the three quizzes. Two scripts read it, and
+**nothing they produce should be edited by hand**:
 
 ```bash
 uv run --with pyyaml python scripts/gen_tables.py               # tables + README tables
-uv run --with pyyaml,nbformat python scripts/gen_notebooks.py   # the 12 notebooks
+uv run --with pyyaml,nbformat python scripts/gen_notebooks.py   # sections + extras
 uv run --with pyyaml,nbformat python scripts/check_links.py     # verify docs/
 ```
 
@@ -121,7 +134,7 @@ _includes/              generated tables, included by the .qmd pages
 index.qmd  es/index.qmd landing pages, EN and ES
 notebooks.qmd  kahoot.qmd
 slides/en/  slides/es/  the two revealjs decks + shared slides.scss
-notebooks/              12 Colab notebooks, one per section
+notebooks/              14 Colab notebooks — 12 sections + 2 take-home extras
 kahoot/                 3 .xlsx quiz import files
 scripts/                generators and the link checker
 tensors_workshop_plan_with_quizzes.md   the source handbook
@@ -207,6 +220,19 @@ trabajo.
 Los cuestionarios 🎯 se ejecutan después de las secciones 04, 07 y 10. Las doce
 secciones suman 165 minutos; los tres cuestionarios añaden 15 y las tres pausas
 de 5 minutos otros 15: en total, 195.
+
+## Para seguir
+
+Dos **estudios a fondo** acompañan al taller sin formar parte de él. Son
+material para después: sin diapositivas, sin Kahoot y sin sitio en el reloj de
+195 minutos, que no se mueve para hacerles hueco.
+
+<!-- BEGIN extras-es -->
+| # | Estudio a fondo | Colab |
+|---|---|---|
+| 12 | Factorizaciones matriciales | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb) |
+| 13 | Factorizaciones tensoriales | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb) |
+<!-- END extras-es -->
 
 ## Ejecutarlo en local
 

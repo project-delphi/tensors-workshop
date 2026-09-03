@@ -1,7 +1,8 @@
 # Notebooks
 
 Twelve notebooks, one per workshop section, numbered to match
-[the section table](https://project-delphi.github.io/tensors-workshop) exactly.
+[the section table](https://project-delphi.github.io/tensors-workshop) exactly —
+plus two take-home deep dives, numbered 12 and 13, that are **not** sections.
 
 **English-primary, with a one-line Spanish summary under each heading** —
 *cada encabezado lleva un resumen en español.*
@@ -14,7 +15,7 @@ others. Sections 07, 08 and 10 re-fetch their CSV from GitHub rather than
 depending on notebook 00. You will see the same three URLs more than once — that
 is deliberate, not accidental duplication.
 
-## The twelve
+## The twelve sections
 
 <!-- BEGIN notebooks -->
 | # | Notebook | Covers | Colab |
@@ -33,6 +34,18 @@ is deliberate, not accidental duplication.
 | 11 | [`11-wrap-up-and-take-homes.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | Wrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) |
 <!-- END notebooks -->
 
+## The two extras
+
+`12-matrix-factorizations.ipynb` and `13-tensor-factorizations.ipynb` are deep
+dives, handed out as take-home material after the session. They are declared
+under `extras:` in `_variables.yml` rather than `sections:`, and that mapping is
+deliberately missing `minutes`, `start`, `end` and `part` — `scripts/timeline.py`
+only ever walks `sections`, so nothing about an extra can move a start time or
+the agenda. They also get no `#sec-NN` slide anchor and no Kahoot.
+
+Everything else about them is a notebook like any other: the same generated
+header and footer, the same ownership boundary, the same checks.
+
 ## Shape of each notebook
 
 1. **Header** — title, objectives, Spanish summary, *Open in Colab* badge.
@@ -42,7 +55,8 @@ is deliberate, not accidental duplication.
 4. **Exercises** — `# TODO` stubs taken from the handbook, each followed by a
    folded solution cell (`cellView: form`, so Colab hides it behind a
    *Show code* toggle).
-5. **Closing** — that section's Kahoot check, and a link back to the site.
+5. **Closing** — that section's Kahoot check, and a link back to the site. An
+   extra has no Kahoot, so its closing is the next deep dive and the site links.
 
 ## No outputs, no execution counts
 
@@ -60,7 +74,7 @@ The teaching body of each notebook is editable directly. Edits made in Colab,
 including edits made with Gemini, no longer need to be retyped into
 `scripts/content.py`.
 
-Ownership is split deliberately:
+Ownership is split deliberately, for sections and extras alike:
 
 - Generated: header, objectives, Colab badge, Setup preamble, Setup code, footer.
 - Notebook-owned: teaching cells between Setup and the footer.
