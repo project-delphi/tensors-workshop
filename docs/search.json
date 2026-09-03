@@ -739,7 +739,7 @@
     "href": "notebooks.html",
     "title": "Notebooks",
     "section": "",
-    "text": "Every section of the workshop has a notebook. They are English-primary, with a one-line Spanish summary under each heading — cada encabezado lleva un resumen en español."
+    "text": "Every section of the workshop has a notebook, and two more sit past the end of the workshop as take-home deep dives. They are English-primary, with a one-line Spanish summary under each heading — cada encabezado lleva un resumen en español."
   },
   {
     "objectID": "notebooks.html#how-they-are-built",
@@ -756,6 +756,13 @@
     "text": "The notebooks\n\n\n\n\n#\nNotebook\nCovers\nColab\n\n\n\n\n00\n00-setup-and-data.ipynb\nSetup and welcome — Load every dataset and confirm your runtime works before anything else.\n\n\n\n01\n01-what-a-tensor-is.ipynb\nWhat a tensor is — Learn to read a tensor’s structure and track what its axes mean as you fix, rearrange, or contract them.\n\n\n\n02\n02-thinking-in-n-dimensions.ipynb\nThinking in N dimensions — Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.\n\n\n\n03\n03-indexing-and-broadcasting.ipynb\nIndexing and broadcasting real data — Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely.\n\n\n\n04\n04-reshape-and-transpose.ipynb\nReshape and transpose real images — Use real images to move between HWC↔︎CHW and NHWC↔︎NCHW, then show why matching shapes do not guarantee matching axis semantics.\n\n\n\n05\n05-video-pipeline-design.ipynb\nVideo pipeline design — Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines.\n\n\n\n06\n06-contraction-with-einsum.ipynb\nContraction with einsum — Use one index rule on real data, then change the inputs interactively to test which index disappears.\n\n\n\n07\n07-inverses-and-pseudoinverse.ipynb\nInverses and the pseudoinverse — Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively.\n\n\n\n08\n08-recursion-with-matrices.ipynb\nRecursion with matrices and vectors — Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data.\n\n\n\n09\n09-convolution-and-deconvolution.ipynb\nConvolution and deconvolution — Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image.\n\n\n\n10\n10-tucker-decomposition.ipynb\nTucker decomposition on real data — Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure.\n\n\n\n11\n11-wrap-up-and-take-homes.ipynb\nWrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio."
   },
   {
+    "objectID": "notebooks.html#going-further",
+    "href": "notebooks.html#going-further",
+    "title": "Notebooks",
+    "section": "Going further",
+    "text": "Going further\nThese two are not sections. They are deep dives, handed out as take-home material: no slides, no Kahoot, and no minutes on the workshop clock — the 195-minute agenda is exactly what it was without them.\n\n\n\n\n#\nDeep dive\nColab\n\n\n\n\n12\n12-matrix-factorizations.ipynb — Matrix factorizations — Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers.\n\n\n\n13\n13-tensor-factorizations.ipynb — Tensor factorizations — Go past Tucker to CP, tensor train and block terms, and see what each one costs, what it recovers, and when its rank stops being well defined."
+  },
+  {
     "objectID": "notebooks.html#running-them-somewhere-other-than-colab",
     "href": "notebooks.html#running-them-somewhere-other-than-colab",
     "title": "Notebooks",
@@ -767,7 +774,7 @@
     "href": "notebooks.html#what-each-notebook-needs",
     "title": "Notebooks",
     "section": "What each notebook needs",
-    "text": "What each notebook needs\n\nColab already has every one of these installed.\n\n\n\n\n\n\n\nNotebook\nBeyond NumPy\nNetwork\n\n\n\n\n00\npandas, scikit-learn, scikit-image, scipy\nyes — all three CSVs\n\n\n01\nscikit-learn, scikit-image, scipy.linalg\nno\n\n\n02\n—\nno\n\n\n03\nscikit-learn\nno\n\n\n04\nscikit-image\nno\n\n\n05\n—\nno\n\n\n06\nscikit-learn, scikit-image\nno\n\n\n07\npandas\nyes — California housing\n\n\n08\npandas\nyes — airline passengers\n\n\n09\nscikit-image, scipy\nno\n\n\n10\npandas\nyes — NYC taxi trips\n\n\n11\nscikit-learn\nno"
+    "text": "What each notebook needs\n\nColab already has every one of these installed.\n\n\n\n\n\n\n\nNotebook\nBeyond NumPy\nNetwork\n\n\n\n\n00\npandas, scikit-learn, scikit-image, scipy\nyes — all three CSVs\n\n\n01\nscikit-learn, scikit-image, scipy.linalg\nno\n\n\n02\n—\nno\n\n\n03\nscikit-learn\nno\n\n\n04\nscikit-image\nno\n\n\n05\n—\nno\n\n\n06\nscikit-learn, scikit-image\nno\n\n\n07\npandas\nyes — California housing\n\n\n08\npandas\nyes — airline passengers\n\n\n09\nscikit-image, scipy\nno\n\n\n10\npandas\nyes — NYC taxi trips\n\n\n11\nscikit-learn\nno\n\n\n12\nscikit-learn, scipy\nno\n\n\n13\npandas\nyes — NYC taxi trips"
   },
   {
     "objectID": "es/index.html",

@@ -4,7 +4,8 @@
 # Read three ways:
 #   1. `{{< var … >}}` shortcodes in .qmd pages and both slide decks
 #   2. scripts/gen_tables.py (section and README tables) and
-#      scripts/gen_notebooks.py (the twelve notebooks), which generate from it
+#      scripts/gen_notebooks.py (the twelve section notebooks plus the
+#      take-home extras), which generate from it
 #   3. scripts/check_links.py, which verifies the rendered output against it
 #
 # Change a value here and it changes everywhere. Do not hard-code these
@@ -595,3 +596,80 @@ sections:
       - "Comparar CP con Tucker sobre el mismo tensor real de taxis de Nueva York."
       - "Usar Cholesky para transformar ruido independiente en muestras correlacionadas y observar cómo la covarianza cambia el riesgo."
       - "Reducir ruido de una grabación real con `STFT → SVD truncada → ISTFT` y medir el compromiso mediante SNR."
+
+# ── Extras ───────────────────────────────────────────────────────────────────
+# Notebooks that are not sections. Deep dives, handed out as take-home material
+# after the workshop, deliberately outside the 195-minute clock.
+#
+# The shape is `sections` minus everything that makes a section a section:
+# there is no `minutes`, no `start`/`end` and no `part`, which is exactly what
+# keeps an extra out of the running clock — scripts/timeline.py only ever walks
+# `sections`, so nothing here can move a start time or the agenda. Extras also
+# get no `#sec-NN` slide anchor and no Kahoot: the decks and the two landing
+# pages stay a list of the twelve sections.
+#
+# `n` still fixes the notebook filename prefix and the row order, continuing
+# the section numbering past 11 so `notebooks/` sorts in reading order.
+extras:
+  x12:
+    n: "12"
+    slug: "matrix-factorizations"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home"
+    format_line_es: "estudio a fondo · para después"
+    title_en: "Matrix factorizations"
+    title_es: "Factorizaciones matriciales"
+    summary_en: "Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers."
+    summary_es: "Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una."
+    intro_en: |-
+      The workshop used three matrix factorizations without ever naming the family: **SVD** behind the pseudoinverse in section 07 and behind deconvolution in section 09, and **Cholesky** in one of the take-homes in section 11.
+
+      This deep dive puts the whole family in one place — **LU, QR, Cholesky, eigendecomposition, SVD and NMF** — and asks the same question of each: *what does this factorization make easy that was hard before?*
+    intro_es: |-
+      > 🇪🇸 El taller usó tres factorizaciones matriciales sin nombrar nunca a la familia: la **SVD** detrás de la pseudoinversa en la sección 07 y de la deconvolución en la 09, y **Cholesky** en uno de los ejercicios para casa de la sección 11.
+      >
+      > Este estudio a fondo reúne a toda la familia — **LU, QR, Cholesky, descomposición espectral, SVD y NMF** — y le hace a cada una la misma pregunta: *¿qué vuelve fácil esta factorización que antes era difícil?*
+    objectives_en:
+      - "Say which problem each of **LU, QR, Cholesky, eigendecomposition, SVD and NMF** is the right tool for."
+      - "Explain what each factorization assumes about its input, and what it does when that assumption fails."
+      - "Solve the same real least-squares problem three ways and compare cost against numerical stability."
+      - "Connect the SVD you already used in sections 07 and 09 to the rest of the family."
+      - "Read a factorization's factors as structure in the data rather than as an opaque numerical result."
+    objectives_es:
+      - "Decir para qué problema es la herramienta adecuada cada una de **LU, QR, Cholesky, descomposición espectral, SVD y NMF**."
+      - "Explicar qué supone cada factorización sobre su entrada y qué ocurre cuando ese supuesto no se cumple."
+      - "Resolver el mismo problema real de mínimos cuadrados de tres formas y comparar coste frente a estabilidad numérica."
+      - "Conectar la SVD que ya usaste en las secciones 07 y 09 con el resto de la familia."
+      - "Leer los factores de una factorización como estructura de los datos y no como un resultado numérico opaco."
+  x13:
+    n: "13"
+    slug: "tensor-factorizations"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home"
+    format_line_es: "estudio a fondo · para después"
+    title_en: "Tensor factorizations"
+    title_es: "Factorizaciones tensoriales"
+    summary_en: "Go past Tucker to CP, tensor train and block terms, and see what each one costs, what it recovers, and when its rank stops being well defined."
+    summary_es: "Ve más allá de Tucker hasta CP, tensor train y términos por bloques, y observa qué cuesta cada uno, qué recupera y cuándo su rango deja de estar bien definido."
+    intro_en: |-
+      Section 10 built one tensor factorization — **Tucker/HOSVD** — on the real New York taxi tensor, and section 11 put **CP** next to it for five minutes.
+
+      This deep dive takes that comparison seriously. Same tensor, four models — **CP, Tucker, tensor train and block-term** — and one honest question each: *what does this model assume, and what does it cost you when the assumption is wrong?*
+    intro_es: |-
+      > 🇪🇸 La sección 10 construyó una factorización tensorial — **Tucker/HOSVD** — sobre el tensor real de taxis de Nueva York, y la sección 11 puso **CP** a su lado durante cinco minutos.
+      >
+      > Este estudio a fondo se toma en serio esa comparación. El mismo tensor, cuatro modelos — **CP, Tucker, tensor train y términos por bloques** — y una pregunta honesta para cada uno: *¿qué supone este modelo y qué te cuesta cuando el supuesto es falso?*
+    objectives_en:
+      - "Fit **CP, Tucker, tensor train and block-term** models to the same real order-3 tensor."
+      - "Explain why tensor rank is not the straightforward generalisation of matrix rank it looks like."
+      - "Compare the four models on stored parameters, reconstruction error and interpretability of the factors."
+      - "Say when uniqueness makes CP the right answer and when Tucker's extra freedom is worth its extra size."
+      - "Recognise which of these models a given real dataset is actually shaped for."
+    objectives_es:
+      - "Ajustar modelos **CP, Tucker, tensor train y de términos por bloques** al mismo tensor real de orden 3."
+      - "Explicar por qué el rango tensorial no es la generalización directa del rango matricial que aparenta ser."
+      - "Comparar los cuatro modelos por parámetros almacenados, error de reconstrucción e interpretabilidad de los factores."
+      - "Decir cuándo la unicidad hace de CP la respuesta correcta y cuándo la libertad extra de Tucker compensa su mayor tamaño."
+      - "Reconocer para cuál de estos modelos está realmente hecho un conjunto de datos real concreto."

@@ -5,13 +5,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A bilingual (EN/ES) Quarto website for a 3-hour tensors workshop. No application
-code — the deliverables are the rendered site, twelve Colab notebooks, two
-revealjs decks and three Kahoot spreadsheets.
+code — the deliverables are the rendered site, fourteen Colab notebooks (twelve
+sections plus two take-home extras), two revealjs decks and three Kahoot
+spreadsheets.
 
 ## The one rule that matters
 
 `_variables.yml` is the single source of truth (repo coordinates, the twelve
-sections, the three quizzes, the agenda). Three things read it: `{{< var >}}`
+sections, the two extras, the three quizzes, the agenda). Three things read it:
+`{{< var >}}`
 shortcodes in the `.qmd` pages and both decks, the two generator scripts, and
 the checker. The generator and the checker both need the running clock —
 what time each section starts, once the quizzes and breaks between them are
@@ -59,6 +61,23 @@ the actual point:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
+
+## Extras: notebooks that are not sections
+
+`extras:` in `_variables.yml` declares a notebook that is not a section — a
+take-home deep dive. The mapping is `sections:` minus `minutes`, `start`, `end`
+and `part`, and that absence *is* the mechanism: `scripts/timeline.py` only ever
+walks `sections`, so nothing under `extras:` can move a start time, the agenda
+or `workshop.minutes`. An extra also gets no `#sec-NN` slide anchor and no
+Kahoot.
+
+Everywhere a **notebook** is handled, extras are included — `gen_notebooks.py`
+normalizes them, and checks 1, 3 and 8 in `check_links.py` cover them.
+Everywhere a **section** is handled, they are not: checks 4 (deck anchors), 5
+(landing-page parity) and 6 (the clock) stay on `SECTIONS` alone, and adding an
+extra to any of them would be the bug. Their tables are separate and narrower —
+`_includes/notebooks-extra-en.md` and `_includes/extras-{en,es}.md`, `# | Deep
+dive | Colab`, no Slides and no Quiz column.
 
 ## No commits on main
 
@@ -121,7 +140,8 @@ numbered checks, in the order they run. Eight can fail, and any failure exits
 non-zero: notebooks are valid with no outputs or execution counts; internal
 links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
-same twelve sections; each section's written `start`/`end` still matches the
+same twelve sections (extras appear in neither, by design); each section's
+written `start`/`end` still matches the
 running clock derived from `minutes` plus the quizzes and breaks between them,
 and the `agenda` rows still account for every segment of that clock exactly
 once and in order; the deck timer's total still matches `workshop.minutes`;

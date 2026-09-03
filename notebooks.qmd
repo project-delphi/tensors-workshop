@@ -1,10 +1,11 @@
 ---
 title: "Notebooks"
-subtitle: "Twelve notebooks, one per section, each runnable cold in Colab"
+subtitle: "One notebook per section, plus two take-home deep dives, each runnable cold in Colab"
 ---
 
-Every section of the workshop has a notebook. They are **English-primary**, with a
-one-line Spanish summary under each heading — *cada encabezado lleva un resumen en
+Every section of the workshop has a notebook, and two more sit past the end of the
+workshop as take-home deep dives. They are **English-primary**, with a one-line
+Spanish summary under each heading — *cada encabezado lleva un resumen en
 español.*
 
 ## How they are built
@@ -30,6 +31,14 @@ investigating rather than dismissing.
 ## The notebooks
 
 {{< include _includes/notebooks-en.md >}}
+
+## Going further
+
+These two are **not sections**. They are deep dives, handed out as take-home
+material: no slides, no Kahoot, and no minutes on the workshop clock — the
+195-minute agenda is exactly what it was without them.
+
+{{< include _includes/notebooks-extra-en.md >}}
 
 ## Running them somewhere other than Colab
 
@@ -61,5 +70,7 @@ the photographs, so most sections work with no network at all. Sections 07, 08 a
 | 09 | `scikit-image`, `scipy` | no |
 | 10 | `pandas` | yes — NYC taxi trips |
 | 11 | `scikit-learn` | no |
+| 12 | `scikit-learn`, `scipy` | no |
+| 13 | `pandas` | yes — NYC taxi trips |
 
 : Colab already has every one of these installed. {tbl-colwidths="[16,54,30]"}
