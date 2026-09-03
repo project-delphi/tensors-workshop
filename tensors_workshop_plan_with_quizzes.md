@@ -7,7 +7,23 @@ title-block-banner-color: body
 
 **🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.
 
-**Before you arrive:** you have read *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)* (Goodfellow, Bengio & Courville), **Chapter 2 — Linear Algebra**. You know matrices. This workshop assumes **no previous knowledge of tensor theory**.
+**Before you arrive.** You know matrices; the workshop assumes **no previous knowledge of tensor theory**. Everything below is free, and nothing needs installing on your own machine.
+
+*Required:*
+
+- **Read Chapter 2 — Linear Algebra** of *[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html)* (Goodfellow, Bengio & Courville): vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD. That chapter is the whole of the assumed background.
+- **Work through [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)** — 14 short bilingual Colab notebooks (~2–3 hours total) covering exactly that material, vectors through PCA. This workshop moves fast through material it assumes you have reviewed.
+- **Run [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) in Colab** before the session. It downloads the three CSV files below; a silent download failure leaves you stuck at Block 4 and Block 6, an hour in. If it fails, say so in Discord immediately.
+
+*Recommended:*
+
+- **Watch *[Essence of linear algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)*** (3Blue1Brown) — 16 videos, about 3 hours in total. Watch it if Chapter 2 felt like symbol-pushing: it supplies the geometric picture of what a matrix *does*, which Parts III and IV lean on throughout.
+
+*Have ready on the day:*
+
+- **A Google account**, so the notebooks run in [Colab](https://colab.research.google.com/) in your browser. Nothing to install.
+- **Discord** — the invite comes from the facilitator. Discussion, breakout channels and questions all happen there, in Spanish or English.
+- **A phone or a second tab for [Kahoot](https://kahoot.it)** — three 6-question knowledge checks, no sign-up, joined with a PIN.
 
 **What you will learn:** what a tensor is, the vocabulary used to talk about them, how to manipulate them in NumPy, how to solve systems that have no exact solution, what convolution and deconvolution really are, how recursion works with matrices, and how to factorize tensors.
 
