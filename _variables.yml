@@ -29,6 +29,10 @@ workshop:
   minutes: 195
   book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
   prereq_repo_url: "https://github.com/Laverde97/linear-algebra-deep-learning"
+  # Recommended, not required: 3Blue1Brown's "Essence of linear algebra",
+  # 16 videos, ~3 hours in total. It supplies the geometric picture the book
+  # chapter assumes you already carry.
+  prereq_video_url: "https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"
   closing_en: "That is the whole workshop. Thank you for participating."
   closing_es: |-
     > 🇪🇸 Ese es todo el taller. Gracias por participar.

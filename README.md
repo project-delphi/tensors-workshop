@@ -30,18 +30,40 @@ summary.
 
 ## Prerequisites
 
-- The linear algebra in Chapter 2: vectors, matrices, the matrix product, the
-  inverse, eigendecomposition, SVD.
-- A Google account, to run the notebooks in Colab. **Nothing to install.**
-- Three CSV files download at the start. Run
-  [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
-  **before** the session — a silent download failure leaves you stuck at
-  sections 07 and 10, an hour in.
-- **Required pre-work:** work through
-  [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)
-  before the session — 14 short bilingual Colab notebooks (~2–3 hours total)
-  covering exactly the linear algebra above, vectors through PCA. This
-  workshop moves fast through material that assumes you've done this review.
+Everything below is free, and nothing needs installing on your own machine.
+
+**Do before the session**
+
+- **The linear algebra in Chapter 2** of
+  [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html):
+  vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD.
+  That chapter is the whole of the assumed background.
+- **[`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**
+  — 14 short bilingual Colab notebooks (~2–3 hours total) covering exactly that
+  material, vectors through PCA. Required pre-work: this workshop moves fast
+  through material it assumes you have reviewed.
+- **[Notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb),
+  run in Colab** — it downloads the three CSV files the workshop needs. Run it
+  **before** the session and say so immediately if it fails: a silent download
+  failure leaves you stuck at sections 07 and 10, an hour in.
+
+**Recommended**
+
+- **[*Essence of linear algebra*](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)**
+  (3Blue1Brown) — 16 videos, about 3 hours in total. Watch it if Chapter 2 felt
+  like symbol-pushing: it gives you the geometric picture of what a matrix
+  *does*, which is what sections 04 through 10 lean on.
+
+**Have ready on the day**
+
+- **A Google account** — the notebooks run in
+  [Colab](https://colab.research.google.com/) in your browser. **Nothing to
+  install.**
+- **Discord** — the invite comes from the facilitator. Every discussion, every
+  breakout channel and every question happens there, in Spanish or English.
+- **A phone or a second tab for [Kahoot](https://kahoot.it)** — three
+  6-question knowledge checks, after sections 04, 07 and 10. No sign-up; you
+  join with a PIN.
 
 ## All the data is real
 
@@ -175,19 +197,43 @@ resumen de una línea en español.
 
 ## Requisitos previos
 
-- El álgebra lineal del capítulo 2: vectores, matrices, el producto matricial,
-  la inversa, la descomposición espectral y la SVD.
-- Una cuenta de Google para ejecutar los cuadernos en Colab. **No hay que
+Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.
+
+**Antes de la sesión**
+
+- **El álgebra lineal del capítulo 2** de
+  [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html):
+  vectores, matrices, el producto matricial, la inversa, la descomposición
+  espectral y la SVD. Ese capítulo es todo el conocimiento previo que se da por
+  supuesto.
+- **[`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**:
+  14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren
+  exactamente ese material, de vectores a PCA. Trabajo previo obligatorio: el
+  taller avanza rápido y da por hecho que ya lo hiciste.
+- **El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb),
+  ejecutado en Colab**: descarga los tres archivos CSV que usa el taller.
+  Ejecútalo **antes** de la sesión y avisa enseguida si falla: una descarga que
+  falla en silencio te deja atascado en las secciones 07 y 10, una hora
+  después.
+
+**Recomendado**
+
+- **[*Essence of linear algebra*](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)**
+  (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total.
+  Míralo si el capítulo 2 te pareció puro manejo de símbolos: da la imagen
+  geométrica de lo que una matriz *hace*, que es en lo que se apoyan las
+  secciones 04 a 10.
+
+**Ten a mano el día del taller**
+
+- **Una cuenta de Google**: los cuadernos se ejecutan en
+  [Colab](https://colab.research.google.com/) desde el navegador. **No hay que
   instalar nada.**
-- Al principio se descargan tres archivos CSV. Ejecuta el
-  [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
-  **antes** de la sesión: una descarga que falla en silencio te deja atascado en
-  las secciones 07 y 10, una hora después.
-- **Trabajo previo obligatorio:** completa
-  [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)
-  antes de la sesión — 14 cuadernos breves de Colab, bilingües (~2–3 horas en
-  total), que cubren exactamente el álgebra lineal anterior, de vectores a
-  PCA. Este taller avanza rápido y da por hecho que ya lo hiciste.
+- **Discord**: la invitación te la pasa quien imparte el taller. Ahí ocurren las
+  discusiones, los canales de grupo y las preguntas, en español o en inglés.
+- **El móvil o una segunda pestaña para [Kahoot](https://kahoot.it)**: tres
+  controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que
+  registrarse: entras con un PIN.
 
 ## Todos los datos son reales
 

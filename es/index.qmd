@@ -35,20 +35,42 @@ define donde aparece por primera vez.
 
 ## Requisitos previos
 
-- El álgebra lineal del capítulo 2 de {{< var workshop.book >}}: vectores,
-  matrices, el producto matricial, la inversa, la descomposición espectral y la
-  SVD.
-- Una cuenta de Google para ejecutar los cuadernos en Colab. No hay que instalar
-  nada.
-- Al principio se descargan tres archivos CSV. **Ejecuta el
-  [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) antes de la
-  sesión** y avisa enseguida si falla: una descarga que falla en silencio te dejará
-  atascado en las secciones 07 y 10.
-- **Trabajo previo obligatorio:** completa
-  [`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}}) antes
-  de la sesión — 14 cuadernos breves de Colab, bilingües (~2–3 horas en total),
-  que cubren exactamente el álgebra lineal anterior, de vectores a PCA. Este
+Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.
+
+**Antes de la sesión**
+
+- **El álgebra lineal de {{< var workshop.book >}}**: vectores, matrices, el
+  producto matricial, la inversa, la descomposición espectral y la SVD. Ese
+  capítulo es todo el conocimiento previo que se da por supuesto.
+- **[`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}})**:
+  14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren
+  exactamente ese material, de vectores a PCA. Trabajo previo obligatorio: el
   taller avanza rápido y da por hecho que ya lo hiciste.
+- **El [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb),
+  ejecutado en Colab**: descarga los tres archivos CSV que usa el taller.
+  Ejecútalo antes de la sesión y avisa enseguida si falla: una descarga que
+  falla en silencio te deja atascado en las secciones 07 y 10, una hora
+  después.
+
+**Recomendado**
+
+- **[*Essence of linear algebra*]({{< var workshop.prereq_video_url >}})**
+  (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total.
+  Míralo si el capítulo del libro te pareció puro manejo de símbolos: da la
+  imagen geométrica de lo que una matriz *hace*, que es en lo que se apoyan
+  las secciones 04 a 10.
+
+**Ten a mano el día del taller**
+
+- **Una cuenta de Google**: los cuadernos se ejecutan en
+  [Colab](https://colab.research.google.com/) desde el navegador. No hay que
+  instalar nada.
+- **Discord**: la invitación te la pasa quien imparte el taller. Ahí ocurren
+  las discusiones, los canales de grupo y las preguntas, en español o en
+  inglés.
+- **El móvil o una segunda pestaña para [Kahoot](../kahoot.qmd)**: tres
+  controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que
+  registrarse: entras con un PIN.
 
 ## Cómo ejecutar los cuadernos
 

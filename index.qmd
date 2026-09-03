@@ -33,18 +33,39 @@ where it first appears.
 
 ## Prerequisites
 
-- The linear algebra in {{< var workshop.book >}} — vectors, matrices, the matrix
-  product, the inverse, eigendecomposition, SVD.
-- A Google account, so you can run the notebooks in Colab. Nothing to install.
-- Three CSV files are downloaded at the start. **Run
-  [notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) before the
-  session** and say so immediately if it fails — a silent download failure will
-  leave you stuck at sections 07 and 10.
-- **Required pre-work:** work through
-  [`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}}) before
-  the session — 14 short bilingual Colab notebooks (~2–3 hours total) covering
-  exactly the linear algebra above, vectors through PCA. This workshop moves
-  fast through material that assumes you've done this review.
+Everything below is free, and nothing needs installing on your own machine.
+
+**Do before the session**
+
+- **The linear algebra in {{< var workshop.book >}}** — vectors, matrices, the
+  matrix product, the inverse, eigendecomposition, SVD. That chapter is the
+  whole of the assumed background.
+- **[`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}})** —
+  14 short bilingual Colab notebooks (~2–3 hours total) covering exactly that
+  material, vectors through PCA. Required pre-work: this workshop moves fast
+  through material it assumes you have reviewed.
+- **[Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb), run in
+  Colab** — it downloads the three CSV files the workshop needs. Run it
+  beforehand and say so immediately if it fails: a silent download failure
+  leaves you stuck at sections 07 and 10, an hour in.
+
+**Recommended**
+
+- **[*Essence of linear algebra*]({{< var workshop.prereq_video_url >}})**
+  (3Blue1Brown) — 16 videos, about 3 hours in total. Watch it if the book
+  chapter felt like symbol-pushing: it gives you the geometric picture of what
+  a matrix *does*, which is what sections 04 through 10 lean on.
+
+**Have ready on the day**
+
+- **A Google account** — the notebooks run in
+  [Colab](https://colab.research.google.com/) in your browser. Nothing to
+  install locally.
+- **Discord** — the invite comes from the facilitator. Every discussion, every
+  breakout channel and every question happens there, in Spanish or English.
+- **A phone or a second tab for [Kahoot](kahoot.qmd)** — three 6-question
+  knowledge checks, after sections 04, 07 and 10. No sign-up; you join with a
+  PIN.
 
 ## How to run the notebooks
 
