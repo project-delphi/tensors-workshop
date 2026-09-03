@@ -15,7 +15,7 @@
 </tr>
 <tr>
 <td>01</td>
-<td><strong>Qué es un tensor</strong><br><small>El vocabulario, la forma en NumPy y las tres operaciones que importan.</small></td>
+<td><strong>Qué es un tensor</strong><br><small>Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.</small></td>
 <td>demostración</td>
 <td>20</td>
 <td><a href="../slides/en/#sec-01-what-a-tensor-is">EN</a></td>
@@ -25,8 +25,8 @@
 </tr>
 <tr>
 <td>02</td>
-<td><strong>Pensar en N dimensiones</strong><br><small>Discutir qué significa cada eje y por qué un eje de lote difiere de un eje temporal.</small></td>
-<td>grupo</td>
+<td><strong>Pensar en N dimensiones</strong><br><small>Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.</small></td>
+<td>demostración</td>
 <td>20</td>
 <td><a href="../slides/en/#sec-02-thinking-in-n-dimensions">EN</a></td>
 <td><a href="../slides/es/#sec-02-thinking-in-n-dimensions">ES</a></td>
@@ -35,7 +35,7 @@
 </tr>
 <tr>
 <td>03</td>
-<td><strong>Indexación y broadcasting con datos reales</strong><br><small>Seleccionar la columna correcta de datos reales de tumores y encontrar píxeles de varianza cero.</small></td>
+<td><strong>Indexación y broadcasting con datos reales</strong><br><small>Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.</small></td>
 <td>ejercicio</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-03-indexing-and-broadcasting">EN</a></td>
@@ -45,7 +45,7 @@
 </tr>
 <tr>
 <td>04</td>
-<td><strong>Reshape y transposición de imágenes reales</strong><br><small>De HWC a CHW, de NHWC a NCHW, y por qué reshape destruye una imagen en silencio.</small></td>
+<td><strong>Reshape y transposición de imágenes reales</strong><br><small>Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué `reshape` puede conservar la forma mientras destruye el significado.</small></td>
 <td>ejercicio</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-04-reshape-and-transpose">EN</a></td>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 <td>05</td>
-<td><strong>Diseño de un pipeline de vídeo</strong><br><small>Diseñar la forma del tensor en cada etapa de dos sistemas de vídeo reales.</small></td>
+<td><strong>Diseño de un pipeline de vídeo</strong><br><small>Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.</small></td>
 <td>grupo</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-05-video-pipeline-design">EN</a></td>
@@ -68,7 +68,7 @@
 </tr>
 <tr>
 <td>06</td>
-<td><strong>Contracción con einsum</strong><br><small>Una sola notación para el producto punto, el producto matricial y un lote de imágenes.</small></td>
+<td><strong>Contracción con einsum</strong><br><small>Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.</small></td>
 <td>ejercicio</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-06-contraction-with-einsum">EN</a></td>
@@ -78,7 +78,7 @@
 </tr>
 <tr>
 <td>07</td>
-<td><strong>Inversas y la pseudoinversa</strong><br><small>Resolver un sistema de 20.433 ecuaciones que no tiene solución exacta.</small></td>
+<td><strong>Inversas y la pseudoinversa</strong><br><small>Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.</small></td>
 <td>ejercicio</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-07-inverses-and-pseudoinverse">EN</a></td>
@@ -91,7 +91,7 @@
 </tr>
 <tr>
 <td>08</td>
-<td><strong>Recursión con matrices y vectores</strong><br><small>Aplicar una misma matriz una y otra vez: Fibonacci, autovectores y un pronóstico real.</small></td>
+<td><strong>Recursión con matrices y vectores</strong><br><small>Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.</small></td>
 <td>demostración</td>
 <td>10</td>
 <td><a href="../slides/en/#sec-08-recursion-with-matrices">EN</a></td>
@@ -101,7 +101,7 @@
 </tr>
 <tr>
 <td>09</td>
-<td><strong>Convolución y deconvolución</strong><br><small>La convolución es un producto matricial estructurado, y el desenfoque se puede deshacer en parte.</small></td>
+<td><strong>Convolución y deconvolución</strong><br><small>Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada.</small></td>
 <td>ejercicio</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-09-convolution-and-deconvolution">EN</a></td>
@@ -111,7 +111,7 @@
 </tr>
 <tr>
 <td>10</td>
-<td><strong>Descomposición de Tucker con datos reales</strong><br><small>PCA generalizado a todos los ejes, sobre un tensor real de viajes en taxi de Nueva York.</small></td>
+<td><strong>Descomposición de Tucker con datos reales</strong><br><small>Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.</small></td>
 <td>ejercicio</td>
 <td>15</td>
 <td><a href="../slides/en/#sec-10-tucker-decomposition">EN</a></td>
@@ -124,7 +124,7 @@
 </tr>
 <tr>
 <td>11</td>
-<td><strong>Cierre y ejercicios para casa</strong><br><small>Qué conecta los bloques 4, 5 y 6, más cinco ejercicios para casa.</small></td>
+<td><strong>Cierre y ejercicios para casa</strong><br><small>Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio.</small></td>
 <td>cierre</td>
 <td>5</td>
 <td><a href="../slides/en/#sec-11-wrap-up-and-take-homes">EN</a></td>

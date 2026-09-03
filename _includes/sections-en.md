@@ -15,7 +15,7 @@
 </tr>
 <tr>
 <td>01</td>
-<td><strong>What a tensor is</strong><br><small>The vocabulary, shape in NumPy, and the three operations that matter.</small></td>
+<td><strong>What a tensor is</strong><br><small>Learn to read a tensor&#x27;s structure and track what its axes mean as you fix, rearrange, or contract them.</small></td>
 <td>demo</td>
 <td>20</td>
 <td><a href="slides/en/#sec-01-what-a-tensor-is">EN</a></td>
@@ -25,8 +25,8 @@
 </tr>
 <tr>
 <td>02</td>
-<td><strong>Thinking in N dimensions</strong><br><small>Argue about what each axis means, and why a batch axis differs from a time axis.</small></td>
-<td>group</td>
+<td><strong>Thinking in N dimensions</strong><br><small>Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.</small></td>
+<td>demo</td>
 <td>20</td>
 <td><a href="slides/en/#sec-02-thinking-in-n-dimensions">EN</a></td>
 <td><a href="slides/es/#sec-02-thinking-in-n-dimensions">ES</a></td>
@@ -35,7 +35,7 @@
 </tr>
 <tr>
 <td>03</td>
-<td><strong>Indexing and broadcasting real data</strong><br><small>Select the right column of real tumour data, then meet zero-variance pixels.</small></td>
+<td><strong>Indexing and broadcasting real data</strong><br><small>Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely.</small></td>
 <td>exercise</td>
 <td>15</td>
 <td><a href="slides/en/#sec-03-indexing-and-broadcasting">EN</a></td>
@@ -45,7 +45,7 @@
 </tr>
 <tr>
 <td>04</td>
-<td><strong>Reshape and transpose real images</strong><br><small>HWC to CHW, NHWC to NCHW, and why reshape silently destroys an image.</small></td>
+<td><strong>Reshape and transpose real images</strong><br><small>Use real images to move between HWC↔CHW and NHWC↔NCHW, then show why matching shapes do not guarantee matching axis semantics.</small></td>
 <td>exercise</td>
 <td>15</td>
 <td><a href="slides/en/#sec-04-reshape-and-transpose">EN</a></td>
@@ -58,7 +58,7 @@
 </tr>
 <tr>
 <td>05</td>
-<td><strong>Video pipeline design</strong><br><small>Design the tensor shape at every stage of two real video systems.</small></td>
+<td><strong>Video pipeline design</strong><br><small>Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines.</small></td>
 <td>group</td>
 <td>15</td>
 <td><a href="slides/en/#sec-05-video-pipeline-design">EN</a></td>
@@ -68,7 +68,7 @@
 </tr>
 <tr>
 <td>06</td>
-<td><strong>Contraction with einsum</strong><br><small>One notation for the dot product, the matrix product, and a batch of images.</small></td>
+<td><strong>Contraction with einsum</strong><br><small>Use one index rule on real data, then change the inputs interactively to test which index disappears.</small></td>
 <td>exercise</td>
 <td>15</td>
 <td><a href="slides/en/#sec-06-contraction-with-einsum">EN</a></td>
@@ -78,7 +78,7 @@
 </tr>
 <tr>
 <td>07</td>
-<td><strong>Inverses and the pseudoinverse</strong><br><small>Solve a 20,433-equation system that has no exact solution.</small></td>
+<td><strong>Inverses and the pseudoinverse</strong><br><small>Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively.</small></td>
 <td>exercise</td>
 <td>15</td>
 <td><a href="slides/en/#sec-07-inverses-and-pseudoinverse">EN</a></td>
@@ -91,7 +91,7 @@
 </tr>
 <tr>
 <td>08</td>
-<td><strong>Recursion with matrices and vectors</strong><br><small>Apply one matrix again and again: Fibonacci, eigenvectors, and a real forecast.</small></td>
+<td><strong>Recursion with matrices and vectors</strong><br><small>Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data.</small></td>
 <td>demo</td>
 <td>10</td>
 <td><a href="slides/en/#sec-08-recursion-with-matrices">EN</a></td>
@@ -101,7 +101,7 @@
 </tr>
 <tr>
 <td>09</td>
-<td><strong>Convolution and deconvolution</strong><br><small>Convolution is a structured matrix product, and blur can be partly undone.</small></td>
+<td><strong>Convolution and deconvolution</strong><br><small>Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image.</small></td>
 <td>exercise</td>
 <td>15</td>
 <td><a href="slides/en/#sec-09-convolution-and-deconvolution">EN</a></td>
@@ -111,7 +111,7 @@
 </tr>
 <tr>
 <td>10</td>
-<td><strong>Tucker decomposition on real data</strong><br><small>PCA generalized to every axis, on a real tensor of New York taxi trips.</small></td>
+<td><strong>Tucker decomposition on real data</strong><br><small>Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure.</small></td>
 <td>exercise</td>
 <td>15</td>
 <td><a href="slides/en/#sec-10-tucker-decomposition">EN</a></td>
@@ -124,7 +124,7 @@
 </tr>
 <tr>
 <td>11</td>
-<td><strong>Wrap-up and take-homes</strong><br><small>What connects Blocks 4, 5 and 6, plus five take-home exercises.</small></td>
+<td><strong>Wrap-up and take-homes</strong><br><small>Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio.</small></td>
 <td>wrap-up</td>
 <td>5</td>
 <td><a href="slides/en/#sec-11-wrap-up-and-take-homes">EN</a></td>

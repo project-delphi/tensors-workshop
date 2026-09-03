@@ -4,7 +4,7 @@
 |---|---|---|---|
 | 00:00 | 5 | — | Preparación y bienvenida |
 | 00:05 | 20 | I | Qué es un tensor |
-| 00:25 | 20 | II | Pensar en N dimensiones *(grupo)* |
+| 00:25 | 20 | II | Pensar en N dimensiones |
 | 00:45 | 30 | III | Indexación y broadcasting · Reshape y transposición |
 | 01:15 | 10 | 🎯 | **Kahoot 1** + pausa |
 | 01:25 | 15 | III | Diseño de un pipeline de vídeo *(grupo)* |

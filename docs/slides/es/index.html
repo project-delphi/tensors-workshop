@@ -7,7 +7,7 @@
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-97af773cfbe0d0670e77fe96929c7f4c.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-549806ee2085284f45b00abea8c6df48.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.6.40">
 
   <title>Tensors for Machine Learning – Tensores para Aprendizaje Automático</title>
@@ -323,7 +323,7 @@
 <td>00:25</td>
 <td>20</td>
 <td>II</td>
-<td>Pensar en N dimensiones <em>(grupo)</em></td>
+<td>Pensar en N dimensiones</td>
 </tr>
 <tr class="even">
 <td>00:45</td>
@@ -397,7 +397,7 @@
 <section id="dos-ritmos-y-una-advertencia" class="slide level2">
 <h2>Dos ritmos, y una advertencia</h2>
 <p><strong>Bloques de ejercicios</strong> — 10 min programando, 5 de explicación.</p>
-<p><strong>Bloques de grupo</strong> — 10 min de discusión y puesta en común.</p>
+<p><strong>Bloque de grupo</strong> (§05) — 10 min de discusión y puesta en común.</p>
 <div class="fragment">
 <div class="callout callout-warning callout-titled callout-style-default">
 <div class="callout-body">
@@ -694,52 +694,29 @@
 <div class="sec-part">
 <p>II</p>
 </div>
-<p><em>Parte II · discusión en grupo · sin código</em></p>
+<p><em>Parte II · demostración · código</em></p>
 <div class="pace-badge">
 <p><span class="pace-duration"><span class="pace-icon">⏱️</span><strong>20 min</strong> asignados</span></p>
 <p><span class="pace-window">Inicio: +00:25 · Fin: +00:45</span></p>
 </div>
 </section>
-<section id="vuestra-tarea" class="slide level2">
-<h2>Vuestra tarea</h2>
-<blockquote>
-<p>Una imagen en escala de grises es una matriz. Casi nada en aprendizaje automático es una sola imagen en gris. Cada cosa que añades — color, muchos ejemplos, tiempo — añade un eje, y cada eje significa algo distinto.</p>
-</blockquote>
-<p><strong>Discutid qué eje va dónde, y por qué.</strong></p>
-<p>10 minutos en vuestro canal y luego puesta en común.</p>
-</section>
-<section id="las-cinco-preguntas" class="slide level2">
-<h2>Las cinco preguntas</h2>
-<div>
-<ol type="1">
-<li class="fragment"><code>(H, W)</code> → imagen en color → lote → vídeo → lote de vídeos. ¿Qué <em>cuenta</em> cada eje nuevo? <strong>No digáis «añadimos una dimensión».</strong></li>
-<li class="fragment">Un eje de lote y un eje temporal son idénticos en el código. ¿Qué cambia en su <strong>significado</strong>? ¿Qué pasa si barajas cada uno?</li>
-<li class="fragment">Los vídeos reales tienen longitudes distintas. Dos formas de agruparlos en lote: ¿qué <strong>pierde o inventa</strong> cada una?</li>
-<li class="fragment">Células fotografiadas cada 10 min durante 48 h: ¿intervalo entre fotogramas → ? ¿campo de visión → ? ¿número de placas → ?</li>
-<li class="fragment">¿Hay un límite al número de ejes de un tensor?</li>
-</ol>
-</div>
-</section>
-<section id="puesta-en-común" class="slide level2">
-<h2>Puesta en común</h2>
-<div id="code-02-thinking-in-n-dimensions-1" class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>gray_image      <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>))            <span class="co"># (H, W)</span></span>
-<span id="cb7-2"><a></a>color_image     <span class="op">=</span> np.zeros((<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))         <span class="co"># (H, W, C)      + color</span></span>
-<span id="cb7-3"><a></a>batch_of_images <span class="op">=</span> np.zeros((<span class="dv">32</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))     <span class="co"># (N, H, W, C)   + muchos ejemplos</span></span>
-<span id="cb7-4"><a></a>video           <span class="op">=</span> np.zeros((<span class="dv">16</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))     <span class="co"># (T, H, W, C)   + tiempo ordenado</span></span>
-<span id="cb7-5"><a></a>batch_of_videos <span class="op">=</span> np.zeros((<span class="dv">8</span>, <span class="dv">16</span>, <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">3</span>))  <span class="co"># (N, T, H, W, C)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
+<section id="la-misma-forma-ejes-distintos" class="slide level2">
+<h2>La misma forma, ejes distintos</h2>
+<p><code>digits.images</code> es <code>(1797, 8, 8)</code> y una foto es <code>(512, 512, 3)</code> — ambas de orden 3, pero el eje 0 cuenta <strong>imágenes</strong> en una y <strong>filas de píxeles</strong> en la otra. En el cuaderno, <code>digit_batch</code> y <code>video_patch</code> son <em>ambos</em> <code>(8, 8, 8)</code>: uno apila ejemplos independientes, el otro apila instantes ordenados.</p>
 <div class="fragment">
-<p><strong>La pregunta 2 es la clave.</strong> Barajar el eje 0 es inofensivo en un lote y <strong>destruye</strong> un vídeo.</p>
-<p>La notación del capítulo 2 no tiene ningún concepto de «el orden entre elementos importa». Eso sí es nuevo hoy.</p>
+<p><strong>Barajar el eje 0</strong> es inofensivo en un lote — los ejemplos son independientes — y <strong>destruye</strong> un vídeo, donde el orden <em>es</em> la información. La misma operación, un significado completamente distinto. La notación del capítulo 2 no tiene ningún concepto de «el orden entre elementos importa»; eso sí es nuevo hoy.</p>
 </div>
+</section>
+<section id="los-clips-de-distinta-duración-necesitan-una-máscara" class="slide level2">
+<h2>Los clips de distinta duración necesitan una máscara</h2>
+<p>Los vídeos reales tienen longitudes distintas, pero un tensor de lote es rectangular. El cuaderno toma tres clips reales de longitud 4, 7 y 5, los rellena en un lote de orden 5 <code>(3, 7, 135, 240, 3)</code> y lleva una <strong>máscara de validez</strong> booleana <code>(3, 7)</code> — así <code>valid.sum() == 16</code> y el relleno queda visible en vez de promediarse en los datos.</p>
 </section>
 <section id="al-cuaderno-2" class="slide level2">
 <h2>Al cuaderno</h2>
 <p><strong>02 · Pensar en N dimensiones</strong></p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb">Abrir en Colab</a></p>
 <aside class="notes">
-<p>Los bloques de grupo necesitan más mano firme que los de ejercicios. Si un grupo sigue en la pregunta 1 a falta de 5 minutos, entra en su canal y diles que dibujen cualquier cosa, aunque la forma esté mal. La puesta en común importa más que un dibujo correcto. Asigna los grupos antes de la sesión.</p>
+<p>Esto es una demostración de código en vivo, no un bloque de discusión. Abre el cuaderno y ejecuta primero la celda de preparación; descarga y verifica por checksum el vídeo real que usan los ejercicios. Recalca el contraste entre barajar un lote y barajar el tiempo, y luego el lote rellenado con su máscara de validez.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -786,19 +763,19 @@
 <section id="el-ejercicio" class="slide level2">
 <h2>El ejercicio</h2>
 <div id="code-03-indexing-and-broadcasting-1" class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Extrae "mean radius" con names.index(...). No escribas un número fijo.</span></span>
-<span id="cb8-2"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Los 5 pacientes con mayor "mean radius", perfil completo, UNA operación.</span></span>
-<span id="cb8-3"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Indexación booleana — maligno (y == 0) frente a benigno (y == 1).</span></span>
-<span id="cb8-4"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Estandariza con broadcasting: (D - mean) / std. MIRA EL RESULTADO.</span></span>
-<span id="cb8-5"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 7: Aparecerán NaN. ¿Cuántos píxeles tienen std == 0, y por qué?</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Extrae "mean radius" con names.index(...). No escribas un número fijo.</span></span>
+<span id="cb7-2"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Los 5 pacientes con mayor "mean radius", perfil completo, UNA operación.</span></span>
+<span id="cb7-3"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Indexación booleana — maligno (y == 0) frente a benigno (y == 1).</span></span>
+<span id="cb7-4"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 6: Estandariza con broadcasting: (D - mean) / std. MIRA EL RESULTADO.</span></span>
+<span id="cb7-5"><a></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 7: Aparecerán NaN. ¿Cuántos píxeles tienen std == 0, y por qué?</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="dos-resultados-reales" class="slide level2">
 <h2>Dos resultados reales</h2>
 <div id="code-03-indexing-and-broadcasting-2" class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a><span class="bu">print</span>(radius[y <span class="op">==</span> <span class="dv">0</span>].mean(), radius[y <span class="op">==</span> <span class="dv">1</span>].mean())   <span class="co"># 17.5 frente a 12.1</span></span>
-<span id="cb9-2"><a></a><span class="bu">print</span>((std <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())                               <span class="co"># 3</span></span>
-<span id="cb9-3"><a></a>Z <span class="op">=</span> (D <span class="op">-</span> mean) <span class="op">/</span> np.where(std <span class="op">==</span> <span class="dv">0</span>, <span class="fl">1.0</span>, std)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a></a><span class="bu">print</span>(radius[y <span class="op">==</span> <span class="dv">0</span>].mean(), radius[y <span class="op">==</span> <span class="dv">1</span>].mean())   <span class="co"># 17.5 frente a 12.1</span></span>
+<span id="cb8-2"><a></a><span class="bu">print</span>((std <span class="op">==</span> <span class="dv">0</span>).<span class="bu">sum</span>())                               <span class="co"># 3</span></span>
+<span id="cb8-3"><a></a>Z <span class="op">=</span> (D <span class="op">-</span> mean) <span class="op">/</span> np.where(std <span class="op">==</span> <span class="dv">0</span>, <span class="fl">1.0</span>, std)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><strong>Los tumores malignos sí tienen un radio medio mayor</strong>: 17,5 frente a 12,1.</p>
@@ -842,10 +819,10 @@
 <section id="la-misma-forma-datos-distintos" class="slide level2">
 <h2>La misma forma, datos distintos</h2>
 <div id="code-04-reshape-and-transpose-1" class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>chw   <span class="op">=</span> np.transpose(photo, (<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))      <span class="co"># (3, 512, 512) — correcto</span></span>
-<span id="cb10-2"><a></a>wrong <span class="op">=</span> photo.reshape(<span class="dv">3</span>, <span class="dv">512</span>, <span class="dv">512</span>)          <span class="co"># (3, 512, 512) — se ejecuta, pero revuelve</span></span>
-<span id="cb10-3"><a></a></span>
-<span id="cb10-4"><a></a>np.array_equal(chw, wrong)                  <span class="co"># False</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a></a>chw   <span class="op">=</span> np.transpose(photo, (<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>))      <span class="co"># (3, 512, 512) — correcto</span></span>
+<span id="cb9-2"><a></a>wrong <span class="op">=</span> photo.reshape(<span class="dv">3</span>, <span class="dv">512</span>, <span class="dv">512</span>)          <span class="co"># (3, 512, 512) — se ejecuta, pero revuelve</span></span>
+<span id="cb9-3"><a></a></span>
+<span id="cb9-4"><a></a>np.array_equal(chw, wrong)                  <span class="co"># False</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><strong><code>reshape</code> solo reinterpreta los números en el orden en que están en memoria.</strong> <strong><code>transpose</code> los mueve según el significado de cada eje.</strong></p>
@@ -854,8 +831,8 @@
 <section id="cuando-dos-ejes-tienen-el-mismo-tamaño" class="slide level2">
 <h2>Cuando dos ejes tienen el mismo tamaño</h2>
 <div id="code-04-reshape-and-transpose-2" class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a>batch <span class="op">=</span> np.stack([photo, photo, photo])      <span class="co"># (3, 512, 512, 3)</span></span>
-<span id="cb11-2"><a></a>nchw  <span class="op">=</span> np.transpose(batch, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>))    <span class="co"># (3, 3, 512, 512)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a></a>batch <span class="op">=</span> np.stack([photo, photo, photo])      <span class="co"># (3, 512, 512, 3)</span></span>
+<span id="cb10-2"><a></a>nchw  <span class="op">=</span> np.transpose(batch, (<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>))    <span class="co"># (3, 3, 512, 512)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p>Ahora dos ejes miden 3. <strong>¿Cómo sabes cuál es cuál?</strong></p>
@@ -920,7 +897,7 @@
 <p><strong>No hay una única respuesta correcta.</strong></p>
 </div>
 </section>
-<section id="las-cinco-preguntas-1" class="slide level2">
+<section id="las-cinco-preguntas" class="slide level2">
 <h2>Las cinco preguntas</h2>
 <div>
 <ol type="1">
@@ -935,11 +912,11 @@
 <section id="dónde-divergen" class="slide level2">
 <h2>Dónde divergen</h2>
 <div id="code-05-video-pipeline-design-1" class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a><span class="co"># Tecnología: el tiempo SE DESTRUYE a propósito</span></span>
-<span id="cb12-2"><a></a><span class="co"># preprocesado (32, 8, 224, 224, 3)  -&gt;  salida (32, 512)      N, embedding</span></span>
-<span id="cb12-3"><a></a></span>
-<span id="cb12-4"><a></a><span class="co"># Biotecnología: el tiempo SOBREVIVE, una etiqueta por instante</span></span>
-<span id="cb12-5"><a></a><span class="co"># preprocesado (4, 64, 224, 224, 3)  -&gt;  salida (4, 64, 12)    N, T, clases</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a></a><span class="co"># Tecnología: el tiempo SE DESTRUYE a propósito</span></span>
+<span id="cb11-2"><a></a><span class="co"># preprocesado (32, 8, 224, 224, 3)  -&gt;  salida (32, 512)      N, embedding</span></span>
+<span id="cb11-3"><a></a></span>
+<span id="cb11-4"><a></a><span class="co"># Biotecnología: el tiempo SOBREVIVE, una etiqueta por instante</span></span>
+<span id="cb11-5"><a></a><span class="co"># preprocesado (4, 64, 224, 224, 3)  -&gt;  salida (4, 64, 12)    N, T, clases</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><strong>La respuesta a la pregunta 5 es la atención</strong> — la §11 la construye con dos llamadas a <code>einsum</code>, y la máscara de relleno de la pregunta 2 resulta ser la misma máscara que necesita la atención.</p>
@@ -971,8 +948,8 @@
 <section id="una-letra-para-todo-un-lote" class="slide level2">
 <h2>Una letra para todo un lote</h2>
 <div id="code-06-contraction-with-einsum-1" class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a>gray       <span class="op">=</span> np.einsum(<span class="st">'hwc,c-&gt;hw'</span>,   photo, w)      <span class="co"># (512, 512)</span></span>
-<span id="cb13-2"><a></a>gray_batch <span class="op">=</span> np.einsum(<span class="st">'nhwc,c-&gt;nhw'</span>, batch, w)      <span class="co"># (2, 512, 512)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a></a>gray       <span class="op">=</span> np.einsum(<span class="st">'hwc,c-&gt;hw'</span>,   photo, w)      <span class="co"># (512, 512)</span></span>
+<span id="cb12-2"><a></a>gray_batch <span class="op">=</span> np.einsum(<span class="st">'nhwc,c-&gt;nhw'</span>, batch, w)      <span class="co"># (2, 512, 512)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><code>c</code> está en las entradas pero no tras la flecha → <strong>se suma</strong>. <code>n</code>, <code>h</code>, <code>w</code> están tras la flecha → <strong>se conservan</strong>.</p>
@@ -984,9 +961,9 @@
 <section id="el-capítulo-2-reescrito" class="slide level2">
 <h2>El capítulo 2, reescrito</h2>
 <div id="code-06-contraction-with-einsum-2" class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a>np.einsum(<span class="st">'ii-&gt;'</span>, A)           <span class="co"># traza              == np.trace(A)   (ec. 2.48)</span></span>
-<span id="cb14-2"><a></a>np.einsum(<span class="st">'ij-&gt;ji'</span>, A)         <span class="co"># transpuesta        == A.T           (ec. 2.3)</span></span>
-<span id="cb14-3"><a></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)   <span class="co"># producto matricial == A @ B         (ec. 2.5)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a></a>np.einsum(<span class="st">'ii-&gt;'</span>, A)           <span class="co"># traza              == np.trace(A)   (ec. 2.48)</span></span>
+<span id="cb13-2"><a></a>np.einsum(<span class="st">'ij-&gt;ji'</span>, A)         <span class="co"># transpuesta        == A.T           (ec. 2.3)</span></span>
+<span id="cb13-3"><a></a>np.einsum(<span class="st">'ik,kj-&gt;ij'</span>, A, B)   <span class="co"># producto matricial == A @ B         (ec. 2.5)</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p>La misma expresión sirve para una imagen o para un millón, y <strong>se lee como las matemáticas del capítulo 2.</strong></p>
@@ -995,8 +972,8 @@
 <section id="todos-los-pares-de-1797-imágenes" class="slide level2">
 <h2>Todos los pares de 1797 imágenes</h2>
 <div id="code-06-contraction-with-einsum-3" class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a>D <span class="op">=</span> load_digits().images.reshape(<span class="dv">1797</span>, <span class="op">-</span><span class="dv">1</span>)     <span class="co"># (1797, 64)</span></span>
-<span id="cb15-2"><a></a>S <span class="op">=</span> np.einsum(<span class="st">'id,jd-&gt;ij'</span>, D, D)               <span class="co"># (1797, 1797) — 3,2 M de puntuaciones</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a></a>D <span class="op">=</span> load_digits().images.reshape(<span class="dv">1797</span>, <span class="op">-</span><span class="dv">1</span>)     <span class="co"># (1797, 64)</span></span>
+<span id="cb14-2"><a></a>S <span class="op">=</span> np.einsum(<span class="st">'id,jd-&gt;ij'</span>, D, D)               <span class="co"># (1797, 1797) — 3,2 M de puntuaciones</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p>Normaliza antes las filas y la misma contracción se convierte en la <strong>similitud del coseno</strong>.</p>
@@ -1038,8 +1015,8 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="paso-1-matrices-cuadradas" class="slide level2">
 <h2>Paso 1 — matrices cuadradas</h2>
 <div id="code-07-inverses-and-pseudoinverse-1" class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a>Singular <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">4.</span>]])   <span class="co"># columna 2 = 2 x columna 1</span></span>
-<span id="cb16-2"><a></a>np.linalg.inv(Singular)                      <span class="co"># LinAlgError</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a></a>Singular <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">4.</span>]])   <span class="co"># columna 2 = 2 x columna 1</span></span>
+<span id="cb15-2"><a></a>np.linalg.inv(Singular)                      <span class="co"># LinAlgError</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><span class="math inline">\(A^{-1}\)</span> existe <strong>solo</strong> si las columnas son linealmente independientes.</p>
@@ -1052,9 +1029,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <p>La <strong>pseudoinversa de Moore-Penrose</strong> está definida para <em>cualquier</em> matriz:</p>
 <p><span class="math display">\[A^{+} = V D^{+} U^{\top}\]</span></p>
 <div id="code-07-inverses-and-pseudoinverse-2" class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a>A_plus <span class="op">=</span> np.linalg.pinv(A)</span>
-<span id="cb17-2"><a></a>U, S_, Vt <span class="op">=</span> np.linalg.svd(A, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb17-3"><a></a>np.allclose(A_plus, Vt.T <span class="op">@</span> np.diag(<span class="dv">1</span> <span class="op">/</span> S_) <span class="op">@</span> U.T)     <span class="co"># True — ec. 2.47</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a></a>A_plus <span class="op">=</span> np.linalg.pinv(A)</span>
+<span id="cb16-2"><a></a>U, S_, Vt <span class="op">=</span> np.linalg.svd(A, full_matrices<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-3"><a></a>np.allclose(A_plus, Vt.T <span class="op">@</span> np.diag(<span class="dv">1</span> <span class="op">/</span> S_) <span class="op">@</span> U.T)     <span class="co"># True — ec. 2.47</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </section>
@@ -1073,14 +1050,14 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="ecuaciones-ninguna-solución" class="slide level2">
 <h2>20.433 ecuaciones, ninguna solución</h2>
 <div id="code-07-inverses-and-pseudoinverse-3" class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a>d <span class="op">=</span> housing.dropna()                                <span class="co"># 20433 filas; 207 tenían NaN</span></span>
-<span id="cb18-2"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(d)), d[feats].to_numpy(<span class="bu">float</span>)])   <span class="co"># (20433, 7)</span></span>
-<span id="cb18-3"><a></a></span>
-<span id="cb18-4"><a></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y</span>
-<span id="cb18-5"><a></a>w_lstsq, <span class="op">*</span>_ <span class="op">=</span> np.linalg.lstsq(X, y, rcond<span class="op">=</span><span class="va">None</span>)</span>
-<span id="cb18-6"><a></a>np.allclose(w, w_lstsq)                             <span class="co"># True</span></span>
-<span id="cb18-7"><a></a></span>
-<span id="cb18-8"><a></a>rmse <span class="op">=</span> np.sqrt(((X <span class="op">@</span> w <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>).mean())           <span class="co"># ~75.980</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a></a>d <span class="op">=</span> housing.dropna()                                <span class="co"># 20433 filas; 207 tenían NaN</span></span>
+<span id="cb17-2"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(d)), d[feats].to_numpy(<span class="bu">float</span>)])   <span class="co"># (20433, 7)</span></span>
+<span id="cb17-3"><a></a></span>
+<span id="cb17-4"><a></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y</span>
+<span id="cb17-5"><a></a>w_lstsq, <span class="op">*</span>_ <span class="op">=</span> np.linalg.lstsq(X, y, rcond<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb17-6"><a></a>np.allclose(w, w_lstsq)                             <span class="co"># True</span></span>
+<span id="cb17-7"><a></a></span>
+<span id="cb17-8"><a></a>rmse <span class="op">=</span> np.sqrt(((X <span class="op">@</span> w <span class="op">-</span> y) <span class="op">**</span> <span class="dv">2</span>).mean())           <span class="co"># ~75.980</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><img data-src="../../images/california-housing.png" alt="Mapa de dispersión de distritos de vivienda de California según longitud y latitud, coloreado por el valor medio de la vivienda, que muestra la concentración de viviendas caras en la costa dentro del mismo conjunto de datos usado en el ajuste por mínimos cuadrados." width="300"></p>
@@ -1150,24 +1127,24 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="aplicar-la-misma-matriz-una-y-otra-vez" class="slide level2">
 <h2>Aplicar la misma matriz una y otra vez</h2>
 <div id="code-08-recursion-with-matrices-1" class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a>F <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">0</span>]])              <span class="co"># f(n) = f(n-1) + f(n-2)</span></span>
-<span id="cb19-2"><a></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>])</span>
-<span id="cb19-3"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb19-4"><a></a>    v <span class="op">=</span> F <span class="op">@</span> v</span>
-<span id="cb19-5"><a></a>v[<span class="dv">1</span>]                                         <span class="co"># 55</span></span>
-<span id="cb19-6"><a></a>np.linalg.matrix_power(F, <span class="dv">10</span>)[<span class="dv">0</span>, <span class="dv">1</span>]          <span class="co"># 55 — misma respuesta, en un paso</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a></a>F <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">0</span>]])              <span class="co"># f(n) = f(n-1) + f(n-2)</span></span>
+<span id="cb18-2"><a></a>v <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">0</span>])</span>
+<span id="cb18-3"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb18-4"><a></a>    v <span class="op">=</span> F <span class="op">@</span> v</span>
+<span id="cb18-5"><a></a>v[<span class="dv">1</span>]                                         <span class="co"># 55</span></span>
+<span id="cb18-6"><a></a>np.linalg.matrix_power(F, <span class="dv">10</span>)[<span class="dv">0</span>, <span class="dv">1</span>]          <span class="co"># 55 — misma respuesta, en un paso</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="la-iteración-de-potencias-halla-un-autovector" class="slide level2">
 <h2>La iteración de potencias halla un autovector</h2>
 <div id="code-08-recursion-with-matrices-2" class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a>x <span class="op">=</span> rng.standard_normal(<span class="dv">2</span>)<span class="op">;</span> x <span class="op">/=</span> np.linalg.norm(x)</span>
-<span id="cb20-2"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
-<span id="cb20-3"><a></a>    x <span class="op">=</span> A <span class="op">@</span> x</span>
-<span id="cb20-4"><a></a>    x <span class="op">/=</span> np.linalg.norm(x)</span>
-<span id="cb20-5"><a></a></span>
-<span id="cb20-6"><a></a>x <span class="op">@</span> A <span class="op">@</span> x                       <span class="co"># 5.000000</span></span>
-<span id="cb20-7"><a></a>np.linalg.eig(A)[<span class="dv">0</span>].<span class="bu">max</span>()       <span class="co"># 5.000000 — idéntico</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a></a>x <span class="op">=</span> rng.standard_normal(<span class="dv">2</span>)<span class="op">;</span> x <span class="op">/=</span> np.linalg.norm(x)</span>
+<span id="cb19-2"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">50</span>):</span>
+<span id="cb19-3"><a></a>    x <span class="op">=</span> A <span class="op">@</span> x</span>
+<span id="cb19-4"><a></a>    x <span class="op">/=</span> np.linalg.norm(x)</span>
+<span id="cb19-5"><a></a></span>
+<span id="cb19-6"><a></a>x <span class="op">@</span> A <span class="op">@</span> x                       <span class="co"># 5.000000</span></span>
+<span id="cb19-7"><a></a>np.linalg.eig(A)[<span class="dv">0</span>].<span class="bu">max</span>()       <span class="co"># 5.000000 — idéntico</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><strong>Aplicar una matriz repetidamente converge a su autovector dominante.</strong> Así ordena PageRank las páginas web.</p>
@@ -1176,14 +1153,14 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="pronosticar-tráfico-aéreo-real" class="slide level2">
 <h2>Pronosticar tráfico aéreo real</h2>
 <div id="code-08-recursion-with-matrices-3" class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>y <span class="op">=</span> flights[<span class="st">'passengers'</span>].to_numpy(<span class="bu">float</span>)     <span class="co"># 144 meses reales, 1949–1960</span></span>
-<span id="cb21-2"><a></a>rows <span class="op">=</span> np.array([y[i:i<span class="op">+</span><span class="dv">12</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(y) <span class="op">-</span> <span class="dv">12</span>)])</span>
-<span id="cb21-3"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(rows)), rows])</span>
-<span id="cb21-4"><a></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y[<span class="dv">12</span>:]                <span class="co"># mínimos cuadrados, igual que en §07</span></span>
-<span id="cb21-5"><a></a></span>
-<span id="cb21-6"><a></a>history <span class="op">=</span> <span class="bu">list</span>(y[<span class="op">-</span><span class="dv">12</span>:])</span>
-<span id="cb21-7"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):                           <span class="co"># realimenta sus propias predicciones</span></span>
-<span id="cb21-8"><a></a>    history.append(w[<span class="dv">0</span>] <span class="op">+</span> np.dot(w[<span class="dv">1</span>:], history[<span class="op">-</span><span class="dv">12</span>:]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a></a>y <span class="op">=</span> flights[<span class="st">'passengers'</span>].to_numpy(<span class="bu">float</span>)     <span class="co"># 144 meses reales, 1949–1960</span></span>
+<span id="cb20-2"><a></a>rows <span class="op">=</span> np.array([y[i:i<span class="op">+</span><span class="dv">12</span>] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(y) <span class="op">-</span> <span class="dv">12</span>)])</span>
+<span id="cb20-3"><a></a>X <span class="op">=</span> np.column_stack([np.ones(<span class="bu">len</span>(rows)), rows])</span>
+<span id="cb20-4"><a></a>w <span class="op">=</span> np.linalg.pinv(X) <span class="op">@</span> y[<span class="dv">12</span>:]                <span class="co"># mínimos cuadrados, igual que en §07</span></span>
+<span id="cb20-5"><a></a></span>
+<span id="cb20-6"><a></a>history <span class="op">=</span> <span class="bu">list</span>(y[<span class="op">-</span><span class="dv">12</span>:])</span>
+<span id="cb20-7"><a></a><span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">12</span>):                           <span class="co"># realimenta sus propias predicciones</span></span>
+<span id="cb20-8"><a></a>    history.append(w[<span class="dv">0</span>] <span class="op">+</span> np.dot(w[<span class="dv">1</span>:], history[<span class="op">-</span><span class="dv">12</span>:]))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><img data-src="../../images/airline-passengers.png" alt="Gráfico de líneas del número mensual de pasajeros de aerolínea entre 1949 y 1960, la serie de 144 meses usada en el pronóstico, con una tendencia creciente y un pico veraniego que se repite cada año." width="300"></p>
@@ -1196,9 +1173,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="eso-es-una-red-neuronal-recurrente" class="slide level2">
 <h2>Eso es una red neuronal recurrente</h2>
 <div id="code-08-recursion-with-matrices-4" class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a>h <span class="op">=</span> np.zeros(<span class="dv">4</span>)</span>
-<span id="cb22-2"><a></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">6</span>):</span>
-<span id="cb22-3"><a></a>    h <span class="op">=</span> np.tanh(W <span class="op">@</span> h <span class="op">+</span> U <span class="op">@</span> xs[t])    <span class="co"># las mismas W y U en cada paso — la recursión</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a></a>h <span class="op">=</span> np.zeros(<span class="dv">4</span>)</span>
+<span id="cb21-2"><a></a><span class="cf">for</span> t <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">6</span>):</span>
+<span id="cb21-3"><a></a>    h <span class="op">=</span> np.tanh(W <span class="op">@</span> h <span class="op">+</span> U <span class="op">@</span> xs[t])    <span class="co"># las mismas W y U en cada paso — la recursión</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Un estado oculto, actualizado por los mismos pesos en cada paso.</strong></p>
 <aside class="notes">
@@ -1235,9 +1212,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="tres-modos-tres-tamaños-de-salida" class="slide level2">
 <h2>Tres modos, tres tamaños de salida</h2>
 <div id="code-09-convolution-and-deconvolution-1" class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a>np.convolve(x, k, <span class="st">'full'</span>)    <span class="co"># longitud 5+3-1 = 7</span></span>
-<span id="cb23-2"><a></a>np.convolve(x, k, <span class="st">'valid'</span>)   <span class="co"># longitud 5-3+1 = 3</span></span>
-<span id="cb23-3"><a></a>np.convolve(x, k, <span class="st">'same'</span>)    <span class="co"># longitud 5</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a></a>np.convolve(x, k, <span class="st">'full'</span>)    <span class="co"># longitud 5+3-1 = 7</span></span>
+<span id="cb22-2"><a></a>np.convolve(x, k, <span class="st">'valid'</span>)   <span class="co"># longitud 5-3+1 = 3</span></span>
+<span id="cb22-3"><a></a>np.convolve(x, k, <span class="st">'same'</span>)    <span class="co"># longitud 5</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><code>valid</code> usa solo las posiciones donde el núcleo cabe entero: por eso la convolución <strong>encoge</strong> una imagen en <code>kernel_size - 1</code>.</p>
@@ -1259,8 +1236,8 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 </div>
 </div>
 <div id="code-09-convolution-and-deconvolution-2" class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a>np.correlate(x, k, <span class="st">'valid'</span>)          <span class="co"># [-2. -2. -2.]</span></span>
-<span id="cb24-2"><a></a>np.convolve(x, k[::<span class="op">-</span><span class="dv">1</span>], <span class="st">'valid'</span>)     <span class="co"># [-2. -2. -2.] — igual, con k invertido</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a></a>np.correlate(x, k, <span class="st">'valid'</span>)          <span class="co"># [-2. -2. -2.]</span></span>
+<span id="cb23-2"><a></a>np.convolve(x, k[::<span class="op">-</span><span class="dv">1</span>], <span class="st">'valid'</span>)     <span class="co"># [-2. -2. -2.] — igual, con k invertido</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p>En la práctica da lo mismo — la red <em>aprende</em> el núcleo —, pero los nombres son incoherentes y conviene saberlo.</p>
@@ -1269,8 +1246,8 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="la-convolución-es-un-producto-matricial" class="slide level2">
 <h2>La convolución es un producto matricial</h2>
 <div id="code-09-convolution-and-deconvolution-3" class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a>C <span class="op">=</span> toeplitz(col, row)                          <span class="co"># (7, 5)</span></span>
-<span id="cb25-2"><a></a>np.allclose(C <span class="op">@</span> x, np.convolve(x, k, <span class="st">'full'</span>))   <span class="co"># True</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a></a>C <span class="op">=</span> toeplitz(col, row)                          <span class="co"># (7, 5)</span></span>
+<span id="cb24-2"><a></a>np.allclose(C <span class="op">@</span> x, np.convolve(x, k, <span class="st">'full'</span>))   <span class="co"># True</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p>Una matriz de <strong>Toeplitz</strong>: los mismos pocos números reutilizados por toda la matriz.</p>
@@ -1289,11 +1266,11 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="deconvolucionar-una-fotografía-real" class="slide level2">
 <h2>Deconvolucionar una fotografía real</h2>
 <div id="code-09-convolution-and-deconvolution-4" class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a>recovered <span class="op">=</span> richardson_lucy(np.clip(noisy, <span class="dv">0</span>, <span class="dv">1</span>), psf, num_iter<span class="op">=</span><span class="dv">50</span>)</span>
-<span id="cb26-2"><a></a></span>
-<span id="cb26-3"><a></a>c <span class="op">=</span> <span class="dv">25</span>   <span class="co"># IGNORA EL BORDE — la deconvolución siempre crea artefactos en los bordes</span></span>
-<span id="cb26-4"><a></a>err <span class="op">=</span> <span class="kw">lambda</span> a: np.linalg.norm((a<span class="op">-</span>img)[c:<span class="op">-</span>c,c:<span class="op">-</span>c]) <span class="op">/</span> np.linalg.norm(img[c:<span class="op">-</span>c,c:<span class="op">-</span>c])</span>
-<span id="cb26-5"><a></a><span class="bu">print</span>(err(noisy), err(recovered))     <span class="co"># 0.1157 -&gt; 0.0815</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a></a>recovered <span class="op">=</span> richardson_lucy(np.clip(noisy, <span class="dv">0</span>, <span class="dv">1</span>), psf, num_iter<span class="op">=</span><span class="dv">50</span>)</span>
+<span id="cb25-2"><a></a></span>
+<span id="cb25-3"><a></a>c <span class="op">=</span> <span class="dv">25</span>   <span class="co"># IGNORA EL BORDE — la deconvolución siempre crea artefactos en los bordes</span></span>
+<span id="cb25-4"><a></a>err <span class="op">=</span> <span class="kw">lambda</span> a: np.linalg.norm((a<span class="op">-</span>img)[c:<span class="op">-</span>c,c:<span class="op">-</span>c]) <span class="op">/</span> np.linalg.norm(img[c:<span class="op">-</span>c,c:<span class="op">-</span>c])</span>
+<span id="cb25-5"><a></a><span class="bu">print</span>(err(noisy), err(recovered))     <span class="co"># 0.1157 -&gt; 0.0815</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><strong>El error se reduce alrededor de un 30 %.</strong></p>
@@ -1328,9 +1305,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="por-qué-no-invertir-el-desenfoque-sin-más" class="slide level2">
 <h2>¿Por qué no invertir el desenfoque sin más?</h2>
 <div id="code-09-convolution-and-deconvolution-5" class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>K <span class="op">=</span> np.fft.fft2(psf, s<span class="op">=</span>img.shape)</span>
-<span id="cb27-2"><a></a>naive <span class="op">=</span> np.real(np.fft.ifft2(np.fft.fft2(noisy) <span class="op">/</span> np.where(<span class="bu">abs</span>(K) <span class="op">&lt;</span> <span class="fl">1e-3</span>, <span class="fl">1e-3</span>, K)))</span>
-<span id="cb27-3"><a></a>err(naive)     <span class="co"># ~2.49 — unas veinte veces PEOR que el desenfoque de partida</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a></a>K <span class="op">=</span> np.fft.fft2(psf, s<span class="op">=</span>img.shape)</span>
+<span id="cb26-2"><a></a>naive <span class="op">=</span> np.real(np.fft.ifft2(np.fft.fft2(noisy) <span class="op">/</span> np.where(<span class="bu">abs</span>(K) <span class="op">&lt;</span> <span class="fl">1e-3</span>, <span class="fl">1e-3</span>, K)))</span>
+<span id="cb26-3"><a></a>err(naive)     <span class="co"># ~2.49 — unas veinte veces PEOR que el desenfoque de partida</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p>El desenfoque destruye el detalle de alta frecuencia, así que invertirlo divide por números casi nulos y <strong>amplifica el ruido enormemente</strong>.</p>
@@ -1444,9 +1421,9 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <h2>Un tensor real de orden 3</h2>
 <p><strong>barrio de origen × barrio de destino × hora del día</strong>, a partir de 6.433 viajes reales en taxi de Nueva York.</p>
 <div id="code-10-tucker-decomposition-1" class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
-<span id="cb28-2"><a></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
-<span id="cb28-3"><a></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a></a>T <span class="op">=</span> np.zeros((<span class="bu">len</span>(pb), <span class="bu">len</span>(db), <span class="dv">24</span>))</span>
+<span id="cb27-2"><a></a><span class="cf">for</span> (p, d, h), v <span class="kw">in</span> sub.groupby([<span class="st">'pickup_borough'</span>,<span class="st">'dropoff_borough'</span>,<span class="st">'hour'</span>]).size().items():</span>
+<span id="cb27-3"><a></a>    T[pb.index(p), db.index(d), h] <span class="op">=</span> v</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><img data-src="../../images/nyc-taxi-pickups-by-hour.png" alt="Gráfico de barras de las recogidas de taxi por hora del día del mismo conjunto de 6.433 viajes, que sube a lo largo del día hasta un pico alrededor de la hora 18, la hora punta que la descomposición de Tucker vuelve a descubrir por sí sola." width="300"></p>
@@ -1458,14 +1435,14 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <section id="tres-ejes-un-solo-einsum" class="slide level2">
 <h2>Tres ejes, un solo einsum</h2>
 <div id="code-10-tucker-decomposition-2" class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>Us <span class="op">=</span> [np.linalg.svd(unfold(T, ax), full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>] <span class="cf">for</span> ax <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
-<span id="cb29-2"><a></a>Us <span class="op">=</span> [Us[i][:, :r[i]] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]                     <span class="co"># r = (2, 2, 3)</span></span>
-<span id="cb29-3"><a></a></span>
-<span id="cb29-4"><a></a>core  <span class="op">=</span> np.einsum(<span class="st">'ijk,ia,jb,kc-&gt;abc'</span>, T, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])   <span class="co"># (2, 2, 3)</span></span>
-<span id="cb29-5"><a></a>recon <span class="op">=</span> np.einsum(<span class="st">'abc,ia,jb,kc-&gt;ijk'</span>, core, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])</span>
-<span id="cb29-6"><a></a></span>
-<span id="cb29-7"><a></a>error <span class="op">=</span> np.linalg.norm(T <span class="op">-</span> recon) <span class="op">/</span> np.linalg.norm(T)            <span class="co"># 0.067</span></span>
-<span id="cb29-8"><a></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))           <span class="co"># 4.71</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a></a>Us <span class="op">=</span> [np.linalg.svd(unfold(T, ax), full_matrices<span class="op">=</span><span class="va">False</span>)[<span class="dv">0</span>] <span class="cf">for</span> ax <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]</span>
+<span id="cb28-2"><a></a>Us <span class="op">=</span> [Us[i][:, :r[i]] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>)]                     <span class="co"># r = (2, 2, 3)</span></span>
+<span id="cb28-3"><a></a></span>
+<span id="cb28-4"><a></a>core  <span class="op">=</span> np.einsum(<span class="st">'ijk,ia,jb,kc-&gt;abc'</span>, T, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])   <span class="co"># (2, 2, 3)</span></span>
+<span id="cb28-5"><a></a>recon <span class="op">=</span> np.einsum(<span class="st">'abc,ia,jb,kc-&gt;ijk'</span>, core, Us[<span class="dv">0</span>], Us[<span class="dv">1</span>], Us[<span class="dv">2</span>])</span>
+<span id="cb28-6"><a></a></span>
+<span id="cb28-7"><a></a>error <span class="op">=</span> np.linalg.norm(T <span class="op">-</span> recon) <span class="op">/</span> np.linalg.norm(T)            <span class="co"># 0.067</span></span>
+<span id="cb28-8"><a></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))           <span class="co"># 4.71</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="fragment">
 <p><code>'ijk,ia,jb,kc-&gt;abc'</code> contrae <strong>tres ejes en una sola expresión.</strong> <strong>Por eso einsum vino primero.</strong></p>
@@ -1476,8 +1453,8 @@ d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}\]</span></p>
 <p><strong>4,7× menos números, 6,7 % de error.</strong> Pero eso no es lo importante.</p>
 <div class="fragment">
 <div id="code-10-tucker-decomposition-3" class="cell">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a></a>np.<span class="bu">abs</span>(Us[<span class="dv">2</span>][:, <span class="dv">0</span>]).argmax()      <span class="co"># 18</span></span>
-<span id="cb30-2"><a></a>T.<span class="bu">sum</span>(axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>)).argmax()       <span class="co"># 18 — la misma hora, desde los datos crudos</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a></a>np.<span class="bu">abs</span>(Us[<span class="dv">2</span>][:, <span class="dv">0</span>]).argmax()      <span class="co"># 18</span></span>
+<span id="cb29-2"><a></a>T.<span class="bu">sum</span>(axis<span class="op">=</span>(<span class="dv">0</span>, <span class="dv">1</span>)).argmax()       <span class="co"># 18 — la misma hora, desde los datos crudos</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">

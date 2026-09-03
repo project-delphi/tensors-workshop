@@ -28,6 +28,11 @@ workshop:
   minutes: 195
   book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
   prereq_repo_url: "https://github.com/Laverde97/linear-algebra-deep-learning"
+  closing_en: "That is the whole workshop. Thank you for participating."
+  closing_es: |-
+    > 🇪🇸 Ese es todo el taller. Gracias por participar.
+    >
+    > Ya tienes una forma práctica de pensar sobre tensores: **primero el significado de los ejes, después la operación matemática**.
 
 # ── Kahoot quizzes ───────────────────────────────────────────────────────────
 # `url` is the live join/share link. It does not exist until the facilitator
@@ -99,8 +104,8 @@ agenda:
     label_en: "What a tensor is"
     label_es: "Qué es un tensor"
   - items: ["02"]
-    label_en: "Thinking in N dimensions *(group)*"
-    label_es: "Pensar en N dimensiones *(grupo)*"
+    label_en: "Thinking in N dimensions"
+    label_es: "Pensar en N dimensiones"
   - items: ["03", "04"]
     label_en: "Indexing & broadcasting · Reshape & transpose"
     label_es: "Indexación y broadcasting · Reshape y transposición"
@@ -179,20 +184,22 @@ sections:
     format_es: "demostración"
     title_en: "What a tensor is"
     title_es: "Qué es un tensor"
-    summary_en: "The vocabulary, shape in NumPy, and the three operations that matter."
-    summary_es: "El vocabulario, la forma en NumPy y las tres operaciones que importan."
+    summary_en: "Learn to read a tensor's structure and track what its axes mean as you fix, rearrange, or contract them."
+    summary_es: "Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos."
+    intro_en: |-
+      A tensor is a way to **organize numbers using one or more directions, called axes**. In this notebook you will learn to read those axes before doing more advanced operations.
+    intro_es: |-
+      > 🇪🇸 Un tensor es una forma de **organizar números usando una o más direcciones, llamadas ejes**. En este cuaderno aprenderás a leer esos ejes antes de realizar operaciones más avanzadas.
     objectives_en:
-      - "Use the vocabulary: order, axis, mode, shape, slice, fiber, unfolding, contraction, decomposition."
-      - "Read `.shape`, `.ndim` and `.size` off any array and say what each axis means."
-      - "Take slices and fibers, and unfold a tensor into a matrix without losing anything."
-      - "Write a dot product and a matrix product as `einsum` contractions."
-      - "Place LU, QR, eigendecomposition, SVD, the pseudoinverse, Cholesky and Tucker in one map."
+      - "Explain **tensor, axis, order, shape, slice, fiber, unfolding, and contraction** in plain language."
+      - "Read `.shape`, `.ndim`, and `.size` and say what the numbers mean."
+      - "Follow what happens to the axes when data is selected, rearranged, or summed."
+      - "Use simple `np.einsum` examples without treating the notation as a black box."
     objectives_es:
-      - "Usar el vocabulario: orden, eje, modo, forma, slice, fibra, unfolding, contracción y descomposición."
-      - "Leer `.shape`, `.ndim` y `.size` de cualquier arreglo y explicar qué significa cada eje."
-      - "Tomar slices y fibras, y desplegar un tensor en una matriz sin perder información."
-      - "Escribir un producto punto y un producto matricial como contracciones con `einsum`."
-      - "Ubicar LU, QR, descomposición en valores propios, SVD, pseudoinversa, Cholesky y Tucker en un mismo mapa."
+      - "Explicar en lenguaje sencillo **tensor, eje, orden, forma, corte, fibra, unfolding y contracción**."
+      - "Leer `.shape`, `.ndim` y `.size` y explicar qué significan sus números."
+      - "Seguir qué ocurre con los ejes cuando los datos se seleccionan, reorganizan o suman."
+      - "Usar ejemplos sencillos de `np.einsum` sin tratar la notación como una “caja negra”."
   s02:
     n: "02"
     slug: "thinking-in-n-dimensions"
@@ -200,22 +207,31 @@ sections:
     minutes: 20
     start: "+00:25"
     end: "+00:45"
-    format_en: "group"
-    format_es: "grupo"
+    format_en: "demo"
+    format_es: "demostración"
+    format_line_en: "Part II · demo + exercise · 20 min"
     title_en: "Thinking in N dimensions"
     title_es: "Pensar en N dimensiones"
-    summary_en: "Argue about what each axis means, and why a batch axis differs from a time axis."
-    summary_es: "Discutir qué significa cada eje y por qué un eje de lote difiere de un eje temporal."
+    summary_en: "Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis."
+    summary_es: "Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal."
+    intro_en: |-
+      The goal of this notebook is simple:
+
+      **Do not read a tensor as a list of numbers. Read every axis as a question: “What does this axis count?”**
+    intro_es: |-
+      > 🇪🇸 El objetivo de este cuaderno es sencillo:
+      >
+      > **No leas un tensor como una lista de números. Lee cada eje como una pregunta: “¿Qué cuenta este eje?”**
     objectives_en:
-      - "Say what a new axis *counts*, rather than saying \"we add a dimension\"."
-      - "Explain why a batch axis and a time axis behave differently despite identical shapes."
-      - "Propose two ways to batch videos of different lengths, and say what each loses or invents."
-      - "Map experimental choices onto axes of a real microscopy tensor."
+      - "Read real image and video tensor shapes and explain every axis in plain language."
+      - "Distinguish a **batch axis** from a **time axis**, even when the shapes are identical."
+      - "See why shuffling independent examples can be acceptable while shuffling time changes the meaning."
+      - "Build a padded order-5 video batch and use a validity mask to distinguish real frames from padding."
     objectives_es:
-      - "Decir qué *cuenta* un nuevo eje, en lugar de decir simplemente \"agregamos una dimensión\"."
-      - "Explicar por qué un eje de batch y un eje temporal se comportan de manera diferente aunque tengan formas idénticas."
-      - "Proponer dos formas de agrupar vídeos de diferentes longitudes y explicar qué pierde o inventa cada una."
-      - "Representar decisiones experimentales mediante los ejes de un tensor real de microscopía."
+      - "Leer formas de tensores reales de imágenes y video y explicar cada eje en lenguaje sencillo."
+      - "Distinguir un **eje de lote** de un **eje temporal**, incluso cuando las formas son idénticas."
+      - "Entender por qué reorganizar ejemplos independientes puede ser válido mientras reorganizar el tiempo cambia el significado."
+      - "Construir un lote de video de orden 5 con padding y usar una máscara de validez para distinguir fotogramas reales de relleno."
   s03:
     n: "03"
     slug: "indexing-and-broadcasting"
@@ -227,18 +243,30 @@ sections:
     format_es: "ejercicio"
     title_en: "Indexing and broadcasting real data"
     title_es: "Indexación y broadcasting con datos reales"
-    summary_en: "Select the right column of real tumour data, then meet zero-variance pixels."
-    summary_es: "Seleccionar la columna correcta de datos reales de tumores y encontrar píxeles de varianza cero."
+    summary_en: "Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely."
+    summary_es: "Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero."
+    intro_en: |-
+      This notebook teaches two practical skills:
+
+      1. **Indexing** — choosing exactly the rows, columns, or values you want.
+      2. **Broadcasting** — applying a smaller set of numbers across a larger array without manually copying them.
+    intro_es: |-
+      > 🇪🇸 Este cuaderno enseña dos habilidades prácticas:
+      >
+      > 1. **Indexación** — seleccionar exactamente las filas, columnas o valores que necesitas.
+      > 2. **Broadcasting** — aplicar un conjunto pequeño de números sobre un arreglo más grande sin copiarlos manualmente.
     objectives_en:
-      - "Select a named column of real data by name, never by a hard-coded number."
-      - "Combine fancy indexing and boolean indexing to pull out sub-tables in one operation."
-      - "Standardize a data matrix with broadcasting."
-      - "Recognise a zero-variance column, and know why real images contain them."
+      - "Select a real measurement by **name** instead of relying on a hard-coded column number."
+      - "Use **fancy indexing** to choose several specific observations at once."
+      - "Use a **Boolean mask** to keep only observations that satisfy a condition."
+      - "Standardize real image data with broadcasting."
+      - "Detect **zero-variance pixels** and explain why division by zero creates `NaN`."
     objectives_es:
-      - "Seleccionar una columna de datos reales por su nombre, nunca mediante un número escrito manualmente."
-      - "Combinar fancy indexing e indexación booleana para extraer subtablas en una sola operación."
-      - "Estandarizar una matriz de datos mediante broadcasting."
-      - "Reconocer una columna de varianza cero y comprender por qué las imágenes reales pueden contenerlas."
+      - "Seleccionar una medición real por **nombre** en lugar de depender de un número fijo de columna."
+      - "Usar **fancy indexing** para elegir varias observaciones específicas al mismo tiempo."
+      - "Usar una **máscara booleana** para conservar solo observaciones que cumplen una condición."
+      - "Estandarizar datos reales de imágenes mediante broadcasting."
+      - "Detectar **píxeles de varianza cero** y explicar por qué dividir entre cero produce `NaN`."
   s04:
     n: "04"
     slug: "reshape-and-transpose"
@@ -250,16 +278,32 @@ sections:
     format_es: "ejercicio"
     title_en: "Reshape and transpose real images"
     title_es: "Reshape y transposición de imágenes reales"
-    summary_en: "HWC to CHW, NHWC to NCHW, and why reshape silently destroys an image."
-    summary_es: "De HWC a CHW, de NHWC a NCHW, y por qué reshape destruye una imagen en silencio."
+    summary_en: "Use real images to move between HWC↔CHW and NHWC↔NCHW, then show why matching shapes do not guarantee matching axis semantics."
+    summary_es: "Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué `reshape` puede conservar la forma mientras destruye el significado."
+    intro_en: |-
+      This notebook teaches one idea that prevents many silent bugs:
+
+      > **Changing a tensor's shape is not the same as moving its axes.**
+
+      We will use real images to see when `transpose` is the correct operation and why `reshape` can produce the expected numbers in `.shape` while giving the wrong interpretation.
+    intro_es: |-
+      > 🇪🇸 Este cuaderno enseña una idea que evita muchos errores silenciosos:
+      >
+      > **Cambiar la forma de un tensor no es lo mismo que mover sus ejes.**
+      >
+      > Usaremos imágenes reales para entender cuándo `transpose` es la operación correcta y por qué `reshape` puede producir la `.shape` esperada y, aun así, dar una interpretación equivocada.
     objectives_en:
-      - "Convert an image between `(H, W, C)` and `(C, H, W)` with `np.transpose`."
-      - "Convert a batch between NHWC and NCHW, and know which axis is which when two share a size."
-      - "Explain why `reshape` runs without error and still destroys the image."
+      - "Read `HWC`, `CHW`, `NHWC`, and `NCHW` as simple sentences."
+      - "Convert a real RGB image from `(H, W, C)` to `(C, H, W)` with `np.transpose`."
+      - "Build a real batch from three different RGB images and convert `NHWC → NCHW`."
+      - "Explain why two axes can have the same size but different meanings."
+      - "Demonstrate visually why `reshape` cannot replace `transpose` when axis meaning must move."
     objectives_es:
-      - "Convertir una imagen entre `(H, W, C)` y `(C, H, W)` con `np.transpose`."
-      - "Convertir un batch entre NHWC y NCHW y distinguir correctamente los ejes cuando dos tienen el mismo tamaño."
-      - "Explicar por qué `reshape` puede ejecutarse sin error y aun así destruir la estructura de la imagen."
+      - "Leer `HWC`, `CHW`, `NHWC` y `NCHW` como frases sencillas."
+      - "Convertir una imagen RGB real de `(H, W, C)` a `(C, H, W)` con `np.transpose`."
+      - "Construir un lote real con tres imágenes RGB distintas y convertir `NHWC → NCHW`."
+      - "Explicar por qué dos ejes pueden tener el mismo tamaño y significados diferentes."
+      - "Demostrar visualmente por qué `reshape` no puede sustituir `transpose` cuando debe cambiar la posición de los ejes."
   s05:
     n: "05"
     slug: "video-pipeline-design"
@@ -271,18 +315,34 @@ sections:
     format_es: "grupo"
     title_en: "Video pipeline design"
     title_es: "Diseño de un pipeline de vídeo"
-    summary_en: "Design the tensor shape at every stage of two real video systems."
-    summary_es: "Diseñar la forma del tensor en cada etapa de dos sistemas de vídeo reales."
+    summary_en: "Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines."
+    summary_es: "Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo."
+    intro_en: |-
+      A video pipeline is the path from a **video file** to the **tensor a model actually receives**.
+
+      The key idea is simple:
+
+      > **Every pipeline decision chooses what information is kept, transformed, or discarded.**
+    intro_es: |-
+      > 🇪🇸 Un pipeline de video es el camino desde un **archivo de video** hasta el **tensor que realmente recibe un modelo**.
+      >
+      > La idea central es sencilla:
+      >
+      > **Cada decisión del pipeline determina qué información se conserva, se transforma o se descarta.**
     objectives_en:
-      - "Read the shape of a real decoded video and say what each of its four axes counts."
-      - "Design the tensor shape at each of five pipeline stages, for two different systems."
-      - "Apply one ragged-length strategy from section 02 and give the exact batched shape."
-      - "Decide where a new axis goes, and say how that choice affects the rest of the pipeline."
+      - "Follow one verified real video from file bytes to a tensor."
+      - "Read `(T, H, W, C)` as a sentence and explain every axis."
+      - "Measure how many recorded frames are kept when the video is sampled."
+      - "Explain why one model may **collapse time** while another must **preserve time**."
+      - "Compare variable-length padding with fixed-frame sampling."
+      - "Reason about an additional synchronized camera axis."
     objectives_es:
-      - "Leer la forma de un vídeo real decodificado y explicar qué cuenta cada uno de sus cuatro ejes."
-      - "Diseñar la forma del tensor en cada una de cinco etapas del pipeline para dos sistemas diferentes."
-      - "Aplicar una estrategia para longitudes variables de la sección 02 y dar la forma exacta del batch."
-      - "Decidir dónde se ubica un nuevo eje y explicar cómo esa decisión afecta el resto del pipeline."
+      - "Seguir un video real verificado desde los bytes del archivo hasta un tensor."
+      - "Leer `(T,H,W,C)` como una frase y explicar cada eje."
+      - "Medir cuántos fotogramas grabados se conservan al muestrear un video."
+      - "Explicar por qué un modelo puede **colapsar el tiempo** mientras otro debe **conservarlo**."
+      - "Comparar padding para longitudes variables con muestreo de un número fijo de fotogramas."
+      - "Razonar sobre un eje adicional de cámaras sincronizadas."
   s06:
     n: "06"
     slug: "contraction-with-einsum"
@@ -294,18 +354,34 @@ sections:
     format_es: "ejercicio"
     title_en: "Contraction with einsum"
     title_es: "Contracción con einsum"
-    summary_en: "One notation for the dot product, the matrix product, and a batch of images."
-    summary_es: "Una sola notación para el producto punto, el producto matricial y un lote de imágenes."
+    summary_en: "Use one index rule on real data, then change the inputs interactively to test which index disappears."
+    summary_es: "Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece."
+    intro_en: |-
+      This notebook teaches one rule that looks compact in code but has a very simple meaning:
+
+      > **If an index disappears after `->`, NumPy sums over it. If the index remains, it survives in the output.**
+
+      We will use that one rule on real microscopy pixels, real handwritten-digit pixels, matrix operations, and image retrieval.
+    intro_es: |-
+      > 🇪🇸 Este cuaderno enseña una regla que parece compacta en el código, pero tiene un significado muy sencillo:
+      >
+      > **Si un índice desaparece después de `->`, NumPy suma sobre él. Si el índice permanece, sobrevive en la salida.**
+      >
+      > Usaremos esa misma regla sobre píxeles reales de microscopía, píxeles reales de dígitos manuscritos, operaciones matriciales y búsqueda de imágenes.
     objectives_en:
-      - "State the einsum rule: an index missing after the arrow is summed over."
-      - "Contract the colour axis of one image, and of a whole batch, with one call each."
-      - "Write trace, transpose and the matrix product as `einsum` and check them against NumPy."
-      - "Build a full similarity matrix between 1797 images with a single contraction."
+      - "Explain **contraction** and `einsum` without memorising formulas."
+      - "Read `hwc,c->hw`, `ik,kj->ij`, and `id,jd->ij` as sentences."
+      - "Convert a real RGB microscopy image to grayscale with one contraction."
+      - "Understand trace, transpose, and matrix multiplication through index movement."
+      - "Compute all **3,229,209 pairwise similarities** between 1,797 real handwritten digits."
+      - "Explore how cosine similarity and raw dot product produce different neighbours."
     objectives_es:
-      - "Enunciar la regla de einsum: un índice que no aparece después de la flecha se suma."
-      - "Contraer el eje de color de una imagen y de un batch completo con una sola llamada en cada caso."
-      - "Escribir la traza, la transposición y el producto matricial con `einsum` y verificarlos con NumPy."
-      - "Construir una matriz completa de similitud entre 1797 imágenes mediante una sola contracción."
+      - "Explicar **contracción** y `einsum` sin memorizar fórmulas."
+      - "Leer `hwc,c->hw`, `ik,kj->ij` e `id,jd->ij` como frases."
+      - "Convertir una imagen RGB real de microscopía a escala de grises con una contracción."
+      - "Entender traza, transposición y producto matricial mediante el movimiento de índices."
+      - "Calcular las **3.229.209 similitudes por pares** entre 1.797 dígitos manuscritos reales."
+      - "Explorar cómo similitud coseno y producto punto producen vecinos diferentes."
   s07:
     n: "07"
     slug: "inverses-and-pseudoinverse"
@@ -317,20 +393,30 @@ sections:
     format_es: "ejercicio"
     title_en: "Inverses and the pseudoinverse"
     title_es: "Inversas y la pseudoinversa"
-    summary_en: "Solve a 20,433-equation system that has no exact solution."
-    summary_es: "Resolver un sistema de 20.433 ecuaciones que no tiene solución exacta."
+    summary_en: "Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively."
+    summary_es: "Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva."
+    intro_en: |-
+      Use one question throughout this notebook:
+
+      > **Does an exact inverse exist? If not, what useful answer does the pseudoinverse give us instead?**
+    intro_es: |-
+      > 🇪🇸 Usa una sola pregunta durante todo el cuaderno:
+      >
+      > **¿Existe una inversa exacta? Si no existe, ¿qué respuesta útil nos entrega la pseudoinversa?**
     objectives_en:
-      - "Say when a square matrix has no inverse, and predict the error before you see it."
-      - "Compute the Moore-Penrose pseudoinverse and verify its four defining conditions."
-      - "Say what `x = A⁺b` gives you for a tall matrix and for a wide one."
-      - "Solve a real 20,433-equation system that has no exact solution."
-      - "Apply the pseudoinverse to a tensor by unfolding, solving, and folding back."
+      - "Explain an ordinary inverse as an exact **undo operation**."
+      - "Diagnose when a square matrix is singular using **rank**, not only an exception message."
+      - "Understand the pseudoinverse as a practical replacement when an ordinary inverse is unavailable."
+      - "Distinguish **wide**, **square**, and **tall** systems."
+      - "Solve a real `20,433 × 7` California-housing least-squares problem."
+      - "Unfold real digit images into a wide matrix and interpret the **minimum-norm** solution."
     objectives_es:
-      - "Identificar cuándo una matriz cuadrada no tiene inversa y anticipar el error antes de observarlo."
-      - "Calcular la pseudoinversa de Moore-Penrose y verificar sus cuatro condiciones definitorias."
-      - "Explicar qué produce `x = A⁺b` para una matriz alta y para una matriz ancha."
-      - "Resolver un sistema real de 20.433 ecuaciones que no tiene solución exacta."
-      - "Aplicar la pseudoinversa a un tensor mediante unfolding, solución y reconstrucción."
+      - "Explicar una inversa ordinaria como una operación exacta de **deshacer**."
+      - "Diagnosticar cuándo una matriz cuadrada es singular usando el **rango**, no solamente un mensaje de error."
+      - "Entender la pseudoinversa como una alternativa práctica cuando la inversa ordinaria no está disponible."
+      - "Distinguir sistemas **anchos**, **cuadrados** y **altos**."
+      - "Resolver un problema real de mínimos cuadrados de vivienda en California con forma `20.433 × 7`."
+      - "Desplegar imágenes reales de dígitos en una matriz ancha e interpretar la solución de **norma mínima**."
   s08:
     n: "08"
     slug: "recursion-with-matrices"
@@ -342,18 +428,44 @@ sections:
     format_es: "demostración"
     title_en: "Recursion with matrices and vectors"
     title_es: "Recursión con matrices y vectores"
-    summary_en: "Apply one matrix again and again: Fibonacci, eigenvectors, and a real forecast."
-    summary_es: "Aplicar una misma matriz una y otra vez: Fibonacci, autovectores y un pronóstico real."
+    summary_en: "Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data."
+    summary_es: "Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones."
+    intro_en: |-
+      This notebook is about one simple pattern:
+
+      > **Use the current state to create the next state, then repeat.**
+
+      We will see that same pattern in:
+
+      1. Fibonacci numbers,
+      2. power iteration,
+      3. a real monthly airline-passenger forecast.
+    intro_es: |-
+      > 🇪🇸 Este cuaderno estudia un patrón muy sencillo:
+      >
+      > **Usar el estado actual para crear el siguiente estado y repetir el proceso.**
+      >
+      > Veremos la misma idea en:
+      >
+      > 1. números de Fibonacci,
+      > 2. iteración de potencias,
+      > 3. un pronóstico real de pasajeros mensuales de aerolíneas.
     objectives_en:
-      - "Write a recurrence as repeated multiplication by one matrix."
-      - "Find the dominant eigenvector by power iteration, and check it against `np.linalg.eig`."
-      - "Fit an autoregressive model with the pseudoinverse and feed its own output back in."
-      - "Recognise that structure as the skeleton of a recurrent neural network."
+      - "Explain **recursion / recurrence**, **state**, and **state update** in plain language."
+      - "Write `x[t+1] = A @ x[t]` and explain what every symbol means."
+      - "Turn Fibonacci into a two-number state updated by the same matrix."
+      - "See why repeated multiplication can align a vector with a dominant eigenvector."
+      - "Understand why the ratio `|λ₂/λ₁|` affects convergence speed."
+      - "Fit a real autoregressive model with the pseudoinverse."
+      - "Compare a recursive forecast with a one-step diagnostic that uses real previous values."
     objectives_es:
-      - "Escribir una recurrencia como multiplicaciones repetidas por una misma matriz."
-      - "Encontrar el vector propio dominante mediante power iteration y comprobarlo con `np.linalg.eig`."
-      - "Ajustar un modelo autorregresivo con la pseudoinversa y reutilizar su propia salida como entrada."
-      - "Reconocer esa estructura como el esqueleto de una red neuronal recurrente."
+      - "Explicar **recursión / recurrencia**, **estado** y **actualización de estado** en lenguaje sencillo."
+      - "Escribir `x[t+1] = A @ x[t]` y explicar qué significa cada símbolo."
+      - "Convertir Fibonacci en un estado de dos números actualizado por la misma matriz."
+      - "Observar por qué multiplicar repetidamente puede alinear un vector con un autovector dominante."
+      - "Entender por qué la razón `|λ₂/λ₁|` afecta la velocidad de convergencia."
+      - "Ajustar un modelo autorregresivo real con la pseudoinversa."
+      - "Comparar un pronóstico recursivo con un diagnóstico de un paso que usa valores previos reales."
   s09:
     n: "09"
     slug: "convolution-and-deconvolution"
@@ -365,20 +477,36 @@ sections:
     format_es: "ejercicio"
     title_en: "Convolution and deconvolution"
     title_es: "Convolución y deconvolución"
-    summary_en: "Convolution is a structured matrix product, and blur can be partly undone."
-    summary_es: "La convolución es un producto matricial estructurado, y el desenfoque se puede deshacer en parte."
+    summary_en: "Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image."
+    summary_es: "Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada."
+    intro_en: |-
+      This notebook follows one idea from a forward operation to an inverse problem:
+
+      > **A small kernel is reused across positions to transform an image.**
+
+      We will distinguish **correlation**, **convolution**, **transposed convolution**, and **deconvolution** without treating them as the same operation.
+    intro_es: |-
+      > 🇪🇸 Este cuaderno sigue una misma idea desde una operación directa hasta un problema inverso:
+      >
+      > **Un kernel pequeño se reutiliza en muchas posiciones para transformar una imagen.**
+      >
+      > Distinguiremos **correlación**, **convolución**, **convolución transpuesta** y **deconvolución** sin tratarlas como si fueran la misma operación.
     objectives_en:
-      - "Predict the output size of a convolution in `full`, `valid` and `same` mode."
-      - "Say why what deep learning calls convolution is really correlation."
-      - "Write a convolution as multiplication by a Toeplitz matrix."
-      - "Distinguish transposed convolution from true deconvolution."
-      - "Recover a blurred image with Richardson-Lucy, and measure it honestly."
+      - "Explain what a **kernel / filtro** does using a real photograph."
+      - "Predict `valid`, `same`, and `full` output shapes."
+      - "Explain the difference between **cross-correlation** and true **convolution**."
+      - "See a 1D convolution as ordinary matrix multiplication with a Toeplitz matrix."
+      - "Explain transposed convolution as **overlap-add**, not as a magical inverse."
+      - "Blur and partially recover a real image using **Richardson–Lucy deconvolution**."
+      - "Explain why noise and image boundaries make inverse problems difficult."
     objectives_es:
-      - "Predecir el tamaño de salida de una convolución en los modos `full`, `valid` y `same`."
-      - "Explicar por qué lo que deep learning llama convolución es realmente correlación."
-      - "Escribir una convolución como multiplicación por una matriz de Toeplitz."
-      - "Distinguir la convolución transpuesta de una deconvolución verdadera."
-      - "Recuperar una imagen desenfocada con Richardson-Lucy y medir el resultado de manera rigurosa."
+      - "Explicar qué hace un **kernel / filtro** usando una fotografía real."
+      - "Predecir las formas de salida `valid`, `same` y `full`."
+      - "Explicar la diferencia entre **correlación cruzada** y **convolución** verdadera."
+      - "Ver una convolución 1D como multiplicación matricial con una matriz Toeplitz."
+      - "Explicar la convolución transpuesta como **superposición y suma**, no como una inversa mágica."
+      - "Desenfocar y recuperar parcialmente una imagen real con **deconvolución Richardson–Lucy**."
+      - "Explicar por qué el ruido y los bordes hacen difícil un problema inverso."
   s10:
     n: "10"
     slug: "tucker-decomposition"
@@ -390,20 +518,44 @@ sections:
     format_es: "ejercicio"
     title_en: "Tucker decomposition on real data"
     title_es: "Descomposición de Tucker con datos reales"
-    summary_en: "PCA generalized to every axis, on a real tensor of New York taxi trips."
-    summary_es: "PCA generalizado a todos los ejes, sobre un tensor real de viajes en taxi de Nueva York."
+    summary_en: "Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure."
+    summary_es: "Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación."
+    intro_en: |-
+      This notebook answers one practical question:
+
+      > **How can we compress a tensor while keeping the meaning of its different axes?**
+
+      We will build a real tensor from New York taxi trips:
+
+      `pickup borough × dropoff borough × hour`
+
+      and use Tucker/HOSVD to compress the three modes separately.
+    intro_es: |-
+      > 🇪🇸 Este cuaderno responde una pregunta práctica:
+      >
+      > **¿Cómo podemos comprimir un tensor conservando el significado de sus distintos ejes?**
+      >
+      > Construiremos un tensor real de viajes en taxi:
+      >
+      > `distrito de origen × distrito de destino × hora`
+      >
+      > y usaremos Tucker/HOSVD para comprimir los tres modos por separado.
     objectives_en:
-      - "Build a genuine order-3 tensor out of a flat table of real trips."
-      - "Compute a Tucker decomposition by HOSVD, using only unfolding, SVD and einsum."
-      - "Contract three axes at once with a single `einsum` string."
-      - "Measure reconstruction error against compression ratio."
-      - "Read a factor matrix and recognise a real pattern the decomposition found by itself."
+      - "Turn a flat table of real taxi trips into an order-3 tensor."
+      - "Explain **mode, unfolding, factor matrix, core tensor, multilinear rank, reconstruction error, and compression** in plain language."
+      - "Unfold the same tensor along pickup, dropoff, and hour modes."
+      - "Compute HOSVD using SVD on each unfolding."
+      - "Build and reconstruct a Tucker model with `np.einsum`."
+      - "Change the three Tucker ranks independently and see the error–storage trade-off."
+      - "Interpret learned temporal components against the real hourly taxi counts."
     objectives_es:
-      - "Construir un tensor real de orden 3 a partir de una tabla plana de viajes reales."
-      - "Calcular una descomposición de Tucker mediante HOSVD usando únicamente unfolding, SVD y einsum."
-      - "Contraer tres ejes simultáneamente con una sola expresión `einsum`."
-      - "Comparar el error de reconstrucción con la razón de compresión."
-      - "Interpretar una matriz de factores y reconocer un patrón real encontrado automáticamente por la descomposición."
+      - "Convertir una tabla plana de viajes reales en un tensor de orden 3."
+      - "Explicar en lenguaje sencillo **modo, unfolding, matriz de factores, tensor núcleo, rango multilineal, error de reconstrucción y compresión**."
+      - "Desplegar el mismo tensor por origen, destino y hora."
+      - "Calcular HOSVD usando SVD sobre cada unfolding."
+      - "Construir y reconstruir Tucker con `np.einsum`."
+      - "Cambiar independientemente los tres rangos Tucker y observar el compromiso entre error y almacenamiento."
+      - "Interpretar componentes temporales aprendidos comparándolos con los conteos reales por hora."
   s11:
     n: "11"
     slug: "wrap-up-and-take-homes"
@@ -413,23 +565,33 @@ sections:
     end: "+03:15"
     format_en: "wrap-up"
     format_es: "cierre"
+    format_line_en: "wrap-up · 5 min + take-homes after the workshop"
+    format_line_es: "cierre · 5 min + ejercicios para después"
     title_en: "Wrap-up and take-homes"
     title_es: "Cierre y ejercicios para casa"
-    summary_en: "What connects Blocks 4, 5 and 6, plus five take-home exercises."
-    summary_es: "Qué conecta los bloques 4, 5 y 6, más cinco ejercicios para casa."
+    summary_en: "Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio."
+    summary_es: "Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio."
+    intro_en: |-
+      This final notebook has two jobs:
+
+      1. connect the ideas from the whole workshop;
+      2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
+    intro_es: |-
+      > 🇪🇸 Este último cuaderno tiene dos objetivos:
+      >
+      > 1. conectar las ideas de todo el taller;
+      > 2. permitirte explorar cinco extensiones: **PCA, atención, CP, Cholesky y reducción de ruido de audio**.
     objectives_en:
-      - "State the one idea that connects the pseudoinverse, deconvolution and Tucker."
-      - "Find the scaling trap in PCA on real, unstandardized data (take-home A)."
-      - "Build attention out of two contractions, and mask padded positions (take-home B)."
-      - "Run a real CP decomposition and read its components as trip types nobody labelled (take-home C)."
-      - "Build correlated data from independent noise with Cholesky, and see why ignoring covariance understates portfolio risk (take-home D)."
-      - "Denoise a real voice recording by truncating the SVD of its STFT, and measure the result in SNR rather than by ear (take-home E)."
-      - "Trade parameter count against reconstruction error with a rank slider, on a real dense tensor (optional appendix)."
+      - "State the one approximation idea connecting pseudoinverse, deconvolution, and Tucker."
+      - "Diagnose the PCA scaling trap on real breast-cancer measurements."
+      - "Build masked attention from two `einsum` contractions."
+      - "Compare CP with Tucker on the same real New York taxi tensor."
+      - "Use Cholesky to turn independent noise into correlated draws and see why covariance changes portfolio risk."
+      - "Denoise a real voice recording with `STFT → truncated SVD → ISTFT` and measure the SNR trade-off."
     objectives_es:
-      - "Enunciar la idea común que conecta la pseudoinversa, la deconvolución y Tucker."
-      - "Identificar la trampa de escala de PCA sobre datos reales sin estandarizar (take-home A)."
-      - "Construir atención mediante dos contracciones y enmascarar las posiciones de padding (take-home B)."
-      - "Ejecutar una descomposición CP real e interpretar sus componentes como tipos de viajes que nadie etiquetó previamente (take-home C)."
-      - "Construir datos correlacionados a partir de ruido independiente con Cholesky y observar por qué ignorar la covarianza subestima el riesgo de portafolio (take-home D)."
-      - "Eliminar ruido de una grabación de voz real truncando la SVD de su STFT y medir el resultado con SNR en lugar de evaluarlo solo de oído (take-home E)."
-      - "Comparar número de parámetros y error de reconstrucción mediante un slider de rango sobre un tensor denso real (apéndice opcional)."
+      - "Explicar la idea de aproximación que conecta pseudoinversa, deconvolución y Tucker."
+      - "Detectar el problema de escala de PCA sobre mediciones reales de cáncer de mama."
+      - "Construir atención enmascarada con dos contracciones `einsum`."
+      - "Comparar CP con Tucker sobre el mismo tensor real de taxis de Nueva York."
+      - "Usar Cholesky para transformar ruido independiente en muestras correlacionadas y observar cómo la covarianza cambia el riesgo."
+      - "Reducir ruido de una grabación real con `STFT → SVD truncada → ISTFT` y medir el compromiso mediante SNR."

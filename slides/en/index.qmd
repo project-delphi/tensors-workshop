@@ -149,7 +149,7 @@ skimage documents as having no known copyright restrictions.
 
 **Exercise blocks** — 10 min coding, 5 min explanation.
 
-**Group blocks** — 10 min discussion, then share-back.
+**Group block** (§05) — 10 min discussion, then share-back.
 
 . . .
 
@@ -366,7 +366,7 @@ never Part I.
 {{< var sections.s02.part >}}
 :::
 
-*Part II · group discussion · no code*
+*Part II · demo · code*
 
 ::: {.pace-badge}
 [[⏱️]{.pace-icon}**{{< var sections.s02.minutes >}} min** allocated]{.pace-duration}
@@ -374,49 +374,27 @@ never Part I.
 [Start: {{< var sections.s02.start >}} · End: {{< var sections.s02.end >}}]{.pace-window}
 :::
 
-## Your task
+## Same shape, different axes
 
-> A grayscale image is a matrix. Almost nothing in ML is a single grayscale
-> image. Each thing you add — colour, many examples, time — adds an axis, and
-> each axis means something different.
-
-**Argue about which axis goes where, and why.**
-
-10 minutes in your breakout channel, then share-back.
-
-## The five questions
-
-::: {.incremental}
-1. `(H, W)` → colour image → batch → video → batch of videos. What does each
-   new axis *count*? **Do not say "we add a dimension."**
-2. A batch axis and a time axis look identical in code. What differs in
-   **meaning**? What happens if you shuffle each?
-3. Real videos have different lengths. Two ways to batch them — what does each
-   **lose or invent**?
-4. Cells photographed every 10 min for 48 h: frame interval → ? field of view →
-   ? number of dishes → ?
-5. Is there a limit on how many axes a tensor can have?
-:::
-
-## Share-back
-
-```{python}
-#| label: code-02-thinking-in-n-dimensions-1
-#| echo: true
-gray_image      = np.zeros((28, 28))            # (H, W)
-color_image     = np.zeros((28, 28, 3))         # (H, W, C)      + colour
-batch_of_images = np.zeros((32, 28, 28, 3))     # (N, H, W, C)   + many examples
-video           = np.zeros((16, 28, 28, 3))     # (T, H, W, C)   + ordered time
-batch_of_videos = np.zeros((8, 16, 28, 28, 3))  # (N, T, H, W, C)
-```
+`digits.images` is `(1797, 8, 8)` and a photo is `(512, 512, 3)` — both order 3,
+but axis 0 counts **images** in one and **rows of pixels** in the other. In the
+notebook, `digit_batch` and `video_patch` are *both* `(8, 8, 8)`: one stacks
+independent examples, the other stacks ordered moments.
 
 . . .
 
-**Question 2 is the point.** Shuffling axis 0 is harmless for a batch and
-**destroys** a video.
+**Shuffling axis 0** is harmless for a batch — the examples are independent —
+and **destroys** a video, where order *is* the information. Same code, opposite
+meaning. Chapter 2's notation has no concept of "order matters between
+elements"; that is genuinely new today.
 
-Chapter 2's notation has no concept of "order matters between elements."
-That is genuinely new today.
+## Ragged clips need a mask
+
+Real videos have different lengths, but a batch tensor is rectangular. The
+notebook takes three real clips of length 4, 7 and 5, pads them into one
+`(3, 7, 135, 240, 3)` order-5 batch, and carries a Boolean `(3, 7)` **validity
+mask** — so `valid.sum() == 16` and the padding stays visible instead of being
+averaged into the data.
 
 ## To the notebook
 
@@ -425,10 +403,10 @@ That is genuinely new today.
 [Open in Colab]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb)
 
 ::: {.notes}
-Group blocks need firmer facilitation than exercise blocks. If a group is still
-on question 1 with 5 minutes left, join their channel and tell them to sketch
-anything, even a wrong shape. The share-back matters more than a correct sketch.
-Pre-assign breakout groups before the session.
+This is a live coding demo, not a discussion block. Open the notebook and run
+Setup first; it downloads and checksums the real video used in the exercises.
+Emphasize the contrast between shuffling a batch and shuffling time, then the
+padded batch with its validity mask.
 :::
 
 # 03 · Indexing and broadcasting {#sec-03-indexing-and-broadcasting}

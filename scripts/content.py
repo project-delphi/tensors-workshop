@@ -58,16 +58,83 @@ CONTENT["01"] = {
     "setup": """import numpy as np
 from sklearn.datasets import load_digits
 from skimage import data
-from scipy.linalg import lu
 
 rng = np.random.default_rng(0)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["02"] = {
-    "setup": """import numpy as np
+    "setup": """%pip install -q "imageio[ffmpeg]"
 
-rng = np.random.default_rng(0)""",
+import hashlib
+import io
+import urllib.request
+
+import imageio.v3 as iio
+import numpy as np
+from sklearn.datasets import load_digits
+from skimage import data
+
+rng = np.random.default_rng(0)
+
+# Real image data: handwritten digits
+digits = load_digits()
+digit_batch = digits.images[:8].astype(np.float32)   # (N, H, W)
+digit_labels = digits.target[:8]
+real_digit = digit_batch[0]
+real_photo = data.astronaut()                        # real RGB photograph
+
+# Real video data: "Tormenta en l'Almadrava" by Nicolas Vigier, CC0.
+# Same pinned source/checksum used by notebook 05.
+VIDEO_URL = (
+    "https://upload.wikimedia.org/wikipedia/commons/1/1e/"
+    "Tormenta_en_l%27Almadrava.webm"
+)
+VIDEO_SHA256 = "e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b"
+UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
+
+
+def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
+    # Download, checksum, and retain sampled frames from a real video.
+    req = urllib.request.Request(url, headers={"User-Agent": UA})
+    raw = urllib.request.urlopen(req, timeout=120).read()
+
+    got = hashlib.sha256(raw).hexdigest()
+    if got != expected_sha256:
+        raise ValueError(
+            f"checksum mismatch: expected {expected_sha256}, got {got}"
+        )
+
+    frames = []
+    for i, frame in enumerate(
+        iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")
+    ):
+        if i % stride == 0:
+            frames.append(frame)
+            if len(frames) == n_frames:
+                break
+
+    return np.stack(frames)
+
+
+real_video = fetch_verified_video(VIDEO_URL, VIDEO_SHA256)
+assert real_video.shape == (16, 540, 960, 3), real_video.shape
+
+# Build a real temporal tensor with the same shape as digit_batch: (8, 8, 8).
+# Take 8 sampled video frames, a centered 8x8 crop, and average RGB.
+r0 = real_video.shape[1] // 2 - 4
+c0 = real_video.shape[2] // 2 - 4
+video_patch = (
+    real_video[:8, r0:r0 + 8, c0:c0 + 8]
+    .mean(axis=3)
+    .astype(np.float32)
+)
+
+print("real_digit :", real_digit.shape, real_digit.dtype)
+print("digit_batch:", digit_batch.shape, digit_batch.dtype)
+print("real_photo :", real_photo.shape, real_photo.dtype)
+print("real_video :", real_video.shape, real_video.dtype)
+print("video_patch:", video_patch.shape, video_patch.dtype)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -86,9 +153,32 @@ CONTENT["04"] = {
     "setup": """import numpy as np
 from skimage import data
 
-photo = data.immunohistochemistry()   # (512, 512, 3) real histology
+# Real images distributed with scikit-image.
+photo = data.immunohistochemistry()   # (512, 512, 3) real histology, RGB
 cells = data.cell()                   # (660, 550)    real microscopy, grayscale
-print(photo.shape, cells.shape)""",
+astronaut = data.astronaut()          # (512, 512, 3) real RGB photograph
+coffee = data.coffee()                # (400, 600, 3) real RGB photograph
+
+
+def center_crop_rgb(img, size=256):
+    # Deterministic centre crop so distinct real RGB images can be stacked.
+    h, w, c = img.shape
+    if c != 3 or h < size or w < size:
+        raise ValueError(
+            f"expected RGB image at least {size}x{size}, got {img.shape}"
+        )
+
+    r0 = (h - size) // 2
+    c0 = (w - size) // 2
+    return img[r0:r0 + size, c0:c0 + size]
+
+
+rgb_sources = [photo, astronaut, coffee]
+
+print("histology:", photo.shape)
+print("microscopy:", cells.shape)
+print("astronaut:", astronaut.shape)
+print("coffee:", coffee.shape)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -103,95 +193,186 @@ import numpy as np
 import imageio.v3 as iio
 import matplotlib.pyplot as plt
 
-# A real clip, pinned. "Tormenta en l'Almadrava" by Nicolas Vigier, CC0:
+# Real clip: "Tormenta en l'Almadrava" by Nicolas Vigier, CC0.
 # https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm
-# 24 seconds of breaking waves at 960x540. The SHA-256 is checked below, so the
-# file this notebook decodes cannot silently change under you -- the same
-# guarantee section 11 puts on its voice recording.
-VIDEO_URL = ("https://upload.wikimedia.org/wikipedia/commons/1/1e/"
-             "Tormenta_en_l%27Almadrava.webm")
+VIDEO_URL = (
+    "https://upload.wikimedia.org/wikipedia/commons/1/1e/"
+    "Tormenta_en_l%27Almadrava.webm"
+)
 VIDEO_SHA256 = "e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b"
-
-# Wikimedia answers the default `Python-urllib/3.x` User-Agent with a 403, so
-# this identifies itself the way their policy asks.
 UA = "tensors-workshop/1.0 (https://github.com/project-delphi/tensors-workshop)"
 
 
 def fetch_verified_video(url, expected_sha256, n_frames=16, stride=45):
-    \"\"\"Download a video, refuse to proceed if it does not match the pinned
-    checksum, and decode only every `stride`-th frame, up to `n_frames`.
-
-    Note what is and is not saved. `imiter` still decodes frames in order --
-    it reaches frame 675 by decoding all 676 before it -- but it only ever
-    RETAINS 16 of them, and it stops as soon as it has them. Holding all 720
-    would be a 1.1 GB array. Sampling frames rather than keeping them all is
-    exactly the decision the design exercise below asks you to make
-    deliberately, for two systems, and to say what it costs.
-    \"\"\"
+    # Verify the real file, decode the whole stream, retain only sparse frames.
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     raw = urllib.request.urlopen(req, timeout=120).read()
+
     got = hashlib.sha256(raw).hexdigest()
     if got != expected_sha256:
         raise ValueError(
-            f"checksum mismatch for {url}: expected {expected_sha256}, got "
-            f"{got}. Refusing to use unverified video data.")
-    frames = []
+            f"checksum mismatch: expected {expected_sha256}, got {got}"
+        )
+
+    kept_frames = []
+    kept_source_indices = []
+    total_frames = 0
+
     for i, frame in enumerate(
-            iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")):
-        if i % stride == 0:
-            frames.append(frame)
-            if len(frames) == n_frames:
-                break
-    return np.stack(frames)
+        iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")
+    ):
+        total_frames = i + 1
+        if i % stride == 0 and len(kept_frames) < n_frames:
+            kept_frames.append(frame)
+            kept_source_indices.append(i)
+
+    clip = np.stack(kept_frames)
+    return clip, np.asarray(kept_source_indices), total_frames
 
 
-clip = fetch_verified_video(VIDEO_URL, VIDEO_SHA256)
-# The cells below index clip[15] and quote this shape, so a short stream should
-# fail here, where the cause is visible, not as an IndexError further down.
+clip, kept_source_indices, total_frames = fetch_verified_video(
+    VIDEO_URL, VIDEO_SHA256
+)
+
 assert clip.shape == (16, 540, 960, 3), f"unexpected clip shape {clip.shape}"
-print(clip.shape, clip.dtype)   # (16, 540, 960, 3) uint8""",
+assert total_frames == 720, f"unexpected frame count {total_frames}"
+
+print("retained tensor:", clip.shape, clip.dtype)
+print("source frames:", total_frames)
+print("source indices retained:", kept_source_indices.tolist())
+print("RAM retained:", f"{clip.nbytes / 1024**2:.1f} MB")""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["06"] = {
     "setup": """import numpy as np
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display
 from sklearn.datasets import load_digits
 from skimage import data
 
-photo = data.immunohistochemistry().astype(float)         # (512, 512, 3)
-batch = np.stack([photo, data.astronaut().astype(float)])  # (2, 512, 512, 3)
-w = np.array([0.2125, 0.7154, 0.0721])                     # RGB -> grayscale weights
-A = np.array([[1., 2.], [3., 4.]])
-B = np.array([[5., 6.], [7., 8.]])
-print(photo.shape, batch.shape)""",
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+# Real colour images.
+photo = data.immunohistochemistry().astype(float)          # (512, 512, 3)
+batch = np.stack([photo, data.astronaut().astype(float)]) # (2, 512, 512, 3)
+w = np.array([0.2125, 0.7154, 0.0721])                    # RGB -> grayscale weights
+
+# Real handwritten digits (UCI Optical Recognition dataset, packaged by sklearn).
+digits = load_digits()
+digit_images = digits.images.astype(float)                 # (1797, 8, 8)
+
+# Small 2x2 matrices for Exercise 2 are NOT invented numbers:
+# they are central pixel patches from two real digit images.
+A = digit_images[0, 2:4, 2:4]
+B = digit_images[1, 2:4, 2:4]
+
+print("photo:", photo.shape, "batch:", batch.shape)
+print("digits:", digit_images.shape, "labels:", digits.target.shape)
+print(
+    "Exercise 2 patches come from digit labels:",
+    digits.target[0],
+    "and",
+    digits.target[1],
+)
+print("A =\\n", A)
+print("B =\\n", B)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["07"] = {
     "setup": """import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+import plotly.express as px
+import plotly.graph_objects as go
+from IPython.display import display
+from sklearn.datasets import load_digits
 
-HOUSING = "https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"
-housing = pd.read_csv(HOUSING)
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
 
-def unfold(T, axis):
+HOUSING = (
+    "https://raw.githubusercontent.com/ageron/handson-ml2/master/"
+    "datasets/housing/housing.csv"
+)
+housing = pd.read_csv(HOUSING).dropna().reset_index(drop=True)
+
+features = [
+    "housing_median_age",
+    "total_rooms",
+    "total_bedrooms",
+    "population",
+    "households",
+    "median_income",
+]
+
+X_raw = housing[features].to_numpy(float)
+feature_mean = X_raw.mean(axis=0)
+feature_std = X_raw.std(axis=0)
+X_scaled = (X_raw - feature_mean) / feature_std
+
+# Bias + six standardized real features -> 7 columns.
+X = np.column_stack([np.ones(len(housing)), X_scaled])
+y = housing["median_house_value"].to_numpy(float)
+column_names = ["bias"] + features
+
+# Real image tensor for Exercise 3.
+digits = load_digits()
+digit_tensor = digits.images.astype(float)  # (1797, 8, 8)
+
+def unfold(T, axis=0):
     return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
 
-rng = np.random.default_rng(0)
-print(housing.shape)                                   # (20640, 10)
-print(housing['total_bedrooms'].isnull().sum())        # 207 missing values!""",
+print("housing rows:", len(housing))
+print("housing design matrix:", X.shape)
+print("digit tensor:", digit_tensor.shape)
+print("interactive charts: Plotly enabled (hover, zoom, pan)")""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["08"] = {
     "setup": """import numpy as np
 import pandas as pd
+import ipywidgets as widgets
+import plotly.express as px
+import plotly.graph_objects as go
+from IPython.display import display
+
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
 
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
 flights = pd.read_csv(FLIGHTS)
 
+y = flights["passengers"].to_numpy(float)
+labels = (
+    flights["year"].astype(str)
+    + "-"
+    + flights["month"].astype(str).str[:3]
+).to_numpy()
+
 rng = np.random.default_rng(0)
-print(flights.shape)                       # (144, 3) — 144 real months, 1949-1960""",
+
+print("real months / meses reales:", len(y))
+print("range / periodo:", labels[0], "→", labels[-1])
+print("passengers min/max:", int(y.min()), int(y.max()))
+print("interactive charts: Plotly + ipywidgets enabled")""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -201,10 +382,42 @@ from scipy import signal
 from scipy.linalg import toeplitz
 from skimage import data
 from skimage.restoration import richardson_lucy
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+from IPython.display import display
 
-img = data.camera().astype(float) / 255.      # real photograph, 512x512
-sobel = np.array([[-1, 0, 1], [-2, 0, 2], [-1, 0, 1]], float)
-print(img.shape, img.min(), img.max())""",
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+img = data.camera().astype(float) / 255.0
+patch = img[176:336, 176:336]
+work = img[128:384, 128:384]
+scanline = img[256, 220:252].copy()
+
+sobel_x = np.array([
+    [-1., 0., 1.],
+    [-2., 0., 2.],
+    [-1., 0., 1.],
+])
+
+kernel_1d = np.array([1., 0., -1.])
+
+def convmtx_full_1d(kernel, n):
+    m = len(kernel)
+    col = np.zeros(n + m - 1)
+    col[:m] = kernel
+    row = np.zeros(n)
+    row[0] = kernel[0]
+    return toeplitz(col, row)
+
+print("full image / imagen completa:", img.shape)
+print("real patch / recorte real:", patch.shape)
+print("deconvolution crop / recorte deconvolución:", work.shape)
+print("real scanline / fila real:", scanline.shape)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -212,7 +425,15 @@ CONTENT["10"] = {
     "setup": """import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from skimage import data
+import ipywidgets as widgets
+from IPython.display import display
+
+# Enable ipywidgets in Google Colab when available.
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
 
 TAXIS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
 taxis = pd.read_csv(TAXIS)
@@ -220,15 +441,80 @@ taxis = pd.read_csv(TAXIS)
 def unfold(T, axis):
     return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
 
-print(taxis.shape)                       # (6433, 14) — 6,433 real NYC taxi trips""",
+def hosvd_bases(T):
+    return [
+        np.linalg.svd(unfold(T, axis), full_matrices=False)[0]
+        for axis in range(T.ndim)
+    ]
+
+taxis["pickup_dt"] = pd.to_datetime(taxis["pickup"], errors="coerce")
+taxis["hour"] = taxis["pickup_dt"].dt.hour
+
+sub = taxis.dropna(
+    subset=["pickup_borough", "dropoff_borough", "hour"]
+).copy()
+sub["hour"] = sub["hour"].astype(int)
+
+pickup_names = sorted(sub["pickup_borough"].unique())
+dropoff_names = sorted(sub["dropoff_borough"].unique())
+
+pickup_index = {name: i for i, name in enumerate(pickup_names)}
+dropoff_index = {name: i for i, name in enumerate(dropoff_names)}
+
+T = np.zeros(
+    (len(pickup_names), len(dropoff_names), 24),
+    dtype=float,
+)
+
+for (p, d, h), count in sub.groupby(
+    ["pickup_borough", "dropoff_borough", "hour"]
+).size().items():
+    T[pickup_index[p], dropoff_index[d], int(h)] = float(count)
+
+print("taxi rows / filas:", len(taxis))
+print("usable trips / viajes utilizables:", int(T.sum()))
+print("tensor shape / forma:", T.shape)
+print("pickup boroughs / origen:", pickup_names)
+print("dropoff boroughs / destino:", dropoff_names)""",
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
 CONTENT["11"] = {
-    "setup": """import numpy as np
-import pandas as pd
-from sklearn.datasets import load_breast_cancer
-from scipy import signal
+    "setup": """import hashlib
+import io
+import subprocess
+import sys
+import urllib.request
 
-rng = np.random.default_rng(0)""",
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import ipywidgets as widgets
+
+from IPython.display import Audio, display
+from scipy import signal
+from sklearn.datasets import load_breast_cancer
+
+try:
+    from google.colab import output
+    output.enable_custom_widget_manager()
+except ImportError:
+    pass
+
+rng = np.random.default_rng(0)
+
+def softmax(x, axis=-1):
+    x = x - np.max(x, axis=axis, keepdims=True)
+    e = np.exp(x)
+    return e / np.sum(e, axis=axis, keepdims=True)
+
+def snr_db(reference, estimate):
+    reference = np.asarray(reference)
+    estimate = np.asarray(estimate)
+    return 10 * np.log10(
+        np.sum(reference**2) /
+        np.sum((estimate - reference)**2)
+    )
+
+print("Setup ready / Preparación lista")""",
 }

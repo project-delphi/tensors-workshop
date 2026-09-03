@@ -149,7 +149,7 @@ histología, que skimage documenta sin restricciones de copyright conocidas.
 
 **Bloques de ejercicios** — 10 min programando, 5 de explicación.
 
-**Bloques de grupo** — 10 min de discusión y puesta en común.
+**Bloque de grupo** (§05) — 10 min de discusión y puesta en común.
 
 . . .
 
@@ -365,7 +365,7 @@ apéndices, nunca la parte I.
 {{< var sections.s02.part >}}
 :::
 
-*Parte II · discusión en grupo · sin código*
+*Parte II · demostración · código*
 
 ::: {.pace-badge}
 [[⏱️]{.pace-icon}**{{< var sections.s02.minutes >}} min** asignados]{.pace-duration}
@@ -373,49 +373,27 @@ apéndices, nunca la parte I.
 [Inicio: {{< var sections.s02.start >}} · Fin: {{< var sections.s02.end >}}]{.pace-window}
 :::
 
-## Vuestra tarea
+## La misma forma, ejes distintos
 
-> Una imagen en escala de grises es una matriz. Casi nada en aprendizaje
-> automático es una sola imagen en gris. Cada cosa que añades — color, muchos
-> ejemplos, tiempo — añade un eje, y cada eje significa algo distinto.
-
-**Discutid qué eje va dónde, y por qué.**
-
-10 minutos en vuestro canal y luego puesta en común.
-
-## Las cinco preguntas
-
-::: {.incremental}
-1. `(H, W)` → imagen en color → lote → vídeo → lote de vídeos. ¿Qué *cuenta*
-   cada eje nuevo? **No digáis «añadimos una dimensión».**
-2. Un eje de lote y un eje temporal son idénticos en el código. ¿Qué cambia en
-   su **significado**? ¿Qué pasa si barajas cada uno?
-3. Los vídeos reales tienen longitudes distintas. Dos formas de agruparlos en
-   lote: ¿qué **pierde o inventa** cada una?
-4. Células fotografiadas cada 10 min durante 48 h: ¿intervalo entre fotogramas
-   → ? ¿campo de visión → ? ¿número de placas → ?
-5. ¿Hay un límite al número de ejes de un tensor?
-:::
-
-## Puesta en común
-
-```{python}
-#| label: code-02-thinking-in-n-dimensions-1
-#| echo: true
-gray_image      = np.zeros((28, 28))            # (H, W)
-color_image     = np.zeros((28, 28, 3))         # (H, W, C)      + color
-batch_of_images = np.zeros((32, 28, 28, 3))     # (N, H, W, C)   + muchos ejemplos
-video           = np.zeros((16, 28, 28, 3))     # (T, H, W, C)   + tiempo ordenado
-batch_of_videos = np.zeros((8, 16, 28, 28, 3))  # (N, T, H, W, C)
-```
+`digits.images` es `(1797, 8, 8)` y una foto es `(512, 512, 3)` — ambas de orden
+3, pero el eje 0 cuenta **imágenes** en una y **filas de píxeles** en la otra. En
+el cuaderno, `digit_batch` y `video_patch` son *ambos* `(8, 8, 8)`: uno apila
+ejemplos independientes, el otro apila instantes ordenados.
 
 . . .
 
-**La pregunta 2 es la clave.** Barajar el eje 0 es inofensivo en un lote y
-**destruye** un vídeo.
+**Barajar el eje 0** es inofensivo en un lote — los ejemplos son independientes —
+y **destruye** un vídeo, donde el orden *es* la información. La misma operación,
+un significado completamente distinto. La notación del capítulo 2 no tiene ningún
+concepto de «el orden entre elementos importa»; eso sí es nuevo hoy.
 
-La notación del capítulo 2 no tiene ningún concepto de «el orden entre elementos
-importa». Eso sí es nuevo hoy.
+## Los clips de distinta duración necesitan una máscara
+
+Los vídeos reales tienen longitudes distintas, pero un tensor de lote es
+rectangular. El cuaderno toma tres clips reales de longitud 4, 7 y 5, los rellena
+en un lote de orden 5 `(3, 7, 135, 240, 3)` y lleva una **máscara de validez**
+booleana `(3, 7)` — así `valid.sum() == 16` y el relleno queda visible en vez de
+promediarse en los datos.
 
 ## Al cuaderno
 
@@ -424,10 +402,11 @@ importa». Eso sí es nuevo hoy.
 [Abrir en Colab]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb)
 
 ::: {.notes}
-Los bloques de grupo necesitan más mano firme que los de ejercicios. Si un grupo
-sigue en la pregunta 1 a falta de 5 minutos, entra en su canal y diles que dibujen
-cualquier cosa, aunque la forma esté mal. La puesta en común importa más que un
-dibujo correcto. Asigna los grupos antes de la sesión.
+Esto es una demostración de código en vivo, no un bloque de discusión. Abre el
+cuaderno y ejecuta primero la celda de preparación; descarga y verifica por
+checksum el vídeo real que usan los ejercicios. Recalca el contraste entre
+barajar un lote y barajar el tiempo, y luego el lote rellenado con su máscara de
+validez.
 :::
 
 # 03 · Indexación y broadcasting {#sec-03-indexing-and-broadcasting}
