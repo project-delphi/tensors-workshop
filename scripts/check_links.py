@@ -4,12 +4,15 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Nine checks, each of which catches a mistake that is otherwise invisible.
+Ten checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
   - Notebooks are valid, have no outputs or execution counts, and each badge
     points at its own file — the twelve sections and the extras alike. [nb]
+  - Every notebook docs/ serves is byte-identical to the one committed in
+    notebooks/. Quarto copies them verbatim instead of rendering them, so
+    this is the only gate that would notice docs/ serving a stale notebook.
   - Internal links resolve — including the #fragment, so a link to
     kahoot.html#quiz-2 fails if that anchor is not on the page.
   - Colab URLs are well-formed AND point at a notebook that exists. A badge
@@ -268,6 +271,54 @@ def check_notebooks() -> None:
           f"badges self-consistent")
 
 
+# ── docs/ serves the notebooks that are committed ────────────────────────────
+
+def check_docs_notebooks() -> None:
+    """The one staleness check that walks something other than *.html.
+
+    Notebooks are `resources:` in _quarto.yml, not `render:` targets, so
+    Quarto copies them into docs/ verbatim rather than building them. That
+    makes a notebook committed without a re-render invisible to both existing
+    gates: the regenerate step compares the tracked notebooks against the
+    normalizer and never looks in docs/, and compare_render.py walks *.html
+    only. docs/notebooks/ has gone stale twice that way, once to nine of the
+    twelve at a stroke, and both times Pages served the old copies.
+
+    Byte-for-byte is the right comparison here precisely because Quarto does
+    not transform these files — unlike the HTML gate, which cannot be exact.
+    CI runs this against docs/ AS COMMITTED, before any re-render, which is
+    what Pages is serving right now.
+    """
+    step("docs/notebooks matches notebooks/")
+    served_dir = DOCS / "notebooks"
+    if not served_dir.is_dir():
+        fail("docs/notebooks/ does not exist — run `quarto render`")
+        return
+
+    expected = {f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
+    stale = []
+    for name in sorted(expected):
+        source, served = NBDIR / name, served_dir / name
+        if not source.exists():
+            continue          # check_notebooks already reported this one
+        if not served.exists():
+            fail(f"docs/notebooks/{name} is missing — run `quarto render` "
+                 f"and commit docs/")
+        elif served.read_bytes() != source.read_bytes():
+            stale.append(name)
+    if stale:
+        fail(f"docs/ serves an old copy of {len(stale)} notebook(s): "
+             f"{', '.join(stale)} — run `quarto render` and commit docs/")
+    for orphan in sorted({p.name for p in served_dir.glob("*.ipynb")}
+                         - expected):
+        fail(f"docs/notebooks/{orphan} is served but is neither a section nor "
+             f"an extra — a rename left it behind; delete it")
+
+    if not stale:
+        print(f"      {len(expected)} notebooks served from docs/ are "
+              f"byte-identical to the committed notebooks/")
+
+
 # ── EN and ES landing pages agree ────────────────────────────────────────────
 
 def check_landing_parity() -> None:
@@ -446,6 +497,7 @@ def main() -> int:
           f"against _variables.yml")
     check_notebooks()
     if not only_nb:
+        check_docs_notebooks()
         check_links()
         check_decks()
         check_landing_parity()

@@ -135,10 +135,11 @@ uv run --with numpy,pandas,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
 scikit-learn,scikit-image python scripts/gen_figures.py
 ```
 
-`check_links.py` is the test suite — there is no pytest here. It prints nine
-numbered checks, in the order they run. Eight can fail, and any failure exits
-non-zero: notebooks are valid with no outputs or execution counts; internal
-links resolve *including the `#fragment`*; every Colab badge points at its own
+`check_links.py` is the test suite — there is no pytest here. It prints ten
+numbered checks, in the order they run. Nine can fail, and any failure exits
+non-zero: notebooks are valid with no outputs or execution counts; every
+notebook `docs/` serves is byte-identical to the one committed in
+`notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
 same twelve sections (extras appear in neither, by design); each section's
 written `start`/`end` still matches the
@@ -147,7 +148,7 @@ and the `agenda` rows still account for every segment of that clock exactly
 once and in order; the deck timer's total still matches `workshop.minutes`;
 and no visible notebook cell depends on a name bound only inside a folded
 solution cell (easy to introduce, invisible when you run the notebook top to
-bottom). The ninth, Kahoot join URLs, only prints a TODO — that output is
+bottom). The tenth, Kahoot join URLs, only prints a TODO — that output is
 **not** a failure. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
@@ -169,15 +170,21 @@ compares committed vs fresh HTML with Quarto's content-hashed asset names
 normalized away (a byte-exact gate is impossible — SCSS compilation differs
 between macOS and ubuntu-latest at the same version).
 
-**That gate only walks `*.html`, and it is the only staleness check there is.**
-`notebooks/*.ipynb` are `resources:` in `_quarto.yml`, not `render:` targets —
-Quarto copies them into `docs/notebooks/` verbatim. So a notebook change that
-is committed without a re-render leaves `docs/notebooks/` serving the old copy,
-and nothing fails: the regenerate gate reruns `scripts/gen_notebooks.py` and
-only fails if the tracked `notebooks/` drift from the normalizer's output,
-never looking in `docs/`, while `compare_render.py` skips non-HTML entirely. This has already happened once, to nine of the twelve
-notebooks at once. Re-render after *any* notebook change, not only after a
-prose or `_variables.yml` change.
+**That gate only walks `*.html`.** `notebooks/*.ipynb` are `resources:` in
+`_quarto.yml`, not `render:` targets — Quarto copies them into
+`docs/notebooks/` verbatim. So a notebook change committed without a re-render
+leaves `docs/notebooks/` serving the old copy, and neither the regenerate gate
+nor `compare_render.py` would say so: the first reruns
+`scripts/gen_notebooks.py` and only fails if the tracked `notebooks/` drift
+from the normalizer's output, never looking in `docs/`, while the second skips
+non-HTML entirely. That is what let it happen twice, once to nine of the twelve
+notebooks at a stroke.
+
+Check 2 in `check_links.py` closes it, and it *is* byte-exact — Quarto copies
+these files instead of transforming them, so there is no SCSS-style difference
+to normalize away. CI runs the checker against `docs/` as committed before it
+re-renders, which is the copy Pages is serving. Re-render after *any* notebook
+change, not only after a prose or `_variables.yml` change.
 
 Quarto is pinned to **1.6.40** in the workflow. Use that version locally; a
 different one changes markup and the staleness gate goes red. Bump the pin and
