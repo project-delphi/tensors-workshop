@@ -256,7 +256,9 @@ background-size: cover;
   <li><a href="#appendix-b-take-home-attention-is-two-contractions" id="toc-appendix-b-take-home-attention-is-two-contractions" class="nav-link" data-scroll-target="#appendix-b-take-home-attention-is-two-contractions">Appendix B — Take-Home: Attention Is Two Contractions</a></li>
   <li><a href="#appendix-c-take-home-cp-decomposition-compared-to-tucker" id="toc-appendix-c-take-home-cp-decomposition-compared-to-tucker" class="nav-link" data-scroll-target="#appendix-c-take-home-cp-decomposition-compared-to-tucker">Appendix C — Take-Home: CP Decomposition, Compared to Tucker</a></li>
   <li><a href="#appendix-d-take-home-cholesky-builds-correlated-data" id="toc-appendix-d-take-home-cholesky-builds-correlated-data" class="nav-link" data-scroll-target="#appendix-d-take-home-cholesky-builds-correlated-data">Appendix D — Take-Home: Cholesky Builds Correlated Data</a></li>
-  <li><a href="#appendix-e-facilitator-notes" id="toc-appendix-e-facilitator-notes" class="nav-link" data-scroll-target="#appendix-e-facilitator-notes">Appendix E — Facilitator Notes</a></li>
+  <li><a href="#appendix-e-matrix-factorizations-which-one-and-what-it-costs" id="toc-appendix-e-matrix-factorizations-which-one-and-what-it-costs" class="nav-link" data-scroll-target="#appendix-e-matrix-factorizations-which-one-and-what-it-costs">Appendix E — Matrix Factorizations: Which One, and What It Costs</a></li>
+  <li><a href="#appendix-f-take-home-tensor-factorizations-reserved" id="toc-appendix-f-take-home-tensor-factorizations-reserved" class="nav-link" data-scroll-target="#appendix-f-take-home-tensor-factorizations-reserved">Appendix F — Take-Home: Tensor Factorizations <em>(reserved)</em></a></li>
+  <li><a href="#appendix-g-facilitator-notes" id="toc-appendix-g-facilitator-notes" class="nav-link" data-scroll-target="#appendix-g-facilitator-notes">Appendix G — Facilitator Notes</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -268,7 +270,7 @@ background-size: cover;
 
 
 
-<p><strong>🆕 Facilitator note on this edit.</strong> Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to <strong>195 minutes (3h15)</strong>. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.</p>
+<p><strong>🆕 Facilitator note on this edit.</strong> Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to <strong>195 minutes (3h15)</strong>. If you need to hold the line at 180 minutes, see the cutting order in Appendix G, which now also covers the quizzes.</p>
 <p><strong>Before you arrive.</strong> You know matrices; the workshop assumes <strong>no previous knowledge of tensor theory</strong>. Everything below is free, and nothing needs installing on your own machine.</p>
 <p><em>Required:</em></p>
 <ul>
@@ -712,6 +714,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+<p>Today uses each of these where it happens to be needed. <a href="#appendix-e-matrix-factorizations-which-one-and-what-it-costs">Appendix E</a> puts the whole family side by side and asks what each one <em>costs</em>, which is the question this table does not answer.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="fl">4.</span>, <span class="fl">3.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">1.</span>, <span class="fl">1.</span>], [<span class="fl">6.</span>, <span class="fl">3.</span>, <span class="fl">5.</span>]])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>P, L, U <span class="op">=</span> lu(A)                            <span class="co"># LU: A = P L U</span></span>
@@ -1084,7 +1087,7 @@ background-size: cover;
 <li><strong>Part IV</strong> — wrote contractions with <code>einsum</code>; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.</li>
 </ol>
 <p><strong>One idea connects Blocks 4, 5 and 6:</strong> when a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.</p>
-<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>, <code>cholesky</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below. - <strong><a href="#further-reading">Further Reading</a></strong> — books, the seminal Tucker/CP/SVD papers, and <code>tensorly</code>, for going deeper than today’s 195 minutes.</p>
+<p><strong>Where to go next</strong> - <code>torch.einsum</code> / <code>tf.einsum</code> / <code>jnp.einsum</code> — identical syntax to what you used today. - <code>np.linalg</code> — the rest of Chapter 2: eigendecomposition, <code>lstsq</code>, <code>pinv</code>, <code>qr</code>, <code>cholesky</code>. - <code>scipy.signal</code> and <code>skimage.restoration</code> — convolution and deconvolution beyond today. - The take-home notebooks below, and the two deep dives beyond them: <a href="#appendix-e-matrix-factorizations-which-one-and-what-it-costs">matrix factorizations</a> and tensor factorizations. - <strong><a href="#further-reading">Further Reading</a></strong> — books, the seminal Tucker/CP/SVD papers, and <code>tensorly</code>, for going deeper than today’s 195 minutes.</p>
 <hr>
 </section>
 <section id="further-reading" class="level2">
@@ -1192,7 +1195,7 @@ Tucker is usually more accurate at equal size, because its dense core can repres
 </section>
 <section id="appendix-d-take-home-cholesky-builds-correlated-data" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-d-take-home-cholesky-builds-correlated-data">Appendix D — Take-Home: Cholesky Builds Correlated Data</h2>
-<p>Every factorization above takes something apart. Cholesky is the exception: you use it to build. Given a covariance matrix <code>Sigma</code> that is symmetric and positive-definite, <code>np.linalg.cholesky</code> returns a lower-triangular <code>L</code> with <code>L @ L.T == Sigma</code>. Feed <code>L</code> independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.</p>
+<p><a href="#appendix-e-matrix-factorizations-which-one-and-what-it-costs">Appendix E</a> covers Cholesky as a <em>solver</em> — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a <strong>sampler</strong>. Feed a lower-triangular <code>L</code> with <code>L @ L.T == Sigma</code> some independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.</p>
 <div class="sourceCode" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>vol <span class="op">=</span> np.array([<span class="fl">0.012</span>, <span class="fl">0.015</span>, <span class="fl">0.010</span>])</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> np.array([[<span class="fl">1.00</span>, <span class="fl">0.85</span>, <span class="fl">0.20</span>],</span>
 <span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>                  [<span class="fl">0.85</span>, <span class="fl">1.00</span>, <span class="fl">0.20</span>],</span>
@@ -1244,15 +1247,131 @@ Solution
 <span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>terminal_independent <span class="op">=</span> initial_value <span class="op">*</span> np.prod(<span class="dv">1</span> <span class="op">+</span> portfolio_returns_independent, axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <code>Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma</code> — independent noise in, correlated noise out. With the parameters above, the correlated simulation’s terminal-value standard deviation is <strong>≈18.8</strong> against <strong>≈13.6</strong> for the independent one (39% more spread); its 5th percentile is <strong>≈79.7</strong> against <strong>≈86.9</strong>, and its 1st percentile <strong>≈70.7</strong> against <strong>≈79.9</strong> — the correlated portfolio’s bad days are genuinely worse, even though every individual asset’s volatility, mean and median terminal value are essentially unchanged between the two simulations. <strong>This is not a general law that correlation increases risk</strong> — it is specific to this book, where every pair is positively correlated; a negatively correlated pair would understate risk if ignored, not overstate it. What generalizes is only that assuming independence when assets are not independent distorts the tails.
 </details>
+</section>
+<section id="appendix-e-matrix-factorizations-which-one-and-what-it-costs" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-e-matrix-factorizations-which-one-and-what-it-costs">Appendix E — Matrix Factorizations: Which One, and What It Costs</h2>
+<p>The workshop used factorizations in passing — LU and QR in Part I §1.4, the pseudoinverse in Block 4, convolution as a matrix product in Block 5 — without ever answering the two questions a practitioner actually has: <strong>which one do I reach for on this data, and what does it cost me?</strong> This appendix answers both, and the deep-dive notebook does it interactively: <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb">12 · Matrix factorizations</a></strong>.</p>
+<p>The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes <code>‖y − Xβ‖</code> subject to an orthonormal <code>Q</code>. The truncated SVD minimizes <code>‖A − B‖_F</code> subject to <code>rank(B) ≤ k</code> — and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to <code>W, H ≥ 0</code>, which must be worse on error and is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all: they are exact rewrites whose entire value is downstream, where a solve costs <code>O(n²)</code> instead of <code>O(n³)</code>.</p>
+<p><strong>The cost table.</strong> Leading-term flop counts for a dense <code>m × n</code> factorization with <code>m ≥ n</code>, from Trefethen &amp; Bau, <em>Numerical Linear Algebra</em>:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Flops</th>
+<th>The question it answers</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Cholesky</strong> (<code>n × n</code> SPD)</td>
+<td><code>n³/3</code></td>
+<td>Solve <code>Ax = b</code> many times, <code>A</code> symmetric positive definite</td>
+</tr>
+<tr class="even">
+<td><strong>LU</strong> (<code>n × n</code>)</td>
+<td><code>2n³/3</code></td>
+<td>The same, <code>A</code> merely square</td>
+</tr>
+<tr class="odd">
+<td><strong>QR</strong> (<code>m × n</code>)</td>
+<td><code>2mn² − 2n³/3</code></td>
+<td>Least squares, without forming <code>XᵀX</code></td>
+</tr>
+<tr class="even">
+<td><strong>Eigendecomposition</strong> (<code>n × n</code> sym.)</td>
+<td><code>≈ 9n³</code></td>
+<td>What does repeated application converge to?</td>
+</tr>
+<tr class="odd">
+<td><strong>Thin SVD</strong> (<code>m × n</code>)</td>
+<td><code>2mn² + 11n³</code></td>
+<td>The best rank-<code>k</code> approximation of anything</td>
+</tr>
+<tr class="even">
+<td><strong>Randomized SVD</strong> (rank <code>k</code>)</td>
+<td><code>≈ 4mnk</code></td>
+<td>The same, when <code>k ≪ n</code> and <code>A</code> is dense</td>
+</tr>
+<tr class="odd">
+<td><strong>Lanczos</strong> (rank <code>k</code>, sparse)</td>
+<td><code>O(k · nnz(A))</code></td>
+<td>The same, when <code>A</code> is sparse</td>
+</tr>
+</tbody>
+</table>
+<p>Three consequences are worth stating outright, because each one is a mistake that costs a single line of code:</p>
+<ol type="1">
+<li><strong>Factor once, solve many.</strong> Cholesky costs <code>n³/3</code> once; each later solve is two triangular substitutions at <code>O(n²)</code>. So <code>m</code> right-hand sides cost <code>O(n³ + mn²)</code>, <strong>not</strong> <code>O(mn³)</code>. <code>np.linalg.inv(A) @ B</code> is both slower and less accurate than factoring, and is never the right call.</li>
+<li><strong>The normal equations square the condition number</strong>, because <code>κ(XᵀX) = κ(X)²</code>. QR’s error scales with <code>κ(X)·ε</code>; the normal equations’ with <code>κ(X)²·ε</code>. Same data, same objective, error squared.</li>
+<li><strong>Do not compute what you will throw away.</strong> A full SVD is <code>O(mn·min(m,n))</code>. If you want 20 components out of 1682, randomized SVD is <code>O(mnk)</code> and Lanczos is <code>O(k·nnz(A))</code> — the gap between those is why large-scale recommenders are feasible at all.</li>
+</ol>
+<div class="sourceCode" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Fit a degree-10 polynomial to the real airline series two ways.</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="co">#         X = np.vander(month_scaled, 11, increasing=True); y = passengers</span></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a><span class="co">#         a) normal equations: np.linalg.solve(X.T @ X, X.T @ y)</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co">#         b) QR: Q, R = np.linalg.qr(X); np.linalg.solve(R, Q.T @ y)</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co">#         Use np.linalg.lstsq as the reference. Compare the RESIDUALS, then</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co">#         compare the COEFFICIENTS. Only one of those two comparisons sees</span></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co">#         the problem.</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 2: Build the 1797x1797 RBF kernel matrix of the digits plus a ridge</span></span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a><span class="co">#         term, and 200 right-hand sides. Time three strategies: factor once</span></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="co">#         with cho_factor/cho_solve, np.linalg.inv(G) @ B, and one</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="co">#         np.linalg.solve per column. Print the ratios, and the relative</span></span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="co">#         residual of the first two. Which is both faster AND more accurate?</span></span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 3: Time Cholesky, LU, QR, eigh and SVD across n = 128 ... 768. Fit</span></span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a><span class="co">#         log t against log n; the slope is the measured exponent. Compare</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a><span class="co">#         it against the predicted 3, and compare the measured SVD/Cholesky</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a><span class="co">#         ratio against the 39x the table above predicts. Which of the two</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a><span class="co">#         predictions survives contact with a real machine?</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 4: Write needed_rank(A, target_db) returning the smallest k whose</span></span>
+<span id="cb40-19"><a href="#cb40-19" aria-hidden="true" tabindex="-1"></a><span class="co">#         rank-k truncation reaches a target PSNR — WITHOUT rebuilding the</span></span>
+<span id="cb40-20"><a href="#cb40-20" aria-hidden="true" tabindex="-1"></a><span class="co">#         truncation for each k. Eckart-Young gives the squared error as</span></span>
+<span id="cb40-21"><a href="#cb40-21" aria-hidden="true" tabindex="-1"></a><span class="co">#         sum(S[k:] ** 2) directly. Run it on the 512x512 astronaut image</span></span>
+<span id="cb40-22"><a href="#cb40-22" aria-hidden="true" tabindex="-1"></a><span class="co">#         for 20, 25, 30 and 35 dB and report what each rank costs to store.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="sourceCode" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.vander(month_scaled, <span class="dv">11</span>, increasing<span class="op">=</span><span class="va">True</span>)                   <span class="co"># </span><span class="al">TODO</span><span class="co"> 1</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>beta_normal <span class="op">=</span> np.linalg.solve(X.T <span class="op">@</span> X, X.T <span class="op">@</span> passengers)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(X)<span class="op">;</span> beta_qr <span class="op">=</span> np.linalg.solve(R, Q.T <span class="op">@</span> passengers)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>beta_ref <span class="op">=</span> np.linalg.lstsq(X, passengers, rcond<span class="op">=</span><span class="va">None</span>)[<span class="dv">0</span>]</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co"># cond(X) = 2.2e+07, cond(X.T @ X) = 4.6e+14 — the square, to one digit</span></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="co"># residuals agree to six decimals; coefficient errors are 2.0e-03 vs 2.0e-14</span></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>X_fast <span class="op">=</span> cho_solve(cho_factor(G), B)                               <span class="co"># </span><span class="al">TODO</span><span class="co"> 2</span></span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a><span class="co"># factor once = 1x; explicit inverse ~5x slower; one solve per column ~340x</span></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co"># and the explicit inverse is also ~7x less accurate on the residual</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a>slope, _ <span class="op">=</span> np.polyfit(np.log(sizes), np.log(times), <span class="dv">1</span>)             <span class="co"># </span><span class="al">TODO</span><span class="co"> 3</span></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co"># fitted slopes land near 2.2-2.9, not 3.0; and the measured SVD/Cholesky ratio lands well under the predicted 39x</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.linalg.svd(A, compute_uv<span class="op">=</span><span class="va">False</span>)                             <span class="co"># </span><span class="al">TODO</span><span class="co"> 4</span></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a>tail <span class="op">=</span> np.concatenate([np.cumsum(S[::<span class="op">-</span><span class="dv">1</span>] <span class="op">**</span> <span class="dv">2</span>)[::<span class="op">-</span><span class="dv">1</span>], [<span class="fl">0.0</span>]])</span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> np.errstate(divide<span class="op">=</span><span class="st">"ignore"</span>):        <span class="co"># the last entry is exactly 0</span></span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a>    db <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> np.log10(<span class="fl">1.0</span> <span class="op">/</span> (tail <span class="op">/</span> A.size))</span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> <span class="bu">int</span>(np.argmax(db <span class="op">&gt;=</span> target_db))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><strong>TODO 1 is the expensive one.</strong> The residuals of the two fits agree to six decimal places, so the check most people run reports nothing wrong — while the coefficients differ by eleven orders of magnitude. That gap is exactly <code>κ(X)²</code> against <code>κ(X)</code>, and it came from writing <code>X.T @ X</code>.</p>
+<p><strong>TODO 3 does not give you 3.0, and that is not a failure of the theory.</strong> Fitted exponents come in low because parallelism and cache reuse both improve as <code>n</code> grows: the machine gets faster at the same work, which flattens the curve. The effect shrinks with larger <code>n</code>, so the slope creeps upward. What does survive is the <strong>ratio between methods at fixed <code>n</code></strong> — it cancels the machine out, because both methods gain from the same hardware. Predict with ratios, not exponents.</p>
+<strong>TODO 4 turns “rank 20” into a defensible decision.</strong> Nobody can justify a rank; anybody can justify “the smallest rank holding 25 dB”. The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 <code>uint8</code> image: 6.3% of the pixel <em>count</em>, but 12.5% of the <em>bytes</em> at <code>int16</code> and 25% at <code>float32</code>. Truncated SVD is a superb analysis tool and a mediocre image codec.
+</details>
+</section>
+<section id="appendix-f-take-home-tensor-factorizations-reserved" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-f-take-home-tensor-factorizations-reserved">Appendix F — Take-Home: Tensor Factorizations <em>(reserved)</em></h2>
+<p>The matching deep dive one order up — CP, Tucker, tensor train and block-term on the same real tensor, and why tensor rank is not the tidy generalization of matrix rank it looks like. The notebook exists and is linked from <a href="notebooks.html">the notebooks page</a>; this appendix arrives with it.</p>
 <hr>
 </section>
-<section id="appendix-e-facilitator-notes" class="level2">
-<h2 class="anchored" data-anchor-id="appendix-e-facilitator-notes">Appendix E — Facilitator Notes</h2>
+<section id="appendix-g-facilitator-notes" class="level2">
+<h2 class="anchored" data-anchor-id="appendix-g-facilitator-notes">Appendix G — Facilitator Notes</h2>
 <p><em>(Students may ignore this section.)</em></p>
 <p><strong>Structure.</strong> Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Blocks 4, 5 and 6 share one theme — <em>no exact inverse exists, so find the best stable approximation</em> — and stating that connection explicitly at the wrap-up is what makes the second half feel like one lesson rather than four.</p>
 <p><strong>Do not rush Part I.</strong> It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.</p>
 <p><strong>Language.</strong> Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — <em>eje</em>, <em>descomposición</em>, <em>contracción</em>, <em>convolución</em> — it removes friction immediately. Invite questions in either language. Warn about the two meanings of “rank” at the start of Part I.</p>
-<p><strong>Verified numbers.</strong> Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18. If a student gets something different, it is worth investigating rather than dismissing.</p>
+<p><strong>Verified numbers.</strong> Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; and, for Appendix E, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. <strong>The one exception is Appendix E’s timings</strong>, which are properties of the machine, not of the data — a Colab CPU will not reproduce them, and the appendix quotes ratios rather than milliseconds for exactly that reason.</p>
 <p><strong>The downloads.</strong> Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone’s download succeeded — a student who silently fails will be stuck at Blocks 4 and 6. Have the three CSVs mirrored in the workshop repo as a fallback.</p>
 <p><strong>Pre-assign the breakout groups</strong> for the video-pipeline block before the session; assigning them live costs 3–5 minutes.</p>
 <p><strong>The group block needs firmer facilitation than exercise blocks.</strong> If a group is still on the first design question with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.</p>
