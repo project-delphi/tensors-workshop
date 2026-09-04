@@ -31,7 +31,7 @@ Keep slide code copied from the matching notebook, which *is* executed.
 | `?` | All shortcuts |
 
 Every Kahoot slide and every difficult moment carries speaker notes, so run
-speaker view rather than trusting memory. The notes hold Appendix D's facilitator
+speaker view rather than trusting memory. The notes hold Appendix G's facilitator
 guidance where it is actually needed:
 
 - the two meanings of **"rank"**, at the start of Part I

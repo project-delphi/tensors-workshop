@@ -5,7 +5,7 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
-**🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix E, which now also covers the quizzes.
+**🆕 Facilitator note on this edit.** Three 6-question Kahoot quizzes have been inserted as knowledge checks after Block 2, after Block 4, and after Block 6 (see the schedule and each insertion point below, marked 🆕). Running time increases from 180 to **195 minutes (3h15)**. If you need to hold the line at 180 minutes, see the cutting order in Appendix G, which now also covers the quizzes.
 
 **Before you arrive.** You know matrices; the workshop assumes **no previous knowledge of tensor theory**. Everything below is free, and nothing needs installing on your own machine.
 
@@ -211,6 +211,8 @@ A **factorization** writes one object as a product of simpler objects. You met t
 | **Pseudoinverse** | Any matrix | "Inverse" when no true inverse exists (§2.9) | Block 4 |
 | **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Appendix D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | Block 6 |
+
+Today uses each of these where it happens to be needed. [Appendix E](#appendix-e-matrix-factorizations-which-one-and-what-it-costs) puts the whole family side by side and asks what each one *costs*, which is the question this table does not answer.
 
 ```python
 A = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
@@ -703,7 +705,7 @@ What you did today:
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
 - `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
-- The take-home notebooks below.
+- The take-home notebooks below, and the two deep dives beyond them: [matrix factorizations](#appendix-e-matrix-factorizations-which-one-and-what-it-costs) and tensor factorizations.
 - **[Further Reading](#further-reading)** — books, the seminal Tucker/CP/SVD papers, and `tensorly`, for going deeper than today's 195 minutes.
 
 ---
@@ -819,7 +821,7 @@ Tucker is usually more accurate at equal size, because its dense core can repres
 
 ## Appendix D — Take-Home: Cholesky Builds Correlated Data
 
-Every factorization above takes something apart. Cholesky is the exception: you use it to build. Given a covariance matrix `Sigma` that is symmetric and positive-definite, `np.linalg.cholesky` returns a lower-triangular `L` with `L @ L.T == Sigma`. Feed `L` independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.
+[Appendix E](#appendix-e-matrix-factorizations-which-one-and-what-it-costs) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.
 
 ```python
 vol = np.array([0.012, 0.015, 0.010])
@@ -876,9 +878,88 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 `Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma` — independent noise in, correlated noise out. With the parameters above, the correlated simulation's terminal-value standard deviation is **≈18.8** against **≈13.6** for the independent one (39% more spread); its 5th percentile is **≈79.7** against **≈86.9**, and its 1st percentile **≈70.7** against **≈79.9** — the correlated portfolio's bad days are genuinely worse, even though every individual asset's volatility, mean and median terminal value are essentially unchanged between the two simulations. **This is not a general law that correlation increases risk** — it is specific to this book, where every pair is positively correlated; a negatively correlated pair would understate risk if ignored, not overstate it. What generalizes is only that assuming independence when assets are not independent distorts the tails.
 </details>
 
+## Appendix E — Matrix Factorizations: Which One, and What It Costs
+
+The workshop used factorizations in passing — LU and QR in §1.4, the pseudoinverse in Block 4, convolution as a matrix product in Block 5 — without ever answering the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This appendix answers both, and the deep-dive notebook does it interactively: **[12 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb)**.
+
+The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes `‖y − Xβ‖` subject to an orthonormal `Q`. The truncated SVD minimizes `‖A − B‖_F` subject to `rank(B) ≤ k` — and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to `W, H ≥ 0`, which must be worse on error and is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all: they are exact rewrites whose entire value is downstream, where a solve costs `O(n²)` instead of `O(n³)`.
+
+**The cost table.** Leading-term flop counts for a dense `m × n` factorization with `m ≥ n`, from Trefethen & Bau, *Numerical Linear Algebra*:
+
+| Method | Flops | The question it answers |
+|---|---|---|
+| **Cholesky** (`n × n` SPD) | `n³/3` | Solve `Ax = b` many times, `A` symmetric positive definite |
+| **LU** (`n × n`) | `2n³/3` | The same, `A` merely square |
+| **QR** (`m × n`) | `2mn² − 2n³/3` | Least squares, without forming `XᵀX` |
+| **Eigendecomposition** (`n × n` sym.) | `≈ 9n³` | What does repeated application converge to? |
+| **Thin SVD** (`m × n`) | `2mn² + 11n³` | The best rank-`k` approximation of anything |
+| **Randomized SVD** (rank `k`) | `≈ 4mnk` | The same, when `k ≪ n` and `A` is dense |
+| **Lanczos** (rank `k`, sparse) | `O(k · nnz(A))` | The same, when `A` is sparse |
+
+Three consequences are worth stating outright, because each one is a mistake that costs a single line of code:
+
+1. **Factor once, solve many.** Cholesky costs `n³/3` once; each later solve is two triangular substitutions at `O(n²)`. So `m` right-hand sides cost `O(n³ + mn²)`, **not** `O(mn³)`. `np.linalg.inv(A) @ B` is both slower and less accurate than factoring, and is never the right call.
+2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
+3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))` — the gap between those is why large-scale recommenders are feasible at all.
+
+```python
+# TODO 1: Fit a degree-10 polynomial to the real airline series two ways.
+#         X = np.vander(month_scaled, 11, increasing=True); y = passengers
+#         a) normal equations: np.linalg.solve(X.T @ X, X.T @ y)
+#         b) QR: Q, R = np.linalg.qr(X); np.linalg.solve(R, Q.T @ y)
+#         Use np.linalg.lstsq as the reference. Compare the RESIDUALS, then
+#         compare the COEFFICIENTS. Only one of those two comparisons sees
+#         the problem.
+# TODO 2: Build the 1797x1797 RBF kernel matrix of the digits plus a ridge
+#         term, and 200 right-hand sides. Time three strategies: factor once
+#         with cho_factor/cho_solve, np.linalg.inv(G) @ B, and one
+#         np.linalg.solve per column. Print the ratios, and the relative
+#         residual of the first two. Which is both faster AND more accurate?
+# TODO 3: Time Cholesky, LU, QR, eigh and SVD across n = 128 ... 768. Fit
+#         log t against log n; the slope is the measured exponent. Compare
+#         it against the predicted 3, and compare the measured SVD/Cholesky
+#         ratio against the 39x the table above predicts. Which of the two
+#         predictions survives contact with a real machine?
+# TODO 4: Write needed_rank(A, target_db) returning the smallest k whose
+#         rank-k truncation reaches a target PSNR — WITHOUT rebuilding the
+#         truncation for each k. Eckart-Young gives the squared error as
+#         sum(S[k:] ** 2) directly. Run it on the 512x512 astronaut image
+#         for 20, 25, 30 and 35 dB and report what each rank costs to store.
+```
+
+<details><summary>Solution</summary>
+
+```python
+X = np.vander(month_scaled, 11, increasing=True)                   # TODO 1
+beta_normal = np.linalg.solve(X.T @ X, X.T @ passengers)
+Q, R = np.linalg.qr(X); beta_qr = np.linalg.solve(R, Q.T @ passengers)
+beta_ref = np.linalg.lstsq(X, passengers, rcond=None)[0]
+# cond(X) = 2.2e+07, cond(X.T @ X) = 4.6e+14 — the square, to one digit
+# residuals agree to six decimals; coefficient errors are 2.0e-03 vs 2.0e-14
+
+X_fast = cho_solve(cho_factor(G), B)                               # TODO 2
+# factor once = 1x; explicit inverse ~5x slower; one solve per column ~340x
+# and the explicit inverse is also ~7x less accurate on the residual
+
+slope, _ = np.polyfit(np.log(sizes), np.log(times), 1)             # TODO 3
+# fitted slopes land near 2.2-2.9, not 3.0; SVD/Cholesky ~31x against 39x
+
+S = np.linalg.svd(A, compute_uv=False)                             # TODO 4
+tail = np.concatenate([np.cumsum(S[::-1] ** 2)[::-1], [0.0]])
+db = 10 * np.log10(1.0 / (tail / A.size))
+k = int(np.argmax(db >= target_db))
+```
+
+**TODO 1 is the expensive one.** The residuals of the two fits agree to six decimal places, so the check most people run reports nothing wrong — while the coefficients differ by eleven orders of magnitude. That gap is exactly `κ(X)²` against `κ(X)`, and it came from writing `X.T @ X`.
+
+**TODO 3 does not give you 3.0, and that is not a failure of the theory.** Fitted exponents come in low because parallelism and cache reuse both improve as `n` grows: the machine gets faster at the same work, which flattens the curve. The effect shrinks with larger `n`, so the slope creeps upward. What does survive is the **ratio between methods at fixed `n`** — it cancels the machine out, because both methods gain from the same hardware. Predict with ratios, not exponents.
+
+**TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
+</details>
+
 ---
 
-## Appendix E — Facilitator Notes
+## Appendix G — Facilitator Notes
 
 *(Students may ignore this section.)*
 
@@ -888,7 +969,7 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 
 **Language.** Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — *eje*, *descomposición*, *contracción*, *convolución* — it removes friction immediately. Invite questions in either language. Warn about the two meanings of "rank" at the start of Part I.
 
-**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18. If a student gets something different, it is worth investigating rather than dismissing.
+**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; and, for Appendix E, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is Appendix E's timings**, which are properties of the machine, not of the data — a Colab CPU will not reproduce them, and the appendix quotes ratios rather than milliseconds for exactly that reason.
 
 **The downloads.** Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone's download succeeded — a student who silently fails will be stuck at Blocks 4 and 6. Have the three CSVs mirrored in the workshop repo as a fallback.
 
