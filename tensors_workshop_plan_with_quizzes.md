@@ -942,11 +942,12 @@ X_fast = cho_solve(cho_factor(G), B)                               # TODO 2
 # and the explicit inverse is also ~7x less accurate on the residual
 
 slope, _ = np.polyfit(np.log(sizes), np.log(times), 1)             # TODO 3
-# fitted slopes land near 2.2-2.9, not 3.0; SVD/Cholesky ~31x against 39x
+# fitted slopes land near 2.2-2.9, not 3.0; and the measured SVD/Cholesky ratio lands well under the predicted 39x
 
 S = np.linalg.svd(A, compute_uv=False)                             # TODO 4
 tail = np.concatenate([np.cumsum(S[::-1] ** 2)[::-1], [0.0]])
-db = 10 * np.log10(1.0 / (tail / A.size))
+with np.errstate(divide="ignore"):        # the last entry is exactly 0
+    db = 10 * np.log10(1.0 / (tail / A.size))
 k = int(np.argmax(db >= target_db))
 ```
 
@@ -956,6 +957,10 @@ k = int(np.argmax(db >= target_db))
 
 **TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
 </details>
+
+## Appendix F — Take-Home: Tensor Factorizations *(reserved)*
+
+The matching deep dive one order up — CP, Tucker, tensor train and block-term on the same real tensor, and why tensor rank is not the tidy generalization of matrix rank it looks like. The notebook exists and is linked from [the notebooks page](notebooks.html); this appendix arrives with it.
 
 ---
 
