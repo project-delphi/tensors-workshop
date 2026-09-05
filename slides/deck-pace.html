@@ -136,29 +136,38 @@
     setInterval(tick, 1000);
 
     // ── The section breadcrumb ──────────────────────────────────────────
-    // Walk every section in document order, not just the top-level ones. The
-    // rendered HTML is flat — a level-1 title slide, then its level-2 slides
-    // as siblings — but reveal's init wraps each group in a `.stack` to make
-    // it a vertical column, so by the time this runs the level-1 slides sit
-    // one level down. Iterating all descendants works before or after that
-    // rewrite, and saves walking back up from the current slide.
+    // Walk every section in document order, not just the top-level ones.
+    // Historically the rendered HTML was flat — a level-1 title slide, then
+    // its level-2 slides as siblings — with reveal's init wrapping each
+    // group in a `.stack` to make it a vertical column, so by the time this
+    // runs the level-1 slides sit one level down. Since issue #45's redesign
+    // (31 flat, image-backed slides per deck, every slide a plain `##`
+    // level-2 background-image block) only the 15 section/Kahoot divider
+    // slides carry the intentional `h1.sr-only` marker, so detection keys
+    // off that specific element rather than the level. Deliberately not a
+    // bare "h1, h2": an ordinary content slide has no heading of its own —
+    // its `##` line carries only slide attributes — but matching any h2 on
+    // principle would be one accidental heading away from manufacturing a
+    // false section break.
     var slides = reveal.querySelectorAll(".slides section");
     var crumbText = "";
     Array.prototype.forEach.call(slides, function (slide) {
       // `.stack` wrappers are neither level, and must not take a crumb.
       var isSlide = slide.classList.contains("level1") ||
                     slide.classList.contains("level2");
-      if (slide.classList.contains("level1")) {
-        var heading = slide.querySelector("h1");
-        var title = heading ? heading.textContent.trim() : "";
+      var heading = slide.querySelector("h1.sr-only");
+      if (heading) {
+        var title = heading.textContent.trim();
         // Drop the "01 · " prefix: the slide number already tells the room
         // where it is, and the part is about to be spelled out anyway.
         title = title.replace(/^\d+\s*·\s*/, "");
-        // A hidden marker on the title slide, not an attribute on the
+        // A hidden marker on the divider slide, not an attribute on the
         // heading: a var shortcode inside a heading's `{...}` is not parsed
-        // as an attribute, and takes the #sec-NN anchor down with it.
+        // as an attribute at all, and takes the #sec-NN anchor down with it.
         // (Quarto runs its shortcode parser over this file too, so the
-        // shortcode cannot be written out literally here either.)
+        // shortcode cannot be written out literally here either.) Kahoot
+        // dividers carry no `.sec-part` at all, so they fall straight to the
+        // plain-title branch below.
         var marker = slide.querySelector(".sec-part");
         var part = marker ? marker.textContent.trim() : "";
         // Sections 00 and 11 sit outside the four parts and carry "—".

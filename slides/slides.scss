@@ -39,121 +39,6 @@ $code-block-font-size: 0.62em;
 .reveal .callout { font-size: .8em; }
 .reveal .footer { font-size: .5em; opacity: .75; }
 
-// Section 10's four-rung overview slide (numbers / polynomial / matrix /
-// tensor) packs more text than any other single slide in the deck. Scoped to
-// this class, shared by both language decks, so nothing else shrinks. Sizes
-// below are the largest that still fit one slide with no overflow, checked
-// against a rendered 1280x760 screenshot — not shrunk further than needed.
-.reveal section.factorization-ladder blockquote {
-  font-size: .68em;
-  margin: .2em 0 .6em;
-}
-.reveal section.factorization-ladder .columns { gap: .6em; }
-.reveal section.factorization-ladder .column {
-  font-size: .64em;
-  line-height: 1.3;
-}
-.reveal section.factorization-ladder .column p { margin: .25em 0; }
-.reveal section.factorization-ladder .column ul {
-  margin: 0 0 .3em;
-  padding-left: 1em;
-}
-.reveal section.factorization-ladder .column li { margin-bottom: .1em; }
-.reveal section.factorization-ladder .callout-tip {
-  font-size: .6em;
-  padding: .3em .6em;
-  margin-top: .3em;
-}
-
-// The dataset grid on "Nothing here is invented" / "Aquí no hay nada
-// inventado" — ten cells (nine dataset cards plus a text cell) that have to
-// land on one 1280x760 slide alongside a heading and two lines of prose.
-// Sizes below are the largest that still fit with no overflow, checked against
-// rendered screenshots of both decks — not shrunk further than needed.
-//
-// Five fixed columns rather than `auto-fit`: reveal.js scales the whole
-// 1280x760 canvas to the viewport, so the layout never reflows while
-// presenting and `auto-fit` would only mis-column at the design width. The
-// media query below is for the non-scaled contexts — print, and reveal's
-// scroll view — where the canvas really can be narrow.
-.reveal section.data-slide {
-  p { margin: .25em 0 .4em; }
-
-  .dataset-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: .55em .6em;
-    margin: .5em 0 .6em;
-  }
-
-  .ds {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;                 // let a long dataset name shrink, not push
-  }
-
-  // `object-fit: cover` keeps every card on the same baseline even though the
-  // waveform is a plot and the rest are photographs.
-  .ds img {
-    width: 100%;
-    // Match the 400x260 the thumbnails are generated at, so `cover` below
-    // never has anything to crop. As a ratio rather than a pixel height
-    // because the card width is not obvious: the theme's `.reveal img` sets
-    // `max-width: 95%`, which beats the `width: 100%` above, so the image is
-    // 95% of a column and any hand-computed height is wrong the moment the
-    // column count changes.
-    aspect-ratio: 20 / 13;
-    height: auto;
-    object-fit: cover;
-    border-radius: 3px;
-    margin: 0 0 .3em;
-    display: block;
-  }
-
-  .ds p {
-    margin: 0;
-    line-height: 1.25;
-    max-width: none;
-  }
-
-  // The dataset name: the one thing on the card that must survive being read
-  // from the back of the room.
-  .ds a {
-    font-size: .52em;
-    font-weight: 600;
-    text-decoration: none;
-    border-bottom: 1px solid rgba(44, 95, 138, .35);
-  }
-
-  // Counts, shapes and section numbers — supporting detail, deliberately quiet.
-  .ds p:last-child {
-    font-size: .42em;
-    opacity: .72;
-    margin-top: .12em;
-  }
-
-  // The tenth cell carries no image, so it needs the height back as padding
-  // or it floats against the top of its row.
-  .ds-more {
-    justify-content: center;
-    padding: .3em .1em 0;
-    p { font-size: .46em; margin: .18em 0; }
-    p:first-child { opacity: .72; }
-    p:last-child { opacity: 1; }
-
-    // `.ds a` above is .52em, and em compounds: inside a .46em paragraph that
-    // renders at a quarter of body size and is unreadable from the room. These
-    // links sit in running text, so match the text instead.
-    a { font-size: 1em; }
-  }
-}
-
-@media (max-width: 800px) {
-  .reveal section.data-slide .dataset-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
 // The pace badge under every section title. Two facts the facilitator needs
 // mid-flight and nobody else does: how many minutes this section is allocated,
 // and where it should sit on the running clock counted from minute zero. A
@@ -297,3 +182,87 @@ $code-block-font-size: 0.62em;
   .reveal .deck-timer,
   .reveal .footer .deck-crumb { display: none; }
 }
+
+// ── Issue #45 redesign: image-backed slides ─────────────────────────────────
+// Both decks became 31 background-image slides (see slides/README.md and
+// slides/en|es/index.qmd). Everything visible now lives in the PNG; the rules
+// below style the support content layered on top of it — never display:none,
+// since screen readers still need to reach it.
+
+// Visually hidden but still announced: per-slide summaries (this redesign's
+// equivalent of `fig-alt`), the hidden section heading/.sec-part pair the
+// breadcrumb above reads, and the live start/end pace window. The visible
+// minutes/format badge is baked into the art, so this text is additional
+// information, never a rendered duplicate of it.
+.reveal .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Real, keyboard-focusable links floating over the artwork — ported from the
+// approved standalone design's `.colab-tab`, recoloured to this repo's
+// existing three-colour palette (heading / link / Kahoot orange) rather than
+// introducing a fourth.
+.reveal .colab-tab,
+.reveal .kahoot-join-tab {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 118px;
+  height: 54px;
+  padding: 0 18px;
+  border: 1px solid rgba(44, 95, 138, .28);
+  border-right: 0;
+  border-radius: 17px 0 0 17px;
+  background: rgba(255, 255, 255, .95);
+  color: $link-color !important;
+  box-shadow: 0 8px 26px rgba(6, 47, 92, .16);
+  font-family: $presentation-heading-font;
+  font-size: 23px;
+  font-weight: 700;
+  text-decoration: none !important;
+  opacity: .92;
+}
+
+.reveal .colab-tab:hover, .reveal .colab-tab:focus,
+.reveal .kahoot-join-tab:hover, .reveal .kahoot-join-tab:focus {
+  transform: translateY(-50%) translateX(-8px);
+  opacity: 1;
+}
+
+// The two take-home "deep dive" links share slide 31 / §11 with the real
+// notebook-11 Colab link and stack under it rather than overlapping it.
+.reveal .colab-tab-extra {
+  top: calc(50% + 70px);
+  min-width: 165px;
+  font-size: 20px;
+  color: #087F78 !important;
+  border-color: rgba(8, 127, 120, .28);
+}
+
+.reveal .colab-tab-extra + .colab-tab-extra { top: calc(50% + 130px); }
+
+// The Kahoot join tab borrows the Kahoot orange rather than the link colour,
+// so "go here" reads clearly against art that is not itself orange.
+.reveal .kahoot-join-tab {
+  border-color: rgba(179, 84, 30, .35);
+  color: #b3541e !important;
+}
+
+// Reveal's slide-overview grid should show the artwork alone, the same way
+// it already hides the timer — an overlay link floating over every thumbnail
+// would make the grid unreadable.
+.reveal.overview .colab-tab,
+.reveal.overview .kahoot-join-tab { display: none !important; }
