@@ -150,6 +150,13 @@ agenda:
 # excluded. `n` is authoritative: it fixes the notebook filename prefix, the
 # slide anchor (#sec-NN-slug) and the row order in every table on the site.
 #
+# `part` and `block` are the handbook's own vocabulary — Part I-IV, Block 1-6 —
+# carried here so the handbook's schedule table can be generated with both the
+# section number and the label beside it. That table is the only key a reader
+# has for resolving "Block 4" to section 07, so the labels live with the
+# sections they name rather than being retyped in the prose. A section that is
+# not one of the six exercise blocks has `block: "—"`.
+#
 # `start` and `end` are the running clock offsets both decks print on the
 # section title slides. They are derived — walk the sections in order, adding
 # `schedule` time after the ones that are followed by a quiz or a break — but
@@ -161,6 +168,7 @@ sections:
     n: "00"
     slug: "setup-and-data"
     part: "—"
+    block: "—"
     minutes: 5
     start: "+00:00"
     end: "+00:05"
@@ -182,6 +190,7 @@ sections:
     n: "01"
     slug: "what-a-tensor-is"
     part: "I"
+    block: "—"
     minutes: 20
     start: "+00:05"
     end: "+00:25"
@@ -209,6 +218,7 @@ sections:
     n: "02"
     slug: "thinking-in-n-dimensions"
     part: "II"
+    block: "—"
     minutes: 20
     start: "+00:25"
     end: "+00:45"
@@ -241,6 +251,7 @@ sections:
     n: "03"
     slug: "indexing-and-broadcasting"
     part: "III"
+    block: "1"
     minutes: 15
     start: "+00:45"
     end: "+01:00"
@@ -276,6 +287,7 @@ sections:
     n: "04"
     slug: "reshape-and-transpose"
     part: "III"
+    block: "2"
     minutes: 15
     start: "+01:00"
     end: "+01:15"
@@ -313,6 +325,7 @@ sections:
     n: "05"
     slug: "video-pipeline-design"
     part: "III"
+    block: "—"
     minutes: 15
     start: "+01:25"
     end: "+01:40"
@@ -352,6 +365,7 @@ sections:
     n: "06"
     slug: "contraction-with-einsum"
     part: "IV"
+    block: "3"
     minutes: 15
     start: "+01:40"
     end: "+01:55"
@@ -391,6 +405,7 @@ sections:
     n: "07"
     slug: "inverses-and-pseudoinverse"
     part: "IV"
+    block: "4"
     minutes: 15
     start: "+02:00"
     end: "+02:15"
@@ -426,6 +441,7 @@ sections:
     n: "08"
     slug: "recursion-with-matrices"
     part: "IV"
+    block: "—"
     minutes: 10
     start: "+02:20"
     end: "+02:30"
@@ -475,6 +491,7 @@ sections:
     n: "09"
     slug: "convolution-and-deconvolution"
     part: "IV"
+    block: "5"
     minutes: 15
     start: "+02:30"
     end: "+02:45"
@@ -516,6 +533,7 @@ sections:
     n: "10"
     slug: "tucker-decomposition"
     part: "IV"
+    block: "6"
     minutes: 15
     start: "+02:50"
     end: "+03:05"
@@ -565,6 +583,7 @@ sections:
     n: "11"
     slug: "wrap-up-and-take-homes"
     part: "—"
+    block: "—"
     minutes: 5
     start: "+03:10"
     end: "+03:15"

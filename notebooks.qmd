@@ -36,7 +36,7 @@ investigating rather than dismissing.
 
 These two are **not sections**. They are deep dives, handed out as take-home
 material: no slides, no Kahoot, and no minutes on the workshop clock — the
-195-minute agenda is exactly what it was without them.
+{{< var workshop.minutes >}}-minute agenda is exactly what it was without them.
 
 {{< include _includes/notebooks-extra-en.md >}}
 
@@ -47,30 +47,39 @@ The notebooks only need the scientific Python stack. Locally:
 ```bash
 git clone {{< var repo.url >}}.git
 cd {{< var repo.name >}}
-uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
 ```
 
-`scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits and
-the photographs, so most sections work with no network at all. Sections 07, 08 and
-10 fetch a CSV from GitHub the first time they run.
+`matplotlib` and `ipywidgets` are in that list because every notebook plots and
+all but 00 use sliders; both ship with Colab, which is why their absence only
+shows up locally.
+
+`scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits
+and the photographs, so sections 01, 03, 04, 06 and 09 run with no network at
+all. The other nine notebooks fetch something the first time they run: a CSV
+from GitHub, the storm video clip from Wikimedia, or — in notebook 11's
+take-home E — a voice recording.
 
 ## What each notebook needs
 
 | Notebook | Beyond NumPy | Network |
 |---|---|---|
-| 00 | `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — all three CSVs |
-| 01 | `scikit-learn`, `scikit-image`, `scipy.linalg` | no |
-| 02 | — | no |
-| 03 | `scikit-learn` | no |
-| 04 | `scikit-image` | no |
-| 05 | — | no |
-| 06 | `scikit-learn`, `scikit-image` | no |
-| 07 | `pandas` | yes — California housing |
-| 08 | `pandas` | yes — airline passengers |
-| 09 | `scikit-image`, `scipy` | no |
-| 10 | `pandas` | yes — NYC taxi trips |
-| 11 | `scikit-learn` | no |
-| 12 | `scikit-learn`, `scipy` | no |
-| 13 | `pandas` | yes — NYC taxi trips |
+| 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | yes — all three CSVs, and the storm clip |
+| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
+| 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | yes — the storm clip |
+| 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
+| 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |
+| 05 | `matplotlib`, `ipywidgets`, `imageio`† | yes — the storm clip |
+| 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
+| 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | yes — California housing |
+| 08 | `matplotlib`, `ipywidgets`, `pandas` | yes — airline passengers |
+| 09 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
+| 10 | `matplotlib`, `ipywidgets`, `pandas` | yes — NYC taxi trips |
+| 11 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | yes — a voice recording, for take-home E |
+| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — airline passengers |
+| 13 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | yes — NYC taxi trips, and the storm clip |
 
-: Colab already has every one of these installed. {tbl-colwidths="[16,54,30]"}
+: Colab already has every one of these installed. {tbl-colwidths="[12,58,30]"}
+
+† Installed by the notebook itself with `%pip install -q`, which is why neither
+is in the command above.

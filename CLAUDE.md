@@ -33,7 +33,7 @@ text, then run the appropriate generator:
 | Generated | Owned by |
 |---|---|
 | `_includes/*.md` (every section table, and the agenda both decks show) | `scripts/gen_tables.py` |
-| The marker-delimited table regions inside `README.md` and `notebooks/README.md` — the rest of both files is hand-maintained | `scripts/gen_tables.py` |
+| The marker-delimited table regions inside `README.md`, `notebooks/README.md` and the handbook's schedule — the rest of all three files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
@@ -61,6 +61,44 @@ the actual point:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
+
+## Which document owns what
+
+Five documents describe the same workshop to different readers. They drifted
+once — five copies of the prerequisites, three different local-run commands, two
+incompatible vocabularies — so each fact now has exactly one home. Before adding
+a paragraph, find whose job it is:
+
+| Document | Owns | Never contains |
+|---|---|---|
+| `_variables.yml` | Every shared fact: repo coordinates, section titles and minutes, the running clock, quiz metadata, prerequisite URLs. | — |
+| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, how to run the notebooks, the section table. | Teaching content or exercises. |
+| The handbook | The session text: theory, exercises, worked solutions, further reading, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. |
+| `notebooks.qmd` | How the notebooks are built, what each one needs, how to run them off Colab. | The workshop's content or its schedule. |
+| `kahoot.qmd` | The three quizzes and how to run them. | — |
+| `README.md` | The GitHub shopfront: what this is, who it is for, prerequisites **in brief**, and links out. | Anything the site already owns. |
+
+**One canonical identifier.** A segment is a **section, `00`–`11`**, everywhere.
+Part I–IV and Block 1–6 are the handbook's own secondary labels, live in
+`_variables.yml` as `part:` and `block:`, and appear in exactly two places: the
+handbook's six exercise headings, and its generated schedule table — which
+carries the section number beside them and is therefore the only key a reader
+needs. Prose that says "Block 4" where it means section 07 is the bug.
+
+**The local-run command** appears in five places — `README.md` twice, once per
+language; `notebooks.qmd`; `notebooks/README.md`; and the Commands section below
+— and nothing checks that they agree. Change one, change all five, and derive it
+from what the notebooks actually import rather than from memory:
+
+```bash
+python3 -c "
+import json, glob, re, os
+for f in sorted(glob.glob('notebooks/*.ipynb')):
+    src = chr(10).join(''.join(c['source']) for c in json.load(open(f))['cells']
+                       if c['cell_type'] == 'code')
+    print(os.path.basename(f), re.findall(r'^\s*(?:import|from)\s+(\w+)', src, re.M))
+"
+```
 
 ## Extras: notebooks that are not sections
 
