@@ -186,8 +186,8 @@ $code-block-font-size: 0.62em;
 // ── Issue #45 redesign: image-backed slides ─────────────────────────────────
 // Both decks became 31 background-image slides (see slides/README.md and
 // slides/en|es/index.qmd). Everything visible now lives in the PNG; the rules
-// below style the support content layered on top of it — never display:none,
-// since screen readers still need to reach it.
+// below style the support content layered on top of it.
+
 
 // Visually hidden but still announced: per-slide summaries (this redesign's
 // equivalent of `fig-alt`), the hidden section heading/.sec-part pair the
@@ -206,11 +206,15 @@ $code-block-font-size: 0.62em;
   border: 0;
 }
 
-// Real, keyboard-focusable links floating over the artwork — ported from the
-// approved standalone design's `.colab-tab`, recoloured to this repo's
-// existing three-colour palette (heading / link / Kahoot orange) rather than
-// introducing a fourth.
-.reveal .colab-tab,
+// The per-slide .colab-tab anchors stay in the qmd for validation
+// (check_links.py) and as inert markup for anything that reads source HTML,
+// but are never shown: the audience-facing control is the single global
+// `.deck-colab-panel` built by deck-pace.html.
+.reveal .colab-tab {
+  display: none !important;
+}
+
+// Kahoot keeps its existing audience-facing side tab.
 .reveal .kahoot-join-tab {
   position: absolute;
   right: 0;
@@ -223,11 +227,11 @@ $code-block-font-size: 0.62em;
   min-width: 118px;
   height: 54px;
   padding: 0 18px;
-  border: 1px solid rgba(44, 95, 138, .28);
+  border: 1px solid rgba(179, 84, 30, .35);
   border-right: 0;
   border-radius: 17px 0 0 17px;
   background: rgba(255, 255, 255, .95);
-  color: $link-color !important;
+  color: #b3541e !important;
   box-shadow: 0 8px 26px rgba(6, 47, 92, .16);
   font-family: $presentation-heading-font;
   font-size: 23px;
@@ -236,33 +240,71 @@ $code-block-font-size: 0.62em;
   opacity: .92;
 }
 
-.reveal .colab-tab:hover, .reveal .colab-tab:focus,
-.reveal .kahoot-join-tab:hover, .reveal .kahoot-join-tab:focus {
+.reveal .kahoot-join-tab:hover,
+.reveal .kahoot-join-tab:focus {
   transform: translateY(-50%) translateX(-8px);
   opacity: 1;
 }
 
-// The two take-home "deep dive" links share slide 31 / §11 with the real
-// notebook-11 Colab link and stack under it rather than overlapping it.
-.reveal .colab-tab-extra {
-  top: calc(50% + 70px);
-  min-width: 165px;
-  font-size: 20px;
+// ── Global Colab panel ───────────────────────────────────────────────────
+// Audience-facing Colab control placed immediately to the left of the timer.
+.reveal .deck-colab-panel {
+  position: fixed;
+  top: 20px;
+  right: 680px;
+  left: auto;
+  z-index: 60;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.reveal .deck-colab-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 145px;
+  height: 46px;
+  padding: 0 14px;
+  border: 2px solid #E0A800;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #FFD84D 0%, #FFC107 100%);
+  color: #5A3A00 !important;
+  box-shadow: 0 8px 20px rgba(6, 47, 92, .16);
+  font-family: $presentation-heading-font;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+
+.reveal .deck-colab-button:hover,
+.reveal .deck-colab-button:focus {
+  opacity: .88;
+}
+
+.reveal .deck-colab-button-extra {
   color: #087F78 !important;
-  border-color: rgba(8, 127, 120, .28);
 }
 
-.reveal .colab-tab-extra + .colab-tab-extra { top: calc(50% + 130px); }
-
-// The Kahoot join tab borrows the Kahoot orange rather than the link colour,
-// so "go here" reads clearly against art that is not itself orange.
-.reveal .kahoot-join-tab {
-  border-color: rgba(179, 84, 30, .35);
-  color: #b3541e !important;
+// Final slide: Colab 11 + Deep dive 12 + Deep dive 13 in one horizontal row.
+.reveal .deck-colab-panel.final-row {
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  top: 20px;
+  right: 840px;
 }
 
-// Reveal's slide-overview grid should show the artwork alone, the same way
-// it already hides the timer — an overlay link floating over every thumbnail
-// would make the grid unreadable.
-.reveal.overview .colab-tab,
-.reveal.overview .kahoot-join-tab { display: none !important; }
+.reveal .deck-colab-panel.final-row .deck-colab-button {
+  min-width: 135px;
+  height: 44px;
+  padding: 0 12px;
+  font-size: 16px;
+}
+
+// Overlay controls should not cover Reveal's overview thumbnails.
+.reveal.overview .kahoot-join-tab,
+.reveal.overview .deck-colab-panel {
+  display: none !important;
+}

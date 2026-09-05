@@ -29,7 +29,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-45f1db920f70e5cb6ee1d1c0ee229354.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-c462a5776a49cfd138ced0eeb45eebcf.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -865,6 +865,103 @@ Section 11 · Wrap-up and take-homes — 5 min, running +03:10 to +03:15. Five t
 
         Reveal.on("slidechanged", updateChrome);
         updateChrome();
+        // ── The Colab panel ─────────────────────────────────────────────────
+        // The original .colab-tab links remain in the rendered deck as the
+        // canonical source of notebook URLs, but slides.scss hides them from
+        // the audience. This panel creates the visible controls once and keeps
+        // the correct notebook available throughout each section.
+
+        var hrefByNumber = {};
+
+        Array.prototype.forEach.call(
+          document.querySelectorAll(".colab-tab"),
+          function (link) {
+            var href = link.getAttribute("href") || "";
+            var match = href.match(/\/(\d{2})-[^/]+\.ipynb/);
+
+            if (match) {
+              hrefByNumber[match[1]] = href;
+            }
+          }
+        );
+
+        var COLAB_PANEL_SLIDES = {
+          4: ["00"],
+
+          5: ["01"], 6: ["01"], 7: ["01"],
+          8: ["02"], 9: ["02"],
+          10: ["03"], 11: ["03"],
+          12: ["04"], 13: ["04"],
+
+          15: ["05"], 16: ["05"],
+          17: ["06"], 18: ["06"], 19: ["06"],
+          20: ["07"], 21: ["07"],
+
+          23: ["08"], 24: ["08"],
+          25: ["09"], 26: ["09"],
+          27: ["10"], 28: ["10"],
+
+          30: ["11"],
+          31: ["11", "12", "13"]
+        };
+
+        var colabPanel = document.createElement("div");
+        colabPanel.className = "deck-colab-panel";
+        colabPanel.hidden = true;
+        reveal.appendChild(colabPanel);
+
+        function updateColabPanel() {
+          if (!Reveal.getIndices) {
+            colabPanel.hidden = true;
+            return;
+          }
+
+          var indices = Reveal.getIndices();
+          var slideNumber = (indices.h || 0) + 1;
+          var numbers = COLAB_PANEL_SLIDES[slideNumber] || [];
+
+          colabPanel.innerHTML = "";
+
+          var visibleButtons = 0;
+
+          numbers.forEach(function (number) {
+            var href = hrefByNumber[number];
+
+            if (!href) {
+              return;
+            }
+
+            var isExtra = number === "12" || number === "13";
+
+            var label = isExtra
+              ? "Deep dive " + number + " ↗"
+              : (es ? "Abrir Colab " : "Open Colab ") + number + " ↗";
+
+            var button = document.createElement("a");
+
+            button.className =
+              "deck-colab-button" +
+              (isExtra ? " deck-colab-button-extra" : "");
+
+            button.href = href;
+            button.target = "_blank";
+            button.rel = "noopener noreferrer";
+            button.textContent = label;
+            button.title = label;
+            button.setAttribute("aria-label", label);
+
+            colabPanel.appendChild(button);
+            visibleButtons += 1;
+          });
+
+          colabPanel.classList.toggle("final-row", visibleButtons > 1);
+          colabPanel.hidden = visibleButtons === 0;
+        }
+
+        Reveal.on("slidechanged", updateColabPanel);
+        Reveal.on("overviewhidden", updateColabPanel);
+
+        updateColabPanel();
       });
     })();
     </script>
