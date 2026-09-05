@@ -257,6 +257,35 @@
     // divider with a `.sec-part` is a section and shares its links group-wide,
     // and one without — a Kahoot — leaves them on the declaring slide.
 
+    // Reading chips ride the same walk. They are not indirected through a
+    // number the way notebooks are — there is no canonical id for a blog post
+    // and no second place that needs to look one up — so the anchor's own
+    // href, text and title are carried straight through.
+    function readingLinks(scope) {
+      var links = [];
+      var seen = {};
+
+      Array.prototype.forEach.call(
+        scope.querySelectorAll(".reading-tab"),
+        function (link) {
+          var href = link.getAttribute("href") || "";
+
+          if (!href || seen[href]) {
+            return;
+          }
+
+          seen[href] = true;
+          links.push({
+            href: href,
+            label: link.textContent,
+            title: link.getAttribute("title") || link.textContent
+          });
+        }
+      );
+
+      return links;
+    }
+
     function colabNumbers(scope) {
       var numbers = [];
 
@@ -292,7 +321,7 @@
     // Same traversal the breadcrumb uses, for the same reason: reveal has
     // already wrapped groups into `.stack` wrappers by the time this runs.
     var panelSlides = [];
-    var panelNumbers = [];
+    var panelEntries = [];
     var group = null;
 
     Array.prototype.forEach.call(
@@ -304,10 +333,11 @@
         }
 
         var own = colabNumbers(slide);
+        var ownReading = readingLinks(slide);
 
         if (slide.querySelector("h1.sr-only")) {
           group = slide.querySelector(".sec-part")
-            ? { numbers: own }
+            ? { numbers: own, reading: ownReading }
             : null;   // a Kahoot break shares nothing forward
         }
 
@@ -320,18 +350,16 @@
             group.numbers = own;
           }
 
-          panelNumbers.push(group);
+          if (ownReading.length) {
+            group.reading = ownReading;
+          }
+
+          panelEntries.push(group);
         } else {
-          panelNumbers.push({ numbers: own });
+          panelEntries.push({ numbers: own, reading: ownReading });
         }
       }
     );
-
-    // A section's links are resolved after the walk, so a divider carrying no
-    // link of its own still picks up the one declared later in its section.
-    panelNumbers = panelNumbers.map(function (entry) {
-      return entry.numbers;
-    });
 
     var colabPanel = document.createElement("div");
     colabPanel.className = "deck-colab-panel";
@@ -350,7 +378,12 @@
 
       var current = Reveal.getCurrentSlide();
       var position = current ? panelSlides.indexOf(current) : -1;
-      var numbers = position === -1 ? [] : (panelNumbers[position] || []);
+      // A section's links are resolved only now, after the whole walk, so a
+      // divider carrying no link of its own still shows the one declared
+      // later in its section.
+      var entry = position === -1 ? null : panelEntries[position];
+      var numbers = (entry && entry.numbers) || [];
+      var reading = (entry && entry.reading) || [];
 
       colabPanel.innerHTML = "";
 
@@ -391,7 +424,47 @@
       });
 
       colabPanel.classList.toggle("final-row", visibleButtons > 1);
-      colabPanel.hidden = visibleButtons === 0;
+
+      // The reading chips go below the Colab buttons inside the same panel
+      // rather than into a second fixed one: the Colab row's height changes
+      // with `final-row`, and a second panel would have to guess at it. A
+      // flex break costs nothing and cannot drift.
+      //
+      // Stacked, not side by side. Two chips in a row reach about a third of
+      // the way across the slide at the height every piece of art puts its
+      // headline, and covered "is also recursion" on section 08. Stacked they
+      // stay in the right margin the timer and the Colab button already own.
+      var readingRow = null;
+
+      if (reading.length) {
+        var breaker = document.createElement("div");
+
+        breaker.className = "deck-panel-break";
+        colabPanel.appendChild(breaker);
+
+        readingRow = document.createElement("div");
+        readingRow.className = "deck-reading-row";
+        colabPanel.appendChild(readingRow);
+      }
+
+      reading.forEach(function (link) {
+        // Keeps `.reading-tab`, which is what carries the chip's look and the
+        // ES deck's "(EN)" marker. Only the inline copies inside .slides are
+        // retired once this panel exists — see slides.scss.
+        var chip = document.createElement("a");
+
+        chip.className = "deck-reading-button reading-tab";
+        chip.href = link.href;
+        chip.target = "_blank";
+        chip.rel = "noopener noreferrer";
+        chip.textContent = link.label;
+        chip.title = link.title;
+        chip.setAttribute("aria-label", link.title);
+
+        readingRow.appendChild(chip);
+      });
+
+      colabPanel.hidden = visibleButtons === 0 && reading.length === 0;
     }
 
     Reveal.on("slidechanged", updateColabPanel);

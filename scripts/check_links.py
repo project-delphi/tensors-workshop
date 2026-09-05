@@ -18,9 +18,12 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
   - Colab URLs are well-formed AND point at a notebook that exists. A badge
     with the wrong filename still opens *something* in Colab, so this one
     never surfaces on its own.
-  - Both decks carry every section anchor. Adding a section to the English
-    deck and forgetting the Spanish one is the single most likely way these
-    two files drift.
+  - Both decks carry every section anchor, and link the same set of ML blog
+    posts. Adding a section to the English deck and forgetting the Spanish one
+    is the single most likely way these two files drift; a reading chip added
+    to one deck only is the same drift with no anchor to catch it. Every
+    ml-blog URL in either deck, and in the notebooks, must be declared under
+    `reading:` — the checker never fetches one, by design.
   - The EN and ES landing pages list the same twelve sections. Extras are
     deliberately absent from both this check and the deck check above: an
     extra is take-home material with no slide and no place in the agenda.
@@ -66,6 +69,17 @@ COLAB_RE = re.compile(
     rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
     rf"{re.escape(REPO['branch'])}/notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)$")
 
+# The ML blog posts both decks and the two deep dives link to. These are the
+# only external URLs in the deck, and nothing here fetches them — the checker
+# is offline by design, and whether a post is still published is a manual
+# concern (see the `reading:` comment in _variables.yml). What *is* checked,
+# and what can go wrong silently, is that every ml-blog URL in the rendered
+# decks and in the notebooks was declared in _variables.yml rather than typed
+# in, and that the two decks link the same set.
+READING = V.get("reading", {})
+READING_URLS = {r["url"] for r in READING.values()}
+BLOG_RE = re.compile(r"https://project-delphi\.github\.io/ml-blog/[^\s\"')<>]*")
+
 failures: list[str] = []
 
 
@@ -88,6 +102,13 @@ def step(title: str) -> None:
     global _step
     _step += 1
     print(f"\n[{_step}] {title}")
+
+
+def check_reading(urls: set[str], where: str) -> None:
+    """Fail for any ml-blog URL `where` uses that _variables.yml does not own."""
+    for url in sorted(urls - READING_URLS):
+        fail(f"{where}: ml-blog URL {url} is not declared under `reading:` "
+             f"in _variables.yml")
 
 
 class Harvester(html.parser.HTMLParser):
@@ -202,6 +223,7 @@ def check_decks() -> None:
     expected = [f"sec-{s['n']}-{s['slug']}" for s in SECTIONS]
     expected += [f"sec-kahoot-{q}" for q in (1, 2, 3)]
     found = {}
+    reading: dict[str, set[str]] = {}
     for lang in ("en", "es"):
         deck = DOCS / "slides" / lang / "index.html"
         if not deck.exists():
@@ -209,12 +231,23 @@ def check_decks() -> None:
             # deck and the parity comparison, which is the point of this check.
             fail(f"missing deck {deck.relative_to(DOCS)}")
             continue
-        found[lang] = harvest(deck).ids
+        h = harvest(deck)
+        found[lang] = h.ids
+        reading[lang] = {u for u in h.links if u in READING_URLS or
+                         BLOG_RE.fullmatch(u)}
+        check_reading(reading[lang], f"slides/{lang}")
         for anchor in expected:
             if anchor not in found[lang]:
                 fail(f"slides/{lang}: missing anchor #{anchor}")
     if len(found) < 2:
         return
+    # The reading chips carry no anchor, so the parity above cannot see them.
+    # They are the newest way for the two decks to drift and the easiest to
+    # miss: a chip added to one deck changes nothing visible in the other.
+    for url in sorted(reading["en"] - reading["es"]):
+        fail(f"reading link {url} is in the EN deck but not the ES deck")
+    for url in sorted(reading["es"] - reading["en"]):
+        fail(f"reading link {url} is in the ES deck but not the EN deck")
     only_en = {a for a in found["en"] if a.startswith("sec-")} - found["es"]
     only_es = {a for a in found["es"] if a.startswith("sec-")} - found["en"]
     for a in sorted(only_en):
@@ -222,6 +255,8 @@ def check_decks() -> None:
     for a in sorted(only_es):
         fail(f"anchor #{a} is in the ES deck but not the EN deck")
     print(f"      {len(expected)} anchors present in both decks, no extras in either")
+    print(f"      {len(reading['en'])} reading links, identical in both decks, "
+          f"all declared in _variables.yml")
 
 
 # ── notebooks ────────────────────────────────────────────────────────────────
@@ -261,6 +296,8 @@ def check_notebooks() -> None:
             fail(f"{name}: has no first cell to carry the Colab badge")
         elif f"{REPO['colab_base']}/{name})" not in badge:
             fail(f"{name}: header badge does not point at this notebook")
+        check_reading(set(BLOG_RE.findall(path.read_text(encoding="utf-8"))),
+                      name)
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
     for e in sorted(unknown):

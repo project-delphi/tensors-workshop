@@ -233,6 +233,68 @@ $code-block-font-size: 0.62em;
   display: none !important;
 }
 
+// ── Further reading chips (issue #64) ───────────────────────────────────────
+// The companion blog post for the concept this slide introduces, linked from
+// the slide itself rather than from a bibliography at the end: the student who
+// wants a second explanation wants it now, not in two hours.
+//
+// Deliberately unlike `.colab-tab` in every respect that carries weight. It is
+// smaller, outlined rather than filled, in the deck's link blue rather than
+// the Colab amber, and it does not retire when the Colab panel appears —
+// during the exercise the amber button is the one that should be reached for,
+// and this must not compete with it. `_variables.yml` caps the count at two
+// per slide for the same reason.
+//
+// Like `.colab-tab`, the inline chip is the fallback and deck-pace.html
+// promotes it into the panel — where it lands on its own wrapped line under
+// the amber buttons, and where it is not sitting on top of the artwork. That
+// matters more here than it does for Colab: with `center: false` the inline
+// copy renders at the top-left of the slide, which on most of the slide art is
+// where the eyebrow line ("NOTEBOOK 07 · PSEUDOINVERSE") already is. Legible
+// enough to be reachable if the script dies, not somewhere to leave it.
+.reveal .reading-tab {
+  position: relative;
+  z-index: 55;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 8px;
+  padding: 3px 11px;
+  border: 1px solid rgba(44, 95, 138, .5);
+  border-radius: 11px;
+  background: rgba(255, 255, 255, .88);
+  color: $link-color !important;
+  font-family: $presentation-heading-font;
+  font-size: 16px;
+  font-weight: 500;
+  text-decoration: none !important;
+  opacity: .82;
+}
+
+.reveal .reading-tab:hover,
+.reveal .reading-tab:focus {
+  opacity: 1;
+}
+
+// The posts are written in English; the ES deck links them under Spanish
+// titles because the surrounding slide is Spanish. Saying so on the chip is
+// the honest version — one rule here rather than "(EN)" retyped into eleven
+// labels in es/index.qmd, which is exactly the kind of thing that ends up
+// applied to nine of them.
+html[lang="es"] .reveal .reading-tab::after {
+  content: " (EN)";
+  margin-left: .35em;
+  font-size: .8em;
+  font-weight: 600;
+  opacity: .7;
+}
+
+// Only the inline copies retire. The promoted chips keep `.reading-tab` — it
+// is what carries the look above and the "(EN)" marker below — and they live
+// in the panel, which hangs off `.reveal` outside `.slides`.
+.reveal.deck-colab-ready .slides .reading-tab {
+  display: none !important;
+}
+
 // Every slide is a `## {background-image=...}` with no title text, so pandoc
 // emits an empty `<h2>` ahead of the `h1.sr-only` that actually names the
 // section. `display: none` takes the empty heading out of the accessibility
@@ -326,6 +388,42 @@ $code-block-font-size: 0.62em;
 
 .reveal .deck-colab-button-extra {
   color: #087F78 !important;
+}
+
+// The reading chips' own line inside the Colab panel. Zero-height and
+// full-width, so flex wraps after it however many Colab buttons precede it.
+.reveal .deck-panel-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
+// Bigger than the inline chip — this one is read from the room, not from the
+// lectern — but still outlined against the Colab button's fill, and still
+// under it. `white-space: nowrap` for the same reason the Colab buttons have
+// it: a title broken across two lines stops reading as one control.
+.reveal .deck-reading-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+//
+// Opaque, unlike the inline chip. The panel sits over whatever the artwork
+// puts under it — on section 07 that is the middle of the headline — and a
+// translucent chip there reads as a smudge rather than as a control. The
+// amber Colab button above it is solid for the same reason.
+.reveal .deck-reading-button {
+  height: 34px;
+  padding: 0 13px;
+  border-color: rgba(44, 95, 138, .55);
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(6, 47, 92, .18);
+  font-size: 17px;
+  font-weight: 600;
+  white-space: nowrap;
+  opacity: 1;
 }
 
 // Final slide: Colab 11 + Deep dive 12 + Deep dive 13 in one horizontal row.

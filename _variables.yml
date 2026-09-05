@@ -88,6 +88,84 @@ schedule:
   # Kahoot 1, which is why the agenda shows a single 10-minute block there.
   break_after: ["04", "06", "09"]
 
+# ── Further reading: the ML blog ─────────────────────────────────────────────
+# Companion posts on https://project-delphi.github.io/ml-blog/, one per core
+# concept. These are the *second explanation* — the one a student wants forty
+# minutes in, when the first one did not land — not the end-of-workshop
+# bibliography, which the handbook's Further Reading still owns.
+#
+# Both decks link them from the slide where the concept is introduced, as
+# `.reading-tab` chips, and the two deep-dive notebooks list them at the end.
+# Nothing hard-codes a URL: they live here for the same reason every other
+# shared fact does, so the EN and ES decks cannot come to disagree.
+#
+# `title_es` is a real translation of the post's title, but **the posts
+# themselves are in English**. The ES deck says so on screen: slides.scss adds
+# a "(EN)" marker to every `.reading-tab` under `html[lang="es"]`, so the
+# language switch is announced before the click rather than after it.
+#
+# These are the only *external* links in either deck, and check_links.py does
+# not follow them — it is offline by design. It does check that both decks
+# link exactly the same set and that every URL in them is declared here, which
+# is the half that can go wrong silently. The other half, whether the post is
+# still there, is a manual concern: last verified 2026-09-05, all 200.
+#
+# Slug note: `sparse_tensors` uses an underscore where every other post uses
+# hyphens. That is the blog's URL, not a typo here.
+reading:
+  # The blog itself, not a post. It is here so that the "read one of these"
+  # preamble in the deep-dive notebooks names it from the same place the posts
+  # come from, and so check_links.py's "every ml-blog URL is declared" rule has
+  # nothing to make an exception for.
+  home:
+    url: "https://project-delphi.github.io/ml-blog/"
+    title_en: "The ML blog"
+    title_es: "El blog de ML"
+  why_so_many:
+    url: "https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/"
+    title_en: "Why so many matrix factorizations?"
+    title_es: "¿Por qué hay tantas factorizaciones matriciales?"
+  optimization:
+    url: "https://project-delphi.github.io/ml-blog/posts/matrix-factorizations/"
+    title_en: "Factorizations as optimization"
+    title_es: "Factorizaciones como optimización"
+  svd:
+    url: "https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/"
+    title_en: "Rotate, stretch, rotate again"
+    title_es: "Gira, estira y vuelve a girar"
+  eigen:
+    url: "https://project-delphi.github.io/ml-blog/posts/eigendecomposition/"
+    title_en: "The directions a matrix refuses to turn"
+    title_es: "Las direcciones que una matriz no gira"
+  recursion:
+    url: "https://project-delphi.github.io/ml-blog/posts/recursive-inversion/"
+    title_en: "Can you invert a recursive function?"
+    title_es: "¿Se puede invertir una función recursiva?"
+  tensor_factorizations:
+    url: "https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/"
+    title_en: "Tensor factorizations and inverses"
+    title_es: "Factorizaciones e inversas tensoriales"
+  uses:
+    url: "https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/"
+    title_en: "What a tensor factorization buys you"
+    title_es: "Para qué sirve factorizar un tensor"
+  inverses_practice:
+    url: "https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/"
+    title_en: "Tensor inverses in practice"
+    title_es: "Inversas tensoriales en la práctica"
+  inverse_examples:
+    url: "https://project-delphi.github.io/ml-blog/posts/tensor-inverse-examples/"
+    title_en: "Tensor inverses, worked through"
+    title_es: "Inversas tensoriales, paso a paso"
+  sparse:
+    url: "https://project-delphi.github.io/ml-blog/posts/sparse_tensors/"
+    title_en: "Sparse tensors"
+    title_es: "Tensores dispersos"
+  attention:
+    url: "https://project-delphi.github.io/ml-blog/posts/attention/"
+    title_en: "Attention as two contractions"
+    title_es: "La atención como dos contracciones"
+
 # ── Agenda ───────────────────────────────────────────────────────────────────
 # The agenda table both decks show, one entry per row. Everything numeric —
 # the start time, the duration and the Part column — is derived from
