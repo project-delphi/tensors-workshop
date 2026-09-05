@@ -1412,7 +1412,11 @@ Section 11 · Wrap-up and take-homes — 5 min, running +03:10 to +03:15. Five t
             chip.rel = "noopener noreferrer";
             chip.textContent = link.label;
             chip.title = link.title;
-            chip.setAttribute("aria-label", link.title);
+            // The label, not the title: the title is the same generic tooltip on
+            // every chip, and an aria-label overrides the visible text — two
+            // chips on one slide would have announced identically, with no way
+            // to tell the SVD post from the pseudoinverse one.
+            chip.setAttribute("aria-label", link.label);
 
             readingRow.appendChild(chip);
           });

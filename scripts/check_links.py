@@ -296,8 +296,12 @@ def check_notebooks() -> None:
             fail(f"{name}: has no first cell to carry the Colab badge")
         elif f"{REPO['colab_base']}/{name})" not in badge:
             fail(f"{name}: header badge does not point at this notebook")
-        check_reading(set(BLOG_RE.findall(path.read_text(encoding="utf-8"))),
-                      name)
+        # The parsed cells, not the file: in raw .ipynb JSON a source line
+        # ends in a literal \n escape, which BLOG_RE's character class does
+        # not exclude, so a bare autolink not followed by `)` would be
+        # captured with the escape stuck to it and reported as undeclared.
+        check_reading(set(BLOG_RE.findall(
+            "".join("".join(c.get("source", [])) for c in nb["cells"]))), name)
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
     for e in sorted(unknown):

@@ -96,8 +96,16 @@ schedule:
 #
 # Both decks link them from the slide where the concept is introduced, as
 # `.reading-tab` chips, and the two deep-dive notebooks list them at the end.
-# Nothing hard-codes a URL: they live here for the same reason every other
-# shared fact does, so the EN and ES decks cannot come to disagree.
+# Neither deck hard-codes a URL: they live here for the same reason every
+# other shared fact does, so the EN and ES decks cannot come to disagree.
+#
+# The notebooks are the exception, and the only one. An .ipynb has no
+# `{{< var >}}`, so 12 and 13 carry a copy of the URL *and* of the title.
+# check_links.py catches half of that drift — change a `url` here and the
+# notebook's now-undeclared copy fails check 1 — but a `title_en` or
+# `title_es` edit reaches the decks and silently does not reach the
+# notebooks. Change a title here and change it in the notebook's "Where this
+# goes next" cell in the same commit.
 #
 # `title_es` is a real translation of the post's title, but **the posts
 # themselves are in English**. The ES deck says so on screen: slides.scss adds
