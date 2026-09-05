@@ -799,25 +799,11 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 `scores` is Chapter 2's dot product (eq. 2.8); `output` is Chapter 2's linear combination (eq. 2.28). Attention is two contractions built from ideas you have already read. TODO 4 solves the variable-length problem from Part II: **the mask is how real models handle sequences and videos of different lengths.**
 </details>
 
-## Appendix C — Take-Home: CP Decomposition, Compared to Tucker
+## Appendix C — Take-Home: CP vs Tucker
 
-```python
-# TODO 1: Build one rank-1 tensor with einsum from three random vectors of
-#         length 4, 5 and 24. What shape is it? How many numbers define it?
-# TODO 2: Compare that against 4*5*24. What is the compression of ONE rank-1 piece?
-# TODO 3: pip install tensorly, run tensorly.decomposition.parafac on the taxi
-#         tensor T with rank=3, and compare its error against your Tucker result.
-# TODO 4: Which was more accurate at similar size? Why might that be?
-```
+The CP-versus-Tucker exercise that lived here has moved to **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**, where CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Appendix F](#appendix-f-tensor-factorizations-which-one-and-what-it-costs) is the written companion to that notebook.
 
-<details><summary>Solution sketch</summary>
-
-```python
-a, b, c = np.random.randn(4), np.random.randn(5), np.random.randn(24)
-rank1 = np.einsum('i,j,k->ijk', a, b, c)     # (4, 5, 24) from only 33 numbers
-```
-Tucker is usually more accurate at equal size, because its dense core can represent interactions between components on different axes — something CP's strict sum of rank-1 pieces cannot do. CP is often preferred when interpretability matters, because each component is one simple pattern per axis.
-</details>
+> 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 13 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 
 ## Appendix D — Take-Home: Cholesky Builds Correlated Data
 
@@ -958,9 +944,93 @@ k = int(np.argmax(db >= target_db))
 **TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
 </details>
 
-## Appendix F — Take-Home: Tensor Factorizations *(reserved)*
+## Appendix F — Tensor Factorizations: Which One, and What It Costs
 
-The matching deep dive one order up — CP, Tucker, tensor train and block-term on the same real tensor, and why tensor rank is not the tidy generalization of matrix rank it looks like. The notebook exists and is linked from [the notebooks page](notebooks.html); this appendix arrives with it.
+Appendix E asked *which factorization, and what does it cost* one order down, on matrices. This appendix asks it of tensors, and the deep-dive notebook does it interactively: **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**.
+
+A tensor decomposition is not only a compression technique. Each one makes a different assumption about **which structure in the data should be kept**, and that assumption — not the flop count — is what you choose between.
+
+### Four decompositions, four bargains
+
+| Method | Main idea | Storage | Best fit |
+|---|---|---|---|
+| **CP** | Sum of rank-1 components | `R(I + J + K)` | Individually interpretable components; uniqueness can matter |
+| **Tucker / HOSVD** | One low-dimensional subspace per mode, plus a core | `R₁R₂R₃ + IR₁ + JR₂ + KR₃` | Different modes need different ranks |
+| **Tensor Train (TT)** | Chain of small cores | `≈ O(N · I · r²)` | Very high-order tensors |
+| **t-SVD** | FFT along mode 3, matrix SVDs, inverse FFT | Depends on retained tubal rank | Order-3 tensors with a meaningful third mode |
+
+> 🇪🇸 Cada método conserva una estructura distinta. CP busca componentes individuales, Tucker permite un rango diferente por modo, Tensor Train evita que un núcleo de orden alto crezca exponencialmente, y t-SVD conserva la estructura del tercer modo mediante FFT.
+
+### Why not flatten first?
+
+Flattening preserves the numerical entries but can hide the meaning carried by separate tensor modes. The synthetic fluorescence-unmixing example in the notebook makes the difference measurable:
+
+- CP recovers the true component amounts at correlation `1.00`.
+- Flatten-then-SVD reaches only mean `|corr| ≈ 0.536`.
+- The SVD representation can produce **negative** amount directions, even though a physical concentration cannot be negative.
+
+That example is synthetic by design: it isolates the structural question without requiring another dataset download.
+
+> 🇪🇸 Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos dos modos cuyo significado separado era precisamente la información que queríamos interpretar.
+
+### Fair comparison: CP versus Tucker
+
+**Do not compare CP rank `R` against Tucker rank `(R, R, R)`.** Those two representations store different numbers of parameters, so the comparison measures the budget, not the model. A fair experiment is:
+
+1. choose a CP rank;
+2. count its stored parameters, `R · sum(T.shape)`;
+3. search Tucker ranks near that same parameter budget, and keep the one with the **lowest reconstruction error**;
+4. compare error and interpretability at that matched budget.
+
+Step 3 is where this goes wrong most easily: picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor — `pickup borough × dropoff borough × hour` — and uses the workshop's pinned storm clip as a second tensor-shaped example.
+
+```python
+# TODO 1: Choose a CP rank R for the taxi tensor.
+# TODO 2: Count CP parameters: R * sum(T.shape).
+# TODO 3: Search Tucker ranks near that parameter count and keep the one with
+#         the lowest reconstruction error, not merely the closest parameter
+#         count. Watch what a rank-1 mode does to the answer.
+# TODO 4: Compare relative reconstruction error at the matched budget.
+# TODO 5: Explain which set of factors is easier to interpret.
+```
+
+### Why Tensor Train matters as order grows
+
+For a dense order-`N` tensor with equal mode size `I`, dense storage is `I^N`. At a fixed TT bond rank `r`, TT storage is `≈ O(N · I · r²)`: **exponential in the order against linear in the order**, with `I` and `r` held fixed.
+
+CP storage is also linear in the order under a fixed global rank. TT's practical advantage is different: it represents high-order interactions through *local* bond ranks, rather than through one Tucker core that grows exponentially with the order.
+
+```python
+# TODO 1: Fix I and the TT bond rank r.
+# TODO 2: Increase the tensor order N.
+# TODO 3: Plot dense storage I**N against TT storage ~ N*I*r**2.
+# TODO 4: Explain the different growth rates, and where the crossover sits.
+```
+
+### Tensor decomposition inside neural networks
+
+A dense convolution kernel of shape `3 × 3 × 512 × 512` holds 2,359,296 weights, and costs about 462 million multiply-adds on a 14 × 14 feature map. A CP factorization at rank 64 stores `64 × (3 + 3 + 512 + 512) = 65,920` weights — **35.8× fewer** — and runs as four skinny convolutions in sequence: `1×1 → 3×1 → 1×3 → 1×1`.
+
+One order up, a transformer output matrix `W_O` of shape `4096 × 4096` stores 16,777,216 weights; a TT-matrix representation at rank 16 stores 34,816, or **481.9× fewer**.
+
+The storage ratio is the easy half. The workflow that makes it usable is **train → compress → fine-tune**, and compression is worth nothing unless the downstream task stays accurate enough — which is a property of the trained weights, not of the shape.
+
+```python
+# TODO 1: Build the synthetic convolution kernel from notebook 13.
+# TODO 2: Evaluate several CP ranks.
+# TODO 3: Find the smallest rank whose reconstruction error sits below a
+#         threshold you chose in advance.
+# TODO 4: Report the rank, the error, the stored weights and the compression
+#         ratio — all four, because any one of them alone can be gamed.
+```
+
+### The decision rule
+
+**Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.** In that order: the first question has no numerical answer, and the second has no answer at all until the first is settled.
+
+> 🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.
+
+For the full interactive treatment — method chooser, measured timing, matched-budget CP/Tucker comparison, downstream compression and the storage-budget widget — continue with **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**.
 
 ---
 

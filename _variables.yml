@@ -655,25 +655,37 @@ extras:
     format_line_es: "estudio a fondo · para después"
     title_en: "Tensor factorizations"
     title_es: "Factorizaciones tensoriales"
-    summary_en: "Go past Tucker to CP, tensor train and block terms, and see what each one costs, what it recovers, and when its rank stops being well defined."
-    summary_es: "Ve más allá de Tucker hasta CP, tensor train y términos por bloques, y observa qué cuesta cada uno, qué recupera y cuándo su rango deja de estar bien definido."
+    summary_en: "Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs."
+    summary_es: "Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación."
     intro_en: |-
-      Section 10 built one tensor factorization — **Tucker/HOSVD** — on the real New York taxi tensor, and section 11 put **CP** next to it for five minutes.
+      Section 10 introduced **Tucker/HOSVD** on the real New York taxi tensor.
 
-      This deep dive takes that comparison seriously. Same tensor, four models — **CP, Tucker, tensor train and block-term** — and one honest question each: *what does this model assume, and what does it cost you when the assumption is wrong?*
+      This deep dive answers the next question:
+
+      > **Which tensor decomposition should I use, and what does it cost me?**
+
+      We compare **CP, Tucker/HOSVD, Tensor Train and t-SVD** using workshop data, interactive widgets, matched-budget comparisons and guided exercises.
     intro_es: |-
-      > 🇪🇸 La sección 10 construyó una factorización tensorial — **Tucker/HOSVD** — sobre el tensor real de taxis de Nueva York, y la sección 11 puso **CP** a su lado durante cinco minutos.
+      > 🇪🇸 La sección 10 presentó **Tucker/HOSVD** sobre el tensor real de taxis de Nueva York.
       >
-      > Este estudio a fondo se toma en serio esa comparación. El mismo tensor, cuatro modelos — **CP, Tucker, tensor train y términos por bloques** — y una pregunta honesta para cada uno: *¿qué supone este modelo y qué te cuesta cuando el supuesto es falso?*
+      > Este estudio a fondo responde la siguiente pregunta:
+      >
+      > **¿Qué descomposición tensorial debo usar y cuánto me cuesta?**
+      >
+      > Comparamos **CP, Tucker/HOSVD, Tensor Train y t-SVD** usando datos del taller, widgets interactivos, comparaciones con presupuestos equivalentes y ejercicios guiados.
     objectives_en:
-      - "Fit **CP, Tucker, tensor train and block-term** models to the same real order-3 tensor."
-      - "Explain why tensor rank is not the straightforward generalisation of matrix rank it looks like."
-      - "Compare the four models on stored parameters, reconstruction error and interpretability of the factors."
-      - "Say when uniqueness makes CP the right answer and when Tucker's extra freedom is worth its extra size."
-      - "Recognise which of these models a given real dataset is actually shaped for."
+      - "Explain why flattening can hide the meaning carried by tensor modes."
+      - "Choose between **CP, Tucker/HOSVD, Tensor Train and t-SVD** from the structure of a problem."
+      - "Compare the decompositions by stored parameters, reconstruction error and measured computational cost."
+      - "Compare CP and Tucker at a **matched parameter budget** rather than rank-for-rank."
+      - "Explain why Tensor Train is useful for very high-order tensors."
+      - "Quantify CP and TT compression for neural-network weight tensors."
+      - "Distinguish an exact factorization from truncation and compression."
     objectives_es:
-      - "Ajustar modelos **CP, Tucker, tensor train y de términos por bloques** al mismo tensor real de orden 3."
-      - "Explicar por qué el rango tensorial no es la generalización directa del rango matricial que aparenta ser."
-      - "Comparar los cuatro modelos por parámetros almacenados, error de reconstrucción e interpretabilidad de los factores."
-      - "Decir cuándo la unicidad hace de CP la respuesta correcta y cuándo la libertad extra de Tucker compensa su mayor tamaño."
-      - "Reconocer para cuál de estos modelos está realmente hecho un conjunto de datos real concreto."
+      - "Explicar por qué aplanar un tensor puede ocultar el significado de sus modos."
+      - "Elegir entre **CP, Tucker/HOSVD, Tensor Train y t-SVD** según la estructura del problema."
+      - "Comparar las descomposiciones por parámetros almacenados, error de reconstrucción y coste computacional medido."
+      - "Comparar CP y Tucker con un **presupuesto de parámetros equivalente**, en lugar de comparar rango contra rango."
+      - "Explicar por qué Tensor Train es útil para tensores de orden muy alto."
+      - "Cuantificar la compresión CP y TT de tensores de pesos de redes neuronales."
+      - "Distinguir una factorización exacta de la truncación y la compresión."
