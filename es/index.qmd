@@ -23,15 +23,32 @@ datos reales contienen problemas que los aleatorios nunca muestran: valores
 faltantes, variables en escalas incompatibles, píxeles que nunca cambian.
 Encontrar esos problemas es parte del trabajo.
 
-Todo procede de un único documento fuente, el
-[manual](../tensors_workshop_plan_with_quizzes.html): las diapositivas, los cuadernos
-y esta página se generan a partir de él.
-
 ## Para quién es
 
 Has leído *{{< var workshop.book >}}*. Sabes qué es una matriz. Este taller **no
 supone ningún conocimiento previo de teoría de tensores**, y cada término nuevo se
 define donde aparece por primera vez.
+
+## Qué hay aquí
+
+Cinco recursos, y cada uno cumple una función distinta. Empieza por el que
+corresponda a lo que estés haciendo ahora mismo.
+
+| | Qué es | Cuándo lo usas |
+|---|---|---|
+| **[Manual](../tensors_workshop_plan_with_quizzes.md)** | El texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas, la lectura adicional y los cinco apéndices para casa. **Solo en inglés.** | Léelo antes, síguelo durante, consérvalo después. |
+| **[Diapositivas](../slides/es/index.qmd)** · [EN](../slides/en/index.qmd) | Lo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás. | En vivo durante la sesión, o para repasar después la forma del día. |
+| **[Cuadernos](../notebooks.qmd)** | Catorce cuadernos de Colab: uno por sección, más dos estudios a fondo para casa. Donde realmente escribes código. | Durante cada sección, y para los ejercicios de casa. |
+| **[Kahoot](../kahoot.qmd)** | Tres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10. | En vivo, en el móvil o en una segunda pestaña. |
+| **[Repositorio]({{< var repo.url >}})** | La fuente de todo lo anterior, más las tres hojas de cálculo de Kahoot. | Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab. |
+
+: {tbl-colwidths="[16,50,34]"}
+
+El manual es el *texto* fuente. Los datos que los cinco comparten —los títulos
+de las secciones, el reloj, los enlaces— viven una sola vez en
+[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
+y todas las tablas de secciones de esta página se generan a partir de ahí, así que no pueden
+contradecirse.
 
 ## Requisitos previos
 
@@ -164,10 +181,3 @@ español: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*,
 **Pregunta en español o en inglés**, lo que te permita preguntar más rápido. Las
 [diapositivas están en los dos idiomas](../slides/es/index.qmd) y cada
 encabezado de los cuadernos lleva un resumen de una línea en español.
-
-## Dónde seguir
-
-- [Manual](../tensors_workshop_plan_with_quizzes.html): el texto completo del
-  estudiante y las notas del facilitador, incluidos los cuatro apéndices para casa.
-- [Cuadernos](../notebooks.qmd): los doce, con sus insignias de Colab.
-- [Kahoot](../kahoot.qmd): los tres cuestionarios y cómo ejecutarlos.

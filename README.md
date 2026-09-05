@@ -30,40 +30,20 @@ summary.
 
 ## Prerequisites
 
-Everything below is free, and nothing needs installing on your own machine.
+Free, and nothing needs installing on your own machine. In brief:
 
-**Do before the session**
-
-- **The linear algebra in Chapter 2** of
-  [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html):
-  vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD.
+- **Read Chapter 2 — Linear Algebra** of
+  [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html).
   That chapter is the whole of the assumed background.
-- **[`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**
-  — 14 short bilingual Colab notebooks (~2–3 hours total) covering exactly that
-  material, vectors through PCA. Required pre-work: this workshop moves fast
-  through material it assumes you have reviewed.
-- **[Notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb),
-  run in Colab** — it downloads the three CSV files the workshop needs. Run it
-  **before** the session and say so immediately if it fails: a silent download
-  failure leaves you stuck at sections 07 and 10, an hour in.
+- **Work through
+  [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**
+  — 14 short bilingual Colab notebooks, ~2–3 hours. Required pre-work.
+- **Run [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
+  in Colab before the session**, and say so immediately if it fails: a silent
+  download failure leaves you stuck at sections 07 and 10, an hour in.
 
-**Recommended**
-
-- **[*Essence of linear algebra*](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)**
-  (3Blue1Brown) — 16 videos, about 3 hours in total. Watch it if Chapter 2 felt
-  like symbol-pushing: it gives you the geometric picture of what a matrix
-  *does*, which is what sections 04 through 10 lean on.
-
-**Have ready on the day**
-
-- **A Google account** — the notebooks run in
-  [Colab](https://colab.research.google.com/) in your browser. **Nothing to
-  install.**
-- **Discord** — the invite comes from the facilitator. Every discussion, every
-  breakout channel and every question happens there, in Spanish or English.
-- **A phone or a second tab for [Kahoot](https://kahoot.it)** — three
-  6-question knowledge checks, after sections 04, 07 and 10. No sign-up; you
-  join with a PIN.
+The full list — the recommended viewing, and what to have ready on the day —
+is on the **[workshop homepage](https://project-delphi.github.io/tensors-workshop/)**, which is where it is maintained.
 
 ## All the data is real
 
@@ -125,7 +105,7 @@ Only Quarto is needed to build the site — the notebooks are **not** executed a
 render time. To run the notebooks locally instead of in Colab:
 
 ```bash
-uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
 ```
 
 ### Regenerating the derived files
@@ -159,7 +139,7 @@ slides/en/  slides/es/  the two revealjs decks + shared slides.scss
 notebooks/              14 Colab notebooks — 12 sections + 2 take-home extras
 kahoot/                 3 .xlsx quiz import files
 scripts/                generators and the link checker
-tensors_workshop_plan_with_quizzes.md   the source handbook
+tensors_workshop_plan_with_quizzes.md   the handbook — the session text
 docs/                   rendered site (committed — this is what Pages serves)
 ```
 
@@ -197,43 +177,22 @@ resumen de una línea en español.
 
 ## Requisitos previos
 
-Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.
+Todo es gratuito y no hace falta instalar nada en tu equipo. En resumen:
 
-**Antes de la sesión**
+- **Lee el capítulo 2 — Álgebra lineal** de
+  [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html).
+  Ese capítulo es todo el conocimiento previo que se da por supuesto.
+- **Trabaja
+  [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**:
+  14 cuadernos breves y bilingües de Colab, ~2–3 horas. Trabajo previo
+  obligatorio.
+- **Ejecuta el [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
+  en Colab antes de la sesión** y avisa enseguida si falla: una descarga que
+  falla en silencio te deja atascado en las secciones 07 y 10, una hora después.
 
-- **El álgebra lineal del capítulo 2** de
-  [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html):
-  vectores, matrices, el producto matricial, la inversa, la descomposición
-  espectral y la SVD. Ese capítulo es todo el conocimiento previo que se da por
-  supuesto.
-- **[`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**:
-  14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren
-  exactamente ese material, de vectores a PCA. Trabajo previo obligatorio: el
-  taller avanza rápido y da por hecho que ya lo hiciste.
-- **El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb),
-  ejecutado en Colab**: descarga los tres archivos CSV que usa el taller.
-  Ejecútalo **antes** de la sesión y avisa enseguida si falla: una descarga que
-  falla en silencio te deja atascado en las secciones 07 y 10, una hora
-  después.
-
-**Recomendado**
-
-- **[*Essence of linear algebra*](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab)**
-  (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total.
-  Míralo si el capítulo 2 te pareció puro manejo de símbolos: da la imagen
-  geométrica de lo que una matriz *hace*, que es en lo que se apoyan las
-  secciones 04 a 10.
-
-**Ten a mano el día del taller**
-
-- **Una cuenta de Google**: los cuadernos se ejecutan en
-  [Colab](https://colab.research.google.com/) desde el navegador. **No hay que
-  instalar nada.**
-- **Discord**: la invitación te la pasa quien imparte el taller. Ahí ocurren las
-  discusiones, los canales de grupo y las preguntas, en español o en inglés.
-- **El móvil o una segunda pestaña para [Kahoot](https://kahoot.it)**: tres
-  controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que
-  registrarse: entras con un PIN.
+La lista completa —lo recomendado y lo que hay que tener a mano el día del
+taller— está en la **[página del taller](https://project-delphi.github.io/tensors-workshop/es/)**, que es donde se
+mantiene.
 
 ## Todos los datos son reales
 
@@ -290,7 +249,14 @@ quarto render           # escribe docs/
 ```
 
 Solo hace falta Quarto para construir el sitio: los cuadernos **no** se ejecutan
-al renderizar.
+al renderizar. Para ejecutar los cuadernos en local en lugar de en Colab:
+
+```bash
+uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+```
+
+`matplotlib` e `ipywidgets` vienen con Colab pero no con una instalación pelada
+de `jupyterlab`, y casi todos los cuadernos los necesitan.
 
 ## Cómo se publica
 

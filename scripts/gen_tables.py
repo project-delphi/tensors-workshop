@@ -12,6 +12,10 @@ covers one.
 
     uv run --with pyyaml python scripts/gen_tables.py
 
+It also owns marker-delimited regions inside three hand-written files: the
+section and extras tables in `README.md` and `notebooks/README.md`, and the
+schedule table in the handbook.
+
 Outputs (all overwritten, none hand-edited):
     _includes/sections-en.md      _includes/sections-es.md
     _includes/notebooks-en.md     _includes/notebooks-extra-en.md
@@ -200,6 +204,48 @@ def agenda_table(lang: str) -> str:
     return "\n".join(rows) + "\n"
 
 
+def handbook_schedule_table() -> str:
+    """The handbook's schedule, and the only key to its own vocabulary.
+
+    The handbook numbers its teaching by Part I-IV and Block 1-6; everything
+    else on the site numbers it by section 00-11. A reader who meets "Block 4"
+    in the prose has no way to reach notebook 07 unless one table shows both,
+    so this is that table, and it is generated rather than written because the
+    hand-written one it replaces carried no section numbers at all and its
+    times could drift from the clock the decks print.
+
+    It walks `timeline.atoms()` — the same run order as the agenda, but one row
+    per segment rather than per agenda row, because the handbook's own headings
+    are per segment.
+    """
+    from timeline import ScheduleError, atoms, clock  # noqa: PLC0415
+
+    for s in SECTIONS:
+        if "block" not in s:
+            raise ScheduleError(
+                f"_variables.yml `sections`: section {s['n']} has no `block` — "
+                'every section needs one, "—" if it is not one of the six '
+                "exercise blocks")
+    by_n = {s["n"]: s for s in SECTIONS}
+    by_q = {f"q{q['n']}": q for q in QUIZZES}
+    head = ("#", "Part", "Block", "Segment", "Format", "Min", "Start")
+    rows = ["| " + " | ".join(head) + " |", "|---|---|---|---|---|---|---|"]
+    minute = 0
+    for name, length in atoms():
+        if s := by_n.get(name):
+            cells = (f"**{s['n']}**", s["part"], s["block"],
+                     f"[{s['title_en']}]({colab_url(s)})", s["format_en"])
+        elif q := by_q.get(name):
+            cells = ("—", "🎯", "—",
+                     f"**Kahoot {q['n']} — {q['title_en']}**", "quiz")
+        else:
+            cells = ("—", "—", "—", "Break", "—")
+        rows.append("| " + " | ".join(cells)
+                    + f" | {length} | {clock(minute)} |")
+        minute += length
+    return "\n".join(rows) + "\n"
+
+
 def readme_table(lang: str) -> str:
     """Markdown table for the READMEs — absolute URLs, since GitHub renders
     these outside the site."""
@@ -229,7 +275,10 @@ def inject(path: pathlib.Path, marker: str, body: str) -> None:
 
     The READMEs are rendered by GitHub, not Quarto, so they cannot use
     `{{< include >}}` — the same tables have to be written into the files. This
-    keeps them generated rather than hand-maintained.
+    keeps them generated rather than hand-maintained. The handbook *is* a
+    Quarto page and could use `{{< include >}}`, but it is also read raw on
+    GitHub, where a shortcode shows as literal text — so it gets a marker
+    region too.
     """
     begin, end = f"<!-- BEGIN {marker} -->", f"<!-- END {marker} -->"
     text = path.read_text(encoding="utf-8")
@@ -258,6 +307,7 @@ def main() -> int:
             "extras-en.md": BANNER + extras_readme_table("en"),
             "extras-es.md": BANNER + extras_readme_table("es"),
         }
+        handbook_schedule = handbook_schedule_table()
     except ScheduleError as e:
         # Nothing is written on the way out: half-regenerated includes would
         # leave the two decks disagreeing, which is the failure this whole
@@ -266,6 +316,9 @@ def main() -> int:
     for name, body in written.items():
         (INCLUDES / name).write_text(body, encoding="utf-8")
         print(f"  wrote _includes/{name}")
+    handbook = ROOT / "tensors_workshop_plan_with_quizzes.md"
+    if handbook.exists():
+        inject(handbook, "handbook-schedule", handbook_schedule)
     readme, nb_readme = ROOT / "README.md", ROOT / "notebooks" / "README.md"
     if readme.exists():
         inject(readme, "sections-en", readme_table("en"))

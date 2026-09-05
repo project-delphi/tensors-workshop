@@ -11,9 +11,9 @@ plus two take-home deep dives, numbered 12 and 13, that are **not** sections.
 
 Its setup cell installs, imports and loads **its own data**, so you can open any
 one of them cold in a fresh Colab runtime, in any order, without having run the
-others. Sections 07, 08 and 10 re-fetch their CSV from GitHub rather than
-depending on notebook 00. You will see the same three URLs more than once — that
-is deliberate, not accidental duplication.
+others. Sections 02, 05, 07, 08 and 10 re-fetch their own data rather than
+depending on notebook 00, as do all three of 11, 12 and 13. You will see the
+same URLs more than once — that is deliberate, not accidental duplication.
 
 ## The twelve sections
 
@@ -100,8 +100,15 @@ Running `gen_notebooks.py` twice must produce no additional changes.
 ## Running them somewhere other than Colab
 
 ```bash
-uv run --with numpy,pandas,scikit-learn,scikit-image,scipy,jupyterlab jupyter lab
+uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
 ```
 
+`matplotlib` and `ipywidgets` are in that list because every notebook plots and
+all but 00 use sliders; both ship with Colab, so their absence only shows up
+locally. `imageio[ffmpeg]` and `tensorly` are not, because the notebooks that
+need them install them themselves.
+
 `scikit-learn` and `scikit-image` ship the tumour data, the digits and the
-photographs, so most sections work with no network at all.
+photographs, so sections 01, 03, 04, 06 and 09 need no network at all. The other
+nine fetch something the first time they run — see the table on the
+[notebooks page](https://project-delphi.github.io/tensors-workshop/notebooks.html).

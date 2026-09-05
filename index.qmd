@@ -21,15 +21,31 @@ invented with random numbers, because real data contains problems that random
 data never shows: missing values, features on incompatible scales, pixels that
 never change. Finding those problems is part of the work.
 
-Everything here comes from one source document, the
-[handbook](tensors_workshop_plan_with_quizzes.md) — the slides, the notebooks and
-this page are all generated from it.
-
 ## Who it is for
 
 You have read *{{< var workshop.book >}}*. You know matrices. This workshop
 assumes **no previous knowledge of tensor theory**, and every new term is defined
 where it first appears.
+
+## What's here
+
+Five things, and they do different jobs. Start with whichever one matches what
+you are doing right now.
+
+| | What it is | When you use it |
+|---|---|---|
+| **[Handbook](tensors_workshop_plan_with_quizzes.md)** | The session text: the theory, every exercise, the worked solutions, further reading, and the five take-home appendices. English only. | Read it before, follow it during, keep it after. |
+| **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
+| **[Notebooks](notebooks.qmd)** | Fourteen Colab notebooks — one per section, plus two take-home deep dives. Where you actually type. | During each section, and for the take-homes. |
+| **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
+| **[Repository]({{< var repo.url >}})** | The source of all of the above, plus the three Kahoot spreadsheets. | To fork it, fix something, or run the notebooks off Colab. |
+
+: {tbl-colwidths="[16,50,34]"}
+
+The handbook is the source *text*. The facts those five share — the section
+titles, the running clock, the links — live once in
+[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
+and every section table on this page is generated from it, so they cannot disagree.
 
 ## Prerequisites
 
@@ -158,10 +174,3 @@ Spanish: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*,
 **Ask questions in Spanish or English** — whichever lets you ask faster. The
 [slide deck exists in both languages](slides/es/index.qmd), and every notebook
 heading carries a one-line Spanish summary.
-
-## Where to go next
-
-- [Handbook](tensors_workshop_plan_with_quizzes.md) — the full student text and
-  facilitator notes, including the four take-home appendices.
-- [Notebooks](notebooks.qmd) — all twelve, with Colab badges.
-- [Kahoot](kahoot.qmd) — the three quizzes and how to run them.
