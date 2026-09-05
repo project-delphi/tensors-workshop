@@ -65,7 +65,7 @@ take-home E — a voice recording.
 | Notebook | Beyond NumPy | Network |
 |---|---|---|
 | 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | yes — all three CSVs, and a 1 KB probe of the storm clip |
-| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
+| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `scipy` | no |
 | 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | yes — the storm clip |
 | 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
 | 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |
