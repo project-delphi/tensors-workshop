@@ -237,11 +237,43 @@
 
     Reveal.on("slidechanged", updateChrome);
     updateChrome();
+
     // ── The Colab panel ─────────────────────────────────────────────────
-    // The original .colab-tab links remain in the rendered deck as the
-    // canonical source of notebook URLs, but slides.scss hides them from
-    // the audience. This panel creates the visible controls once and keeps
-    // the correct notebook available throughout each section.
+    // The .colab-tab links in the qmd are the canonical source of notebook
+    // URLs; this panel promotes them to one audience-facing control and keeps
+    // the right notebook reachable across a whole section, not only on the
+    // slide that happens to carry the link.
+    //
+    // Which slides get which notebook is derived from the deck itself. Slide
+    // positions are deliberately never written down here: an earlier version
+    // hard-coded a 1-based index -> notebook map, and inserting a single slide
+    // anywhere in the qmd would have silently pointed every later button at
+    // the wrong notebook, with nothing to fail.
+    //
+    // The rule, in one sentence: a section makes its notebook available on
+    // every slide of that section, while a Kahoot break adopts none, so a
+    // slide sitting after a break carries its own link. Groups start at each
+    // divider (the `h1.sr-only` marker the breadcrumb already keys off); a
+    // divider with a `.sec-part` is a section and shares its links group-wide,
+    // and one without — a Kahoot — leaves them on the declaring slide.
+
+    function colabNumbers(scope) {
+      var numbers = [];
+
+      Array.prototype.forEach.call(
+        scope.querySelectorAll(".colab-tab"),
+        function (link) {
+          var match = (link.getAttribute("href") || "")
+            .match(/\/(\d{2})-[^/]+\.ipynb/);
+
+          if (match && numbers.indexOf(match[1]) === -1) {
+            numbers.push(match[1]);
+          }
+        }
+      );
+
+      return numbers;
+    }
 
     var hrefByNumber = {};
 
@@ -257,25 +289,49 @@
       }
     );
 
-    var COLAB_PANEL_SLIDES = {
-      4: ["00"],
+    // Same traversal the breadcrumb uses, for the same reason: reveal has
+    // already wrapped groups into `.stack` wrappers by the time this runs.
+    var panelSlides = [];
+    var panelNumbers = [];
+    var group = null;
 
-      5: ["01"], 6: ["01"], 7: ["01"],
-      8: ["02"], 9: ["02"],
-      10: ["03"], 11: ["03"],
-      12: ["04"], 13: ["04"],
+    Array.prototype.forEach.call(
+      reveal.querySelectorAll(".slides section"),
+      function (slide) {
+        if (!slide.classList.contains("level1") &&
+            !slide.classList.contains("level2")) {
+          return;   // a `.stack` wrapper is not a slide
+        }
 
-      15: ["05"], 16: ["05"],
-      17: ["06"], 18: ["06"], 19: ["06"],
-      20: ["07"], 21: ["07"],
+        var own = colabNumbers(slide);
 
-      23: ["08"], 24: ["08"],
-      25: ["09"], 26: ["09"],
-      27: ["10"], 28: ["10"],
+        if (slide.querySelector("h1.sr-only")) {
+          group = slide.querySelector(".sec-part")
+            ? { numbers: own }
+            : null;   // a Kahoot break shares nothing forward
+        }
 
-      30: ["11"],
-      31: ["11", "12", "13"]
-    };
+        panelSlides.push(slide);
+
+        if (group) {
+          // Every slide of the section pushes the same object, so a link
+          // found later in the walk reaches the divider too.
+          if (own.length) {
+            group.numbers = own;
+          }
+
+          panelNumbers.push(group);
+        } else {
+          panelNumbers.push({ numbers: own });
+        }
+      }
+    );
+
+    // A section's links are resolved after the walk, so a divider carrying no
+    // link of its own still picks up the one declared later in its section.
+    panelNumbers = panelNumbers.map(function (entry) {
+      return entry.numbers;
+    });
 
     var colabPanel = document.createElement("div");
     colabPanel.className = "deck-colab-panel";
@@ -283,14 +339,18 @@
     reveal.appendChild(colabPanel);
 
     function updateColabPanel() {
-      if (!Reveal.getIndices) {
+      // Guard the API this actually calls. `?print-pdf` and the moment before
+      // reveal finishes initialising both land here with no current slide, and
+      // an empty panel is the right answer for both.
+      if (!Reveal.getCurrentSlide) {
+        colabPanel.innerHTML = "";
         colabPanel.hidden = true;
         return;
       }
 
-      var indices = Reveal.getIndices();
-      var slideNumber = (indices.h || 0) + 1;
-      var numbers = COLAB_PANEL_SLIDES[slideNumber] || [];
+      var current = Reveal.getCurrentSlide();
+      var position = current ? panelSlides.indexOf(current) : -1;
+      var numbers = position === -1 ? [] : (panelNumbers[position] || []);
 
       colabPanel.innerHTML = "";
 
@@ -305,8 +365,12 @@
 
         var isExtra = number === "12" || number === "13";
 
+        // Both halves go through `es`: the extra label was English-only, so
+        // the ES deck's final slide read "Abrir Colab 11" beside
+        // "Deep dive 12". `estudio a fondo` is the wording _variables.yml
+        // already uses for an extra in Spanish.
         var label = isExtra
-          ? "Deep dive " + number + " ↗"
+          ? (es ? "Estudio a fondo " : "Deep dive ") + number + " ↗"
           : (es ? "Abrir Colab " : "Open Colab ") + number + " ↗";
 
         var button = document.createElement("a");
@@ -334,6 +398,11 @@
     Reveal.on("overviewhidden", updateColabPanel);
 
     updateColabPanel();
+
+    // Last, and only on success: this is what retires the inline .colab-tab
+    // links in slides.scss. Anything above throwing leaves them visible, so a
+    // broken panel degrades to the markdown links instead of to no link.
+    reveal.classList.add("deck-colab-ready");
   });
 })();
 </script>

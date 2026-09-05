@@ -20,6 +20,13 @@ lang: en
 
 <p class="sr-only">Tensors for Machine Learning — from real data to modern models. Presenter: Ravi Kalia. Prepared by: Sebastian Laverde Chunza.</p>
 
+::: {.notes}
+Say this out loud: nobody is expected to know tensor theory. Every new term is
+defined the first time it appears. Students are ESL (Colombia) — speak slowly,
+avoid idiom, and name the Spanish cognates early: eje, descomposición,
+contracción, convolución.
+:::
+
 ## {background-image="images/slides-final/slide-02.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">The workshop idea: four cards show scalar, vector, matrix and tensor as 0D, 1D, 2D and ND arrays, each defined by its shape. The guiding question of the day: before operating, what does each axis represent?</p>
@@ -27,6 +34,36 @@ lang: en
 ## {background-image="images/slides-final/slide-03.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Real data, real problems: four real datasets used throughout the workshop — handwritten digits, stained histology, California housing, and NYC taxi trips — each with the role it plays later.</p>
+
+::: {.notes}
+The point of the grid is that every card is a link: students can go and look at
+the source themselves, and several will. Name the two that surprise people —
+the digits are the UCI 8x8 set, not MNIST, and the cell is a phase image from a
+hologram rather than a stained slide — the histology card beside it is the
+stained one.
+
+Image credits, none of them required: taxis Ferdinand Stohr, DC-3 Bernard
+Spragg, histopathology Mikael Haggstrom MD, tract housing Alfred Twu (Wikimedia
+Commons); storm Nicolas Vigier (Commons); voice Bart Massey — all CC0. Digits,
+cell, histology and waveform are rendered from the data itself by
+scripts/gen_thumbnails.py; those are CC0 too, except the histology, which
+skimage documents as having no known copyright restrictions.
+:::
+
+## Agenda — {{< var workshop.minutes >}} minutes {.agenda-slide}
+
+{{< include ../../_includes/agenda-en.md >}}
+
+::: {.notes}
+Give the "rank" warning at the start of Part I, not later. It is the single most
+reliable source of confusion in the whole workshop: Chapter 2 uses *rank* for the
+number of independent columns, tensor theory usually means the number of axes.
+Today, say "order" for the number of axes, and "rank" only in Chapter 2's sense.
+
+Rhythm, so the room knows what to expect: exercise blocks are 10 minutes coding
+then 5 of explanation; the group block (§05) is 10 minutes of discussion then a
+share-back.
+:::
 
 ## {#sec-00-setup-and-data background-image="images/slides-final/slide-04.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -38,6 +75,15 @@ lang: en
 <p class="sr-only">Section {{< var sections.s00.n >}} · {{< var sections.s00.title_en >}} — {{< var sections.s00.minutes >}} min, running {{< var sections.s00.start >}} to {{< var sections.s00.end >}}. Objective: confirm the Colab runtime can reach every dataset the workshop uses. Three guiding questions: what kinds of data will we see, why use real data, and what does it mean for an axis to carry semantics?</p>
 [Colab ↗]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 00 in Google Colab"}
 
+::: {.notes}
+Confirm in the first 5 minutes that everyone's download succeeded. A student who
+silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored
+in the repo as a fallback.
+
+The `%pip install "imageio[ffmpeg]"` line pulls about 20 MB. On a slow venue
+network start this cell before you start talking.
+:::
+
 ## {#sec-01-what-a-tensor-is background-image="images/slides-final/slide-05.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
@@ -48,9 +94,30 @@ lang: en
 <p class="sr-only">Section {{< var sections.s01.n >}} · {{< var sections.s01.title_en >}} — {{< var sections.s01.minutes >}} min, running {{< var sections.s01.start >}} to {{< var sections.s01.end >}}. Objective: explain in plain language what a tensor is, what each axis represents, and how to read its shape. A photograph of the Manhattan Bridge is decomposed into its red, green and blue channels to show a tensor as height by width by colour.</p>
 [Colab ↗]({{< var repo.colab_base >}}/01-what-a-tensor-is.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 01 in Google Colab"}
 
+::: {.notes}
+Do not rush Part I. It is the students' first contact with tensor theory and
+every later block uses its vocabulary. If running late, cut Appendix material,
+never Part I.
+:::
+
 ## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.</p>
+
+::: {.notes}
+Prime factorization is unique up to ordering — the cleanest case on the slide.
+Generic low-rank matrix factors have gauge freedom (the $M$/$M^{-\top}$ pair);
+extra structure or a convention — positive pivots, orthonormal columns, a
+positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can
+be essentially unique under suitable identifiability conditions, up to
+permutation and a compensating nonzero scaling across modes; over the reals,
+sign flips are a special case of that scaling. Kruskal's
+$k_A + k_B + k_C \ge 2R + 2$ is a *sufficient* condition, not a necessary one,
+and it says nothing about whether the decomposition is easy to find. Worth
+saying if there is time: computing tensor rank is NP-hard in general, tensor
+rank can exceed every individual mode dimension, and a best rank-$R$
+approximation need not even exist — none of that is true of matrices.
+:::
 
 ## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -69,6 +136,13 @@ lang: en
 
 <p class="sr-only">Batch is not time: sixteen shuffled handwritten digits stay recognisable, while shuffled video frames turn the storm sequence meaningless — reordering a batch axis is safe, reordering a time axis is not.</p>
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 02 in Google Colab"}
+
+::: {.notes}
+This is a live coding demo, not a discussion block. Open the notebook and run
+Setup first; it downloads and checksums the real video used in the exercises.
+Emphasize the contrast between shuffling a batch and shuffling time, then the
+padded batch with its validity mask.
+:::
 
 ## {#sec-03-indexing-and-broadcasting background-image="images/slides-final/slide-10.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -104,6 +178,23 @@ lang: en
 <p class="sr-only">Active break: Kahoot 1, {{< var kahoot.q1.title_en >}}. {{< var kahoot.q1.questions >}} questions covering axes, shapes, indexing and transpose. Join at {{< var kahoot.join >}}; answer with intuition first, then justify with shapes.</p>
 [Kahoot ↗]({{< var kahoot.q1.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 1"}
 
+::: {.notes}
+Run this before the break, right after section 04. Everyone has just used order,
+axis, shape, slice, fiber, variance, reshape and transpose — this is the moment
+those words are freshest.
+
+IMPORT THE .xlsx AHEAD OF TIME. Create → Add question → Import → Import
+spreadsheet. Do not do this live.
+
+Budget 5 minutes including the podium. Groups want to see the leaderboard, and
+that is fine — it is the payoff.
+
+Two questions reach into the exercises: the NaN question is section 03's
+zero-variance pixels, and the last is section 04's reshape-versus-transpose.
+
+If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
+:::
+
 ## {#sec-05-video-pipeline-design background-image="images/slides-final/slide-15.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
@@ -126,6 +217,12 @@ lang: en
 
 <h1 class="sr-only">{{< var sections.s06.n >}} · {{< var sections.s06.title_en >}}</h1>
 <p class="sr-only">Section {{< var sections.s06.n >}} · {{< var sections.s06.title_en >}} — {{< var sections.s06.minutes >}} min, running {{< var sections.s06.start >}} to {{< var sections.s06.end >}}. Objective: describe tensor contractions with explicit indices and recognise dot product, matmul, trace and similarity. The Manhattan Bridge photo carries the einsum contraction equation.</p>
+
+::: {.notes}
+Say "Euclidean distance" and "cosine similarity" out loud here. Kahoot 2 asks
+about both and the handbook never defines them anywhere else — this exercise is
+the only bridge.
+:::
 
 ## {background-image="images/slides-final/slide-18.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -150,11 +247,29 @@ lang: en
 <p class="sr-only">California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
 
+::: {.notes}
+TODO 3 asks students to trigger an error deliberately — say in advance that the
+error is the expected result, or several will think they broke something.
+:::
+
 ## {#sec-kahoot-2 background-image="images/slides-final/slide-22.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 2 — {{< var kahoot.q2.title_en >}}</h1>
 <p class="sr-only">Active break: Kahoot 2, {{< var kahoot.q2.title_en >}}. {{< var kahoot.q2.questions >}} questions covering einsum, similarity and the pseudoinverse. Join at {{< var kahoot.join >}}; decide the operation first, then justify with indices and shapes.</p>
 [Kahoot ↗]({{< var kahoot.q2.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 2"}
+
+::: {.notes}
+Run this right after section 07, before the recursion demo. It covers contraction
+(§06), the pseudoinverse and singular matrices (§07), and distance/similarity —
+the digit-similarity matrix from §06 TODO 4 is the bridge between the two.
+
+WARNING: two questions ask about Euclidean distance and cosine similarity, which
+the handbook never defines directly. If you did not say those words during §06,
+expect them to land cold.
+
+THIS IS THE FIRST QUIZ TO CUT if you are over time — the pseudoinverse and
+distance both get re-covered narratively in the wrap-up.
+:::
 
 ## {#sec-08-recursion-with-matrices background-image="images/slides-final/slide-23.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -164,6 +279,11 @@ lang: en
 
 <h1 class="sr-only">{{< var sections.s08.n >}} · {{< var sections.s08.title_en >}}</h1>
 <p class="sr-only">Section {{< var sections.s08.n >}} · {{< var sections.s08.title_en >}} — {{< var sections.s08.minutes >}} min, running {{< var sections.s08.start >}} to {{< var sections.s08.end >}}. Objective: recognise a recursion as the same map applied repeatedly. A real airline-passenger series is forecast forward by feeding each prediction back in as the next input.</p>
+
+::: {.notes}
+If badly over time, this RNN snippet is third on the cutting list — after Kahoot
+2 and §09 TODO 4.
+:::
 
 ## {background-image="images/slides-final/slide-24.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -184,6 +304,11 @@ lang: en
 <p class="sr-only">Forward is not transpose is not inverse: a real photograph shows the forward blur, its transpose (which does not undo the blur), and a Richardson-Lucy partial recovery, labelled as three distinct operations.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
 
+::: {.notes}
+This is the hardest thing in the workshop. TODO 4 is second on the cutting list.
+Say the border-crop warning out loud before they start, not after.
+:::
+
 ## {#sec-10-tucker-decomposition background-image="images/slides-final/slide-27.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
@@ -198,15 +323,40 @@ lang: en
 <p class="sr-only">Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.</p>
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
 
+::: {.notes}
+Never cut section 10. In tech, Tucker and CP compress neural network weight
+tensors so models run on phones. In biotech, on (genes × samples × conditions),
+they find structure PCA cannot reach — PCA can only ever see two axes.
+:::
+
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_en >}}</h1>
 <p class="sr-only">Active break: Kahoot 3, {{< var kahoot.q3.title_en >}}. {{< var kahoot.q3.questions >}} questions covering convolution, correlation, Tucker and CP. Join at {{< var kahoot.join >}}; recognise the structure first, then choose the operator.</p>
 [Kahoot ↗]({{< var kahoot.q3.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 3"}
 
+::: {.notes}
+Run this right after section 10, while the taxi-tensor rush-hour result is still
+on screen.
+
+ITS LAST QUESTION NAMES HOUR 18 — it must come AFTER §10 TODO 6, never before,
+or it gives the answer away.
+
+NEVER CUT THIS ONE. It is the cheapest way to check whether Tucker and CP
+actually landed before students leave. It also doubles as a live rehearsal of the
+wrap-up's own recap, so segue straight from the podium into the wrap-up.
+:::
+
 ## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">One idea connects the workshop: pseudoinverse, deconvolution and Tucker are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
+
+[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
+
+::: {.notes}
+Stating this connection explicitly is what makes the second half feel like one
+lesson rather than four separate blocks. Do not skip it.
+:::
 
 ## {#sec-11-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 

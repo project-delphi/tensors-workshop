@@ -206,12 +206,40 @@ $code-block-font-size: 0.62em;
   border: 0;
 }
 
-// The per-slide .colab-tab anchors stay in the qmd for validation
-// (check_links.py) and as inert markup for anything that reads source HTML,
-// but are never shown: the audience-facing control is the single global
-// `.deck-colab-panel` built by deck-pace.html.
+// The per-slide .colab-tab anchors are the deck's fallback, not dead markup.
+// deck-pace.html sets `.deck-colab-ready` on `.reveal` only once it has built
+// the global `.deck-colab-panel`, and only then do these retire. If that
+// script never runs — or throws before it finishes — every section slide is
+// still left with a reachable notebook link, styled to read as deliberate on
+// top of the artwork rather than as a stray blue underline.
 .reveal .colab-tab {
+  position: relative;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  margin-right: 10px;
+  padding: 4px 14px;
+  border: 2px solid #E0A800;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, .95);
+  color: #5A3A00 !important;
+  font-family: $presentation-heading-font;
+  font-size: 18px;
+  font-weight: 700;
+  text-decoration: none !important;
+}
+
+.reveal.deck-colab-ready .colab-tab {
   display: none !important;
+}
+
+// Every slide is a `## {background-image=...}` with no title text, so pandoc
+// emits an empty `<h2>` ahead of the `h1.sr-only` that actually names the
+// section. `display: none` takes the empty heading out of the accessibility
+// tree as well as the page, which leaves the h1 as the slide's first heading
+// instead of a stray empty h2 above it.
+.reveal .slides section > h2:empty {
+  display: none;
 }
 
 // Kahoot keeps its existing audience-facing side tab.
@@ -248,15 +276,28 @@ $code-block-font-size: 0.62em;
 
 // ── Global Colab panel ───────────────────────────────────────────────────
 // Audience-facing Colab control placed immediately to the left of the timer.
+// Directly under the timer in the same right-hand gutter, rather than beside
+// it: a `right:` offset large enough to clear the timer is a guess about how
+// wide the timer renders, and on a 1024px projector that guess pushed the
+// buttons off-screen. Stacking below it costs nothing and holds at any width.
 .reveal .deck-colab-panel {
   position: fixed;
-  top: 20px;
-  right: 680px;
+  top: 96px;
+  right: 18px;
   left: auto;
   z-index: 60;
   display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-end;
   align-items: center;
   gap: 14px;
+  max-width: calc(100vw - 36px);
+}
+
+// `display: flex` above is author-origin and would otherwise beat the UA's
+// `[hidden] { display: none }`, leaving the panel's own hidden guards inert.
+.reveal .deck-colab-panel[hidden] {
+  display: none;
 }
 
 .reveal .deck-colab-button {
@@ -289,11 +330,7 @@ $code-block-font-size: 0.62em;
 
 // Final slide: Colab 11 + Deep dive 12 + Deep dive 13 in one horizontal row.
 .reveal .deck-colab-panel.final-row {
-  flex-direction: row;
-  align-items: center;
   gap: 12px;
-  top: 20px;
-  right: 840px;
 }
 
 .reveal .deck-colab-panel.final-row .deck-colab-button {

@@ -20,6 +20,12 @@ lang: es
 
 <p class="sr-only">Tensores para Machine Learning — de datos reales a modelos modernos. Expositor: Ravi Kalia. Elaborado por: Sebastian Laverde Chunza.</p>
 
+::: {.notes}
+Dilo en voz alta: nadie tiene por qué saber teoría de tensores. Cada término
+nuevo se define la primera vez que aparece. Habla despacio y evita modismos;
+nombra pronto los cognados: eje, descomposición, contracción, convolución.
+:::
+
 ## {background-image="images/slides-final/slide-02.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">La idea del workshop: cuatro tarjetas muestran escalar, vector, matriz y tensor como arreglos 0D, 1D, 2D y ND, cada uno definido por su forma. La pregunta guía del día: antes de operar, ¿qué representa cada eje?</p>
@@ -27,6 +33,37 @@ lang: es
 ## {background-image="images/slides-final/slide-03.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Datos reales, problemas reales: cuatro conjuntos de datos reales usados en el taller — dígitos manuscritos, histología teñida, vivienda en California y viajes en taxi de NYC — cada uno con el papel que cumple más adelante.</p>
+
+::: {.notes}
+Lo importante de la cuadrícula es que cada tarjeta es un enlace: quien quiera
+puede ir a ver la fuente, y varios lo harán. Menciona los dos casos que
+sorprenden: los dígitos son el conjunto UCI de 8x8, no MNIST, y la célula es
+una imagen de fase de un holograma, no una preparación teñida — la tarjeta de
+histología que tiene al lado sí lo es.
+
+Créditos de las imágenes, ninguno obligatorio: taxis Ferdinand Stohr, DC-3
+Bernard Spragg, histopatología Mikael Haggstrom MD, viviendas en serie Alfred
+Twu (Wikimedia Commons); tormenta Nicolas Vigier (Commons); voz Bart Massey —
+todas CC0. Los dígitos, la célula, la histología y la onda se generan a partir
+de los propios datos con scripts/gen_thumbnails.py; también son CC0, salvo la
+histología, que skimage documenta sin restricciones de copyright conocidas.
+:::
+
+## Programa — {{< var workshop.minutes >}} minutos {.agenda-slide}
+
+{{< include ../../_includes/agenda-es.md >}}
+
+::: {.notes}
+Da la advertencia sobre «rango» al principio de la parte I, no después. Es la
+fuente de confusión más fiable de todo el taller: el capítulo 2 usa *rango* para
+el número de columnas independientes, y la teoría de tensores suele referirse al
+número de ejes. Hoy: «orden» para el número de ejes, y «rango» solo en el
+sentido del capítulo 2.
+
+El ritmo, para que la sala sepa qué esperar: los bloques de ejercicios son 10
+minutos programando y 5 de explicación; el bloque de grupo (§05) son 10 minutos
+de discusión y una puesta en común.
+:::
 
 ## {#sec-00-setup-and-data background-image="images/slides-final/slide-04.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -38,6 +75,12 @@ lang: es
 <p class="sr-only">Sección {{< var sections.s00.n >}} · {{< var sections.s00.title_es >}} — {{< var sections.s00.minutes >}} min, de {{< var sections.s00.start >}} a {{< var sections.s00.end >}}. Objetivo: confirmar que el entorno de Colab puede acceder a todos los conjuntos de datos del taller. Tres preguntas guía: qué tipos de datos veremos, por qué usar datos reales, y qué significa que un eje tenga semántica.</p>
 [Colab ↗]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 00 en Google Colab"}
 
+::: {.notes}
+Confirma en los primeros 5 minutos que a todo el mundo le funcionó la descarga.
+Quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los
+tres CSV replicados en el repositorio como alternativa.
+:::
+
 ## {#sec-01-what-a-tensor-is background-image="images/slides-final/slide-05.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
@@ -48,9 +91,32 @@ lang: es
 <p class="sr-only">Sección {{< var sections.s01.n >}} · {{< var sections.s01.title_es >}} — {{< var sections.s01.minutes >}} min, de {{< var sections.s01.start >}} a {{< var sections.s01.end >}}. Objetivo: explicar en lenguaje sencillo qué es un tensor, qué representa cada eje y cómo leer su forma. Una fotografía del puente de Manhattan se descompone en sus canales rojo, verde y azul para mostrar un tensor como alto por ancho por color.</p>
 [Colab ↗]({{< var repo.colab_base >}}/01-what-a-tensor-is.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 01 en Google Colab"}
 
+::: {.notes}
+No corras con la parte I. Es el primer contacto con la teoría de tensores y todos
+los bloques posteriores usan su vocabulario. Si vas con retraso, recorta los
+apéndices, nunca la parte I.
+:::
+
 ## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.</p>
+
+::: {.notes}
+La factorización en primos es única salvo el orden — el caso más limpio de la
+diapositiva. Los factores genéricos de una matriz de bajo rango tienen
+libertad de gauge (el par $M$/$M^{-\top}$); una estructura adicional o una
+convención — pivotes positivos, columnas ortonormales, diagonal positiva — es
+lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente
+único bajo condiciones de identificabilidad adecuadas, salvo permutación y una
+escala compensatoria no nula entre modos; sobre los reales, los cambios de
+signo son un caso particular de esa escala. La condición de Kruskal
+$k_A + k_B + k_C \ge 2R + 2$ es *suficiente*, no necesaria, y no dice nada
+sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si
+hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango
+tensorial puede superar cada dimensión individual de los ejes, y una mejor
+aproximación de rango $R$ puede no existir siquiera — nada de eso es cierto
+para matrices.
+:::
 
 ## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -69,6 +135,14 @@ lang: es
 
 <p class="sr-only">Batch no es tiempo: dieciséis dígitos manuscritos barajados siguen siendo reconocibles, mientras que los fotogramas de vídeo barajados vuelven la secuencia de la tormenta irreconocible — reordenar un eje de lote es seguro, reordenar el tiempo no lo es.</p>
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 02 en Google Colab"}
+
+::: {.notes}
+Esto es una demostración de código en vivo, no un bloque de discusión. Abre el
+cuaderno y ejecuta primero la celda de preparación; descarga y verifica por
+checksum el vídeo real que usan los ejercicios. Recalca el contraste entre
+barajar un lote y barajar el tiempo, y luego el lote rellenado con su máscara de
+validez.
+:::
 
 ## {#sec-03-indexing-and-broadcasting background-image="images/slides-final/slide-10.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -104,6 +178,25 @@ lang: es
 <p class="sr-only">Pausa activa: Kahoot 1, {{< var kahoot.q1.title_es >}}. {{< var kahoot.q1.questions >}} preguntas sobre ejes, formas, indexación y transpose. Entrad en {{< var kahoot.join >}}; respondan primero con intuición y luego justifiquen con formas.</p>
 [Kahoot ↗]({{< var kahoot.q1.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Unirse al Kahoot 1"}
 
+::: {.notes}
+Ejecútalo antes de la pausa, justo después de la sección 04. Todos acaban de usar
+orden, eje, forma, corte, fibra, varianza, reshape y transposición: es el momento
+en que esas palabras están más frescas.
+
+IMPORTA EL .xlsx CON ANTELACIÓN. Create → Add question → Import → Import
+spreadsheet. No lo hagas en directo.
+
+Calcula 5 minutos incluido el podio. Los grupos quieren ver la clasificación, y
+está bien: es la recompensa.
+
+Dos preguntas vienen de los ejercicios: la de los NaN es la de los píxeles de
+varianza cero de la sección 03, y la última es reshape frente a transposición de
+la sección 04.
+
+Si vas muy justo de tiempo, este es el último cuestionario que hay que recortar:
+recorta antes el Kahoot 2.
+:::
+
 ## {#sec-05-video-pipeline-design background-image="images/slides-final/slide-15.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
@@ -126,6 +219,12 @@ lang: es
 
 <h1 class="sr-only">{{< var sections.s06.n >}} · {{< var sections.s06.title_es >}}</h1>
 <p class="sr-only">Sección {{< var sections.s06.n >}} · {{< var sections.s06.title_es >}} — {{< var sections.s06.minutes >}} min, de {{< var sections.s06.start >}} a {{< var sections.s06.end >}}. Objetivo: describir contracciones tensoriales con índices explícitos y reconocer producto punto, matmul, traza y similitud. La foto del puente de Manhattan lleva la ecuación de contracción einsum.</p>
+
+::: {.notes}
+Di «distancia euclídea» y «similitud del coseno» en voz alta aquí. El Kahoot 2
+pregunta por las dos y el manual no las define en ningún otro sitio: este
+ejercicio es el único puente.
+:::
 
 ## {background-image="images/slides-final/slide-18.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -150,11 +249,30 @@ lang: es
 <p class="sr-only">California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab"}
 
+::: {.notes}
+El TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el
+resultado esperado, o varios pensarán que han roto algo.
+:::
+
 ## {#sec-kahoot-2 background-image="images/slides-final/slide-22.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 2 — {{< var kahoot.q2.title_es >}}</h1>
 <p class="sr-only">Pausa activa: Kahoot 2, {{< var kahoot.q2.title_es >}}. {{< var kahoot.q2.questions >}} preguntas sobre einsum, similitud y la pseudoinversa. Entrad en {{< var kahoot.join >}}; decidan primero la operación y luego justifíquenla con índices y formas.</p>
 [Kahoot ↗]({{< var kahoot.q2.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Unirse al Kahoot 2"}
+
+::: {.notes}
+Ejecútalo justo después de la sección 07, antes de la demostración de recursión.
+Cubre la contracción (§06), la pseudoinversa y las matrices singulares (§07), y
+distancia/similitud: la matriz de similitud de dígitos del TODO 4 de la §06 es
+el puente entre ambas.
+
+AVISO: dos preguntas son sobre distancia euclídea y similitud del coseno, que el
+manual no define directamente. Si no dijiste esas palabras durante la §06, espera
+que caigan en frío.
+
+ESTE ES EL PRIMER CUESTIONARIO QUE HAY QUE RECORTAR si vas mal de tiempo: la
+pseudoinversa y la distancia se repasan de forma narrativa en el cierre.
+:::
 
 ## {#sec-08-recursion-with-matrices background-image="images/slides-final/slide-23.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -164,6 +282,11 @@ lang: es
 
 <h1 class="sr-only">{{< var sections.s08.n >}} · {{< var sections.s08.title_es >}}</h1>
 <p class="sr-only">Sección {{< var sections.s08.n >}} · {{< var sections.s08.title_es >}} — {{< var sections.s08.minutes >}} min, de {{< var sections.s08.start >}} a {{< var sections.s08.end >}}. Objetivo: reconocer una recursión como la misma regla aplicada una y otra vez. Una serie real de pasajeros aéreos se pronostica hacia adelante realimentando cada predicción como la siguiente entrada.</p>
+
+::: {.notes}
+Si vas muy mal de tiempo, este fragmento de RNN es el tercero en la lista de
+recortes, después del Kahoot 2 y del TODO 4 de la §09.
+:::
 
 ## {background-image="images/slides-final/slide-24.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -184,6 +307,11 @@ lang: es
 <p class="sr-only">Forward no es transpose no es inverse: una fotografía real muestra el desenfoque directo, su transpuesta (que no deshace el desenfoque) y una recuperación parcial con Richardson-Lucy, etiquetadas como tres operaciones distintas.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
 
+::: {.notes}
+Es lo más difícil del taller. El TODO 4 es el segundo en la lista de recortes.
+Di lo del recorte del borde en voz alta antes de que empiecen, no después.
+:::
+
 ## {#sec-10-tucker-decomposition background-image="images/slides-final/slide-27.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
@@ -198,15 +326,41 @@ lang: es
 <p class="sr-only">Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.</p>
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 10 en Google Colab"}
 
+::: {.notes}
+Nunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores
+de pesos de las redes neuronales para que los modelos corran en móviles. En
+biotecnología, sobre datos (genes × muestras × condiciones), encuentran
+estructura que PCA no alcanza: PCA solo puede ver dos ejes.
+:::
+
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_es >}}</h1>
 <p class="sr-only">Pausa activa: Kahoot 3, {{< var kahoot.q3.title_es >}}. {{< var kahoot.q3.questions >}} preguntas sobre convolución, correlación, Tucker y CP. Entrad en {{< var kahoot.join >}}; reconozcan primero la estructura y luego elijan el operador.</p>
 [Kahoot ↗]({{< var kahoot.q3.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Unirse al Kahoot 3"}
 
+::: {.notes}
+Ejecútalo justo después de la sección 10, con el resultado de la hora punta del
+tensor de taxis todavía en pantalla.
+
+SU ÚLTIMA PREGUNTA NOMBRA LA HORA 18: tiene que ir DESPUÉS del TODO 6 de la §10,
+nunca antes, o revela la respuesta.
+
+NUNCA RECORTES ESTE. Es la forma más barata de comprobar si Tucker y CP han
+calado antes de que se vayan. Además hace de ensayo en directo del propio repaso
+del cierre, así que enlaza directamente del podio con el cierre.
+:::
+
 ## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Una idea conecta el workshop: pseudoinversa, deconvolución y Tucker se muestran uno junto al otro como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.</p>
+
+[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir el cuaderno 11 en Google Colab"}
+
+::: {.notes}
+Enunciar esta conexión de forma explícita es lo que hace que la segunda mitad se
+sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
+:::
 
 ## {#sec-11-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
