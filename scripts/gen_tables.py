@@ -218,8 +218,14 @@ def handbook_schedule_table() -> str:
     per segment rather than per agenda row, because the handbook's own headings
     are per segment.
     """
-    from timeline import atoms, clock  # noqa: PLC0415  (sibling module)
+    from timeline import ScheduleError, atoms, clock  # noqa: PLC0415
 
+    for s in SECTIONS:
+        if "block" not in s:
+            raise ScheduleError(
+                f"_variables.yml `sections`: section {s['n']} has no `block` — "
+                'every section needs one, "—" if it is not one of the six '
+                "exercise blocks")
     by_n = {s["n"]: s for s in SECTIONS}
     by_q = {f"q{q['n']}": q for q in QUIZZES}
     head = ("#", "Part", "Block", "Segment", "Format", "Min", "Start")
@@ -301,6 +307,7 @@ def main() -> int:
             "extras-en.md": BANNER + extras_readme_table("en"),
             "extras-es.md": BANNER + extras_readme_table("es"),
         }
+        handbook_schedule = handbook_schedule_table()
     except ScheduleError as e:
         # Nothing is written on the way out: half-regenerated includes would
         # leave the two decks disagreeing, which is the failure this whole
@@ -311,7 +318,7 @@ def main() -> int:
         print(f"  wrote _includes/{name}")
     handbook = ROOT / "tensors_workshop_plan_with_quizzes.md"
     if handbook.exists():
-        inject(handbook, "handbook-schedule", handbook_schedule_table())
+        inject(handbook, "handbook-schedule", handbook_schedule)
     readme, nb_readme = ROOT / "README.md", ROOT / "notebooks" / "README.md"
     if readme.exists():
         inject(readme, "sections-en", readme_table("en"))

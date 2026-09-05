@@ -47,7 +47,7 @@ corresponda a lo que estés haciendo ahora mismo.
 El manual es el *texto* fuente. Los datos que los cinco comparten —los títulos
 de las secciones, el reloj, los enlaces— viven una sola vez en
 [`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
-y todas las tablas de esta página se generan a partir de ahí, así que no pueden
+y todas las tablas de secciones de esta página se generan a partir de ahí, así que no pueden
 contradecirse.
 
 ## Requisitos previos

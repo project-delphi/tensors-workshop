@@ -77,9 +77,17 @@ the wrap-up.
 | NYC Taxi Trips | 6,433 real taxi journeys in New York | Tensor factorization |
 | Airline Passengers | 144 months of real airline traffic, 1949–1960 | Recursion, forecasting |
 
-Those three come from GitHub raw URLs:
+Every code snippet in this handbook assumes the names notebook 00's setup cell
+binds, so if you are reading along outside a notebook, start here:
 
 ```python
+import numpy as np
+import pandas as pd
+from sklearn.datasets import load_digits, load_breast_cancer
+from skimage import data
+from scipy import signal
+from scipy.linalg import lu, toeplitz
+
 HOUSING = "https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"
 TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
@@ -1102,4 +1110,4 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 **Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of section 09 (true deconvolution — the most technically demanding), then the RNN snippet in the recursion demo, then question 5 of the video-pipeline group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
 
-**Known rough edges.** section 09 TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 25-pixel crop clearly *before* the exercise starts, not after. section 07 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.
+**Known rough edges.** Section 09 TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 25-pixel crop clearly *before* the exercise starts, not after. Section 07 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.

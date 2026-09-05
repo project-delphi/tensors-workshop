@@ -45,7 +45,7 @@ you are doing right now.
 The handbook is the source *text*. The facts those five share — the section
 titles, the running clock, the links — live once in
 [`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
-and every table on this page is generated from it, so they cannot disagree.
+and every section table on this page is generated from it, so they cannot disagree.
 
 ## Prerequisites
 

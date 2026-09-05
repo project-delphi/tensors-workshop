@@ -194,8 +194,8 @@ Quarto never executes the notebooks, so building needs Quarto only. To run them
 locally: `uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab`.
 
 `matplotlib` and `ipywidgets` both ship with Colab but not with a local
-`jupyterlab` install. Nearly every section now plots something, and the sliders
-in sections 01, 03, 09, 10 and 11 need `ipywidgets` on top of that. Notebook
+`jupyterlab` install. Every notebook plots something, and every one except 00
+uses `ipywidgets` sliders on top of that. Notebook
 cells that need `tensorly` install it themselves with `%pip install -q
 tensorly`, so it is not in this list.
 
