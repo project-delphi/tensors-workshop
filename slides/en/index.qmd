@@ -1,36 +1,24 @@
 ---
-title: "Tensors for Machine Learning"
-subtitle: "A 3-hour workshop, plus three Kahoot knowledge checks"
 format:
   revealjs:
     theme: [default, ../slides.scss]
-    slide-number: c/t
-    show-slide-number: all
+    slide-number: false
     progress: true
-    # The audience-facing timer and the section breadcrumb. One shared
-    # file for both decks; it picks its language off <html lang>.
     include-after-body: ../deck-pace.html
-    # Not `auto`: that intercepts every http(s) link and opens it in an
-    # in-deck iframe whenever the deck is fullscreen — i.e. exactly when
-    # presenting. Colab and GitHub both send X-Frame-Options, so clicking
-    # "Open in Colab" live would show a blank overlay, not the notebook.
     preview-links: false
     hash-type: title
     history: true
-    width: 1280
-    height: 760
+    width: 1920
+    height: 1080
     footer: "[Workshop site](https://project-delphi.github.io/tensors-workshop) · [Español](../es/)"
 execute:
   enabled: false
 lang: en
 ---
 
-# Before we start {#sec-title}
+## {background-image="images/slides-final/slide-01.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-**You have read** *Deep Learning*, Chapter 2 — Linear Algebra.
-You know matrices.
-
-**This workshop assumes no previous knowledge of tensor theory.**
+<p class="sr-only">Tensors for Machine Learning — from real data to modern models. Presenter: Ravi Kalia. Prepared by: Sebastian Laverde Chunza.</p>
 
 ::: {.notes}
 Say this out loud: nobody is expected to know tensor theory. Every new term is
@@ -39,92 +27,13 @@ avoid idiom, and name the Spanish cognates early: eje, descomposición,
 contracción, convolución.
 :::
 
-## Nothing here is invented {#all-the-data-here-is-real .data-slide}
+## {background-image="images/slides-final/slide-02.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-Eleven datasets. Every one measured off something that exists.
+<p class="sr-only">The workshop idea: four cards show scalar, vector, matrix and tensor as 0D, 1D, 2D and ND arrays, each defined by its shape. The guiding question of the day: before operating, what does each axis represent?</p>
 
-::: {.dataset-grid}
-::: {.ds}
-![](../../images/ds-nyc-taxi.jpg){fig-alt="Yellow taxis queuing on a Manhattan avenue, the city whose 6,433 trip records make up the taxis dataset."}
+## {background-image="images/slides-final/slide-03.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[NYC taxi trips](https://github.com/mwaskom/seaborn-data)
-
-6,433 journeys · §10
-:::
-
-::: {.ds}
-![](../../images/ds-airliner.jpg){fig-alt="A Douglas DC-3 airliner in flight, the aircraft of the 1949 to 1960 era whose monthly passenger totals the flights dataset counts."}
-
-[Airline passengers](https://github.com/mwaskom/seaborn-data)
-
-144 months, 1949–60 · §08
-:::
-
-::: {.ds}
-![](../../images/ds-digits.png){fig-alt="Eight handwritten digits from scikit-learn's load_digits, each 8 by 8 pixels, shown unsmoothed so the individual pixels stay visible."}
-
-[Handwritten digits](https://scikit-learn.org/stable/datasets/toy_dataset.html#optical-recognition-of-handwritten-digits-dataset)
-
-1,797 at 8×8 · §01 §03 §06
-:::
-
-::: {.ds}
-![](../../images/ds-breast-cancer.jpg){fig-alt="Two stained histopathology views of invasive ductal carcinoma of the breast, the kind of slide the tumour nucleus measurements were taken from."}
-
-[Breast tumours](https://scikit-learn.org/stable/datasets/toy_dataset.html#breast-cancer-wisconsin-diagnostic-dataset)
-
-569 patients, 30 measures · §03 §11
-:::
-
-::: {.ds}
-![](../../images/ds-cell.jpg){fig-alt="A single cell floating in saline, imaged as a quantitative phase map recovered from a digital hologram."}
-
-[Cell microscopy](https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.cell)
-
-660×550 phase image · §04
-:::
-
-::: {.ds}
-![](../../images/ds-video.jpg){fig-alt="Three frames from footage of a storm at l'Almadrava, two seconds apart; the breaking waves differ from frame to frame, which is what makes the time axis carry information."}
-
-[Storm footage](https://commons.wikimedia.org/wiki/File:Tormenta_en_l%27Almadrava.webm)
-
-24 s at 960×540 · §05
-:::
-
-::: {.ds}
-![](../../images/ds-audio.png){fig-alt="The waveform of a five-second voice recording, amplitude against time, with bursts of speech separated by quieter gaps."}
-
-[Voice recording](https://github.com/pdx-cs-sound/wavs)
-
-4.9 s at 48 kHz · §11
-:::
-
-::: {.ds}
-![](../../images/ds-housing.jpg){fig-alt="An aerial view of rows of tract housing in southern California, the kind of district whose median value and block counts make up the housing dataset."}
-
-[California housing](https://github.com/ageron/handson-ml2/blob/master/datasets/housing/housing.csv)
-
-20,640 districts · §07
-:::
-
-::: {.ds}
-![](../../images/ds-histology.jpg){fig-alt="Immunohistochemically stained colonic glands, the brown DAB signal marking FHL2 expression against a blue haematoxylin counterstain."}
-
-[Stained histology](https://scikit-image.org/docs/stable/api/skimage.data.html#skimage.data.immunohistochemistry)
-
-512×512 RGB · §01 §04 §06
-:::
-
-::: {.ds .ds-more}
-**Also today**
-
-[Photographs](https://scikit-image.org/docs/stable/api/skimage.data.html) · §01 §06 §09 §10
-:::
-:::
-
-Real data breaks in ways random numbers never do — missing values, mismatched
-scales, pixels that never change. **Finding that is the work.**
+<p class="sr-only">Real data, real problems: four real datasets used throughout the workshop — handwritten digits, stained histology, California housing, and NYC taxi trips — each with the role it plays later.</p>
 
 ::: {.notes}
 The point of the grid is that every card is a link: students can go and look at
@@ -141,64 +50,30 @@ scripts/gen_thumbnails.py; those are CC0 too, except the histology, which
 skimage documents as having no known copyright restrictions.
 :::
 
-## Agenda — {{< var workshop.minutes >}} minutes
+## Agenda — {{< var workshop.minutes >}} minutes {.agenda-slide}
 
 {{< include ../../_includes/agenda-en.md >}}
 
-## Two rhythms, and one warning
-
-**Exercise blocks** — 10 min coding, 5 min explanation.
-
-**Group block** (§05) — 10 min discussion, then share-back.
-
-. . .
-
-::: {.callout-warning}
-### The word "rank"
-Chapter 2: *rank* = number of independent columns.
-Tensor theory: *rank* often = number of axes.
-
-**Today: "order" for the number of axes. "Rank" only in Chapter 2's sense.**
-:::
-
 ::: {.notes}
-Give this warning at the start of Part I, not later. It is the single most
-reliable source of confusion in the whole workshop.
+Give the "rank" warning at the start of Part I, not later. It is the single most
+reliable source of confusion in the whole workshop: Chapter 2 uses *rank* for the
+number of independent columns, tensor theory usually means the number of axes.
+Today, say "order" for the number of axes, and "rank" only in Chapter 2's sense.
+
+Rhythm, so the room knows what to expect: exercise blocks are 10 minutes coding
+then 5 of explanation; the group block (§05) is 10 minutes of discussion then a
+share-back.
 :::
 
-# 00 · Setup and welcome {#sec-00-setup-and-data}
+## {#sec-00-setup-and-data background-image="images/slides-final/slide-04.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s00.part >}}
 :::
 
-*run this before anything else*
-
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s00.minutes >}} min** allocated]{.pace-duration}
-
-[Start: {{< var sections.s00.start >}} · End: {{< var sections.s00.end >}}]{.pace-window}
-:::
-
-## Three downloads, one first cell
-
-```{python}
-#| label: code-00-setup-and-data-1
-#| echo: true
-HOUSING = "https://raw.githubusercontent.com/ageron/handson-ml2/master/datasets/housing/housing.csv"
-TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
-FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
-
-housing = pd.read_csv(HOUSING)
-taxis   = pd.read_csv(TAXIS)
-flights = pd.read_csv(FLIGHTS)
-print(housing.shape, taxis.shape, flights.shape)   # (20640, 10) (6433, 14) (144, 3)
-```
-
-The same cell installs the ffmpeg backend §05 needs and pings the video host,
-so a missing decoder surfaces now rather than two hours in.
-
-**If this fails, say so in Discord now** — not in two hours.
+<h1 class="sr-only">{{< var sections.s00.n >}} · {{< var sections.s00.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s00.n >}} · {{< var sections.s00.title_en >}} — {{< var sections.s00.minutes >}} min, running {{< var sections.s00.start >}} to {{< var sections.s00.end >}}. Objective: confirm the Colab runtime can reach every dataset the workshop uses. Three guiding questions: what kinds of data will we see, why use real data, and what does it mean for an axis to carry semantics?</p>
+[Colab ↗]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 00 in Google Colab"}
 
 ::: {.notes}
 Confirm in the first 5 minutes that everyone's download succeeded. A student who
@@ -209,150 +84,15 @@ The `%pip install "imageio[ffmpeg]"` line pulls about 20 MB. On a slow venue
 network start this cell before you start talking.
 :::
 
-## To the notebook
-
-::: {.columns}
-::: {.column width="60%"}
-**00 · Setup and welcome**
-
-[Open in Colab]({{< var repo.colab_base >}}/00-setup-and-data.ipynb)
-
-Everything else in the library ships offline: `load_breast_cancer`,
-`load_digits`, `data.camera()`, `data.astronaut()`.
-:::
-::: {.column width="40%"}
-![](../../images/camera.png){fig-alt="Grayscale thumbnail of the scikit-image camera photograph, a standard offline test image shipped with the library." width="220"}
-
-![](../../images/astronaut.png){fig-alt="Small colour thumbnail of the scikit-image astronaut photograph, another standard offline test image shipped with the library." width="220"}
-:::
-:::
-
-# 01 · What a tensor is {#sec-01-what-a-tensor-is}
+## {#sec-01-what-a-tensor-is background-image="images/slides-final/slide-05.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s01.part >}}
 :::
 
-*Part I · demo*
-
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s01.minutes >}} min** allocated]{.pace-duration}
-
-[Start: {{< var sections.s01.start >}} · End: {{< var sections.s01.end >}}]{.pace-window}
-:::
-
-## The vocabulary
-
-| Term | Plain meaning | Spanish |
-|---|---|---|
-| **Tensor** | Array of numbers with any number of axes | *tensor* |
-| **Axis** | One direction along which data is arranged | *eje* |
-| **Order** | How many axes a tensor has | *orden* |
-| **Shape** | The size along each axis | *forma* |
-| **Slice** | Fix one index, keep the rest | *corte* |
-| **Fiber** | Fix every index except one | *fibra* |
-| **Unfolding** | Rearranging a tensor into a matrix | *desplegado* |
-| **Contraction** | Multiply and sum over a shared axis | *contracción* |
-
-## Shape is a tuple; order is its length
-
-```{python}
-#| label: code-01-what-a-tensor-is-1
-#| echo: true
-scalar = np.array(3.0)                     # order 0   shape ()
-vector = np.array([1., 2., 3.])            # order 1   shape (3,)
-matrix = np.array([[1., 2.], [3., 4.]])    # order 2   shape (2, 2)
-tensor = rng.standard_normal((2, 3, 4))    # order 3   shape (2, 3, 4)
-```
-
-. . .
-
-```{python}
-#| label: code-01-what-a-tensor-is-2
-#| echo: true
-digits.images.shape              # (1797, 8, 8)  — images, height, width
-photo.shape                      # (512, 512, 3) — height, width, colour
-```
-
-. . .
-
-![](../../images/digits-grid.png){fig-alt="Grid of eight real handwritten digits from the scikit-learn digits dataset, each an 8 by 8 pixel grayscale image shown with nearest-neighbour scaling so individual pixels stay visible — this is what shape (1797, 8, 8) means: 1797 such images." width="260"}
-
-. . .
-
-**Both are order 3. Their axes mean completely different things.**
-
-The shape alone never tells you what the axes mean.
-
-## Three operations {auto-animate="true"}
-
-**Slice** — fix one index. **Fiber** — fix all but one.
-
-```{python}
-#| label: code-01-what-a-tensor-is-3
-#| echo: true
-photo[:, :, 0].shape       # (512, 512) — a slice: one colour channel
-photo[100, 200, :].shape   # (3,)       — a fiber: one pixel's colours
-```
-
-## Three operations {auto-animate="true"}
-
-**Unfolding** — turn any tensor into a matrix.
-
-```{python}
-#| label: code-01-what-a-tensor-is-4
-#| echo: true
-def unfold(T, axis):
-    return np.moveaxis(T, axis, 0).reshape(T.shape[axis], -1)
-
-unfold(photo, 0).shape   # (512, 1536)
-unfold(photo, 2).shape   # (3, 262144) — each colour channel is one row
-```
-
-. . .
-
-**Unfolding loses nothing.** Every matrix tool you know now applies.
-
-## Three operations {auto-animate="true"}
-
-**Contraction** — multiply along a shared axis and sum over it.
-
-```{python}
-#| label: code-01-what-a-tensor-is-5
-#| echo: true
-np.einsum('i,i->', a, b)          # dot product      (eq 2.8)
-np.einsum('ik,kj->ij', A, B)      # matrix product   (eq 2.5)
-```
-
-. . .
-
-::: {.callout-tip}
-### The rule, in one sentence
-An index in the inputs but **not** after the arrow is **summed over**.
-An index after the arrow is **kept**.
-:::
-
-## The map of factorizations
-
-| Method | Works on | Where today |
-|---|---|---|
-| LU | Square matrix | now |
-| QR | Any matrix | now |
-| Eigendecomposition | Square matrix | §08 |
-| SVD | Any matrix | §07, §10 |
-| **Pseudoinverse** | Any matrix | §07 |
-| Cholesky | Symmetric positive-definite matrix | §11 |
-| **Tucker / CP** | **Tensor, any order** | §10 |
-
-. . .
-
-Everything but the last row works on **two axes**. Real data has more.
-
-## To the notebook
-
-**01 · What a tensor is**
-
-[Open in Colab]({{< var repo.colab_base >}}/01-what-a-tensor-is.ipynb)
+<h1 class="sr-only">{{< var sections.s01.n >}} · {{< var sections.s01.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s01.n >}} · {{< var sections.s01.title_en >}} — {{< var sections.s01.minutes >}} min, running {{< var sections.s01.start >}} to {{< var sections.s01.end >}}. Objective: explain in plain language what a tensor is, what each axis represents, and how to read its shape. A photograph of the Manhattan Bridge is decomposed into its red, green and blue channels to show a tensor as height by width by colour.</p>
+[Colab ↗]({{< var repo.colab_base >}}/01-what-a-tensor-is.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 01 in Google Colab"}
 
 ::: {.notes}
 Do not rush Part I. It is the students' first contact with tensor theory and
@@ -360,47 +100,42 @@ every later block uses its vocabulary. If running late, cut Appendix material,
 never Part I.
 :::
 
-# 02 · Thinking in N dimensions {#sec-02-thinking-in-n-dimensions}
+## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.</p>
+
+::: {.notes}
+Prime factorization is unique up to ordering — the cleanest case on the slide.
+Generic low-rank matrix factors have gauge freedom (the $M$/$M^{-\top}$ pair);
+extra structure or a convention — positive pivots, orthonormal columns, a
+positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can
+be essentially unique under suitable identifiability conditions, up to
+permutation and a compensating nonzero scaling across modes; over the reals,
+sign flips are a special case of that scaling. Kruskal's
+$k_A + k_B + k_C \ge 2R + 2$ is a *sufficient* condition, not a necessary one,
+and it says nothing about whether the decomposition is easy to find. Worth
+saying if there is time: computing tensor rank is NP-hard in general, tensor
+rank can exceed every individual mode dimension, and a best rank-$R$
+approximation need not even exist — none of that is true of matrices.
+:::
+
+## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">What does a factorization give you? A four-step diagram — number, polynomial, matrix, tensor — shows that factorizing reveals useful structure rather than just rewriting an expression.</p>
+
+## {#sec-02-thinking-in-n-dimensions background-image="images/slides-final/slide-08.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s02.part >}}
 :::
 
-*Part II · demo · code*
+<h1 class="sr-only">{{< var sections.s02.n >}} · {{< var sections.s02.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s02.n >}} · {{< var sections.s02.title_en >}} — {{< var sections.s02.minutes >}} min, running {{< var sections.s02.start >}} to {{< var sections.s02.end >}}. Objective: read real tensor shapes and distinguish a batch axis from a time axis. Eight independent handwritten digits are contrasted with four ordered frames of a storm video.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s02.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-09.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s02.start >}} · End: {{< var sections.s02.end >}}]{.pace-window}
-:::
-
-## Same shape, different axes
-
-`digits.images` is `(1797, 8, 8)` and a photo is `(512, 512, 3)` — both order 3,
-but axis 0 counts **images** in one and **rows of pixels** in the other. In the
-notebook, `digit_batch` and `video_patch` are *both* `(8, 8, 8)`: one stacks
-independent examples, the other stacks ordered moments.
-
-. . .
-
-**Shuffling axis 0** is harmless for a batch — the examples are independent —
-and **destroys** a video, where order *is* the information. Same code, opposite
-meaning. Chapter 2's notation has no concept of "order matters between
-elements"; that is genuinely new today.
-
-## Ragged clips need a mask
-
-Real videos have different lengths, but a batch tensor is rectangular. The
-notebook takes three real clips of length 4, 7 and 5, pads them into one
-`(3, 7, 135, 240, 3)` order-5 batch, and carries a Boolean `(3, 7)` **validity
-mask** — so `valid.sum() == 16` and the padding stays visible instead of being
-averaged into the data.
-
-## To the notebook
-
-**02 · Thinking in N dimensions**
-
-[Open in Colab]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb)
+<p class="sr-only">Batch is not time: sixteen shuffled handwritten digits stay recognisable, while shuffled video frames turn the storm sequence meaningless — reordering a batch axis is safe, reordering a time axis is not.</p>
+[Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 02 in Google Colab"}
 
 ::: {.notes}
 This is a live coding demo, not a discussion block. Open the notebook and run
@@ -409,172 +144,39 @@ Emphasize the contrast between shuffling a batch and shuffling time, then the
 padded batch with its validity mask.
 :::
 
-# 03 · Indexing and broadcasting {#sec-03-indexing-and-broadcasting}
+## {#sec-03-indexing-and-broadcasting background-image="images/slides-final/slide-10.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s03.part >}}
 :::
 
-*Part III · exercise*
+<h1 class="sr-only">{{< var sections.s03.n >}} · {{< var sections.s03.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s03.n >}} · {{< var sections.s03.title_en >}} — {{< var sections.s03.minutes >}} min, running {{< var sections.s03.start >}} to {{< var sections.s03.end >}}. Objective: select real data with indexing and Boolean masks, and broadcast safely. Four panels show row/column indexing on a temperature table, thresholding into a mask, region selection on a satellite image, and shape broadcasting.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s03.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-11.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s03.start >}} · End: {{< var sections.s03.end >}}]{.pace-window}
-:::
+<p class="sr-only">Indexing in action: the same four indexing, masking, satellite-cropping and broadcasting panels, with a summary strip naming each technique.</p>
+[Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 03 in Google Colab"}
 
-## Why this matters
-
-::: {.columns}
-::: {.column width="55%"}
-569 real patients, 30 real measurements of tumour cell nuclei.
-
-::: {.incremental}
-- Selecting the wrong column **does not produce an error**
-- It returns a *different real measurement*
-- Your analysis continues and gives a confident, wrong answer
-:::
-:::
-::: {.column width="45%"}
-![](../../images/breast-cancer.png){fig-alt="Scatter plot of mean radius against mean texture for 569 patients in the scikit-learn breast cancer dataset, coloured by malignant versus benign diagnosis; two of the dataset's 30 measurements, not the full picture." width="300"}
-:::
-:::
-
-. . .
-
-In research: results nobody can reproduce.
-In a clinical tool: a wrong recommendation about a real person.
-
-## The exercise
-
-```{python}
-#| label: code-03-indexing-and-broadcasting-1
-#| echo: true
-# TODO 2: Extract "mean radius" using names.index(...). Do not hard-code a number.
-# TODO 3: The 5 patients with the LARGEST mean radius, full profiles, ONE operation.
-# TODO 4: Boolean indexing — malignant (y == 0) vs benign (y == 1). Real difference?
-# TODO 6: Standardize with broadcasting: (D - mean) / std. LOOK AT THE RESULT.
-# TODO 7: You will find NaN. How many pixels have std == 0, and why?
-```
-
-## Two real results
-
-```{python}
-#| label: code-03-indexing-and-broadcasting-2
-#| echo: true
-print(radius[y == 0].mean(), radius[y == 1].mean())   # 17.5 vs 12.1
-print((std == 0).sum())                               # 3
-Z = (D - mean) / np.where(std == 0, 1.0, std)
-```
-
-. . .
-
-**Malignant tumours really do have a larger mean radius** — 17.5 against 12.1.
-
-. . .
-
-**Three pixels are always dark** in all 1797 digit images — corners where nobody
-writes. Standard deviation exactly zero → `NaN`.
-
-**Random data would never have shown you this.**
-
-## To the notebook
-
-**03 · Indexing and broadcasting real data**
-
-[Open in Colab]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb)
-
-# 04 · Reshape and transpose {#sec-04-reshape-and-transpose}
+## {#sec-04-reshape-and-transpose background-image="images/slides-final/slide-12.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s04.part >}}
 :::
 
-*Part III · exercise*
+<h1 class="sr-only">{{< var sections.s04.n >}} · {{< var sections.s04.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s04.n >}} · {{< var sections.s04.title_en >}} — {{< var sections.s04.minutes >}} min, running {{< var sections.s04.start >}} to {{< var sections.s04.end >}}. Objective: distinguish reshape from transpose and read HWC, CHW, NHWC and NCHW. A stained histology image is correctly transposed to CHW alongside a reshape that scrambles it into colour noise.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s04.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-13.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s04.start >}} · End: {{< var sections.s04.end >}}]{.pace-window}
-:::
+<p class="sr-only">Transpose is not reshape: the histology transpose-versus-reshape comparison, plus a real NHWC-to-NCHW batch of a histology slide, an astronaut photo and a cat photo, each correctly reordered.</p>
+[Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 04 in Google Colab"}
 
-## Why this matters
+## {#sec-kahoot-1 background-image="images/slides-final/slide-14.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-::: {.columns}
-::: {.column width="60%"}
-Microscopes and cameras order their axes according to the **hardware**, not
-according to what a model expects.
-
-. . .
-
-Getting this wrong does not crash. The model runs on scrambled data and returns
-**confident, meaningless output**.
-
-. . .
-
-The famous version: a model trained in TensorFlow (`NHWC`) deployed into
-PyTorch (`NCHW`) with no transpose.
-:::
-::: {.column width="40%"}
-![](../../images/immunohistochemistry.png){fig-alt="Colour immunohistochemistry-stained tissue image from scikit-image, an example microscopy image whose colour channels are ordered by the imaging hardware." width="240"}
-
-![](../../images/cell.png){fig-alt="Grayscale microscopy image of a single cell from scikit-image, another example of hardware-ordered image axes." width="240"}
-:::
-:::
-
-## Same shape, different data
-
-```{python}
-#| label: code-04-reshape-and-transpose-1
-#| echo: true
-chw   = np.transpose(photo, (2, 0, 1))      # (3, 512, 512) — correct
-wrong = photo.reshape(3, 512, 512)          # (3, 512, 512) — runs, but scrambles
-
-np.array_equal(chw, wrong)                  # False
-```
-
-. . .
-
-**Reshape only reinterprets numbers in memory order.**
-**Transpose moves them according to axis meaning.**
-
-## When two axes share a size
-
-```{python}
-#| label: code-04-reshape-and-transpose-2
-#| echo: true
-batch = np.stack([photo, photo, photo])      # (3, 512, 512, 3)
-nchw  = np.transpose(batch, (0, 3, 1, 2))    # (3, 3, 512, 512)
-```
-
-. . .
-
-Two axes now both have size 3. **How do you know which is which?**
-
-. . .
-
-You do not. **Only your own tracking can tell you.**
-Nothing in the array records it.
-
-## To the notebook
-
-**04 · Reshape and transpose real images**
-
-[Open in Colab]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb)
-
-# 🎯 Kahoot 1 {#sec-kahoot-1 background-color="#b3541e"}
-
-## Kahoot 1 — {{< var kahoot.q1.title_en >}}
-
-**{{< var kahoot.q1.questions >}} questions · about 5 minutes**
-
-### Join at **{{< var kahoot.join >}}**
-
-### PIN on screen
-
-*Covers: order, axis, shape, slice, fiber, variance, reshape, transpose*
-
-[Quiz details]({{< var repo.site >}}/kahoot.html#quiz-1)
+<h1 class="sr-only">Kahoot 1 — {{< var kahoot.q1.title_en >}}</h1>
+<p class="sr-only">Active break: Kahoot 1, {{< var kahoot.q1.title_en >}}. {{< var kahoot.q1.questions >}} questions covering axes, shapes, indexing and transpose. Join at {{< var kahoot.join >}}; answer with intuition first, then justify with shapes.</p>
+[Kahoot ↗]({{< var kahoot.q1.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 1"}
 
 ::: {.notes}
 Run this before the break, right after section 04. Everyone has just used order,
@@ -593,139 +195,28 @@ zero-variance pixels, and the last is section 04's reshape-versus-transpose.
 If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
 :::
 
-# 05 · Video pipeline design {#sec-05-video-pipeline-design}
+## {#sec-05-video-pipeline-design background-image="images/slides-final/slide-15.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s05.part >}}
 :::
 
-*Part III · group discussion*
+<h1 class="sr-only">{{< var sections.s05.n >}} · {{< var sections.s05.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s05.n >}} · {{< var sections.s05.title_en >}} — {{< var sections.s05.minutes >}} min, running {{< var sections.s05.start >}} to {{< var sections.s05.end >}}. Objective: treat a video as a sequence of frames and build padded, masked batches. A skateboarding clip's frames unfold into a 5-D (N, T, H, W, C) tensor.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s05.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-16.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s05.start >}} · End: {{< var sections.s05.end >}}]{.pace-window}
-:::
+<p class="sr-only">File to frames to tensor to model: a four-stage pipeline showing how a video becomes a masked tensor, with the validity-mask formula spelled out.</p>
+[Colab ↗]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 05 in Google Colab"}
 
-## Design both pipelines
-
-*raw file → decoded frames → preprocessed batch → model input → model output*
-
-**Tech** — a short-video app computing one embedding per video from sampled
-frames.
-
-**Biotech** — a surgical-video model labelling the current phase of an operation.
-
-. . .
-
-**There is no single correct answer.**
-
-## The five questions
-
-::: {.incremental}
-1. Sketch the shape at each of the five stages, for both. Where must they differ?
-2. 30 seconds against 4 hours. Give the exact preprocessed batch shape. What does
-   an invented or wasted value **represent**?
-3. Three camera angles at once. **Where does that axis go?**
-4. 8 frames sampled from 900 — which operation from §03, and what is lost?
-5. Which frames matter most? **What could learn that weighting?**
-:::
-
-## Where they diverge
-
-```{python}
-#| label: code-05-video-pipeline-design-1
-#| echo: true
-# Tech: time is DESTROYED on purpose
-# preprocessed (32, 8, 224, 224, 3)  ->  output (32, 512)      N, embedding
-
-# Biotech: time SURVIVES, one label per timestep
-# preprocessed (4, 64, 224, 224, 3)  ->  output (4, 64, 12)    N, T, classes
-```
-
-. . .
-
-**Q5 is attention** — §11 builds it from two `einsum` calls, and the padding mask
-from Q2 turns out to be the same mask attention needs.
-
-## To the notebook
-
-**05 · Video pipeline design**
-
-[Open in Colab]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb)
-
-# 06 · Contraction with einsum {#sec-06-contraction-with-einsum}
+## {#sec-06-contraction-with-einsum background-image="images/slides-final/slide-17.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s06.part >}}
 :::
 
-*Part IV · exercise*
-
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s06.minutes >}} min** allocated]{.pace-duration}
-
-[Start: {{< var sections.s06.start >}} · End: {{< var sections.s06.end >}}]{.pace-window}
-:::
-
-## Why this matters
-
-Recommendation and search rank items by the dot product between a user vector
-and **every** item vector — millions of items, many times per second.
-
-**That contraction *is* the ranking signal.**
-
-Sum over the wrong axis and every user gets wrong results.
-
-## One letter for a batch
-
-```{python}
-#| label: code-06-contraction-with-einsum-1
-#| echo: true
-gray       = np.einsum('hwc,c->hw',   photo, w)      # (512, 512)
-gray_batch = np.einsum('nhwc,c->nhw', batch, w)      # (2, 512, 512)
-```
-
-. . .
-
-`c` is in the inputs but not after the arrow → **summed over**.
-`n`, `h`, `w` are after the arrow → **kept**.
-
-. . .
-
-**Adding a batch axis costs exactly one letter.**
-
-## Chapter 2, rewritten
-
-```{python}
-#| label: code-06-contraction-with-einsum-2
-#| echo: true
-np.einsum('ii->', A)           # trace          == np.trace(A)      (eq 2.48)
-np.einsum('ij->ji', A)         # transpose      == A.T              (eq 2.3)
-np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B            (eq 2.5)
-```
-
-. . .
-
-The same expression works for one image or for a million, and **it reads like
-the mathematics in Chapter 2.**
-
-## Every pair of 1797 images
-
-```{python}
-#| label: code-06-contraction-with-einsum-3
-#| echo: true
-D = load_digits().images.reshape(1797, -1)     # (1797, 64)
-S = np.einsum('id,jd->ij', D, D)               # (1797, 1797) — 3.2M scores
-```
-
-. . .
-
-Normalize the rows first and the same contraction becomes **cosine similarity**.
-
-$$\text{cos}(u, v) = \frac{u \cdot v}{\lVert u \rVert \, \lVert v \rVert}
-\qquad
-d(u,v) = \sqrt{\textstyle\sum_i (u_i - v_i)^2}$$
+<h1 class="sr-only">{{< var sections.s06.n >}} · {{< var sections.s06.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s06.n >}} · {{< var sections.s06.title_en >}} — {{< var sections.s06.minutes >}} min, running {{< var sections.s06.start >}} to {{< var sections.s06.end >}}. Objective: describe tensor contractions with explicit indices and recognise dot product, matmul, trace and similarity. The Manhattan Bridge photo carries the einsum contraction equation.</p>
 
 ::: {.notes}
 Say "Euclidean distance" and "cosine similarity" out loud here. Kahoot 2 asks
@@ -733,121 +224,39 @@ about both and the handbook never defines them anywhere else — this exercise i
 the only bridge.
 :::
 
-## To the notebook
+## {background-image="images/slides-final/slide-18.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-**06 · Contraction with einsum**
+<p class="sr-only">Anatomy of einsum: the expression np.einsum('ij,jk-&gt;ik', A, B) is broken into its input labels, its shared index, and the indices that survive, with a diagram of the matrices each letter indexes.</p>
 
-[Open in Colab]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb)
+## {background-image="images/slides-final/slide-19.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-# 07 · Inverses and the pseudoinverse {#sec-07-inverses-and-pseudoinverse}
+<p class="sr-only">NumPy to einsum: a table maps inner product, outer product, matmul, transpose, trace, diagonal, batched matmul and axis-sum to their einsum equivalents.</p>
+[Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 06 in Google Colab"}
+
+## {#sec-07-inverses-and-pseudoinverse background-image="images/slides-final/slide-20.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s07.part >}}
 :::
 
-*Part IV · exercise*
+<h1 class="sr-only">{{< var sections.s07.n >}} · {{< var sections.s07.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s07.n >}} · {{< var sections.s07.title_en >}} — {{< var sections.s07.minutes >}} min, running {{< var sections.s07.start >}} to {{< var sections.s07.end >}}. Objective: distinguish wide, square and tall matrices and use the pseudoinverse for stable solutions. Three colour-coded matrices illustrate each case.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s07.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-21.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s07.start >}} · End: {{< var sections.s07.end >}}]{.pace-window}
-:::
-
-## Step 1 — square matrices
-
-```{python}
-#| label: code-07-inverses-and-pseudoinverse-1
-#| echo: true
-Singular = np.array([[1., 2.], [2., 4.]])   # column 2 = 2 x column 1
-np.linalg.inv(Singular)                      # LinAlgError
-```
-
-. . .
-
-$A^{-1}$ exists **only** when the columns are linearly independent.
-
-## Step 2 — non-square matrices
-
-In machine learning `A` is almost never square: one row per example, one column
-per feature, **always far more examples than features**.
-
-. . .
-
-The **Moore-Penrose pseudoinverse** is defined for *every* matrix:
-
-$$A^{+} = V D^{+} U^{\top}$$
-
-```{python}
-#| label: code-07-inverses-and-pseudoinverse-2
-#| echo: true
-A_plus = np.linalg.pinv(A)
-U, S_, Vt = np.linalg.svd(A, full_matrices=False)
-np.allclose(A_plus, Vt.T @ np.diag(1 / S_) @ U.T)     # True — eq 2.47
-```
-
-## What $A^{+}b$ gives you
-
-::: {.incremental}
-- **Tall** (too many equations, no exact solution) → the `x` making `Ax` as
-  **close as possible** to `b`. **Least squares.**
-- **Wide** (too few equations, infinitely many solutions) → the valid solution
-  with the **smallest norm**.
-:::
-
-. . .
-
-**Step 3 — tensors?** No single tensor inverse everyone uses.
-In practice: **unfold → pseudoinverse → fold back.** It works because unfolding
-loses nothing.
-
-## 20,433 equations, no solution
-
-```{python}
-#| label: code-07-inverses-and-pseudoinverse-3
-#| echo: true
-d = housing.dropna()                                # 20433 rows; 207 had NaN
-X = np.column_stack([np.ones(len(d)), d[feats].to_numpy(float)])   # (20433, 7)
-
-w = np.linalg.pinv(X) @ y
-w_lstsq, *_ = np.linalg.lstsq(X, y, rcond=None)
-np.allclose(w, w_lstsq)                             # True
-
-rmse = np.sqrt(((X @ w - y) ** 2).mean())           # ~75,980
-```
-
-. . .
-
-![](../../images/california-housing.png){fig-alt="Scatter map of California housing districts plotted by longitude and latitude, coloured by median house value, showing the coastal concentration of expensive housing in the same dataset used for the least-squares fit." width="300"}
-
-. . .
-
-**No straight line passes through 20,433 points.** The pseudoinverse gives the
-best possible answer instead. Largest coefficient: `median_income`. Sensible.
+<p class="sr-only">California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.</p>
+[Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
 
 ::: {.notes}
 TODO 3 asks students to trigger an error deliberately — say in advance that the
 error is the expected result, or several will think they broke something.
 :::
 
-## To the notebook
+## {#sec-kahoot-2 background-image="images/slides-final/slide-22.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-**07 · Inverses and the pseudoinverse**
-
-[Open in Colab]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb)
-
-# 🎯 Kahoot 2 {#sec-kahoot-2 background-color="#b3541e"}
-
-## Kahoot 2 — {{< var kahoot.q2.title_en >}}
-
-**{{< var kahoot.q2.questions >}} questions · about 5 minutes**
-
-### Join at **{{< var kahoot.join >}}**
-
-### PIN on screen
-
-*Covers: contraction, the pseudoinverse, singular matrices, distance*
-
-[Quiz details]({{< var repo.site >}}/kahoot.html#quiz-2)
+<h1 class="sr-only">Kahoot 2 — {{< var kahoot.q2.title_en >}}</h1>
+<p class="sr-only">Active break: Kahoot 2, {{< var kahoot.q2.title_en >}}. {{< var kahoot.q2.questions >}} questions covering einsum, similarity and the pseudoinverse. Join at {{< var kahoot.join >}}; decide the operation first, then justify with indices and shapes.</p>
+[Kahoot ↗]({{< var kahoot.q2.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 2"}
 
 ::: {.notes}
 Run this right after section 07, before the recursion demo. It covers contraction
@@ -862,396 +271,57 @@ THIS IS THE FIRST QUIZ TO CUT if you are over time — the pseudoinverse and
 distance both get re-covered narratively in the wrap-up.
 :::
 
-# 08 · Recursion with matrices {#sec-08-recursion-with-matrices}
+## {#sec-08-recursion-with-matrices background-image="images/slides-final/slide-23.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s08.part >}}
 :::
 
-*Part IV · demo*
-
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s08.minutes >}} min** allocated]{.pace-duration}
-
-[Start: {{< var sections.s08.start >}} · End: {{< var sections.s08.end >}}]{.pace-window}
-:::
-
-## Apply the same matrix again and again
-
-```{python}
-#| label: code-08-recursion-with-matrices-1
-#| echo: true
-F = np.array([[1, 1], [1, 0]])              # f(n) = f(n-1) + f(n-2)
-v = np.array([1, 0])
-for _ in range(10):
-    v = F @ v
-v[1]                                         # 55
-np.linalg.matrix_power(F, 10)[0, 1]          # 55 — same answer, one step
-```
-
-## Power iteration finds an eigenvector
-
-```{python}
-#| label: code-08-recursion-with-matrices-2
-#| echo: true
-x = rng.standard_normal(2); x /= np.linalg.norm(x)
-for _ in range(50):
-    x = A @ x
-    x /= np.linalg.norm(x)
-
-x @ A @ x                       # 5.000000
-np.linalg.eig(A)[0].max()       # 5.000000 — identical
-```
-
-. . .
-
-**Repeated application of a matrix converges to its dominant eigenvector.**
-This is how PageRank ranks web pages.
-
-## Forecasting real airline traffic
-
-```{python}
-#| label: code-08-recursion-with-matrices-3
-#| echo: true
-y = flights['passengers'].to_numpy(float)     # 144 real months, 1949–1960
-rows = np.array([y[i:i+12] for i in range(len(y) - 12)])
-X = np.column_stack([np.ones(len(rows)), rows])
-w = np.linalg.pinv(X) @ y[12:]                # least squares, exactly as in §07
-
-history = list(y[-12:])
-for _ in range(12):                           # feed predictions back in
-    history.append(w[0] + np.dot(w[1:], history[-12:]))
-```
-
-. . .
-
-![](../../images/airline-passengers.png){fig-alt="Line chart of monthly airline passenger counts from 1949 to 1960, the 144-month series used for the forecast, showing a rising trend with a repeating yearly summer peak." width="300"}
-
-. . .
-
-`[465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]`
-
-**Low in winter, peaking in summer** — learned from 132 real training windows.
-
-## That is a recurrent neural network
-
-```{python}
-#| label: code-08-recursion-with-matrices-4
-#| echo: true
-h = np.zeros(4)
-for t in range(6):
-    h = np.tanh(W @ h + U @ xs[t])    # same W and U every step — the recursion
-```
-
-**A hidden state, updated by the same weights at every step.**
+<h1 class="sr-only">{{< var sections.s08.n >}} · {{< var sections.s08.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s08.n >}} · {{< var sections.s08.title_en >}} — {{< var sections.s08.minutes >}} min, running {{< var sections.s08.start >}} to {{< var sections.s08.end >}}. Objective: recognise a recursion as the same map applied repeatedly. A real airline-passenger series is forecast forward by feeding each prediction back in as the next input.</p>
 
 ::: {.notes}
 If badly over time, this RNN snippet is third on the cutting list — after Kahoot
 2 and §09 TODO 4.
 :::
 
-## To the notebook
+## {background-image="images/slides-final/slide-24.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-**08 · Recursion with matrices and vectors**
+<p class="sr-only">Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08's own output once Issue #49 is implemented.</p>
+[Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 08 in Google Colab"}
 
-[Open in Colab]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb)
-
-# 09 · Convolution and deconvolution {#sec-09-convolution-and-deconvolution}
+## {#sec-09-convolution-and-deconvolution background-image="images/slides-final/slide-25.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s09.part >}}
 :::
 
-*Part IV · exercise*
+<h1 class="sr-only">{{< var sections.s09.n >}} · {{< var sections.s09.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s09.n >}} · {{< var sections.s09.title_en >}} — {{< var sections.s09.minutes >}} min, running {{< var sections.s09.start >}} to {{< var sections.s09.end >}}. Objective: understand convolution as a local operation and why inverting it is a different problem. A Manhattan Bridge photo is blurred, partially recovered, and its error map shown.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s09.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-26.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s09.start >}} · End: {{< var sections.s09.end >}}]{.pace-window}
-:::
-
-## Three modes, three output sizes
-
-```{python}
-#| label: code-09-convolution-and-deconvolution-1
-#| echo: true
-np.convolve(x, k, 'full')    # length 5+3-1 = 7
-np.convolve(x, k, 'valid')   # length 5-3+1 = 3
-np.convolve(x, k, 'same')    # length 5
-```
-
-. . .
-
-`valid` uses only positions where the kernel fits completely — this is why
-convolution **shrinks** an image by `kernel_size - 1`.
-
-## What everyone gets wrong
-
-::: {.callout-warning}
-True convolution **flips** the kernel. Correlation does not.
-**What deep learning libraries call "convolution" is actually correlation.**
-:::
-
-```{python}
-#| label: code-09-convolution-and-deconvolution-2
-#| echo: true
-np.correlate(x, k, 'valid')          # [-2. -2. -2.]
-np.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — same, with k flipped
-```
-
-. . .
-
-It makes no practical difference — the network *learns* the kernel — but the
-names are inconsistent and you should know it.
-
-## Convolution is a matrix product
-
-```{python}
-#| label: code-09-convolution-and-deconvolution-3
-#| echo: true
-C = toeplitz(col, row)                          # (7, 5)
-np.allclose(C @ x, np.convolve(x, k, 'full'))   # True
-```
-
-. . .
-
-A **Toeplitz** matrix: the same few numbers reused across the whole matrix.
-
-**That reuse is exactly why CNNs need so many fewer parameters** than fully
-connected networks.
-
-## "Deconvolution" means two things
-
-::: {.incremental}
-1. **Transposed convolution** — the upsampling layer in a decoder or GAN.
-   Makes things *bigger*. **Not a true inverse**; the name is historical.
-2. **True deconvolution** — recovering the original from a blurred one.
-   A genuine inverse problem, and where §07 comes back.
-:::
-
-## Deconvolving a real photograph
-
-```{python}
-#| label: code-09-convolution-and-deconvolution-4
-#| echo: true
-recovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)
-
-c = 25   # IGNORE THE BORDER — deconvolution always creates edge artifacts
-err = lambda a: np.linalg.norm((a-img)[c:-c,c:-c]) / np.linalg.norm(img[c:-c,c:-c])
-print(err(noisy), err(recovered))     # 0.1157 -> 0.0815
-```
-
-. . .
-
-**Error reduced by about 30%.**
-
-::: {.callout-important}
-Flag the 25-pixel crop **before** the exercise. Students who skip it will
-conclude deconvolution failed. It did not.
-:::
+<p class="sr-only">Forward is not transpose is not inverse: a real photograph shows the forward blur, its transpose (which does not undo the blur), and a Richardson-Lucy partial recovery, labelled as three distinct operations.</p>
+[Colab ↗]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
 
 ::: {.notes}
 This is the hardest thing in the workshop. TODO 4 is second on the cutting list.
 Say the border-crop warning out loud before they start, not after.
 :::
 
-## Why not just invert the blur?
-
-```{python}
-#| label: code-09-convolution-and-deconvolution-5
-#| echo: true
-K = np.fft.fft2(psf, s=img.shape)
-naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, K)))
-err(naive)     # ~2.49 — about twenty times WORSE than the blur we started from
-```
-
-. . .
-
-Blurring destroys high-frequency detail, so inverting divides by numbers very
-close to zero and **amplifies noise enormously**.
-
-. . .
-
-**Same lesson as §07:** a direct inverse either does not exist or is unusable, so
-you find the best stable answer instead.
-
-## To the notebook
-
-**09 · Convolution and deconvolution**
-
-[Open in Colab]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb)
-
-# 10 · Tucker decomposition {#sec-10-tucker-decomposition}
+## {#sec-10-tucker-decomposition background-image="images/slides-final/slide-27.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s10.part >}}
 :::
 
-*Part IV · exercise*
+<h1 class="sr-only">{{< var sections.s10.n >}} · {{< var sections.s10.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s10.n >}} · {{< var sections.s10.title_en >}} — {{< var sections.s10.minutes >}} min, running {{< var sections.s10.start >}} to {{< var sections.s10.end >}}. Objective: convert taxi trips into a pickup-borough by dropoff-borough by hour tensor and compress it by mode. A real 6:00 PM slice is compared against its Tucker reconstruction and absolute error.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s10.minutes >}} min** allocated]{.pace-duration}
+## {background-image="images/slides-final/slide-28.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-[Start: {{< var sections.s10.start >}} · End: {{< var sections.s10.end >}}]{.pace-window}
-:::
-
-## What different factorizations buy you {.factorization-ladder}
-
-> A factorization picks the atoms, the rule for combining them, and the
-> property you buy. The object never changes — only which question becomes
-> trivial.
-
-::: {.columns}
-::: {.column width="25%"}
-**100**
-
-- $2^2 \cdot 5^2$ → divisors, gcd
-- $4 \cdot 25$ → arithmetic
-- $64 + 32 + 4$ → storage
-- $6^2 + 8^2$ → geometry
-
-Product or sum; prime factorization is unique up to ordering.
-:::
-
-::: {.column width="25%"}
-**$x^2 - 4x - 5$**
-
-- standard → intercept, coefficients
-- $(x-5)(x+1)$ → roots, sign
-- $(x-2)^2 - 9$ → vertex, range
-
-Completing the square: the scalar bridge to diagonalizing quadratic forms.
-:::
-
-::: {.column width="25%"}
-**Matrix $A$**
-
-- LU → elimination, repeated solves
-- QR → orthogonality, least squares
-- Cholesky → SPD solves, covariance
-- SVD → low-rank structure, conditioning
-- NMF → nonnegative parts
-
-$AB^{\top} = (AM)(BM^{-\top})^{\top}$ — generic factors are not unique
-without additional structure or conventions.
-:::
-
-::: {.column width="25%"}
-**Tensor $\mathcal{X}$**
-
-- CP → interpretable rank-1 components
-- Tucker / HOSVD → multilinear compression, subspaces
-- Tensor Train → scalable high-order storage
-
-Essentially unique up to permutation and compensating scale, under suitable
-conditions — sufficient: $k_A + k_B + k_C \ge 2R + 2$.
-:::
-:::
-
-::: {.callout-tip}
-Matrix multiplication is itself a tensor; its CP rank is the multiplication
-count. The $2 \times 2$ case has rank 7, not 8 — that is Strassen. At the top
-of the ladder, the factorization is the algorithm.
-:::
-
-::: {.notes}
-Prime factorization is unique up to ordering — the cleanest case on the slide.
-Generic low-rank matrix factors have gauge freedom (the $M$/$M^{-\top}$ pair);
-extra structure or a convention — positive pivots, orthonormal columns, a
-positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can
-be essentially unique under suitable identifiability conditions, up to
-permutation and a compensating nonzero scaling across modes; over the reals,
-sign flips are a special case of that scaling. Kruskal's
-$k_A + k_B + k_C \ge 2R + 2$ is a *sufficient* condition, not a necessary one,
-and it says nothing about whether the decomposition is easy to find. Worth
-saying if there is time: computing tensor rank is NP-hard in general, tensor
-rank can exceed every individual mode dimension, and a best rank-$R$
-approximation need not even exist — none of that is true of matrices.
-:::
-
-## PCA generalized to every axis
-
-PCA compresses a **matrix** — two axes. Real data often has more.
-
-**Tucker**: one **factor matrix per axis**, plus a small **core tensor**
-describing how the factors combine.
-
-. . .
-
-**HOSVD** uses only tools you already have:
-
-::: {.incremental}
-1. **Unfold** the tensor along each axis *(§01)*
-2. **SVD** on each unfolding; keep the top components
-3. **Contract** the tensor against all factors to get the core *(§06)*
-:::
-
-## A real order-3 tensor
-
-**pickup borough × dropoff borough × hour of day**, from 6,433 real NYC taxi
-trips.
-
-```{python}
-#| label: code-10-tucker-decomposition-1
-#| echo: true
-T = np.zeros((len(pb), len(db), 24))
-for (p, d, h), v in sub.groupby(['pickup_borough','dropoff_borough','hour']).size().items():
-    T[pb.index(p), db.index(d), h] = v
-```
-
-. . .
-
-![](../../images/nyc-taxi-pickups-by-hour.png){fig-alt="Bar chart of NYC taxi pickup counts by hour of day from the same 6,433-trip dataset, rising through the day to a peak around hour 18, the evening rush the Tucker decomposition later rediscovers on its own." width="300"}
-
-. . .
-
-`T[i, j, k]` = trips from borough `i` to borough `j` picked up during hour `k`.
-
-## Three axes, one einsum
-
-```{python}
-#| label: code-10-tucker-decomposition-2
-#| echo: true
-Us = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0] for ax in range(3)]
-Us = [Us[i][:, :r[i]] for i in range(3)]                     # r = (2, 2, 3)
-
-core  = np.einsum('ijk,ia,jb,kc->abc', T, Us[0], Us[1], Us[2])   # (2, 2, 3)
-recon = np.einsum('abc,ia,jb,kc->ijk', core, Us[0], Us[1], Us[2])
-
-error = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067
-ratio = T.size / (core.size + sum(u.size for u in Us))           # 4.71
-```
-
-. . .
-
-`'ijk,ia,jb,kc->abc'` contracts **three axes in one expression.**
-**That is why einsum came first.**
-
-## What it found by itself
-
-**4.7× fewer numbers, 6.7% error.** But that is not the point.
-
-. . .
-
-```{python}
-#| label: code-10-tucker-decomposition-3
-#| echo: true
-np.abs(Us[2][:, 0]).argmax()      # 18
-T.sum(axis=(0, 1)).argmax()       # 18 — the same hour, from raw counts
-```
-
-. . .
-
-**The decomposition discovered evening rush hour by itself.**
-
-Nobody told it about time, traffic or commuting. It found the dominant pattern
-along that axis because that is what a decomposition does.
-
-## To the notebook
-
-**10 · Tucker decomposition on real data**
-
-[Open in Colab]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb)
+<p class="sr-only">Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.</p>
+[Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
 
 ::: {.notes}
 Never cut section 10. In tech, Tucker and CP compress neural network weight
@@ -1259,19 +329,11 @@ tensors so models run on phones. In biotech, on (genes × samples × conditions)
 they find structure PCA cannot reach — PCA can only ever see two axes.
 :::
 
-# 🎯 Kahoot 3 {#sec-kahoot-3 background-color="#b3541e"}
+## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-## Kahoot 3 — {{< var kahoot.q3.title_en >}}
-
-**{{< var kahoot.q3.questions >}} questions · about 5 minutes**
-
-### Join at **{{< var kahoot.join >}}**
-
-### PIN on screen
-
-*Covers: convolution, correlation, Tucker, CP, HOSVD*
-
-[Quiz details]({{< var repo.site >}}/kahoot.html#quiz-3)
+<h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_en >}}</h1>
+<p class="sr-only">Active break: Kahoot 3, {{< var kahoot.q3.title_en >}}. {{< var kahoot.q3.questions >}} questions covering convolution, correlation, Tucker and CP. Join at {{< var kahoot.join >}}; recognise the structure first, then choose the operator.</p>
+[Kahoot ↗]({{< var kahoot.q3.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 3"}
 
 ::: {.notes}
 Run this right after section 10, while the taxi-tensor rush-hour result is still
@@ -1285,68 +347,25 @@ actually landed before students leave. It also doubles as a live rehearsal of th
 wrap-up's own recap, so segue straight from the podium into the wrap-up.
 :::
 
-# 11 · Wrap-up {#sec-11-wrap-up-and-take-homes}
+## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-::: {.sec-part}
-{{< var sections.s11.part >}}
-:::
+<p class="sr-only">One idea connects the workshop: pseudoinverse, deconvolution and Tucker are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
 
-::: {.pace-badge}
-[[⏱️]{.pace-icon}**{{< var sections.s11.minutes >}} min** allocated]{.pace-duration}
-
-[Start: {{< var sections.s11.start >}} · End: {{< var sections.s11.end >}}]{.pace-window}
-:::
-
-## What you did today
-
-::: {.incremental}
-- **§01** — the vocabulary, and that unfolding loses nothing
-- **§02, §05** — a batch axis and a time axis behave differently even when the
-  shapes look identical
-- **§03, §04** — real tumour data and real medical images, and real problems:
-  zero-variance pixels, reshape silently destroying an image
-- **§06–§10** — contractions; an unsolvable 20,433-equation system; recursion
-  that forecasts real airline traffic; a deconvolved photograph; a taxi tensor
-  compressed 4.7×, which found rush hour on its own
-:::
-
-## One idea connects §07, §09 and §10
-
-::: {.callout-tip}
-### When a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation.
-:::
-
-::: {.incremental}
-- **Pseudoinverse** — for linear systems
-- **Richardson-Lucy** — for blurred images
-- **Tucker** — for tensors too large to keep in full
-:::
+[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
 
 ::: {.notes}
 Stating this connection explicitly is what makes the second half feel like one
 lesson rather than four separate blocks. Do not skip it.
 :::
 
-## Where to go next
+## {#sec-11-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-- `torch.einsum` / `tf.einsum` / `jnp.einsum` — **identical syntax** to today
-- [`tensorly`](https://tensorly.org) — proper Tucker and CP
-- `np.linalg` — the rest of Chapter 2: `eig`, `lstsq`, `pinv`, `qr`, `cholesky`
-- `scipy.signal`, `skimage.restoration` — convolution and deconvolution beyond today
-- [Further Reading](../../tensors_workshop_plan_with_quizzes.md#further-reading) — books and the seminal papers behind Tucker, CP and SVD
+::: {.sec-part}
+{{< var sections.s11.part >}}
+:::
 
-. . .
-
-**Five take-homes** in [notebook 11]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb):
-the PCA scaling trap, attention as two contractions, CP compared to Tucker,
-building correlated portfolios with Cholesky, and denoising a real voice
-recording by rank reduction.
-
-## Thank you
-
-**Questions welcome in Discord — in Spanish or English.**
-
-[Workshop site]({{< var repo.site >}}/) ·
-[Handbook]({{< var repo.site >}}/tensors_workshop_plan_with_quizzes.html) ·
-[All notebooks]({{< var repo.site >}}/notebooks.html) ·
-[Estas diapositivas en español](../es/)
+<h1 class="sr-only">{{< var sections.s11.n >}} · {{< var sections.s11.title_en >}}</h1>
+<p class="sr-only">Section {{< var sections.s11.n >}} · {{< var sections.s11.title_en >}} — {{< var sections.s11.minutes >}} min, running {{< var sections.s11.start >}} to {{< var sections.s11.end >}}. Five take-home extensions — PCA, attention, CP, Cholesky and audio — under the closing message that tensors are the language connecting the models. Thanks: Ravi Kalia, Sebastian Laverde Chunza.</p>
+[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
+[Deep dive 12 ↗]({{< var repo.colab_base >}}/{{< var extras.x12.n >}}-{{< var extras.x12.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 12 in Google Colab"}
+[Deep dive 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 13 in Google Colab"}
