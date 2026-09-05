@@ -57,8 +57,12 @@ Three mechanisms, in order of strength:
    to the look lands in both at once.
 3. **A check that fails the build.** `scripts/check_links.py` asserts that both
    rendered decks contain **all twelve `sec-NN-slug` anchors** plus the three
-   Kahoot slides — 15 in total, with no extras in either. Add a section to one
-   deck and not the other and CI goes red.
+   Kahoot slides — 15 in total, with no extras in either — and that both link
+   the **same set of ML blog posts**, every one of them declared under
+   `reading:`. Add a section or a reading chip to one deck and not the other
+   and CI goes red. What it does *not* do is fetch those posts: the checker is
+   offline by design, so a post that disappears from the blog is caught by a
+   human, not by CI.
 
 What is *not* automated is the prose. When you change a slide's wording,
 **change both files in the same commit.** The Spanish is a real translation
@@ -104,6 +108,16 @@ must stay in the qmd:
 - `.colab-tab` links — the canonical notebook URLs `check_links.py` validates,
   which `deck-pace.html` promotes into the on-screen panel and which stay
   visible as the fallback if that script fails.
+- `.reading-tab` chips — the companion ML blog post for the concept the slide
+  introduces, on the slide that introduces it rather than in a bibliography at
+  the end. Two per slide at most, from `reading:` in
+  [`_variables.yml`](../_variables.yml) like every other shared URL. They work
+  exactly like `.colab-tab`: `deck-pace.html` promotes them into the same
+  panel — stacked under the amber buttons, outlined instead of filled, so they
+  read as supplementary rather than as the thing to click during the exercise
+  — and the inline copies are the fallback if that script fails. The posts are
+  in English; the ES deck marks that with a "(EN)" suffix added by
+  `slides.scss`, not retyped into each label.
 - `::: {.notes}` — facilitator guidance, read in speaker view.
 
 The `#sec-NN-slug` anchors are what the section tables on the site link to, so

@@ -29,7 +29,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-618be6850bf080eb8f549d74d723a3db.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-1cee06d4721791e6972bbbded52dff41.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -349,6 +349,7 @@ Sección 01 · Qué es un tensor — 20 min, de +00:05 a +00:25. Objetivo: expli
 <p class="sr-only">
 Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.
 </p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 ¿Por qué hay tantas factorizaciones matriciales? ↗</a></p>
 <aside class="notes">
 <p>La factorización en primos es única salvo el orden — el caso más limpio de la diapositiva. Los factores genéricos de una matriz de bajo rango tienen libertad de gauge (el par <span class="math inline">\(M\)</span>/<span class="math inline">\(M^{-\top}\)</span>); una estructura adicional o una convención — pivotes positivos, columnas ortonormales, diagonal positiva — es lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente único bajo condiciones de identificabilidad adecuadas, salvo permutación y una escala compensatoria no nula entre modos; sobre los reales, los cambios de signo son un caso particular de esa escala. La condición de Kruskal <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span> es <em>suficiente</em>, no necesaria, y no dice nada sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango tensorial puede superar cada dimensión individual de los ejes, y una mejor aproximación de rango <span class="math inline">\(R\)</span> puede no existir siquiera — nada de eso es cierto para matrices.</p>
 <style type="text/css">
@@ -541,6 +542,7 @@ Sección 07 · Inversas y la pseudoinversa — 15 min, de +02:00 a +02:15. Objet
 California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab">Colab ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Gira, estira y vuelve a girar ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Inversas tensoriales en la práctica ↗</a></p>
 <aside class="notes">
 <p>El TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo.</p>
 <style type="text/css">
@@ -611,6 +613,7 @@ Sección 08 · Recursión con matrices y vectores — 10 min, de +02:20 a +02:30
 Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 08 en Google Colab">Colab ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/eigendecomposition/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Las direcciones que una matriz no gira ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/recursive-inversion/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 ¿Se puede invertir una función recursiva? ↗</a></p>
 </section>
 <section id="sec-09-convolution-and-deconvolution" class="slide level2" data-background-image="images/slides-final/slide-25.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
@@ -662,6 +665,7 @@ Sección 10 · Descomposición de Tucker con datos reales — 15 min, de +02:50 
 Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 10 en Google Colab">Colab ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Para qué sirve factorizar un tensor ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Factorizaciones e inversas tensoriales ↗</a></p>
 <aside class="notes">
 <p>Nunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores de pesos de las redes neuronales para que los modelos corran en móviles. En biotecnología, sobre datos (genes × muestras × condiciones), encuentran estructura que PCA no alcanza: PCA solo puede ver dos ejes.</p>
 <style type="text/css">
@@ -733,6 +737,7 @@ Una idea conecta el workshop: pseudoinversa, deconvolución y Tucker se muestran
 Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 11 en Google Colab">Colab ↗</a> <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb" class="colab-tab colab-tab-extra" target="_blank" rel="noopener noreferrer" title="Abrir deep dive 12 en Google Colab">Deep dive 12 ↗</a> <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb" class="colab-tab colab-tab-extra" target="_blank" rel="noopener noreferrer" title="Abrir deep dive 13 en Google Colab">Deep dive 13 ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/matrix-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Factorizaciones como optimización ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/attention/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 La atención como dos contracciones ↗</a></p>
 
 
 </section>
@@ -1210,6 +1215,35 @@ Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinc
         // divider with a `.sec-part` is a section and shares its links group-wide,
         // and one without — a Kahoot — leaves them on the declaring slide.
 
+        // Reading chips ride the same walk. They are not indirected through a
+        // number the way notebooks are — there is no canonical id for a blog post
+        // and no second place that needs to look one up — so the anchor's own
+        // href, text and title are carried straight through.
+        function readingLinks(scope) {
+          var links = [];
+          var seen = {};
+
+          Array.prototype.forEach.call(
+            scope.querySelectorAll(".reading-tab"),
+            function (link) {
+              var href = link.getAttribute("href") || "";
+
+              if (!href || seen[href]) {
+                return;
+              }
+
+              seen[href] = true;
+              links.push({
+                href: href,
+                label: link.textContent,
+                title: link.getAttribute("title") || link.textContent
+              });
+            }
+          );
+
+          return links;
+        }
+
         function colabNumbers(scope) {
           var numbers = [];
 
@@ -1245,7 +1279,7 @@ Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinc
         // Same traversal the breadcrumb uses, for the same reason: reveal has
         // already wrapped groups into `.stack` wrappers by the time this runs.
         var panelSlides = [];
-        var panelNumbers = [];
+        var panelEntries = [];
         var group = null;
 
         Array.prototype.forEach.call(
@@ -1257,10 +1291,11 @@ Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinc
             }
 
             var own = colabNumbers(slide);
+            var ownReading = readingLinks(slide);
 
             if (slide.querySelector("h1.sr-only")) {
               group = slide.querySelector(".sec-part")
-                ? { numbers: own }
+                ? { numbers: own, reading: ownReading }
                 : null;   // a Kahoot break shares nothing forward
             }
 
@@ -1273,18 +1308,16 @@ Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinc
                 group.numbers = own;
               }
 
-              panelNumbers.push(group);
+              if (ownReading.length) {
+                group.reading = ownReading;
+              }
+
+              panelEntries.push(group);
             } else {
-              panelNumbers.push({ numbers: own });
+              panelEntries.push({ numbers: own, reading: ownReading });
             }
           }
         );
-
-        // A section's links are resolved after the walk, so a divider carrying no
-        // link of its own still picks up the one declared later in its section.
-        panelNumbers = panelNumbers.map(function (entry) {
-          return entry.numbers;
-        });
 
         var colabPanel = document.createElement("div");
         colabPanel.className = "deck-colab-panel";
@@ -1303,7 +1336,12 @@ Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinc
 
           var current = Reveal.getCurrentSlide();
           var position = current ? panelSlides.indexOf(current) : -1;
-          var numbers = position === -1 ? [] : (panelNumbers[position] || []);
+          // A section's links are resolved only now, after the whole walk, so a
+          // divider carrying no link of its own still shows the one declared
+          // later in its section.
+          var entry = position === -1 ? null : panelEntries[position];
+          var numbers = (entry && entry.numbers) || [];
+          var reading = (entry && entry.reading) || [];
 
           colabPanel.innerHTML = "";
 
@@ -1344,7 +1382,51 @@ Sección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinc
           });
 
           colabPanel.classList.toggle("final-row", visibleButtons > 1);
-          colabPanel.hidden = visibleButtons === 0;
+
+          // The reading chips go below the Colab buttons inside the same panel
+          // rather than into a second fixed one: the Colab row's height changes
+          // with `final-row`, and a second panel would have to guess at it. A
+          // flex break costs nothing and cannot drift.
+          //
+          // Stacked, not side by side. Two chips in a row reach about a third of
+          // the way across the slide at the height every piece of art puts its
+          // headline, and covered "is also recursion" on section 08. Stacked they
+          // stay in the right margin the timer and the Colab button already own.
+          var readingRow = null;
+
+          if (reading.length) {
+            var breaker = document.createElement("div");
+
+            breaker.className = "deck-panel-break";
+            colabPanel.appendChild(breaker);
+
+            readingRow = document.createElement("div");
+            readingRow.className = "deck-reading-row";
+            colabPanel.appendChild(readingRow);
+          }
+
+          reading.forEach(function (link) {
+            // Keeps `.reading-tab`, which is what carries the chip's look and the
+            // ES deck's "(EN)" marker. Only the inline copies inside .slides are
+            // retired once this panel exists — see slides.scss.
+            var chip = document.createElement("a");
+
+            chip.className = "deck-reading-button reading-tab";
+            chip.href = link.href;
+            chip.target = "_blank";
+            chip.rel = "noopener noreferrer";
+            chip.textContent = link.label;
+            chip.title = link.title;
+            // The label, not the title: the title is the same generic tooltip on
+            // every chip, and an aria-label overrides the visible text — two
+            // chips on one slide would have announced identically, with no way
+            // to tell the SVD post from the pseudoinverse one.
+            chip.setAttribute("aria-label", link.label);
+
+            readingRow.appendChild(chip);
+          });
+
+          colabPanel.hidden = visibleButtons === 0 && reading.length === 0;
         }
 
         Reveal.on("slidechanged", updateColabPanel);

@@ -256,7 +256,7 @@
     "href": "slides/en/index.html#section-3",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.\n\n\nPrime factorization is unique up to ordering — the cleanest case on the slide. Generic low-rank matrix factors have gauge freedom (the \\(M\\)/\\(M^{-\\top}\\) pair); extra structure or a convention — positive pivots, orthonormal columns, a positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can be essentially unique under suitable identifiability conditions, up to permutation and a compensating nonzero scaling across modes; over the reals, sign flips are a special case of that scaling. Kruskal’s \\(k_A + k_B + k_C \\ge 2R + 2\\) is a sufficient condition, not a necessary one, and it says nothing about whether the decomposition is easy to find. Worth saying if there is time: computing tensor rank is NP-hard in general, tensor rank can exceed every individual mode dimension, and a best rank-\\(R\\) approximation need not even exist — none of that is true of matrices."
+    "text": "Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.\n\n📖 Why so many matrix factorizations? ↗\n\nPrime factorization is unique up to ordering — the cleanest case on the slide. Generic low-rank matrix factors have gauge freedom (the \\(M\\)/\\(M^{-\\top}\\) pair); extra structure or a convention — positive pivots, orthonormal columns, a positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can be essentially unique under suitable identifiability conditions, up to permutation and a compensating nonzero scaling across modes; over the reals, sign flips are a special case of that scaling. Kruskal’s \\(k_A + k_B + k_C \\ge 2R + 2\\) is a sufficient condition, not a necessary one, and it says nothing about whether the decomposition is easy to find. Worth saying if there is time: computing tensor rank is NP-hard in general, tensor rank can exceed every individual mode dimension, and a best rank-\\(R\\) approximation need not even exist — none of that is true of matrices."
   },
   {
     "objectID": "slides/en/index.html#section-4",
@@ -361,7 +361,7 @@
     "href": "slides/en/index.html#section-11",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.\n\nColab ↗\n\nTODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something."
+    "text": "California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.\n\nColab ↗\n📖 Rotate, stretch, rotate again ↗ 📖 Tensor inverses in practice ↗\n\nTODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something."
   },
   {
     "objectID": "slides/en/index.html#sec-kahoot-2",
@@ -382,7 +382,7 @@
     "href": "slides/en/index.html#section-12",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08’s own output once Issue #49 is implemented.\n\nColab ↗"
+    "text": "Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08’s own output once Issue #49 is implemented.\n\nColab ↗\n📖 The directions a matrix refuses to turn ↗ 📖 Can you invert a recursive function? ↗"
   },
   {
     "objectID": "slides/en/index.html#sec-09-convolution-and-deconvolution",
@@ -410,7 +410,7 @@
     "href": "slides/en/index.html#section-14",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.\n\nColab ↗\n\nNever cut section 10. In tech, Tucker and CP compress neural network weight tensors so models run on phones. In biotech, on (genes × samples × conditions), they find structure PCA cannot reach — PCA can only ever see two axes."
+    "text": "Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.\n\nColab ↗\n📖 What a tensor factorization buys you ↗ 📖 Tensor factorizations and inverses ↗\n\nNever cut section 10. In tech, Tucker and CP compress neural network weight tensors so models run on phones. In biotech, on (genes × samples × conditions), they find structure PCA cannot reach — PCA can only ever see two axes."
   },
   {
     "objectID": "slides/en/index.html#sec-kahoot-3",
@@ -431,7 +431,7 @@
     "href": "slides/en/index.html#sec-11-wrap-up-and-take-homes",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "—\n\n\n11 · Wrap-up and take-homes\n\n\nSection 11 · Wrap-up and take-homes — 5 min, running +03:10 to +03:15. Five take-home extensions — PCA, attention, CP, Cholesky and audio — under the closing message that tensors are the language connecting the models. Thanks: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Deep dive 12 ↗ Deep dive 13 ↗"
+    "text": "—\n\n\n11 · Wrap-up and take-homes\n\n\nSection 11 · Wrap-up and take-homes — 5 min, running +03:10 to +03:15. Five take-home extensions — PCA, attention, CP, Cholesky and audio — under the closing message that tensors are the language connecting the models. Thanks: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Deep dive 12 ↗ Deep dive 13 ↗\n📖 Factorizations as optimization ↗ 📖 Attention as two contractions ↗"
   },
   {
     "objectID": "kahoot.html",
@@ -704,7 +704,7 @@
     "href": "slides/es/index.html#section-3",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.\n\n\nLa factorización en primos es única salvo el orden — el caso más limpio de la diapositiva. Los factores genéricos de una matriz de bajo rango tienen libertad de gauge (el par \\(M\\)/\\(M^{-\\top}\\)); una estructura adicional o una convención — pivotes positivos, columnas ortonormales, diagonal positiva — es lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente único bajo condiciones de identificabilidad adecuadas, salvo permutación y una escala compensatoria no nula entre modos; sobre los reales, los cambios de signo son un caso particular de esa escala. La condición de Kruskal \\(k_A + k_B + k_C \\ge 2R + 2\\) es suficiente, no necesaria, y no dice nada sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango tensorial puede superar cada dimensión individual de los ejes, y una mejor aproximación de rango \\(R\\) puede no existir siquiera — nada de eso es cierto para matrices."
+    "text": "Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.\n\n📖 ¿Por qué hay tantas factorizaciones matriciales? ↗\n\nLa factorización en primos es única salvo el orden — el caso más limpio de la diapositiva. Los factores genéricos de una matriz de bajo rango tienen libertad de gauge (el par \\(M\\)/\\(M^{-\\top}\\)); una estructura adicional o una convención — pivotes positivos, columnas ortonormales, diagonal positiva — es lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente único bajo condiciones de identificabilidad adecuadas, salvo permutación y una escala compensatoria no nula entre modos; sobre los reales, los cambios de signo son un caso particular de esa escala. La condición de Kruskal \\(k_A + k_B + k_C \\ge 2R + 2\\) es suficiente, no necesaria, y no dice nada sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango tensorial puede superar cada dimensión individual de los ejes, y una mejor aproximación de rango \\(R\\) puede no existir siquiera — nada de eso es cierto para matrices."
   },
   {
     "objectID": "slides/es/index.html#section-4",
@@ -809,7 +809,7 @@
     "href": "slides/es/index.html#section-11",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.\n\nColab ↗\n\nEl TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo."
+    "text": "California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.\n\nColab ↗\n📖 Gira, estira y vuelve a girar ↗ 📖 Inversas tensoriales en la práctica ↗\n\nEl TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo."
   },
   {
     "objectID": "slides/es/index.html#sec-kahoot-2",
@@ -830,7 +830,7 @@
     "href": "slides/es/index.html#section-12",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.\n\nColab ↗"
+    "text": "Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.\n\nColab ↗\n📖 Las direcciones que una matriz no gira ↗ 📖 ¿Se puede invertir una función recursiva? ↗"
   },
   {
     "objectID": "slides/es/index.html#sec-09-convolution-and-deconvolution",
@@ -858,7 +858,7 @@
     "href": "slides/es/index.html#section-14",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.\n\nColab ↗\n\nNunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores de pesos de las redes neuronales para que los modelos corran en móviles. En biotecnología, sobre datos (genes × muestras × condiciones), encuentran estructura que PCA no alcanza: PCA solo puede ver dos ejes."
+    "text": "Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.\n\nColab ↗\n📖 Para qué sirve factorizar un tensor ↗ 📖 Factorizaciones e inversas tensoriales ↗\n\nNunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores de pesos de las redes neuronales para que los modelos corran en móviles. En biotecnología, sobre datos (genes × muestras × condiciones), encuentran estructura que PCA no alcanza: PCA solo puede ver dos ejes."
   },
   {
     "objectID": "slides/es/index.html#sec-kahoot-3",
@@ -879,6 +879,6 @@
     "href": "slides/es/index.html#sec-11-wrap-up-and-take-homes",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "—\n\n\n11 · Cierre y ejercicios para casa\n\n\nSección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Deep dive 12 ↗ Deep dive 13 ↗"
+    "text": "—\n\n\n11 · Cierre y ejercicios para casa\n\n\nSección 11 · Cierre y ejercicios para casa — 5 min, de +03:10 a +03:15. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Deep dive 12 ↗ Deep dive 13 ↗\n📖 Factorizaciones como optimización ↗ 📖 La atención como dos contracciones ↗"
   }
 ]
