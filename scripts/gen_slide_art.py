@@ -25,9 +25,9 @@ Two things it deliberately does not do:
   * **No page number.** The existing art bakes the number into the bottom-right
     corner, so an insertion leaves every later baked number ahead of its true
     position -- and `slide-02a` puts the first insertion in the opening run, so
-    that is every numbered slide but two. Redrawing thirty-one PNGs to fix a
-    decoration is not worth it; the new slides simply carry no number, and
-    `slides/README.md` records that the baked ones are not authoritative.
+    that is `slide-03` through `slide-31`, twenty-nine of them. Redrawing them
+    to fix a decoration is not worth it; the new slides simply carry no number,
+    and `slides/README.md` records that the baked ones are not authoritative.
   * **No lightbulb in the callout bar.** The existing bars put a lightbulb glyph
     in the teal disc. #65 is an argument against exactly that mark -- it labels
     a fact as an insight -- so the disc here holds an arrow. The shape and the
@@ -85,9 +85,10 @@ FONT_STACK = ('Montserrat, "Avenir Next", "Segoe UI", system-ui, '
 
 
 # ── The copy ────────────────────────────────────────────────────────────────
-# One entry per new slide. `stem` is the PNG name: the letter suffix says this
-# slide was inserted after `slide-20`, rather than renumbering fourteen files
-# whose numbers are painted on.
+# One entry per new slide, and the first of them, `slide-02a`, opens the deck.
+# `stem` is the PNG name: the letter suffix says the slide was inserted after
+# the one it names, rather than renumbering every later file whose number is
+# painted on.
 #
 # A card is (glyph, heading, [lines]). The glyphs on 20a are the shapes
 # themselves -- a square, a hatched square, a tall bar, a wide bar -- which is
@@ -126,7 +127,7 @@ SLIDES = [
                     "the pseudoinverse answers.",
                 ]),
             ],
-            "callout": ("The question of the day:", "before you operate on a "
+            "callout": ("Carry this all day:", "before you operate on a "
                         "tensor, name its axes."),
         },
         "es": {
@@ -151,15 +152,15 @@ SLIDES = [
                     "La misma forma puede tener otro significado: ese es el "
                     "error que este día evita.",
                 ]),
-                ("∏", "Factorizaciones e inversas", [
-                    "Los números se factorizan en primos; las matrices en "
-                    "LU, QR, SVD.",
-                    "Los tensores también, y donde no hay inversa responde "
-                    "la pseudoinversa.",
+                ("∏", "Factoriza e invierte", [
+                    "Los números en primos, las cuadráticas en raíces, las "
+                    "matrices en LU, QR, SVD.",
+                    "Los tensores también; y sin inversa, responde la "
+                    "pseudoinversa.",
                 ]),
             ],
-            "callout": ("La pregunta del día:", "antes de operar sobre un "
-                        "tensor, nombra sus ejes."),
+            "callout": ("Llévate esto todo el día:", "antes de operar sobre "
+                        "un tensor, nombra sus ejes."),
         },
     },
     {
