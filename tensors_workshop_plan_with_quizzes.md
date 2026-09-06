@@ -807,6 +807,10 @@ What you did today:
 
 - [`tensorly`](https://tensorly.org) docs — [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html) and [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html) implementations, used in section 10 and Appendix C. Created by [Jean Kossaifi](https://jeankossaifi.com/).
 
+### A machine-generated companion
+
+- [*Tensors in Machine Learning Overview*](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb) — a shared Gemini Notebook that walks the same ground as today, in English. It is generated, not written: use it as a second pass over material you have already seen, and check anything it asserts against the books and papers above.
+
 ---
 
 ## Appendix A — Take-Home: How Many Principal Components Are Enough?
