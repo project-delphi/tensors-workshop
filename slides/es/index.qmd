@@ -18,7 +18,7 @@ lang: es
 
 ## {background-image="images/slides-final/slide-01.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Tensores para Machine Learning — de datos reales a modelos modernos. Expositor: Ravi Kalia. Elaborado por: Sebastian Laverde Chunza.</p>
+<p class="sr-only">Tensores para Machine Learning — de datos reales a modelos modernos. Ravi Kalia y Sebastian Laverde Chunza.</p>
 
 ::: {.notes}
 Dilo en voz alta: nadie tiene por qué saber teoría de tensores. Cada término
