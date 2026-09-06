@@ -4,8 +4,9 @@ Since #45 every slide in both decks is a PNG under
 `slides/{en,es}/images/slides-final/`, drawn by hand in a tool that is not in
 this repository. `slides/README.md` says the consequence out loud: "the slide
 art has to be redrawn by hand." That is fine for thirty-one slides that already
-exist and awkward for the thirty-second, so #63 -- which needs three new slides
-in each language -- is the point at which the art gets a source.
+exist and awkward for the thirty-second, so #63 -- which needed three new slides
+in each language -- was the point at which the art got a source. `SLIDES` has
+grown since: eight entries now, sixteen PNGs.
 
 The source is HTML and CSS, screenshotted by headless Chrome. Not matplotlib:
 these slides are typography and cards, and every hour spent teaching a plotting
@@ -85,10 +86,10 @@ FONT_STACK = ('Montserrat, "Avenir Next", "Segoe UI", system-ui, '
 
 
 # ── The copy ────────────────────────────────────────────────────────────────
-# One entry per new slide, and the first of them, `slide-02a`, opens the deck.
-# `stem` is the PNG name: the letter suffix says the slide was inserted after
-# the one it names, rather than renumbering every later file whose number is
-# painted on.
+# One entry per new slide, and the first of them, `slide-02a`, sits in the
+# deck's opening run. `stem` is the PNG name: the letter suffix says the slide
+# was inserted after the one it names, rather than renumbering every later file
+# whose number is painted on.
 #
 # A card is (glyph, heading, [lines]). The glyphs on 20a are the shapes
 # themselves -- a square, a hatched square, a tall bar, a wide bar -- which is
