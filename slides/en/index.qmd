@@ -103,8 +103,7 @@ never Part I.
 ## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.</p>
-<p class="sr-only">Deep dive 12 is the take-home for this map: every factorization written as a constrained optimization, the cost of each one derived and then measured, and SVD as the best rank-k approximation there is. It is for anyone who wants the "which one, and what does it cost me" answer this ladder only gestures at.</p>
-[Deep dive 12 ↗]({{< var repo.colab_base >}}/{{< var extras.x12.n >}}-{{< var extras.x12.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 12 in Google Colab"}
+<p class="sr-only">Section 09 walks this map on real data: every factorization written as a constrained optimization, the cost of each one derived and then measured, and SVD as the best rank-k approximation there is. The "which one, and what does it cost me" question this ladder raises is answered two hours later, in the room.</p>
 
 [📖 {{< var reading.why_so_many.title_en >}} ↗]({{< var reading.why_so_many.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
@@ -122,9 +121,9 @@ saying if there is time: computing tensor rank is NP-hard in general, tensor
 rank can exceed every individual mode dimension, and a best rank-$R$
 approximation need not even exist — none of that is true of matrices.
 
-Name deep dive 12 here rather than saving it for the closing slide. This is
-the minute a student wonders why there are so many of these, and 12 is the
-notebook that answers it with a cost column.
+Point forward to section 09 here. This is the minute a student wonders why
+there are so many of these, and 09 is where the map gets walked with a cost
+column attached.
 :::
 
 ## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -333,23 +332,40 @@ If badly over time, this RNN snippet is third on the cutting list — after Kaho
 [📖 {{< var reading.eigen.title_en >}} ↗]({{< var reading.eigen.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 [📖 {{< var reading.recursion.title_en >}} ↗]({{< var reading.recursion.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
-## {#sec-09-convolution-and-deconvolution background-image="images/slides-final/slide-25.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-09-matrix-factorizations background-image="images/slides-final/slide-25a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s09.part >}}
 :::
 
 <h1 class="sr-only">{{< var sections.s09.n >}} · {{< var sections.s09.title_en >}}</h1>
-<p class="sr-only">Section {{< var sections.s09.n >}} · {{< var sections.s09.title_en >}} — {{< var sections.s09.minutes >}} min, running {{< var sections.s09.start >}} to {{< var sections.s09.end >}}. Objective: understand convolution as a local operation and why inverting it is a different problem. A Manhattan Bridge photo is blurred, partially recovered, and its error map shown.</p>
+<p class="sr-only">Section {{< var sections.s09.n >}} · {{< var sections.s09.title_en >}} — {{< var sections.s09.minutes >}} min, running {{< var sections.s09.start >}} to {{< var sections.s09.end >}}. Objective: walk section 01's map of factorizations on real data — LU, QR, Cholesky, eigendecomposition, SVD and NMF — and find out what each one costs. Three cards: six methods as one optimization under different constraints, cost derived and then measured, and eigendecomposition named here rather than assumed in section 10.</p>
+[Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
 
-## {background-image="images/slides-final/slide-26.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
-
-<p class="sr-only">Forward is not transpose is not inverse: a real photograph shows the forward blur, its transpose (which does not undo the blur), and a Richardson-Lucy partial recovery, labelled as three distinct operations.</p>
-[Colab ↗]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
+[📖 {{< var reading.optimization.title_en >}} ↗]({{< var reading.optimization.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+[📖 {{< var reading.eigen.title_en >}} ↗]({{< var reading.eigen.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
 ::: {.notes}
-This is the hardest thing in the workshop. TODO 4 is second on the cutting list.
-Say the border-crop warning out loud before they start, not after.
+This section is where the map from section 01 stops being a picture. Do
+not let it become a tour of six APIs: the question on every card is what the
+factorization makes easy that was hard before.
+
+Name eigendecomposition out loud. Section 10 leans on the same machinery and
+until this section existed the workshop never introduced it.
+:::
+
+## {background-image="images/slides-final/slide-26a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Factor once, solve many: the same real least-squares problem three ways. Normal equations are fastest to write and square the condition number; QR is the stable default and never forms A-transpose-A; SVD is the most expensive and the most informative, because Eckart-Young gives the truncation error without building the truncation.</p>
+[Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
+
+::: {.notes}
+The flop table and the stopwatch disagree, and the disagreement is the
+lesson. What survives the machine is the ratio between methods at a fixed
+size — a full SVD near 39 times a Cholesky — not the exponent, which comes in
+under 3 because of parallelism and cache.
+
+If you are short of time, run Exercise 2 and skip Exercise 3.
 :::
 
 ## {#sec-10-tucker-decomposition background-image="images/slides-final/slide-27.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -374,25 +390,6 @@ tensors so models run on phones. In biotech, on (genes × samples × conditions)
 they find structure PCA cannot reach — PCA can only ever see two axes.
 :::
 
-## {background-image="images/slides-final/slide-28a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
-
-<p class="sr-only">Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.</p>
-<p class="sr-only">Deep dive 13 runs all four on one tensor at a matched parameter budget, and adds the flattening argument and the growth-rate argument for Tensor Train. It is for anyone who wants that comparison measured rather than asserted.</p>
-[Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
-[Deep dive 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 13 in Google Colab"}
-
-[📖 {{< var reading.tensor_factorizations.title_en >}} ↗]({{< var reading.tensor_factorizations.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
-
-::: {.notes}
-Section 10 teaches Tucker only, and with 15 minutes that is the right call.
-This slide is where the other three get named, so a student who opens deep
-dive 13 afterwards meets CP, Tensor Train and t-SVD already knowing what each
-one is for.
-
-If you are behind, read the four headings and the callout and move on. The
-comparison belongs to the deep dive, not to this room.
-:::
-
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_en >}}</h1>
@@ -411,28 +408,72 @@ actually landed before students leave. It also doubles as a live rehearsal of th
 wrap-up's own recap, so segue straight from the podium into the wrap-up.
 :::
 
-## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
-
-<p class="sr-only">One idea connects the workshop: pseudoinverse, deconvolution and Tucker are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
-
-[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
-
-::: {.notes}
-Stating this connection explicitly is what makes the second half feel like one
-lesson rather than four separate blocks. Do not skip it.
-:::
-
-## {#sec-11-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-11-tensor-factorizations background-image="images/slides-final/slide-29a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s11.part >}}
 :::
 
 <h1 class="sr-only">{{< var sections.s11.n >}} · {{< var sections.s11.title_en >}}</h1>
-<p class="sr-only">Section {{< var sections.s11.n >}} · {{< var sections.s11.title_en >}} — {{< var sections.s11.minutes >}} min, running {{< var sections.s11.start >}} to {{< var sections.s11.end >}}. Five take-home extensions — PCA, attention, CP, Cholesky and audio — under the closing message that tensors are the language connecting the models. Thanks: Ravi Kalia, Sebastian Laverde Chunza.</p>
-[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
-[Deep dive 12 ↗]({{< var repo.colab_base >}}/{{< var extras.x12.n >}}-{{< var extras.x12.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 12 in Google Colab"}
-[Deep dive 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 13 in Google Colab"}
+<p class="sr-only">Section {{< var sections.s11.n >}} · {{< var sections.s11.title_en >}} — {{< var sections.s11.minutes >}} min, running {{< var sections.s11.start >}} to {{< var sections.s11.end >}}. Objective: choose the decomposition from the structure you need to keep, and the rank from the loss you can afford. Three cards: flattening keeps every number and loses which direction meant what; CP against Tucker at a matched parameter budget rather than rank for rank; and growth rates rather than constants, because a faster machine changes the constants and not which formula grows exponentially.</p>
+[Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
 
-[📖 {{< var reading.optimization.title_en >}} ↗]({{< var reading.optimization.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+[📖 {{< var reading.uses.title_en >}} ↗]({{< var reading.uses.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+[📖 {{< var reading.tensor_factorizations.title_en >}} ↗]({{< var reading.tensor_factorizations.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
+::: {.notes}
+Section 10 gave the room one bargain. This section puts the other three
+beside it, which is what turns Tucker from "the tensor decomposition" into one
+choice among four.
+
+The matched-budget comparison is the part to protect if you are behind.
+Rank-for-rank is the comparison everyone makes, and it is the wrong one.
+:::
+
+## {background-image="images/slides-final/slide-29b.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.</p>
+[Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
+
+::: {.notes}
+Read the four headings in order and let the room ask which one their own data
+wants. That question is the section; the arithmetic is not.
+
+The two meanings of "rank" collide here — Chapter 2's independent columns and
+the tensor sense. Say which you mean every time.
+:::
+
+## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">One idea connects the workshop: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
+
+[Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
+
+::: {.notes}
+Stating this connection explicitly is what makes the second half feel like one
+lesson rather than four separate blocks. Do not skip it. Section 07's tensor
+inverse slide opens it; this is where it closes.
+
+Convolution is the one leg of the three the room no longer runs. Say so, and
+say that take-home 13 is where it happens to a real photograph.
+:::
+
+## {#sec-12-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+::: {.sec-part}
+{{< var sections.s12.part >}}
+:::
+
+<h1 class="sr-only">{{< var sections.s12.n >}} · {{< var sections.s12.title_en >}}</h1>
+<p class="sr-only">Take-home 13 is convolution and deconvolution: a small kernel reused across positions, correlation against true convolution, transposed convolution as overlap-add, and Richardson-Lucy recovering a real blurred photograph. It is the third instance of the workshop's connecting idea, and the one the room no longer runs.</p>
+<p class="sr-only">Section {{< var sections.s12.n >}} · {{< var sections.s12.title_en >}} — {{< var sections.s12.minutes >}} min, running {{< var sections.s12.start >}} to {{< var sections.s12.end >}}. Five take-home extensions — PCA, attention, CP, Cholesky and audio — under the closing message that tensors are the language connecting the models. Thanks: Ravi Kalia, Sebastian Laverde Chunza.</p>
+[Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
+[Take-home 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open take-home 13 in Google Colab"}
+
 [📖 {{< var reading.attention.title_en >}} ↗]({{< var reading.attention.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
+::: {.notes}
+The art on this slide still reads 11 for this section, which became 12 when
+factorizations moved into the day. It is the only slide the renumbering left
+behind; see slides/README.md.
+:::

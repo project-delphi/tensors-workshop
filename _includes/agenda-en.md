@@ -12,7 +12,9 @@
 | 01:55 | 5 | — | Break |
 | 02:00 | 15 | IV | Inverses and the pseudoinverse |
 | 02:15 | 5 | 🎯 | **Kahoot 2** |
-| 02:20 | 25 | IV | Recursion · Convolution |
+| 02:20 | 25 | IV | Recursion · Matrix factorizations |
 | 02:45 | 5 | — | Break |
 | 02:50 | 15 | IV | Tucker decomposition |
-| 03:05 | 10 | 🎯 | **Kahoot 3** + wrap-up |
+| 03:05 | 5 | 🎯 | **Kahoot 3** |
+| 03:10 | 15 | IV | Tensor factorizations |
+| 03:25 | 5 | — | Wrap-up and take-homes |

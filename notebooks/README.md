@@ -1,8 +1,8 @@
 # Notebooks
 
-Twelve notebooks, one per workshop section, numbered to match
+Thirteen notebooks, one per workshop section, numbered to match
 [the section table](https://project-delphi.github.io/tensors-workshop) exactly —
-plus two take-home deep dives, numbered 12 and 13, that are **not** sections.
+plus one take-home deep dive, numbered 13, that is **not** a section.
 
 **English-primary, with a one-line Spanish summary under each heading** —
 *cada encabezado lleva un resumen en español.*
@@ -29,22 +29,28 @@ same URLs more than once — that is deliberate, not accidental duplication.
 | 06 | [`06-contraction-with-einsum.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | Contraction with einsum — Use one index rule on real data, then change the inputs interactively to test which index disappears. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) |
 | 07 | [`07-inverses-and-pseudoinverse.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | Inverses and the pseudoinverse — Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) |
 | 08 | [`08-recursion-with-matrices.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | Recursion with matrices and vectors — Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) |
-| 09 | [`09-convolution-and-deconvolution.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb) | Convolution and deconvolution — Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb) |
+| 09 | [`09-matrix-factorizations.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | Matrix factorizations — Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers, and what each one costs. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) |
 | 10 | [`10-tucker-decomposition.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | Tucker decomposition on real data — Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) |
-| 11 | [`11-wrap-up-and-take-homes.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | Wrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) |
+| 11 | [`11-tensor-factorizations.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | Tensor factorizations — Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) |
+| 12 | [`12-wrap-up-and-take-homes.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | Wrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) |
 <!-- END notebooks -->
 
-## The two extras
+## The extra
 
-`12-matrix-factorizations.ipynb` and `13-tensor-factorizations.ipynb` are deep
-dives, handed out as take-home material after the session. They are declared
-under `extras:` in `_variables.yml` rather than `sections:`, and that mapping is
-deliberately missing `minutes`, `start`, `end` and `part` — `scripts/timeline.py`
-only ever walks `sections`, so nothing about an extra can move a start time or
-the agenda. They also get no `#sec-NN` slide anchor and no Kahoot.
+`13-convolution-and-deconvolution.ipynb` is a deep dive, handed out as take-home
+material after the session. It is declared under `extras:` in `_variables.yml`
+rather than `sections:`, and that mapping is deliberately missing `minutes`,
+`start`, `end` and `part` — `scripts/timeline.py` only ever walks `sections`, so
+nothing about an extra can move a start time or the agenda. It also gets no
+`#sec-NN` slide anchor and no Kahoot.
 
-Everything else about them is a notebook like any other: the same generated
+Everything else about it is a notebook like any other: the same generated
 header and footer, the same ownership boundary, the same checks.
+
+It was section 09 until matrix and tensor factorizations became sections 09 and
+11. The workshop's connecting idea still has three legs — pseudoinverse,
+deconvolution, Tucker — and this is the one the room no longer runs, which is
+why sections 07, 10 and 12 all name it out loud.
 
 ## Shape of each notebook
 

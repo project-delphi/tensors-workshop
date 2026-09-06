@@ -101,13 +101,13 @@
 </tr>
 <tr>
 <td>09</td>
-<td><strong>Convolución y deconvolución</strong><br><small>Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada.</small></td>
+<td><strong>Factorizaciones matriciales</strong><br><small>Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.</small></td>
 <td>ejercicio</td>
 <td>15</td>
-<td><a href="../slides/en/#sec-09-convolution-and-deconvolution">EN</a></td>
-<td><a href="../slides/es/#sec-09-convolution-and-deconvolution">ES</a></td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb">src</a></td>
-<td><a href="../kahoot.html#quiz-3">Q3</a></td>
+<td><a href="../slides/en/#sec-09-matrix-factorizations">EN</a></td>
+<td><a href="../slides/es/#sec-09-matrix-factorizations">ES</a></td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb">src</a></td>
+<td>—</td>
 </tr>
 <tr>
 <td>10</td>
@@ -120,16 +120,26 @@
 <td><a href="../kahoot.html#quiz-3">Q3</a></td>
 </tr>
 <tr class="kahoot-row">
-<td>🎯</td><td colspan="7"><a href="../kahoot.html#quiz-3">Kahoot 3 — Convolución y descomposiciones tensoriales · 6 preguntas · 5 min</a> — <small>cubre las secciones 09, 10</small></td>
+<td>🎯</td><td colspan="7"><a href="../kahoot.html#quiz-3">Kahoot 3 — Convolución y descomposiciones tensoriales · 6 preguntas · 5 min</a> — <small>cubre las secciones 10</small></td>
 </tr>
 <tr>
 <td>11</td>
+<td><strong>Factorizaciones tensoriales</strong><br><small>Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.</small></td>
+<td>ejercicio</td>
+<td>15</td>
+<td><a href="../slides/en/#sec-11-tensor-factorizations">EN</a></td>
+<td><a href="../slides/es/#sec-11-tensor-factorizations">ES</a></td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb">src</a></td>
+<td>—</td>
+</tr>
+<tr>
+<td>12</td>
 <td><strong>Cierre y ejercicios para casa</strong><br><small>Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio.</small></td>
 <td>cierre</td>
 <td>5</td>
-<td><a href="../slides/en/#sec-11-wrap-up-and-take-homes">EN</a></td>
-<td><a href="../slides/es/#sec-11-wrap-up-and-take-homes">ES</a></td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb">src</a></td>
+<td><a href="../slides/en/#sec-12-wrap-up-and-take-homes">EN</a></td>
+<td><a href="../slides/es/#sec-12-wrap-up-and-take-homes">ES</a></td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb">src</a></td>
 <td>—</td>
 </tr>
 </tbody></table></div>

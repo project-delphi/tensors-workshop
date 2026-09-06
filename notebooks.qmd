@@ -1,6 +1,6 @@
 ---
 title: "Notebooks"
-subtitle: "One notebook per section, plus two take-home deep dives, each runnable cold in Colab"
+subtitle: "One notebook per section, plus a take-home deep dive, each runnable cold in Colab"
 ---
 
 Every section of the workshop has a notebook, and two more sit past the end of the

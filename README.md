@@ -7,9 +7,9 @@
 [![Slides EN](https://img.shields.io/badge/slides-EN-informational)](https://project-delphi.github.io/tensors-workshop/slides/en/)
 [![Diapositivas ES](https://img.shields.io/badge/diapositivas-ES-informational)](https://project-delphi.github.io/tensors-workshop/slides/es/)
 
-**A 3-hour workshop (195 minutes including three Kahoot knowledge checks) that
-takes you from "I know matrices" to manipulating, solving, convolving and
-factorizing tensors.**
+**A 3.5-hour workshop (210 minutes including three Kahoot knowledge checks)
+that takes you from "I know matrices" to manipulating, solving and factorizing
+matrices and tensors.**
 
 📍 **[project-delphi.github.io/tensors-workshop](https://project-delphi.github.io/tensors-workshop)**
  · 🇪🇸 [En español](#tensores-para-aprendizaje-automático)
@@ -71,25 +71,28 @@ Taxi Trips and the Airline Passengers series are downloaded once.
 | 06 | Contraction with einsum | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-06-contraction-with-einsum) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-06-contraction-with-einsum) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2) |
 | 07 | Inverses and the pseudoinverse | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-07-inverses-and-pseudoinverse) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-07-inverses-and-pseudoinverse) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2) |
 | 08 | Recursion with matrices and vectors | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-08-recursion-with-matrices) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-08-recursion-with-matrices) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | — |
-| 09 | Convolution and deconvolution | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-09-convolution-and-deconvolution) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-09-convolution-and-deconvolution) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb) | [Q3](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-3) |
+| 09 | Matrix factorizations | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-09-matrix-factorizations) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-09-matrix-factorizations) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | — |
 | 10 | Tucker decomposition on real data | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-10-tucker-decomposition) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-10-tucker-decomposition) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | [Q3](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-3) |
-| 11 | Wrap-up and take-homes | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | — |
+| 11 | Tensor factorizations | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-tensor-factorizations) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-tensor-factorizations) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | — |
+| 12 | Wrap-up and take-homes | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-12-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-12-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | — |
 <!-- END sections-en -->
 
-The 🎯 quizzes run after sections 04, 07 and 10. The twelve sections come to 165
-minutes; the three quizzes add 15 and three 5-minute breaks another 15, for 195.
+The 🎯 quizzes run after sections 04, 07 and 10. The thirteen sections come to
+180 minutes; the three quizzes add 15 and three 5-minute breaks another 15, for
+210.
 
 ## Going further
 
-Two **deep dives** ship with the workshop without being part of it. They are
-take-home material: no slides, no Kahoot, and no place on the 195-minute clock,
-which does not move to make room for them.
+One **deep dive** ships with the workshop without being part of it. It is
+take-home material: no slides, no Kahoot, and no place on the 210-minute clock,
+which does not move to make room for it. Convolution and deconvolution moved
+here when matrix and tensor factorizations became sections 09 and 11 — the
+through-line still names it, and section 12 still points at it.
 
 <!-- BEGIN extras-en -->
 | # | Deep dive | Colab |
 |---|---|---|
-| 12 | Matrix factorizations | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb) |
-| 13 | Tensor factorizations | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb) |
+| 13 | Convolution and deconvolution | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb) |
 <!-- END extras-en -->
 
 ## Run it locally
@@ -110,7 +113,7 @@ uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab
 
 ### Regenerating the derived files
 
-`_variables.yml` is the single source of truth: repo coordinates, the twelve
+`_variables.yml` is the single source of truth: repo coordinates, the thirteen
 sections, the two take-home extras, the three quizzes. Two scripts read it, and
 **nothing they produce should be edited by hand**:
 
@@ -156,7 +159,7 @@ in the Handbook.
 
 # Tensores para Aprendizaje Automático
 
-**Un taller de 3 horas (195 minutos con tres controles de conocimiento con
+**Un taller de 3,5 horas (210 minutos con tres controles de conocimiento con
 Kahoot) que te lleva de «sé lo que es una matriz» a manipular, resolver,
 convolucionar y factorizar tensores.**
 
@@ -217,26 +220,29 @@ trabajo.
 | 06 | Contracción con einsum | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-06-contraction-with-einsum) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-06-contraction-with-einsum) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2) |
 | 07 | Inversas y la pseudoinversa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-07-inverses-and-pseudoinverse) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-07-inverses-and-pseudoinverse) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2) |
 | 08 | Recursión con matrices y vectores | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-08-recursion-with-matrices) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-08-recursion-with-matrices) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | — |
-| 09 | Convolución y deconvolución | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-09-convolution-and-deconvolution) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-09-convolution-and-deconvolution) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb) | [Q3](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-3) |
+| 09 | Factorizaciones matriciales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-09-matrix-factorizations) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-09-matrix-factorizations) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | — |
 | 10 | Descomposición de Tucker con datos reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-10-tucker-decomposition) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-10-tucker-decomposition) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | [Q3](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-3) |
-| 11 | Cierre y ejercicios para casa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | — |
+| 11 | Factorizaciones tensoriales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-tensor-factorizations) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-tensor-factorizations) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | — |
+| 12 | Cierre y ejercicios para casa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-12-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-12-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | — |
 <!-- END sections-es -->
 
-Los cuestionarios 🎯 se ejecutan después de las secciones 04, 07 y 10. Las doce
-secciones suman 165 minutos; los tres cuestionarios añaden 15 y las tres pausas
-de 5 minutos otros 15: en total, 195.
+Los cuestionarios 🎯 se ejecutan después de las secciones 04, 07 y 10. Las trece
+secciones suman 180 minutos; los tres cuestionarios añaden 15 y las tres pausas
+de 5 minutos otros 15: en total, 210.
 
 ## Para seguir
 
-Dos **estudios a fondo** acompañan al taller sin formar parte de él. Son
-material para después: sin diapositivas, sin Kahoot y sin sitio en el reloj de
-195 minutos, que no se mueve para hacerles hueco.
+Un **estudio a fondo** acompaña al taller sin formar parte de él. Es material
+para después: sin diapositivas, sin Kahoot y sin sitio en el reloj de 210
+minutos, que no se mueve para hacerle hueco. La convolución y la deconvolución
+pasaron aquí cuando las factorizaciones matriciales y tensoriales se
+convirtieron en las secciones 09 y 11; el hilo conductor las sigue nombrando, y
+la sección 12 sigue señalándolas.
 
 <!-- BEGIN extras-es -->
 | # | Estudio a fondo | Colab |
 |---|---|---|
-| 12 | Factorizaciones matriciales | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb) |
-| 13 | Factorizaciones tensoriales | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb) |
+| 13 | Convolución y deconvolución | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb) |
 <!-- END extras-es -->
 
 ## Ejecutarlo en local

@@ -5,14 +5,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A bilingual (EN/ES) Quarto website for a 3-hour tensors workshop. No application
-code — the deliverables are the rendered site, fourteen Colab notebooks (twelve
-sections plus two take-home extras), two revealjs decks and three Kahoot
-spreadsheets.
+code — the deliverables are the rendered site, fourteen Colab notebooks
+(thirteen sections plus one take-home extra), two revealjs decks and three
+Kahoot spreadsheets.
 
 ## The one rule that matters
 
-`_variables.yml` is the single source of truth (repo coordinates, the twelve
-sections, the two extras, the three quizzes, the agenda). Three things read it:
+`_variables.yml` is the single source of truth (repo coordinates, the thirteen
+sections, the extra, the three quizzes, the agenda). Three things read it:
 `{{< var >}}`
 shortcodes in the `.qmd` pages and both decks, the two generator scripts, and
 the checker. The generator and the checker both need the running clock —
@@ -187,7 +187,7 @@ non-zero: notebooks are valid with no outputs or execution counts; every
 notebook `docs/` serves is byte-identical to the one committed in
 `notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
-same twelve sections (extras appear in neither, by design); each section's
+same thirteen sections (extras appear in neither, by design); each section's
 written `start`/`end` still matches the
 running clock derived from `minutes` plus the quizzes and breaks between them,
 and the `agenda` rows still account for every segment of that clock exactly
@@ -223,8 +223,8 @@ leaves `docs/notebooks/` serving the old copy, and neither the regenerate gate
 nor `compare_render.py` would say so: the first reruns
 `scripts/gen_notebooks.py` and only fails if the tracked `notebooks/` drift
 from the normalizer's output, never looking in `docs/`, while the second skips
-non-HTML entirely. That is what let it happen twice, once to nine of the twelve
-notebooks at a stroke.
+non-HTML entirely. That is what let it happen twice, once to nine notebooks at
+a stroke.
 
 Check 2 in `check_links.py` closes it, and it *is* byte-exact — Quarto copies
 these files instead of transforming them, so there is no SCSS-style difference

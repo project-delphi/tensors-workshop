@@ -204,9 +204,169 @@ SLIDES = [
         },
     },
     {
-        "stem": "slide-28a",
+        "stem": "slide-25a",
+        "kind": "divider",
         "en": {
-            "eyebrow": "Notebook 10 · Deep dive 13",
+            "eyebrow": "Notebook 09 · Factorizations",
+            "title": ["09 ·", "Matrix factorizations"],
+            "badge": "15 min · exercise",
+            "objective": ("Objective:", "walk section 01's map on real data, "
+                          "and find out what each factorization costs."),
+            "cards": [
+                ("◧", "Six methods, one shape", [
+                    "LU, QR, Cholesky, eigendecomposition, SVD, NMF.",
+                    "Each is the same optimization under a different "
+                    "constraint.",
+                ]),
+                ("◷", "Cost, derived then measured", [
+                    "The flop table first, the stopwatch second.",
+                    "They disagree, and the disagreement is the lesson.",
+                ]),
+                ("◐", "Eigendecomposition, named", [
+                    "The tool section 10 leans on.",
+                    "Introduced here rather than assumed.",
+                ]),
+            ],
+            "callout": ("Predict before you run:", "every exercise asks for "
+                        "your guess first. That is what makes the cost and "
+                        "conditioning lessons land."),
+        },
+        "es": {
+            "eyebrow": "Notebook 09 · Factorizaciones",
+            "title": ["09 ·", "Factorizaciones matriciales"],
+            "badge": "15 min · ejercicio",
+            "objective": ("Objetivo:", "recorrer sobre datos reales el mapa "
+                          "de la sección 01 y descubrir cuánto cuesta cada "
+                          "factorización."),
+            "cards": [
+                ("◧", "Seis métodos, una forma", [
+                    "LU, QR, Cholesky, descomposición espectral, SVD, NMF.",
+                    "Cada una es la misma optimización con otra restricción.",
+                ]),
+                ("◷", "Coste, deducido y medido", [
+                    "Primero la tabla de operaciones, después el cronómetro.",
+                    "No coinciden, y ese desacuerdo es la lección.",
+                ]),
+                ("◐", "La descomposición espectral, nombrada", [
+                    "La herramienta en la que se apoya la sección 10.",
+                    "Se presenta aquí en vez de darse por sabida.",
+                ]),
+            ],
+            "callout": ("Predice antes de ejecutar:", "cada ejercicio pide "
+                        "tu conjetura primero. Eso es lo que hace que las "
+                        "lecciones de coste y condicionamiento calen."),
+        },
+    },
+    {
+        "stem": "slide-26a",
+        "en": {
+            "eyebrow": "Notebook 09 · Cost",
+            "title": ["Factor once,", "solve many"],
+            "subtitle": "The same real least-squares problem, three ways",
+            "cards": [
+                ("∑", "Normal equations", [
+                    "Fastest to write.",
+                    "Squares the condition number — the answer degrades long "
+                    "before the clock does.",
+                ]),
+                ("⊿", "QR", [
+                    "The stable default.",
+                    "A predictable cost, and it never forms AᵀA.",
+                ]),
+                ("≈", "SVD", [
+                    "The most expensive and the most informative.",
+                    "Eckart–Young gives the truncation error without "
+                    "building the truncation.",
+                ]),
+            ],
+            "callout": ("What survives the machine:", "the flop table says a "
+                        "full SVD costs about 39× a Cholesky, and you measure "
+                        "near that. The exponent it predicts, you do not."),
+        },
+        "es": {
+            "eyebrow": "Notebook 09 · Coste",
+            "title": ["Factoriza una vez,", "resuelve muchas"],
+            "subtitle": "El mismo problema real de mínimos cuadrados, de tres "
+                        "formas",
+            "cards": [
+                ("∑", "Ecuaciones normales", [
+                    "Las más rápidas de escribir.",
+                    "Elevan al cuadrado el número de condición: la respuesta "
+                    "se degrada mucho antes que el reloj.",
+                ]),
+                ("⊿", "QR", [
+                    "La opción estable por defecto.",
+                    "Coste predecible, y nunca forma AᵀA.",
+                ]),
+                ("≈", "SVD", [
+                    "La más cara y la más informativa.",
+                    "Eckart–Young da el error de truncamiento sin construir "
+                    "el truncamiento.",
+                ]),
+            ],
+            "callout": ("Lo que sobrevive a la máquina:", "la tabla predice "
+                        "que una SVD completa cuesta unas 39× una Cholesky, y "
+                        "eso lo mides. El exponente que predice, no."),
+        },
+    },
+    {
+        "stem": "slide-29a",
+        "kind": "divider",
+        "en": {
+            "eyebrow": "Notebook 11 · Tensor factorizations",
+            "title": ["11 ·", "Tensor factorizations"],
+            "badge": "15 min · exercise",
+            "objective": ("Objective:", "choose the decomposition from the "
+                          "structure you need to keep, and the rank from the "
+                          "loss you can afford."),
+            "cards": [
+                ("⊟", "Why not flatten first?", [
+                    "Flattening keeps every number.",
+                    "It loses which direction meant what.",
+                ]),
+                ("⚖", "Matched budget, not matched rank", [
+                    "CP against Tucker at the same parameter count.",
+                    "Rank for rank is not a fair comparison.",
+                ]),
+                ("↗", "Growth, not constants", [
+                    "A faster machine changes the constants.",
+                    "It does not change which formula grows exponentially.",
+                ]),
+            ],
+            "callout": ("Following section 10:", "Tucker was one bargain. "
+                        "This section puts the other three beside it and "
+                        "makes you pay for each."),
+        },
+        "es": {
+            "eyebrow": "Notebook 11 · Factorizaciones tensoriales",
+            "title": ["11 ·", "Factorizaciones tensoriales"],
+            "badge": "15 min · ejercicio",
+            "objective": ("Objetivo:", "elegir la descomposición según la "
+                          "estructura que necesitas conservar, y el rango "
+                          "según la pérdida que puedes aceptar."),
+            "cards": [
+                ("⊟", "¿Por qué no aplanar primero?", [
+                    "Aplanar conserva todos los números.",
+                    "Pierde qué significaba cada dirección.",
+                ]),
+                ("⚖", "Mismo presupuesto, no mismo rango", [
+                    "CP frente a Tucker con el mismo número de parámetros.",
+                    "Rango contra rango no es una comparación justa.",
+                ]),
+                ("↗", "Crecimiento, no constantes", [
+                    "Una máquina más rápida cambia las constantes.",
+                    "No cambia qué fórmula crece exponencialmente.",
+                ]),
+            ],
+            "callout": ("Después de la sección 10:", "Tucker fue un trato. "
+                        "Esta sección pone los otros tres a su lado y te hace "
+                        "pagar por cada uno."),
+        },
+    },
+    {
+        "stem": "slide-29b",
+        "en": {
+            "eyebrow": "Notebook 11 · Four bargains",
             "title": ["Four decompositions,", "four bargains"],
             "subtitle": "Each one keeps a different structure — and that "
                         "choice is the decision",
@@ -232,12 +392,12 @@ SLIDES = [
                     "When mode 3 carries a meaning of its own.",
                 ]),
             ],
-            "callout": ("Deep dive 13:", "runs all four on one tensor at a "
-                        "matched parameter budget — the comparison this slide "
-                        "only asserts."),
+            "callout": ("The decision, in order:", "structure first, "
+                        "then rank. The flop count is the last thing you "
+                        "should choose on."),
         },
         "es": {
-            "eyebrow": "Notebook 10 · Profundización 13",
+            "eyebrow": "Notebook 11 · Cuatro tratos",
             "title": ["Cuatro descomposiciones,", "cuatro tratos"],
             "subtitle": "Cada una conserva una estructura distinta, y esa "
                         "elección es la decisión",
@@ -263,9 +423,9 @@ SLIDES = [
                     "Cuando el modo 3 tiene un significado propio.",
                 ]),
             ],
-            "callout": ("Profundización 13:", "ejecuta las cuatro sobre un "
-                        "mismo tensor con el mismo presupuesto de parámetros: "
-                        "la comparación que esta diapositiva solo afirma."),
+            "callout": ("La decisión, en orden:", "primero la estructura, "
+                        "después el rango. El número de operaciones es lo "
+                        "último por lo que deberías decidir."),
         },
     },
 ]
@@ -310,7 +470,7 @@ html, body {{
   background-size: 32px 32px;
 }}
 .dots.tl {{ top: 34px;  left: 46px; opacity: .85; }}
-.dots.mr {{ top: 236px; right: 44px; opacity: .5; }}
+.dots.mr {{ top: 470px; right: 44px; opacity: .5; }}
 
 /* The wave band along the bottom edge. Three overlapping ellipses -- blue on
    the left, green on the right, a pale sheet over both -- which is as close as
@@ -418,6 +578,63 @@ h2 {{
 }}
 .card p + p {{ margin-top: 10px; }}
 
+/* A section divider carries two things a content slide does not: the minutes
+   badge beside the title, and an objective bar under it. Both are read off the
+   existing divider art, and both come from _variables.yml rather than being
+   typed here, so a section that changes its minutes cannot end up with a slide
+   that disagrees -- which is exactly how the hand-drawn dividers go stale. */
+/* Spanish section titles run longer than English ones -- "Factorizaciones
+   tensoriales" against "Tensor factorizations" -- so the divider sets its
+   title smaller than a content slide and lets the badge wrap below rather
+   than pushing the cards under the callout bar. */
+.titlerow {{ display: flex; flex-wrap: wrap; align-items: center; gap: 26px; }}
+.titlerow h1 {{ font-size: 78px; }}
+.badge {{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 0 0 auto;
+  margin-top: 14px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  background: rgba(219, 233, 250, .75);
+  color: {NAVY};
+  font-size: 26px;
+  font-weight: 600;
+  white-space: nowrap;
+}}
+.badge .dot {{
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 3px solid {BLUE};
+}}
+.objective {{
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 26px;
+  padding: 20px 30px;
+  border: 2px solid rgba(15, 143, 147, .45);
+  border-radius: 18px;
+  background: #edf8f8;
+}}
+.objective .mark {{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: {TEAL};
+  color: #ffffff;
+  font-size: 27px;
+  line-height: 1;
+}}
+.objective p {{ font-size: 28px; font-weight: 500; color: {NAVY}; }}
+.objective strong {{ color: {TEAL}; font-weight: 700; }}
+
 /* The callout bar, same shape and colour as the one on every neighbouring
    slide. The disc holds an arrow rather than a lightbulb; see the module
    docstring. */
@@ -452,7 +669,7 @@ h2 {{
 .callout strong {{ color: {TEAL}; font-weight: 700; }}
 """
 
-PAGE = """<!doctype html>
+HEAD = """<!doctype html>
 <html lang="{lang}"><head><meta charset="utf-8"><style>{css}</style></head>
 <body><div class="page">
   <span class="dots tl"></span><span class="dots mr"></span>
@@ -461,24 +678,44 @@ PAGE = """<!doctype html>
   <div class="content">
     <div class="eyebrow">{eyebrow}</div>
     <div class="rule"></div>
-    <h1>{title}</h1>
-    <h2>{subtitle}</h2>
+    {head}
     <div class="cards n{n}">{cards}</div>
   </div>
-  <div class="callout"><span class="mark">→</span>
+  <div class="callout"><span class="mark">&#8594;</span>
     <p><strong>{lead}</strong> {rest}</p></div>
 </div></body></html>
 """
+
+# A content slide leads with a two-line title and a one-line subtitle.
+CONTENT_HEAD = """<h1>{title}</h1>
+    <h2>{subtitle}</h2>"""
+
+# A divider leads with "NN . Title", the minutes badge, and the objective bar.
+DIVIDER_HEAD = """<div class="titlerow">
+      <h1>{title}</h1>
+      <div class="badge"><span class="dot"></span>{badge}</div>
+    </div>
+    <div class="objective"><span class="mark">&#9678;</span>
+      <p><strong>{objective_lead}</strong> {objective}</p></div>"""
 
 
 def e(text: str) -> str:
     return html.escape(text, quote=False)
 
 
-def page(copy: dict, lang: str) -> str:
+def page(copy: dict, lang: str, kind: str) -> str:
     """One slide's HTML. The second half of the title carries the gradient."""
     first, accent = copy["title"]
-    title = f'{e(first)}<br><span class="accent">{e(accent)}</span>'
+    if kind == "divider":
+        # One line, not two: "09 . Matrix factorizations" is a name, and
+        # breaking it after the number reads as a list item.
+        title = f'{e(first)} <span class="accent">{e(accent)}</span>'
+        head = DIVIDER_HEAD.format(title=title, badge=e(copy["badge"]),
+                                   objective_lead=e(copy["objective"][0]),
+                                   objective=e(copy["objective"][1]))
+    else:
+        title = f'{e(first)}<br><span class="accent">{e(accent)}</span>'
+        head = CONTENT_HEAD.format(title=title, subtitle=e(copy["subtitle"]))
     cards = "".join(
         '<div class="card">'
         f'<div class="disc">{e(glyph)}</div>'
@@ -489,9 +726,8 @@ def page(copy: dict, lang: str) -> str:
         for glyph, heading, lines in copy["cards"]
     )
     lead, rest = copy["callout"]
-    return PAGE.format(lang=lang, css=CSS, eyebrow=e(copy["eyebrow"]),
-                       title=title, subtitle=e(copy["subtitle"]),
-                       n=len(copy["cards"]), cards=cards,
+    return HEAD.format(lang=lang, css=CSS, eyebrow=e(copy["eyebrow"]),
+                       head=head, n=len(copy["cards"]), cards=cards,
                        lead=e(lead), rest=e(rest))
 
 
@@ -525,9 +761,11 @@ def main() -> None:
     with tempfile.TemporaryDirectory() as tmp:
         tmpdir = Path(tmp)
         for slide in SLIDES:
+            kind = slide.get("kind", "content")
             for lang, directory in DECKS.items():
                 source = tmpdir / f"{slide['stem']}-{lang}.html"
-                source.write_text(page(slide[lang], lang), encoding="utf-8")
+                source.write_text(page(slide[lang], lang, kind),
+                                  encoding="utf-8")
                 out = directory / f"{slide['stem']}.png"
                 shoot(browser, source, out)
                 print(f"  {out.relative_to(ROOT)}")
