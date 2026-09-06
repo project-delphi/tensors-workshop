@@ -344,9 +344,14 @@ Section 01 · What a tensor is — 20 min, running +00:05 to +00:25. Objective: 
 <p class="sr-only">
 Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.
 </p>
+<p class="sr-only">
+Deep dive 12 is the take-home for this map: every factorization written as a constrained optimization, the cost of each one derived and then measured, and SVD as the best rank-k approximation there is. It is for anyone who wants the “which one, and what does it cost me” answer this ladder only gestures at.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb" class="colab-tab colab-tab-extra" target="_blank" rel="noopener noreferrer" title="Open deep dive 12 in Google Colab">Deep dive 12 ↗</a></p>
 <p><a href="https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Why so many matrix factorizations? ↗</a></p>
 <aside class="notes">
 <p>Prime factorization is unique up to ordering — the cleanest case on the slide. Generic low-rank matrix factors have gauge freedom (the <span class="math inline">\(M\)</span>/<span class="math inline">\(M^{-\top}\)</span> pair); extra structure or a convention — positive pivots, orthonormal columns, a positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can be essentially unique under suitable identifiability conditions, up to permutation and a compensating nonzero scaling across modes; over the reals, sign flips are a special case of that scaling. Kruskal’s <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span> is a <em>sufficient</em> condition, not a necessary one, and it says nothing about whether the decomposition is easy to find. Worth saying if there is time: computing tensor rank is NP-hard in general, tensor rank can exceed every individual mode dimension, and a best rank-<span class="math inline">\(R\)</span> approximation need not even exist — none of that is true of matrices.</p>
+<p>Name deep dive 12 here rather than saving it for the closing slide. This is the minute a student wonders why there are so many of these, and 12 is the notebook that answers it with a cost column.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -531,15 +536,48 @@ NumPy to einsum: a table maps inner product, outer product, matmul, transpose, t
 Section 07 · Inverses and the pseudoinverse — 15 min, running +02:00 to +02:15. Objective: distinguish wide, square and tall matrices and use the pseudoinverse for stable solutions. Three colour-coded matrices illustrate each case.
 </p>
 </section>
-<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-20a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+Three shapes, three answers. Four cards: a square full-rank matrix, where the inverse exists and Ax = b has exactly one solution; a square singular matrix, where the inverse is undefined but the pseudoinverse is not, because it is computed from the SVD; a tall matrix, more equations than unknowns, where A-plus b is the least-squares fit that minimises the residual; and a wide matrix, infinitely many solutions, where A-plus b returns the one of smallest norm.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab">Colab ↗</a></p>
+<aside class="notes">
+<p>The theory slide section 07 used to do out loud. Take the four cards in order and make the room say which case California Housing is before the next slide shows it.</p>
+<p>TODO 3 asks students to trigger an error deliberately. The callout bar now says so on the slide, but say it out loud as well, or several will think they broke something. The notebook carries the fuller version in its “Important numerical note”: an exception is not the mathematical definition of singular — rank below the number of columns is.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab">Colab ↗</a></p>
-<p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Rotate, stretch, rotate again ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Tensor inverses in practice ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Rotate, stretch, rotate again ↗</a></p>
+</section>
+<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-21a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+What about tensors? Three cards: there is no single tensor inverse everyone uses, which is a fair question with an honest answer rather than a gap in your reading; definitions built on the Einstein product, and on the t-product for order-3 tensors, do exist and are active research; and in practice you unfold the tensor into a matrix, apply the matrix pseudoinverse, and fold the result back — a 4 by 3 by 5 tensor unfolds to 4 by 15, whose pseudoinverse is 15 by 4, and M A-plus M returns M exactly, because unfolding loses nothing.
+</p>
+<p class="sr-only">
+This is also where the second half’s through-line starts: the pseudoinverse in section 07, Richardson-Lucy deconvolution in section 09 and Tucker in section 10 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab">Colab ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Tensor inverses in practice ↗</a></p>
 <aside class="notes">
-<p>TODO 3 asks students to trigger an error deliberately — say in advance that the error is the expected result, or several will think they broke something.</p>
+<p>“Is there a tensor inverse?” gets asked in every run of this workshop. Answer it here instead of deflecting: there is no single one, several definitions do exist, and the working answer is unfold, pinv, fold back.</p>
+<p>State the through-line here as well as on the closing slide. Sections 08, 09 and 10 all sit downstream of it, and saying it now is what keeps the second half from reading as four unrelated blocks.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -602,7 +640,7 @@ Section 08 · Recursion with matrices and vectors — 10 min, running +02:20 to 
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08’s own output once Issue #49 is implemented.
@@ -622,7 +660,7 @@ Gradient descent is also recursion: the scalar, vector and matrix forms of gradi
 Section 09 · Convolution and deconvolution — 15 min, running +02:30 to +02:45. Objective: understand convolution as a local operation and why inverting it is a different problem. A Manhattan Bridge photo is blurred, partially recovered, and its error map shown.
 </p>
 </section>
-<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-26.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-26.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Forward is not transpose is not inverse: a real photograph shows the forward blur, its transpose (which does not undo the blur), and a Richardson-Lucy partial recovery, labelled as three distinct operations.
@@ -654,15 +692,40 @@ Forward is not transpose is not inverse: a real photograph shows the forward blu
 Section 10 · Tucker decomposition on real data — 15 min, running +02:50 to +03:05. Objective: convert taxi trips into a pickup-borough by dropoff-borough by hour tensor and compress it by mode. A real 6:00 PM slice is compared against its Tucker reconstruction and absolute error.
 </p>
 </section>
-<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-16" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab">Colab ↗</a></p>
-<p><a href="https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 What a tensor factorization buys you ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Tensor factorizations and inverses ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 What a tensor factorization buys you ↗</a></p>
 <aside class="notes">
 <p>Never cut section 10. In tech, Tucker and CP compress neural network weight tensors so models run on phones. In biotech, on (genes × samples × conditions), they find structure PCA cannot reach — PCA can only ever see two axes.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="section-17" class="slide level2" data-background-image="images/slides-final/slide-28a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.
+</p>
+<p class="sr-only">
+Deep dive 13 runs all four on one tensor at a matched parameter budget, and adds the flattening argument and the growth-rate argument for Tensor Train. It is for anyone who wants that comparison measured rather than asserted.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab">Colab ↗</a> <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb" class="colab-tab colab-tab-extra" target="_blank" rel="noopener noreferrer" title="Open deep dive 13 in Google Colab">Deep dive 13 ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Tensor factorizations and inverses ↗</a></p>
+<aside class="notes">
+<p>Section 10 teaches Tucker only, and with 15 minutes that is the right call. This slide is where the other three get named, so a student who opens deep dive 13 afterwards meets CP, Tensor Train and t-SVD already knowing what each one is for.</p>
+<p>If you are behind, read the four headings and the callout and move on. The comparison belongs to the deep dive, not to this room.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -700,7 +763,7 @@ Active break: Kahoot 3, Convolution &amp; Tensor Decompositions. 6 questions cov
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-18" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 One idea connects the workshop: pseudoinverse, deconvolution and Tucker are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.

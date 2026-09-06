@@ -103,6 +103,8 @@ never Part I.
 ## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.</p>
+<p class="sr-only">Deep dive 12 is the take-home for this map: every factorization written as a constrained optimization, the cost of each one derived and then measured, and SVD as the best rank-k approximation there is. It is for anyone who wants the "which one, and what does it cost me" answer this ladder only gestures at.</p>
+[Deep dive 12 ↗]({{< var repo.colab_base >}}/{{< var extras.x12.n >}}-{{< var extras.x12.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 12 in Google Colab"}
 
 [📖 {{< var reading.why_so_many.title_en >}} ↗]({{< var reading.why_so_many.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
@@ -119,6 +121,10 @@ and it says nothing about whether the decomposition is easy to find. Worth
 saying if there is time: computing tensor rank is NP-hard in general, tensor
 rank can exceed every individual mode dimension, and a best rank-$R$
 approximation need not even exist — none of that is true of matrices.
+
+Name deep dive 12 here rather than saving it for the closing slide. This is
+the minute a student wonders why there are so many of these, and 12 is the
+notebook that answers it with a cost column.
 :::
 
 ## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -244,17 +250,46 @@ the only bridge.
 <h1 class="sr-only">{{< var sections.s07.n >}} · {{< var sections.s07.title_en >}}</h1>
 <p class="sr-only">Section {{< var sections.s07.n >}} · {{< var sections.s07.title_en >}} — {{< var sections.s07.minutes >}} min, running {{< var sections.s07.start >}} to {{< var sections.s07.end >}}. Objective: distinguish wide, square and tall matrices and use the pseudoinverse for stable solutions. Three colour-coded matrices illustrate each case.</p>
 
+## {background-image="images/slides-final/slide-20a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Three shapes, three answers. Four cards: a square full-rank matrix, where the inverse exists and Ax = b has exactly one solution; a square singular matrix, where the inverse is undefined but the pseudoinverse is not, because it is computed from the SVD; a tall matrix, more equations than unknowns, where A-plus b is the least-squares fit that minimises the residual; and a wide matrix, infinitely many solutions, where A-plus b returns the one of smallest norm.</p>
+[Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
+
+::: {.notes}
+The theory slide section 07 used to do out loud. Take the four cards in order
+and make the room say which case California Housing is before the next slide
+shows it.
+
+TODO 3 asks students to trigger an error deliberately. The callout bar now
+says so on the slide, but say it out loud as well, or several will think they
+broke something. The notebook carries the fuller version in its "Important
+numerical note": an exception is not the mathematical definition of singular —
+rank below the number of columns is.
+:::
+
 ## {background-image="images/slides-final/slide-21.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
 
 [📖 {{< var reading.svd.title_en >}} ↗]({{< var reading.svd.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
+## {background-image="images/slides-final/slide-21a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">What about tensors? Three cards: there is no single tensor inverse everyone uses, which is a fair question with an honest answer rather than a gap in your reading; definitions built on the Einstein product, and on the t-product for order-3 tensors, do exist and are active research; and in practice you unfold the tensor into a matrix, apply the matrix pseudoinverse, and fold the result back — a 4 by 3 by 5 tensor unfolds to 4 by 15, whose pseudoinverse is 15 by 4, and M A-plus M returns M exactly, because unfolding loses nothing.</p>
+<p class="sr-only">This is also where the second half's through-line starts: the pseudoinverse in section 07, Richardson-Lucy deconvolution in section 09 and Tucker in section 10 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.</p>
+[Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
+
 [📖 {{< var reading.inverses_practice.title_en >}} ↗]({{< var reading.inverses_practice.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
 ::: {.notes}
-TODO 3 asks students to trigger an error deliberately — say in advance that the
-error is the expected result, or several will think they broke something.
+"Is there a tensor inverse?" gets asked in every run of this workshop. Answer
+it here instead of deflecting: there is no single one, several definitions do
+exist, and the working answer is unfold, pinv, fold back.
+
+State the through-line here as well as on the closing slide. Sections 08, 09
+and 10 all sit downstream of it, and saying it now is what keeps the second
+half from reading as four unrelated blocks.
 :::
 
 ## {#sec-kahoot-2 background-image="images/slides-final/slide-22.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -332,12 +367,30 @@ Say the border-crop warning out loud before they start, not after.
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
 
 [📖 {{< var reading.uses.title_en >}} ↗]({{< var reading.uses.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
-[📖 {{< var reading.tensor_factorizations.title_en >}} ↗]({{< var reading.tensor_factorizations.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
 ::: {.notes}
 Never cut section 10. In tech, Tucker and CP compress neural network weight
 tensors so models run on phones. In biotech, on (genes × samples × conditions),
 they find structure PCA cannot reach — PCA can only ever see two axes.
+:::
+
+## {background-image="images/slides-final/slide-28a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.</p>
+<p class="sr-only">Deep dive 13 runs all four on one tensor at a matched parameter budget, and adds the flattening argument and the growth-rate argument for Tensor Train. It is for anyone who wants that comparison measured rather than asserted.</p>
+[Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
+[Deep dive 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 13 in Google Colab"}
+
+[📖 {{< var reading.tensor_factorizations.title_en >}} ↗]({{< var reading.tensor_factorizations.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
+::: {.notes}
+Section 10 teaches Tucker only, and with 15 minutes that is the right call.
+This slide is where the other three get named, so a student who opens deep
+dive 13 afterwards meets CP, Tensor Train and t-SVD already knowing what each
+one is for.
+
+If you are behind, read the four headings and the callout and move on. The
+comparison belongs to the deep dive, not to this room.
 :::
 
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
