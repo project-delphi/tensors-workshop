@@ -21,7 +21,14 @@ code on a slide either: every slide is a rendered PNG under
 runs anything. That keeps CI fast and means a deck cannot break because a
 dependency moved — but it also means **nothing checks that a number shown on a
 slide still matches the notebook it came from**. When a notebook's output
-changes, the slide art has to be redrawn by hand.
+changes, the slide art has to be redrawn.
+
+The thirty-one PNGs numbered `slide-01` to `slide-31` were drawn by hand in a
+tool that is not in this repository, so redrawing one means redrawing it there.
+Anything added since — the `slide-NNa` insertions — has a source:
+[`scripts/gen_slide_art.py`](../scripts/gen_slide_art.py), which holds the copy
+in both languages, lays it out in CSS, and screenshots it with headless Chrome
+at the deck's own 1920×1080. See *Drawing slide art* below.
 
 ## Present
 
@@ -40,7 +47,7 @@ guidance where it is actually needed:
 - the two meanings of **"rank"**, at the start of Part I
 - the **deliberate `LinAlgError`** in section 07, which students will think is
   their mistake
-- the **25-pixel border crop** in section 09, which must be said *before* the
+- the **20-pixel border crop** in section 09, which must be said *before* the
   exercise, not after
 - on each Kahoot slide: import ahead of time, budget 5 minutes, and where that
   quiz sits in the cutting order
@@ -123,3 +130,89 @@ must stay in the qmd:
 The `#sec-NN-slug` anchors are what the section tables on the site link to, so
 **do not rename one** without updating `_variables.yml` — the link checker will
 catch it if you do.
+
+## Slide → notebook map
+
+Nothing checks this table, which is exactly why it is written down: the deck and
+the notebooks are the two halves of the same lesson and they drift silently
+(#63). A `·` means the slide carries no notebook of its own and inherits its
+section's.
+
+| Slide | Anchor | Notebook | What it introduces |
+|---|---|---|---|
+| 01–03 | — | — | Title, the workshop idea, the four datasets |
+| agenda | — | — | The running clock, from `_includes/agenda-{en,es}.md` |
+| 04 | `sec-00-setup-and-data` | 00 | Setup and welcome |
+| 05 | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
+| 06 | · | 01 · **deep dive 12** | Map of factorizations |
+| 07 | · | 01 | What a factorization gives you: number → polynomial → matrix → tensor |
+| 08 | `sec-02-thinking-in-n-dimensions` | 02 | Thinking in N dimensions |
+| 09 | · | 02 | Batch is not time |
+| 10 | `sec-03-indexing-and-broadcasting` | 03 | Indexing and broadcasting |
+| 11 | · | 03 | Broadcasting on real images |
+| 12 | `sec-04-reshape-and-transpose` | 04 | Reshape and transpose |
+| 13 | · | 04 | Reshape vs. transpose |
+| 14 | `sec-kahoot-1` | — | Quiz 1 |
+| 15 | `sec-05-video-pipeline-design` | 05 | Video pipeline design |
+| 16 | · | 05 | Pad or sample |
+| 17 | `sec-06-contraction-with-einsum` | 06 | Contraction with einsum |
+| 18 | · | 06 | Reading an einsum expression |
+| 19 | · | 06 | NumPy and einsum, side by side |
+| 20 | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
+| **20a** | · | 07 | **Square, singular, tall, wide — and what `A⁺` returns in each** |
+| 21 | · | 07 | California Housing, 20,433 equations |
+| **21a** | · | 07 | **Tensor inverses: unfold → `pinv` → fold, and the second half's through-line** |
+| 22 | `sec-kahoot-2` | — | Quiz 2 |
+| 23 | `sec-08-recursion-with-matrices` | 08 | Recursion with matrices |
+| 24 | · | 08 | Eigenvectors and the dominant direction |
+| 25 | `sec-09-convolution-and-deconvolution` | 09 | Convolution and deconvolution |
+| 26 | · | 09 | Forward is not transpose is not inverse |
+| 27 | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
+| 28 | · | 10 | Table → tensor → HOSVD → reconstruction |
+| **28a** | · | 10 · **deep dive 13** | **CP, Tucker, TT and t-SVD: what each stores and what it buys** |
+| 29 | `sec-kahoot-3` | — | Quiz 3 |
+| 30 | · | 11 | One idea connects sections 07, 09 and 10 |
+| 31 | `sec-11-wrap-up-and-take-homes` | 11 · deep dives 12 and 13 | Wrap-up and take-homes |
+
+**What the notebooks teach that no slide does**, and deliberately so — these are
+take-home material, and the room's 195 minutes do not stretch to them:
+
+- **Notebook 12** in full: every factorization as a constrained optimization, the
+  cost table derived and then measured, the ~340× penalty for one solve per
+  column, the measured exponent landing near 2.2–2.9 rather than 3, and NMF.
+  Slide 06 frames it; slide 06 does not teach it.
+- **Notebook 13** in full: the flattening argument, CP against Tucker at a
+  matched parameter budget, the Tensor Train growth-rate crossover, and the
+  storage-versus-apply-cost distinction. Slide 28a frames it.
+- **Take-homes A–E** in notebook 11 — PCA's scaling trap, attention as two
+  contractions, Cholesky, audio denoising. Slide 31 lists them; none is taught.
+- **Eigendecomposition** is used in section 08's recursion demo and named on no
+  slide, including slide 06's ladder. That one is not deliberate — it is
+  [#65](https://github.com/project-delphi/tensors-workshop/issues/65)'s
+  sequencing item, and fixing it means redrawing slide 06.
+
+## Drawing slide art
+
+`slide-NNa` is an **insertion**: `slide-20a` follows `slide-20`. The alternative
+was renumbering every later file, and the page number on the old art is painted
+into the image, so a rename would have made the numbering wrong in a second
+place rather than right in the first. Two consequences, both deliberate:
+
+- The baked corner number on `slide-21` onward is now one to three ahead of the
+  slide's true position. It is decoration — `slide-number: false` in both deck
+  headers means reveal shows no number of its own — and it stops being
+  authoritative after section 07.
+- New art carries **no corner number at all**, so it cannot be wrong.
+
+To add or change one of the generated slides, edit `SLIDES` in
+[`scripts/gen_slide_art.py`](../scripts/gen_slide_art.py) — copy for both
+languages lives there, next to each other, which is the point — and run:
+
+```bash
+uv run python scripts/gen_slide_art.py
+```
+
+It needs Chrome or Chromium and the network (Google Fonts), so like
+`gen_thumbnails.py` and `gen_figures.py` it is **not** in the CI regenerate
+gate: nothing will tell you a slide is stale. It is deterministic — rerunning it
+rewrites the same bytes — so `git status` after a rerun is the check.

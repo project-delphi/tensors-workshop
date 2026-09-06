@@ -38,6 +38,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
+| `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` | `quarto render` |
 
 CI reruns `gen_tables.py` and `gen_notebooks.py` and fails if the working tree
@@ -45,11 +46,11 @@ changes. This gate *is* byte-exact — both are deterministic pure Python —
 unlike the render gate under Publishing, which cannot be. A hand-edit is
 caught, but only once you push.
 
-**The two image generators are not in that gate**, deliberately: they need the
-network and a scientific stack the workflow does not install. So nothing will
-tell you an image is stale — rerun them by hand when their inputs change. Both
-are still deterministic, and both record where every pixel came from, which is
-the actual point:
+**The three image generators are not in that gate**, deliberately: they need
+the network, and a scientific stack or a browser the workflow does not install.
+So nothing will tell you an image is stale — rerun them by hand when their
+inputs change. All three are still deterministic, and all three record where
+every pixel came from, which is the actual point:
 
 - `gen_thumbnails.py` builds the nine dataset cards from SHA-256-pinned CC0
   sources. Pinning matters: a Commons file can be overwritten under the same
@@ -61,6 +62,12 @@ the actual point:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
+- `gen_slide_art.py` draws slide art from HTML and CSS, screenshotted by
+  headless Chrome at the deck's own 1920×1080. It owns only the `slide-NNa`
+  insertions: the thirty-one PNGs the #45 redesign left have no source and are
+  still redrawn by hand in the tool that made them. Copy for both languages
+  lives in one `SLIDES` table, so EN and ES cannot be edited apart. Rerunning it
+  rewrites the same bytes, which is what makes `git status` a staleness check.
 
 ## Which document owns what
 
@@ -171,6 +178,7 @@ uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
 scikit-learn,scikit-image python scripts/gen_thumbnails.py
 uv run --with numpy,pandas,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
 scikit-learn,scikit-image python scripts/gen_figures.py
+uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
 `check_links.py` is the test suite — there is no pytest here. It prints ten

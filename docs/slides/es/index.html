@@ -349,9 +349,14 @@ Sección 01 · Qué es un tensor — 20 min, de +00:05 a +00:25. Objetivo: expli
 <p class="sr-only">
 Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.
 </p>
+<p class="sr-only">
+La profundización 12 es el trabajo para casa de este mapa: cada factorización escrita como un problema de optimización con restricciones, el coste de cada una deducido y luego medido, y la SVD como la mejor aproximación de rango k que existe. Es para quien quiera la respuesta a “cuál elijo y cuánto me cuesta” que esta escalera solo insinúa.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb" class="colab-tab colab-tab-extra" target="_blank" rel="noopener noreferrer" title="Abrir la profundización 12 en Google Colab">Deep dive 12 ↗</a></p>
 <p><a href="https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 ¿Por qué hay tantas factorizaciones matriciales? ↗</a></p>
 <aside class="notes">
 <p>La factorización en primos es única salvo el orden — el caso más limpio de la diapositiva. Los factores genéricos de una matriz de bajo rango tienen libertad de gauge (el par <span class="math inline">\(M\)</span>/<span class="math inline">\(M^{-\top}\)</span>); una estructura adicional o una convención — pivotes positivos, columnas ortonormales, diagonal positiva — es lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente único bajo condiciones de identificabilidad adecuadas, salvo permutación y una escala compensatoria no nula entre modos; sobre los reales, los cambios de signo son un caso particular de esa escala. La condición de Kruskal <span class="math inline">\(k_A + k_B + k_C \ge 2R + 2\)</span> es <em>suficiente</em>, no necesaria, y no dice nada sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango tensorial puede superar cada dimensión individual de los ejes, y una mejor aproximación de rango <span class="math inline">\(R\)</span> puede no existir siquiera — nada de eso es cierto para matrices.</p>
+<p>Menciona aquí la profundización 12, no la dejes para la diapositiva final. Este es el minuto en que alguien se pregunta por qué hay tantas, y 12 es el notebook que lo responde con una columna de coste.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -536,15 +541,48 @@ NumPy y einsum: una tabla asocia producto interno, producto externo, matmul, tra
 Sección 07 · Inversas y la pseudoinversa — 15 min, de +02:00 a +02:15. Objetivo: distinguir matrices wide, square y tall y usar la pseudoinversa para obtener soluciones estables. Tres matrices con código de color ilustran cada caso.
 </p>
 </section>
-<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-20a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+Tres formas, tres respuestas. Cuatro tarjetas: una matriz cuadrada de rango completo, donde la inversa existe y Ax = b tiene exactamente una solución; una matriz cuadrada singular, donde la inversa no está definida pero la pseudoinversa sí, porque se calcula a partir de la SVD; una matriz alta, con más ecuaciones que incógnitas, donde A-más b es el ajuste por mínimos cuadrados que minimiza el residual; y una matriz ancha, con infinitas soluciones, donde A-más b devuelve la de menor norma.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab">Colab ↗</a></p>
+<aside class="notes">
+<p>La diapositiva de teoría que la sección 07 hacía solo de viva voz. Recorre las cuatro tarjetas en orden y haz que la sala diga qué caso es California Housing antes de que la siguiente lo muestre.</p>
+<p>El TODO 3 pide provocar un error a propósito. La barra de la diapositiva ya lo dice, pero dilo también en voz alta o varios pensarán que han roto algo. El notebook lleva la versión completa en su “Nota numérica importante”: una excepción no es la definición matemática de singular; lo es que el rango sea menor que el número de columnas.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab">Colab ↗</a></p>
-<p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Gira, estira y vuelve a girar ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Inversas tensoriales en la práctica ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Gira, estira y vuelve a girar ↗</a></p>
+</section>
+<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-21a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+¿Y los tensores? Tres tarjetas: no existe una única inversa tensorial aceptada por todos, lo que es una pregunta legítima con una respuesta honesta y no un hueco en tu lectura; sí existen definiciones basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa; y en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado — un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4, y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.
+</p>
+<p class="sr-only">
+Aquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, la deconvolución de Richardson-Lucy de la sección 09 y Tucker en la sección 10 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab">Colab ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Inversas tensoriales en la práctica ↗</a></p>
 <aside class="notes">
-<p>El TODO 3 pide provocar un error a propósito. Avisa antes de que el error ES el resultado esperado, o varios pensarán que han roto algo.</p>
+<p>“¿Existe la inversa de un tensor?” sale en todas las ediciones de este taller. Respóndela aquí en lugar de esquivarla: no hay una sola, existen varias definiciones, y la respuesta práctica es desplegar, pinv y volver a plegar.</p>
+<p>Enuncia el hilo conductor aquí y no solo en la diapositiva final. Las secciones 08, 09 y 10 dependen de él, y decirlo ahora es lo que evita que la segunda mitad se lea como cuatro bloques sueltos.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -607,7 +645,7 @@ Sección 08 · Recursión con matrices y vectores — 10 min, de +02:20 a +02:30
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.
@@ -627,7 +665,7 @@ Gradient descent también es recursión: las formas escalar, vectorial y matrici
 Sección 09 · Convolución y deconvolución — 15 min, de +02:30 a +02:45. Objetivo: entender la convolución como una operación local y por qué invertirla es un problema distinto. Una foto del puente de Manhattan se desenfoca, se recupera parcialmente y se muestra su mapa de error.
 </p>
 </section>
-<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-26.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-26.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Forward no es transpose no es inverse: una fotografía real muestra el desenfoque directo, su transpuesta (que no deshace el desenfoque) y una recuperación parcial con Richardson-Lucy, etiquetadas como tres operaciones distintas.
@@ -659,15 +697,40 @@ Forward no es transpose no es inverse: una fotografía real muestra el desenfoqu
 Sección 10 · Descomposición de Tucker con datos reales — 15 min, de +02:50 a +03:05. Objetivo: convertir viajes de taxi en un tensor origen por destino por hora y comprimirlo por modos. Un corte real a las 18:00 se compara con su reconstrucción Tucker y el error absoluto.
 </p>
 </section>
-<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-16" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.
 </p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 10 en Google Colab">Colab ↗</a></p>
-<p><a href="https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Para qué sirve factorizar un tensor ↗</a> <a href="https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Factorizaciones e inversas tensoriales ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Para qué sirve factorizar un tensor ↗</a></p>
 <aside class="notes">
 <p>Nunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores de pesos de las redes neuronales para que los modelos corran en móviles. En biotecnología, sobre datos (genes × muestras × condiciones), encuentran estructura que PCA no alcanza: PCA solo puede ver dos ejes.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="section-17" class="slide level2" data-background-image="images/slides-final/slide-28a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de rango 1, R por I más J más K números, y es la opción cuando hay que leer los componentes uno a uno. Tucker guarda un subespacio por modo más un núcleo, y es la opción cuando cada modo necesita su propio rango. Tensor Train guarda una cadena de núcleos pequeños, que crece solo linealmente con el orden, y es la opción cuando un núcleo denso explotaría. Y t-SVD aplica una FFT sobre el modo 3, SVD matriciales y una FFT inversa, y es la opción cuando el tercer modo tiene un significado propio.
+</p>
+<p class="sr-only">
+La profundización 13 ejecuta las cuatro sobre un mismo tensor con el mismo presupuesto de parámetros, y añade el argumento del aplanado y el del ritmo de crecimiento de Tensor Train. Es para quien quiera esa comparación medida y no afirmada.
+</p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 10 en Google Colab">Colab ↗</a> <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb" class="colab-tab colab-tab-extra" target="_blank" rel="noopener noreferrer" title="Abrir la profundización 13 en Google Colab">Deep dive 13 ↗</a></p>
+<p><a href="https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Factorizaciones e inversas tensoriales ↗</a></p>
+<aside class="notes">
+<p>La sección 10 enseña solo Tucker y, con 15 minutos, esa es la decisión correcta. Esta diapositiva es donde se nombran las otras tres, para que quien abra la profundización 13 después llegue a CP, Tensor Train y t-SVD sabiendo ya para qué sirve cada una.</p>
+<p>Si vas con retraso, lee los cuatro títulos y la barra y sigue. La comparación es de la profundización, no de esta sala.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
@@ -705,7 +768,7 @@ Pausa activa: Kahoot 3, Convolución y descomposiciones tensoriales. 6 preguntas
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-18" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Una idea conecta el workshop: pseudoinversa, deconvolución y Tucker se muestran uno junto al otro como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.
