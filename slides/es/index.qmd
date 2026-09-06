@@ -32,7 +32,7 @@ nombra pronto los cognados: eje, descomposición, contracción, convolución.
 
 ## {background-image="images/slides-final/slide-02a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Cuatro ideas, un solo objeto — todo el día en cuatro tarjetas. Un tensor generaliza la matriz: un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Contiene los datos: imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Sus ejes se mueven: transpose los permuta, reshape relee los mismos números planos, y la misma forma puede tener otro significado. Y se factoriza: los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también — y donde no hay inversa, responde la pseudoinversa. La pregunta del día: antes de operar sobre un tensor, nombra sus ejes.</p>
+<p class="sr-only">Cuatro ideas, un solo objeto — todo el día en cuatro tarjetas. Un tensor generaliza la matriz: un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Contiene los datos: imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Sus ejes se mueven: transpose los permuta, reshape relee los mismos números planos, y la misma forma puede tener otro significado. Y se factoriza: los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también — y donde no hay inversa, responde la pseudoinversa. Llévate esto todo el día: antes de operar sobre un tensor, nombra sus ejes.</p>
 
 ::: {.notes}
 Este es el mapa de todo el día, y la única diapositiva que muestra las cuatro
