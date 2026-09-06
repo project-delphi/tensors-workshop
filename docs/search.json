@@ -228,6 +228,13 @@
     "href": "slides/en/index.html#section-2",
     "title": "Tensors for Machine Learning",
     "section": "",
+    "text": "Four ideas, one object — the whole day in four cards. A tensor generalizes a matrix: a scalar has no axes, a vector one, a matrix two, and a tensor as many as the data needs. It holds the data: images, video frames, taxi trips and prices are all one box of numbers, and every axis stands for something. Its axes can be moved: transpose permutes them, reshape re-reads the same flat numbers, and the same shape can carry a different meaning. And it factors: numbers into primes, quadratics into roots, matrices into LU, QR and SVD, tensors too — and where an inverse does not exist, the pseudoinverse answers. The question of the day: before you operate on a tensor, name its axes.\n\n\nThis is the map of the whole day, and the only slide that shows all four ideas at once. Spend a minute on it, not five: each card is opened properly later — card 1 in section 01, card 2 in sections 02 and 03, card 3 in section 04, card 4 in sections 07, 09, 10 and 11.\nThe fourth card is the one to sell. Students already factor numbers and solve quadratics; the claim is that factorization is the same move each time, applied to a bigger object. That is the promise section 09 collects on.\nSay “axes”, not “dimensions”, from here on — and remember the “rank” warning is due at the start of Part I."
+  },
+  {
+    "objectID": "slides/en/index.html#section-3",
+    "href": "slides/en/index.html#section-3",
+    "title": "Tensors for Machine Learning",
+    "section": "",
     "text": "Real data, real problems: four real datasets used throughout the workshop — handwritten digits, stained histology, California housing, and NYC taxi trips — each with the role it plays later.\n\n\nThe point of the grid is that every card is a link: students can go and look at the source themselves, and several will. Name the two that surprise people — the digits are the UCI 8x8 set, not MNIST, and the cell is a phase image from a hologram rather than a stained slide — the histology card beside it is the stained one.\nImage credits, none of them required: taxis Ferdinand Stohr, DC-3 Bernard Spragg, histopathology Mikael Haggstrom MD, tract housing Alfred Twu (Wikimedia Commons); storm Nicolas Vigier (Commons); voice Bart Massey — all CC0. Digits, cell, histology and waveform are rendered from the data itself by scripts/gen_thumbnails.py; those are CC0 too, except the histology, which skimage documents as having no known copyright restrictions."
   },
   {
@@ -252,15 +259,15 @@
     "text": "I\n\n\n01 · What a tensor is\n\n\nSection 01 · What a tensor is — 20 min, running +00:05 to +00:25. Objective: explain in plain language what a tensor is, what each axis represents, and how to read its shape. A photograph of the Manhattan Bridge is decomposed into its red, green and blue channels to show a tensor as height by width by colour.\n\nColab ↗\n\nDo not rush Part I. It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, never Part I."
   },
   {
-    "objectID": "slides/en/index.html#section-3",
-    "href": "slides/en/index.html#section-3",
+    "objectID": "slides/en/index.html#section-4",
+    "href": "slides/en/index.html#section-4",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.\n\n\nSection 09 walks this map on real data: every factorization written as a constrained optimization, the cost of each one derived and then measured, and SVD as the best rank-k approximation there is. The “which one, and what does it cost me” question this ladder raises is answered two hours later, in the room.\n\n📖 Why so many matrix factorizations? ↗\n\nPrime factorization is unique up to ordering — the cleanest case on the slide. Generic low-rank matrix factors have gauge freedom (the \\(M\\)/\\(M^{-\\top}\\) pair); extra structure or a convention — positive pivots, orthonormal columns, a positive diagonal — is what restores uniqueness for LU, QR or Cholesky. CP can be essentially unique under suitable identifiability conditions, up to permutation and a compensating nonzero scaling across modes; over the reals, sign flips are a special case of that scaling. Kruskal’s \\(k_A + k_B + k_C \\ge 2R + 2\\) is a sufficient condition, not a necessary one, and it says nothing about whether the decomposition is easy to find. Worth saying if there is time: computing tensor rank is NP-hard in general, tensor rank can exceed every individual mode dimension, and a best rank-\\(R\\) approximation need not even exist — none of that is true of matrices.\nPoint forward to section 09 here. This is the minute a student wonders why there are so many of these, and 09 is where the map gets walked with a cost column attached."
   },
   {
-    "objectID": "slides/en/index.html#section-4",
-    "href": "slides/en/index.html#section-4",
+    "objectID": "slides/en/index.html#section-5",
+    "href": "slides/en/index.html#section-5",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "What does a factorization give you? A four-step diagram — number, polynomial, matrix, tensor — shows that factorizing reveals useful structure rather than just rewriting an expression."
@@ -273,8 +280,8 @@
     "text": "II\n\n\n02 · Thinking in N dimensions\n\n\nSection 02 · Thinking in N dimensions — 20 min, running +00:25 to +00:45. Objective: read real tensor shapes and distinguish a batch axis from a time axis. Eight independent handwritten digits are contrasted with four ordered frames of a storm video."
   },
   {
-    "objectID": "slides/en/index.html#section-5",
-    "href": "slides/en/index.html#section-5",
+    "objectID": "slides/en/index.html#section-6",
+    "href": "slides/en/index.html#section-6",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Batch is not time: sixteen shuffled handwritten digits stay recognisable, while shuffled video frames turn the storm sequence meaningless — reordering a batch axis is safe, reordering a time axis is not.\n\nColab ↗\n\nThis is a live coding demo, not a discussion block. Open the notebook and run Setup first; it downloads and checksums the real video used in the exercises. Emphasize the contrast between shuffling a batch and shuffling time, then the padded batch with its validity mask."
@@ -287,8 +294,8 @@
     "text": "III\n\n\n03 · Indexing and broadcasting real data\n\n\nSection 03 · Indexing and broadcasting real data — 15 min, running +00:45 to +01:00. Objective: select real data with indexing and Boolean masks, and broadcast safely. Four panels show row/column indexing on a temperature table, thresholding into a mask, region selection on a satellite image, and shape broadcasting."
   },
   {
-    "objectID": "slides/en/index.html#section-6",
-    "href": "slides/en/index.html#section-6",
+    "objectID": "slides/en/index.html#section-7",
+    "href": "slides/en/index.html#section-7",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Indexing in action: the same four indexing, masking, satellite-cropping and broadcasting panels, with a summary strip naming each technique.\n\nColab ↗"
@@ -301,8 +308,8 @@
     "text": "III\n\n\n04 · Reshape and transpose real images\n\n\nSection 04 · Reshape and transpose real images — 15 min, running +01:00 to +01:15. Objective: distinguish reshape from transpose and read HWC, CHW, NHWC and NCHW. A stained histology image is correctly transposed to CHW alongside a reshape that scrambles it into colour noise."
   },
   {
-    "objectID": "slides/en/index.html#section-7",
-    "href": "slides/en/index.html#section-7",
+    "objectID": "slides/en/index.html#section-8",
+    "href": "slides/en/index.html#section-8",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Transpose is not reshape: the histology transpose-versus-reshape comparison, plus a real NHWC-to-NCHW batch of a histology slide, an astronaut photo and a cat photo, each correctly reordered.\n\nColab ↗"
@@ -322,8 +329,8 @@
     "text": "III\n\n\n05 · Video pipeline design\n\n\nSection 05 · Video pipeline design — 15 min, running +01:25 to +01:40. Objective: treat a video as a sequence of frames and build padded, masked batches. A skateboarding clip’s frames unfold into a 5-D (N, T, H, W, C) tensor."
   },
   {
-    "objectID": "slides/en/index.html#section-8",
-    "href": "slides/en/index.html#section-8",
+    "objectID": "slides/en/index.html#section-9",
+    "href": "slides/en/index.html#section-9",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "File to frames to tensor to model: a four-stage pipeline showing how a video becomes a masked tensor, with the validity-mask formula spelled out.\n\nColab ↗"
@@ -336,15 +343,15 @@
     "text": "IV\n\n\n06 · Contraction with einsum\n\n\nSection 06 · Contraction with einsum — 15 min, running +01:40 to +01:55. Objective: describe tensor contractions with explicit indices and recognise dot product, matmul, trace and similarity. The Manhattan Bridge photo carries the einsum contraction equation.\n\n\nSay “Euclidean distance” and “cosine similarity” out loud here. Kahoot 2 asks about both and the handbook never defines them anywhere else — this exercise is the only bridge."
   },
   {
-    "objectID": "slides/en/index.html#section-9",
-    "href": "slides/en/index.html#section-9",
+    "objectID": "slides/en/index.html#section-10",
+    "href": "slides/en/index.html#section-10",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Anatomy of einsum: the expression np.einsum(‘ij,jk-&gt;ik’, A, B) is broken into its input labels, its shared index, and the indices that survive, with a diagram of the matrices each letter indexes."
   },
   {
-    "objectID": "slides/en/index.html#section-10",
-    "href": "slides/en/index.html#section-10",
+    "objectID": "slides/en/index.html#section-11",
+    "href": "slides/en/index.html#section-11",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "NumPy to einsum: a table maps inner product, outer product, matmul, transpose, trace, diagonal, batched matmul and axis-sum to their einsum equivalents.\n\nColab ↗"
@@ -357,22 +364,22 @@
     "text": "IV\n\n\n07 · Inverses and the pseudoinverse\n\n\nSection 07 · Inverses and the pseudoinverse — 15 min, running +02:00 to +02:15. Objective: distinguish wide, square and tall matrices and use the pseudoinverse for stable solutions. Three colour-coded matrices illustrate each case."
   },
   {
-    "objectID": "slides/en/index.html#section-11",
-    "href": "slides/en/index.html#section-11",
+    "objectID": "slides/en/index.html#section-12",
+    "href": "slides/en/index.html#section-12",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Three shapes, three answers. Four cards: a square full-rank matrix, where the inverse exists and Ax = b has exactly one solution; a square singular matrix, where the inverse is undefined but the pseudoinverse is not, because it is computed from the SVD; a tall matrix, more equations than unknowns, where A-plus b is the least-squares fit that minimises the residual; and a wide matrix, infinitely many solutions, where A-plus b returns the one of smallest norm.\n\nColab ↗\n\nThe theory slide section 07 used to do out loud. Take the four cards in order and make the room say which case California Housing is before the next slide shows it.\nTODO 3 asks students to trigger an error deliberately. The callout bar now says so on the slide, but say it out loud as well, or several will think they broke something. The notebook carries the fuller version in its “Important numerical note”: an exception is not the mathematical definition of singular — rank below the number of columns is."
   },
   {
-    "objectID": "slides/en/index.html#section-12",
-    "href": "slides/en/index.html#section-12",
+    "objectID": "slides/en/index.html#section-13",
+    "href": "slides/en/index.html#section-13",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.\n\nColab ↗\n📖 Rotate, stretch, rotate again ↗"
   },
   {
-    "objectID": "slides/en/index.html#section-13",
-    "href": "slides/en/index.html#section-13",
+    "objectID": "slides/en/index.html#section-14",
+    "href": "slides/en/index.html#section-14",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "What about tensors? Three cards: there is no single tensor inverse everyone uses, which is a fair question with an honest answer rather than a gap in your reading; definitions built on the Einstein product, and on the t-product for order-3 tensors, do exist and are active research; and in practice you unfold the tensor into a matrix, apply the matrix pseudoinverse, and fold the result back — a 4 by 3 by 5 tensor unfolds to 4 by 15, whose pseudoinverse is 15 by 4, and M A-plus M returns M exactly, because unfolding loses nothing.\n\n\nThis is also where the second half’s through-line starts: the pseudoinverse in section 07, Richardson-Lucy deconvolution in section 09 and Tucker in section 10 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.\n\nColab ↗\n📖 Tensor inverses in practice ↗\n\n“Is there a tensor inverse?” gets asked in every run of this workshop. Answer it here instead of deflecting: there is no single one, several definitions do exist, and the working answer is unfold, pinv, fold back.\nState the through-line here as well as on the closing slide. Sections 08, 09 and 10 all sit downstream of it, and saying it now is what keeps the second half from reading as four unrelated blocks."
@@ -392,8 +399,8 @@
     "text": "IV\n\n\n08 · Recursion with matrices and vectors\n\n\nSection 08 · Recursion with matrices and vectors — 10 min, running +02:20 to +02:30. Objective: recognise a recursion as the same map applied repeatedly. A real airline-passenger series is forecast forward by feeding each prediction back in as the next input.\n\n\nIf badly over time, this RNN snippet is third on the cutting list — after Kahoot 2 and §09 TODO 4."
   },
   {
-    "objectID": "slides/en/index.html#section-14",
-    "href": "slides/en/index.html#section-14",
+    "objectID": "slides/en/index.html#section-15",
+    "href": "slides/en/index.html#section-15",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08’s own output once Issue #49 is implemented.\n\nColab ↗\n📖 The directions a matrix refuses to turn ↗ 📖 Can you invert a recursive function? ↗"
@@ -406,8 +413,8 @@
     "text": "IV\n\n\n09 · Matrix factorizations\n\n\nSection 09 · Matrix factorizations — 15 min, running +02:30 to +02:45. Objective: walk section 01’s map of factorizations on real data — LU, QR, Cholesky, eigendecomposition, SVD and NMF — and find out what each one costs. Three cards: six methods as one optimization under different constraints, cost derived and then measured, and eigendecomposition named here rather than assumed in section 10.\n\nColab ↗\n📖 Factorizations as optimization ↗ 📖 The directions a matrix refuses to turn ↗\n\nThis section is where the map from section 01 stops being a picture. Do not let it become a tour of six APIs: the question on every card is what the factorization makes easy that was hard before.\nName eigendecomposition out loud. Section 10 leans on the same machinery and until this section existed the workshop never introduced it."
   },
   {
-    "objectID": "slides/en/index.html#section-15",
-    "href": "slides/en/index.html#section-15",
+    "objectID": "slides/en/index.html#section-16",
+    "href": "slides/en/index.html#section-16",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Factor once, solve many: the same real least-squares problem three ways. Normal equations are fastest to write and square the condition number; QR is the stable default and never forms A-transpose-A; SVD is the most expensive and the most informative, because Eckart-Young gives the truncation error without building the truncation.\n\nColab ↗\n\nThe flop table and the stopwatch disagree, and the disagreement is the lesson. What survives the machine is the ratio between methods at a fixed size — a full SVD near 39 times a Cholesky — not the exponent, which comes in under 3 because of parallelism and cache.\nIf you are short of time, run Exercise 2 and skip Exercise 3."
@@ -420,8 +427,8 @@
     "text": "IV\n\n\n10 · Tucker decomposition on real data\n\n\nSection 10 · Tucker decomposition on real data — 15 min, running +02:50 to +03:05. Objective: convert taxi trips into a pickup-borough by dropoff-borough by hour tensor and compress it by mode. A real 6:00 PM slice is compared against its Tucker reconstruction and absolute error."
   },
   {
-    "objectID": "slides/en/index.html#section-16",
-    "href": "slides/en/index.html#section-16",
+    "objectID": "slides/en/index.html#section-17",
+    "href": "slides/en/index.html#section-17",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.\n\nColab ↗\n📖 What a tensor factorization buys you ↗\n\nNever cut section 10. In tech, Tucker and CP compress neural network weight tensors so models run on phones. In biotech, on (genes × samples × conditions), they find structure PCA cannot reach — PCA can only ever see two axes."
@@ -441,15 +448,15 @@
     "text": "IV\n\n\n11 · Tensor factorizations\n\n\nSection 11 · Tensor factorizations — 15 min, running +03:10 to +03:25. Objective: choose the decomposition from the structure you need to keep, and the rank from the loss you can afford. Three cards: flattening keeps every number and loses which direction meant what; CP against Tucker at a matched parameter budget rather than rank for rank; and growth rates rather than constants, because a faster machine changes the constants and not which formula grows exponentially.\n\nColab ↗\n📖 What a tensor factorization buys you ↗ 📖 Tensor factorizations and inverses ↗\n\nSection 10 gave the room one bargain. This section puts the other three beside it, which is what turns Tucker from “the tensor decomposition” into one choice among four.\nThe matched-budget comparison is the part to protect if you are behind. Rank-for-rank is the comparison everyone makes, and it is the wrong one."
   },
   {
-    "objectID": "slides/en/index.html#section-17",
-    "href": "slides/en/index.html#section-17",
+    "objectID": "slides/en/index.html#section-18",
+    "href": "slides/en/index.html#section-18",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.\n\nColab ↗\n\nRead the four headings in order and let the room ask which one their own data wants. That question is the section; the arithmetic is not.\nThe two meanings of “rank” collide here — Chapter 2’s independent columns and the tensor sense. Say which you mean every time."
   },
   {
-    "objectID": "slides/en/index.html#section-18",
-    "href": "slides/en/index.html#section-18",
+    "objectID": "slides/en/index.html#section-19",
+    "href": "slides/en/index.html#section-19",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "One idea connects the workshop: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.\n\nColab ↗\n\nStating this connection explicitly is what makes the second half feel like one lesson rather than four separate blocks. Do not skip it. Section 07’s tensor inverse slide opens it; this is where it closes.\nConvolution is the one leg of the three the room no longer runs. Say so, and say that take-home 13 is where it happens to a real photograph."
@@ -704,6 +711,13 @@
     "href": "slides/es/index.html#section-2",
     "title": "Tensors for Machine Learning",
     "section": "",
+    "text": "Cuatro ideas, un solo objeto — todo el día en cuatro tarjetas. Un tensor generaliza la matriz: un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Contiene los datos: imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Sus ejes se mueven: transpose los permuta, reshape relee los mismos números planos, y la misma forma puede tener otro significado. Y se factoriza: los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también — y donde no hay inversa, responde la pseudoinversa. La pregunta del día: antes de operar sobre un tensor, nombra sus ejes.\n\n\nEste es el mapa de todo el día, y la única diapositiva que muestra las cuatro ideas juntas. Dedícale un minuto, no cinco: cada tarjeta se abre después — la 1 en la sección 01, la 2 en las secciones 02 y 03, la 3 en la sección 04, y la 4 en las secciones 07, 09, 10 y 11.\nLa cuarta tarjeta es la que hay que vender. El grupo ya factoriza números y resuelve cuadráticas; la afirmación es que factorizar es el mismo movimiento cada vez, aplicado a un objeto más grande. Esa es la promesa que cobra la sección 09.\nDi “ejes”, no “dimensiones”, de aquí en adelante — y recuerda que la advertencia sobre “rango” toca al empezar la Parte I."
+  },
+  {
+    "objectID": "slides/es/index.html#section-3",
+    "href": "slides/es/index.html#section-3",
+    "title": "Tensors for Machine Learning",
+    "section": "",
     "text": "Datos reales, problemas reales: cuatro conjuntos de datos reales usados en el taller — dígitos manuscritos, histología teñida, vivienda en California y viajes en taxi de NYC — cada uno con el papel que cumple más adelante.\n\n\nLo importante de la cuadrícula es que cada tarjeta es un enlace: quien quiera puede ir a ver la fuente, y varios lo harán. Menciona los dos casos que sorprenden: los dígitos son el conjunto UCI de 8x8, no MNIST, y la célula es una imagen de fase de un holograma, no una preparación teñida — la tarjeta de histología que tiene al lado sí lo es.\nCréditos de las imágenes, ninguno obligatorio: taxis Ferdinand Stohr, DC-3 Bernard Spragg, histopatología Mikael Haggstrom MD, viviendas en serie Alfred Twu (Wikimedia Commons); tormenta Nicolas Vigier (Commons); voz Bart Massey — todas CC0. Los dígitos, la célula, la histología y la onda se generan a partir de los propios datos con scripts/gen_thumbnails.py; también son CC0, salvo la histología, que skimage documenta sin restricciones de copyright conocidas."
   },
   {
@@ -728,15 +742,15 @@
     "text": "I\n\n\n01 · Qué es un tensor\n\n\nSección 01 · Qué es un tensor — 20 min, de +00:05 a +00:25. Objetivo: explicar en lenguaje sencillo qué es un tensor, qué representa cada eje y cómo leer su forma. Una fotografía del puente de Manhattan se descompone en sus canales rojo, verde y azul para mostrar un tensor como alto por ancho por color.\n\nColab ↗\n\nNo corras con la parte I. Es el primer contacto con la teoría de tensores y todos los bloques posteriores usan su vocabulario. Si vas con retraso, recorta los apéndices, nunca la parte I."
   },
   {
-    "objectID": "slides/es/index.html#section-3",
-    "href": "slides/es/index.html#section-3",
+    "objectID": "slides/es/index.html#section-4",
+    "href": "slides/es/index.html#section-4",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.\n\n\nLa sección 09 recorre este mapa sobre datos reales: cada factorización escrita como un problema de optimización con restricciones, el coste de cada una deducido y luego medido, y la SVD como la mejor aproximación de rango k que existe. La pregunta “cuál elijo y cuánto me cuesta” que plantea esta escalera se responde dos horas después, en la sala.\n\n📖 ¿Por qué hay tantas factorizaciones matriciales? ↗\n\nLa factorización en primos es única salvo el orden — el caso más limpio de la diapositiva. Los factores genéricos de una matriz de bajo rango tienen libertad de gauge (el par \\(M\\)/\\(M^{-\\top}\\)); una estructura adicional o una convención — pivotes positivos, columnas ortonormales, diagonal positiva — es lo que restaura la unicidad en LU, QR o Cholesky. CP puede ser esencialmente único bajo condiciones de identificabilidad adecuadas, salvo permutación y una escala compensatoria no nula entre modos; sobre los reales, los cambios de signo son un caso particular de esa escala. La condición de Kruskal \\(k_A + k_B + k_C \\ge 2R + 2\\) es suficiente, no necesaria, y no dice nada sobre si la descomposición es fácil de encontrar. Vale la pena mencionar si hay tiempo: calcular el rango tensorial es NP-difícil en general, el rango tensorial puede superar cada dimensión individual de los ejes, y una mejor aproximación de rango \\(R\\) puede no existir siquiera — nada de eso es cierto para matrices.\nSeñala aquí hacia la sección 09. Este es el minuto en que alguien se pregunta por qué hay tantas, y 09 es donde se recorre el mapa con una columna de coste al lado."
   },
   {
-    "objectID": "slides/es/index.html#section-4",
-    "href": "slides/es/index.html#section-4",
+    "objectID": "slides/es/index.html#section-5",
+    "href": "slides/es/index.html#section-5",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "¿Qué aporta una factorización? Un diagrama de cuatro pasos — número, polinomio, matriz, tensor — muestra que factorizar revela estructura útil y no solo reescribe una expresión."
@@ -749,8 +763,8 @@
     "text": "II\n\n\n02 · Pensar en N dimensiones\n\n\nSección 02 · Pensar en N dimensiones — 20 min, de +00:25 a +00:45. Objetivo: leer formas de tensores reales y distinguir un eje de lote de un eje temporal. Ocho dígitos manuscritos independientes se contrastan con cuatro fotogramas ordenados de un vídeo de tormenta."
   },
   {
-    "objectID": "slides/es/index.html#section-5",
-    "href": "slides/es/index.html#section-5",
+    "objectID": "slides/es/index.html#section-6",
+    "href": "slides/es/index.html#section-6",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Batch no es tiempo: dieciséis dígitos manuscritos barajados siguen siendo reconocibles, mientras que los fotogramas de vídeo barajados vuelven la secuencia de la tormenta irreconocible — reordenar un eje de lote es seguro, reordenar el tiempo no lo es.\n\nColab ↗\n\nEsto es una demostración de código en vivo, no un bloque de discusión. Abre el cuaderno y ejecuta primero la celda de preparación; descarga y verifica por checksum el vídeo real que usan los ejercicios. Recalca el contraste entre barajar un lote y barajar el tiempo, y luego el lote rellenado con su máscara de validez."
@@ -763,8 +777,8 @@
     "text": "III\n\n\n03 · Indexación y broadcasting con datos reales\n\n\nSección 03 · Indexación y broadcasting con datos reales — 15 min, de +00:45 a +01:00. Objetivo: seleccionar datos reales con indexación y máscaras booleanas, y aplicar broadcasting de forma segura. Cuatro paneles muestran indexación de filas/columnas en una tabla de temperaturas, una máscara por umbral, selección de región en una imagen satelital, y broadcasting de formas."
   },
   {
-    "objectID": "slides/es/index.html#section-6",
-    "href": "slides/es/index.html#section-6",
+    "objectID": "slides/es/index.html#section-7",
+    "href": "slides/es/index.html#section-7",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Indexación en acción: los mismos cuatro paneles de indexación, máscaras, recorte satelital y broadcasting, con una franja resumen que nombra cada técnica.\n\nColab ↗"
@@ -777,8 +791,8 @@
     "text": "III\n\n\n04 · Reshape y transposición de imágenes reales\n\n\nSección 04 · Reshape y transposición de imágenes reales — 15 min, de +01:00 a +01:15. Objetivo: distinguir reshape de transpose y leer HWC, CHW, NHWC y NCHW. Una imagen de histología teñida se transpone correctamente a CHW junto a un reshape que la revuelve en ruido de color."
   },
   {
-    "objectID": "slides/es/index.html#section-7",
-    "href": "slides/es/index.html#section-7",
+    "objectID": "slides/es/index.html#section-8",
+    "href": "slides/es/index.html#section-8",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "transpose no es reshape: la misma comparación de histología entre transpose y reshape, más un lote real NHWC a NCHW con una imagen de histología, una foto de astronauta y una foto de gato, cada una reordenada correctamente.\n\nColab ↗"
@@ -798,8 +812,8 @@
     "text": "III\n\n\n05 · Diseño de un pipeline de vídeo\n\n\nSección 05 · Diseño de un pipeline de vídeo — 15 min, de +01:25 a +01:40. Objetivo: tratar un vídeo como una secuencia de fotogramas y construir lotes con padding y máscara. Los fotogramas de un vídeo de skateboarding se despliegan en un tensor 5D (N, T, H, W, C)."
   },
   {
-    "objectID": "slides/es/index.html#section-8",
-    "href": "slides/es/index.html#section-8",
+    "objectID": "slides/es/index.html#section-9",
+    "href": "slides/es/index.html#section-9",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Archivo a frames a tensor a modelo: una tubería de cuatro etapas muestra cómo un vídeo se convierte en un tensor enmascarado, con la fórmula de la máscara de validez.\n\nColab ↗"
@@ -812,15 +826,15 @@
     "text": "IV\n\n\n06 · Contracción con einsum\n\n\nSección 06 · Contracción con einsum — 15 min, de +01:40 a +01:55. Objetivo: describir contracciones tensoriales con índices explícitos y reconocer producto punto, matmul, traza y similitud. La foto del puente de Manhattan lleva la ecuación de contracción einsum.\n\n\nDi «distancia euclídea» y «similitud del coseno» en voz alta aquí. El Kahoot 2 pregunta por las dos y el manual no las define en ningún otro sitio: este ejercicio es el único puente."
   },
   {
-    "objectID": "slides/es/index.html#section-9",
-    "href": "slides/es/index.html#section-9",
+    "objectID": "slides/es/index.html#section-10",
+    "href": "slides/es/index.html#section-10",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Anatomía de einsum: la expresión np.einsum(‘ij,jk-&gt;ik’, A, B) se descompone en sus etiquetas de entrada, el índice compartido y los índices que sobreviven, con un diagrama de las matrices que indexa cada letra."
   },
   {
-    "objectID": "slides/es/index.html#section-10",
-    "href": "slides/es/index.html#section-10",
+    "objectID": "slides/es/index.html#section-11",
+    "href": "slides/es/index.html#section-11",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "NumPy y einsum: una tabla asocia producto interno, producto externo, matmul, transpose, traza, diagonal, matmul por lotes y suma por eje con su equivalente en einsum.\n\nColab ↗"
@@ -833,22 +847,22 @@
     "text": "IV\n\n\n07 · Inversas y la pseudoinversa\n\n\nSección 07 · Inversas y la pseudoinversa — 15 min, de +02:00 a +02:15. Objetivo: distinguir matrices wide, square y tall y usar la pseudoinversa para obtener soluciones estables. Tres matrices con código de color ilustran cada caso."
   },
   {
-    "objectID": "slides/es/index.html#section-11",
-    "href": "slides/es/index.html#section-11",
+    "objectID": "slides/es/index.html#section-12",
+    "href": "slides/es/index.html#section-12",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Tres formas, tres respuestas. Cuatro tarjetas: una matriz cuadrada de rango completo, donde la inversa existe y Ax = b tiene exactamente una solución; una matriz cuadrada singular, donde la inversa no está definida pero la pseudoinversa sí, porque se calcula a partir de la SVD; una matriz alta, con más ecuaciones que incógnitas, donde A-más b es el ajuste por mínimos cuadrados que minimiza el residual; y una matriz ancha, con infinitas soluciones, donde A-más b devuelve la de menor norma.\n\nColab ↗\n\nLa diapositiva de teoría que la sección 07 hacía solo de viva voz. Recorre las cuatro tarjetas en orden y haz que la sala diga qué caso es California Housing antes de que la siguiente lo muestre.\nEl TODO 3 pide provocar un error a propósito. La barra de la diapositiva ya lo dice, pero dilo también en voz alta o varios pensarán que han roto algo. El notebook lleva la versión completa en su “Nota numérica importante”: una excepción no es la definición matemática de singular; lo es que el rango sea menor que el número de columnas."
   },
   {
-    "objectID": "slides/es/index.html#section-12",
-    "href": "slides/es/index.html#section-12",
+    "objectID": "slides/es/index.html#section-13",
+    "href": "slides/es/index.html#section-13",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.\n\nColab ↗\n📖 Gira, estira y vuelve a girar ↗"
   },
   {
-    "objectID": "slides/es/index.html#section-13",
-    "href": "slides/es/index.html#section-13",
+    "objectID": "slides/es/index.html#section-14",
+    "href": "slides/es/index.html#section-14",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "¿Y los tensores? Tres tarjetas: no existe una única inversa tensorial aceptada por todos, lo que es una pregunta legítima con una respuesta honesta y no un hueco en tu lectura; sí existen definiciones basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa; y en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado — un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4, y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.\n\n\nAquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, la deconvolución de Richardson-Lucy de la sección 09 y Tucker en la sección 10 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.\n\nColab ↗\n📖 Inversas tensoriales en la práctica ↗\n\n“¿Existe la inversa de un tensor?” sale en todas las ediciones de este taller. Respóndela aquí en lugar de esquivarla: no hay una sola, existen varias definiciones, y la respuesta práctica es desplegar, pinv y volver a plegar.\nEnuncia el hilo conductor aquí y no solo en la diapositiva final. Las secciones 08, 09 y 10 dependen de él, y decirlo ahora es lo que evita que la segunda mitad se lea como cuatro bloques sueltos."
@@ -868,8 +882,8 @@
     "text": "IV\n\n\n08 · Recursión con matrices y vectores\n\n\nSección 08 · Recursión con matrices y vectores — 10 min, de +02:20 a +02:30. Objetivo: reconocer una recursión como la misma regla aplicada una y otra vez. Una serie real de pasajeros aéreos se pronostica hacia adelante realimentando cada predicción como la siguiente entrada.\n\n\nSi vas muy mal de tiempo, este fragmento de RNN es el tercero en la lista de recortes, después del Kahoot 2 y del TODO 4 de la §09."
   },
   {
-    "objectID": "slides/es/index.html#section-14",
-    "href": "slides/es/index.html#section-14",
+    "objectID": "slides/es/index.html#section-15",
+    "href": "slides/es/index.html#section-15",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.\n\nColab ↗\n📖 Las direcciones que una matriz no gira ↗ 📖 ¿Se puede invertir una función recursiva? ↗"
@@ -882,8 +896,8 @@
     "text": "IV\n\n\n09 · Factorizaciones matriciales\n\n\nSección 09 · Factorizaciones matriciales — 15 min, de +02:30 a +02:45. Objetivo: recorrer sobre datos reales el mapa de factorizaciones de la sección 01 — LU, QR, Cholesky, descomposición espectral, SVD y NMF — y descubrir cuánto cuesta cada una. Tres tarjetas: seis métodos como una misma optimización con distintas restricciones, el coste deducido y luego medido, y la descomposición espectral nombrada aquí en vez de darse por sabida en la sección 10.\n\nColab ↗\n📖 Factorizaciones como optimización ↗ 📖 Las direcciones que una matriz no gira ↗\n\nEn esta sección el mapa de la sección 01 deja de ser un dibujo. Que no se convierta en un recorrido por seis APIs: la pregunta de cada tarjeta es qué vuelve fácil la factorización que antes era difícil.\nNombra la descomposición espectral en voz alta. La sección 10 se apoya en la misma maquinaria y, hasta que existió esta sección, el taller nunca la presentaba."
   },
   {
-    "objectID": "slides/es/index.html#section-15",
-    "href": "slides/es/index.html#section-15",
+    "objectID": "slides/es/index.html#section-16",
+    "href": "slides/es/index.html#section-16",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir y elevan al cuadrado el número de condición; QR es la opción estable por defecto y nunca forma A-traspuesta-A; la SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.\n\nColab ↗\n\nLa tabla de operaciones y el cronómetro no coinciden, y ese desacuerdo es la lección. Lo que sobrevive a la máquina es la razón entre métodos a tamaño fijo — una SVD completa cerca de 39 veces una Cholesky — no el exponente, que queda por debajo de 3 por el paralelismo y la caché.\nSi vas justo de tiempo, haz el ejercicio 2 y salta el 3."
@@ -896,8 +910,8 @@
     "text": "IV\n\n\n10 · Descomposición de Tucker con datos reales\n\n\nSección 10 · Descomposición de Tucker con datos reales — 15 min, de +02:50 a +03:05. Objetivo: convertir viajes de taxi en un tensor origen por destino por hora y comprimirlo por modos. Un corte real a las 18:00 se compara con su reconstrucción Tucker y el error absoluto."
   },
   {
-    "objectID": "slides/es/index.html#section-16",
-    "href": "slides/es/index.html#section-16",
+    "objectID": "slides/es/index.html#section-17",
+    "href": "slides/es/index.html#section-17",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.\n\nColab ↗\n📖 Para qué sirve factorizar un tensor ↗\n\nNunca recortes la sección 10. En tecnología, Tucker y CP comprimen los tensores de pesos de las redes neuronales para que los modelos corran en móviles. En biotecnología, sobre datos (genes × muestras × condiciones), encuentran estructura que PCA no alcanza: PCA solo puede ver dos ejes."
@@ -917,15 +931,15 @@
     "text": "IV\n\n\n11 · Factorizaciones tensoriales\n\n\nSección 11 · Factorizaciones tensoriales — 15 min, de +03:10 a +03:25. Objetivo: elegir la descomposición según la estructura que necesitas conservar, y el rango según la pérdida que puedes aceptar. Tres tarjetas: aplanar conserva todos los números y pierde qué significaba cada dirección; CP frente a Tucker con un presupuesto de parámetros equivalente en lugar de rango contra rango; y ritmos de crecimiento en vez de constantes, porque una máquina más rápida cambia las constantes y no qué fórmula crece exponencialmente.\n\nColab ↗\n📖 Para qué sirve factorizar un tensor ↗ 📖 Factorizaciones e inversas tensoriales ↗\n\nLa sección 10 le dio a la sala un solo trato. Esta pone los otros tres a su lado, que es lo que convierte a Tucker de “la descomposición tensorial” en una opción entre cuatro.\nLa comparación con presupuesto equivalente es lo que hay que proteger si vas con retraso. Rango contra rango es la comparación que todo el mundo hace, y es la equivocada."
   },
   {
-    "objectID": "slides/es/index.html#section-17",
-    "href": "slides/es/index.html#section-17",
+    "objectID": "slides/es/index.html#section-18",
+    "href": "slides/es/index.html#section-18",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de rango 1, R por I más J más K números, y es la opción cuando hay que leer los componentes uno a uno. Tucker guarda un subespacio por modo más un núcleo, y es la opción cuando cada modo necesita su propio rango. Tensor Train guarda una cadena de núcleos pequeños, que crece solo linealmente con el orden, y es la opción cuando un núcleo denso explotaría. Y t-SVD aplica una FFT sobre el modo 3, SVD matriciales y una FFT inversa, y es la opción cuando el tercer modo tiene un significado propio.\n\nColab ↗\n\nLee los cuatro títulos en orden y deja que la sala pregunte cuál quieren sus propios datos. Esa pregunta es la sección; la aritmética no.\nAquí chocan los dos sentidos de “rango”: el del capítulo 2 y el tensorial. Di cuál quieres decir cada vez."
   },
   {
-    "objectID": "slides/es/index.html#section-18",
-    "href": "slides/es/index.html#section-18",
+    "objectID": "slides/es/index.html#section-19",
+    "href": "slides/es/index.html#section-19",
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "Una idea conecta el taller: la pseudoinversa de la sección 07, Tucker en la 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 aparecen juntas como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.\n\nColab ↗\n\nEnunciar esta conexión de forma explícita es lo que hace que la segunda mitad se sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes. La diapositiva de inversas tensoriales de la sección 07 la abre; aquí se cierra.\nLa convolución es la única de las tres patas que la sala ya no ejecuta. Dilo, y di que el ejercicio para casa 13 es donde le ocurre a una fotografía real."
