@@ -458,7 +458,7 @@ Convolution is the one leg of the three the room no longer runs. Say so, and
 say that take-home 13 is where it happens to a real photograph.
 :::
 
-## {#sec-12-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-12-wrap-up-and-take-homes background-image="images/slides-final/slide-31a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s12.part >}}
@@ -471,9 +471,3 @@ say that take-home 13 is where it happens to a real photograph.
 [Take-home 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open take-home 13 in Google Colab"}
 
 [📖 {{< var reading.attention.title_en >}} ↗]({{< var reading.attention.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
-
-::: {.notes}
-The art on this slide still reads 11 for this section, which became 12 when
-factorizations moved into the day. It is the only slide the renumbering left
-behind; see slides/README.md.
-:::

@@ -464,7 +464,7 @@ La convolución es la única de las tres patas que la sala ya no ejecuta. Dilo, 
 di que el ejercicio para casa 13 es donde le ocurre a una fotografía real.
 :::
 
-## {#sec-12-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-12-wrap-up-and-take-homes background-image="images/slides-final/slide-31a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s12.part >}}
@@ -477,9 +477,3 @@ di que el ejercicio para casa 13 es donde le ocurre a una fotografía real.
 [Take-home 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir el ejercicio para casa 13 en Google Colab"}
 
 [📖 {{< var reading.attention.title_es >}} ↗]({{< var reading.attention.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
-
-::: {.notes}
-El arte de esta diapositiva todavía dice 11 para esta sección, que pasó a ser
-la 12 cuando las factorizaciones entraron en el día. Es la única que la
-renumeración dejó atrás; ver slides/README.md.
-:::

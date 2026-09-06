@@ -173,11 +173,12 @@ section's.
 | **29a** | `sec-11-tensor-factorizations` | 11 | Tensor factorizations: structure first, then rank |
 | **29b** | · | 11 | CP, Tucker, TT and t-SVD — what each stores and what it buys |
 | 30 | · | 12 | One idea connects sections 07, 10 and take-home 13 |
-| 31 | `sec-12-wrap-up-and-take-homes` | 12 · take-home 13 | Wrap-up and take-homes |
+| **31a** | `sec-12-wrap-up-and-take-homes` | 12 · take-home 13 | Wrap-up and take-homes |
 
-**Unused art.** `slide-25.png` and `slide-26.png` are the old convolution
-slides, kept because they cannot be regenerated — convolution became take-home
-13 when factorizations moved into the day. Nothing references them.
+**Unused art.** `slide-25.png` and `slide-26.png` (the old convolution slides)
+and `slide-31.png` (the old wrap-up, which read `11 ·`) are still in the
+repository and referenced by nothing. They are kept because they cannot be
+regenerated: the tool that drew them is not here.
 
 **What the notebooks teach that no slide does**, and deliberately so — these are
 take-home material, and the room's 210 minutes do not stretch to them:
@@ -203,10 +204,13 @@ place rather than right in the first. Two consequences, both deliberate:
   means reveal shows no number of its own — and it stops being authoritative
   after section 07.
 - New art carries **no corner number at all**, so it cannot be wrong.
-- **`slide-31` is the one slide the restructure left stale.** Its art reads
-  `11 · Wrap-up and take-homes`; the wrap-up became section 12 when matrix and
-  tensor factorizations became sections 09 and 11. Fixing it means redrawing it
-  in the tool that made it, or rebuilding it in `gen_slide_art.py`.
+- The **closing slide was rebuilt** here rather than left stale. `slide-31`'s
+  art read `11 · Wrap-up and take-homes` after the wrap-up became section 12,
+  so `slide-31a` replaces it — same layout, correct number, and without the
+  Spanish that had leaked into the English card labels (*compara
+  representations*, *STFT → matriz → SVD*). It is the `closing` layout in
+  `gen_slide_art.py`: five centred cards, the sentence to leave with, and the
+  thanks line, with no callout bar competing against the closing statement.
 
 To add or change one of the generated slides, edit `SLIDES` in
 [`scripts/gen_slide_art.py`](../scripts/gen_slide_art.py) — copy for both

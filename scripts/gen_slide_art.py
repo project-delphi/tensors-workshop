@@ -94,6 +94,40 @@ FONT_STACK = ('Montserrat, "Avenir Next", "Segoe UI", system-ui, '
 
 SLIDES = [
     {
+        "stem": "slide-31a",
+        "kind": "closing",
+        "en": {
+            "eyebrow": "",
+            "title": ["12 · One idea to", "take away"],
+            "subtitle": "Tensors are not the final topic: they are the "
+                        "language that connects the models",
+            "cards": [
+                ("∴", "PCA", ["reduce dimension"]),
+                ("⇝", "Attention", ["compare representations"]),
+                ("◫", "CP", ["rank-1 components"]),
+                ("◣", "Cholesky", ["SPD structure"]),
+                ("∿", "Audio", ["STFT → matrix → SVD"]),
+            ],
+            "closing": ("Before operating,", "name the axes."),
+            "thanks": ("Thanks", "Ravi Kalia · Sebastian Laverde Chunza"),
+        },
+        "es": {
+            "eyebrow": "",
+            "title": ["12 · Una idea para", "llevarte"],
+            "subtitle": "Los tensores no son el tema final: son el lenguaje "
+                        "que conecta los modelos",
+            "cards": [
+                ("∴", "PCA", ["reducir dimensión"]),
+                ("⇝", "Attention", ["comparar representaciones"]),
+                ("◫", "CP", ["componentes rank-1"]),
+                ("◣", "Cholesky", ["estructura SPD"]),
+                ("∿", "Audio", ["STFT → matriz → SVD"]),
+            ],
+            "closing": ("Antes de operar,", "nombra los ejes."),
+            "thanks": ("Gracias", "Ravi Kalia · Sebastian Laverde Chunza"),
+        },
+    },
+    {
         "stem": "slide-20a",
         "en": {
             "eyebrow": "Notebook 07 · Inverses",
@@ -495,6 +529,11 @@ html, body {{
    existing art: the dots own the margin, the title does not. */
 .eyebrow, .rule {{ margin-left: 126px; }}
 
+/* The closing slide keeps the rule and drops the eyebrow: there is no
+   notebook to name at that point, only the sentence to leave with. */
+.eyebrow:empty {{ display: none; }}
+.eyebrow:empty + .rule {{ margin-top: 68px; }}
+
 .eyebrow {{
   font-size: 25px;
   font-weight: 700;
@@ -538,6 +577,14 @@ h2 {{
 }}
 .cards.n3 {{ grid-template-columns: repeat(3, 1fr); }}
 .cards.n4 {{ grid-template-columns: repeat(4, 1fr); }}
+.cards.n5 {{ grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 58px; }}
+
+/* The closing slide centres its cards under a large disc: five one-word
+   labels read as a row of badges, not as three-line explanations. */
+.cards.centered .card {{ text-align: center; padding: 40px 20px 44px 20px; }}
+.cards.centered .disc {{ width: 124px; height: 124px; margin: 0 auto; font-size: 54px; }}
+.cards.centered h3 {{ margin-top: 20px; }}
+.cards.centered .amber {{ margin: 12px auto 16px auto; }}
 
 .card {{
   padding: 26px 28px 28px 28px;
@@ -635,6 +682,43 @@ h2 {{
 .objective p {{ font-size: 28px; font-weight: 500; color: {NAVY}; }}
 .objective strong {{ color: {TEAL}; font-weight: 700; }}
 
+/* The last slide's foot: the sentence to leave with, and the thanks. It
+   replaces the callout bar rather than sitting beside it -- a closing
+   statement that has to compete with a teal box is not a closing statement. */
+.closing {{
+  position: absolute;
+  left: 78px;
+  right: 78px;
+  bottom: 62px;
+  text-align: center;
+}}
+.closing .line {{
+  font-size: 60px;
+  font-weight: 800;
+  letter-spacing: -.01em;
+  color: {NAVY};
+}}
+.closing .line .accent {{
+  background: linear-gradient(90deg, {BLUE}, {TEAL});
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}}
+.closing .underline {{
+  width: 232px;
+  height: 5px;
+  margin: 14px auto 0 auto;
+  border-radius: 3px;
+  background: {AMBER};
+}}
+.closing .thanks {{
+  margin-top: 24px;
+  font-size: 26px;
+  font-weight: 500;
+  color: {BODY};
+}}
+.closing .thanks b {{ color: {BLUE}; font-weight: 600; }}
+
 /* The callout bar, same shape and colour as the one on every neighbouring
    slide. The disc holds an arrow rather than a lightbulb; see the module
    docstring. */
@@ -679,12 +763,20 @@ HEAD = """<!doctype html>
     <div class="eyebrow">{eyebrow}</div>
     <div class="rule"></div>
     {head}
-    <div class="cards n{n}">{cards}</div>
+    <div class="cards n{n}{centered}">{cards}</div>
   </div>
-  <div class="callout"><span class="mark">&#8594;</span>
-    <p><strong>{lead}</strong> {rest}</p></div>
+  {tail}
 </div></body></html>
 """
+
+CALLOUT = """<div class="callout"><span class="mark">&#8594;</span>
+    <p><strong>{lead}</strong> {rest}</p></div>"""
+
+CLOSING = """<div class="closing">
+    <div class="line">{line} <span class="accent">{accent}</span></div>
+    <div class="underline"></div>
+    <div class="thanks">{thanks_lead} · <b>{thanks}</b></div>
+  </div>"""
 
 # A content slide leads with a two-line title and a one-line subtitle.
 CONTENT_HEAD = """<h1>{title}</h1>
@@ -706,13 +798,17 @@ def e(text: str) -> str:
 def page(copy: dict, lang: str, kind: str) -> str:
     """One slide's HTML. The second half of the title carries the gradient."""
     first, accent = copy["title"]
-    if kind == "divider":
+    if kind in ("divider", "closing"):
         # One line, not two: "09 . Matrix factorizations" is a name, and
         # breaking it after the number reads as a list item.
         title = f'{e(first)} <span class="accent">{e(accent)}</span>'
-        head = DIVIDER_HEAD.format(title=title, badge=e(copy["badge"]),
-                                   objective_lead=e(copy["objective"][0]),
-                                   objective=e(copy["objective"][1]))
+        if kind == "closing":
+            head = CONTENT_HEAD.format(title=title,
+                                       subtitle=e(copy["subtitle"]))
+        else:
+            head = DIVIDER_HEAD.format(title=title, badge=e(copy["badge"]),
+                                       objective_lead=e(copy["objective"][0]),
+                                       objective=e(copy["objective"][1]))
     else:
         title = f'{e(first)}<br><span class="accent">{e(accent)}</span>'
         head = CONTENT_HEAD.format(title=title, subtitle=e(copy["subtitle"]))
@@ -725,10 +821,18 @@ def page(copy: dict, lang: str, kind: str) -> str:
         + "</div>"
         for glyph, heading, lines in copy["cards"]
     )
-    lead, rest = copy["callout"]
+    if kind == "closing":
+        line, accent_line = copy["closing"]
+        tail = CLOSING.format(line=e(line), accent=e(accent_line),
+                              thanks_lead=e(copy["thanks"][0]),
+                              thanks=e(copy["thanks"][1]))
+    else:
+        lead, rest = copy["callout"]
+        tail = CALLOUT.format(lead=e(lead), rest=e(rest))
     return HEAD.format(lang=lang, css=CSS, eyebrow=e(copy["eyebrow"]),
-                       head=head, n=len(copy["cards"]), cards=cards,
-                       lead=e(lead), rest=e(rest))
+                       head=head, n=len(copy["cards"]),
+                       centered=" centered" if kind == "closing" else "",
+                       cards=cards, tail=tail)
 
 
 def chrome() -> str:
