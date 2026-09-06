@@ -100,8 +100,7 @@ apéndices, nunca la parte I.
 ## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.</p>
-<p class="sr-only">La profundización 12 es el trabajo para casa de este mapa: cada factorización escrita como un problema de optimización con restricciones, el coste de cada una deducido y luego medido, y la SVD como la mejor aproximación de rango k que existe. Es para quien quiera la respuesta a "cuál elijo y cuánto me cuesta" que esta escalera solo insinúa.</p>
-[Deep dive 12 ↗]({{< var repo.colab_base >}}/{{< var extras.x12.n >}}-{{< var extras.x12.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir la profundización 12 en Google Colab"}
+<p class="sr-only">La sección 09 recorre este mapa sobre datos reales: cada factorización escrita como un problema de optimización con restricciones, el coste de cada una deducido y luego medido, y la SVD como la mejor aproximación de rango k que existe. La pregunta "cuál elijo y cuánto me cuesta" que plantea esta escalera se responde dos horas después, en la sala.</p>
 
 [📖 {{< var reading.why_so_many.title_es >}} ↗]({{< var reading.why_so_many.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 
@@ -121,9 +120,9 @@ tensorial puede superar cada dimensión individual de los ejes, y una mejor
 aproximación de rango $R$ puede no existir siquiera — nada de eso es cierto
 para matrices.
 
-Menciona aquí la profundización 12, no la dejes para la diapositiva final.
-Este es el minuto en que alguien se pregunta por qué hay tantas, y 12 es el
-notebook que lo responde con una columna de coste.
+Señala aquí hacia la sección 09. Este es el minuto en que alguien se pregunta
+por qué hay tantas, y 09 es donde se recorre el mapa con una columna de coste
+al lado.
 :::
 
 ## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -336,23 +335,41 @@ recortes, después del Kahoot 2 y del TODO 4 de la §09.
 [📖 {{< var reading.eigen.title_es >}} ↗]({{< var reading.eigen.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 [📖 {{< var reading.recursion.title_es >}} ↗]({{< var reading.recursion.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 
-## {#sec-09-convolution-and-deconvolution background-image="images/slides-final/slide-25.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-09-matrix-factorizations background-image="images/slides-final/slide-25a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s09.part >}}
 :::
 
 <h1 class="sr-only">{{< var sections.s09.n >}} · {{< var sections.s09.title_es >}}</h1>
-<p class="sr-only">Sección {{< var sections.s09.n >}} · {{< var sections.s09.title_es >}} — {{< var sections.s09.minutes >}} min, de {{< var sections.s09.start >}} a {{< var sections.s09.end >}}. Objetivo: entender la convolución como una operación local y por qué invertirla es un problema distinto. Una foto del puente de Manhattan se desenfoca, se recupera parcialmente y se muestra su mapa de error.</p>
+<p class="sr-only">Sección {{< var sections.s09.n >}} · {{< var sections.s09.title_es >}} — {{< var sections.s09.minutes >}} min, de {{< var sections.s09.start >}} a {{< var sections.s09.end >}}. Objetivo: recorrer sobre datos reales el mapa de factorizaciones de la sección 01 — LU, QR, Cholesky, descomposición espectral, SVD y NMF — y descubrir cuánto cuesta cada una. Tres tarjetas: seis métodos como una misma optimización con distintas restricciones, el coste deducido y luego medido, y la descomposición espectral nombrada aquí en vez de darse por sabida en la sección 10.</p>
+[Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
 
-## {background-image="images/slides-final/slide-26.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
-
-<p class="sr-only">Forward no es transpose no es inverse: una fotografía real muestra el desenfoque directo, su transpuesta (que no deshace el desenfoque) y una recuperación parcial con Richardson-Lucy, etiquetadas como tres operaciones distintas.</p>
-[Colab ↗]({{< var repo.colab_base >}}/09-convolution-and-deconvolution.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
+[📖 {{< var reading.optimization.title_es >}} ↗]({{< var reading.optimization.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+[📖 {{< var reading.eigen.title_es >}} ↗]({{< var reading.eigen.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 
 ::: {.notes}
-Es lo más difícil del taller. El TODO 4 es el segundo en la lista de recortes.
-Di lo del recorte del borde en voz alta antes de que empiecen, no después.
+En esta sección el mapa de la sección 01 deja de ser un dibujo. Que no se
+convierta en un recorrido por seis APIs: la pregunta de cada tarjeta es qué
+vuelve fácil la factorización que antes era difícil.
+
+Nombra la descomposición espectral en voz alta. La sección 10 se apoya en la
+misma maquinaria y, hasta que existió esta sección, el taller nunca la
+presentaba.
+:::
+
+## {background-image="images/slides-final/slide-26a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir y elevan al cuadrado el número de condición; QR es la opción estable por defecto y nunca forma A-traspuesta-A; la SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.</p>
+[Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
+
+::: {.notes}
+La tabla de operaciones y el cronómetro no coinciden, y ese desacuerdo es la
+lección. Lo que sobrevive a la máquina es la razón entre métodos a tamaño
+fijo — una SVD completa cerca de 39 veces una Cholesky — no el exponente, que
+queda por debajo de 3 por el paralelismo y la caché.
+
+Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 :::
 
 ## {#sec-10-tucker-decomposition background-image="images/slides-final/slide-27.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -378,25 +395,6 @@ biotecnología, sobre datos (genes × muestras × condiciones), encuentran
 estructura que PCA no alcanza: PCA solo puede ver dos ejes.
 :::
 
-## {background-image="images/slides-final/slide-28a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
-
-<p class="sr-only">Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de rango 1, R por I más J más K números, y es la opción cuando hay que leer los componentes uno a uno. Tucker guarda un subespacio por modo más un núcleo, y es la opción cuando cada modo necesita su propio rango. Tensor Train guarda una cadena de núcleos pequeños, que crece solo linealmente con el orden, y es la opción cuando un núcleo denso explotaría. Y t-SVD aplica una FFT sobre el modo 3, SVD matriciales y una FFT inversa, y es la opción cuando el tercer modo tiene un significado propio.</p>
-<p class="sr-only">La profundización 13 ejecuta las cuatro sobre un mismo tensor con el mismo presupuesto de parámetros, y añade el argumento del aplanado y el del ritmo de crecimiento de Tensor Train. Es para quien quiera esa comparación medida y no afirmada.</p>
-[Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 10 en Google Colab"}
-[Deep dive 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir la profundización 13 en Google Colab"}
-
-[📖 {{< var reading.tensor_factorizations.title_es >}} ↗]({{< var reading.tensor_factorizations.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
-
-::: {.notes}
-La sección 10 enseña solo Tucker y, con 15 minutos, esa es la decisión
-correcta. Esta diapositiva es donde se nombran las otras tres, para que quien
-abra la profundización 13 después llegue a CP, Tensor Train y t-SVD sabiendo
-ya para qué sirve cada una.
-
-Si vas con retraso, lee los cuatro títulos y la barra y sigue. La comparación
-es de la profundización, no de esta sala.
-:::
-
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_es >}}</h1>
@@ -415,28 +413,67 @@ calado antes de que se vayan. Además hace de ensayo en directo del propio repas
 del cierre, así que enlaza directamente del podio con el cierre.
 :::
 
-## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
-
-<p class="sr-only">Una idea conecta el workshop: pseudoinversa, deconvolución y Tucker se muestran uno junto al otro como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.</p>
-
-[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir el cuaderno 11 en Google Colab"}
-
-::: {.notes}
-Enunciar esta conexión de forma explícita es lo que hace que la segunda mitad se
-sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
-:::
-
-## {#sec-11-wrap-up-and-take-homes background-image="images/slides-final/slide-31.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-11-tensor-factorizations background-image="images/slides-final/slide-29a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
 {{< var sections.s11.part >}}
 :::
 
 <h1 class="sr-only">{{< var sections.s11.n >}} · {{< var sections.s11.title_es >}}</h1>
-<p class="sr-only">Sección {{< var sections.s11.n >}} · {{< var sections.s11.title_es >}} — {{< var sections.s11.minutes >}} min, de {{< var sections.s11.start >}} a {{< var sections.s11.end >}}. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.</p>
-[Colab ↗]({{< var repo.colab_base >}}/11-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 11 en Google Colab"}
-[Deep dive 12 ↗]({{< var repo.colab_base >}}/{{< var extras.x12.n >}}-{{< var extras.x12.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir deep dive 12 en Google Colab"}
-[Deep dive 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir deep dive 13 en Google Colab"}
+<p class="sr-only">Sección {{< var sections.s11.n >}} · {{< var sections.s11.title_es >}} — {{< var sections.s11.minutes >}} min, de {{< var sections.s11.start >}} a {{< var sections.s11.end >}}. Objetivo: elegir la descomposición según la estructura que necesitas conservar, y el rango según la pérdida que puedes aceptar. Tres tarjetas: aplanar conserva todos los números y pierde qué significaba cada dirección; CP frente a Tucker con un presupuesto de parámetros equivalente en lugar de rango contra rango; y ritmos de crecimiento en vez de constantes, porque una máquina más rápida cambia las constantes y no qué fórmula crece exponencialmente.</p>
+[Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 11 en Google Colab"}
 
-[📖 {{< var reading.optimization.title_es >}} ↗]({{< var reading.optimization.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+[📖 {{< var reading.uses.title_es >}} ↗]({{< var reading.uses.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+[📖 {{< var reading.tensor_factorizations.title_es >}} ↗]({{< var reading.tensor_factorizations.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
+::: {.notes}
+La sección 10 le dio a la sala un solo trato. Esta pone los otros tres a su
+lado, que es lo que convierte a Tucker de "la descomposición tensorial" en una
+opción entre cuatro.
+
+La comparación con presupuesto equivalente es lo que hay que proteger si vas
+con retraso. Rango contra rango es la comparación que todo el mundo hace, y es
+la equivocada.
+:::
+
+## {background-image="images/slides-final/slide-29b.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de rango 1, R por I más J más K números, y es la opción cuando hay que leer los componentes uno a uno. Tucker guarda un subespacio por modo más un núcleo, y es la opción cuando cada modo necesita su propio rango. Tensor Train guarda una cadena de núcleos pequeños, que crece solo linealmente con el orden, y es la opción cuando un núcleo denso explotaría. Y t-SVD aplica una FFT sobre el modo 3, SVD matriciales y una FFT inversa, y es la opción cuando el tercer modo tiene un significado propio.</p>
+[Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 11 en Google Colab"}
+
+::: {.notes}
+Lee los cuatro títulos en orden y deja que la sala pregunte cuál quieren sus
+propios datos. Esa pregunta es la sección; la aritmética no.
+
+Aquí chocan los dos sentidos de "rango": el del capítulo 2 y el tensorial. Di
+cuál quieres decir cada vez.
+:::
+
+## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+<p class="sr-only">Una idea conecta el taller: la pseudoinversa de la sección 07, Tucker en la 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 aparecen juntas como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.</p>
+
+[Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 12 en Google Colab"}
+
+::: {.notes}
+Enunciar esta conexión de forma explícita es lo que hace que la segunda mitad se
+sienta como una sola lección y no como cuatro bloques sueltos. No te lo saltes.
+La diapositiva de inversas tensoriales de la sección 07 la abre; aquí se cierra.
+
+La convolución es la única de las tres patas que la sala ya no ejecuta. Dilo, y
+di que el ejercicio para casa 13 es donde le ocurre a una fotografía real.
+:::
+
+## {#sec-12-wrap-up-and-take-homes background-image="images/slides-final/slide-31a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+
+::: {.sec-part}
+{{< var sections.s12.part >}}
+:::
+
+<h1 class="sr-only">{{< var sections.s12.n >}} · {{< var sections.s12.title_es >}}</h1>
+<p class="sr-only">El ejercicio para casa 13 es convolución y deconvolución: un kernel pequeño reutilizado en muchas posiciones, correlación frente a convolución verdadera, la convolución transpuesta como superposición y suma, y Richardson-Lucy recuperando una fotografía real desenfocada. Es el tercer caso de la idea que conecta el taller, y el único que la sala ya no ejecuta.</p>
+<p class="sr-only">Sección {{< var sections.s12.n >}} · {{< var sections.s12.title_es >}} — {{< var sections.s12.minutes >}} min, de {{< var sections.s12.start >}} a {{< var sections.s12.end >}}. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.</p>
+[Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 12 en Google Colab"}
+[Take-home 13 ↗]({{< var repo.colab_base >}}/{{< var extras.x13.n >}}-{{< var extras.x13.slug >}}.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir el ejercicio para casa 13 en Google Colab"}
+
 [📖 {{< var reading.attention.title_es >}} ↗]({{< var reading.attention.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}

@@ -42,7 +42,7 @@ Until you do, every quiz link points at `kahoot.it` itself, which still works â€
 students enter the PIN from your screen. `scripts/check_links.py` reports how
 many are still on the fallback.
 
-Every link on the site, in both slide decks and in all twelve notebooks points
+Every link on the site, in both slide decks and in all fourteen notebooks points
 at that one file, so three edits cover everything.
 
 ### During the session

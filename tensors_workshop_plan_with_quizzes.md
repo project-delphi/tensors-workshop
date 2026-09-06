@@ -41,11 +41,12 @@ across to turn one label into the other.
 | **07** | IV | 4 | [Inverses and the pseudoinverse](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | exercise | 15 | 02:00 |
 | — | 🎯 | — | **Kahoot 2 — Einsum, Distance & the Pseudoinverse** | quiz | 5 | 02:15 |
 | **08** | IV | — | [Recursion with matrices and vectors](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | demo | 10 | 02:20 |
-| **09** | IV | 5 | [Convolution and deconvolution](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-convolution-and-deconvolution.ipynb) | exercise | 15 | 02:30 |
+| **09** | IV | 5 | [Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | exercise | 15 | 02:30 |
 | — | — | — | Break | — | 5 | 02:45 |
 | **10** | IV | 6 | [Tucker decomposition on real data](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | exercise | 15 | 02:50 |
 | — | 🎯 | — | **Kahoot 3 — Convolution & Tensor Decompositions** | quiz | 5 | 03:05 |
-| **11** | — | — | [Wrap-up and take-homes](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb) | wrap-up | 5 | 03:10 |
+| **11** | IV | 7 | [Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | exercise | 15 | 03:10 |
+| **12** | — | — | [Wrap-up and take-homes](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | wrap-up | 5 | 03:25 |
 <!-- END handbook-schedule -->
 
 **Why the quizzes sit where they do.** Each one follows the sections that supply
@@ -204,7 +205,7 @@ A **factorization** writes one object as a product of simpler objects. You met t
 | **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Appendix D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | section 10 |
 
-Today uses each of these where it happens to be needed. [Appendix F](#appendix-f-matrix-factorizations-which-one-and-what-it-costs) puts the whole family side by side and asks what each one *costs*, which is the question this table does not answer.
+Today uses each of these where it happens to be needed. [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) puts the whole family side by side and asks what each one *costs*, which is the question this table does not answer.
 
 ```python
 A = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
@@ -521,95 +522,86 @@ for t in range(6):
     h = np.tanh(W @ h + U @ xs[t])    # same W and U every step — that is the recursion
 ```
 
-## 09 · Convolution and Deconvolution (Block 5, 15 min)
+## 09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 15 min)
 
-### The theory
+Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing — LU and QR in §1.4 itself, the pseudoinverse in section 07 — without ever answering the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This section answers both, and it is where **eigendecomposition** finally gets named, an hour before section 10 leans on the same machinery. The notebook is **[09 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
 
-**Convolution** slides a small array (the **kernel**, or **filter**) across a larger one, multiplying and summing at each position. It is the operation at the heart of every convolutional neural network, and it is also how every blur, sharpen, and edge-detection filter works.
+The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes `‖y − Xβ‖` subject to an orthonormal `Q`. The truncated SVD minimizes `‖A − B‖_F` subject to `rank(B) ≤ k` — and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to `W, H ≥ 0`, which must be worse on error and is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all: they are exact rewrites whose entire value is downstream, where a solve costs `O(n²)` instead of `O(n³)`.
 
-```python
-x = np.array([1., 2., 3., 4., 5.])
-k = np.array([1., 0., -1.])
+**The cost table.** Leading-term flop counts for a dense `m × n` factorization with `m ≥ n`, from Trefethen & Bau, *Numerical Linear Algebra*:
 
-np.convolve(x, k, 'full')    # [ 1.  2.  2.  2.  2. -4. -5.]  length 5+3-1 = 7
-np.convolve(x, k, 'valid')   # [ 2.  2.  2.]                  length 5-3+1 = 3
-np.convolve(x, k, 'same')    # [ 2.  2.  2.  2. -4.]          length 5
-```
+| Method | Flops | The question it answers |
+|---|---|---|
+| **Cholesky** (`n × n` SPD) | `n³/3` | Solve `Ax = b` many times, `A` symmetric positive definite |
+| **LU** (`n × n`) | `2n³/3` | The same, `A` merely square |
+| **QR** (`m × n`) | `2mn² − 2n³/3` | Least squares, without forming `XᵀX` |
+| **Eigendecomposition** (`n × n` sym.) | `≈ 9n³` | What does repeated application converge to? |
+| **Thin SVD** (`m × n`) | `2mn² + 11n³` | The best rank-`k` approximation of anything |
+| **Randomized SVD** (rank `k`) | `≈ 4mnk` | The same, when `k ≪ n` and `A` is dense |
+| **Lanczos** (rank `k`, sparse) | `O(k · nnz(A))` | The same, when `A` is sparse |
 
-Three modes, three output sizes. `valid` uses only positions where the kernel fits completely — this is why convolution **shrinks** an image by `kernel_size - 1`.
+Three consequences are worth stating outright, because each one is a mistake that costs a single line of code:
 
-⚠️ **A detail that confuses everyone.** True convolution flips the kernel; **correlation** does not. What deep learning libraries call "convolution" is actually correlation. It makes no practical difference, because the network *learns* the kernel — but you should know the names are inconsistent.
-
-```python
-np.correlate(x, k, 'valid')          # [-2. -2. -2.]
-np.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — the same, with k flipped
-```
-
-**Convolution is a matrix multiplication.** This is the connection back to Chapter 2. Any convolution can be written as multiplication by a **Toeplitz** matrix — a matrix where the kernel is shifted along each row:
+1. **Factor once, solve many.** Cholesky costs `n³/3` once; each later solve is two triangular substitutions at `O(n²)`. So `m` right-hand sides cost `O(n³ + mn²)`, **not** `O(mn³)`. `np.linalg.inv(A) @ B` is both slower and less accurate than factoring, and is never the right call.
+2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
+3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))` — the gap between those is why large-scale recommenders are feasible at all.
 
 ```python
-col = np.zeros(7); col[:3] = k
-row = np.zeros(5); row[0] = k[0]
-C = toeplitz(col, row)                       # (7, 5)
-np.allclose(C @ x, np.convolve(x, k, 'full'))   # True
+# TODO 1: Fit a degree-10 polynomial to the real airline series two ways.
+#         X = np.vander(month_scaled, 11, increasing=True); y = passengers
+#         a) normal equations: np.linalg.solve(X.T @ X, X.T @ y)
+#         b) QR: Q, R = np.linalg.qr(X); np.linalg.solve(R, Q.T @ y)
+#         Use np.linalg.lstsq as the reference. Compare the RESIDUALS, then
+#         compare the COEFFICIENTS. Only one of those two comparisons sees
+#         the problem.
+# TODO 2: Build the 1797x1797 RBF kernel matrix of the digits plus a ridge
+#         term, and 200 right-hand sides. Time three strategies: factor once
+#         with cho_factor/cho_solve, np.linalg.inv(G) @ B, and one
+#         np.linalg.solve per column. Print the ratios, and the relative
+#         residual of the first two. Which is both faster AND more accurate?
+# TODO 3: Time Cholesky, LU, QR, eigh and SVD across n = 128 ... 768. Fit
+#         log t against log n; the slope is the measured exponent. Compare
+#         it against the predicted 3, and compare the measured SVD/Cholesky
+#         ratio against the 39x the table above predicts. Which of the two
+#         predictions survives contact with a real machine?
+# TODO 4: Write needed_rank(A, target_db) returning the smallest k whose
+#         rank-k truncation reaches a target PSNR — WITHOUT rebuilding the
+#         truncation for each k. Eckart-Young gives the squared error as
+#         sum(S[k:] ** 2) directly. Run it on the 512x512 astronaut image
+#         for 20, 25, 30 and 35 dB and report what each rank costs to store.
 ```
 
-So convolution is not a new kind of operation. It is a **structured matrix multiplication** — one where the same few numbers are reused across the whole matrix. That reuse is exactly why CNNs need so many fewer parameters than fully connected networks.
-
-**Deconvolution** means two different things, and you must keep them separate:
-
-1. **Transposed convolution** — the upsampling layer in a decoder or GAN. It makes things *bigger*. It is not a true inverse; the name is historical and misleading.
-2. **True deconvolution** — recovering the original signal from a blurred one. This is a genuine inverse problem, and it is where section 07 comes back.
-
-**Exercise (10 min)**
-```python
-img = data.camera().astype(float) / 255.      # real photograph, 512x512
-sobel = np.array([[-1,0,1],[-2,0,2],[-1,0,1]], float)
-
-# TODO 1: Convolve `img` with `sobel` in 'valid' mode. What shape comes out,
-#         and by how much did it shrink?
-# TODO 2: Blur the image with a 9x9 averaging kernel (all entries equal,
-#         summing to 1), mode='same'. Display it next to the original.
-# TODO 3 (transposed convolution): upsample this 2x2 array to 3x3 by adding
-#         small * kernel into an output array at each position:
-#             small = np.array([[1., 2.], [3., 4.]]); ker = np.ones((2, 2))
-#         What shape do you get? Why is this called "deconvolution" in CNNs
-#         even though it does not undo anything?
-# TODO 4 (true deconvolution): add small noise to the blurred image, then try to
-#         recover the original with skimage.restoration.richardson_lucy(...,
-#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 25-pixel
-#         border. Did it improve?
-```
-
-**Explanation (5 min)**
-```python
-edges = signal.convolve2d(img, sobel, mode='valid')     # (510, 510) — shrank by 2
-
-psf = np.ones((9, 9)); psf /= psf.sum()
-blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
-noisy = blurred + 0.002 * np.random.default_rng(0).standard_normal(blurred.shape)
-
-from skimage.restoration import richardson_lucy
-recovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)
-
-c = 25   # ignore the border: deconvolution always creates edge artifacts
-err = lambda a: np.linalg.norm((a-img)[c:-c,c:-c]) / np.linalg.norm(img[c:-c,c:-c])
-print(err(noisy), err(recovered))     # 0.1157 -> 0.0815
-```
-
-Deconvolution **reduced the error by about 30%**. Two lessons worth keeping:
-
-**First, you must ignore the border.** Deconvolution creates strong artifacts at the edges, where the algorithm has no information about what lies outside the image. If you measure error over the whole image, the artifacts dominate and it looks like the method failed. It did not.
-
-**Second, why not just invert the blur directly?** Because it fails badly. Blurring destroys high-frequency detail, so inverting it divides by numbers very close to zero and amplifies noise enormously:
+<details><summary>Solution</summary>
 
 ```python
-K = np.fft.fft2(psf, s=img.shape)
-naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, K)))
-# relative error ≈ 1.4 — far WORSE than the blurred image we started from
+X = np.vander(month_scaled, 11, increasing=True)                   # TODO 1
+beta_normal = np.linalg.solve(X.T @ X, X.T @ passengers)
+Q, R = np.linalg.qr(X); beta_qr = np.linalg.solve(R, Q.T @ passengers)
+beta_ref = np.linalg.lstsq(X, passengers, rcond=None)[0]
+# cond(X) = 2.2e+07, cond(X.T @ X) = 4.6e+14 — the square, to one digit
+# residuals agree to six decimals; coefficient errors are 2.0e-03 vs 2.0e-14
+
+X_fast = cho_solve(cho_factor(G), B)                               # TODO 2
+# factor once = 1x; explicit inverse ~5x slower; one solve per column ~340x
+# and the explicit inverse is also ~7x less accurate on the residual
+
+slope, _ = np.polyfit(np.log(sizes), np.log(times), 1)             # TODO 3
+# fitted slopes land near 2.2-2.9, not 3.0; and the measured SVD/Cholesky ratio lands well under the predicted 39x
+
+S = np.linalg.svd(A, compute_uv=False)                             # TODO 4
+tail = np.concatenate([np.cumsum(S[::-1] ** 2)[::-1], [0.0]])
+with np.errstate(divide="ignore"):        # the last entry is exactly 0
+    db = 10 * np.log10(1.0 / (tail / A.size))
+k = int(np.argmax(db >= target_db))
 ```
 
-**This is the same lesson as section 07.** A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine: every fluorescence microscope blurs its images by a known amount (the *point spread function*), and deconvolution is standard practice before cells are counted or measured.
+**TODO 1 is the expensive one.** The residuals of the two fits agree to six decimal places, so the check most people run reports nothing wrong — while the coefficients differ by eleven orders of magnitude. That gap is exactly `κ(X)²` against `κ(X)`, and it came from writing `X.T @ X`.
+
+**TODO 3 does not give you 3.0, and that is not a failure of the theory.** Fitted exponents come in low because parallelism and cache reuse both improve as `n` grows: the machine gets faster at the same work, which flattens the curve. The effect shrinks with larger `n`, so the slope creeps upward. What does survive is the **ratio between methods at fixed `n`** — it cancels the machine out, because both methods gain from the same hardware. Predict with ratios, not exponents.
+
+**TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
+</details>
+
 
 ## Break (5 min)
 
@@ -678,11 +670,102 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 
 ## Kahoot Quiz 3 — Convolution & Tensor Decompositions (5 min)
 
-**Run this right after section 10, before the Wrap-up.** It covers convolution/correlation (section 09) and Tucker/CP decomposition (section 10) while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up's own recap, so segue straight from the quiz into it.
+**Run this right after section 10, before section 11.** Its six questions still cover convolution/correlation alongside Tucker/CP decomposition — convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up's own recap, so segue straight from the quiz into it.
 
 ---
 
-## 11 · Wrap-Up (5 min)
+## 11 · Tensor Factorizations: Which One, and What It Costs (Block 7, 15 min)
+
+[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) asked *which factorization, and what does it cost* one order down, on matrices. This section asks it of tensors, straight after section 10 has shown one answer. The notebook is **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
+
+A tensor decomposition is not only a compression technique. Each one makes a different assumption about **which structure in the data should be kept**, and that assumption — not the flop count — is what you choose between.
+
+### Four decompositions, four bargains
+
+| Method | Main idea | Storage | Best fit |
+|---|---|---|---|
+| **CP** | Sum of rank-1 components | `R(I + J + K)` | Individually interpretable components; uniqueness can matter |
+| **Tucker / HOSVD** | One low-dimensional subspace per mode, plus a core | `R₁R₂R₃ + IR₁ + JR₂ + KR₃` | Different modes need different ranks |
+| **Tensor Train (TT)** | Chain of small cores | `≈ O(N · I · r²)` | Very high-order tensors |
+| **t-SVD** | FFT along mode 3, matrix SVDs, inverse FFT | Depends on retained tubal rank | Order-3 tensors with a meaningful third mode |
+
+> 🇪🇸 Cada método conserva una estructura distinta. CP busca componentes individuales, Tucker permite un rango diferente por modo, Tensor Train evita que un núcleo de orden alto crezca exponencialmente, y t-SVD conserva la estructura del tercer modo mediante FFT.
+
+### Why not flatten first?
+
+Flattening preserves the numerical entries but can hide the meaning carried by separate tensor modes. The synthetic fluorescence-unmixing example in the notebook makes the difference measurable:
+
+- CP recovers the true component amounts at correlation `1.00`.
+- Flatten-then-SVD reaches only mean `|corr| ≈ 0.536`.
+- The SVD representation can produce **negative** amount directions, even though a physical concentration cannot be negative.
+
+That example is synthetic by design: it isolates the structural question without requiring another dataset download.
+
+> 🇪🇸 Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos dos modos cuyo significado separado era precisamente la información que queríamos interpretar.
+
+### Fair comparison: CP versus Tucker
+
+**Do not compare CP rank `R` against Tucker rank `(R, R, R)`.** Those two representations store different numbers of parameters, so the comparison measures the budget, not the model. A fair experiment is:
+
+1. choose a CP rank;
+2. count its stored parameters, `R · sum(T.shape)`;
+3. search Tucker ranks near that same parameter budget, and keep the one with the **lowest reconstruction error**;
+4. compare error and interpretability at that matched budget.
+
+Step 3 is where this goes wrong most easily: picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor — `pickup borough × dropoff borough × hour` — and uses the workshop's pinned storm clip as a second tensor-shaped example.
+
+```python
+# TODO 1: Choose a CP rank R for the taxi tensor.
+# TODO 2: Count CP parameters: R * sum(T.shape).
+# TODO 3: Search Tucker ranks near that parameter count and keep the one with
+#         the lowest reconstruction error, not merely the closest parameter
+#         count. Watch what a rank-1 mode does to the answer.
+# TODO 4: Compare relative reconstruction error at the matched budget.
+# TODO 5: Explain which set of factors is easier to interpret.
+```
+
+### Why Tensor Train matters as order grows
+
+For a dense order-`N` tensor with equal mode size `I`, dense storage is `I^N`. At a fixed TT bond rank `r`, TT storage is `≈ O(N · I · r²)`: **exponential in the order against linear in the order**, with `I` and `r` held fixed.
+
+CP storage is also linear in the order under a fixed global rank. TT's practical advantage is different: it represents high-order interactions through *local* bond ranks, rather than through one Tucker core that grows exponentially with the order.
+
+```python
+# TODO 1: Fix I and the TT bond rank r.
+# TODO 2: Increase the tensor order N.
+# TODO 3: Plot dense storage I**N against TT storage ~ N*I*r**2.
+# TODO 4: Explain the different growth rates, and where the crossover sits.
+```
+
+### Tensor decomposition inside neural networks
+
+A dense convolution kernel of shape `3 × 3 × 512 × 512` holds 2,359,296 weights, and costs about 462 million multiply-adds on a 14 × 14 feature map. A CP factorization at rank 64 stores `64 × (3 + 3 + 512 + 512) = 65,920` weights — **35.8× fewer** — and runs as four skinny convolutions in sequence: `1×1 → 3×1 → 1×3 → 1×1`.
+
+One order up, a transformer output matrix `W_O` of shape `4096 × 4096` stores 16,777,216 weights; a TT-matrix representation at rank 16 stores 34,816, or **481.9× fewer**.
+
+The storage ratio is the easy half. The workflow that makes it usable is **train → compress → fine-tune**, and compression is worth nothing unless the downstream task stays accurate enough — which is a property of the trained weights, not of the shape.
+
+```python
+# TODO 1: Build the synthetic convolution kernel from notebook 13.
+# TODO 2: Evaluate several CP ranks.
+# TODO 3: Find the smallest rank whose reconstruction error sits below a
+#         threshold you chose in advance.
+# TODO 4: Report the rank, the error, the stored weights and the compression
+#         ratio — all four, because any one of them alone can be gamed.
+```
+
+### The decision rule
+
+**Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.** In that order: the first question has no numerical answer, and the second has no answer at all until the first is settled.
+
+> 🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.
+
+For the full interactive treatment — method chooser, measured timing, matched-budget CP/Tucker comparison, downstream compression and the storage-budget widget — continue with **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
+
+---
+
+
+## 12 · Wrap-Up (5 min)
 
 What you did today:
 
@@ -697,9 +780,9 @@ What you did today:
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
 - `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
-- **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 11](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-wrap-up-and-take-homes.ipynb).
-- **The two deep dives** beyond them: [matrix factorizations](#appendix-f-matrix-factorizations-which-one-and-what-it-costs) (Appendix F, notebook 12) and [tensor factorizations](#appendix-g-tensor-factorizations-which-one-and-what-it-costs) (Appendix G, notebook 13).
-- **[Further Reading](#further-reading)** — books, the seminal Tucker/CP/SVD papers, and `tensorly`, for going deeper than today's 195 minutes.
+- **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 11](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
+- **The one deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run.
+- **[Further Reading](#further-reading)** — books, the seminal Tucker/CP/SVD papers, and `tensorly`, for going deeper than today's 210 minutes.
 
 ---
 
@@ -794,13 +877,13 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 ## Appendix C — Take-Home: CP vs Tucker
 
-The CP-versus-Tucker exercise that lived here has moved to **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**, where CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Appendix G](#appendix-g-tensor-factorizations-which-one-and-what-it-costs) is the written companion to that notebook.
+The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, where CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook.
 
-> 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 13 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
+> 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 13 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 
 ## Appendix D — Take-Home: Cholesky Builds Correlated Data
 
-[Appendix F](#appendix-f-matrix-factorizations-which-one-and-what-it-costs) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.
+[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.
 
 ```python
 vol = np.array([0.012, 0.015, 0.010])
@@ -918,177 +1001,98 @@ Both ends fail, for opposite reasons. At `k = 2` the approximation is so aggress
 **Retained energy is not the criterion.** Going from `k = 40` to `k = 80` retains *more* energy (87% against 78%) and produces *worse* audio, because the energy being added back is noise. Low rank does not mean clean; it means small. Whether it also means better is an empirical question, and this is the one take-home where the answer is "only in a window, and you have to measure to find it".
 </details>
 
-## Appendix F — Matrix Factorizations: Which One, and What It Costs
+## Appendix F — Take-Home: Convolution and Deconvolution
 
-The workshop used factorizations in passing — LU and QR in Part I §1.4, the pseudoinverse in section 07, convolution as a matrix product in section 09 — without ever answering the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This appendix answers both, and the deep-dive notebook does it interactively: **[12 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-matrix-factorizations.ipynb)**.
+### The theory
 
-The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes `‖y − Xβ‖` subject to an orthonormal `Q`. The truncated SVD minimizes `‖A − B‖_F` subject to `rank(B) ≤ k` — and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to `W, H ≥ 0`, which must be worse on error and is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all: they are exact rewrites whose entire value is downstream, where a solve costs `O(n²)` instead of `O(n³)`.
-
-**The cost table.** Leading-term flop counts for a dense `m × n` factorization with `m ≥ n`, from Trefethen & Bau, *Numerical Linear Algebra*:
-
-| Method | Flops | The question it answers |
-|---|---|---|
-| **Cholesky** (`n × n` SPD) | `n³/3` | Solve `Ax = b` many times, `A` symmetric positive definite |
-| **LU** (`n × n`) | `2n³/3` | The same, `A` merely square |
-| **QR** (`m × n`) | `2mn² − 2n³/3` | Least squares, without forming `XᵀX` |
-| **Eigendecomposition** (`n × n` sym.) | `≈ 9n³` | What does repeated application converge to? |
-| **Thin SVD** (`m × n`) | `2mn² + 11n³` | The best rank-`k` approximation of anything |
-| **Randomized SVD** (rank `k`) | `≈ 4mnk` | The same, when `k ≪ n` and `A` is dense |
-| **Lanczos** (rank `k`, sparse) | `O(k · nnz(A))` | The same, when `A` is sparse |
-
-Three consequences are worth stating outright, because each one is a mistake that costs a single line of code:
-
-1. **Factor once, solve many.** Cholesky costs `n³/3` once; each later solve is two triangular substitutions at `O(n²)`. So `m` right-hand sides cost `O(n³ + mn²)`, **not** `O(mn³)`. `np.linalg.inv(A) @ B` is both slower and less accurate than factoring, and is never the right call.
-2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
-3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))` — the gap between those is why large-scale recommenders are feasible at all.
+**Convolution** slides a small array (the **kernel**, or **filter**) across a larger one, multiplying and summing at each position. It is the operation at the heart of every convolutional neural network, and it is also how every blur, sharpen, and edge-detection filter works.
 
 ```python
-# TODO 1: Fit a degree-10 polynomial to the real airline series two ways.
-#         X = np.vander(month_scaled, 11, increasing=True); y = passengers
-#         a) normal equations: np.linalg.solve(X.T @ X, X.T @ y)
-#         b) QR: Q, R = np.linalg.qr(X); np.linalg.solve(R, Q.T @ y)
-#         Use np.linalg.lstsq as the reference. Compare the RESIDUALS, then
-#         compare the COEFFICIENTS. Only one of those two comparisons sees
-#         the problem.
-# TODO 2: Build the 1797x1797 RBF kernel matrix of the digits plus a ridge
-#         term, and 200 right-hand sides. Time three strategies: factor once
-#         with cho_factor/cho_solve, np.linalg.inv(G) @ B, and one
-#         np.linalg.solve per column. Print the ratios, and the relative
-#         residual of the first two. Which is both faster AND more accurate?
-# TODO 3: Time Cholesky, LU, QR, eigh and SVD across n = 128 ... 768. Fit
-#         log t against log n; the slope is the measured exponent. Compare
-#         it against the predicted 3, and compare the measured SVD/Cholesky
-#         ratio against the 39x the table above predicts. Which of the two
-#         predictions survives contact with a real machine?
-# TODO 4: Write needed_rank(A, target_db) returning the smallest k whose
-#         rank-k truncation reaches a target PSNR — WITHOUT rebuilding the
-#         truncation for each k. Eckart-Young gives the squared error as
-#         sum(S[k:] ** 2) directly. Run it on the 512x512 astronaut image
-#         for 20, 25, 30 and 35 dB and report what each rank costs to store.
+x = np.array([1., 2., 3., 4., 5.])
+k = np.array([1., 0., -1.])
+
+np.convolve(x, k, 'full')    # [ 1.  2.  2.  2.  2. -4. -5.]  length 5+3-1 = 7
+np.convolve(x, k, 'valid')   # [ 2.  2.  2.]                  length 5-3+1 = 3
+np.convolve(x, k, 'same')    # [ 2.  2.  2.  2. -4.]          length 5
 ```
 
-<details><summary>Solution</summary>
+Three modes, three output sizes. `valid` uses only positions where the kernel fits completely — this is why convolution **shrinks** an image by `kernel_size - 1`.
+
+⚠️ **A detail that confuses everyone.** True convolution flips the kernel; **correlation** does not. What deep learning libraries call "convolution" is actually correlation. It makes no practical difference, because the network *learns* the kernel — but you should know the names are inconsistent.
 
 ```python
-X = np.vander(month_scaled, 11, increasing=True)                   # TODO 1
-beta_normal = np.linalg.solve(X.T @ X, X.T @ passengers)
-Q, R = np.linalg.qr(X); beta_qr = np.linalg.solve(R, Q.T @ passengers)
-beta_ref = np.linalg.lstsq(X, passengers, rcond=None)[0]
-# cond(X) = 2.2e+07, cond(X.T @ X) = 4.6e+14 — the square, to one digit
-# residuals agree to six decimals; coefficient errors are 2.0e-03 vs 2.0e-14
-
-X_fast = cho_solve(cho_factor(G), B)                               # TODO 2
-# factor once = 1x; explicit inverse ~5x slower; one solve per column ~340x
-# and the explicit inverse is also ~7x less accurate on the residual
-
-slope, _ = np.polyfit(np.log(sizes), np.log(times), 1)             # TODO 3
-# fitted slopes land near 2.2-2.9, not 3.0; and the measured SVD/Cholesky ratio lands well under the predicted 39x
-
-S = np.linalg.svd(A, compute_uv=False)                             # TODO 4
-tail = np.concatenate([np.cumsum(S[::-1] ** 2)[::-1], [0.0]])
-with np.errstate(divide="ignore"):        # the last entry is exactly 0
-    db = 10 * np.log10(1.0 / (tail / A.size))
-k = int(np.argmax(db >= target_db))
+np.correlate(x, k, 'valid')          # [-2. -2. -2.]
+np.convolve(x, k[::-1], 'valid')     # [-2. -2. -2.] — the same, with k flipped
 ```
 
-**TODO 1 is the expensive one.** The residuals of the two fits agree to six decimal places, so the check most people run reports nothing wrong — while the coefficients differ by eleven orders of magnitude. That gap is exactly `κ(X)²` against `κ(X)`, and it came from writing `X.T @ X`.
-
-**TODO 3 does not give you 3.0, and that is not a failure of the theory.** Fitted exponents come in low because parallelism and cache reuse both improve as `n` grows: the machine gets faster at the same work, which flattens the curve. The effect shrinks with larger `n`, so the slope creeps upward. What does survive is the **ratio between methods at fixed `n`** — it cancels the machine out, because both methods gain from the same hardware. Predict with ratios, not exponents.
-
-**TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
-</details>
-
-## Appendix G — Tensor Factorizations: Which One, and What It Costs
-
-Appendix F asked *which factorization, and what does it cost* one order down, on matrices. This appendix asks it of tensors, and the deep-dive notebook does it interactively: **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**.
-
-A tensor decomposition is not only a compression technique. Each one makes a different assumption about **which structure in the data should be kept**, and that assumption — not the flop count — is what you choose between.
-
-### Four decompositions, four bargains
-
-| Method | Main idea | Storage | Best fit |
-|---|---|---|---|
-| **CP** | Sum of rank-1 components | `R(I + J + K)` | Individually interpretable components; uniqueness can matter |
-| **Tucker / HOSVD** | One low-dimensional subspace per mode, plus a core | `R₁R₂R₃ + IR₁ + JR₂ + KR₃` | Different modes need different ranks |
-| **Tensor Train (TT)** | Chain of small cores | `≈ O(N · I · r²)` | Very high-order tensors |
-| **t-SVD** | FFT along mode 3, matrix SVDs, inverse FFT | Depends on retained tubal rank | Order-3 tensors with a meaningful third mode |
-
-> 🇪🇸 Cada método conserva una estructura distinta. CP busca componentes individuales, Tucker permite un rango diferente por modo, Tensor Train evita que un núcleo de orden alto crezca exponencialmente, y t-SVD conserva la estructura del tercer modo mediante FFT.
-
-### Why not flatten first?
-
-Flattening preserves the numerical entries but can hide the meaning carried by separate tensor modes. The synthetic fluorescence-unmixing example in the notebook makes the difference measurable:
-
-- CP recovers the true component amounts at correlation `1.00`.
-- Flatten-then-SVD reaches only mean `|corr| ≈ 0.536`.
-- The SVD representation can produce **negative** amount directions, even though a physical concentration cannot be negative.
-
-That example is synthetic by design: it isolates the structural question without requiring another dataset download.
-
-> 🇪🇸 Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos dos modos cuyo significado separado era precisamente la información que queríamos interpretar.
-
-### Fair comparison: CP versus Tucker
-
-**Do not compare CP rank `R` against Tucker rank `(R, R, R)`.** Those two representations store different numbers of parameters, so the comparison measures the budget, not the model. A fair experiment is:
-
-1. choose a CP rank;
-2. count its stored parameters, `R · sum(T.shape)`;
-3. search Tucker ranks near that same parameter budget, and keep the one with the **lowest reconstruction error**;
-4. compare error and interpretability at that matched budget.
-
-Step 3 is where this goes wrong most easily: picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor — `pickup borough × dropoff borough × hour` — and uses the workshop's pinned storm clip as a second tensor-shaped example.
+**Convolution is a matrix multiplication.** This is the connection back to Chapter 2. Any convolution can be written as multiplication by a **Toeplitz** matrix — a matrix where the kernel is shifted along each row:
 
 ```python
-# TODO 1: Choose a CP rank R for the taxi tensor.
-# TODO 2: Count CP parameters: R * sum(T.shape).
-# TODO 3: Search Tucker ranks near that parameter count and keep the one with
-#         the lowest reconstruction error, not merely the closest parameter
-#         count. Watch what a rank-1 mode does to the answer.
-# TODO 4: Compare relative reconstruction error at the matched budget.
-# TODO 5: Explain which set of factors is easier to interpret.
+col = np.zeros(7); col[:3] = k
+row = np.zeros(5); row[0] = k[0]
+C = toeplitz(col, row)                       # (7, 5)
+np.allclose(C @ x, np.convolve(x, k, 'full'))   # True
 ```
 
-### Why Tensor Train matters as order grows
+So convolution is not a new kind of operation. It is a **structured matrix multiplication** — one where the same few numbers are reused across the whole matrix. That reuse is exactly why CNNs need so many fewer parameters than fully connected networks.
 
-For a dense order-`N` tensor with equal mode size `I`, dense storage is `I^N`. At a fixed TT bond rank `r`, TT storage is `≈ O(N · I · r²)`: **exponential in the order against linear in the order**, with `I` and `r` held fixed.
+**Deconvolution** means two different things, and you must keep them separate:
 
-CP storage is also linear in the order under a fixed global rank. TT's practical advantage is different: it represents high-order interactions through *local* bond ranks, rather than through one Tucker core that grows exponentially with the order.
+1. **Transposed convolution** — the upsampling layer in a decoder or GAN. It makes things *bigger*. It is not a true inverse; the name is historical and misleading.
+2. **True deconvolution** — recovering the original signal from a blurred one. This is a genuine inverse problem, and it is where section 07 comes back.
+
+**Exercise (10 min)**
+```python
+img = data.camera().astype(float) / 255.      # real photograph, 512x512
+sobel = np.array([[-1,0,1],[-2,0,2],[-1,0,1]], float)
+
+# TODO 1: Convolve `img` with `sobel` in 'valid' mode. What shape comes out,
+#         and by how much did it shrink?
+# TODO 2: Blur the image with a 9x9 averaging kernel (all entries equal,
+#         summing to 1), mode='same'. Display it next to the original.
+# TODO 3 (transposed convolution): upsample this 2x2 array to 3x3 by adding
+#         small * kernel into an output array at each position:
+#             small = np.array([[1., 2.], [3., 4.]]); ker = np.ones((2, 2))
+#         What shape do you get? Why is this called "deconvolution" in CNNs
+#         even though it does not undo anything?
+# TODO 4 (true deconvolution): add small noise to the blurred image, then try to
+#         recover the original with skimage.restoration.richardson_lucy(...,
+#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 20-pixel
+#         border. Did it improve?
+```
+
+**Explanation (5 min)**
+```python
+edges = signal.convolve2d(img, sobel, mode='valid')     # (510, 510) — shrank by 2
+
+psf = np.ones((9, 9)); psf /= psf.sum()
+blurred = signal.convolve2d(img, psf, mode='same', boundary='symm')
+noisy = blurred + 0.002 * np.random.default_rng(0).standard_normal(blurred.shape)
+
+from skimage.restoration import richardson_lucy
+recovered = richardson_lucy(np.clip(noisy, 0, 1), psf, num_iter=50)
+
+c = 25   # ignore the border: deconvolution always creates edge artifacts
+err = lambda a: np.linalg.norm((a-img)[c:-c,c:-c]) / np.linalg.norm(img[c:-c,c:-c])
+print(err(noisy), err(recovered))     # 0.1157 -> 0.0815
+```
+
+Deconvolution **reduced the error by about 30%**. Two lessons worth keeping:
+
+**First, you must ignore the border.** Deconvolution creates strong artifacts at the edges, where the algorithm has no information about what lies outside the image. If you measure error over the whole image, the artifacts dominate and it looks like the method failed. It did not.
+
+**Second, why not just invert the blur directly?** Because it fails badly. Blurring destroys high-frequency detail, so inverting it divides by numbers very close to zero and amplifies noise enormously:
 
 ```python
-# TODO 1: Fix I and the TT bond rank r.
-# TODO 2: Increase the tensor order N.
-# TODO 3: Plot dense storage I**N against TT storage ~ N*I*r**2.
-# TODO 4: Explain the different growth rates, and where the crossover sits.
+K = np.fft.fft2(psf, s=img.shape)
+naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, K)))
+# relative error ≈ 1.4 — far WORSE than the blurred image we started from
 ```
 
-### Tensor decomposition inside neural networks
+**This is the same lesson as section 07.** A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine: every fluorescence microscope blurs its images by a known amount (the *point spread function*), and deconvolution is standard practice before cells are counted or measured.
 
-A dense convolution kernel of shape `3 × 3 × 512 × 512` holds 2,359,296 weights, and costs about 462 million multiply-adds on a 14 × 14 feature map. A CP factorization at rank 64 stores `64 × (3 + 3 + 512 + 512) = 65,920` weights — **35.8× fewer** — and runs as four skinny convolutions in sequence: `1×1 → 3×1 → 1×3 → 1×1`.
 
-One order up, a transformer output matrix `W_O` of shape `4096 × 4096` stores 16,777,216 weights; a TT-matrix representation at rank 16 stores 34,816, or **481.9× fewer**.
-
-The storage ratio is the easy half. The workflow that makes it usable is **train → compress → fine-tune**, and compression is worth nothing unless the downstream task stays accurate enough — which is a property of the trained weights, not of the shape.
-
-```python
-# TODO 1: Build the synthetic convolution kernel from notebook 13.
-# TODO 2: Evaluate several CP ranks.
-# TODO 3: Find the smallest rank whose reconstruction error sits below a
-#         threshold you chose in advance.
-# TODO 4: Report the rank, the error, the stored weights and the compression
-#         ratio — all four, because any one of them alone can be gamed.
-```
-
-### The decision rule
-
-**Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.** In that order: the first question has no numerical answer, and the second has no answer at all until the first is settled.
-
-> 🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.
-
-For the full interactive treatment — method chooser, measured timing, matched-budget CP/Tucker comparison, downstream compression and the storage-budget widget — continue with **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-tensor-factorizations.ipynb)**.
-
----
-
-## Appendix H — Facilitator Notes
+## Appendix G — Facilitator Notes
 
 *(Students may ignore this section.)*
 
@@ -1098,7 +1102,7 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 **Language.** Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — *eje*, *descomposición*, *contracción*, *convolución* — it removes friction immediately. Invite questions in either language. Warn about the two meanings of "rank" at the start of Part I.
 
-**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; for Appendix E, a 4.949 s recording giving a (513, 465) STFT whose best tested rank is 40 at 9.08 dB against the noisy input's 5.00 dB; and, for Appendix F, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is Appendix F's timings**, which are properties of the machine, not of the data — a Colab CPU will not reproduce them, and the appendix quotes ratios rather than milliseconds for exactly that reason.
+**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (20-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; for Appendix E, a 4.949 s recording giving a (513, 465) STFT whose best tested rank is 40 at 9.08 dB against the noisy input's 5.00 dB; and, for section 09, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is section 09's timings**, which are properties of the machine, not of the data — a Colab CPU will not reproduce them, and the appendix quotes ratios rather than milliseconds for exactly that reason.
 
 **The downloads.** Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone's download succeeded — a student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the workshop repo as a fallback.
 
@@ -1106,8 +1110,8 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 **The group block needs firmer facilitation than exercise blocks.** If a group is still on the first design question with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.
 
-**The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after sections 04, 07 and 10 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes total, taking the workshop from 180 to 195 minutes.
+**The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after sections 04, 07 and 10 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes total, taking the workshop from 195 to 210 minutes.
 
-**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of section 09 (true deconvolution — the most technically demanding), then the RNN snippet in the recursion demo, then question 5 of the video-pipeline group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
+**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home anyway), then the RNN snippet in the recursion demo, then question 5 of the video-pipeline group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
 
-**Known rough edges.** Section 09 TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 25-pixel crop clearly *before* the exercise starts, not after. Section 07 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.
+**Known rough edges.** Appendix F TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 20-pixel crop clearly *before* the exercise starts, not after. Section 07 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.

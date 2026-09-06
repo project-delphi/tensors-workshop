@@ -1,7 +1,7 @@
 # Slides
 
 Two revealjs decks, [`en/`](en/index.qmd) and [`es/`](es/index.qmd), with
-**identical structure** and the same 15 slide anchors — twelve `#sec-NN-slug`
+**identical structure** and the same 16 slide anchors — thirteen `#sec-NN-slug`
 sections plus the three Kahoot dividers.
 
 - 🇬🇧 [Slides (EN)](https://project-delphi.github.io/tensors-workshop/slides/en/)
@@ -41,7 +41,7 @@ at the deck's own 1920×1080. See *Drawing slide art* below.
 | `?` | All shortcuts |
 
 Every Kahoot slide and every difficult moment carries speaker notes, so run
-speaker view rather than trusting memory. The notes hold Appendix H's facilitator
+speaker view rather than trusting memory. The notes hold Appendix G's facilitator
 guidance where it is actually needed:
 
 - the two meanings of **"rank"**, at the start of Part I
@@ -63,8 +63,8 @@ Three mechanisms, in order of strength:
 2. **Shared styling.** Both decks load [`slides.scss`](slides.scss), so a change
    to the look lands in both at once.
 3. **A check that fails the build.** `scripts/check_links.py` asserts that both
-   rendered decks contain **all twelve `sec-NN-slug` anchors** plus the three
-   Kahoot slides — 15 in total, with no extras in either — and that both link
+   rendered decks contain **all thirteen `sec-NN-slug` anchors** plus the three
+   Kahoot slides — 16 in total, with no extras in either — and that both link
    the **same set of ML blog posts**, every one of them declared under
    `reading:`. Add a section or a reading chip to one deck and not the other
    and CI goes red. What it does *not* do is fetch those posts: the checker is
@@ -108,7 +108,7 @@ Every slide but the agenda is a background PNG. What is *not* in the image and
 must stay in the qmd:
 
 - `<p class="sr-only">` — the slide's summary, this redesign's `fig-alt`.
-- `<h1 class="sr-only">` on the fifteen divider slides — the section name the
+- `<h1 class="sr-only">` on the sixteen divider slides — the section name the
   breadcrumb in `deck-pace.html` reads.
 - `::: {.sec-part}` — the part number, for the same breadcrumb. It cannot be a
   `data-` attribute on the heading; see CLAUDE.md.
@@ -144,7 +144,7 @@ section's.
 | agenda | — | — | The running clock, from `_includes/agenda-{en,es}.md` |
 | 04 | `sec-00-setup-and-data` | 00 | Setup and welcome |
 | 05 | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
-| 06 | · | 01 · **deep dive 12** | Map of factorizations |
+| 06 | · | 01 | Map of factorizations — the map section 09 walks |
 | 07 | · | 01 | What a factorization gives you: number → polynomial → matrix → tensor |
 | 08 | `sec-02-thinking-in-n-dimensions` | 02 | Thinking in N dimensions |
 | 09 | · | 02 | Batch is not time |
@@ -159,37 +159,38 @@ section's.
 | 18 | · | 06 | Reading an einsum expression |
 | 19 | · | 06 | NumPy and einsum, side by side |
 | 20 | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
-| **20a** | · | 07 | **Square, singular, tall, wide — and what `A⁺` returns in each** |
+| **20a** | · | 07 | Square, singular, tall, wide — and what `A⁺` returns in each |
 | 21 | · | 07 | California Housing, 20,433 equations |
-| **21a** | · | 07 | **Tensor inverses: unfold → `pinv` → fold, and the second half's through-line** |
+| **21a** | · | 07 | Tensor inverses: unfold → `pinv` → fold, and the second half's through-line |
 | 22 | `sec-kahoot-2` | — | Quiz 2 |
 | 23 | `sec-08-recursion-with-matrices` | 08 | Recursion with matrices |
 | 24 | · | 08 | Eigenvectors and the dominant direction |
-| 25 | `sec-09-convolution-and-deconvolution` | 09 | Convolution and deconvolution |
-| 26 | · | 09 | Forward is not transpose is not inverse |
+| **25a** | `sec-09-matrix-factorizations` | 09 | Matrix factorizations, and where eigendecomposition is named |
+| **26a** | · | 09 | Factor once, solve many — three routes to the same least squares |
 | 27 | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
 | 28 | · | 10 | Table → tensor → HOSVD → reconstruction |
-| **28a** | · | 10 · **deep dive 13** | **CP, Tucker, TT and t-SVD: what each stores and what it buys** |
 | 29 | `sec-kahoot-3` | — | Quiz 3 |
-| 30 | · | 11 | One idea connects sections 07, 09 and 10 |
-| 31 | `sec-11-wrap-up-and-take-homes` | 11 · deep dives 12 and 13 | Wrap-up and take-homes |
+| **29a** | `sec-11-tensor-factorizations` | 11 | Tensor factorizations: structure first, then rank |
+| **29b** | · | 11 | CP, Tucker, TT and t-SVD — what each stores and what it buys |
+| 30 | · | 12 | One idea connects sections 07, 10 and take-home 13 |
+| **31a** | `sec-12-wrap-up-and-take-homes` | 12 · take-home 13 | Wrap-up and take-homes |
+
+**Unused art.** `slide-25.png` and `slide-26.png` (the old convolution slides)
+and `slide-31.png` (the old wrap-up, which read `11 ·`) are still in the
+repository and referenced by nothing. They are kept because they cannot be
+regenerated: the tool that drew them is not here.
 
 **What the notebooks teach that no slide does**, and deliberately so — these are
-take-home material, and the room's 195 minutes do not stretch to them:
+take-home material, and the room's 210 minutes do not stretch to them:
 
-- **Notebook 12** in full: every factorization as a constrained optimization, the
-  cost table derived and then measured, the ~340× penalty for one solve per
-  column, the measured exponent landing near 2.2–2.9 rather than 3, and NMF.
-  Slide 06 frames it; slide 06 does not teach it.
-- **Notebook 13** in full: the flattening argument, CP against Tucker at a
-  matched parameter budget, the Tensor Train growth-rate crossover, and the
-  storage-versus-apply-cost distinction. Slide 28a frames it.
-- **Take-homes A–E** in notebook 11 — PCA's scaling trap, attention as two
+- **Take-home 13** in full: correlation against true convolution, the Toeplitz
+  view, transposed convolution as overlap-add, and Richardson-Lucy on a real
+  photograph. Slides 21a, 30 and 31 all name it; none teaches it.
+- **Take-homes A–E** in notebook 12 — PCA's scaling trap, attention as two
   contractions, Cholesky, audio denoising. Slide 31 lists them; none is taught.
-- **Eigendecomposition** is used in section 08's recursion demo and named on no
-  slide, including slide 06's ladder. That one is not deliberate — it is
-  [#65](https://github.com/project-delphi/tensors-workshop/issues/65)'s
-  sequencing item, and fixing it means redrawing slide 06.
+- Parts of notebooks 09 and 11 that 15 minutes will not reach: NMF, the fitted
+  cost exponent, t-SVD's exact-versus-truncated comparison. The slides frame the
+  section; the notebook outruns it, which is the intent.
 
 ## Drawing slide art
 
@@ -198,11 +199,18 @@ was renumbering every later file, and the page number on the old art is painted
 into the image, so a rename would have made the numbering wrong in a second
 place rather than right in the first. Two consequences, both deliberate:
 
-- The baked corner number on `slide-21` onward is now one to three ahead of the
-  slide's true position. It is decoration — `slide-number: false` in both deck
-  headers means reveal shows no number of its own — and it stops being
-  authoritative after section 07.
+- The baked corner number on `slide-21` onward no longer matches the slide's
+  true position. It is decoration — `slide-number: false` in both deck headers
+  means reveal shows no number of its own — and it stops being authoritative
+  after section 07.
 - New art carries **no corner number at all**, so it cannot be wrong.
+- The **closing slide was rebuilt** here rather than left stale. `slide-31`'s
+  art read `11 · Wrap-up and take-homes` after the wrap-up became section 12,
+  so `slide-31a` replaces it — same layout, correct number, and without the
+  Spanish that had leaked into the English card labels (*compara
+  representations*, *STFT → matriz → SVD*). It is the `closing` layout in
+  `gen_slide_art.py`: five centred cards, the sentence to leave with, and the
+  thanks line, with no callout bar competing against the closing statement.
 
 To add or change one of the generated slides, edit `SLIDES` in
 [`scripts/gen_slide_art.py`](../scripts/gen_slide_art.py) — copy for both

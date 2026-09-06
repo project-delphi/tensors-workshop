@@ -17,7 +17,7 @@ minutes you do not have.
 The three **join links below still point at `kahoot.it` itself** — which works,
 because students enter the PIN from your screen there. Once each quiz exists,
 paste its direct join URL into the `url:` field of `_variables.yml` and
-re-render: every link on this site, in both decks and in all twelve notebooks
+re-render: every link on this site, in both decks and in all fourteen notebooks
 reads from that one file.
 :::
 

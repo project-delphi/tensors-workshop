@@ -18,13 +18,13 @@
 (function () {
   "use strict";
 
-  // The whole workshop, in seconds: 195 minutes. This is the one place it is
+  // The whole workshop, in seconds: 210 minutes. This is the one place it is
   // written — Quarto has no passthrough for reveal's `totalTime`, so setting it
   // in the deck header does nothing (it silently never reaches the config).
   // We hand it to Reveal.configure() below, which drives the speaker view's
   // pacing clock as well as the audience timer here. check_links.py fails if
   // this stops matching workshop.minutes in _variables.yml.
-  var TOTAL_SECONDS = 11700;
+  var TOTAL_SECONDS = 12600;
 
   // Survives a reload — a facilitator who refreshes mid-workshop should not
   // silently get a clock that restarts at zero. sessionStorage rather than
@@ -35,12 +35,12 @@
   // Open the deck in the morning to check it, leave the tab open, present
   // from it that afternoon, and the room's first sight of the timer would be
   // hours into the amber. Anything this old is a leftover, not a session.
-  var STALE_AFTER_SECONDS = 11700 * 2;
+  var STALE_AFTER_SECONDS = 12600 * 2;
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
 
   // Always minutes and seconds; hours only once there are any. The remaining
-  // side of a 195-minute workshop is over an hour for most of the room's day,
+  // side of a 210-minute workshop is over an hour for most of the room's day,
   // and "182:26" is harder to read at a glance than "3:02:26".
   function hms(seconds) {
     seconds = Math.max(0, Math.round(seconds));
@@ -305,6 +305,7 @@
     }
 
     var hrefByNumber = {};
+    var extraNumbers = {};
 
     Array.prototype.forEach.call(
       document.querySelectorAll(".colab-tab"),
@@ -314,6 +315,10 @@
 
         if (match) {
           hrefByNumber[match[1]] = href;
+
+          if (link.classList.contains("colab-tab-extra")) {
+            extraNumbers[match[1]] = true;
+          }
         }
       }
     );
@@ -345,14 +350,24 @@
 
         if (group) {
           // Every slide of the section pushes the same object, so a link
-          // found later in the walk reaches the divider too.
-          if (own.length) {
-            group.numbers = own;
-          }
+          // found later in the walk reaches the divider too. Union, not
+          // replacement: a section whose second slide carries a link must not
+          // lose the one its divider declared.
+          own.forEach(function (number) {
+            if (group.numbers.indexOf(number) === -1) {
+              group.numbers.push(number);
+            }
+          });
 
-          if (ownReading.length) {
-            group.reading = ownReading;
-          }
+          ownReading.forEach(function (link) {
+            for (var i = 0; i < group.reading.length; i++) {
+              if (group.reading[i].href === link.href) {
+                return;
+              }
+            }
+
+            group.reading.push(link);
+          });
 
           panelEntries.push(group);
         } else {
@@ -396,7 +411,7 @@
           return;
         }
 
-        var isExtra = number === "12" || number === "13";
+        var isExtra = extraNumbers[number] === true;
 
         // Both halves go through `es`: the extra label was English-only, so
         // the ES deck's final slide read "Abrir Colab 11" beside

@@ -4,8 +4,8 @@
 # Read three ways:
 #   1. `{{< var … >}}` shortcodes in .qmd pages and both slide decks
 #   2. scripts/gen_tables.py (section and README tables) and
-#      scripts/gen_notebooks.py (the twelve section notebooks plus the
-#      take-home extras), which generate from it
+#      scripts/gen_notebooks.py (the thirteen section notebooks plus the
+#      take-home extra), which generate from it
 #   3. scripts/check_links.py, which verifies the rendered output against it
 #
 # Change a value here and it changes everywhere. Do not hard-code these
@@ -24,9 +24,9 @@ repo:
 workshop:
   title_en: "Tensors for Machine Learning"
   title_es: "Tensores para Aprendizaje Automático"
-  subtitle_en: "A 3-hour workshop, plus three Kahoot knowledge checks"
-  subtitle_es: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
-  minutes: 195
+  subtitle_en: "A 3.5-hour workshop, plus three Kahoot knowledge checks"
+  subtitle_es: "Un taller de 3,5 horas, más tres controles de conocimiento con Kahoot"
+  minutes: 210
   book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
   prereq_repo_url: "https://github.com/Laverde97/linear-algebra-deep-learning"
   # Recommended, not required: 3Blue1Brown's "Essence of linear algebra",
@@ -66,6 +66,9 @@ kahoot:
     after: "07"
     covers: ["06", "07"]
     questions: 6
+  # Its six questions are unchanged, so the title still describes them -- but
+  # half of them now ask about convolution, which became take-home 13 when
+  # factorizations took section 09. Retitle it only when the questions change.
   q3:
     n: 3
     title_en: "Convolution & Tensor Decompositions"
@@ -73,11 +76,11 @@ kahoot:
     xlsx: "kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"
     url: "https://kahoot.it/"          # TODO: paste the Kahoot 3 join URL
     after: "10"
-    covers: ["09", "10"]
+    covers: ["10"]
     questions: 6
 
 # ── Schedule ─────────────────────────────────────────────────────────────────
-# What sits *between* the sections. The twelve sections come to 165 minutes;
+# What sits *between* the sections. The thirteen sections come to 180 minutes;
 # these two fill the remaining 30 and are the whole reason a section's `start`
 # is not just the sum of the `minutes` before it. Each quiz already declares
 # the section it follows (`kahoot.qN.after`), so only the breaks are listed.
@@ -95,12 +98,12 @@ schedule:
 # bibliography, which the handbook's Further Reading still owns.
 #
 # Both decks link them from the slide where the concept is introduced, as
-# `.reading-tab` chips, and the two deep-dive notebooks list them at the end.
+# `.reading-tab` chips, and the two factorization notebooks list them at the end.
 # Neither deck hard-codes a URL: they live here for the same reason every
 # other shared fact does, so the EN and ES decks cannot come to disagree.
 #
 # The notebooks are the exception, and the only one. An .ipynb has no
-# `{{< var >}}`, so 12 and 13 carry a copy of the URL *and* of the title.
+# `{{< var >}}`, so 09 and 11 carry a copy of the URL *and* of the title.
 # check_links.py catches half of that drift — change a `url` here and the
 # notebook's now-undeclared copy fails check 1 — but a `title_en` or
 # `title_es` edit reaches the decks and silently does not reach the
@@ -219,29 +222,35 @@ agenda:
     label_en: "**Kahoot 2**"
     label_es: "**Kahoot 2**"
   - items: ["08", "09"]
-    label_en: "Recursion · Convolution"
-    label_es: "Recursión · Convolución"
+    label_en: "Recursion · Matrix factorizations"
+    label_es: "Recursión · Factorizaciones matriciales"
   - items: ["break-09"]
     label_en: "Break"
     label_es: "Pausa"
   - items: ["10"]
     label_en: "Tucker decomposition"
     label_es: "Descomposición de Tucker"
-  - items: ["q3", "11"]
-    label_en: "**Kahoot 3** + wrap-up"
-    label_es: "**Kahoot 3** + cierre"
+  - items: ["q3"]
+    label_en: "**Kahoot 3**"
+    label_es: "**Kahoot 3**"
+  - items: ["11"]
+    label_en: "Tensor factorizations"
+    label_es: "Factorizaciones tensoriales"
+  - items: ["12"]
+    label_en: "Wrap-up and take-homes"
+    label_es: "Cierre y ejercicios para casa"
 
 # ── Sections ─────────────────────────────────────────────────────────────────
-# The section spine is the handbook's own 195-minute schedule table, breaks
+# The section spine is the handbook's own 210-minute schedule table, breaks
 # excluded. `n` is authoritative: it fixes the notebook filename prefix, the
 # slide anchor (#sec-NN-slug) and the row order in every table on the site.
 #
-# `part` and `block` are the handbook's own vocabulary — Part I-IV, Block 1-6 —
+# `part` and `block` are the handbook's own vocabulary — Part I-IV, Block 1-7 —
 # carried here so the handbook's schedule table can be generated with both the
 # section number and the label beside it. That table is the only key a reader
 # has for resolving "Block 4" to section 07, so the labels live with the
 # sections they name rather than being retyped in the prose. A section that is
-# not one of the six exercise blocks has `block: "—"`.
+# not one of the seven exercise blocks has `block: "—"`.
 #
 # `start` and `end` are the running clock offsets both decks print on the
 # section title slides. They are derived — walk the sections in order, adding
@@ -575,7 +584,7 @@ sections:
       - "Comparar un pronóstico recursivo con un diagnóstico de un paso que usa valores previos reales."
   s09:
     n: "09"
-    slug: "convolution-and-deconvolution"
+    slug: "matrix-factorizations"
     part: "IV"
     block: "5"
     minutes: 15
@@ -583,38 +592,34 @@ sections:
     end: "+02:45"
     format_en: "exercise"
     format_es: "ejercicio"
-    title_en: "Convolution and deconvolution"
-    title_es: "Convolución y deconvolución"
-    summary_en: "Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image."
-    summary_es: "Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada."
+    title_en: "Matrix factorizations"
+    title_es: "Factorizaciones matriciales"
+    summary_en: "Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers, and what each one costs."
+    summary_es: "Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta."
     intro_en: |-
-      This notebook follows one idea from a forward operation to an inverse problem:
+      Section 01 showed the **map of factorizations**. This section walks it, on real data.
 
-      > **A small kernel is reused across positions to transform an image.**
+      The whole family in one place — **LU, QR, Cholesky, eigendecomposition, SVD and NMF** — with the same question asked of each: *what does this factorization make easy that was hard before, and what does it cost?*
 
-      We will distinguish **correlation**, **convolution**, **transposed convolution**, and **deconvolution** without treating them as the same operation.
+      This is also where **eigendecomposition** gets named, before section 10 leans on the same machinery.
     intro_es: |-
-      > 🇪🇸 Este cuaderno sigue una misma idea desde una operación directa hasta un problema inverso:
+      > 🇪🇸 La sección 01 mostró el **mapa de las factorizaciones**. Esta sección lo recorre, sobre datos reales.
       >
-      > **Un kernel pequeño se reutiliza en muchas posiciones para transformar una imagen.**
+      > Toda la familia en un solo lugar — **LU, QR, Cholesky, descomposición espectral, SVD y NMF** — con la misma pregunta para cada una: *¿qué vuelve fácil esta factorización que antes era difícil, y cuánto cuesta?*
       >
-      > Distinguiremos **correlación**, **convolución**, **convolución transpuesta** y **deconvolución** sin tratarlas como si fueran la misma operación.
+      > Aquí también se nombra la **descomposición espectral**, antes de que la sección 10 se apoye en la misma maquinaria.
     objectives_en:
-      - "Explain what a **kernel / filtro** does using a real photograph."
-      - "Predict `valid`, `same`, and `full` output shapes."
-      - "Explain the difference between **cross-correlation** and true **convolution**."
-      - "See a 1D convolution as ordinary matrix multiplication with a Toeplitz matrix."
-      - "Explain transposed convolution as **overlap-add**, not as a magical inverse."
-      - "Blur and partially recover a real image using **Richardson–Lucy deconvolution**."
-      - "Explain why noise and image boundaries make inverse problems difficult."
+      - "Say which problem each of **LU, QR, Cholesky, eigendecomposition, SVD and NMF** is the right tool for."
+      - "Explain what each factorization assumes about its input, and what it does when that assumption fails."
+      - "Solve the same real least-squares problem three ways and compare cost against numerical stability."
+      - "Connect the SVD you already used in section 07 to the rest of the family."
+      - "Read a factorization's factors as structure in the data rather than as an opaque numerical result."
     objectives_es:
-      - "Explicar qué hace un **kernel / filtro** usando una fotografía real."
-      - "Predecir las formas de salida `valid`, `same` y `full`."
-      - "Explicar la diferencia entre **correlación cruzada** y **convolución** verdadera."
-      - "Ver una convolución 1D como multiplicación matricial con una matriz Toeplitz."
-      - "Explicar la convolución transpuesta como **superposición y suma**, no como una inversa mágica."
-      - "Desenfocar y recuperar parcialmente una imagen real con **deconvolución Richardson–Lucy**."
-      - "Explicar por qué el ruido y los bordes hacen difícil un problema inverso."
+      - "Decir para qué problema es la herramienta adecuada cada una de **LU, QR, Cholesky, descomposición espectral, SVD y NMF**."
+      - "Explicar qué supone cada factorización sobre su entrada y qué ocurre cuando ese supuesto no se cumple."
+      - "Resolver el mismo problema real de mínimos cuadrados de tres formas y comparar coste frente a estabilidad numérica."
+      - "Conectar la SVD que ya usaste en la sección 07 con el resto de la familia."
+      - "Leer los factores de una factorización como estructura de los datos y no como un resultado numérico opaco."
   s10:
     n: "10"
     slug: "tucker-decomposition"
@@ -667,12 +672,52 @@ sections:
       - "Interpretar componentes temporales aprendidos comparándolos con los conteos reales por hora."
   s11:
     n: "11"
+    slug: "tensor-factorizations"
+    part: "IV"
+    block: "7"
+    minutes: 15
+    start: "+03:10"
+    end: "+03:25"
+    format_en: "exercise"
+    format_es: "ejercicio"
+    title_en: "Tensor factorizations"
+    title_es: "Factorizaciones tensoriales"
+    summary_en: "Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs."
+    summary_es: "Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación."
+    intro_en: |-
+      Section 10 introduced **Tucker/HOSVD** on the real New York taxi tensor. This section answers the next question:
+
+      > **Which tensor decomposition should I use, and what does it cost me?**
+
+      We compare **CP, Tucker/HOSVD, Tensor Train and t-SVD** on workshop data, at a matched parameter budget rather than rank for rank.
+    intro_es: |-
+      > 🇪🇸 La sección 10 presentó **Tucker/HOSVD** sobre el tensor real de taxis de Nueva York. Esta sección responde la siguiente pregunta:
+      >
+      > **¿Qué descomposición tensorial debo usar y cuánto me cuesta?**
+      >
+      > Comparamos **CP, Tucker/HOSVD, Tensor Train y t-SVD** con datos del taller, usando un presupuesto de parámetros equivalente en lugar de comparar rango contra rango.
+    objectives_en:
+      - "Explain why flattening can hide the meaning carried by tensor modes."
+      - "Choose between **CP, Tucker/HOSVD, Tensor Train and t-SVD** from the structure of a problem."
+      - "Compare the decompositions by stored parameters, reconstruction error and measured computational cost."
+      - "Compare CP and Tucker at a **matched parameter budget** rather than rank-for-rank."
+      - "Explain why Tensor Train is useful for very high-order tensors."
+      - "Distinguish an exact factorization from truncation and compression."
+    objectives_es:
+      - "Explicar por qué aplanar un tensor puede ocultar el significado de sus modos."
+      - "Elegir entre **CP, Tucker/HOSVD, Tensor Train y t-SVD** según la estructura del problema."
+      - "Comparar las descomposiciones por parámetros almacenados, error de reconstrucción y coste computacional medido."
+      - "Comparar CP y Tucker con un **presupuesto de parámetros equivalente**, en lugar de comparar rango contra rango."
+      - "Explicar por qué Tensor Train es útil para tensores de orden muy alto."
+      - "Distinguir una factorización exacta de la truncación y la compresión."
+  s12:
+    n: "12"
     slug: "wrap-up-and-take-homes"
     part: "—"
     block: "—"
     minutes: 5
-    start: "+03:10"
-    end: "+03:15"
+    start: "+03:25"
+    end: "+03:30"
     format_en: "wrap-up"
     format_es: "cierre"
     format_line_en: "wrap-up · 5 min + take-homes after the workshop"
@@ -685,6 +730,12 @@ sections:
       This final notebook has two jobs:
 
       1. connect the ideas from the whole workshop;
+      2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
+    intro_es: |-
+      > 🇪🇸 Este último cuaderno tiene dos objetivos:
+      >
+      > 1. conectar las ideas de todo el taller;
+
       2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
     intro_es: |-
       > 🇪🇸 Este último cuaderno tiene dos objetivos:
@@ -715,82 +766,51 @@ sections:
 # keeps an extra out of the running clock — scripts/timeline.py only ever walks
 # `sections`, so nothing here can move a start time or the agenda. Extras also
 # get no `#sec-NN` slide anchor and no Kahoot: the decks and the two landing
-# pages stay a list of the twelve sections.
+# pages stay a list of the thirteen sections.
 #
 # `n` still fixes the notebook filename prefix and the row order, continuing
-# the section numbering past 11 so `notebooks/` sorts in reading order.
+# the section numbering past 12 so `notebooks/` sorts in reading order.
 extras:
-  x12:
-    n: "12"
-    slug: "matrix-factorizations"
-    format_en: "deep dive"
-    format_es: "estudio a fondo"
-    format_line_en: "deep dive · take-home"
-    format_line_es: "estudio a fondo · para después"
-    title_en: "Matrix factorizations"
-    title_es: "Factorizaciones matriciales"
-    summary_en: "Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers."
-    summary_es: "Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una."
-    intro_en: |-
-      The workshop used three matrix factorizations without ever naming the family: **SVD** behind the pseudoinverse in section 07 and behind deconvolution in section 09, and **Cholesky** in one of the take-homes in section 11.
-
-      This deep dive puts the whole family in one place — **LU, QR, Cholesky, eigendecomposition, SVD and NMF** — and asks the same question of each: *what does this factorization make easy that was hard before?*
-    intro_es: |-
-      > 🇪🇸 El taller usó tres factorizaciones matriciales sin nombrar nunca a la familia: la **SVD** detrás de la pseudoinversa en la sección 07 y de la deconvolución en la 09, y **Cholesky** en uno de los ejercicios para casa de la sección 11.
-      >
-      > Este estudio a fondo reúne a toda la familia — **LU, QR, Cholesky, descomposición espectral, SVD y NMF** — y le hace a cada una la misma pregunta: *¿qué vuelve fácil esta factorización que antes era difícil?*
-    objectives_en:
-      - "Say which problem each of **LU, QR, Cholesky, eigendecomposition, SVD and NMF** is the right tool for."
-      - "Explain what each factorization assumes about its input, and what it does when that assumption fails."
-      - "Solve the same real least-squares problem three ways and compare cost against numerical stability."
-      - "Connect the SVD you already used in sections 07 and 09 to the rest of the family."
-      - "Read a factorization's factors as structure in the data rather than as an opaque numerical result."
-    objectives_es:
-      - "Decir para qué problema es la herramienta adecuada cada una de **LU, QR, Cholesky, descomposición espectral, SVD y NMF**."
-      - "Explicar qué supone cada factorización sobre su entrada y qué ocurre cuando ese supuesto no se cumple."
-      - "Resolver el mismo problema real de mínimos cuadrados de tres formas y comparar coste frente a estabilidad numérica."
-      - "Conectar la SVD que ya usaste en las secciones 07 y 09 con el resto de la familia."
-      - "Leer los factores de una factorización como estructura de los datos y no como un resultado numérico opaco."
   x13:
     n: "13"
-    slug: "tensor-factorizations"
+    slug: "convolution-and-deconvolution"
     format_en: "deep dive"
     format_es: "estudio a fondo"
     format_line_en: "deep dive · take-home"
     format_line_es: "estudio a fondo · para después"
-    title_en: "Tensor factorizations"
-    title_es: "Factorizaciones tensoriales"
-    summary_en: "Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs."
-    summary_es: "Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación."
+    title_en: "Convolution and deconvolution"
+    title_es: "Convolución y deconvolución"
+    summary_en: "Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image."
+    summary_es: "Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada."
     intro_en: |-
-      Section 10 introduced **Tucker/HOSVD** on the real New York taxi tensor.
+      This deep dive follows one idea from a forward operation to an inverse problem:
 
-      This deep dive answers the next question:
+      > **A small kernel is reused across positions to transform an image.**
 
-      > **Which tensor decomposition should I use, and what does it cost me?**
+      It is the third instance of the workshop's connecting idea, alongside the pseudoinverse in section 07 and Tucker in section 10: when a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 10 and 11 state that idea; this notebook is where you watch it happen to a photograph.
 
-      We compare **CP, Tucker/HOSVD, Tensor Train and t-SVD** using workshop data, interactive widgets, matched-budget comparisons and guided exercises.
+      We will distinguish **correlation**, **convolution**, **transposed convolution**, and **deconvolution** without treating them as the same operation.
     intro_es: |-
-      > 🇪🇸 La sección 10 presentó **Tucker/HOSVD** sobre el tensor real de taxis de Nueva York.
+      > 🇪🇸 Este estudio a fondo sigue una misma idea desde una operación directa hasta un problema inverso:
       >
-      > Este estudio a fondo responde la siguiente pregunta:
+      > **Un kernel pequeño se reutiliza en muchas posiciones para transformar una imagen.**
       >
-      > **¿Qué descomposición tensorial debo usar y cuánto me cuesta?**
+      > Es el tercer caso de la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10: cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 10 y 11 enuncian esa idea; en este cuaderno la ves ocurrir sobre una fotografía.
       >
-      > Comparamos **CP, Tucker/HOSVD, Tensor Train y t-SVD** usando datos del taller, widgets interactivos, comparaciones con presupuestos equivalentes y ejercicios guiados.
+      > Distinguiremos **correlación**, **convolución**, **convolución transpuesta** y **deconvolución** sin tratarlas como si fueran la misma operación.
     objectives_en:
-      - "Explain why flattening can hide the meaning carried by tensor modes."
-      - "Choose between **CP, Tucker/HOSVD, Tensor Train and t-SVD** from the structure of a problem."
-      - "Compare the decompositions by stored parameters, reconstruction error and measured computational cost."
-      - "Compare CP and Tucker at a **matched parameter budget** rather than rank-for-rank."
-      - "Explain why Tensor Train is useful for very high-order tensors."
-      - "Quantify CP and TT compression for neural-network weight tensors."
-      - "Distinguish an exact factorization from truncation and compression."
+      - "Explain what a **kernel / filtro** does using a real photograph."
+      - "Predict `valid`, `same`, and `full` output shapes."
+      - "Explain the difference between **cross-correlation** and true **convolution**."
+      - "See a 1D convolution as ordinary matrix multiplication with a Toeplitz matrix."
+      - "Explain transposed convolution as **overlap-add**, not as a magical inverse."
+      - "Blur and partially recover a real image using **Richardson–Lucy deconvolution**."
+      - "Explain why noise and image boundaries make inverse problems difficult."
     objectives_es:
-      - "Explicar por qué aplanar un tensor puede ocultar el significado de sus modos."
-      - "Elegir entre **CP, Tucker/HOSVD, Tensor Train y t-SVD** según la estructura del problema."
-      - "Comparar las descomposiciones por parámetros almacenados, error de reconstrucción y coste computacional medido."
-      - "Comparar CP y Tucker con un **presupuesto de parámetros equivalente**, en lugar de comparar rango contra rango."
-      - "Explicar por qué Tensor Train es útil para tensores de orden muy alto."
-      - "Cuantificar la compresión CP y TT de tensores de pesos de redes neuronales."
-      - "Distinguir una factorización exacta de la truncación y la compresión."
+      - "Explicar qué hace un **kernel / filtro** usando una fotografía real."
+      - "Predecir las formas de salida `valid`, `same` y `full`."
+      - "Explicar la diferencia entre **correlación cruzada** y **convolución** verdadera."
+      - "Ver una convolución 1D como multiplicación matricial con una matriz Toeplitz."
+      - "Explicar la convolución transpuesta como **superposición y suma**, no como una inversa mágica."
+      - "Desenfocar y recuperar parcialmente una imagen real con **deconvolución Richardson–Lucy**."
+      - "Explicar por qué el ruido y los bordes hacen difícil un problema inverso."

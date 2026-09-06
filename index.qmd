@@ -36,7 +36,7 @@ you are doing right now.
 |---|---|---|
 | **[Handbook](tensors_workshop_plan_with_quizzes.md)** | The session text: the theory, every exercise, the worked solutions, further reading, and the five take-home appendices. English only. | Read it before, follow it during, keep it after. |
 | **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
-| **[Notebooks](notebooks.qmd)** | Fourteen Colab notebooks — one per section, plus two take-home deep dives. Where you actually type. | During each section, and for the take-homes. |
+| **[Notebooks](notebooks.qmd)** | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
 | **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
 | **[Repository]({{< var repo.url >}})** | The source of all of the above, plus the three Kahoot spreadsheets. | To fork it, fix something, or run the notebooks off Colab. |
 
@@ -160,7 +160,7 @@ they actually run.
 
 {{< include _includes/sections-en.md >}}
 
-**Not shown:** the three 5-minute breaks. The twelve sections come to 165
+**Not shown:** the three 5-minute breaks. The thirteen sections come to 180
 minutes; the three quizzes add 15 and the breaks another 15, which is how the
 session reaches {{< var workshop.minutes >}} minutes.
 

@@ -9,7 +9,7 @@ They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
   - Notebooks are valid, have no outputs or execution counts, and each badge
-    points at its own file — the twelve sections and the extras alike. [nb]
+    points at its own file — the thirteen sections and the extras alike. [nb]
   - Every notebook docs/ serves is byte-identical to the one committed in
     notebooks/. Quarto copies them verbatim instead of rendering them, so
     this is the only gate that would notice docs/ serving a stale notebook.

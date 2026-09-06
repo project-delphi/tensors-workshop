@@ -38,7 +38,7 @@ corresponda a lo que estés haciendo ahora mismo.
 |---|---|---|
 | **[Manual](../tensors_workshop_plan_with_quizzes.md)** | El texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas, la lectura adicional y los cinco apéndices para casa. **Solo en inglés.** | Léelo antes, síguelo durante, consérvalo después. |
 | **[Diapositivas](../slides/es/index.qmd)** · [EN](../slides/en/index.qmd) | Lo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás. | En vivo durante la sesión, o para repasar después la forma del día. |
-| **[Cuadernos](../notebooks.qmd)** | Catorce cuadernos de Colab: uno por sección, más dos estudios a fondo para casa. Donde realmente escribes código. | Durante cada sección, y para los ejercicios de casa. |
+| **[Cuadernos](../notebooks.qmd)** | Catorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código. | Durante cada sección, y para el ejercicio de casa. |
 | **[Kahoot](../kahoot.qmd)** | Tres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10. | En vivo, en el móvil o en una segunda pestaña. |
 | **[Repositorio]({{< var repo.url >}})** | La fuente de todo lo anterior, más las tres hojas de cálculo de Kahoot. | Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab. |
 
@@ -167,8 +167,8 @@ filas 🎯 son los tres cuestionarios, en el orden real en que se ejecutan.
 
 {{< include ../_includes/sections-es.md >}}
 
-**No aparecen** en la tabla: las tres pausas de 5 minutos. Las doce secciones
-suman 165 minutos; los tres cuestionarios añaden 15 y las pausas otros 15, que
+**No aparecen** en la tabla: las tres pausas de 5 minutos. Las trece secciones
+suman 180 minutos; los tres cuestionarios añaden 15 y las pausas otros 15, que
 es como la sesión llega a {{< var workshop.minutes >}} minutos.
 
 ## Una nota sobre el idioma

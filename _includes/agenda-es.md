@@ -12,7 +12,9 @@
 | 01:55 | 5 | — | Pausa |
 | 02:00 | 15 | IV | Inversas y la pseudoinversa |
 | 02:15 | 5 | 🎯 | **Kahoot 2** |
-| 02:20 | 25 | IV | Recursión · Convolución |
+| 02:20 | 25 | IV | Recursión · Factorizaciones matriciales |
 | 02:45 | 5 | — | Pausa |
 | 02:50 | 15 | IV | Descomposición de Tucker |
-| 03:05 | 10 | 🎯 | **Kahoot 3** + cierre |
+| 03:05 | 5 | 🎯 | **Kahoot 3** |
+| 03:10 | 15 | IV | Factorizaciones tensoriales |
+| 03:25 | 5 | — | Cierre y ejercicios para casa |
