@@ -152,7 +152,28 @@ Tensores para Machine Learning — de datos reales a modelos modernos. Expositor
 La idea del workshop: cuatro tarjetas muestran escalar, vector, matriz y tensor como arreglos 0D, 1D, 2D y ND, cada uno definido por su forma. La pregunta guía del día: antes de operar, ¿qué representa cada eje?
 </p>
 </section>
-<section id="section-2" class="slide level2" data-background-image="images/slides-final/slide-03.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-2" class="slide level2" data-background-image="images/slides-final/slide-02a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+Cuatro ideas, un solo objeto — todo el día en cuatro tarjetas. Un tensor generaliza la matriz: un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Contiene los datos: imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Sus ejes se mueven: transpose los permuta, reshape relee los mismos números planos, y la misma forma puede tener otro significado. Y se factoriza: los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también — y donde no hay inversa, responde la pseudoinversa. La pregunta del día: antes de operar sobre un tensor, nombra sus ejes.
+</p>
+<aside class="notes">
+<p>Este es el mapa de todo el día, y la única diapositiva que muestra las cuatro ideas juntas. Dedícale un minuto, no cinco: cada tarjeta se abre después — la 1 en la sección 01, la 2 en las secciones 02 y 03, la 3 en la sección 04, y la 4 en las secciones 07, 09, 10 y 11.</p>
+<p>La cuarta tarjeta es la que hay que vender. El grupo ya factoriza números y resuelve cuadráticas; la afirmación es que factorizar es el mismo movimiento cada vez, aplicado a un objeto más grande. Esa es la promesa que cobra la sección 09.</p>
+<p>Di “ejes”, no “dimensiones”, de aquí en adelante — y recuerda que la advertencia sobre “rango” toca al empezar la Parte I.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="section-3" class="slide level2" data-background-image="images/slides-final/slide-03.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Datos reales, problemas reales: cuatro conjuntos de datos reales usados en el taller — dígitos manuscritos, histología teñida, vivienda en California y viajes en taxi de NYC — cada uno con el papel que cumple más adelante.
@@ -356,7 +377,7 @@ Sección 01 · Qué es un tensor — 20 min, de +00:05 a +00:25. Objetivo: expli
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-3" class="slide level2" data-background-image="images/slides-final/slide-06.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-4" class="slide level2" data-background-image="images/slides-final/slide-06.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.
@@ -380,7 +401,7 @@ La sección 09 recorre este mapa sobre datos reales: cada factorización escrita
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-4" class="slide level2" data-background-image="images/slides-final/slide-07.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-5" class="slide level2" data-background-image="images/slides-final/slide-07.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 ¿Qué aporta una factorización? Un diagrama de cuatro pasos — número, polinomio, matriz, tensor — muestra que factorizar revela estructura útil y no solo reescribe una expresión.
@@ -398,7 +419,7 @@ La sección 09 recorre este mapa sobre datos reales: cada factorización escrita
 Sección 02 · Pensar en N dimensiones — 20 min, de +00:25 a +00:45. Objetivo: leer formas de tensores reales y distinguir un eje de lote de un eje temporal. Ocho dígitos manuscritos independientes se contrastan con cuatro fotogramas ordenados de un vídeo de tormenta.
 </p>
 </section>
-<section id="section-5" class="slide level2" data-background-image="images/slides-final/slide-09.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-6" class="slide level2" data-background-image="images/slides-final/slide-09.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Batch no es tiempo: dieciséis dígitos manuscritos barajados siguen siendo reconocibles, mientras que los fotogramas de vídeo barajados vuelven la secuencia de la tormenta irreconocible — reordenar un eje de lote es seguro, reordenar el tiempo no lo es.
@@ -430,7 +451,7 @@ Batch no es tiempo: dieciséis dígitos manuscritos barajados siguen siendo reco
 Sección 03 · Indexación y broadcasting con datos reales — 15 min, de +00:45 a +01:00. Objetivo: seleccionar datos reales con indexación y máscaras booleanas, y aplicar broadcasting de forma segura. Cuatro paneles muestran indexación de filas/columnas en una tabla de temperaturas, una máscara por umbral, selección de región en una imagen satelital, y broadcasting de formas.
 </p>
 </section>
-<section id="section-6" class="slide level2" data-background-image="images/slides-final/slide-11.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-7" class="slide level2" data-background-image="images/slides-final/slide-11.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Indexación en acción: los mismos cuatro paneles de indexación, máscaras, recorte satelital y broadcasting, con una franja resumen que nombra cada técnica.
@@ -449,7 +470,7 @@ Indexación en acción: los mismos cuatro paneles de indexación, máscaras, rec
 Sección 04 · Reshape y transposición de imágenes reales — 15 min, de +01:00 a +01:15. Objetivo: distinguir reshape de transpose y leer HWC, CHW, NHWC y NCHW. Una imagen de histología teñida se transpone correctamente a CHW junto a un reshape que la revuelve en ruido de color.
 </p>
 </section>
-<section id="section-7" class="slide level2" data-background-image="images/slides-final/slide-13.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-8" class="slide level2" data-background-image="images/slides-final/slide-13.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 transpose no es reshape: la misma comparación de histología entre transpose y reshape, más un lote real NHWC a NCHW con una imagen de histología, una foto de astronauta y una foto de gato, cada una reordenada correctamente.
@@ -495,7 +516,7 @@ Pausa activa: Kahoot 1, Vocabulario de tensores y formas. 6 preguntas sobre ejes
 Sección 05 · Diseño de un pipeline de vídeo — 15 min, de +01:25 a +01:40. Objetivo: tratar un vídeo como una secuencia de fotogramas y construir lotes con padding y máscara. Los fotogramas de un vídeo de skateboarding se despliegan en un tensor 5D (N, T, H, W, C).
 </p>
 </section>
-<section id="section-8" class="slide level2" data-background-image="images/slides-final/slide-16.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-9" class="slide level2" data-background-image="images/slides-final/slide-16.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Archivo a frames a tensor a modelo: una tubería de cuatro etapas muestra cómo un vídeo se convierte en un tensor enmascarado, con la fórmula de la máscara de validez.
@@ -527,13 +548,13 @@ Sección 06 · Contracción con einsum — 15 min, de +01:40 a +01:55. Objetivo:
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-9" class="slide level2" data-background-image="images/slides-final/slide-18.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-10" class="slide level2" data-background-image="images/slides-final/slide-18.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Anatomía de einsum: la expresión np.einsum(‘ij,jk-&gt;ik’, A, B) se descompone en sus etiquetas de entrada, el índice compartido y los índices que sobreviven, con un diagrama de las matrices que indexa cada letra.
 </p>
 </section>
-<section id="section-10" class="slide level2" data-background-image="images/slides-final/slide-19.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-19.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 NumPy y einsum: una tabla asocia producto interno, producto externo, matmul, transpose, traza, diagonal, matmul por lotes y suma por eje con su equivalente en einsum.
@@ -552,7 +573,7 @@ NumPy y einsum: una tabla asocia producto interno, producto externo, matmul, tra
 Sección 07 · Inversas y la pseudoinversa — 15 min, de +02:00 a +02:15. Objetivo: distinguir matrices wide, square y tall y usar la pseudoinversa para obtener soluciones estables. Tres matrices con código de color ilustran cada caso.
 </p>
 </section>
-<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-20a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-20a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Tres formas, tres respuestas. Cuatro tarjetas: una matriz cuadrada de rango completo, donde la inversa existe y Ax = b tiene exactamente una solución; una matriz cuadrada singular, donde la inversa no está definida pero la pseudoinversa sí, porque se calcula a partir de la SVD; una matriz alta, con más ecuaciones que incógnitas, donde A-más b es el ajuste por mínimos cuadrados que minimiza el residual; y una matriz ancha, con infinitas soluciones, donde A-más b devuelve la de menor norma.
@@ -573,7 +594,7 @@ Tres formas, tres respuestas. Cuatro tarjetas: una matriz cuadrada de rango comp
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 20.433 por 7 — valores predichos frente a reales, e histograma de residuales — calculado con la pseudoinversa de Moore-Penrose.
@@ -581,7 +602,7 @@ California Housing y la pseudoinversa: un ajuste real de mínimos cuadrados de 2
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab">Colab ↗</a></p>
 <p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)">📖 Gira, estira y vuelve a girar ↗</a></p>
 </section>
-<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-21a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-21a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 ¿Y los tensores? Tres tarjetas: no existe una única inversa tensorial aceptada por todos, lo que es una pregunta legítima con una respuesta honesta y no un hueco en tu lectura; sí existen definiciones basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa; y en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado — un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4, y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.
@@ -656,7 +677,7 @@ Sección 08 · Recursión con matrices y vectores — 10 min, de +02:20 a +02:30
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.
@@ -692,7 +713,7 @@ Sección 09 · Factorizaciones matriciales — 15 min, de +02:30 a +02:45. Objet
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-26a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-16" class="slide level2" data-background-image="images/slides-final/slide-26a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir y elevan al cuadrado el número de condición; QR es la opción estable por defecto y nunca forma A-traspuesta-A; la SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.
@@ -725,7 +746,7 @@ Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados
 Sección 10 · Descomposición de Tucker con datos reales — 15 min, de +02:50 a +03:05. Objetivo: convertir viajes de taxi en un tensor origen por destino por hora y comprimirlo por modos. Un corte real a las 18:00 se compara con su reconstrucción Tucker y el error absoluto.
 </p>
 </section>
-<section id="section-16" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-17" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.
@@ -799,7 +820,7 @@ Sección 11 · Factorizaciones tensoriales — 15 min, de +03:10 a +03:25. Objet
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-17" class="slide level2" data-background-image="images/slides-final/slide-29b.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-18" class="slide level2" data-background-image="images/slides-final/slide-29b.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de rango 1, R por I más J más K números, y es la opción cuando hay que leer los componentes uno a uno. Tucker guarda un subespacio por modo más un núcleo, y es la opción cuando cada modo necesita su propio rango. Tensor Train guarda una cadena de núcleos pequeños, que crece solo linealmente con el orden, y es la opción cuando un núcleo denso explotaría. Y t-SVD aplica una FFT sobre el modo 3, SVD matriciales y una FFT inversa, y es la opción cuando el tercer modo tiene un significado propio.
@@ -820,7 +841,7 @@ Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de ran
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-18" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-19" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Una idea conecta el taller: la pseudoinversa de la sección 07, Tucker en la 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 aparecen juntas como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.

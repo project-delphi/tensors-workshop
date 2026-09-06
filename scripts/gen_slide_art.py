@@ -23,10 +23,11 @@ rerun it by hand when the copy here changes, and commit the PNGs.
 Two things it deliberately does not do:
 
   * **No page number.** The existing art bakes the number into the bottom-right
-    corner, so inserting `slide-20a` leaves every later baked number ahead of
-    its true position. Redrawing fourteen PNGs to fix a decoration is not worth
-    it; the new slides simply carry no number, and `slides/README.md` records
-    that the baked ones stop being authoritative after section 07.
+    corner, so an insertion leaves every later baked number ahead of its true
+    position -- and `slide-02a` puts the first insertion in the opening run, so
+    that is every numbered slide but two. Redrawing thirty-one PNGs to fix a
+    decoration is not worth it; the new slides simply carry no number, and
+    `slides/README.md` records that the baked ones are not authoritative.
   * **No lightbulb in the callout bar.** The existing bars put a lightbulb glyph
     in the teal disc. #65 is an argument against exactly that mark -- it labels
     a fact as an insight -- so the disc here holds an arrow. The shape and the
@@ -93,6 +94,74 @@ FONT_STACK = ('Montserrat, "Avenir Next", "Segoe UI", system-ui, '
 # the one place on that slide where the geometry can be seen rather than read.
 
 SLIDES = [
+    {
+        "stem": "slide-02a",
+        "en": {
+            "eyebrow": "The whole day · Four ideas",
+            "title": ["Four ideas,", "one object"],
+            "subtitle": "Everything today is one of these four, done on real "
+                        "data",
+            "cards": [
+                ("⊞", "Generalizes a matrix", [
+                    "A scalar has no axes, a vector one, a matrix two.",
+                    "A tensor is the same object with as many axes as the "
+                    "data needs.",
+                ]),
+                ("▦", "Holds the data", [
+                    "Images, video frames, taxi trips, prices — all of "
+                    "it is one box of numbers.",
+                    "The box arrives with a shape, and every axis stands for "
+                    "something.",
+                ]),
+                ("⇄", "Axes you can move", [
+                    "transpose permutes the axes; reshape re-reads the same "
+                    "flat numbers.",
+                    "The same shape can carry a different meaning — that is "
+                    "the bug this day prevents.",
+                ]),
+                ("∏", "Factors and inverses", [
+                    "Numbers factor into primes, quadratics into roots, "
+                    "matrices into LU, QR, SVD.",
+                    "Tensors factor too, and where an inverse does not exist "
+                    "the pseudoinverse answers.",
+                ]),
+            ],
+            "callout": ("The question of the day:", "before you operate on a "
+                        "tensor, name its axes."),
+        },
+        "es": {
+            "eyebrow": "Todo el día · Cuatro ideas",
+            "title": ["Cuatro ideas,", "un solo objeto"],
+            "subtitle": "Todo lo de hoy es una de estas cuatro, sobre datos "
+                        "reales",
+            "cards": [
+                ("⊞", "Generaliza la matriz", [
+                    "Un escalar no tiene ejes, un vector uno, una matriz dos.",
+                    "Un tensor es el mismo objeto con tantos ejes como pidan "
+                    "los datos.",
+                ]),
+                ("▦", "Contiene los datos", [
+                    "Imágenes, fotogramas, viajes en taxi, precios: todo es "
+                    "una sola caja de números.",
+                    "La caja llega con una forma, y cada eje representa algo.",
+                ]),
+                ("⇄", "Ejes que se mueven", [
+                    "transpose permuta los ejes; reshape relee los mismos "
+                    "números planos.",
+                    "La misma forma puede tener otro significado: ese es el "
+                    "error que este día evita.",
+                ]),
+                ("∏", "Factorizaciones e inversas", [
+                    "Los números se factorizan en primos; las matrices en "
+                    "LU, QR, SVD.",
+                    "Los tensores también, y donde no hay inversa responde "
+                    "la pseudoinversa.",
+                ]),
+            ],
+            "callout": ("La pregunta del día:", "antes de operar sobre un "
+                        "tensor, nombra sus ejes."),
+        },
+    },
     {
         "stem": "slide-31a",
         "kind": "closing",

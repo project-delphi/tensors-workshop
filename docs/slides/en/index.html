@@ -152,7 +152,28 @@ Tensors for Machine Learning — from real data to modern models. Presenter: Rav
 The workshop idea: four cards show scalar, vector, matrix and tensor as 0D, 1D, 2D and ND arrays, each defined by its shape. The guiding question of the day: before operating, what does each axis represent?
 </p>
 </section>
-<section id="section-2" class="slide level2" data-background-image="images/slides-final/slide-03.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-2" class="slide level2" data-background-image="images/slides-final/slide-02a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<h2></h2>
+<p class="sr-only">
+Four ideas, one object — the whole day in four cards. A tensor generalizes a matrix: a scalar has no axes, a vector one, a matrix two, and a tensor as many as the data needs. It holds the data: images, video frames, taxi trips and prices are all one box of numbers, and every axis stands for something. Its axes can be moved: transpose permutes them, reshape re-reads the same flat numbers, and the same shape can carry a different meaning. And it factors: numbers into primes, quadratics into roots, matrices into LU, QR and SVD, tensors too — and where an inverse does not exist, the pseudoinverse answers. The question of the day: before you operate on a tensor, name its axes.
+</p>
+<aside class="notes">
+<p>This is the map of the whole day, and the only slide that shows all four ideas at once. Spend a minute on it, not five: each card is opened properly later — card 1 in section 01, card 2 in sections 02 and 03, card 3 in section 04, card 4 in sections 07, 09, 10 and 11.</p>
+<p>The fourth card is the one to sell. Students already factor numbers and solve quadratics; the claim is that factorization is the same move each time, applied to a bigger object. That is the promise section 09 collects on.</p>
+<p>Say “axes”, not “dimensions”, from here on — and remember the “rank” warning is due at the start of Part I.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section id="section-3" class="slide level2" data-background-image="images/slides-final/slide-03.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Real data, real problems: four real datasets used throughout the workshop — handwritten digits, stained histology, California housing, and NYC taxi trips — each with the role it plays later.
@@ -351,7 +372,7 @@ Section 01 · What a tensor is — 20 min, running +00:05 to +00:25. Objective: 
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-3" class="slide level2" data-background-image="images/slides-final/slide-06.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-4" class="slide level2" data-background-image="images/slides-final/slide-06.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.
@@ -375,7 +396,7 @@ Section 09 walks this map on real data: every factorization written as a constra
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-4" class="slide level2" data-background-image="images/slides-final/slide-07.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-5" class="slide level2" data-background-image="images/slides-final/slide-07.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 What does a factorization give you? A four-step diagram — number, polynomial, matrix, tensor — shows that factorizing reveals useful structure rather than just rewriting an expression.
@@ -393,7 +414,7 @@ What does a factorization give you? A four-step diagram — number, polynomial, 
 Section 02 · Thinking in N dimensions — 20 min, running +00:25 to +00:45. Objective: read real tensor shapes and distinguish a batch axis from a time axis. Eight independent handwritten digits are contrasted with four ordered frames of a storm video.
 </p>
 </section>
-<section id="section-5" class="slide level2" data-background-image="images/slides-final/slide-09.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-6" class="slide level2" data-background-image="images/slides-final/slide-09.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Batch is not time: sixteen shuffled handwritten digits stay recognisable, while shuffled video frames turn the storm sequence meaningless — reordering a batch axis is safe, reordering a time axis is not.
@@ -425,7 +446,7 @@ Batch is not time: sixteen shuffled handwritten digits stay recognisable, while 
 Section 03 · Indexing and broadcasting real data — 15 min, running +00:45 to +01:00. Objective: select real data with indexing and Boolean masks, and broadcast safely. Four panels show row/column indexing on a temperature table, thresholding into a mask, region selection on a satellite image, and shape broadcasting.
 </p>
 </section>
-<section id="section-6" class="slide level2" data-background-image="images/slides-final/slide-11.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-7" class="slide level2" data-background-image="images/slides-final/slide-11.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Indexing in action: the same four indexing, masking, satellite-cropping and broadcasting panels, with a summary strip naming each technique.
@@ -444,7 +465,7 @@ Indexing in action: the same four indexing, masking, satellite-cropping and broa
 Section 04 · Reshape and transpose real images — 15 min, running +01:00 to +01:15. Objective: distinguish reshape from transpose and read HWC, CHW, NHWC and NCHW. A stained histology image is correctly transposed to CHW alongside a reshape that scrambles it into colour noise.
 </p>
 </section>
-<section id="section-7" class="slide level2" data-background-image="images/slides-final/slide-13.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-8" class="slide level2" data-background-image="images/slides-final/slide-13.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Transpose is not reshape: the histology transpose-versus-reshape comparison, plus a real NHWC-to-NCHW batch of a histology slide, an astronaut photo and a cat photo, each correctly reordered.
@@ -490,7 +511,7 @@ Active break: Kahoot 1, Tensor Vocabulary &amp; Shapes. 6 questions covering axe
 Section 05 · Video pipeline design — 15 min, running +01:25 to +01:40. Objective: treat a video as a sequence of frames and build padded, masked batches. A skateboarding clip’s frames unfold into a 5-D (N, T, H, W, C) tensor.
 </p>
 </section>
-<section id="section-8" class="slide level2" data-background-image="images/slides-final/slide-16.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-9" class="slide level2" data-background-image="images/slides-final/slide-16.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 File to frames to tensor to model: a four-stage pipeline showing how a video becomes a masked tensor, with the validity-mask formula spelled out.
@@ -522,13 +543,13 @@ Section 06 · Contraction with einsum — 15 min, running +01:40 to +01:55. Obje
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-9" class="slide level2" data-background-image="images/slides-final/slide-18.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-10" class="slide level2" data-background-image="images/slides-final/slide-18.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Anatomy of einsum: the expression np.einsum(‘ij,jk-&gt;ik’, A, B) is broken into its input labels, its shared index, and the indices that survive, with a diagram of the matrices each letter indexes.
 </p>
 </section>
-<section id="section-10" class="slide level2" data-background-image="images/slides-final/slide-19.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-19.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 NumPy to einsum: a table maps inner product, outer product, matmul, transpose, trace, diagonal, batched matmul and axis-sum to their einsum equivalents.
@@ -547,7 +568,7 @@ NumPy to einsum: a table maps inner product, outer product, matmul, transpose, t
 Section 07 · Inverses and the pseudoinverse — 15 min, running +02:00 to +02:15. Objective: distinguish wide, square and tall matrices and use the pseudoinverse for stable solutions. Three colour-coded matrices illustrate each case.
 </p>
 </section>
-<section id="section-11" class="slide level2" data-background-image="images/slides-final/slide-20a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-20a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Three shapes, three answers. Four cards: a square full-rank matrix, where the inverse exists and Ax = b has exactly one solution; a square singular matrix, where the inverse is undefined but the pseudoinverse is not, because it is computed from the SVD; a tall matrix, more equations than unknowns, where A-plus b is the least-squares fit that minimises the residual; and a wide matrix, infinitely many solutions, where A-plus b returns the one of smallest norm.
@@ -568,7 +589,7 @@ Three shapes, three answers. Four cards: a square full-rank matrix, where the in
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-12" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-21.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit — predicted versus true housing values, and the residual histogram — computed with the Moore-Penrose pseudoinverse.
@@ -576,7 +597,7 @@ California Housing and the pseudoinverse: a real 20,433-by-7 least-squares fit �
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" class="colab-tab" target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab">Colab ↗</a></p>
 <p><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/" class="reading-tab" target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog">📖 Rotate, stretch, rotate again ↗</a></p>
 </section>
-<section id="section-13" class="slide level2" data-background-image="images/slides-final/slide-21a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-21a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 What about tensors? Three cards: there is no single tensor inverse everyone uses, which is a fair question with an honest answer rather than a gap in your reading; definitions built on the Einstein product, and on the t-product for order-3 tensors, do exist and are active research; and in practice you unfold the tensor into a matrix, apply the matrix pseudoinverse, and fold the result back — a 4 by 3 by 5 tensor unfolds to 4 by 15, whose pseudoinverse is 15 by 4, and M A-plus M returns M exactly, because unfolding loses nothing.
@@ -651,7 +672,7 @@ Section 08 · Recursion with matrices and vectors — 10 min, running +02:20 to 
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-14" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-24.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08’s own output once Issue #49 is implemented.
@@ -687,7 +708,7 @@ Section 09 · Matrix factorizations — 15 min, running +02:30 to +02:45. Object
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-15" class="slide level2" data-background-image="images/slides-final/slide-26a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-16" class="slide level2" data-background-image="images/slides-final/slide-26a.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Factor once, solve many: the same real least-squares problem three ways. Normal equations are fastest to write and square the condition number; QR is the stable default and never forms A-transpose-A; SVD is the most expensive and the most informative, because Eckart-Young gives the truncation error without building the truncation.
@@ -720,7 +741,7 @@ Factor once, solve many: the same real least-squares problem three ways. Normal 
 Section 10 · Tucker decomposition on real data — 15 min, running +02:50 to +03:05. Objective: convert taxi trips into a pickup-borough by dropoff-borough by hour tensor and compress it by mode. A real 6:00 PM slice is compared against its Tucker reconstruction and absolute error.
 </p>
 </section>
-<section id="section-16" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-17" class="slide level2" data-background-image="images/slides-final/slide-28.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.
@@ -794,7 +815,7 @@ Section 11 · Tensor factorizations — 15 min, running +03:10 to +03:25. Object
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-17" class="slide level2" data-background-image="images/slides-final/slide-29b.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-18" class="slide level2" data-background-image="images/slides-final/slide-29b.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.
@@ -815,7 +836,7 @@ Four decompositions, four bargains. CP stores a sum of rank-1 components, R time
           display:block!important;
       }</style></aside>
 </section>
-<section id="section-18" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
+<section id="section-19" class="slide level2" data-background-image="images/slides-final/slide-30.png" data-background-size="contain" data-background-repeat="no-repeat" data-background-position="center" data-background-color="#ffffff">
 <h2></h2>
 <p class="sr-only">
 One idea connects the workshop: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.

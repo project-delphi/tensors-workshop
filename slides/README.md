@@ -98,7 +98,7 @@ forget it.
 
 ## Structure of each deck
 
-Three opening slides → the agenda (the one text slide left, generated into
+Four opening slides → the agenda (the one text slide left, generated into
 `_includes/agenda-{en,es}.md` by `scripts/gen_tables.py`) → then per section a
 `##` divider slide carrying the `{#sec-NN-slug}` anchor and one to three
 follow-on slides, with a full-bleed **Kahoot pause** slide after sections 04,
@@ -140,7 +140,9 @@ section's.
 
 | Slide | Anchor | Notebook | What it introduces |
 |---|---|---|---|
-| 01–03 | — | — | Title, the workshop idea, the four datasets |
+| 01–02 | — | — | Title, the workshop idea |
+| **02a** | — | — | Four ideas, one object — the whole day in four cards |
+| 03 | — | — | The four datasets |
 | agenda | — | — | The running clock, from `_includes/agenda-{en,es}.md` |
 | 04 | `sec-00-setup-and-data` | 00 | Setup and welcome |
 | 05 | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
@@ -194,15 +196,16 @@ take-home material, and the room's 210 minutes do not stretch to them:
 
 ## Drawing slide art
 
-`slide-NNa` is an **insertion**: `slide-20a` follows `slide-20`. The alternative
+`slide-NNa` is an **insertion**: `slide-02a` follows `slide-02`. The alternative
 was renumbering every later file, and the page number on the old art is painted
 into the image, so a rename would have made the numbering wrong in a second
 place rather than right in the first. Two consequences, both deliberate:
 
-- The baked corner number on `slide-21` onward no longer matches the slide's
-  true position. It is decoration — `slide-number: false` in both deck headers
-  means reveal shows no number of its own — and it stops being authoritative
-  after section 07.
+- The baked corner number no longer matches the slide's true position. It is
+  decoration — `slide-number: false` in both deck headers means reveal shows no
+  number of its own — and since `slide-02a` it stops being authoritative from
+  `slide-03` onward, rather than after section 07 as it did when `slide-20a`
+  was the first insertion.
 - New art carries **no corner number at all**, so it cannot be wrong.
 - The **closing slide was rebuilt** here rather than left stale. `slide-31`'s
   art read `11 · Wrap-up and take-homes` after the wrap-up became section 12,
