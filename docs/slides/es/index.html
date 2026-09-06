@@ -1395,6 +1395,7 @@ Sección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinc
         }
 
         var hrefByNumber = {};
+        var extraNumbers = {};
 
         Array.prototype.forEach.call(
           document.querySelectorAll(".colab-tab"),
@@ -1404,6 +1405,10 @@ Sección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinc
 
             if (match) {
               hrefByNumber[match[1]] = href;
+
+              if (link.classList.contains("colab-tab-extra")) {
+                extraNumbers[match[1]] = true;
+              }
             }
           }
         );
@@ -1435,14 +1440,24 @@ Sección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinc
 
             if (group) {
               // Every slide of the section pushes the same object, so a link
-              // found later in the walk reaches the divider too.
-              if (own.length) {
-                group.numbers = own;
-              }
+              // found later in the walk reaches the divider too. Union, not
+              // replacement: a section whose second slide carries a link must not
+              // lose the one its divider declared.
+              own.forEach(function (number) {
+                if (group.numbers.indexOf(number) === -1) {
+                  group.numbers.push(number);
+                }
+              });
 
-              if (ownReading.length) {
-                group.reading = ownReading;
-              }
+              ownReading.forEach(function (link) {
+                for (var i = 0; i < group.reading.length; i++) {
+                  if (group.reading[i].href === link.href) {
+                    return;
+                  }
+                }
+
+                group.reading.push(link);
+              });
 
               panelEntries.push(group);
             } else {
@@ -1486,7 +1501,7 @@ Sección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinc
               return;
             }
 
-            var isExtra = number === "12" || number === "13";
+            var isExtra = extraNumbers[number] === true;
 
             // Both halves go through `es`: the extra label was English-only, so
             // the ES deck's final slide read "Abrir Colab 11" beside
