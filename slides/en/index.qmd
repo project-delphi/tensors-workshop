@@ -33,7 +33,7 @@ contracción, convolución.
 
 ## {background-image="images/slides-final/slide-02a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Four ideas, one object — the whole day in four cards. A tensor generalizes a matrix: a scalar has no axes, a vector one, a matrix two, and a tensor as many as the data needs. It holds the data: images, video frames, taxi trips and prices are all one box of numbers, and every axis stands for something. Its axes can be moved: transpose permutes them, reshape re-reads the same flat numbers, and the same shape can carry a different meaning. And it factors: numbers into primes, quadratics into roots, matrices into LU, QR and SVD, tensors too — and where an inverse does not exist, the pseudoinverse answers. The question of the day: before you operate on a tensor, name its axes.</p>
+<p class="sr-only">Four ideas, one object — the whole day in four cards. A tensor generalizes a matrix: a scalar has no axes, a vector one, a matrix two, and a tensor as many as the data needs. It holds the data: images, video frames, taxi trips and prices are all one box of numbers, and every axis stands for something. Its axes can be moved: transpose permutes them, reshape re-reads the same flat numbers, and the same shape can carry a different meaning. And it factors: numbers into primes, quadratics into roots, matrices into LU, QR and SVD, tensors too — and where an inverse does not exist, the pseudoinverse answers. Carry this all day: before you operate on a tensor, name its axes.</p>
 
 ::: {.notes}
 This is the map of the whole day, and the only slide that shows all four ideas
