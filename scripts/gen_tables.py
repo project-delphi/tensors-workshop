@@ -299,7 +299,7 @@ def video_block(lang: str) -> str:
     # youtube-nocookie, deliberately: the player sets no tracking cookie until
     # the visitor actually presses play.
     watch = {"en": "Watch on YouTube", "es": "Ver en YouTube"}[lang]
-    mins = v.get("minutes") or 0
+    mins = v.get(f"minutes_{lang}") or 0
     meta = {"en": f"{mins} minutes", "es": f"{mins} minutos"}[lang] if mins else ""
     line = f"{meta} · " if meta else ""
     return (
@@ -333,7 +333,7 @@ def audio_block(lang: str, prefix: str) -> str:
                   "se descarga como archivo, así que cuando esté sonará aquí "
                   "mismo, sin cuenta y sin terceros.\n",
         }[lang]
-    mins = a.get("minutes") or 0
+    mins = a.get(f"minutes_{lang}") or 0
     meta = ({"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
             if mins else "")
     return (
@@ -375,6 +375,17 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     # the page: with nothing exported there is nothing to click, and a page
     # that says otherwise is the small lie that makes the big warning at the
     # top of it less believable.
+    required = ("file", "url", title_key, alt_key)
+    for n, i in enumerate(items, 1):
+        missing = [k for k in required if not i.get(k)]
+        if missing:
+            # These entries are pasted in by hand from the template in
+            # _variables.yml, so a forgotten `alt_es` is the likeliest
+            # mistake here -- and a bare KeyError names the field without
+            # saying which entry or what to do about it.
+            sys.exit(f"companion.infographics[{n}] "
+                     f"({i.get('file', 'no file')}): missing "
+                     f"{', '.join(missing)}")
     out = [{"en": "Click one to open it full size. These are PNG exports, "
                   "served from this site.",
             "es": "Haz clic en una para abrirla a tamaño completo. Son "

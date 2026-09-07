@@ -558,6 +558,13 @@ def check_companion() -> None:
             pending.append(f"video.youtube_id_{lang}")
         if not c["audio"].get(f"file_{lang}"):
             pending.append(f"audio.file_{lang}")
+        # The running times are reported too. Without them the page still
+        # renders -- it just quietly drops the "12 minutes ·" prefix -- and a
+        # field that goes missing with no visible symptom is exactly what this
+        # check exists to catch.
+        for kind in ("video", "audio"):
+            if not c[kind].get(f"minutes_{lang}"):
+                pending.append(f"{kind}.minutes_{lang}")
     if not c.get("infographics"):
         pending.append("infographics")
     if pending:

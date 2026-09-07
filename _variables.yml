@@ -84,6 +84,13 @@ kahoot:
 # these two fill the remaining 30 and are the whole reason a section's `start`
 # is not just the sum of the `minutes` before it. Each quiz already declares
 # the section it follows (`kahoot.qN.after`), so only the breaks are listed.
+schedule:
+  quiz_minutes: 5
+  break_minutes: 5
+  # Sections after which the room takes a break. After 04 the break follows
+  # Kahoot 1, which is why the agenda shows a single 10-minute block there.
+  break_after: ["04", "06", "09"]
+
 # ── The machine-generated companion ──────────────────────────────────────────
 # A NotebookLM notebook built from this workshop's own sources, and the
 # artifacts generated from it. It is generated, not written: it is a second
@@ -126,7 +133,8 @@ companion:
     title_es: "Tensores en aprendizaje automático — resumen en vídeo"
     youtube_id_en: ""                 # TODO: paste the EN YouTube video id
     youtube_id_es: ""                 # TODO: paste the ES YouTube video id
-    minutes: 0                        # TODO: the running time, for the page
+    minutes_en: 0                     # TODO: the EN running time
+    minutes_es: 0                     # TODO: the ES running time
 
   # The Audio Overview, committed under media/. `_quarto.yml` carries
   # `media/**` in `resources:` so Quarto copies it verbatim, the same way it
@@ -136,7 +144,8 @@ companion:
     title_es: "Resumen en audio"
     file_en: ""                       # TODO: e.g. media/companion-overview-en.mp3
     file_es: ""                       # TODO: e.g. media/companion-overview-es.mp3
-    minutes: 0                        # TODO
+    minutes_en: 0                     # TODO
+    minutes_es: 0                     # TODO
 
   # Link-only artifacts. Leave at default_url until the real share link exists.
   quiz:
@@ -168,13 +177,6 @@ companion:
   # — an infographic is load-bearing content, and every other image on this
   # site carries a fig-alt describing what it actually shows.
   infographics: []
-
-schedule:
-  quiz_minutes: 5
-  break_minutes: 5
-  # Sections after which the room takes a break. After 04 the break follows
-  # Kahoot 1, which is why the agenda shows a single 10-minute block there.
-  break_after: ["04", "06", "09"]
 
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core
