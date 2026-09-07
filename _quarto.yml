@@ -8,7 +8,9 @@ project:
     - index.qmd
     - notebooks.qmd
     - kahoot.qmd
+    - companion.qmd
     - es/index.qmd
+    - es/companion.qmd
     - slides/en/index.qmd
     - slides/es/index.qmd
     - tensors_workshop_plan_with_quizzes.md
@@ -17,6 +19,9 @@ project:
     - kahoot/*.xlsx
     - notebooks/*.ipynb
     - images/**
+    # The companion's Audio Overview. Copied verbatim, like the notebooks --
+    # nothing renders it, so it must be a resource or it never reaches docs/.
+    - media/**
 
 website:
   title: "Tensors for Machine Learning"
@@ -36,6 +41,12 @@ website:
         text: Notebooks
       - href: kahoot.qmd
         text: Kahoot
+      - text: Companion
+        menu:
+          - href: companion.qmd
+            text: "Companion (EN)"
+          - href: es/companion.qmd
+            text: "Complemento (ES)"
       - text: Slides
         menu:
           - href: slides/en/index.qmd
@@ -62,6 +73,11 @@ format:
     toc: true
     toc-depth: 3
     anchor-sections: true
+    # Opt-in, not `auto`: `auto` lightboxes every image on the site, which
+    # rewrites the handbook's figures and the dataset cards too. Only the
+    # companion's infographics carry `.lightbox`, because only they are worth
+    # reading at full size.
+    lightbox: true
     code-copy: true
     code-overflow: wrap
     link-external-newwindow: true

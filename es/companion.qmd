@@ -1,0 +1,84 @@
+---
+title: "El complemento generado por máquina"
+subtitle: "Un cuaderno de NotebookLM construido con las fuentes de este taller, y todo lo que se ha generado a partir de él"
+lang: es
+---
+
+::: {.callout-warning appearance="simple"}
+**Todo lo que hay en esta página está generado, no escrito.** Lo produjo
+[NotebookLM]({{< var companion.notebook_url >}}) a partir del manual y los
+cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola
+frase. Úsalo como una *segunda pasada* sobre material que ya has visto, y
+comprueba cualquier cosa que afirme contra el
+[manual](../tensors_workshop_plan_with_quizzes.md), nunca al revés. Generado el
+{{< var companion.exported >}}.
+:::
+
+El taller se apoya en una promesa: datos reales y números que puedes
+reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la
+línea está. Existe porque una explicación distinta del mismo material es
+realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir,
+un cuestionario en el tren de vuelta—, no porque sustituya a nada.
+
+Cuando un artefacto se ha podido **exportar**, se ha exportado, y se sirve
+desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque
+el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar:
+esos son enlaces a NotebookLM y te pedirán una cuenta de Google. Cada apartado
+dice de cuál se trata.
+
+## Resumen en vídeo {#video}
+
+{{< include ../_includes/companion-video-es.md >}}
+
+## Infografías {#infographics}
+
+{{< include ../_includes/companion-infographics-es.md >}}
+
+## Escuchar {#listen}
+
+El resumen en audio son dos voces comentando el taller. Es lo único de aquí
+que funciona con la pantalla apagada, y eso lo convierte en lo que más merece
+la pena llevarse en el trayecto del día anterior.
+
+{{< include ../_includes/companion-audio-es.md >}}
+
+## Ponte a prueba {#test-yourself}
+
+Ninguno de los dos es el [Kahoot](../kahoot.qmd). Los cuestionarios de Kahoot
+son de seis preguntas, se hacen en vivo en la sala después de las secciones
+04, 07 y 10, y se escribieron para este taller. Estos dos están generados, no
+tienen límite y son para ti, después.
+
+**Los dos se abren en NotebookLM y piden una cuenta de Google**: los
+cuestionarios y las tarjetas son los artefactos que NotebookLM no deja
+exportar.
+
+| | Qué es | Cuándo lo usas |
+|---|---|---|
+| **[{{< var companion.quiz.title_es >}}]({{< var companion.quiz.url_es >}})** | Preguntas de opción múltiple generadas sobre todo el taller, tantas como quieras. | Después de la sesión, para descubrir qué secciones no se te quedaron. |
+| **[{{< var companion.flashcards.title_es >}}]({{< var companion.flashcards.url_es >}})** | El término por un lado y la definición por el otro: el vocabulario que el taller va definiendo sobre la marcha. | Repetición espaciada, en las semanas siguientes. |
+
+: {tbl-colwidths="[22,48,30]"}
+
+## El mapa {#map}
+
+**[{{< var companion.mindmap.title_es >}}]({{< var companion.mindmap.url_es >}})**:
+cómo se sostienen unas en otras las trece secciones, en una sola pantalla. Solo
+es interactivo dentro de NotebookLM, así que es un enlace y pide cuenta.
+
+Merece la pena mirarlo pronto: el taller es deliberadamente una escalera, y ver
+la escalera entera antes de empezar a subirla hace que los peldaños del medio
+parezcan menos arbitrarios.
+
+## En NotebookLM {#notebooklm}
+
+**[Abrir el cuaderno]({{< var companion.notebook_url >}})** para ver las
+fuentes con las que se generó cada artefacto de arriba, hacerle tus propias
+preguntas o generar otra cosa a partir de él.
+
+El resumen escrito que cita la lista de lecturas del manual está
+**[aquí]({{< var companion.overview_url >}})**.
+
+::: {.callout-note appearance="simple"}
+🇬🇧 Prefer English? [This page in English](../companion.qmd).
+:::

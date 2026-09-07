@@ -91,6 +91,93 @@ schedule:
   # Kahoot 1, which is why the agenda shows a single 10-minute block there.
   break_after: ["04", "06", "09"]
 
+# ── The machine-generated companion ──────────────────────────────────────────
+# A NotebookLM notebook built from this workshop's own sources, and the
+# artifacts generated from it. It is generated, not written: it is a second
+# pass over material already seen, and anything it asserts is checked against
+# the handbook, never the other way round. Say so on every page that shows it.
+#
+# Two kinds of artifact, and the difference decides how each one is published:
+#
+#   - Video, infographics and audio EXPORT (MP4, PNG, WAV/MP3). Those are
+#     committed here, so they work for a visitor with no Google account and
+#     survive the notebook being edited, unshared or deleted. The video is the
+#     one exception: it is re-uploaded to YouTube rather than committed,
+#     because an MP4 lands in the repo twice — once in `images/`-style source
+#     and again in `docs/` — against a 1 GB Pages ceiling.
+#   - Quiz, flashcards and the mind map DO NOT export. They are link-only, and
+#     the links work only while the notebook is shared as "anyone with the
+#     link". They are the only things here that ask a visitor to sign in.
+#
+# These assets are hand-exported, not script-generated, so there is no
+# SHA-256 pin to fall back on: `notebook_url` plus each artifact's own
+# `/artifact/<uuid>` URL plus `exported` IS the provenance record. Re-export
+# an asset, update `exported`.
+#
+# `default_url` is the placeholder an artifact carries until its real share
+# link has been pasted in, exactly as `kahoot.default_url` works. Check 10 in
+# check_links.py prints a non-fatal TODO for every field still holding it.
+companion:
+  notebook_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
+  default_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
+  exported: "2026-09-07"
+  # The artifact the handbook's further-reading list has cited since #76. It
+  # is the written overview, not the video.
+  overview_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb"
+
+  # The Video Overview, re-uploaded to YouTube. Only the id: the watch URL and
+  # the privacy-preserving youtube-nocookie embed URL are both built from it,
+  # and a full URL pasted here would silently break the embed.
+  video:
+    title_en: "Tensors in machine learning — video overview"
+    title_es: "Tensores en aprendizaje automático — resumen en vídeo"
+    youtube_id_en: ""                 # TODO: paste the EN YouTube video id
+    youtube_id_es: ""                 # TODO: paste the ES YouTube video id
+    minutes_en: 0                     # TODO: the EN running time
+    minutes_es: 0                     # TODO: the ES running time
+
+  # The Audio Overview, committed under media/. `_quarto.yml` carries
+  # `media/**` in `resources:` so Quarto copies it verbatim, the same way it
+  # copies the notebooks.
+  audio:
+    title_en: "Audio overview"
+    title_es: "Resumen en audio"
+    file_en: ""                       # TODO: e.g. media/companion-overview-en.mp3
+    file_es: ""                       # TODO: e.g. media/companion-overview-es.mp3
+    minutes_en: 0                     # TODO
+    minutes_es: 0                     # TODO
+
+  # Link-only artifacts. Leave at default_url until the real share link exists.
+  quiz:
+    title_en: "Self-check quiz"
+    title_es: "Cuestionario de autoevaluación"
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+  flashcards:
+    title_en: "Flashcards"
+    title_es: "Tarjetas de memoria"
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+  mindmap:
+    title_en: "Mind map"
+    title_es: "Mapa mental"
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+
+  # The infographic gallery, generated into _includes/companion-infographics-*.md
+  # by scripts/gen_tables.py. Add an entry per exported PNG:
+  #
+  #   - file: "images/info-01-what-an-axis-means.png"
+  #     url:  "https://notebook.google.com/notebook/<nb>/artifact/<uuid>"
+  #     title_en: … ; title_es: …
+  #     alt_en:   … ; alt_es:   …
+  #
+  # `file` must exist under images/ before it is listed: check 3 resolves it as
+  # an internal link and a missing PNG fails the build. `alt_*` is not optional
+  # — an infographic is load-bearing content, and every other image on this
+  # site carries a fig-alt describing what it actually shows.
+  infographics: []
+
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core
 # concept. These are the *second explanation* — the one a student wants forty

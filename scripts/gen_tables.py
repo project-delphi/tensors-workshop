@@ -22,6 +22,10 @@ Outputs (all overwritten, none hand-edited):
     _includes/agenda-en.md        _includes/agenda-es.md
     _includes/readme-sections.md  _includes/readme-sections-es.md
     _includes/extras-en.md        _includes/extras-es.md
+    _includes/companion-video-en.md          _includes/companion-video-es.md
+    _includes/companion-audio-en.md          _includes/companion-audio-es.md
+    _includes/companion-infographics-en.md
+    _includes/companion-infographics-es.md
 """
 from __future__ import annotations
 
@@ -39,6 +43,7 @@ SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
 QUIZZES = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
 REPO = V["repo"]
+COMPANION = V["companion"]
 
 L = {
     "en": dict(
@@ -266,6 +271,145 @@ def readme_table(lang: str) -> str:
     return "\n".join(rows) + "\n"
 
 
+FENCE = "```"
+
+
+def video_block(lang: str) -> str:
+    """The companion's Video Overview, as a raw-HTML embed.
+
+    Generated rather than written into the two pages with a `{{< var >}}`,
+    for two reasons. A shortcode inside a raw HTML attribute does not survive
+    pandoc -- it ends the tag at the `>` in `>}}`, and the whole iframe comes
+    out as smart-quoted literal text -- and the id may not exist yet, in which
+    case an embed URL with nothing after `embed/` is a broken player. Here the
+    substitution happens in Python and the missing case has somewhere to go.
+    """
+    v = COMPANION["video"]
+    vid = v.get(f"youtube_id_{lang}") or ""
+    title = v[f"title_{lang}"]
+    if not vid:
+        return {
+            "en": "*Not published yet.* The video overview is generated in "
+                  "NotebookLM and re-uploaded to YouTube; until then there is "
+                  "nothing here that works without a Google account.\n",
+            "es": "*Todavía sin publicar.* El resumen en vídeo se genera en "
+                  "NotebookLM y se sube a YouTube; hasta entonces no hay aquí "
+                  "nada que funcione sin una cuenta de Google.\n",
+        }[lang]
+    # youtube-nocookie, deliberately: the player sets no tracking cookie until
+    # the visitor actually presses play.
+    watch = {"en": "Watch on YouTube", "es": "Ver en YouTube"}[lang]
+    mins = v.get(f"minutes_{lang}") or 0
+    meta = {"en": f"{mins} minutes", "es": f"{mins} minutos"}[lang] if mins else ""
+    line = f"{meta} · " if meta else ""
+    return (
+        f"{FENCE}{{=html}}\n"
+        f'<div class="video-frame">\n'
+        f'<iframe src="https://www.youtube-nocookie.com/embed/{vid}"\n'
+        f'        title="{html.escape(title, quote=True)}"\n'
+        f'        loading="lazy" allowfullscreen\n'
+        f'        referrerpolicy="strict-origin-when-cross-origin"></iframe>\n'
+        f"</div>\n"
+        f"{FENCE}\n\n"
+        f"{line}[{watch}](https://www.youtube.com/watch?v={vid})\n")
+
+
+def audio_block(lang: str, prefix: str) -> str:
+    """The companion's Audio Overview, as a plain `<audio controls>`.
+
+    The file is committed and served from `media/`, so this works logged out.
+    check_links.py harvests `src` from every tag, which means a path listed
+    here that is not actually in `docs/` fails the build -- exactly the gate
+    we want on a hand-exported asset.
+    """
+    a = COMPANION["audio"]
+    f = a.get(f"file_{lang}") or ""
+    if not f:
+        return {
+            "en": "*Not exported yet.* NotebookLM's Audio Overview downloads "
+                  "as a file, so when it lands it will play right here, with "
+                  "no account and no third party.\n",
+            "es": "*Todavía sin exportar.* El resumen en audio de NotebookLM "
+                  "se descarga como archivo, así que cuando esté sonará aquí "
+                  "mismo, sin cuenta y sin terceros.\n",
+        }[lang]
+    mins = a.get(f"minutes_{lang}") or 0
+    meta = ({"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
+            if mins else "")
+    return (
+        f"{FENCE}{{=html}}\n"
+        f'<audio class="companion-audio" controls preload="none"\n'
+        f'       src="{prefix}{f}"></audio>\n'
+        f"{FENCE}\n{meta}")
+
+
+def infographics_gallery(lang: str, prefix: str) -> str:
+    """The companion's infographic gallery, as `.info-card`s in an `.info-strip`.
+
+    Generated for the same reason the section tables are: the EN and ES
+    galleries must show the same PNGs in the same order, and hand-maintaining
+    two copies of that is how they stop agreeing. Each card is one exported
+    file plus the artifact it came from.
+
+    While `companion.infographics` is empty -- nothing exported yet -- this
+    emits the honest version of the section rather than nothing at all, so the
+    page never has a heading with a hole under it.
+    """
+    items = COMPANION.get("infographics") or []
+    if not items:
+        pending = {
+            "en": ("*Not exported yet.* The infographics live in "
+                   f"[the notebook]({COMPANION['notebook_url']}) until they "
+                   "are exported as PNGs and committed here; that link needs "
+                   "a Google account, and these pages will not."),
+            "es": ("*Todavía sin exportar.* Las infografías están en "
+                   f"[el cuaderno]({COMPANION['notebook_url']}) hasta que se "
+                   "exporten como PNG y se guarden aquí; ese enlace pide una "
+                   "cuenta de Google, y estas páginas no lo harán."),
+        }
+        return pending[lang] + "\n"
+
+    title_key, alt_key = f"title_{lang}", f"alt_{lang}"
+    seen = {"en": "See it in NotebookLM", "es": "Verla en NotebookLM"}[lang]
+    # The invitation to click belongs here rather than under the heading in
+    # the page: with nothing exported there is nothing to click, and a page
+    # that says otherwise is the small lie that makes the big warning at the
+    # top of it less believable.
+    required = ("file", "url", title_key, alt_key)
+    for n, i in enumerate(items, 1):
+        missing = [k for k in required if not i.get(k)]
+        if missing:
+            # These entries are pasted in by hand from the template in
+            # _variables.yml, so a forgotten `alt_es` is the likeliest
+            # mistake here -- and a bare KeyError names the field without
+            # saying which entry or what to do about it.
+            sys.exit(f"companion.infographics[{n}] "
+                     f"({i.get('file', 'no file')}): missing "
+                     f"{', '.join(missing)}")
+    out = [{"en": "Click one to open it full size. These are PNG exports, "
+                  "served from this site.",
+            "es": "Haz clic en una para abrirla a tamaño completo. Son "
+                  "exportaciones en PNG, servidas desde este sitio."}[lang],
+           "", "::: {.info-strip}"]
+    for i in items:
+        alt = i[alt_key]
+        if '"' in alt:
+            # The alt lands inside a `{fig-alt="…"}` attribute, where a bare
+            # double quote ends it early and silently truncates the text.
+            sys.exit(f"companion.infographics: {alt_key} for {i['file']} "
+                     f"contains a double quote; use typographic quotes")
+        out += [
+            "::: {.info-card}",
+            f"![]({prefix}{i['file']})"
+            f'{{.lightbox group="infographics" fig-alt="{alt}"}}',
+            "",
+            f"**{i[title_key]}**<br>[{seen}]({i['url']})",
+            ":::",
+        ]
+    out.append(":::")
+    return "\n".join(out) + "\n"
+
+
 BANNER = ("<!-- GENERATED by scripts/gen_tables.py from _variables.yml. "
           "Do not edit by hand. -->\n")
 
@@ -306,6 +450,14 @@ def main() -> int:
             "readme-sections-es.md": BANNER + readme_table("es"),
             "extras-en.md": BANNER + extras_readme_table("en"),
             "extras-es.md": BANNER + extras_readme_table("es"),
+            "companion-video-en.md": BANNER + video_block("en"),
+            "companion-video-es.md": BANNER + video_block("es"),
+            "companion-audio-en.md": BANNER + audio_block("en", ""),
+            "companion-audio-es.md": BANNER + audio_block("es", "../"),
+            "companion-infographics-en.md":
+                BANNER + infographics_gallery("en", ""),
+            "companion-infographics-es.md":
+                BANNER + infographics_gallery("es", "../"),
         }
         handbook_schedule = handbook_schedule_table()
     except ScheduleError as e:

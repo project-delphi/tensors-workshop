@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.6.40">
@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kahoot – Tensors for Machine Learning</title>
+<title>El complemento generado por máquina – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,23 +23,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./favicon.svg" rel="icon" type="image/svg+xml">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-14d7642a37ac691745027c91b916d755.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-14d7642a37ac691745027c91b916d755.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -54,17 +54,17 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 
@@ -78,30 +78,30 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Tensors for Machine Learning</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./tensors_workshop_plan_with_quizzes.html"> 
+    <a class="nav-link" href="../tensors_workshop_plan_with_quizzes.html"> 
 <span class="menu-text">Handbook</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html"> 
+    <a class="nav-link" href="../notebooks.html"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./kahoot.html" aria-current="page"> 
+    <a class="nav-link" href="../kahoot.html"> 
 <span class="menu-text">Kahoot</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -110,11 +110,11 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-companion">    
         <li>
-    <a class="dropdown-item" href="./companion.html">
+    <a class="dropdown-item" href="../companion.html">
  <span class="dropdown-text">Companion (EN)</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/companion.html">
+    <a class="dropdown-item" href="../es/companion.html">
  <span class="dropdown-text">Complemento (ES)</span></a>
   </li>  
     </ul>
@@ -125,11 +125,11 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-slides">    
         <li>
-    <a class="dropdown-item" href="./slides/en/index.html">
+    <a class="dropdown-item" href="../slides/en/index.html">
  <span class="dropdown-text">Slides (EN)</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./slides/es/index.html">
+    <a class="dropdown-item" href="../slides/es/index.html">
  <span class="dropdown-text">Slides (ES)</span></a>
   </li>  
     </ul>
@@ -137,11 +137,11 @@ ul.task-list li input[type="checkbox"] {
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html"> 
+    <a class="nav-link" href="../index.html"> 
 <span class="menu-text">EN</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/index.html"> 
+    <a class="nav-link" href="../es/index.html"> 
 <span class="menu-text">ES</span></a>
   </li>  
   <li class="nav-item compact">
@@ -162,14 +162,15 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">En esta página</h2>
    
   <ul>
-  <li><a href="#quiz-1" id="toc-quiz-1" class="nav-link active" data-scroll-target="#quiz-1">Quiz 1 — Tensor Vocabulary &amp; Shapes</a></li>
-  <li><a href="#quiz-2" id="toc-quiz-2" class="nav-link" data-scroll-target="#quiz-2">Quiz 2 — Einsum, Distance &amp; the Pseudoinverse</a></li>
-  <li><a href="#quiz-3" id="toc-quiz-3" class="nav-link" data-scroll-target="#quiz-3">Quiz 3 — Convolution &amp; Tensor Decompositions</a></li>
-  <li><a href="#running-them" id="toc-running-them" class="nav-link" data-scroll-target="#running-them">Running them</a></li>
-  <li><a href="#if-you-are-running-out-of-time" id="toc-if-you-are-running-out-of-time" class="nav-link" data-scroll-target="#if-you-are-running-out-of-time">If you are running out of time</a></li>
+  <li><a href="#video" id="toc-video" class="nav-link active" data-scroll-target="#video">Resumen en vídeo</a></li>
+  <li><a href="#infographics" id="toc-infographics" class="nav-link" data-scroll-target="#infographics">Infografías</a></li>
+  <li><a href="#listen" id="toc-listen" class="nav-link" data-scroll-target="#listen">Escuchar</a></li>
+  <li><a href="#test-yourself" id="toc-test-yourself" class="nav-link" data-scroll-target="#test-yourself">Ponte a prueba</a></li>
+  <li><a href="#map" id="toc-map" class="nav-link" data-scroll-target="#map">El mapa</a></li>
+  <li><a href="#notebooklm" id="toc-notebooklm" class="nav-link" data-scroll-target="#notebooklm">En NotebookLM</a></li>
   </ul>
 </nav>
     </div>
@@ -178,8 +179,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Kahoot</h1>
-<p class="subtitle lead">Three 6-question knowledge checks, and how to run them</p>
+<h1 class="title">El complemento generado por máquina</h1>
+<p class="subtitle lead">Un cuaderno de NotebookLM construido con las fuentes de este taller, y todo lo que se ha generado a partir de él</p>
 </div>
 
 
@@ -196,138 +197,84 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Three quizzes sit at the three natural seams of the workshop: after the shape and vocabulary work, after the einsum and pseudoinverse stretch, and after the decompositions. Each sits right after the blocks that supply its content, while the material is still fresh, and <strong>before</strong> the next context switch — a break or a new Part — so it reinforces rather than interrupts.</p>
-<div class="kahoot-note">
-<p><strong>Facilitators: import each spreadsheet into kahoot.it <em>before</em> the session.</strong> Create → Add question → Import → Import spreadsheet. Doing it live costs several minutes you do not have.</p>
-<p>The three <strong>join links below still point at <code>kahoot.it</code> itself</strong> — which works, because students enter the PIN from your screen there. Once each quiz exists, paste its direct join URL into the <code>url:</code> field of <code>_variables.yml</code> and re-render: every link on this site, in both decks and in all fourteen notebooks reads from that one file.</p>
-</div>
-<section id="quiz-1" class="level2">
-<h2 class="anchored" data-anchor-id="quiz-1">Quiz 1 — Tensor Vocabulary &amp; Shapes</h2>
-<p><em>Vocabulario de tensores y formas</em></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 80%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Runs after</strong></td>
-<td>Section 04 — Reshape and transpose, before the first break</td>
-</tr>
-<tr class="even">
-<td><strong>Covers</strong></td>
-<td>Sections 01, 03, 04</td>
-</tr>
-<tr class="odd">
-<td><strong>Length</strong></td>
-<td>6 questions, ~5 min including the podium</td>
-</tr>
-<tr class="even">
-<td><strong>Import file</strong></td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx"><code>kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx</code></a></td>
-</tr>
-<tr class="odd">
-<td><strong>Join link</strong></td>
-<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
-</tr>
-</tbody>
-</table>
-<p>Everyone has just used <em>order</em>, <em>axis</em>, <em>shape</em>, <em>slice</em>, <em>fiber</em>, <em>variance</em>, <em>reshape</em> and <em>transpose</em> — this is the moment those words are freshest. Two questions reach back into the exercises specifically: the NaN question is section 03’s zero-variance pixels, and the last one is section 04’s reshape-versus-transpose.</p>
-</section>
-<section id="quiz-2" class="level2">
-<h2 class="anchored" data-anchor-id="quiz-2">Quiz 2 — Einsum, Distance &amp; the Pseudoinverse</h2>
-<p><em>Einsum, distancia y la pseudoinversa</em></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 80%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Runs after</strong></td>
-<td>Section 07 — Inverses and the pseudoinverse, before the recursion demo</td>
-</tr>
-<tr class="even">
-<td><strong>Covers</strong></td>
-<td>Sections 06, 07</td>
-</tr>
-<tr class="odd">
-<td><strong>Length</strong></td>
-<td>6 questions, ~5 min</td>
-</tr>
-<tr class="even">
-<td><strong>Import file</strong></td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx"><code>kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx</code></a></td>
-</tr>
-<tr class="odd">
-<td><strong>Join link</strong></td>
-<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
-</tr>
-</tbody>
-</table>
 <div class="callout callout-style-simple callout-warning">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Two questions here are ahead of the material.</strong> Quiz 2 asks about Euclidean distance and cosine similarity, which the handbook never defines directly. The bridge is section 06’s TODO 4 — the 1797×1797 digit similarity matrix built with one <code>einsum</code>. Say the two words out loud during that exercise, or expect the last two questions to land cold.</p>
+<p><strong>Todo lo que hay en esta página está generado, no escrito.</strong> Lo produjo <a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">NotebookLM</a> a partir del manual y los cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola frase. Úsalo como una <em>segunda pasada</em> sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el <a href="../tensors_workshop_plan_with_quizzes.html">manual</a>, nunca al revés. Generado el 2026-09-07.</p>
 </div>
 </div>
 </div>
+<p>El taller se apoya en una promesa: datos reales y números que puedes reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la línea está. Existe porque una explicación distinta del mismo material es realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir, un cuestionario en el tren de vuelta—, no porque sustituya a nada.</p>
+<p>Cuando un artefacto se ha podido <strong>exportar</strong>, se ha exportado, y se sirve desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar: esos son enlaces a NotebookLM y te pedirán una cuenta de Google. Cada apartado dice de cuál se trata.</p>
+<section id="video" class="level2">
+<h2 class="anchored" data-anchor-id="video">Resumen en vídeo</h2>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p><em>Todavía sin publicar.</em> El resumen en vídeo se genera en NotebookLM y se sube a YouTube; hasta entonces no hay aquí nada que funcione sin una cuenta de Google.</p>
 </section>
-<section id="quiz-3" class="level2">
-<h2 class="anchored" data-anchor-id="quiz-3">Quiz 3 — Convolution &amp; Tensor Decompositions</h2>
-<p><em>Convolución y descomposiciones tensoriales</em></p>
+<section id="infographics" class="level2">
+<h2 class="anchored" data-anchor-id="infographics">Infografías</h2>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p><em>Todavía sin exportar.</em> Las infografías están en <a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">el cuaderno</a> hasta que se exporten como PNG y se guarden aquí; ese enlace pide una cuenta de Google, y estas páginas no lo harán.</p>
+</section>
+<section id="listen" class="level2">
+<h2 class="anchored" data-anchor-id="listen">Escuchar</h2>
+<p>El resumen en audio son dos voces comentando el taller. Es lo único de aquí que funciona con la pantalla apagada, y eso lo convierte en lo que más merece la pena llevarse en el trayecto del día anterior.</p>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p><em>Todavía sin exportar.</em> El resumen en audio de NotebookLM se descarga como archivo, así que cuando esté sonará aquí mismo, sin cuenta y sin terceros.</p>
+</section>
+<section id="test-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="test-yourself">Ponte a prueba</h2>
+<p>Ninguno de los dos es el <a href="../kahoot.html">Kahoot</a>. Los cuestionarios de Kahoot son de seis preguntas, se hacen en vivo en la sala después de las secciones 04, 07 y 10, y se escribieron para este taller. Estos dos están generados, no tienen límite y son para ti, después.</p>
+<p><strong>Los dos se abren en NotebookLM y piden una cuenta de Google</strong>: los cuestionarios y las tarjetas son los artefactos que NotebookLM no deja exportar.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 80%">
+<col style="width: 22%">
+<col style="width: 48%">
+<col style="width: 30%">
 </colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>Qué es</th>
+<th>Cuándo lo usas</th>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
-<td><strong>Runs after</strong></td>
-<td>Section 10 — Tucker decomposition, immediately before the wrap-up</td>
+<td><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Cuestionario de autoevaluación</a></strong></td>
+<td>Preguntas de opción múltiple generadas sobre todo el taller, tantas como quieras.</td>
+<td>Después de la sesión, para descubrir qué secciones no se te quedaron.</td>
 </tr>
 <tr class="even">
-<td><strong>Covers</strong></td>
-<td>Sections 09, 10</td>
-</tr>
-<tr class="odd">
-<td><strong>Length</strong></td>
-<td>6 questions, ~5 min</td>
-</tr>
-<tr class="even">
-<td><strong>Import file</strong></td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"><code>kahoot/kahoot_quiz_3_convolution_decompositions.xlsx</code></a></td>
-</tr>
-<tr class="odd">
-<td><strong>Join link</strong></td>
-<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
+<td><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Tarjetas de memoria</a></strong></td>
+<td>El término por un lado y la definición por el otro: el vocabulario que el taller va definiendo sobre la marcha.</td>
+<td>Repetición espaciada, en las semanas siguientes.</td>
 </tr>
 </tbody>
 </table>
-<p>Run it while the taxi-tensor rush-hour result is still on screen. Its final question names hour 18, so it <strong>must</strong> come after section 10’s TODO 6 — running it early gives the answer away. It doubles as a live rehearsal of the wrap-up’s own recap, so segue straight from the podium into the wrap-up.</p>
 </section>
-<section id="running-them" class="level2">
-<h2 class="anchored" data-anchor-id="running-them">Running them</h2>
-<ul>
-<li><strong>Budget 5 minutes each, including the podium.</strong> Groups want to see the leaderboard, and that is fine — it is the payoff.</li>
-<li><strong>Do not import live.</strong> See the note at the top of this page.</li>
-<li><strong>These add 15 minutes</strong>, taking the workshop from 180 to 210.</li>
-</ul>
+<section id="map" class="level2">
+<h2 class="anchored" data-anchor-id="map">El mapa</h2>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Mapa mental</a></strong>: cómo se sostienen unas en otras las trece secciones, en una sola pantalla. Solo es interactivo dentro de NotebookLM, así que es un enlace y pide cuenta.</p>
+<p>Merece la pena mirarlo pronto: el taller es deliberadamente una escalera, y ver la escalera entera antes de empezar a subirla hace que los peldaños del medio parezcan menos arbitrarios.</p>
 </section>
-<section id="if-you-are-running-out-of-time" class="level2">
-<h2 class="anchored" data-anchor-id="if-you-are-running-out-of-time">If you are running out of time</h2>
-<p>The handbook’s cutting order, in order:</p>
-<ol type="1">
-<li><strong>Quiz 2</strong> — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.</li>
-<li>TODO 4 of section 09 (true deconvolution — the most technically demanding).</li>
-<li>The RNN snippet in section 08.</li>
-<li>Question 5 of either group block.</li>
-<li><strong>Quiz 1.</strong></li>
-</ol>
-<p><strong>Never cut</strong> section 01’s <em>Three Operations That Matter</em>, section 10, or <strong>Quiz 3</strong> — the last is the cheapest way to check whether Tucker and CP actually landed before students leave.</p>
+<section id="notebooklm" class="level2">
+<h2 class="anchored" data-anchor-id="notebooklm">En NotebookLM</h2>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Abrir el cuaderno</a></strong> para ver las fuentes con las que se generó cada artefacto de arriba, hacerle tus propias preguntas o generar otra cosa a partir de él.</p>
+<p>El resumen escrito que cita la lista de lecturas del manual está <strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb">aquí</a></strong>.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>🇬🇧 Prefer English? <a href="../companion.html">This page in English</a>.</p>
+</div>
+</div>
+</div>
 
 
 </section>
@@ -376,12 +323,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // flash "checked"
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
+    button.setAttribute("title", "Copiado");
     let tooltip;
     if (window.bootstrap) {
       button.setAttribute("data-bs-toggle", "tooltip");
       button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
+      button.setAttribute("data-bs-title", "Copiado");
       tooltip = new bootstrap.Tooltip(button, 
         { trigger: "manual", 
           customClass: "code-copy-button-tooltip",

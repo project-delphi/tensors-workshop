@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Kahoot – Tensors for Machine Learning</title>
+<title>The machine-generated companion – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -101,7 +101,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./kahoot.html" aria-current="page"> 
+    <a class="nav-link" href="./kahoot.html"> 
 <span class="menu-text">Kahoot</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -165,11 +165,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#quiz-1" id="toc-quiz-1" class="nav-link active" data-scroll-target="#quiz-1">Quiz 1 — Tensor Vocabulary &amp; Shapes</a></li>
-  <li><a href="#quiz-2" id="toc-quiz-2" class="nav-link" data-scroll-target="#quiz-2">Quiz 2 — Einsum, Distance &amp; the Pseudoinverse</a></li>
-  <li><a href="#quiz-3" id="toc-quiz-3" class="nav-link" data-scroll-target="#quiz-3">Quiz 3 — Convolution &amp; Tensor Decompositions</a></li>
-  <li><a href="#running-them" id="toc-running-them" class="nav-link" data-scroll-target="#running-them">Running them</a></li>
-  <li><a href="#if-you-are-running-out-of-time" id="toc-if-you-are-running-out-of-time" class="nav-link" data-scroll-target="#if-you-are-running-out-of-time">If you are running out of time</a></li>
+  <li><a href="#video" id="toc-video" class="nav-link active" data-scroll-target="#video">Video overview</a></li>
+  <li><a href="#infographics" id="toc-infographics" class="nav-link" data-scroll-target="#infographics">Infographics</a></li>
+  <li><a href="#listen" id="toc-listen" class="nav-link" data-scroll-target="#listen">Listen</a></li>
+  <li><a href="#test-yourself" id="toc-test-yourself" class="nav-link" data-scroll-target="#test-yourself">Test yourself</a></li>
+  <li><a href="#map" id="toc-map" class="nav-link" data-scroll-target="#map">The map</a></li>
+  <li><a href="#notebooklm" id="toc-notebooklm" class="nav-link" data-scroll-target="#notebooklm">In NotebookLM</a></li>
   </ul>
 </nav>
     </div>
@@ -178,8 +179,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Kahoot</h1>
-<p class="subtitle lead">Three 6-question knowledge checks, and how to run them</p>
+<h1 class="title">The machine-generated companion</h1>
+<p class="subtitle lead">A NotebookLM notebook built from this workshop’s own sources — and everything generated out of it</p>
 </div>
 
 
@@ -196,138 +197,84 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Three quizzes sit at the three natural seams of the workshop: after the shape and vocabulary work, after the einsum and pseudoinverse stretch, and after the decompositions. Each sits right after the blocks that supply its content, while the material is still fresh, and <strong>before</strong> the next context switch — a break or a new Part — so it reinforces rather than interrupts.</p>
-<div class="kahoot-note">
-<p><strong>Facilitators: import each spreadsheet into kahoot.it <em>before</em> the session.</strong> Create → Add question → Import → Import spreadsheet. Doing it live costs several minutes you do not have.</p>
-<p>The three <strong>join links below still point at <code>kahoot.it</code> itself</strong> — which works, because students enter the PIN from your screen there. Once each quiz exists, paste its direct join URL into the <code>url:</code> field of <code>_variables.yml</code> and re-render: every link on this site, in both decks and in all fourteen notebooks reads from that one file.</p>
-</div>
-<section id="quiz-1" class="level2">
-<h2 class="anchored" data-anchor-id="quiz-1">Quiz 1 — Tensor Vocabulary &amp; Shapes</h2>
-<p><em>Vocabulario de tensores y formas</em></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 80%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Runs after</strong></td>
-<td>Section 04 — Reshape and transpose, before the first break</td>
-</tr>
-<tr class="even">
-<td><strong>Covers</strong></td>
-<td>Sections 01, 03, 04</td>
-</tr>
-<tr class="odd">
-<td><strong>Length</strong></td>
-<td>6 questions, ~5 min including the podium</td>
-</tr>
-<tr class="even">
-<td><strong>Import file</strong></td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx"><code>kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx</code></a></td>
-</tr>
-<tr class="odd">
-<td><strong>Join link</strong></td>
-<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
-</tr>
-</tbody>
-</table>
-<p>Everyone has just used <em>order</em>, <em>axis</em>, <em>shape</em>, <em>slice</em>, <em>fiber</em>, <em>variance</em>, <em>reshape</em> and <em>transpose</em> — this is the moment those words are freshest. Two questions reach back into the exercises specifically: the NaN question is section 03’s zero-variance pixels, and the last one is section 04’s reshape-versus-transpose.</p>
-</section>
-<section id="quiz-2" class="level2">
-<h2 class="anchored" data-anchor-id="quiz-2">Quiz 2 — Einsum, Distance &amp; the Pseudoinverse</h2>
-<p><em>Einsum, distancia y la pseudoinversa</em></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 20%">
-<col style="width: 80%">
-</colgroup>
-<tbody>
-<tr class="odd">
-<td><strong>Runs after</strong></td>
-<td>Section 07 — Inverses and the pseudoinverse, before the recursion demo</td>
-</tr>
-<tr class="even">
-<td><strong>Covers</strong></td>
-<td>Sections 06, 07</td>
-</tr>
-<tr class="odd">
-<td><strong>Length</strong></td>
-<td>6 questions, ~5 min</td>
-</tr>
-<tr class="even">
-<td><strong>Import file</strong></td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx"><code>kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx</code></a></td>
-</tr>
-<tr class="odd">
-<td><strong>Join link</strong></td>
-<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
-</tr>
-</tbody>
-</table>
 <div class="callout callout-style-simple callout-warning">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Two questions here are ahead of the material.</strong> Quiz 2 asks about Euclidean distance and cosine similarity, which the handbook never defines directly. The bridge is section 06’s TODO 4 — the 1797×1797 digit similarity matrix built with one <code>einsum</code>. Say the two words out loud during that exercise, or expect the last two questions to land cold.</p>
+<p><strong>Everything on this page is generated, not written.</strong> It was produced by <a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">NotebookLM</a> from the workshop’s own handbook and notebooks, and no human wrote or checked a sentence of it. Use it as a <em>second pass</em> over material you have already seen, and check anything it asserts against the <a href="./tensors_workshop_plan_with_quizzes.html">handbook</a> — never the other way round. Generated 2026-09-07.</p>
 </div>
 </div>
 </div>
+<p>The workshop itself is built on a promise: real data, and numbers you can reproduce. This page keeps that promise by being clear about which side of the line it sits on. It is here because a different explanation of the same material is genuinely useful — a video before the session, a diagram to argue with, a quiz on the train home — not because it replaces anything.</p>
+<p>Where an artifact could be <strong>exported</strong>, it was, and it is served from this site: no account, no sign-in, and it still works if the notebook is later edited or deleted. Three of them cannot be exported, and those are links into NotebookLM that will ask you for a Google account. Each one below says which it is.</p>
+<section id="video" class="level2">
+<h2 class="anchored" data-anchor-id="video">Video overview</h2>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p><em>Not published yet.</em> The video overview is generated in NotebookLM and re-uploaded to YouTube; until then there is nothing here that works without a Google account.</p>
 </section>
-<section id="quiz-3" class="level2">
-<h2 class="anchored" data-anchor-id="quiz-3">Quiz 3 — Convolution &amp; Tensor Decompositions</h2>
-<p><em>Convolución y descomposiciones tensoriales</em></p>
+<section id="infographics" class="level2">
+<h2 class="anchored" data-anchor-id="infographics">Infographics</h2>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p><em>Not exported yet.</em> The infographics live in <a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">the notebook</a> until they are exported as PNGs and committed here; that link needs a Google account, and these pages will not.</p>
+</section>
+<section id="listen" class="level2">
+<h2 class="anchored" data-anchor-id="listen">Listen</h2>
+<p>The Audio Overview is two hosts talking through the workshop. It is the only piece here that works with the screen off, which makes it the one worth taking on a commute the day before.</p>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p><em>Not exported yet.</em> NotebookLM’s Audio Overview downloads as a file, so when it lands it will play right here, with no account and no third party.</p>
+</section>
+<section id="test-yourself" class="level2">
+<h2 class="anchored" data-anchor-id="test-yourself">Test yourself</h2>
+<p>Neither of these is the <a href="./kahoot.html">Kahoot</a>. The Kahoot quizzes are six questions each, run live in the room after sections 04, 07 and 10, and they were written for this workshop. These two are generated, unlimited and for your own use afterwards.</p>
+<p><strong>Both open in NotebookLM and need a Google account</strong> — quizzes and flashcards are the artifacts NotebookLM does not let you export.</p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 20%">
-<col style="width: 80%">
+<col style="width: 22%">
+<col style="width: 48%">
+<col style="width: 30%">
 </colgroup>
+<thead>
+<tr class="header">
+<th></th>
+<th>What it is</th>
+<th>When you use it</th>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
-<td><strong>Runs after</strong></td>
-<td>Section 10 — Tucker decomposition, immediately before the wrap-up</td>
+<td><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Self-check quiz</a></strong></td>
+<td>Generated multiple-choice questions over the whole workshop, as many as you want.</td>
+<td>After the session, to find out which sections did not stick.</td>
 </tr>
 <tr class="even">
-<td><strong>Covers</strong></td>
-<td>Sections 09, 10</td>
-</tr>
-<tr class="odd">
-<td><strong>Length</strong></td>
-<td>6 questions, ~5 min</td>
-</tr>
-<tr class="even">
-<td><strong>Import file</strong></td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"><code>kahoot/kahoot_quiz_3_convolution_decompositions.xlsx</code></a></td>
-</tr>
-<tr class="odd">
-<td><strong>Join link</strong></td>
-<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
+<td><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Flashcards</a></strong></td>
+<td>Term on one side, definition on the other — the vocabulary the workshop defines as it goes.</td>
+<td>Spaced repetition, in the weeks after.</td>
 </tr>
 </tbody>
 </table>
-<p>Run it while the taxi-tensor rush-hour result is still on screen. Its final question names hour 18, so it <strong>must</strong> come after section 10’s TODO 6 — running it early gives the answer away. It doubles as a live rehearsal of the wrap-up’s own recap, so segue straight from the podium into the wrap-up.</p>
 </section>
-<section id="running-them" class="level2">
-<h2 class="anchored" data-anchor-id="running-them">Running them</h2>
-<ul>
-<li><strong>Budget 5 minutes each, including the podium.</strong> Groups want to see the leaderboard, and that is fine — it is the payoff.</li>
-<li><strong>Do not import live.</strong> See the note at the top of this page.</li>
-<li><strong>These add 15 minutes</strong>, taking the workshop from 180 to 210.</li>
-</ul>
+<section id="map" class="level2">
+<h2 class="anchored" data-anchor-id="map">The map</h2>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Mind map</a></strong> — how the thirteen sections hang off each other, on one screen. Interactive inside NotebookLM only, so this is a link and it needs an account.</p>
+<p>It is worth one look early: the workshop is deliberately a ladder, and seeing the whole ladder before you start climbing makes the middle rungs less arbitrary.</p>
 </section>
-<section id="if-you-are-running-out-of-time" class="level2">
-<h2 class="anchored" data-anchor-id="if-you-are-running-out-of-time">If you are running out of time</h2>
-<p>The handbook’s cutting order, in order:</p>
-<ol type="1">
-<li><strong>Quiz 2</strong> — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.</li>
-<li>TODO 4 of section 09 (true deconvolution — the most technically demanding).</li>
-<li>The RNN snippet in section 08.</li>
-<li>Question 5 of either group block.</li>
-<li><strong>Quiz 1.</strong></li>
-</ol>
-<p><strong>Never cut</strong> section 01’s <em>Three Operations That Matter</em>, section 10, or <strong>Quiz 3</strong> — the last is the cheapest way to check whether Tucker and CP actually landed before students leave.</p>
+<section id="notebooklm" class="level2">
+<h2 class="anchored" data-anchor-id="notebooklm">In NotebookLM</h2>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Open the notebook</a></strong> to see the sources every artifact above was generated from, ask it your own questions, or generate something else from it.</p>
+<p>The written overview the handbook’s reading list cites is <strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb">here</a></strong>.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>🇪🇸 ¿Prefieres español? <a href="./es/companion.html">Esta página en español</a>.</p>
+</div>
+</div>
+</div>
 
 
 </section>

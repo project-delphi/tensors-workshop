@@ -45,6 +45,18 @@ Free, and nothing needs installing on your own machine. In brief:
 The full list — the recommended viewing, and what to have ready on the day —
 is on the **[workshop homepage](https://project-delphi.github.io/tensors-workshop/)**, which is where it is maintained.
 
+## A machine-generated companion
+
+A [NotebookLM](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)
+notebook built from this workshop's own handbook and notebooks, and the
+artifacts generated out of it: a video overview, infographics, an audio
+overview, a quiz, flashcards and a mind map. It is **generated, not written** —
+a second pass over material you have already seen, to be checked against the
+handbook rather than trusted over it.
+
+**[The companion page](https://project-delphi.github.io/tensors-workshop/companion.html)**
+ · 🇪🇸 [En español](https://project-delphi.github.io/tensors-workshop/es/companion.html)
+
 ## All the data is real
 
 No synthetic random arrays anywhere. Real tumour measurements, real handwritten
