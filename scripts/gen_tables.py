@@ -2,7 +2,7 @@
 """Generate every section table on the site from _variables.yml.
 
 The EN and ES landing pages, the notebooks page and the READMEs all show the
-same 12 sections. Writing those tables by hand is how bilingual sites drift, so
+same thirteen sections. Writing those tables by hand is how bilingual sites drift, so
 they are generated here instead and included with `{{< include >}}`.
 
 The `extras` — take-home deep dives that are not sections — get their own three
@@ -505,7 +505,13 @@ def references_list(lang: str) -> str:
     """
     t = REF_L[lang]
     spine = REFERENCES["spine"]
-    out = [spine[f"note_{lang}"].strip().replace("URL", spine["chapter_url"]), ""]
+    # `{{URL}}` rather than a bare `URL`: the notes are prose, and a future
+    # one that simply uses the word ("a DOI rather than a URL") would
+    # otherwise have it silently rewritten into the deeplearningbook link.
+    # check_references() could not catch that — it happens in both
+    # languages identically, so the parity comparison still passes.
+    out = [spine[f"note_{lang}"].strip().replace("{{URL}}",
+                                                 spine["chapter_url"]), ""]
 
     for g in REFERENCES["groups"]:
         out += [f"## {g[f'title_{lang}']} {{#{g['anchor']}}}", "",

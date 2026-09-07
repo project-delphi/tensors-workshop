@@ -24,7 +24,7 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     to one deck only is the same drift with no anchor to catch it. Every
     ml-blog URL in either deck, and in the notebooks, must be declared under
     `reading:` — the checker never fetches one, by design.
-  - The EN and ES landing pages list the same twelve sections. Extras are
+  - The EN and ES landing pages list the same thirteen sections. Extras are
     deliberately absent from both this check and the deck check above: an
     extra is take-home material with no slide and no place in the agenda.
   - The EN and ES references pages cite the same external works, every

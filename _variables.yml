@@ -123,9 +123,9 @@ companion:
   default_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
   exported: "2026-09-07"
   # The overview infographic, linked on its own from both companion pages
-  # since #76 — not the video, whatever the field name suggests. The
-  # handbook's further-reading list does not carry this URL: it links the
-  # companion page, which holds every artifact link exactly once. It is also
+  # since #76 — not the video, whatever the field name suggests. Neither the
+  # handbook nor `references:` carries this URL: both link the companion page,
+  # which holds every artifact link exactly once. It is also
   # an entry in `infographics:` below, which is why the URL is a YAML anchor:
   # the same artifact reached from two places, one string to change if it
   # moves.
@@ -211,8 +211,12 @@ companion:
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core
 # concept. These are the *second explanation* — the one a student wants forty
-# minutes in, when the first one did not land — not the end-of-workshop
-# bibliography, which the handbook's Further Reading still owns.
+# minutes in, when the first one did not land.
+#
+# They are also part of the end-of-workshop bibliography: `references:` below
+# cites them as its `ref-blog` group, by key rather than by URL, so each post
+# is declared exactly once in this file and check_links.py's "every ml-blog
+# URL is declared" rule needs no exception for the references page.
 #
 # Both decks link them from the slide where the concept is introduced, as
 # `.reading-tab` chips, and the two factorization notebooks list them at the end.
@@ -322,7 +326,7 @@ reading:
 #            page name, so it is the same in both languages by construction.
 #   code     true if the title is a package name, so it renders as `code`.
 #
-# In `spine`, the bare word URL inside each note is replaced with
+# In `spine`, the placeholder `{{URL}}` inside each note is replaced with
 # `chapter_url` by the generator, so the one link is written once and both
 # languages get it.
 references:
@@ -330,16 +334,15 @@ references:
   # already read, and what it does not cover — which is the whole reason this
   # page exists.
   spine:
-    title: "Deep Learning"
     chapter_url: "https://www.deeplearningbook.org/contents/linear_algebra.html"
     note_en: >-
-      [Chapter 2](URL) of *Deep Learning* (Goodfellow, Bengio & Courville) is
+      [Chapter 2]({{URL}}) of *Deep Learning* (Goodfellow, Bengio & Courville) is
       the spine for the linear algebra this workshop assumes, and the
       [prerequisites on the homepage](index.qmd#prerequisites) say what else to
       do before the session. Neither covers Tucker or CP at all. This page is
       where to go next.
     note_es: >-
-      El [capítulo 2](URL) de *Deep Learning* (Goodfellow, Bengio y Courville)
+      El [capítulo 2]({{URL}}) de *Deep Learning* (Goodfellow, Bengio y Courville)
       es la columna vertebral del álgebra lineal que este taller da por
       sabida, y los [requisitos previos de la página
       principal](index.qmd#requisitos-previos) dicen qué más hacer antes de la
