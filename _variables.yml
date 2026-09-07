@@ -152,6 +152,16 @@ companion:
     url_es: ""                        # TODO: the ES video artifact, if one is generated
     minutes_en: 0                     # TODO: the EN running time
     minutes_es: 0                     # TODO: the ES running time
+    # A poster frame, committed under images/, shown while the video is still
+    # a NotebookLM link: the section then looks like a video rather than
+    # reading like one. One image for both languages -- the same choice
+    # `infographics:` makes with `file` -- and the alt text per language,
+    # because that is the part a screen reader actually reads out. The
+    # YouTube embed, when it lands, wins over it: an embed carries its own
+    # poster.
+    thumb: ""                         # TODO: e.g. images/companion-video.png
+    thumb_alt_en: ""
+    thumb_alt_es: ""
 
   # The Audio Overview, committed under media/. `_quarto.yml` carries
   # `media/**` in `resources:` so Quarto copies it verbatim, the same way it
@@ -163,18 +173,46 @@ companion:
     file_es: ""                       # TODO: e.g. media/companion-overview-es.mp3
     minutes_en: 0                     # TODO
     minutes_es: 0                     # TODO
+    # The same three-state ladder the video uses, for the same reason: the
+    # committed file is the endpoint, and until it exists the artifact's own
+    # NotebookLM link is a real thing to click rather than a note saying there
+    # is nothing. `file_*` wins over `url_*` whenever both are set.
+    url_en: ""                        # TODO: the EN audio artifact in NotebookLM
+    url_es: ""                        # TODO: the ES audio artifact, if generated
+    thumb: ""                         # TODO: e.g. images/companion-audio.png
+    thumb_alt_en: ""
+    thumb_alt_es: ""
 
   # Link-only artifacts. Leave at default_url until the real share link exists.
+  #
+  # None of the three can be exported, so what a visitor gets here is a link
+  # into NotebookLM and a Google sign-in. `thumb` is what makes that link
+  # honest to look at: a screenshot of the artifact, committed under images/
+  # and served from this site, so the page shows what is behind the link
+  # before anyone spends an account on it. It is a *screenshot*, not the
+  # artifact — the mind map is interactive and the quiz is endless, and
+  # neither survives being turned into a PNG. The caption on each card says so.
+  #
+  # One image for both languages, matching `infographics:`; `thumb_alt_*` per
+  # language, because that is the copy a screen reader reads out. A `thumb`
+  # that is set must exist under images/ before it is listed here: check 3
+  # resolves it like any other internal link and a missing PNG fails the build.
   quiz:
     title_en: "Self-check quiz"
     title_es: "Cuestionario de autoevaluación"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    thumb: ""                         # TODO: e.g. images/companion-quiz.png
+    thumb_alt_en: ""
+    thumb_alt_es: ""
   flashcards:
     title_en: "Flashcards"
     title_es: "Tarjetas de memoria"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    thumb: ""                         # TODO: e.g. images/companion-flashcards.png
+    thumb_alt_en: ""
+    thumb_alt_es: ""
   # One mind map, generated from the EN sources, linked from both pages — the
   # same choice `notebook_url` already makes for the notebook itself.
   mindmap:
@@ -182,6 +220,9 @@ companion:
     title_es: "Mapa mental"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"
+    thumb: ""                         # TODO: e.g. images/companion-mindmap.png
+    thumb_alt_en: ""
+    thumb_alt_es: ""
 
   # The infographic gallery, generated into _includes/companion-infographics-*.md
   # by scripts/gen_tables.py. Add an entry per exported PNG:

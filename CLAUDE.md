@@ -32,7 +32,7 @@ text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (every section table, the agenda both decks show, the companion's video, audio and infographic blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
+| `_includes/*.md` (every section table, the agenda both decks show, the companion's video, audio, infographic, self-check and mind-map blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md`, `notebooks/README.md` and the handbook's schedule — the rest of all three files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
@@ -83,6 +83,16 @@ The three link-only artifacts — quiz, flashcards, mind map — cannot be expor
 at all, and only work while the notebook is shared as "anyone with the link".
 They are the only things on the site that ask a visitor for a Google account,
 and both companion pages say so where they appear.
+
+What stands in for the export is a **screenshot**: `thumb:` on each of those
+three, and on `video:` and `audio:` while they are still NotebookLM links,
+naming a PNG under `images/` that the site serves itself. A visitor then sees
+what is behind the link before spending an account on it. Every one carries
+`thumb_alt_{en,es}` and, on the three unexportable ones, a caption saying it is
+a still of something live — the artifact is interactive and the PNG is not, and
+a page that lets a reader miss that has mis-sold the click. Check 12 names
+every `thumb` and alt still unset; check 3 fails the build on a `thumb` whose
+PNG is not there.
 
 ## Which document owns what
 

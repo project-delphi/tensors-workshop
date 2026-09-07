@@ -305,6 +305,71 @@ main p:has(> img:only-child) + p > em:only-child {
 
 .companion-audio { width: 100%; max-width: 46rem; margin: 1.2rem 0; }
 
+// A committed screenshot standing in for something that only exists inside
+// NotebookLM. Same measure as the video embed, so the video, the audio and
+// the poster that replaces either of them all share the page's left edge and
+// its right one. No fixed aspect ratio: the shot is whatever shape the
+// artifact is, and cropping a still of a mind map loses the half that matters.
+.poster-frame {
+  position: relative;
+  max-width: 46rem;
+  margin: 1.4rem 0 1rem;
+  // Quarto wraps the linked image in a <p>, which keeps Bootstrap's bottom
+  // margin: without this the frame is taller than the picture and the badge
+  // below centres itself on the box rather than on the image.
+  p { margin: 0; }
+  a { display: block; line-height: 0; }
+  img {
+    width: 100%;
+    height: auto;
+    border: 1px solid $border-color;
+    border-radius: 3px;
+    background: $body-bg;
+  }
+  // The play badge. Drawn here rather than baked into the PNG, so the same
+  // screenshot can be re-exported without a triangle burnt into it -- and so
+  // it only ever appears on a poster that is actually a link to something
+  // that plays.
+  a::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 4.4rem;
+    height: 4.4rem;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: rgba(15, 23, 42, .72)
+      // A white triangle, centred by nudging it a hair right of true centre:
+      // an equilateral pointing right looks off-centre when it is not.
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23fff' d='M9 6.5v11l9-5.5z'/%3E%3C/svg%3E")
+      center / 2.4rem no-repeat;
+    transition: background-color .15s ease;
+  }
+  a:hover::after { background-color: rgba(15, 23, 42, .88); }
+}
+
+// The cover art above the player, once the audio itself is committed. There
+// is nothing to click, so no badge and no link.
+.audio-cover {
+  display: block;
+  width: 100%;
+  max-width: 46rem;
+  height: auto;
+  border: 1px solid $border-color;
+  border-radius: 3px;
+  margin: 1.4rem 0 .6rem;
+}
+
+// Said under every screenshot of an unexportable artifact. Small, grey, and
+// always present: the page is a still of a live thing, and the caption is
+// what keeps that from being a quiet lie.
+// #64748b, the secondary grey used everywhere else in this file, rather than
+// anything lighter: it clears WCAG AA against the page, and a caption whose
+// whole job is to stop a screenshot passing for the real thing cannot be the
+// least legible text on the card.
+.shot-note { color: #64748b; font-size: .78rem; }
+
 // The infographic gallery. Deliberately NOT `.app-card`: that one crops to
 // `aspect-ratio: 20/13` with `object-fit: cover`, which is right for the
 // dataset thumbnails gen_thumbnails.py renders at exactly that shape and
