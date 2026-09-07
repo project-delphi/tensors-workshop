@@ -553,9 +553,16 @@ def check_companion() -> None:
         for lang in ("en", "es"):
             if c[name][f"url_{lang}"] == c["default_url"]:
                 pending.append(f"{name}.url_{lang}")
+    interim = []
     for lang in ("en", "es"):
         if not c["video"].get(f"youtube_id_{lang}"):
-            pending.append(f"video.youtube_id_{lang}")
+            # A video published as a NotebookLM link is not unset -- it plays
+            # today, it just costs the visitor a Google account. Report it
+            # apart from the fields that show nothing at all.
+            if c["video"].get(f"url_{lang}"):
+                interim.append(f"video.youtube_id_{lang}")
+            else:
+                pending.append(f"video.youtube_id_{lang}")
         if not c["audio"].get(f"file_{lang}"):
             pending.append(f"audio.file_{lang}")
         # The running times are reported too. Without them the page still
@@ -567,12 +574,31 @@ def check_companion() -> None:
                 pending.append(f"{kind}.minutes_{lang}")
     if not c.get("infographics"):
         pending.append("infographics")
+    else:
+        # An entry still holding the notebook's own front door is a
+        # placeholder, not a published link -- the same distinction the
+        # quiz/flashcards/mindmap loop above draws with `default_url`.
+        placeholder = [i for i in c["infographics"]
+                       if i.get("url") == c["default_url"]]
+        if placeholder:
+            pending.append(f"{len(placeholder)} infographic url(s) still at "
+                           f"default_url")
+        unexported = [i for i in c["infographics"]
+                      if not i.get("file") and i not in placeholder]
+        if unexported:
+            interim.append(f"{len(unexported)} infographic(s) linked, not "
+                           f"exported")
     if pending:
         print(f"      TODO  {len(pending)} companion fields still unset: "
               f"{', '.join(pending)}")
         print("      Each one degrades to an honest note on the page, so the "
               "site is publishable meanwhile.")
-    else:
+    if interim:
+        print(f"      TODO  published as NotebookLM links, not yet exported: "
+              f"{', '.join(interim)}")
+        print("      These work today, but only for a visitor with a Google "
+              "account.")
+    if not pending and not interim:
         print("      every companion artifact has a link or a committed file")
 
 

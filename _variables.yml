@@ -104,7 +104,8 @@ schedule:
 #     survive the notebook being edited, unshared or deleted. The video is the
 #     one exception: it is re-uploaded to YouTube rather than committed,
 #     because an MP4 lands in the repo twice — once in `images/`-style source
-#     and again in `docs/` — against a 1 GB Pages ceiling.
+#     and again in `docs/` — against a 1 GB Pages ceiling. Until that upload
+#     exists it is published as a link into NotebookLM, like the three below.
 #   - Quiz, flashcards and the mind map DO NOT export. They are link-only, and
 #     the links work only while the notebook is shared as "anyone with the
 #     link". They are the only things here that ask a visitor to sign in.
@@ -121,18 +122,34 @@ companion:
   notebook_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
   default_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
   exported: "2026-09-07"
-  # The artifact the handbook's further-reading list has cited since #76. It
-  # is the written overview, not the video.
-  overview_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb"
+  # The overview infographic, linked on its own from both companion pages
+  # since #76 — not the video, whatever the field name suggests. The
+  # handbook's further-reading list does not carry this URL: it links the
+  # companion page, which holds every artifact link exactly once. It is also
+  # an entry in `infographics:` below, which is why the URL is a YAML anchor:
+  # the same artifact reached from two places, one string to change if it
+  # moves.
+  overview_url: &overview_url "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb"
 
-  # The Video Overview, re-uploaded to YouTube. Only the id: the watch URL and
-  # the privacy-preserving youtube-nocookie embed URL are both built from it,
-  # and a full URL pasted here would silently break the embed.
+  # The Video Overview. Two ways to publish it, and the generator prefers the
+  # first that exists:
+  #
+  #   - `youtube_id_*` — the video re-uploaded to YouTube. Only the id: the
+  #     watch URL and the privacy-preserving youtube-nocookie embed URL are
+  #     both built from it, and a full URL pasted here would silently break
+  #     the embed. This is the endpoint, because it works logged out.
+  #   - `url_*` — the artifact's own `/artifact/<uuid>` link in NotebookLM,
+  #     which plays there and therefore asks for a Google account. It is the
+  #     honest interim: a real video a visitor can watch today, rather than a
+  #     note saying there is nothing yet. Leave it in place once the YouTube
+  #     id lands; the embed simply wins.
   video:
     title_en: "Tensors in machine learning — video overview"
     title_es: "Tensores en aprendizaje automático — resumen en vídeo"
     youtube_id_en: ""                 # TODO: paste the EN YouTube video id
     youtube_id_es: ""                 # TODO: paste the ES YouTube video id
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2cc077a-4770-4bf8-948c-30bb68dd66f2"
+    url_es: ""                        # TODO: the ES video artifact, if one is generated
     minutes_en: 0                     # TODO: the EN running time
     minutes_es: 0                     # TODO: the ES running time
 
@@ -158,11 +175,13 @@ companion:
     title_es: "Tarjetas de memoria"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+  # One mind map, generated from the EN sources, linked from both pages — the
+  # same choice `notebook_url` already makes for the notebook itself.
   mindmap:
     title_en: "Mind map"
     title_es: "Mapa mental"
-    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
-    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"
+    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"
 
   # The infographic gallery, generated into _includes/companion-infographics-*.md
   # by scripts/gen_tables.py. Add an entry per exported PNG:
@@ -176,7 +195,18 @@ companion:
   # an internal link and a missing PNG fails the build. `alt_*` is not optional
   # — an infographic is load-bearing content, and every other image on this
   # site carries a fig-alt describing what it actually shows.
-  infographics: []
+  #
+  # An entry with **no `file`** is one not exported yet: it is published as a
+  # bare link into NotebookLM, below the gallery, and needs neither `file` nor
+  # `alt_*` because there is no image on the page to describe. Add the PNG and
+  # the alt text when it is exported and it moves up into the gallery.
+  infographics:
+    - url: *overview_url
+      title_en: "Tensors — overview"
+      title_es: "Tensores — panorama general"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2569f0b-ca63-45de-8632-667cba10a384"
+      title_en: "Reshape vs transpose"
+      title_es: "Reshape frente a transposición"
 
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core

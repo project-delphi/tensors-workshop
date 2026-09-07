@@ -18,11 +18,11 @@ line it sits on. It is here because a different explanation of the same
 material is genuinely useful — a video before the session, a diagram to argue
 with, a quiz on the train home — not because it replaces anything.
 
-Where an artifact could be **exported**, it was, and it is served from this
+Where an artifact can be **exported**, it is, and it is served from this
 site: no account, no sign-in, and it still works if the notebook is later
-edited or deleted. Three of them cannot be exported, and those are links into
-NotebookLM that will ask you for a Google account. Each one below says which
-it is.
+edited or deleted. Three of them cannot be exported at all, and some that can
+be are links into NotebookLM until that export happens. Both of those ask you
+for a Google account. Each section below says which of the three it is.
 
 ## Video overview {#video}
 
@@ -73,8 +73,8 @@ arbitrary.
 every artifact above was generated from, ask it your own questions, or generate
 something else from it.
 
-The written overview the handbook's reading list cites is
-**[here]({{< var companion.overview_url >}})**.
+The overview infographic is in the gallery above, and
+**[here]({{< var companion.overview_url >}})** on its own.
 
 ::: {.callout-note appearance="simple"}
 🇪🇸 ¿Prefieres español? [Esta página en español](es/companion.qmd).

@@ -20,11 +20,12 @@ línea está. Existe porque una explicación distinta del mismo material es
 realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir,
 un cuestionario en el tren de vuelta—, no porque sustituya a nada.
 
-Cuando un artefacto se ha podido **exportar**, se ha exportado, y se sirve
-desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque
-el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar:
-esos son enlaces a NotebookLM y te pedirán una cuenta de Google. Cada apartado
-dice de cuál se trata.
+Cuando un artefacto se puede **exportar**, se exporta, y se sirve desde este
+sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno
+se edite o se borre después. Tres de ellos no se pueden exportar en absoluto, y
+algunos de los que sí se pueden son, hasta que se exporten, enlaces a
+NotebookLM. Ambos casos te pedirán una cuenta de Google. Cada apartado dice de
+cuál de los tres se trata.
 
 ## Resumen en vídeo {#video}
 
@@ -76,8 +77,8 @@ parezcan menos arbitrarios.
 fuentes con las que se generó cada artefacto de arriba, hacerle tus propias
 preguntas o generar otra cosa a partir de él.
 
-El resumen escrito que cita la lista de lecturas del manual está
-**[aquí]({{< var companion.overview_url >}})**.
+La infografía de panorama general está en la galería de arriba, y también
+**[aquí]({{< var companion.overview_url >}})** por separado.
 
 ::: {.callout-note appearance="simple"}
 🇬🇧 Prefer English? [This page in English](../companion.qmd).
