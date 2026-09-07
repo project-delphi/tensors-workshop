@@ -18,7 +18,7 @@ lang: en
 
 ## {background-image="images/slides-final/slide-01.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Tensors for Machine Learning — from real data to modern models. Presenter: Ravi Kalia. Prepared by: Sebastian Laverde Chunza.</p>
+<p class="sr-only">Tensors for Machine Learning — from real data to modern models. Ravi Kalia and Sebastian Laverde Chunza.</p>
 
 ::: {.notes}
 Say this out loud: nobody is expected to know tensor theory. Every new term is
