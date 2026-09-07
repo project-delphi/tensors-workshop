@@ -73,7 +73,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-bc5beceb84f29304406e66ba9199029e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-14d7642a37ac691745027c91b916d755.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -145,6 +148,21 @@ background-size: cover;
     <a class="nav-link" href="./kahoot.html"> 
 <span class="menu-text">Kahoot</span></a>
   </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-companion" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Companion</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-companion">    
+        <li>
+    <a class="dropdown-item" href="./companion.html">
+ <span class="dropdown-text">Companion (EN)</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./es/companion.html">
+ <span class="dropdown-text">Complemento (ES)</span></a>
+  </li>  
+    </ul>
+  </li>
   <li class="nav-item dropdown ">
     <a class="nav-link dropdown-toggle" href="#" id="nav-menu-slides" role="link" data-bs-toggle="dropdown" aria-expanded="false">
  <span class="menu-text">Slides</span>
@@ -670,7 +688,7 @@ background-size: cover;
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(photo.shape)               <span class="co"># (512, 512, 3) — height, width, colour</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p class="page-columns page-full"><img src="images/fig-ladder.png" class="column-page img-fluid" alt="Five real arrays in a row, climbing from order 0 to order 4: a single grey square holding one pixel of the camera photograph, a long thin strip holding one row of it, one handwritten digit as an eight-by-eight grid of grey squares with white gutters ruled between them, a stained histology photograph shown as three separated colour planes, and sixteen frames of a storm clip stacked in a pile. Each is labelled with its shape, ndim and size."></p>
+<p class="page-columns page-full"><a href="images/fig-ladder.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-1"><img src="images/fig-ladder.png" class="column-page img-fluid" alt="Five real arrays in a row, climbing from order 0 to order 4: a single grey square holding one pixel of the camera photograph, a long thin strip holding one row of it, one handwritten digit as an eight-by-eight grid of grey squares with white gutters ruled between them, a stained histology photograph shown as three separated colour planes, and sixteen frames of a storm clip stacked in a pile. Each is labelled with its shape, ndim and size."></a></p>
 <p><em>The same climb, in arrays you will meet today. <code>shape</code> grows by one number at each rung; the last two rungs both have a <code>3</code> in them, and the two threes mean nothing like each other.</em></p>
 <p>Both are order 3, but their axes mean completely different things. <code>digits.images</code> counts <em>images</em> along axis 0; <code>photo</code> counts <em>colours</em> along axis 2. <strong>The shape alone never tells you what the axes mean.</strong> You must know, and you must keep track.</p>
 </section>
@@ -772,7 +790,7 @@ background-size: cover;
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>Q, R <span class="op">=</span> np.linalg.qr(A)                      <span class="co"># QR: orthonormal directions</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.allclose(Q.T <span class="op">@</span> Q, np.eye(<span class="dv">3</span>)))      <span class="co"># True — book eq 2.37</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><strong>LU</strong> is Gaussian elimination stored as two triangular matrices, so <code>Ax = b</code> can be solved cheaply many times for different <code>b</code>. <strong>QR</strong> (computed by Gram-Schmidt, or more stably by other methods) produces <em>orthonormal</em> directions — mutually perpendicular, each of length 1. It is used for orthogonal weight initialization in neural networks and for stable least-squares.</p>
-<p class="page-columns page-full"><img src="images/fig-factorization-map.png" class="column-page img-fluid" alt="One eight-by-eight handwritten digit factorized three ways, each row showing the original matrix and its factors as small heatmaps: A equals P times L times U, with L visibly lower triangular and U upper triangular; A equals Q times R; and A equals U times Sigma times V transpose, with Sigma empty apart from its diagonal. Below a dividing line, a pile of four slices of the real taxi tensor, labelled as having any number of axes, pointing to section 10."></p>
+<p class="page-columns page-full"><a href="images/fig-factorization-map.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-2"><img src="images/fig-factorization-map.png" class="column-page img-fluid" alt="One eight-by-eight handwritten digit factorized three ways, each row showing the original matrix and its factors as small heatmaps: A equals P times L times U, with L visibly lower triangular and U upper triangular; A equals Q times R; and A equals U times Sigma times V transpose, with Sigma empty apart from its diagonal. Below a dividing line, a pile of four slices of the real taxi tensor, labelled as having any number of axes, pointing to section 10."></a></p>
 <p><em>The same 8×8 digit, factorized three ways. The shapes are the point: <code>L</code> really is lower triangular, <code>U</code> upper, and <code>Σ</code> is empty apart from its diagonal. Below the line is an object none of them can touch.</em></p>
 <p>Everything in that table above the double line works on <strong>matrices</strong> — two axes. Real data often has more. That is what section 10 addresses.</p>
 <hr>
@@ -863,7 +881,7 @@ background-size: cover;
 <blockquote class="blockquote">
 <p>Design the tensor shape at each stage — <em>raw file → decoded frames → preprocessed batch → model input → model output</em> — for <strong>both</strong> systems: - <strong>Tech:</strong> a short-video app computing one embedding per video from sampled frames, to choose what to play next. - <strong>Biotech:</strong> a surgical-video model that labels the current phase of an operation from an operating-room camera.</p>
 </blockquote>
-<p class="page-columns page-full"><img src="images/fig-video-stack.gif" class="column-page img-fluid" alt="Two video panes side by side, both cycling through the same eight frames of a storm at a rocky shore. The left pane, labelled clip, plays them in order and the swell builds steadily. The right pane, labelled clip permuted, plays the identical frames in a shuffled order and the sea jumps between shots."></p>
+<p class="page-columns page-full"><a href="images/fig-video-stack.gif" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-3"><img src="images/fig-video-stack.gif" class="column-page img-fluid" alt="Two video panes side by side, both cycling through the same eight frames of a storm at a rocky shore. The left pane, labelled clip, plays them in order and the swell builds steadily. The right pane, labelled clip permuted, plays the identical frames in a shuffled order and the sea jumps between shots."></a></p>
 <p><em>Both panes hold the same eight frames, the same shape and the same sum. Only the order of axis 0 differs, and no arithmetic in this workshop can tell you which one is the video.</em></p>
 <ol type="1">
 <li>Sketch the shape at each of the five stages, for both. Where are they the same, and where must they differ?</li>
@@ -1160,7 +1178,7 @@ Solution
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> np.linalg.norm(T <span class="op">-</span> recon) <span class="op">/</span> np.linalg.norm(T)            <span class="co"># 0.067</span></span>
 <span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>ratio <span class="op">=</span> T.size <span class="op">/</span> (core.size <span class="op">+</span> <span class="bu">sum</span>(u.size <span class="cf">for</span> u <span class="kw">in</span> Us))            <span class="co"># 4.71</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p class="page-columns page-full"><img src="images/fig-tucker-taxi.png" class="column-page img-fluid" alt="The taxi tensor decomposed. Along the top, T as a pile of four heatmap slices equals a small core G times three factor matrices A, B and C, each labelled with its shape. Below, two bar charts against hour of day: the raw pickup counts, and the first column of the hour factor. Both have their tallest bar at hour 18, drawn in red."></p>
+<p class="page-columns page-full"><a href="images/fig-tucker-taxi.png" class="lightbox page-columns page-full" data-gallery="quarto-lightbox-gallery-4"><img src="images/fig-tucker-taxi.png" class="column-page img-fluid" alt="The taxi tensor decomposed. Along the top, T as a pile of four heatmap slices equals a small core G times three factor matrices A, B and C, each labelled with its shape. Below, two bar charts against hour of day: the raw pickup counts, and the first column of the hour factor. Both have their tallest bar at hour 18, drawn in red."></a></p>
 <p><em>480 numbers become 102. The two charts are TODO 6: the busiest hour in the raw counts, and the peak of the hour factor the decomposition built without ever being told what an hour is.</em></p>
 <p><strong>The result: 4.7× fewer numbers, 6.7% error.</strong> But the important part is TODO 6. The strongest pattern in the hour factor peaks at <strong>hour 18</strong> — and that is also the busiest hour in the raw data. <strong>The decomposition discovered evening rush hour by itself.</strong> Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.</p>
 <p>Look at the einsum strings: <code>'ijk,ia,jb,kc-&gt;abc'</code> contracts three axes in one expression. That is why <code>einsum</code> came first.</p>
@@ -1329,7 +1347,7 @@ Solution
 <section id="a-machine-generated-companion" class="level3">
 <h3 class="anchored" data-anchor-id="a-machine-generated-companion">A machine-generated companion</h3>
 <ul>
-<li><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb"><em>Tensors in Machine Learning Overview</em></a> — a shared Gemini Notebook that walks the same ground as today, in English. It is generated, not written: use it as a second pass over material you have already seen, and check anything it asserts against the books and papers above.</li>
+<li><a href="./companion.html">The companion page</a> — a NotebookLM notebook built from this handbook and the notebooks, plus everything generated out of it: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. It is generated, not written: use it as a second pass over material you have already seen, and check anything it asserts against the books and papers above. That page holds the links, so there is one copy of each.</li>
 </ul>
 <hr>
 </section>
@@ -2076,6 +2094,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 

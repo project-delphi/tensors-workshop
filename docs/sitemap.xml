@@ -2,11 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html</loc>
-    <lastmod>2026-09-06T13:46:18.399Z</lastmod>
+    <lastmod>2026-09-07T12:27:38.971Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/slides/en/index.html</loc>
-    <lastmod>2026-09-06T13:44:50.350Z</lastmod>
+    <lastmod>2026-09-07T10:55:03.154Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/index.html</loc>
+    <lastmod>2026-09-07T12:26:33.808Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/kahoot.html</loc>
@@ -14,18 +18,22 @@
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/index.html</loc>
-    <lastmod>2026-09-06T12:27:19.921Z</lastmod>
+    <lastmod>2026-09-07T12:26:33.807Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/notebooks.html</loc>
     <lastmod>2026-09-06T12:27:19.921Z</lastmod>
   </url>
   <url>
-    <loc>https://project-delphi.github.io/tensors-workshop/es/index.html</loc>
-    <lastmod>2026-09-06T12:27:19.920Z</lastmod>
+    <loc>https://project-delphi.github.io/tensors-workshop/companion.html</loc>
+    <lastmod>2026-09-07T12:26:33.807Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/companion.html</loc>
+    <lastmod>2026-09-07T12:26:33.807Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/slides/es/index.html</loc>
-    <lastmod>2026-09-06T13:44:50.350Z</lastmod>
+    <lastmod>2026-09-07T10:55:03.158Z</lastmod>
   </url>
 </urlset>

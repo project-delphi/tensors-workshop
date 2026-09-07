@@ -39,6 +39,8 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
   - No visible cell depends on a name bound only inside a folded solution
     cell. [nb]
   - Kahoot join URLs. A reminder, NOT a failure — see check_kahoot_urls.
+  - The companion's artifact links and exports. Also a reminder, NOT a
+    failure — see check_companion.
 
 Exit code is non-zero on any failure, so CI can gate on it.
 """
@@ -532,6 +534,41 @@ def check_kahoot_urls() -> None:
         print("      all three point at a specific kahoot")
 
 
+def check_companion() -> None:
+    """Not a failure either, and for the same reason as the Kahoot check: an
+    artifact that has not been exported yet has somewhere sensible to fall
+    back to, and CI must not go red for the fortnight between publishing the
+    page and finishing the exports.
+
+    Two different placeholder shapes, because the artifacts differ in kind: a
+    link-only artifact (quiz, flashcards, mind map) sits at `default_url`, the
+    notebook's own front door, which does work; an exported one (video, audio,
+    infographics) is simply empty, because there is no partial version of a
+    file. The real gate on the exports is check 3 — once a path is listed, it
+    has to exist in docs/."""
+    step("Companion artifacts")
+    c = V["companion"]
+    pending = []
+    for name in ("quiz", "flashcards", "mindmap"):
+        for lang in ("en", "es"):
+            if c[name][f"url_{lang}"] == c["default_url"]:
+                pending.append(f"{name}.url_{lang}")
+    for lang in ("en", "es"):
+        if not c["video"].get(f"youtube_id_{lang}"):
+            pending.append(f"video.youtube_id_{lang}")
+        if not c["audio"].get(f"file_{lang}"):
+            pending.append(f"audio.file_{lang}")
+    if not c.get("infographics"):
+        pending.append("infographics")
+    if pending:
+        print(f"      TODO  {len(pending)} companion fields still unset: "
+              f"{', '.join(pending)}")
+        print("      Each one degrades to an honest note on the page, so the "
+              "site is publishable meanwhile.")
+    else:
+        print("      every companion artifact has a link or a committed file")
+
+
 def main() -> int:
     only_nb = "--notebooks-only" in sys.argv
     print(f"Checking {'notebooks' if only_nb else 'docs/ and notebooks/'} "
@@ -547,6 +584,7 @@ def main() -> int:
     check_solution_independence()
     if not only_nb:
         check_kahoot_urls()
+        check_companion()
 
     print()
     if failures:

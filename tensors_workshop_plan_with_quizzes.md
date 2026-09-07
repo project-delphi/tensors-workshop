@@ -809,7 +809,7 @@ What you did today:
 
 ### A machine-generated companion
 
-- [*Tensors in Machine Learning Overview*](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb) — a shared Gemini Notebook that walks the same ground as today, in English. It is generated, not written: use it as a second pass over material you have already seen, and check anything it asserts against the books and papers above.
+- [The companion page](companion.qmd) — a NotebookLM notebook built from this handbook and the notebooks, plus everything generated out of it: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. It is generated, not written: use it as a second pass over material you have already seen, and check anything it asserts against the books and papers above. That page holds the links, so there is one copy of each.
 
 ---
 

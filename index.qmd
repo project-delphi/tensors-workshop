@@ -11,6 +11,14 @@ title-block-banner-color: body
 bienvenidas en español o en inglés.
 :::
 
+::: {.companion-strip}
+[Video overview](companion.qmd#video)
+[Infographics](companion.qmd#infographics)
+[Self-check quiz](companion.qmd#test-yourself)
+[Mind map](companion.qmd#map)
+[In NotebookLM](companion.qmd#notebooklm)
+:::
+
 ## What this is
 
 A {{< var workshop.minutes >}}-minute workshop that takes you from "I know matrices"
@@ -21,6 +29,15 @@ invented with random numbers, because real data contains problems that random
 data never shows: missing values, features on incompatible scales, pixels that
 never change. Finding those problems is part of the work.
 
+## Watch it first
+
+{{< include _includes/companion-video-en.md >}}
+
+The video is *generated*, not recorded. It, and the infographics, audio, quiz,
+flashcards and mind map beside it, live on the
+[companion page](companion.qmd) — which says plainly what being generated
+means, and what to do about it.
+
 ## Who it is for
 
 You have read *{{< var workshop.book >}}*. You know matrices. This workshop
@@ -29,7 +46,7 @@ where it first appears.
 
 ## What's here
 
-Five things, and they do different jobs. Start with whichever one matches what
+Six things, and they do different jobs. Start with whichever one matches what
 you are doing right now.
 
 | | What it is | When you use it |
@@ -38,11 +55,12 @@ you are doing right now.
 | **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
 | **[Notebooks](notebooks.qmd)** | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
 | **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
+| **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Machine-generated from this workshop's own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. | Before, for a first pass; after, for revision. |
 | **[Repository]({{< var repo.url >}})** | The source of all of the above, plus the three Kahoot spreadsheets. | To fork it, fix something, or run the notebooks off Colab. |
 
 : {tbl-colwidths="[16,50,34]"}
 
-The handbook is the source *text*. The facts those five share — the section
+The handbook is the source *text*. The facts those six share — the section
 titles, the running clock, the links — live once in
 [`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
 and every section table on this page is generated from it, so they cannot disagree.

@@ -32,7 +32,7 @@ text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (every section table, and the agenda both decks show) | `scripts/gen_tables.py` |
+| `_includes/*.md` (every section table, the agenda both decks show, and the companion's video, audio and infographic blocks) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md`, `notebooks/README.md` and the handbook's schedule — the rest of all three files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
@@ -69,9 +69,24 @@ every pixel came from, which is the actual point:
   lives in one `SLIDES` table, so EN and ES cannot be edited apart. Rerunning it
   rewrites the same bytes, which is what makes `git status` a staleness check.
 
+**The companion's assets are the one class with no generator at all.** The
+infographic PNGs and the Audio Overview under `media/` are exported by hand out
+of NotebookLM, so there is no script to rerun and no SHA-256 pin to compare
+against. What stands in for both is the `companion:` block in `_variables.yml`:
+the notebook URL, each artifact's own `/artifact/<uuid>` URL, and an `exported`
+date. Re-export an asset and update `exported`, or the provenance is a lie.
+`media/**` is in `_quarto.yml`'s `resources:` for the same reason
+`notebooks/*.ipynb` is — nothing renders it, so without that line it never
+reaches `docs/`.
+
+The three link-only artifacts — quiz, flashcards, mind map — cannot be exported
+at all, and only work while the notebook is shared as "anyone with the link".
+They are the only things on the site that ask a visitor for a Google account,
+and both companion pages say so where they appear.
+
 ## Which document owns what
 
-Five documents describe the same workshop to different readers. They drifted
+Six documents describe the same workshop to different readers. They drifted
 once — five copies of the prerequisites, three different local-run commands, two
 incompatible vocabularies — so each fact now has exactly one home. Before adding
 a paragraph, find whose job it is:
@@ -83,6 +98,7 @@ a paragraph, find whose job it is:
 | The handbook | The session text: theory, exercises, worked solutions, further reading, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. |
 | `notebooks.qmd` | How the notebooks are built, what each one needs, how to run them off Colab. | The workshop's content or its schedule. |
 | `kahoot.qmd` | The three quizzes and how to run them. | — |
+| `companion.qmd` / `es/companion.qmd` | The machine-generated companion: the NotebookLM notebook and every artifact out of it — video, infographics, audio, quiz, flashcards, mind map — and the standing warning that none of it was written or checked by a person. It owns those links, so nothing else carries one. | The workshop's own content. It explains material, it never defines it. |
 | `README.md` | The GitHub shopfront: what this is, who it is for, prerequisites **in brief**, and links out. | Anything the site already owns. |
 
 **One canonical identifier.** A segment is a **section, `00`–`11`**, everywhere.
@@ -181,7 +197,7 @@ scikit-learn,scikit-image python scripts/gen_figures.py
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
-`check_links.py` is the test suite — there is no pytest here. It prints ten
+`check_links.py` is the test suite — there is no pytest here. It prints eleven
 numbered checks, in the order they run. Nine can fail, and any failure exits
 non-zero: notebooks are valid with no outputs or execution counts; every
 notebook `docs/` serves is byte-identical to the one committed in
@@ -194,8 +210,10 @@ and the `agenda` rows still account for every segment of that clock exactly
 once and in order; the deck timer's total still matches `workshop.minutes`;
 and no visible notebook cell depends on a name bound only inside a folded
 solution cell (easy to introduce, invisible when you run the notebook top to
-bottom). The tenth, Kahoot join URLs, only prints a TODO — that output is
-**not** a failure. `--notebooks-only` runs the notebook and
+bottom). The last two — Kahoot join URLs, and the companion's artifact links
+and exports — only print a TODO. That output is **not** a failure: both cover
+material that is pasted in after the page exists, and CI must not go red in
+between. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them

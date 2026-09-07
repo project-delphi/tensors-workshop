@@ -1,0 +1,81 @@
+---
+title: "The machine-generated companion"
+subtitle: "A NotebookLM notebook built from this workshop's own sources — and everything generated out of it"
+---
+
+::: {.callout-warning appearance="simple"}
+**Everything on this page is generated, not written.** It was produced by
+[NotebookLM]({{< var companion.notebook_url >}}) from the workshop's own
+handbook and notebooks, and no human wrote or checked a sentence of it. Use it
+as a *second pass* over material you have already seen, and check anything it
+asserts against the [handbook](tensors_workshop_plan_with_quizzes.md) — never
+the other way round. Generated {{< var companion.exported >}}.
+:::
+
+The workshop itself is built on a promise: real data, and numbers you can
+reproduce. This page keeps that promise by being clear about which side of the
+line it sits on. It is here because a different explanation of the same
+material is genuinely useful — a video before the session, a diagram to argue
+with, a quiz on the train home — not because it replaces anything.
+
+Where an artifact could be **exported**, it was, and it is served from this
+site: no account, no sign-in, and it still works if the notebook is later
+edited or deleted. Three of them cannot be exported, and those are links into
+NotebookLM that will ask you for a Google account. Each one below says which
+it is.
+
+## Video overview {#video}
+
+{{< include _includes/companion-video-en.md >}}
+
+## Infographics {#infographics}
+
+{{< include _includes/companion-infographics-en.md >}}
+
+## Listen {#listen}
+
+The Audio Overview is two hosts talking through the workshop. It is the only
+piece here that works with the screen off, which makes it the one worth taking
+on a commute the day before.
+
+{{< include _includes/companion-audio-en.md >}}
+
+## Test yourself {#test-yourself}
+
+Neither of these is the [Kahoot](kahoot.qmd). The Kahoot quizzes are six
+questions each, run live in the room after sections 04, 07 and 10, and they
+were written for this workshop. These two are generated, unlimited and for
+your own use afterwards.
+
+**Both open in NotebookLM and need a Google account** — quizzes and flashcards
+are the artifacts NotebookLM does not let you export.
+
+| | What it is | When you use it |
+|---|---|---|
+| **[{{< var companion.quiz.title_en >}}]({{< var companion.quiz.url_en >}})** | Generated multiple-choice questions over the whole workshop, as many as you want. | After the session, to find out which sections did not stick. |
+| **[{{< var companion.flashcards.title_en >}}]({{< var companion.flashcards.url_en >}})** | Term on one side, definition on the other — the vocabulary the workshop defines as it goes. | Spaced repetition, in the weeks after. |
+
+: {tbl-colwidths="[22,48,30]"}
+
+## The map {#map}
+
+**[{{< var companion.mindmap.title_en >}}]({{< var companion.mindmap.url_en >}})** —
+how the thirteen sections hang off each other, on one screen. Interactive
+inside NotebookLM only, so this is a link and it needs an account.
+
+It is worth one look early: the workshop is deliberately a ladder, and seeing
+the whole ladder before you start climbing makes the middle rungs less
+arbitrary.
+
+## In NotebookLM {#notebooklm}
+
+**[Open the notebook]({{< var companion.notebook_url >}})** to see the sources
+every artifact above was generated from, ask it your own questions, or generate
+something else from it.
+
+The written overview the handbook's reading list cites is
+**[here]({{< var companion.overview_url >}})**.
+
+::: {.callout-note appearance="simple"}
+🇪🇸 ¿Prefieres español? [Esta página en español](es/companion.qmd).
+:::
