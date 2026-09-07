@@ -606,7 +606,7 @@
     "href": "index.html#watch-it-first",
     "title": "Tensors for Machine Learning",
     "section": "Watch it first",
-    "text": "Watch it first\n\nNot published yet. The video overview is generated in NotebookLM and re-uploaded to YouTube; until then there is nothing here that works without a Google account.\nThe video is generated, not recorded. It, and the infographics, audio, quiz, flashcards and mind map beside it, live on the companion page — which says plainly what being generated means, and what to do about it."
+    "text": "Watch it first\n\nTensors in machine learning — video overview — It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in.\nThe video is generated, not recorded. It, and the infographics, audio, quiz, flashcards and mind map beside it, live on the companion page — which says plainly what being generated means, and what to do about it."
   },
   {
     "objectID": "index.html#who-it-is-for",
@@ -711,21 +711,21 @@
     "href": "companion.html",
     "title": "The machine-generated companion",
     "section": "",
-    "text": "Everything on this page is generated, not written. It was produced by NotebookLM from the workshop’s own handbook and notebooks, and no human wrote or checked a sentence of it. Use it as a second pass over material you have already seen, and check anything it asserts against the handbook — never the other way round. Generated 2026-09-07.\nThe workshop itself is built on a promise: real data, and numbers you can reproduce. This page keeps that promise by being clear about which side of the line it sits on. It is here because a different explanation of the same material is genuinely useful — a video before the session, a diagram to argue with, a quiz on the train home — not because it replaces anything.\nWhere an artifact could be exported, it was, and it is served from this site: no account, no sign-in, and it still works if the notebook is later edited or deleted. Three of them cannot be exported, and those are links into NotebookLM that will ask you for a Google account. Each one below says which it is."
+    "text": "Everything on this page is generated, not written. It was produced by NotebookLM from the workshop’s own handbook and notebooks, and no human wrote or checked a sentence of it. Use it as a second pass over material you have already seen, and check anything it asserts against the handbook — never the other way round. Generated 2026-09-07.\nThe workshop itself is built on a promise: real data, and numbers you can reproduce. This page keeps that promise by being clear about which side of the line it sits on. It is here because a different explanation of the same material is genuinely useful — a video before the session, a diagram to argue with, a quiz on the train home — not because it replaces anything.\nWhere an artifact can be exported, it is, and it is served from this site: no account, no sign-in, and it still works if the notebook is later edited or deleted. Three of them cannot be exported at all, and anything still waiting for its export is a link meanwhile — those go into NotebookLM and will ask you for a Google account. Each one below says which it is."
   },
   {
     "objectID": "companion.html#video",
     "href": "companion.html#video",
     "title": "The machine-generated companion",
     "section": "Video overview",
-    "text": "Video overview\n\nNot published yet. The video overview is generated in NotebookLM and re-uploaded to YouTube; until then there is nothing here that works without a Google account."
+    "text": "Video overview\n\nTensors in machine learning — video overview — It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in."
   },
   {
     "objectID": "companion.html#infographics",
     "href": "companion.html#infographics",
     "title": "The machine-generated companion",
     "section": "Infographics",
-    "text": "Infographics\n\nNot exported yet. The infographics live in the notebook until they are exported as PNGs and committed here; that link needs a Google account, and these pages will not."
+    "text": "Infographics\n\nNot exported yet, so these open in NotebookLM and will ask you for a Google account:\n\nTensors — overview\nReshape vs transpose"
   },
   {
     "objectID": "companion.html#listen",
@@ -753,14 +753,14 @@
     "href": "companion.html#notebooklm",
     "title": "The machine-generated companion",
     "section": "In NotebookLM",
-    "text": "In NotebookLM\nOpen the notebook to see the sources every artifact above was generated from, ask it your own questions, or generate something else from it.\nThe written overview the handbook’s reading list cites is here.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
+    "text": "In NotebookLM\nOpen the notebook to see the sources every artifact above was generated from, ask it your own questions, or generate something else from it.\nThe overview infographic the handbook’s reading list cites is the first of the two above, and here on its own.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
   },
   {
     "objectID": "es/companion.html",
     "href": "es/companion.html",
     "title": "El complemento generado por máquina",
     "section": "",
-    "text": "Todo lo que hay en esta página está generado, no escrito. Lo produjo NotebookLM a partir del manual y los cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola frase. Úsalo como una segunda pasada sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el manual, nunca al revés. Generado el 2026-09-07.\nEl taller se apoya en una promesa: datos reales y números que puedes reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la línea está. Existe porque una explicación distinta del mismo material es realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir, un cuestionario en el tren de vuelta—, no porque sustituya a nada.\nCuando un artefacto se ha podido exportar, se ha exportado, y se sirve desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar: esos son enlaces a NotebookLM y te pedirán una cuenta de Google. Cada apartado dice de cuál se trata."
+    "text": "Todo lo que hay en esta página está generado, no escrito. Lo produjo NotebookLM a partir del manual y los cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola frase. Úsalo como una segunda pasada sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el manual, nunca al revés. Generado el 2026-09-07.\nEl taller se apoya en una promesa: datos reales y números que puedes reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la línea está. Existe porque una explicación distinta del mismo material es realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir, un cuestionario en el tren de vuelta—, no porque sustituya a nada.\nCuando un artefacto se puede exportar, se exporta, y se sirve desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar en absoluto, y lo que todavía está pendiente de exportar se publica mientras tanto como enlace: esos van a NotebookLM y te pedirán una cuenta de Google. Cada apartado dice de cuál se trata."
   },
   {
     "objectID": "es/companion.html#video",
@@ -774,7 +774,7 @@
     "href": "es/companion.html#infographics",
     "title": "El complemento generado por máquina",
     "section": "Infografías",
-    "text": "Infografías\n\nTodavía sin exportar. Las infografías están en el cuaderno hasta que se exporten como PNG y se guarden aquí; ese enlace pide una cuenta de Google, y estas páginas no lo harán."
+    "text": "Infografías\n\nTodavía sin exportar, así que estas se abren en NotebookLM y te pedirán una cuenta de Google:\n\nTensores — panorama general\nReshape frente a transposición"
   },
   {
     "objectID": "es/companion.html#listen",
@@ -802,7 +802,7 @@
     "href": "es/companion.html#notebooklm",
     "title": "El complemento generado por máquina",
     "section": "En NotebookLM",
-    "text": "En NotebookLM\nAbrir el cuaderno para ver las fuentes con las que se generó cada artefacto de arriba, hacerle tus propias preguntas o generar otra cosa a partir de él.\nEl resumen escrito que cita la lista de lecturas del manual está aquí.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
+    "text": "En NotebookLM\nAbrir el cuaderno para ver las fuentes con las que se generó cada artefacto de arriba, hacerle tus propias preguntas o generar otra cosa a partir de él.\nLa infografía de panorama general que cita la lista de lecturas del manual es la primera de las dos de arriba, y está aquí por separado.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
   },
   {
     "objectID": "slides/es/index.html#section",

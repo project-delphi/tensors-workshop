@@ -283,11 +283,32 @@ def video_block(lang: str) -> str:
     out as smart-quoted literal text -- and the id may not exist yet, in which
     case an embed URL with nothing after `embed/` is a broken player. Here the
     substitution happens in Python and the missing case has somewhere to go.
+
+    Three states, in order of preference: the YouTube embed, which needs no
+    account; failing that a direct link to the artifact in NotebookLM, which
+    plays but asks for one; failing both, the note that there is nothing yet.
     """
     v = COMPANION["video"]
     vid = v.get(f"youtube_id_{lang}") or ""
     title = v[f"title_{lang}"]
     if not vid:
+        url = v.get(f"url_{lang}") or ""
+        if url:
+            mins = v.get(f"minutes_{lang}") or 0
+            return {
+                "en": (f"**[{title}]({url})** — "
+                       + (f"{mins} minutes. " if mins else "")
+                       + "It has not been re-uploaded to YouTube yet, so this "
+                         "one plays inside NotebookLM and will ask you for a "
+                         "Google account. When the upload lands it will play "
+                         "here instead, with no account and no sign-in.\n"),
+                "es": (f"**[{title}]({url})** — "
+                       + (f"{mins} minutos. " if mins else "")
+                       + "Todavía no se ha subido a YouTube, así que este se "
+                         "reproduce dentro de NotebookLM y te pedirá una "
+                         "cuenta de Google. Cuando esté subido se reproducirá "
+                         "aquí mismo, sin cuenta y sin iniciar sesión.\n"),
+            }[lang]
         return {
             "en": "*Not published yet.* The video overview is generated in "
                   "NotebookLM and re-uploaded to YouTube; until then there is "
@@ -351,9 +372,15 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     two copies of that is how they stop agreeing. Each card is one exported
     file plus the artifact it came from.
 
-    While `companion.infographics` is empty -- nothing exported yet -- this
-    emits the honest version of the section rather than nothing at all, so the
-    page never has a heading with a hole under it.
+    An entry with a `file` is an exported PNG and becomes a card. An entry
+    with no `file` is one that has not been exported yet: it still has an
+    artifact URL, so it is published as a link into NotebookLM -- which asks
+    for a Google account -- rather than withheld until the export happens.
+    Those need no `alt_*`, having no image to describe.
+
+    While `companion.infographics` is empty -- nothing published at all --
+    this emits the honest version of the section rather than nothing at all,
+    so the page never has a heading with a hole under it.
     """
     items = COMPANION.get("infographics") or []
     if not items:
@@ -371,42 +398,58 @@ def infographics_gallery(lang: str, prefix: str) -> str:
 
     title_key, alt_key = f"title_{lang}", f"alt_{lang}"
     seen = {"en": "See it in NotebookLM", "es": "Verla en NotebookLM"}[lang]
+    for n, i in enumerate(items, 1):
+        # These entries are pasted in by hand from the template in
+        # _variables.yml, so a forgotten `alt_es` is the likeliest mistake
+        # here -- and a bare KeyError names the field without saying which
+        # entry or what to do about it.
+        required = ("url", title_key)
+        if i.get("file"):
+            required += ("file", alt_key)
+        missing = [k for k in required if not i.get(k)]
+        if missing:
+            sys.exit(f"companion.infographics[{n}] "
+                     f"({i.get('file') or i.get(title_key) or 'no file'}): "
+                     f"missing {', '.join(missing)}")
+    exported = [i for i in items if i.get("file")]
+    linked = [i for i in items if not i.get("file")]
+
+    out = []
     # The invitation to click belongs here rather than under the heading in
     # the page: with nothing exported there is nothing to click, and a page
     # that says otherwise is the small lie that makes the big warning at the
     # top of it less believable.
-    required = ("file", "url", title_key, alt_key)
-    for n, i in enumerate(items, 1):
-        missing = [k for k in required if not i.get(k)]
-        if missing:
-            # These entries are pasted in by hand from the template in
-            # _variables.yml, so a forgotten `alt_es` is the likeliest
-            # mistake here -- and a bare KeyError names the field without
-            # saying which entry or what to do about it.
-            sys.exit(f"companion.infographics[{n}] "
-                     f"({i.get('file', 'no file')}): missing "
-                     f"{', '.join(missing)}")
-    out = [{"en": "Click one to open it full size. These are PNG exports, "
-                  "served from this site.",
-            "es": "Haz clic en una para abrirla a tamaño completo. Son "
-                  "exportaciones en PNG, servidas desde este sitio."}[lang],
-           "", "::: {.info-strip}"]
-    for i in items:
-        alt = i[alt_key]
-        if '"' in alt:
-            # The alt lands inside a `{fig-alt="…"}` attribute, where a bare
-            # double quote ends it early and silently truncates the text.
-            sys.exit(f"companion.infographics: {alt_key} for {i['file']} "
-                     f"contains a double quote; use typographic quotes")
-        out += [
-            "::: {.info-card}",
-            f"![]({prefix}{i['file']})"
-            f'{{.lightbox group="infographics" fig-alt="{alt}"}}',
-            "",
-            f"**{i[title_key]}**<br>[{seen}]({i['url']})",
-            ":::",
-        ]
-    out.append(":::")
+    if exported:
+        out += [{"en": "Click one to open it full size. These are PNG "
+                       "exports, served from this site.",
+                 "es": "Haz clic en una para abrirla a tamaño completo. Son "
+                       "exportaciones en PNG, servidas desde este sitio."}[lang],
+                "", "::: {.info-strip}"]
+        for i in exported:
+            alt = i[alt_key]
+            if '"' in alt:
+                # The alt lands inside a `{fig-alt="…"}` attribute, where a
+                # bare double quote ends it early and silently truncates it.
+                sys.exit(f"companion.infographics: {alt_key} for {i['file']} "
+                         f"contains a double quote; use typographic quotes")
+            out += [
+                "::: {.info-card}",
+                f"![]({prefix}{i['file']})"
+                f'{{.lightbox group="infographics" fig-alt="{alt}"}}',
+                "",
+                f"**{i[title_key]}**<br>[{seen}]({i['url']})",
+                ":::",
+            ]
+        out.append(":::")
+    if linked:
+        if exported:
+            out.append("")
+        out += [{"en": "Not exported yet, so these open in NotebookLM and "
+                       "will ask you for a Google account:",
+                 "es": "Todavía sin exportar, así que estas se abren en "
+                       "NotebookLM y te pedirán una cuenta de Google:"}[lang],
+                ""]
+        out += [f"- [{i[title_key]}]({i['url']})" for i in linked]
     return "\n".join(out) + "\n"
 
 
