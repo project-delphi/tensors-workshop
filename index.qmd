@@ -46,21 +46,22 @@ where it first appears.
 
 ## What's here
 
-Six things, and they do different jobs. Start with whichever one matches what
-you are doing right now.
+Seven things, and they do different jobs. Start with whichever one matches
+what you are doing right now.
 
 | | What it is | When you use it |
 |---|---|---|
-| **[Handbook](tensors_workshop_plan_with_quizzes.md)** | The session text: the theory, every exercise, the worked solutions, further reading, and the five take-home appendices. English only. | Read it before, follow it during, keep it after. |
+| **[Handbook](tensors_workshop_plan_with_quizzes.md)** | The session text: the theory, every exercise, the worked solutions, and the five take-home appendices. English only. | Read it before, follow it during, keep it after. |
 | **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
 | **[Notebooks](notebooks.qmd)** | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
 | **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
 | **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Machine-generated from this workshop's own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. | Before, for a first pass; after, for revision. |
+| **[References](references.qmd)** · [ES](es/references.qmd) | The books, papers, `tensorly` docs and blog posts the workshop is built on — with DOIs and author pages. | After a section, when you want the proper treatment of what it skimmed. |
 | **[Repository]({{< var repo.url >}})** | The source of all of the above, plus the three Kahoot spreadsheets. | To fork it, fix something, or run the notebooks off Colab. |
 
 : {tbl-colwidths="[16,50,34]"}
 
-The handbook is the source *text*. The facts those six share — the section
+The handbook is the source *text*. The facts those seven share — the section
 titles, the running clock, the links — live once in
 [`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
 and every section table on this page is generated from it, so they cannot disagree.

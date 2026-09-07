@@ -294,6 +294,223 @@ reading:
     title_en: "Attention as two contractions"
     title_es: "La atención como dos contracciones"
 
+# ── References and further reading ───────────────────────────────────────────
+# The bibliography, and the single home for it. It used to live in the
+# handbook's own "Further Reading" section, in English only; that section is
+# now a pointer here, and README.md's two "Further reading" sections point
+# here as well, so there is one copy of each citation rather than three.
+#
+# scripts/gen_tables.py renders this into _includes/references-{en,es}.md,
+# which references.qmd and es/references.qmd include. Both pages are entirely
+# generated below the intro, so EN and ES cannot list different works.
+#
+# A group is one `## ` heading on the page. `anchor` is its id, written out
+# rather than derived from the title, because the titles differ by language
+# and the anchors must not — the handbook links to `#ref-tensors`.
+#
+# A group carries either `items` (works cited in full) or `reading` (a list of
+# keys into `reading:` above, so the blog posts are declared exactly once and
+# check_links.py's "every ml-blog URL is declared" rule still holds here).
+#
+# Per item, only `title`, `url` and the two notes are required:
+#   authors  "Kolda, T. G. & Bader, B. W." — as printed, not translated
+#   year     the year of publication, for papers
+#   where    journal, volume and pages, or the publisher
+#   note_en  what it is FOR, and why you would open this one rather than
+#   note_es  another. Not a summary of the work — a reason to read it.
+#   also     author pages and other secondary links. `name` is a person or a
+#            page name, so it is the same in both languages by construction.
+#   code     true if the title is a package name, so it renders as `code`.
+#
+# In `spine`, the bare word URL inside each note is replaced with
+# `chapter_url` by the generator, so the one link is written once and both
+# languages get it.
+references:
+  # Shown above the first group on both pages. The one thing every reader has
+  # already read, and what it does not cover — which is the whole reason this
+  # page exists.
+  spine:
+    title: "Deep Learning"
+    chapter_url: "https://www.deeplearningbook.org/contents/linear_algebra.html"
+    note_en: >-
+      [Chapter 2](URL) of *Deep Learning* (Goodfellow, Bengio & Courville) is
+      the spine for the linear algebra this workshop assumes, and the
+      [prerequisites on the homepage](index.qmd#prerequisites) say what else to
+      do before the session. Neither covers Tucker or CP at all. This page is
+      where to go next.
+    note_es: >-
+      El [capítulo 2](URL) de *Deep Learning* (Goodfellow, Bengio y Courville)
+      es la columna vertebral del álgebra lineal que este taller da por
+      sabida, y los [requisitos previos de la página
+      principal](index.qmd#requisitos-previos) dicen qué más hacer antes de la
+      sesión. Ninguno de los dos trata Tucker ni CP. Esta página es adonde ir
+      después.
+  groups:
+    - anchor: ref-linear-algebra
+      title_en: "Linear algebra, to go deeper"
+      title_es: "Álgebra lineal, para profundizar"
+      note_en: >-
+        Three books, in increasing order of how much numerical detail they
+        make you look at. Any one of them covers everything sections 03 to 09
+        lean on.
+      note_es: >-
+        Tres libros, en orden creciente de detalle numérico. Cualquiera de
+        ellos cubre todo aquello en lo que se apoyan las secciones 03 a 09.
+      items:
+        - authors: "Strang, G."
+          title: "Introduction to Linear Algebra"
+          url: "https://math.mit.edu/~gs/linearalgebra/"
+          note_en: "the accessible one"
+          note_es: "el accesible"
+          also:
+            - name: "Gilbert Strang"
+              url: "https://math.mit.edu/~gs/"
+        - authors: "Trefethen, L. N. & Bau, D."
+          title: "Numerical Linear Algebra"
+          url: "https://people.maths.ox.ac.uk/trefethen/text.html"
+          note_en: "the one that takes SVD seriously"
+          note_es: "el que se toma en serio la SVD"
+          also:
+            - name: "Nick Trefethen"
+              url: "https://people.maths.ox.ac.uk/trefethen/"
+        - authors: "Golub, G. H. & Van Loan, C. F."
+          title: "Matrix Computations"
+          url: "https://www.press.jhu.edu/books/title/10678/matrix-computations"
+          note_en: "the reference, for when something is numerically wrong"
+          note_es: "la referencia, para cuando algo falla numéricamente"
+          also:
+            - name: "Gene Golub"
+              url: "https://mathshistory.st-andrews.ac.uk/Biographies/Golub/"
+            - name: "Charles Van Loan"
+              url: "https://as.cornell.edu/people/charles-van-loan"
+    - anchor: ref-tensors
+      title_en: "Tensors specifically"
+      title_es: "Tensores en concreto"
+      note_en: >-
+        The survey first, then the four papers the workshop's last three
+        sections are built on — all of them readable, and three of them older
+        than the field that now uses them.
+      note_es: >-
+        Primero el artículo de revisión, después los cuatro trabajos sobre los
+        que se construyen las tres últimas secciones del taller: todos
+        legibles, y tres de ellos más antiguos que el campo que hoy los usa.
+      items:
+        - authors: "Kolda, T. G. & Bader, B. W."
+          year: 2009
+          title: "Tensor Decompositions and Applications"
+          url: "https://doi.org/10.1137/07070111X"
+          where: "SIAM Review 51(3), 455–500"
+          note_en: >-
+            the survey. If you read one thing after this workshop, it is this
+          note_es: >-
+            el artículo de revisión. Si vas a leer una sola cosa después de
+            este taller, que sea esta
+          also:
+            - name: "Tamara Kolda"
+              url: "https://www.mathsci.ai/"
+            - name: "Brett Bader"
+              url: "https://scholar.google.com/citations?user=OJQ8pq0AAAAJ"
+        - authors: "Tucker, L. R."
+          year: 1966
+          title: "Some mathematical notes on three-mode factor analysis"
+          url: "https://doi.org/10.1007/BF02289464"
+          where: "Psychometrika 31, 279–311"
+          note_en: "section 10's decomposition, from the source"
+          note_es: "la descomposición de la sección 10, en su fuente original"
+        - authors: "Carroll, J. D. & Chang, J.-J."
+          year: 1970
+          title: >-
+            Analysis of individual differences in multidimensional scaling via
+            an N-way generalization of “Eckart-Young” decomposition
+          url: "https://doi.org/10.1007/BF02310791"
+          where: "Psychometrika 35, 283–319"
+          note_en: >-
+            CP, arrived at as a generalization of Eckart–Young. Discovered
+            independently and twice — see Harshman below
+          note_es: >-
+            CP, obtenida como generalización de Eckart–Young. Se descubrió dos
+            veces y de forma independiente: véase Harshman más abajo
+        - authors: "Harshman, R. A."
+          year: 1970
+          title: "Foundations of the PARAFAC procedure"
+          url: "https://www.psychology.uwo.ca/faculty/harshman/wpppfac0.pdf"
+          where: "UCLA Working Papers in Phonetics 16, 1–84"
+          note_en: >-
+            the same decomposition, reached from psychometrics rather than
+            from Eckart–Young, and named PARAFAC. Hence “CP/PARAFAC”
+          note_es: >-
+            la misma descomposición, alcanzada desde la psicometría y no desde
+            Eckart–Young, y bautizada PARAFAC. De ahí «CP/PARAFAC»
+          also:
+            - name: "Richard Harshman"
+              url: "https://psychology.uwo.ca/faculty/harshman/"
+        - authors: "Eckart, C. & Young, G."
+          year: 1936
+          title: "The approximation of one matrix by another of lower rank"
+          url: "https://doi.org/10.1007/BF02288367"
+          where: "Psychometrika 1, 211–218"
+          note_en: >-
+            the truncated SVD is the optimal low-rank approximation. This is
+            the theorem underneath Tucker and CP both, and Appendix E is where
+            optimal on the Frobenius norm stops being enough
+          note_es: >-
+            la SVD truncada es la mejor aproximación de rango bajo. Es el
+            teorema que hay debajo de Tucker y de CP, y el apéndice E es donde
+            ser óptimo en la norma de Frobenius deja de bastar
+    - anchor: ref-software
+      title_en: "Software"
+      title_es: "Software"
+      note_en: >-
+        The workshop writes CP and Tucker out with `numpy` first, so that what
+        the library does is not a mystery. For real projects, use the library.
+      note_es: >-
+        El taller escribe CP y Tucker a mano con `numpy` primero, para que lo
+        que hace la biblioteca no sea un misterio. Para proyectos reales, usa
+        la biblioteca.
+      items:
+        - title: "tensorly"
+          code: true
+          url: "https://tensorly.org"
+          note_en: >-
+            the tensor library, used in section 10 and Appendix C — see its
+            [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html)
+            and [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html)
+            implementations
+          note_es: >-
+            la biblioteca de tensores, usada en la sección 10 y en el apéndice
+            C; véanse sus implementaciones de
+            [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html)
+            y
+            [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html)
+          also:
+            - name: "Jean Kossaifi"
+              url: "https://jeankossaifi.com/"
+    - anchor: ref-blog
+      title_en: "Posts from the ML blog"
+      title_es: "Entradas del blog de ML"
+      note_en: >-
+        Written for this workshop's audience, and linked from the slides at
+        the section each one supports. They are the shortest of everything on
+        this page: one idea per post, worked through.
+      note_es: >-
+        Escritas para el público de este taller, y enlazadas desde las
+        diapositivas en la sección a la que acompañan. Son lo más corto de
+        todo lo que hay en esta página: una idea por entrada, desarrollada.
+      # Keys into `reading:` above. `home` is the blog itself, not a post, so
+      # it is deliberately not listed — the intro links it instead.
+      reading:
+        - why_so_many
+        - optimization
+        - svd
+        - eigen
+        - recursion
+        - tensor_factorizations
+        - uses
+        - inverses_practice
+        - inverse_examples
+        - sparse
+        - attention
+
 # ── Agenda ───────────────────────────────────────────────────────────────────
 # The agenda table both decks show, one entry per row. Everything numeric —
 # the start time, the duration and the Part column — is derived from

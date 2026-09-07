@@ -161,11 +161,14 @@ docs/                   rendered site (committed — this is what Pages serves)
 Directory READMEs: [`notebooks/`](notebooks/README.md) ·
 [`slides/`](slides/README.md) · [`kahoot/`](kahoot/README.md)
 
-## Further reading
+## References and further reading
 
-Books, the seminal Tucker/CP/SVD papers (with DOIs and author pages), and the
-`tensorly` docs: see **[Further Reading](https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html#further-reading)**
-in the Handbook.
+Books, the seminal Tucker/CP/SVD papers (with DOIs and author pages), the
+`tensorly` docs and the ML blog posts:
+see **[References](https://project-delphi.github.io/tensors-workshop/references.html)**.
+It is the single home for all of them, and it exists in
+[Spanish](https://project-delphi.github.io/tensors-workshop/es/references.html)
+too.
 
 ---
 
@@ -283,9 +286,11 @@ repositorio. `.github/workflows/publish.yml` vuelve a renderizar en cada push y
 falla si el `docs/` publicado está desactualizado o si algún enlace está roto.
 Renderiza y haz commit de `docs/` junto con tu cambio.
 
-## Lectura adicional
+## Referencias y lectura adicional
 
 Libros, los artículos originales de Tucker/CP/SVD (con DOI y páginas de los
-autores) y la documentación de `tensorly`: consulta
-**[Further Reading](https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html#further-reading)**
-en el Handbook (en inglés).
+autores), la documentación de `tensorly` y las entradas del blog de ML:
+consulta
+**[Referencias](https://project-delphi.github.io/tensors-workshop/es/references.html)**.
+Es el único sitio donde viven, y la página existe también
+[en inglés](https://project-delphi.github.io/tensors-workshop/references.html).
