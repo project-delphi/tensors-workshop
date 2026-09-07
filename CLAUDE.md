@@ -32,7 +32,7 @@ text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (every section table, the agenda both decks show, and the companion's video, audio and infographic blocks) | `scripts/gen_tables.py` |
+| `_includes/*.md` (every section table, the agenda both decks show, the companion's video, audio and infographic blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md`, `notebooks/README.md` and the handbook's schedule — the rest of all three files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
@@ -86,7 +86,7 @@ and both companion pages say so where they appear.
 
 ## Which document owns what
 
-Six documents describe the same workshop to different readers. They drifted
+Seven documents describe the same workshop to different readers. They drifted
 once — five copies of the prerequisites, three different local-run commands, two
 incompatible vocabularies — so each fact now has exactly one home. Before adding
 a paragraph, find whose job it is:
@@ -95,9 +95,10 @@ a paragraph, find whose job it is:
 |---|---|---|
 | `_variables.yml` | Every shared fact: repo coordinates, section titles and minutes, the running clock, quiz metadata, prerequisite URLs. | — |
 | `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, how to run the notebooks, the section table. | Teaching content or exercises. |
-| The handbook | The session text: theory, exercises, worked solutions, further reading, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. |
+| The handbook | The session text: theory, exercises, worked solutions, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. The bibliography — it links to `references.qmd`, and its `## Further Reading` section is now only that pointer. |
 | `notebooks.qmd` | How the notebooks are built, what each one needs, how to run them off Colab. | The workshop's content or its schedule. |
 | `kahoot.qmd` | The three quizzes and how to run them. | — |
+| `references.qmd` / `es/references.qmd` | Every citation: the linear algebra books, the Tucker/CP/Eckart–Young papers, the `tensorly` docs, and the ML blog posts. With DOIs and author pages. | Prerequisites — it links to the homepage. Teaching content: it says what a work is *for*, never what it says. |
 | `companion.qmd` / `es/companion.qmd` | The machine-generated companion: the NotebookLM notebook and every artifact out of it — video, infographics, audio, quiz, flashcards, mind map — and the standing warning that none of it was written or checked by a person. It owns those links, so nothing else carries one. | The workshop's own content. It explains material, it never defines it. |
 | `README.md` | The GitHub shopfront: what this is, who it is for, prerequisites **in brief**, and links out. | Anything the site already owns. |
 
@@ -197,13 +198,16 @@ scikit-learn,scikit-image python scripts/gen_figures.py
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
-`check_links.py` is the test suite — there is no pytest here. It prints eleven
-numbered checks, in the order they run. Nine can fail, and any failure exits
+`check_links.py` is the test suite — there is no pytest here. It prints twelve
+numbered checks, in the order they run. Ten can fail, and any failure exits
 non-zero: notebooks are valid with no outputs or execution counts; every
 notebook `docs/` serves is byte-identical to the one committed in
 `notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook; both decks carry every section anchor; EN and ES list the
-same thirteen sections (extras appear in neither, by design); each section's
+same thirteen sections (extras appear in neither, by design); the two
+references pages cite the same external works, with every ml-blog URL among
+them declared under `reading:` and every `references:` group anchor present on
+both; each section's
 written `start`/`end` still matches the
 running clock derived from `minutes` plus the quizzes and breaks between them,
 and the `agenda` rows still account for every segment of that clock exactly

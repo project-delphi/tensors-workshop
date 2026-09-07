@@ -8,8 +8,10 @@ project:
     - index.qmd
     - notebooks.qmd
     - kahoot.qmd
+    - references.qmd
     - companion.qmd
     - es/index.qmd
+    - es/references.qmd
     - es/companion.qmd
     - slides/en/index.qmd
     - slides/es/index.qmd
@@ -41,18 +43,22 @@ website:
         text: Notebooks
       - href: kahoot.qmd
         text: Kahoot
-      - text: Companion
-        menu:
-          - href: companion.qmd
-            text: "Companion (EN)"
-          - href: es/companion.qmd
-            text: "Complemento (ES)"
-      - text: Slides
-        menu:
-          - href: slides/en/index.qmd
-            text: "Slides (EN)"
-          - href: slides/es/index.qmd
-            text: "Slides (ES)"
+      - href: references.qmd
+        text: References
+      # Slides and the companion each exist in two languages. These were two
+      # dropdowns; they are eight-plus characters of flat navbar instead,
+      # because a dropdown hides the Spanish half behind a click on a site
+      # whose whole point is that both halves are equal. Each is labelled in
+      # its own language, so the pairs read as four destinations rather than
+      # as two words printed twice.
+      - href: slides/en/index.qmd
+        text: Slides
+      - href: slides/es/index.qmd
+        text: Diapositivas
+      - href: companion.qmd
+        text: Companion
+      - href: es/companion.qmd
+        text: Complemento
     right:
       - text: "EN"
         href: index.qmd

@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Notebooks – Tensors for Machine Learning</title>
+<title>References and further reading – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -131,7 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Handbook</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="./notebooks.html" aria-current="page"> 
+    <a class="nav-link" href="./notebooks.html"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
@@ -139,7 +105,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Kahoot</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./references.html"> 
+    <a class="nav-link active" href="./references.html" aria-current="page"> 
 <span class="menu-text">References</span></a>
   </li>  
   <li class="nav-item">
@@ -189,11 +155,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#how-they-are-built" id="toc-how-they-are-built" class="nav-link active" data-scroll-target="#how-they-are-built">How they are built</a></li>
-  <li><a href="#the-notebooks" id="toc-the-notebooks" class="nav-link" data-scroll-target="#the-notebooks">The notebooks</a></li>
-  <li><a href="#going-further" id="toc-going-further" class="nav-link" data-scroll-target="#going-further">Going further</a></li>
-  <li><a href="#running-them-somewhere-other-than-colab" id="toc-running-them-somewhere-other-than-colab" class="nav-link" data-scroll-target="#running-them-somewhere-other-than-colab">Running them somewhere other than Colab</a></li>
-  <li><a href="#what-each-notebook-needs" id="toc-what-each-notebook-needs" class="nav-link" data-scroll-target="#what-each-notebook-needs">What each notebook needs</a></li>
+  <li><a href="#ref-linear-algebra" id="toc-ref-linear-algebra" class="nav-link active" data-scroll-target="#ref-linear-algebra">Linear algebra, to go deeper</a></li>
+  <li><a href="#ref-tensors" id="toc-ref-tensors" class="nav-link" data-scroll-target="#ref-tensors">Tensors specifically</a></li>
+  <li><a href="#ref-software" id="toc-ref-software" class="nav-link" data-scroll-target="#ref-software">Software</a></li>
+  <li><a href="#ref-blog" id="toc-ref-blog" class="nav-link" data-scroll-target="#ref-blog">Posts from the ML blog</a></li>
+  <li><a href="#elsewhere" id="toc-elsewhere" class="nav-link" data-scroll-target="#elsewhere">Not on this page</a></li>
   </ul>
 </nav>
     </div>
@@ -202,8 +168,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Notebooks</h1>
-<p class="subtitle lead">One notebook per section, plus a take-home deep dive, each runnable cold in Colab</p>
+<h1 class="title">References and further reading</h1>
+<p class="subtitle lead">The books, papers, software and posts this workshop is built on</p>
 </div>
 
 
@@ -220,242 +186,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Every section of the workshop has a notebook, and two more sit past the end of the workshop as take-home deep dives. They are <strong>English-primary</strong>, with a one-line Spanish summary under each heading — <em>cada encabezado lleva un resumen en español.</em></p>
-<section id="how-they-are-built" class="level2">
-<h2 class="anchored" data-anchor-id="how-they-are-built">How they are built</h2>
-<p>Each notebook follows the same shape, so you always know where you are:</p>
-<ol type="1">
-<li><strong>Header</strong> — the section title, its objectives, and an <em>Open in Colab</em> badge.</li>
-<li><strong>Setup</strong> — installs and imports only what this section needs, and loads its own data. Self-contained: no local files, no dependency on any other notebook.</li>
-<li><strong>Explanation and code</strong>, alternating, building up rather than dumping a wall of code at you.</li>
-<li><strong>Exercises</strong> — <code># TODO</code> stubs taken from the handbook, each followed by a folded solution cell. Open it after you have tried.</li>
-<li><strong>Closing</strong> — the Kahoot check for that section, and a link back here.</li>
-</ol>
-<div class="callout callout-style-simple callout-important">
+<div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>The notebooks are committed with <strong>no outputs and no execution counts</strong>. Every number you see is one you produced. The expected results are quoted in the prose so you can tell whether yours are right — and if yours differ, that is worth investigating rather than dismissing.</p>
+<p>🇪🇸 ¿Prefieres español? <a href="./es/references.html">Esta página en español</a>.</p>
 </div>
 </div>
 </div>
-</section>
-<section id="the-notebooks" class="level2">
-<h2 class="anchored" data-anchor-id="the-notebooks">The notebooks</h2>
+<p>Everything below is something the workshop actually leans on — a book it assumes, a paper a section implements, a library it tells you to use instead of your own code. Nothing is here to pad a bibliography.</p>
+<p>Read it two ways. <strong>Before or during the session</strong>, it is where a term you have just met is defined properly. <strong>After it</strong>, it is the ladder out: the survey first, then whichever of the four papers covers the decomposition you ended up needing.</p>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Notebook</th>
-<th>Covers</th>
-<th>Colab</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>00</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><code>00-setup-and-data.ipynb</code></a></td>
-<td>Setup and welcome — Load every dataset and confirm your runtime works before anything else.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>01</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><code>01-what-a-tensor-is.ipynb</code></a></td>
-<td>What a tensor is — Learn to read a tensor’s structure and track what its axes mean as you fix, rearrange, or contract them.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>02</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><code>02-thinking-in-n-dimensions.ipynb</code></a></td>
-<td>Thinking in N dimensions — Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>03</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><code>03-indexing-and-broadcasting.ipynb</code></a></td>
-<td>Indexing and broadcasting real data — Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>04</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><code>04-reshape-and-transpose.ipynb</code></a></td>
-<td>Reshape and transpose real images — Use real images to move between HWC↔︎CHW and NHWC↔︎NCHW, then show why matching shapes do not guarantee matching axis semantics.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>05</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><code>05-video-pipeline-design.ipynb</code></a></td>
-<td>Video pipeline design — Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>06</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><code>06-contraction-with-einsum.ipynb</code></a></td>
-<td>Contraction with einsum — Use one index rule on real data, then change the inputs interactively to test which index disappears.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>07</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><code>07-inverses-and-pseudoinverse.ipynb</code></a></td>
-<td>Inverses and the pseudoinverse — Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>08</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><code>08-recursion-with-matrices.ipynb</code></a></td>
-<td>Recursion with matrices and vectors — Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>09</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><code>09-matrix-factorizations.ipynb</code></a></td>
-<td>Matrix factorizations — Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers, and what each one costs.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><code>10-tucker-decomposition.ipynb</code></a></td>
-<td>Tucker decomposition on real data — Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><code>11-tensor-factorizations.ipynb</code></a></td>
-<td>Tensor factorizations — Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><code>12-wrap-up-and-take-homes.ipynb</code></a></td>
-<td>Wrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-</tbody>
-</table>
+<p><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Chapter 2</a> of <em>Deep Learning</em> (Goodfellow, Bengio &amp; Courville) is the spine for the linear algebra this workshop assumes, and the <a href="./index.html#prerequisites">prerequisites on the homepage</a> say what else to do before the session. Neither covers Tucker or CP at all. This page is where to go next.</p>
+<section id="ref-linear-algebra" class="level2">
+<h2 class="anchored" data-anchor-id="ref-linear-algebra">Linear algebra, to go deeper</h2>
+<p>Three books, in increasing order of how much numerical detail they make you look at. Any one of them covers everything sections 03 to 09 lean on.</p>
+<ul>
+<li>Strang, G. — <a href="https://math.mit.edu/~gs/linearalgebra/"><em>Introduction to Linear Algebra</em></a> — the accessible one.<br> <small>Author pages: <a href="https://math.mit.edu/~gs/">Gilbert Strang</a></small></li>
+<li>Trefethen, L. N. &amp; Bau, D. — <a href="https://people.maths.ox.ac.uk/trefethen/text.html"><em>Numerical Linear Algebra</em></a> — the one that takes SVD seriously.<br> <small>Author pages: <a href="https://people.maths.ox.ac.uk/trefethen/">Nick Trefethen</a></small></li>
+<li>Golub, G. H. &amp; Van Loan, C. F. — <a href="https://www.press.jhu.edu/books/title/10678/matrix-computations"><em>Matrix Computations</em></a> — the reference, for when something is numerically wrong.<br> <small>Author pages: <a href="https://mathshistory.st-andrews.ac.uk/Biographies/Golub/">Gene Golub</a> · <a href="https://as.cornell.edu/people/charles-van-loan">Charles Van Loan</a></small></li>
+</ul>
 </section>
-<section id="going-further" class="level2">
-<h2 class="anchored" data-anchor-id="going-further">Going further</h2>
-<p>These two are <strong>not sections</strong>. They are deep dives, handed out as take-home material: no slides, no Kahoot, and no minutes on the workshop clock — the 210-minute agenda is exactly what it was without them.</p>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Deep dive</th>
-<th>Colab</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>13</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><code>13-convolution-and-deconvolution.ipynb</code></a> — Convolution and deconvolution — Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-</tbody>
-</table>
+<section id="ref-tensors" class="level2">
+<h2 class="anchored" data-anchor-id="ref-tensors">Tensors specifically</h2>
+<p>The survey first, then the four papers the workshop’s last three sections are built on — all of them readable, and three of them older than the field that now uses them.</p>
+<ul>
+<li>Kolda, T. G. &amp; Bader, B. W. (2009). <a href="https://doi.org/10.1137/07070111X"><em>Tensor Decompositions and Applications</em></a>, SIAM Review 51(3), 455–500 — the survey. If you read one thing after this workshop, it is this.<br> <small>Author pages: <a href="https://www.mathsci.ai/">Tamara Kolda</a> · <a href="https://scholar.google.com/citations?user=OJQ8pq0AAAAJ">Brett Bader</a></small></li>
+<li>Tucker, L. R. (1966). <a href="https://doi.org/10.1007/BF02289464"><em>Some mathematical notes on three-mode factor analysis</em></a>, Psychometrika 31, 279–311 — section 10’s decomposition, from the source.</li>
+<li>Carroll, J. D. &amp; Chang, J.-J. (1970). <a href="https://doi.org/10.1007/BF02310791"><em>Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition</em></a>, Psychometrika 35, 283–319 — CP, arrived at as a generalization of Eckart–Young. Discovered independently and twice — see Harshman below.</li>
+<li>Harshman, R. A. (1970). <a href="https://www.psychology.uwo.ca/faculty/harshman/wpppfac0.pdf"><em>Foundations of the PARAFAC procedure</em></a>, UCLA Working Papers in Phonetics 16, 1–84 — the same decomposition, reached from psychometrics rather than from Eckart–Young, and named PARAFAC. Hence “CP/PARAFAC”.<br> <small>Author pages: <a href="https://psychology.uwo.ca/faculty/harshman/">Richard Harshman</a></small></li>
+<li>Eckart, C. &amp; Young, G. (1936). <a href="https://doi.org/10.1007/BF02288367"><em>The approximation of one matrix by another of lower rank</em></a>, Psychometrika 1, 211–218 — the truncated SVD is the optimal low-rank approximation. This is the theorem underneath Tucker and CP both, and Appendix E is where optimal on the Frobenius norm stops being enough.</li>
+</ul>
 </section>
-<section id="running-them-somewhere-other-than-colab" class="level2">
-<h2 class="anchored" data-anchor-id="running-them-somewhere-other-than-colab">Running them somewhere other than Colab</h2>
-<p>The notebooks only need the scientific Python stack. Locally:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/project-delphi/tensors-workshop.git</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tensors-workshop</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>matplotlib</code> and <code>ipywidgets</code> are in that list because every notebook plots and all but 00 use sliders; both ship with Colab, which is why their absence only shows up locally.</p>
-<p><code>scikit-learn</code> and <code>scikit-image</code> ship the tumour data, the handwritten digits and the photographs, so sections 01, 03, 04, 06 and 09 run with no network at all. The other nine notebooks fetch something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or — in notebook 11’s take-home E — a voice recording.</p>
+<section id="ref-software" class="level2">
+<h2 class="anchored" data-anchor-id="ref-software">Software</h2>
+<p>The workshop writes CP and Tucker out with <code>numpy</code> first, so that what the library does is not a mystery. For real projects, use the library.</p>
+<ul>
+<li><a href="https://tensorly.org"><code>tensorly</code></a> — the tensor library, used in section 10 and Appendix C — see its <a href="https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html">Tucker</a> and <a href="https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html">CP</a> implementations.<br> <small>Author pages: <a href="https://jeankossaifi.com/">Jean Kossaifi</a></small></li>
+</ul>
 </section>
-<section id="what-each-notebook-needs" class="level2">
-<h2 class="anchored" data-anchor-id="what-each-notebook-needs">What each notebook needs</h2>
-<table class="caption-top table">
-<caption>Colab already has every one of these installed.</caption>
-<colgroup>
-<col style="width: 12%">
-<col style="width: 57%">
-<col style="width: 30%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Notebook</th>
-<th>Beyond NumPy</th>
-<th>Network</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>00</td>
-<td><code>matplotlib</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code>, <code>imageio</code>†</td>
-<td>yes — all three CSVs, and a 1 KB probe of the storm clip</td>
-</tr>
-<tr class="even">
-<td>01</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>02</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>imageio</code>†</td>
-<td>yes — the storm clip</td>
-</tr>
-<tr class="even">
-<td>03</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>04</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td>05</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>imageio</code>†</td>
-<td>yes — the storm clip</td>
-</tr>
-<tr class="odd">
-<td>06</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td>07</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code></td>
-<td>yes — California housing</td>
-</tr>
-<tr class="odd">
-<td>08</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
-<td>yes — airline passengers</td>
-</tr>
-<tr class="even">
-<td>09</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
-<td>yes — NYC taxi trips</td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
-<td>yes — a voice recording, for take-home E</td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>yes — airline passengers</td>
-</tr>
-<tr class="even">
-<td>13</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
-<td>yes — NYC taxi trips, and the storm clip</td>
-</tr>
-</tbody>
-</table>
-<p>† Installed by the notebook itself with <code>%pip install -q</code>, which is why neither is in the command above.</p>
+<section id="ref-blog" class="level2">
+<h2 class="anchored" data-anchor-id="ref-blog">Posts from the ML blog</h2>
+<p>Written for this workshop’s audience, and linked from the slides at the section each one supports. They are the shortest of everything on this page: one idea per post, worked through.</p>
+<p>Every post lives on <a href="https://project-delphi.github.io/ml-blog/">The ML blog</a>.</p>
+<ul>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/">Why so many matrix factorizations?</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/matrix-factorizations/">Factorizations as optimization</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/">Rotate, stretch, rotate again</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/eigendecomposition/">The directions a matrix refuses to turn</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/recursive-inversion/">Can you invert a recursive function?</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/">Tensor factorizations and inverses</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/">What a tensor factorization buys you</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/">Tensor inverses in practice</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/tensor-inverse-examples/">Tensor inverses, worked through</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/sparse_tensors/">Sparse tensors</a></li>
+<li><a href="https://project-delphi.github.io/ml-blog/posts/attention/">Attention as two contractions</a></li>
+</ul>
+</section>
+<section id="elsewhere" class="level2">
+<h2 class="anchored" data-anchor-id="elsewhere">Not on this page</h2>
+<ul>
+<li><strong><a href="./index.html#prerequisites">Prerequisites</a></strong> — the pre-work, in full, on the homepage. That is the one list to work through <em>before</em> the session; this page is for after it.</li>
+<li><strong><a href="./tensors_workshop_plan_with_quizzes.html">The handbook</a></strong> — the workshop’s own text, including the five take-home appendices. It cites the works above where each one is first needed.</li>
+<li><strong><a href="./companion.html">The machine-generated companion</a></strong> — a video, infographics, an audio overview, a quiz, flashcards and a mind map, all generated by NotebookLM from this workshop’s own sources. It is <em>generated, not written</em>: use it as a second pass, and check anything it asserts against the works on this page rather than the other way round.</li>
+</ul>
 
 
 </section>

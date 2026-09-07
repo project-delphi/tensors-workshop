@@ -4,7 +4,7 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Ten checks, each of which catches a mistake that is otherwise invisible.
+Twelve checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
@@ -24,9 +24,14 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     to one deck only is the same drift with no anchor to catch it. Every
     ml-blog URL in either deck, and in the notebooks, must be declared under
     `reading:` — the checker never fetches one, by design.
-  - The EN and ES landing pages list the same twelve sections. Extras are
+  - The EN and ES landing pages list the same thirteen sections. Extras are
     deliberately absent from both this check and the deck check above: an
     extra is take-home material with no slide and no place in the agenda.
+  - The EN and ES references pages cite the same external works, every
+    ml-blog URL among them is declared under `reading:`, and every group
+    anchor in `references:` exists on both. The bibliography is generated,
+    but the prose around it is not, and that is where a work gets cited in
+    one language only.
   - Every section's `start` and `end` still match what the running clock
     derives from `minutes` and the quizzes and breaks between them, and the
     `agenda` rows both decks print still spell that clock out segment for
@@ -79,6 +84,7 @@ COLAB_RE = re.compile(
 # decks and in the notebooks was declared in _variables.yml rather than typed
 # in, and that the two decks link the same set.
 READING = V.get("reading", {})
+REFERENCES = V.get("references", {})
 READING_URLS = {r["url"] for r in READING.values()}
 BLOG_RE = re.compile(r"https://project-delphi\.github\.io/ml-blog/[^\s\"')<>]*")
 
@@ -383,6 +389,59 @@ def check_landing_parity() -> None:
           f"with slide anchors and notebook links")
 
 
+def check_references() -> None:
+    """The EN and ES references pages must cite the same works.
+
+    The body of both pages is generated from `references:` by gen_tables.py,
+    so parity there holds by construction — but the intro and the "not on this
+    page" list around it are hand-written per language, and that is where a
+    citation gets added to one page only.
+
+    Comparing *external* links rather than every link is deliberate: the two
+    pages' internal cross-links legitimately differ (`../handbook` on one,
+    `handbook` on the other), while every book, DOI, author page and blog post
+    is an absolute URL that is the same in both languages or is a mistake.
+    """
+    step("EN / ES references pages")
+    en, es = DOCS / "references.html", DOCS / "es" / "references.html"
+    if not (en.exists() and es.exists()):
+        fail("a references page is missing")
+        return
+
+    external, ids = {}, {}
+    for lang, page in (("en", en), ("es", es)):
+        h = harvest(page)
+        ids[lang] = h.ids
+        external[lang] = {u for u in h.links if u.startswith(("http://", "https://"))}
+        check_reading({u for u in external[lang] if BLOG_RE.fullmatch(u)},
+                      f"references ({lang})")
+
+    for url in sorted(external["en"] - external["es"]):
+        fail(f"references: {url} is cited on the EN page but not the ES page")
+    for url in sorted(external["es"] - external["en"]):
+        fail(f"references: {url} is cited on the ES page but not the EN page")
+
+    # Group anchors are written out in `references:` precisely so they do not
+    # follow the (translated) heading text. The handbook and the section-10
+    # prose link straight into them, and check_links() above only sees the
+    # anchors a link actually names — a group renamed out from under an
+    # unlinked anchor would pass there and fail here.
+    for g in REFERENCES.get("groups", []):
+        for lang in ("en", "es"):
+            if g["anchor"] not in ids[lang]:
+                fail(f"references ({lang}): no anchor #{g['anchor']}")
+
+    n_groups = len(REFERENCES.get("groups", []))
+    shared = external["en"] & external["es"]
+    # Reporting the shared count rather than the EN one: with a mismatch above,
+    # "N citations, identical on both pages" would be the one line in the run
+    # that contradicts the FAILs printed directly over it.
+    both = "identical on both pages" if external["en"] == external["es"] else \
+           "on both pages, plus the mismatches above"
+    print(f"      {len(shared)} external citations {both}, "
+          f"across {n_groups} groups")
+
+
 def check_schedule() -> None:
     """Compare the running clock with the written `start`/`end` and the agenda.
 
@@ -612,6 +671,7 @@ def main() -> int:
         check_links()
         check_decks()
         check_landing_parity()
+        check_references()
         check_schedule()
         check_deck_total()
     check_solution_independence()

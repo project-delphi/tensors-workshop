@@ -5,15 +5,17 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
-This is the session text: the theory, every exercise, the worked solutions, the
-further reading and the take-home appendices. It is what to follow during the
-workshop and what to keep afterwards.
+This is the session text: the theory, every exercise, the worked solutions and
+the take-home appendices. It is what to follow during the workshop and what to
+keep afterwards. The books and papers behind it are on the
+[references page](references.qmd), which holds them for both languages.
 
 **Before you arrive,** work through the prerequisites on the [workshop
 homepage](index.qmd) — the required reading, the pre-work notebooks, and what to
 have ready on the day. The homepage is also where every other resource is
 described: the [slides](slides/en/index.qmd), the [notebooks](notebooks.qmd) you
-type in, and the three [Kahoot checks](kahoot.qmd).
+type in, the three [Kahoot checks](kahoot.qmd) and the
+[references](references.qmd).
 
 **A note on numbering.** This handbook groups the workshop into four **Parts**
 and six exercise **Blocks**. Everywhere else — the notebooks, the slides, the
@@ -664,7 +666,7 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one expression. That is why `einsum` came first.
 
-**Where this is used.** In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use [`tensorly`](https://tensorly.org), which implements both properly — see [Further Reading](#tensors-specifically) for the Kolda & Bader survey and the theorem (Eckart–Young) underneath both decompositions.
+**Where this is used.** In tech, Tucker and CP compress the large weight tensors inside neural networks so models run on phones instead of servers. In biotech, applied to data such as (genes × samples × conditions), they find structure ordinary PCA cannot reach, because PCA can only ever see two axes. For real projects use [`tensorly`](https://tensorly.org), which implements both properly — see [References](references.qmd#ref-tensors) for the Kolda & Bader survey and the theorem (Eckart–Young) underneath both decompositions.
 
 ---
 
@@ -782,34 +784,30 @@ What you did today:
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
 - **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 11](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
 - **The one deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run.
-- **[Further Reading](#further-reading)** — books, the seminal Tucker/CP/SVD papers, and `tensorly`, for going deeper than today's 210 minutes.
+- **[References and further reading](references.qmd)** — books, the seminal Tucker/CP/SVD papers, `tensorly` and the blog posts, for going deeper than today's 210 minutes.
 
 ---
 
 ## Further Reading
 
-[Chapter 2](https://www.deeplearningbook.org/contents/linear_algebra.html) of *Deep Learning* (Goodfellow, Bengio & Courville) is the spine for the linear algebra above, but it doesn't cover Tucker or CP at all. This is where to go next.
+The bibliography moved to its own page, in both languages:
+**[References and further reading](references.qmd)**.
 
-### Linear algebra, to go deeper
+It carries what this section used to — the linear algebra books, the Kolda &
+Bader survey, the Tucker, CP/PARAFAC and Eckart–Young papers with their DOIs
+and author pages, and the `tensorly` docs — plus the ML blog posts the slides
+link, which were never listed here at all. Each work is cited in exactly one
+place now, and the Spanish half of the site can reach it.
 
-- Strang, G. — *[Introduction to Linear Algebra](https://math.mit.edu/~gs/linearalgebra/)* — the accessible one. [Author's page](https://math.mit.edu/~gs/).
-- Trefethen, L. N. & Bau, D. — *[Numerical Linear Algebra](https://people.maths.ox.ac.uk/trefethen/text.html)* — the one that takes SVD seriously. [Trefethen's page](https://people.maths.ox.ac.uk/trefethen/).
-- Golub, G. H. & Van Loan, C. F. — *[Matrix Computations](https://www.press.jhu.edu/books/title/10678/matrix-computations)* — the reference, for when something is numerically wrong. [Golub biography](https://mathshistory.st-andrews.ac.uk/Biographies/Golub/) · [Van Loan's page](https://as.cornell.edu/people/charles-van-loan).
+Jump straight to a group:
+[linear algebra](references.qmd#ref-linear-algebra) ·
+[tensors](references.qmd#ref-tensors) ·
+[software](references.qmd#ref-software) ·
+[the ML blog](references.qmd#ref-blog).
 
-### Tensors specifically
-
-- Kolda, T. G. & Bader, B. W. (2009). [*Tensor Decompositions and Applications*](https://doi.org/10.1137/07070111X), SIAM Review 51(3), 455–500 — the survey. If you read one thing after this workshop, it is this. [Kolda's page](https://www.mathsci.ai/) · [Bader's publications](https://scholar.google.com/citations?user=OJQ8pq0AAAAJ).
-- Tucker, L. R. (1966). [*Some mathematical notes on three-mode factor analysis*](https://doi.org/10.1007/BF02289464), Psychometrika 31, 279–311 — section 10's decomposition, from the source.
-- Carroll, J. D. & Chang, J.-J. (1970). [*Analysis of individual differences in multidimensional scaling via an N-way generalization of "Eckart-Young" decomposition*](https://doi.org/10.1007/BF02310791), Psychometrika 35, 283–319, and Harshman, R. A. (1970). [*Foundations of the PARAFAC procedure*](https://www.psychology.uwo.ca/faculty/harshman/wpppfac0.pdf), UCLA Working Papers in Phonetics 16, 1–84 — CP/PARAFAC, discovered independently and twice: Carroll & Chang arrived at it as a generalization of Eckart–Young, Harshman from psychometrics, and called it PARAFAC. [Harshman's page](https://psychology.uwo.ca/faculty/harshman/).
-- Eckart, C. & Young, G. (1936). [*The approximation of one matrix by another of lower rank*](https://doi.org/10.1007/BF02288367), Psychometrika 1, 211–218 — the truncated SVD is the optimal low-rank approximation. This is the theorem underneath Tucker and CP both.
-
-### Software
-
-- [`tensorly`](https://tensorly.org) docs — [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html) and [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html) implementations, used in section 10 and Appendix C. Created by [Jean Kossaifi](https://jeankossaifi.com/).
-
-### A machine-generated companion
-
-- [The companion page](companion.qmd) — a NotebookLM notebook built from this handbook and the notebooks, plus everything generated out of it: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. It is generated, not written: use it as a second pass over material you have already seen, and check anything it asserts against the books and papers above. That page holds the links, so there is one copy of each.
+The [machine-generated companion](companion.qmd) is a different kind of thing
+and lives on its own page: generated, not written, and to be checked against
+the works on that page rather than the other way round.
 
 ---
 
@@ -946,7 +944,7 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 
 ## Appendix E — Take-Home: Audio Denoising by Low-Rank STFT
 
-The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the Further Reading). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows and ask which frequencies are present in each — that is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
+The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the [references](references.qmd#ref-tensors)). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows and ask which frequencies are present in each — that is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
 
 Optimal on `‖A − B‖_F` is not the same as optimal on *the thing you care about*, so the criterion has to be measured, not assumed. Here the criterion is signal-to-noise ratio against a known clean reference — which is why the noise is added deliberately rather than found. The recording is real and pinned to a SHA-256; the noise is synthetic by design, because only a known clean signal makes SNR measurable at all.
 

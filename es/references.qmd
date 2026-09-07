@@ -1,0 +1,36 @@
+---
+title: "Referencias y lectura adicional"
+subtitle: "Los libros, artículos, programas y entradas sobre los que se construye este taller"
+lang: es
+---
+
+::: {.callout-note appearance="simple"}
+🇬🇧 Prefer English? [This page in English](../references.qmd). Casi todo lo que
+se enlaza aquí está en inglés.
+:::
+
+Todo lo que aparece más abajo es algo en lo que el taller se apoya de verdad:
+un libro que da por leído, un artículo que una sección implementa, una
+biblioteca que te recomienda usar en lugar de tu propio código. Nada está aquí
+para engordar una bibliografía.
+
+Se puede leer de dos maneras. **Antes o durante la sesión**, es donde un
+término que acabas de encontrar está definido como es debido. **Después**, es
+la escalera hacia arriba: primero el artículo de revisión, y luego el que trate
+la descomposición que hayas terminado necesitando.
+
+{{< include ../_includes/references-es.md >}}
+
+## Lo que no está en esta página {#elsewhere}
+
+- **[Requisitos previos](index.qmd#requisitos-previos)** — el trabajo previo,
+  completo, en la página principal. Esa es la lista que hay que hacer *antes*
+  de la sesión; esta página es para después.
+- **[El manual](../tensors_workshop_plan_with_quizzes.md)** — el texto del
+  propio taller, con los cinco apéndices para casa. **Solo en inglés.** Cita
+  las obras de arriba allí donde cada una hace falta por primera vez.
+- **[El complemento generado por máquina](companion.qmd)** — un vídeo,
+  infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un
+  mapa mental, todo generado por NotebookLM a partir de las fuentes del propio
+  taller. Está *generado, no escrito*: úsalo como segunda pasada, y comprueba
+  lo que afirme contra las obras de esta página, nunca al revés.
