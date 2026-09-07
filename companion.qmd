@@ -20,9 +20,9 @@ with, a quiz on the train home — not because it replaces anything.
 
 Where an artifact can be **exported**, it is, and it is served from this
 site: no account, no sign-in, and it still works if the notebook is later
-edited or deleted. Three of them cannot be exported at all, and anything still
-waiting for its export is a link meanwhile — those go into NotebookLM and will
-ask you for a Google account. Each one below says which it is.
+edited or deleted. Three of them cannot be exported at all, and some that can
+be are links into NotebookLM until that export happens. Both of those ask you
+for a Google account. Each section below says which of the three it is.
 
 ## Video overview {#video}
 
@@ -73,8 +73,8 @@ arbitrary.
 every artifact above was generated from, ask it your own questions, or generate
 something else from it.
 
-The overview infographic the handbook's reading list cites is the first of
-the two above, and **[here]({{< var companion.overview_url >}})** on its own.
+The overview infographic is in the gallery above, and
+**[here]({{< var companion.overview_url >}})** on its own.
 
 ::: {.callout-note appearance="simple"}
 🇪🇸 ¿Prefieres español? [Esta página en español](es/companion.qmd).

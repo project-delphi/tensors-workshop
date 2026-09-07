@@ -122,10 +122,13 @@ companion:
   notebook_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
   default_url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"
   exported: "2026-09-07"
-  # The artifact the handbook's further-reading list has cited since #76 —
-  # the overview infographic, not the video. It is also the first entry in
-  # `infographics:` below, which is why the URL is a YAML anchor: the same
-  # artifact reached from two places, and one string to change if it moves.
+  # The overview infographic, linked on its own from both companion pages
+  # since #76 — not the video, whatever the field name suggests. The
+  # handbook's further-reading list does not carry this URL: it links the
+  # companion page, which holds every artifact link exactly once. It is also
+  # an entry in `infographics:` below, which is why the URL is a YAML anchor:
+  # the same artifact reached from two places, one string to change if it
+  # moves.
   overview_url: &overview_url "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb"
 
   # The Video Overview. Two ways to publish it, and the generator prefers the

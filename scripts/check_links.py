@@ -575,7 +575,16 @@ def check_companion() -> None:
     if not c.get("infographics"):
         pending.append("infographics")
     else:
-        unexported = [i for i in c["infographics"] if not i.get("file")]
+        # An entry still holding the notebook's own front door is a
+        # placeholder, not a published link -- the same distinction the
+        # quiz/flashcards/mindmap loop above draws with `default_url`.
+        placeholder = [i for i in c["infographics"]
+                       if i.get("url") == c["default_url"]]
+        if placeholder:
+            pending.append(f"{len(placeholder)} infographic url(s) still at "
+                           f"default_url")
+        unexported = [i for i in c["infographics"]
+                      if not i.get("file") and i not in placeholder]
         if unexported:
             interim.append(f"{len(unexported)} infographic(s) linked, not "
                            f"exported")

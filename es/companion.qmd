@@ -23,9 +23,9 @@ un cuestionario en el tren de vuelta—, no porque sustituya a nada.
 Cuando un artefacto se puede **exportar**, se exporta, y se sirve desde este
 sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno
 se edite o se borre después. Tres de ellos no se pueden exportar en absoluto, y
-lo que todavía está pendiente de exportar se publica mientras tanto como
-enlace: esos van a NotebookLM y te pedirán una cuenta de Google. Cada apartado
-dice de cuál se trata.
+algunos de los que sí se pueden son, hasta que se exporten, enlaces a
+NotebookLM. Ambos casos te pedirán una cuenta de Google. Cada apartado dice de
+cuál de los tres se trata.
 
 ## Resumen en vídeo {#video}
 
@@ -77,9 +77,8 @@ parezcan menos arbitrarios.
 fuentes con las que se generó cada artefacto de arriba, hacerle tus propias
 preguntas o generar otra cosa a partir de él.
 
-La infografía de panorama general que cita la lista de lecturas del manual es
-la primera de las dos de arriba, y está **[aquí]({{< var companion.overview_url >}})**
-por separado.
+La infografía de panorama general está en la galería de arriba, y también
+**[aquí]({{< var companion.overview_url >}})** por separado.
 
 ::: {.callout-note appearance="simple"}
 🇬🇧 Prefer English? [This page in English](../companion.qmd).

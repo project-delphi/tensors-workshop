@@ -711,7 +711,7 @@
     "href": "companion.html",
     "title": "The machine-generated companion",
     "section": "",
-    "text": "Everything on this page is generated, not written. It was produced by NotebookLM from the workshop’s own handbook and notebooks, and no human wrote or checked a sentence of it. Use it as a second pass over material you have already seen, and check anything it asserts against the handbook — never the other way round. Generated 2026-09-07.\nThe workshop itself is built on a promise: real data, and numbers you can reproduce. This page keeps that promise by being clear about which side of the line it sits on. It is here because a different explanation of the same material is genuinely useful — a video before the session, a diagram to argue with, a quiz on the train home — not because it replaces anything.\nWhere an artifact can be exported, it is, and it is served from this site: no account, no sign-in, and it still works if the notebook is later edited or deleted. Three of them cannot be exported at all, and anything still waiting for its export is a link meanwhile — those go into NotebookLM and will ask you for a Google account. Each one below says which it is."
+    "text": "Everything on this page is generated, not written. It was produced by NotebookLM from the workshop’s own handbook and notebooks, and no human wrote or checked a sentence of it. Use it as a second pass over material you have already seen, and check anything it asserts against the handbook — never the other way round. Generated 2026-09-07.\nThe workshop itself is built on a promise: real data, and numbers you can reproduce. This page keeps that promise by being clear about which side of the line it sits on. It is here because a different explanation of the same material is genuinely useful — a video before the session, a diagram to argue with, a quiz on the train home — not because it replaces anything.\nWhere an artifact can be exported, it is, and it is served from this site: no account, no sign-in, and it still works if the notebook is later edited or deleted. Three of them cannot be exported at all, and some that can be are links into NotebookLM until that export happens. Both of those ask you for a Google account. Each section below says which of the three it is."
   },
   {
     "objectID": "companion.html#video",
@@ -753,14 +753,14 @@
     "href": "companion.html#notebooklm",
     "title": "The machine-generated companion",
     "section": "In NotebookLM",
-    "text": "In NotebookLM\nOpen the notebook to see the sources every artifact above was generated from, ask it your own questions, or generate something else from it.\nThe overview infographic the handbook’s reading list cites is the first of the two above, and here on its own.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
+    "text": "In NotebookLM\nOpen the notebook to see the sources every artifact above was generated from, ask it your own questions, or generate something else from it.\nThe overview infographic is in the gallery above, and here on its own.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
   },
   {
     "objectID": "es/companion.html",
     "href": "es/companion.html",
     "title": "El complemento generado por máquina",
     "section": "",
-    "text": "Todo lo que hay en esta página está generado, no escrito. Lo produjo NotebookLM a partir del manual y los cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola frase. Úsalo como una segunda pasada sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el manual, nunca al revés. Generado el 2026-09-07.\nEl taller se apoya en una promesa: datos reales y números que puedes reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la línea está. Existe porque una explicación distinta del mismo material es realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir, un cuestionario en el tren de vuelta—, no porque sustituya a nada.\nCuando un artefacto se puede exportar, se exporta, y se sirve desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar en absoluto, y lo que todavía está pendiente de exportar se publica mientras tanto como enlace: esos van a NotebookLM y te pedirán una cuenta de Google. Cada apartado dice de cuál se trata."
+    "text": "Todo lo que hay en esta página está generado, no escrito. Lo produjo NotebookLM a partir del manual y los cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola frase. Úsalo como una segunda pasada sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el manual, nunca al revés. Generado el 2026-09-07.\nEl taller se apoya en una promesa: datos reales y números que puedes reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la línea está. Existe porque una explicación distinta del mismo material es realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir, un cuestionario en el tren de vuelta—, no porque sustituya a nada.\nCuando un artefacto se puede exportar, se exporta, y se sirve desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar en absoluto, y algunos de los que sí se pueden son, hasta que se exporten, enlaces a NotebookLM. Ambos casos te pedirán una cuenta de Google. Cada apartado dice de cuál de los tres se trata."
   },
   {
     "objectID": "es/companion.html#video",
@@ -802,7 +802,7 @@
     "href": "es/companion.html#notebooklm",
     "title": "El complemento generado por máquina",
     "section": "En NotebookLM",
-    "text": "En NotebookLM\nAbrir el cuaderno para ver las fuentes con las que se generó cada artefacto de arriba, hacerle tus propias preguntas o generar otra cosa a partir de él.\nLa infografía de panorama general que cita la lista de lecturas del manual es la primera de las dos de arriba, y está aquí por separado.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
+    "text": "En NotebookLM\nAbrir el cuaderno para ver las fuentes con las que se generó cada artefacto de arriba, hacerle tus propias preguntas o generar otra cosa a partir de él.\nLa infografía de panorama general está en la galería de arriba, y también aquí por separado.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
   },
   {
     "objectID": "slides/es/index.html#section",
