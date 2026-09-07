@@ -48,24 +48,17 @@ were written for this workshop. These two are generated, unlimited and for
 your own use afterwards.
 
 **Both open in NotebookLM and need a Google account** — quizzes and flashcards
-are the artifacts NotebookLM does not let you export.
+are the artifacts NotebookLM does not let you export. The pictures below are
+screenshots, served from this site, so you can see what is behind each link
+before you spend an account on it.
 
-| | What it is | When you use it |
-|---|---|---|
-| **[{{< var companion.quiz.title_en >}}]({{< var companion.quiz.url_en >}})** | Generated multiple-choice questions over the whole workshop, as many as you want. | After the session, to find out which sections did not stick. |
-| **[{{< var companion.flashcards.title_en >}}]({{< var companion.flashcards.url_en >}})** | Term on one side, definition on the other — the vocabulary the workshop defines as it goes. | Spaced repetition, in the weeks after. |
-
-: {tbl-colwidths="[22,48,30]"}
+{{< include _includes/companion-selfcheck-en.md >}}
 
 ## The map {#map}
 
-**[{{< var companion.mindmap.title_en >}}]({{< var companion.mindmap.url_en >}})** —
-how the thirteen sections hang off each other, on one screen. Interactive
-inside NotebookLM only, so this is a link and it needs an account.
+Interactive inside NotebookLM only, so this one is a link too.
 
-It is worth one look early: the workshop is deliberately a ladder, and seeing
-the whole ladder before you start climbing makes the middle rungs less
-arbitrary.
+{{< include _includes/companion-map-en.md >}}
 
 ## In NotebookLM {#notebooklm}
 

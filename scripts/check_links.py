@@ -631,6 +631,18 @@ def check_companion() -> None:
         for kind in ("video", "audio"):
             if not c[kind].get(f"minutes_{lang}"):
                 pending.append(f"{kind}.minutes_{lang}")
+    # The screenshots. An artifact with no `thumb` still renders -- as a card
+    # or a link with no picture -- so this is a TODO like the rest; an artifact
+    # *with* one and no alt text is different in kind, and gets said so,
+    # because the generator quietly falls back to the title and a screen
+    # reader is then told "Mind map" about a picture of thirteen boxes.
+    for name in ("video", "audio", "quiz", "flashcards", "mindmap"):
+        if not c[name].get("thumb"):
+            pending.append(f"{name}.thumb")
+            continue
+        for lang in ("en", "es"):
+            if not c[name].get(f"thumb_alt_{lang}"):
+                pending.append(f"{name}.thumb_alt_{lang} (has a thumb)")
     if not c.get("infographics"):
         pending.append("infographics")
     else:

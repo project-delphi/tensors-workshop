@@ -26,6 +26,8 @@ Outputs (all overwritten, none hand-edited):
     _includes/companion-audio-en.md          _includes/companion-audio-es.md
     _includes/companion-infographics-en.md
     _includes/companion-infographics-es.md
+    _includes/companion-selfcheck-en.md      _includes/companion-selfcheck-es.md
+    _includes/companion-map-en.md            _includes/companion-map-es.md
     _includes/references-en.md    _includes/references-es.md
 """
 from __future__ import annotations
@@ -277,7 +279,27 @@ def readme_table(lang: str) -> str:
 FENCE = "```"
 
 
-def video_block(lang: str) -> str:
+def poster(prefix: str, thumb: str, alt: str, url: str, where: str) -> str:
+    """A committed screenshot, linked to the artifact it is a picture of.
+
+    The shape every unexportable artifact on this page ends up in: NotebookLM
+    will not give us the thing itself, so what the site serves is a PNG of it
+    and a link through to the real one. The image is ours -- no account, no
+    third party, and it still shows something if the notebook is later
+    deleted -- and the click is theirs.
+
+    `where` names the field for the error message: an alt with a double quote
+    in it would end the `{fig-alt="…"}` attribute early and truncate itself,
+    silently, the same trap infographics_gallery() guards.
+    """
+    if '"' in alt:
+        sys.exit(f"companion.{where}: thumb_alt contains a double quote; "
+                 f"use typographic quotes")
+    return f'[![]({prefix}{thumb}){{fig-alt="{alt}"}}]({url})'
+
+
+
+def video_block(lang: str, prefix: str) -> str:
     """The companion's Video Overview, as a raw-HTML embed.
 
     Generated rather than written into the two pages with a `{{< var >}}`,
@@ -290,6 +312,11 @@ def video_block(lang: str) -> str:
     Three states, in order of preference: the YouTube embed, which needs no
     account; failing that a direct link to the artifact in NotebookLM, which
     plays but asks for one; failing both, the note that there is nothing yet.
+
+    In that middle state a `thumb` -- a poster frame committed under images/ --
+    turns the link into something that looks like a video. The embed does not
+    use it: YouTube ships its own poster, and a second one underneath would
+    only be a thing to get out of date.
     """
     v = COMPANION["video"]
     vid = v.get(f"youtube_id_{lang}") or ""
@@ -298,7 +325,14 @@ def video_block(lang: str) -> str:
         url = v.get(f"url_{lang}") or ""
         if url:
             mins = v.get(f"minutes_{lang}") or 0
-            return {
+            thumb = v.get("thumb") or ""
+            head = ""
+            if thumb:
+                alt = v.get(f"thumb_alt_{lang}") or title
+                head = ("::: {.poster-frame}\n"
+                        + poster(prefix, thumb, alt, url, "video")
+                        + "\n:::\n\n")
+            return head + {
                 "en": (f"**[{title}]({url})** — "
                        + (f"{mins} minutes. " if mins else "")
                        + "It has not been re-uploaded to YouTube yet, so this "
@@ -348,7 +382,38 @@ def audio_block(lang: str, prefix: str) -> str:
     """
     a = COMPANION["audio"]
     f = a.get(f"file_{lang}") or ""
+    title = a[f"title_{lang}"]
+    mins = a.get(f"minutes_{lang}") or 0
+    thumb = a.get("thumb") or ""
+    alt = a.get(f"thumb_alt_{lang}") or title
+    if thumb and '"' in alt:
+        sys.exit("companion.audio: thumb_alt contains a double quote; "
+                 "use typographic quotes")
     if not f:
+        url = a.get(f"url_{lang}") or ""
+        if url:
+            # The middle state, matching the video's: the artifact plays in
+            # NotebookLM today and costs a Google account, and the cover is
+            # ours and costs nothing.
+            head = ("::: {.poster-frame .poster-audio}\n"
+                    + poster(prefix, thumb, alt, url, "audio")
+                    + "\n:::\n\n") if thumb else ""
+            return head + {
+                "en": (f"**[{title}]({url})** — "
+                       + (f"{mins} minutes. " if mins else "")
+                       + "It has not been exported yet, so this one plays "
+                         "inside NotebookLM and will ask you for a Google "
+                         "account. Once the file is downloaded and committed "
+                         "it will play here instead, with no account and no "
+                         "third party.\n"),
+                "es": (f"**[{title}]({url})** — "
+                       + (f"{mins} minutos. " if mins else "")
+                       + "Todavía no se ha exportado, así que este se "
+                         "reproduce dentro de NotebookLM y te pedirá una "
+                         "cuenta de Google. Cuando el archivo esté descargado "
+                         "y guardado aquí sonará en esta misma página, sin "
+                         "cuenta y sin terceros.\n"),
+            }[lang]
         return {
             "en": "*Not exported yet.* NotebookLM's Audio Overview downloads "
                   "as a file, so when it lands it will play right here, with "
@@ -357,10 +422,13 @@ def audio_block(lang: str, prefix: str) -> str:
                   "se descarga como archivo, así que cuando esté sonará aquí "
                   "mismo, sin cuenta y sin terceros.\n",
         }[lang]
-    mins = a.get(f"minutes_{lang}") or 0
     meta = ({"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
             if mins else "")
-    return (
+    # With the file committed there is nothing left to link to, so the cover
+    # art is a plain image: the player below it is the thing to click.
+    cover = (f'![]({prefix}{thumb}){{.audio-cover fig-alt="{alt}"}}\n\n'
+             if thumb else "")
+    return cover + (
         f"{FENCE}{{=html}}\n"
         f'<audio class="companion-audio" controls preload="none"\n'
         f'       src="{prefix}{f}"></audio>\n'
@@ -453,6 +521,78 @@ def infographics_gallery(lang: str, prefix: str) -> str:
                        "NotebookLM y te pedirán una cuenta de Google:"}[lang],
                 ""]
         out += [f"- [{i[title_key]}]({i['url']})" for i in linked]
+    return "\n".join(out) + "\n"
+
+
+# What each link-only artifact is, and when a student would reach for it.
+# It lives here rather than in the two .qmd pages for the reason every other
+# table on this site does: written twice, EN and ES come to say different
+# things about the same artifact, and nothing would catch it.
+LINK_COPY = {
+    "quiz": {
+        "en": ("Generated multiple-choice questions over the whole workshop, "
+               "as many as you want.",
+               "After the session, to find out which sections did not stick."),
+        "es": ("Preguntas de opción múltiple generadas sobre todo el taller, "
+               "tantas como quieras.",
+               "Después de la sesión, para descubrir qué secciones no se te "
+               "quedaron."),
+    },
+    "flashcards": {
+        "en": ("Term on one side, definition on the other — the vocabulary "
+               "the workshop defines as it goes.",
+               "Spaced repetition, in the weeks after."),
+        "es": ("El término por un lado y la definición por el otro: el "
+               "vocabulario que el taller va definiendo sobre la marcha.",
+               "Repetición espaciada, en las semanas siguientes."),
+    },
+    "mindmap": {
+        "en": ("How the thirteen sections hang off each other, on one screen.",
+               "Once, early: seeing the whole ladder before you climb it "
+               "makes the middle rungs less arbitrary."),
+        "es": ("Cómo se sostienen unas en otras las trece secciones, en una "
+               "sola pantalla.",
+               "Una vez, pronto: ver la escalera entera antes de subirla hace "
+               "que los peldaños del medio parezcan menos arbitrarios."),
+    },
+}
+
+# Said under every screenshot of an artifact that cannot be exported. The
+# picture is a still of something live, and a page that lets a reader think
+# otherwise has mis-sold the click.
+SHOT_NOTE = {
+    "en": "Screenshot — the real one is interactive, in NotebookLM.",
+    "es": "Captura de pantalla; el de verdad es interactivo, en NotebookLM.",
+}
+
+
+def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
+    """The quiz, the flashcards and the mind map, as `.info-card`s.
+
+    These three are the artifacts NotebookLM does not let you export at all,
+    so unlike the infographics there will never be a file to serve: the card
+    is a committed screenshot linked through to the live artifact, and the
+    caption says which of the two you are looking at.
+
+    A card without a `thumb` is still a card -- title, what it is, when to use
+    it -- because the copy is the half that does not depend on the export. It
+    just has no picture yet.
+    """
+    out = ["::: {.info-strip}"]
+    for name in names:
+        a = COMPANION[name]
+        title, url = a[f"title_{lang}"], a[f"url_{lang}"]
+        what, when = LINK_COPY[name][lang]
+        thumb = a.get("thumb") or ""
+        out.append("::: {.info-card}")
+        if thumb:
+            alt = a.get(f"thumb_alt_{lang}") or title
+            out += [poster(prefix, thumb, alt, url, name), ""]
+        out += [f"**[{title}]({url})**<br>{what}<br>*{when}*"]
+        if thumb:
+            out.append(f"<br>[{SHOT_NOTE[lang]}]{{.shot-note}}")
+        out.append(":::")
+    out.append(":::")
     return "\n".join(out) + "\n"
 
 
@@ -574,14 +714,22 @@ def main() -> int:
             "readme-sections-es.md": BANNER + readme_table("es"),
             "extras-en.md": BANNER + extras_readme_table("en"),
             "extras-es.md": BANNER + extras_readme_table("es"),
-            "companion-video-en.md": BANNER + video_block("en"),
-            "companion-video-es.md": BANNER + video_block("es"),
+            "companion-video-en.md": BANNER + video_block("en", ""),
+            "companion-video-es.md": BANNER + video_block("es", "../"),
             "companion-audio-en.md": BANNER + audio_block("en", ""),
             "companion-audio-es.md": BANNER + audio_block("es", "../"),
             "companion-infographics-en.md":
                 BANNER + infographics_gallery("en", ""),
             "companion-infographics-es.md":
                 BANNER + infographics_gallery("es", "../"),
+            "companion-selfcheck-en.md":
+                BANNER + link_cards("en", "", ("quiz", "flashcards")),
+            "companion-selfcheck-es.md":
+                BANNER + link_cards("es", "../", ("quiz", "flashcards")),
+            "companion-map-en.md":
+                BANNER + link_cards("en", "", ("mindmap",)),
+            "companion-map-es.md":
+                BANNER + link_cards("es", "../", ("mindmap",)),
             "references-en.md": BANNER + references_list("en"),
             "references-es.md": BANNER + references_list("es"),
         }
