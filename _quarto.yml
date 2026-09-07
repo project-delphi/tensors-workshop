@@ -48,6 +48,14 @@ website:
     # English only, and keep their English labels on the Spanish navbar on
     # purpose: the label's language is what tells you the page's language, and
     # a Spanish label leading to an English page is the worse surprise.
+    #
+    # Being untagged does a second job. Those three pages are `lang: en`, so
+    # they show an English navbar, which would strand a Spanish reader who
+    # opened one — the ES chip only goes back to the Spanish homepage. The
+    # `Español` dropdown at the end is their way across, and it shows on
+    # exactly those three pages because they are the only ones whose own
+    # navbar item carries no language for `custom.scss` to match `.active`
+    # against. Tagging one of them would take that away.
     left:
       - href: index.qmd
         text: Home
@@ -79,6 +87,21 @@ website:
       - href: es/companion.qmd
         text: Complemento
         rel: lang-es
+      # Visible only on the three English-only pages above -- see
+      # `custom.scss`. It is deliberately the whole Spanish side rather than a
+      # single link home, so a Spanish reader reading the Handbook reaches
+      # `Complemento` in one click, the way they could before the navbar
+      # started following the page's language.
+      - text: "Español"
+        menu:
+          - href: es/index.qmd
+            text: Inicio
+          - href: es/references.qmd
+            text: Referencias
+          - href: slides/es/index.qmd
+            text: Diapositivas
+          - href: es/companion.qmd
+            text: Complemento
     right:
       # Both always visible -- this is the control that switches the rest of
       # the navbar. `lang-switch-*` marks them so the current language can be
