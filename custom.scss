@@ -65,16 +65,41 @@ tr.kahoot-row td {
 // Placeholder Kahoot URLs are meant to be conspicuous until they are replaced.
 code.todo, .todo > code { color: $kahoot-accent; font-weight: 600; }
 
-// Language switcher. The two right-hand nav items are the EN/ES pair; boxing
-// them separates them from the section links, and Quarto's own `.active` class
-// marks whichever language you are currently reading.
-.navbar-nav.navbar-nav-scroll ~ .navbar-nav .nav-link,
-.navbar .navbar-nav:last-of-type .nav-link {
-  &[href$="index.html"], &[href="./"], &[href="../"] {
-    letter-spacing: .06em;
-    font-size: .82rem;
-  }
+// ─── one navbar, two languages ──────────────────────────────────────────────
+// Quarto has a single global navbar, so `_quarto.yml` lists both languages'
+// items and tags each one `rel="lang-en"` or `rel="lang-es"` (`rel` is the
+// only attribute Quarto passes through to the anchor). What decides which
+// half a reader sees is the page's own `html lang`, which Quarto writes from
+// its `lang:` — so the navbar follows the EN/ES switch with no script.
+//
+// Only hiding is expressed, never un-hiding: every Quarto page carries an
+// explicit `lang`, and a page that somehow carried none would fall back to
+// showing both halves, which is what this navbar did before. `|=` so a
+// regional tag like `es-419` still matches.
+//
+// Two rules per language. `:has()` drops the whole `<li>`, leaving no gap
+// behind it; hiding the `.nav-link` is what still holds in a browser without
+// `:has()`, which drops that rule alone and at worst leaves an empty slot.
+html[lang|="en"] .navbar-nav {
+  .nav-item:has(> .nav-link[rel="lang-es"]) { display: none; }
+  .nav-link[rel="lang-es"] { display: none; }
 }
+html[lang|="es"] .navbar-nav {
+  .nav-item:has(> .nav-link[rel="lang-en"]) { display: none; }
+  .nav-link[rel="lang-en"] { display: none; }
+}
+
+// The EN/ES pair itself, which is the control for all of the above and so is
+// the one thing that shows in both languages. Small caps-ish spacing sets it
+// apart from the section links, and the language you are reading is marked —
+// by `lang`, not by Quarto's `.active`, which only matches on the two
+// homepages the pair happens to point at.
+.navbar-nav .nav-link[rel^="lang-switch-"] {
+  letter-spacing: .06em;
+  font-size: .82rem;
+}
+html[lang|="en"] .navbar-nav .nav-link[rel="lang-switch-en"],
+html[lang|="es"] .navbar-nav .nav-link[rel="lang-switch-es"],
 .navbar .nav-link.active {
   font-weight: 700;
   text-decoration: underline;

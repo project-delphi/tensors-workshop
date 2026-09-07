@@ -34,9 +34,27 @@ website:
   navbar:
     background: primary
     search: true
+    # One navbar, two languages. Quarto has a single global navbar, so both
+    # halves live here and each item that exists in two languages carries a
+    # `rel` saying which one it belongs to -- `rel` is the only attribute
+    # Quarto passes through to the anchor, and an unknown `rel` value is inert
+    # in every browser. `custom.scss` then shows the half that matches the
+    # page's own `html lang`, which Quarto sets from each page's `lang:`.
+    # So a reader on a Spanish page sees a Spanish navbar, and the EN/ES
+    # switch at the right does the switching -- rather than every destination
+    # appearing twice on every page, which is what this navbar used to do.
+    #
+    # The three items with no `rel` -- Handbook, Notebooks, Kahoot -- exist in
+    # English only, and keep their English labels on the Spanish navbar on
+    # purpose: the label's language is what tells you the page's language, and
+    # a Spanish label leading to an English page is the worse surprise.
     left:
       - href: index.qmd
         text: Home
+        rel: lang-en
+      - href: es/index.qmd
+        text: Inicio
+        rel: lang-es
       - href: tensors_workshop_plan_with_quizzes.md
         text: Handbook
       - href: notebooks.qmd
@@ -45,25 +63,34 @@ website:
         text: Kahoot
       - href: references.qmd
         text: References
-      # Slides and the companion each exist in two languages. These were two
-      # dropdowns; they are eight-plus characters of flat navbar instead,
-      # because a dropdown hides the Spanish half behind a click on a site
-      # whose whole point is that both halves are equal. Each is labelled in
-      # its own language, so the pairs read as four destinations rather than
-      # as two words printed twice.
+        rel: lang-en
+      - href: es/references.qmd
+        text: Referencias
+        rel: lang-es
       - href: slides/en/index.qmd
         text: Slides
+        rel: lang-en
       - href: slides/es/index.qmd
         text: Diapositivas
+        rel: lang-es
       - href: companion.qmd
         text: Companion
+        rel: lang-en
       - href: es/companion.qmd
         text: Complemento
+        rel: lang-es
     right:
+      # Both always visible -- this is the control that switches the rest of
+      # the navbar. `lang-switch-*` marks them so the current language can be
+      # shown as the active one; each goes to the other language's homepage,
+      # not to a translation of the current page (only three pages have one,
+      # and each of those carries its own in-page link to its counterpart).
       - text: "EN"
         href: index.qmd
+        rel: lang-switch-en
       - text: "ES"
         href: es/index.qmd
+        rel: lang-switch-es
       - icon: github
         href: https://github.com/project-delphi/tensors-workshop
         aria-label: "Source on GitHub"
