@@ -292,10 +292,21 @@ def poster(prefix: str, thumb: str, alt: str, url: str, where: str) -> str:
     in it would end the `{fig-alt="…"}` attribute early and truncate itself,
     silently, the same trap infographics_gallery() guards.
     """
+    return f'[{image(prefix, thumb, alt, where)}]({url})'
+
+
+def image(prefix: str, thumb: str, alt: str, where: str, cls: str = "") -> str:
+    """A committed screenshot with its alt text, and the guard on that text.
+
+    Every `{fig-alt="…"}` on this page is built here, so the double-quote
+    check happens once: a bare quote in the alt ends the attribute early and
+    truncates it with nothing to show for it, and a second copy of the guard
+    is a second message to keep in step with the first.
+    """
     if '"' in alt:
         sys.exit(f"companion.{where}: thumb_alt contains a double quote; "
                  f"use typographic quotes")
-    return f'[![]({prefix}{thumb}){{fig-alt="{alt}"}}]({url})'
+    return f'![]({prefix}{thumb}){{{cls + " " if cls else ""}fig-alt="{alt}"}}'
 
 
 
@@ -386,16 +397,13 @@ def audio_block(lang: str, prefix: str) -> str:
     mins = a.get(f"minutes_{lang}") or 0
     thumb = a.get("thumb") or ""
     alt = a.get(f"thumb_alt_{lang}") or title
-    if thumb and '"' in alt:
-        sys.exit("companion.audio: thumb_alt contains a double quote; "
-                 "use typographic quotes")
     if not f:
         url = a.get(f"url_{lang}") or ""
         if url:
             # The middle state, matching the video's: the artifact plays in
             # NotebookLM today and costs a Google account, and the cover is
             # ours and costs nothing.
-            head = ("::: {.poster-frame .poster-audio}\n"
+            head = ("::: {.poster-frame}\n"
                     + poster(prefix, thumb, alt, url, "audio")
                     + "\n:::\n\n") if thumb else ""
             return head + {
@@ -426,7 +434,7 @@ def audio_block(lang: str, prefix: str) -> str:
             if mins else "")
     # With the file committed there is nothing left to link to, so the cover
     # art is a plain image: the player below it is the thing to click.
-    cover = (f'![]({prefix}{thumb}){{.audio-cover fig-alt="{alt}"}}\n\n'
+    cover = (image(prefix, thumb, alt, "audio", ".audio-cover") + "\n\n"
              if thumb else "")
     return cover + (
         f"{FENCE}{{=html}}\n"
@@ -565,6 +573,28 @@ SHOT_NOTE = {
     "es": "Captura de pantalla; el de verdad es interactivo, en NotebookLM.",
 }
 
+# The invitation to look before you click. It belongs here, above the cards it
+# describes, rather than in the two .qmd pages -- with no thumb exported there
+# are no pictures, and a page promising some is the small lie that makes the
+# big warning at the top of it less believable. Exactly the reason
+# infographics_gallery() keeps its own "click one to open it full size" behind
+# `if exported`.
+SHOT_INTRO = {
+    "en": "The pictures are screenshots, served from this site, so you can "
+          "see what is behind each link before you spend an account on it.",
+    "es": "Las imágenes son capturas de pantalla, servidas desde este sitio, "
+          "para que veas qué hay detrás de cada enlace antes de gastar una "
+          "cuenta en él.",
+}
+
+# Carried on the card itself rather than only in the prose above it. Every
+# heading on this page is a linked anchor, so a reader can arrive at `#map`
+# with none of the page's earlier warnings behind them.
+ACCOUNT_NOTE = {
+    "en": "Opens in NotebookLM; needs a Google account.",
+    "es": "Se abre en NotebookLM; pide una cuenta de Google.",
+}
+
 
 def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
     """The quiz, the flashcards and the mind map, as `.info-card`s.
@@ -576,11 +606,15 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
 
     A card without a `thumb` is still a card -- title, what it is, when to use
     it -- because the copy is the half that does not depend on the export. It
-    just has no picture yet.
+    just has no picture yet, and the sentence promising pictures stays off the
+    page until one of them has one.
     """
-    out = ["::: {.info-strip}"]
-    for name in names:
-        a = COMPANION[name]
+    cards = [COMPANION[name] for name in names]
+    out = []
+    if any(c.get("thumb") for c in cards):
+        out += [SHOT_INTRO[lang], ""]
+    out.append("::: {.info-strip}")
+    for name, a in zip(names, cards):
         title, url = a[f"title_{lang}"], a[f"url_{lang}"]
         what, when = LINK_COPY[name][lang]
         thumb = a.get("thumb") or ""
@@ -588,9 +622,10 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
         if thumb:
             alt = a.get(f"thumb_alt_{lang}") or title
             out += [poster(prefix, thumb, alt, url, name), ""]
-        out += [f"**[{title}]({url})**<br>{what}<br>*{when}*"]
-        if thumb:
-            out.append(f"<br>[{SHOT_NOTE[lang]}]{{.shot-note}}")
+        out += [f"**[{title}]({url})**<br>{what}<br>*{when}*",
+                f"<br>[{ACCOUNT_NOTE[lang]}"
+                + (f" {SHOT_NOTE[lang]}" if thumb else "")
+                + "]{.shot-note}"]
         out.append(":::")
     out.append(":::")
     return "\n".join(out) + "\n"

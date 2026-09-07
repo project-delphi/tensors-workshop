@@ -2,5 +2,6 @@
 ::: {.info-strip}
 ::: {.info-card}
 **[Mind map](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87)**<br>How the thirteen sections hang off each other, on one screen.<br>*Once, early: seeing the whole ladder before you climb it makes the middle rungs less arbitrary.*
+<br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
 :::
 :::

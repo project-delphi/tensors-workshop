@@ -48,15 +48,14 @@ were written for this workshop. These two are generated, unlimited and for
 your own use afterwards.
 
 **Both open in NotebookLM and need a Google account** — quizzes and flashcards
-are the artifacts NotebookLM does not let you export. The pictures below are
-screenshots, served from this site, so you can see what is behind each link
-before you spend an account on it.
+are the artifacts NotebookLM does not let you export.
 
 {{< include _includes/companion-selfcheck-en.md >}}
 
 ## The map {#map}
 
-Interactive inside NotebookLM only, so this one is a link too.
+Interactive inside NotebookLM only, so this one is a link and it needs
+an account.
 
 {{< include _includes/companion-map-en.md >}}
 

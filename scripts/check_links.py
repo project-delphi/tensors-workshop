@@ -637,6 +637,13 @@ def check_companion() -> None:
     # because the generator quietly falls back to the title and a screen
     # reader is then told "Mind map" about a picture of thirteen boxes.
     for name in ("video", "audio", "quiz", "flashcards", "mindmap"):
+        # The video is the one artifact whose poster has an expiry: once a
+        # YouTube id lands in both languages the embed carries its own, and
+        # video_block() stops reading `thumb` entirely. Asking for it then
+        # would be asking for a PNG that changes nothing on the page.
+        if name == "video" and all(c["video"].get(f"youtube_id_{la}")
+                                   for la in ("en", "es")):
+            continue
         if not c[name].get("thumb"):
             pending.append(f"{name}.thumb")
             continue

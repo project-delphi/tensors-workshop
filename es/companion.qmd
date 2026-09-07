@@ -52,15 +52,14 @@ tienen límite y son para ti, después.
 
 **Los dos se abren en NotebookLM y piden una cuenta de Google**: los
 cuestionarios y las tarjetas son los artefactos que NotebookLM no deja
-exportar. Las imágenes de abajo son capturas de pantalla, servidas desde este
-sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta
-en él.
+exportar.
 
 {{< include ../_includes/companion-selfcheck-es.md >}}
 
 ## El mapa {#map}
 
-Solo es interactivo dentro de NotebookLM, así que este también es un enlace.
+Solo es interactivo dentro de NotebookLM, así que este también es un enlace
+y pide cuenta.
 
 {{< include ../_includes/companion-map-es.md >}}
 

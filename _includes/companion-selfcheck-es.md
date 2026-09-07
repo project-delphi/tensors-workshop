@@ -2,8 +2,10 @@
 ::: {.info-strip}
 ::: {.info-card}
 **[Cuestionario de autoevaluación](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)**<br>Preguntas de opción múltiple generadas sobre todo el taller, tantas como quieras.<br>*Después de la sesión, para descubrir qué secciones no se te quedaron.*
+<br>[Se abre en NotebookLM; pide una cuenta de Google.]{.shot-note}
 :::
 ::: {.info-card}
 **[Tarjetas de memoria](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)**<br>El término por un lado y la definición por el otro: el vocabulario que el taller va definiendo sobre la marcha.<br>*Repetición espaciada, en las semanas siguientes.*
+<br>[Se abre en NotebookLM; pide una cuenta de Google.]{.shot-note}
 :::
 :::

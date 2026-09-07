@@ -314,6 +314,10 @@ main p:has(> img:only-child) + p > em:only-child {
   position: relative;
   max-width: 46rem;
   margin: 1.4rem 0 1rem;
+  // Quarto wraps the linked image in a <p>, which keeps Bootstrap's bottom
+  // margin: without this the frame is taller than the picture and the badge
+  // below centres itself on the box rather than on the image.
+  p { margin: 0; }
   a { display: block; line-height: 0; }
   img {
     width: 100%;
@@ -360,7 +364,11 @@ main p:has(> img:only-child) + p > em:only-child {
 // Said under every screenshot of an unexportable artifact. Small, grey, and
 // always present: the page is a still of a live thing, and the caption is
 // what keeps that from being a quiet lie.
-.shot-note { color: #94a3b8; font-size: .78rem; }
+// #64748b, the secondary grey used everywhere else in this file, rather than
+// anything lighter: it clears WCAG AA against the page, and a caption whose
+// whole job is to stop a screenshot passing for the real thing cannot be the
+// least legible text on the card.
+.shot-note { color: #64748b; font-size: .78rem; }
 
 // The infographic gallery. Deliberately NOT `.app-card`: that one crops to
 // `aspect-ratio: 20/13` with `object-fit: cover`, which is right for the
