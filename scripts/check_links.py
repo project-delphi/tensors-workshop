@@ -660,6 +660,25 @@ def check_companion() -> None:
         for lang in ("en", "es"):
             if not c[name].get(f"thumb_alt_{lang}"):
                 pending.append(f"{name}.thumb_alt_{lang} (has a thumb)")
+    # The shorts. `covers` is a hand-made reading of each title, so what can be
+    # checked is only that it names a section that exists -- a typo, or a
+    # section renumbered out from under it. A wrong-but-real number is beyond
+    # this check and always will be.
+    known = {s["n"] for s in SECTIONS}
+    for n, s in enumerate(c.get("shorts") or [], 1):
+        missing = [k for k in ("url", "title_en", "title_es", "length",
+                               "lang", "covers") if not s.get(k)]
+        if missing:
+            fail(f"companion.shorts[{n}] ({s.get('title_en') or 'untitled'}): "
+                 f"missing {', '.join(missing)}")
+        elif s["covers"] not in known:
+            fail(f"companion.shorts[{n}] ({s['title_en']}): covers "
+                 f"{s['covers']!r}, which is not a section")
+        elif s["lang"] not in ("en", "es"):
+            fail(f"companion.shorts[{n}] ({s['title_en']}): lang "
+                 f"{s['lang']!r} is neither en nor es")
+    if not c.get("shorts"):
+        pending.append("shorts")
     if not c.get("infographics"):
         pending.append("infographics")
     else:

@@ -21,6 +21,12 @@ cuenta de Google. Cada tarjeta dice de cuál se trata.
 
 {{< include ../_includes/companion-video-es.md >}}
 
+## Vídeos de un minuto {#shorts}
+
+Ocho, cada uno sobre una sola idea y ligado a la sección a la que pertenece.
+
+{{< include ../_includes/companion-shorts-es.md >}}
+
 ## Infografías {#infographics}
 
 {{< include ../_includes/companion-infographics-es.md >}}

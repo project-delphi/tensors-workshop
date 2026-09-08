@@ -32,7 +32,7 @@ text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (both notebook tables, the agenda both decks show, the companion's video, audio, infographic, self-check and mind-map blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
+| `_includes/*.md` (both notebook tables, the agenda both decks show, the companion's video, shorts, audio, infographic, self-check and mind-map blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
 | The marker-delimited table regions inside `README.md`, `notebooks/README.md` and each language's handbook schedule — the rest of all four files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
@@ -85,10 +85,22 @@ date. Re-export an asset and update `exported`, or the provenance is a lie.
 `notebooks/*.ipynb` is — nothing renders it, so without that line it never
 reaches `docs/`.
 
-The three link-only artifacts — quiz, flashcards, mind map — cannot be exported
-at all, and only work while the notebook is shared as "anyone with the link".
-They are the only things on the site that ask a visitor for a Google account,
-and both companion pages say so where they appear.
+Every artifact in that notebook has an `/artifact/<uuid>` URL, the quiz and
+flashcards and Audio Overview included — the Studio row's ⋮ menu hides Copy link
+for those three, which is what made them look unshareable. What none of them
+has is an export, so they only work while the notebook is shared as "anyone
+with the link", and they are the only things on the site that ask a visitor for
+a Google account. Both companion pages say so on every card.
+
+`companion.shorts:` is the eight one-minute video overviews, kept apart from
+`video:` because that one is *the* overview — the one both landing pages embed
+and the one a YouTube id is waiting on. Each short carries a `covers` naming the
+section it lines up with, and that is **a hand-made reading of the title**:
+nothing in NotebookLM knows this workshop has sections. Check 12 verifies the
+number names a section that exists, which catches a typo and cannot catch a bad
+call. Each also carries `lang`, the language the video is actually in — seven
+English and one Spanish — and `gen_tables.py` marks any card whose language is
+not the page's, so a reader is told before the click.
 
 What stands in for the export is a **screenshot**: `thumb:` on each of those
 three, and on `video:` and `audio:` while they are still NotebookLM links,

@@ -171,13 +171,13 @@ companion:
     title_es: "Resumen en audio"
     file_en: ""                       # TODO: e.g. media/companion-overview-en.mp3
     file_es: ""                       # TODO: e.g. media/companion-overview-es.mp3
-    minutes_en: 0                     # TODO
+    minutes_en: 2                     # 1:36 in NotebookLM
     minutes_es: 0                     # TODO
     # The same three-state ladder the video uses, for the same reason: the
     # committed file is the endpoint, and until it exists the artifact's own
     # NotebookLM link is a real thing to click rather than a note saying there
     # is nothing. `file_*` wins over `url_*` whenever both are set.
-    url_en: ""                        # TODO: the EN audio artifact in NotebookLM
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/73a2479d-d5de-4884-b5e8-0c3635231634"
     url_es: ""                        # TODO: the ES audio artifact, if generated
     thumb: ""                         # TODO: e.g. images/companion-audio.png
     thumb_alt_en: ""
@@ -185,16 +185,19 @@ companion:
 
   # Link-only artifacts. Leave at default_url until the real share link exists.
   #
-  # Checked in the NotebookLM UI on 2026-09-07, signed in, and the split is not
-  # the one you would guess. An artifact page with a **Copy link** button has a
-  # `/artifact/<uuid>` URL of its own: the infographics, the video overviews and
-  # the **mind map** all do. The quiz, the flashcards and the **Audio Overview**
-  # open only inside the notebook's Studio panel — no Copy link, no download,
-  # no URL of their own. So `mindmap.url_*` below is real, `quiz.url_*` and
-  # `flashcards.url_*` are the notebook's own front door standing in, and
-  # `audio.url_*` above has nothing to point at either. gen_tables.py says so on
-  # any card still sitting at `default_url`, because a card headed "Self-check
-  # quiz" that lands you on a notebook has mis-sold the click.
+  # Checked signed in on 2026-09-07: **every** artifact in this notebook has a
+  # `/artifact/<uuid>` URL, the quiz and the flashcards and the Audio Overview
+  # included. The Studio row's ⋮ menu offers only "View prompt and sources" for
+  # those three, which makes them look unshareable from the notebook side —
+  # but open the artifact page itself and there is a Copy link button on it
+  # like any other. The ids below were read out of the Studio DOM and each was
+  # then confirmed against its own page's og:title and og:image kind, so a
+  # wrong id would have shown up as the wrong artifact rather than as a link
+  # that merely happens to load.
+  #
+  # gen_tables.py still marks any card left sitting at `default_url`, because a
+  # card headed "Self-check quiz" that lands you on a notebook has mis-sold the
+  # click. Nothing here should need that any more.
   #
   # None of the three can be exported, so what a visitor gets here is a link
   # into NotebookLM and a Google sign-in. `thumb` is what makes that link
@@ -211,16 +214,16 @@ companion:
   quiz:
     title_en: "Self-check quiz"
     title_es: "Cuestionario de autoevaluación"
-    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
-    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/72379ae0-b758-4fa9-b203-b68ed934b59a"
+    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/72379ae0-b758-4fa9-b203-b68ed934b59a"
     thumb: "images/companion-quiz.png"
     thumb_alt_en: "The first of the quiz's twenty-six questions, as NotebookLM shows it: how an order-3 tensor is distinguished from a matrix, with four answers lettered A to D and a Hint button beside Next."
     thumb_alt_es: "La primera de las veintiséis preguntas del cuestionario, tal como la muestra NotebookLM: cómo se distingue un tensor de orden 3 de una matriz, con cuatro respuestas de la A a la D y un botón de pista junto a Siguiente."
   flashcards:
     title_en: "Flashcards"
     title_es: "Tarjetas de memoria"
-    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
-    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
+    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b4168432-9dda-4495-adb9-36f5b0277a03"
+    url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b4168432-9dda-4495-adb9-36f5b0277a03"
     thumb: "images/companion-flashcards.png"
     thumb_alt_en: "Card one of sixty, face up: what is the geometric interpretation of a vector in linear algebra, with a See answer prompt underneath and the got-it and missed-it counters below the card."
     thumb_alt_es: "La primera de sesenta tarjetas, por la cara delantera: cuál es la interpretación geométrica de un vector en álgebra lineal, con la indicación Ver respuesta debajo y los contadores de acertadas y falladas bajo la tarjeta."
@@ -234,6 +237,71 @@ companion:
     thumb: "images/companion-mindmap.png"
     thumb_alt_en: "The mind map collapsed to its top level: a node reading Tensors for Machine Learning Workshop, with five branches curving off it — Defining Tensors, Practical Data Storage, Axis Manipulation, Solving and Factorizing, and Computational Implementation — each with an arrow that opens it further."
     thumb_alt_es: "El mapa mental plegado a su primer nivel: un nodo que dice Tensors for Machine Learning Workshop, del que salen cinco ramas — Defining Tensors, Practical Data Storage, Axis Manipulation, Solving and Factorizing y Computational Implementation — cada una con una flecha que la despliega."
+
+  # ── The shorts ──────────────────────────────────────────────────────────────
+  # Eight one-minute video overviews NotebookLM generated alongside the 6:59
+  # explainer in `video:` above. They are listed apart from it deliberately:
+  # `video:` is *the* overview, the one the homepage embeds and the one a
+  # YouTube id is waiting for, and burying it in a list of eight would lose that.
+  #
+  # `covers` is the section each one lines up with. It is a **hand-made
+  # reading of the title**, not something NotebookLM asserts — nothing in the
+  # notebook knows this workshop has sections. check_links.py checks the number
+  # names a real section, which catches a typo but cannot catch a bad call.
+  #
+  # `lang` is the language the video is actually *in*. Seven are English and one
+  # is Spanish, and gen_tables.py marks every card whose language is not the
+  # page's, so a reader is told before the click rather than after it — the same
+  # thing slides.scss does for the ML blog's `.reading-tab` chips.
+  shorts:
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4a0fc480-42d4-42f7-bcf5-544c5e0a2626"
+      title_en: "Decoding NumPy tensor dimensions"
+      title_es: "Descifrar las dimensiones de un tensor en NumPy"
+      length: "1:17"
+      lang: "en"
+      covers: "01"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/fece63b8-7fa5-4ec4-a367-015f52b167ce"
+      title_en: "How memory flattens tensors"
+      title_es: "Cómo la memoria aplasta los tensores"
+      length: "1:20"
+      lang: "es"
+      covers: "04"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/28b74a23-b275-429a-b3c6-c8b8460bd2a4"
+      title_en: "How the pseudoinverse solves messy data"
+      title_es: "Cómo la pseudoinversa resuelve datos imperfectos"
+      length: "1:12"
+      lang: "en"
+      covers: "07"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/04f39426-5a7e-4561-87d7-c85d649e3565"
+      title_en: "How SVD compresses sequential matrices"
+      title_es: "Cómo la SVD comprime matrices secuenciales"
+      length: "1:10"
+      lang: "en"
+      covers: "09"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b5f7c997-3142-40b1-8f09-2e641bbde35e"
+      title_en: "How Tucker decomposition compresses data"
+      title_es: "Cómo la descomposición de Tucker comprime datos"
+      length: "1:16"
+      lang: "en"
+      covers: "10"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/5dd4e774-7649-4dc5-bae5-cb4560b2b71f"
+      title_en: "How HOSVD compresses multidimensional data"
+      title_es: "Cómo la HOSVD comprime datos multidimensionales"
+      length: "1:27"
+      lang: "en"
+      covers: "10"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4d8f05b2-b0d9-41b2-a79f-9e81ca8cad38"
+      title_en: "How tensor decomposition extracts meaning"
+      title_es: "Cómo la descomposición tensorial extrae significado"
+      length: "1:19"
+      lang: "en"
+      covers: "10"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/27538f28-52c7-4701-8362-2ae80471df9b"
+      title_en: "How CP decomposition cracks N-dimensional tensors"
+      title_es: "Cómo la descomposición CP aborda tensores N-dimensionales"
+      length: "1:19"
+      lang: "en"
+      covers: "11"
 
   # The infographic gallery, generated into _includes/companion-infographics-*.md
   # by scripts/gen_tables.py. Add an entry per exported PNG:
@@ -259,6 +327,15 @@ companion:
     - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2569f0b-ca63-45de-8632-667cba10a384"
       title_en: "Reshape vs transpose"
       title_es: "Reshape frente a transposición"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/3a9af8fc-5db5-414c-854a-452f88de50f1"
+      title_en: "Inverses and pseudoinverses"
+      title_es: "Inversas y pseudoinversas"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/83c84375-396a-49e4-b32b-971aa9a7ef6b"
+      title_en: "Navigating tensor inverses"
+      title_es: "Guía de inversas tensoriales"
+    - url: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b1776a9f-9730-43f0-a273-106b64a681c9"
+      title_en: "Matrix and tensor factorizations"
+      title_es: "Factorizaciones matriciales y tensoriales"
 
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core

@@ -20,6 +20,12 @@ Every card below says which it is.
 
 {{< include _includes/companion-video-en.md >}}
 
+## One-minute shorts {#shorts}
+
+Eight of them, each on one idea, each tied to the section it belongs to.
+
+{{< include _includes/companion-shorts-en.md >}}
+
 ## Infographics {#infographics}
 
 {{< include _includes/companion-infographics-en.md >}}

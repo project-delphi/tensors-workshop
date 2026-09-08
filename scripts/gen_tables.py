@@ -26,6 +26,7 @@ Outputs (all overwritten, none hand-edited):
     _includes/companion-audio-en.md          _includes/companion-audio-es.md
     _includes/companion-infographics-en.md
     _includes/companion-infographics-es.md
+    _includes/companion-shorts-en.md         _includes/companion-shorts-es.md
     _includes/companion-selfcheck-en.md      _includes/companion-selfcheck-es.md
     _includes/companion-map-en.md            _includes/companion-map-es.md
     _includes/references-en.md    _includes/references-es.md
@@ -424,6 +425,51 @@ PLACEHOLDER_NOTE = {
 }
 
 
+# Said on a card whose video is not in the page's own language. The ES page
+# carries seven English videos and the EN page one Spanish one, and which it is
+# should be known before the click rather than after it -- the same job
+# slides.scss does for the ML blog's `.reading-tab` chips.
+OTHER_LANG = {
+    ("en", "es"): "In Spanish.",
+    ("es", "en"): "En inglés.",
+}
+SHORT_SECTION = {"en": "section {n}", "es": "sección {n}"}
+
+
+def shorts_list(lang: str, prefix: str) -> str:
+    """The one-minute video overviews, as `.info-card`s.
+
+    Kept apart from `video:` on purpose: that one is *the* overview, the one
+    the landing pages embed and the one a YouTube id is waiting for, and
+    folding it into a list of eight would lose that distinction.
+
+    Each card names the section the short lines up with, so the list reads as
+    a way back into the workshop rather than as eight titles in a row. The
+    section number comes from `covers` in `_variables.yml`; this only formats
+    it, and check 12 is what verifies it names a section that exists.
+    """
+    items = COMPANION.get("shorts") or []
+    if not items:
+        return {"en": "*None generated yet.*\n",
+                "es": "*Todavía no se ha generado ninguno.*\n"}[lang]
+    lead = {"en": "One minute each, generated from the same sources. Every one "
+                  "opens in NotebookLM.",
+            "es": "Un minuto cada uno, generados con las mismas fuentes. Todos "
+                  "se abren en NotebookLM."}[lang]
+    out = [lead, "", "::: {.info-strip}"]
+    for i in items:
+        meta = [i["length"], SHORT_SECTION[lang].format(n=i["covers"])]
+        note = ACCOUNT_NOTE[lang]
+        if other := OTHER_LANG.get((lang, i["lang"])):
+            note = f"{other} {note}"
+        out += ["::: {.info-card}",
+                f'**[{i[f"title_{lang}"]}]({i["url"]})**<br>{" · ".join(meta)}',
+                f"<br>[{note}]{{.shot-note}}",
+                ":::"]
+    out.append(":::")
+    return "\n".join(out) + "\n"
+
+
 def infographics_gallery(lang: str, prefix: str) -> str:
     """The companion's infographic gallery, as `.info-card`s in an `.info-strip`.
 
@@ -722,6 +768,8 @@ def main() -> int:
                 BANNER + infographics_gallery("en", ""),
             "companion-infographics-es.md":
                 BANNER + infographics_gallery("es", "../"),
+            "companion-shorts-en.md": BANNER + shorts_list("en", ""),
+            "companion-shorts-es.md": BANNER + shorts_list("es", "../"),
             "companion-selfcheck-en.md":
                 BANNER + link_cards("en", "", ("quiz", "flashcards")),
             "companion-selfcheck-es.md":

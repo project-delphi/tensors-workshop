@@ -3,15 +3,15 @@ The pictures are screenshots, served from this site, so you can see what is behi
 
 ::: {.info-strip}
 ::: {.info-card}
-[![](images/companion-quiz.png){fig-alt="The first of the quiz's twenty-six questions, as NotebookLM shows it: how an order-3 tensor is distinguished from a matrix, with four answers lettered A to D and a Hint button beside Next."}](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)
+[![](images/companion-quiz.png){fig-alt="The first of the quiz's twenty-six questions, as NotebookLM shows it: how an order-3 tensor is distinguished from a matrix, with four answers lettered A to D and a Hint button beside Next."}](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/72379ae0-b758-4fa9-b203-b68ed934b59a)
 
-**[Self-check quiz](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)**<br>Twenty-six generated multiple-choice questions across the whole workshop.<br>*After the session, to find out which sections did not stick.*
-<br>[Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact. Screenshot — the real one is interactive, in NotebookLM.]{.shot-note}
+**[Self-check quiz](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/72379ae0-b758-4fa9-b203-b68ed934b59a)**<br>Twenty-six generated multiple-choice questions across the whole workshop.<br>*After the session, to find out which sections did not stick.*
+<br>[Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM.]{.shot-note}
 :::
 ::: {.info-card}
-[![](images/companion-flashcards.png){fig-alt="Card one of sixty, face up: what is the geometric interpretation of a vector in linear algebra, with a See answer prompt underneath and the got-it and missed-it counters below the card."}](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)
+[![](images/companion-flashcards.png){fig-alt="Card one of sixty, face up: what is the geometric interpretation of a vector in linear algebra, with a See answer prompt underneath and the got-it and missed-it counters below the card."}](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b4168432-9dda-4495-adb9-36f5b0277a03)
 
-**[Flashcards](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)**<br>Sixty cards, question on one side and answer on the other, over the linear algebra as well as the tensors.<br>*Spaced repetition, in the weeks after.*
-<br>[Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact. Screenshot — the real one is interactive, in NotebookLM.]{.shot-note}
+**[Flashcards](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b4168432-9dda-4495-adb9-36f5b0277a03)**<br>Sixty cards, question on one side and answer on the other, over the linear algebra as well as the tensors.<br>*Spaced repetition, in the weeks after.*
+<br>[Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM.]{.shot-note}
 :::
 :::

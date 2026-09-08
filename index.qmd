@@ -13,6 +13,7 @@ bienvenidas en español o en inglés.
 
 ::: {.companion-strip}
 [Video overview](companion.qmd#video)
+[One-minute shorts](companion.qmd#shorts)
 [Infographics](companion.qmd#infographics)
 [Self-check quiz](companion.qmd#test-yourself)
 [Mind map](companion.qmd#map)

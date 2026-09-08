@@ -483,11 +483,18 @@
     "text": "Resumen en vídeo\n\nTodavía sin publicar. El resumen en vídeo se genera en NotebookLM y se sube a YouTube; hasta entonces no hay aquí nada que funcione sin una cuenta de Google."
   },
   {
+    "objectID": "es/companion.html#shorts",
+    "href": "es/companion.html#shorts",
+    "title": "El complemento generado por máquina",
+    "section": "Vídeos de un minuto",
+    "text": "Vídeos de un minuto\nOcho, cada uno sobre una sola idea y ligado a la sección a la que pertenece.\n\nUn minuto cada uno, generados con las mismas fuentes. Todos se abren en NotebookLM.\n\n\nDescifrar las dimensiones de un tensor en NumPy1:17 · sección 01 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la memoria aplasta los tensores1:20 · sección 04 Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la pseudoinversa resuelve datos imperfectos1:12 · sección 07 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la SVD comprime matrices secuenciales1:10 · sección 09 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la descomposición de Tucker comprime datos1:16 · sección 10 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la HOSVD comprime datos multidimensionales1:27 · sección 10 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la descomposición tensorial extrae significado1:19 · sección 10 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la descomposición CP aborda tensores N-dimensionales1:19 · sección 11 En inglés. Se abre en NotebookLM; pide una cuenta de Google."
+  },
+  {
     "objectID": "es/companion.html#infographics",
     "href": "es/companion.html#infographics",
     "title": "El complemento generado por máquina",
     "section": "Infografías",
-    "text": "Infografías\n\nTodavía sin exportar, así que estas se abren en NotebookLM:\n\n\nTensores — panorama general Se abre en NotebookLM; pide una cuenta de Google.\n\n\nReshape frente a transposición Se abre en NotebookLM; pide una cuenta de Google."
+    "text": "Infografías\n\nTodavía sin exportar, así que estas se abren en NotebookLM:\n\n\nTensores — panorama general Se abre en NotebookLM; pide una cuenta de Google.\n\n\nReshape frente a transposición Se abre en NotebookLM; pide una cuenta de Google.\n\n\nInversas y pseudoinversas Se abre en NotebookLM; pide una cuenta de Google.\n\n\nGuía de inversas tensoriales Se abre en NotebookLM; pide una cuenta de Google.\n\n\nFactorizaciones matriciales y tensoriales Se abre en NotebookLM; pide una cuenta de Google."
   },
   {
     "objectID": "es/companion.html#listen",
@@ -501,7 +508,7 @@
     "href": "es/companion.html#test-yourself",
     "title": "El complemento generado por máquina",
     "section": "Ponte a prueba",
-    "text": "Ponte a prueba\nNinguno de los dos es el Kahoot, que son seis preguntas en vivo después de las secciones 04, 07 y 10, escritas para este taller. Estos dos están generados y no tienen límite.\n\nLas imágenes son capturas de pantalla, servidas desde este sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta en él.\n\n\n\nCuestionario de autoevaluaciónVeintiséis preguntas de opción múltiple generadas sobre todo el taller.Después de la sesión, para descubrir qué secciones no se te quedaron. Se abre en NotebookLM; pide una cuenta de Google. Todavía sin enlace propio: esto abre el cuaderno, no el artefacto. Captura de pantalla; el de verdad es interactivo, en NotebookLM.\n\n\n\nTarjetas de memoriaSesenta tarjetas, pregunta por un lado y respuesta por el otro, sobre el álgebra lineal además de los tensores.Repetición espaciada, en las semanas siguientes. Se abre en NotebookLM; pide una cuenta de Google. Todavía sin enlace propio: esto abre el cuaderno, no el artefacto. Captura de pantalla; el de verdad es interactivo, en NotebookLM."
+    "text": "Ponte a prueba\nNinguno de los dos es el Kahoot, que son seis preguntas en vivo después de las secciones 04, 07 y 10, escritas para este taller. Estos dos están generados y no tienen límite.\n\nLas imágenes son capturas de pantalla, servidas desde este sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta en él.\n\n\n\nCuestionario de autoevaluaciónVeintiséis preguntas de opción múltiple generadas sobre todo el taller.Después de la sesión, para descubrir qué secciones no se te quedaron. Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM.\n\n\n\nTarjetas de memoriaSesenta tarjetas, pregunta por un lado y respuesta por el otro, sobre el álgebra lineal además de los tensores.Repetición espaciada, en las semanas siguientes. Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM."
   },
   {
     "objectID": "es/companion.html#map",
@@ -574,25 +581,32 @@
     "text": "Video overview\n\nTensors in machine learning — video overview — 7 minutes. It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in."
   },
   {
+    "objectID": "companion.html#shorts",
+    "href": "companion.html#shorts",
+    "title": "The machine-generated companion",
+    "section": "One-minute shorts",
+    "text": "One-minute shorts\nEight of them, each on one idea, each tied to the section it belongs to.\n\nOne minute each, generated from the same sources. Every one opens in NotebookLM.\n\n\nDecoding NumPy tensor dimensions1:17 · section 01 Opens in NotebookLM; needs a Google account.\n\n\nHow memory flattens tensors1:20 · section 04 In Spanish. Opens in NotebookLM; needs a Google account.\n\n\nHow the pseudoinverse solves messy data1:12 · section 07 Opens in NotebookLM; needs a Google account.\n\n\nHow SVD compresses sequential matrices1:10 · section 09 Opens in NotebookLM; needs a Google account.\n\n\nHow Tucker decomposition compresses data1:16 · section 10 Opens in NotebookLM; needs a Google account.\n\n\nHow HOSVD compresses multidimensional data1:27 · section 10 Opens in NotebookLM; needs a Google account.\n\n\nHow tensor decomposition extracts meaning1:19 · section 10 Opens in NotebookLM; needs a Google account.\n\n\nHow CP decomposition cracks N-dimensional tensors1:19 · section 11 Opens in NotebookLM; needs a Google account."
+  },
+  {
     "objectID": "companion.html#infographics",
     "href": "companion.html#infographics",
     "title": "The machine-generated companion",
     "section": "Infographics",
-    "text": "Infographics\n\nNot exported yet, so these open in NotebookLM:\n\n\nTensors — overview Opens in NotebookLM; needs a Google account.\n\n\nReshape vs transpose Opens in NotebookLM; needs a Google account."
+    "text": "Infographics\n\nNot exported yet, so these open in NotebookLM:\n\n\nTensors — overview Opens in NotebookLM; needs a Google account.\n\n\nReshape vs transpose Opens in NotebookLM; needs a Google account.\n\n\nInverses and pseudoinverses Opens in NotebookLM; needs a Google account.\n\n\nNavigating tensor inverses Opens in NotebookLM; needs a Google account.\n\n\nMatrix and tensor factorizations Opens in NotebookLM; needs a Google account."
   },
   {
     "objectID": "companion.html#listen",
     "href": "companion.html#listen",
     "title": "The machine-generated companion",
     "section": "Listen",
-    "text": "Listen\nTwo hosts talking through the workshop — the one piece here that works with the screen off.\n\nNot exported yet. NotebookLM’s Audio Overview downloads as a file, so when it lands it will play right here, with no account and no third party."
+    "text": "Listen\nTwo hosts talking through the workshop — the one piece here that works with the screen off.\n\nAudio overview — 2 minutes. It has not been exported yet, so this one plays inside NotebookLM and will ask you for a Google account. Once the file is downloaded and committed it will play here instead, with no account and no third party."
   },
   {
     "objectID": "companion.html#test-yourself",
     "href": "companion.html#test-yourself",
     "title": "The machine-generated companion",
     "section": "Test yourself",
-    "text": "Test yourself\nNeither of these is the Kahoot, which is six live questions after sections 04, 07 and 10, written for this workshop. These two are generated and unlimited.\n\nThe pictures are screenshots, served from this site, so you can see what is behind each link before you spend an account on it.\n\n\n\nSelf-check quizTwenty-six generated multiple-choice questions across the whole workshop.After the session, to find out which sections did not stick. Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact. Screenshot — the real one is interactive, in NotebookLM.\n\n\n\nFlashcardsSixty cards, question on one side and answer on the other, over the linear algebra as well as the tensors.Spaced repetition, in the weeks after. Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact. Screenshot — the real one is interactive, in NotebookLM."
+    "text": "Test yourself\nNeither of these is the Kahoot, which is six live questions after sections 04, 07 and 10, written for this workshop. These two are generated and unlimited.\n\nThe pictures are screenshots, served from this site, so you can see what is behind each link before you spend an account on it.\n\n\n\nSelf-check quizTwenty-six generated multiple-choice questions across the whole workshop.After the session, to find out which sections did not stick. Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM.\n\n\n\nFlashcardsSixty cards, question on one side and answer on the other, over the linear algebra as well as the tensors.Spaced repetition, in the weeks after. Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM."
   },
   {
     "objectID": "companion.html#map",

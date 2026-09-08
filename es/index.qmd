@@ -14,6 +14,7 @@ inglés, pero puedes preguntar en español cuando quieras.
 
 ::: {.companion-strip}
 [Resumen en vídeo](companion.qmd#video)
+[Vídeos de un minuto](companion.qmd#shorts)
 [Infografías](companion.qmd#infographics)
 [Autoevaluación](companion.qmd#test-yourself)
 [Mapa mental](companion.qmd#map)

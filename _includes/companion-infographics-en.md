@@ -10,4 +10,16 @@ Not exported yet, so these open in NotebookLM:
 **[Reshape vs transpose](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2569f0b-ca63-45de-8632-667cba10a384)**
 <br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
 :::
+::: {.info-card}
+**[Inverses and pseudoinverses](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/3a9af8fc-5db5-414c-854a-452f88de50f1)**
+<br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
+:::
+::: {.info-card}
+**[Navigating tensor inverses](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/83c84375-396a-49e4-b32b-971aa9a7ef6b)**
+<br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
+:::
+::: {.info-card}
+**[Matrix and tensor factorizations](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b1776a9f-9730-43f0-a273-106b64a681c9)**
+<br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
+:::
 :::
