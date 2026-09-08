@@ -521,30 +521,38 @@ def infographics_gallery(lang: str, prefix: str) -> str:
 # It lives here rather than in the two .qmd pages for the reason every other
 # table on this site does: written twice, EN and ES come to say different
 # things about the same artifact, and nothing would catch it.
+# Counts and shapes checked against the artifacts themselves on 2026-09-07,
+# not guessed from what NotebookLM was asked for: the quiz is a fixed 26
+# questions rather than an endless generator, the deck is 60 cards, and the
+# mind map opens on five branches rather than on the workshop's thirteen
+# sections. Copy that oversells what is behind a link is the failure this
+# whole page is built to avoid.
 LINK_COPY = {
     "quiz": {
-        "en": ("Generated multiple-choice questions over the whole workshop, "
-               "as many as you want.",
+        "en": ("Twenty-six generated multiple-choice questions across the "
+               "whole workshop.",
                "After the session, to find out which sections did not stick."),
-        "es": ("Preguntas de opción múltiple generadas sobre todo el taller, "
-               "tantas como quieras.",
+        "es": ("Veintiséis preguntas de opción múltiple generadas sobre todo "
+               "el taller.",
                "Después de la sesión, para descubrir qué secciones no se te "
                "quedaron."),
     },
     "flashcards": {
-        "en": ("Term on one side, definition on the other — the vocabulary "
-               "the workshop defines as it goes.",
+        "en": ("Sixty cards, question on one side and answer on the other, "
+               "over the linear algebra as well as the tensors.",
                "Spaced repetition, in the weeks after."),
-        "es": ("El término por un lado y la definición por el otro: el "
-               "vocabulario que el taller va definiendo sobre la marcha.",
+        "es": ("Sesenta tarjetas, pregunta por un lado y respuesta por el "
+               "otro, sobre el álgebra lineal además de los tensores.",
                "Repetición espaciada, en las semanas siguientes."),
     },
     "mindmap": {
-        "en": ("How the thirteen sections hang off each other, on one screen.",
+        "en": ("Five branches off one root — defining tensors, storing data, "
+               "moving axes, factorizing, computing — each opening further.",
                "Once, early: seeing the whole ladder before you climb it "
                "makes the middle rungs less arbitrary."),
-        "es": ("Cómo se sostienen unas en otras las trece secciones, en una "
-               "sola pantalla.",
+        "es": ("Cinco ramas de una sola raíz —definir tensores, almacenar "
+               "datos, mover ejes, factorizar, calcular—, y cada una se abre "
+               "más.",
                "Una vez, pronto: ver la escalera entera antes de subirla hace "
                "que los peldaños del medio parezcan menos arbitrarios."),
     },

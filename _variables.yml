@@ -150,7 +150,7 @@ companion:
     youtube_id_es: ""                 # TODO: paste the ES YouTube video id
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2cc077a-4770-4bf8-948c-30bb68dd66f2"
     url_es: ""                        # TODO: the ES video artifact, if one is generated
-    minutes_en: 0                     # TODO: the EN running time
+    minutes_en: 7                     # 6:59 in NotebookLM
     minutes_es: 0                     # TODO: the ES running time
     # A poster frame, committed under images/, shown while the video is still
     # a NotebookLM link: the section then looks like a video rather than
@@ -185,6 +185,17 @@ companion:
 
   # Link-only artifacts. Leave at default_url until the real share link exists.
   #
+  # Checked in the NotebookLM UI on 2026-09-07, signed in, and the split is not
+  # the one you would guess. An artifact page with a **Copy link** button has a
+  # `/artifact/<uuid>` URL of its own: the infographics, the video overviews and
+  # the **mind map** all do. The quiz, the flashcards and the **Audio Overview**
+  # open only inside the notebook's Studio panel — no Copy link, no download,
+  # no URL of their own. So `mindmap.url_*` below is real, `quiz.url_*` and
+  # `flashcards.url_*` are the notebook's own front door standing in, and
+  # `audio.url_*` above has nothing to point at either. gen_tables.py says so on
+  # any card still sitting at `default_url`, because a card headed "Self-check
+  # quiz" that lands you on a notebook has mis-sold the click.
+  #
   # None of the three can be exported, so what a visitor gets here is a link
   # into NotebookLM and a Google sign-in. `thumb` is what makes that link
   # honest to look at: a screenshot of the artifact, committed under images/
@@ -202,17 +213,17 @@ companion:
     title_es: "Cuestionario de autoevaluación"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
-    thumb: ""                         # TODO: e.g. images/companion-quiz.png
-    thumb_alt_en: ""
-    thumb_alt_es: ""
+    thumb: "images/companion-quiz.png"
+    thumb_alt_en: "The first of the quiz's twenty-six questions, as NotebookLM shows it: how an order-3 tensor is distinguished from a matrix, with four answers lettered A to D and a Hint button beside Next."
+    thumb_alt_es: "La primera de las veintiséis preguntas del cuestionario, tal como la muestra NotebookLM: cómo se distingue un tensor de orden 3 de una matriz, con cuatro respuestas de la A a la D y un botón de pista junto a Siguiente."
   flashcards:
     title_en: "Flashcards"
     title_es: "Tarjetas de memoria"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c"   # TODO
-    thumb: ""                         # TODO: e.g. images/companion-flashcards.png
-    thumb_alt_en: ""
-    thumb_alt_es: ""
+    thumb: "images/companion-flashcards.png"
+    thumb_alt_en: "Card one of sixty, face up: what is the geometric interpretation of a vector in linear algebra, with a See answer prompt underneath and the got-it and missed-it counters below the card."
+    thumb_alt_es: "La primera de sesenta tarjetas, por la cara delantera: cuál es la interpretación geométrica de un vector en álgebra lineal, con la indicación Ver respuesta debajo y los contadores de acertadas y falladas bajo la tarjeta."
   # One mind map, generated from the EN sources, linked from both pages — the
   # same choice `notebook_url` already makes for the notebook itself.
   mindmap:
@@ -220,9 +231,9 @@ companion:
     title_es: "Mapa mental"
     url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"
     url_es: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"
-    thumb: ""                         # TODO: e.g. images/companion-mindmap.png
-    thumb_alt_en: ""
-    thumb_alt_es: ""
+    thumb: "images/companion-mindmap.png"
+    thumb_alt_en: "The mind map collapsed to its top level: a node reading Tensors for Machine Learning Workshop, with five branches curving off it — Defining Tensors, Practical Data Storage, Axis Manipulation, Solving and Factorizing, and Computational Implementation — each with an arrow that opens it further."
+    thumb_alt_es: "El mapa mental plegado a su primer nivel: un nodo que dice Tensors for Machine Learning Workshop, del que salen cinco ramas — Defining Tensors, Practical Data Storage, Axis Manipulation, Solving and Factorizing y Computational Implementation — cada una con una flecha que la despliega."
 
   # The infographic gallery, generated into _includes/companion-infographics-*.md
   # by scripts/gen_tables.py. Add an entry per exported PNG:

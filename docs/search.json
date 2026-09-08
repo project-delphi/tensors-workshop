@@ -501,14 +501,14 @@
     "href": "es/companion.html#test-yourself",
     "title": "El complemento generado por máquina",
     "section": "Ponte a prueba",
-    "text": "Ponte a prueba\nNinguno de los dos es el Kahoot, que son seis preguntas en vivo después de las secciones 04, 07 y 10, escritas para este taller. Estos dos están generados y no tienen límite.\n\n\n\nCuestionario de autoevaluaciónPreguntas de opción múltiple generadas sobre todo el taller, tantas como quieras.Después de la sesión, para descubrir qué secciones no se te quedaron. Se abre en NotebookLM; pide una cuenta de Google. Todavía sin enlace propio: esto abre el cuaderno, no el artefacto.\n\n\nTarjetas de memoriaEl término por un lado y la definición por el otro: el vocabulario que el taller va definiendo sobre la marcha.Repetición espaciada, en las semanas siguientes. Se abre en NotebookLM; pide una cuenta de Google. Todavía sin enlace propio: esto abre el cuaderno, no el artefacto."
+    "text": "Ponte a prueba\nNinguno de los dos es el Kahoot, que son seis preguntas en vivo después de las secciones 04, 07 y 10, escritas para este taller. Estos dos están generados y no tienen límite.\n\nLas imágenes son capturas de pantalla, servidas desde este sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta en él.\n\n\n\nCuestionario de autoevaluaciónVeintiséis preguntas de opción múltiple generadas sobre todo el taller.Después de la sesión, para descubrir qué secciones no se te quedaron. Se abre en NotebookLM; pide una cuenta de Google. Todavía sin enlace propio: esto abre el cuaderno, no el artefacto. Captura de pantalla; el de verdad es interactivo, en NotebookLM.\n\n\n\nTarjetas de memoriaSesenta tarjetas, pregunta por un lado y respuesta por el otro, sobre el álgebra lineal además de los tensores.Repetición espaciada, en las semanas siguientes. Se abre en NotebookLM; pide una cuenta de Google. Todavía sin enlace propio: esto abre el cuaderno, no el artefacto. Captura de pantalla; el de verdad es interactivo, en NotebookLM."
   },
   {
     "objectID": "es/companion.html#map",
     "href": "es/companion.html#map",
     "title": "El complemento generado por máquina",
     "section": "El mapa",
-    "text": "El mapa\n\n\n\nMapa mentalCómo se sostienen unas en otras las trece secciones, en una sola pantalla.Una vez, pronto: ver la escalera entera antes de subirla hace que los peldaños del medio parezcan menos arbitrarios. Se abre en NotebookLM; pide una cuenta de Google."
+    "text": "El mapa\n\nLas imágenes son capturas de pantalla, servidas desde este sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta en él.\n\n\n\nMapa mentalCinco ramas de una sola raíz —definir tensores, almacenar datos, mover ejes, factorizar, calcular—, y cada una se abre más.Una vez, pronto: ver la escalera entera antes de subirla hace que los peldaños del medio parezcan menos arbitrarios. Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM."
   },
   {
     "objectID": "es/companion.html#notebooklm",
@@ -571,7 +571,7 @@
     "href": "companion.html#video",
     "title": "The machine-generated companion",
     "section": "Video overview",
-    "text": "Video overview\n\nTensors in machine learning — video overview — It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in."
+    "text": "Video overview\n\nTensors in machine learning — video overview — 7 minutes. It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in."
   },
   {
     "objectID": "companion.html#infographics",
@@ -592,14 +592,14 @@
     "href": "companion.html#test-yourself",
     "title": "The machine-generated companion",
     "section": "Test yourself",
-    "text": "Test yourself\nNeither of these is the Kahoot, which is six live questions after sections 04, 07 and 10, written for this workshop. These two are generated and unlimited.\n\n\n\nSelf-check quizGenerated multiple-choice questions over the whole workshop, as many as you want.After the session, to find out which sections did not stick. Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact.\n\n\nFlashcardsTerm on one side, definition on the other — the vocabulary the workshop defines as it goes.Spaced repetition, in the weeks after. Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact."
+    "text": "Test yourself\nNeither of these is the Kahoot, which is six live questions after sections 04, 07 and 10, written for this workshop. These two are generated and unlimited.\n\nThe pictures are screenshots, served from this site, so you can see what is behind each link before you spend an account on it.\n\n\n\nSelf-check quizTwenty-six generated multiple-choice questions across the whole workshop.After the session, to find out which sections did not stick. Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact. Screenshot — the real one is interactive, in NotebookLM.\n\n\n\nFlashcardsSixty cards, question on one side and answer on the other, over the linear algebra as well as the tensors.Spaced repetition, in the weeks after. Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact. Screenshot — the real one is interactive, in NotebookLM."
   },
   {
     "objectID": "companion.html#map",
     "href": "companion.html#map",
     "title": "The machine-generated companion",
     "section": "The map",
-    "text": "The map\n\n\n\nMind mapHow the thirteen sections hang off each other, on one screen.Once, early: seeing the whole ladder before you climb it makes the middle rungs less arbitrary. Opens in NotebookLM; needs a Google account."
+    "text": "The map\n\nThe pictures are screenshots, served from this site, so you can see what is behind each link before you spend an account on it.\n\n\n\nMind mapFive branches off one root — defining tensors, storing data, moving axes, factorizing, computing — each opening further.Once, early: seeing the whole ladder before you climb it makes the middle rungs less arbitrary. Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM."
   },
   {
     "objectID": "companion.html#notebooklm",
@@ -669,7 +669,7 @@
     "href": "index.html#watch-it-first",
     "title": "Tensors for Machine Learning",
     "section": "Watch it first",
-    "text": "Watch it first\n\nTensors in machine learning — video overview — It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in.\nThe video is generated, not recorded. It, and the infographics, audio, quiz, flashcards and mind map beside it, live on the companion page — which says plainly what being generated means, and what to do about it."
+    "text": "Watch it first\n\nTensors in machine learning — video overview — 7 minutes. It has not been re-uploaded to YouTube yet, so this one plays inside NotebookLM and will ask you for a Google account. When the upload lands it will play here instead, with no account and no sign-in.\nThe video is generated, not recorded. It, and the infographics, audio, quiz, flashcards and mind map beside it, live on the companion page — which says plainly what being generated means, and what to do about it."
   },
   {
     "objectID": "index.html#who-it-is-for",
