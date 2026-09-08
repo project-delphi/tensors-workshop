@@ -62,6 +62,9 @@ import yaml
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 NBDIR = ROOT / "notebooks"
+# The handbook, by the one filename both languages use: the English one at
+# the repo root, the Spanish translation of it under es/.
+HANDBOOK = "tensors_workshop_plan_with_quizzes.md"
 V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 # Extras are notebooks that are not sections: take-home deep dives, off the
@@ -75,6 +78,15 @@ COLAB_RE = re.compile(
     r"^https://colab\.research\.google\.com/github/"
     rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
     rf"{re.escape(REPO['branch'])}/notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)$")
+
+# Any reference to a notebook from *inside* another notebook. Two forms reach
+# a reader: the full Colab URL, and the bare repo-relative path. Unanchored,
+# unlike COLAB_RE above, because these are found inside prose rather than
+# matched against a whole href.
+NB_REF_RE = re.compile(
+    r"(?:https://colab\.research\.google\.com/github/"
+    rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
+    rf"{re.escape(REPO['branch'])}/)?notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)")
 
 # The ML blog posts both decks and the two deep dives link to. These are the
 # only external URLs in the deck, and nothing here fetches them — the checker
@@ -278,6 +290,7 @@ def check_notebooks() -> None:
         nbformat = None
         print("      nbformat unavailable — structural checks only")
 
+    n_refs = 0
     for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         path = NBDIR / name
@@ -308,8 +321,20 @@ def check_notebooks() -> None:
         # ends in a literal \n escape, which BLOG_RE's character class does
         # not exclude, so a bare autolink not followed by `)` would be
         # captured with the escape stuck to it and reported as undeclared.
-        check_reading(set(BLOG_RE.findall(
-            "".join("".join(c.get("source", [])) for c in nb["cells"]))), name)
+        body = "".join("".join(c.get("source", [])) for c in nb["cells"])
+        check_reading(set(BLOG_RE.findall(body)), name)
+        # Links from one notebook to another. **Nothing else looks at these.**
+        # Check 3 harvests links out of `docs/*.html`, and a notebook reaches
+        # `docs/` as a verbatim `resources:` copy rather than a rendered page,
+        # so its own links are never parsed. That is how notebook 01 came to
+        # link `12-matrix-factorizations.ipynb` and
+        # `13-tensor-factorizations.ipynb` -- the numbers the two
+        # factorization notebooks carried before they became 09 and 11 --
+        # and stay that way through every green build until #83.
+        for target in sorted(set(NB_REF_RE.findall(body))):
+            n_refs += 1
+            if not (NBDIR / target).exists():
+                fail(f"{name}: links notebooks/{target}, which does not exist")
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
     for e in sorted(unknown):
@@ -318,6 +343,7 @@ def check_notebooks() -> None:
     print(f"      {len(NOTEBOOKS)} notebooks ({len(SECTIONS)} sections, "
           f"{len(EXTRAS)} extras): valid, no outputs, no execution counts, "
           f"badges self-consistent")
+    print(f"      {n_refs} links from one notebook to another, all resolving")
 
 
 # ── docs/ serves the notebooks that are committed ────────────────────────────
@@ -709,6 +735,55 @@ def check_companion() -> None:
         print("      every companion artifact has a link or a committed file")
 
 
+# ── the two handbooks move together ──────────────────────────────────────────
+
+def check_handbooks() -> None:
+    """The EN and ES handbooks still have the same shape.
+
+    `CLAUDE.md` requires both to change in the same commit -- nothing
+    generates the Spanish one from the English -- and until now nothing
+    verified it. What can be compared without a translation dictionary is
+    structure: how many sections, how many tables, and which notebooks each
+    one sends a reader to.
+
+    **What this cannot catch is wording**, which is the half that goes wrong
+    most often. #83 edited "the whole family" to "the eight" in the English
+    handbook and left "toda la familia" in the Spanish one, and every count
+    below stayed equal through it. A guard that oversold itself here would be
+    worse than none, so: this catches a heading, a table or a notebook link
+    added to one side only, and nothing else.
+
+    It runs last, and is numbered last, because the numbers are a contract --
+    `CLAUDE.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
+    inserting this one where it reads best would silently renumber three of
+    them.
+    """
+    step("EN / ES handbooks have the same shape")
+    en, es = ROOT / HANDBOOK, ROOT / "es" / HANDBOOK
+    if not (en.exists() and es.exists()):
+        print("      one or both handbooks missing — nothing to compare")
+        return
+
+    def shape(path: pathlib.Path) -> dict:
+        t = re.sub(r"```.*?```", "", path.read_text(encoding="utf-8"), flags=re.S)
+        return {
+            "## headings": len(re.findall(r"^## ", t, re.M)),
+            "### headings": len(re.findall(r"^### ", t, re.M)),
+            "table rows": len(re.findall(r"^\|", t, re.M)),
+            "notebooks linked":
+                len(set(re.findall(r"notebooks/(\d\d-[a-z0-9-]+)\.ipynb", t))),
+        }
+
+    a, b = shape(en), shape(es)
+    for k in a:
+        if a[k] != b[k]:
+            fail(f"handbooks disagree on {k}: EN has {a[k]}, ES has {b[k]} — "
+                 f"the two must change in the same commit")
+    if a == b:
+        print("      " + ", ".join(f"{v} {k}" for k, v in a.items())
+              + " — identical in both")
+
+
 def main() -> int:
     only_nb = "--notebooks-only" in sys.argv
     print(f"Checking {'notebooks' if only_nb else 'docs/ and notebooks/'} "
@@ -726,6 +801,7 @@ def main() -> int:
     if not only_nb:
         check_kahoot_urls()
         check_companion()
+        check_handbooks()
 
     print()
     if failures:

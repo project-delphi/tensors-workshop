@@ -54,7 +54,7 @@
 <rect x="10" y="512" width="860" height="92" rx="8" class="bs-ribbon"/>
 <text x="440" y="542" class="bs-thread" text-anchor="middle">Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas</text>
 <text x="440" y="561" class="bs-thread" text-anchor="middle">confiar.</text>
-<text x="440" y="585" class="bs-where" text-anchor="middle">Lo encuentras en las secciones 07, 10 y 13.</text>
+<text x="440" y="585" class="bs-where" text-anchor="middle">Lo ves ocurrir en las secciones 07, 10 y 13.</text>
 <text x="440" y="630" class="bs-closing" text-anchor="middle">12 une las cuatro. 13 es el ejercicio para casa.</text>
 </svg>
 <svg xmlns="http://www.w3.org/2000/svg" class="bs-narrow" viewBox="0 0 400 1002" role="img" aria-labelledby="bs-narrow-t bs-narrow-d">
@@ -113,7 +113,7 @@
 <text x="200" y="890" class="bs-thread" text-anchor="middle">Un hilo recorre las cuatro. Cuando no hay</text>
 <text x="200" y="909" class="bs-thread" text-anchor="middle">respuesta exacta, busca la mejor aproximación</text>
 <text x="200" y="928" class="bs-thread" text-anchor="middle">en la que puedas confiar.</text>
-<text x="200" y="952" class="bs-where" text-anchor="middle">Lo encuentras en las secciones 07, 10 y 13.</text>
+<text x="200" y="952" class="bs-where" text-anchor="middle">Lo ves ocurrir en las secciones 07, 10 y 13.</text>
 <text x="200" y="997" class="bs-closing" text-anchor="middle">12 une las cuatro. 13 es el ejercicio para casa.</text>
 </svg>
 :::

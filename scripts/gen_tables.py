@@ -29,13 +29,16 @@ Outputs (all overwritten, none hand-edited):
     _includes/companion-shorts-en.md         _includes/companion-shorts-es.md
     _includes/companion-selfcheck-en.md      _includes/companion-selfcheck-es.md
     _includes/companion-map-en.md            _includes/companion-map-es.md
+    _includes/notebook-deps-en.md  _includes/notebook-deps-es.md
     _includes/brainstorm-en.md    _includes/brainstorm-es.md
     _includes/references-en.md    _includes/references-es.md
 """
 from __future__ import annotations
 
 import html
+import json
 import pathlib
+import re
 import sys
 
 import yaml
@@ -73,21 +76,34 @@ V = yaml.load((ROOT / "_variables.yml").read_text(encoding="utf-8"),
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
 QUIZZES = [V["kahoot"][k] for k in ("q1", "q2", "q3")]
+# Sections and extras together, in notebook order: the dependency table
+# covers every .ipynb, the way checks 1, 3 and 8 do, rather than sections
+# alone the way the schedule does.
+NOTEBOOKS = SECTIONS + EXTRAS
 REPO = V["repo"]
 COMPANION = V["companion"]
 READING = V["reading"]
 REFERENCES = V["references"]
+DATASETS = V["datasets"]
 
 L = {
     "en": dict(
         nb_head=("#", "Notebook", "Covers", "Colab"),
         extra_head=("#", "Deep dive", "Colab"),
         agenda_head=("Start Time", "Duration (min)", "Part", "Segment Name"),
+        deps_head=("Notebook", "Beyond NumPy", "Network"),
+        deps_yes="yes — ",
+        deps_no="no",
+        deps_caption="Colab already has every one of these installed.",
     ),
     "es": dict(
         nb_head=("#", "Cuaderno", "Contenido", "Colab"),
         extra_head=("#", "Estudio a fondo", "Colab"),
         agenda_head=("Hora de inicio", "Duración (min)", "Parte", "Segmento"),
+        deps_head=("Cuaderno", "Además de NumPy", "Red"),
+        deps_yes="sí — ",
+        deps_no="no",
+        deps_caption="Colab ya tiene instalado todo lo de esta lista.",
     ),
 }
 
@@ -146,6 +162,112 @@ def extras_readme_table(lang: str) -> str:
         rows.append(f"| {s['n']} | {s[title_key]} "
                     f"| [Colab]({colab_url(s)}) |")
     return "\n".join(rows) + "\n"
+
+
+# ── what each notebook needs ─────────────────────────────────────────────────
+# Generated from the notebooks themselves, not written down beside them. The
+# hand-written version of this table sat with its 09, 11, 12 and 13 rows
+# rotated by an old section renumber -- in both columns and both languages --
+# telling a student that section 09 needs no network when it downloads a CSV,
+# and that notebook 13 needs `tensorly`, which it never imports. Nothing
+# compared it against the notebooks, because nothing could.
+
+# Display order for the dependency column. Not alphabetical: this is roughly
+# "how likely you are to already have it", which is the order the table has
+# always used and the order that reads best. Anything not named here is
+# appended alphabetically rather than dropped.
+DEP_ORDER = ["matplotlib", "ipywidgets", "pandas", "scikit-learn",
+             "scikit-image", "scipy", "tensorly", "imageio"]
+
+# Import name -> the name a reader would install it under.
+DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn"}
+
+# Always present, or not a dependency a reader has to think about: the standard
+# library, NumPy (the column is "beyond NumPy"), and the three that only ever
+# appear inside Colab-specific plumbing.
+DEP_SKIP = {
+    "numpy", "urllib", "io", "os", "sys", "json", "pathlib", "time", "hashlib",
+    "warnings", "math", "textwrap", "collections", "functools", "itertools",
+    "tempfile", "shutil", "subprocess", "contextlib", "dataclasses", "typing",
+    "random", "csv", "re", "IPython", "google", "imageio_ffmpeg",
+}
+
+IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)
+PIP_RE = re.compile(r"^\s*%pip install[^\n]*", re.M)
+URL_RE = re.compile(r"https?://[^\s\"')]+")
+
+# Colab badges and repo links are not downloads; every other external URL in a
+# code cell is something a reader's machine has to reach.
+NOT_A_DOWNLOAD = re.compile(
+    r"colab\.research\.google\.com|github\.com/|project-delphi\.github\.io"
+    r"|tensorly\.org|deeplearningbook|kahoot\.it")
+
+
+def notebook_code(path: pathlib.Path) -> str:
+    """Every code cell of a notebook, joined so line-anchored regexes work.
+
+    Joined with a newline, deliberately. Cell sources do not end in one, so
+    concatenating them directly glues the next cell's first line onto the
+    previous cell's last -- which hides an `import` from a line-anchored
+    pattern and silently understates a notebook's dependencies.
+    """
+    nb = json.loads(path.read_text(encoding="utf-8"))
+    return "\n".join("".join(c.get("source", []))
+                     for c in nb["cells"] if c["cell_type"] == "code")
+
+
+def notebook_deps_table(lang: str) -> str:
+    """The "what each notebook needs" table, read off the notebooks.
+
+    Two columns, both derived. The dependency column is what the notebook
+    imports, minus the standard library and NumPy, with a dagger on anything
+    the notebook installs for itself. The network column is which registered
+    dataset it downloads -- and a URL matching no entry in `datasets:` exits
+    here rather than being dropped, so a notebook that starts fetching
+    something new fails the build until the registry learns its name.
+    """
+    head = L[lang]["deps_head"]
+    out = [f"| {' | '.join(head)} |", "|---|---|---|"]
+    for s in NOTEBOOKS:
+        path = ROOT / "notebooks" / notebook_name(s)
+        # A commented-out line is a credit, not a fetch: notebook 05 names the
+        # Commons *file page* for the storm clip in a comment above the raw
+        # media URL it actually downloads.
+        code = "\n".join(l for l in notebook_code(path).split("\n")
+                         if not l.lstrip().startswith("#"))
+        pip = " ".join(PIP_RE.findall(code))
+        mods = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
+        mods |= {d for d in ("imageio", "tensorly") if d in pip}
+        ranked = ([m for m in DEP_ORDER if m in mods]
+                  + sorted(m for m in mods if m not in DEP_ORDER))
+        deps = ", ".join(f"`{m}`" + ("†" if m in pip else "") for m in ranked)
+
+        # Python's implicit string concatenation, undone: several notebooks
+        # write a long URL as two adjacent literals across a line break, and
+        # harvesting the raw text finds only the half before the join --
+        # `.../handson-ml2/master/` without the `housing.csv` that names it.
+        glued = re.sub(r'"\s*\n?\s*"', "", code)
+        urls = [u for u in URL_RE.findall(glued)
+                if not NOT_A_DOWNLOAD.search(u)]
+        labels, seen = [], set()
+        for d in DATASETS:                       # registry order, not discovery
+            if any(d["match"] in u for u in urls):
+                labels.append(d[f"label_{lang}"])
+                seen.update(u for u in urls if d["match"] in u)
+        if stray := sorted(set(urls) - seen):
+            sys.exit(f"notebooks/{notebook_name(s)} downloads {stray[0]}, "
+                     f"which matches no entry in `datasets:` in "
+                     f"_variables.yml; add it there so the notebooks page can "
+                     f"name it")
+        if labels:
+            net = L[lang]["deps_yes"] + ", ".join(labels)
+            if note := s.get(f"network_note_{lang}"):
+                net += f" ({note})"
+        else:
+            net = L[lang]["deps_no"]
+        out.append(f"| {s['n']} | {deps} | {net} |")
+    out += ["", f": {L[lang]['deps_caption']} {{tbl-colwidths=\"[12,58,30]\"}}"]
+    return "\n".join(out) + "\n"
 
 
 def agenda_table(lang: str) -> str:
@@ -1025,6 +1147,8 @@ def main() -> int:
                 BANNER + link_cards("en", "", ("mindmap",)),
             "companion-map-es.md":
                 BANNER + link_cards("es", "../", ("mindmap",)),
+            "notebook-deps-en.md": BANNER + notebook_deps_table("en"),
+            "notebook-deps-es.md": BANNER + notebook_deps_table("es"),
             "brainstorm-en.md": BANNER + brainstorm_svg("en"),
             "brainstorm-es.md": BANNER + brainstorm_svg("es"),
             "references-en.md": BANNER + references_list("en"),

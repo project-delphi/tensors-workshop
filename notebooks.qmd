@@ -68,24 +68,7 @@ two each.
 
 ## What each notebook needs
 
-| Notebook | Beyond NumPy | Network |
-|---|---|---|
-| 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | yes — all three CSVs, and a 1 KB probe of the storm clip |
-| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `scipy` | no |
-| 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | yes — the storm clip |
-| 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
-| 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |
-| 05 | `matplotlib`, `ipywidgets`, `imageio`† | yes — the storm clip |
-| 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
-| 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | yes — California housing |
-| 08 | `matplotlib`, `ipywidgets`, `pandas` | yes — airline passengers |
-| 09 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — airline passengers |
-| 10 | `matplotlib`, `ipywidgets`, `pandas` | yes — NYC taxi trips |
-| 11 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | yes — NYC taxi trips, and the storm clip |
-| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | yes — a voice recording, for take-home E |
-| 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
-
-: Colab already has every one of these installed. {tbl-colwidths="[12,58,30]"}
+{{< include _includes/notebook-deps-en.md >}}
 
 † Installed by the notebook itself with `%pip install -q`, which is why neither
 is in the command above.
