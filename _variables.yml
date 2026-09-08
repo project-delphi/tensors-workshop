@@ -337,6 +337,41 @@ companion:
       title_en: "Matrix and tensor factorizations"
       title_es: "Factorizaciones matriciales y tensoriales"
 
+# ── The files the notebooks download ─────────────────────────────────────────
+# Every external file a notebook fetches at runtime, and what to call it in the
+# Network column of the notebooks page. `match` is a fragment of the URL, which
+# is what the notebooks build theirs from — several are split across string
+# literals, so matching on a fragment is the only thing that works without
+# reassembling them.
+#
+# This registry is what makes that table generated rather than hand-written,
+# and it is worth saying why. The table used to be prose, and its rows for 09,
+# 11, 12 and 13 sat rotated by an old section renumber for months: it told a
+# student section 09 needed no network when 09 downloads a CSV, and that
+# notebook 13 needed `tensorly`, which it never imports. Nothing compared it to
+# the notebooks, because nothing could.
+#
+# `notebook_deps_table()` in gen_tables.py **exits** on a URL that matches no
+# entry here. So a notebook that starts fetching something new fails the build
+# until this list learns its name, rather than quietly dropping it from the
+# column that tells a student whether they can work on a train.
+datasets:
+  - match: "housing.csv"
+    label_en: "California housing"
+    label_es: "vivienda en California"
+  - match: "flights.csv"
+    label_en: "airline passengers"
+    label_es: "pasajeros de aerolínea"
+  - match: "taxis.csv"
+    label_en: "NYC taxi trips"
+    label_es: "viajes en taxi de Nueva York"
+  - match: "upload.wikimedia.org/wikipedia/commons/1/1e"
+    label_en: "the storm clip"
+    label_es: "el clip de la tormenta"
+  - match: "pdx-cs-sound"
+    label_en: "a voice recording"
+    label_es: "una grabación de voz"
+
 # ── The brainstorm diagram ───────────────────────────────────────────────────
 # One picture of the whole day, on both companion pages. Four ideas, and every
 # section hangs off the one it serves.
@@ -388,26 +423,32 @@ brainstorm:
       gloss_es: "Divídelo en partes más simples que puedas usar."
       sections: ["07", "08", "09", "10", "11"]
 
-  # The ribbon under the four cards. `thread_sections` are the three places
-  # this diagram points at for the idea: the pseudoinverse, Tucker, and the
-  # take-home's deconvolution.
+  # The ribbon under the four cards. There are **two different claims** about
+  # the workshop's connecting idea, and they name different sections. Keeping
+  # them apart is what stopped four documents contradicting each other:
   #
-  # **The other documents do not agree on that list, and this is the fourth
-  # reading of it.** The handbook's wrap-up says sections 07, 09 and 10;
-  # `x13.intro_*` names 07 and 10 beside the take-home itself. All of them are
-  # defensible — 09 states the idea, 11 restates it, 13 is where you watch it
-  # happen — and none of them is generated from another, so they drift in
-  # silence. check_links.py can only verify that each number here names a
-  # section that exists, never that the three documents chose the same three.
-  # Change one, and go and look at the other two.
+  #   * Where the idea is **stated** — sections 07, 09 and 10. That is the
+  #     handbook's wrap-up, and notebook 13's header repeats it.
+  #   * Where you **watch it happen** — 07, 10 and take-home 13. That is this
+  #     list, and it is what `slide-30.png` draws: the pseudoinverse, Tucker
+  #     and Richardson-Lucy deconvolution side by side. That slide is one of
+  #     the thirty-one with no source, so it cannot be redrawn to match a
+  #     different three — which is why the split is the resolution rather
+  #     than picking one list and propagating it.
+  #
+  # So `thread_lead_*` reads "you watch it happen in", not "you meet it in".
+  # Change this list and the handbook's second sentence has to move with it,
+  # and the slide cannot follow either. check_links.py verifies only that each
+  # number names a section that exists; the split itself is prose, and prose
+  # is what drifts.
   #
   # The numbers are rendered from this list rather than written into the
   # sentence, so at least a renumbered section cannot leave a wrong number
   # painted on the picture.
   thread_en: "One thread runs through all four. When there is no exact answer, find the best approximation you can trust."
   thread_es: "Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar."
-  thread_lead_en: "You meet it in sections"
-  thread_lead_es: "Lo encuentras en las secciones"
+  thread_lead_en: "You watch it happen in sections"
+  thread_lead_es: "Lo ves ocurrir en las secciones"
   thread_sections: ["07", "10", "13"]
 
   # Where the day lands. These two are not filed under an idea: 12 collects all
@@ -818,6 +859,9 @@ sections:
     format_es: "preparación"
     title_en: "Setup and welcome"
     title_es: "Preparación y bienvenida"
+    network_note_for: "upload.wikimedia.org/wikipedia/commons/1/1e"
+    network_note_en: "only a 1 KB probe"
+    network_note_es: "solo un sondeo de 1 KB"
     summary_en: "Load every dataset and confirm your runtime works before the workshop starts."
     summary_es: "Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller."
     objectives_en:
@@ -1271,6 +1315,9 @@ sections:
     format_line_es: "cierre · 5 min + ejercicios para después"
     title_en: "Wrap-up and take-homes"
     title_es: "Cierre y ejercicios para casa"
+    network_note_for: "pdx-cs-sound"
+    network_note_en: "for take-home E"
+    network_note_es: "para el ejercicio E"
     summary_en: "Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio."
     summary_es: "Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio."
     intro_en: |-
@@ -1328,7 +1375,7 @@ extras:
 
       > **A small kernel is reused across positions to transform an image.**
 
-      It is the third instance of the workshop's connecting idea, alongside the pseudoinverse in section 07 and Tucker in section 10. When a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 10 and 11 state that idea. This notebook is where you watch it happen to a photograph.
+      It is the third place you watch the workshop's connecting idea happen, alongside the pseudoinverse in section 07 and Tucker in section 10. When a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 09 and 10 state that idea. This notebook is where you watch it happen to a photograph.
 
       We will distinguish **correlation**, **convolution**, **transposed convolution**, and **deconvolution** without treating them as the same operation.
     intro_es: |-
@@ -1336,7 +1383,7 @@ extras:
       >
       > **Un kernel pequeño se reutiliza en muchas posiciones para transformar una imagen.**
       >
-      > Es el tercer caso de la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10. Cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 10 y 11 enuncian esa idea. En este cuaderno la ves ocurrir sobre una fotografía.
+      > Es el tercer lugar donde ves ocurrir la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10. Cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 09 y 10 enuncian esa idea. En este cuaderno la ves ocurrir sobre una fotografía.
       >
       > Distinguiremos **correlación**, **convolución**, **convolución transpuesta** y **deconvolución** sin tratarlas como si fueran la misma operación.
     objectives_en:

@@ -101,8 +101,8 @@ SLIDES = [
         "en": {
             "eyebrow": "The whole day · Four ideas",
             "title": ["Four ideas,", "one object"],
-            "subtitle": "Everything today is one of these four, done on real "
-                        "data",
+            "subtitle": "Every section today serves one of these four, on "
+                        "real data",
             "cards": [
                 ("⊞", "Generalizes a matrix", [
                     "A scalar has no axes, a vector one, a matrix two.",
@@ -110,15 +110,15 @@ SLIDES = [
                     "data needs.",
                 ]),
                 ("▦", "Holds the data", [
-                    "Images, video frames, taxi trips, prices — all of "
-                    "it is one box of numbers.",
+                    "Images, video frames, taxi trips, prices: each one is "
+                    "a box of numbers.",
                     "The box arrives with a shape, and every axis stands for "
                     "something.",
                 ]),
                 ("⇄", "Axes you can move", [
                     "transpose permutes the axes; reshape re-reads the same "
                     "flat numbers.",
-                    "The same shape can carry a different meaning — that is "
+                    "The same shape can carry a different meaning. That is "
                     "the bug this day prevents.",
                 ]),
                 ("∏", "Factors and inverses", [
@@ -134,8 +134,8 @@ SLIDES = [
         "es": {
             "eyebrow": "Todo el día · Cuatro ideas",
             "title": ["Cuatro ideas,", "un solo objeto"],
-            "subtitle": "Todo lo de hoy es una de estas cuatro, sobre datos "
-                        "reales",
+            "subtitle": "Cada sección de hoy sirve a una de estas cuatro, "
+                        "sobre datos reales",
             "cards": [
                 ("⊞", "Generaliza la matriz", [
                     "Un escalar no tiene ejes, un vector uno, una matriz dos.",
@@ -143,14 +143,14 @@ SLIDES = [
                     "los datos.",
                 ]),
                 ("▦", "Contiene los datos", [
-                    "Imágenes, fotogramas, viajes en taxi, precios: todo es "
-                    "una sola caja de números.",
+                    "Imágenes, fotogramas, viajes en taxi, precios: cada uno "
+                    "es una caja de números.",
                     "La caja llega con una forma, y cada eje representa algo.",
                 ]),
                 ("⇄", "Ejes que se mueven", [
                     "transpose permuta los ejes; reshape relee los mismos "
                     "números planos.",
-                    "La misma forma puede tener otro significado: ese es el "
+                    "La misma forma puede tener otro significado. Ese es el "
                     "error que este día evita.",
                 ]),
                 ("∏", "Factoriza e invierte", [
@@ -371,7 +371,7 @@ SLIDES = [
             "cards": [
                 ("∑", "Normal equations", [
                     "Fastest to write.",
-                    "Squares the condition number — the answer degrades long "
+                    "Squares the condition number. The answer degrades long "
                     "before the clock does.",
                 ]),
                 ("⊿", "QR", [
@@ -396,7 +396,7 @@ SLIDES = [
             "cards": [
                 ("∑", "Ecuaciones normales", [
                     "Las más rápidas de escribir.",
-                    "Elevan al cuadrado el número de condición: la respuesta "
+                    "Elevan al cuadrado el número de condición. La respuesta "
                     "se degrada mucho antes que el reloj.",
                 ]),
                 ("⊿", "QR", [
@@ -473,8 +473,8 @@ SLIDES = [
         "en": {
             "eyebrow": "Notebook 11 · Four bargains",
             "title": ["Four decompositions,", "four bargains"],
-            "subtitle": "Each one keeps a different structure — and that "
-                        "choice is the decision",
+            "subtitle": "Each one keeps a different structure. That choice "
+                        "is the decision",
             "cards": [
                 ("∑", "CP", [
                     "A sum of rank-1 components.",
@@ -504,7 +504,7 @@ SLIDES = [
         "es": {
             "eyebrow": "Notebook 11 · Cuatro tratos",
             "title": ["Cuatro descomposiciones,", "cuatro tratos"],
-            "subtitle": "Cada una conserva una estructura distinta, y esa "
+            "subtitle": "Cada una conserva una estructura distinta. Esa "
                         "elección es la decisión",
             "cards": [
                 ("∑", "CP", [

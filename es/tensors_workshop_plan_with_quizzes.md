@@ -786,7 +786,7 @@ Lo que has hecho hoy:
 3. **Parte III**: indexar, hacer broadcasting, reorganizar y transponer datos reales de tumores e imágenes médicas reales, y tropezar con problemas reales: píxeles de varianza cero, y `reshape` destruyendo una imagen en silencio.
 4. **Parte IV**: escribir contracciones con `einsum`; resolver un sistema irresoluble de 20 433 ecuaciones con la pseudoinversa; usar la recursión para pronosticar tráfico aéreo real y para encontrar un vector propio; convolucionar y deconvolucionar una fotografía real; y comprimir 4,7× un tensor real de taxis con Tucker, que encontró la hora punta por su cuenta.
 
-**Una sola idea conecta las secciones 07, 09 y 10:** cuando un problema no tiene respuesta exacta ni inversa verdadera, no te rindes: buscas la mejor aproximación estable. La pseudoinversa hace esto para sistemas lineales, Richardson-Lucy para imágenes desenfocadas y Tucker para tensores demasiado grandes para guardarlos enteros.
+**Una sola idea conecta las secciones 07, 09 y 10:** cuando un problema no tiene respuesta exacta ni inversa verdadera, no te rindes: buscas la mejor aproximación estable. Esas tres secciones la *enuncian*. La ves ocurrir tres veces: la pseudoinversa sobre un sistema lineal real en la sección 07, Tucker sobre un tensor demasiado grande en la sección 10, y Richardson-Lucy sobre una fotografía desenfocada en el ejercicio 13.
 
 **Adónde ir después**
 

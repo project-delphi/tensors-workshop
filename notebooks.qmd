@@ -63,29 +63,11 @@ when you run locally.
 and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at
 all. The other nine download something the first time they run: a CSV from
 GitHub, the storm video clip from Wikimedia, or the voice recording for
-notebook 12's take-home E. Notebook 00 fetches four files, and 05 and 11 fetch
-two each.
+notebook 12's take-home E. The table below says which, notebook by notebook.
 
 ## What each notebook needs
 
-| Notebook | Beyond NumPy | Network |
-|---|---|---|
-| 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | yes — all three CSVs, and a 1 KB probe of the storm clip |
-| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `scipy` | no |
-| 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | yes — the storm clip |
-| 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
-| 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |
-| 05 | `matplotlib`, `ipywidgets`, `imageio`† | yes — the storm clip |
-| 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
-| 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | yes — California housing |
-| 08 | `matplotlib`, `ipywidgets`, `pandas` | yes — airline passengers |
-| 09 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — airline passengers |
-| 10 | `matplotlib`, `ipywidgets`, `pandas` | yes — NYC taxi trips |
-| 11 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | yes — NYC taxi trips, and the storm clip |
-| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | yes — a voice recording, for take-home E |
-| 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
-
-: Colab already has every one of these installed. {tbl-colwidths="[12,58,30]"}
+{{< include _includes/notebook-deps-en.md >}}
 
 † Installed by the notebook itself with `%pip install -q`, which is why neither
 is in the command above.

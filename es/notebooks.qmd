@@ -65,29 +65,12 @@ así que si falta uno solo se nota al ejecutar en local.
 manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se
 ejecutan sin red. Los otros nueve descargan algo la primera vez que se
 ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia,
-o la grabación de voz para el ejercicio E del cuaderno 12. El cuaderno 00
-descarga cuatro archivos, y el 05 y el 11 descargan dos cada uno.
+o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo
+dice cuál, cuaderno por cuaderno.
 
 ## Qué necesita cada cuaderno
 
-| Cuaderno | Además de NumPy | Red |
-|---|---|---|
-| 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | sí — los tres CSV, y un sondeo de 1 KB del clip de la tormenta |
-| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `scipy` | no |
-| 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | sí — el clip de la tormenta |
-| 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
-| 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |
-| 05 | `matplotlib`, `ipywidgets`, `imageio`† | sí — el clip de la tormenta |
-| 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
-| 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | sí — vivienda en California |
-| 08 | `matplotlib`, `ipywidgets`, `pandas` | sí — pasajeros de aerolínea |
-| 09 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | sí — pasajeros de aerolínea |
-| 10 | `matplotlib`, `ipywidgets`, `pandas` | sí — viajes en taxi de Nueva York |
-| 11 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | sí — viajes en taxi de Nueva York, y el clip de la tormenta |
-| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | sí — una grabación de voz, para el ejercicio E |
-| 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
-
-: Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}
+{{< include ../_includes/notebook-deps-es.md >}}
 
 † Lo instala el propio cuaderno con `%pip install -q`, y por eso ninguno de los
 dos está en el comando de arriba.

@@ -52,7 +52,7 @@
 <text x="510" y="442" class="bs-sect">Tensor factorizations</text>
 <rect x="10" y="496" width="860" height="73" rx="8" class="bs-ribbon"/>
 <text x="440" y="526" class="bs-thread" text-anchor="middle">One thread runs through all four. When there is no exact answer, find the best approximation you can trust.</text>
-<text x="440" y="550" class="bs-where" text-anchor="middle">You meet it in sections 07, 10 and 13.</text>
+<text x="440" y="550" class="bs-where" text-anchor="middle">You watch it happen in sections 07, 10 and 13.</text>
 <text x="440" y="595" class="bs-closing" text-anchor="middle">12 pulls the four together. 13 is the take-home.</text>
 </svg>
 <svg xmlns="http://www.w3.org/2000/svg" class="bs-narrow" viewBox="0 0 400 986" role="img" aria-labelledby="bs-narrow-t bs-narrow-d">
@@ -110,7 +110,7 @@
 <text x="200" y="874" class="bs-thread" text-anchor="middle">One thread runs through all four. When there</text>
 <text x="200" y="893" class="bs-thread" text-anchor="middle">is no exact answer, find the best</text>
 <text x="200" y="912" class="bs-thread" text-anchor="middle">approximation you can trust.</text>
-<text x="200" y="936" class="bs-where" text-anchor="middle">You meet it in sections 07, 10 and 13.</text>
+<text x="200" y="936" class="bs-where" text-anchor="middle">You watch it happen in sections 07, 10 and 13.</text>
 <text x="200" y="981" class="bs-closing" text-anchor="middle">12 pulls the four together. 13 is the take-home.</text>
 </svg>
 :::
