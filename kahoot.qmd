@@ -104,6 +104,6 @@ The handbook's cutting order, in order:
 4. Question 5 of either group block.
 5. **Quiz 1.**
 
-**Never cut** section 01's *Three Operations That Matter*, section 10, or **Quiz
-3**. Quiz 3 is the cheapest way to find out whether Tucker and CP landed, and
-you only find out before students leave.
+**Never cut** section 01's *Three Operations That Matter*, section 10, or
+**Quiz 3**. Quiz 3 is the cheapest way to find out whether Tucker and CP
+landed, and the only chance to find out is before students leave.

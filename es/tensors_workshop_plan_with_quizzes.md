@@ -205,7 +205,7 @@ np.einsum('ik,kj->ij', A, B)      # matrix product, sum over k       (eq 2.5)
 
 ## 1.4 El mapa de las factorizaciones
 
-Una **factorización** escribe un objeto como producto de objetos más simples. Conociste dos en el capítulo 2. Esta es toda la familia que vamos a usar hoy:
+Una **factorización** escribe un objeto como producto de objetos más simples. Conociste dos en el capítulo 2. Estas son las ocho que vamos a usar hoy:
 
 | Método | Funciona sobre | Qué te da | Dónde, hoy |
 |---|---|---|---|
@@ -218,7 +218,7 @@ Una **factorización** escribe un objeto como producto de objetos más simples. 
 | **Cholesky** | Matriz simétrica definida positiva | Una «raíz cuadrada» de una matriz de covarianza, para *construir* datos correlacionados | Apéndice D |
 | **Tucker / CP** | **Tensor, de cualquier orden** | PCA generalizado a todos los ejes | Sección 10 |
 
-Hoy se usa cada uno de estos donde hace falta. La [sección 09](#sec-09-factorizaciones-matriciales) pone toda la familia lado a lado y pregunta qué *cuesta* cada uno, que es la pregunta que esta tabla no responde.
+Hoy se usa cada uno de estos donde hace falta. La [sección 09](#sec-09-factorizaciones-matriciales) pone seis factorizaciones lado a lado —cinco de esta tabla, más NMF— y pregunta qué *cuesta* cada una. Esta tabla no responde a esa pregunta.
 
 ```python
 A = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])

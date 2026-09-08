@@ -850,6 +850,12 @@ def brainstorm_svg(lang: str) -> str:
             sys.exit(f"brainstorm: section {n} ({titles[n]}) is placed "
                      f"{placed.get(n, 0)} times; every section belongs under "
                      f"exactly one idea, or in closing_sections")
+    # At least two: the ribbon reads "sections 07, 10 and 13", and the join
+    # below indexes the last element. An empty list would crash the generator
+    # that gates CI with a bare IndexError instead of a named cause.
+    if len(b["thread_sections"]) < 2:
+        sys.exit("brainstorm.thread_sections: needs at least two sections; "
+                 f"got {b['thread_sections']!r}")
     for n in b["thread_sections"]:
         if n not in titles:
             sys.exit(f"brainstorm.thread_sections: {n!r} is not a section")

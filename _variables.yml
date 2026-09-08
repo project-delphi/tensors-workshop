@@ -388,11 +388,22 @@ brainstorm:
       gloss_es: "Divídelo en partes más simples que puedas usar."
       sections: ["07", "08", "09", "10", "11"]
 
-  # The ribbon under the four cards. `thread_sections` are the three places the
-  # workshop states this idea out loud — the pseudoinverse, Tucker, and the
-  # take-home's deconvolution. The handbook names the same three; the numbers
-  # are rendered from this list rather than written into the sentence, so a
-  # renumbered section cannot leave a wrong number painted on the picture.
+  # The ribbon under the four cards. `thread_sections` are the three places
+  # this diagram points at for the idea: the pseudoinverse, Tucker, and the
+  # take-home's deconvolution.
+  #
+  # **The other documents do not agree on that list, and this is the fourth
+  # reading of it.** The handbook's wrap-up says sections 07, 09 and 10;
+  # `x13.intro_*` names 07 and 10 beside the take-home itself. All of them are
+  # defensible — 09 states the idea, 11 restates it, 13 is where you watch it
+  # happen — and none of them is generated from another, so they drift in
+  # silence. check_links.py can only verify that each number here names a
+  # section that exists, never that the three documents chose the same three.
+  # Change one, and go and look at the other two.
+  #
+  # The numbers are rendered from this list rather than written into the
+  # sentence, so at least a renumbered section cannot leave a wrong number
+  # painted on the picture.
   thread_en: "One thread runs through all four. When there is no exact answer, find the best approximation you can trust."
   thread_es: "Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar."
   thread_lead_en: "You meet it in sections"

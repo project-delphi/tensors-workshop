@@ -421,7 +421,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tensors-workshop</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>matplotlib</code> and <code>ipywidgets</code> are in that list because every notebook plots, and all but 00 use sliders. Both ship with Colab, so a missing one only shows up when you run locally.</p>
-<p><code>scikit-learn</code> and <code>scikit-image</code> ship the tumour data, the handwritten digits and the photographs. So sections 01, 03, 04, 06 and 09 run with no network at all. The other nine notebooks each fetch one file the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or a voice recording for notebook 11’s take-home E.</p>
+<p><code>scikit-learn</code> and <code>scikit-image</code> ship the tumour data, the handwritten digits and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at all. The other nine download something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or the voice recording for notebook 12’s take-home E. Notebook 00 fetches four files, and 05 and 11 fetch two each.</p>
 </section>
 <section id="what-each-notebook-needs" class="level2">
 <h2 class="anchored" data-anchor-id="what-each-notebook-needs">What each notebook needs</h2>
@@ -487,8 +487,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>09</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>no</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>yes — airline passengers</td>
 </tr>
 <tr class="odd">
 <td>10</td>
@@ -497,18 +497,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>11</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
-<td>yes — a voice recording, for take-home E</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
+<td>yes — NYC taxi trips, and the storm clip</td>
 </tr>
 <tr class="odd">
 <td>12</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>yes — airline passengers</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
+<td>yes — a voice recording, for take-home E</td>
 </tr>
 <tr class="even">
 <td>13</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
-<td>yes — NYC taxi trips, and the storm clip</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>no</td>
 </tr>
 </tbody>
 </table>

@@ -59,11 +59,7 @@ uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab
 all but 00 use sliders. Both ship with Colab, so a missing one only shows up
 when you run locally.
 
-`scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits
-and the photographs. So sections 01, 03, 04, 06 and 09 run with no network at
-all. The other nine notebooks each fetch one file the first time they run: a CSV
-from GitHub, the storm video clip from Wikimedia, or a voice recording for
-notebook 11's take-home E.
+`scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at all. The other nine download something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or the voice recording for notebook 12's take-home E. Notebook 00 fetches four files, and 05 and 11 fetch two each.
 
 ## What each notebook needs
 
@@ -78,11 +74,11 @@ notebook 11's take-home E.
 | 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
 | 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | yes — California housing |
 | 08 | `matplotlib`, `ipywidgets`, `pandas` | yes — airline passengers |
-| 09 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
+| 09 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — airline passengers |
 | 10 | `matplotlib`, `ipywidgets`, `pandas` | yes — NYC taxi trips |
-| 11 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | yes — a voice recording, for take-home E |
-| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | yes — airline passengers |
-| 13 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | yes — NYC taxi trips, and the storm clip |
+| 11 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | yes — NYC taxi trips, and the storm clip |
+| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | yes — a voice recording, for take-home E |
+| 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
 
 : Colab already has every one of these installed. {tbl-colwidths="[12,58,30]"}
 
