@@ -8,20 +8,21 @@ lang: es
 🇬🇧 Prefer English? [This page in English](../notebooks.qmd).
 :::
 
-Cada sección del taller tiene su cuaderno, y uno más queda al final como estudio
-a fondo para casa. Están **escritos principalmente en inglés**, con un resumen de
-una línea en español bajo cada encabezado.
+Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como
+estudio a fondo para casa. Están **escritos principalmente en inglés**, y cada
+encabezado lleva un resumen de una línea en español.
 
 ## Cómo están construidos
 
-Todos los cuadernos siguen la misma forma, así que siempre sabes dónde estás:
+Todos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde
+estás:
 
 1. **Encabezado**: el título de la sección, sus objetivos y una insignia *Open in
    Colab*.
 2. **Preparación**: instala e importa solo lo que esa sección necesita, y carga
-   sus propios datos. Es autónomo: sin archivos locales y sin depender de ningún
-   otro cuaderno.
-3. **Explicación y código**, alternándose, construyendo poco a poco en lugar de
+   sus propios datos. Cada cuaderno es autónomo: sin archivos locales y sin
+   depender de ningún otro cuaderno.
+3. **Explicación y código**, alternándose. Construyen poco a poco, en lugar de
    soltarte un muro de código.
 4. **Ejercicios**: esqueletos `# TODO` sacados del manual, cada uno seguido de una
    celda de solución plegada. Ábrela después de intentarlo.
@@ -29,9 +30,9 @@ Todos los cuadernos siguen la misma forma, así que siempre sabes dónde estás:
 
 ::: {.callout-important appearance="simple"}
 Los cuadernos se guardan **sin salidas y sin números de ejecución**. Cada número
-que veas es uno que has producido tú. Los resultados esperados están citados en
-el texto para que puedas comprobar si los tuyos son correctos, y si los tuyos
-difieren, eso merece investigarse en lugar de descartarse.
+que veas es uno que has producido tú. El texto cita los resultados esperados,
+así que puedes comprobar si los tuyos son correctos. Si los tuyos difieren, eso
+merece investigarse en lugar de descartarse.
 :::
 
 ## Los cuadernos
@@ -41,7 +42,7 @@ difieren, eso merece investigarse en lugar de descartarse.
 ## Para ir más lejos
 
 Este **no es una sección**. Es un estudio a fondo, entregado como material para
-casa: sin diapositivas, sin Kahoot y sin minutos en el reloj del taller. La
+casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la
 agenda de {{< var workshop.minutes >}} minutos es exactamente la misma sin él.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
@@ -56,15 +57,16 @@ cd {{< var repo.name >}}
 uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
 ```
 
-`matplotlib` y `ipywidgets` están en esa lista porque todos los cuadernos dibujan
-algo y todos menos el 00 usan deslizadores; los dos vienen con Colab, y por eso
-su ausencia solo se nota en local.
+`matplotlib` y `ipywidgets` están en esa lista porque todos los cuadernos
+dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab,
+así que si falta uno solo se nota al ejecutar en local.
 
 `scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
-manuscritos y las fotografías, así que las secciones 01, 03, 04, 06 y 09 se
-ejecutan sin red en absoluto. Los otros nueve cuadernos descargan algo la primera
-vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde
-Wikimedia o —en el ejercicio E para casa del cuaderno 11— una grabación de voz.
+manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se
+ejecutan sin red. Los otros nueve descargan algo la primera vez que se
+ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia,
+o la grabación de voz para el ejercicio E del cuaderno 12. El cuaderno 00
+descarga cuatro archivos, y el 05 y el 11 descargan dos cada uno.
 
 ## Qué necesita cada cuaderno
 
@@ -79,11 +81,11 @@ Wikimedia o —en el ejercicio E para casa del cuaderno 11— una grabación de 
 | 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
 | 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | sí — vivienda en California |
 | 08 | `matplotlib`, `ipywidgets`, `pandas` | sí — pasajeros de aerolínea |
-| 09 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
+| 09 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | sí — pasajeros de aerolínea |
 | 10 | `matplotlib`, `ipywidgets`, `pandas` | sí — viajes en taxi de Nueva York |
-| 11 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | sí — una grabación de voz, para el ejercicio E |
-| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | sí — pasajeros de aerolínea |
-| 13 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | sí — viajes en taxi de Nueva York, y el clip de la tormenta |
+| 11 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | sí — viajes en taxi de Nueva York, y el clip de la tormenta |
+| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | sí — una grabación de voz, para el ejercicio E |
+| 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
 
 : Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}
 

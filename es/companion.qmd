@@ -1,21 +1,25 @@
 ---
 title: "El complemento generado por máquina"
-subtitle: "Todo lo que NotebookLM generó con las fuentes del propio taller"
+subtitle: "Lo que NotebookLM generó a partir del manual y los cuadernos"
 lang: es
 ---
 
-::: {.callout-warning appearance="simple"}
-**Nada de esta página lo ha escrito ni revisado una persona.** Lo generó
-[NotebookLM]({{< var companion.notebook_url >}}) a partir del manual y los
-cuadernos del taller. Úsalo como una *segunda pasada* sobre material que ya has
-visto, y comprueba cualquier cosa que afirme contra el
-[manual](tensors_workshop_plan_with_quizzes.md), nunca al revés. Generado el
-{{< var companion.exported >}}.
-:::
+NotebookLM generó el material de esta página a partir de las fuentes del propio
+taller. No lo ha escrito ninguna persona y nadie lo ha revisado. Úsalo como una
+*segunda pasada* sobre material que ya has visto. Cuando algo aquí contradiga al
+[manual](tensors_workshop_plan_with_quizzes.md), el manual tiene razón. Generado
+el {{< var companion.exported >}}.
 
-Cuando un artefacto se puede exportar, se exporta y lo sirve este sitio: sin
-cuenta y sin iniciar sesión. Los demás son enlaces a NotebookLM, que pide una
-cuenta de Google. Cada tarjeta dice de cuál se trata.
+Algunos artefactos están exportados y los sirve este sitio: sin cuenta y sin
+iniciar sesión. Los demás son enlaces a NotebookLM, que pide una cuenta de
+Google. Cada tarjeta dice de cuál se trata.
+
+## Todo el día en una imagen {#brainstorm}
+
+Este diagrama es la excepción de la página: lo dibujó una persona, a partir del
+manual. Cuatro ideas, y cada sección bajo la idea a la que sirve.
+
+{{< include ../_includes/brainstorm-es.md >}}
 
 ## Resumen en vídeo {#video}
 
@@ -23,7 +27,8 @@ cuenta de Google. Cada tarjeta dice de cuál se trata.
 
 ## Vídeos de un minuto {#shorts}
 
-Ocho, cada uno sobre una sola idea y ligado a la sección a la que pertenece.
+Ocho vídeos. Cada uno trata una sola idea y nombra la sección a la que
+pertenece.
 
 {{< include ../_includes/companion-shorts-es.md >}}
 
@@ -33,16 +38,16 @@ Ocho, cada uno sobre una sola idea y ligado a la sección a la que pertenece.
 
 ## Escuchar {#listen}
 
-Dos voces comentando el taller: lo único de aquí que funciona con la pantalla
+Dos voces comentan el taller. Es lo único de aquí que funciona con la pantalla
 apagada.
 
 {{< include ../_includes/companion-audio-es.md >}}
 
 ## Ponte a prueba {#test-yourself}
 
-Ninguno de los dos es el [Kahoot](../kahoot.qmd), que son seis preguntas en vivo
-después de las secciones 04, 07 y 10, escritas para este taller. Estos dos están
-generados y no tienen límite.
+Ninguno de los dos es el [Kahoot](../kahoot.qmd). El Kahoot son seis preguntas
+en vivo, escritas para este taller, que se lanzan después de las secciones 04,
+07 y 10. Estos dos están generados y puedes repetirlos las veces que quieras.
 
 {{< include ../_includes/companion-selfcheck-es.md >}}
 
@@ -52,10 +57,10 @@ generados y no tienen límite.
 
 ## En NotebookLM {#notebooklm}
 
-**[Abrir el cuaderno]({{< var companion.notebook_url >}})** para ver las fuentes
-que hay detrás de todo lo anterior, o para generar otra cosa a partir de ellas.
-La infografía de panorama general está también
-**[aquí]({{< var companion.overview_url >}})** por separado.
+**[Abre el cuaderno]({{< var companion.notebook_url >}})** para leer las fuentes
+de las que salieron estos artefactos, o para generar otros nuevos. La infografía
+de panorama general tiene también **[su propio
+enlace]({{< var companion.overview_url >}})**.
 
 ::: {.callout-note appearance="simple"}
 🇬🇧 Prefer English? [This page in English](../companion.qmd).

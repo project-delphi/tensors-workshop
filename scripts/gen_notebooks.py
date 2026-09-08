@@ -255,10 +255,10 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
         ]
     elif extra:
         parts += [
-            f"That is the last deep dive. Everything else is back on "
+            f"That is the last deep dive. The rest is back on "
             f"[the workshop site]({site}/).",
             "",
-            f"> 🇪🇸 Ese es el último estudio a fondo. Todo lo demás está en "
+            f"> 🇪🇸 Ese es el último estudio a fondo. El resto está en "
             f"[el sitio del taller]({site}/).",
             "",
         ]

@@ -64,12 +64,12 @@ etiqueta en la otra.
 <!-- END handbook-schedule -->
 
 **Por qué los cuestionarios están donde están.** Cada uno va detrás de las
-secciones que le dan contenido, mientras el material sigue fresco, y cae antes
-del siguiente cambio de contexto —una pausa o una Parte nueva—, de modo que
-refuerza en lugar de interrumpir. El cuestionario 1 cierra el trabajo de formas y
-vocabulario de las secciones 03 y 04; el 2 cierra el tramo de einsum y
-pseudoinversa, secciones 06 y 07; el 3 cierra el tramo de descomposiciones,
-secciones 09 y 10, justo antes del cierre.
+secciones que le dan contenido, mientras el material sigue fresco. Cada uno cae
+también antes del siguiente cambio de contexto: una pausa, o una Parte nueva.
+Así el cuestionario refuerza el trabajo en vez de interrumpirlo. El
+cuestionario 1 cierra el trabajo de formas y vocabulario de las secciones 03 y
+04. El 2 cierra el tramo de einsum y pseudoinversa, secciones 06 y 07. El 3
+cierra el tramo de descomposiciones, secciones 09 y 10, justo antes del cierre.
 
 ---
 
@@ -92,9 +92,7 @@ secciones 09 y 10, justo antes del cierre.
 | NYC Taxi Trips | 6433 viajes reales en taxi por Nueva York | Factorización tensorial |
 | Airline Passengers | 144 meses de tráfico aéreo real, 1949–1960 | Recursión, pronóstico |
 
-Todos los fragmentos de código de este manual dan por supuestos los nombres que
-liga la celda de preparación del cuaderno 00, así que si estás leyendo fuera de
-un cuaderno, empieza aquí:
+Todos los fragmentos de código de este manual dan por supuestos los nombres que liga la celda de preparación del cuaderno 00. Si estás leyendo fuera de un cuaderno, empieza aquí:
 
 ```python
 import numpy as np
@@ -109,7 +107,7 @@ TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.c
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
 ```
 
-El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) descarga los tres e imprime sus formas — `(20640, 10) (6433, 14) (144, 3)`. Ejecútalo en Colab antes de la sesión, y dilo en Discord enseguida si falla: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después. Todos los demás cuadernos cargan solo los datos que necesita su propia sección, así que puedes abrir cualquiera de ellos en frío.
+El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) descarga los tres e imprime sus formas — `(20640, 10) (6433, 14) (144, 3)`. Ejecútalo en Colab antes de la sesión. Si falla, dilo en Discord enseguida: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después. Todos los demás cuadernos cargan solo los datos que necesita su propia sección, así que puedes abrir cualquiera de ellos en frío.
 
 ---
 
@@ -181,7 +179,7 @@ photo[:, :, 0].shape       # (512, 512) — a slice: one colour channel, still a
 photo[100, 200, :].shape   # (3,)       — a fiber: the 3 colour values of one pixel
 ```
 
-**Desplegado**: toda descomposición tensorial empieza convirtiendo el tensor en una matriz, un eje cada vez. Mueve el eje *k* al frente y luego aplana todo lo demás en un único eje largo.
+**Desplegado**: toda descomposición tensorial empieza convirtiendo el tensor en una matriz, un eje cada vez. Mueve el eje *k* al frente y luego aplana los ejes restantes en un único eje largo.
 
 ```python
 def unfold(T, axis):
@@ -191,7 +189,7 @@ print(unfold(photo, 0).shape)   # (512, 1536) — rows are the height axis
 print(unfold(photo, 2).shape)   # (3, 262144) — rows are the 3 colour channels
 ```
 
-El desplegado **no pierde nada**. Solo reorganiza. El desplegado en modo 2 dice «cada canal de color es una fila de 262 144 números», y ahora se le puede aplicar cualquier herramienta matricial que conozcas, incluida la SVD.
+El desplegado **no pierde nada**. Solo reorganiza. El desplegado en modo 2 dice «cada canal de color es una fila de 262 144 números». Ahora se le puede aplicar cualquier herramienta matricial que conozcas, incluida la SVD.
 
 **Contracción**: multiplicar a lo largo de un eje compartido y sumar sobre él. El producto escalar (ec. 2.8) y el producto matricial (ec. 2.5) son los dos contracciones. `np.einsum` las escribe directamente:
 
@@ -207,7 +205,7 @@ np.einsum('ik,kj->ij', A, B)      # matrix product, sum over k       (eq 2.5)
 
 ## 1.4 El mapa de las factorizaciones
 
-Una **factorización** escribe un objeto como producto de objetos más simples. Conociste dos en el capítulo 2. Esta es toda la familia que vamos a usar hoy:
+Una **factorización** escribe un objeto como producto de objetos más simples. Conociste dos en el capítulo 2. Estas son las ocho que vamos a usar hoy:
 
 | Método | Funciona sobre | Qué te da | Dónde, hoy |
 |---|---|---|---|
@@ -220,7 +218,7 @@ Una **factorización** escribe un objeto como producto de objetos más simples. 
 | **Cholesky** | Matriz simétrica definida positiva | Una «raíz cuadrada» de una matriz de covarianza, para *construir* datos correlacionados | Apéndice D |
 | **Tucker / CP** | **Tensor, de cualquier orden** | PCA generalizado a todos los ejes | Sección 10 |
 
-Hoy se usa cada uno de estos donde hace falta. La [sección 09](#sec-09-factorizaciones-matriciales) pone toda la familia lado a lado y pregunta qué *cuesta* cada uno, que es la pregunta que esta tabla no responde.
+Hoy se usa cada uno de estos donde hace falta. La [sección 09](#sec-09-factorizaciones-matriciales) pone seis factorizaciones lado a lado —cinco de esta tabla, más NMF— y pregunta qué *cuesta* cada una. Esta tabla no responde a esa pregunta.
 
 ```python
 A = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
@@ -238,7 +236,7 @@ print(np.allclose(Q.T @ Q, np.eye(3)))      # True — book eq 2.37
 
 *El mismo dígito de 8×8, factorizado de tres formas. Las formas son lo importante: `L` es de verdad triangular inferior, `U` superior, y `Σ` está vacía salvo su diagonal. Debajo de la línea hay un objeto que ninguna de las tres puede tocar.*
 
-Todo lo que está en esa tabla por encima de la línea doble funciona sobre **matrices**: dos ejes. Los datos reales a menudo tienen más. De eso trata la sección 10.
+Cada método de esa tabla por encima de la línea doble funciona sobre **matrices**: dos ejes. Los datos reales a menudo tienen más. De eso trata la sección 10.
 
 ---
 
@@ -246,9 +244,9 @@ Todo lo que está en esa tabla por encima de la línea doble funciona sobre **ma
 
 Una demostración de código en vivo en el cuaderno, sobre tensores reales de imagen y de vídeo. Ábrelo en Colab y ejecuta primero la celda de preparación: descarga y comprueba la suma de verificación del clip de vídeo real que usan los ejercicios. Tres ejercicios:
 
-1. **Leer los ejes en tensores reales.** `digits.images` es `(1797, 8, 8)` y una foto es `(512, 512, 3)` —los dos de orden 3—, pero el eje 0 cuenta imágenes enteras en uno y filas de píxeles en el otro. `digit_batch` y `video_patch` son *los dos* `(8, 8, 8)`. Antes de ejecutar nada, di qué cuenta cada eje.
-2. **Barajar un lote frente a barajar el tiempo.** Barajar el eje 0 es inofensivo para un lote —los ejemplos son independientes, el orden no lleva información— y destruye un vídeo, donde el orden **es** la información. La misma operación, un significado completamente distinto. La notación del capítulo 2 no tiene ningún concepto de «el orden entre elementos importa». Eso sí es genuinamente nuevo hoy.
-3. **Agrupar clips de distinta duración.** Los vídeos reales tienen distinto número de fotogramas, pero un tensor de lote es rectangular. Toma tres clips reales de longitud 4, 7 y 5, rellénalos hasta formar un lote de orden 5 `(3, 7, 135, 240, 3)`, y lleva una máscara booleana `(3, 7)` de validez para que `valid.sum() == 16`: el relleno sigue visible en lugar de promediarse con los datos.
+1. **Leer los ejes en tensores reales.** `digits.images` es `(1797, 8, 8)` y una foto es `(512, 512, 3)`. Los dos son de orden 3, pero el eje 0 cuenta imágenes enteras en uno y filas de píxeles en el otro. `digit_batch` y `video_patch` son *los dos* `(8, 8, 8)`. Antes de ejecutar una sola línea de código, di qué cuenta cada eje.
+2. **Barajar un lote frente a barajar el tiempo.** Barajar el eje 0 es inofensivo para un lote: los ejemplos son independientes, y el orden no lleva información. Destruye un vídeo, donde el orden **es** la información. La misma operación, un significado completamente distinto. La notación del capítulo 2 no tiene ningún concepto de «el orden entre elementos importa». Eso sí es genuinamente nuevo hoy.
+3. **Agrupar clips de distinta duración.** Los vídeos reales tienen distinto número de fotogramas, pero un tensor de lote es rectangular. Toma tres clips reales de longitud 4, 7 y 5 y rellénalos hasta formar un lote de orden 5 `(3, 7, 135, 240, 3)`. Lleva junto a él una máscara booleana `(3, 7)` de validez, para que `valid.sum() == 16`. Así el relleno sigue visible en lugar de promediarse con los datos.
 
 ---
 
@@ -331,7 +329,7 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 
-**Hazlo antes de la pausa, justo después de la sección 04.** Todo el mundo acaba de usar orden, eje, forma, corte, fibra, varianza, reshape y transposición: es el momento en que esas palabras están más frescas. Lanza `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 preguntas, ~5 min con el podio incluido). No hace falta preparación más allá de haberlo importado a un kahoot con antelación.
+**Hazlo antes de la pausa, justo después de la sección 04.** La sala acaba de usar orden, eje, forma, corte, fibra, varianza, reshape y transposición. Es el momento en que esas palabras están más frescas. Lanza `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 preguntas, ~5 min con el podio incluido). No hace falta preparación más allá de haberlo importado a un kahoot con antelación.
 
 ## Pausa (5 min)
 
@@ -359,7 +357,7 @@ De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No 
 
 ## 06 · Contracción con `einsum` (Bloque 3, 15 min)
 
-**Por qué importa.** Los sistemas de recomendación y de búsqueda ordenan los artículos por el producto escalar entre un vector de usuario y todos los vectores de artículo: un usuario contra millones de artículos, muchas veces por segundo. Esa contracción *es* la señal de ordenación. Suma sobre el eje equivocado y todos los usuarios reciben resultados erróneos.
+**Por qué importa.** Los sistemas de recomendación y de búsqueda ordenan los artículos por el producto escalar entre un vector de usuario y todos los vectores de artículo. Eso es un usuario contra millones de artículos, muchas veces por segundo. Esa contracción *es* la señal de ordenación. Suma sobre el eje equivocado y todos los usuarios reciben resultados erróneos.
 
 **Ejercicio (10 min)**
 ```python
@@ -388,7 +386,7 @@ np.einsum('ij->ji', A)         # transpose      == A.T
 np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 ```
 
-`c` aparece en las entradas pero no después de la flecha, así que **se suma**: eso es la contracción. `n`, `h` y `w` aparecen después de la flecha, así que **se conservan**. Añadir un eje de lote cuesta exactamente una letra. Por eso merece la pena aprender `einsum`: la misma expresión sirve para una imagen o para un millón, y se lee como las matemáticas del capítulo 2.
+`c` aparece en las entradas pero no después de la flecha, así que **se suma**: eso es la contracción. `n`, `h` y `w` aparecen después de la flecha, así que **se conservan**. Añadir un eje de lote cuesta exactamente una letra. Por eso merece la pena aprender `einsum`. La misma expresión sirve para una imagen o para un millón, y se lee como las matemáticas del capítulo 2.
 
 ## 07 · Inversas y la pseudoinversa (Bloque 4, 15 min)
 
@@ -404,7 +402,7 @@ Singular = np.array([[1., 2.], [2., 4.]])  # column 2 = 2 × column 1
 np.linalg.inv(Singular)                     # raises LinAlgError
 ```
 
-**Paso 2: matrices no cuadradas.** `A⁻¹` ni siquiera está definida. Pero seguimos necesitando resolver `Ax = b`, y en aprendizaje automático `A` casi nunca es cuadrada: tiene una fila por ejemplo y una columna por variable, y siempre hay muchos más ejemplos que variables.
+**Paso 2: matrices no cuadradas.** `A⁻¹` ni siquiera está definida. Pero seguimos necesitando resolver `Ax = b`. En aprendizaje automático `A` casi nunca es cuadrada: tiene una fila por ejemplo y una columna por variable, y siempre hay muchos más ejemplos que variables.
 
 La **pseudoinversa de Moore-Penrose** `A⁺` (capítulo 2, §2.9) es la respuesta. Está definida para *toda* matriz —cuadrada o no, singular o no— y se calcula a partir de la SVD (ec. 2.47):
 
@@ -431,7 +429,7 @@ Lo que te da `A⁺` depende de la forma, exactamente como dice el §2.9 del cap�
 - **Más filas que columnas** (demasiadas ecuaciones, normalmente sin solución exacta) → `x = A⁺b` da la `x` que hace que `Ax` esté lo **más cerca posible** de `b`. Esto son los mínimos cuadrados.
 - **Más columnas que filas** (muy pocas ecuaciones, infinitas soluciones) → `x = A⁺b` da la solución válida de **norma más pequeña**.
 
-**Paso 3: ¿y los tensores?** Es una pregunta justa con una respuesta honesta. No hay una única inversa tensorial que use todo el mundo. Existen varias definiciones (basadas en el producto de Einstein, o en el t-producto para tensores de orden 3), y son investigación activa. **En la práctica, en aprendizaje automático, se despliega el tensor en una matriz, se usa la pseudoinversa matricial y se vuelve a plegar el resultado.** Eso funciona porque el desplegado no pierde nada:
+**Paso 3: ¿y los tensores?** Es una pregunta justa con una respuesta honesta. No hay ninguna inversa tensorial de uso común. Existen varias definiciones —basadas en el producto de Einstein, o en el t-producto para tensores de orden 3— y son investigación activa. **En la práctica, en aprendizaje automático, se despliega el tensor en una matriz, se usa la pseudoinversa matricial y se vuelve a plegar el resultado.** Eso funciona porque el desplegado no pierde nada:
 
 ```python
 T = np.random.randn(4, 3, 5)
@@ -475,11 +473,11 @@ np.allclose(w, w_lstsq)                                   # True
 rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 ```
 
-`X` es de 20 433 × 7 —muy alta—, así que `np.linalg.inv` ni siquiera se puede llamar. **No hay solución exacta**: ninguna recta pasa por 20 433 puntos. La pseudoinversa da en su lugar la mejor respuesta posible, y `lstsq` coincide exactamente porque resuelve el mismo problema. El coeficiente más grande es el de `median_income` (unos 47 700 por unidad), que es el resultado sensato: la renta predice el precio de la vivienda.
+`X` es de 20 433 × 7 —muy alta—, así que `np.linalg.inv` ni siquiera se puede llamar. **No hay solución exacta**: ninguna recta pasa por 20 433 puntos. La pseudoinversa da en su lugar la mejor respuesta posible. `lstsq` coincide con ella exactamente, porque resuelve el mismo problema. El coeficiente más grande es el de `median_income` (unos 47 700 por unidad), que es el resultado sensato: la renta predice el precio de la vivienda.
 
 ## Kahoot 2 — Einsum, distancia y la pseudoinversa (5 min)
 
-**Hazlo justo después de la sección 07, antes de la demo de recursión.** Cubre la contracción (el `einsum` de la sección 06), la pseudoinversa y las matrices singulares (sección 07), y distancia/similitud: la matriz de similitud entre dígitos del TODO 4 de la sección 06 es el puente natural entre las dos. Lanza `kahoot_quiz_2_distance_pseudoinverse.xlsx` (6 preguntas, ~5 min).
+**Hazlo justo después de la sección 07, antes de la demo de recursión.** Cubre la contracción (el `einsum` de la sección 06), la pseudoinversa y las matrices singulares (sección 07), y distancia y similitud. La matriz de similitud entre dígitos del TODO 4 de la sección 06 es el puente natural entre las dos. Lanza `kahoot_quiz_2_distance_pseudoinverse.xlsx` (6 preguntas, ~5 min).
 
 ## 08 · Recursión con matrices y vectores (10 min — demo)
 
@@ -509,7 +507,7 @@ print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical
 ```
 
-Así es como PageRank ordena páginas web, y por eso los vectores propios importan mucho más allá del capítulo 2: **la aplicación repetida de una matriz converge a su vector propio dominante.**
+Así es como PageRank ordena páginas web. Y por eso los vectores propios importan mucho más allá del capítulo 2: **la aplicación repetida de una matriz converge a su vector propio dominante.**
 
 **3. Recursión sobre datos reales: pronóstico del tráfico aéreo.** Esto combina la recursión con la pseudoinversa de la sección 07. Ajustamos un modelo que predice cada mes a partir de los 12 anteriores y luego lo aplicamos *a su propia salida* para pronosticar hacia adelante:
 
@@ -540,9 +538,9 @@ for t in range(6):
 
 ## 09 · Factorizaciones matriciales: cuál elegir y qué cuesta (Bloque 5, 15 min) {#sec-09-factorizaciones-matriciales}
 
-La §1.4 de la Parte I dibujó el mapa. Las secciones 03 a 08 usaron de pasada tres de las factorizaciones que hay en él —LU y QR en la propia §1.4, la pseudoinversa en la sección 07— sin responder nunca a las dos preguntas que se hace de verdad quien practica: **¿a cuál echo mano con estos datos, y qué me cuesta?** Esta sección responde a las dos, y es donde la **descomposición espectral** por fin se nombra, una hora antes de que la sección 10 se apoye en la misma maquinaria. El cuaderno es **[09 · Factorizaciones matriciales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
+La §1.4 de la Parte I dibujó el mapa. Las secciones 03 a 08 usaron de pasada tres de las factorizaciones que hay en él: LU y QR en la propia §1.4, y la pseudoinversa en la sección 07. Ninguna respondió a las dos preguntas que se hace de verdad quien practica: **¿a cuál echo mano con estos datos, y qué me cuesta?** Esta sección responde a las dos. Es también donde la **descomposición espectral** por fin se nombra, una hora antes de que la sección 10 se apoye en la misma maquinaria. El cuaderno es **[09 · Factorizaciones matriciales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
 
-La idea que lo organiza todo es que las seis son optimizaciones con restricciones, y la restricción es lo que da su forma a cada factorización. QR minimiza `‖y − Xβ‖` sujeto a que `Q` sea ortonormal. La SVD truncada minimiza `‖A − B‖_F` sujeto a `rank(B) ≤ k`, y Eckart–Young–Mirsky demuestra que nada lo hace mejor. NMF minimiza esa misma cantidad sujeta a `W, H ≥ 0`, lo que forzosamente es peor en error y se elige de todos modos, porque las componentes salen como partes a las que puedes ponerles nombre. Cholesky y LU no optimizan nada en absoluto: son reescrituras exactas cuyo valor está entero aguas abajo, donde una resolución cuesta `O(n²)` en lugar de `O(n³)`.
+La idea que lo organiza todo es que las seis son optimizaciones con restricciones, y la restricción es lo que da su forma a cada factorización. QR minimiza `‖y − Xβ‖` sujeto a que `Q` sea ortonormal. La SVD truncada minimiza `‖A − B‖_F` sujeto a `rank(B) ≤ k`, y Eckart–Young–Mirsky demuestra que nada lo hace mejor. NMF minimiza esa misma cantidad sujeta a `W, H ≥ 0`. Esa restricción extra es forzosamente peor en error, y se elige de todos modos, porque las componentes salen como partes a las que puedes ponerles nombre. Cholesky y LU no optimizan nada en absoluto. Son reescrituras exactas, y su valor está entero aguas abajo, donde una resolución cuesta `O(n²)` en lugar de `O(n³)`.
 
 **La tabla de costes.** Recuento de operaciones en coma flotante del término dominante para una factorización densa `m × n` con `m ≥ n`, de Trefethen y Bau, *Numerical Linear Algebra*:
 
@@ -560,7 +558,7 @@ Tres consecuencias merecen decirse en voz alta, porque cada una es un error que 
 
 1. **Factoriza una vez, resuelve muchas.** Cholesky cuesta `n³/3` una vez; cada resolución posterior son dos sustituciones triangulares a `O(n²)`. Así que `m` términos independientes cuestan `O(n³ + mn²)`, **no** `O(mn³)`. `np.linalg.inv(A) @ B` es a la vez más lento y menos preciso que factorizar, y nunca es la decisión correcta.
 2. **Las ecuaciones normales elevan al cuadrado el número de condición**, porque `κ(XᵀX) = κ(X)²`. El error de QR escala con `κ(X)·ε`; el de las ecuaciones normales, con `κ(X)²·ε`. Los mismos datos, el mismo objetivo, el error al cuadrado.
-3. **No calcules lo que vas a tirar.** Una SVD completa es `O(mn·min(m,n))`. Si quieres 20 componentes de 1682, la SVD aleatorizada es `O(mnk)` y Lanczos es `O(k·nnz(A))`; la distancia entre esas dos es la razón de que los recomendadores a gran escala sean viables.
+3. **No calcules lo que vas a tirar.** Una SVD completa es `O(mn·min(m,n))`. Si quieres 20 componentes de 1682, la SVD aleatorizada es `O(mnk)` y Lanczos es `O(k·nnz(A))`. Esa distancia es la razón de que los recomendadores a gran escala sean viables.
 
 ```python
 # TODO 1: Fit a degree-10 polynomial to the real airline series two ways.
@@ -611,11 +609,11 @@ with np.errstate(divide="ignore"):        # the last entry is exactly 0
 k = int(np.argmax(db >= target_db))
 ```
 
-**El TODO 1 es el caro.** Los residuos de los dos ajustes coinciden en seis decimales, así que la comprobación que hace casi todo el mundo no señala nada raro, mientras que los coeficientes difieren en once órdenes de magnitud. Esa distancia es exactamente `κ(X)²` frente a `κ(X)`, y vino de escribir `X.T @ X`.
+**El TODO 1 es el caro.** Los residuos de los dos ajustes coinciden en seis decimales, así que la comprobación que hace casi todo el mundo no señala ningún problema. Mientras tanto, los coeficientes difieren en once órdenes de magnitud. Esa distancia es exactamente `κ(X)²` frente a `κ(X)`, y vino de escribir `X.T @ X`.
 
-**El TODO 3 no te da 3,0, y eso no es un fallo de la teoría.** Los exponentes ajustados salen bajos porque tanto el paralelismo como la reutilización de caché mejoran al crecer `n`: la máquina se vuelve más rápida haciendo el mismo trabajo, y eso aplana la curva. El efecto se encoge con `n` mayores, así que la pendiente va subiendo. Lo que sí sobrevive es la **razón entre métodos a `n` fijo**: cancela la máquina, porque los dos métodos ganan con el mismo hardware. Predice con razones, no con exponentes.
+**El TODO 3 no te da 3,0, y eso no es un fallo de la teoría.** Los exponentes ajustados salen bajos porque tanto el paralelismo como la reutilización de caché mejoran al crecer `n`. La máquina se vuelve más rápida haciendo el mismo trabajo, y eso aplana la curva. El efecto se encoge con `n` mayores, así que la pendiente va subiendo. Lo que sí sobrevive es la **razón entre métodos a `n` fijo**. Cancela la máquina, porque los dos métodos ganan con el mismo hardware. Predice con razones, no con exponentes.
 
-**El TODO 4 convierte «rango 20» en una decisión defendible.** Nadie puede justificar un rango; cualquiera puede justificar «el rango más pequeño que alcanza 25 dB». El rango necesario crece más que linealmente en dB, porque los valores singulares decaen deprisa y luego se aplanan: los últimos dB cuestan más rango que los primeros veinte. Y fíjate en lo que es realmente el almacenamiento de rango 16 en una imagen `uint8` de 512×512: el 6,3 % del *número* de píxeles, pero el 12,5 % de los *bytes* en `int16` y el 25 % en `float32`. La SVD truncada es una herramienta de análisis excelente y un códec de imagen mediocre.
+**El TODO 4 convierte «rango 20» en una decisión defendible.** Nadie puede justificar un rango; cualquiera puede justificar «el rango más pequeño que alcanza 25 dB». El rango necesario crece más que linealmente en dB, porque los valores singulares decaen deprisa y luego se aplanan. Los últimos dB cuestan más rango que los primeros veinte. Y fíjate en lo que es realmente el almacenamiento de rango 16 en una imagen `uint8` de 512×512. Es el 6,3 % del *número* de píxeles, pero el 12,5 % de los *bytes* en `int16`, y el 25 % en `float32`. La SVD truncada es una herramienta de análisis excelente y un códec de imagen mediocre.
 </details>
 
 
@@ -675,19 +673,19 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 ![](../images/fig-tucker-taxi.png){.column-page fig-alt="El tensor de taxis descompuesto. Arriba, T como una pila de cuatro cortes en mapa de calor igual a un núcleo pequeño G por tres matrices de factores A, B y C, cada una etiquetada con su forma. Debajo, dos diagramas de barras frente a la hora del día: los recuentos brutos de recogidas y la primera columna del factor de hora. Los dos tienen su barra más alta en la hora 18, dibujada en rojo."}
 
-*480 números se convierten en 102. Los dos diagramas son el TODO 6: la hora con más viajes en los recuentos brutos, y el pico del factor de hora que la descomposición construyó sin que nadie le dijera nunca qué es una hora.*
+*480 números se convierten en 102. Los dos diagramas son el TODO 6. A la izquierda, la hora con más viajes en los recuentos brutos. A la derecha, el pico del factor de hora, que la descomposición construyó sin que nadie le dijera nunca qué es una hora.*
 
-**El resultado: 4,7× menos números, 6,7 % de error.** Pero lo importante es el TODO 6. El patrón más fuerte del factor de hora tiene su pico en la **hora 18**, y esa es también la hora con más viajes en los datos brutos. **La descomposición descubrió la hora punta de la tarde por sí sola.** Nadie le habló de tiempo, ni de tráfico, ni de desplazamientos al trabajo; encontró el patrón dominante en ese eje porque eso es lo que hace una descomposición.
+**El resultado: 4,7× menos números, 6,7 % de error.** Pero lo importante es el TODO 6. El patrón más fuerte del factor de hora tiene su pico en la **hora 18**, y esa es también la hora con más viajes en los datos brutos. **La descomposición descubrió la hora punta de la tarde por sí sola.** Nadie le habló de tiempo, ni de tráfico, ni de desplazamientos al trabajo. Encontró el patrón dominante en ese eje, porque eso es lo que hace una descomposición.
 
 Fíjate en las cadenas de einsum: `'ijk,ia,jb,kc->abc'` contrae tres ejes en una sola expresión. Por eso `einsum` vino antes.
 
-**Dónde se usa esto.** En tecnología, Tucker y CP comprimen los grandes tensores de pesos que hay dentro de las redes neuronales para que los modelos corran en teléfonos en lugar de en servidores. En biotecnología, aplicados a datos como (genes × muestras × condiciones), encuentran estructura a la que el PCA corriente no llega, porque el PCA solo puede ver dos ejes. Para proyectos reales usa [`tensorly`](https://tensorly.org), que implementa las dos correctamente; consulta las [referencias](references.qmd#ref-tensors) para el artículo de revisión de Kolda y Bader y el teorema (Eckart–Young) que hay debajo de ambas descomposiciones.
+**Dónde se usa esto.** En tecnología, Tucker y CP comprimen los grandes tensores de pesos que hay dentro de las redes neuronales. Así los modelos corren en teléfonos en lugar de en servidores. En biotecnología, aplicados a datos como (genes × muestras × condiciones), encuentran estructura a la que el PCA corriente no llega, porque el PCA solo puede ver dos ejes. Para proyectos reales usa [`tensorly`](https://tensorly.org), que implementa las dos correctamente. Consulta las [referencias](references.qmd#ref-tensors) para el artículo de revisión de Kolda y Bader, y para el teorema de Eckart–Young que hay debajo de ambas descomposiciones.
 
 ---
 
 ## Kahoot 3 — Convolución y descomposiciones tensoriales (5 min)
 
-**Hazlo justo después de la sección 10, antes de la sección 11.** Sus seis preguntas siguen cubriendo convolución y correlación junto con las descomposiciones Tucker y CP: la convolución pasó a ser el ejercicio para casa 13 cuando las factorizaciones entraron en la jornada, y las preguntas todavía no se han reescrito. Hazlo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Lanza `kahoot_quiz_3_convolution_decompositions.xlsx` (6 preguntas, ~5 min). Sirve además de ensayo en vivo del propio repaso del cierre, así que enlaza directamente del cuestionario al cierre.
+**Hazlo justo después de la sección 10, antes de la sección 11.** Sus seis preguntas siguen cubriendo convolución y correlación junto con Tucker y CP. La convolución pasó a ser el ejercicio para casa 13 cuando las factorizaciones entraron en la jornada, y las preguntas todavía no se han reescrito. Hazlo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Lanza `kahoot_quiz_3_convolution_decompositions.xlsx` (6 preguntas, ~5 min). Sirve además de ensayo en vivo del propio repaso del cierre, así que enlaza directamente del cuestionario al cierre.
 
 ---
 
@@ -706,7 +704,7 @@ Una descomposición tensorial no es solo una técnica de compresión. Cada una h
 | **Tensor Train (TT)** | Cadena de núcleos pequeños | `≈ O(N · I · r²)` | Tensores de orden muy alto |
 | **t-SVD** | FFT sobre el modo 3, SVD matriciales, FFT inversa | Depende del rango tubular conservado | Tensores de orden 3 con un tercer modo con significado |
 
-Cada método conserva una estructura distinta. CP busca componentes individuales, Tucker permite un rango diferente por modo, Tensor Train evita que un núcleo de orden alto crezca exponencialmente, y t-SVD conserva la estructura del tercer modo mediante FFT.
+Cada método conserva una estructura distinta. CP busca componentes individuales. Tucker permite un rango diferente por modo. Tensor Train evita que un núcleo de orden alto crezca exponencialmente, y t-SVD conserva la estructura del tercer modo mediante FFT.
 
 ### ¿Por qué no aplanar primero?
 
@@ -729,7 +727,7 @@ Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos d
 3. buscar rangos de Tucker cercanos a ese mismo presupuesto de parámetros y quedarse con el de **menor error de reconstrucción**;
 4. comparar error e interpretabilidad con ese presupuesto igualado.
 
-El paso 3 es donde esto se tuerce con más facilidad: elegir el candidato cuyo número de parámetros sea *simplemente el más cercano* al presupuesto puede regalarle a Tucker un modo degenerado de rango 1 y fabricar la conclusión. El cuaderno hace la comparación de esta forma sobre el tensor real de taxis de Nueva York —`distrito de recogida × distrito de destino × hora`— y usa el clip de tormenta fijado del taller como segundo ejemplo con forma de tensor.
+El paso 3 es donde esto se tuerce con más facilidad. Elegir el candidato cuyo número de parámetros sea *simplemente el más cercano* al presupuesto puede regalarle a Tucker un modo degenerado de rango 1, y fabricar la conclusión. El cuaderno hace la comparación de esta forma sobre el tensor real de taxis de Nueva York, `distrito de recogida × distrito de destino × hora`. Usa el clip de tormenta fijado del taller como segundo ejemplo con forma de tensor.
 
 ```python
 # TODO 1: Choose a CP rank R for the taxi tensor.
@@ -745,7 +743,7 @@ El paso 3 es donde esto se tuerce con más facilidad: elegir el candidato cuyo n
 
 Para un tensor denso de orden `N` con todos los modos de tamaño `I`, el almacenamiento denso es `I^N`. Con un rango de enlace TT fijo `r`, el almacenamiento TT es `≈ O(N · I · r²)`: **exponencial en el orden frente a lineal en el orden**, con `I` y `r` fijos.
 
-El almacenamiento de CP también es lineal en el orden bajo un rango global fijo. La ventaja práctica de TT es distinta: representa interacciones de orden alto mediante rangos de enlace *locales*, en vez de mediante un único núcleo de Tucker que crece exponencialmente con el orden.
+El almacenamiento de CP también es lineal en el orden bajo un rango global fijo. La ventaja práctica de TT es distinta. Representa interacciones de orden alto mediante rangos de enlace *locales*, en vez de mediante un único núcleo de Tucker que crece exponencialmente con el orden.
 
 ```python
 # TODO 1: Fix I and the TT bond rank r.
@@ -758,9 +756,9 @@ El almacenamiento de CP también es lineal en el orden bajo un rango global fijo
 
 Un núcleo de convolución denso de forma `3 × 3 × 512 × 512` guarda 2 359 296 pesos, y cuesta unos 462 millones de multiplicaciones-sumas sobre un mapa de características de 14 × 14. Una factorización CP de rango 64 guarda `64 × (3 + 3 + 512 + 512) = 65 920` pesos —**35,8× menos**— y se ejecuta como cuatro convoluciones estrechas en secuencia: `1×1 → 3×1 → 1×3 → 1×1`.
 
-Un orden más arriba, una matriz de salida de transformer `W_O` de forma `4096 × 4096` guarda 16 777 216 pesos; una representación TT-matriz de rango 16 guarda 34 816, es decir, **481,9× menos**.
+Un orden más arriba, una matriz de salida de transformer `W_O` de forma `4096 × 4096` guarda 16 777 216 pesos. Una representación TT-matriz de rango 16 guarda 34 816, es decir, **481,9× menos**.
 
-La razón de almacenamiento es la mitad fácil. El flujo de trabajo que lo hace utilizable es **entrenar → comprimir → afinar**, y la compresión no vale nada si la tarea final no sigue siendo lo bastante precisa, cosa que es una propiedad de los pesos entrenados, no de la forma.
+La razón de almacenamiento es la mitad fácil. El flujo de trabajo que lo hace utilizable es **entrenar → comprimir → afinar**. La compresión no te sirve de nada si la tarea final no sigue siendo lo bastante precisa, y eso es una propiedad de los pesos entrenados, no de la forma.
 
 ```python
 # TODO 1: Build the synthetic convolution kernel from notebook 13.
@@ -773,7 +771,7 @@ La razón de almacenamiento es la mitad fácil. El flujo de trabajo que lo hace 
 
 ### La regla de decisión
 
-**Elige la descomposición según la estructura que necesitas conservar, y después elige el rango según la pérdida que puedes permitirte.** En ese orden: la primera pregunta no tiene respuesta numérica, y la segunda no tiene respuesta en absoluto hasta que la primera está resuelta.
+**Elige la descomposición según la estructura que necesitas conservar, y después elige el rango según la pérdida que puedes permitirte.** Mantén ese orden. La primera pregunta no tiene respuesta numérica, y la segunda no tiene respuesta en absoluto hasta que la primera está resuelta.
 
 Para el tratamiento interactivo completo —selector de método, tiempos medidos, comparación CP/Tucker con presupuesto igualado, compresión aguas abajo y el widget de presupuesto de almacenamiento— sigue con **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
@@ -783,7 +781,7 @@ Para el tratamiento interactivo completo —selector de método, tiempos medidos
 
 Lo que has hecho hoy:
 
-1. **Parte I**: aprender el vocabulario de los tensores (eje, orden, forma, corte, fibra, desplegado, contracción, descomposición), y que el desplegado convierte cualquier tensor en una matriz sin perder nada.
+1. **Parte I**: aprender el vocabulario de los tensores (eje, orden, forma, corte, fibra, desplegado, contracción, descomposición), y que el desplegado convierte cualquier tensor en una matriz sin perder un solo número.
 2. **Parte II**: trabajar qué significan los ejes y por qué el eje de lote y el eje de tiempo son semánticamente distintos.
 3. **Parte III**: indexar, hacer broadcasting, reorganizar y transponer datos reales de tumores e imágenes médicas reales, y tropezar con problemas reales: píxeles de varianza cero, y `reshape` destruyendo una imagen en silencio.
 4. **Parte IV**: escribir contracciones con `einsum`; resolver un sistema irresoluble de 20 433 ecuaciones con la pseudoinversa; usar la recursión para pronosticar tráfico aéreo real y para encontrar un vector propio; convolucionar y deconvolucionar una fotografía real; y comprimir 4,7× un tensor real de taxis con Tucker, que encontró la hora punta por su cuenta.
@@ -857,12 +855,12 @@ Xs = (X - X.mean(axis=0)) / X.std(axis=0)
 S2 = np.linalg.svd(Xs, full_matrices=False)[1]
 n95_scaled = np.argmax(np.cumsum(S2**2/(S2**2).sum()) >= 0.95) + 1   # 10
 ```
-Sin estandarizar, la primera componente parece explicar el **98,2 %** de la varianza. Es una ilusión: `worst area` tiene una varianza de unos 323 000 mientras que los valores de suavidad están por debajo de 1, así que el PCA informa de la mayor *unidad*, no del mayor *patrón*. Después de estandarizar, la primera componente explica el 44 % y hacen falta **10 componentes**. **El PCA no sabe nada de unidades. Las variables en escalas distintas hay que estandarizarlas primero.**
+Sin estandarizar, la primera componente parece explicar el **98,2 %** de la varianza. Es una ilusión. `worst area` tiene una varianza de unos 323 000, y los valores de suavidad están por debajo de 1. Así que el PCA informa de la mayor *unidad*, no del mayor *patrón*. Después de estandarizar, la primera componente explica el 44 % y hacen falta **10 componentes**. **El PCA no sabe nada de unidades. Las variables en escalas distintas hay que estandarizarlas primero.**
 </details>
 
 ## Apéndice B — Para casa: la atención son dos contracciones {#apendice-b-atencion}
 
-La atención es el mecanismo que responde a la pregunta 5 de la discusión sobre el pipeline de vídeo: *¿qué partes de una secuencia importan más?* Los modelos de lenguaje de proteínas la usan para que cada aminoácido pueda mirar a todos los demás; los recomendadores la usan para ponderar las interacciones pasadas de un usuario.
+La atención responde a la pregunta 5 de la discusión sobre el pipeline de vídeo: *¿qué partes de una secuencia importan más?* Los modelos de lenguaje de proteínas la usan para que cada aminoácido pueda mirar a todos los demás. Los recomendadores la usan para ponderar las interacciones pasadas de un usuario.
 
 ```python
 np.random.seed(6)
@@ -897,11 +895,11 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 ## Apéndice C — Para casa: CP frente a Tucker {#apendice-c-cp-tucker}
 
-El ejercicio de CP frente a Tucker que vivía aquí se mudó a la propia sesión, como **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente** en lugar de rango contra rango, y el análisis se amplía a Tensor Train y t-SVD. La [sección 11](#sec-11-factorizaciones-tensoriales) es el texto que acompaña a ese cuaderno.
+El ejercicio de CP frente a Tucker que vivía aquí se mudó a la propia sesión, como **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. Allí CP y Tucker se comparan con un **presupuesto de parámetros equivalente** en lugar de rango contra rango, y el análisis se amplía a Tensor Train y t-SVD. La [sección 11](#sec-11-factorizaciones-tensoriales) es el texto que acompaña a ese cuaderno.
 
 ## Apéndice D — Para casa: Cholesky construye datos correlacionados {#apendice-d-cholesky}
 
-La [sección 09](#sec-09-factorizaciones-matriciales) cubre Cholesky como *resolvedor*: factorizar una vez y luego resolver barato muchas veces. Este apéndice es la otra mitad: Cholesky como **muestreador**. Dale a una `L` triangular inferior con `L @ L.T == Sigma` un poco de ruido gaussiano independiente y te devuelve muestras correlacionadas con exactamente esa covarianza — el mecanismo detrás de toda simulación de Monte Carlo que necesite activos, sensores o escenarios correlacionados.
+La [sección 09](#sec-09-factorizaciones-matriciales) cubre Cholesky como *resolvedor*: factorizar una vez y luego resolver barato muchas veces. Este apéndice es la otra mitad: Cholesky como **muestreador**. Dale a una `L` triangular inferior con `L @ L.T == Sigma` un poco de ruido gaussiano independiente, y te devuelve muestras correlacionadas con exactamente esa covarianza. Ese es el mecanismo detrás de toda simulación de Monte Carlo que necesite activos, sensores o escenarios correlacionados.
 
 ```python
 vol = np.array([0.012, 0.015, 0.010])
@@ -955,12 +953,12 @@ independent_asset_returns = (mu[:, None] + independent_scale @ z_paths).reshape(
 portfolio_returns_independent = np.einsum('a,apd->pd', weights, independent_asset_returns)
 terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent, axis=1)
 ```
-`Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma`: entra ruido independiente, sale ruido correlacionado. Con los parámetros de arriba, la desviación típica del valor final de la simulación correlacionada es de **≈18,8** frente a **≈13,6** de la independiente (un 39 % más de dispersión); su percentil 5 es **≈79,7** frente a **≈86,9**, y su percentil 1 **≈70,7** frente a **≈79,9**: los días malos de la cartera correlacionada son genuinamente peores, aunque la volatilidad, la media y la mediana del valor final de cada activo individual sean esencialmente iguales entre las dos simulaciones. **Esto no es una ley general según la cual la correlación aumenta el riesgo**: es específico de este ejemplo, donde todos los pares están correlacionados positivamente; un par correlacionado negativamente subestimaría el riesgo si se ignorara, no lo sobreestimaría. Lo que sí se generaliza es solo que suponer independencia cuando los activos no son independientes distorsiona las colas.
+`Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma`: entra ruido independiente, sale ruido correlacionado. Con los parámetros de arriba, la desviación típica del valor final de la simulación correlacionada es de **≈18,8** frente a **≈13,6** de la independiente, un 39 % más de dispersión. Su percentil 5 es **≈79,7** frente a **≈86,9**, y su percentil 1 **≈70,7** frente a **≈79,9**. Los días malos de la cartera correlacionada son genuinamente peores. Y la volatilidad, la media y la mediana del valor final de cada activo son esencialmente iguales entre las dos simulaciones. **Esto no es una ley general según la cual la correlación aumenta el riesgo.** Es específico de este ejemplo, donde todos los pares están correlacionados positivamente. Ignorar un par correlacionado negativamente subestimaría el riesgo, no lo sobreestimaría. Lo que sí se generaliza es solo que suponer independencia cuando los activos no son independientes distorsiona las colas.
 </details>
 
 ## Apéndice E — Para casa: eliminar ruido de audio con una STFT de rango bajo {#apendice-e-audio}
 
-La SVD truncada es la aproximación de rango bajo *óptima* (Eckart–Young, en las [referencias](references.qmd#ref-tensors)). Este apéndice es donde esa optimalidad deja de bastar. Corta una grabación de voz real en ventanas temporales cortas y solapadas y pregunta qué frecuencias hay en cada una: eso es la **transformada de Fourier de tiempo corto**, y su salida es una matriz, `frecuencia × tiempo`. Truncar la SVD de esa matriz conserva la estructura concentrada en las direcciones singulares principales y tira el resto. Si la voz está más concentrada ahí que el ruido, el resultado es más limpio. Si no lo está, has tirado la voz.
+La SVD truncada es la aproximación de rango bajo *óptima* (Eckart–Young, en las [referencias](references.qmd#ref-tensors)). Este apéndice es donde esa optimalidad deja de bastar. Corta una grabación de voz real en ventanas temporales cortas y solapadas, y pregunta qué frecuencias hay en cada una. Eso es la **transformada de Fourier de tiempo corto**, y su salida es una matriz, `frecuencia × tiempo`. Truncar la SVD de esa matriz conserva la estructura concentrada en las direcciones singulares principales y tira el resto. Si la voz está más concentrada ahí que el ruido, el resultado es más limpio. Si no lo está, has tirado la voz.
 
 Ser óptimo en `‖A − B‖_F` no es lo mismo que ser óptimo en *lo que a ti te importa*, así que el criterio hay que medirlo, no suponerlo. Aquí el criterio es la relación señal-ruido frente a una referencia limpia conocida, y por eso el ruido se añade a propósito en lugar de encontrarse. La grabación es real y está fijada a un SHA-256; el ruido es sintético por diseño, porque solo una señal limpia conocida hace medible la SNR.
 
@@ -1016,7 +1014,7 @@ for k in [2, 5, 10, 20, 40, 80, len(s)]:
 
 Los dos extremos fallan, por razones opuestas. Con `k = 2` la aproximación es tan agresiva que descarta voz junto con el ruido, y cae **por debajo** de la señal ruidosa: un «eliminador de ruido» que empeoró las cosas. Con el rango completo no se descarta nada en absoluto: `U Σ Vᵀ` reconstruye `Z` exactamente, la ISTFT invierte la STFT, y recuperas el audio ruidoso, 5,00 dB, sin cambios. La región útil es la de en medio, y el pico de aquí conserva el 78 % de la energía de los valores singulares con el 8,6 % de los rangos, que es la misma historia de compresión que el tensor de taxis de la sección 10, medida contra otro criterio.
 
-**La energía conservada no es el criterio.** Pasar de `k = 40` a `k = 80` conserva *más* energía (87 % frente a 78 %) y produce audio *peor*, porque la energía que se está devolviendo es ruido. Rango bajo no significa limpio; significa pequeño. Si además significa mejor es una pregunta empírica, y este es el único ejercicio para casa cuya respuesta es «solo dentro de una ventana, y hay que medir para encontrarla».
+**La energía conservada no es el criterio.** Pasar de `k = 40` a `k = 80` conserva *más* energía, un 87 % frente a un 78 %, y produce audio *peor*. La energía que se devuelve es ruido. Rango bajo no significa limpio; significa pequeño. Si además significa mejor es una pregunta empírica. Este es el único ejercicio para casa cuya respuesta es «solo dentro de una ventana, y hay que medir para encontrarla».
 </details>
 
 ## Apéndice F — Para casa: convolución y deconvolución {#apendice-f-convolucion-y-deconvolucion}
@@ -1036,7 +1034,7 @@ np.convolve(x, k, 'same')    # [ 2.  2.  2.  2. -4.]          length 5
 
 Tres modos, tres tamaños de salida. `valid` usa solo las posiciones donde el núcleo cabe entero: por eso la convolución **encoge** una imagen en `kernel_size - 1`.
 
-⚠️ **Un detalle que confunde a todo el mundo.** La convolución verdadera voltea el núcleo; la **correlación** no. Lo que las bibliotecas de aprendizaje profundo llaman «convolución» es en realidad correlación. No supone ninguna diferencia práctica, porque la red *aprende* el núcleo, pero conviene saber que los nombres son inconsistentes.
+⚠️ **Un detalle que se le escapa a casi todo el mundo.** La convolución verdadera voltea el núcleo; la **correlación** no. Lo que las bibliotecas de aprendizaje profundo llaman «convolución» es en realidad correlación. No supone ninguna diferencia práctica, porque la red *aprende* el núcleo, pero conviene saber que los nombres son inconsistentes.
 
 ```python
 np.correlate(x, k, 'valid')          # [-2. -2. -2.]
@@ -1107,29 +1105,34 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 # relative error ≈ 1.4 — far WORSE than the blurred image we started from
 ```
 
-**Esta es la misma lección que la de la sección 07.** Una inversa directa o no existe o es inutilizable, así que usas un método que encuentra la mejor respuesta estable. La pseudoinversa hace esto para sistemas lineales; Richardson-Lucy y el filtrado de Wiener lo hacen para la deconvolución. En biotecnología esto es rutina: todo microscopio de fluorescencia desenfoca sus imágenes en una cantidad conocida (la *función de dispersión de punto*), y la deconvolución es práctica habitual antes de contar o medir células.
+**Esta es la misma lección que la de la sección 07.** Una inversa directa o no existe o es inutilizable, así que usas un método que encuentra la mejor respuesta estable. La pseudoinversa hace esto para sistemas lineales; Richardson-Lucy y el filtrado de Wiener lo hacen para la deconvolución. En biotecnología esto es rutina. Todo microscopio de fluorescencia desenfoca sus imágenes en una cantidad conocida, la *función de dispersión de punto*, y la deconvolución es práctica habitual antes de contar o medir células.
 
 
 ## Apéndice G — Notas para quien imparte {#apendice-g-notas-facilitacion}
 
 *(El alumnado puede saltarse esta sección.)*
 
-**Estructura.** Cuatro partes que se construyen una sobre otra: entender qué es un tensor → razonar por qué existen los ejes → manipular ejes → calcular con tensores y factorizarlos. Las secciones 07, 09 y 10 comparten un tema —*no existe una inversa exacta, así que busca la mejor aproximación estable*— y decir esa conexión explícitamente en el cierre es lo que hace que la segunda mitad se sienta como una sola lección en vez de como cuatro.
+**Estructura.** Cuatro partes que se construyen una sobre otra: entender qué es un tensor → razonar por qué existen los ejes → manipular ejes → calcular con tensores y factorizarlos. Las secciones 07, 09 y 10 comparten un tema: *no existe una inversa exacta, así que busca la mejor aproximación estable*. Decir esa conexión en voz alta en el cierre es lo que hace que la segunda mitad se sienta como una sola lección en vez de como cuatro.
 
 **No corras en la Parte I.** Es el primer contacto del alumnado con la teoría de tensores y todos los bloques posteriores usan su vocabulario. Si vas con retraso, recorta material de los apéndices, no la Parte I.
 
 **Idioma.** El alumnado tiene el inglés como segunda lengua (Colombia). Habla despacio, evita los modismos y define los términos la primera vez que los uses. Nombra en voz alta los cognados en español desde el principio —*eje*, *descomposición*, *contracción*, *convolución*—: quita fricción de inmediato. Invita a preguntar en cualquiera de los dos idiomas. Avisa de los dos sentidos de «rank» al comienzo de la Parte I.
 
-**Números verificados.** Toda salida citada en este documento se ejecutó y se comprobó: radio medio maligno frente a benigno 17,5/12,1; 3 píxeles de varianza cero en los dígitos; 207 valores faltantes en los datos de vivienda; RMSE de vivienda ≈ 75 980; error de deconvolución 0,1157 → 0,0815 (excluyendo un borde de 20 píxeles); Tucker sobre taxis con compresión 4,71× al 6,7 % de error y el factor de hora con su pico en las 18; para el apéndice E, una grabación de 4,949 s que da una STFT de (513, 465) cuyo mejor rango probado es 40 a 9,08 dB frente a los 5,00 dB de la entrada ruidosa; y, para la sección 09, la Vandermonde de grado 10 de la serie aérea con κ(X) = 2,16e7 y κ(XᵀX) = 4,65e14, con errores de coeficiente de 1,95e-03 por ecuaciones normales frente a 2,04e-14 por QR, y el rango 16 de la imagen astronaut a 21,1 dB. Si alguien obtiene algo distinto, merece investigarse en lugar de descartarse. **La única excepción son los tiempos de la sección 09**, que son propiedades de la máquina, no de los datos: una CPU de Colab no los reproducirá, y por eso exactamente el apéndice cita razones y no milisegundos.
+**Números verificados.** Toda salida citada en este documento se ejecutó y se comprobó: radio medio maligno frente a benigno 17,5/12,1; 3 píxeles de varianza cero en los dígitos; 207 valores faltantes en los datos de vivienda; RMSE de vivienda ≈ 75 980; error de deconvolución 0,1157 → 0,0815 (excluyendo un borde de 20 píxeles); Tucker sobre taxis con compresión 4,71× al 6,7 % de error y el factor de hora con su pico en las 18; para el apéndice E, una grabación de 4,949 s que da una STFT de (513, 465) cuyo mejor rango probado es 40 a 9,08 dB frente a los 5,00 dB de la entrada ruidosa; y, para la sección 09, la Vandermonde de grado 10 de la serie aérea con κ(X) = 2,16e7 y κ(XᵀX) = 4,65e14, con errores de coeficiente de 1,95e-03 por ecuaciones normales frente a 2,04e-14 por QR, y el rango 16 de la imagen astronaut a 21,1 dB. Si alguien obtiene algo distinto, merece investigarse en lugar de descartarse. **La única excepción son los tiempos de la sección 09.** Son propiedades de la máquina, no de los datos. Una CPU de Colab no los reproducirá, y por eso el apéndice cita razones y no milisegundos.
 
-**Las descargas.** Tres CSV desde URL raw de GitHub. Son pequeños y rápidos, pero confirma en los primeros 5 minutos que a todo el mundo le ha funcionado la descarga: quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio del taller como alternativa.
+**Las descargas.** Tres CSV desde URL raw de GitHub. Son pequeños y rápidos. Aun así, confirma en los primeros 5 minutos que todas las descargas han funcionado: quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio del taller como alternativa.
 
 **Asigna los grupos de antemano** para el bloque del pipeline de vídeo; asignarlos en directo cuesta de 3 a 5 minutos.
 
-**El bloque de grupo necesita más mano firme que los bloques de ejercicios.** Si un grupo sigue en la primera pregunta de diseño a falta de 5 minutos, entra en su canal y diles que dibujen cualquier cosa, aunque sea una forma equivocada. La puesta en común importa más que un boceto correcto.
+**El bloque de grupo necesita más mano firme que los bloques de ejercicios.** Si un grupo sigue en la primera pregunta de diseño a falta de 5 minutos, entra en su canal y diles que dibujen una forma, aunque sea la equivocada. La puesta en común importa más que un boceto correcto.
 
 **Los tres cuestionarios de Kahoot.** Cada uno son 6 preguntas en `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx` y `kahoot_quiz_3_convolution_decompositions.xlsx`, situados después de las secciones 04, 07 y 10 respectivamente. Importa cada uno a un kahoot con antelación (Create → Add question → Import → Import spreadsheet); no lo hagas en directo. Presupuesta 5 minutos por cuestionario con el podio incluido; a los grupos les suele apetecer ver la clasificación, y está bien, es la recompensa. Estos suman 15 minutos en total, y llevan el taller de 195 a 210 minutos.
 
-**Recortes por tiempo.** En este orden: quita el **Kahoot 2** (el menos novedoso de los tres: la pseudoinversa y la distancia se vuelven a cubrir narrativamente en el cierre), luego el TODO 4 del apéndice F (deconvolución verdadera, lo más exigente técnicamente y ya de por sí para casa), luego el fragmento de RNN de la demo de recursión, luego la pregunta 5 del bloque de grupo del pipeline de vídeo, y luego el **Kahoot 1**. No quites nunca la §1.3 de la Parte I, la sección 10 ni el **Kahoot 3**: el último es la forma más barata de comprobar si Tucker y CP han calado antes de que la gente se vaya.
+**Recortes por tiempo.** En este orden: quita el **Kahoot 2** (el menos novedoso de los tres: la pseudoinversa y la distancia se vuelven a cubrir narrativamente en el cierre), luego el TODO 4 del apéndice F (deconvolución verdadera, lo más exigente técnicamente y ya de por sí para casa), luego el fragmento de RNN de la demo de recursión, luego la pregunta 5 del bloque de grupo del pipeline de vídeo, y luego el **Kahoot 1**. No quites nunca la §1.3 de la Parte I, la sección 10 ni el **Kahoot 3**. El Kahoot 3 es la forma más barata de comprobar si Tucker y CP han calado, y solo puedes comprobarlo antes de que la gente se vaya.
 
-**Asperezas conocidas.** El TODO 4 del apéndice F es lo más difícil del taller; quien se salte el recorte del borde concluirá que la deconvolución falló, así que señala el recorte de 20 píxeles con claridad *antes* de que empiece el ejercicio, no después. El TODO 3 de la sección 07 pide provocar un error a propósito: habrá quien piense que ha hecho algo mal, así que di de antemano que el error es el resultado esperado.
+**Asperezas conocidas.** El TODO 4 del apéndice F es lo más difícil del taller.
+Quien se salte el recorte del borde concluirá que la deconvolución falló, así
+que señala el recorte de 20 píxeles con claridad *antes* de que empiece el
+ejercicio, no después. El TODO 3 de la sección 07 pide provocar un error a
+propósito. Habrá quien piense que ha hecho algo mal, así que di de antemano que
+el error es el resultado esperado.

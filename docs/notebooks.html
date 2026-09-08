@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-4ed2128eaa0b240e519f61bccd8d8d25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-ec2fe0b1ca51000cfd22675ad4861d09.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -277,14 +277,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>Every section of the workshop has a notebook, and one more sits past the end of the workshop as a take-home deep dive. They are <strong>English-primary</strong>, with a one-line Spanish summary under each heading — <em>cada encabezado lleva un resumen en español.</em></p>
+<p>Every section of the workshop has a notebook. One more sits past the end of the day, as a take-home deep dive. They are <strong>English-primary</strong>, and every heading carries a one-line Spanish summary — <em>cada encabezado lleva un resumen en español.</em></p>
 <section id="how-they-are-built" class="level2">
 <h2 class="anchored" data-anchor-id="how-they-are-built">How they are built</h2>
-<p>Each notebook follows the same shape, so you always know where you are:</p>
+<p>Every notebook has the same five parts, so you always know where you are:</p>
 <ol type="1">
 <li><strong>Header</strong> — the section title, its objectives, and an <em>Open in Colab</em> badge.</li>
-<li><strong>Setup</strong> — installs and imports only what this section needs, and loads its own data. Self-contained: no local files, no dependency on any other notebook.</li>
-<li><strong>Explanation and code</strong>, alternating, building up rather than dumping a wall of code at you.</li>
+<li><strong>Setup</strong> — installs and imports only what this section needs, and loads its own data. Each notebook is self-contained: no local files, and no dependency on any other notebook.</li>
+<li><strong>Explanation and code</strong>, alternating. They build up, rather than dropping a wall of code on you.</li>
 <li><strong>Exercises</strong> — <code># TODO</code> stubs taken from the handbook, each followed by a folded solution cell. Open it after you have tried.</li>
 <li><strong>Closing</strong> — the Kahoot check for that section, and a link back here.</li>
 </ol>
@@ -294,7 +294,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>The notebooks are committed with <strong>no outputs and no execution counts</strong>. Every number you see is one you produced. The expected results are quoted in the prose so you can tell whether yours are right — and if yours differ, that is worth investigating rather than dismissing.</p>
+<p>The notebooks are committed with <strong>no outputs and no execution counts</strong>. Every number you see is one you produced. The prose quotes the expected results, so you can tell whether yours are right. If yours differ, that is worth investigating rather than dismissing.</p>
 </div>
 </div>
 </div>
@@ -315,7 +315,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td>00</td>
 <td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><code>00-setup-and-data.ipynb</code></a></td>
-<td>Setup and welcome — Load every dataset and confirm your runtime works before anything else.</td>
+<td>Setup and welcome — Load every dataset and confirm your runtime works before the workshop starts.</td>
 <td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="even">
@@ -395,7 +395,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="going-further" class="level2">
 <h2 class="anchored" data-anchor-id="going-further">Going further</h2>
-<p>This one is <strong>not a section</strong>. It is a deep dive, handed out as take-home material: no slides, no Kahoot, and no minutes on the workshop clock — the 210-minute agenda is exactly what it was without it.</p>
+<p>This one is <strong>not a section</strong>. It is a deep dive, handed out as take-home material. It has no slides, no Kahoot, and no minutes on the workshop clock: the 210-minute agenda is exactly what it was without it.</p>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
 <table class="caption-top table">
 <thead>
@@ -420,8 +420,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/project-delphi/tensors-workshop.git</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tensors-workshop</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>matplotlib</code> and <code>ipywidgets</code> are in that list because every notebook plots and all but 00 use sliders; both ship with Colab, which is why their absence only shows up locally.</p>
-<p><code>scikit-learn</code> and <code>scikit-image</code> ship the tumour data, the handwritten digits and the photographs, so sections 01, 03, 04, 06 and 09 run with no network at all. The other nine notebooks fetch something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or — in notebook 11’s take-home E — a voice recording.</p>
+<p><code>matplotlib</code> and <code>ipywidgets</code> are in that list because every notebook plots, and all but 00 use sliders. Both ship with Colab, so a missing one only shows up when you run locally.</p>
+<p><code>scikit-learn</code> and <code>scikit-image</code> ship the tumour data, the handwritten digits and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at all. The other nine download something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or the voice recording for notebook 12’s take-home E. Notebook 00 fetches four files, and 05 and 11 fetch two each.</p>
 </section>
 <section id="what-each-notebook-needs" class="level2">
 <h2 class="anchored" data-anchor-id="what-each-notebook-needs">What each notebook needs</h2>
@@ -487,8 +487,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>09</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>no</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>yes — airline passengers</td>
 </tr>
 <tr class="odd">
 <td>10</td>
@@ -497,18 +497,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 <tr class="even">
 <td>11</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
-<td>yes — a voice recording, for take-home E</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
+<td>yes — NYC taxi trips, and the storm clip</td>
 </tr>
 <tr class="odd">
 <td>12</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>yes — airline passengers</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
+<td>yes — a voice recording, for take-home E</td>
 </tr>
 <tr class="even">
 <td>13</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
-<td>yes — NYC taxi trips, and the storm clip</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>no</td>
 </tr>
 </tbody>
 </table>

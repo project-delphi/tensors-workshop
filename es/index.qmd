@@ -13,6 +13,7 @@ inglés, pero puedes preguntar en español cuando quieras.
 :::
 
 ::: {.companion-strip}
+[Todo el día en una imagen](companion.qmd#brainstorm)
 [Resumen en vídeo](companion.qmd#video)
 [Vídeos de un minuto](companion.qmd#shorts)
 [Infografías](companion.qmd#infographics)
@@ -23,23 +24,24 @@ inglés, pero puedes preguntar en español cuando quieras.
 
 ## Qué es esto
 
-Un taller de {{< var workshop.minutes >}} minutos que te lleva de «sé lo que es una
-matriz» a «sé manipular, resolver, convolucionar y factorizar tensores». Está
-construido **solo con datos reales**: medidas reales de tumores, dígitos
-manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva
-York, tráfico aéreo real. No hay nada inventado con números aleatorios, porque los
-datos reales contienen problemas que los aleatorios nunca muestran: valores
-faltantes, variables en escalas incompatibles, píxeles que nunca cambian.
-Encontrar esos problemas es parte del trabajo.
+Un taller de {{< var workshop.minutes >}} minutos. Te lleva de «sé lo que es una
+matriz» a «sé manipular, resolver, convolucionar y factorizar tensores».
+
+Funciona **solo con datos reales**: medidas reales de tumores, dígitos
+manuscritos reales, imágenes reales de histología, viajes reales en taxi de
+Nueva York, tráfico aéreo real. Ningún conjunto de datos está inventado con
+números aleatorios. Los datos reales traen problemas que los aleatorios nunca
+muestran: valores faltantes, variables en escalas incompatibles, píxeles que
+nunca cambian. Encontrar esos problemas es parte del trabajo.
 
 ## Míralo primero
 
 {{< include ../_includes/companion-video-es.md >}}
 
-El vídeo está *generado*, no grabado. Él, y las infografías, el audio, el
-cuestionario, las tarjetas y el mapa mental que lo acompañan, están en la
-[página del complemento](companion.qmd), que explica sin rodeos qué significa
-estar generado y qué hacer al respecto.
+El vídeo está *generado*, no grabado. Está en la
+[página del complemento](companion.qmd), junto a las infografías, el audio, el
+cuestionario, las tarjetas y el mapa mental. Esa página explica qué significa
+aquí «generado» y qué hacer al respecto.
 
 ## Para quién es
 
@@ -58,35 +60,37 @@ corresponda a lo que estés haciendo ahora mismo.
 | **[Diapositivas](../slides/es/index.qmd)** · [EN](../slides/en/index.qmd) | Lo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás. | En vivo durante la sesión, o para repasar después la forma del día. |
 | **[Cuadernos](notebooks.qmd)** · [EN](../notebooks.qmd) | Catorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código. | Durante cada sección, y para el ejercicio de casa. |
 | **[Kahoot](../kahoot.qmd)** | Tres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10. | En vivo, en el móvil o en una segunda pestaña. |
-| **[Complemento](companion.qmd)** · [EN](../companion.qmd) | Generado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito. | Antes, para una primera pasada; después, para repasar. |
+| **[Complemento](companion.qmd)** · [EN](../companion.qmd) | Generado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito. Y un diagrama del día, dibujado a mano. | Antes, para una primera pasada; después, para repasar. |
 | **[Referencias](references.qmd)** · [EN](../references.qmd) | Los libros, artículos, documentación de `tensorly` y entradas del blog sobre los que se construye el taller, con DOI y páginas de los autores. | Después de una sección, cuando quieras el tratamiento serio de lo que rozó. |
-| **[Repositorio]({{< var repo.url >}})** | La fuente de todo lo anterior, más las tres hojas de cálculo de Kahoot. | Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab. |
+| **[Repositorio]({{< var repo.url >}})** | La fuente de las seis filas anteriores, más las tres hojas de cálculo de Kahoot. | Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab. |
 
 : {tbl-colwidths="[16,50,34]"}
 
 El manual es el *texto* fuente. Los datos que los siete comparten —los títulos
 de las secciones, el reloj, los enlaces— viven una sola vez en
-[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml)
-y todas las tablas del sitio se generan a partir de ahí, así que no pueden
-contradecirse. **Las trece secciones, una por una, están en la
+[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml).
+Todas las tablas del sitio se generan a partir de ese único archivo, así que no
+hay dos que puedan contradecirse.
+
+**Las trece secciones, una por una, están en la
 [página de cuadernos](notebooks.qmd).**
 
 ## Requisitos previos
 
-Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.
+Cada recurso de abajo es gratuito, y todos funcionan en el navegador.
 
 **Antes de la sesión**
 
 - **El álgebra lineal de {{< var workshop.book >}}**: vectores, matrices, el
   producto matricial, la inversa, la descomposición espectral y la SVD. Ese
-  capítulo es todo el conocimiento previo que se da por supuesto.
+  único capítulo es el único conocimiento previo que se da por supuesto.
 - **[`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}})**:
-  14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren
-  exactamente ese material, de vectores a PCA. Trabajo previo obligatorio: el
-  taller avanza rápido y da por hecho que ya lo hiciste.
+  14 cuadernos breves de Colab, bilingües, unas 2–3 horas en total. Cubren
+  exactamente ese material, de vectores a PCA. Es trabajo previo obligatorio.
+  El taller avanza rápido y da por hecho que ya lo hiciste.
 - **El [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb),
   ejecutado en Colab**: descarga los tres archivos CSV que usa el taller.
-  Ejecútalo antes de la sesión y avisa enseguida si falla: una descarga que
+  Ejecútalo antes de la sesión. Si falla, avisa enseguida: una descarga que
   falla en silencio te deja atascado en las secciones 07 y 10, una hora
   después.
 
@@ -94,15 +98,15 @@ Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.
 
 - **[*Essence of linear algebra*]({{< var workshop.prereq_video_url >}})**
   (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total.
-  Míralo si el capítulo del libro te pareció puro manejo de símbolos: da la
-  imagen geométrica de lo que una matriz *hace*, que es en lo que se apoyan
-  las secciones 04 a 10.
+  Míralos si el capítulo del libro te pareció puro manejo de símbolos. Dan la
+  imagen geométrica de lo que una matriz *hace*, y las secciones 04 a 10 se
+  apoyan en esa imagen.
 
 **Ten a mano el día del taller**
 
 - **Una cuenta de Google**: los cuadernos se ejecutan en
-  [Colab](https://colab.research.google.com/) desde el navegador. No hay que
-  instalar nada.
+  [Colab](https://colab.research.google.com/) desde el navegador. No hay
+  instalación local.
 - **Discord**: la invitación te la pasa quien imparte el taller. Ahí ocurren
   las discusiones, los canales de grupo y las preguntas, en español o en
   inglés.

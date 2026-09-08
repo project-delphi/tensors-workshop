@@ -331,6 +331,48 @@ main p:has(> img:only-child) + p > em:only-child {
 // least legible text on the card.
 .shot-note { color: #64748b; font-size: .78rem; }
 
+// The brainstorm diagram on both companion pages, drawn by
+// `brainstorm_svg()` in scripts/gen_tables.py. The generator emits geometry
+// and nothing else; every colour and size is here, so the picture is drawn
+// from the same SCSS variables as the page around it and cannot fall out of
+// step with the theme.
+//
+// `gen_tables.py` emits the layout twice, two columns and one, because an SVG
+// with a fixed `viewBox` does not reflow -- it scales, and on a phone a 14px
+// section title arrives at about 5px. The breakpoint below picks one. It is
+// `display: none` rather than `visibility` so the copy that is not shown
+// leaves the accessibility tree as well: a screen reader gets the diagram
+// once, not twice.
+.brainstorm {
+  max-width: 62rem;
+  margin: 1.4rem 0 2rem;
+  svg { width: 100%; height: auto; display: block; }
+  .bs-narrow { display: none; }
+  @media (max-width: 44rem) {
+    .bs-wide { display: none; }
+    .bs-narrow { display: block; }
+  }
+
+  text { font-family: $font-family-sans-serif; }
+  .bs-card   { fill: $body-bg; stroke: $border-color; }
+  .bs-disc   { fill: $code-bg;  stroke: $border-color; }
+  .bs-ribbon { fill: $code-bg;  stroke: $border-color; }
+
+  .bs-title  { font-size: 25px; font-weight: 700; fill: $primary; }
+  .bs-lead   { font-size: 15px; fill: #64748b; }
+  .bs-glyph  { font-size: 17px; fill: $link-color; }
+  .bs-hub    { font-size: 17px; font-weight: 600; fill: $primary; }
+  .bs-gloss  { font-size: 13px; fill: #64748b; }
+  // The section number is the key a reader matches against every table on the
+  // site, so it gets the link colour and tabular figures, like `table td`.
+  .bs-num    { font-size: 14px; font-weight: 700; fill: $link-color;
+               font-variant-numeric: tabular-nums; }
+  .bs-sect   { font-size: 14px; fill: $body-color; }
+  .bs-thread { font-size: 15px; fill: $primary; }
+  .bs-where,
+  .bs-closing { font-size: 13px; fill: #64748b; }
+}
+
 // The infographic gallery. Nothing here is cropped and nothing is a fixed
 // shape: an infographic is usually portrait and is all text, so the fixed
 // `aspect-ratio` + `object-fit: cover` treatment that suits a photograph

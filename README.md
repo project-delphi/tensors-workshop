@@ -32,25 +32,26 @@ source of truth.
 
 ## Prerequisites
 
-Free, and nothing needs installing on your own machine. In brief:
+Every item is free, and it all runs in your browser. In brief:
 
 - **Read Chapter 2 — Linear Algebra** of
   [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html).
-  That chapter is the whole of the assumed background.
+  That one chapter is the only background this workshop assumes.
 - **Work through
   [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**
   — 14 short bilingual Colab notebooks, ~2–3 hours. Required pre-work.
 - **Run [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
-  in Colab before the session**, and say so immediately if it fails: a silent
-  download failure leaves you stuck at sections 07 and 10, an hour in.
+  in Colab before the session.** If it fails, say so at once: a download that
+  fails quietly leaves you stuck at sections 07 and 10, an hour in.
 
 The full list — the recommended viewing, and what to have ready on the day —
 is on the **[workshop homepage](https://project-delphi.github.io/tensors-workshop/)**, which is where it is maintained.
 
 ## A machine-generated companion
 
-A [NotebookLM](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)
-notebook built from this workshop's own handbook and notebooks, and the
+A
+[NotebookLM](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)
+notebook built from this workshop's own handbook and notebooks, plus the
 artifacts generated out of it: a video overview, infographics, an audio
 overview, a quiz, flashcards and a mind map. It is **generated, not written** —
 a second pass over material you have already seen, to be checked against the
@@ -63,7 +64,7 @@ handbook rather than trusted over it.
 
 No synthetic random arrays anywhere. Real tumour measurements, real handwritten
 digits, real histology and microscopy images, real New York taxi trips, real
-airline traffic — because real data contains problems random data never shows:
+airline traffic. Real data carries problems that random numbers never show:
 missing values, features on incompatible scales, pixels that never change.
 Finding those problems is part of the work.
 
@@ -129,7 +130,7 @@ uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab
 
 `_variables.yml` is the single source of truth: repo coordinates, the thirteen
 sections, the two take-home extras, the three quizzes. Two scripts read it, and
-**nothing they produce should be edited by hand**:
+**what they produce is never edited by hand**:
 
 ```bash
 uv run --with pyyaml python scripts/gen_tables.py               # tables + README tables
@@ -194,10 +195,10 @@ conocimiento previo de teoría de tensores**, y cada término nuevo se define
 donde aparece por primera vez.
 
 Se imparte en inglés; las preguntas son bienvenidas en español o en inglés. Las
-diapositivas, el manual, el índice de cuadernos, las referencias y el complemento
-están en los dos idiomas, y cada encabezado de los cuadernos lleva un resumen de
-una línea en español. El manual en español es una traducción automática del
-inglés, que sigue siendo la fuente de verdad.
+diapositivas, el manual, el índice de cuadernos, las referencias y el
+complemento están en los dos idiomas. Cada encabezado de los cuadernos lleva un
+resumen de una línea en español. El manual en español es una traducción
+automática del inglés, que sigue siendo la fuente de verdad.
 
 ## Requisitos previos
 
@@ -205,14 +206,15 @@ Todo es gratuito y no hace falta instalar nada en tu equipo. En resumen:
 
 - **Lee el capítulo 2 — Álgebra lineal** de
   [Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html).
-  Ese capítulo es todo el conocimiento previo que se da por supuesto.
+  Ese único capítulo es el único conocimiento previo que se da por supuesto.
 - **Trabaja
   [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**:
   14 cuadernos breves y bilingües de Colab, ~2–3 horas. Trabajo previo
   obligatorio.
 - **Ejecuta el [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
-  en Colab antes de la sesión** y avisa enseguida si falla: una descarga que
-  falla en silencio te deja atascado en las secciones 07 y 10, una hora después.
+  en Colab antes de la sesión.** Si falla, avisa enseguida: una descarga que
+  falla en silencio te deja atascado en las secciones 07 y 10, una hora
+  después.
 
 La lista completa —lo recomendado y lo que hay que tener a mano el día del
 taller— está en la **[página del taller](https://project-delphi.github.io/tensors-workshop/es/)**, que es donde se
@@ -222,8 +224,8 @@ mantiene.
 
 Ni un solo array aleatorio. Medidas reales de tumores, dígitos manuscritos
 reales, imágenes reales de histología y microscopía, viajes reales en taxi de
-Nueva York, tráfico aéreo real, porque los datos reales contienen problemas que
-los aleatorios nunca muestran: valores faltantes, variables en escalas
+Nueva York, tráfico aéreo real. Los datos reales traen problemas que los
+aleatorios nunca muestran: valores faltantes, variables en escalas
 incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del
 trabajo.
 
@@ -257,7 +259,7 @@ Un **estudio a fondo** acompaña al taller sin formar parte de él. Es material
 para después: sin diapositivas, sin Kahoot y sin sitio en el reloj de 210
 minutos, que no se mueve para hacerle hueco. La convolución y la deconvolución
 pasaron aquí cuando las factorizaciones matriciales y tensoriales se
-convirtieron en las secciones 09 y 11; el hilo conductor las sigue nombrando, y
+convirtieron en las secciones 09 y 11. El hilo conductor las sigue nombrando, y
 la sección 12 sigue señalándolas.
 
 <!-- BEGIN extras-es -->

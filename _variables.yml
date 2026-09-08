@@ -337,6 +337,87 @@ companion:
       title_en: "Matrix and tensor factorizations"
       title_es: "Factorizaciones matriciales y tensoriales"
 
+# ── The brainstorm diagram ───────────────────────────────────────────────────
+# One picture of the whole day, on both companion pages. Four ideas, and every
+# section hangs off the one it serves.
+#
+# The four ideas are the deck's own opening slide, `slide-02a` in
+# `scripts/gen_slide_art.py`. The wording here is shorter than the slide's,
+# because a card in a diagram is not a card on a projector — but it is the same
+# four ideas in the same order, and changing one means changing both.
+#
+# **The hub → section mapping is a hand-made reading**, exactly like `covers` on
+# `companion.shorts` above. Nothing in this repo knows which idea a section
+# serves; a person decided. `gen_tables.py` verifies that every section in
+# `sections:` and `extras:` is placed exactly once, which catches a section
+# added here twice or not at all — and cannot catch a section filed under the
+# wrong idea.
+#
+# Section titles are NOT repeated here. `brainstorm_svg()` reads `title_{lang}`
+# out of `sections:` and wraps it, so a retitled section changes the diagram
+# with no edit in this block.
+brainstorm:
+  title_en: "Four ideas, one object"
+  title_es: "Cuatro ideas, un solo objeto"
+  lead_en: "Every section serves one of these four ideas."
+  lead_es: "Cada sección sirve a una de estas cuatro ideas."
+
+  hubs:
+    - glyph: "⊞"
+      title_en: "It generalizes a matrix"
+      title_es: "Generaliza la matriz"
+      gloss_en: "The same object, with as many axes as the data needs."
+      gloss_es: "El mismo objeto, con tantos ejes como pidan los datos."
+      sections: ["01", "02"]
+    - glyph: "▦"
+      title_en: "It holds the data"
+      title_es: "Contiene los datos"
+      gloss_en: "Images, video, taxi trips: one box of numbers."
+      gloss_es: "Imágenes, vídeo, viajes en taxi: una sola caja de números."
+      sections: ["00", "03", "05"]
+    - glyph: "⇄"
+      title_en: "Its axes can move"
+      title_es: "Sus ejes se mueven"
+      gloss_en: "reshape re-reads the numbers. transpose moves the axes."
+      gloss_es: "reshape relee los números. transpose mueve los ejes."
+      sections: ["04", "06"]
+    - glyph: "∏"
+      title_en: "It factors"
+      title_es: "Se factoriza"
+      gloss_en: "Break it into simpler parts you can use."
+      gloss_es: "Divídelo en partes más simples que puedas usar."
+      sections: ["07", "08", "09", "10", "11"]
+
+  # The ribbon under the four cards. `thread_sections` are the three places
+  # this diagram points at for the idea: the pseudoinverse, Tucker, and the
+  # take-home's deconvolution.
+  #
+  # **The other documents do not agree on that list, and this is the fourth
+  # reading of it.** The handbook's wrap-up says sections 07, 09 and 10;
+  # `x13.intro_*` names 07 and 10 beside the take-home itself. All of them are
+  # defensible — 09 states the idea, 11 restates it, 13 is where you watch it
+  # happen — and none of them is generated from another, so they drift in
+  # silence. check_links.py can only verify that each number here names a
+  # section that exists, never that the three documents chose the same three.
+  # Change one, and go and look at the other two.
+  #
+  # The numbers are rendered from this list rather than written into the
+  # sentence, so at least a renumbered section cannot leave a wrong number
+  # painted on the picture.
+  thread_en: "One thread runs through all four. When there is no exact answer, find the best approximation you can trust."
+  thread_es: "Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar."
+  thread_lead_en: "You meet it in sections"
+  thread_lead_es: "Lo encuentras en las secciones"
+  thread_sections: ["07", "10", "13"]
+
+  # Where the day lands. These two are not filed under an idea: 12 collects all
+  # four, and 13 is the take-home that sits past the clock. They are listed
+  # here so the "every section placed exactly once" rule has somewhere to put
+  # them.
+  closing_en: "12 pulls the four together. 13 is the take-home."
+  closing_es: "12 une las cuatro. 13 es el ejercicio para casa."
+  closing_sections: ["12", "13"]
+
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core
 # concept. These are the *second explanation* — the one a student wants forty
@@ -737,8 +818,8 @@ sections:
     format_es: "preparación"
     title_en: "Setup and welcome"
     title_es: "Preparación y bienvenida"
-    summary_en: "Load every dataset and confirm your runtime works before anything else."
-    summary_es: "Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de empezar."
+    summary_en: "Load every dataset and confirm your runtime works before the workshop starts."
+    summary_es: "Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller."
     objectives_en:
       - "Confirm your Colab runtime can reach every dataset the workshop uses."
       - "Know which data ships inside the libraries and which is downloaded."
@@ -1065,13 +1146,13 @@ sections:
     intro_en: |-
       Section 01 showed the **map of factorizations**. This section walks it, on real data.
 
-      The whole family in one place — **LU, QR, Cholesky, eigendecomposition, SVD and NMF** — with the same question asked of each: *what does this factorization make easy that was hard before, and what does it cost?*
+      All six in one place: **LU, QR, Cholesky, eigendecomposition, SVD and NMF**. Each one is asked the same question. *What does this factorization make easy that was hard before, and what does it cost?*
 
       This is also where **eigendecomposition** gets named, before section 10 leans on the same machinery.
     intro_es: |-
       > 🇪🇸 La sección 01 mostró el **mapa de las factorizaciones**. Esta sección lo recorre, sobre datos reales.
       >
-      > Toda la familia en un solo lugar — **LU, QR, Cholesky, descomposición espectral, SVD y NMF** — con la misma pregunta para cada una: *¿qué vuelve fácil esta factorización que antes era difícil, y cuánto cuesta?*
+      > Las seis en un solo lugar: **LU, QR, Cholesky, descomposición espectral, SVD y NMF**. A cada una se le hace la misma pregunta. *¿Qué vuelve fácil esta factorización que antes era difícil, y cuánto cuesta?*
       >
       > Aquí también se nombra la **descomposición espectral**, antes de que la sección 10 se apoye en la misma maquinaria.
     objectives_en:
@@ -1195,18 +1276,12 @@ sections:
     intro_en: |-
       This final notebook has two jobs:
 
-      1. connect the ideas from the whole workshop;
+      1. connect the ideas from all thirteen sections;
       2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
     intro_es: |-
       > 🇪🇸 Este último cuaderno tiene dos objetivos:
       >
-      > 1. conectar las ideas de todo el taller;
-
-      2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
-    intro_es: |-
-      > 🇪🇸 Este último cuaderno tiene dos objetivos:
-      >
-      > 1. conectar las ideas de todo el taller;
+      > 1. conectar las ideas de las trece secciones;
       > 2. permitirte explorar cinco extensiones: **PCA, atención, CP, Cholesky y reducción de ruido de audio**.
     objectives_en:
       - "State the one approximation idea connecting pseudoinverse, deconvolution, and Tucker."
@@ -1253,7 +1328,7 @@ extras:
 
       > **A small kernel is reused across positions to transform an image.**
 
-      It is the third instance of the workshop's connecting idea, alongside the pseudoinverse in section 07 and Tucker in section 10: when a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 10 and 11 state that idea; this notebook is where you watch it happen to a photograph.
+      It is the third instance of the workshop's connecting idea, alongside the pseudoinverse in section 07 and Tucker in section 10. When a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 10 and 11 state that idea. This notebook is where you watch it happen to a photograph.
 
       We will distinguish **correlation**, **convolution**, **transposed convolution**, and **deconvolution** without treating them as the same operation.
     intro_es: |-
@@ -1261,7 +1336,7 @@ extras:
       >
       > **Un kernel pequeño se reutiliza en muchas posiciones para transformar una imagen.**
       >
-      > Es el tercer caso de la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10: cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 10 y 11 enuncian esa idea; en este cuaderno la ves ocurrir sobre una fotografía.
+      > Es el tercer caso de la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10. Cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 10 y 11 enuncian esa idea. En este cuaderno la ves ocurrir sobre una fotografía.
       >
       > Distinguiremos **correlación**, **convolución**, **convolución transpuesta** y **deconvolución** sin tratarlas como si fueran la misma operación.
     objectives_en:
