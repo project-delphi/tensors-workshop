@@ -51,9 +51,9 @@ what you are doing right now.
 
 | | What it is | When you use it |
 |---|---|---|
-| **[Handbook](tensors_workshop_plan_with_quizzes.md)** | The session text: the theory, every exercise, the worked solutions, and the five take-home appendices. English only. | Read it before, follow it during, keep it after. |
+| **[Handbook](tensors_workshop_plan_with_quizzes.md)** · [ES](es/tensors_workshop_plan_with_quizzes.md) | The session text: the theory, every exercise, the worked solutions, and the take-home appendices. | Read it before, follow it during, keep it after. |
 | **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
-| **[Notebooks](notebooks.qmd)** | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
+| **[Notebooks](notebooks.qmd)** · [ES](es/notebooks.qmd) | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
 | **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
 | **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Machine-generated from this workshop's own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. | Before, for a first pass; after, for revision. |
 | **[References](references.qmd)** · [ES](es/references.qmd) | The books, papers, `tensorly` docs and blog posts the workshop is built on — with DOIs and author pages. | After a section, when you want the proper treatment of what it skimmed. |
@@ -63,8 +63,10 @@ what you are doing right now.
 
 The handbook is the source *text*. The facts those seven share — the section
 titles, the running clock, the links — live once in
-[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml),
-and every section table on this page is generated from it, so they cannot disagree.
+[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml)
+and every table on this site is generated from it, so they cannot disagree.
+**The thirteen sections, section by section, are on the
+[notebooks page](notebooks.qmd).**
 
 ## Prerequisites
 
@@ -102,86 +104,12 @@ Everything below is free, and nothing needs installing on your own machine.
   knowledge checks, after sections 04, 07 and 10. No sign-up; you join with a
   PIN.
 
-## How to run the notebooks
-
-Click any **Colab** link in the table below. The notebook opens in your browser,
-already connected to a free runtime.
-
-1. Every notebook is **self-contained**. Its setup cell installs and imports
-   exactly what that section needs and loads its own data, so you can open any one
-   of them cold, in any order, without having run the others.
-2. Run the setup cell first (▶ or `Shift+Enter`).
-3. Work through the `# TODO` cells. Each has a solution cell underneath, folded
-   away — open it after you have tried, not before.
-4. Colab will warn that the notebook was not authored by Google. That is expected;
-   the source is [on GitHub]({{< var repo.url >}}/tree/{{< var repo.branch >}}/notebooks).
-
-::: {.callout-tip appearance="simple"}
-Changes you make in Colab are **not** saved back to this repo. Use
-*File → Save a copy in Drive* to keep your work.
-:::
-
 ## How we work
 
 Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:
 
 - **Exercise blocks** — 10 minutes coding, then 5 minutes explanation.
 - **Group blocks** — 10 minutes discussion in your breakout channel, then share-back.
-
-## Where the data comes from
-
-Every dataset here is real, and every one of them is something someone actually
-measured. Nothing in this workshop is invented with random numbers.
-
-::: {.app-strip}
-::: {.app-card}
-![](images/ds-nyc-taxi.jpg){fig-alt="Yellow taxis queuing on a Manhattan avenue, the city whose 6,433 trip records make up the taxis dataset."}
-
-**NYC taxi trips**<br>Tucker decomposition
-:::
-
-::: {.app-card}
-![](images/ds-housing.jpg){fig-alt="An aerial view of rows of tract housing in southern California, the kind of district whose median value and block counts make up the housing dataset."}
-
-**California housing**<br>Least squares, pseudoinverse
-:::
-
-::: {.app-card}
-![](images/ds-video.jpg){fig-alt="Three frames from footage of a storm at l'Almadrava, two seconds apart; the breaking waves differ from frame to frame, which is what makes the time axis carry information."}
-
-**Storm footage**<br>Video pipeline design
-:::
-
-::: {.app-card}
-![](images/ds-histology.jpg){fig-alt="Immunohistochemically stained colonic glands, the brown DAB signal marking FHL2 expression against a blue haematoxylin counterstain."}
-
-**Histology slides**<br>Reshape and transpose
-:::
-
-::: {.app-card}
-![](images/ds-breast-cancer.jpg){fig-alt="Two stained histopathology views of invasive ductal carcinoma of the breast, the kind of slide the tumour nucleus measurements were taken from."}
-
-**Tumour measurements**<br>Indexing and broadcasting
-:::
-
-::: {.app-card}
-![](images/ds-airliner.jpg){fig-alt="A Douglas DC-3 airliner in flight, the aircraft of the 1949 to 1960 era whose monthly passenger totals the flights dataset counts."}
-
-**Airline traffic**<br>Recursion and forecasting
-:::
-:::
-
-## The sections
-
-Read across a row: the slides in either language, the notebook to run, and the
-Kahoot check that covers it. The 🎯 rows are the three quizzes, shown in the order
-they actually run.
-
-{{< include _includes/sections-en.md >}}
-
-**Not shown:** the three 5-minute breaks. The thirteen sections come to 180
-minutes; the three quizzes add 15 and the breaks another 15, which is how the
-session reaches {{< var workshop.minutes >}} minutes.
 
 ## A note on language
 

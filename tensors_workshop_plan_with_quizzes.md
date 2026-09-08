@@ -5,6 +5,11 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
+::: {.callout-note appearance="simple"}
+🇪🇸 ¿Prefieres español? [Este manual en español](es/tensors_workshop_plan_with_quizzes.md)
+— es una traducción automática de esta página, que sigue siendo la fuente de verdad.
+:::
+
 This is the session text: the theory, every exercise, the worked solutions and
 the take-home appendices. It is what to follow during the workshop and what to
 keep afterwards. The books and papers behind it are on the
@@ -18,8 +23,8 @@ type in, the three [Kahoot checks](kahoot.qmd) and the
 [references](references.qmd).
 
 **A note on numbering.** This handbook groups the workshop into four **Parts**
-and six exercise **Blocks**. Everywhere else — the notebooks, the slides, the
-section tables — the same segments are numbered **00 to 11**, and that number is
+and seven exercise **Blocks**. Everywhere else — the notebooks, the slides, the
+section tables — the same segments are numbered **00 to 12**, and that number is
 the canonical one. The schedule below carries both, so any row can be read
 across to turn one label into the other.
 
@@ -762,7 +767,7 @@ The storage ratio is the easy half. The workflow that makes it usable is **train
 
 > 🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.
 
-For the full interactive treatment — method chooser, measured timing, matched-budget CP/Tucker comparison, downstream compression and the storage-budget widget — continue with **[13 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
+For the full interactive treatment — method chooser, measured timing, matched-budget CP/Tucker comparison, downstream compression and the storage-budget widget — continue with **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
 ---
 
@@ -782,7 +787,7 @@ What you did today:
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
 - `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
-- **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 11](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
+- **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 12](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
 - **The one deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run.
 - **[References and further reading](references.qmd)** — books, the seminal Tucker/CP/SVD papers, `tensorly` and the blog posts, for going deeper than today's 210 minutes.
 
@@ -881,7 +886,7 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, where CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook.
 
-> 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 13 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
+> 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 
 ## Appendix D — Take-Home: Cholesky Builds Correlated Data
 

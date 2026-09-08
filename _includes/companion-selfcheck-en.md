@@ -2,10 +2,10 @@
 ::: {.info-strip}
 ::: {.info-card}
 **[Self-check quiz](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)**<br>Generated multiple-choice questions over the whole workshop, as many as you want.<br>*After the session, to find out which sections did not stick.*
-<br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
+<br>[Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact.]{.shot-note}
 :::
 ::: {.info-card}
 **[Flashcards](https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c)**<br>Term on one side, definition on the other — the vocabulary the workshop defines as it goes.<br>*Spaced repetition, in the weeks after.*
-<br>[Opens in NotebookLM; needs a Google account.]{.shot-note}
+<br>[Opens in NotebookLM; needs a Google account. No share link of its own yet — this opens the notebook, not the artifact.]{.shot-note}
 :::
 :::

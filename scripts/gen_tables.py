@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Generate every section table on the site from _variables.yml.
 
-The EN and ES landing pages, the notebooks page and the READMEs all show the
-same thirteen sections. Writing those tables by hand is how bilingual sites drift, so
-they are generated here instead and included with `{{< include >}}`.
+The EN and ES notebooks pages and the READMEs all show the same thirteen
+sections. Writing those tables by hand is how bilingual sites drift, so they
+are generated here instead and included with `{{< include >}}`.
 
 The `extras` — take-home deep dives that are not sections — get their own three
 tables. They are deliberately narrower: no Slides column, because an extra has
@@ -12,13 +12,13 @@ covers one.
 
     uv run --with pyyaml python scripts/gen_tables.py
 
-It also owns marker-delimited regions inside three hand-written files: the
+It also owns marker-delimited regions inside four hand-written files: the
 section and extras tables in `README.md` and `notebooks/README.md`, and the
-schedule table in the handbook.
+schedule table in each language's handbook.
 
 Outputs (all overwritten, none hand-edited):
-    _includes/sections-en.md      _includes/sections-es.md
-    _includes/notebooks-en.md     _includes/notebooks-extra-en.md
+    _includes/notebooks-en.md     _includes/notebooks-es.md
+    _includes/notebooks-extra-en.md  _includes/notebooks-extra-es.md
     _includes/agenda-en.md        _includes/agenda-es.md
     _includes/readme-sections.md  _includes/readme-sections-es.md
     _includes/extras-en.md        _includes/extras-es.md
@@ -52,21 +52,11 @@ REFERENCES = V["references"]
 
 L = {
     "en": dict(
-        num="#", section="Section", fmt="Format", min="Min",
-        slides_en="Slides EN", slides_es="Slides ES", nb="Notebook", quiz="Kahoot",
-        colab="Open in Colab", none="—",
-        quiz_row="Kahoot {n} — {title} · {q} questions · 5 min",
-        covers="covers sections {covers}",
         nb_head=("#", "Notebook", "Covers", "Colab"),
         extra_head=("#", "Deep dive", "Colab"),
         agenda_head=("Start Time", "Duration (min)", "Part", "Segment Name"),
     ),
     "es": dict(
-        num="#", section="Sección", fmt="Formato", min="Min",
-        slides_en="Diapos EN", slides_es="Diapos ES", nb="Cuaderno", quiz="Kahoot",
-        colab="Abrir en Colab", none="—",
-        quiz_row="Kahoot {n} — {title} · {q} preguntas · 5 min",
-        covers="cubre las secciones {covers}",
         nb_head=("#", "Cuaderno", "Contenido", "Colab"),
         extra_head=("#", "Estudio a fondo", "Colab"),
         agenda_head=("Hora de inicio", "Duración (min)", "Parte", "Segmento"),
@@ -85,70 +75,6 @@ def colab_url(s: dict) -> str:
 def quiz_for(n: str) -> dict | None:
     """The quiz whose questions cover section `n`, if any."""
     return next((q for q in QUIZZES if n in q["covers"]), None)
-
-
-def quiz_after(n: str) -> dict | None:
-    """The quiz that runs immediately after section `n`, if any."""
-    return next((q for q in QUIZZES if q["after"] == n), None)
-
-
-def html_table(lang: str, prefix: str) -> str:
-    """The full section table as raw HTML.
-
-    Raw HTML rather than a pipe table because the three Kahoot checkpoints are
-    full-width highlighted rows in the run order, which pandoc pipe tables
-    cannot express.
-    """
-    t = L[lang]
-    title_key, fmt_key = f"title_{lang}", f"format_{lang}"
-    sum_key = f"summary_{lang}"
-    heads = [t["num"], t["section"], t["fmt"], t["min"],
-             t["slides_en"], t["slides_es"], t["nb"], t["quiz"]]
-
-    # `table-responsive` keeps the table scrolling inside itself on a phone
-    # rather than scrolling the whole page. Widening it past the body column is
-    # not possible here — Quarto places <main> in `column-body` regardless of
-    # page-layout — so custom.scss keeps the link cells on one line instead.
-    out = ['<div class="table-responsive">',
-           '<table class="table table-sm table-striped section-table">',
-           "<thead><tr>" + "".join(f"<th>{html.escape(h)}</th>" for h in heads)
-           + "</tr></thead>", "<tbody>"]
-
-    for s in SECTIONS:
-        n, slug = s["n"], s["slug"]
-        anchor = f"sec-{n}-{slug}"
-        nb = notebook_name(s)
-        q = quiz_for(n)
-        qcell = (f'<a href="{prefix}kahoot.html#quiz-{q["n"]}">Q{q["n"]}</a>'
-                 if q else t["none"])
-        out += [
-            "<tr>",
-            f'<td>{n}</td>',
-            f'<td><strong>{html.escape(s[title_key])}</strong><br>'
-            f'<small>{html.escape(s[sum_key])}</small></td>',
-            f'<td>{html.escape(s[fmt_key])}</td>',
-            f'<td>{s["minutes"]}</td>',
-            f'<td><a href="{prefix}slides/en/#{anchor}">EN</a></td>',
-            f'<td><a href="{prefix}slides/es/#{anchor}">ES</a></td>',
-            f'<td><a href="{colab_url(s)}" title="{html.escape(t["colab"])}">Colab</a>'
-            f' · <a href="{REPO["url"]}/blob/{REPO["branch"]}/notebooks/{nb}">src</a></td>',
-            f"<td>{qcell}</td>",
-            "</tr>",
-        ]
-        after = quiz_after(n)
-        if after:
-            label = t["quiz_row"].format(
-                n=after["n"], title=html.escape(after[title_key]), q=after["questions"])
-            covers = t["covers"].format(covers=", ".join(after["covers"]))
-            out += [
-                '<tr class="kahoot-row">',
-                f'<td>🎯</td><td colspan="7"><a href="{prefix}kahoot.html#quiz-{after["n"]}">'
-                f"{label}</a> — <small>{covers}</small></td>",
-                "</tr>",
-            ]
-
-    out += ["</tbody></table></div>"]
-    return "\n".join(out) + "\n"
 
 
 def notebooks_table(lang: str) -> str:
@@ -214,15 +140,19 @@ def agenda_table(lang: str) -> str:
     return "\n".join(rows) + "\n"
 
 
-def handbook_schedule_table() -> str:
+def handbook_schedule_table(lang: str = "en") -> str:
     """The handbook's schedule, and the only key to its own vocabulary.
 
-    The handbook numbers its teaching by Part I-IV and Block 1-6; everything
-    else on the site numbers it by section 00-11. A reader who meets "Block 4"
+    The handbook numbers its teaching by Part I-IV and Block 1-7; everything
+    else on the site numbers it by section 00-12. A reader who meets "Block 4"
     in the prose has no way to reach notebook 07 unless one table shows both,
     so this is that table, and it is generated rather than written because the
     hand-written one it replaces carried no section numbers at all and its
     times could drift from the clock the decks print.
+
+    Both languages get one, from the same walk of the clock: `lang` picks the
+    column headings, the segment titles and the word for a break, and nothing
+    else differs between them.
 
     It walks `timeline.atoms()` — the same run order as the agenda, but one row
     per segment rather than per agenda row, because the handbook's own headings
@@ -238,22 +168,30 @@ def handbook_schedule_table() -> str:
                 "exercise blocks")
     by_n = {s["n"]: s for s in SECTIONS}
     by_q = {f"q{q['n']}": q for q in QUIZZES}
-    head = ("#", "Part", "Block", "Segment", "Format", "Min", "Start")
+    title_key, fmt_key = f"title_{lang}", f"format_{lang}"
+    head = HANDBOOK_HEAD[lang]
     rows = ["| " + " | ".join(head) + " |", "|---|---|---|---|---|---|---|"]
     minute = 0
     for name, length in atoms():
         if s := by_n.get(name):
             cells = (f"**{s['n']}**", s["part"], s["block"],
-                     f"[{s['title_en']}]({colab_url(s)})", s["format_en"])
+                     f"[{s[title_key]}]({colab_url(s)})", s[fmt_key])
         elif q := by_q.get(name):
             cells = ("—", "🎯", "—",
-                     f"**Kahoot {q['n']} — {q['title_en']}**", "quiz")
+                     f"**Kahoot {q['n']} — {q[title_key]}**", "quiz")
         else:
-            cells = ("—", "—", "—", "Break", "—")
+            cells = ("—", "—", "—", HANDBOOK_BREAK[lang], "—")
         rows.append("| " + " | ".join(cells)
                     + f" | {length} | {clock(minute)} |")
         minute += length
     return "\n".join(rows) + "\n"
+
+
+HANDBOOK_HEAD = {
+    "en": ("#", "Part", "Block", "Segment", "Format", "Min", "Start"),
+    "es": ("#", "Parte", "Bloque", "Segmento", "Formato", "Min", "Inicio"),
+}
+HANDBOOK_BREAK = {"en": "Break", "es": "Pausa"}
 
 
 def readme_table(lang: str) -> str:
@@ -443,6 +381,49 @@ def audio_block(lang: str, prefix: str) -> str:
         f"{FENCE}\n{meta}")
 
 
+# Said under every screenshot of an artifact that cannot be exported. The
+# picture is a still of something live, and a page that lets a reader think
+# otherwise has mis-sold the click.
+SHOT_NOTE = {
+    "en": "Screenshot — the real one is interactive, in NotebookLM.",
+    "es": "Captura de pantalla; el de verdad es interactivo, en NotebookLM.",
+}
+
+# The invitation to look before you click. It belongs here, above the cards it
+# describes, rather than in the two .qmd pages -- with no thumb exported there
+# are no pictures, and a page promising some is the small lie that makes the
+# big warning at the top of it less believable. Exactly the reason
+# infographics_gallery() keeps its own "click one to open it full size" behind
+# `if exported`.
+SHOT_INTRO = {
+    "en": "The pictures are screenshots, served from this site, so you can "
+          "see what is behind each link before you spend an account on it.",
+    "es": "Las imágenes son capturas de pantalla, servidas desde este sitio, "
+          "para que veas qué hay detrás de cada enlace antes de gastar una "
+          "cuenta en él.",
+}
+
+# Carried on the card itself rather than only in the prose above it. Every
+# heading on this page is a linked anchor, so a reader can arrive at `#map`
+# with none of the page's earlier warnings behind them.
+ACCOUNT_NOTE = {
+    "en": "Opens in NotebookLM; needs a Google account.",
+    "es": "Se abre en NotebookLM; pide una cuenta de Google.",
+}
+
+# An artifact whose `url_*` is still `default_url` has no share link of its own
+# yet, so the card would drop a reader at the notebook's front door under a
+# heading promising a quiz. The front door is also the one URL here that
+# redirects to a Google sign-in, so the mis-sell is not hypothetical. Said on
+# the card, because a heading on this page is a linked anchor and a reader can
+# arrive at it with none of the page's prose behind them.
+PLACEHOLDER_NOTE = {
+    "en": "No share link of its own yet — this opens the notebook, not the "
+          "artifact.",
+    "es": "Todavía sin enlace propio: esto abre el cuaderno, no el artefacto.",
+}
+
+
 def infographics_gallery(lang: str, prefix: str) -> str:
     """The companion's infographic gallery, as `.info-card`s in an `.info-strip`.
 
@@ -523,12 +504,16 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     if linked:
         if exported:
             out.append("")
-        out += [{"en": "Not exported yet, so these open in NotebookLM and "
-                       "will ask you for a Google account:",
+        out += [{"en": "Not exported yet, so these open in NotebookLM:",
                  "es": "Todavía sin exportar, así que estas se abren en "
-                       "NotebookLM y te pedirán una cuenta de Google:"}[lang],
-                ""]
-        out += [f"- [{i[title_key]}]({i['url']})" for i in linked]
+                       "NotebookLM:"}[lang],
+                "", "::: {.info-strip}"]
+        for i in linked:
+            out += ["::: {.info-card}",
+                    f"**[{i[title_key]}]({i['url']})**",
+                    f"<br>[{ACCOUNT_NOTE[lang]}]{{.shot-note}}",
+                    ":::"]
+        out.append(":::")
     return "\n".join(out) + "\n"
 
 
@@ -565,37 +550,6 @@ LINK_COPY = {
     },
 }
 
-# Said under every screenshot of an artifact that cannot be exported. The
-# picture is a still of something live, and a page that lets a reader think
-# otherwise has mis-sold the click.
-SHOT_NOTE = {
-    "en": "Screenshot — the real one is interactive, in NotebookLM.",
-    "es": "Captura de pantalla; el de verdad es interactivo, en NotebookLM.",
-}
-
-# The invitation to look before you click. It belongs here, above the cards it
-# describes, rather than in the two .qmd pages -- with no thumb exported there
-# are no pictures, and a page promising some is the small lie that makes the
-# big warning at the top of it less believable. Exactly the reason
-# infographics_gallery() keeps its own "click one to open it full size" behind
-# `if exported`.
-SHOT_INTRO = {
-    "en": "The pictures are screenshots, served from this site, so you can "
-          "see what is behind each link before you spend an account on it.",
-    "es": "Las imágenes son capturas de pantalla, servidas desde este sitio, "
-          "para que veas qué hay detrás de cada enlace antes de gastar una "
-          "cuenta en él.",
-}
-
-# Carried on the card itself rather than only in the prose above it. Every
-# heading on this page is a linked anchor, so a reader can arrive at `#map`
-# with none of the page's earlier warnings behind them.
-ACCOUNT_NOTE = {
-    "en": "Opens in NotebookLM; needs a Google account.",
-    "es": "Se abre en NotebookLM; pide una cuenta de Google.",
-}
-
-
 def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
     """The quiz, the flashcards and the mind map, as `.info-card`s.
 
@@ -622,8 +576,11 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
         if thumb:
             alt = a.get(f"thumb_alt_{lang}") or title
             out += [poster(prefix, thumb, alt, url, name), ""]
+        note = ACCOUNT_NOTE[lang]
+        if url == COMPANION["default_url"]:
+            note += " " + PLACEHOLDER_NOTE[lang]
         out += [f"**[{title}]({url})**<br>{what}<br>*{when}*",
-                f"<br>[{ACCOUNT_NOTE[lang]}"
+                f"<br>[{note}"
                 + (f" {SHOT_NOTE[lang]}" if thumb else "")
                 + "]{.shot-note}"]
         out.append(":::")
@@ -739,10 +696,10 @@ def main() -> int:
     INCLUDES.mkdir(exist_ok=True)
     try:
         written = {
-            "sections-en.md": BANNER + html_table("en", ""),
-            "sections-es.md": BANNER + html_table("es", "../"),
             "notebooks-en.md": BANNER + notebooks_table("en"),
+            "notebooks-es.md": BANNER + notebooks_table("es"),
             "notebooks-extra-en.md": BANNER + extras_notebooks_table("en"),
+            "notebooks-extra-es.md": BANNER + extras_notebooks_table("es"),
             "agenda-en.md": BANNER + "\n" + agenda_table("en"),
             "agenda-es.md": BANNER + "\n" + agenda_table("es"),
             "readme-sections.md": BANNER + readme_table("en"),
@@ -768,7 +725,8 @@ def main() -> int:
             "references-en.md": BANNER + references_list("en"),
             "references-es.md": BANNER + references_list("es"),
         }
-        handbook_schedule = handbook_schedule_table()
+        handbook_schedule = {la: handbook_schedule_table(la)
+                             for la in ("en", "es")}
     except ScheduleError as e:
         # Nothing is written on the way out: half-regenerated includes would
         # leave the two decks disagreeing, which is the failure this whole
@@ -777,9 +735,11 @@ def main() -> int:
     for name, body in written.items():
         (INCLUDES / name).write_text(body, encoding="utf-8")
         print(f"  wrote _includes/{name}")
-    handbook = ROOT / "tensors_workshop_plan_with_quizzes.md"
-    if handbook.exists():
-        inject(handbook, "handbook-schedule", handbook_schedule)
+    for la, rel in (("en", "tensors_workshop_plan_with_quizzes.md"),
+                    ("es", "es/tensors_workshop_plan_with_quizzes.md")):
+        handbook = ROOT / rel
+        if handbook.exists():
+            inject(handbook, "handbook-schedule", handbook_schedule[la])
     readme, nb_readme = ROOT / "README.md", ROOT / "notebooks" / "README.md"
     if readme.exists():
         inject(readme, "sections-en", readme_table("en"))

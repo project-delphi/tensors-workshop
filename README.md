@@ -24,9 +24,11 @@ matrices. The workshop assumes **no previous
 knowledge of tensor theory**, and every new term is defined where it first
 appears.
 
-Taught in English; questions welcome in Spanish or English. The slide deck
-exists in both languages and every notebook heading carries a one-line Spanish
-summary.
+Taught in English; questions welcome in Spanish or English. The slides, the
+handbook, the notebook index, the references and the companion all exist in both
+languages, and every notebook heading carries a one-line Spanish summary. The
+Spanish handbook is a machine translation of the English one, which stays the
+source of truth.
 
 ## Prerequisites
 
@@ -149,12 +151,14 @@ _variables.yml          single source of truth — sections, quizzes, URLs
 _quarto.yml             website config; renders to docs/
 _includes/              generated tables, included by the .qmd pages
 index.qmd  es/index.qmd landing pages, EN and ES
-notebooks.qmd  kahoot.qmd
+notebooks.qmd  es/notebooks.qmd   the notebook index, EN and ES
+kahoot.qmd              the three quizzes — English only
 slides/en/  slides/es/  the two revealjs decks + shared slides.scss
-notebooks/              14 Colab notebooks — 12 sections + 2 take-home extras
+notebooks/              14 Colab notebooks — 13 sections + 1 take-home extra
 kahoot/                 3 .xlsx quiz import files
 scripts/                generators and the link checker
-tensors_workshop_plan_with_quizzes.md   the handbook — the session text
+tensors_workshop_plan_with_quizzes.md      the handbook — the session text
+es/tensors_workshop_plan_with_quizzes.md   the same, machine-translated
 docs/                   rendered site (committed — this is what Pages serves)
 ```
 
@@ -190,8 +194,10 @@ conocimiento previo de teoría de tensores**, y cada término nuevo se define
 donde aparece por primera vez.
 
 Se imparte en inglés; las preguntas son bienvenidas en español o en inglés. Las
-diapositivas están en los dos idiomas y cada encabezado de los cuadernos lleva un
-resumen de una línea en español.
+diapositivas, el manual, el índice de cuadernos, las referencias y el complemento
+están en los dos idiomas, y cada encabezado de los cuadernos lleva un resumen de
+una línea en español. El manual en español es una traducción automática del
+inglés, que sigue siendo la fuente de verdad.
 
 ## Requisitos previos
 

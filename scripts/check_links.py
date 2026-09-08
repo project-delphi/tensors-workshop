@@ -24,7 +24,7 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     to one deck only is the same drift with no anchor to catch it. Every
     ml-blog URL in either deck, and in the notebooks, must be declared under
     `reading:` — the checker never fetches one, by design.
-  - The EN and ES landing pages list the same thirteen sections. Extras are
+  - The EN and ES notebooks pages list the same thirteen sections. Extras are
     deliberately absent from both this check and the deck check above: an
     extra is take-home material with no slide and no place in the agenda.
   - The EN and ES references pages cite the same external works, every
@@ -66,7 +66,7 @@ V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 # Extras are notebooks that are not sections: take-home deep dives, off the
 # clock. They are notebooks everywhere a notebook is checked, and nowhere a
-# section is checked — no deck anchor, no landing-page row, no agenda segment.
+# section is checked — no deck anchor, no parity row, no agenda segment.
 EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
 NOTEBOOKS = SECTIONS + EXTRAS
 REPO = V["repo"]
@@ -368,25 +368,35 @@ def check_docs_notebooks() -> None:
               f"byte-identical to the committed notebooks/")
 
 
-# ── EN and ES landing pages agree ────────────────────────────────────────────
+# ── EN and ES notebooks pages agree ──────────────────────────────────────────
 
-def check_landing_parity() -> None:
-    step("EN / ES landing pages")
-    en, es = DOCS / "index.html", DOCS / "es" / "index.html"
+def check_notebooks_parity() -> None:
+    """The EN and ES notebooks pages must list the same thirteen sections.
+
+    This used to check the two landing pages, which carried the full section
+    table until it was cut from both to make the homepage a front door rather
+    than an index. The table did not move -- it went away -- so the guarantee
+    moved to the narrower one that survived: `_includes/notebooks-{en,es}.md`,
+    the only place on the site that still enumerates every section in both
+    languages.
+
+    Slide anchors are not checked here, because the notebooks table has none.
+    Nothing is lost by that: check 4 already walks both decks for every
+    `#sec-NN` anchor, which is the same guarantee from the other end.
+    """
+    step("EN / ES notebooks pages")
+    en, es = DOCS / "notebooks.html", DOCS / "es" / "notebooks.html"
     if not (en.exists() and es.exists()):
-        fail("a landing page is missing")
+        fail("a notebooks page is missing")
         return
     for page in (en, es):
         text = page.read_text(encoding="utf-8")
         for s in SECTIONS:
-            if f"sec-{s['n']}-{s['slug']}" not in text:
-                fail(f"{page.relative_to(DOCS)}: section {s['n']} "
-                     f"({s['slug']}) is not in the table")
             if f"{s['n']}-{s['slug']}.ipynb" not in text:
                 fail(f"{page.relative_to(DOCS)}: no notebook link for "
                      f"section {s['n']}")
     print(f"      both pages list all {len(SECTIONS)} sections "
-          f"with slide anchors and notebook links")
+          f"with notebook links")
 
 
 def check_references() -> None:
@@ -689,7 +699,7 @@ def main() -> int:
         check_docs_notebooks()
         check_links()
         check_decks()
-        check_landing_parity()
+        check_notebooks_parity()
         check_references()
         check_schedule()
         check_deck_total()

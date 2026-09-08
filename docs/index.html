@@ -39,10 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-2869e9347126a443a5de0dd024f16cca.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-4ed2128eaa0b240e519f61bccd8d8d25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,12 +104,20 @@ background-size: cover;
 <span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./tensors_workshop_plan_with_quizzes.html"> 
+    <a class="nav-link" href="./tensors_workshop_plan_with_quizzes.html" rel="lang-en"> 
 <span class="menu-text">Handbook</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html"> 
+    <a class="nav-link" href="./es/tensors_workshop_plan_with_quizzes.html" rel="lang-es"> 
+<span class="menu-text">Manual</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./notebooks.html" rel="lang-en"> 
 <span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./es/notebooks.html" rel="lang-es"> 
+<span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="./kahoot.html"> 
@@ -150,6 +155,14 @@ background-size: cover;
         <li>
     <a class="dropdown-item" href="./es/index.html">
  <span class="dropdown-text">Inicio</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./es/tensors_workshop_plan_with_quizzes.html">
+ <span class="dropdown-text">Manual</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./es/notebooks.html">
+ <span class="dropdown-text">Cuadernos</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="./es/references.html">
@@ -261,8 +274,8 @@ background-size: cover;
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><a href="./tensors_workshop_plan_with_quizzes.html">Handbook</a></strong></td>
-<td>The session text: the theory, every exercise, the worked solutions, and the five take-home appendices. English only.</td>
+<td><strong><a href="./tensors_workshop_plan_with_quizzes.html">Handbook</a></strong> · <a href="./es/tensors_workshop_plan_with_quizzes.html">ES</a></td>
+<td>The session text: the theory, every exercise, the worked solutions, and the take-home appendices.</td>
 <td>Read it before, follow it during, keep it after.</td>
 </tr>
 <tr class="even">
@@ -271,7 +284,7 @@ background-size: cover;
 <td>Live in the session, or to review the shape of the day afterwards.</td>
 </tr>
 <tr class="odd">
-<td><strong><a href="./notebooks.html">Notebooks</a></strong></td>
+<td><strong><a href="./notebooks.html">Notebooks</a></strong> · <a href="./es/notebooks.html">ES</a></td>
 <td>Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type.</td>
 <td>During each section, and for the take-home.</td>
 </tr>
@@ -297,7 +310,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
-<p>The handbook is the source <em>text</em>. The facts those seven share — the section titles, the running clock, the links — live once in <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a>, and every section table on this page is generated from it, so they cannot disagree.</p>
+<p>The handbook is the source <em>text</em>. The facts those seven share — the section titles, the running clock, the links — live once in <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a> and every table on this site is generated from it, so they cannot disagree. <strong>The thirteen sections, section by section, are on the <a href="./notebooks.html">notebooks page</a>.</strong></p>
 </section>
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
@@ -319,26 +332,6 @@ background-size: cover;
 <li><strong>A phone or a second tab for <a href="./kahoot.html">Kahoot</a></strong> — three 6-question knowledge checks, after sections 04, 07 and 10. No sign-up; you join with a PIN.</li>
 </ul>
 </section>
-<section id="how-to-run-the-notebooks" class="level2">
-<h2 class="anchored" data-anchor-id="how-to-run-the-notebooks">How to run the notebooks</h2>
-<p>Click any <strong>Colab</strong> link in the table below. The notebook opens in your browser, already connected to a free runtime.</p>
-<ol type="1">
-<li>Every notebook is <strong>self-contained</strong>. Its setup cell installs and imports exactly what that section needs and loads its own data, so you can open any one of them cold, in any order, without having run the others.</li>
-<li>Run the setup cell first (▶ or <code>Shift+Enter</code>).</li>
-<li>Work through the <code># TODO</code> cells. Each has a solution cell underneath, folded away — open it after you have tried, not before.</li>
-<li>Colab will warn that the notebook was not authored by Google. That is expected; the source is <a href="https://github.com/project-delphi/tensors-workshop/tree/main/notebooks">on GitHub</a>.</li>
-</ol>
-<div class="callout callout-style-simple callout-tip">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>Changes you make in Colab are <strong>not</strong> saved back to this repo. Use <em>File → Save a copy in Drive</em> to keep your work.</p>
-</div>
-</div>
-</div>
-</section>
 <section id="how-we-work" class="level2">
 <h2 class="anchored" data-anchor-id="how-we-work">How we work</h2>
 <p>Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:</p>
@@ -346,438 +339,6 @@ background-size: cover;
 <li><strong>Exercise blocks</strong> — 10 minutes coding, then 5 minutes explanation.</li>
 <li><strong>Group blocks</strong> — 10 minutes discussion in your breakout channel, then share-back.</li>
 </ul>
-</section>
-<section id="where-the-data-comes-from" class="level2">
-<h2 class="anchored" data-anchor-id="where-the-data-comes-from">Where the data comes from</h2>
-<p>Every dataset here is real, and every one of them is something someone actually measured. Nothing in this workshop is invented with random numbers.</p>
-<div class="app-strip">
-<div class="app-card">
-<p><a href="images/ds-nyc-taxi.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="images/ds-nyc-taxi.jpg" class="img-fluid" alt="Yellow taxis queuing on a Manhattan avenue, the city whose 6,433 trip records make up the taxis dataset."></a></p>
-<p><strong>NYC taxi trips</strong><br>Tucker decomposition</p>
-</div>
-<div class="app-card">
-<p><a href="images/ds-housing.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="images/ds-housing.jpg" class="img-fluid" alt="An aerial view of rows of tract housing in southern California, the kind of district whose median value and block counts make up the housing dataset."></a></p>
-<p><strong>California housing</strong><br>Least squares, pseudoinverse</p>
-</div>
-<div class="app-card">
-<p><a href="images/ds-video.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="images/ds-video.jpg" class="img-fluid" alt="Three frames from footage of a storm at l'Almadrava, two seconds apart; the breaking waves differ from frame to frame, which is what makes the time axis carry information."></a></p>
-<p><strong>Storm footage</strong><br>Video pipeline design</p>
-</div>
-<div class="app-card">
-<p><a href="images/ds-histology.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="images/ds-histology.jpg" class="img-fluid" alt="Immunohistochemically stained colonic glands, the brown DAB signal marking FHL2 expression against a blue haematoxylin counterstain."></a></p>
-<p><strong>Histology slides</strong><br>Reshape and transpose</p>
-</div>
-<div class="app-card">
-<p><a href="images/ds-breast-cancer.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="images/ds-breast-cancer.jpg" class="img-fluid" alt="Two stained histopathology views of invasive ductal carcinoma of the breast, the kind of slide the tumour nucleus measurements were taken from."></a></p>
-<p><strong>Tumour measurements</strong><br>Indexing and broadcasting</p>
-</div>
-<div class="app-card">
-<p><a href="images/ds-airliner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="images/ds-airliner.jpg" class="img-fluid" alt="A Douglas DC-3 airliner in flight, the aircraft of the 1949 to 1960 era whose monthly passenger totals the flights dataset counts."></a></p>
-<p><strong>Airline traffic</strong><br>Recursion and forecasting</p>
-</div>
-</div>
-</section>
-<section id="the-sections" class="level2">
-<h2 class="anchored" data-anchor-id="the-sections">The sections</h2>
-<p>Read across a row: the slides in either language, the notebook to run, and the Kahoot check that covers it. The 🎯 rows are the three quizzes, shown in the order they actually run.</p>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<div class="table-responsive">
-<table class="table table-sm table-striped section-table">
-<thead>
-<tr>
-<th>
-#
-</th>
-<th>
-Section
-</th>
-<th>
-Format
-</th>
-<th>
-Min
-</th>
-<th>
-Slides EN
-</th>
-<th>
-Slides ES
-</th>
-<th>
-Notebook
-</th>
-<th>
-Kahoot
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-00
-</td>
-<td>
-<strong>Setup and welcome</strong><br><small>Load every dataset and confirm your runtime works before anything else.</small>
-</td>
-<td>
-setup
-</td>
-<td>
-5
-</td>
-<td>
-<a href="slides/en/#sec-00-setup-and-data">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-00-setup-and-data">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-01
-</td>
-<td>
-<strong>What a tensor is</strong><br><small>Learn to read a tensor's structure and track what its axes mean as you fix, rearrange, or contract them.</small>
-</td>
-<td>
-demo
-</td>
-<td>
-20
-</td>
-<td>
-<a href="slides/en/#sec-01-what-a-tensor-is">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-01-what-a-tensor-is">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb">src</a>
-</td>
-<td>
-<a href="kahoot.html#quiz-1">Q1</a>
-</td>
-</tr>
-<tr>
-<td>
-02
-</td>
-<td>
-<strong>Thinking in N dimensions</strong><br><small>Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.</small>
-</td>
-<td>
-demo
-</td>
-<td>
-20
-</td>
-<td>
-<a href="slides/en/#sec-02-thinking-in-n-dimensions">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-02-thinking-in-n-dimensions">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-03
-</td>
-<td>
-<strong>Indexing and broadcasting real data</strong><br><small>Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-03-indexing-and-broadcasting">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-03-indexing-and-broadcasting">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb">src</a>
-</td>
-<td>
-<a href="kahoot.html#quiz-1">Q1</a>
-</td>
-</tr>
-<tr>
-<td>
-04
-</td>
-<td>
-<strong>Reshape and transpose real images</strong><br><small>Use real images to move between HWC↔︎CHW and NHWC↔︎NCHW, then show why matching shapes do not guarantee matching axis semantics.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-04-reshape-and-transpose">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-04-reshape-and-transpose">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb">src</a>
-</td>
-<td>
-<a href="kahoot.html#quiz-1">Q1</a>
-</td>
-</tr>
-<tr class="kahoot-row">
-<td>
-🎯
-</td>
-<td colspan="7">
-<a href="kahoot.html#quiz-1">Kahoot 1 — Tensor Vocabulary &amp; Shapes · 6 questions · 5 min</a> — <small>covers sections 01, 03, 04</small>
-</td>
-</tr>
-<tr>
-<td>
-05
-</td>
-<td>
-<strong>Video pipeline design</strong><br><small>Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines.</small>
-</td>
-<td>
-group
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-05-video-pipeline-design">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-05-video-pipeline-design">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-06
-</td>
-<td>
-<strong>Contraction with einsum</strong><br><small>Use one index rule on real data, then change the inputs interactively to test which index disappears.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-06-contraction-with-einsum">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-06-contraction-with-einsum">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb">src</a>
-</td>
-<td>
-<a href="kahoot.html#quiz-2">Q2</a>
-</td>
-</tr>
-<tr>
-<td>
-07
-</td>
-<td>
-<strong>Inverses and the pseudoinverse</strong><br><small>Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-07-inverses-and-pseudoinverse">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-07-inverses-and-pseudoinverse">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb">src</a>
-</td>
-<td>
-<a href="kahoot.html#quiz-2">Q2</a>
-</td>
-</tr>
-<tr class="kahoot-row">
-<td>
-🎯
-</td>
-<td colspan="7">
-<a href="kahoot.html#quiz-2">Kahoot 2 — Einsum, Distance &amp; the Pseudoinverse · 6 questions · 5 min</a> — <small>covers sections 06, 07</small>
-</td>
-</tr>
-<tr>
-<td>
-08
-</td>
-<td>
-<strong>Recursion with matrices and vectors</strong><br><small>Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data.</small>
-</td>
-<td>
-demo
-</td>
-<td>
-10
-</td>
-<td>
-<a href="slides/en/#sec-08-recursion-with-matrices">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-08-recursion-with-matrices">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-09
-</td>
-<td>
-<strong>Matrix factorizations</strong><br><small>Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers, and what each one costs.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-09-matrix-factorizations">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-09-matrix-factorizations">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-10
-</td>
-<td>
-<strong>Tucker decomposition on real data</strong><br><small>Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-10-tucker-decomposition">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-10-tucker-decomposition">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb">src</a>
-</td>
-<td>
-<a href="kahoot.html#quiz-3">Q3</a>
-</td>
-</tr>
-<tr class="kahoot-row">
-<td>
-🎯
-</td>
-<td colspan="7">
-<a href="kahoot.html#quiz-3">Kahoot 3 — Convolution &amp; Tensor Decompositions · 6 questions · 5 min</a> — <small>covers sections 10</small>
-</td>
-</tr>
-<tr>
-<td>
-11
-</td>
-<td>
-<strong>Tensor factorizations</strong><br><small>Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs.</small>
-</td>
-<td>
-exercise
-</td>
-<td>
-15
-</td>
-<td>
-<a href="slides/en/#sec-11-tensor-factorizations">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-11-tensor-factorizations">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-12
-</td>
-<td>
-<strong>Wrap-up and take-homes</strong><br><small>Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio.</small>
-</td>
-<td>
-wrap-up
-</td>
-<td>
-5
-</td>
-<td>
-<a href="slides/en/#sec-12-wrap-up-and-take-homes">EN</a>
-</td>
-<td>
-<a href="slides/es/#sec-12-wrap-up-and-take-homes">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb" title="Open in Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>Not shown:</strong> the three 5-minute breaks. The thirteen sections come to 180 minutes; the three quizzes add 15 and the breaks another 15, which is how the session reaches 210 minutes.</p>
 </section>
 <section id="a-note-on-language" class="level2">
 <h2 class="anchored" data-anchor-id="a-note-on-language">A note on language</h2>
@@ -1224,38 +785,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 

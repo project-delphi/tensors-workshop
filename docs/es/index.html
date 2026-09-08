@@ -39,10 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-2869e9347126a443a5de0dd024f16cca.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
-<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-4ed2128eaa0b240e519f61bccd8d8d25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,12 +104,20 @@ background-size: cover;
 <span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../tensors_workshop_plan_with_quizzes.html"> 
+    <a class="nav-link" href="../tensors_workshop_plan_with_quizzes.html" rel="lang-en"> 
 <span class="menu-text">Handbook</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../notebooks.html"> 
+    <a class="nav-link" href="../es/tensors_workshop_plan_with_quizzes.html" rel="lang-es"> 
+<span class="menu-text">Manual</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../notebooks.html" rel="lang-en"> 
 <span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../es/notebooks.html" rel="lang-es"> 
+<span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../kahoot.html"> 
@@ -150,6 +155,14 @@ background-size: cover;
         <li>
     <a class="dropdown-item" href="../es/index.html">
  <span class="dropdown-text">Inicio</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../es/tensors_workshop_plan_with_quizzes.html">
+ <span class="dropdown-text">Manual</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../es/notebooks.html">
+ <span class="dropdown-text">Cuadernos</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../es/references.html">
@@ -261,8 +274,8 @@ background-size: cover;
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><a href="../tensors_workshop_plan_with_quizzes.html">Manual</a></strong></td>
-<td>El texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas y los cinco apéndices para casa. <strong>Solo en inglés.</strong></td>
+<td><strong><a href="../es/tensors_workshop_plan_with_quizzes.html">Manual</a></strong> · <a href="../tensors_workshop_plan_with_quizzes.html">EN</a></td>
+<td>El texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas y los apéndices para casa.</td>
 <td>Léelo antes, síguelo durante, consérvalo después.</td>
 </tr>
 <tr class="even">
@@ -271,7 +284,7 @@ background-size: cover;
 <td>En vivo durante la sesión, o para repasar después la forma del día.</td>
 </tr>
 <tr class="odd">
-<td><strong><a href="../notebooks.html">Cuadernos</a></strong></td>
+<td><strong><a href="../es/notebooks.html">Cuadernos</a></strong> · <a href="../notebooks.html">EN</a></td>
 <td>Catorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código.</td>
 <td>Durante cada sección, y para el ejercicio de casa.</td>
 </tr>
@@ -297,7 +310,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
-<p>El manual es el <em>texto</em> fuente. Los datos que los siete comparten —los títulos de las secciones, el reloj, los enlaces— viven una sola vez en <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a>, y todas las tablas de secciones de esta página se generan a partir de ahí, así que no pueden contradecirse.</p>
+<p>El manual es el <em>texto</em> fuente. Los datos que los siete comparten —los títulos de las secciones, el reloj, los enlaces— viven una sola vez en <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a> y todas las tablas del sitio se generan a partir de ahí, así que no pueden contradecirse. <strong>Las trece secciones, una por una, están en la <a href="../es/notebooks.html">página de cuadernos</a>.</strong></p>
 </section>
 <section id="requisitos-previos" class="level2">
 <h2 class="anchored" data-anchor-id="requisitos-previos">Requisitos previos</h2>
@@ -319,26 +332,6 @@ background-size: cover;
 <li><strong>El móvil o una segunda pestaña para <a href="../kahoot.html">Kahoot</a></strong>: tres controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que registrarse: entras con un PIN.</li>
 </ul>
 </section>
-<section id="cómo-ejecutar-los-cuadernos" class="level2">
-<h2 class="anchored" data-anchor-id="cómo-ejecutar-los-cuadernos">Cómo ejecutar los cuadernos</h2>
-<p>Haz clic en cualquier enlace <strong>Colab</strong> de la tabla. El cuaderno se abre en tu navegador, ya conectado a un entorno de ejecución gratuito.</p>
-<ol type="1">
-<li>Cada cuaderno es <strong>autónomo</strong>. Su celda de preparación instala e importa exactamente lo que esa sección necesita y carga sus propios datos, así que puedes abrir cualquiera en frío, en cualquier orden, sin haber ejecutado los demás.</li>
-<li>Ejecuta primero la celda de preparación (▶ o <code>Shift+Enter</code>).</li>
-<li>Trabaja las celdas <code># TODO</code>. Cada una tiene debajo una celda de solución, plegada: ábrela después de intentarlo, no antes.</li>
-<li>Colab avisará de que el cuaderno no lo escribió Google. Es lo esperado; el código fuente está <a href="https://github.com/project-delphi/tensors-workshop/tree/main/notebooks">en GitHub</a>.</li>
-</ol>
-<div class="callout callout-style-simple callout-tip">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>Los cambios que hagas en Colab <strong>no</strong> se guardan en este repositorio. Usa <em>Archivo → Guardar una copia en Drive</em> para conservar tu trabajo.</p>
-</div>
-</div>
-</div>
-</section>
 <section id="cómo-trabajamos" class="level2">
 <h2 class="anchored" data-anchor-id="cómo-trabajamos">Cómo trabajamos</h2>
 <p>Cuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:</p>
@@ -346,438 +339,6 @@ background-size: cover;
 <li><strong>Bloques de ejercicios</strong>: 10 minutos programando y 5 de explicación.</li>
 <li><strong>Bloques de grupo</strong>: 10 minutos de discusión en tu canal y luego puesta en común.</li>
 </ul>
-</section>
-<section id="de-dónde-vienen-los-datos" class="level2">
-<h2 class="anchored" data-anchor-id="de-dónde-vienen-los-datos">De dónde vienen los datos</h2>
-<p>Todos los conjuntos de datos son reales, y cada uno es algo que alguien midió de verdad. Nada en este taller se inventa con números aleatorios.</p>
-<div class="app-strip">
-<div class="app-card">
-<p><a href="../images/ds-nyc-taxi.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><img src="../images/ds-nyc-taxi.jpg" class="img-fluid" alt="Taxis amarillos en una avenida de Manhattan, la ciudad cuyos 6.433 viajes forman el conjunto de datos de taxis."></a></p>
-<p><strong>Viajes en taxi de Nueva York</strong><br>Descomposición de Tucker</p>
-</div>
-<div class="app-card">
-<p><a href="../images/ds-housing.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-2"><img src="../images/ds-housing.jpg" class="img-fluid" alt="Vista aérea de hileras de viviendas en el sur de California, el tipo de distrito cuyo valor mediano forma el conjunto de datos de vivienda."></a></p>
-<p><strong>Vivienda en California</strong><br>Mínimos cuadrados, pseudoinversa</p>
-</div>
-<div class="app-card">
-<p><a href="../images/ds-video.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-3"><img src="../images/ds-video.jpg" class="img-fluid" alt="Tres fotogramas de una tormenta en l'Almadrava, separados por dos segundos; las olas cambian entre fotogramas, y por eso el eje temporal lleva información."></a></p>
-<p><strong>Grabación de una tormenta</strong><br>Diseño de un pipeline de vídeo</p>
-</div>
-<div class="app-card">
-<p><a href="../images/ds-histology.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-4"><img src="../images/ds-histology.jpg" class="img-fluid" alt="Glándulas colónicas teñidas por inmunohistoquímica, con la señal marrón de DAB marcando la expresión de FHL2 sobre un contraste azul de hematoxilina."></a></p>
-<p><strong>Cortes de histología</strong><br>Reshape y transposición</p>
-</div>
-<div class="app-card">
-<p><a href="../images/ds-breast-cancer.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-5"><img src="../images/ds-breast-cancer.jpg" class="img-fluid" alt="Dos vistas histopatológicas de carcinoma ductal invasivo de mama, el tipo de preparación del que proceden las mediciones de núcleos tumorales."></a></p>
-<p><strong>Mediciones de tumores</strong><br>Indexación y broadcasting</p>
-</div>
-<div class="app-card">
-<p><a href="../images/ds-airliner.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-6"><img src="../images/ds-airliner.jpg" class="img-fluid" alt="Un Douglas DC-3 en vuelo, el avión de la era 1949-1960 cuyos totales mensuales de pasajeros cuenta el conjunto de datos de vuelos."></a></p>
-<p><strong>Tráfico aéreo</strong><br>Recursión y pronóstico</p>
-</div>
-</div>
-</section>
-<section id="las-secciones" class="level2">
-<h2 class="anchored" data-anchor-id="las-secciones">Las secciones</h2>
-<p>Lee una fila de izquierda a derecha: las diapositivas en cualquiera de los dos idiomas, el cuaderno que hay que ejecutar y el control de Kahoot que lo cubre. Las filas 🎯 son los tres cuestionarios, en el orden real en que se ejecutan.</p>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<div class="table-responsive">
-<table class="table table-sm table-striped section-table">
-<thead>
-<tr>
-<th>
-#
-</th>
-<th>
-Sección
-</th>
-<th>
-Formato
-</th>
-<th>
-Min
-</th>
-<th>
-Diapos EN
-</th>
-<th>
-Diapos ES
-</th>
-<th>
-Cuaderno
-</th>
-<th>
-Kahoot
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-00
-</td>
-<td>
-<strong>Preparación y bienvenida</strong><br><small>Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de empezar.</small>
-</td>
-<td>
-preparación
-</td>
-<td>
-5
-</td>
-<td>
-<a href="../slides/en/#sec-00-setup-and-data">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-00-setup-and-data">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-01
-</td>
-<td>
-<strong>Qué es un tensor</strong><br><small>Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.</small>
-</td>
-<td>
-demostración
-</td>
-<td>
-20
-</td>
-<td>
-<a href="../slides/en/#sec-01-what-a-tensor-is">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-01-what-a-tensor-is">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb">src</a>
-</td>
-<td>
-<a href="../kahoot.html#quiz-1">Q1</a>
-</td>
-</tr>
-<tr>
-<td>
-02
-</td>
-<td>
-<strong>Pensar en N dimensiones</strong><br><small>Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.</small>
-</td>
-<td>
-demostración
-</td>
-<td>
-20
-</td>
-<td>
-<a href="../slides/en/#sec-02-thinking-in-n-dimensions">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-02-thinking-in-n-dimensions">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-03
-</td>
-<td>
-<strong>Indexación y broadcasting con datos reales</strong><br><small>Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-03-indexing-and-broadcasting">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-03-indexing-and-broadcasting">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb">src</a>
-</td>
-<td>
-<a href="../kahoot.html#quiz-1">Q1</a>
-</td>
-</tr>
-<tr>
-<td>
-04
-</td>
-<td>
-<strong>Reshape y transposición de imágenes reales</strong><br><small>Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué <code>reshape</code> puede conservar la forma mientras destruye el significado.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-04-reshape-and-transpose">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-04-reshape-and-transpose">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb">src</a>
-</td>
-<td>
-<a href="../kahoot.html#quiz-1">Q1</a>
-</td>
-</tr>
-<tr class="kahoot-row">
-<td>
-🎯
-</td>
-<td colspan="7">
-<a href="../kahoot.html#quiz-1">Kahoot 1 — Vocabulario de tensores y formas · 6 preguntas · 5 min</a> — <small>cubre las secciones 01, 03, 04</small>
-</td>
-</tr>
-<tr>
-<td>
-05
-</td>
-<td>
-<strong>Diseño de un pipeline de vídeo</strong><br><small>Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.</small>
-</td>
-<td>
-grupo
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-05-video-pipeline-design">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-05-video-pipeline-design">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-06
-</td>
-<td>
-<strong>Contracción con einsum</strong><br><small>Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-06-contraction-with-einsum">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-06-contraction-with-einsum">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb">src</a>
-</td>
-<td>
-<a href="../kahoot.html#quiz-2">Q2</a>
-</td>
-</tr>
-<tr>
-<td>
-07
-</td>
-<td>
-<strong>Inversas y la pseudoinversa</strong><br><small>Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-07-inverses-and-pseudoinverse">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-07-inverses-and-pseudoinverse">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb">src</a>
-</td>
-<td>
-<a href="../kahoot.html#quiz-2">Q2</a>
-</td>
-</tr>
-<tr class="kahoot-row">
-<td>
-🎯
-</td>
-<td colspan="7">
-<a href="../kahoot.html#quiz-2">Kahoot 2 — Einsum, distancia y la pseudoinversa · 6 preguntas · 5 min</a> — <small>cubre las secciones 06, 07</small>
-</td>
-</tr>
-<tr>
-<td>
-08
-</td>
-<td>
-<strong>Recursión con matrices y vectores</strong><br><small>Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.</small>
-</td>
-<td>
-demostración
-</td>
-<td>
-10
-</td>
-<td>
-<a href="../slides/en/#sec-08-recursion-with-matrices">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-08-recursion-with-matrices">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-09
-</td>
-<td>
-<strong>Factorizaciones matriciales</strong><br><small>Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-09-matrix-factorizations">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-09-matrix-factorizations">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-10
-</td>
-<td>
-<strong>Descomposición de Tucker con datos reales</strong><br><small>Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-10-tucker-decomposition">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-10-tucker-decomposition">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb">src</a>
-</td>
-<td>
-<a href="../kahoot.html#quiz-3">Q3</a>
-</td>
-</tr>
-<tr class="kahoot-row">
-<td>
-🎯
-</td>
-<td colspan="7">
-<a href="../kahoot.html#quiz-3">Kahoot 3 — Convolución y descomposiciones tensoriales · 6 preguntas · 5 min</a> — <small>cubre las secciones 10</small>
-</td>
-</tr>
-<tr>
-<td>
-11
-</td>
-<td>
-<strong>Factorizaciones tensoriales</strong><br><small>Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.</small>
-</td>
-<td>
-ejercicio
-</td>
-<td>
-15
-</td>
-<td>
-<a href="../slides/en/#sec-11-tensor-factorizations">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-11-tensor-factorizations">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-<tr>
-<td>
-12
-</td>
-<td>
-<strong>Cierre y ejercicios para casa</strong><br><small>Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio.</small>
-</td>
-<td>
-cierre
-</td>
-<td>
-5
-</td>
-<td>
-<a href="../slides/en/#sec-12-wrap-up-and-take-homes">EN</a>
-</td>
-<td>
-<a href="../slides/es/#sec-12-wrap-up-and-take-homes">ES</a>
-</td>
-<td>
-<a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb" title="Abrir en Colab">Colab</a> · <a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb">src</a>
-</td>
-<td>
-—
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-<p><strong>No aparecen</strong> en la tabla: las tres pausas de 5 minutos. Las trece secciones suman 180 minutos; los tres cuestionarios añaden 15 y las pausas otros 15, que es como la sesión llega a 210 minutos.</p>
 </section>
 <section id="una-nota-sobre-el-idioma" class="level2">
 <h2 class="anchored" data-anchor-id="una-nota-sobre-el-idioma">Una nota sobre el idioma</h2>
@@ -1224,38 +785,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>
   </div>
 </footer>
-<script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom","selector":".lightbox"});
-(function() {
-  let previousOnload = window.onload;
-  window.onload = () => {
-    if (previousOnload) {
-      previousOnload();
-    }
-    lightboxQuarto.on('slide_before_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      const href = trigger.getAttribute('href');
-      if (href !== null) {
-        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
-        if (imgEl !== null) {
-          const srcAttr = imgEl.getAttribute("src");
-          if (srcAttr && srcAttr.startsWith("data:")) {
-            slideConfig.href = srcAttr;
-          }
-        }
-      } 
-    });
-  
-    lightboxQuarto.on('slide_after_load', (data) => {
-      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(slideNode);
-      }
-    });
-  
-  };
-  
-})();
-          </script>
 
 
 

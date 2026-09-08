@@ -11,8 +11,10 @@ project:
     - references.qmd
     - companion.qmd
     - es/index.qmd
+    - es/notebooks.qmd
     - es/references.qmd
     - es/companion.qmd
+    - es/tensors_workshop_plan_with_quizzes.md
     - slides/en/index.qmd
     - slides/es/index.qmd
     - tensors_workshop_plan_with_quizzes.md
@@ -44,18 +46,17 @@ website:
     # switch at the right does the switching -- rather than every destination
     # appearing twice on every page, which is what this navbar used to do.
     #
-    # The three items with no `rel` -- Handbook, Notebooks, Kahoot -- exist in
-    # English only, and keep their English labels on the Spanish navbar on
-    # purpose: the label's language is what tells you the page's language, and
-    # a Spanish label leading to an English page is the worse surprise.
+    # Kahoot is the one item with no `rel`: it exists in English only, and it
+    # keeps its English label on the Spanish navbar on purpose — the label's
+    # language is what tells you the page's language, and a Spanish label
+    # leading to an English page is the worse surprise.
     #
-    # Being untagged does a second job. Those three pages are `lang: en`, so
-    # they show an English navbar, which would strand a Spanish reader who
-    # opened one — the ES chip only goes back to the Spanish homepage. The
-    # `Español` dropdown at the end is their way across, and it shows on
-    # exactly those three pages because they are the only ones whose own
-    # navbar item carries no language for `custom.scss` to match `.active`
-    # against. Tagging one of them would take that away.
+    # Being untagged does a second job. That page is `lang: en`, so it shows an
+    # English navbar, which would strand a Spanish reader who opened it — the
+    # ES chip only goes back to the Spanish homepage. The `Español` dropdown at
+    # the end is the way across, and it shows on exactly that page because it
+    # is the only one whose own navbar item carries no language for
+    # `custom.scss` to match `.active` against. Tagging it would take that away.
     left:
       - href: index.qmd
         text: Home
@@ -65,8 +66,16 @@ website:
         rel: lang-es
       - href: tensors_workshop_plan_with_quizzes.md
         text: Handbook
+        rel: lang-en
+      - href: es/tensors_workshop_plan_with_quizzes.md
+        text: Manual
+        rel: lang-es
       - href: notebooks.qmd
         text: Notebooks
+        rel: lang-en
+      - href: es/notebooks.qmd
+        text: Cuadernos
+        rel: lang-es
       - href: kahoot.qmd
         text: Kahoot
       - href: references.qmd
@@ -87,15 +96,18 @@ website:
       - href: es/companion.qmd
         text: Complemento
         rel: lang-es
-      # Visible only on the three English-only pages above -- see
+      # Visible only on Kahoot, the one English-only page left -- see
       # `custom.scss`. It is deliberately the whole Spanish side rather than a
-      # single link home, so a Spanish reader reading the Handbook reaches
-      # `Complemento` in one click, the way they could before the navbar
-      # started following the page's language.
+      # single link home, so a Spanish reader who lands there reaches
+      # `Complemento` in one click rather than by way of the homepage.
       - text: "Español"
         menu:
           - href: es/index.qmd
             text: Inicio
+          - href: es/tensors_workshop_plan_with_quizzes.md
+            text: Manual
+          - href: es/notebooks.qmd
+            text: Cuadernos
           - href: es/references.qmd
             text: Referencias
           - href: slides/es/index.qmd

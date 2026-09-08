@@ -32,8 +32,8 @@ text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (every section table, the agenda both decks show, the companion's video, audio, infographic, self-check and mind-map blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
-| The marker-delimited table regions inside `README.md`, `notebooks/README.md` and the handbook's schedule — the rest of all three files is hand-maintained | `scripts/gen_tables.py` |
+| `_includes/*.md` (both notebook tables, the agenda both decks show, the companion's video, audio, infographic, self-check and mind-map blocks, and the whole body of both references pages) | `scripts/gen_tables.py` |
+| The marker-delimited table regions inside `README.md`, `notebooks/README.md` and each language's handbook schedule — the rest of all four files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
@@ -55,7 +55,13 @@ every pixel came from, which is the actual point:
 - `gen_thumbnails.py` builds the nine dataset cards from SHA-256-pinned CC0
   sources. Pinning matters: a Commons file can be overwritten under the same
   name, and a card silently regenerated from a different photograph is not
-  something a binary diff will show you.
+  something a binary diff will show you. **Nothing on the site displays
+  `images/ds-*` any more** — the dataset strip they were drawn for was cut from
+  both landing pages. They are kept, and so is the generator, because
+  `gen_figures.py` imports its pin, palette and fetcher, and because the
+  handbook's *The Data We Use* section is the obvious place to bring them back.
+  Do not treat their absence from every page as a bug to fix by re-adding a
+  strip to the homepage.
 - `gen_figures.py` builds the banner and the handbook's four figures, and
   imports the pin, the palette and the fetcher from `gen_thumbnails.py` rather
   than repeating them. Every figure is drawn from an array the workshop
@@ -104,24 +110,34 @@ a paragraph, find whose job it is:
 | Document | Owns | Never contains |
 |---|---|---|
 | `_variables.yml` | Every shared fact: repo coordinates, section titles and minutes, the running clock, quiz metadata, prerequisite URLs. | — |
-| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, how to run the notebooks, the section table. | Teaching content or exercises. |
-| The handbook | The session text: theory, exercises, worked solutions, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. The bibliography — it links to `references.qmd`, and its `## Further Reading` section is now only that pointer. |
-| `notebooks.qmd` | How the notebooks are built, what each one needs, how to run them off Colab. | The workshop's content or its schedule. |
-| `kahoot.qmd` | The three quizzes and how to run them. | — |
+| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, and how we work. | Teaching content or exercises. A section table, Colab instructions, or a tour of the datasets — the homepage is a front door, and all three were cut from it. |
+| The handbook (`tensors_workshop_plan_with_quizzes.md`, and `es/` beside it) | The session text: theory, exercises, worked solutions, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. The bibliography — it links to `references.qmd`, and its `## Further Reading` section is now only that pointer. |
+| `notebooks.qmd` / `es/notebooks.qmd` | The list of every notebook, how they are built, what each one needs, and how to run them off Colab. The only page left that enumerates all thirteen sections in both languages, which is what check 6 now watches. | The workshop's content or its schedule. |
+| `kahoot.qmd` | The three quizzes and how to run them. English only — the one page that still is, and therefore the only one showing the navbar's `Español` dropdown. | — |
 | `references.qmd` / `es/references.qmd` | Every citation: the linear algebra books, the Tucker/CP/Eckart–Young papers, the `tensorly` docs, and the ML blog posts. With DOIs and author pages. | Prerequisites — it links to the homepage. Teaching content: it says what a work is *for*, never what it says. |
 | `companion.qmd` / `es/companion.qmd` | The machine-generated companion: the NotebookLM notebook and every artifact out of it — video, infographics, audio, quiz, flashcards, mind map — and the standing warning that none of it was written or checked by a person. It owns those links, so nothing else carries one. | The workshop's own content. It explains material, it never defines it. |
 | `README.md` | The GitHub shopfront: what this is, who it is for, prerequisites **in brief**, and links out. | Anything the site already owns. |
 
-**One canonical identifier.** A segment is a **section, `00`–`11`**, everywhere.
-Part I–IV and Block 1–6 are the handbook's own secondary labels, live in
-`_variables.yml` as `part:` and `block:`, and appear in exactly two places: the
-handbook's six exercise headings, and its generated schedule table — which
-carries the section number beside them and is therefore the only key a reader
-needs. Prose that says "Block 4" where it means section 07 is the bug.
+**The Spanish handbook is machine-translated.** `es/tensors_workshop_plan_with_quizzes.md`
+is a translation of the English handbook, which stays the source of truth; the
+page says so in a callout at the top, the way the companion pages say what they
+are. Code, identifiers and every `# TODO` comment are deliberately left in
+English, because they are what a student types into the notebook. Change the
+English handbook and the Spanish one does **not** follow — nothing generates it
+and nothing checks it. Change both in the same commit, or the callout stops
+being true.
 
-**The local-run command** appears in five places — `README.md` twice, once per
-language; `notebooks.qmd`; `notebooks/README.md`; and the Commands section below
-— and nothing checks that they agree. Change one, change all five, and derive it
+**One canonical identifier.** A segment is a **section, `00`–`12`**, everywhere.
+Part I–IV and Block 1–7 are the handbook's own secondary labels, live in
+`_variables.yml` as `part:` and `block:`, and appear in exactly two places: the
+handbook's exercise headings, and its generated schedule table — which carries
+the section number beside them and is therefore the only key a reader needs.
+Prose that says "Block 4" where it means section 07 is the bug.
+
+**The local-run command** appears in six places — `README.md` twice, once per
+language; `notebooks.qmd` and `es/notebooks.qmd`; `notebooks/README.md`; and the
+Commands section below — and nothing checks that they agree. Change one, change
+all six, and derive it
 from what the notebooks actually import rather than from memory:
 
 ```bash
@@ -145,11 +161,11 @@ Kahoot.
 
 Everywhere a **notebook** is handled, extras are included — `gen_notebooks.py`
 normalizes them, and checks 1, 3 and 8 in `check_links.py` cover them.
-Everywhere a **section** is handled, they are not: checks 4 (deck anchors), 5
-(landing-page parity) and 6 (the clock) stay on `SECTIONS` alone, and adding an
-extra to any of them would be the bug. Their tables are separate and narrower —
-`_includes/notebooks-extra-en.md` and `_includes/extras-{en,es}.md`, `# | Deep
-dive | Colab`, no Slides and no Quiz column.
+Everywhere a **section** is handled, they are not: checks 5 (deck anchors), 6
+(notebooks-page parity) and 8 (the clock) stay on `SECTIONS` alone, and adding
+an extra to any of them would be the bug. Their tables are separate and narrower
+— `_includes/notebooks-extra-{en,es}.md` and `_includes/extras-{en,es}.md`,
+`# | Deep dive | Colab`, no Slides and no Quiz column.
 
 ## No commits on main
 
@@ -213,8 +229,9 @@ numbered checks, in the order they run. Ten can fail, and any failure exits
 non-zero: notebooks are valid with no outputs or execution counts; every
 notebook `docs/` serves is byte-identical to the one committed in
 `notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
-existing notebook; both decks carry every section anchor; EN and ES list the
-same thirteen sections (extras appear in neither, by design); the two
+existing notebook; both decks carry every section anchor; the EN and ES
+notebooks pages list the same thirteen sections (extras appear in neither, by
+design); the two
 references pages cite the same external works, with every ml-blog URL among
 them declared under `reading:` and every `references:` group anchor present on
 both; each section's
@@ -286,7 +303,10 @@ auto-generates an id from it, which silently destroys every `#sec-NN` anchor.
 
 `_quarto.yml` has an explicit `render:` list on purpose — without it Quarto
 sweeps up every notebook and tries to execute them, and renders every README as
-a page. Adding a page means adding it there.
+a page. Adding a page means adding it there — and, if it has a counterpart in
+the other language, tagging both navbar items `rel: lang-en` / `rel: lang-es`,
+because an untagged item is what `custom.scss` reads as "English only" and uses
+to decide where the `Español` dropdown shows.
 
 ## Working on WSL2 (Windows)
 
