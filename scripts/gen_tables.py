@@ -195,12 +195,20 @@ DEP_SKIP = {
 IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)
 PIP_RE = re.compile(r"^\s*%pip install[^\n]*", re.M)
 URL_RE = re.compile(r"https?://[^\s\"')]+")
+# The contents of a double-quoted Python string, which is where every URL a
+# notebook actually fetches lives.
+STRING_RE = re.compile(r'"([^"\n]*)"')
 
-# Colab badges and repo links are not downloads; every other external URL in a
-# code cell is something a reader's machine has to reach.
+# Colab badges and links back to this workshop are not downloads; every other
+# external URL in a string literal is something a reader's machine has to
+# reach. Scoped to `github.com/project-delphi/` rather than all of GitHub on
+# purpose: a bare `github\.com/` would also swallow a real
+# `github.com/<user>/<repo>/raw/main/data.csv` fetch, which would then render
+# as "Network: no" and never trip the unregistered-URL exit below. The only
+# thing it needs to exclude today is the User-Agent string notebook 11 sends.
 NOT_A_DOWNLOAD = re.compile(
-    r"colab\.research\.google\.com|github\.com/|project-delphi\.github\.io"
-    r"|tensorly\.org|deeplearningbook|kahoot\.it")
+    r"colab\.research\.google\.com|github\.com/project-delphi/"
+    r"|project-delphi\.github\.io|tensorly\.org|deeplearningbook|kahoot\.it")
 
 
 def notebook_code(path: pathlib.Path) -> str:
@@ -211,6 +219,14 @@ def notebook_code(path: pathlib.Path) -> str:
     previous cell's last -- which hides an `import` from a line-anchored
     pattern and silently understates a notebook's dependencies.
     """
+    if not path.exists():
+        # Declaring a section in _variables.yml before writing its notebook is
+        # a normal order of work, and this is the first thing in gen_tables.py
+        # that hard-depends on the files. Say which one, the way
+        # gen_notebooks.py does, rather than surfacing a raw traceback.
+        sys.exit(f"cannot read a missing notebook: "
+                 f"{path.relative_to(ROOT)} is declared in _variables.yml "
+                 f"but is not on disk")
     nb = json.loads(path.read_text(encoding="utf-8"))
     return "\n".join("".join(c.get("source", []))
                      for c in nb["cells"] if c["cell_type"] == "code")
@@ -230,11 +246,7 @@ def notebook_deps_table(lang: str) -> str:
     out = [f"| {' | '.join(head)} |", "|---|---|---|"]
     for s in NOTEBOOKS:
         path = ROOT / "notebooks" / notebook_name(s)
-        # A commented-out line is a credit, not a fetch: notebook 05 names the
-        # Commons *file page* for the storm clip in a comment above the raw
-        # media URL it actually downloads.
-        code = "\n".join(l for l in notebook_code(path).split("\n")
-                         if not l.lstrip().startswith("#"))
+        code = notebook_code(path)
         pip = " ".join(PIP_RE.findall(code))
         mods = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
         mods |= {d for d in ("imageio", "tensorly") if d in pip}
@@ -247,24 +259,41 @@ def notebook_deps_table(lang: str) -> str:
         # harvesting the raw text finds only the half before the join --
         # `.../handson-ml2/master/` without the `housing.csv` that names it.
         glued = re.sub(r'"\s*\n?\s*"', "", code)
-        urls = [u for u in URL_RE.findall(glued)
+        # Only URLs inside a string literal are fetched. A URL in a comment is
+        # a citation: notebook 05 names the Commons *file page* for the storm
+        # clip above the raw media URL it downloads. Matching literals rather
+        # than stripping comment lines also handles a trailing comment, which
+        # line-wise stripping would miss -- and a stray citation hard-exiting
+        # the build is a poor reward for attributing a source.
+        urls = [u for lit in STRING_RE.findall(glued)
+                for u in URL_RE.findall(lit)
                 if not NOT_A_DOWNLOAD.search(u)]
+        # A note qualifies one file, not the row. Notebook 00 downloads three
+        # CSVs in full and only probes the storm clip, so hanging "only a 1 KB
+        # probe" off the end of the whole list would quietly disown the CSVs.
+        note, note_for = s.get(f"network_note_{lang}"), s.get("network_note_for")
+        if note and not note_for:
+            sys.exit(f"sections.{s['n']}: network_note_{lang} is set but "
+                     f"network_note_for does not say which dataset it "
+                     f"qualifies")
         labels, seen = [], set()
         for d in DATASETS:                       # registry order, not discovery
             if any(d["match"] in u for u in urls):
-                labels.append(d[f"label_{lang}"])
+                label = d[f"label_{lang}"]
+                if note and d["match"] == note_for:
+                    label += f" ({note})"
+                labels.append(label)
                 seen.update(u for u in urls if d["match"] in u)
         if stray := sorted(set(urls) - seen):
             sys.exit(f"notebooks/{notebook_name(s)} downloads {stray[0]}, "
                      f"which matches no entry in `datasets:` in "
                      f"_variables.yml; add it there so the notebooks page can "
                      f"name it")
-        if labels:
-            net = L[lang]["deps_yes"] + ", ".join(labels)
-            if note := s.get(f"network_note_{lang}"):
-                net += f" ({note})"
-        else:
-            net = L[lang]["deps_no"]
+        if note_for and note_for not in {d["match"] for d in DATASETS}:
+            sys.exit(f"sections.{s['n']}: network_note_for is {note_for!r}, "
+                     f"which is not a `match` in `datasets:`")
+        net = (L[lang]["deps_yes"] + ", ".join(labels) if labels
+               else L[lang]["deps_no"])
         out.append(f"| {s['n']} | {deps} | {net} |")
     out += ["", f": {L[lang]['deps_caption']} {{tbl-colwidths=\"[12,58,30]\"}}"]
     return "\n".join(out) + "\n"

@@ -4,12 +4,15 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Twelve checks, each of which catches a mistake that is otherwise invisible.
+Thirteen checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
   - Notebooks are valid, have no outputs or execution counts, and each badge
-    points at its own file — the thirteen sections and the extras alike. [nb]
+    points at its own file — the thirteen sections and the extras alike. And
+    every link from one notebook to another names an `.ipynb` that exists:
+    nothing else looks at those, because a notebook reaches `docs/` as a
+    verbatim copy rather than a rendered page. [nb]
   - Every notebook docs/ serves is byte-identical to the one committed in
     notebooks/. Quarto copies them verbatim instead of rendering them, so
     this is the only gate that would notice docs/ serving a stale notebook.
@@ -46,6 +49,10 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
   - Kahoot join URLs. A reminder, NOT a failure — see check_kahoot_urls.
   - The companion's artifact links and exports. Also a reminder, NOT a
     failure — see check_companion.
+  - The two handbooks still have the same shape: heading counts, table rows,
+    and the notebooks each links. `CLAUDE.md` requires them to change in the
+    same commit and nothing else verifies it. Structure only — it cannot see
+    wording, which is the half that actually drifts.
 
 Exit code is non-zero on any failure, so CI can gate on it.
 """

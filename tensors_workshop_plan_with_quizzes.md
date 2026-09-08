@@ -776,7 +776,7 @@ What you did today:
 3. **Part III** — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.
 4. **Part IV** — wrote contractions with `einsum`; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.
 
-**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full. Those three sections *state* the idea. Sections 07 and 10, and take-home 13, are where you watch it happen.
+**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. Those three sections *state* it. You watch it happen three times: the pseudoinverse on a real linear system in section 07, Tucker on an oversized tensor in section 10, and Richardson-Lucy on a blurred photograph in take-home 13.
 
 **Where to go next**
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.

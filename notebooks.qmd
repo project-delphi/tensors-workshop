@@ -63,8 +63,7 @@ when you run locally.
 and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at
 all. The other nine download something the first time they run: a CSV from
 GitHub, the storm video clip from Wikimedia, or the voice recording for
-notebook 12's take-home E. Notebook 00 fetches four files, and 05 and 11 fetch
-two each.
+notebook 12's take-home E. The table below says which, notebook by notebook.
 
 ## What each notebook needs
 
