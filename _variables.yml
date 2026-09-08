@@ -807,8 +807,8 @@ sections:
     format_es: "preparación"
     title_en: "Setup and welcome"
     title_es: "Preparación y bienvenida"
-    summary_en: "Load every dataset and confirm your runtime works before anything else."
-    summary_es: "Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de empezar."
+    summary_en: "Load every dataset and confirm your runtime works before the workshop starts."
+    summary_es: "Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller."
     objectives_en:
       - "Confirm your Colab runtime can reach every dataset the workshop uses."
       - "Know which data ships inside the libraries and which is downloaded."
@@ -1135,13 +1135,13 @@ sections:
     intro_en: |-
       Section 01 showed the **map of factorizations**. This section walks it, on real data.
 
-      The whole family in one place — **LU, QR, Cholesky, eigendecomposition, SVD and NMF** — with the same question asked of each: *what does this factorization make easy that was hard before, and what does it cost?*
+      All six in one place: **LU, QR, Cholesky, eigendecomposition, SVD and NMF**. Each one is asked the same question. *What does this factorization make easy that was hard before, and what does it cost?*
 
       This is also where **eigendecomposition** gets named, before section 10 leans on the same machinery.
     intro_es: |-
       > 🇪🇸 La sección 01 mostró el **mapa de las factorizaciones**. Esta sección lo recorre, sobre datos reales.
       >
-      > Toda la familia en un solo lugar — **LU, QR, Cholesky, descomposición espectral, SVD y NMF** — con la misma pregunta para cada una: *¿qué vuelve fácil esta factorización que antes era difícil, y cuánto cuesta?*
+      > Las seis en un solo lugar: **LU, QR, Cholesky, descomposición espectral, SVD y NMF**. A cada una se le hace la misma pregunta. *¿Qué vuelve fácil esta factorización que antes era difícil, y cuánto cuesta?*
       >
       > Aquí también se nombra la **descomposición espectral**, antes de que la sección 10 se apoye en la misma maquinaria.
     objectives_en:
@@ -1265,14 +1265,13 @@ sections:
     intro_en: |-
       This final notebook has two jobs:
 
-      1. connect the ideas from the whole workshop;
+      1. connect the ideas from all thirteen sections;
       2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
     intro_es: |-
       > 🇪🇸 Este último cuaderno tiene dos objetivos:
       >
-      > 1. conectar las ideas de todo el taller;
-
-      2. let you explore five extensions: **PCA, attention, CP, Cholesky, and audio denoising**.
+      > 1. conectar las ideas de las trece secciones;
+      > 2. dejarte explorar cinco extensiones: **PCA, atención, CP, Cholesky y eliminación de ruido en audio**.
     intro_es: |-
       > 🇪🇸 Este último cuaderno tiene dos objetivos:
       >
@@ -1323,7 +1322,7 @@ extras:
 
       > **A small kernel is reused across positions to transform an image.**
 
-      It is the third instance of the workshop's connecting idea, alongside the pseudoinverse in section 07 and Tucker in section 10: when a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 10 and 11 state that idea; this notebook is where you watch it happen to a photograph.
+      It is the third instance of the workshop's connecting idea, alongside the pseudoinverse in section 07 and Tucker in section 10. When a problem has no exact answer and no true inverse, you look for the best stable approximation. Sections 07, 10 and 11 state that idea. This notebook is where you watch it happen to a photograph.
 
       We will distinguish **correlation**, **convolution**, **transposed convolution**, and **deconvolution** without treating them as the same operation.
     intro_es: |-
@@ -1331,7 +1330,7 @@ extras:
       >
       > **Un kernel pequeño se reutiliza en muchas posiciones para transformar una imagen.**
       >
-      > Es el tercer caso de la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10: cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 10 y 11 enuncian esa idea; en este cuaderno la ves ocurrir sobre una fotografía.
+      > Es el tercer caso de la idea que conecta el taller, junto con la pseudoinversa de la sección 07 y Tucker en la 10. Cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable. Las secciones 07, 10 y 11 enuncian esa idea. En este cuaderno la ves ocurrir sobre una fotografía.
       >
       > Distinguiremos **correlación**, **convolución**, **convolución transpuesta** y **deconvolución** sin tratarlas como si fueran la misma operación.
     objectives_en:
