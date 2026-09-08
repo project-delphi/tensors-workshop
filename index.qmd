@@ -12,6 +12,7 @@ bienvenidas en español o en inglés.
 :::
 
 ::: {.companion-strip}
+[The whole day in one picture](companion.qmd#brainstorm)
 [Video overview](companion.qmd#video)
 [One-minute shorts](companion.qmd#shorts)
 [Infographics](companion.qmd#infographics)
@@ -34,10 +35,10 @@ never change. Finding those problems is part of the work.
 
 {{< include _includes/companion-video-en.md >}}
 
-The video is *generated*, not recorded. It, and the infographics, audio, quiz,
-flashcards and mind map beside it, live on the
-[companion page](companion.qmd) — which says plainly what being generated
-means, and what to do about it.
+The video is *generated*, not recorded. It sits on the
+[companion page](companion.qmd), beside the infographics, the audio, the quiz,
+the flashcards and the mind map. That page says what generated means here, and
+what to do about it.
 
 ## Who it is for
 
@@ -56,7 +57,7 @@ what you are doing right now.
 | **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
 | **[Notebooks](notebooks.qmd)** · [ES](es/notebooks.qmd) | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
 | **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
-| **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Machine-generated from this workshop's own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. | Before, for a first pass; after, for revision. |
+| **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Machine-generated from this workshop's own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. Plus one diagram of the day, drawn by hand. | Before, for a first pass; after, for revision. |
 | **[References](references.qmd)** · [ES](es/references.qmd) | The books, papers, `tensorly` docs and blog posts the workshop is built on — with DOIs and author pages. | After a section, when you want the proper treatment of what it skimmed. |
 | **[Repository]({{< var repo.url >}})** | The source of all of the above, plus the three Kahoot spreadsheets. | To fork it, fix something, or run the notebooks off Colab. |
 

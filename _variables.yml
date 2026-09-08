@@ -337,6 +337,76 @@ companion:
       title_en: "Matrix and tensor factorizations"
       title_es: "Factorizaciones matriciales y tensoriales"
 
+# ── The brainstorm diagram ───────────────────────────────────────────────────
+# One picture of the whole day, on both companion pages. Four ideas, and every
+# section hangs off the one it serves.
+#
+# The four ideas are the deck's own opening slide, `slide-02a` in
+# `scripts/gen_slide_art.py`. The wording here is shorter than the slide's,
+# because a card in a diagram is not a card on a projector — but it is the same
+# four ideas in the same order, and changing one means changing both.
+#
+# **The hub → section mapping is a hand-made reading**, exactly like `covers` on
+# `companion.shorts` above. Nothing in this repo knows which idea a section
+# serves; a person decided. `gen_tables.py` verifies that every section in
+# `sections:` and `extras:` is placed exactly once, which catches a section
+# added here twice or not at all — and cannot catch a section filed under the
+# wrong idea.
+#
+# Section titles are NOT repeated here. `brainstorm_svg()` reads `title_{lang}`
+# out of `sections:` and wraps it, so a retitled section changes the diagram
+# with no edit in this block.
+brainstorm:
+  title_en: "Four ideas, one object"
+  title_es: "Cuatro ideas, un solo objeto"
+  lead_en: "Every section serves one of these four ideas."
+  lead_es: "Cada sección sirve a una de estas cuatro ideas."
+
+  hubs:
+    - glyph: "⊞"
+      title_en: "It generalizes a matrix"
+      title_es: "Generaliza la matriz"
+      gloss_en: "The same object, with as many axes as the data needs."
+      gloss_es: "El mismo objeto, con tantos ejes como pidan los datos."
+      sections: ["01", "02"]
+    - glyph: "▦"
+      title_en: "It holds the data"
+      title_es: "Contiene los datos"
+      gloss_en: "Images, video, taxi trips: one box of numbers."
+      gloss_es: "Imágenes, vídeo, viajes en taxi: una sola caja de números."
+      sections: ["00", "03", "05"]
+    - glyph: "⇄"
+      title_en: "Its axes can move"
+      title_es: "Sus ejes se mueven"
+      gloss_en: "reshape re-reads the numbers. transpose moves the axes."
+      gloss_es: "reshape relee los números. transpose mueve los ejes."
+      sections: ["04", "06"]
+    - glyph: "∏"
+      title_en: "It factors"
+      title_es: "Se factoriza"
+      gloss_en: "Break it into simpler parts you can use."
+      gloss_es: "Divídelo en partes más simples que puedas usar."
+      sections: ["07", "08", "09", "10", "11"]
+
+  # The ribbon under the four cards. `thread_sections` are the three places the
+  # workshop states this idea out loud — the pseudoinverse, Tucker, and the
+  # take-home's deconvolution. The handbook names the same three; the numbers
+  # are rendered from this list rather than written into the sentence, so a
+  # renumbered section cannot leave a wrong number painted on the picture.
+  thread_en: "One thread runs through all four. When there is no exact answer, find the best approximation you can trust."
+  thread_es: "Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar."
+  thread_lead_en: "You meet it in sections"
+  thread_lead_es: "Lo encuentras en las secciones"
+  thread_sections: ["07", "10", "13"]
+
+  # Where the day lands. These two are not filed under an idea: 12 collects all
+  # four, and 13 is the take-home that sits past the clock. They are listed
+  # here so the "every section placed exactly once" rule has somewhere to put
+  # them.
+  closing_en: "12 pulls the four together. 13 is the take-home."
+  closing_es: "12 une las cuatro. 13 es el ejercicio para casa."
+  closing_sections: ["12", "13"]
+
 # ── Further reading: the ML blog ─────────────────────────────────────────────
 # Companion posts on https://project-delphi.github.io/ml-blog/, one per core
 # concept. These are the *second explanation* — the one a student wants forty

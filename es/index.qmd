@@ -13,6 +13,7 @@ inglés, pero puedes preguntar en español cuando quieras.
 :::
 
 ::: {.companion-strip}
+[Todo el día en una imagen](companion.qmd#brainstorm)
 [Resumen en vídeo](companion.qmd#video)
 [Vídeos de un minuto](companion.qmd#shorts)
 [Infografías](companion.qmd#infographics)
@@ -36,10 +37,10 @@ Encontrar esos problemas es parte del trabajo.
 
 {{< include ../_includes/companion-video-es.md >}}
 
-El vídeo está *generado*, no grabado. Él, y las infografías, el audio, el
-cuestionario, las tarjetas y el mapa mental que lo acompañan, están en la
-[página del complemento](companion.qmd), que explica sin rodeos qué significa
-estar generado y qué hacer al respecto.
+El vídeo está *generado*, no grabado. Está en la
+[página del complemento](companion.qmd), junto a las infografías, el audio, el
+cuestionario, las tarjetas y el mapa mental. Esa página explica qué significa
+aquí «generado» y qué hacer al respecto.
 
 ## Para quién es
 
@@ -58,7 +59,7 @@ corresponda a lo que estés haciendo ahora mismo.
 | **[Diapositivas](../slides/es/index.qmd)** · [EN](../slides/en/index.qmd) | Lo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás. | En vivo durante la sesión, o para repasar después la forma del día. |
 | **[Cuadernos](notebooks.qmd)** · [EN](../notebooks.qmd) | Catorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código. | Durante cada sección, y para el ejercicio de casa. |
 | **[Kahoot](../kahoot.qmd)** | Tres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10. | En vivo, en el móvil o en una segunda pestaña. |
-| **[Complemento](companion.qmd)** · [EN](../companion.qmd) | Generado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito. | Antes, para una primera pasada; después, para repasar. |
+| **[Complemento](companion.qmd)** · [EN](../companion.qmd) | Generado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito. Y un diagrama del día, dibujado a mano. | Antes, para una primera pasada; después, para repasar. |
 | **[Referencias](references.qmd)** · [EN](../references.qmd) | Los libros, artículos, documentación de `tensorly` y entradas del blog sobre los que se construye el taller, con DOI y páginas de los autores. | Después de una sección, cuando quieras el tratamiento serio de lo que rozó. |
 | **[Repositorio]({{< var repo.url >}})** | La fuente de todo lo anterior, más las tres hojas de cálculo de Kahoot. | Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab. |
 

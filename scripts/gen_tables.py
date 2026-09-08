@@ -29,6 +29,7 @@ Outputs (all overwritten, none hand-edited):
     _includes/companion-shorts-en.md         _includes/companion-shorts-es.md
     _includes/companion-selfcheck-en.md      _includes/companion-selfcheck-es.md
     _includes/companion-map-en.md            _includes/companion-map-es.md
+    _includes/brainstorm-en.md    _includes/brainstorm-es.md
     _includes/references-en.md    _includes/references-es.md
 """
 from __future__ import annotations
@@ -285,24 +286,24 @@ def video_block(lang: str, prefix: str) -> str:
             return head + {
                 "en": (f"**[{title}]({url})** — "
                        + (f"{mins} minutes. " if mins else "")
-                       + "It has not been re-uploaded to YouTube yet, so this "
-                         "one plays inside NotebookLM and will ask you for a "
-                         "Google account. When the upload lands it will play "
-                         "here instead, with no account and no sign-in.\n"),
+                       + "This one is not on YouTube yet. It plays inside "
+                         "NotebookLM, so it asks you for a Google account. "
+                         "Once it is on YouTube it will play here, with no "
+                         "account and no sign-in.\n"),
                 "es": (f"**[{title}]({url})** — "
                        + (f"{mins} minutos. " if mins else "")
-                       + "Todavía no se ha subido a YouTube, así que este se "
-                         "reproduce dentro de NotebookLM y te pedirá una "
-                         "cuenta de Google. Cuando esté subido se reproducirá "
-                         "aquí mismo, sin cuenta y sin iniciar sesión.\n"),
+                       + "Este todavía no está en YouTube. Se reproduce "
+                         "dentro de NotebookLM, así que te pide una cuenta de "
+                         "Google. Cuando esté en YouTube se reproducirá aquí, "
+                         "sin cuenta y sin iniciar sesión.\n"),
             }[lang]
         return {
-            "en": "*Not published yet.* The video overview is generated in "
-                  "NotebookLM and re-uploaded to YouTube; until then there is "
-                  "nothing here that works without a Google account.\n",
-            "es": "*Todavía sin publicar.* El resumen en vídeo se genera en "
-                  "NotebookLM y se sube a YouTube; hasta entonces no hay aquí "
-                  "nada que funcione sin una cuenta de Google.\n",
+            "en": "*Not published yet.* NotebookLM generates the video "
+                  "overview, and it is re-uploaded to YouTube. Until that "
+                  "happens, this section needs a Google account.\n",
+            "es": "*Todavía sin publicar.* NotebookLM genera el resumen en "
+                  "vídeo y luego se sube a YouTube. Hasta que eso ocurra, "
+                  "esta sección pide una cuenta de Google.\n",
         }[lang]
     # youtube-nocookie, deliberately: the player sets no tracking cookie until
     # the visitor actually presses play.
@@ -348,26 +349,24 @@ def audio_block(lang: str, prefix: str) -> str:
             return head + {
                 "en": (f"**[{title}]({url})** — "
                        + (f"{mins} minutes. " if mins else "")
-                       + "It has not been exported yet, so this one plays "
-                         "inside NotebookLM and will ask you for a Google "
-                         "account. Once the file is downloaded and committed "
-                         "it will play here instead, with no account and no "
-                         "third party.\n"),
+                       + "This one is not exported yet. It plays inside "
+                         "NotebookLM, so it asks you for a Google account. "
+                         "Once the file is committed here it will play on "
+                         "this page, with no account and no third party.\n"),
                 "es": (f"**[{title}]({url})** — "
                        + (f"{mins} minutos. " if mins else "")
-                       + "Todavía no se ha exportado, así que este se "
-                         "reproduce dentro de NotebookLM y te pedirá una "
-                         "cuenta de Google. Cuando el archivo esté descargado "
-                         "y guardado aquí sonará en esta misma página, sin "
-                         "cuenta y sin terceros.\n"),
+                       + "Este todavía no se ha exportado. Se reproduce "
+                         "dentro de NotebookLM, así que te pide una cuenta de "
+                         "Google. Cuando el archivo esté guardado aquí sonará "
+                         "en esta página, sin cuenta y sin terceros.\n"),
             }[lang]
         return {
-            "en": "*Not exported yet.* NotebookLM's Audio Overview downloads "
-                  "as a file, so when it lands it will play right here, with "
-                  "no account and no third party.\n",
-            "es": "*Todavía sin exportar.* El resumen en audio de NotebookLM "
-                  "se descarga como archivo, así que cuando esté sonará aquí "
-                  "mismo, sin cuenta y sin terceros.\n",
+            "en": "*Not exported yet.* NotebookLM's Audio Overview "
+                  "downloads as a file. When it lands it will play right "
+                  "here, with no account and no third party.\n",
+            "es": "*Todavía sin exportar.* El resumen en audio de "
+                  "NotebookLM se descarga como archivo. Cuando esté, sonará "
+                  "aquí mismo, sin cuenta y sin terceros.\n",
         }[lang]
     meta = ({"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
             if mins else "")
@@ -397,11 +396,10 @@ SHOT_NOTE = {
 # infographics_gallery() keeps its own "click one to open it full size" behind
 # `if exported`.
 SHOT_INTRO = {
-    "en": "The pictures are screenshots, served from this site, so you can "
-          "see what is behind each link before you spend an account on it.",
-    "es": "Las imágenes son capturas de pantalla, servidas desde este sitio, "
-          "para que veas qué hay detrás de cada enlace antes de gastar una "
-          "cuenta en él.",
+    "en": "The pictures are screenshots, served from this site. Look at "
+          "one before you spend an account on the click.",
+    "es": "Las imágenes son capturas de pantalla, servidas desde este "
+          "sitio. Mira una antes de gastar una cuenta en el clic.",
 }
 
 # Carried on the card itself rather than only in the prose above it. Every
@@ -452,10 +450,10 @@ def shorts_list(lang: str, prefix: str) -> str:
     if not items:
         return {"en": "*None generated yet.*\n",
                 "es": "*Todavía no se ha generado ninguno.*\n"}[lang]
-    lead = {"en": "One minute each, generated from the same sources. Every one "
-                  "opens in NotebookLM.",
-            "es": "Un minuto cada uno, generados con las mismas fuentes. Todos "
-                  "se abren en NotebookLM."}[lang]
+    lead = {"en": "One minute each, generated from the handbook and the "
+                  "notebooks. Every one opens in NotebookLM.",
+            "es": "Un minuto cada uno, generados a partir del manual y los "
+                  "cuadernos. Todos se abren en NotebookLM."}[lang]
     out = [lead, "", "::: {.info-strip}"]
     for i in items:
         meta = [i["length"], SHORT_SECTION[lang].format(n=i["covers"])]
@@ -492,13 +490,13 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     if not items:
         pending = {
             "en": ("*Not exported yet.* The infographics live in "
-                   f"[the notebook]({COMPANION['notebook_url']}) until they "
-                   "are exported as PNGs and committed here; that link needs "
-                   "a Google account, and these pages will not."),
+                   f"[the notebook]({COMPANION['notebook_url']}) until "
+                   "someone exports them as PNGs and commits them here. That "
+                   "link needs a Google account. These pages will not."),
             "es": ("*Todavía sin exportar.* Las infografías están en "
-                   f"[el cuaderno]({COMPANION['notebook_url']}) hasta que se "
-                   "exporten como PNG y se guarden aquí; ese enlace pide una "
-                   "cuenta de Google, y estas páginas no lo harán."),
+                   f"[el cuaderno]({COMPANION['notebook_url']}) hasta que "
+                   "alguien las exporte como PNG y las guarde aquí. Ese "
+                   "enlace pide una cuenta de Google. Estas páginas no."),
         }
         return pending[lang] + "\n"
 
@@ -575,11 +573,11 @@ def infographics_gallery(lang: str, prefix: str) -> str:
 # whole page is built to avoid.
 LINK_COPY = {
     "quiz": {
-        "en": ("Twenty-six generated multiple-choice questions across the "
-               "whole workshop.",
+        "en": ("Twenty-six generated multiple-choice questions, from "
+               "section 00 to section 12.",
                "After the session, to find out which sections did not stick."),
-        "es": ("Veintiséis preguntas de opción múltiple generadas sobre todo "
-               "el taller.",
+        "es": ("Veintiséis preguntas de opción múltiple generadas, de la "
+               "sección 00 a la sección 12.",
                "Después de la sesión, para descubrir qué secciones no se te "
                "quedaron."),
     },
@@ -594,13 +592,13 @@ LINK_COPY = {
     "mindmap": {
         "en": ("Five branches off one root — defining tensors, storing data, "
                "moving axes, factorizing, computing — each opening further.",
-               "Once, early: seeing the whole ladder before you climb it "
-               "makes the middle rungs less arbitrary."),
+               "Once, early. Seeing the ladder before you climb it makes "
+               "the middle rungs less arbitrary."),
         "es": ("Cinco ramas de una sola raíz —definir tensores, almacenar "
                "datos, mover ejes, factorizar, calcular—, y cada una se abre "
                "más.",
-               "Una vez, pronto: ver la escalera entera antes de subirla hace "
-               "que los peldaños del medio parezcan menos arbitrarios."),
+               "Una vez, pronto. Ver la escalera antes de subirla hace que "
+               "los peldaños del medio parezcan menos arbitrarios."),
     },
 }
 
@@ -639,6 +637,223 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
                 + "]{.shot-note}"]
         out.append(":::")
     out.append(":::")
+    return "\n".join(out) + "\n"
+
+
+
+# ── the brainstorm diagram ───────────────────────────────────────────────────
+# One picture of the whole day, on both companion pages: four ideas, with every
+# section under the one it serves.
+#
+# Drawn as inline SVG rather than as a PNG, and generated here rather than by a
+# script of its own, for three reasons. It is pure Python, so unlike the three
+# image generators it lands inside CI's byte-exact regenerate gate and cannot
+# go stale unnoticed. Its text stays real text -- selectable, scalable, and
+# read out by a screen reader -- which is the point for the readers this
+# diagram is for. And the EN and ES versions come out of one table, so they
+# cannot come to disagree, which is the reason every other table on this site
+# is generated too.
+#
+# An SVG with a fixed `viewBox` does not reflow: on a phone the whole picture
+# scales down together, and 14px section titles arrive at about 5px. So the
+# layout is emitted TWICE from one `brainstorm_body()` -- two columns for a
+# wide screen, one for a narrow one -- and `custom.scss` shows one of them.
+# The hidden one is `display: none`, which takes it out of the accessibility
+# tree too, so a screen reader is never read the diagram twice.
+#
+# There is no font metric here and there does not need to be one: `wrap()`
+# below counts characters. Every string it wraps is a section title or one
+# short line of copy, the type is set large, and the cards are wide -- so a
+# character budget that is a few per cent off costs a little white space and
+# never a clipped word.
+
+# Every colour and type size lives in `custom.scss` under `.brainstorm`, not
+# here: the diagram is drawn from the site's own SCSS variables, and a palette
+# copied into this file is one that goes stale the first time the theme moves.
+# What stays here is geometry, in user units of the viewBox.
+BS_PAD = 10             # margin inside the viewBox
+BS_GAP = 20             # between the two columns and between the rows
+
+# (viewBox width, columns) for the two variants. The narrow one is not a
+# shrunken copy: it is the same layout re-run at one column, so its type ends
+# up roughly the size the wide one has on a laptop.
+BS_VARIANTS = (("bs-wide", 880, 2), ("bs-narrow", 400, 1))
+
+# The conjunction joining the last two numbers in "sections 07, 10 and 13".
+BS_AND = {"en": "and", "es": "y"}
+
+
+def wrap(text: str, budget: int, limit: int = 2) -> list[str]:
+    """Greedy word wrap to `budget` characters, at most `limit` lines.
+
+    Deterministic and font-blind. A word longer than the budget goes on a line
+    of its own rather than being broken: these are section titles, and
+    `factorizations` split across two lines helps nobody.
+    """
+    lines, cur = [], ""
+    for word in text.split():
+        trial = f"{cur} {word}".strip()
+        if cur and len(trial) > budget:
+            lines.append(cur)
+            cur = word
+            if len(lines) == limit - 1 and limit > 1:
+                budget = 10_000       # the last line takes whatever is left
+        else:
+            cur = trial
+    if cur:
+        lines.append(cur)
+    return lines or [""]
+
+
+def bs_text(x: float, y: float, cls: str, content: str,
+            anchor: str = "") -> str:
+    a = f' text-anchor="{anchor}"' if anchor else ""
+    return (f'<text x="{x:g}" y="{y:g}" class="{cls}"{a}>'
+            f"{html.escape(content)}</text>")
+
+
+def brainstorm_card(hub: dict, lang: str, x: float, y: float, w: float,
+                    h: float, rows: list, gloss: list[str]) -> list[str]:
+    """One idea card: glyph, heading, the gloss, then the sections under it."""
+    out = [f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" '
+           f'rx="8" class="bs-card"/>',
+           f'<circle cx="{x + 34:g}" cy="{y + 34:g}" r="17" class="bs-disc"/>',
+           bs_text(x + 34, y + 40, "bs-glyph", hub["glyph"], "middle"),
+           bs_text(x + 64, y + 32, "bs-hub", hub[f"title_{lang}"])]
+    ty = y + 50
+    for line in gloss:
+        out.append(bs_text(x + 64, ty, "bs-gloss", line))
+        ty += 16
+    ty += 12
+    for num, lines in rows:
+        out.append(bs_text(x + 24, ty, "bs-num", num))
+        for i, line in enumerate(lines):
+            out.append(bs_text(x + 60, ty + i * 17, "bs-sect", line))
+        ty += 17 * len(lines) + 9
+    return out
+
+
+def brainstorm_body(b: dict, lang: str, titles: dict, width: int,
+                    cols: int) -> tuple[list[str], float]:
+    """Lay the four cards out in `cols` columns and return (elements, height).
+
+    A row is as tall as its tallest card, so the columns keep one baseline
+    down the page. Every character budget below scales with the card, which is
+    what lets the same code draw the phone version.
+    """
+    card_w = (width - 2 * BS_PAD - (cols - 1) * BS_GAP) / cols
+    # ~9.4px per character at 13px and ~7.8px at 14px, less the 64px and 60px
+    # indents the gloss and the section titles sit at. Rounded down: a budget
+    # that is slightly mean costs one extra wrapped line, never a clipped one.
+    gloss_budget = max(int((card_w - 76) / 6.4), 16)
+    sect_budget = max(int((card_w - 72) / 7.2), 14)
+
+    cards = []
+    for hub in b["hubs"]:
+        rows = [(n, wrap(titles[n], sect_budget)) for n in hub["sections"]]
+        gloss = wrap(hub[f"gloss_{lang}"], gloss_budget, limit=3)
+        body = sum(17 * len(l) + 9 for _, l in rows)
+        cards.append((hub, rows, gloss, 50 + 16 * len(gloss) + 12 + body + 8))
+
+    # Row heights, then the y of each row, so a card knows both.
+    rows_h = [max(c[3] for c in cards[i:i + cols])
+              for i in range(0, len(cards), cols)]
+    head = 76
+    row_y, y = [], head
+    for h in rows_h:
+        row_y.append(y)
+        y += h + BS_GAP
+
+    thread = wrap(b[f"thread_{lang}"], max(int((width - 60) / 7.4), 28),
+                  limit=4)
+    ribbon_h = 30 + 19 * len(thread) + 24
+    closing = wrap(b[f"closing_{lang}"], max(int((width - 40) / 6.4), 26),
+                   limit=2)
+    total = y + ribbon_h + 14 + 17 * len(closing)
+
+    out = [bs_text(BS_PAD + 4, 34, "bs-title", b[f"title_{lang}"]),
+           bs_text(BS_PAD + 4, 58, "bs-lead", b[f"lead_{lang}"])]
+    for i, (hub, rows, gloss, _) in enumerate(cards):
+        x = BS_PAD + (i % cols) * (card_w + BS_GAP)
+        out += brainstorm_card(hub, lang, x, row_y[i // cols], card_w,
+                               rows_h[i // cols], rows, gloss)
+
+    out.append(f'<rect x="{BS_PAD}" y="{y:g}" width="{width - 2 * BS_PAD}" '
+               f'height="{ribbon_h:g}" rx="8" class="bs-ribbon"/>')
+    ty = y + 30
+    for line in thread:
+        out.append(bs_text(width / 2, ty, "bs-thread", line, "middle"))
+        ty += 19
+    nums = b["thread_sections"]
+    joined = f"{', '.join(nums[:-1])} {BS_AND[lang]} {nums[-1]}"
+    out.append(bs_text(width / 2, ty + 5, "bs-where",
+                       f"{b[f'thread_lead_{lang}']} {joined}.", "middle"))
+    cy = y + ribbon_h + 26
+    for line in closing:
+        out.append(bs_text(width / 2, cy, "bs-closing", line, "middle"))
+        cy += 17
+    return out, total
+
+
+def brainstorm_svg(lang: str) -> str:
+    """The whole-day diagram, as inline SVG in a `.brainstorm` div.
+
+    Validates its own inputs the way infographics_gallery() does: a section
+    that is in `sections:` or `extras:` but under no idea, or under two, is a
+    mistake in a hand-made mapping that nothing else would catch. It is
+    checked here rather than in check_links.py because this generator is what
+    CI reruns -- a bad mapping then fails the build at the point that names it.
+    """
+    b = V["brainstorm"]
+    titles = {s["n"]: s[f"title_{lang}"] for s in SECTIONS + EXTRAS}
+
+    placed: dict[str, int] = {}
+    for hub in b["hubs"]:
+        for key in ("glyph", f"title_{lang}", f"gloss_{lang}", "sections"):
+            if not hub.get(key):
+                sys.exit(f"brainstorm.hubs ({hub.get('title_en', '?')}): "
+                         f"missing {key}")
+        for n in hub["sections"]:
+            placed[n] = placed.get(n, 0) + 1
+    for n in b["closing_sections"]:
+        placed[n] = placed.get(n, 0) + 1
+    for n in sorted(set(placed) - set(titles)):
+        sys.exit(f"brainstorm: {n!r} is not a section or an extra")
+    for n in sorted(titles):
+        if placed.get(n, 0) != 1:
+            sys.exit(f"brainstorm: section {n} ({titles[n]}) is placed "
+                     f"{placed.get(n, 0)} times; every section belongs under "
+                     f"exactly one idea, or in closing_sections")
+    for n in b["thread_sections"]:
+        if n not in titles:
+            sys.exit(f"brainstorm.thread_sections: {n!r} is not a section")
+
+    # The description a screen reader gets. It is the diagram in a sentence:
+    # every idea with the sections under it, then the thread and the closing.
+    # Without it the picture is a wall of forty disconnected `<text>` runs.
+    hubs_said = "; ".join(
+        f"{hub[f'title_{lang}']} — "
+        + ", ".join(f"{n} {titles[n]}" for n in hub["sections"])
+        for hub in b["hubs"])
+    desc = (f"{b[f'lead_{lang}']} {hubs_said}. "
+            f"{b[f'thread_{lang}']} {b[f'closing_{lang}']}")
+
+    out = ["::: {.brainstorm}"]
+    for cls, width, cols in BS_VARIANTS:
+        body, total = brainstorm_body(b, lang, titles, width, cols)
+        # `aria-hidden` is belt and braces over the `display: none` that hides
+        # whichever variant this screen is not using: only one is ever in the
+        # accessibility tree, so the labelled ids cannot be ambiguous either.
+        ids = f"{cls}-t {cls}-d"
+        out += [f'<svg xmlns="http://www.w3.org/2000/svg" class="{cls}" '
+                f'viewBox="0 0 {width} {total:g}" role="img" '
+                f'aria-labelledby="{ids}">',
+                f'<title id="{cls}-t">'
+                f"{html.escape(b[f'title_{lang}'])}</title>",
+                f'<desc id="{cls}-d">{html.escape(desc)}</desc>',
+                *body,
+                "</svg>"]
+    out += [":::"]
     return "\n".join(out) + "\n"
 
 
@@ -778,6 +993,8 @@ def main() -> int:
                 BANNER + link_cards("en", "", ("mindmap",)),
             "companion-map-es.md":
                 BANNER + link_cards("es", "../", ("mindmap",)),
+            "brainstorm-en.md": BANNER + brainstorm_svg("en"),
+            "brainstorm-es.md": BANNER + brainstorm_svg("es"),
             "references-en.md": BANNER + references_list("en"),
             "references-es.md": BANNER + references_list("es"),
         }
