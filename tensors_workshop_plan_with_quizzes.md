@@ -15,18 +15,13 @@ the take-home appendices. It is what to follow during the workshop and what to
 keep afterwards. The books and papers behind it are on the
 [references page](references.qmd), which holds them for both languages.
 
-**Before you arrive,** work through the prerequisites on the [workshop
-homepage](index.qmd) — the required reading, the pre-work notebooks, and what to
-have ready on the day. The homepage is also where every other resource is
-described: the [slides](slides/en/index.qmd), the [notebooks](notebooks.qmd) you
-type in, the three [Kahoot checks](kahoot.qmd) and the
-[references](references.qmd).
+**Before you arrive,** work through the prerequisites on the [workshop homepage](index.qmd): the required reading, the pre-work notebooks, and what to have ready on the day. The homepage also describes every other resource — the [slides](slides/en/index.qmd), the [notebooks](notebooks.qmd) you type in, the three [Kahoot checks](kahoot.qmd) and the [references](references.qmd).
 
 **A note on numbering.** This handbook groups the workshop into four **Parts**
-and seven exercise **Blocks**. Everywhere else — the notebooks, the slides, the
-section tables — the same segments are numbered **00 to 12**, and that number is
-the canonical one. The schedule below carries both, so any row can be read
-across to turn one label into the other.
+and seven exercise **Blocks**. The notebooks, the slides and the section tables
+number those same segments **00 to 12**, and that number is the canonical one.
+The schedule below carries both, so any row can be read across to turn one
+label into the other.
 
 ---
 
@@ -56,13 +51,13 @@ across to turn one label into the other.
 | **12** | — | — | [Wrap-up and take-homes](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | wrap-up | 5 | 03:25 |
 <!-- END handbook-schedule -->
 
-**Why the quizzes sit where they do.** Each one follows the sections that supply
-its content, while the material is still fresh, and lands before the next
-context switch — a break, or a new Part — so it reinforces rather than
-interrupts. Quiz 1 closes out the shape-and-vocabulary work of sections 03 and
-04; Quiz 2 closes out the einsum and pseudoinverse stretch, sections 06 and 07;
-Quiz 3 closes out the decomposition stretch, sections 09 and 10, right before
-the wrap-up.
+**Why the quizzes sit where they do.** Each one follows the sections that
+supply its content, while the material is still fresh. Each also lands before
+the next context switch — a break, or a new Part. So a quiz reinforces the work
+rather than interrupting it. Quiz 1 closes out the shape-and-vocabulary work of
+sections 03 and 04. Quiz 2 closes out the einsum and pseudoinverse stretch,
+sections 06 and 07. Quiz 3 closes out the decomposition stretch, sections 09
+and 10, right before the wrap-up.
 
 ---
 
@@ -101,7 +96,7 @@ TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.c
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
 ```
 
-[Notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) downloads all three and prints their shapes — `(20640, 10) (6433, 14) (144, 3)`. Run it in Colab before the session, and say so in Discord immediately if it fails: a silent download failure leaves you stuck at sections 07 and 10, an hour in. Every other notebook loads only the data its own section needs, so you can open any one of them cold.
+[Notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) downloads all three and prints their shapes — `(20640, 10) (6433, 14) (144, 3)`. Run it in Colab before the session. If it fails, say so in Discord at once: a download that fails quietly leaves you stuck at sections 07 and 10, an hour in. Every other notebook loads only the data its own section needs, so you can open any one of them cold.
 
 ---
 
@@ -109,7 +104,7 @@ FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights
 
 ## 1.1 Vocabulary
 
-Keep this table open for the whole workshop.
+Keep this table open from section 00 to section 12.
 
 | Term | Plain meaning | Spanish | Example |
 |---|---|---|---|
@@ -173,7 +168,7 @@ photo[:, :, 0].shape       # (512, 512) — a slice: one colour channel, still a
 photo[100, 200, :].shape   # (3,)       — a fiber: the 3 colour values of one pixel
 ```
 
-**Unfolding** — every tensor decomposition begins by turning the tensor into a matrix, one axis at a time. Move axis *k* to the front, then flatten everything else into one long axis.
+**Unfolding** — every tensor decomposition begins by turning the tensor into a matrix, one axis at a time. Move axis *k* to the front, then flatten the remaining axes into one long axis.
 
 ```python
 def unfold(T, axis):
@@ -183,7 +178,7 @@ print(unfold(photo, 0).shape)   # (512, 1536) — rows are the height axis
 print(unfold(photo, 2).shape)   # (3, 262144) — rows are the 3 colour channels
 ```
 
-Unfolding **loses nothing**. It only rearranges. The mode-2 unfolding says "each colour channel is one row of 262,144 numbers" — and now every matrix tool you know, including SVD, can be applied to it.
+Unfolding **loses nothing**. It only rearranges. The mode-2 unfolding says "each colour channel is one row of 262,144 numbers". Every matrix tool you know, SVD included, now applies to it.
 
 **Contraction** — multiply along a shared axis and sum over it. The dot product (eq. 2.8) and the matrix product (eq. 2.5) are both contractions. `np.einsum` writes them directly:
 
@@ -195,11 +190,11 @@ A = np.array([[1., 2.], [3., 4.]]); B = np.array([[5., 6.], [7., 8.]])
 np.einsum('ik,kj->ij', A, B)      # matrix product, sum over k       (eq 2.5)
 ```
 
-**The rule, in one sentence:** an index that appears in the inputs but **not** after the arrow is summed over; an index that appears after the arrow is kept.
+**The rule, in one sentence:** an index that appears in the inputs but **not** after the arrow is summed over. An index that appears after the arrow is kept.
 
 ## 1.4 The Map of Factorizations
 
-A **factorization** writes one object as a product of simpler objects. You met two in Chapter 2. Here is the whole family we will use today:
+A **factorization** writes one object as a product of simpler objects. You met two in Chapter 2. Here are the six we will use today:
 
 | Method | Works on | What it gives you | Where today |
 |---|---|---|---|
@@ -212,7 +207,7 @@ A **factorization** writes one object as a product of simpler objects. You met t
 | **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Appendix D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | section 10 |
 
-Today uses each of these where it happens to be needed. [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) puts the whole family side by side and asks what each one *costs*, which is the question this table does not answer.
+Today uses each of these where it happens to be needed. [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) puts all six side by side and asks what each one *costs*. This table does not answer that question.
 
 ```python
 A = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
@@ -230,7 +225,7 @@ print(np.allclose(Q.T @ Q, np.eye(3)))      # True — book eq 2.37
 
 *The same 8×8 digit, factorized three ways. The shapes are the point: `L` really is lower triangular, `U` upper, and `Σ` is empty apart from its diagonal. Below the line is an object none of them can touch.*
 
-Everything in that table above the double line works on **matrices** — two axes. Real data often has more. That is what section 10 addresses.
+Every method in that table above the double line works on **matrices** — two axes. Real data often has more. That is what section 10 addresses.
 
 ---
 
@@ -238,9 +233,9 @@ Everything in that table above the double line works on **matrices** — two axe
 
 A live coding demo in the notebook, on real image and video tensors. Open it in Colab and run the Setup cell first — it downloads and checksums the real video clip used by the exercises. Three exercises:
 
-1. **Read the axes on real tensors.** `digits.images` is `(1797, 8, 8)` and a photo is `(512, 512, 3)` — both order 3, but axis 0 counts whole images in one and rows of pixels in the other. `digit_batch` and `video_patch` are *both* `(8, 8, 8)`. Before running anything, say what every axis counts.
-2. **Shuffle a batch vs shuffle time.** Shuffling axis 0 is harmless for a batch — examples are independent, order carries no information — and destroys a video, where order **is** the information. The same operation, a completely different meaning. Chapter 2's notation has no concept of "order matters between elements." That is genuinely new today.
-3. **Batch clips of different lengths.** Real videos have different frame counts, but a batch tensor is rectangular. Take three real clips of length 4, 7 and 5, pad them into one `(3, 7, 135, 240, 3)` order-5 batch, and carry a Boolean `(3, 7)` validity mask so `valid.sum() == 16` — the padding stays visible instead of being averaged into the data.
+1. **Read the axes on real tensors.** `digits.images` is `(1797, 8, 8)` and a photo is `(512, 512, 3)`. Both are order 3. But axis 0 counts whole images in one, and rows of pixels in the other. `digit_batch` and `video_patch` are *both* `(8, 8, 8)`. Before you run a line of code, say what every axis counts.
+2. **Shuffle a batch vs shuffle time.** Shuffling axis 0 is harmless for a batch: examples are independent, and order carries no information. It destroys a video, where order **is** the information. The same operation, a completely different meaning. Chapter 2's notation has no concept of "order matters between elements." That is genuinely new today.
+3. **Batch clips of different lengths.** Real videos have different frame counts, but a batch tensor is rectangular. Take three real clips of length 4, 7 and 5 and pad them into one `(3, 7, 135, 240, 3)` order-5 batch. Carry a Boolean `(3, 7)` validity mask alongside it, so `valid.sum() == 16`. The padding then stays visible instead of being averaged into the data.
 
 ---
 
@@ -248,7 +243,7 @@ A live coding demo in the notebook, on real image and video tensors. Open it in 
 
 ## 03 · Indexing and Broadcasting Real Data (Block 1, 15 min)
 
-**Why this matters.** The `breast_cancer` data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column does not produce an error — it returns a *different real measurement*, and your analysis continues and gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.
+**Why this matters.** The `breast_cancer` data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column produces no error. It returns a *different real measurement*, your analysis continues, and it gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.
 
 **In tech**, the identical operation runs on a `(users, items)` matrix to pull one user's history before making a recommendation.
 
@@ -323,7 +318,7 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 
-**Run this before the break, right after section 04.** Everyone has just used order, axis, shape, slice, fiber, variance, reshape, and transpose — this is the moment those words are freshest. Launch `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.
+**Run this before the break, right after section 04.** The room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest. Launch `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.
 
 ## Break (5 min)
 
@@ -351,7 +346,7 @@ Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is
 
 ## 06 · Contraction With `einsum` (Block 3, 15 min)
 
-**Why this matters.** Recommendation and search systems rank items by the dot product between a user vector and every item vector — one user against millions of items, many times per second. That contraction *is* the ranking signal. Sum over the wrong axis and every user gets wrong results.
+**Why this matters.** Recommendation and search systems rank items by the dot product between a user vector and every item vector. That is one user against millions of items, many times per second. That contraction *is* the ranking signal. Sum over the wrong axis and every user gets wrong results.
 
 **Exercise (10 min)**
 ```python
@@ -380,7 +375,7 @@ np.einsum('ij->ji', A)         # transpose      == A.T
 np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 ```
 
-`c` appears in the inputs but not after the arrow, so it is **summed over** — that is the contraction. `n`, `h`, `w` appear after the arrow, so they are **kept**. Adding a batch axis costs exactly one letter. This is why `einsum` is worth learning: the same expression works for one image or for a million, and it reads like the mathematics in Chapter 2.
+`c` appears in the inputs but not after the arrow, so it is **summed over** — that is the contraction. `n`, `h`, `w` appear after the arrow, so they are **kept**. Adding a batch axis costs exactly one letter. This is why `einsum` is worth learning. The same expression works for one image or for a million, and it reads like the mathematics in Chapter 2.
 
 ## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
 
@@ -396,7 +391,7 @@ Singular = np.array([[1., 2.], [2., 4.]])  # column 2 = 2 × column 1
 np.linalg.inv(Singular)                     # raises LinAlgError
 ```
 
-**Step 2 — non-square matrices.** `A⁻¹` is not even defined. But we still need to solve `Ax = b`, and in machine learning `A` is almost never square: it has one row per example and one column per feature, and there are always far more examples than features.
+**Step 2 — non-square matrices.** `A⁻¹` is not even defined. But we still need to solve `Ax = b`. In machine learning `A` is almost never square: it has one row per example and one column per feature, and there are always far more examples than features.
 
 The **Moore-Penrose pseudoinverse** `A⁺` (Chapter 2 §2.9) is the answer. It is defined for *every* matrix — square or not, singular or not — and it is computed from the SVD (eq. 2.47):
 
@@ -422,7 +417,7 @@ What `A⁺` gives you depends on the shape, exactly as Chapter 2 §2.9 says:
 - **More rows than columns** (too many equations, usually no exact solution) → `x = A⁺b` gives the `x` that makes `Ax` as **close as possible** to `b`. This is least squares.
 - **More columns than rows** (too few equations, infinitely many solutions) → `x = A⁺b` gives the valid solution with the **smallest norm**.
 
-**Step 3 — what about tensors?** This is a fair question with an honest answer. There is no single tensor inverse that everyone uses. Several definitions exist (based on the Einstein product, or the t-product for order-3 tensors), and they are active research. **In practice, in machine learning, you unfold the tensor into a matrix, use the matrix pseudoinverse, and fold the result back.** That works because unfolding loses nothing:
+**Step 3 — what about tensors?** This is a fair question with an honest answer. No single tensor inverse is in common use. Several definitions exist — built on the Einstein product, or on the t-product for order-3 tensors — and they are active research. **In practice, in machine learning, you unfold the tensor into a matrix, use the matrix pseudoinverse, and fold the result back.** That works because unfolding loses nothing:
 
 ```python
 T = np.random.randn(4, 3, 5)
@@ -466,11 +461,11 @@ np.allclose(w, w_lstsq)                                   # True
 rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 ```
 
-`X` is 20433 × 7 — very tall, so `np.linalg.inv` cannot even be called. There is **no exact solution**: no straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead, and `lstsq` agrees exactly because it solves the same problem. The largest coefficient belongs to `median_income` (about 47,700 per unit), which is the sensible result — income predicts house prices.
+`X` is 20433 × 7 — very tall, so `np.linalg.inv` cannot even be called. There is **no exact solution**: no straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead. `lstsq` agrees with it exactly, because it solves the same problem. The largest coefficient belongs to `median_income` (about 47,700 per unit), which is the sensible result — income predicts house prices.
 
 ## Kahoot Quiz 2 — Einsum, Distance & the Pseudoinverse (5 min)
 
-**Run this right after section 07, before the recursion demo.** It covers contraction (section 06's `einsum`), the pseudoinverse and singular matrices (section 07), and distance/similarity — the digit-similarity matrix from section 06 TODO 4 is the natural bridge between the two. Launch `kahoot_quiz_2_distance_pseudoinverse.xlsx` (6 questions, ~5 min).
+**Run this right after section 07, before the recursion demo.** It covers contraction (section 06's `einsum`), the pseudoinverse and singular matrices (section 07), and distance and similarity. The digit-similarity matrix from section 06 TODO 4 is the natural bridge between the two. Launch `kahoot_quiz_2_distance_pseudoinverse.xlsx` (6 questions, ~5 min).
 
 ## 08 · Recursion With Matrices and Vectors (10 min — demo)
 
@@ -500,7 +495,7 @@ print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical
 ```
 
-This is how PageRank ranks web pages, and it is why eigenvectors matter far beyond Chapter 2: **repeated application of a matrix converges to its dominant eigenvector.**
+This is how PageRank ranks web pages. It is also why eigenvectors matter far beyond Chapter 2: **repeated application of a matrix converges to its dominant eigenvector.**
 
 **3. Recursion on real data — forecasting airline traffic.** This combines recursion with the pseudoinverse from section 07. We fit a model that predicts each month from the previous 12, then apply it *to its own output* to forecast forward:
 
@@ -520,7 +515,7 @@ print(np.round(history[-12:], 1))
 # [465.2 429.1 455.1 491.0 527.8 589.4 679.7 661.3 575.3 509.5 438.6 470.7]
 ```
 
-The forecast reproduces the seasonal shape of real air travel — low in winter, peaking in summer — because the model learned it from 132 real training windows. **This is exactly the structure of a recurrent neural network**: a hidden state, updated by the same weights at every step.
+The forecast reproduces the seasonal shape of real air travel, low in winter and peaking in summer. It learned that shape from 132 real training windows. **This is exactly the structure of a recurrent neural network**: a hidden state, updated by the same weights at every step.
 
 ```python
 W, U = np.random.randn(4, 4) * 0.5, np.random.randn(4, 3) * 0.5
@@ -531,9 +526,9 @@ for t in range(6):
 
 ## 09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 15 min)
 
-Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing — LU and QR in §1.4 itself, the pseudoinverse in section 07 — without ever answering the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This section answers both, and it is where **eigendecomposition** finally gets named, an hour before section 10 leans on the same machinery. The notebook is **[09 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
+Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing: LU and QR in §1.4 itself, and the pseudoinverse in section 07. None of them answered the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This section answers both. It is also where **eigendecomposition** finally gets named, an hour before section 10 leans on the same machinery. The notebook is **[09 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
 
-The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes `‖y − Xβ‖` subject to an orthonormal `Q`. The truncated SVD minimizes `‖A − B‖_F` subject to `rank(B) ≤ k` — and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to `W, H ≥ 0`, which must be worse on error and is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all: they are exact rewrites whose entire value is downstream, where a solve costs `O(n²)` instead of `O(n³)`.
+The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes `‖y − Xβ‖` subject to an orthonormal `Q`. The truncated SVD minimizes `‖A − B‖_F` subject to `rank(B) ≤ k`, and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to `W, H ≥ 0`. That extra constraint must be worse on error, and it is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all. They are exact rewrites, and their value is all downstream, where a solve costs `O(n²)` instead of `O(n³)`.
 
 **The cost table.** Leading-term flop counts for a dense `m × n` factorization with `m ≥ n`, from Trefethen & Bau, *Numerical Linear Algebra*:
 
@@ -551,7 +546,7 @@ Three consequences are worth stating outright, because each one is a mistake tha
 
 1. **Factor once, solve many.** Cholesky costs `n³/3` once; each later solve is two triangular substitutions at `O(n²)`. So `m` right-hand sides cost `O(n³ + mn²)`, **not** `O(mn³)`. `np.linalg.inv(A) @ B` is both slower and less accurate than factoring, and is never the right call.
 2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
-3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))` — the gap between those is why large-scale recommenders are feasible at all.
+3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))`. That gap is why large-scale recommenders are feasible at all.
 
 ```python
 # TODO 1: Fit a degree-10 polynomial to the real airline series two ways.
@@ -602,11 +597,11 @@ with np.errstate(divide="ignore"):        # the last entry is exactly 0
 k = int(np.argmax(db >= target_db))
 ```
 
-**TODO 1 is the expensive one.** The residuals of the two fits agree to six decimal places, so the check most people run reports nothing wrong — while the coefficients differ by eleven orders of magnitude. That gap is exactly `κ(X)²` against `κ(X)`, and it came from writing `X.T @ X`.
+**TODO 1 is the expensive one.** The residuals of the two fits agree to six decimal places, so the check most people run reports no problem. Meanwhile the coefficients differ by eleven orders of magnitude. That gap is exactly `κ(X)²` against `κ(X)`, and it came from writing `X.T @ X`.
 
-**TODO 3 does not give you 3.0, and that is not a failure of the theory.** Fitted exponents come in low because parallelism and cache reuse both improve as `n` grows: the machine gets faster at the same work, which flattens the curve. The effect shrinks with larger `n`, so the slope creeps upward. What does survive is the **ratio between methods at fixed `n`** — it cancels the machine out, because both methods gain from the same hardware. Predict with ratios, not exponents.
+**TODO 3 does not give you 3.0, and that is not a failure of the theory.** Fitted exponents come in low because parallelism and cache reuse both improve as `n` grows. The machine gets faster at the same work, and that flattens the curve. The effect shrinks with larger `n`, so the slope creeps upward. What does survive is the **ratio between methods at fixed `n`**. It cancels the machine out, because both methods gain from the same hardware. Predict with ratios, not exponents.
 
-**TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten — the last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
+**TODO 4 turns "rank 20" into a defensible decision.** Nobody can justify a rank; anybody can justify "the smallest rank holding 25 dB". The rank needed grows faster than linearly in dB, because the singular values decay quickly and then flatten. The last few dB cost more rank than the first twenty did. And note what rank-16 storage actually is on a 512×512 `uint8` image: 6.3% of the pixel *count*, but 12.5% of the *bytes* at `int16` and 25% at `float32`. Truncated SVD is a superb analysis tool and a mediocre image codec.
 </details>
 
 
@@ -665,9 +660,9 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 ![](images/fig-tucker-taxi.png){.column-page fig-alt="The taxi tensor decomposed. Along the top, T as a pile of four heatmap slices equals a small core G times three factor matrices A, B and C, each labelled with its shape. Below, two bar charts against hour of day: the raw pickup counts, and the first column of the hour factor. Both have their tallest bar at hour 18, drawn in red."}
 
-*480 numbers become 102. The two charts are TODO 6: the busiest hour in the raw counts, and the peak of the hour factor the decomposition built without ever being told what an hour is.*
+*480 numbers become 102. The two charts are TODO 6. On the left, the busiest hour in the raw counts. On the right, the peak of the hour factor — which the decomposition built without ever being told what an hour is.*
 
-**The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition discovered evening rush hour by itself.** Nobody told it about time, traffic, or commuting; it found the dominant pattern along that axis because that is what a decomposition does.
+**The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition discovered evening rush hour by itself.** Nobody told it about time, traffic or commuting. It found the dominant pattern along that axis, because that is what a decomposition does.
 
 Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one expression. That is why `einsum` came first.
 
@@ -677,7 +672,7 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 
 ## Kahoot Quiz 3 — Convolution & Tensor Decompositions (5 min)
 
-**Run this right after section 10, before section 11.** Its six questions still cover convolution/correlation alongside Tucker/CP decomposition — convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up's own recap, so segue straight from the quiz into it.
+**Run this right after section 10, before section 11.** Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up's own recap, so segue straight from the quiz into it.
 
 ---
 
@@ -719,7 +714,7 @@ That example is synthetic by design: it isolates the structural question without
 3. search Tucker ranks near that same parameter budget, and keep the one with the **lowest reconstruction error**;
 4. compare error and interpretability at that matched budget.
 
-Step 3 is where this goes wrong most easily: picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor — `pickup borough × dropoff borough × hour` — and uses the workshop's pinned storm clip as a second tensor-shaped example.
+Step 3 is where this goes wrong most easily. Picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode, and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor, `pickup borough × dropoff borough × hour`. It uses the workshop's pinned storm clip as a second tensor-shaped example.
 
 ```python
 # TODO 1: Choose a CP rank R for the taxi tensor.
@@ -750,7 +745,7 @@ A dense convolution kernel of shape `3 × 3 × 512 × 512` holds 2,359,296 weigh
 
 One order up, a transformer output matrix `W_O` of shape `4096 × 4096` stores 16,777,216 weights; a TT-matrix representation at rank 16 stores 34,816, or **481.9× fewer**.
 
-The storage ratio is the easy half. The workflow that makes it usable is **train → compress → fine-tune**, and compression is worth nothing unless the downstream task stays accurate enough — which is a property of the trained weights, not of the shape.
+The storage ratio is the easy half. The workflow that makes it usable is **train → compress → fine-tune**. Compression buys you nothing unless the downstream task stays accurate enough, and that is a property of the trained weights, not of the shape.
 
 ```python
 # TODO 1: Build the synthetic convolution kernel from notebook 13.
@@ -763,7 +758,7 @@ The storage ratio is the easy half. The workflow that makes it usable is **train
 
 ### The decision rule
 
-**Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.** In that order: the first question has no numerical answer, and the second has no answer at all until the first is settled.
+**Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.** Keep that order. The first question has no numerical answer, and the second has no answer at all until the first is settled.
 
 > 🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.
 
@@ -776,12 +771,12 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 What you did today:
 
-1. **Part I** — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing anything.
+1. **Part I** — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing a single number.
 2. **Part II** — worked through what axes mean and why batch and time axes are semantically different.
 3. **Part III** — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.
 4. **Part IV** — wrote contractions with `einsum`; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.
 
-**One idea connects sections 07, 09 and 10:** when a problem has no exact answer or no true inverse, you do not give up — you find the best stable approximation. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.
+**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. The pseudoinverse does this for linear systems, Richardson-Lucy for blurred images, and Tucker for tensors that are too large to keep in full.
 
 **Where to go next**
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
@@ -798,9 +793,9 @@ What you did today:
 The bibliography moved to its own page, in both languages:
 **[References and further reading](references.qmd)**.
 
-It carries what this section used to — the linear algebra books, the Kolda &
+It carries what this section used to: the linear algebra books, the Kolda &
 Bader survey, the Tucker, CP/PARAFAC and Eckart–Young papers with their DOIs
-and author pages, and the `tensorly` docs — plus the ML blog posts the slides
+and author pages, and the `tensorly` docs. It adds the ML blog posts the slides
 link, which were never listed here at all. Each work is cited in exactly one
 place now, and the Spanish half of the site can reach it.
 
@@ -810,9 +805,7 @@ Jump straight to a group:
 [software](references.qmd#ref-software) ·
 [the ML blog](references.qmd#ref-blog).
 
-The [machine-generated companion](companion.qmd) is a different kind of thing
-and lives on its own page: generated, not written, and to be checked against
-the works on that page rather than the other way round.
+The [machine-generated companion](companion.qmd) is a different kind of thing, and lives on its own page. It is generated, not written. Check it against the works on that page, not the other way round.
 
 ---
 
@@ -849,7 +842,7 @@ Without standardizing, the first component appears to explain **98.2%** of the v
 
 ## Appendix B — Take-Home: Attention Is Two Contractions
 
-Attention is the mechanism that answers question 5 from the video-pipeline discussion: *which parts of a sequence matter most?* Protein language models use it so every amino acid can look at every other one; recommenders use it to weight a user's past interactions.
+Attention answers question 5 from the video-pipeline discussion: *which parts of a sequence matter most?* Protein language models use it so every amino acid can look at every other one. Recommenders use it to weight a user's past interactions.
 
 ```python
 np.random.seed(6)
@@ -884,13 +877,13 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 ## Appendix C — Take-Home: CP vs Tucker
 
-The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, where CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook.
+The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. There CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook.
 
 > 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 
 ## Appendix D — Take-Home: Cholesky Builds Correlated Data
 
-[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise and it hands back correlated draws with exactly that covariance — the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors, or scenarios.
+[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise, and it hands back correlated draws with exactly that covariance. That is the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors or scenarios.
 
 ```python
 vol = np.array([0.012, 0.015, 0.010])
@@ -944,12 +937,12 @@ independent_asset_returns = (mu[:, None] + independent_scale @ z_paths).reshape(
 portfolio_returns_independent = np.einsum('a,apd->pd', weights, independent_asset_returns)
 terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent, axis=1)
 ```
-`Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma` — independent noise in, correlated noise out. With the parameters above, the correlated simulation's terminal-value standard deviation is **≈18.8** against **≈13.6** for the independent one (39% more spread); its 5th percentile is **≈79.7** against **≈86.9**, and its 1st percentile **≈70.7** against **≈79.9** — the correlated portfolio's bad days are genuinely worse, even though every individual asset's volatility, mean and median terminal value are essentially unchanged between the two simulations. **This is not a general law that correlation increases risk** — it is specific to this book, where every pair is positively correlated; a negatively correlated pair would understate risk if ignored, not overstate it. What generalizes is only that assuming independence when assets are not independent distorts the tails.
+`Cov(x) = Cov(Lz) = L Cov(z) L.T ≈ L I L.T = L L.T = Sigma` — independent noise in, correlated noise out. With the parameters above, the correlated simulation's terminal-value standard deviation is **≈18.8** against **≈13.6** for the independent one, 39% more spread. Its 5th percentile is **≈79.7** against **≈86.9**, and its 1st percentile **≈70.7** against **≈79.9**. The correlated portfolio's bad days are genuinely worse — and every individual asset's volatility, mean and median terminal value are essentially unchanged between the two simulations. **This is not a general law that correlation increases risk.** It is specific to this book, where every pair is positively correlated. Ignoring a negatively correlated pair would understate risk, not overstate it. What generalizes is only that assuming independence when assets are not independent distorts the tails.
 </details>
 
 ## Appendix E — Take-Home: Audio Denoising by Low-Rank STFT
 
-The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the [references](references.qmd#ref-tensors)). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows and ask which frequencies are present in each — that is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
+The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the [references](references.qmd#ref-tensors)). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows, and ask which frequencies are present in each. That is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
 
 Optimal on `‖A − B‖_F` is not the same as optimal on *the thing you care about*, so the criterion has to be measured, not assumed. Here the criterion is signal-to-noise ratio against a known clean reference — which is why the noise is added deliberately rather than found. The recording is real and pinned to a SHA-256; the noise is synthetic by design, because only a known clean signal makes SNR measurable at all.
 
@@ -1005,7 +998,7 @@ for k in [2, 5, 10, 20, 40, 80, len(s)]:
 
 Both ends fail, for opposite reasons. At `k = 2` the approximation is so aggressive that it discards voice along with noise, and lands **below** the noisy signal — a "denoiser" that made things worse. At full rank nothing is discarded at all: `U Σ Vᵀ` reconstructs `Z` exactly, ISTFT inverts STFT, and you get the noisy audio back, 5.00 dB, unchanged. The useful region is the middle, and the peak here retains 78% of the singular-value energy from 8.6% of the ranks — which is the same compression story as the taxi tensor in section 10, measured against a different criterion.
 
-**Retained energy is not the criterion.** Going from `k = 40` to `k = 80` retains *more* energy (87% against 78%) and produces *worse* audio, because the energy being added back is noise. Low rank does not mean clean; it means small. Whether it also means better is an empirical question, and this is the one take-home where the answer is "only in a window, and you have to measure to find it".
+**Retained energy is not the criterion.** Going from `k = 40` to `k = 80` retains *more* energy (87% against 78%) and produces *worse* audio, because the energy being added back is noise. Low rank does not mean clean; it means small. Whether it also means better is an empirical question. This is the one take-home where the answer is "only in a window, and you have to measure to find it".
 </details>
 
 ## Appendix F — Take-Home: Convolution and Deconvolution
@@ -1025,7 +1018,7 @@ np.convolve(x, k, 'same')    # [ 2.  2.  2.  2. -4.]          length 5
 
 Three modes, three output sizes. `valid` uses only positions where the kernel fits completely — this is why convolution **shrinks** an image by `kernel_size - 1`.
 
-⚠️ **A detail that confuses everyone.** True convolution flips the kernel; **correlation** does not. What deep learning libraries call "convolution" is actually correlation. It makes no practical difference, because the network *learns* the kernel — but you should know the names are inconsistent.
+⚠️ **A detail that catches almost every reader.** True convolution flips the kernel. **Correlation** does not. What deep learning libraries call "convolution" is actually correlation. It makes no practical difference, because the network *learns* the kernel — but you should know the names are inconsistent.
 
 ```python
 np.correlate(x, k, 'valid')          # [-2. -2. -2.]
@@ -1041,7 +1034,7 @@ C = toeplitz(col, row)                       # (7, 5)
 np.allclose(C @ x, np.convolve(x, k, 'full'))   # True
 ```
 
-So convolution is not a new kind of operation. It is a **structured matrix multiplication** — one where the same few numbers are reused across the whole matrix. That reuse is exactly why CNNs need so many fewer parameters than fully connected networks.
+So convolution is not a new kind of operation. It is a **structured matrix multiplication**, one where the same few numbers are reused at every position in the matrix. That reuse is exactly why CNNs need so many fewer parameters than fully connected networks.
 
 **Deconvolution** means two different things, and you must keep them separate:
 
@@ -1086,7 +1079,7 @@ print(err(noisy), err(recovered))     # 0.1157 -> 0.0815
 
 Deconvolution **reduced the error by about 30%**. Two lessons worth keeping:
 
-**First, you must ignore the border.** Deconvolution creates strong artifacts at the edges, where the algorithm has no information about what lies outside the image. If you measure error over the whole image, the artifacts dominate and it looks like the method failed. It did not.
+**First, you must ignore the border.** Deconvolution creates strong artifacts at the edges, where the algorithm has no information about what lies outside the image. If you measure error over the full image, border artifacts dominate and it looks like the method failed. It did not.
 
 **Second, why not just invert the blur directly?** Because it fails badly. Blurring destroys high-frequency detail, so inverting it divides by numbers very close to zero and amplifies noise enormously:
 
@@ -1096,22 +1089,22 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 # relative error ≈ 1.4 — far WORSE than the blurred image we started from
 ```
 
-**This is the same lesson as section 07.** A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine: every fluorescence microscope blurs its images by a known amount (the *point spread function*), and deconvolution is standard practice before cells are counted or measured.
+**This is the same lesson as section 07.** A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine. Every fluorescence microscope blurs its images by a known amount, the *point spread function*, and deconvolution is standard practice before cells are counted or measured.
 
 
 ## Appendix G — Facilitator Notes
 
 *(Students may ignore this section.)*
 
-**Structure.** Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Sections 07, 09 and 10 share one theme — *no exact inverse exists, so find the best stable approximation* — and stating that connection explicitly at the wrap-up is what makes the second half feel like one lesson rather than four.
+**Structure.** Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Sections 07, 09 and 10 share one theme: *no exact inverse exists, so find the best stable approximation*. Stating that connection out loud at the wrap-up is what makes the second half feel like one lesson rather than four.
 
 **Do not rush Part I.** It is the students' first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.
 
 **Language.** Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — *eje*, *descomposición*, *contracción*, *convolución* — it removes friction immediately. Invite questions in either language. Warn about the two meanings of "rank" at the start of Part I.
 
-**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (20-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; for Appendix E, a 4.949 s recording giving a (513, 465) STFT whose best tested rank is 40 at 9.08 dB against the noisy input's 5.00 dB; and, for section 09, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is section 09's timings**, which are properties of the machine, not of the data — a Colab CPU will not reproduce them, and the appendix quotes ratios rather than milliseconds for exactly that reason.
+**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (20-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; for Appendix E, a 4.949 s recording giving a (513, 465) STFT whose best tested rank is 40 at 9.08 dB against the noisy input's 5.00 dB; and, for section 09, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is section 09's timings.** Those are properties of the machine, not of the data. A Colab CPU will not reproduce them, which is why the appendix quotes ratios rather than milliseconds.
 
-**The downloads.** Three CSVs from GitHub raw URLs. They are small and fast, but confirm in the first 5 minutes that everyone's download succeeded — a student who silently fails will be stuck at sections 07 and 10. Have the three CSVs mirrored in the workshop repo as a fallback.
+**The downloads.** Three CSVs from GitHub raw URLs. They are small and fast. Even so, confirm in the first 5 minutes that every download succeeded: a student whose download fails quietly will be stuck at sections 07 and 10. Have the three CSVs mirrored in the workshop repo as a fallback.
 
 **Pre-assign the breakout groups** for the video-pipeline block before the session; assigning them live costs 3–5 minutes.
 
@@ -1121,4 +1114,8 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home anyway), then the RNN snippet in the recursion demo, then question 5 of the video-pipeline group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
 
-**Known rough edges.** Appendix F TODO 4 is the hardest thing in the workshop; students who skip the border crop will conclude deconvolution failed, so flag the 20-pixel crop clearly *before* the exercise starts, not after. Section 07 TODO 3 asks students to trigger an error deliberately — some will think they did something wrong, so say in advance that the error is the expected result.
+**Known rough edges.** Appendix F TODO 4 is the hardest thing in the workshop.
+A student who skips the border crop will conclude deconvolution failed, so flag
+the 20-pixel crop clearly *before* the exercise starts, not after. Section 07
+TODO 3 asks students to trigger an error deliberately — some will think they
+did something wrong, so say in advance that the error is the expected result.
