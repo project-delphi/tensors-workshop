@@ -1271,11 +1271,6 @@ sections:
       > 🇪🇸 Este último cuaderno tiene dos objetivos:
       >
       > 1. conectar las ideas de las trece secciones;
-      > 2. dejarte explorar cinco extensiones: **PCA, atención, CP, Cholesky y eliminación de ruido en audio**.
-    intro_es: |-
-      > 🇪🇸 Este último cuaderno tiene dos objetivos:
-      >
-      > 1. conectar las ideas de todo el taller;
       > 2. permitirte explorar cinco extensiones: **PCA, atención, CP, Cholesky y reducción de ruido de audio**.
     objectives_en:
       - "State the one approximation idea connecting pseudoinverse, deconvolution, and Tucker."

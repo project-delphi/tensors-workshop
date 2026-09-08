@@ -1108,7 +1108,7 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Pre-assign the breakout groups** for the video-pipeline block before the session; assigning them live costs 3–5 minutes.
 
-**The group block needs firmer facilitation than exercise blocks.** If a group is still on the first design question with 5 minutes left, join their channel and tell them to sketch anything, even a wrong shape. The share-back matters more than a correct sketch.
+**The group block needs firmer facilitation than exercise blocks.** If a group is still on the first design question with 5 minutes left, join their channel and tell them to sketch a shape, even the wrong one. The share-back matters more than a correct sketch.
 
 **The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after sections 04, 07 and 10 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes total, taking the workshop from 195 to 210 minutes.
 

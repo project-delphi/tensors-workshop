@@ -35,8 +35,7 @@ nombra pronto los cognados: eje, descomposición, contracción, convolución.
 <p class="sr-only">Cuatro ideas, un solo objeto. Todo el día en cuatro tarjetas. Tarjeta uno: un tensor generaliza la matriz. Un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Tarjeta dos: contiene los datos. Imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Tarjeta tres: sus ejes se mueven. transpose los permuta. reshape relee los mismos números planos, así que la misma forma puede tener otro significado. Tarjeta cuatro: se factoriza. Los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también. Y donde no hay inversa, responde la pseudoinversa. Llévate esto todo el día: antes de operar sobre un tensor, nombra sus ejes.</p>
 
 ::: {.notes}
-Este es el mapa de todo el día, y la única diapositiva que muestra las cuatro
-ideas juntas. Dedícale un minuto, no cinco. Cada tarjeta se abre después: la 1 en la sección 01, la 2 en las secciones 02 y 03, la 3 en la sección 04, y la 4 en las secciones 07, 09, 10 y 11.
+Este es el mapa del día, y la única diapositiva que muestra las cuatro ideas juntas. Dedícale un minuto, no cinco. Cada tarjeta se abre después: la 1 en la sección 01, la 2 en las secciones 02 y 03, la 3 en la sección 04, y la 4 en las secciones 07, 09, 10 y 11.
 
 La cuarta tarjeta es la que hay que vender. El grupo ya factoriza números y
 resuelve cuadráticas. La afirmación es que factorizar es el mismo movimiento
@@ -444,8 +443,7 @@ lado, que es lo que convierte a Tucker de "la descomposición tensorial" en una
 opción entre cuatro.
 
 La comparación con presupuesto equivalente es lo que hay que proteger si vas
-con retraso. Rango contra rango es la comparación que todo el mundo hace, y es
-la equivocada.
+con retraso. Rango contra rango es la comparación que hace casi todo el mundo, y es la equivocada.
 :::
 
 ## {background-image="images/slides-final/slide-29b.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}

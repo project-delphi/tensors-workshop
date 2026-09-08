@@ -42,7 +42,33 @@ import yaml
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 INCLUDES = ROOT / "_includes"
-V = yaml.safe_load((ROOT / "_variables.yml").read_text(encoding="utf-8"))
+
+
+class StrictLoader(yaml.SafeLoader):
+    """SafeLoader that refuses a mapping with the same key twice.
+
+    YAML's own rule is last-one-wins, silently. `_variables.yml` carried two
+    `intro_es:` keys under `s12` for some time: the first held a list item
+    still in English and outside the blockquote it belonged in, the second
+    held the real translation, and nothing on the site or in the checker
+    could see the first. A file whose whole job is to be the single source of
+    truth cannot have a second copy of a fact hiding in it.
+    """
+
+    def construct_mapping(self, node, deep=False):
+        seen = set()
+        for key_node, _ in node.value:
+            key = self.construct_object(key_node, deep=deep)
+            if key in seen:
+                mark = key_node.start_mark
+                sys.exit(f"_variables.yml line {mark.line + 1}: duplicate key "
+                         f"{key!r}; YAML would keep only the last one")
+            seen.add(key)
+        return super().construct_mapping(node, deep)
+
+
+V = yaml.load((ROOT / "_variables.yml").read_text(encoding="utf-8"),
+              Loader=StrictLoader)
 
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]

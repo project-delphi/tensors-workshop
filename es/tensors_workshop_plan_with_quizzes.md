@@ -1034,7 +1034,7 @@ np.convolve(x, k, 'same')    # [ 2.  2.  2.  2. -4.]          length 5
 
 Tres modos, tres tamaños de salida. `valid` usa solo las posiciones donde el núcleo cabe entero: por eso la convolución **encoge** una imagen en `kernel_size - 1`.
 
-⚠️ **Un detalle que confunde a todo el mundo.** La convolución verdadera voltea el núcleo; la **correlación** no. Lo que las bibliotecas de aprendizaje profundo llaman «convolución» es en realidad correlación. No supone ninguna diferencia práctica, porque la red *aprende* el núcleo, pero conviene saber que los nombres son inconsistentes.
+⚠️ **Un detalle que se le escapa a casi todo el mundo.** La convolución verdadera voltea el núcleo; la **correlación** no. Lo que las bibliotecas de aprendizaje profundo llaman «convolución» es en realidad correlación. No supone ninguna diferencia práctica, porque la red *aprende* el núcleo, pero conviene saber que los nombres son inconsistentes.
 
 ```python
 np.correlate(x, k, 'valid')          # [-2. -2. -2.]
