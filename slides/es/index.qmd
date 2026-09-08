@@ -32,16 +32,14 @@ nombra pronto los cognados: eje, descomposición, contracción, convolución.
 
 ## {background-image="images/slides-final/slide-02a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Cuatro ideas, un solo objeto — todo el día en cuatro tarjetas. Un tensor generaliza la matriz: un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Contiene los datos: imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Sus ejes se mueven: transpose los permuta, reshape relee los mismos números planos, y la misma forma puede tener otro significado. Y se factoriza: los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también — y donde no hay inversa, responde la pseudoinversa. Llévate esto todo el día: antes de operar sobre un tensor, nombra sus ejes.</p>
+<p class="sr-only">Cuatro ideas, un solo objeto. Todo el día en cuatro tarjetas. Tarjeta uno: un tensor generaliza la matriz. Un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Tarjeta dos: contiene los datos. Imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Tarjeta tres: sus ejes se mueven. transpose los permuta. reshape relee los mismos números planos, así que la misma forma puede tener otro significado. Tarjeta cuatro: se factoriza. Los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también. Y donde no hay inversa, responde la pseudoinversa. Llévate esto todo el día: antes de operar sobre un tensor, nombra sus ejes.</p>
 
 ::: {.notes}
 Este es el mapa de todo el día, y la única diapositiva que muestra las cuatro
-ideas juntas. Dedícale un minuto, no cinco: cada tarjeta se abre después — la 1
-en la sección 01, la 2 en las secciones 02 y 03, la 3 en la sección 04, y la 4
-en las secciones 07, 09, 10 y 11.
+ideas juntas. Dedícale un minuto, no cinco. Cada tarjeta se abre después: la 1 en la sección 01, la 2 en las secciones 02 y 03, la 3 en la sección 04, y la 4 en las secciones 07, 09, 10 y 11.
 
 La cuarta tarjeta es la que hay que vender. El grupo ya factoriza números y
-resuelve cuadráticas; la afirmación es que factorizar es el mismo movimiento
+resuelve cuadráticas. La afirmación es que factorizar es el mismo movimiento
 cada vez, aplicado a un objeto más grande. Esa es la promesa que cobra la
 sección 09.
 
@@ -51,7 +49,7 @@ advertencia sobre "rango" toca al empezar la Parte I.
 
 ## {background-image="images/slides-final/slide-03.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Datos reales, problemas reales: cuatro conjuntos de datos reales usados en el taller — dígitos manuscritos, histología teñida, vivienda en California y viajes en taxi de NYC — cada uno con el papel que cumple más adelante.</p>
+<p class="sr-only">Datos reales, problemas reales. Cuatro conjuntos de datos reales usados en el taller: dígitos manuscritos, histología teñida, vivienda en California y viajes en taxi de NYC. Cada uno lleva el papel que cumple más adelante.</p>
 
 ::: {.notes}
 Lo importante de la cuadrícula es que cada tarjeta es un enlace: quien quiera
@@ -73,10 +71,7 @@ histología, que skimage documenta sin restricciones de copyright conocidas.
 {{< include ../../_includes/agenda-es.md >}}
 
 ::: {.notes}
-Da la advertencia sobre «rango» al principio de la parte I, no después. Es la
-fuente de confusión más fiable de todo el taller: el capítulo 2 usa *rango* para
-el número de columnas independientes, y la teoría de tensores suele referirse al
-número de ejes. Hoy: «orden» para el número de ejes, y «rango» solo en el
+Da la advertencia sobre «rango» al principio de la parte I, no después. Es la fuente de confusión más fiable de este taller. El capítulo 2 usa *rango* para el número de columnas independientes, y la teoría de tensores suele referirse al número de ejes. Hoy: «orden» para el número de ejes, y «rango» solo en el
 sentido del capítulo 2.
 
 El ritmo, para que la sala sepa qué esperar: los bloques de ejercicios son 10
@@ -95,7 +90,7 @@ de discusión y una puesta en común.
 [Colab ↗]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 00 en Google Colab"}
 
 ::: {.notes}
-Confirma en los primeros 5 minutos que a todo el mundo le funcionó la descarga.
+Confirma en los primeros 5 minutos que todas las descargas funcionaron.
 Quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los
 tres CSV replicados en el repositorio como alternativa.
 :::
@@ -159,7 +154,7 @@ al lado.
 
 ## {background-image="images/slides-final/slide-09.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Batch no es tiempo: dieciséis dígitos manuscritos barajados siguen siendo reconocibles, mientras que los fotogramas de vídeo barajados vuelven la secuencia de la tormenta irreconocible — reordenar un eje de lote es seguro, reordenar el tiempo no lo es.</p>
+<p class="sr-only">Batch no es tiempo. Dieciséis dígitos manuscritos barajados siguen siendo reconocibles, mientras que los fotogramas de vídeo barajados vuelven la secuencia de la tormenta irreconocible. Reordenar un eje de lote es seguro. Reordenar el tiempo no lo es.</p>
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 02 en Google Colab"}
 
 ::: {.notes}
@@ -272,7 +267,7 @@ ejercicio es el único puente.
 
 ## {background-image="images/slides-final/slide-20a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Tres formas, tres respuestas. Cuatro tarjetas: una matriz cuadrada de rango completo, donde la inversa existe y Ax = b tiene exactamente una solución; una matriz cuadrada singular, donde la inversa no está definida pero la pseudoinversa sí, porque se calcula a partir de la SVD; una matriz alta, con más ecuaciones que incógnitas, donde A-más b es el ajuste por mínimos cuadrados que minimiza el residual; y una matriz ancha, con infinitas soluciones, donde A-más b devuelve la de menor norma.</p>
+<p class="sr-only">Tres formas, tres respuestas. Cuatro tarjetas. Una matriz cuadrada de rango completo: la inversa existe, y Ax = b tiene exactamente una solución. Una matriz cuadrada singular: la inversa no está definida, pero la pseudoinversa sí, porque se calcula a partir de la SVD. Una matriz alta, con más ecuaciones que incógnitas: A-más b es el ajuste por mínimos cuadrados que minimiza el residual. Y una matriz ancha, con infinitas soluciones: A-más b devuelve la de menor norma.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab"}
 
 ::: {.notes}
@@ -296,7 +291,7 @@ menor que el número de columnas.
 
 ## {background-image="images/slides-final/slide-21a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">¿Y los tensores? Tres tarjetas: no existe una única inversa tensorial aceptada por todos, lo que es una pregunta legítima con una respuesta honesta y no un hueco en tu lectura; sí existen definiciones basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa; y en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado — un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4, y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.</p>
+<p class="sr-only">¿Y los tensores? Tres tarjetas. La primera: no hay ninguna inversa tensorial de uso común. Es una pregunta legítima con una respuesta honesta, no un hueco en tu lectura. La segunda: sí existen definiciones, basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa. La tercera: en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado. Un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4. Y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.</p>
 <p class="sr-only">Aquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, la deconvolución de Richardson-Lucy de la sección 09 y Tucker en la sección 10 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab"}
 
@@ -379,14 +374,12 @@ presentaba.
 
 ## {background-image="images/slides-final/slide-26a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir y elevan al cuadrado el número de condición; QR es la opción estable por defecto y nunca forma A-traspuesta-A; la SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.</p>
+<p class="sr-only">Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir, y elevan al cuadrado el número de condición. QR es la opción estable por defecto, y nunca forma A-traspuesta-A. La SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
 
 ::: {.notes}
 La tabla de operaciones y el cronómetro no coinciden, y ese desacuerdo es la
-lección. Lo que sobrevive a la máquina es la razón entre métodos a tamaño
-fijo — una SVD completa cerca de 39 veces una Cholesky — no el exponente, que
-queda por debajo de 3 por el paralelismo y la caché.
+lección. Lo que sobrevive a la máquina es la razón entre métodos a tamaño fijo: una SVD completa cerca de 39 veces una Cholesky. No el exponente, que queda por debajo de 3 por el paralelismo y la caché.
 
 Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 :::
