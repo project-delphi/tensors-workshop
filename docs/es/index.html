@@ -244,7 +244,8 @@ background-size: cover;
 </div>
 <section id="qué-es-esto" class="level2">
 <h2 class="anchored" data-anchor-id="qué-es-esto">Qué es esto</h2>
-<p>Un taller de 210 minutos que te lleva de «sé lo que es una matriz» a «sé manipular, resolver, convolucionar y factorizar tensores». Está construido <strong>solo con datos reales</strong>: medidas reales de tumores, dígitos manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva York, tráfico aéreo real. No hay nada inventado con números aleatorios, porque los datos reales contienen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del trabajo.</p>
+<p>Un taller de 210 minutos. Te lleva de «sé lo que es una matriz» a «sé manipular, resolver, convolucionar y factorizar tensores».</p>
+<p>Funciona <strong>solo con datos reales</strong>: medidas reales de tumores, dígitos manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva York, tráfico aéreo real. Ningún conjunto de datos está inventado con números aleatorios. Los datos reales traen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del trabajo.</p>
 </section>
 <section id="míralo-primero" class="level2">
 <h2 class="anchored" data-anchor-id="míralo-primero">Míralo primero</h2>
@@ -305,29 +306,30 @@ background-size: cover;
 </tr>
 <tr class="odd">
 <td><strong><a href="https://github.com/project-delphi/tensors-workshop">Repositorio</a></strong></td>
-<td>La fuente de todo lo anterior, más las tres hojas de cálculo de Kahoot.</td>
+<td>La fuente de las seis filas anteriores, más las tres hojas de cálculo de Kahoot.</td>
 <td>Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab.</td>
 </tr>
 </tbody>
 </table>
-<p>El manual es el <em>texto</em> fuente. Los datos que los siete comparten —los títulos de las secciones, el reloj, los enlaces— viven una sola vez en <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a> y todas las tablas del sitio se generan a partir de ahí, así que no pueden contradecirse. <strong>Las trece secciones, una por una, están en la <a href="../es/notebooks.html">página de cuadernos</a>.</strong></p>
+<p>El manual es el <em>texto</em> fuente. Los datos que los siete comparten —los títulos de las secciones, el reloj, los enlaces— viven una sola vez en <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a>. Todas las tablas del sitio se generan a partir de ese único archivo, así que no hay dos que puedan contradecirse.</p>
+<p><strong>Las trece secciones, una por una, están en la <a href="../es/notebooks.html">página de cuadernos</a>.</strong></p>
 </section>
 <section id="requisitos-previos" class="level2">
 <h2 class="anchored" data-anchor-id="requisitos-previos">Requisitos previos</h2>
-<p>Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.</p>
+<p>Cada recurso de abajo es gratuito, y todos funcionan en el navegador.</p>
 <p><strong>Antes de la sesión</strong></p>
 <ul>
-<li><strong>El álgebra lineal de <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong>: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD. Ese capítulo es todo el conocimiento previo que se da por supuesto.</li>
-<li><strong><a href="https://github.com/Laverde97/linear-algebra-deep-learning"><code>linear-algebra-deep-learning</code></a></strong>: 14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren exactamente ese material, de vectores a PCA. Trabajo previo obligatorio: el taller avanza rápido y da por hecho que ya lo hiciste.</li>
-<li><strong>El <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">cuaderno 00</a>, ejecutado en Colab</strong>: descarga los tres archivos CSV que usa el taller. Ejecútalo antes de la sesión y avisa enseguida si falla: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después.</li>
+<li><strong>El álgebra lineal de <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong>: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD. Ese único capítulo es el único conocimiento previo que se da por supuesto.</li>
+<li><strong><a href="https://github.com/Laverde97/linear-algebra-deep-learning"><code>linear-algebra-deep-learning</code></a></strong>: 14 cuadernos breves de Colab, bilingües, unas 2–3 horas en total. Cubren exactamente ese material, de vectores a PCA. Es trabajo previo obligatorio. El taller avanza rápido y da por hecho que ya lo hiciste.</li>
+<li><strong>El <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">cuaderno 00</a>, ejecutado en Colab</strong>: descarga los tres archivos CSV que usa el taller. Ejecútalo antes de la sesión. Si falla, avisa enseguida: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después.</li>
 </ul>
 <p><strong>Recomendado</strong></p>
 <ul>
-<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a></strong> (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total. Míralo si el capítulo del libro te pareció puro manejo de símbolos: da la imagen geométrica de lo que una matriz <em>hace</em>, que es en lo que se apoyan las secciones 04 a 10.</li>
+<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a></strong> (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total. Míralos si el capítulo del libro te pareció puro manejo de símbolos. Dan la imagen geométrica de lo que una matriz <em>hace</em>, y las secciones 04 a 10 se apoyan en esa imagen.</li>
 </ul>
 <p><strong>Ten a mano el día del taller</strong></p>
 <ul>
-<li><strong>Una cuenta de Google</strong>: los cuadernos se ejecutan en <a href="https://colab.research.google.com/">Colab</a> desde el navegador. No hay que instalar nada.</li>
+<li><strong>Una cuenta de Google</strong>: los cuadernos se ejecutan en <a href="https://colab.research.google.com/">Colab</a> desde el navegador. No hay instalación local.</li>
 <li><strong>Discord</strong>: la invitación te la pasa quien imparte el taller. Ahí ocurren las discusiones, los canales de grupo y las preguntas, en español o en inglés.</li>
 <li><strong>El móvil o una segunda pestaña para <a href="../kahoot.html">Kahoot</a></strong>: tres controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que registrarse: entras con un PIN.</li>
 </ul>

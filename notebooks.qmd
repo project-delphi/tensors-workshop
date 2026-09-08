@@ -7,28 +7,29 @@ subtitle: "One notebook per section, plus a take-home deep dive, each runnable c
 🇪🇸 ¿Prefieres español? [Esta página en español](es/notebooks.qmd).
 :::
 
-Every section of the workshop has a notebook, and one more sits past the end of
-the workshop as a take-home deep dive. They are **English-primary**, with a
-one-line Spanish summary under each heading — *cada encabezado lleva un resumen
-en español.*
+Every section of the workshop has a notebook. One more sits past the end of the
+day, as a take-home deep dive. They are **English-primary**, and every heading
+carries a one-line Spanish summary — *cada encabezado lleva un resumen en
+español.*
 
 ## How they are built
 
-Each notebook follows the same shape, so you always know where you are:
+Every notebook has the same five parts, so you always know where you are:
 
 1. **Header** — the section title, its objectives, and an *Open in Colab* badge.
-2. **Setup** — installs and imports only what this section needs, and loads its own
-   data. Self-contained: no local files, no dependency on any other notebook.
-3. **Explanation and code**, alternating, building up rather than dumping a wall of
-   code at you.
+2. **Setup** — installs and imports only what this section needs, and loads its
+   own data. Each notebook is self-contained: no local files, and no dependency
+   on any other notebook.
+3. **Explanation and code**, alternating. They build up, rather than dropping a
+   wall of code on you.
 4. **Exercises** — `# TODO` stubs taken from the handbook, each followed by a
    folded solution cell. Open it after you have tried.
 5. **Closing** — the Kahoot check for that section, and a link back here.
 
 ::: {.callout-important appearance="simple"}
 The notebooks are committed with **no outputs and no execution counts**. Every
-number you see is one you produced. The expected results are quoted in the prose
-so you can tell whether yours are right — and if yours differ, that is worth
+number you see is one you produced. The prose quotes the expected results, so
+you can tell whether yours are right. If yours differ, that is worth
 investigating rather than dismissing.
 :::
 
@@ -39,7 +40,7 @@ investigating rather than dismissing.
 ## Going further
 
 This one is **not a section**. It is a deep dive, handed out as take-home
-material: no slides, no Kahoot, and no minutes on the workshop clock — the
+material. It has no slides, no Kahoot, and no minutes on the workshop clock: the
 {{< var workshop.minutes >}}-minute agenda is exactly what it was without it.
 
 {{< include _includes/notebooks-extra-en.md >}}
@@ -54,15 +55,15 @@ cd {{< var repo.name >}}
 uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
 ```
 
-`matplotlib` and `ipywidgets` are in that list because every notebook plots and
-all but 00 use sliders; both ship with Colab, which is why their absence only
-shows up locally.
+`matplotlib` and `ipywidgets` are in that list because every notebook plots, and
+all but 00 use sliders. Both ship with Colab, so a missing one only shows up
+when you run locally.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits
-and the photographs, so sections 01, 03, 04, 06 and 09 run with no network at
-all. The other nine notebooks fetch something the first time they run: a CSV
-from GitHub, the storm video clip from Wikimedia, or — in notebook 11's
-take-home E — a voice recording.
+and the photographs. So sections 01, 03, 04, 06 and 09 run with no network at
+all. The other nine notebooks each fetch one file the first time they run: a CSV
+from GitHub, the storm video clip from Wikimedia, or a voice recording for
+notebook 11's take-home E.
 
 ## What each notebook needs
 

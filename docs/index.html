@@ -244,7 +244,8 @@ background-size: cover;
 </div>
 <section id="what-this-is" class="level2">
 <h2 class="anchored" data-anchor-id="what-this-is">What this is</h2>
-<p>A 210-minute workshop that takes you from “I know matrices” to “I can manipulate, solve, convolve and factorize tensors.” It is built around <strong>real data only</strong> — real tumour measurements, real handwritten digits, real histology images, real New York taxi trips, real airline traffic. Nothing is invented with random numbers, because real data contains problems that random data never shows: missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.</p>
+<p>A 210-minute workshop. It takes you from “I know matrices” to “I can manipulate, solve, convolve and factorize tensors.”</p>
+<p>It runs on <strong>real data only</strong>: real tumour measurements, real handwritten digits, real histology images, real New York taxi trips, real airline traffic. No dataset here is invented with random numbers. Real data carries problems that random numbers never show you — missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work.</p>
 </section>
 <section id="watch-it-first" class="level2">
 <h2 class="anchored" data-anchor-id="watch-it-first">Watch it first</h2>
@@ -305,29 +306,30 @@ background-size: cover;
 </tr>
 <tr class="odd">
 <td><strong><a href="https://github.com/project-delphi/tensors-workshop">Repository</a></strong></td>
-<td>The source of all of the above, plus the three Kahoot spreadsheets.</td>
+<td>The source of the six rows above, plus the three Kahoot spreadsheets.</td>
 <td>To fork it, fix something, or run the notebooks off Colab.</td>
 </tr>
 </tbody>
 </table>
-<p>The handbook is the source <em>text</em>. The facts those seven share — the section titles, the running clock, the links — live once in <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a> and every table on this site is generated from it, so they cannot disagree. <strong>The thirteen sections, section by section, are on the <a href="./notebooks.html">notebooks page</a>.</strong></p>
+<p>The handbook is the source <em>text</em>. The facts those seven share — the section titles, the running clock, the links — live once in <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a>. Every table on this site is generated from that one file, so no two tables can disagree.</p>
+<p><strong>The thirteen sections, section by section, are on the <a href="./notebooks.html">notebooks page</a>.</strong></p>
 </section>
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
-<p>Everything below is free, and nothing needs installing on your own machine.</p>
+<p>Every item below is free, and it all runs in your browser.</p>
 <p><strong>Do before the session</strong></p>
 <ul>
-<li><strong>The linear algebra in <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong> — vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD. That chapter is the whole of the assumed background.</li>
-<li><strong><a href="https://github.com/Laverde97/linear-algebra-deep-learning"><code>linear-algebra-deep-learning</code></a></strong> — 14 short bilingual Colab notebooks (~2–3 hours total) covering exactly that material, vectors through PCA. Required pre-work: this workshop moves fast through material it assumes you have reviewed.</li>
-<li><strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">Notebook 00</a>, run in Colab</strong> — it downloads the three CSV files the workshop needs. Run it beforehand and say so immediately if it fails: a silent download failure leaves you stuck at sections 07 and 10, an hour in.</li>
+<li><strong>The linear algebra in <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong> — vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD. That one chapter is the only background this workshop assumes.</li>
+<li><strong><a href="https://github.com/Laverde97/linear-algebra-deep-learning"><code>linear-algebra-deep-learning</code></a></strong> — 14 short bilingual Colab notebooks, about 2–3 hours in total. They cover exactly that material, vectors through PCA. This is required pre-work. The workshop moves fast, and it assumes you have reviewed it.</li>
+<li><strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">Notebook 00</a>, run in Colab</strong> — it downloads the three CSV files the workshop needs. Run it before the session. If it fails, say so at once: a download that fails quietly leaves you stuck at sections 07 and 10, an hour in.</li>
 </ul>
 <p><strong>Recommended</strong></p>
 <ul>
-<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a></strong> (3Blue1Brown) — 16 videos, about 3 hours in total. Watch it if the book chapter felt like symbol-pushing: it gives you the geometric picture of what a matrix <em>does</em>, which is what sections 04 through 10 lean on.</li>
+<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a></strong> (3Blue1Brown) — 16 videos, about 3 hours in total. Watch them if the book chapter felt like symbol-pushing. They give you the geometric picture of what a matrix <em>does</em>, and sections 04 to 10 lean on that picture.</li>
 </ul>
 <p><strong>Have ready on the day</strong></p>
 <ul>
-<li><strong>A Google account</strong> — the notebooks run in <a href="https://colab.research.google.com/">Colab</a> in your browser. Nothing to install locally.</li>
+<li><strong>A Google account</strong> — the notebooks run in <a href="https://colab.research.google.com/">Colab</a> in your browser. There is no local install.</li>
 <li><strong>Discord</strong> — the invite comes from the facilitator. Every discussion, every breakout channel and every question happens there, in Spanish or English.</li>
 <li><strong>A phone or a second tab for <a href="./kahoot.html">Kahoot</a></strong> — three 6-question knowledge checks, after sections 04, 07 and 10. No sign-up; you join with a PIN.</li>
 </ul>
@@ -342,7 +344,7 @@ background-size: cover;
 </section>
 <section id="a-note-on-language" class="level2">
 <h2 class="anchored" data-anchor-id="a-note-on-language">A note on language</h2>
-<p>This workshop is taught in English, but many terms are nearly identical in Spanish: <em>tensor/tensor</em>, <em>matrix/matriz</em>, <em>axis/eje</em>, <em>dimension/dimensión</em>, <em>decomposition/descomposición</em>, <em>factorization/factorización</em>, <em>contraction/contracción</em>, <em>convolution/convolución</em>, <em>recursion/recursión</em>.</p>
+<p>This workshop is taught in English. Many of its terms are nearly identical in Spanish: <em>tensor/tensor</em>, <em>matrix/matriz</em>, <em>axis/eje</em>, <em>dimension/dimensión</em>, <em>decomposition/descomposición</em>, <em>factorization/factorización</em>, <em>contraction/contracción</em>, <em>convolution/convolución</em>, <em>recursion/recursión</em>.</p>
 <p><strong>Ask questions in Spanish or English</strong> — whichever lets you ask faster. The <a href="./slides/es/index.html">slide deck exists in both languages</a>, and every notebook heading carries a one-line Spanish summary.</p>
 
 

@@ -3,22 +3,25 @@ title: "Kahoot"
 subtitle: "Three 6-question knowledge checks, and how to run them"
 ---
 
-Three quizzes sit at the three natural seams of the workshop: after the shape and
-vocabulary work, after the einsum and pseudoinverse stretch, and after the
-decompositions. Each sits right after the blocks that supply its content, while
-the material is still fresh, and **before** the next context switch — a break or a
-new Part — so it reinforces rather than interrupts.
+Three quizzes sit at the three natural seams of the workshop: after the shape
+and vocabulary work, after the einsum and pseudoinverse stretch, and after the
+decompositions.
+
+Each one runs right after the blocks that supply its content, while the material
+is still fresh. Each one also runs **before** the next context switch — a break,
+or a new Part. That way a quiz reinforces the work rather than interrupting
+it.
 
 ::: {.kahoot-note}
 **Facilitators: import each spreadsheet into kahoot.it *before* the session.**
 Create → Add question → Import → Import spreadsheet. Doing it live costs several
 minutes you do not have.
 
-The three **join links below still point at `kahoot.it` itself** — which works,
-because students enter the PIN from your screen there. Once each quiz exists,
-paste its direct join URL into the `url:` field of `_variables.yml` and
-re-render: every link on this site, in both decks and in all fourteen notebooks
-reads from that one file.
+The three **join links below still point at `kahoot.it` itself**. That works:
+students enter the PIN from your screen there. Once each quiz exists, paste its
+direct join URL into the `url:` field of `_variables.yml` and re-render. Every
+link on this site, in both decks and in all fourteen notebooks, reads from that
+one file.
 :::
 
 ## Quiz 1 — {{< var kahoot.q1.title_en >}} {#quiz-1}
@@ -35,10 +38,11 @@ reads from that one file.
 
 : {tbl-colwidths="[20,80]"}
 
-Everyone has just used *order*, *axis*, *shape*, *slice*, *fiber*, *variance*,
-*reshape* and *transpose* — this is the moment those words are freshest. Two
-questions reach back into the exercises specifically: the NaN question is section
-03's zero-variance pixels, and the last one is section 04's reshape-versus-transpose.
+The room has just used *order*, *axis*, *shape*, *slice*, *fiber*, *variance*,
+*reshape* and *transpose*. This is the moment those words are freshest. Two
+questions reach back into the exercises: the NaN question is section 03's
+zero-variance pixels, and the last one is section 04's
+reshape-versus-transpose.
 
 ## Quiz 2 — {{< var kahoot.q2.title_en >}} {#quiz-2}
 
@@ -56,10 +60,10 @@ questions reach back into the exercises specifically: the NaN question is sectio
 
 ::: {.callout-warning appearance="simple"}
 **Two questions here are ahead of the material.** Quiz 2 asks about Euclidean
-distance and cosine similarity, which the handbook never defines directly. The
-bridge is section 06's TODO 4 — the 1797×1797 digit similarity matrix built with
-one `einsum`. Say the two words out loud during that exercise, or expect the last
-two questions to land cold.
+distance and cosine similarity, and the handbook never defines either directly.
+The bridge is section 06's TODO 4, the 1797×1797 digit similarity matrix built
+with one `einsum`. Say the two words out loud during that exercise. Otherwise
+the last two questions land cold.
 :::
 
 ## Quiz 3 — {{< var kahoot.q3.title_en >}} {#quiz-3}
@@ -77,14 +81,14 @@ two questions to land cold.
 : {tbl-colwidths="[20,80]"}
 
 Run it while the taxi-tensor rush-hour result is still on screen. Its final
-question names hour 18, so it **must** come after section 10's TODO 6 — running it
-early gives the answer away. It doubles as a live rehearsal of the wrap-up's own
-recap, so segue straight from the podium into the wrap-up.
+question names hour 18, so it **must** come after section 10's TODO 6. Running
+it early gives the answer away. It doubles as a live rehearsal of the wrap-up's
+own recap, so go straight from the podium into the wrap-up.
 
 ## Running them
 
 - **Budget 5 minutes each, including the podium.** Groups want to see the
-  leaderboard, and that is fine — it is the payoff.
+  leaderboard, and that is fine. It is the payoff.
 - **Do not import live.** See the note at the top of this page.
 - **These add 15 minutes**, taking the workshop from 180 to
   {{< var workshop.minutes >}}.
@@ -101,5 +105,5 @@ The handbook's cutting order, in order:
 5. **Quiz 1.**
 
 **Never cut** section 01's *Three Operations That Matter*, section 10, or **Quiz
-3** — the last is the cheapest way to check whether Tucker and CP actually landed
-before students leave.
+3**. Quiz 3 is the cheapest way to find out whether Tucker and CP landed, and
+you only find out before students leave.
