@@ -41,7 +41,8 @@ Every item is free, and it all runs in your browser. In brief:
   [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**
   — 14 short bilingual Colab notebooks, ~2–3 hours. Required pre-work.
 - **Run [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
-  in Colab before the session.** If it fails, say so at once: a download that fails quietly leaves you stuck at sections 07 and 10, an hour in.
+  in Colab before the session.** If it fails, say so at once: a download that
+  fails quietly leaves you stuck at sections 07 and 10, an hour in.
 
 The full list — the recommended viewing, and what to have ready on the day —
 is on the **[workshop homepage](https://project-delphi.github.io/tensors-workshop/)**, which is where it is maintained.
@@ -211,7 +212,9 @@ Todo es gratuito y no hace falta instalar nada en tu equipo. En resumen:
   14 cuadernos breves y bilingües de Colab, ~2–3 horas. Trabajo previo
   obligatorio.
 - **Ejecuta el [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
-  en Colab antes de la sesión.** Si falla, avisa enseguida: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después.
+  en Colab antes de la sesión.** Si falla, avisa enseguida: una descarga que
+  falla en silencio te deja atascado en las secciones 07 y 10, una hora
+  después.
 
 La lista completa —lo recomendado y lo que hay que tener a mano el día del
 taller— está en la **[página del taller](https://project-delphi.github.io/tensors-workshop/es/)**, que es donde se

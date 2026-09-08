@@ -61,7 +61,12 @@ uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab
 dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab,
 así que si falta uno solo se nota al ejecutar en local.
 
-`scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se ejecutan sin red. Los otros nueve descargan algo la primera vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia, o la grabación de voz para el ejercicio E del cuaderno 12. El cuaderno 00 descarga cuatro archivos, y el 05 y el 11 descargan dos cada uno.
+`scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
+manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se
+ejecutan sin red. Los otros nueve descargan algo la primera vez que se
+ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia,
+o la grabación de voz para el ejercicio E del cuaderno 12. El cuaderno 00
+descarga cuatro archivos, y el 05 y el 11 descargan dos cada uno.
 
 ## Qué necesita cada cuaderno
 
