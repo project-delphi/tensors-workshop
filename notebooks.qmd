@@ -3,10 +3,14 @@ title: "Notebooks"
 subtitle: "One notebook per section, plus a take-home deep dive, each runnable cold in Colab"
 ---
 
-Every section of the workshop has a notebook, and two more sit past the end of the
-workshop as take-home deep dives. They are **English-primary**, with a one-line
-Spanish summary under each heading — *cada encabezado lleva un resumen en
-español.*
+::: {.callout-note appearance="simple"}
+🇪🇸 ¿Prefieres español? [Esta página en español](es/notebooks.qmd).
+:::
+
+Every section of the workshop has a notebook, and one more sits past the end of
+the workshop as a take-home deep dive. They are **English-primary**, with a
+one-line Spanish summary under each heading — *cada encabezado lleva un resumen
+en español.*
 
 ## How they are built
 
@@ -34,9 +38,9 @@ investigating rather than dismissing.
 
 ## Going further
 
-These two are **not sections**. They are deep dives, handed out as take-home
+This one is **not a section**. It is a deep dive, handed out as take-home
 material: no slides, no Kahoot, and no minutes on the workshop clock — the
-{{< var workshop.minutes >}}-minute agenda is exactly what it was without them.
+{{< var workshop.minutes >}}-minute agenda is exactly what it was without it.
 
 {{< include _includes/notebooks-extra-en.md >}}
 

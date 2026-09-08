@@ -2,19 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html</loc>
-    <lastmod>2026-09-07T20:28:46.539Z</lastmod>
+    <lastmod>2026-09-08T04:21:50.190Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/slides/en/index.html</loc>
     <lastmod>2026-09-07T10:55:03.154Z</lastmod>
   </url>
   <url>
-    <loc>https://project-delphi.github.io/tensors-workshop/es/references.html</loc>
-    <lastmod>2026-09-07T18:34:57.065Z</lastmod>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/companion.html</loc>
+    <lastmod>2026-09-08T04:20:53.794Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/notebooks.html</loc>
+    <lastmod>2026-09-08T03:36:46.775Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/companion.html</loc>
-    <lastmod>2026-09-07T20:27:53.594Z</lastmod>
+    <lastmod>2026-09-08T04:20:53.794Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/kahoot.html</loc>
@@ -22,11 +26,11 @@
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/index.html</loc>
-    <lastmod>2026-09-07T18:34:57.066Z</lastmod>
+    <lastmod>2026-09-08T04:21:34.767Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/notebooks.html</loc>
-    <lastmod>2026-09-06T12:27:19.921Z</lastmod>
+    <lastmod>2026-09-08T03:36:26.090Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/references.html</loc>
@@ -34,11 +38,15 @@
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/es/index.html</loc>
-    <lastmod>2026-09-07T18:34:57.064Z</lastmod>
+    <lastmod>2026-09-08T04:21:34.768Z</lastmod>
   </url>
   <url>
-    <loc>https://project-delphi.github.io/tensors-workshop/es/companion.html</loc>
-    <lastmod>2026-09-07T20:27:53.594Z</lastmod>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/references.html</loc>
+    <lastmod>2026-09-07T18:34:57.065Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/tensors_workshop_plan_with_quizzes.html</loc>
+    <lastmod>2026-09-08T04:21:50.191Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/slides/es/index.html</loc>

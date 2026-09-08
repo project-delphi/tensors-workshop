@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-2869e9347126a443a5de0dd024f16cca.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-4ed2128eaa0b240e519f61bccd8d8d25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -97,12 +97,20 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../tensors_workshop_plan_with_quizzes.html"> 
+    <a class="nav-link" href="../tensors_workshop_plan_with_quizzes.html" rel="lang-en"> 
 <span class="menu-text">Handbook</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../notebooks.html"> 
+    <a class="nav-link" href="../es/tensors_workshop_plan_with_quizzes.html" rel="lang-es"> 
+<span class="menu-text">Manual</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../notebooks.html" rel="lang-en"> 
 <span class="menu-text">Notebooks</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../es/notebooks.html" rel="lang-es"> 
+<span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../kahoot.html"> 
@@ -140,6 +148,14 @@ ul.task-list li input[type="checkbox"] {
         <li>
     <a class="dropdown-item" href="../es/index.html">
  <span class="dropdown-text">Inicio</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../es/tensors_workshop_plan_with_quizzes.html">
+ <span class="dropdown-text">Manual</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../es/notebooks.html">
+ <span class="dropdown-text">Cuadernos</span></a>
   </li>  
         <li>
     <a class="dropdown-item" href="../es/references.html">
@@ -187,6 +203,7 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#video" id="toc-video" class="nav-link active" data-scroll-target="#video">Resumen en vídeo</a></li>
+  <li><a href="#shorts" id="toc-shorts" class="nav-link" data-scroll-target="#shorts">Vídeos de un minuto</a></li>
   <li><a href="#infographics" id="toc-infographics" class="nav-link" data-scroll-target="#infographics">Infografías</a></li>
   <li><a href="#listen" id="toc-listen" class="nav-link" data-scroll-target="#listen">Escuchar</a></li>
   <li><a href="#test-yourself" id="toc-test-yourself" class="nav-link" data-scroll-target="#test-yourself">Ponte a prueba</a></li>
@@ -201,7 +218,7 @@ ul.task-list li input[type="checkbox"] {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">El complemento generado por máquina</h1>
-<p class="subtitle lead">Un cuaderno de NotebookLM construido con las fuentes de este taller, y todo lo que se ha generado a partir de él</p>
+<p class="subtitle lead">Todo lo que NotebookLM generó con las fuentes del propio taller</p>
 </div>
 
 
@@ -224,60 +241,106 @@ ul.task-list li input[type="checkbox"] {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p><strong>Todo lo que hay en esta página está generado, no escrito.</strong> Lo produjo <a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">NotebookLM</a> a partir del manual y los cuadernos del propio taller, y ninguna persona ha escrito ni revisado una sola frase. Úsalo como una <em>segunda pasada</em> sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el <a href="../tensors_workshop_plan_with_quizzes.html">manual</a>, nunca al revés. Generado el 2026-09-07.</p>
+<p><strong>Nada de esta página lo ha escrito ni revisado una persona.</strong> Lo generó <a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">NotebookLM</a> a partir del manual y los cuadernos del taller. Úsalo como una <em>segunda pasada</em> sobre material que ya has visto, y comprueba cualquier cosa que afirme contra el <a href="../es/tensors_workshop_plan_with_quizzes.html">manual</a>, nunca al revés. Generado el 2026-09-07.</p>
 </div>
 </div>
 </div>
-<p>El taller se apoya en una promesa: datos reales y números que puedes reproducir. Esta página cumple esa promesa siendo clara sobre a qué lado de la línea está. Existe porque una explicación distinta del mismo material es realmente útil —un vídeo antes de la sesión, un diagrama con el que discutir, un cuestionario en el tren de vuelta—, no porque sustituya a nada.</p>
-<p>Cuando un artefacto se puede <strong>exportar</strong>, se exporta, y se sirve desde este sitio: sin cuenta, sin iniciar sesión, y sigue funcionando aunque el cuaderno se edite o se borre después. Tres de ellos no se pueden exportar en absoluto, y algunos de los que sí se pueden son, hasta que se exporten, enlaces a NotebookLM. Ambos casos te pedirán una cuenta de Google. Cada apartado dice de cuál de los tres se trata.</p>
+<p>Cuando un artefacto se puede exportar, se exporta y lo sirve este sitio: sin cuenta y sin iniciar sesión. Los demás son enlaces a NotebookLM, que pide una cuenta de Google. Cada tarjeta dice de cuál se trata.</p>
 <section id="video" class="level2">
 <h2 class="anchored" data-anchor-id="video">Resumen en vídeo</h2>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
 <p><em>Todavía sin publicar.</em> El resumen en vídeo se genera en NotebookLM y se sube a YouTube; hasta entonces no hay aquí nada que funcione sin una cuenta de Google.</p>
 </section>
+<section id="shorts" class="level2">
+<h2 class="anchored" data-anchor-id="shorts">Vídeos de un minuto</h2>
+<p>Ocho, cada uno sobre una sola idea y ligado a la sección a la que pertenece.</p>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p>Un minuto cada uno, generados con las mismas fuentes. Todos se abren en NotebookLM.</p>
+<div class="info-strip">
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4a0fc480-42d4-42f7-bcf5-544c5e0a2626">Descifrar las dimensiones de un tensor en NumPy</a></strong><br>1:17 · sección 01 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/fece63b8-7fa5-4ec4-a367-015f52b167ce">Cómo la memoria aplasta los tensores</a></strong><br>1:20 · sección 04 <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/28b74a23-b275-429a-b3c6-c8b8460bd2a4">Cómo la pseudoinversa resuelve datos imperfectos</a></strong><br>1:12 · sección 07 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/04f39426-5a7e-4561-87d7-c85d649e3565">Cómo la SVD comprime matrices secuenciales</a></strong><br>1:10 · sección 09 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b5f7c997-3142-40b1-8f09-2e641bbde35e">Cómo la descomposición de Tucker comprime datos</a></strong><br>1:16 · sección 10 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/5dd4e774-7649-4dc5-bae5-cb4560b2b71f">Cómo la HOSVD comprime datos multidimensionales</a></strong><br>1:27 · sección 10 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4d8f05b2-b0d9-41b2-a79f-9e81ca8cad38">Cómo la descomposición tensorial extrae significado</a></strong><br>1:19 · sección 10 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/27538f28-52c7-4701-8362-2ae80471df9b">Cómo la descomposición CP aborda tensores N-dimensionales</a></strong><br>1:19 · sección 11 <br><span class="shot-note">En inglés. Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+</div>
+</section>
 <section id="infographics" class="level2">
 <h2 class="anchored" data-anchor-id="infographics">Infografías</h2>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<p>Todavía sin exportar, así que estas se abren en NotebookLM y te pedirán una cuenta de Google:</p>
-<ul>
-<li><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb">Tensores — panorama general</a></li>
-<li><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2569f0b-ca63-45de-8632-667cba10a384">Reshape frente a transposición</a></li>
-</ul>
+<p>Todavía sin exportar, así que estas se abren en NotebookLM:</p>
+<div class="info-strip">
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb">Tensores — panorama general</a></strong> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2569f0b-ca63-45de-8632-667cba10a384">Reshape frente a transposición</a></strong> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/3a9af8fc-5db5-414c-854a-452f88de50f1">Inversas y pseudoinversas</a></strong> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/83c84375-396a-49e4-b32b-971aa9a7ef6b">Guía de inversas tensoriales</a></strong> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+<div class="info-card">
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b1776a9f-9730-43f0-a273-106b64a681c9">Factorizaciones matriciales y tensoriales</a></strong> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+</div>
+</div>
 </section>
 <section id="listen" class="level2">
 <h2 class="anchored" data-anchor-id="listen">Escuchar</h2>
-<p>El resumen en audio son dos voces comentando el taller. Es lo único de aquí que funciona con la pantalla apagada, y eso lo convierte en lo que más merece la pena llevarse en el trayecto del día anterior.</p>
+<p>Dos voces comentando el taller: lo único de aquí que funciona con la pantalla apagada.</p>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
 <p><em>Todavía sin exportar.</em> El resumen en audio de NotebookLM se descarga como archivo, así que cuando esté sonará aquí mismo, sin cuenta y sin terceros.</p>
 </section>
 <section id="test-yourself" class="level2">
 <h2 class="anchored" data-anchor-id="test-yourself">Ponte a prueba</h2>
-<p>Ninguno de los dos es el <a href="../kahoot.html">Kahoot</a>. Los cuestionarios de Kahoot son de seis preguntas, se hacen en vivo en la sala después de las secciones 04, 07 y 10, y se escribieron para este taller. Estos dos están generados, no tienen límite y son para ti, después.</p>
-<p><strong>Los dos se abren en NotebookLM y piden una cuenta de Google</strong>: los cuestionarios y las tarjetas son los artefactos que NotebookLM no deja exportar.</p>
+<p>Ninguno de los dos es el <a href="../kahoot.html">Kahoot</a>, que son seis preguntas en vivo después de las secciones 04, 07 y 10, escritas para este taller. Estos dos están generados y no tienen límite.</p>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p>Las imágenes son capturas de pantalla, servidas desde este sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta en él.</p>
 <div class="info-strip">
 <div class="info-card">
-<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Cuestionario de autoevaluación</a></strong><br>Preguntas de opción múltiple generadas sobre todo el taller, tantas como quieras.<br><em>Después de la sesión, para descubrir qué secciones no se te quedaron.</em> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+<p><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/72379ae0-b758-4fa9-b203-b68ed934b59a"><img src="../images/companion-quiz.png" class="img-fluid" alt="La primera de las veintiséis preguntas del cuestionario, tal como la muestra NotebookLM: cómo se distingue un tensor de orden 3 de una matriz, con cuatro respuestas de la A a la D y un botón de pista junto a Siguiente."></a></p>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/72379ae0-b758-4fa9-b203-b68ed934b59a">Cuestionario de autoevaluación</a></strong><br>Veintiséis preguntas de opción múltiple generadas sobre todo el taller.<br><em>Después de la sesión, para descubrir qué secciones no se te quedaron.</em> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM.</span></p>
 </div>
 <div class="info-card">
-<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Tarjetas de memoria</a></strong><br>El término por un lado y la definición por el otro: el vocabulario que el taller va definiendo sobre la marcha.<br><em>Repetición espaciada, en las semanas siguientes.</em> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+<p><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b4168432-9dda-4495-adb9-36f5b0277a03"><img src="../images/companion-flashcards.png" class="img-fluid" alt="La primera de sesenta tarjetas, por la cara delantera: cuál es la interpretación geométrica de un vector en álgebra lineal, con la indicación Ver respuesta debajo y los contadores de acertadas y falladas bajo la tarjeta."></a></p>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b4168432-9dda-4495-adb9-36f5b0277a03">Tarjetas de memoria</a></strong><br>Sesenta tarjetas, pregunta por un lado y respuesta por el otro, sobre el álgebra lineal además de los tensores.<br><em>Repetición espaciada, en las semanas siguientes.</em> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM.</span></p>
 </div>
 </div>
 </section>
 <section id="map" class="level2">
 <h2 class="anchored" data-anchor-id="map">El mapa</h2>
-<p>Solo es interactivo dentro de NotebookLM, así que este también es un enlace y pide cuenta.</p>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<p>Las imágenes son capturas de pantalla, servidas desde este sitio, para que veas qué hay detrás de cada enlace antes de gastar una cuenta en él.</p>
 <div class="info-strip">
 <div class="info-card">
-<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87">Mapa mental</a></strong><br>Cómo se sostienen unas en otras las trece secciones, en una sola pantalla.<br><em>Una vez, pronto: ver la escalera entera antes de subirla hace que los peldaños del medio parezcan menos arbitrarios.</em> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google.</span></p>
+<p><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87"><img src="../images/companion-mindmap.png" class="img-fluid" alt="El mapa mental plegado a su primer nivel: un nodo que dice Tensors for Machine Learning Workshop, del que salen cinco ramas — Defining Tensors, Practical Data Storage, Axis Manipulation, Solving and Factorizing y Computational Implementation — cada una con una flecha que la despliega."></a></p>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/609426f1-af07-4b0d-8aa4-91fd6d633d87">Mapa mental</a></strong><br>Cinco ramas de una sola raíz —definir tensores, almacenar datos, mover ejes, factorizar, calcular—, y cada una se abre más.<br><em>Una vez, pronto: ver la escalera entera antes de subirla hace que los peldaños del medio parezcan menos arbitrarios.</em> <br><span class="shot-note">Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM.</span></p>
 </div>
 </div>
 </section>
 <section id="notebooklm" class="level2">
 <h2 class="anchored" data-anchor-id="notebooklm">En NotebookLM</h2>
-<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Abrir el cuaderno</a></strong> para ver las fuentes con las que se generó cada artefacto de arriba, hacerle tus propias preguntas o generar otra cosa a partir de él.</p>
-<p>La infografía de panorama general está en la galería de arriba, y también <strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb">aquí</a></strong> por separado.</p>
+<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c">Abrir el cuaderno</a></strong> para ver las fuentes que hay detrás de todo lo anterior, o para generar otra cosa a partir de ellas. La infografía de panorama general está también <strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/53361223-7a9f-4eda-a928-64a2080421eb">aquí</a></strong> por separado.</p>
 <div class="callout callout-style-simple callout-note">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">

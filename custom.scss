@@ -31,28 +31,16 @@ h2 {
   border-bottom: 1px solid $border-color;
 }
 
-// Section tables carry 8 columns of links — keep them compact and scrollable
-// on a phone rather than letting the page scroll sideways.
+// Wide tables — the handbook's cost table, the notebooks page's dependency
+// table — scroll inside themselves on a phone rather than scrolling the page
+// sideways. Bootstrap emits the class; this is the behaviour it needs.
 .table-responsive { overflow-x: auto; }
 
-// The link columns must never wrap: "Colab · src" broken across two lines
-// makes every row twice as tall for no gain. Let the Section column absorb
-// whatever width is left instead.
-// `tr:not(.kahoot-row)` matters: a Kahoot row has only two cells (the 🎯 and a
-// colspan=7), so an unscoped nth-last-child would make its long checkpoint text
-// nowrap and force the table wider than its column on a narrow screen.
-.section-table tr:not(.kahoot-row) td:nth-last-child(-n+5),
-.section-table th:nth-last-child(-n+5) { white-space: nowrap; }
-.section-table td small { color: #64748b; }
 table { font-size: .93rem; }
 table th { font-weight: 600; white-space: nowrap; }
 table td:first-child { font-variant-numeric: tabular-nums; color: #64748b; }
 
-// The three Kahoot checkpoints, in the tables and inline.
-tr.kahoot-row td {
-  background: rgba(179, 84, 30, .07);
-  font-weight: 500;
-}
+// The three Kahoot checkpoints, called out inline on kahoot.qmd.
 .kahoot-note {
   border-left: 4px solid $kahoot-accent;
   background: rgba(179, 84, 30, .06);
@@ -89,14 +77,13 @@ html[lang|="es"] .navbar-nav {
   .nav-link[rel="lang-en"] { display: none; }
 }
 
-// Handbook, Notebooks and Kahoot exist in English only, so they are `lang: en`
-// and the rules above leave a Spanish reader who opens one with nothing
-// Spanish in the navbar at all — the ES chip goes to the Spanish homepage and
-// no further, so `Complemento`, one click away a moment earlier, is now two.
-// The `Español` dropdown is the Spanish affordance those three pages need,
-// and it appears on exactly them, with no per-page markup: Quarto marks the
-// current page's own item `.active`, and those three are the only pages where
-// the active item carries no language of its own.
+// Kahoot exists in English only, so it is `lang: en` and the rules above leave
+// a Spanish reader who opens it with nothing Spanish in the navbar at all —
+// the ES chip goes to the Spanish homepage and no further, so `Complemento`,
+// one click away a moment earlier, is now two. The `Español` dropdown is the
+// Spanish affordance that page needs, and it appears on exactly it, with no
+// per-page markup: Quarto marks the current page's own item `.active`, and it
+// is the only page where the active item carries no language of its own.
 //
 // Showing the whole Spanish half there instead is what this replaced. Eleven
 // flat items do not fit a laptop: at 1100px the brand and the EN/ES chips are
@@ -234,32 +221,6 @@ main p:has(> img:only-child) + p > em:only-child {
   line-height: 1.55;
 }
 
-// ─── the dataset strip on the landing pages ─────────────────────────────────
-.app-strip {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  gap: 1.1rem;
-  margin: 1.4rem 0 2rem;
-  max-width: 62rem;
-}
-.app-card {
-  img {
-    width: 100%;
-    aspect-ratio: 20 / 13;   // the shape gen_thumbnails.py renders the cards at
-    object-fit: cover;
-    border-radius: 3px;
-    border: 1px solid $border-color;
-  }
-  p {
-    max-width: none;
-    margin: .45rem 0 0;
-    font-size: .85rem;
-    line-height: 1.4;
-    color: #64748b;
-  }
-  strong { color: $body-color; font-weight: 600; }
-}
-
 // ─── the machine-generated companion ────────────────────────────────────────
 // A chip row under the hero band, pointing at the companion page's sections.
 // It is navigation, not prose, so it opts out of the 46rem measure and sets
@@ -370,11 +331,10 @@ main p:has(> img:only-child) + p > em:only-child {
 // least legible text on the card.
 .shot-note { color: #64748b; font-size: .78rem; }
 
-// The infographic gallery. Deliberately NOT `.app-card`: that one crops to
-// `aspect-ratio: 20/13` with `object-fit: cover`, which is right for the
-// dataset thumbnails gen_thumbnails.py renders at exactly that shape and
-// wrong for an infographic, which is usually portrait and is all text. Here
-// nothing is cropped and nothing is a fixed shape.
+// The infographic gallery. Nothing here is cropped and nothing is a fixed
+// shape: an infographic is usually portrait and is all text, so the fixed
+// `aspect-ratio` + `object-fit: cover` treatment that suits a photograph
+// would cut the words off.
 .info-strip {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));

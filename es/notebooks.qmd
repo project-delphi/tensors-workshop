@@ -1,0 +1,91 @@
+---
+title: "Cuadernos"
+subtitle: "Un cuaderno por sección, más un estudio a fondo para casa, y cada uno se ejecuta en frío en Colab"
+lang: es
+---
+
+::: {.callout-note appearance="simple"}
+🇬🇧 Prefer English? [This page in English](../notebooks.qmd).
+:::
+
+Cada sección del taller tiene su cuaderno, y uno más queda al final como estudio
+a fondo para casa. Están **escritos principalmente en inglés**, con un resumen de
+una línea en español bajo cada encabezado.
+
+## Cómo están construidos
+
+Todos los cuadernos siguen la misma forma, así que siempre sabes dónde estás:
+
+1. **Encabezado**: el título de la sección, sus objetivos y una insignia *Open in
+   Colab*.
+2. **Preparación**: instala e importa solo lo que esa sección necesita, y carga
+   sus propios datos. Es autónomo: sin archivos locales y sin depender de ningún
+   otro cuaderno.
+3. **Explicación y código**, alternándose, construyendo poco a poco en lugar de
+   soltarte un muro de código.
+4. **Ejercicios**: esqueletos `# TODO` sacados del manual, cada uno seguido de una
+   celda de solución plegada. Ábrela después de intentarlo.
+5. **Cierre**: el control de Kahoot de esa sección y un enlace de vuelta aquí.
+
+::: {.callout-important appearance="simple"}
+Los cuadernos se guardan **sin salidas y sin números de ejecución**. Cada número
+que veas es uno que has producido tú. Los resultados esperados están citados en
+el texto para que puedas comprobar si los tuyos son correctos, y si los tuyos
+difieren, eso merece investigarse en lugar de descartarse.
+:::
+
+## Los cuadernos
+
+{{< include ../_includes/notebooks-es.md >}}
+
+## Para ir más lejos
+
+Este **no es una sección**. Es un estudio a fondo, entregado como material para
+casa: sin diapositivas, sin Kahoot y sin minutos en el reloj del taller. La
+agenda de {{< var workshop.minutes >}} minutos es exactamente la misma sin él.
+
+{{< include ../_includes/notebooks-extra-es.md >}}
+
+## Ejecutarlos fuera de Colab
+
+Los cuadernos solo necesitan el stack científico de Python. En local:
+
+```bash
+git clone {{< var repo.url >}}.git
+cd {{< var repo.name >}}
+uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+```
+
+`matplotlib` y `ipywidgets` están en esa lista porque todos los cuadernos dibujan
+algo y todos menos el 00 usan deslizadores; los dos vienen con Colab, y por eso
+su ausencia solo se nota en local.
+
+`scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
+manuscritos y las fotografías, así que las secciones 01, 03, 04, 06 y 09 se
+ejecutan sin red en absoluto. Los otros nueve cuadernos descargan algo la primera
+vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde
+Wikimedia o —en el ejercicio E para casa del cuaderno 11— una grabación de voz.
+
+## Qué necesita cada cuaderno
+
+| Cuaderno | Además de NumPy | Red |
+|---|---|---|
+| 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | sí — los tres CSV, y un sondeo de 1 KB del clip de la tormenta |
+| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `scipy` | no |
+| 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | sí — el clip de la tormenta |
+| 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
+| 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |
+| 05 | `matplotlib`, `ipywidgets`, `imageio`† | sí — el clip de la tormenta |
+| 06 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
+| 07 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn` | sí — vivienda en California |
+| 08 | `matplotlib`, `ipywidgets`, `pandas` | sí — pasajeros de aerolínea |
+| 09 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy` | no |
+| 10 | `matplotlib`, `ipywidgets`, `pandas` | sí — viajes en taxi de Nueva York |
+| 11 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy` | sí — una grabación de voz, para el ejercicio E |
+| 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scikit-image`, `scipy` | sí — pasajeros de aerolínea |
+| 13 | `matplotlib`, `ipywidgets`, `pandas`, `tensorly`†, `imageio`† | sí — viajes en taxi de Nueva York, y el clip de la tormenta |
+
+: Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}
+
+† Lo instala el propio cuaderno con `%pip install -q`, y por eso ninguno de los
+dos está en el comando de arriba.

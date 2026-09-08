@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Tensores para Aprendizaje Automático – Tensors for Machine Learning</title>
+<title>Cuadernos – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,6 +19,40 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -67,21 +101,14 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
-<style>
-
-      .quarto-title-block .quarto-title-banner {
-        background-image: url(../images/hero-band.png);
-background-size: cover;
-      }
-</style>
 
 
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -100,7 +127,7 @@ background-size: cover;
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../es/index.html" rel="lang-es" aria-current="page"> 
+    <a class="nav-link" href="../es/index.html" rel="lang-es"> 
 <span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
@@ -116,7 +143,7 @@ background-size: cover;
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../es/notebooks.html" rel="lang-es"> 
+    <a class="nav-link active" href="../es/notebooks.html" rel="lang-es" aria-current="page"> 
 <span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
@@ -201,32 +228,43 @@ background-size: cover;
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Tensores para Aprendizaje Automático</h1>
-            <p class="subtitle lead">Un taller de 3 horas, más tres controles de conocimiento con Kahoot</p>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">En esta página</h2>
+   
+  <ul>
+  <li><a href="#cómo-están-construidos" id="toc-cómo-están-construidos" class="nav-link active" data-scroll-target="#cómo-están-construidos">Cómo están construidos</a></li>
+  <li><a href="#los-cuadernos" id="toc-los-cuadernos" class="nav-link" data-scroll-target="#los-cuadernos">Los cuadernos</a></li>
+  <li><a href="#para-ir-más-lejos" id="toc-para-ir-más-lejos" class="nav-link" data-scroll-target="#para-ir-más-lejos">Para ir más lejos</a></li>
+  <li><a href="#ejecutarlos-fuera-de-colab" id="toc-ejecutarlos-fuera-de-colab" class="nav-link" data-scroll-target="#ejecutarlos-fuera-de-colab">Ejecutarlos fuera de Colab</a></li>
+  <li><a href="#qué-necesita-cada-cuaderno" id="toc-qué-necesita-cada-cuaderno" class="nav-link" data-scroll-target="#qué-necesita-cada-cuaderno">Qué necesita cada cuaderno</a></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Cuadernos</h1>
+<p class="subtitle lead">Un cuaderno por sección, más un estudio a fondo para casa, y cada uno se ejecuta en frío en Colab</p>
+</div>
 
 
 
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <div class="callout callout-style-simple callout-note">
@@ -235,115 +273,246 @@ background-size: cover;
 <i class="callout-icon"></i>
 </div>
 <div class="callout-body-container">
-<p>🇬🇧 Prefer English? <a href="../index.html">This page in English</a>. El taller se imparte en inglés, pero puedes preguntar en español cuando quieras.</p>
+<p>🇬🇧 Prefer English? <a href="../notebooks.html">This page in English</a>.</p>
 </div>
 </div>
 </div>
-<div class="companion-strip">
-<p><a href="../es/companion.html#video">Resumen en vídeo</a> <a href="../es/companion.html#shorts">Vídeos de un minuto</a> <a href="../es/companion.html#infographics">Infografías</a> <a href="../es/companion.html#test-yourself">Autoevaluación</a> <a href="../es/companion.html#map">Mapa mental</a> <a href="../es/companion.html#notebooklm">En NotebookLM</a></p>
+<p>Cada sección del taller tiene su cuaderno, y uno más queda al final como estudio a fondo para casa. Están <strong>escritos principalmente en inglés</strong>, con un resumen de una línea en español bajo cada encabezado.</p>
+<section id="cómo-están-construidos" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-están-construidos">Cómo están construidos</h2>
+<p>Todos los cuadernos siguen la misma forma, así que siempre sabes dónde estás:</p>
+<ol type="1">
+<li><strong>Encabezado</strong>: el título de la sección, sus objetivos y una insignia <em>Open in Colab</em>.</li>
+<li><strong>Preparación</strong>: instala e importa solo lo que esa sección necesita, y carga sus propios datos. Es autónomo: sin archivos locales y sin depender de ningún otro cuaderno.</li>
+<li><strong>Explicación y código</strong>, alternándose, construyendo poco a poco en lugar de soltarte un muro de código.</li>
+<li><strong>Ejercicios</strong>: esqueletos <code># TODO</code> sacados del manual, cada uno seguido de una celda de solución plegada. Ábrela después de intentarlo.</li>
+<li><strong>Cierre</strong>: el control de Kahoot de esa sección y un enlace de vuelta aquí.</li>
+</ol>
+<div class="callout callout-style-simple callout-important">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
 </div>
-<section id="qué-es-esto" class="level2">
-<h2 class="anchored" data-anchor-id="qué-es-esto">Qué es esto</h2>
-<p>Un taller de 210 minutos que te lleva de «sé lo que es una matriz» a «sé manipular, resolver, convolucionar y factorizar tensores». Está construido <strong>solo con datos reales</strong>: medidas reales de tumores, dígitos manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva York, tráfico aéreo real. No hay nada inventado con números aleatorios, porque los datos reales contienen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del trabajo.</p>
+<div class="callout-body-container">
+<p>Los cuadernos se guardan <strong>sin salidas y sin números de ejecución</strong>. Cada número que veas es uno que has producido tú. Los resultados esperados están citados en el texto para que puedas comprobar si los tuyos son correctos, y si los tuyos difieren, eso merece investigarse en lugar de descartarse.</p>
+</div>
+</div>
+</div>
 </section>
-<section id="míralo-primero" class="level2">
-<h2 class="anchored" data-anchor-id="míralo-primero">Míralo primero</h2>
+<section id="los-cuadernos" class="level2">
+<h2 class="anchored" data-anchor-id="los-cuadernos">Los cuadernos</h2>
 <!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<p><em>Todavía sin publicar.</em> El resumen en vídeo se genera en NotebookLM y se sube a YouTube; hasta entonces no hay aquí nada que funcione sin una cuenta de Google.</p>
-<p>El vídeo está <em>generado</em>, no grabado. Él, y las infografías, el audio, el cuestionario, las tarjetas y el mapa mental que lo acompañan, están en la <a href="../es/companion.html">página del complemento</a>, que explica sin rodeos qué significa estar generado y qué hacer al respecto.</p>
-</section>
-<section id="para-quién-es" class="level2">
-<h2 class="anchored" data-anchor-id="para-quién-es">Para quién es</h2>
-<p>Has leído <em><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</em>. Sabes qué es una matriz. Este taller <strong>no supone ningún conocimiento previo de teoría de tensores</strong>, y cada término nuevo se define donde aparece por primera vez.</p>
-</section>
-<section id="qué-hay-aquí" class="level2">
-<h2 class="anchored" data-anchor-id="qué-hay-aquí">Qué hay aquí</h2>
-<p>Siete recursos, y cada uno cumple una función distinta. Empieza por el que corresponda a lo que estés haciendo ahora mismo.</p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 16%">
-<col style="width: 50%">
-<col style="width: 34%">
-</colgroup>
 <thead>
 <tr class="header">
-<th></th>
-<th>Qué es</th>
-<th>Cuándo lo usas</th>
+<th>#</th>
+<th>Cuaderno</th>
+<th>Contenido</th>
+<th>Colab</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
-<td><strong><a href="../es/tensors_workshop_plan_with_quizzes.html">Manual</a></strong> · <a href="../tensors_workshop_plan_with_quizzes.html">EN</a></td>
-<td>El texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas y los apéndices para casa.</td>
-<td>Léelo antes, síguelo durante, consérvalo después.</td>
+<td>00</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><code>00-setup-and-data.ipynb</code></a></td>
+<td>Preparación y bienvenida — Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de empezar.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="even">
-<td><strong><a href="../slides/es/index.html">Diapositivas</a></strong> · <a href="../slides/en/index.html">EN</a></td>
-<td>Lo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás.</td>
-<td>En vivo durante la sesión, o para repasar después la forma del día.</td>
+<td>01</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><code>01-what-a-tensor-is.ipynb</code></a></td>
+<td>Qué es un tensor — Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="odd">
-<td><strong><a href="../es/notebooks.html">Cuadernos</a></strong> · <a href="../notebooks.html">EN</a></td>
-<td>Catorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código.</td>
-<td>Durante cada sección, y para el ejercicio de casa.</td>
+<td>02</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><code>02-thinking-in-n-dimensions.ipynb</code></a></td>
+<td>Pensar en N dimensiones — Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="even">
-<td><strong><a href="../kahoot.html">Kahoot</a></strong></td>
-<td>Tres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10.</td>
-<td>En vivo, en el móvil o en una segunda pestaña.</td>
+<td>03</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><code>03-indexing-and-broadcasting.ipynb</code></a></td>
+<td>Indexación y broadcasting con datos reales — Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="odd">
-<td><strong><a href="../es/companion.html">Complemento</a></strong> · <a href="../companion.html">EN</a></td>
-<td>Generado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito.</td>
-<td>Antes, para una primera pasada; después, para repasar.</td>
+<td>04</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><code>04-reshape-and-transpose.ipynb</code></a></td>
+<td>Reshape y transposición de imágenes reales — Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué <code>reshape</code> puede conservar la forma mientras destruye el significado.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="even">
-<td><strong><a href="../es/references.html">Referencias</a></strong> · <a href="../references.html">EN</a></td>
-<td>Los libros, artículos, documentación de <code>tensorly</code> y entradas del blog sobre los que se construye el taller, con DOI y páginas de los autores.</td>
-<td>Después de una sección, cuando quieras el tratamiento serio de lo que rozó.</td>
+<td>05</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><code>05-video-pipeline-design.ipynb</code></a></td>
+<td>Diseño de un pipeline de vídeo — Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 <tr class="odd">
-<td><strong><a href="https://github.com/project-delphi/tensors-workshop">Repositorio</a></strong></td>
-<td>La fuente de todo lo anterior, más las tres hojas de cálculo de Kahoot.</td>
-<td>Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab.</td>
+<td>06</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><code>06-contraction-with-einsum.ipynb</code></a></td>
+<td>Contracción con einsum — Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+<tr class="even">
+<td>07</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><code>07-inverses-and-pseudoinverse.ipynb</code></a></td>
+<td>Inversas y la pseudoinversa — Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+<tr class="odd">
+<td>08</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><code>08-recursion-with-matrices.ipynb</code></a></td>
+<td>Recursión con matrices y vectores — Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+<tr class="even">
+<td>09</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><code>09-matrix-factorizations.ipynb</code></a></td>
+<td>Factorizaciones matriciales — Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><code>10-tucker-decomposition.ipynb</code></a></td>
+<td>Descomposición de Tucker con datos reales — Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+<tr class="even">
+<td>11</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><code>11-tensor-factorizations.ipynb</code></a></td>
+<td>Factorizaciones tensoriales — Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><code>12-wrap-up-and-take-homes.ipynb</code></a></td>
+<td>Cierre y ejercicios para casa — Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
 </tr>
 </tbody>
 </table>
-<p>El manual es el <em>texto</em> fuente. Los datos que los siete comparten —los títulos de las secciones, el reloj, los enlaces— viven una sola vez en <a href="https://github.com/project-delphi/tensors-workshop/blob/main/_variables.yml"><code>_variables.yml</code></a> y todas las tablas del sitio se generan a partir de ahí, así que no pueden contradecirse. <strong>Las trece secciones, una por una, están en la <a href="../es/notebooks.html">página de cuadernos</a>.</strong></p>
 </section>
-<section id="requisitos-previos" class="level2">
-<h2 class="anchored" data-anchor-id="requisitos-previos">Requisitos previos</h2>
-<p>Todo lo que sigue es gratuito y no hace falta instalar nada en tu equipo.</p>
-<p><strong>Antes de la sesión</strong></p>
-<ul>
-<li><strong>El álgebra lineal de <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong>: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD. Ese capítulo es todo el conocimiento previo que se da por supuesto.</li>
-<li><strong><a href="https://github.com/Laverde97/linear-algebra-deep-learning"><code>linear-algebra-deep-learning</code></a></strong>: 14 cuadernos breves de Colab, bilingües (~2–3 horas en total), que cubren exactamente ese material, de vectores a PCA. Trabajo previo obligatorio: el taller avanza rápido y da por hecho que ya lo hiciste.</li>
-<li><strong>El <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">cuaderno 00</a>, ejecutado en Colab</strong>: descarga los tres archivos CSV que usa el taller. Ejecútalo antes de la sesión y avisa enseguida si falla: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después.</li>
-</ul>
-<p><strong>Recomendado</strong></p>
-<ul>
-<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a></strong> (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total. Míralo si el capítulo del libro te pareció puro manejo de símbolos: da la imagen geométrica de lo que una matriz <em>hace</em>, que es en lo que se apoyan las secciones 04 a 10.</li>
-</ul>
-<p><strong>Ten a mano el día del taller</strong></p>
-<ul>
-<li><strong>Una cuenta de Google</strong>: los cuadernos se ejecutan en <a href="https://colab.research.google.com/">Colab</a> desde el navegador. No hay que instalar nada.</li>
-<li><strong>Discord</strong>: la invitación te la pasa quien imparte el taller. Ahí ocurren las discusiones, los canales de grupo y las preguntas, en español o en inglés.</li>
-<li><strong>El móvil o una segunda pestaña para <a href="../kahoot.html">Kahoot</a></strong>: tres controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que registrarse: entras con un PIN.</li>
-</ul>
+<section id="para-ir-más-lejos" class="level2">
+<h2 class="anchored" data-anchor-id="para-ir-más-lejos">Para ir más lejos</h2>
+<p>Este <strong>no es una sección</strong>. Es un estudio a fondo, entregado como material para casa: sin diapositivas, sin Kahoot y sin minutos en el reloj del taller. La agenda de 210 minutos es exactamente la misma sin él.</p>
+<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>#</th>
+<th>Estudio a fondo</th>
+<th>Colab</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>13</td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><code>13-convolution-and-deconvolution.ipynb</code></a> — Convolución y deconvolución — Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada.</td>
+<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
+</tr>
+</tbody>
+</table>
 </section>
-<section id="cómo-trabajamos" class="level2">
-<h2 class="anchored" data-anchor-id="cómo-trabajamos">Cómo trabajamos</h2>
-<p>Cuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:</p>
-<ul>
-<li><strong>Bloques de ejercicios</strong>: 10 minutos programando y 5 de explicación.</li>
-<li><strong>Bloques de grupo</strong>: 10 minutos de discusión en tu canal y luego puesta en común.</li>
-</ul>
+<section id="ejecutarlos-fuera-de-colab" class="level2">
+<h2 class="anchored" data-anchor-id="ejecutarlos-fuera-de-colab">Ejecutarlos fuera de Colab</h2>
+<p>Los cuadernos solo necesitan el stack científico de Python. En local:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/project-delphi/tensors-workshop.git</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tensors-workshop</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p><code>matplotlib</code> y <code>ipywidgets</code> están en esa lista porque todos los cuadernos dibujan algo y todos menos el 00 usan deslizadores; los dos vienen con Colab, y por eso su ausencia solo se nota en local.</p>
+<p><code>scikit-learn</code> y <code>scikit-image</code> traen consigo los datos de tumores, los dígitos manuscritos y las fotografías, así que las secciones 01, 03, 04, 06 y 09 se ejecutan sin red en absoluto. Los otros nueve cuadernos descargan algo la primera vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia o —en el ejercicio E para casa del cuaderno 11— una grabación de voz.</p>
 </section>
-<section id="una-nota-sobre-el-idioma" class="level2">
-<h2 class="anchored" data-anchor-id="una-nota-sobre-el-idioma">Una nota sobre el idioma</h2>
-<p>El taller se imparte en inglés, pero muchos términos son casi idénticos en español: <em>tensor/tensor</em>, <em>matrix/matriz</em>, <em>axis/eje</em>, <em>dimension/dimensión</em>, <em>decomposition/descomposición</em>, <em>factorization/factorización</em>, <em>contraction/contracción</em>, <em>convolution/convolución</em>, <em>recursion/recursión</em>.</p>
-<p><strong>Pregunta en español o en inglés</strong>, lo que te permita preguntar más rápido. Las <a href="../slides/es/index.html">diapositivas están en los dos idiomas</a> y cada encabezado de los cuadernos lleva un resumen de una línea en español.</p>
+<section id="qué-necesita-cada-cuaderno" class="level2">
+<h2 class="anchored" data-anchor-id="qué-necesita-cada-cuaderno">Qué necesita cada cuaderno</h2>
+<table class="caption-top table">
+<caption>Colab ya tiene instalado todo lo de esta lista.</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 57%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Cuaderno</th>
+<th>Además de NumPy</th>
+<th>Red</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>00</td>
+<td><code>matplotlib</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code>, <code>imageio</code>†</td>
+<td>sí — los tres CSV, y un sondeo de 1 KB del clip de la tormenta</td>
+</tr>
+<tr class="even">
+<td>01</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td>02</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>imageio</code>†</td>
+<td>sí — el clip de la tormenta</td>
+</tr>
+<tr class="even">
+<td>03</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code></td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td>04</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code></td>
+<td>no</td>
+</tr>
+<tr class="even">
+<td>05</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>imageio</code>†</td>
+<td>sí — el clip de la tormenta</td>
+</tr>
+<tr class="odd">
+<td>06</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code></td>
+<td>no</td>
+</tr>
+<tr class="even">
+<td>07</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code></td>
+<td>sí — vivienda en California</td>
+</tr>
+<tr class="odd">
+<td>08</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
+<td>sí — pasajeros de aerolínea</td>
+</tr>
+<tr class="even">
+<td>09</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>no</td>
+</tr>
+<tr class="odd">
+<td>10</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
+<td>sí — viajes en taxi de Nueva York</td>
+</tr>
+<tr class="even">
+<td>11</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
+<td>sí — una grabación de voz, para el ejercicio E</td>
+</tr>
+<tr class="odd">
+<td>12</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
+<td>sí — pasajeros de aerolínea</td>
+</tr>
+<tr class="even">
+<td>13</td>
+<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
+<td>sí — viajes en taxi de Nueva York, y el clip de la tormenta</td>
+</tr>
+</tbody>
+</table>
+<p>† Lo instala el propio cuaderno con <code>%pip install -q</code>, y por eso ninguno de los dos está en el comando de arriba.</p>
 
 
 </section>
