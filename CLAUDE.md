@@ -187,6 +187,44 @@ for f in sorted(glob.glob('notebooks/*.ipynb')):
 "
 ```
 
+## How a notebook looks
+
+Two conventions carry the look of a notebook, and both are forced by *where*
+notebooks are read rather than chosen for taste.
+
+**Inline styles only.** A styled block is HTML in a markdown cell with an
+inline `style=` attribute. Colab strips a `<style>` block, so a stylesheet
+would silently do nothing; GitHub renders `.ipynb` but strips the `style`
+attribute itself. Three rules follow:
+
+- Every styled block must still read as plain prose with the styling gone, so
+  colour may never be the only thing carrying a meaning — that is why the
+  Spanish box says `ESPAÑOL` in words.
+- Tints are `rgba` over whatever the theme is painting, never opaque fills and
+  never a hard-coded text colour, so one palette reads in Colab light and Colab
+  dark without a second set of values.
+- Headings stay real markdown headings. Colab builds its outline from those,
+  and a title inside a `<div>` would leave the notebook unnavigable.
+
+A styled `<div>` is a raw HTML block, so nothing inside one is parsed as
+markdown: `**bold**` written there reaches the reader as asterisks. Use
+`<b>`, `<code>` and `<ul>` inside a box.
+
+`gen_notebooks.py` owns the vocabulary — `rule()`, `eyebrow()`, `es_box()` and
+one accent per notebook from `ACCENTS` — and spends it on the header and footer
+it generates. Body cells repeat the same inline styles by hand, because a body
+cell is authored in the `.ipynb`, including in Colab.
+
+**Two kinds of cell are folded**, and `hide-input` is the tag they share.
+`_normalize_cell` keys on that tag to restore `cellView` and
+`jupyter.source_hidden` after a Colab round-trip, which is what keeps a folded
+cell folded:
+
+| Tag | Hides | Check 10 |
+|---|---|---|
+| `solution` | an answer the reader should not see yet | **applies** — no visible cell may depend on a name only a solution binds, because a reader may never open one |
+| `plumbing` | widget and plotting scaffolding whose output is the lesson and whose source is noise | does not apply — the cell is meant to be run, and folding hides its source, not its execution |
+
 ## Extras: notebooks that are not sections
 
 `extras:` in `_variables.yml` declares a notebook that is not a section — a

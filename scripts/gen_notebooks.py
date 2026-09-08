@@ -68,6 +68,123 @@ def _lines(text: str) -> list[str]:
     return [ln + "\n" for ln in text.split("\n")[:-1]] + [text.split("\n")[-1]]
 
 
+# ── the visual system ────────────────────────────────────────────────────────
+#
+# Three rules hold this together, and all three come from where the notebooks
+# are read rather than from taste:
+#
+# 1. Inline `style=` attributes only. Colab strips a `<style>` block, so a
+#    stylesheet would silently do nothing.
+# 2. Every styled block must still read as plain prose with the styling gone.
+#    GitHub renders .ipynb and strips the style attribute itself, so colour
+#    may never be the only thing carrying a meaning -- the Spanish box says
+#    "ESPAÑOL" in words for exactly that reason.
+# 3. No opaque background and no hard-coded text colour. The tints are rgba
+#    over whatever the theme is painting, so one palette reads on Colab light
+#    and Colab dark without a second set of values.
+
+SANS = "ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,sans-serif"
+MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
+
+# One accent per notebook, indexed by section number, so a reader can tell at
+# a glance which notebook a screenshot came from. Mid-saturation hues only:
+# each has to hold its own against a white page and against Colab's #1e1e1e.
+ACCENTS = [
+    "#0ea5e9", "#6366f1", "#0891b2", "#7c3aed", "#059669", "#d97706",
+    "#db2777", "#0d9488", "#2563eb", "#c2410c", "#9333ea", "#16a34a",
+    "#e11d48", "#0284c7",
+]
+
+
+def accent(s: dict) -> str:
+    return ACCENTS[int(s["n"]) % len(ACCENTS)]
+
+
+def rgba(hex_colour: str, alpha: float) -> str:
+    r, g, b = (int(hex_colour[i:i + 2], 16) for i in (1, 3, 5))
+    return f"rgba({r},{g},{b},{alpha:g})"
+
+
+def rule(colour: str) -> str:
+    """The accent rule that opens a notebook: solid at the left, gone by the
+    right margin."""
+    return ('<div style="height:3px;border-radius:2px;margin:1.4em 0 1.6em;'
+            f'background:linear-gradient(90deg,{colour},{rgba(colour, 0)})">'
+            '</div>')
+
+
+def eyebrow(text: str, colour: str) -> str:
+    """Small caps, letter-spaced, in the accent: the format-and-length line."""
+    return (f'<span style="font:700 11px/1.6 {MONO};letter-spacing:.18em;'
+            f'color:{colour}">{text}</span>')
+
+
+_CODE_RE = re.compile(r"`([^`]+)`")
+_BOLD_RE = re.compile(r"\*\*(.+?)\*\*")
+_LINK_RE = re.compile(r"\[([^\]]+)\]\(([^)]+)\)")
+
+
+def inline_html(text: str) -> str:
+    """The inline markdown the headers actually use, rendered as HTML.
+
+    A styled `<div>` is a raw HTML block: nothing inside it is parsed as
+    markdown, so `**bold**` written there reaches the reader as asterisks.
+    Bold, code and links are the whole vocabulary `_variables.yml` uses.
+    """
+    text = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    # `<code>` needs no inline font: every renderer that strips <style> still
+    # styles the tag itself.
+    text = _CODE_RE.sub(lambda m: f"<code>{m.group(1)}</code>", text)
+    text = _BOLD_RE.sub(lambda m: f"<b>{m.group(1)}</b>", text)
+    return _LINK_RE.sub(lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>',
+                        text)
+
+
+def es_box(body_html: str) -> str:
+    """The Spanish half of a bilingual block, set apart rather than merely
+    indented.
+
+    Deliberately neutral grey and not the notebook's accent: Spanish is not a
+    kind of remark, it is the same remark, and colouring it would rank it.
+    """
+    return (
+        '<div style="border-left:4px solid rgba(130,130,150,.5);'
+        'background:rgba(130,130,150,.09);border-radius:0 8px 8px 0;'
+        f'padding:12px 16px;margin:1.2em 0 1.8em;font:400 14.5px/1.7 {SANS}">'
+        f'<div style="font:700 10.5px/1 {MONO};letter-spacing:.18em;'
+        'opacity:.62;margin-bottom:10px">🇪🇸 ESPAÑOL</div>'
+        f"{body_html}</div>"
+    )
+
+
+def es_prose(text: str) -> str:
+    """`> 🇪🇸 ...` blockquote prose from _variables.yml, as a Spanish box.
+
+    The leading flag is dropped -- the box carries its own label -- and blank
+    lines become paragraph breaks.
+    """
+    lines = [re.sub(r"^>\s?", "", ln) for ln in text.strip().splitlines()]
+    stripped = "\n".join(lines).strip()
+    stripped = re.sub(r"^🇪🇸\s*", "", stripped)
+    paragraphs = [p.strip().replace("\n", " ")
+                  for p in re.split(r"\n\s*\n", stripped) if p.strip()]
+    last = len(paragraphs) - 1
+    body = "".join(
+        f'<div style="margin:0 0 {"0" if i == last else ".7em"}">'
+        f"{inline_html(p)}</div>"
+        for i, p in enumerate(paragraphs))
+    return es_box(body)
+
+
+def es_list(items: list[str]) -> str:
+    """A Spanish objectives list, as a Spanish box."""
+    body = ('<ul style="margin:0;padding-left:1.2em">'
+            + "".join(f'<li style="margin:.35em 0">{inline_html(i)}</li>'
+                      for i in items)
+            + "</ul>")
+    return es_box(body)
+
+
 # ── scaffolding ──────────────────────────────────────────────────────────────
 
 def notebook_name(s: dict) -> str:
@@ -113,9 +230,11 @@ def header_cell(s: dict) -> dict:
         mins = f" · {s['minutes']} min" if s.get("minutes") else ""
         fmt_line = f"{part}{s['format_en']}{mins}"
 
+    a = accent(s)
     objs_en = "\n".join(f"- {o}" for o in s["objectives_en"])
-    objs_es = "\n".join(f"> - {o}" for o in s["objectives_es"])
 
+    # The heading stays a real markdown heading: Colab builds its outline from
+    # those, and a styled <div> title would leave the notebook unnavigable.
     if s.get("intro_en"):
         # Sections 01-11 and the extras: merged bilingual header. Intro
         # prose is authored in _variables.yml (intro_en / intro_es).
@@ -123,19 +242,19 @@ def header_cell(s: dict) -> dict:
 
 {badge}
 
-*{fmt_line}*
+{rule(a)}
+
+{eyebrow(fmt_line.upper(), a)}
 
 {s['intro_en'].rstrip(chr(10))}
 
-{s['intro_es'].rstrip(chr(10))}
+{es_prose(s['intro_es'])}
 
 ## What you will be able to do / Lo que podrás hacer
 
 {objs_en}
 
-> 🇪🇸
->
-{objs_es}
+{es_list(s['objectives_es'])}
 """)
 
     # Section 00: single-language header with an ES summary callout.
@@ -143,19 +262,19 @@ def header_cell(s: dict) -> dict:
 
 {badge}
 
-*{fmt_line}*
+{rule(a)}
 
-> 🇪🇸 **{s['title_es']}** — {s['summary_es']}
+{eyebrow(fmt_line.upper(), a)}
 
 {s['summary_en']}
+
+{es_prose(f"**{s['title_es']}** — {s['summary_es']}")}
 
 ## What you will be able to do
 
 {objs_en}
 
-> 🇪🇸 **Lo que podrás hacer:**
->
-{objs_es}
+{es_list(s['objectives_es'])}
 """)
 
 
@@ -163,19 +282,20 @@ def footer_cell(s: dict) -> dict:
     q = quiz_after(s["n"])
     site = REPO["site"]
     nxt = next_notebook(s)
+    colour = accent(s)
 
     if s.get("intro_en"):
-        return _footer_bilingual(q, nxt, site, extra=is_extra(s))
+        return _footer_bilingual(q, nxt, site, accent(s), extra=is_extra(s))
 
     # Section 00: single-language footer.
     if q:
-        body = f"""---
+        body = f"""{rule(colour)}
 
 ## Time for Kahoot 🎯
 
 **Kahoot {q['n']} — {q['title_en']}** · {q['questions']} questions, about 5 minutes.
 
-> 🇪🇸 **{q['title_es']}** — {q['questions']} preguntas, unos 5 minutos.
+{es_prose(f"**{q['title_es']}** — {q['questions']} preguntas, unos 5 minutos.")}
 
 Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
 
@@ -183,8 +303,8 @@ Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
 - [Import file (`.xlsx`)]({REPO['url']}/blob/{REPO['branch']}/{q['xlsx']})
 """
     else:
-        body = ("---\n\n## Done with this section\n"
-                "\n> 🇪🇸 **Fin de esta sección.**\n")
+        body = (f"{rule(colour)}\n\n## Done with this section\n\n"
+                f"{es_prose('**Fin de esta sección.**')}\n")
     if nxt:
         body += (f"\nNext up: **{nxt['n']} · {nxt['title_en']}** — "
                  f"[open in Colab]({colab_url(nxt)}).\n")
@@ -197,7 +317,7 @@ Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
 
 
 def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
-                      extra: bool = False) -> dict:
+                      colour: str, extra: bool = False) -> dict:
     """Merged bilingual footer for sections 01-11 and for the extras.
 
     An extra never gets a Kahoot block — `q` is always None for one — and the
@@ -211,7 +331,7 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
            "[Handbook / Manual]"
            f"({site}/tensors_workshop_plan_with_quizzes.html)")
 
-    parts = ["---", ""]
+    parts = [rule(colour), ""]
     if q:
         parts += [
             "## Time for Kahoot 🎯 / Hora de Kahoot 🎯",
@@ -223,8 +343,8 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
             f"Join at **{V['kahoot']['join']}** with the PIN on the "
             "facilitator's screen.",
             "",
-            f"> 🇪🇸 Entra a **{V['kahoot']['join']}** con el PIN que aparece "
-            "en la pantalla del facilitador.",
+            es_prose(f"Entra a **{V['kahoot']['join']}** con el PIN que "
+                     "aparece en la pantalla del facilitador."),
             "",
             "- [Quiz details and facilitator notes]"
             f"({site}/kahoot.html#quiz-{q['n']})",
@@ -258,15 +378,15 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
             f"That is the last deep dive. The rest is back on "
             f"[the workshop site]({site}/).",
             "",
-            f"> 🇪🇸 Ese es el último estudio a fondo. El resto está en "
-            f"[el sitio del taller]({site}/).",
+            es_prose("Ese es el último estudio a fondo. El resto está en "
+                     f"[el sitio del taller]({site}/)."),
             "",
         ]
     else:
         parts += [
             WORKSHOP["closing_en"],
             "",
-            WORKSHOP["closing_es"].rstrip(chr(10)),
+            es_prose(WORKSHOP["closing_es"]),
             "",
         ]
 
@@ -305,16 +425,26 @@ def _normalize_cell(cell: dict) -> dict:
     """Remove execution state and Colab-only per-cell metadata.
 
     Teaching metadata is deliberately left alone. In particular this preserves
-    the metadata used by folded solution cells: cellView, jupyter.source_hidden
-    and the solution/hide-input tags.
+    the metadata used by every folded cell: cellView, jupyter.source_hidden
+    and the solution/plumbing/hide-input tags.
     """
     metadata = cell.setdefault("metadata", {})
     for key in ("colab", "outputId", "executionInfo", "id"):
         metadata.pop(key, None)
 
     # Colab may drop cellView when saving a notebook back to GitHub.
-    # Restore the metadata required to keep solution cells folded.
-    if "solution" in metadata.get("tags", []):
+    # Restore the metadata required to keep a folded cell folded. Two kinds
+    # of cell are folded, and `hide-input` is what they share:
+    #
+    #   solution  -- an answer the reader should not see yet;
+    #   plumbing  -- widget and plotting scaffolding whose output is the
+    #                lesson and whose source is noise.
+    #
+    # The distinction is not cosmetic. Check 10 in check_links.py holds that
+    # no visible cell may depend on a name only a *solution* binds, because a
+    # reader may never open one. A plumbing cell carries no such rule: it is
+    # meant to be run, and folding hides its source, not its execution.
+    if "hide-input" in metadata.get("tags", []):
         metadata["cellView"] = "form"
         metadata.setdefault("jupyter", {})["source_hidden"] = True
 

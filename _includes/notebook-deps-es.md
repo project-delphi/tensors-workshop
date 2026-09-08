@@ -2,7 +2,7 @@
 | Cuaderno | Además de NumPy | Red |
 |---|---|---|
 | 00 | `matplotlib`, `pandas`, `scikit-learn`, `scikit-image`, `scipy`, `imageio`† | sí — vivienda en California, pasajeros de aerolínea, viajes en taxi de Nueva York, el clip de la tormenta (solo un sondeo de 1 KB) |
-| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `scipy` | no |
+| 01 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image` | no |
 | 02 | `matplotlib`, `ipywidgets`, `scikit-learn`, `scikit-image`, `imageio`† | sí — el clip de la tormenta |
 | 03 | `matplotlib`, `ipywidgets`, `scikit-learn` | no |
 | 04 | `matplotlib`, `ipywidgets`, `scikit-image` | no |

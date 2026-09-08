@@ -891,15 +891,15 @@ sections:
     intro_es: |-
       > 🇪🇸 Un tensor es una forma de **organizar números usando una o más direcciones, llamadas ejes**. En este cuaderno aprenderás a leer esos ejes antes de realizar operaciones más avanzadas.
     objectives_en:
-      - "Explain **tensor, axis, order, shape, slice, fiber, unfolding, and contraction** in plain language."
-      - "Read `.shape`, `.ndim`, and `.size` and say what the numbers mean."
-      - "Follow what happens to the axes when data is selected, rearranged, or summed."
-      - "Use simple `np.einsum` examples without treating the notation as a black box."
+      - "Explain **tensor, axis, order, shape, slice, fiber** and **unfolding** in plain language."
+      - "Read `.shape`, `.ndim` and `.size`, and say what each number counts."
+      - "Name which axes stay, move or disappear in an operation."
+      - "Predict a result's shape before you run the line that produces it."
     objectives_es:
-      - "Explicar en lenguaje sencillo **tensor, eje, orden, forma, corte, fibra, unfolding y contracción**."
-      - "Leer `.shape`, `.ndim` y `.size` y explicar qué significan sus números."
-      - "Seguir qué ocurre con los ejes cuando los datos se seleccionan, reorganizan o suman."
-      - "Usar ejemplos sencillos de `np.einsum` sin tratar la notación como una “caja negra”."
+      - "Explicar en lenguaje sencillo **tensor, eje, orden, forma, corte, fibra** y **unfolding**."
+      - "Leer `.shape`, `.ndim` y `.size`, y decir qué cuenta cada número."
+      - "Nombrar qué ejes permanecen, se mueven o desaparecen en una operación."
+      - "Predecir la forma de un resultado antes de ejecutar la línea que lo produce."
   s02:
     n: "02"
     slug: "thinking-in-n-dimensions"
