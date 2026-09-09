@@ -189,6 +189,16 @@ for f in sorted(glob.glob('notebooks/*.ipynb')):
 
 ## How a notebook looks
 
+Core routes and learning prompts are notebook-owned body cells. The route cell's
+`metadata.workshop` lists preparation IDs and the activity ID. Visible **Core prep**
+labels and `workshop-core-prep` / `workshop-core-activity` tags identify that route.
+Do not make a core route depend on an optional exercise or an unopened solution.
+`scripts/check_teaching_materials.py` checks these references and the teaching
+kit's local links; `tests/test_teaching_materials.py` tests the checker and tiny
+worked examples. These checks do not execute the full notebook routes.
+The facilitator guide, assessments, worked mistakes and feedback form are
+hand-maintained Markdown with matching files in `es/`. Keep both languages aligned.
+
 Two conventions carry the look of a notebook, and both are forced by *where*
 notebooks are read rather than chosen for taste.
 
@@ -299,7 +309,7 @@ scikit-learn,scikit-image python scripts/gen_figures.py
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
-`check_links.py` is the test suite — there is no pytest here. It prints
+`check_links.py` is the site test suite — there is no pytest here. It prints
 thirteen numbered checks, in the order they run. Eleven can fail, and any
 failure exits non-zero: notebooks are valid with no outputs or execution
 counts; every notebook `docs/` serves is byte-identical to the one committed in

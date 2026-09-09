@@ -3,10 +3,6 @@ title: "References and further reading"
 subtitle: "Books, papers, software, and worked examples"
 ---
 
-::: {.callout-note appearance="simple"}
-🇪🇸 ¿Prefieres español? [Esta página en español](es/references.qmd).
-:::
-
 Look up a concept or explore it further. For tensors, start with the
 Kolda–Bader survey. Then choose the paper for the method you need.
 

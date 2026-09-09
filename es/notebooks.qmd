@@ -4,10 +4,6 @@ subtitle: "Un cuaderno por sección, más un estudio a fondo para casa, y cada u
 lang: es
 ---
 
-::: {.callout-note appearance="simple"}
-🇬🇧 Prefer English? [This page in English](../notebooks.qmd).
-:::
-
 Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como
 estudio a fondo para casa. Están **escritos principalmente en inglés**, y cada
 encabezado lleva un resumen de una línea en español.

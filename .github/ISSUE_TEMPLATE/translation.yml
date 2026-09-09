@@ -1,0 +1,22 @@
+name: Translation correction
+description: Report an English–Spanish mismatch; either language is welcome
+title: "[translation] "
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Page or notebook and heading / Página o cuaderno y encabezado
+    validations:
+      required: true
+  - type: textarea
+    id: mismatch
+    attributes:
+      label: Original and translation / Original y traducción
+      description: Quote the short passages that differ in meaning.
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: Suggested wording / Redacción sugerida
+      description: Optional. Explain the intended meaning if you can.

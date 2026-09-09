@@ -39,8 +39,8 @@ jobs:
 
       - name: Install checker dependencies
         # Quarto never executes the notebooks, so the scientific stack is not
-        # needed here — only what the generators and the checker import.
-        run: python -m pip install --quiet pyyaml nbformat
+        # needed here — NumPy runs only the tiny teaching counterexamples.
+        run: python -m pip install --quiet pyyaml nbformat numpy
 
       - name: Regenerate derived files
         # Pure Python and deterministic, so this one CAN be byte-exact: it
@@ -61,6 +61,11 @@ jobs:
         # Runs against docs/ AS COMMITTED, before any re-render — this is what
         # GitHub Pages is actually serving right now.
         run: python scripts/check_links.py
+
+      - name: Check teaching materials
+        run: |
+          python scripts/check_teaching_materials.py
+          python -m unittest discover -s tests -v
 
       - name: Keep a copy of the committed site
         run: cp -R docs "$RUNNER_TEMP/docs-committed"

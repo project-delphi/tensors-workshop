@@ -4,11 +4,6 @@ subtitle: "Libros, artículos, software y ejemplos resueltos"
 lang: es
 ---
 
-::: {.callout-note appearance="simple"}
-🇬🇧 Prefer English? [This page in English](../references.qmd).
-La mayoría de las fuentes están en inglés.
-:::
-
 Consulta un concepto o profundiza en él. Para tensores, empieza por la revisión
 de Kolda y Bader. Después elige el artículo del método que necesites.
 

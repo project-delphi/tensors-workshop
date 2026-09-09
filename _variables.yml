@@ -148,10 +148,12 @@ companion:
     title_es: "Tensores en aprendizaje automático — resumen en vídeo"
     youtube_id_en: ""                 # TODO: paste the EN YouTube video id
     youtube_id_es: ""                 # TODO: paste the ES YouTube video id
-    url_en: "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/b2cc077a-4770-4bf8-948c-30bb68dd66f2"
-    url_es: ""                        # TODO: the ES video artifact, if one is generated
-    minutes_en: 7                     # 6:59 in NotebookLM
-    minutes_es: 0                     # TODO: the ES running time
+    # Organizer-supplied video and poster, added 2026-09-09. Both page
+    # languages link to this same artifact; its duration is not verified.
+    url_en: &video_overview_url "https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4cd12b58-ba38-428b-9f0f-c16d76ce6bb7"
+    url_es: *video_overview_url
+    minutes_en: 0
+    minutes_es: 0
     # A poster frame, committed under images/, shown while the video is still
     # a NotebookLM link: the section then looks like a video rather than
     # reading like one. One image for both languages -- the same choice
@@ -159,9 +161,9 @@ companion:
     # because that is the part a screen reader actually reads out. The
     # YouTube embed, when it lands, wins over it: an embed carries its own
     # poster.
-    thumb: ""                         # TODO: e.g. images/companion-video.png
-    thumb_alt_en: ""
-    thumb_alt_es: ""
+    thumb: "images/companion-video.png"
+    thumb_alt_en: "Watch the NotebookLM video: Tensors Machine Learning, illustrated with stacked tensor slices."
+    thumb_alt_es: "Ver el vídeo de NotebookLM: Tensors Machine Learning, ilustrado con cortes de un tensor apilados."
 
   # The Audio Overview, committed under media/. `_quarto.yml` carries
   # `media/**` in `resources:` so Quarto copies it verbatim, the same way it

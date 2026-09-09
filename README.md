@@ -54,6 +54,11 @@ is on the **[workshop homepage](https://project-delphi.github.io/tensors-worksho
 One task per notebook. Use them during a discussion break or after the session.
 Each includes a time box, questions, and a short group deliverable.
 
+Teaching kit: [run sheet](facilitator-guide.md) · [entry/exit checks](assessments.md) ·
+[worked mistakes](worked-mistakes.md) · [feedback form](workshop-feedback.md).
+
+Maintainers: [release checklist](RELEASE_CHECKLIST.md) · [changelog](CHANGELOG.md).
+
 ## A machine-generated companion
 
 A
@@ -166,6 +171,10 @@ notebooks/              14 Colab notebooks — 13 sections + 1 take-home extra
 group-tasks.md  es/group-tasks.md   open-ended group activities, EN and ES
 kahoot/                 3 .xlsx quiz import files
 scripts/                generators and the link checker
+facilitator-guide.md    live teaching run sheet (Spanish copy in es/)
+assessments.md          entry/exit checks and rubric (also in es/)
+worked-mistakes.md      small counterexamples (also in es/)
+workshop-feedback.md    reusable pilot feedback form (also in es/)
 tensors_workshop_plan_with_quizzes.md      the handbook — the session text
 es/tensors_workshop_plan_with_quizzes.md   the same, machine-translated
 docs/                   rendered site (committed — this is what Pages serves)
@@ -234,6 +243,9 @@ mantiene.
 
 Una actividad por cuaderno, para una pausa de discusión o después del taller.
 Cada una incluye tiempo, preguntas y un resultado breve para compartir.
+
+Para enseñar: [guion](es/facilitator-guide.md) · [evaluación](es/assessments.md) ·
+[errores resueltos](es/worked-mistakes.md) · [opinión](es/workshop-feedback.md).
 
 ## Todos los datos son reales
 

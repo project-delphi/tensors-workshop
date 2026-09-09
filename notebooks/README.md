@@ -7,6 +7,12 @@ plus one take-home deep dive, numbered 13, that is **not** a section.
 **English-primary, with a one-line Spanish summary under each heading** —
 *cada encabezado lleva un resumen en español.*
 
+Each notebook marks a **core path**, optional work, two outcomes, and a
+`predict → run → explain → check` activity. Run **Core prep** in order, then
+jump to **Core activity**. Facilitators can combine
+these with the [group task library](../group-tasks.md) and
+[run sheet](../facilitator-guide.md).
+
 ## Every notebook is self-contained
 
 Its setup cell installs, imports and loads **its own data**, so you can open any
@@ -15,7 +21,7 @@ others. Sections 02, 05, 07, 08 and 10 re-fetch their own data rather than
 depending on notebook 00, as do all three of 11, 12 and 13. You will see the
 same URLs more than once — that is deliberate, not accidental duplication.
 
-## The twelve sections
+## The thirteen sections
 
 <!-- BEGIN notebooks -->
 | # | Notebook | Covers | Colab |
@@ -82,11 +88,12 @@ including edits made with Gemini, no longer need to be retyped into
 
 Ownership is split deliberately, for sections and extras alike:
 
-- Generated: header, objectives, Colab badge, Setup preamble, Setup code, footer.
-- Notebook-owned: teaching cells between Setup and the footer.
+- Generated: header, objectives, Colab badge and footer.
+- Notebook-owned: every body cell, including Setup, core routes and learning prompts.
 
 Shared objectives and workshop facts live in `_variables.yml`.
-Central Setup code lives in `scripts/content.py`.
+Core-route metadata lists preparation and activity cell IDs. Keep it aligned
+with the visible labels; `scripts/check_teaching_materials.py` checks the links.
 
 ### Colab to GitHub workflow
 
@@ -115,6 +122,6 @@ locally. `imageio[ffmpeg]` and `tensorly` are not, because the notebooks that
 need them install them themselves.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the digits and the
-photographs, so sections 01, 03, 04, 06 and 09 need no network at all. The other
+photographs, so notebooks 01, 03, 04, 06 and 13 need no network at all. The other
 nine fetch something the first time they run — see the table on the
 [notebooks page](https://project-delphi.github.io/tensors-workshop/notebooks.html).

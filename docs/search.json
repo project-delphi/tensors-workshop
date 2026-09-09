@@ -4,7 +4,7 @@
     "href": "tensors_workshop_plan_with_quizzes.html",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "🇪🇸 ¿Prefieres español? Este manual en español — es una traducción automática de esta página, que sigue siendo la fuente de verdad.\nThis is the session text: the theory, every exercise, the worked solutions and the take-home appendices. It is what to follow during the workshop and what to keep afterwards. The books and papers behind it are on the references page, which holds them for both languages.\nBefore you arrive, work through the prerequisites on the workshop homepage: the required reading, the pre-work notebooks, and what to have ready on the day. The homepage also describes every other resource — the slides, the notebooks you type in, the three Kahoot checks and the references.\nA note on numbering. This handbook groups the workshop into four Parts and seven exercise Blocks. The notebooks, the slides and the section tables number those same segments 00 to 12, and that number is the canonical one. The schedule below carries both, so any row can be read across to turn one label into the other."
+    "text": "This is the session text: the theory, every exercise, the worked solutions and the take-home appendices. It is what to follow during the workshop and what to keep afterwards. The books and papers behind it are on the references page, which holds them for both languages.\nBefore you arrive, work through the prerequisites on the workshop homepage: the required reading, the pre-work notebooks, and what to have ready on the day. The homepage also describes every other resource — the slides, the notebooks you type in, the three Kahoot checks and the references.\nA note on numbering. This handbook groups the workshop into four Parts and seven exercise Blocks. The notebooks, the slides and the section tables number those same segments 00 to 12, and that number is the canonical one. The schedule below carries both, so any row can be read across to turn one label into the other."
   },
   {
     "objectID": "tensors_workshop_plan_with_quizzes.html#schedule",
@@ -487,7 +487,7 @@
     "href": "es/companion.html#video",
     "title": "Complemento del taller",
     "section": "Resumen en vídeo",
-    "text": "Resumen en vídeo\n\nVídeo próximamente."
+    "text": "Resumen en vídeo\n\n\n\n\nTensores en aprendizaje automático — resumen en vídeo — Ver en NotebookLM."
   },
   {
     "objectID": "es/companion.html#shorts",
@@ -529,14 +529,14 @@
     "href": "es/companion.html#notebooklm",
     "title": "Complemento del taller",
     "section": "En NotebookLM",
-    "text": "En NotebookLM\nAbre el cuaderno para explorar las fuentes. Ver la infografía general.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
+    "text": "En NotebookLM\nAbre el cuaderno para explorar las fuentes. Ver la infografía general."
   },
   {
     "objectID": "es/notebooks.html",
     "href": "es/notebooks.html",
     "title": "Cuadernos",
     "section": "",
-    "text": "🇬🇧 Prefer English? This page in English.\nCada sección del taller tiene su cuaderno. Uno más queda al final del día, como estudio a fondo para casa. Están escritos principalmente en inglés, y cada encabezado lleva un resumen de una línea en español."
+    "text": "Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como estudio a fondo para casa. Están escritos principalmente en inglés, y cada encabezado lleva un resumen de una línea en español."
   },
   {
     "objectID": "es/notebooks.html#cómo-están-construidos",
@@ -592,7 +592,7 @@
     "href": "companion.html#video",
     "title": "Workshop companion",
     "section": "Video overview",
-    "text": "Video overview\n\nTensors in machine learning — video overview — 7 minutes. Watch in NotebookLM."
+    "text": "Video overview\n\n\n\n\nTensors in machine learning — video overview — Watch in NotebookLM."
   },
   {
     "objectID": "companion.html#shorts",
@@ -634,7 +634,7 @@
     "href": "companion.html#notebooklm",
     "title": "Workshop companion",
     "section": "In NotebookLM",
-    "text": "In NotebookLM\nOpen the notebook to explore the sources. View the overview infographic.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
+    "text": "In NotebookLM\nOpen the notebook to explore the sources. View the overview infographic."
   },
   {
     "objectID": "kahoot.html",
@@ -683,7 +683,7 @@
     "href": "index.html",
     "title": "Tensors for Machine Learning",
     "section": "",
-    "text": "🇪🇸 ¿Prefieres español? Esta página en español. Las preguntas son bienvenidas en español o en inglés."
+    "text": "The whole day in one picture Video overview One-minute shorts Infographics Self-check quiz Mind map In NotebookLM"
   },
   {
     "objectID": "index.html#what-this-is",
@@ -697,7 +697,7 @@
     "href": "index.html#watch-it-first",
     "title": "Tensors for Machine Learning",
     "section": "Watch it first",
-    "text": "Watch it first\n\nTensors in machine learning — video overview — 7 minutes. Watch in NotebookLM.\nFind more NotebookLM summaries on the companion page."
+    "text": "Watch it first\n\n\n\n\nTensors in machine learning — video overview — Watch in NotebookLM.\nFind more NotebookLM summaries on the companion page."
   },
   {
     "objectID": "index.html#who-it-is-for",
@@ -739,7 +739,7 @@
     "href": "notebooks.html",
     "title": "Notebooks",
     "section": "",
-    "text": "🇪🇸 ¿Prefieres español? Esta página en español.\nEvery section of the workshop has a notebook. One more sits past the end of the day, as a take-home deep dive. They are English-primary, and every heading carries a one-line Spanish summary — cada encabezado lleva un resumen en español."
+    "text": "Every section of the workshop has a notebook. One more sits past the end of the day, as a take-home deep dive. They are English-primary, and every heading carries a one-line Spanish summary — cada encabezado lleva un resumen en español."
   },
   {
     "objectID": "notebooks.html#how-they-are-built",
@@ -781,7 +781,7 @@
     "href": "references.html",
     "title": "References and further reading",
     "section": "",
-    "text": "🇪🇸 ¿Prefieres español? Esta página en español.\nLook up a concept or explore it further. For tensors, start with the Kolda–Bader survey. Then choose the paper for the method you need.\nBackground: Chapter 2 of Deep Learning. See the pre-work before the session."
+    "text": "Look up a concept or explore it further. For tensors, start with the Kolda–Bader survey. Then choose the paper for the method you need.\nBackground: Chapter 2 of Deep Learning. See the pre-work before the session."
   },
   {
     "objectID": "references.html#ref-linear-algebra",
@@ -823,7 +823,7 @@
     "href": "es/index.html",
     "title": "Tensores para Aprendizaje Automático",
     "section": "",
-    "text": "🇬🇧 Prefer English? This page in English. El taller se imparte en inglés, pero puedes preguntar en español cuando quieras."
+    "text": "Todo el día en una imagen Resumen en vídeo Vídeos de un minuto Infografías Autoevaluación Mapa mental En NotebookLM"
   },
   {
     "objectID": "es/index.html#qué-es-esto",
@@ -837,7 +837,7 @@
     "href": "es/index.html#míralo-primero",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Míralo primero",
-    "text": "Míralo primero\n\nVídeo próximamente.\nEncuentra más resúmenes de NotebookLM en el complemento."
+    "text": "Míralo primero\n\n\n\n\nTensores en aprendizaje automático — resumen en vídeo — Ver en NotebookLM.\nEncuentra más resúmenes de NotebookLM en el complemento."
   },
   {
     "objectID": "es/index.html#para-quién-es",
@@ -879,7 +879,7 @@
     "href": "es/references.html",
     "title": "Referencias y lectura adicional",
     "section": "",
-    "text": "🇬🇧 Prefer English? This page in English. La mayoría de las fuentes están en inglés.\nConsulta un concepto o profundiza en él. Para tensores, empieza por la revisión de Kolda y Bader. Después elige el artículo del método que necesites.\nBase: capítulo 2 de Deep Learning. Consulta el trabajo previo antes de la sesión."
+    "text": "Consulta un concepto o profundiza en él. Para tensores, empieza por la revisión de Kolda y Bader. Después elige el artículo del método que necesites.\nBase: capítulo 2 de Deep Learning. Consulta el trabajo previo antes de la sesión."
   },
   {
     "objectID": "es/references.html#ref-linear-algebra",
