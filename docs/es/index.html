@@ -6,6 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Domina los tensores en 210 minutos con datos reales y ejercicios prácticos en Python.">
 
 <title>Tensores para Aprendizaje Automático – Tensors for Machine Learning</title>
 <style>
@@ -34,7 +35,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
@@ -67,21 +67,15 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Buscar"
   }
 }</script>
-<style>
-
-      .quarto-title-block .quarto-title-banner {
-        background-image: url(../images/hero-band.png);
-background-size: cover;
-      }
-</style>
 
 
+<link rel="stylesheet" href="../homepage.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+  <header id="quarto-header" class="headroom fixed-top">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
@@ -182,11 +176,11 @@ background-size: cover;
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
     <a class="nav-link" href="../index.html" rel="lang-switch-en"> 
-<span class="menu-text">EN</span></a>
+<span class="menu-text">🇬🇧 EN</span></a>
   </li>  
   <li class="nav-item">
     <a class="nav-link" href="../es/index.html" rel="lang-switch-es"> 
-<span class="menu-text">ES</span></a>
+<span class="menu-text">🇪🇸 ES</span></a>
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/project-delphi/tensors-workshop"> <i class="bi bi-github" role="img" aria-label="Source on GitHub">
@@ -201,129 +195,117 @@ background-size: cover;
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
-  <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-body">
-      <h1 class="title">Tensores para Aprendizaje Automático</h1>
-            <p class="subtitle lead">Un taller de 3 horas con código, datos reales y tres cuestionarios</p>
-                      </div>
-  </div>
-    
-  
-  <div class="quarto-title-meta">
-
-      
-    
-      
-    </div>
-    
-  
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     
 <!-- main -->
-<main class="content quarto-banner-title-block" id="quarto-document-content">
+<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
 
 
 
-
-<div class="companion-strip">
-<p><a href="../es/companion.html#brainstorm">Todo el día en una imagen</a> <a href="../es/companion.html#video">Resumen en vídeo</a> <a href="../es/companion.html#shorts">Vídeos de un minuto</a> <a href="../es/companion.html#infographics">Infografías</a> <a href="../es/companion.html#test-yourself">Autoevaluación</a> <a href="../es/companion.html#map">Mapa mental</a> <a href="../es/companion.html#notebooklm">En NotebookLM</a></p>
+<div class="workshop-landing">
+<nav class="landing-language-switch" aria-label="Idioma">
+  <a href="../index.html" lang="en" hreflang="en"><span aria-hidden="true">🇬🇧</span> English</a>
+  <a href="./index.html" lang="es" hreflang="es" aria-current="page"><span aria-hidden="true">🇪🇸</span> Español</a>
+</nav>
+<div class="workshop-hero">
+<div class="hero-copy">
+<p><span class="workshop-badge">🌐 Taller en inglés · Preguntas en español e inglés</span></p>
+<section id="domina-los-tensores-en-minutos" class="level1">
+<h1>Domina los tensores en 210 minutos</h1>
+<p>Cambia la forma de tensores, resuelve sistemas, aplica convoluciones y factoriza con datos reales y ejercicios prácticos en Python.</p>
+<p><a href="./tensors_workshop_plan_with_quizzes.html" class="hero-button">🚀 Empieza el taller (manual)</a></p>
+<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb" class="hero-secondary">💻 Abre el cuaderno de preparación</a></p>
+</section>
 </div>
-<section id="qué-es-esto" class="level2">
-<h2 class="anchored" data-anchor-id="qué-es-esto">Qué es esto</h2>
-<p>Aprende a cambiar la forma, resolver, convolucionar y factorizar tensores en 210 minutos.</p>
-<p>Trabaja con imágenes, viajes en taxi y cifras de pasajeros. Encuentra valores faltantes, escalas desiguales y píxeles constantes. Algunos ejemplos sintéticos pequeños explican ideas concretas.</p>
-</section>
-<section id="míralo-primero" class="level2">
-<h2 class="anchored" data-anchor-id="míralo-primero">Míralo primero</h2>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<div class="poster-frame">
-<p><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4cd12b58-ba38-428b-9f0f-c16d76ce6bb7"><img src="../images/companion-video.png" class="img-fluid" alt="Ver el vídeo de NotebookLM: Tensors Machine Learning, ilustrado con cortes de un tensor apilados."></a></p>
+<div class="hero-visual">
+<svg viewbox="0 0 400 360" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="tensor-title">Bloques de un tensor tridimensional apilados</title>
+  <desc id="tensor-desc">Tres capas cuadriculadas de un tensor apiladas a lo largo del eje de profundidad.</desc>
+  <defs>
+    <g id="tensor-layer" stroke="#315b78" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M60 110 200 40 340 110 200 180Z" fill="#d6eaf4"></path>
+      <path d="M60 110 200 180 200 220 60 150Z" fill="#70aac9"></path>
+      <path d="M200 180 340 110 340 150 200 220Z" fill="#39749b"></path>
+      <path d="M95 92.5 235 162.5M130 75 270 145M165 57.5 305 127.5M95 127.5 235 57.5M130 145 270 75M165 162.5 305 92.5" fill="none" stroke="#6e9eb9"></path>
+      <path d="M95 127.5V167.5M130 145V185M165 162.5V202.5M235 162.5V202.5M270 145V185M305 127.5V167.5" fill="none"></path>
+    </g>
+  </defs>
+  <ellipse cx="200" cy="317" rx="145" ry="24" fill="#2f4858" opacity=".08"></ellipse>
+  <use href="#tensor-layer" y="110"></use>
+  <use href="#tensor-layer" y="55"></use>
+  <use href="#tensor-layer"></use>
+</svg>
 </div>
-<p><strong><a href="https://notebook.google.com/notebook/29755b94-43c4-46ca-83b8-8cf0524f040c/artifact/4cd12b58-ba38-428b-9f0f-c16d76ce6bb7">Tensores en aprendizaje automático — resumen en vídeo</a></strong> — Ver en NotebookLM.</p>
-<p>Encuentra más resúmenes de NotebookLM en el <a href="../es/companion.html">complemento</a>.</p>
-</section>
-<section id="para-quién-es" class="level2">
-<h2 class="anchored" data-anchor-id="para-quién-es">Para quién es</h2>
-<p>Conoces el álgebra lineal de <em><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</em>. No necesitas teoría de tensores. Los términos nuevos se explican al aparecer.</p>
-</section>
+</div>
+<div class="facilitator-banner">
+<p>Facilitado por <strong>Ravi Kalia</strong> · Trabajo en grupos en <strong>Discord</strong> · 10 min de código / 5 min de explicación</p>
+</div>
 <section id="qué-hay-aquí" class="level2">
-<h2 class="anchored" data-anchor-id="qué-hay-aquí">Qué hay aquí</h2>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>Recurso</th>
-<th>Para qué sirve</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td><strong><a href="../es/tensors_workshop_plan_with_quizzes.html">Manual</a></strong> · <a href="../tensors_workshop_plan_with_quizzes.html">EN</a></td>
-<td>Leer teoría, ejercicios y soluciones.</td>
-</tr>
-<tr class="even">
-<td><strong><a href="../slides/es/index.html">Diapositivas</a></strong> · <a href="../slides/en/index.html">EN</a></td>
-<td>Seguir la sesión.</td>
-</tr>
-<tr class="odd">
-<td><strong><a href="../es/notebooks.html">Cuadernos</a></strong> · <a href="../notebooks.html">EN</a></td>
-<td>Escribir código en Colab.</td>
-</tr>
-<tr class="even">
-<td><strong><a href="../kahoot.html">Kahoot</a></strong></td>
-<td>Comprobar lo aprendido durante la sesión.</td>
-</tr>
-<tr class="odd">
-<td><strong><a href="../es/companion.html">Complemento</a></strong> · <a href="../companion.html">EN</a></td>
-<td>Repasar con vídeo, audio, diagramas y preguntas.</td>
-</tr>
-<tr class="even">
-<td><strong><a href="../es/references.html">Referencias</a></strong> · <a href="../references.html">EN</a></td>
-<td>Explorar libros, artículos y software.</td>
-</tr>
-<tr class="odd">
-<td><strong><a href="https://github.com/project-delphi/tensors-workshop">Repositorio</a></strong></td>
-<td>Obtener los archivos fuente o contribuir una corrección.</td>
-</tr>
-</tbody>
-</table>
+<h2 data-anchor-id="qué-hay-aquí">Tus recursos para el taller</h2>
+<div class="resource-grid">
+<section id="manual" class="level3 resource-card">
+<h3 data-anchor-id="manual">📖 Manual</h3>
+<p>Teoría completa, ejercicios y soluciones paso a paso.</p>
+<p><a href="./tensors_workshop_plan_with_quizzes.html" class="resource-button">Lee el manual</a></p>
+</section>
+<section id="cuadernos" class="level3 resource-card">
+<h3 data-anchor-id="cuadernos">🚀 Cuadernos</h3>
+<p>Cuadernos interactivos de Python para ejecutar en Google Colab.</p>
+<p><a href="../es/notebooks.html" class="resource-button">Ejecuta el código</a></p>
+</section>
+<section id="diapositivas" class="level3 resource-card">
+<h3 data-anchor-id="diapositivas">📊 Diapositivas</h3>
+<p>Presentaciones visuales para seguir las sesiones del taller.</p>
+<p><a href="../slides/es/index.html" class="resource-button">Ver diapositivas</a></p>
+</section>
+<section id="complemento" class="level3 resource-card">
+<h3 data-anchor-id="complemento">💡 Complemento</h3>
+<p>Mapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.</p>
+<p><a href="../es/companion.html" class="resource-button">Explora el complemento</a></p>
+</section>
+<section id="kahoot" class="level3 resource-card">
+<h3 data-anchor-id="kahoot">🎯 Kahoot</h3>
+<p>Cuestionarios interactivos en directo para comprobar lo aprendido.</p>
+<p><a href="https://kahoot.it/" class="resource-button">Entra al cuestionario</a></p>
+</section>
+<section id="referencias" class="level3 resource-card">
+<h3 data-anchor-id="referencias">📚 Referencias</h3>
+<p>Artículos clave, capítulos de libros y código fuente del repositorio.</p>
+<p><a href="../es/references.html" class="resource-button">Consulta las fuentes</a></p>
+</section>
+</div>
 </section>
 <section id="requisitos-previos" class="level2">
-<h2 class="anchored" data-anchor-id="requisitos-previos">Requisitos previos</h2>
-<p>Las herramientas son gratuitas y funcionan en el navegador.</p>
-<p><strong>Antes de la sesión</strong></p>
-<ul>
-<li>Repasa el álgebra lineal de <strong><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong>: vectores, matrices, productos, inversas, descomposición espectral y SVD.</li>
-<li><strong><a href="https://github.com/Laverde97/linear-algebra-deep-learning"><code>linear-algebra-deep-learning</code></a></strong>: trabajo previo obligatorio. Completa 14 cuadernos bilingües, de vectores a PCA. Reserva 2–3 horas.</li>
-<li><strong>El <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">cuaderno 00</a>, ejecutado en Colab</strong>: comprueba la preparación y las descargas. Avisa de cualquier error antes de la sesión.</li>
-</ul>
-<p><strong>Recomendado</strong></p>
-<ul>
-<li><strong><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a></strong> (3Blue1Brown, en inglés con subtítulos): un repaso visual. 16 vídeos, unas 3 horas.</li>
-</ul>
-<p><strong>Ten a mano el día del taller</strong></p>
-<ul>
-<li><strong><a href="https://colab.research.google.com/">Colab</a></strong> para programar.</li>
-<li><strong>Discord</strong> para preguntas y trabajo en grupo. Recibirás una invitación.</li>
-<li><strong>El móvil o una segunda pestaña para <a href="../kahoot.html">Kahoot</a></strong>. Entra con el PIN de la sesión.</li>
-</ul>
+<h2 data-anchor-id="requisitos-previos">¿Conoces el álgebra lineal básica? Ya puedes empezar.</h2>
+<div class="prerequisite-list">
+<section id="paso-1-conceptos-básicos-obligatorio" class="level3 prerequisite-step">
+<h3 data-anchor-id="paso-1-conceptos-básicos-obligatorio">Paso 1: Conceptos básicos <span class="step-badge">Obligatorio</span></h3>
+<p>Repasa vectores, matrices y SVD en el <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">capítulo 2 de Goodfellow</a> o completa los <a href="https://github.com/Laverde97/linear-algebra-deep-learning">cuadernos de trabajo previo</a>.</p>
+</section>
+<section id="paso-2-preparación-obligatorio-5-min" class="level3 prerequisite-step">
+<h3 data-anchor-id="paso-2-preparación-obligatorio-5-min">Paso 2: Preparación <span class="step-badge">Obligatorio, 5 min</span></h3>
+<p>Ejecuta el <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">cuaderno 00</a> en Google Colab para cargar los conjuntos de datos.</p>
+</section>
+<section id="paso-3-repaso-visual-opcional" class="level3 prerequisite-step">
+<h3 data-anchor-id="paso-3-repaso-visual-opcional">Paso 3: Repaso visual <span class="step-badge step-optional">Opcional</span></h3>
+<p>Mira <a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a>, de 3Blue1Brown.</p>
+</section>
+</div>
 </section>
 <section id="cómo-trabajamos" class="level2">
-<h2 class="anchored" data-anchor-id="cómo-trabajamos">Cómo trabajamos</h2>
-<ul>
-<li><strong>Bloques de ejercicios</strong>: 10 minutos programando y 5 de explicación.</li>
-<li><strong>Bloques de grupo</strong>: 10 minutos de discusión en tu canal y luego puesta en común.</li>
-</ul>
+<h2 data-anchor-id="cómo-trabajamos">210 minutos de práctica a un ritmo constante.</h2>
+<ol class="workshop-pipeline" aria-label="Ritmo de actividades del taller">
+  <li><span aria-hidden="true">💻</span> <strong>10 min</strong> Código</li>
+  <li><span aria-hidden="true">💡</span> <strong>5 min</strong> Repaso de conceptos</li>
+  <li><span aria-hidden="true">💬</span> <strong>10 min</strong> Discusión en grupo</li>
+</ol>
 </section>
-<section id="una-nota-sobre-el-idioma" class="level2">
-<h2 class="anchored" data-anchor-id="una-nota-sobre-el-idioma">Una nota sobre el idioma</h2>
-<p>El taller se imparte en inglés. <strong>Pregunta en español o en inglés.</strong> Las <a href="../slides/es/index.html">diapositivas</a> y los cuadernos ofrecen ambos idiomas.</p>
+</div>
 
 
-</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -346,13 +328,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
       if (clz.startsWith('code-annotation-')) {                     

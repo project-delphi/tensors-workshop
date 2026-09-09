@@ -117,13 +117,12 @@ website:
     right:
       # Both always visible -- this is the control that switches the rest of
       # the navbar. `lang-switch-*` marks them so the current language can be
-      # shown as the active one; each goes to the other language's homepage,
-      # not to a translation of the current page (only three pages have one,
-      # and each of those carries its own in-page link to its counterpart).
-      - text: "EN"
+      # shown as the active one; each goes to that language's homepage.
+      # Landing pages also show a full-label switch outside the mobile menu.
+      - text: "🇬🇧 EN"
         href: index.qmd
         rel: lang-switch-en
-      - text: "ES"
+      - text: "🇪🇸 ES"
         href: es/index.qmd
         rel: lang-switch-es
       - icon: github

@@ -700,6 +700,13 @@
     "text": "If you are running out of time\nThe handbook’s cutting order, in order:\n\nQuiz 2 — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.\nTODO 4 of section 09 (true deconvolution — the most technically demanding).\nThe RNN snippet in section 08.\nQuestion 5 of either group block.\nQuiz 1.\n\nNever cut section 01’s Three Operations That Matter, section 10, or Quiz 3. Quiz 3 is the cheapest way to find out whether Tucker and CP landed, and the only chance to find out is before students leave."
   },
   {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Master Tensors in 210 Minutes",
+    "section": "",
+    "text": "🇬🇧 English\n  🇪🇸 Español\n\n\n\n🌐 English Workshop · Questions welcomed in EN & ES\n\n\nReshape, solve, convolve, and factorize tensors with real-world data and hands-on Python code.\n🚀 Start Workshop (Handbook)\n💻 Open Setup Notebook\n\n\n\n\n  Stacked three-dimensional tensor blocks\n  Three gridded tensor layers stacked along the depth axis.\n  \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n\n\n\n\nHosted by Ravi Kalia · Live breakouts on Discord · 10m coding / 5m discussion rhythm\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 or complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
+  },
+  {
     "objectID": "index.html#whats-here",
     "href": "index.html#whats-here",
     "title": "Master Tensors in 210 Minutes",
@@ -807,58 +814,30 @@
   {
     "objectID": "es/index.html",
     "href": "es/index.html",
-    "title": "Tensores para Aprendizaje Automático",
+    "title": "Domina los tensores en 210 minutos",
     "section": "",
-    "text": "Todo el día en una imagen Resumen en vídeo Vídeos de un minuto Infografías Autoevaluación Mapa mental En NotebookLM"
+    "text": "🇬🇧 English\n  🇪🇸 Español\n\n\n\n🌐 Taller en inglés · Preguntas en español e inglés\n\n\nCambia la forma de tensores, resuelve sistemas, aplica convoluciones y factoriza con datos reales y ejercicios prácticos en Python.\n🚀 Empieza el taller (manual)\n💻 Abre el cuaderno de preparación\n\n\n\n\n  Bloques de un tensor tridimensional apilados\n  Tres capas cuadriculadas de un tensor apiladas a lo largo del eje de profundidad.\n  \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n\n\n\n\nFacilitado por Ravi Kalia · Trabajo en grupos en Discord · 10 min de código / 5 min de explicación\n\n\n\n\n\n\nTeoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes\n\n\n\n\n\n\n\n\nRepasa vectores, matrices y SVD en el capítulo 2 de Goodfellow o completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown.\n\n\n\n\n\n\n  💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   },
   {
-    "objectID": "es/index.html#qué-es-esto",
-    "href": "es/index.html#qué-es-esto",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Qué es esto",
-    "text": "Qué es esto\nAprende a cambiar la forma, resolver, convolucionar y factorizar tensores en 210 minutos.\nTrabaja con imágenes, viajes en taxi y cifras de pasajeros. Encuentra valores faltantes, escalas desiguales y píxeles constantes. Algunos ejemplos sintéticos pequeños explican ideas concretas."
+    "objectID": "es/index.html#whats-here",
+    "href": "es/index.html#whats-here",
+    "title": "Domina los tensores en 210 minutos",
+    "section": "",
+    "text": "Teoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes"
   },
   {
-    "objectID": "es/index.html#míralo-primero",
-    "href": "es/index.html#míralo-primero",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Míralo primero",
-    "text": "Míralo primero\n\n\n\n\nTensores en aprendizaje automático — resumen en vídeo — Ver en NotebookLM.\nEncuentra más resúmenes de NotebookLM en el complemento."
+    "objectID": "es/index.html#prerequisites",
+    "href": "es/index.html#prerequisites",
+    "title": "Domina los tensores en 210 minutos",
+    "section": "",
+    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow o completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
   },
   {
-    "objectID": "es/index.html#para-quién-es",
-    "href": "es/index.html#para-quién-es",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Para quién es",
-    "text": "Para quién es\nConoces el álgebra lineal de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. No necesitas teoría de tensores. Los términos nuevos se explican al aparecer."
-  },
-  {
-    "objectID": "es/index.html#qué-hay-aquí",
-    "href": "es/index.html#qué-hay-aquí",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Qué hay aquí",
-    "text": "Qué hay aquí\n\n\n\nRecurso\nPara qué sirve\n\n\n\n\nManual · EN\nLeer teoría, ejercicios y soluciones.\n\n\nDiapositivas · EN\nSeguir la sesión.\n\n\nCuadernos · EN\nEscribir código en Colab.\n\n\nKahoot\nComprobar lo aprendido durante la sesión.\n\n\nComplemento · EN\nRepasar con vídeo, audio, diagramas y preguntas.\n\n\nReferencias · EN\nExplorar libros, artículos y software.\n\n\nRepositorio\nObtener los archivos fuente o contribuir una corrección."
-  },
-  {
-    "objectID": "es/index.html#requisitos-previos",
-    "href": "es/index.html#requisitos-previos",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Requisitos previos",
-    "text": "Requisitos previos\nLas herramientas son gratuitas y funcionan en el navegador.\nAntes de la sesión\n\nRepasa el álgebra lineal de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectores, matrices, productos, inversas, descomposición espectral y SVD.\nlinear-algebra-deep-learning: trabajo previo obligatorio. Completa 14 cuadernos bilingües, de vectores a PCA. Reserva 2–3 horas.\nEl cuaderno 00, ejecutado en Colab: comprueba la preparación y las descargas. Avisa de cualquier error antes de la sesión.\n\nRecomendado\n\nEssence of linear algebra (3Blue1Brown, en inglés con subtítulos): un repaso visual. 16 vídeos, unas 3 horas.\n\nTen a mano el día del taller\n\nColab para programar.\nDiscord para preguntas y trabajo en grupo. Recibirás una invitación.\nEl móvil o una segunda pestaña para Kahoot. Entra con el PIN de la sesión."
-  },
-  {
-    "objectID": "es/index.html#cómo-trabajamos",
-    "href": "es/index.html#cómo-trabajamos",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Cómo trabajamos",
-    "text": "Cómo trabajamos\n\nBloques de ejercicios: 10 minutos programando y 5 de explicación.\nBloques de grupo: 10 minutos de discusión en tu canal y luego puesta en común."
-  },
-  {
-    "objectID": "es/index.html#una-nota-sobre-el-idioma",
-    "href": "es/index.html#una-nota-sobre-el-idioma",
-    "title": "Tensores para Aprendizaje Automático",
-    "section": "Una nota sobre el idioma",
-    "text": "Una nota sobre el idioma\nEl taller se imparte en inglés. Pregunta en español o en inglés. Las diapositivas y los cuadernos ofrecen ambos idiomas."
+    "objectID": "es/index.html#how-we-work",
+    "href": "es/index.html#how-we-work",
+    "title": "Domina los tensores en 210 minutos",
+    "section": "",
+    "text": "💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   },
   {
     "objectID": "es/references.html",
@@ -1393,10 +1372,24 @@
     "text": "—\n\n\n12 · Cierre y ejercicios para casa\n\n\nEl ejercicio para casa 13 es convolución y deconvolución: un kernel pequeño reutilizado en muchas posiciones, correlación frente a convolución verdadera, la convolución transpuesta como superposición y suma, y Richardson-Lucy recuperando una fotografía real desenfocada. Es el tercer caso de la idea que conecta el taller, y el único que la sala ya no ejecuta.\n\n\nSección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Take-home 13 ↗\n📖 La atención como dos contracciones ↗"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Master Tensors in 210 Minutes",
+    "objectID": "es/index.html#qué-hay-aquí",
+    "href": "es/index.html#qué-hay-aquí",
+    "title": "Domina los tensores en 210 minutos",
     "section": "",
-    "text": "🌐 English Workshop · Questions welcomed in EN & ES\n\n\nReshape, solve, convolve, and factorize tensors with real-world data and hands-on Python code.\n🚀 Start Workshop (Handbook)\n💻 Open Setup Notebook\n\n\n\n\n  Stacked three-dimensional tensor blocks\n  Three gridded tensor layers stacked along the depth axis.\n  \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n\n\n\n\nHosted by Ravi Kalia · Live breakouts on Discord · 10m coding / 5m discussion rhythm\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 or complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
+    "text": "Teoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes"
+  },
+  {
+    "objectID": "es/index.html#requisitos-previos",
+    "href": "es/index.html#requisitos-previos",
+    "title": "Domina los tensores en 210 minutos",
+    "section": "",
+    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow o completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
+  },
+  {
+    "objectID": "es/index.html#cómo-trabajamos",
+    "href": "es/index.html#cómo-trabajamos",
+    "title": "Domina los tensores en 210 minutos",
+    "section": "",
+    "text": "💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   }
 ]
