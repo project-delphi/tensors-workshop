@@ -463,24 +463,14 @@ def video_block(lang: str, prefix: str) -> str:
             return head + {
                 "en": (f"**[{title}]({url})** — "
                        + (f"{mins} minutes. " if mins else "")
-                       + "This one is not on YouTube yet. It plays inside "
-                         "NotebookLM, so it asks you for a Google account. "
-                         "Once it is on YouTube it will play here, with no "
-                         "account and no sign-in.\n"),
+                       + "Watch in NotebookLM.\n"),
                 "es": (f"**[{title}]({url})** — "
                        + (f"{mins} minutos. " if mins else "")
-                       + "Este todavía no está en YouTube. Se reproduce "
-                         "dentro de NotebookLM, así que te pide una cuenta de "
-                         "Google. Cuando esté en YouTube se reproducirá aquí, "
-                         "sin cuenta y sin iniciar sesión.\n"),
+                       + "Ver en NotebookLM.\n"),
             }[lang]
         return {
-            "en": "*Not published yet.* NotebookLM generates the video "
-                  "overview, and it is re-uploaded to YouTube. Until that "
-                  "happens, this section needs a Google account.\n",
-            "es": "*Todavía sin publicar.* NotebookLM genera el resumen en "
-                  "vídeo y luego se sube a YouTube. Hasta que eso ocurra, "
-                  "esta sección pide una cuenta de Google.\n",
+            "en": "*Video coming soon.*\n",
+            "es": "*Vídeo próximamente.*\n",
         }[lang]
     # youtube-nocookie, deliberately: the player sets no tracking cookie until
     # the visitor actually presses play.
@@ -517,33 +507,21 @@ def audio_block(lang: str, prefix: str) -> str:
     if not f:
         url = a.get(f"url_{lang}") or ""
         if url:
-            # The middle state, matching the video's: the artifact plays in
-            # NotebookLM today and costs a Google account, and the cover is
-            # ours and costs nothing.
+            # The artifact plays in NotebookLM; the cover is served locally.
             head = ("::: {.poster-frame}\n"
                     + poster(prefix, thumb, alt, url, "audio")
                     + "\n:::\n\n") if thumb else ""
             return head + {
                 "en": (f"**[{title}]({url})** — "
                        + (f"{mins} minutes. " if mins else "")
-                       + "This one is not exported yet. It plays inside "
-                         "NotebookLM, so it asks you for a Google account. "
-                         "Once the file is committed here it will play on "
-                         "this page, with no account and no third party.\n"),
+                       + "Listen in NotebookLM.\n"),
                 "es": (f"**[{title}]({url})** — "
                        + (f"{mins} minutos. " if mins else "")
-                       + "Este todavía no se ha exportado. Se reproduce "
-                         "dentro de NotebookLM, así que te pide una cuenta de "
-                         "Google. Cuando el archivo esté guardado aquí sonará "
-                         "en esta página, sin cuenta y sin terceros.\n"),
+                       + "Escuchar en NotebookLM.\n"),
             }[lang]
         return {
-            "en": "*Not exported yet.* NotebookLM's Audio Overview "
-                  "downloads as a file. When it lands it will play right "
-                  "here, with no account and no third party.\n",
-            "es": "*Todavía sin exportar.* El resumen en audio de "
-                  "NotebookLM se descarga como archivo. Cuando esté, sonará "
-                  "aquí mismo, sin cuenta y sin terceros.\n",
+            "en": "*Audio coming soon.*\n",
+            "es": "*Audio próximamente.*\n",
         }[lang]
     meta = ({"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
             if mins else "")
@@ -562,29 +540,20 @@ def audio_block(lang: str, prefix: str) -> str:
 # picture is a still of something live, and a page that lets a reader think
 # otherwise has mis-sold the click.
 SHOT_NOTE = {
-    "en": "Screenshot — the real one is interactive, in NotebookLM.",
-    "es": "Captura de pantalla; el de verdad es interactivo, en NotebookLM.",
+    "en": "Preview of the interactive activity.",
+    "es": "Vista previa de la actividad interactiva.",
 }
 
-# The invitation to look before you click. It belongs here, above the cards it
-# describes, rather than in the two .qmd pages -- with no thumb exported there
-# are no pictures, and a page promising some is the small lie that makes the
-# big warning at the top of it less believable. Exactly the reason
-# infographics_gallery() keeps its own "click one to open it full size" behind
-# `if exported`.
+# Only invite readers to open a preview when screenshots are available.
 SHOT_INTRO = {
-    "en": "The pictures are screenshots, served from this site. Look at "
-          "one before you spend an account on the click.",
-    "es": "Las imágenes son capturas de pantalla, servidas desde este "
-          "sitio. Mira una antes de gastar una cuenta en el clic.",
+    "en": "Open a preview to try the activity in NotebookLM.",
+    "es": "Abre una vista previa para probar la actividad en NotebookLM.",
 }
 
-# Carried on the card itself rather than only in the prose above it. Every
-# heading on this page is a linked anchor, so a reader can arrive at `#map`
-# with none of the page's earlier warnings behind them.
-ACCOUNT_NOTE = {
-    "en": "Opens in NotebookLM; needs a Google account.",
-    "es": "Se abre en NotebookLM; pide una cuenta de Google.",
+# Name the destination. Readers are assumed to have a Google account.
+DESTINATION_NOTE = {
+    "en": "Opens in NotebookLM.",
+    "es": "Se abre en NotebookLM.",
 }
 
 # An artifact whose `url_*` is still `default_url` has no share link of its own
@@ -594,9 +563,8 @@ ACCOUNT_NOTE = {
 # the card, because a heading on this page is a linked anchor and a reader can
 # arrive at it with none of the page's prose behind them.
 PLACEHOLDER_NOTE = {
-    "en": "No share link of its own yet — this opens the notebook, not the "
-          "artifact.",
-    "es": "Todavía sin enlace propio: esto abre el cuaderno, no el artefacto.",
+    "en": "Find this activity in the notebook.",
+    "es": "Busca esta actividad en el cuaderno.",
 }
 
 
@@ -627,19 +595,15 @@ def shorts_list(lang: str, prefix: str) -> str:
     if not items:
         return {"en": "*None generated yet.*\n",
                 "es": "*Todavía no se ha generado ninguno.*\n"}[lang]
-    lead = {"en": "One minute each, generated from the handbook and the "
-                  "notebooks. Every one opens in NotebookLM.",
-            "es": "Un minuto cada uno, generados a partir del manual y los "
-                  "cuadernos. Todos se abren en NotebookLM."}[lang]
+    lead = {"en": "About a minute per idea. Opens in NotebookLM.",
+            "es": "Un minuto por idea, aproximadamente. Se abren en NotebookLM."}[lang]
     out = [lead, "", "::: {.info-strip}"]
     for i in items:
         meta = [i["length"], SHORT_SECTION[lang].format(n=i["covers"])]
-        note = ACCOUNT_NOTE[lang]
-        if other := OTHER_LANG.get((lang, i["lang"])):
-            note = f"{other} {note}"
+        note = OTHER_LANG.get((lang, i["lang"]), "")
         out += ["::: {.info-card}",
                 f'**[{i[f"title_{lang}"]}]({i["url"]})**<br>{" · ".join(meta)}',
-                f"<br>[{note}]{{.shot-note}}",
+                *([f"<br>[{note}]{{.shot-note}}"] if note else []),
                 ":::"]
     out.append(":::")
     return "\n".join(out) + "\n"
@@ -666,14 +630,8 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     items = COMPANION.get("infographics") or []
     if not items:
         pending = {
-            "en": ("*Not exported yet.* The infographics live in "
-                   f"[the notebook]({COMPANION['notebook_url']}) until "
-                   "someone exports them as PNGs and commits them here. That "
-                   "link needs a Google account. These pages will not."),
-            "es": ("*Todavía sin exportar.* Las infografías están en "
-                   f"[el cuaderno]({COMPANION['notebook_url']}) hasta que "
-                   "alguien las exporte como PNG y las guarde aquí. Ese "
-                   "enlace pide una cuenta de Google. Estas páginas no."),
+            "en": f"[View infographics in NotebookLM]({COMPANION['notebook_url']}).",
+            "es": f"[Ver infografías en NotebookLM]({COMPANION['notebook_url']}).",
         }
         return pending[lang] + "\n"
 
@@ -701,10 +659,8 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     # that says otherwise is the small lie that makes the big warning at the
     # top of it less believable.
     if exported:
-        out += [{"en": "Click one to open it full size. These are PNG "
-                       "exports, served from this site.",
-                 "es": "Haz clic en una para abrirla a tamaño completo. Son "
-                       "exportaciones en PNG, servidas desde este sitio."}[lang],
+        out += [{"en": "Click an image to enlarge it.",
+                 "es": "Haz clic en una imagen para ampliarla."}[lang],
                 "", "::: {.info-strip}"]
         for i in exported:
             alt = i[alt_key]
@@ -725,14 +681,12 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     if linked:
         if exported:
             out.append("")
-        out += [{"en": "Not exported yet, so these open in NotebookLM:",
-                 "es": "Todavía sin exportar, así que estas se abren en "
-                       "NotebookLM:"}[lang],
+        out += [{"en": "View in NotebookLM:",
+                 "es": "Ver en NotebookLM:"}[lang],
                 "", "::: {.info-strip}"]
         for i in linked:
             out += ["::: {.info-card}",
                     f"**[{i[title_key]}]({i['url']})**",
-                    f"<br>[{ACCOUNT_NOTE[lang]}]{{.shot-note}}",
                     ":::"]
         out.append(":::")
     return "\n".join(out) + "\n"
@@ -750,32 +704,16 @@ def infographics_gallery(lang: str, prefix: str) -> str:
 # whole page is built to avoid.
 LINK_COPY = {
     "quiz": {
-        "en": ("Twenty-six generated multiple-choice questions, from "
-               "section 00 to section 12.",
-               "After the session, to find out which sections did not stick."),
-        "es": ("Veintiséis preguntas de opción múltiple generadas, de la "
-               "sección 00 a la sección 12.",
-               "Después de la sesión, para descubrir qué secciones no se te "
-               "quedaron."),
+        "en": ("26 multiple-choice questions.", "Find what to review."),
+        "es": ("26 preguntas de opción múltiple.", "Descubre qué repasar."),
     },
     "flashcards": {
-        "en": ("Sixty cards, question on one side and answer on the other, "
-               "over the linear algebra as well as the tensors.",
-               "Spaced repetition, in the weeks after."),
-        "es": ("Sesenta tarjetas, pregunta por un lado y respuesta por el "
-               "otro, sobre el álgebra lineal además de los tensores.",
-               "Repetición espaciada, en las semanas siguientes."),
+        "en": ("60 cards on linear algebra and tensors.", "Practice recalling key ideas."),
+        "es": ("60 tarjetas de álgebra lineal y tensores.", "Practica las ideas clave."),
     },
     "mindmap": {
-        "en": ("Five branches off one root — defining tensors, storing data, "
-               "moving axes, factorizing, computing — each opening further.",
-               "Once, early. Seeing the ladder before you climb it makes "
-               "the middle rungs less arbitrary."),
-        "es": ("Cinco ramas de una sola raíz —definir tensores, almacenar "
-               "datos, mover ejes, factorizar, calcular—, y cada una se abre "
-               "más.",
-               "Una vez, pronto. Ver la escalera antes de subirla hace que "
-               "los peldaños del medio parezcan menos arbitrarios."),
+        "en": ("Five branches connect the workshop's ideas.", "Expand a branch to explore."),
+        "es": ("Cinco ramas conectan las ideas del taller.", "Abre una rama para explorar."),
     },
 }
 
@@ -805,7 +743,7 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
         if thumb:
             alt = a.get(f"thumb_alt_{lang}") or title
             out += [poster(prefix, thumb, alt, url, name), ""]
-        note = ACCOUNT_NOTE[lang]
+        note = DESTINATION_NOTE[lang]
         if url == COMPANION["default_url"]:
             note += " " + PLACEHOLDER_NOTE[lang]
         out += [f"**[{title}]({url})**<br>{what}<br>*{when}*",

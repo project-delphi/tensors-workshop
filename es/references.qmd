@@ -1,38 +1,22 @@
 ---
 title: "Referencias y lectura adicional"
-subtitle: "Los libros, artículos, programas y entradas sobre los que se construye este taller"
+subtitle: "Libros, artículos, software y ejemplos resueltos"
 lang: es
 ---
 
 ::: {.callout-note appearance="simple"}
-🇬🇧 Prefer English? [This page in English](../references.qmd). Casi cada obra
-enlazada aquí está en inglés.
+🇬🇧 Prefer English? [This page in English](../references.qmd).
+La mayoría de las fuentes están en inglés.
 :::
 
-Cada obra de abajo es una en la que el taller se apoya. Unas son libros que da
-por leídos. Otras son artículos que una sección implementa. Otras son
-bibliotecas que te recomienda usar en lugar de tu propio código. Ninguna está
-aquí para engordar una bibliografía.
-
-Se puede leer de dos maneras. **Antes o durante la sesión**, es donde un
-término que acabas de encontrar está definido como es debido. **Después de la
-sesión**, es la escalera hacia arriba. Empieza por el artículo de revisión.
-Luego lee el que trate la descomposición que hayas terminado necesitando.
+Consulta un concepto o profundiza en él. Para tensores, empieza por la revisión
+de Kolda y Bader. Después elige el artículo del método que necesites.
 
 {{< include ../_includes/references-es.md >}}
 
-## Lo que no está en esta página {#elsewhere}
+## Recursos relacionados {#elsewhere}
 
-- **[Requisitos previos](index.qmd#requisitos-previos)** — el trabajo previo,
-  completo, en la página principal. Esa es la lista que hay que hacer *antes*
-  de la sesión; esta página es para después.
-- **[El manual](tensors_workshop_plan_with_quizzes.md)** — el texto del propio
-  taller, con los cinco apéndices para casa. Está traducido por máquina desde
-  el [inglés](../tensors_workshop_plan_with_quizzes.md), que es la versión de
-  referencia. Cita las obras de arriba allí donde cada una hace falta por
-  primera vez.
-- **[El complemento generado por máquina](companion.qmd)** — un vídeo,
-  infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un
-  mapa mental. NotebookLM los generó a partir de las fuentes del propio taller.
-  Está *generado, no escrito*, así que úsalo como segunda pasada. Cuando
-  contradiga a una obra de esta página, la obra tiene razón.
+- [Requisitos previos](index.qmd#requisitos-previos) — prepara la sesión.
+- [Manual](tensors_workshop_plan_with_quizzes.md) — teoría, ejercicios y soluciones.
+  Traducción automática del [original en inglés](../tensors_workshop_plan_with_quizzes.md).
+- [Complemento](companion.qmd) — resúmenes y preguntas de NotebookLM.
