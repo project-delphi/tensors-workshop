@@ -471,65 +471,65 @@
   {
     "objectID": "es/companion.html",
     "href": "es/companion.html",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "",
-    "text": "NotebookLM generó el material de esta página a partir de las fuentes del propio taller. No lo ha escrito ninguna persona y nadie lo ha revisado. Úsalo como una segunda pasada sobre material que ya has visto. Cuando algo aquí contradiga al manual, el manual tiene razón. Generado el 2026-09-07.\nAlgunos artefactos están exportados y los sirve este sitio: sin cuenta y sin iniciar sesión. Los demás son enlaces a NotebookLM, que pide una cuenta de Google. Cada tarjeta dice de cuál se trata."
+    "text": "Repasa el taller con estos materiales de NotebookLM, generados el 2026-09-07. Nadie los ha revisado. Usa el manual para comprobar respuestas."
   },
   {
     "objectID": "es/companion.html#brainstorm",
     "href": "es/companion.html#brainstorm",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "Todo el día en una imagen",
-    "text": "Todo el día en una imagen\nEste diagrama es la excepción de la página: lo dibujó una persona, a partir del manual. Cuatro ideas, y cada sección bajo la idea a la que sirve.\n\n\n\n\nCuatro ideas, un solo objeto\n\nCada sección sirve a una de estas cuatro ideas. Generaliza la matriz — 01 Qué es un tensor, 02 Pensar en N dimensiones; Contiene los datos — 00 Preparación y bienvenida, 03 Indexación y broadcasting con datos reales, 05 Diseño de un pipeline de vídeo; Sus ejes se mueven — 04 Reshape y transposición de imágenes reales, 06 Contracción con einsum; Se factoriza — 07 Inversas y la pseudoinversa, 08 Recursión con matrices y vectores, 09 Factorizaciones matriciales, 10 Descomposición de Tucker con datos reales, 11 Factorizaciones tensoriales. Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. 12 une las cuatro. 13 es el ejercicio para casa. Cuatro ideas, un solo objeto Cada sección sirve a una de estas cuatro ideas.   ⊞ Generaliza la matriz El mismo objeto, con tantos ejes como pidan los datos. 01 Qué es un tensor 02 Pensar en N dimensiones   ▦ Contiene los datos Imágenes, vídeo, viajes en taxi: una sola caja de números. 00 Preparación y bienvenida 03 Indexación y broadcasting con datos reales 05 Diseño de un pipeline de vídeo   ⇄ Sus ejes se mueven reshape relee los números. transpose mueve los ejes. 04 Reshape y transposición de imágenes reales 06 Contracción con einsum   ∏ Se factoriza Divídelo en partes más simples que puedas usar. 07 Inversas y la pseudoinversa 08 Recursión con matrices y vectores 09 Factorizaciones matriciales 10 Descomposición de Tucker con datos reales 11 Factorizaciones tensoriales  Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. Lo ves ocurrir en las secciones 07, 10 y 13. 12 une las cuatro. 13 es el ejercicio para casa.\n\n\n\nCuatro ideas, un solo objeto\n\nCada sección sirve a una de estas cuatro ideas. Generaliza la matriz — 01 Qué es un tensor, 02 Pensar en N dimensiones; Contiene los datos — 00 Preparación y bienvenida, 03 Indexación y broadcasting con datos reales, 05 Diseño de un pipeline de vídeo; Sus ejes se mueven — 04 Reshape y transposición de imágenes reales, 06 Contracción con einsum; Se factoriza — 07 Inversas y la pseudoinversa, 08 Recursión con matrices y vectores, 09 Factorizaciones matriciales, 10 Descomposición de Tucker con datos reales, 11 Factorizaciones tensoriales. Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. 12 une las cuatro. 13 es el ejercicio para casa. Cuatro ideas, un solo objeto Cada sección sirve a una de estas cuatro ideas.   ⊞ Generaliza la matriz El mismo objeto, con tantos ejes como pidan los datos. 01 Qué es un tensor 02 Pensar en N dimensiones   ▦ Contiene los datos Imágenes, vídeo, viajes en taxi: una sola caja de números. 00 Preparación y bienvenida 03 Indexación y broadcasting con datos reales 05 Diseño de un pipeline de vídeo   ⇄ Sus ejes se mueven reshape relee los números. transpose mueve los ejes. 04 Reshape y transposición de imágenes reales 06 Contracción con einsum   ∏ Se factoriza Divídelo en partes más simples que puedas usar. 07 Inversas y la pseudoinversa 08 Recursión con matrices y vectores 09 Factorizaciones matriciales 10 Descomposición de Tucker con datos reales 11 Factorizaciones tensoriales  Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. Lo ves ocurrir en las secciones 07, 10 y 13. 12 une las cuatro. 13 es el ejercicio para casa."
+    "text": "Todo el día en una imagen\nCuatro ideas conectan las secciones. Este diagrama se dibujó a mano.\n\n\n\n\nCuatro ideas, un solo objeto\n\nCada sección sirve a una de estas cuatro ideas. Generaliza la matriz — 01 Qué es un tensor, 02 Pensar en N dimensiones; Contiene los datos — 00 Preparación y bienvenida, 03 Indexación y broadcasting con datos reales, 05 Diseño de un pipeline de vídeo; Sus ejes se mueven — 04 Reshape y transposición de imágenes reales, 06 Contracción con einsum; Se factoriza — 07 Inversas y la pseudoinversa, 08 Recursión con matrices y vectores, 09 Factorizaciones matriciales, 10 Descomposición de Tucker con datos reales, 11 Factorizaciones tensoriales. Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. 12 une las cuatro. 13 es el ejercicio para casa. Cuatro ideas, un solo objeto Cada sección sirve a una de estas cuatro ideas.   ⊞ Generaliza la matriz El mismo objeto, con tantos ejes como pidan los datos. 01 Qué es un tensor 02 Pensar en N dimensiones   ▦ Contiene los datos Imágenes, vídeo, viajes en taxi: una sola caja de números. 00 Preparación y bienvenida 03 Indexación y broadcasting con datos reales 05 Diseño de un pipeline de vídeo   ⇄ Sus ejes se mueven reshape relee los números. transpose mueve los ejes. 04 Reshape y transposición de imágenes reales 06 Contracción con einsum   ∏ Se factoriza Divídelo en partes más simples que puedas usar. 07 Inversas y la pseudoinversa 08 Recursión con matrices y vectores 09 Factorizaciones matriciales 10 Descomposición de Tucker con datos reales 11 Factorizaciones tensoriales  Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. Lo ves ocurrir en las secciones 07, 10 y 13. 12 une las cuatro. 13 es el ejercicio para casa.\n\n\n\nCuatro ideas, un solo objeto\n\nCada sección sirve a una de estas cuatro ideas. Generaliza la matriz — 01 Qué es un tensor, 02 Pensar en N dimensiones; Contiene los datos — 00 Preparación y bienvenida, 03 Indexación y broadcasting con datos reales, 05 Diseño de un pipeline de vídeo; Sus ejes se mueven — 04 Reshape y transposición de imágenes reales, 06 Contracción con einsum; Se factoriza — 07 Inversas y la pseudoinversa, 08 Recursión con matrices y vectores, 09 Factorizaciones matriciales, 10 Descomposición de Tucker con datos reales, 11 Factorizaciones tensoriales. Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. 12 une las cuatro. 13 es el ejercicio para casa. Cuatro ideas, un solo objeto Cada sección sirve a una de estas cuatro ideas.   ⊞ Generaliza la matriz El mismo objeto, con tantos ejes como pidan los datos. 01 Qué es un tensor 02 Pensar en N dimensiones   ▦ Contiene los datos Imágenes, vídeo, viajes en taxi: una sola caja de números. 00 Preparación y bienvenida 03 Indexación y broadcasting con datos reales 05 Diseño de un pipeline de vídeo   ⇄ Sus ejes se mueven reshape relee los números. transpose mueve los ejes. 04 Reshape y transposición de imágenes reales 06 Contracción con einsum   ∏ Se factoriza Divídelo en partes más simples que puedas usar. 07 Inversas y la pseudoinversa 08 Recursión con matrices y vectores 09 Factorizaciones matriciales 10 Descomposición de Tucker con datos reales 11 Factorizaciones tensoriales  Un hilo recorre las cuatro. Cuando no hay respuesta exacta, busca la mejor aproximación en la que puedas confiar. Lo ves ocurrir en las secciones 07, 10 y 13. 12 une las cuatro. 13 es el ejercicio para casa."
   },
   {
     "objectID": "es/companion.html#video",
     "href": "es/companion.html#video",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "Resumen en vídeo",
-    "text": "Resumen en vídeo\n\nTodavía sin publicar. NotebookLM genera el resumen en vídeo y luego se sube a YouTube. Hasta que eso ocurra, esta sección pide una cuenta de Google."
+    "text": "Resumen en vídeo\n\nVídeo próximamente."
   },
   {
     "objectID": "es/companion.html#shorts",
     "href": "es/companion.html#shorts",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "Vídeos de un minuto",
-    "text": "Vídeos de un minuto\nOcho vídeos. Cada uno trata una sola idea y nombra la sección a la que pertenece.\n\nUn minuto cada uno, generados a partir del manual y los cuadernos. Todos se abren en NotebookLM.\n\n\nDescifrar las dimensiones de un tensor en NumPy1:17 · sección 01 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la memoria aplasta los tensores1:20 · sección 04 Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la pseudoinversa resuelve datos imperfectos1:12 · sección 07 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la SVD comprime matrices secuenciales1:10 · sección 09 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la descomposición de Tucker comprime datos1:16 · sección 10 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la HOSVD comprime datos multidimensionales1:27 · sección 10 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la descomposición tensorial extrae significado1:19 · sección 10 En inglés. Se abre en NotebookLM; pide una cuenta de Google.\n\n\nCómo la descomposición CP aborda tensores N-dimensionales1:19 · sección 11 En inglés. Se abre en NotebookLM; pide una cuenta de Google."
+    "text": "Vídeos de un minuto\n\nUn minuto por idea, aproximadamente. Se abren en NotebookLM.\n\n\nDescifrar las dimensiones de un tensor en NumPy1:17 · sección 01 En inglés.\n\n\nCómo la memoria aplasta los tensores1:20 · sección 04\n\n\nCómo la pseudoinversa resuelve datos imperfectos1:12 · sección 07 En inglés.\n\n\nCómo la SVD comprime matrices secuenciales1:10 · sección 09 En inglés.\n\n\nCómo la descomposición de Tucker comprime datos1:16 · sección 10 En inglés.\n\n\nCómo la HOSVD comprime datos multidimensionales1:27 · sección 10 En inglés.\n\n\nCómo la descomposición tensorial extrae significado1:19 · sección 10 En inglés.\n\n\nCómo la descomposición CP aborda tensores N-dimensionales1:19 · sección 11 En inglés."
   },
   {
     "objectID": "es/companion.html#infographics",
     "href": "es/companion.html#infographics",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "Infografías",
-    "text": "Infografías\n\nTodavía sin exportar, así que estas se abren en NotebookLM:\n\n\nTensores — panorama general Se abre en NotebookLM; pide una cuenta de Google.\n\n\nReshape frente a transposición Se abre en NotebookLM; pide una cuenta de Google.\n\n\nInversas y pseudoinversas Se abre en NotebookLM; pide una cuenta de Google.\n\n\nGuía de inversas tensoriales Se abre en NotebookLM; pide una cuenta de Google.\n\n\nFactorizaciones matriciales y tensoriales Se abre en NotebookLM; pide una cuenta de Google."
+    "text": "Infografías\n\nVer en NotebookLM:\n\n\nTensores — panorama general\n\n\nReshape frente a transposición\n\n\nInversas y pseudoinversas\n\n\nGuía de inversas tensoriales\n\n\nFactorizaciones matriciales y tensoriales"
   },
   {
     "objectID": "es/companion.html#listen",
     "href": "es/companion.html#listen",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "Escuchar",
-    "text": "Escuchar\nDos voces comentan el taller. Es lo único de aquí que funciona con la pantalla apagada.\n\nTodavía sin exportar. El resumen en audio de NotebookLM se descarga como archivo. Cuando esté, sonará aquí mismo, sin cuenta y sin terceros."
+    "text": "Escuchar\nEscucha a dos voces explicar las ideas principales.\n\nAudio próximamente."
   },
   {
     "objectID": "es/companion.html#test-yourself",
     "href": "es/companion.html#test-yourself",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "Ponte a prueba",
-    "text": "Ponte a prueba\nNinguno de los dos es el Kahoot. El Kahoot son seis preguntas en vivo, escritas para este taller, que se lanzan después de las secciones 04, 07 y 10. Estos dos están generados y puedes repetirlos las veces que quieras.\n\nLas imágenes son capturas de pantalla, servidas desde este sitio. Mira una antes de gastar una cuenta en el clic.\n\n\n\nCuestionario de autoevaluaciónVeintiséis preguntas de opción múltiple generadas, de la sección 00 a la sección 12.Después de la sesión, para descubrir qué secciones no se te quedaron. Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM.\n\n\n\nTarjetas de memoriaSesenta tarjetas, pregunta por un lado y respuesta por el otro, sobre el álgebra lineal además de los tensores.Repetición espaciada, en las semanas siguientes. Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM."
+    "text": "Ponte a prueba\nPractica a tu ritmo. Para los cuestionarios en vivo, usa Kahoot.\n\nAbre una vista previa para probar la actividad en NotebookLM.\n\n\n\nCuestionario de autoevaluación26 preguntas de opción múltiple.Descubre qué repasar. Se abre en NotebookLM. Vista previa de la actividad interactiva.\n\n\n\nTarjetas de memoria60 tarjetas de álgebra lineal y tensores.Practica las ideas clave. Se abre en NotebookLM. Vista previa de la actividad interactiva."
   },
   {
     "objectID": "es/companion.html#map",
     "href": "es/companion.html#map",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "El mapa",
-    "text": "El mapa\n\nLas imágenes son capturas de pantalla, servidas desde este sitio. Mira una antes de gastar una cuenta en el clic.\n\n\n\nMapa mentalCinco ramas de una sola raíz —definir tensores, almacenar datos, mover ejes, factorizar, calcular—, y cada una se abre más.Una vez, pronto. Ver la escalera antes de subirla hace que los peldaños del medio parezcan menos arbitrarios. Se abre en NotebookLM; pide una cuenta de Google. Captura de pantalla; el de verdad es interactivo, en NotebookLM."
+    "text": "El mapa\n\nAbre una vista previa para probar la actividad en NotebookLM.\n\n\n\nMapa mentalCinco ramas conectan las ideas del taller.Abre una rama para explorar. Se abre en NotebookLM. Vista previa de la actividad interactiva."
   },
   {
     "objectID": "es/companion.html#notebooklm",
     "href": "es/companion.html#notebooklm",
-    "title": "El complemento generado por máquina",
+    "title": "Complemento del taller",
     "section": "En NotebookLM",
-    "text": "En NotebookLM\nAbre el cuaderno para leer las fuentes de las que salieron estos artefactos, o para generar otros nuevos. La infografía de panorama general tiene también su propio enlace.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
+    "text": "En NotebookLM\nAbre el cuaderno para explorar las fuentes. Ver la infografía general.\n\n\n\n\n\n\n🇬🇧 Prefer English? This page in English."
   },
   {
     "objectID": "es/notebooks.html",
@@ -576,65 +576,65 @@
   {
     "objectID": "companion.html",
     "href": "companion.html",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "",
-    "text": "NotebookLM generated the material on this page from the workshop’s own sources. No person wrote it and no person checked it. Use it as a second pass over material you have already seen. Where it disagrees with the handbook, the handbook is right. Generated 2026-09-07.\nSome artifacts are exported, and this site serves them: no account, no sign-in. The rest are links into NotebookLM, which asks for a Google account. Each card says which one it is."
+    "text": "Review the workshop with these NotebookLM materials, generated 2026-09-07. They have not been checked by a person. Use the handbook to check answers."
   },
   {
     "objectID": "companion.html#brainstorm",
     "href": "companion.html#brainstorm",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "The whole day in one picture",
-    "text": "The whole day in one picture\nThis diagram is the exception on this page: a person drew it, from the handbook. Four ideas, and every section under the idea it serves.\n\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home.\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home."
+    "text": "The whole day in one picture\nFour ideas connect the sections. This diagram was drawn by hand.\n\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home.\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home."
   },
   {
     "objectID": "companion.html#video",
     "href": "companion.html#video",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "Video overview",
-    "text": "Video overview\n\nTensors in machine learning — video overview — 7 minutes. This one is not on YouTube yet. It plays inside NotebookLM, so it asks you for a Google account. Once it is on YouTube it will play here, with no account and no sign-in."
+    "text": "Video overview\n\nTensors in machine learning — video overview — 7 minutes. Watch in NotebookLM."
   },
   {
     "objectID": "companion.html#shorts",
     "href": "companion.html#shorts",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "One-minute shorts",
-    "text": "One-minute shorts\nEight videos. Each one covers a single idea and names the section it belongs to.\n\nOne minute each, generated from the handbook and the notebooks. Every one opens in NotebookLM.\n\n\nDecoding NumPy tensor dimensions1:17 · section 01 Opens in NotebookLM; needs a Google account.\n\n\nHow memory flattens tensors1:20 · section 04 In Spanish. Opens in NotebookLM; needs a Google account.\n\n\nHow the pseudoinverse solves messy data1:12 · section 07 Opens in NotebookLM; needs a Google account.\n\n\nHow SVD compresses sequential matrices1:10 · section 09 Opens in NotebookLM; needs a Google account.\n\n\nHow Tucker decomposition compresses data1:16 · section 10 Opens in NotebookLM; needs a Google account.\n\n\nHow HOSVD compresses multidimensional data1:27 · section 10 Opens in NotebookLM; needs a Google account.\n\n\nHow tensor decomposition extracts meaning1:19 · section 10 Opens in NotebookLM; needs a Google account.\n\n\nHow CP decomposition cracks N-dimensional tensors1:19 · section 11 Opens in NotebookLM; needs a Google account."
+    "text": "One-minute shorts\n\nAbout a minute per idea. Opens in NotebookLM.\n\n\nDecoding NumPy tensor dimensions1:17 · section 01\n\n\nHow memory flattens tensors1:20 · section 04 In Spanish.\n\n\nHow the pseudoinverse solves messy data1:12 · section 07\n\n\nHow SVD compresses sequential matrices1:10 · section 09\n\n\nHow Tucker decomposition compresses data1:16 · section 10\n\n\nHow HOSVD compresses multidimensional data1:27 · section 10\n\n\nHow tensor decomposition extracts meaning1:19 · section 10\n\n\nHow CP decomposition cracks N-dimensional tensors1:19 · section 11"
   },
   {
     "objectID": "companion.html#infographics",
     "href": "companion.html#infographics",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "Infographics",
-    "text": "Infographics\n\nNot exported yet, so these open in NotebookLM:\n\n\nTensors — overview Opens in NotebookLM; needs a Google account.\n\n\nReshape vs transpose Opens in NotebookLM; needs a Google account.\n\n\nInverses and pseudoinverses Opens in NotebookLM; needs a Google account.\n\n\nNavigating tensor inverses Opens in NotebookLM; needs a Google account.\n\n\nMatrix and tensor factorizations Opens in NotebookLM; needs a Google account."
+    "text": "Infographics\n\nView in NotebookLM:\n\n\nTensors — overview\n\n\nReshape vs transpose\n\n\nInverses and pseudoinverses\n\n\nNavigating tensor inverses\n\n\nMatrix and tensor factorizations"
   },
   {
     "objectID": "companion.html#listen",
     "href": "companion.html#listen",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "Listen",
-    "text": "Listen\nTwo hosts talk through the workshop. This is the one piece here you can use with the screen off.\n\nAudio overview — 2 minutes. This one is not exported yet. It plays inside NotebookLM, so it asks you for a Google account. Once the file is committed here it will play on this page, with no account and no third party."
+    "text": "Listen\nListen to two hosts explain the main ideas.\n\nAudio overview — 2 minutes. Listen in NotebookLM."
   },
   {
     "objectID": "companion.html#test-yourself",
     "href": "companion.html#test-yourself",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "Test yourself",
-    "text": "Test yourself\nNeither of these is the Kahoot. The Kahoot is six live questions, written for this workshop, run after sections 04, 07 and 10. These two are generated, and you can retake them as often as you like.\n\nThe pictures are screenshots, served from this site. Look at one before you spend an account on the click.\n\n\n\nSelf-check quizTwenty-six generated multiple-choice questions, from section 00 to section 12.After the session, to find out which sections did not stick. Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM.\n\n\n\nFlashcardsSixty cards, question on one side and answer on the other, over the linear algebra as well as the tensors.Spaced repetition, in the weeks after. Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM."
+    "text": "Test yourself\nPractice at your own pace. For the live quizzes, use Kahoot.\n\nOpen a preview to try the activity in NotebookLM.\n\n\n\nSelf-check quiz26 multiple-choice questions.Find what to review. Opens in NotebookLM. Preview of the interactive activity.\n\n\n\nFlashcards60 cards on linear algebra and tensors.Practice recalling key ideas. Opens in NotebookLM. Preview of the interactive activity."
   },
   {
     "objectID": "companion.html#map",
     "href": "companion.html#map",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "The map",
-    "text": "The map\n\nThe pictures are screenshots, served from this site. Look at one before you spend an account on the click.\n\n\n\nMind mapFive branches off one root — defining tensors, storing data, moving axes, factorizing, computing — each opening further.Once, early. Seeing the ladder before you climb it makes the middle rungs less arbitrary. Opens in NotebookLM; needs a Google account. Screenshot — the real one is interactive, in NotebookLM."
+    "text": "The map\n\nOpen a preview to try the activity in NotebookLM.\n\n\n\nMind mapFive branches connect the workshop’s ideas.Expand a branch to explore. Opens in NotebookLM. Preview of the interactive activity."
   },
   {
     "objectID": "companion.html#notebooklm",
     "href": "companion.html#notebooklm",
-    "title": "The machine-generated companion",
+    "title": "Workshop companion",
     "section": "In NotebookLM",
-    "text": "In NotebookLM\nOpen the notebook to read the sources these artifacts came from, or to generate new ones. The overview infographic has its own link as well.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
+    "text": "In NotebookLM\nOpen the notebook to explore the sources. View the overview infographic.\n\n\n\n\n\n\n🇪🇸 ¿Prefieres español? Esta página en español."
   },
   {
     "objectID": "kahoot.html",
@@ -690,49 +690,49 @@
     "href": "index.html#what-this-is",
     "title": "Tensors for Machine Learning",
     "section": "What this is",
-    "text": "What this is\nA 210-minute workshop. It takes you from “I know matrices” to “I can manipulate, solve, convolve and factorize tensors.”\nIt runs on real data only: real tumour measurements, real handwritten digits, real histology images, real New York taxi trips, real airline traffic. No dataset here is invented with random numbers. Real data carries problems that random numbers never show you — missing values, features on incompatible scales, pixels that never change. Finding those problems is part of the work."
+    "text": "What this is\nLearn to reshape, solve, convolve, and factorize tensors in 210 minutes.\nWork with images, taxi trips, and airline counts. Find missing values, uneven scales, and constant pixels. Small synthetic examples explain selected ideas."
   },
   {
     "objectID": "index.html#watch-it-first",
     "href": "index.html#watch-it-first",
     "title": "Tensors for Machine Learning",
     "section": "Watch it first",
-    "text": "Watch it first\n\nTensors in machine learning — video overview — 7 minutes. This one is not on YouTube yet. It plays inside NotebookLM, so it asks you for a Google account. Once it is on YouTube it will play here, with no account and no sign-in.\nThe video is generated, not recorded. It sits on the companion page, beside the infographics, the audio, the quiz, the flashcards and the mind map. That page says what generated means here, and what to do about it."
+    "text": "Watch it first\n\nTensors in machine learning — video overview — 7 minutes. Watch in NotebookLM.\nFind more NotebookLM summaries on the companion page."
   },
   {
     "objectID": "index.html#who-it-is-for",
     "href": "index.html#who-it-is-for",
     "title": "Tensors for Machine Learning",
     "section": "Who it is for",
-    "text": "Who it is for\nYou have read Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. You know matrices. This workshop assumes no previous knowledge of tensor theory, and every new term is defined where it first appears."
+    "text": "Who it is for\nYou know the linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. No tensor theory is required. New terms are explained as they appear."
   },
   {
     "objectID": "index.html#whats-here",
     "href": "index.html#whats-here",
     "title": "Tensors for Machine Learning",
     "section": "What’s here",
-    "text": "What’s here\nSeven things, and they do different jobs. Start with whichever one matches what you are doing right now.\n\n\n\n\n\n\n\n\n\nWhat it is\nWhen you use it\n\n\n\n\nHandbook · ES\nThe session text: the theory, every exercise, the worked solutions, and the take-home appendices.\nRead it before, follow it during, keep it after.\n\n\nSlides · ES\nWhat is projected in the room, with the running clock and a breadcrumb saying which section you are in.\nLive in the session, or to review the shape of the day afterwards.\n\n\nNotebooks · ES\nFourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type.\nDuring each section, and for the take-home.\n\n\nKahoot\nThree 6-question knowledge checks, run after sections 04, 07 and 10.\nLive, on your phone or a second tab.\n\n\nCompanion · ES\nMachine-generated from this workshop’s own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. Plus one diagram of the day, drawn by hand.\nBefore, for a first pass; after, for revision.\n\n\nReferences · ES\nThe books, papers, tensorly docs and blog posts the workshop is built on — with DOIs and author pages.\nAfter a section, when you want the proper treatment of what it skimmed.\n\n\nRepository\nThe source of the six rows above, plus the three Kahoot spreadsheets.\nTo fork it, fix something, or run the notebooks off Colab.\n\n\n\nThe handbook is the source text. The facts those seven share — the section titles, the running clock, the links — live once in _variables.yml. Every table on this site is generated from that one file, so no two tables can disagree.\nThe thirteen sections, section by section, are on the notebooks page."
+    "text": "What’s here\n\n\n\nResource\nUse it to\n\n\n\n\nHandbook · ES\nRead the theory, exercises, and solutions.\n\n\nSlides · ES\nFollow the session.\n\n\nNotebooks · ES\nWrite code in Colab.\n\n\nKahoot\nCheck your understanding during the session.\n\n\nCompanion · ES\nReview with video, audio, diagrams, and practice questions.\n\n\nReferences · ES\nExplore the books, papers, and software.\n\n\nRepository\nGet the source files or contribute a fix."
   },
   {
     "objectID": "index.html#prerequisites",
     "href": "index.html#prerequisites",
     "title": "Tensors for Machine Learning",
     "section": "Prerequisites",
-    "text": "Prerequisites\nEvery item below is free, and it all runs in your browser.\nDo before the session\n\nThe linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra — vectors, matrices, the matrix product, the inverse, eigendecomposition, SVD. That one chapter is the only background this workshop assumes.\nlinear-algebra-deep-learning — 14 short bilingual Colab notebooks, about 2–3 hours in total. They cover exactly that material, vectors through PCA. This is required pre-work. The workshop moves fast, and it assumes you have reviewed it.\nNotebook 00, run in Colab — it downloads the three CSV files the workshop needs. Run it before the session. If it fails, say so at once: a download that fails quietly leaves you stuck at sections 07 and 10, an hour in.\n\nRecommended\n\nEssence of linear algebra (3Blue1Brown) — 16 videos, about 3 hours in total. Watch them if the book chapter felt like symbol-pushing. They give you the geometric picture of what a matrix does, and sections 04 to 10 lean on that picture.\n\nHave ready on the day\n\nA Google account — the notebooks run in Colab in your browser. There is no local install.\nDiscord — the invite comes from the facilitator. Every discussion, every breakout channel and every question happens there, in Spanish or English.\nA phone or a second tab for Kahoot — three 6-question knowledge checks, after sections 04, 07 and 10. No sign-up; you join with a PIN."
+    "text": "Prerequisites\nThe tools are free and run in your browser.\nDo before the session\n\nReview the linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectors, matrices, products, inverses, eigendecomposition, and SVD.\nlinear-algebra-deep-learning — required pre-work. Complete 14 bilingual notebooks, from vectors to PCA. Allow 2–3 hours.\nNotebook 00, run in Colab — check setup and data downloads. Report any errors before the session.\n\nRecommended\n\nEssence of linear algebra (3Blue1Brown) — a visual refresher. 16 videos, about 3 hours.\n\nHave ready on the day\n\nColab for coding.\nDiscord for questions and group work. The facilitator shares the invite.\nA phone or second tab for Kahoot. Join with the session PIN."
   },
   {
     "objectID": "index.html#how-we-work",
     "href": "index.html#how-we-work",
     "title": "Tensors for Machine Learning",
     "section": "How we work",
-    "text": "How we work\nNotebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:\n\nExercise blocks — 10 minutes coding, then 5 minutes explanation.\nGroup blocks — 10 minutes discussion in your breakout channel, then share-back."
+    "text": "How we work\n\nExercise blocks — 10 minutes coding, then 5 minutes explanation.\nGroup blocks — 10 minutes discussion in your breakout channel, then share-back."
   },
   {
     "objectID": "index.html#a-note-on-language",
     "href": "index.html#a-note-on-language",
     "title": "Tensors for Machine Learning",
     "section": "A note on language",
-    "text": "A note on language\nThis workshop is taught in English. Many of its terms are nearly identical in Spanish: tensor/tensor, matrix/matriz, axis/eje, dimension/dimensión, decomposition/descomposición, factorization/factorización, contraction/contracción, convolution/convolución, recursion/recursión.\nAsk questions in Spanish or English — whichever lets you ask faster. The slide deck exists in both languages, and every notebook heading carries a one-line Spanish summary."
+    "text": "A note on language\nTeaching is in English. Ask questions in English or Spanish. The slides and notebooks support both languages."
   },
   {
     "objectID": "notebooks.html",
@@ -781,42 +781,42 @@
     "href": "references.html",
     "title": "References and further reading",
     "section": "",
-    "text": "🇪🇸 ¿Prefieres español? Esta página en español.\nEvery work below is one the workshop leans on. Some are books it assumes. Some are papers a section implements. Some are libraries it tells you to use in place of your own code. None of them is here to pad a bibliography.\nRead it two ways. Before or during the session, it is where a term you have just met is defined properly. After the session, it is the ladder out. Start with the survey. Then read whichever of the four papers covers the decomposition you ended up needing.\nChapter 2 of Deep Learning (Goodfellow, Bengio & Courville) is the spine for the linear algebra this workshop assumes, and the prerequisites on the homepage say what else to do before the session. Neither covers Tucker or CP at all. This page is where to go next."
+    "text": "🇪🇸 ¿Prefieres español? Esta página en español.\nLook up a concept or explore it further. For tensors, start with the Kolda–Bader survey. Then choose the paper for the method you need.\nBackground: Chapter 2 of Deep Learning. See the pre-work before the session."
   },
   {
     "objectID": "references.html#ref-linear-algebra",
     "href": "references.html#ref-linear-algebra",
     "title": "References and further reading",
-    "section": "Linear algebra, to go deeper",
-    "text": "Linear algebra, to go deeper\nThree books, in increasing order of how much numerical detail they make you look at. Any one of them covers everything sections 03 to 09 lean on.\n\nStrang, G. — Introduction to Linear Algebra — the accessible one. Author pages: Gilbert Strang\nTrefethen, L. N. & Bau, D. — Numerical Linear Algebra — the one that takes SVD seriously. Author pages: Nick Trefethen\nGolub, G. H. & Van Loan, C. F. — Matrix Computations — the reference, for when something is numerically wrong. Author pages: Gene Golub · Charles Van Loan"
+    "section": "Linear algebra",
+    "text": "Linear algebra\nFrom an introduction to numerical methods.\n\nStrang, G. — Introduction to Linear Algebra — an introduction. Author pages: Gilbert Strang\nTrefethen, L. N. & Bau, D. — Numerical Linear Algebra — numerical methods and SVD. Author pages: Nick Trefethen\nGolub, G. H. & Van Loan, C. F. — Matrix Computations — matrix algorithms. Author pages: Gene Golub · Charles Van Loan"
   },
   {
     "objectID": "references.html#ref-tensors",
     "href": "references.html#ref-tensors",
     "title": "References and further reading",
-    "section": "Tensors specifically",
-    "text": "Tensors specifically\nThe survey first, then the four papers the workshop’s last three sections are built on — all of them readable, and three of them older than the field that now uses them.\n\nKolda, T. G. & Bader, B. W. (2009). Tensor Decompositions and Applications, SIAM Review 51(3), 455–500 — the survey. If you read one thing after this workshop, it is this. Author pages: Tamara Kolda · Brett Bader\nTucker, L. R. (1966). Some mathematical notes on three-mode factor analysis, Psychometrika 31, 279–311 — section 10’s decomposition, from the source.\nCarroll, J. D. & Chang, J.-J. (1970). Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition, Psychometrika 35, 283–319 — CP, arrived at as a generalization of Eckart–Young. Discovered independently and twice — see Harshman below.\nHarshman, R. A. (1970). Foundations of the PARAFAC procedure, UCLA Working Papers in Phonetics 16, 1–84 — the same decomposition, reached from psychometrics rather than from Eckart–Young, and named PARAFAC. Hence “CP/PARAFAC”. Author pages: Richard Harshman\nEckart, C. & Young, G. (1936). The approximation of one matrix by another of lower rank, Psychometrika 1, 211–218 — the truncated SVD is the optimal low-rank approximation. This is the theorem underneath Tucker and CP both, and Appendix E is where optimal on the Frobenius norm stops being enough."
+    "section": "Tensors",
+    "text": "Tensors\nStart with the survey. Then choose a method.\n\nKolda, T. G. & Bader, B. W. (2009). Tensor Decompositions and Applications, SIAM Review 51(3), 455–500 — the survey; start here. Author pages: Tamara Kolda · Brett Bader\nTucker, L. R. (1966). Some mathematical notes on three-mode factor analysis, Psychometrika 31, 279–311 — Tucker decomposition.\nCarroll, J. D. & Chang, J.-J. (1970). Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition, Psychometrika 35, 283–319 — CP decomposition.\nHarshman, R. A. (1970). Foundations of the PARAFAC procedure, UCLA Working Papers in Phonetics 16, 1–84 — PARAFAC, also known as CP. Author pages: Richard Harshman\nEckart, C. & Young, G. (1936). The approximation of one matrix by another of lower rank, Psychometrika 1, 211–218 — optimal low-rank matrix approximation."
   },
   {
     "objectID": "references.html#ref-software",
     "href": "references.html#ref-software",
     "title": "References and further reading",
     "section": "Software",
-    "text": "Software\nThe workshop writes CP and Tucker out with numpy first, so that what the library does is not a mystery. For real projects, use the library.\n\ntensorly — the tensor library, used in section 10 and Appendix C — see its Tucker and CP implementations. Author pages: Jean Kossaifi"
+    "text": "Software\nImplementations for your own projects.\n\ntensorly — implementations of Tucker and CP. Author pages: Jean Kossaifi"
   },
   {
     "objectID": "references.html#ref-blog",
     "href": "references.html#ref-blog",
     "title": "References and further reading",
     "section": "Posts from the ML blog",
-    "text": "Posts from the ML blog\nWritten for this workshop’s audience, and linked from the slides at the section each one supports. They are the shortest of everything on this page: one idea per post, worked through.\nEvery post lives on The ML blog.\n\nWhy so many matrix factorizations?\nFactorizations as optimization\nRotate, stretch, rotate again\nThe directions a matrix refuses to turn\nCan you invert a recursive function?\nTensor factorizations and inverses\nWhat a tensor factorization buys you\nTensor inverses in practice\nTensor inverses, worked through\nSparse tensors\nAttention as two contractions"
+    "text": "Posts from the ML blog\nOne idea per post, with examples.\nEvery post lives on The ML blog.\n\nWhy so many matrix factorizations?\nFactorizations as optimization\nRotate, stretch, rotate again\nThe directions a matrix refuses to turn\nCan you invert a recursive function?\nTensor factorizations and inverses\nWhat a tensor factorization buys you\nTensor inverses in practice\nTensor inverses, worked through\nSparse tensors\nAttention as two contractions"
   },
   {
     "objectID": "references.html#elsewhere",
     "href": "references.html#elsewhere",
     "title": "References and further reading",
-    "section": "Not on this page",
-    "text": "Not on this page\n\nPrerequisites — the pre-work, in full, on the homepage. That is the one list to work through before the session; this page is for after it.\nThe handbook — the workshop’s own text, including the five take-home appendices. It cites the works above where each one is first needed.\nThe machine-generated companion — a video, infographics, an audio overview, a quiz, flashcards and a mind map. NotebookLM generated them all from this workshop’s own sources. It is generated, not written, so use it as a second pass. Where it disagrees with a work on this page, the work is right."
+    "section": "Related resources",
+    "text": "Related resources\n\nPrerequisites — prepare for the session.\nHandbook — theory, exercises, and solutions.\nCompanion — NotebookLM summaries and practice questions."
   },
   {
     "objectID": "es/index.html",
@@ -830,91 +830,91 @@
     "href": "es/index.html#qué-es-esto",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Qué es esto",
-    "text": "Qué es esto\nUn taller de 210 minutos. Te lleva de «sé lo que es una matriz» a «sé manipular, resolver, convolucionar y factorizar tensores».\nFunciona solo con datos reales: medidas reales de tumores, dígitos manuscritos reales, imágenes reales de histología, viajes reales en taxi de Nueva York, tráfico aéreo real. Ningún conjunto de datos está inventado con números aleatorios. Los datos reales traen problemas que los aleatorios nunca muestran: valores faltantes, variables en escalas incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del trabajo."
+    "text": "Qué es esto\nAprende a cambiar la forma, resolver, convolucionar y factorizar tensores en 210 minutos.\nTrabaja con imágenes, viajes en taxi y cifras de pasajeros. Encuentra valores faltantes, escalas desiguales y píxeles constantes. Algunos ejemplos sintéticos pequeños explican ideas concretas."
   },
   {
     "objectID": "es/index.html#míralo-primero",
     "href": "es/index.html#míralo-primero",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Míralo primero",
-    "text": "Míralo primero\n\nTodavía sin publicar. NotebookLM genera el resumen en vídeo y luego se sube a YouTube. Hasta que eso ocurra, esta sección pide una cuenta de Google.\nEl vídeo está generado, no grabado. Está en la página del complemento, junto a las infografías, el audio, el cuestionario, las tarjetas y el mapa mental. Esa página explica qué significa aquí «generado» y qué hacer al respecto."
+    "text": "Míralo primero\n\nVídeo próximamente.\nEncuentra más resúmenes de NotebookLM en el complemento."
   },
   {
     "objectID": "es/index.html#para-quién-es",
     "href": "es/index.html#para-quién-es",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Para quién es",
-    "text": "Para quién es\nHas leído Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. Sabes qué es una matriz. Este taller no supone ningún conocimiento previo de teoría de tensores, y cada término nuevo se define donde aparece por primera vez."
+    "text": "Para quién es\nConoces el álgebra lineal de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. No necesitas teoría de tensores. Los términos nuevos se explican al aparecer."
   },
   {
     "objectID": "es/index.html#qué-hay-aquí",
     "href": "es/index.html#qué-hay-aquí",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Qué hay aquí",
-    "text": "Qué hay aquí\nSiete recursos, y cada uno cumple una función distinta. Empieza por el que corresponda a lo que estés haciendo ahora mismo.\n\n\n\n\n\n\n\n\n\nQué es\nCuándo lo usas\n\n\n\n\nManual · EN\nEl texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas y los apéndices para casa.\nLéelo antes, síguelo durante, consérvalo después.\n\n\nDiapositivas · EN\nLo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás.\nEn vivo durante la sesión, o para repasar después la forma del día.\n\n\nCuadernos · EN\nCatorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código.\nDurante cada sección, y para el ejercicio de casa.\n\n\nKahoot\nTres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10.\nEn vivo, en el móvil o en una segunda pestaña.\n\n\nComplemento · EN\nGenerado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito. Y un diagrama del día, dibujado a mano.\nAntes, para una primera pasada; después, para repasar.\n\n\nReferencias · EN\nLos libros, artículos, documentación de tensorly y entradas del blog sobre los que se construye el taller, con DOI y páginas de los autores.\nDespués de una sección, cuando quieras el tratamiento serio de lo que rozó.\n\n\nRepositorio\nLa fuente de las seis filas anteriores, más las tres hojas de cálculo de Kahoot.\nPara clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab.\n\n\n\nEl manual es el texto fuente. Los datos que los siete comparten —los títulos de las secciones, el reloj, los enlaces— viven una sola vez en _variables.yml. Todas las tablas del sitio se generan a partir de ese único archivo, así que no hay dos que puedan contradecirse.\nLas trece secciones, una por una, están en la página de cuadernos."
+    "text": "Qué hay aquí\n\n\n\nRecurso\nPara qué sirve\n\n\n\n\nManual · EN\nLeer teoría, ejercicios y soluciones.\n\n\nDiapositivas · EN\nSeguir la sesión.\n\n\nCuadernos · EN\nEscribir código en Colab.\n\n\nKahoot\nComprobar lo aprendido durante la sesión.\n\n\nComplemento · EN\nRepasar con vídeo, audio, diagramas y preguntas.\n\n\nReferencias · EN\nExplorar libros, artículos y software.\n\n\nRepositorio\nObtener los archivos fuente o contribuir una corrección."
   },
   {
     "objectID": "es/index.html#requisitos-previos",
     "href": "es/index.html#requisitos-previos",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Requisitos previos",
-    "text": "Requisitos previos\nCada recurso de abajo es gratuito, y todos funcionan en el navegador.\nAntes de la sesión\n\nEl álgebra lineal de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectores, matrices, el producto matricial, la inversa, la descomposición espectral y la SVD. Ese único capítulo es el único conocimiento previo que se da por supuesto.\nlinear-algebra-deep-learning: 14 cuadernos breves de Colab, bilingües, unas 2–3 horas en total. Cubren exactamente ese material, de vectores a PCA. Es trabajo previo obligatorio. El taller avanza rápido y da por hecho que ya lo hiciste.\nEl cuaderno 00, ejecutado en Colab: descarga los tres archivos CSV que usa el taller. Ejecútalo antes de la sesión. Si falla, avisa enseguida: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después.\n\nRecomendado\n\nEssence of linear algebra (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total. Míralos si el capítulo del libro te pareció puro manejo de símbolos. Dan la imagen geométrica de lo que una matriz hace, y las secciones 04 a 10 se apoyan en esa imagen.\n\nTen a mano el día del taller\n\nUna cuenta de Google: los cuadernos se ejecutan en Colab desde el navegador. No hay instalación local.\nDiscord: la invitación te la pasa quien imparte el taller. Ahí ocurren las discusiones, los canales de grupo y las preguntas, en español o en inglés.\nEl móvil o una segunda pestaña para Kahoot: tres controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que registrarse: entras con un PIN."
+    "text": "Requisitos previos\nLas herramientas son gratuitas y funcionan en el navegador.\nAntes de la sesión\n\nRepasa el álgebra lineal de Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectores, matrices, productos, inversas, descomposición espectral y SVD.\nlinear-algebra-deep-learning: trabajo previo obligatorio. Completa 14 cuadernos bilingües, de vectores a PCA. Reserva 2–3 horas.\nEl cuaderno 00, ejecutado en Colab: comprueba la preparación y las descargas. Avisa de cualquier error antes de la sesión.\n\nRecomendado\n\nEssence of linear algebra (3Blue1Brown, en inglés con subtítulos): un repaso visual. 16 vídeos, unas 3 horas.\n\nTen a mano el día del taller\n\nColab para programar.\nDiscord para preguntas y trabajo en grupo. Recibirás una invitación.\nEl móvil o una segunda pestaña para Kahoot. Entra con el PIN de la sesión."
   },
   {
     "objectID": "es/index.html#cómo-trabajamos",
     "href": "es/index.html#cómo-trabajamos",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Cómo trabajamos",
-    "text": "Cómo trabajamos\nCuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:\n\nBloques de ejercicios: 10 minutos programando y 5 de explicación.\nBloques de grupo: 10 minutos de discusión en tu canal y luego puesta en común."
+    "text": "Cómo trabajamos\n\nBloques de ejercicios: 10 minutos programando y 5 de explicación.\nBloques de grupo: 10 minutos de discusión en tu canal y luego puesta en común."
   },
   {
     "objectID": "es/index.html#una-nota-sobre-el-idioma",
     "href": "es/index.html#una-nota-sobre-el-idioma",
     "title": "Tensores para Aprendizaje Automático",
     "section": "Una nota sobre el idioma",
-    "text": "Una nota sobre el idioma\nEl taller se imparte en inglés, pero muchos términos son casi idénticos en español: tensor/tensor, matrix/matriz, axis/eje, dimension/dimensión, decomposition/descomposición, factorization/factorización, contraction/contracción, convolution/convolución, recursion/recursión.\nPregunta en español o en inglés, lo que te permita preguntar más rápido. Las diapositivas están en los dos idiomas y cada encabezado de los cuadernos lleva un resumen de una línea en español."
+    "text": "Una nota sobre el idioma\nEl taller se imparte en inglés. Pregunta en español o en inglés. Las diapositivas y los cuadernos ofrecen ambos idiomas."
   },
   {
     "objectID": "es/references.html",
     "href": "es/references.html",
     "title": "Referencias y lectura adicional",
     "section": "",
-    "text": "🇬🇧 Prefer English? This page in English. Casi cada obra enlazada aquí está en inglés.\nCada obra de abajo es una en la que el taller se apoya. Unas son libros que da por leídos. Otras son artículos que una sección implementa. Otras son bibliotecas que te recomienda usar en lugar de tu propio código. Ninguna está aquí para engordar una bibliografía.\nSe puede leer de dos maneras. Antes o durante la sesión, es donde un término que acabas de encontrar está definido como es debido. Después de la sesión, es la escalera hacia arriba. Empieza por el artículo de revisión. Luego lee el que trate la descomposición que hayas terminado necesitando.\nEl capítulo 2 de Deep Learning (Goodfellow, Bengio y Courville) es la columna vertebral del álgebra lineal que este taller da por sabida, y los requisitos previos de la página principal dicen qué más hacer antes de la sesión. Ninguno de los dos trata Tucker ni CP. Esta página es adonde ir después."
+    "text": "🇬🇧 Prefer English? This page in English. La mayoría de las fuentes están en inglés.\nConsulta un concepto o profundiza en él. Para tensores, empieza por la revisión de Kolda y Bader. Después elige el artículo del método que necesites.\nBase: capítulo 2 de Deep Learning. Consulta el trabajo previo antes de la sesión."
   },
   {
     "objectID": "es/references.html#ref-linear-algebra",
     "href": "es/references.html#ref-linear-algebra",
     "title": "Referencias y lectura adicional",
-    "section": "Álgebra lineal, para profundizar",
-    "text": "Álgebra lineal, para profundizar\nTres libros, en orden creciente de detalle numérico. Cualquiera de ellos cubre todo aquello en lo que se apoyan las secciones 03 a 09.\n\nStrang, G. — Introduction to Linear Algebra — el accesible. Páginas de autor: Gilbert Strang\nTrefethen, L. N. & Bau, D. — Numerical Linear Algebra — el que se toma en serio la SVD. Páginas de autor: Nick Trefethen\nGolub, G. H. & Van Loan, C. F. — Matrix Computations — la referencia, para cuando algo falla numéricamente. Páginas de autor: Gene Golub · Charles Van Loan"
+    "section": "Álgebra lineal",
+    "text": "Álgebra lineal\nDe una introducción a los métodos numéricos.\n\nStrang, G. — Introduction to Linear Algebra — una introducción. Páginas de autor: Gilbert Strang\nTrefethen, L. N. & Bau, D. — Numerical Linear Algebra — métodos numéricos y SVD. Páginas de autor: Nick Trefethen\nGolub, G. H. & Van Loan, C. F. — Matrix Computations — algoritmos matriciales. Páginas de autor: Gene Golub · Charles Van Loan"
   },
   {
     "objectID": "es/references.html#ref-tensors",
     "href": "es/references.html#ref-tensors",
     "title": "Referencias y lectura adicional",
-    "section": "Tensores en concreto",
-    "text": "Tensores en concreto\nPrimero el artículo de revisión, después los cuatro trabajos sobre los que se construyen las tres últimas secciones del taller: todos legibles, y tres de ellos más antiguos que el campo que hoy los usa.\n\nKolda, T. G. & Bader, B. W. (2009). Tensor Decompositions and Applications, SIAM Review 51(3), 455–500 — el artículo de revisión. Si vas a leer una sola cosa después de este taller, que sea esta. Páginas de autor: Tamara Kolda · Brett Bader\nTucker, L. R. (1966). Some mathematical notes on three-mode factor analysis, Psychometrika 31, 279–311 — la descomposición de la sección 10, en su fuente original.\nCarroll, J. D. & Chang, J.-J. (1970). Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition, Psychometrika 35, 283–319 — CP, obtenida como generalización de Eckart–Young. Se descubrió dos veces y de forma independiente: véase Harshman más abajo.\nHarshman, R. A. (1970). Foundations of the PARAFAC procedure, UCLA Working Papers in Phonetics 16, 1–84 — la misma descomposición, alcanzada desde la psicometría y no desde Eckart–Young, y bautizada PARAFAC. De ahí «CP/PARAFAC». Páginas de autor: Richard Harshman\nEckart, C. & Young, G. (1936). The approximation of one matrix by another of lower rank, Psychometrika 1, 211–218 — la SVD truncada es la mejor aproximación de rango bajo. Es el teorema que hay debajo de Tucker y de CP, y el apéndice E es donde ser óptimo en la norma de Frobenius deja de bastar."
+    "section": "Tensores",
+    "text": "Tensores\nEmpieza por la revisión. Después elige un método.\n\nKolda, T. G. & Bader, B. W. (2009). Tensor Decompositions and Applications, SIAM Review 51(3), 455–500 — la revisión; empieza aquí. Páginas de autor: Tamara Kolda · Brett Bader\nTucker, L. R. (1966). Some mathematical notes on three-mode factor analysis, Psychometrika 31, 279–311 — descomposición de Tucker.\nCarroll, J. D. & Chang, J.-J. (1970). Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition, Psychometrika 35, 283–319 — descomposición CP.\nHarshman, R. A. (1970). Foundations of the PARAFAC procedure, UCLA Working Papers in Phonetics 16, 1–84 — PARAFAC, también llamada CP. Páginas de autor: Richard Harshman\nEckart, C. & Young, G. (1936). The approximation of one matrix by another of lower rank, Psychometrika 1, 211–218 — aproximación matricial óptima de rango bajo."
   },
   {
     "objectID": "es/references.html#ref-software",
     "href": "es/references.html#ref-software",
     "title": "Referencias y lectura adicional",
     "section": "Software",
-    "text": "Software\nEl taller escribe CP y Tucker a mano con numpy primero, para que lo que hace la biblioteca no sea un misterio. Para proyectos reales, usa la biblioteca.\n\ntensorly — la biblioteca de tensores, usada en la sección 10 y en el apéndice C; véanse sus implementaciones de Tucker y CP. Páginas de autor: Jean Kossaifi"
+    "text": "Software\nImplementaciones para tus proyectos.\n\ntensorly — implementaciones de Tucker y CP. Páginas de autor: Jean Kossaifi"
   },
   {
     "objectID": "es/references.html#ref-blog",
     "href": "es/references.html#ref-blog",
     "title": "Referencias y lectura adicional",
     "section": "Entradas del blog de ML",
-    "text": "Entradas del blog de ML\nEscritas para el público de este taller, y enlazadas desde las diapositivas en la sección a la que acompañan. Son lo más corto de todo lo que hay en esta página: una idea por entrada, desarrollada.\nTodas las entradas están en El blog de ML.\n\n¿Por qué hay tantas factorizaciones matriciales?\nFactorizaciones como optimización\nGira, estira y vuelve a girar\nLas direcciones que una matriz no gira\n¿Se puede invertir una función recursiva?\nFactorizaciones e inversas tensoriales\nPara qué sirve factorizar un tensor\nInversas tensoriales en la práctica\nInversas tensoriales, paso a paso\nTensores dispersos\nLa atención como dos contracciones"
+    "text": "Entradas del blog de ML\nUna idea por entrada, con ejemplos.\nTodas las entradas están en El blog de ML.\n\n¿Por qué hay tantas factorizaciones matriciales?\nFactorizaciones como optimización\nGira, estira y vuelve a girar\nLas direcciones que una matriz no gira\n¿Se puede invertir una función recursiva?\nFactorizaciones e inversas tensoriales\nPara qué sirve factorizar un tensor\nInversas tensoriales en la práctica\nInversas tensoriales, paso a paso\nTensores dispersos\nLa atención como dos contracciones"
   },
   {
     "objectID": "es/references.html#elsewhere",
     "href": "es/references.html#elsewhere",
     "title": "Referencias y lectura adicional",
-    "section": "Lo que no está en esta página",
-    "text": "Lo que no está en esta página\n\nRequisitos previos — el trabajo previo, completo, en la página principal. Esa es la lista que hay que hacer antes de la sesión; esta página es para después.\nEl manual — el texto del propio taller, con los cinco apéndices para casa. Está traducido por máquina desde el inglés, que es la versión de referencia. Cita las obras de arriba allí donde cada una hace falta por primera vez.\nEl complemento generado por máquina — un vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. NotebookLM los generó a partir de las fuentes del propio taller. Está generado, no escrito, así que úsalo como segunda pasada. Cuando contradiga a una obra de esta página, la obra tiene razón."
+    "section": "Recursos relacionados",
+    "text": "Recursos relacionados\n\nRequisitos previos — prepara la sesión.\nManual — teoría, ejercicios y soluciones. Traducción automática del original en inglés.\nComplemento — resúmenes y preguntas de NotebookLM."
   },
   {
     "objectID": "es/tensors_workshop_plan_with_quizzes.html",

@@ -1,33 +1,19 @@
 ---
 title: "References and further reading"
-subtitle: "The books, papers, software and posts this workshop is built on"
+subtitle: "Books, papers, software, and worked examples"
 ---
 
 ::: {.callout-note appearance="simple"}
 🇪🇸 ¿Prefieres español? [Esta página en español](es/references.qmd).
 :::
 
-Every work below is one the workshop leans on. Some are books it assumes. Some
-are papers a section implements. Some are libraries it tells you to use in place
-of your own code. None of them is here to pad a bibliography.
-
-Read it two ways. **Before or during the session**, it is where a term you have
-just met is defined properly. **After the session**, it is the ladder out. Start
-with the survey. Then read whichever of the four papers covers the decomposition
-you ended up needing.
+Look up a concept or explore it further. For tensors, start with the
+Kolda–Bader survey. Then choose the paper for the method you need.
 
 {{< include _includes/references-en.md >}}
 
-## Not on this page {#elsewhere}
+## Related resources {#elsewhere}
 
-- **[Prerequisites](index.qmd#prerequisites)** — the pre-work, in full, on the
-  homepage. That is the one list to work through *before* the session; this
-  page is for after it.
-- **[The handbook](tensors_workshop_plan_with_quizzes.md)** — the workshop's
-  own text, including the five take-home appendices. It cites the works above
-  where each one is first needed.
-- **[The machine-generated companion](companion.qmd)** — a video,
-  infographics, an audio overview, a quiz, flashcards and a mind map. NotebookLM
-  generated them all from this workshop's own sources. It is *generated, not
-  written*, so use it as a second pass. Where it disagrees with a work on this
-  page, the work is right.
+- [Prerequisites](index.qmd#prerequisites) — prepare for the session.
+- [Handbook](tensors_workshop_plan_with_quizzes.md) — theory, exercises, and solutions.
+- [Companion](companion.qmd) — NotebookLM summaries and practice questions.

@@ -1,6 +1,6 @@
 ---
 title: "Tensores para Aprendizaje Automático"
-subtitle: "Un taller de 3 horas, más tres controles de conocimiento con Kahoot"
+subtitle: "Un taller de 3 horas con código, datos reales y tres cuestionarios"
 lang: es
 toc: false
 title-block-banner: ../images/hero-band.png
@@ -24,110 +24,70 @@ inglés, pero puedes preguntar en español cuando quieras.
 
 ## Qué es esto
 
-Un taller de {{< var workshop.minutes >}} minutos. Te lleva de «sé lo que es una
-matriz» a «sé manipular, resolver, convolucionar y factorizar tensores».
+Aprende a cambiar la forma, resolver, convolucionar y factorizar tensores en
+{{< var workshop.minutes >}} minutos.
 
-Funciona **solo con datos reales**: medidas reales de tumores, dígitos
-manuscritos reales, imágenes reales de histología, viajes reales en taxi de
-Nueva York, tráfico aéreo real. Ningún conjunto de datos está inventado con
-números aleatorios. Los datos reales traen problemas que los aleatorios nunca
-muestran: valores faltantes, variables en escalas incompatibles, píxeles que
-nunca cambian. Encontrar esos problemas es parte del trabajo.
+Trabaja con imágenes, viajes en taxi y cifras de pasajeros. Encuentra valores
+faltantes, escalas desiguales y píxeles constantes. Algunos ejemplos sintéticos
+pequeños explican ideas concretas.
 
 ## Míralo primero
 
 {{< include ../_includes/companion-video-es.md >}}
 
-El vídeo está *generado*, no grabado. Está en la
-[página del complemento](companion.qmd), junto a las infografías, el audio, el
-cuestionario, las tarjetas y el mapa mental. Esa página explica qué significa
-aquí «generado» y qué hacer al respecto.
+Encuentra más resúmenes de NotebookLM en el [complemento](companion.qmd).
 
 ## Para quién es
 
-Has leído *{{< var workshop.book >}}*. Sabes qué es una matriz. Este taller **no
-supone ningún conocimiento previo de teoría de tensores**, y cada término nuevo se
-define donde aparece por primera vez.
+Conoces el álgebra lineal de *{{< var workshop.book >}}*.
+No necesitas teoría de tensores. Los términos nuevos se explican al aparecer.
 
 ## Qué hay aquí
 
-Siete recursos, y cada uno cumple una función distinta. Empieza por el que
-corresponda a lo que estés haciendo ahora mismo.
-
-| | Qué es | Cuándo lo usas |
-|---|---|---|
-| **[Manual](tensors_workshop_plan_with_quizzes.md)** · [EN](../tensors_workshop_plan_with_quizzes.md) | El texto de la sesión: la teoría, todos los ejercicios, las soluciones comentadas y los apéndices para casa. | Léelo antes, síguelo durante, consérvalo después. |
-| **[Diapositivas](../slides/es/index.qmd)** · [EN](../slides/en/index.qmd) | Lo que se proyecta en la sala, con el reloj de la sesión y una miga de pan que indica en qué sección estás. | En vivo durante la sesión, o para repasar después la forma del día. |
-| **[Cuadernos](notebooks.qmd)** · [EN](../notebooks.qmd) | Catorce cuadernos de Colab: uno por sección, más un estudio a fondo para casa. Donde realmente escribes código. | Durante cada sección, y para el ejercicio de casa. |
-| **[Kahoot](../kahoot.qmd)** | Tres controles de conocimiento de 6 preguntas, después de las secciones 04, 07 y 10. | En vivo, en el móvil o en una segunda pestaña. |
-| **[Complemento](companion.qmd)** · [EN](../companion.qmd) | Generado por máquina a partir de las fuentes del propio taller: un resumen en vídeo, infografías, un resumen en audio, un cuestionario, tarjetas de memoria y un mapa mental. Generado, no escrito. Y un diagrama del día, dibujado a mano. | Antes, para una primera pasada; después, para repasar. |
-| **[Referencias](references.qmd)** · [EN](../references.qmd) | Los libros, artículos, documentación de `tensorly` y entradas del blog sobre los que se construye el taller, con DOI y páginas de los autores. | Después de una sección, cuando quieras el tratamiento serio de lo que rozó. |
-| **[Repositorio]({{< var repo.url >}})** | La fuente de las seis filas anteriores, más las tres hojas de cálculo de Kahoot. | Para clonarlo, corregir algo o ejecutar los cuadernos fuera de Colab. |
-
-: {tbl-colwidths="[16,50,34]"}
-
-El manual es el *texto* fuente. Los datos que los siete comparten —los títulos
-de las secciones, el reloj, los enlaces— viven una sola vez en
-[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml).
-Todas las tablas del sitio se generan a partir de ese único archivo, así que no
-hay dos que puedan contradecirse.
-
-**Las trece secciones, una por una, están en la
-[página de cuadernos](notebooks.qmd).**
+| Recurso | Para qué sirve |
+|---|---|
+| **[Manual](tensors_workshop_plan_with_quizzes.md)** · [EN](../tensors_workshop_plan_with_quizzes.md) | Leer teoría, ejercicios y soluciones. |
+| **[Diapositivas](../slides/es/index.qmd)** · [EN](../slides/en/index.qmd) | Seguir la sesión. |
+| **[Cuadernos](notebooks.qmd)** · [EN](../notebooks.qmd) | Escribir código en Colab. |
+| **[Kahoot](../kahoot.qmd)** | Comprobar lo aprendido durante la sesión. |
+| **[Complemento](companion.qmd)** · [EN](../companion.qmd) | Repasar con vídeo, audio, diagramas y preguntas. |
+| **[Referencias](references.qmd)** · [EN](../references.qmd) | Explorar libros, artículos y software. |
+| **[Repositorio]({{< var repo.url >}})** | Obtener los archivos fuente o contribuir una corrección. |
 
 ## Requisitos previos
 
-Cada recurso de abajo es gratuito, y todos funcionan en el navegador.
+Las herramientas son gratuitas y funcionan en el navegador.
 
 **Antes de la sesión**
 
-- **El álgebra lineal de {{< var workshop.book >}}**: vectores, matrices, el
-  producto matricial, la inversa, la descomposición espectral y la SVD. Ese
-  único capítulo es el único conocimiento previo que se da por supuesto.
+- Repasa el álgebra lineal de **{{< var workshop.book >}}**: vectores,
+  matrices, productos, inversas, descomposición espectral y SVD.
 - **[`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}})**:
-  14 cuadernos breves de Colab, bilingües, unas 2–3 horas en total. Cubren
-  exactamente ese material, de vectores a PCA. Es trabajo previo obligatorio.
-  El taller avanza rápido y da por hecho que ya lo hiciste.
+  trabajo previo obligatorio. Completa 14 cuadernos bilingües, de vectores a
+  PCA. Reserva 2–3 horas.
 - **El [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb),
-  ejecutado en Colab**: descarga los tres archivos CSV que usa el taller.
-  Ejecútalo antes de la sesión. Si falla, avisa enseguida: una descarga que
-  falla en silencio te deja atascado en las secciones 07 y 10, una hora
-  después.
+  ejecutado en Colab**: comprueba la preparación y las descargas.
+  Avisa de cualquier error antes de la sesión.
 
 **Recomendado**
 
 - **[*Essence of linear algebra*]({{< var workshop.prereq_video_url >}})**
-  (3Blue1Brown, en inglés con subtítulos): 16 vídeos, unas 3 horas en total.
-  Míralos si el capítulo del libro te pareció puro manejo de símbolos. Dan la
-  imagen geométrica de lo que una matriz *hace*, y las secciones 04 a 10 se
-  apoyan en esa imagen.
+  (3Blue1Brown, en inglés con subtítulos): un repaso visual. 16 vídeos,
+  unas 3 horas.
 
 **Ten a mano el día del taller**
 
-- **Una cuenta de Google**: los cuadernos se ejecutan en
-  [Colab](https://colab.research.google.com/) desde el navegador. No hay
-  instalación local.
-- **Discord**: la invitación te la pasa quien imparte el taller. Ahí ocurren
-  las discusiones, los canales de grupo y las preguntas, en español o en
-  inglés.
-- **El móvil o una segunda pestaña para [Kahoot](../kahoot.qmd)**: tres
-  controles de 6 preguntas, después de las secciones 04, 07 y 10. No hay que
-  registrarse: entras con un PIN.
+- **[Colab](https://colab.research.google.com/)** para programar.
+- **Discord** para preguntas y trabajo en grupo. Recibirás una invitación.
+- **El móvil o una segunda pestaña para [Kahoot](../kahoot.qmd)**.
+  Entra con el PIN de la sesión.
 
 ## Cómo trabajamos
-
-Cuadernos en GitHub, ejecución en Colab, discusión en Discord. Dos ritmos:
 
 - **Bloques de ejercicios**: 10 minutos programando y 5 de explicación.
 - **Bloques de grupo**: 10 minutos de discusión en tu canal y luego puesta en común.
 
 ## Una nota sobre el idioma
 
-El taller se imparte en inglés, pero muchos términos son casi idénticos en
-español: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*,
-*decomposition/descomposición*, *factorization/factorización*,
-*contraction/contracción*, *convolution/convolución*, *recursion/recursión*.
-
-**Pregunta en español o en inglés**, lo que te permita preguntar más rápido. Las
-[diapositivas están en los dos idiomas](../slides/es/index.qmd) y cada
-encabezado de los cuadernos lleva un resumen de una línea en español.
+El taller se imparte en inglés. **Pregunta en español o en inglés.**
+Las [diapositivas](../slides/es/index.qmd) y los cuadernos ofrecen ambos idiomas.

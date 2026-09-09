@@ -1,22 +1,15 @@
 ---
-title: "The machine-generated companion"
-subtitle: "What NotebookLM made from the handbook and the notebooks"
+title: "Workshop companion"
+subtitle: "Videos, audio, diagrams, and practice questions"
 ---
 
-NotebookLM generated the material on this page from the workshop's own sources.
-No person wrote it and no person checked it. Use it as a *second pass* over
-material you have already seen. Where it disagrees with the
-[handbook](tensors_workshop_plan_with_quizzes.md), the handbook is right.
-Generated {{< var companion.exported >}}.
-
-Some artifacts are exported, and this site serves them: no account, no sign-in.
-The rest are links into NotebookLM, which asks for a Google account. Each card
-says which one it is.
+Review the workshop with these NotebookLM materials, generated
+{{< var companion.exported >}}. They have not been checked by a person.
+Use the [handbook](tensors_workshop_plan_with_quizzes.md) to check answers.
 
 ## The whole day in one picture {#brainstorm}
 
-This diagram is the exception on this page: a person drew it, from the handbook.
-Four ideas, and every section under the idea it serves.
+Four ideas connect the sections. This diagram was drawn by hand.
 
 {{< include _includes/brainstorm-en.md >}}
 
@@ -26,8 +19,6 @@ Four ideas, and every section under the idea it serves.
 
 ## One-minute shorts {#shorts}
 
-Eight videos. Each one covers a single idea and names the section it belongs to.
-
 {{< include _includes/companion-shorts-en.md >}}
 
 ## Infographics {#infographics}
@@ -36,16 +27,13 @@ Eight videos. Each one covers a single idea and names the section it belongs to.
 
 ## Listen {#listen}
 
-Two hosts talk through the workshop. This is the one piece here you can use with
-the screen off.
+Listen to two hosts explain the main ideas.
 
 {{< include _includes/companion-audio-en.md >}}
 
 ## Test yourself {#test-yourself}
 
-Neither of these is the [Kahoot](kahoot.qmd). The Kahoot is six live questions,
-written for this workshop, run after sections 04, 07 and 10. These two are
-generated, and you can retake them as often as you like.
+Practice at your own pace. For the live quizzes, use [Kahoot](kahoot.qmd).
 
 {{< include _includes/companion-selfcheck-en.md >}}
 
@@ -55,9 +43,8 @@ generated, and you can retake them as often as you like.
 
 ## In NotebookLM {#notebooklm}
 
-**[Open the notebook]({{< var companion.notebook_url >}})** to read the sources
-these artifacts came from, or to generate new ones. The overview infographic has
-**[its own link]({{< var companion.overview_url >}})** as well.
+[Open the notebook]({{< var companion.notebook_url >}}) to explore the sources.
+[View the overview infographic]({{< var companion.overview_url >}}).
 
 ::: {.callout-note appearance="simple"}
 🇪🇸 ¿Prefieres español? [Esta página en español](es/companion.qmd).

@@ -1,23 +1,16 @@
 ---
-title: "El complemento generado por máquina"
-subtitle: "Lo que NotebookLM generó a partir del manual y los cuadernos"
+title: "Complemento del taller"
+subtitle: "Vídeos, audio, diagramas y preguntas de práctica"
 lang: es
 ---
 
-NotebookLM generó el material de esta página a partir de las fuentes del propio
-taller. No lo ha escrito ninguna persona y nadie lo ha revisado. Úsalo como una
-*segunda pasada* sobre material que ya has visto. Cuando algo aquí contradiga al
-[manual](tensors_workshop_plan_with_quizzes.md), el manual tiene razón. Generado
-el {{< var companion.exported >}}.
-
-Algunos artefactos están exportados y los sirve este sitio: sin cuenta y sin
-iniciar sesión. Los demás son enlaces a NotebookLM, que pide una cuenta de
-Google. Cada tarjeta dice de cuál se trata.
+Repasa el taller con estos materiales de NotebookLM, generados el
+{{< var companion.exported >}}. Nadie los ha revisado.
+Usa el [manual](tensors_workshop_plan_with_quizzes.md) para comprobar respuestas.
 
 ## Todo el día en una imagen {#brainstorm}
 
-Este diagrama es la excepción de la página: lo dibujó una persona, a partir del
-manual. Cuatro ideas, y cada sección bajo la idea a la que sirve.
+Cuatro ideas conectan las secciones. Este diagrama se dibujó a mano.
 
 {{< include ../_includes/brainstorm-es.md >}}
 
@@ -27,9 +20,6 @@ manual. Cuatro ideas, y cada sección bajo la idea a la que sirve.
 
 ## Vídeos de un minuto {#shorts}
 
-Ocho vídeos. Cada uno trata una sola idea y nombra la sección a la que
-pertenece.
-
 {{< include ../_includes/companion-shorts-es.md >}}
 
 ## Infografías {#infographics}
@@ -38,16 +28,13 @@ pertenece.
 
 ## Escuchar {#listen}
 
-Dos voces comentan el taller. Es lo único de aquí que funciona con la pantalla
-apagada.
+Escucha a dos voces explicar las ideas principales.
 
 {{< include ../_includes/companion-audio-es.md >}}
 
 ## Ponte a prueba {#test-yourself}
 
-Ninguno de los dos es el [Kahoot](../kahoot.qmd). El Kahoot son seis preguntas
-en vivo, escritas para este taller, que se lanzan después de las secciones 04,
-07 y 10. Estos dos están generados y puedes repetirlos las veces que quieras.
+Practica a tu ritmo. Para los cuestionarios en vivo, usa [Kahoot](../kahoot.qmd).
 
 {{< include ../_includes/companion-selfcheck-es.md >}}
 
@@ -57,10 +44,8 @@ en vivo, escritas para este taller, que se lanzan después de las secciones 04,
 
 ## En NotebookLM {#notebooklm}
 
-**[Abre el cuaderno]({{< var companion.notebook_url >}})** para leer las fuentes
-de las que salieron estos artefactos, o para generar otros nuevos. La infografía
-de panorama general tiene también **[su propio
-enlace]({{< var companion.overview_url >}})**.
+[Abre el cuaderno]({{< var companion.notebook_url >}}) para explorar las fuentes.
+[Ver la infografía general]({{< var companion.overview_url >}}).
 
 ::: {.callout-note appearance="simple"}
 🇬🇧 Prefer English? [This page in English](../companion.qmd).

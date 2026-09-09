@@ -1,6 +1,6 @@
 ---
 title: "Tensors for Machine Learning"
-subtitle: "A 3-hour workshop, plus three Kahoot knowledge checks"
+subtitle: "A 3-hour workshop with code, real data, and three quizzes"
 toc: false
 title-block-banner: images/hero-band.png
 title-block-banner-color: body
@@ -23,106 +23,66 @@ bienvenidas en español o en inglés.
 
 ## What this is
 
-A {{< var workshop.minutes >}}-minute workshop. It takes you from "I know
-matrices" to "I can manipulate, solve, convolve and factorize tensors."
+Learn to reshape, solve, convolve, and factorize tensors in
+{{< var workshop.minutes >}} minutes.
 
-It runs on **real data only**: real tumour measurements, real handwritten
-digits, real histology images, real New York taxi trips, real airline traffic.
-No dataset here is invented with random numbers. Real data carries problems that
-random numbers never show you — missing values, features on incompatible scales,
-pixels that never change. Finding those problems is part of the work.
+Work with images, taxi trips, and airline counts. Find missing values, uneven
+scales, and constant pixels. Small synthetic examples explain selected ideas.
 
 ## Watch it first
 
 {{< include _includes/companion-video-en.md >}}
 
-The video is *generated*, not recorded. It sits on the
-[companion page](companion.qmd), beside the infographics, the audio, the quiz,
-the flashcards and the mind map. That page says what generated means here, and
-what to do about it.
+Find more NotebookLM summaries on the [companion page](companion.qmd).
 
 ## Who it is for
 
-You have read *{{< var workshop.book >}}*. You know matrices. This workshop
-assumes **no previous knowledge of tensor theory**, and every new term is defined
-where it first appears.
+You know the linear algebra in *{{< var workshop.book >}}*.
+No tensor theory is required. New terms are explained as they appear.
 
 ## What's here
 
-Seven things, and they do different jobs. Start with whichever one matches
-what you are doing right now.
-
-| | What it is | When you use it |
-|---|---|---|
-| **[Handbook](tensors_workshop_plan_with_quizzes.md)** · [ES](es/tensors_workshop_plan_with_quizzes.md) | The session text: the theory, every exercise, the worked solutions, and the take-home appendices. | Read it before, follow it during, keep it after. |
-| **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | What is projected in the room, with the running clock and a breadcrumb saying which section you are in. | Live in the session, or to review the shape of the day afterwards. |
-| **[Notebooks](notebooks.qmd)** · [ES](es/notebooks.qmd) | Fourteen Colab notebooks — one per section, plus a take-home deep dive. Where you actually type. | During each section, and for the take-home. |
-| **[Kahoot](kahoot.qmd)** | Three 6-question knowledge checks, run after sections 04, 07 and 10. | Live, on your phone or a second tab. |
-| **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Machine-generated from this workshop's own sources: a video overview, infographics, an audio overview, a quiz, flashcards and a mind map. Generated, not written. Plus one diagram of the day, drawn by hand. | Before, for a first pass; after, for revision. |
-| **[References](references.qmd)** · [ES](es/references.qmd) | The books, papers, `tensorly` docs and blog posts the workshop is built on — with DOIs and author pages. | After a section, when you want the proper treatment of what it skimmed. |
-| **[Repository]({{< var repo.url >}})** | The source of the six rows above, plus the three Kahoot spreadsheets. | To fork it, fix something, or run the notebooks off Colab. |
-
-: {tbl-colwidths="[16,50,34]"}
-
-The handbook is the source *text*. The facts those seven share — the section
-titles, the running clock, the links — live once in
-[`_variables.yml`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/_variables.yml).
-Every table on this site is generated from that one file, so no two tables can
-disagree.
-
-**The thirteen sections, section by section, are on the
-[notebooks page](notebooks.qmd).**
+| Resource | Use it to |
+|---|---|
+| **[Handbook](tensors_workshop_plan_with_quizzes.md)** · [ES](es/tensors_workshop_plan_with_quizzes.md) | Read the theory, exercises, and solutions. |
+| **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | Follow the session. |
+| **[Notebooks](notebooks.qmd)** · [ES](es/notebooks.qmd) | Write code in Colab. |
+| **[Kahoot](kahoot.qmd)** | Check your understanding during the session. |
+| **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Review with video, audio, diagrams, and practice questions. |
+| **[References](references.qmd)** · [ES](es/references.qmd) | Explore the books, papers, and software. |
+| **[Repository]({{< var repo.url >}})** | Get the source files or contribute a fix. |
 
 ## Prerequisites
 
-Every item below is free, and it all runs in your browser.
+The tools are free and run in your browser.
 
 **Do before the session**
 
-- **The linear algebra in {{< var workshop.book >}}** — vectors, matrices, the
-  matrix product, the inverse, eigendecomposition, SVD. That one chapter is the
-  only background this workshop assumes.
+- Review the linear algebra in **{{< var workshop.book >}}**: vectors,
+  matrices, products, inverses, eigendecomposition, and SVD.
 - **[`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}})** —
-  14 short bilingual Colab notebooks, about 2–3 hours in total. They cover
-  exactly that material, vectors through PCA. This is required pre-work. The
-  workshop moves fast, and it assumes you have reviewed it.
+  required pre-work. Complete 14 bilingual notebooks, from vectors to PCA.
+  Allow 2–3 hours.
 - **[Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb), run in
-  Colab** — it downloads the three CSV files the workshop needs. Run it before
-  the session. If it fails, say so at once: a download that fails quietly
-  leaves you stuck at sections 07 and 10, an hour in.
+  Colab** — check setup and data downloads. Report any errors before the session.
 
 **Recommended**
 
 - **[*Essence of linear algebra*]({{< var workshop.prereq_video_url >}})**
-  (3Blue1Brown) — 16 videos, about 3 hours in total. Watch them if the book
-  chapter felt like symbol-pushing. They give you the geometric picture of what
-  a matrix *does*, and sections 04 to 10 lean on that picture.
+  (3Blue1Brown) — a visual refresher. 16 videos, about 3 hours.
 
 **Have ready on the day**
 
-- **A Google account** — the notebooks run in
-  [Colab](https://colab.research.google.com/) in your browser. There is no
-  local install.
-- **Discord** — the invite comes from the facilitator. Every discussion, every
-  breakout channel and every question happens there, in Spanish or English.
-- **A phone or a second tab for [Kahoot](kahoot.qmd)** — three 6-question
-  knowledge checks, after sections 04, 07 and 10. No sign-up; you join with a
-  PIN.
+- **[Colab](https://colab.research.google.com/)** for coding.
+- **Discord** for questions and group work. The facilitator shares the invite.
+- **A phone or second tab for [Kahoot](kahoot.qmd)**. Join with the session PIN.
 
 ## How we work
-
-Notebooks on GitHub, run in Colab, discussion in Discord. Two rhythms:
 
 - **Exercise blocks** — 10 minutes coding, then 5 minutes explanation.
 - **Group blocks** — 10 minutes discussion in your breakout channel, then share-back.
 
 ## A note on language
 
-This workshop is taught in English. Many of its terms are nearly identical in
-Spanish: *tensor/tensor*, *matrix/matriz*, *axis/eje*, *dimension/dimensión*,
-*decomposition/descomposición*, *factorization/factorización*,
-*contraction/contracción*, *convolution/convolución*, *recursion/recursión*.
-
-**Ask questions in Spanish or English** — whichever lets you ask faster. The
-[slide deck exists in both languages](slides/es/index.qmd), and every notebook
-heading carries a one-line Spanish summary.
+Teaching is in English. **Ask questions in English or Spanish.**
+The [slides](slides/es/index.qmd) and notebooks support both languages.

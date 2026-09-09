@@ -89,8 +89,8 @@ Every artifact in that notebook has an `/artifact/<uuid>` URL, the quiz and
 flashcards and Audio Overview included — the Studio row's ⋮ menu hides Copy link
 for those three, which is what made them look unshareable. What none of them
 has is an export, so they only work while the notebook is shared as "anyone
-with the link", and they are the only things on the site that ask a visitor for
-a Google account. Both companion pages say so on every card.
+with the link". Companion copy names the destination briefly ("Opens in
+NotebookLM"); assume readers have a Google account and omit login reminders.
 
 `companion.shorts:` is the eight one-minute video overviews, kept apart from
 `video:` because that one is *the* overview — the one both landing pages embed
