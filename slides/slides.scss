@@ -39,6 +39,31 @@ $code-block-font-size: 0.62em;
 .reveal .callout { font-size: .8em; }
 .reveal .footer { font-size: .5em; opacity: .75; }
 
+// Editable computing primer between the introduction and section 02.
+// Scope typography to these slides so the existing art and agenda keep their layout.
+.reveal .slides section.computing-slide {
+  text-align: left;
+  font-size: 30px;
+
+  h2 { font-size: 1.85em; margin-bottom: .65em; }
+  h3 { font-size: 1.12em; margin-bottom: .5em; }
+  .columns { display: flex; gap: 2em; }
+  .columns > .column { min-width: 0; flex: 0 0 calc(50% - 1em); width: calc(50% - 1em) !important; }
+  .column > :not(ul, ol) { margin-left: 0; margin-right: 0; }
+  li { margin-bottom: .45em; }
+  table { width: 100%; font-size: .87em; margin: .65em 0; }
+  th, td { padding: .35em .4em; }
+  pre { font-size: .78em; margin-top: 1em; }
+  pre code { max-height: none; }
+  > .callout { margin-top: 1em; font-size: .95em; }
+}
+
+// These context slides have no notebook action of their own. Hide the inherited
+// section-01 links, which otherwise overlap the right column.
+.reveal:has(.computing-slide.present) .deck-colab-panel {
+  display: none;
+}
+
 // The pace badge under every section title. Two facts the facilitator needs
 // mid-flight and nobody else does: how many minutes this section is allocated,
 // and where it should sit on the running clock counted from minute zero. A

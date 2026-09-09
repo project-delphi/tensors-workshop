@@ -142,6 +142,172 @@ al lado.
 
 <p class="sr-only">¿Qué aporta una factorización? Un diagrama de cuatro pasos — número, polinomio, matriz, tensor — muestra que factorizar revela estructura útil y no solo reescribe una expresión.</p>
 
+## NumPy: memoria y cómputo vectorizado {#numpy-memory .computing-slide}
+
+:::: {.columns}
+::: {.column width="50%"}
+### Conceptos y arquitectura
+
+- **`ndarray`**: un búfer de datos con forma, tipo de elemento (`dtype`) y strides (pasos en bytes por eje).
+- **Vistas**: el slicing básico y la transposición comparten datos al cambiar metadatos. La indexación avanzada crea copias.
+- **Vectorización**: las operaciones numéricas usan bucles compilados y reducen el trabajo del intérprete de Python.
+- **Broadcasting**: alinea formas desde la derecha. Cada par de tamaños debe coincidir o incluir un 1, sin replicar las entradas.
+
+```python
+import numpy as np
+
+T = np.arange(24, dtype=np.float32).reshape(2, 3, 4)
+print(T.shape, T.strides)      # (2, 3, 4) (48, 16, 4)
+
+T_t = T.transpose(2, 0, 1)
+print(T_t.shape, T_t.strides)  # (4, 2, 3) (4, 48, 16)
+print(np.shares_memory(T, T_t))  # True
+```
+:::
+::: {.column width="50%"}
+### Historia y orígenes
+
+**Travis Oliphant creó NumPy en 2005**, combinando ideas y funcionalidades de Numeric y Numarray.
+
+Escribió *Guide to NumPy* y luego cofundó Continuum Analytics, hoy Anaconda.
+
+| Año | Hito |
+|---|---|
+| 1995 | Surge Numeric |
+| 2001 | Comienza el desarrollo de Numarray |
+| 2005 | Comienza el proyecto NumPy |
+| 2006 | Se publica NumPy 1.0 |
+| Hoy | Base de Python científico y PyData |
+
+**Explora:** [github.com/numpy/numpy](https://github.com/numpy/numpy) para consultar el código, los issues y las guías de contribución.
+:::
+::::
+
+::: {.callout-note title="Mismo búfer, distintos ejes" icon=false}
+Cada `float32` ocupa 4 bytes. Transponer reordena los strides sin mover los valores. Escribir mediante esta vista también modifica el arreglo original.
+:::
+
+::: {.notes}
+Conecta los conceptos de tensor con los arreglos de la sección 02. Lee los
+strides como pasos en bytes: avanzar una posición en el primer eje de T salta
+48 bytes. Pregunta qué eje original pasa a ser el primero de T_t (el eje 2).
+Broadcasting evita replicar las entradas, pero la operación puede crear una
+salida grande. Reshape puede necesitar una copia si los strides actuales no
+permiten expresar la nueva forma. Vectorizar con NumPy no traslada el cálculo
+automáticamente a una GPU.
+
+Fuentes: [Organización interna de NumPy](https://numpy.org/doc/stable/dev/internals.html),
+[copias y vistas](https://numpy.org/doc/stable/user/basics.copies.html),
+[broadcasting](https://numpy.org/doc/stable/user/basics.broadcasting.html),
+[historia de NumPy](https://numpy.org/history/),
+[Guide to NumPy](https://web.mit.edu/dvp/Public/numpybook.pdf),
+[orígenes de Anaconda](https://www.anaconda.com/about-us).
+:::
+
+## Aceleración por hardware: más allá de la CPU {#hardware-acceleration .computing-slide}
+
+:::: {.columns}
+::: {.column width="50%"}
+### Panorama del hardware
+
+- **CPU**: baja latencia y control de flujo flexible, con cachés grandes, varios núcleos e instrucciones vectoriales SIMD.
+- **GPU NVIDIA**: muchos hilos con SIMT. CUDA es la plataforma de programación. Los **Tensor Cores** aceleran el producto de matrices con acumulación: $\mathbf{D}=\mathbf{A}\mathbf{B}+\mathbf{C}$.
+- **TPU de Google**: son ASIC especializados. Sus unidades matriciales (MXU) pasan datos por una malla sistólica y los reutilizan al multiplicar y acumular.
+- **Ancho de banda**: limita muchas operaciones elemento a elemento. Los productos matriciales grandes con buen uso de bloques pueden quedar limitados por el cómputo.
+:::
+::: {.column width="50%"}
+### Correspondencia con el cómputo
+
+| Arquitectura | Modelo de ejecución | Especialidad | Ejemplos de memoria |
+|---|---|---|---|
+| CPU | Multinúcleo + SIMD | Tareas generales, baja latencia | Cachés + DRAM DDR |
+| GPU NVIDIA | SIMT + Tensor Cores | Contracciones paralelas | GDDR o HBM |
+| TPU de Google | MXU sistólica | Productos matriciales densos | Búferes internos + HBM |
+| Otros ASIC de ML | Flujo de datos especializado | Cargas específicas | SRAM, DRAM o HBM |
+
+La memoria y la precisión admitida dependen de la generación del dispositivo.
+
+**Ejemplo de Volta:** un Tensor Core realiza un producto matricial $4\times4$ con acumulación por ciclo, con entradas FP16 y acumulación FP32. Otras generaciones difieren.
+:::
+::::
+
+::: {.callout-tip title="Mover datos también cuesta" icon=false}
+Los aceleradores ayudan cuando suficiente trabajo reutiliza datos en el dispositivo. Las operaciones pequeñas y las transferencias repetidas entre CPU y dispositivo pueden anular la mejora.
+:::
+
+::: {.notes}
+SIMD significa una instrucción, múltiples datos. SIMT significa una instrucción,
+múltiples hilos. Una malla sistólica pasa operandos entre elementos vecinos en
+vez de consultar la memoria en cada paso. Aun así necesita búferes y
+transferencias. HBM significa memoria de alto ancho de banda.
+
+La operación 4 por 4 por ciclo describe el rendimiento de un Tensor Core de
+Volta, no la latencia de un producto matricial arbitrario ni una regla para
+todas las generaciones. La tabla presenta familias de memoria, sin suponer que
+toda CPU usa DDR5 o toda GPU usa HBM3e. Una TPU también es un circuito integrado
+de aplicación específica (ASIC).
+
+Fuentes: [Guía de rendimiento de GPU NVIDIA](https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html),
+[Tensor Cores de Volta](https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/),
+[arquitectura de TPU de Google](https://docs.cloud.google.com/tpu/docs/system-architecture-tpu-vm).
+:::
+
+## BLAS, LAPACK y frameworks de ML {#numerical-software-stack .computing-slide}
+
+:::: {.columns}
+::: {.column width="50%"}
+### Fundamentos de bajo nivel
+
+**BLAS** (Basic Linear Algebra Subprograms) define operaciones numéricas estándar:
+
+| Nivel | Operación | Ejemplo |
+|---|---|---|
+| 1 | Vector | Producto punto |
+| 2 | Matriz–vector | $y=Ax$ |
+| 3 | Matriz–matriz | $C=AB$ |
+
+- **LAPACK**, sucesor de LINPACK y EISPACK, usa BLAS para sistemas lineales, SVD y problemas de autovalores. Las bibliotecas de descomposición tensorial reutilizan estas rutinas matriciales.
+- **Bibliotecas de aceleración**: cuBLAS ofrece BLAS en GPU, cuTENSOR ofrece contracciones y oneDNN optimiza primitivas de redes neuronales en CPU y GPU compatibles.
+:::
+::: {.column width="50%"}
+### Frameworks y modelos de programación
+
+- **PyTorch**: código imperativo y grafos dinámicos de autograd, con compilación opcional mediante `torch.compile`.
+- **JAX**: arreglos con transformaciones componibles `jit`, `vmap` y `grad`. Las funciones puras facilitan el trazado y la compilación con XLA.
+- **TensorFlow**: ejecución inmediata y grafos con `tf.function`, con herramientas para servir modelos.
+- **Keras 3**: API de modelos de alto nivel con backends de TensorFlow, JAX y PyTorch.
+- **Haiku / Flax**: módulos de redes neuronales y gestión de parámetros sobre JAX.
+:::
+::::
+
+::: {.callout-note title="La conexión con nuestros notebooks" icon=false}
+`A @ B` y `np.linalg.svd(A)` en NumPy pueden llamar bibliotecas numéricas optimizadas. Los frameworks añaden diferenciación automática, selección de dispositivo y compilación a las operaciones tensoriales.
+:::
+
+::: {.notes}
+BLAS es una interfaz con varias implementaciones, como OpenBLAS y MKL. LAPACK
+ofrece algoritmos matriciales, no algoritmos generales de factorización
+tensorial. La selección de rutinas depende de la operación, el dtype, la
+disposición de memoria y el backend instalado. Un framework puede usar
+bibliotecas del fabricante o generar sus propios kernels. oneDNN ofrece
+primitivas de redes neuronales y no sustituye directamente a BLAS.
+
+Conecta con la siguiente sección: antes de elegir un backend, nombra los ejes y
+comprueba las formas. Esos hábitos sirven en todos los frameworks.
+
+Fuentes: [BLAS](https://www.netlib.org/blas/),
+[introducción a LAPACK](https://www.netlib.org/lapack/lug/node5.html),
+[cuBLAS](https://docs.nvidia.com/cuda/cublas/),
+[cuTENSOR](https://docs.nvidia.com/cuda/cutensor/latest/),
+[oneDNN](https://uxlfoundation.github.io/oneDNN/),
+[autograd de PyTorch](https://docs.pytorch.org/docs/stable/notes/autograd.html),
+[conceptos de JAX](https://docs.jax.dev/en/latest/key-concepts.html),
+[grafos de TensorFlow](https://www.tensorflow.org/guide/intro_to_graphs),
+[Keras 3](https://keras.io/keras_3/),
+[Haiku](https://dm-haiku.readthedocs.io/en/stable/),
+[Flax](https://flax.readthedocs.io/).
+:::
+
 ## {#sec-02-thinking-in-n-dimensions background-image="images/slides-final/slide-08.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.sec-part}
