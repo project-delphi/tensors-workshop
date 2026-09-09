@@ -6,6 +6,44 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
+## What you'll master
+
+::: {.grid}
+::: {.g-col-6}
+### 🧠 Tensor mechanics & memory layouts
+
+- Master multi-dimensional indexing, slicing, axis transpositions, and strided memory buffers.
+- Understand zero-copy views and memory layouts in NumPy, PyTorch, and JAX.
+:::
+::: {.g-col-6}
+### 📉 Low-rank tensor compression
+
+- Factorize high-dimensional tensors into compact factor matrices using CP/PARAFAC and Tucker decompositions.
+- Reduce storage and computational overhead while preserving critical latent structures.
+:::
+::: {.g-col-6}
+### 🔍 Real-world data diagnostics
+
+- Identify and repair spatial and temporal anomalies, constant or dead pixels, and scale imbalances.
+- Impute missing values across complex multi-way arrays, including NYC taxi grids, airline trends, and image sets.
+:::
+::: {.g-col-6}
+### ⚡ Hardware acceleration & infrastructure
+
+- Connect abstract tensor contractions to GPUs, TPUs, Tensor Cores, and BLAS/LAPACK backends.
+- Build intuition for memory bandwidth bottlenecks and hardware execution.
+:::
+:::
+
+## The 210-minute journey
+
+| Module | Time | Focus |
+|---|---|---|
+| 1 | 00:00–00:45 | **Shapes & strides** — reshaping, indexing, broadcasting, and zero-copy views |
+| 2 | 00:45–01:30 | **Systems & convolutions** — tensor equations, multi-way filtering, and multidimensional transformations |
+| 3 | 01:30–02:30 | **Factorization & compression** — low-rank CP and Tucker decompositions, with memory reduction |
+| 4 | 02:30–03:30 | **Diagnostics & imputation** — dead pixels, scale anomalies, and missing-value recovery |
+
 ::: {.companion-strip}
 [The whole day in one picture](companion.qmd#brainstorm)
 [Video overview](companion.qmd#video)
@@ -18,8 +56,7 @@ title-block-banner-color: body
 
 ## What this is
 
-Learn to reshape, solve, convolve, and factorize tensors in
-{{< var workshop.minutes >}} minutes.
+Master the multidimensional math behind modern machine learning. Learn to manipulate, compress, and diagnose multi-way datasets and model weights in a focused, 3-hour interactive workshop.
 
 Work with images, taxi trips, and airline counts. Find missing values, uneven
 scales, and constant pixels. Small synthetic examples explain selected ideas.
@@ -50,6 +87,12 @@ No tensor theory is required. New terms are explained as they appear.
 ## Prerequisites
 
 The tools are free and run in your browser.
+
+::: {.callout-tip icon=false}
+## Am I ready for this workshop?
+
+If you can multiply two matrices and understand basic SVD, you are ready! No prior tensor theory is required. We build every high-dimensional concept step-by-step using code and real data.
+:::
 
 **Do before the session**
 

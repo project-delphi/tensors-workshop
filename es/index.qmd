@@ -7,6 +7,44 @@ title-block-banner: ../images/hero-band.png
 title-block-banner-color: body
 ---
 
+## Lo que dominarás
+
+::: {.grid}
+::: {.g-col-6}
+### 🧠 Mecánica de tensores y memoria
+
+- Domina la indexación multidimensional, el slicing, las transposiciones de ejes y los búferes de memoria con strides.
+- Comprende las vistas sin copia y las disposiciones de memoria en NumPy, PyTorch y JAX.
+:::
+::: {.g-col-6}
+### 📉 Compresión tensorial de bajo rango
+
+- Factoriza tensores de alta dimensión en matrices de factores compactas mediante las descomposiciones CP/PARAFAC y Tucker.
+- Reduce el almacenamiento y el coste computacional conservando las estructuras latentes importantes.
+:::
+::: {.g-col-6}
+### 🔍 Diagnóstico de datos reales
+
+- Identifica y corrige anomalías espaciales y temporales, píxeles constantes o muertos y desequilibrios de escala.
+- Imputa valores faltantes en arreglos complejos de múltiples vías, como cuadrículas de taxis de Nueva York, tendencias de aerolíneas y conjuntos de imágenes.
+:::
+::: {.g-col-6}
+### ⚡ Aceleración por hardware e infraestructura
+
+- Conecta las contracciones tensoriales abstractas con GPU, TPU, Tensor Cores y backends BLAS/LAPACK.
+- Desarrolla intuición sobre los cuellos de botella del ancho de banda de memoria y la ejecución del hardware.
+:::
+:::
+
+## El recorrido de 210 minutos
+
+| Módulo | Tiempo | Enfoque |
+|---|---|---|
+| 1 | 00:00–00:45 | **Formas y strides**: reshape, indexación, broadcasting y vistas sin copia |
+| 2 | 00:45–01:30 | **Sistemas y convoluciones**: ecuaciones tensoriales, filtrado de múltiples vías y transformaciones multidimensionales |
+| 3 | 01:30–02:30 | **Factorización y compresión**: descomposiciones CP y Tucker de bajo rango, con reducción de memoria |
+| 4 | 02:30–03:30 | **Diagnóstico e imputación**: píxeles muertos, anomalías de escala y recuperación de valores faltantes |
+
 ::: {.companion-strip}
 [Todo el día en una imagen](companion.qmd#brainstorm)
 [Resumen en vídeo](companion.qmd#video)
@@ -19,8 +57,7 @@ title-block-banner-color: body
 
 ## Qué es esto
 
-Aprende a cambiar la forma, resolver, convolucionar y factorizar tensores en
-{{< var workshop.minutes >}} minutos.
+Domina las matemáticas multidimensionales que sustentan el aprendizaje automático moderno. Aprende a manipular, comprimir y diagnosticar datos de múltiples vías y pesos de modelos en un taller interactivo y concentrado de 3 horas.
 
 Trabaja con imágenes, viajes en taxi y cifras de pasajeros. Encuentra valores
 faltantes, escalas desiguales y píxeles constantes. Algunos ejemplos sintéticos
@@ -52,6 +89,12 @@ No necesitas teoría de tensores. Los términos nuevos se explican al aparecer.
 ## Requisitos previos
 
 Las herramientas son gratuitas y funcionan en el navegador.
+
+::: {.callout-tip icon=false}
+## ¿Estoy preparado para este taller?
+
+¡Si puedes multiplicar dos matrices y entiendes la SVD básica, estás preparado! No necesitas teoría previa de tensores. Construimos cada concepto de alta dimensión paso a paso con código y datos reales.
+:::
 
 **Antes de la sesión**
 

@@ -229,12 +229,84 @@ background-size: cover;
 
 
 
+<section id="what-youll-master" class="level2">
+<h2 class="anchored" data-anchor-id="what-youll-master">What you’ll master</h2>
+<div class="grid">
+<section id="tensor-mechanics-memory-layouts" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="tensor-mechanics-memory-layouts">🧠 Tensor mechanics &amp; memory layouts</h3>
+<ul>
+<li>Master multi-dimensional indexing, slicing, axis transpositions, and strided memory buffers.</li>
+<li>Understand zero-copy views and memory layouts in NumPy, PyTorch, and JAX.</li>
+</ul>
+</section>
+<section id="low-rank-tensor-compression" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="low-rank-tensor-compression">📉 Low-rank tensor compression</h3>
+<ul>
+<li>Factorize high-dimensional tensors into compact factor matrices using CP/PARAFAC and Tucker decompositions.</li>
+<li>Reduce storage and computational overhead while preserving critical latent structures.</li>
+</ul>
+</section>
+<section id="real-world-data-diagnostics" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="real-world-data-diagnostics">🔍 Real-world data diagnostics</h3>
+<ul>
+<li>Identify and repair spatial and temporal anomalies, constant or dead pixels, and scale imbalances.</li>
+<li>Impute missing values across complex multi-way arrays, including NYC taxi grids, airline trends, and image sets.</li>
+</ul>
+</section>
+<section id="hardware-acceleration-infrastructure" class="level3 g-col-6">
+<h3 class="anchored" data-anchor-id="hardware-acceleration-infrastructure">⚡ Hardware acceleration &amp; infrastructure</h3>
+<ul>
+<li>Connect abstract tensor contractions to GPUs, TPUs, Tensor Cores, and BLAS/LAPACK backends.</li>
+<li>Build intuition for memory bandwidth bottlenecks and hardware execution.</li>
+</ul>
+</section>
+</div>
+</section>
+<section id="the-210-minute-journey" class="level2">
+<h2 class="anchored" data-anchor-id="the-210-minute-journey">The 210-minute journey</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Module</th>
+<th>Time</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>00:00–00:45</td>
+<td><strong>Shapes &amp; strides</strong> — reshaping, indexing, broadcasting, and zero-copy views</td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>00:45–01:30</td>
+<td><strong>Systems &amp; convolutions</strong> — tensor equations, multi-way filtering, and multidimensional transformations</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>01:30–02:30</td>
+<td><strong>Factorization &amp; compression</strong> — low-rank CP and Tucker decompositions, with memory reduction</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>02:30–03:30</td>
+<td><strong>Diagnostics &amp; imputation</strong> — dead pixels, scale anomalies, and missing-value recovery</td>
+</tr>
+</tbody>
+</table>
 <div class="companion-strip">
 <p><a href="./companion.html#brainstorm">The whole day in one picture</a> <a href="./companion.html#video">Video overview</a> <a href="./companion.html#shorts">One-minute shorts</a> <a href="./companion.html#infographics">Infographics</a> <a href="./companion.html#test-yourself">Self-check quiz</a> <a href="./companion.html#map">Mind map</a> <a href="./companion.html#notebooklm">In NotebookLM</a></p>
 </div>
+</section>
 <section id="what-this-is" class="level2">
 <h2 class="anchored" data-anchor-id="what-this-is">What this is</h2>
-<p>Learn to reshape, solve, convolve, and factorize tensors in 210 minutes.</p>
+<p>Master the multidimensional math behind modern machine learning. Learn to manipulate, compress, and diagnose multi-way datasets and model weights in a focused, 3-hour interactive workshop.</p>
 <p>Work with images, taxi trips, and airline counts. Find missing values, uneven scales, and constant pixels. Small synthetic examples explain selected ideas.</p>
 </section>
 <section id="watch-it-first" class="level2">
@@ -294,6 +366,19 @@ background-size: cover;
 <section id="prerequisites" class="level2">
 <h2 class="anchored" data-anchor-id="prerequisites">Prerequisites</h2>
 <p>The tools are free and run in your browser.</p>
+<div class="callout callout-style-default callout-tip no-icon callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Am I ready for this workshop?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you can multiply two matrices and understand basic SVD, you are ready! No prior tensor theory is required. We build every high-dimensional concept step-by-step using code and real data.</p>
+</div>
+</div>
 <p><strong>Do before the session</strong></p>
 <ul>
 <li>Review the linear algebra in <strong><a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Deep Learning</a> (Goodfellow, Bengio &amp; Courville), Chapter 2 — Linear Algebra</strong>: vectors, matrices, products, inverses, eigendecomposition, and SVD.</li>
