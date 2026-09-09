@@ -15,13 +15,17 @@ quarto render                          # the whole site, both decks
 quarto preview slides/es/index.qmd     # live reload while editing
 ```
 
-No Python or Jupyter is needed, and since the issue #45 redesign there is no
-code on a slide either: every slide is a rendered PNG under
-`en|es/images/slides-final/`, and `execute: enabled: false` means Quarto never
-runs anything. That keeps CI fast and means a deck cannot break because a
-dependency moved — but it also means **nothing checks that a number shown on a
-slide still matches the notebook it came from**. When a notebook's output
-changes, the slide art has to be redrawn.
+No Python or Jupyter is needed: `execute: enabled: false` means Quarto never
+runs code. Most slides use rendered PNGs under `en|es/images/slides-final/`.
+The agenda and the three computing slides before section 02 use editable
+Quarto content. The computing slides cover NumPy memory, hardware acceleration,
+and BLAS/LAPACK plus ML frameworks, using columns, code chunks and callouts.
+Their shared styling is scoped to `.computing-slide` in `slides.scss`, and
+their sources appear in speaker notes. Edit both languages together.
+
+The NumPy example shows expected output in comments, so it can be read without
+execution. **Nothing checks that a number shown in slide art still matches the
+notebook it came from**. When a notebook's output changes, redraw its slide art.
 
 The thirty-one PNGs numbered `slide-01` to `slide-31` were drawn by hand in a
 tool that is not in this repository, so redrawing one means redrawing it there.
