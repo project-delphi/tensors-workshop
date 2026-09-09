@@ -19,7 +19,9 @@ No Python or Jupyter is needed: `execute: enabled: false` means Quarto never
 runs code. Most slides use rendered PNGs under `en|es/images/slides-final/`.
 The agenda and the three computing slides before section 02 use editable
 Quarto content. The computing slides cover NumPy memory, hardware acceleration,
-and BLAS/LAPACK plus ML frameworks, using columns, code chunks and callouts.
+and BLAS/LAPACK plus ML frameworks, using a shared-buffer example, an architecture
+comparison and operation-to-library mappings. Code and tables stay selectable;
+secondary detail is in speaker notes.
 Their shared styling is scoped to `.computing-slide` in `slides.scss`, and
 their sources appear in speaker notes. Edit both languages together.
 
@@ -102,14 +104,14 @@ forget it.
 
 ## Structure of each deck
 
-Four opening slides → the agenda (the one text slide left, generated into
+Four opening slides → the agenda (generated into
 `_includes/agenda-{en,es}.md` by `scripts/gen_tables.py`) → then per section a
 `##` divider slide carrying the `{#sec-NN-slug}` anchor and one to three
 follow-on slides, with a full-bleed **Kahoot pause** slide after sections 04,
 07 and 10.
 
-Every slide but the agenda is a background PNG. What is *not* in the image and
-must stay in the qmd:
+Apart from the agenda and the three computing slides, every slide is a background
+PNG. What is *not* in the image and must stay in the qmd:
 
 - `<p class="sr-only">` — the slide's summary, this redesign's `fig-alt`.
 - `<h1 class="sr-only">` on the sixteen divider slides — the section name the
@@ -152,6 +154,7 @@ section's.
 | 05 | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
 | 06 | · | 01 | Map of factorizations — the map section 09 walks |
 | 07 | · | 01 | What a factorization gives you: number → polynomial → matrix → tensor |
+| computing primer | `numpy-memory`, `hardware-acceleration`, `numerical-software-stack` | 01 | NumPy memory, hardware and numerical software |
 | 08 | `sec-02-thinking-in-n-dimensions` | 02 | Thinking in N dimensions |
 | 09 | · | 02 | Batch is not time |
 | 10 | `sec-03-indexing-and-broadcasting` | 03 | Indexing and broadcasting |

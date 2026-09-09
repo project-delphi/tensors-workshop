@@ -94,7 +94,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-1cbe99773f4837085d3401b93189ac8c.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-0a53348bff282875a0b68f067b5ed71a.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -467,74 +467,102 @@ Section 09 walks this map on real data: every factorization written as a constra
 What does a factorization give you? A four-step diagram — number, polynomial, matrix, tensor — shows that factorizing reveals useful structure rather than just rewriting an expression.
 </p>
 </section>
-<section id="numpy-memory" class="slide level2 computing-slide">
-<h2>NumPy: memory layout &amp; vectorized computing</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<h3 id="concepts-architecture">Concepts &amp; architecture</h3>
-<ul>
-<li><strong><code>ndarray</code></strong>: a data buffer plus shape, element type (<code>dtype</code>) and strides (byte steps along each axis).</li>
-<li><strong>Views</strong>: basic slicing and transposition share data by changing metadata. Advanced indexing makes copies.</li>
-<li><strong>Vectorization</strong>: numeric array operations run compiled loops, reducing Python interpreter overhead.</li>
-<li><strong>Broadcasting</strong>: align shapes from the right. Each pair of sizes must match or include a 1, without tiling the inputs.</li>
-</ul>
-<div class="sourceCode" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb1-2"><a></a></span>
-<span id="cb1-3"><a></a>T <span class="op">=</span> np.arange(<span class="dv">24</span>, dtype<span class="op">=</span>np.float32).reshape(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
-<span id="cb1-4"><a></a><span class="bu">print</span>(T.shape, T.strides)      <span class="co"># (2, 3, 4) (48, 16, 4)</span></span>
-<span id="cb1-5"><a></a></span>
-<span id="cb1-6"><a></a>T_t <span class="op">=</span> T.transpose(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
-<span id="cb1-7"><a></a><span class="bu">print</span>(T_t.shape, T_t.strides)  <span class="co"># (4, 2, 3) (4, 48, 16)</span></span>
-<span id="cb1-8"><a></a><span class="bu">print</span>(np.shares_memory(T, T_t))  <span class="co"># True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div><div class="column" style="width:50%;">
-<h3 id="history-origins">History &amp; origins</h3>
-<p><strong>Travis Oliphant created NumPy in 2005</strong>, combining ideas and capabilities from Numeric and Numarray.</p>
-<p>He wrote <em>Guide to NumPy</em> and later co-founded Continuum Analytics, now Anaconda.</p>
-<table class="caption-top">
+<section id="numpy-memory" class="slide level2 computing-slide numpy-slide">
+<h2>NumPy: one buffer, different views</h2>
+<p class="computing-lead">
+An <code>ndarray</code> pairs values in memory with metadata that tells us how to read them.
+</p>
+<div class="computing-layout">
+<div class="memory-example">
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a aria-hidden="true" tabindex="-1"></a>T <span class="op">=</span> np.arange(<span class="dv">24</span>, dtype<span class="op">=</span>np.float32).reshape(<span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb1-3"><a aria-hidden="true" tabindex="-1"></a>T_t <span class="op">=</span> T.transpose(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb1-4"><a aria-hidden="true" tabindex="-1"></a>np.shares_memory(T, T_t)  <span class="co"># True</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<table class="memory-table">
 <thead>
-<tr class="header">
-<th>Year</th>
-<th>Milestone</th>
+<tr>
+<th scope="col">
+Array
+</th>
+<th scope="col">
+Shape
+</th>
+<th scope="col">
+Strides · bytes
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td>1995</td>
-<td>Numeric emerges</td>
+<tr>
+<th scope="row">
+<code>T</code>
+</th>
+<td>
+(2, 3, 4)
+</td>
+<td>
+(48, 16, 4)
+</td>
 </tr>
-<tr class="even">
-<td>2001</td>
-<td>Numarray development begins</td>
-</tr>
-<tr class="odd">
-<td>2005</td>
-<td>NumPy project begins</td>
-</tr>
-<tr class="even">
-<td>2006</td>
-<td>NumPy 1.0 released</td>
-</tr>
-<tr class="odd">
-<td>Today</td>
-<td>Foundation of scientific Python and PyData</td>
+<tr>
+<th scope="row">
+<code>T_t</code>
+</th>
+<td>
+(4, 2, 3)
+</td>
+<td>
+(4, 48, 16)
+</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Explore:</strong> <a href="https://github.com/numpy/numpy">github.com/numpy/numpy</a> for source code, issues and contribution guidelines.</p>
-</div></div>
-<div title="Same buffer, different axes">
-<div class="callout callout-note no-icon callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<p><strong>Same buffer, different axes</strong></p>
+<p class="memory-result">
+<strong>Same data. Reordered axes.</strong><br>Writing through the view also changes the original.
+</p>
 </div>
-<div class="callout-content">
-<p>Each <code>float32</code> occupies 4 bytes. Transpose reorders the strides without moving the values. Writing through this view also changes the original array.</p>
+<div class="memory-explainer">
+<p class="memory-size">
+<strong>96</strong> bytes
+</p>
+<p class="memory-caption">
+24 values × 4 bytes per <code>float32</code><br>Both arrays share this data buffer.
+</p>
+<dl class="concept-list">
+<dt>
+Strides
+</dt>
+<dd>
+Byte steps along each axis. Transpose reorders these steps.
+</dd>
+<dt>
+Vectorization
+</dt>
+<dd>
+Compiled numeric loops reduce Python overhead.
+</dd>
+<dt>
+Broadcasting
+</dt>
+<dd>
+Align shapes from the right: sizes match or one is 1. No tiled inputs.
+</dd>
+</dl>
 </div>
 </div>
-</div>
+<div class="numpy-history">
+<p>
+<strong>Travis Oliphant · 2005</strong><br>Combined Numeric and Numarray to create NumPy.
+</p>
+<p>
+Numeric <b>1995</b> &nbsp;→&nbsp; Numarray <b>2001</b><br>NumPy <b>2005</b> &nbsp;→&nbsp; NumPy 1.0 <b>2006</b>
+</p>
+<p>
+<a href="https://github.com/numpy/numpy">Explore NumPy ↗</a><br>Scientific Python’s array foundation
+</p>
 </div>
 <aside class="notes">
+<p>Travis Oliphant wrote Guide to NumPy and later co-founded Continuum Analytics, now Anaconda. Basic slicing and transposition return views; advanced indexing makes copies. The 96 bytes count the data buffer only, excluding array metadata.</p>
 <p>Bridge from tensor concepts to the arrays students will manipulate in section 02. Read the strides as byte steps: moving one position on the first axis of T skips 48 bytes. Ask which original axis becomes the first axis of T_t (axis 2). Broadcasting avoids tiled inputs, but an operation can still allocate a large output. Reshape may need a copy when the current strides cannot express the requested layout. NumPy vectorization does not automatically move work to a GPU.</p>
 <p>Sources: <a href="https://numpy.org/doc/stable/dev/internals.html">NumPy internals</a>, <a href="https://numpy.org/doc/stable/user/basics.copies.html">copies and views</a>, <a href="https://numpy.org/doc/stable/user/basics.broadcasting.html">broadcasting</a>, <a href="https://numpy.org/history/">NumPy history</a>, <a href="https://web.mit.edu/dvp/Public/numpybook.pdf">Guide to NumPy</a>, <a href="https://www.anaconda.com/about-us">Anaconda origins</a>.</p>
 <style type="text/css">
@@ -549,77 +577,106 @@ What does a factorization give you? A four-step diagram — number, polynomial, 
           display:block!important;
       }</style></aside>
 </section>
-<section id="hardware-acceleration" class="slide level2 computing-slide">
-<h2>Hardware acceleration: beyond the CPU</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<h3 id="hardware-landscape">Hardware landscape</h3>
-<ul>
-<li><strong>CPUs</strong> favor low latency and flexible control flow, with large caches, multiple cores and SIMD vector instructions.</li>
-<li><strong>NVIDIA GPUs</strong> run many threads with SIMT. CUDA is the programming platform. <strong>Tensor Cores</strong> accelerate matrix multiply-accumulate: <span class="math inline">\(\mathbf{D}=\mathbf{A}\mathbf{B}+\mathbf{C}\)</span>.</li>
-<li><strong>Google TPUs</strong> are custom ASICs. Their matrix units (MXUs) pass data through a systolic grid, reusing it across multiply-accumulate steps.</li>
-<li><strong>Memory bandwidth</strong> limits many elementwise operations. Large, well-tiled matrix products can instead be compute-bound.</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<h3 id="compute-mapping">Compute mapping</h3>
-<table class="caption-top">
+<section id="hardware-acceleration" class="slide level2 computing-slide hardware-slide">
+<h2>Hardware for tensor operations</h2>
+<div class="hardware-intro">
+<p class="computing-lead">
+The workload determines which architecture helps.
+</p>
+<p class="hardware-equation">
+<span>D = AB + C</span><br>Matrix multiply–accumulate
+</p>
+</div>
+<table class="hardware-table">
 <colgroup>
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
-<col style="width: 25%">
+<col style="width:20%">
+<col style="width:30%">
+<col style="width:28%">
+<col style="width:22%">
 </colgroup>
 <thead>
-<tr class="header">
-<th>Architecture</th>
-<th>Execution model</th>
-<th>Specialty</th>
-<th>Memory examples</th>
+<tr>
+<th scope="col">
+Architecture
+</th>
+<th scope="col">
+How it computes
+</th>
+<th scope="col">
+Best suited to
+</th>
+<th scope="col">
+Memory examples
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td>CPU</td>
-<td>Multicore + SIMD</td>
-<td>General tasks, low latency</td>
-<td>Caches + DDR DRAM</td>
+<tr>
+<th scope="row">
+<strong>CPU</strong><span>General purpose</span>
+</th>
+<td>
+Multiple cores + SIMD<br><small>Flexible control flow</small>
+</td>
+<td>
+General tasks<br>Low latency
+</td>
+<td>
+Caches + DDR DRAM
+</td>
 </tr>
-<tr class="even">
-<td>NVIDIA GPU</td>
-<td>SIMT + Tensor Cores</td>
-<td>Parallel contractions</td>
-<td>GDDR or HBM</td>
+<tr>
+<th scope="row">
+<strong>GPU</strong><span>NVIDIA</span>
+</th>
+<td>
+SIMT + Tensor Cores<br><small>CUDA programming platform</small>
+</td>
+<td>
+Parallel contractions<br>Matrix multiply–accumulate
+</td>
+<td>
+GDDR or HBM
+</td>
 </tr>
-<tr class="odd">
-<td>Google TPU</td>
-<td>Systolic MXU</td>
-<td>Dense matrix products</td>
-<td>On-chip buffers + HBM</td>
+<tr>
+<th scope="row">
+<strong>TPU</strong><span>Google · custom ASIC</span>
+</th>
+<td>
+Systolic matrix units (MXUs)<br><small>Operands pass between neighbors</small>
+</td>
+<td>
+Dense matrix products<br>Reuse data across operations
+</td>
+<td>
+On-chip buffers + HBM
+</td>
 </tr>
-<tr class="even">
-<td>Other ML ASIC</td>
-<td>Specialized dataflow</td>
-<td>Target workloads</td>
-<td>SRAM, DRAM or HBM</td>
+<tr class="other-hardware">
+<th scope="row">
+Other ML ASICs
+</th>
+<td>
+Specialized dataflow
+</td>
+<td>
+Target workloads
+</td>
+<td>
+SRAM, DRAM or HBM
+</td>
 </tr>
 </tbody>
 </table>
-<p>Memory type and supported precision depend on the device generation.</p>
-<p><strong>Volta example:</strong> a Tensor Core performs a <span class="math inline">\(4\times4\)</span> matrix multiply-accumulate per clock, with FP16 inputs and FP32 accumulation. Later generations differ.</p>
-</div></div>
-<div title="Data movement is part of the cost">
-<div class="callout callout-tip no-icon callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<p><strong>Data movement is part of the cost</strong></p>
-</div>
-<div class="callout-content">
-<p>Accelerators pay off when enough work reuses data on the device. Small operations and repeated CPU–device transfers can erase the speedup.</p>
-</div>
-</div>
-</div>
+<p class="hardware-caveat">
+Memory and supported precision vary by device generation.
+</p>
+<div class="computing-takeaway">
+<strong>Moving data costs time.</strong><span>Reuse data on the device. Small operations and repeated transfers can erase the speedup.</span>
 </div>
 <aside class="notes">
+<p>Memory bandwidth limits many elementwise operations; large, well-tiled matrix products may be compute-bound. Volta example: a Tensor Core performs a 4×4 matrix multiply-accumulate per clock with FP16 inputs and FP32 accumulation. Later generations differ.</p>
 <p>SIMD means single instruction, multiple data. SIMT means single instruction, multiple threads. A systolic array passes operands between neighboring processing elements rather than repeatedly fetching every operand from memory. It still needs buffers and memory transfers. HBM means high-bandwidth memory.</p>
 <p>The 4-by-4 operation per clock describes a Volta Tensor Core’s throughput, not the latency of an arbitrary matrix product or a rule for all GPU generations. The table gives memory families rather than implying that every CPU uses DDR5 or every GPU uses HBM3e. TPU is itself an application-specific integrated circuit.</p>
 <p>Sources: <a href="https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html">NVIDIA GPU performance guide</a>, <a href="https://developer.nvidia.com/blog/programming-tensor-cores-cuda-9/">Volta Tensor Cores</a>, <a href="https://docs.cloud.google.com/tpu/docs/system-architecture-tpu-vm">Google TPU architecture</a>.</p>
@@ -635,65 +692,106 @@ What does a factorization give you? A four-step diagram — number, polynomial, 
           display:block!important;
       }</style></aside>
 </section>
-<section id="numerical-software-stack" class="slide level2 computing-slide">
-<h2>BLAS, LAPACK &amp; modern ML frameworks</h2>
-<div class="columns">
-<div class="column" style="width:50%;">
-<h3 id="low-level-foundations">Low-level foundations</h3>
-<p><strong>BLAS</strong> (Basic Linear Algebra Subprograms) defines standard numerical operations:</p>
-<table class="caption-top">
+<section id="numerical-software-stack" class="slide level2 computing-slide framework-slide">
+<h2>Numerical libraries &amp; ML frameworks</h2>
+<p class="computing-lead">
+Familiar tensor operations sit above optimized numerical routines.
+</p>
+<div class="computing-layout">
+<div class="library-column">
+<h3>
+Inside a NumPy operation
+</h3>
+<div class="operation-row">
+<code>A @ B</code><span>Matrix product</span><strong>BLAS</strong>
+</div>
+<div class="operation-row">
+<code>np.linalg.svd(A)</code><span>Singular value decomposition</span><strong>LAPACK</strong>
+</div>
+<table class="blas-table">
+<caption>
+BLAS · standard operations at three levels
+</caption>
 <thead>
-<tr class="header">
-<th>Level</th>
-<th>Operation</th>
-<th>Example</th>
+<tr>
+<th scope="col">
+1 · Vector
+</th>
+<th scope="col">
+2 · Matrix–vector
+</th>
+<th scope="col">
+3 · Matrix–matrix
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td>1</td>
-<td>Vector</td>
-<td>Dot product</td>
-</tr>
-<tr class="even">
-<td>2</td>
-<td>Matrix–vector</td>
-<td><span class="math inline">\(y=Ax\)</span></td>
-</tr>
-<tr class="odd">
-<td>3</td>
-<td>Matrix–matrix</td>
-<td><span class="math inline">\(C=AB\)</span></td>
+<tr>
+<td>
+Dot product
+</td>
+<td>
+y = Ax
+</td>
+<td>
+C = AB
+</td>
 </tr>
 </tbody>
 </table>
-<ul>
-<li><strong>LAPACK</strong>, the successor to LINPACK and EISPACK, uses BLAS for linear systems, SVD and eigenproblems. Tensor decomposition libraries reuse these matrix routines.</li>
-<li><strong>Accelerator libraries</strong>: cuBLAS handles GPU BLAS, cuTENSOR handles tensor contractions, and oneDNN supplies optimized neural network primitives on supported CPUs and GPUs.</li>
-</ul>
-</div><div class="column" style="width:50%;">
-<h3 id="frameworks-programming-models">Frameworks &amp; programming models</h3>
-<ul>
-<li><strong>PyTorch</strong>: imperative tensor code and dynamic autograd graphs, with optional compilation through <code>torch.compile</code>.</li>
-<li><strong>JAX</strong>: array programming with composable <code>jit</code>, <code>vmap</code> and <code>grad</code> transformations. Pure functions support tracing and XLA compilation.</li>
-<li><strong>TensorFlow</strong>: eager execution plus <code>tf.function</code> graphs, with tools for model serving.</li>
-<li><strong>Keras 3</strong>: a high-level model API supporting TensorFlow, JAX and PyTorch backends.</li>
-<li><strong>Haiku / Flax</strong>: neural network modules and parameter management built on JAX.</li>
-</ul>
-</div></div>
-<div title="The connection to our notebooks">
-<div class="callout callout-note no-icon callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<p><strong>The connection to our notebooks</strong></p>
+<p class="library-detail">
+<strong>LAPACK builds on BLAS</strong> for linear systems, SVD and eigenproblems.
+</p>
+<p class="accelerator-libraries">
+<strong>Accelerator libraries</strong><br>cuBLAS · GPU BLAS<br>cuTENSOR · tensor contractions<br>oneDNN · neural network primitives
+</p>
 </div>
-<div class="callout-content">
-<p>NumPy’s <code>A @ B</code> and <code>np.linalg.svd(A)</code> can call optimized numerical libraries. Frameworks add automatic differentiation, device placement and compilation on top of tensor operations.</p>
+<div class="framework-column">
+<h3>
+Frameworks add more
+</h3>
+<p class="framework-capabilities">
+Automatic differentiation · device placement · compilation
+</p>
+<dl class="framework-list">
+<dt>
+PyTorch
+</dt>
+<dd>
+Dynamic autograd<br><code>torch.compile</code>
+</dd>
+<dt>
+JAX
+</dt>
+<dd>
+Composable transformations<br><code>jit</code> · <code>vmap</code> · <code>grad</code>
+</dd>
+<dt>
+TensorFlow
+</dt>
+<dd>
+Eager execution + graphs<br><code>tf.function</code>
+</dd>
+<dt>
+Keras 3
+</dt>
+<dd>
+Model API over<br>TensorFlow / JAX / PyTorch
+</dd>
+<dt>
+Haiku / Flax
+</dt>
+<dd>
+Neural network modules on JAX
+</dd>
+</dl>
 </div>
 </div>
-</div>
+<div class="computing-takeaway">
+<strong>Name the axes. Check the shapes.</strong><span>Those habits transfer across frameworks.</span>
 </div>
 <aside class="notes">
+<p>LAPACK succeeded LINPACK and EISPACK. Tensor decomposition libraries reuse matrix routines. JAX pure functions support tracing and XLA compilation. TensorFlow includes tools for serving models. Haiku and Flax manage neural network parameters. The NumPy examples can dispatch to optimized libraries; they do not guarantee a particular backend.</p>
 <p>BLAS is an interface with multiple implementations, such as OpenBLAS and MKL. LAPACK supplies matrix algorithms, not general tensor factorization algorithms. Dispatch depends on the operation, dtype, layout and installed backend. A framework may use vendor libraries or generate its own kernels. oneDNN is a neural network primitive library, not a drop-in BLAS implementation.</p>
 <p>Connect this back to the next section: before choosing a backend, name the axes and check shapes. Those habits transfer across frameworks.</p>
 <p>Sources: <a href="https://www.netlib.org/blas/">BLAS</a>, <a href="https://www.netlib.org/lapack/lug/node5.html">LAPACK introduction</a>, <a href="https://docs.nvidia.com/cuda/cublas/">cuBLAS</a>, <a href="https://docs.nvidia.com/cuda/cutensor/latest/">cuTENSOR</a>, <a href="https://uxlfoundation.github.io/oneDNN/">oneDNN</a>, <a href="https://docs.pytorch.org/docs/stable/notes/autograd.html">PyTorch autograd</a>, <a href="https://docs.jax.dev/en/latest/key-concepts.html">JAX concepts</a>, <a href="https://www.tensorflow.org/guide/intro_to_graphs">TensorFlow graphs</a>, <a href="https://keras.io/keras_3/">Keras 3</a>, <a href="https://dm-haiku.readthedocs.io/en/stable/">Haiku</a>, <a href="https://flax.readthedocs.io/">Flax</a>.</p>

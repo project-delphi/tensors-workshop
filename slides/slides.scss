@@ -39,29 +39,155 @@ $code-block-font-size: 0.62em;
 .reveal .callout { font-size: .8em; }
 .reveal .footer { font-size: .5em; opacity: .75; }
 
-// Editable computing primer between the introduction and section 02.
-// Scope typography to these slides so the existing art and agenda keep their layout.
+// Editable computing primer. Native code, comparison tables and typography
+// echo the blue/teal slide art while keeping all teaching content selectable.
 .reveal .slides section.computing-slide {
+  --computing-blue: #0750ef;
+  --computing-teal: #008e99;
+  --computing-ink: #091743;
   text-align: left;
+  color: var(--computing-ink);
   font-size: 30px;
+  padding-top: 12px;
+  box-sizing: border-box;
 
-  h2 { font-size: 1.85em; margin-bottom: .65em; }
-  h3 { font-size: 1.12em; margin-bottom: .5em; }
-  .columns { display: flex; gap: 2em; }
-  .columns > .column { min-width: 0; flex: 0 0 calc(50% - 1em); width: calc(50% - 1em) !important; }
-  .column > :not(ul, ol) { margin-left: 0; margin-right: 0; }
-  li { margin-bottom: .45em; }
-  table { width: 100%; font-size: .87em; margin: .65em 0; }
-  th, td { padding: .35em .4em; }
-  pre { font-size: .78em; margin-top: 1em; }
-  pre code { max-height: none; }
-  > .callout { margin-top: 1em; font-size: .95em; }
+  h2 {
+    max-width: 1550px;
+    color: var(--computing-ink);
+    font-size: 2.3em;
+    font-weight: 750;
+    letter-spacing: -.035em;
+    margin: 0 0 20px;
+    border-bottom: 4px solid var(--computing-blue);
+    padding-bottom: 22px;
+  }
+  h3 { font-size: 1.15em; color: var(--computing-blue); margin: 0 0 22px; }
+  p { margin: 0; }
+  code { color: var(--computing-blue); background: transparent; }
+  .computing-lead { font-size: 1.15em; color: #4b5974; margin: 0 0 40px; }
+  .computing-layout { display: grid; grid-template-columns: 1.18fr 1fr; gap: 74px; }
+  .computing-layout > div { min-width: 0; }
+  table { width: 100%; margin: 0; border-collapse: collapse; font-size: 1em; }
+  th, td { text-align: left; border: 0; vertical-align: middle; }
+  th { background: transparent; }
+  table small { font-size: .85em; color: #53617a; }
+  pre { font-size: 27px; margin: 0 0 30px; border: 0; border-radius: 0; box-shadow: none; }
+  div.sourceCode { background: #f0f5ff; border: 0; border-left: 5px solid var(--computing-blue); margin: 0 0 30px; }
+  pre code { max-height: none; padding: 24px; line-height: 1.5; }
+  div.sourceCode pre { margin: 0; }
+  .memory-table {
+    thead { color: #58647e; font-size: .8em; }
+    th, td { padding: 16px 18px; border-bottom: 1px solid #d7e2f4; }
+    tbody { font-size: 1.5em; font-variant-numeric: tabular-nums; }
+    tbody th { font-size: .8em; }
+    tbody tr:last-child { color: var(--computing-teal); }
+  }
+  .memory-result { margin-top: 28px; font-size: 1em; }
+  .memory-result strong { color: var(--computing-teal); font-size: 1.25em; }
+  .memory-size { color: var(--computing-blue); font-size: 1.7em; line-height: 1; }
+  .memory-size strong { font-size: 3.1em; letter-spacing: -.075em; line-height: .95; margin-right: 15px; }
+  .memory-caption { margin: 20px 0 28px; color: #52617c; }
+  .concept-list {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 225px 1fr;
+    gap: 20px 24px;
+    font-size: .97em;
+    dt { color: var(--computing-teal); font-weight: 700; }
+    dd { margin: 0; line-height: 1.35; }
+  }
+  .numpy-history {
+    border-top: 2px solid #d7e2f4;
+    margin-top: 32px;
+    padding-top: 25px;
+    display: grid;
+    grid-template-columns: 1.15fr 1fr .9fr;
+    gap: 36px;
+    font-size: .86em;
+    color: #52617c;
+    strong, b { color: var(--computing-ink); }
+    a { color: var(--computing-blue); font-weight: 650; }
+  }
+  .hardware-intro { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+  .hardware-intro .computing-lead { margin-bottom: 0; max-width: 930px; }
+  .hardware-equation { text-align: right; color: #52617c; font-size: .82em; }
+  .hardware-equation span { color: var(--computing-teal); font-size: 2.2em; font-weight: 700; letter-spacing: -.03em; }
+  .hardware-table {
+    table-layout: fixed;
+    thead th { color: #596781; font-size: .82em; padding: 18px 24px; border-bottom: 2px solid var(--computing-blue); }
+    th:first-child { padding-left: 0; }
+    tbody th, td { padding: 18px 24px; border-bottom: 1px solid #d7e2f4; line-height: 1.5; }
+    tbody th strong { color: var(--computing-blue); display: block; font-size: 2em; line-height: 1.15; letter-spacing: -.04em; }
+    tbody th span { display: block; color: #53617a; font-size: .75em; font-weight: 450; margin-top: 5px; }
+    tbody tr:nth-child(3) th strong { color: var(--computing-teal); }
+    .other-hardware { font-size: .83em; color: #53617a; }
+    .other-hardware th, .other-hardware td { padding-top: 20px; padding-bottom: 20px; }
+  }
+  .hardware-caveat { font-size: .8em; color: #53617a; margin-top: 18px; }
+  .computing-takeaway {
+    margin-top: 32px;
+    border-top: 4px solid var(--computing-teal);
+    padding-top: 22px;
+    display: flex;
+    align-items: baseline;
+    gap: 38px;
+    strong { color: var(--computing-teal); font-size: 1.22em; flex: 0 0 34%; line-height: 1.25; }
+    span { font-size: 1em; line-height: 1.4; }
+  }
+  .operation-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 25px;
+    padding: 17px 0;
+    border-bottom: 1px solid #d7e2f4;
+    code { font-size: 1.25em; font-weight: 600; }
+    span { grid-row: 2; font-size: .86em; color: #52617c; }
+    strong { grid-column: 2; grid-row: 1 / 3; align-self: center; color: var(--computing-teal); font-size: 1.25em; }
+  }
+  .blas-table {
+    table-layout: fixed;
+    th, td { width: 33.333%; padding-right: 18px; }
+    margin: 26px 0 22px;
+    caption { text-align: left; font-size: .83em; color: #52617c; margin-bottom: 12px; }
+    th { font-size: .78em; font-weight: 550; color: #52617c; padding: 9px 0; }
+    td { padding: 10px 0; font-size: 1.25em; color: var(--computing-blue); }
+  }
+  .library-detail { font-size: .96em; margin-bottom: 22px; }
+  .accelerator-libraries { font-size: .92em; color: #52617c; line-height: 1.5; }
+  .accelerator-libraries strong { color: var(--computing-ink); }
+  .framework-column { border-left: 2px solid #d7e2f4; padding-left: 56px; }
+  .framework-capabilities { font-size: .95em; color: var(--computing-teal); margin-bottom: 20px; }
+  .framework-list {
+    display: grid;
+    grid-template-columns: 205px 1fr;
+    margin: 0;
+    font-size: .94em;
+    dt, dd { margin: 0; padding: 15px 0; border-bottom: 1px solid #d7e2f4; }
+    dt { color: var(--computing-blue); font-weight: 700; font-size: 1.13em; }
+    dd { line-height: 1.35; }
+  }
+  &.framework-slide {
+    .computing-layout { grid-template-columns: 1fr 1fr; }
+    .computing-lead { margin-bottom: 28px; }
+    h3 { margin-bottom: 16px; }
+    .operation-row { padding: 13px 0; }
+    .blas-table { margin: 20px 0 16px; }
+    .accelerator-libraries { line-height: 1.4; }
+  }
+  &.framework-slide .computing-takeaway strong { flex-basis: 49%; }
 }
 
 // These context slides have no notebook action of their own. Hide the inherited
 // section-01 links, which otherwise overlap the right column.
 .reveal:has(.computing-slide.present) .deck-colab-panel {
   display: none;
+}
+
+// Keep fixed-size timer chrome clear of the editable titles on smaller screens.
+@media screen and (max-width: 1500px) {
+  .reveal:has(.computing-slide.present) .deck-timer {
+    font-size: clamp(18px, 2.2vw, 32px);
+  }
 }
 
 // The pace badge under every section title. Two facts the facilitator needs
