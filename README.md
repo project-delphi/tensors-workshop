@@ -47,6 +47,13 @@ Every item is free, and it all runs in your browser. In brief:
 The full list — the recommended viewing, and what to have ready on the day —
 is on the **[workshop homepage](https://project-delphi.github.io/tensors-workshop/)**, which is where it is maintained.
 
+## Group activities
+
+[Open-ended group tasks](group-tasks.md) · [Español](es/group-tasks.md)
+
+One task per notebook. Use them during a discussion break or after the session.
+Each includes a time box, questions, and a short group deliverable.
+
 ## A machine-generated companion
 
 A
@@ -156,6 +163,7 @@ notebooks.qmd  es/notebooks.qmd   the notebook index, EN and ES
 kahoot.qmd              the three quizzes — English only
 slides/en/  slides/es/  the two revealjs decks + shared slides.scss
 notebooks/              14 Colab notebooks — 13 sections + 1 take-home extra
+group-tasks.md  es/group-tasks.md   open-ended group activities, EN and ES
 kahoot/                 3 .xlsx quiz import files
 scripts/                generators and the link checker
 tensors_workshop_plan_with_quizzes.md      the handbook — the session text
@@ -219,6 +227,13 @@ Todo es gratuito y no hace falta instalar nada en tu equipo. En resumen:
 La lista completa —lo recomendado y lo que hay que tener a mano el día del
 taller— está en la **[página del taller](https://project-delphi.github.io/tensors-workshop/es/)**, que es donde se
 mantiene.
+
+## Actividades en grupo
+
+[Actividades y preguntas abiertas](es/group-tasks.md) · [English](group-tasks.md)
+
+Una actividad por cuaderno, para una pausa de discusión o después del taller.
+Cada una incluye tiempo, preguntas y un resultado breve para compartir.
 
 ## Todos los datos son reales
 
