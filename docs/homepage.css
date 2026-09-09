@@ -9,6 +9,32 @@
 .workshop-landing h1,
 .workshop-landing h2,
 .workshop-landing h3 { color: var(--landing-ink); }
+.landing-language-switch {
+  display: flex;
+  justify-content: flex-end;
+  gap: .25rem;
+  margin-bottom: 1rem;
+}
+.landing-language-switch a {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 44px;
+  padding: .45rem .8rem;
+  border: 1px solid #bdcfdd;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--landing-accent);
+  font-size: .85rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.landing-language-switch a:hover { background: #eaf3f9; }
+.landing-language-switch a[aria-current="page"] {
+  background: var(--landing-accent);
+  border-color: var(--landing-accent);
+  color: #fff;
+}
 .workshop-landing h2 {
   margin: 2.5rem 0 1.2rem;
   padding: 0;

@@ -1,6 +1,7 @@
 ---
 title: ""
 pagetitle: "Tensors for Machine Learning"
+lang: en
 description: "Master tensors in 210 minutes with real-world data and hands-on Python code."
 toc: false
 anchor-sections: false
@@ -9,6 +10,13 @@ css: homepage.css
 ---
 
 ::::: {.workshop-landing}
+
+```{=html}
+<nav class="landing-language-switch" aria-label="Language">
+  <a href="./index.html" lang="en" hreflang="en" aria-current="page"><span aria-hidden="true">🇬🇧</span> English</a>
+  <a href="./es/index.html" lang="es" hreflang="es"><span aria-hidden="true">🇪🇸</span> Español</a>
+</nav>
+```
 
 :::: {.workshop-hero}
 ::: {.hero-copy}
