@@ -1,0 +1,25 @@
+name: Notebook bug
+description: Report a broken cell, link, download, or expected result
+title: "[notebook] "
+body:
+  - type: input
+    id: notebook
+    attributes:
+      label: Notebook
+      description: Notebook number and Colab or local runtime.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Give the cell, error, and steps that produced it.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Workshop commit/tag, date, browser, Python version, fresh runtime, and core path or full notebook. Omit private data.
+    validations:
+      required: true

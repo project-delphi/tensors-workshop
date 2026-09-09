@@ -46,7 +46,3 @@ Practica a tu ritmo. Para los cuestionarios en vivo, usa [Kahoot](../kahoot.qmd)
 
 [Abre el cuaderno]({{< var companion.notebook_url >}}) para explorar las fuentes.
 [Ver la infografía general]({{< var companion.overview_url >}}).
-
-::: {.callout-note appearance="simple"}
-🇬🇧 Prefer English? [This page in English](../companion.qmd).
-:::

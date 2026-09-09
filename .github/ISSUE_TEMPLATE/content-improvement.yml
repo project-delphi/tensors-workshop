@@ -1,0 +1,23 @@
+name: Content improvement
+description: Suggest a clearer explanation, example, or group activity
+title: "[content] "
+body:
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: Notebook, page, or section number.
+    validations:
+      required: true
+  - type: textarea
+    id: observation
+    attributes:
+      label: What happened?
+      description: Describe the learner confusion or teaching opportunity.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested change
+      description: Include a replacement prompt, example, or activity if you have one.

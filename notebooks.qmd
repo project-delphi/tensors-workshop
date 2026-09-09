@@ -3,10 +3,6 @@ title: "Notebooks"
 subtitle: "One notebook per section, plus a take-home deep dive, each runnable cold in Colab"
 ---
 
-::: {.callout-note appearance="simple"}
-🇪🇸 ¿Prefieres español? [Esta página en español](es/notebooks.qmd).
-:::
-
 Every section of the workshop has a notebook. One more sits past the end of the
 day, as a take-home deep dive. They are **English-primary**, and every heading
 carries a one-line Spanish summary — *cada encabezado lleva un resumen en

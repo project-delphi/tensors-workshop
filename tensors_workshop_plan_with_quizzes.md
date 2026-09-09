@@ -5,11 +5,6 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
-::: {.callout-note appearance="simple"}
-🇪🇸 ¿Prefieres español? [Este manual en español](es/tensors_workshop_plan_with_quizzes.md)
-— es una traducción automática de esta página, que sigue siendo la fuente de verdad.
-:::
-
 This is the session text: the theory, every exercise, the worked solutions and
 the take-home appendices. It is what to follow during the workshop and what to
 keep afterwards. The books and papers behind it are on the

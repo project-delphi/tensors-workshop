@@ -7,11 +7,6 @@ title-block-banner: ../images/hero-band.png
 title-block-banner-color: body
 ---
 
-::: {.callout-note appearance="simple"}
-🇬🇧 Prefer English? [This page in English](../index.qmd). El taller se imparte en
-inglés, pero puedes preguntar en español cuando quieras.
-:::
-
 ::: {.companion-strip}
 [Todo el día en una imagen](companion.qmd#brainstorm)
 [Resumen en vídeo](companion.qmd#video)

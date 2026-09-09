@@ -45,7 +45,3 @@ Practice at your own pace. For the live quizzes, use [Kahoot](kahoot.qmd).
 
 [Open the notebook]({{< var companion.notebook_url >}}) to explore the sources.
 [View the overview infographic]({{< var companion.overview_url >}}).
-
-::: {.callout-note appearance="simple"}
-🇪🇸 ¿Prefieres español? [Esta página en español](es/companion.qmd).
-:::

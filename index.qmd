@@ -6,11 +6,6 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
-::: {.callout-note appearance="simple"}
-🇪🇸 ¿Prefieres español? [Esta página en español](es/index.qmd). Las preguntas son
-bienvenidas en español o en inglés.
-:::
-
 ::: {.companion-strip}
 [The whole day in one picture](companion.qmd#brainstorm)
 [Video overview](companion.qmd#video)
