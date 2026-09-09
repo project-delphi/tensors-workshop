@@ -700,60 +700,25 @@
     "text": "If you are running out of time\nThe handbook’s cutting order, in order:\n\nQuiz 2 — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.\nTODO 4 of section 09 (true deconvolution — the most technically demanding).\nThe RNN snippet in section 08.\nQuestion 5 of either group block.\nQuiz 1.\n\nNever cut section 01’s Three Operations That Matter, section 10, or Quiz 3. Quiz 3 is the cheapest way to find out whether Tucker and CP landed, and the only chance to find out is before students leave."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Tensors for Machine Learning",
-    "section": "",
-    "text": "The whole day in one picture Video overview One-minute shorts Infographics Self-check quiz Mind map In NotebookLM"
-  },
-  {
-    "objectID": "index.html#what-this-is",
-    "href": "index.html#what-this-is",
-    "title": "Tensors for Machine Learning",
-    "section": "What this is",
-    "text": "What this is\nLearn to reshape, solve, convolve, and factorize tensors in 210 minutes.\nWork with images, taxi trips, and airline counts. Find missing values, uneven scales, and constant pixels. Small synthetic examples explain selected ideas."
-  },
-  {
-    "objectID": "index.html#watch-it-first",
-    "href": "index.html#watch-it-first",
-    "title": "Tensors for Machine Learning",
-    "section": "Watch it first",
-    "text": "Watch it first\n\n\n\n\nTensors in machine learning — video overview — Watch in NotebookLM.\nFind more NotebookLM summaries on the companion page."
-  },
-  {
-    "objectID": "index.html#who-it-is-for",
-    "href": "index.html#who-it-is-for",
-    "title": "Tensors for Machine Learning",
-    "section": "Who it is for",
-    "text": "Who it is for\nYou know the linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra. No tensor theory is required. New terms are explained as they appear."
-  },
-  {
     "objectID": "index.html#whats-here",
     "href": "index.html#whats-here",
-    "title": "Tensors for Machine Learning",
-    "section": "What’s here",
-    "text": "What’s here\n\n\n\nResource\nUse it to\n\n\n\n\nHandbook · ES\nRead the theory, exercises, and solutions.\n\n\nSlides · ES\nFollow the session.\n\n\nNotebooks · ES\nWrite code in Colab.\n\n\nKahoot\nCheck your understanding during the session.\n\n\nCompanion · ES\nReview with video, audio, diagrams, and practice questions.\n\n\nReferences · ES\nExplore the books, papers, and software.\n\n\nRepository\nGet the source files or contribute a fix."
+    "title": "Master Tensors in 210 Minutes",
+    "section": "",
+    "text": "Full theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources"
   },
   {
     "objectID": "index.html#prerequisites",
     "href": "index.html#prerequisites",
-    "title": "Tensors for Machine Learning",
-    "section": "Prerequisites",
-    "text": "Prerequisites\nThe tools are free and run in your browser.\nDo before the session\n\nReview the linear algebra in Deep Learning (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra: vectors, matrices, products, inverses, eigendecomposition, and SVD.\nlinear-algebra-deep-learning — required pre-work. Complete 14 bilingual notebooks, from vectors to PCA. Allow 2–3 hours.\nNotebook 00, run in Colab — check setup and data downloads. Report any errors before the session.\n\nRecommended\n\nEssence of linear algebra (3Blue1Brown) — a visual refresher. 16 videos, about 3 hours.\n\nHave ready on the day\n\nColab for coding.\nDiscord for questions and group work. The facilitator shares the invite.\nA phone or second tab for Kahoot. Join with the session PIN."
+    "title": "Master Tensors in 210 Minutes",
+    "section": "",
+    "text": "Review vectors, matrices, and SVD in Goodfellow Ch. 2 or complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra."
   },
   {
     "objectID": "index.html#how-we-work",
     "href": "index.html#how-we-work",
-    "title": "Tensors for Machine Learning",
-    "section": "How we work",
-    "text": "How we work\n\nExercise blocks — 10 minutes coding, then 5 minutes explanation.\nGroup blocks — 10 minutes discussion in your breakout channel, then share-back."
-  },
-  {
-    "objectID": "index.html#a-note-on-language",
-    "href": "index.html#a-note-on-language",
-    "title": "Tensors for Machine Learning",
-    "section": "A note on language",
-    "text": "A note on language\nTeaching is in English. Ask questions in English or Spanish. The slides and notebooks support both languages."
+    "title": "Master Tensors in 210 Minutes",
+    "section": "",
+    "text": "💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
   },
   {
     "objectID": "notebooks.html",
@@ -1426,5 +1391,12 @@
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "—\n\n\n12 · Cierre y ejercicios para casa\n\n\nEl ejercicio para casa 13 es convolución y deconvolución: un kernel pequeño reutilizado en muchas posiciones, correlación frente a convolución verdadera, la convolución transpuesta como superposición y suma, y Richardson-Lucy recuperando una fotografía real desenfocada. Es el tercer caso de la idea que conecta el taller, y el único que la sala ya no ejecuta.\n\n\nSección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Take-home 13 ↗\n📖 La atención como dos contracciones ↗"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Master Tensors in 210 Minutes",
+    "section": "",
+    "text": "🌐 English Workshop · Questions welcomed in EN & ES\n\n\nReshape, solve, convolve, and factorize tensors with real-world data and hands-on Python code.\n🚀 Start Workshop (Handbook)\n💻 Open Setup Notebook\n\n\n\n\n  Stacked three-dimensional tensor blocks\n  Three gridded tensor layers stacked along the depth axis.\n  \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n\n\n\n\nHosted by Ravi Kalia · Live breakouts on Discord · 10m coding / 5m discussion rhythm\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 or complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
   }
 ]
