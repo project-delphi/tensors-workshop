@@ -1,83 +1,137 @@
 ---
-title: "Tensors for Machine Learning"
-subtitle: "A 3-hour workshop with code, real data, and three quizzes"
+title: ""
+pagetitle: "Tensors for Machine Learning"
+description: "Master tensors in 210 minutes with real-world data and hands-on Python code."
 toc: false
-title-block-banner: images/hero-band.png
-title-block-banner-color: body
+anchor-sections: false
+page-layout: full
+css: homepage.css
 ---
 
-::: {.companion-strip}
-[The whole day in one picture](companion.qmd#brainstorm)
-[Video overview](companion.qmd#video)
-[One-minute shorts](companion.qmd#shorts)
-[Infographics](companion.qmd#infographics)
-[Self-check quiz](companion.qmd#test-yourself)
-[Mind map](companion.qmd#map)
-[In NotebookLM](companion.qmd#notebooklm)
+::::: {.workshop-landing}
+
+:::: {.workshop-hero}
+::: {.hero-copy}
+[🌐 English Workshop · Questions welcomed in EN & ES]{.workshop-badge}
+
+# Master Tensors in {{< var workshop.minutes >}} Minutes
+
+Reshape, solve, convolve, and factorize tensors with real-world data and hands-on Python code.
+
+[🚀 Start Workshop (Handbook)](./tensors_workshop_plan_with_quizzes.html){.hero-button}
+
+[💻 Open Setup Notebook]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
 :::
 
-## What this is
+::: {.hero-visual}
+```{=html}
+<svg viewBox="0 0 400 360" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="tensor-title">Stacked three-dimensional tensor blocks</title>
+  <desc id="tensor-desc">Three gridded tensor layers stacked along the depth axis.</desc>
+  <defs>
+    <g id="tensor-layer" stroke="#315b78" stroke-width="1.5" stroke-linejoin="round">
+      <path d="M60 110 200 40 340 110 200 180Z" fill="#d6eaf4"/>
+      <path d="M60 110 200 180 200 220 60 150Z" fill="#70aac9"/>
+      <path d="M200 180 340 110 340 150 200 220Z" fill="#39749b"/>
+      <path d="M95 92.5 235 162.5M130 75 270 145M165 57.5 305 127.5M95 127.5 235 57.5M130 145 270 75M165 162.5 305 92.5" fill="none" stroke="#6e9eb9"/>
+      <path d="M95 127.5V167.5M130 145V185M165 162.5V202.5M235 162.5V202.5M270 145V185M305 127.5V167.5" fill="none"/>
+    </g>
+  </defs>
+  <ellipse cx="200" cy="317" rx="145" ry="24" fill="#2f4858" opacity=".08"/>
+  <use href="#tensor-layer" y="110"/>
+  <use href="#tensor-layer" y="55"/>
+  <use href="#tensor-layer"/>
+</svg>
+```
+:::
+::::
 
-Learn to reshape, solve, convolve, and factorize tensors in
-{{< var workshop.minutes >}} minutes.
+::: {.facilitator-banner}
+Hosted by **Ravi Kalia** · Live breakouts on **Discord** · 10m coding / 5m discussion rhythm
+:::
 
-Work with images, taxi trips, and airline counts. Find missing values, uneven
-scales, and constant pixels. Small synthetic examples explain selected ideas.
+## Your workshop toolkit {#whats-here}
 
-## Watch it first
+:::: {.resource-grid}
+::: {.resource-card}
+### 📖 Handbook
 
-{{< include _includes/companion-video-en.md >}}
+Full theory, exercises, and step-by-step solutions.
 
-Find more NotebookLM summaries on the [companion page](companion.qmd).
+[Read Handbook](./tensors_workshop_plan_with_quizzes.html){.resource-button}
+:::
 
-## Who it is for
+::: {.resource-card}
+### 🚀 Notebooks
 
-You know the linear algebra in *{{< var workshop.book >}}*.
-No tensor theory is required. New terms are explained as they appear.
+Interactive Python notebooks running in Google Colab.
 
-## What's here
+[Run Code](notebooks.qmd){.resource-button}
+:::
 
-| Resource | Use it to |
-|---|---|
-| **[Handbook](tensors_workshop_plan_with_quizzes.md)** · [ES](es/tensors_workshop_plan_with_quizzes.md) | Read the theory, exercises, and solutions. |
-| **[Slides](slides/en/index.qmd)** · [ES](slides/es/index.qmd) | Follow the session. |
-| **[Notebooks](notebooks.qmd)** · [ES](es/notebooks.qmd) | Write code in Colab. |
-| **[Kahoot](kahoot.qmd)** | Check your understanding during the session. |
-| **[Companion](companion.qmd)** · [ES](es/companion.qmd) | Review with video, audio, diagrams, and practice questions. |
-| **[References](references.qmd)** · [ES](es/references.qmd) | Explore the books, papers, and software. |
-| **[Repository]({{< var repo.url >}})** | Get the source files or contribute a fix. |
+::: {.resource-card}
+### 📊 Slides
 
-## Prerequisites
+Visual presentation decks for workshop sessions.
 
-The tools are free and run in your browser.
+[View Decks](slides/en/index.qmd){.resource-button}
+:::
 
-**Do before the session**
+::: {.resource-card}
+### 💡 Companion Hub
 
-- Review the linear algebra in **{{< var workshop.book >}}**: vectors,
-  matrices, products, inverses, eigendecomposition, and SVD.
-- **[`linear-algebra-deep-learning`]({{< var workshop.prereq_repo_url >}})** —
-  required pre-work. Complete 14 bilingual notebooks, from vectors to PCA.
-  Allow 2–3 hours.
-- **[Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb), run in
-  Colab** — check setup and data downloads. Report any errors before the session.
+Mind maps, 1-minute shorts, audio overviews, and self-checks.
 
-**Recommended**
+[Explore Hub](companion.qmd){.resource-button}
+:::
 
-- **[*Essence of linear algebra*]({{< var workshop.prereq_video_url >}})**
-  (3Blue1Brown) — a visual refresher. 16 videos, about 3 hours.
+::: {.resource-card}
+### 🎯 Kahoot
 
-**Have ready on the day**
+Live interactive quizzes for concept checks.
 
-- **[Colab](https://colab.research.google.com/)** for coding.
-- **Discord** for questions and group work. The facilitator shares the invite.
-- **A phone or second tab for [Kahoot](kahoot.qmd)**. Join with the session PIN.
+[Join Quiz]({{< var kahoot.default_url >}}){.resource-button}
+:::
 
-## How we work
+::: {.resource-card}
+### 📚 References
 
-- **Exercise blocks** — 10 minutes coding, then 5 minutes explanation.
-- **Group blocks** — 10 minutes discussion in your breakout channel, then share-back.
+Core papers, textbook chapters, and repository source code.
 
-## A note on language
+[View Sources](references.qmd){.resource-button}
+:::
+::::
 
-Teaching is in English. **Ask questions in English or Spanish.**
-The [slides](slides/es/index.qmd) and notebooks support both languages.
+## Familiar with basic linear algebra? You're ready to go. {#prerequisites}
+
+:::: {.prerequisite-list}
+::: {.prerequisite-step}
+### Step 1: Core Concepts [Required]{.step-badge}
+
+Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) or complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
+:::
+
+::: {.prerequisite-step}
+### Step 2: Setup [Required, 5 mins]{.step-badge}
+
+Run [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) in Google Colab to pre-load datasets.
+:::
+
+::: {.prerequisite-step}
+### Step 3: Visual Refresher [Optional]{.step-badge .step-optional}
+
+Watch 3Blue1Brown's [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}).
+:::
+::::
+
+## {{< var workshop.minutes >}} minutes. One hands-on rhythm. {#how-we-work}
+
+```{=html}
+<ol class="workshop-pipeline" aria-label="Workshop activity rhythm">
+  <li><span aria-hidden="true">💻</span> <strong>10m</strong> Code</li>
+  <li><span aria-hidden="true">💡</span> <strong>5m</strong> Concept Review</li>
+  <li><span aria-hidden="true">💬</span> <strong>10m</strong> Group Discussion</li>
+</ol>
+```
+
+:::::
