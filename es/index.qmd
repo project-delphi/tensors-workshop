@@ -20,43 +20,95 @@ css: ../homepage.css
 
 :::: {.workshop-hero}
 ::: {.hero-copy}
-[🌐 Taller en inglés · Preguntas en español e inglés]{.workshop-badge}
+[{{< var workshop.minutes >}} minutos · Python en práctica]{.workshop-badge}
 
-# Domina los tensores en {{< var workshop.minutes >}} minutos
+# Visualiza tensores. [Piensa en ML.]{.hero-highlight}
 
-Cambia la forma de tensores, resuelve sistemas, aplica convoluciones y factoriza con datos reales y ejercicios prácticos en Python.
+Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra las matemáticas del ML.
 
-[🚀 Empieza el taller (manual)](./tensors_workshop_plan_with_quizzes.html){.hero-button}
+[Empieza el taller →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 
-[💻 Abre el cuaderno de preparación]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
+[Abre el cuaderno de preparación]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
+
+[Taller en inglés · Preguntas en español e inglés]{.hero-language}
 :::
 
 ::: {.hero-visual}
 ```{=html}
-<svg viewBox="0 0 400 360" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
-  <title id="tensor-title">Bloques de un tensor tridimensional apilados</title>
-  <desc id="tensor-desc">Tres capas cuadriculadas de un tensor apiladas a lo largo del eje de profundidad.</desc>
+<svg viewBox="0 0 480 380" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="tensor-title">De un número a una operación de red neuronal</title>
+  <desc id="tensor-desc">Un escalar pasa a vector, luego a matriz y a tensor tridimensional. Una capa de red neuronal usa operaciones tensoriales para transformar entradas en salidas.</desc>
   <defs>
-    <g id="tensor-layer" stroke="#315b78" stroke-width="1.5" stroke-linejoin="round">
-      <path d="M60 110 200 40 340 110 200 180Z" fill="#d6eaf4"/>
-      <path d="M60 110 200 180 200 220 60 150Z" fill="#70aac9"/>
-      <path d="M200 180 340 110 340 150 200 220Z" fill="#39749b"/>
-      <path d="M95 92.5 235 162.5M130 75 270 145M165 57.5 305 127.5M95 127.5 235 57.5M130 145 270 75M165 162.5 305 92.5" fill="none" stroke="#6e9eb9"/>
-      <path d="M95 127.5V167.5M130 145V185M165 162.5V202.5M235 162.5V202.5M270 145V185M305 127.5V167.5" fill="none"/>
+    <radialGradient id="tensor-glow"><stop stop-color="#277c9a" stop-opacity=".45"/><stop offset="1" stop-color="#0c192e" stop-opacity="0"/></radialGradient>
+    <linearGradient id="tensor-top" x2="1" y2="1"><stop stop-color="#9cf4e2"/><stop offset="1" stop-color="#54bedd"/></linearGradient>
+    <pattern id="tensor-dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#9ebdd7" opacity=".2"/></pattern>
+    <marker id="tensor-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="m1 1 7 4-7 4" fill="none" stroke="#91a7c5" stroke-width="1.5"/></marker>
+    <g id="tensor-slice" stroke="#0d354c" stroke-width="1.2" stroke-linejoin="round">
+      <path d="m0 38 88-44 88 44-88 44Z" fill="url(#tensor-top)"/>
+      <path d="m0 38 88 44v19L0 57Z" fill="#369fb9"/>
+      <path d="m88 82 88-44v19l-88 44Z" fill="#32769a"/>
+      <path d="m22 27 88 44m-66-55 88 44m-66-55 88 44M22 49l88-44M44 60l88-44M66 71l88-44" fill="none" opacity=".6"/>
+      <path d="M22 49v19m22-8v19m22-8v19m44-19v19m22-30v19m22-30v19" fill="none" opacity=".5"/>
     </g>
   </defs>
-  <ellipse cx="200" cy="317" rx="145" ry="24" fill="#2f4858" opacity=".08"/>
-  <use href="#tensor-layer" y="110"/>
-  <use href="#tensor-layer" y="55"/>
-  <use href="#tensor-layer"/>
+  <rect width="480" height="380" rx="20" fill="#0c192e"/>
+  <rect width="480" height="380" rx="20" fill="url(#tensor-dots)"/>
+  <ellipse cx="198" cy="216" rx="220" ry="165" fill="url(#tensor-glow)"/>
+  <g font-family="system-ui, sans-serif">
+    <text x="26" y="29" fill="#a9c0d9" font-size="10" letter-spacing="1.5">LA FORMA DEL APRENDIZAJE AUTOMÁTICO</text>
+    <g fill="#91a7c5" font-size="11" text-anchor="middle"><text x="62" y="116">Escalar</text><text x="214" y="116">Vector</text><text x="393" y="116">Matriz</text></g>
+    <rect x="48" y="60" width="28" height="28" rx="7" fill="#91edda"/>
+    <text x="62" y="79" text-anchor="middle" fill="#10263b" font-size="14" font-weight="700">7</text>
+    <g fill="#91edda"><rect x="161" y="65" width="22" height="22" rx="4" opacity=".4"/><rect x="189" y="65" width="22" height="22" rx="4" opacity=".6"/><rect x="217" y="65" width="22" height="22" rx="4" opacity=".8"/><rect x="245" y="65" width="22" height="22" rx="4"/></g>
+    <g transform="translate(369 50)" fill="#a9b5ff"><rect x="0" y="0" width="14" height="14" rx="2" opacity="0.4"/><rect x="17" y="0" width="14" height="14" rx="2" opacity="0.52"/><rect x="34" y="0" width="14" height="14" rx="2" opacity="0.64"/><rect x="0" y="17" width="14" height="14" rx="2" opacity="0.52"/><rect x="17" y="17" width="14" height="14" rx="2" opacity="0.64"/><rect x="34" y="17" width="14" height="14" rx="2" opacity="0.76"/><rect x="0" y="34" width="14" height="14" rx="2" opacity="0.64"/><rect x="17" y="34" width="14" height="14" rx="2" opacity="0.76"/><rect x="34" y="34" width="14" height="14" rx="2" opacity="0.88"/></g>
+    <g fill="none" stroke="#91a7c5" stroke-width="1.2" marker-end="url(#tensor-arrow)"><path d="M95 75h44"/><path d="M286 75h61"/><path d="M395 133v21q0 12-12 12h-80"/></g>
+    <g transform="translate(61 140)"><use href="#tensor-slice" y="66"/><use href="#tensor-slice" y="33"/><use href="#tensor-slice"/></g>
+    <path d="M49 225v58h28" fill="none" stroke="#7ba3bb" stroke-width="1"/>
+    <text x="92" y="332" fill="#d5fff5" font-size="17" font-weight="650">Tensor 3D</text>
+    <text x="92" y="351" fill="#a9c0d9" font-size="11">Tres ejes. Más posibilidades.</text>
+    <text x="288" y="211" fill="#dce5ff" font-size="14" font-weight="650">Red neuronal</text>
+    <text x="288" y="234" fill="#a9b5ff" font-size="14" font-family="ui-monospace, monospace">y = σ(Wx + b)</text>
+    <path d="M251 272h27" fill="none" stroke="#91a7c5" marker-end="url(#tensor-arrow)"/>
+    <g fill="none" stroke="#8799e8" stroke-opacity=".4" stroke-width="1.2"><path d="M305 281 357 275"/><path d="M305 281 357 297"/><path d="M305 281 357 319"/><path d="M305 281 357 341"/><path d="M305 303 357 275"/><path d="M305 303 357 297"/><path d="M305 303 357 319"/><path d="M305 303 357 341"/><path d="M305 325 357 275"/><path d="M305 325 357 297"/><path d="M305 325 357 319"/><path d="M305 325 357 341"/><path d="M357 275 410 291"/><path d="M357 275 410 325"/><path d="M357 297 410 291"/><path d="M357 297 410 325"/><path d="M357 319 410 291"/><path d="M357 319 410 325"/><path d="M357 341 410 291"/><path d="M357 341 410 325"/></g>
+    <g fill="#91edda" stroke="#0c192e" stroke-width="2"><circle cx="305" cy="281" r="5"/><circle cx="305" cy="303" r="5"/><circle cx="305" cy="325" r="5"/></g>
+    <g fill="#a9b5ff" stroke="#0c192e" stroke-width="2"><circle cx="357" cy="275" r="6"/><circle cx="357" cy="297" r="6"/><circle cx="357" cy="319" r="6"/><circle cx="357" cy="341" r="6"/></g>
+    <g fill="#ffcb97" stroke="#0c192e" stroke-width="2"><circle cx="410" cy="291" r="6"/><circle cx="410" cy="325" r="6"/></g>
+    <g fill="#a9c0d9" font-size="10" text-anchor="middle"><text x="305" y="362">entrada</text><text x="410" y="362">salida</text></g>
+  </g>
 </svg>
 ```
 :::
 ::::
 
-::: {.facilitator-banner}
-Facilitado por **Ravi Kalia** · Trabajo en grupos en **Discord** · 10 min de código / 5 min de explicación
-:::
+```{=html}
+<section class="learning-outcomes" aria-labelledby="outcomes-title">
+  <h2 id="outcomes-title">Al terminar, podrás…</h2>
+  <ul class="outcome-grid">
+    <li><span class="outcome-number" aria-hidden="true">01</span><div><h3>Domina las formas.</h3><p>Indexa, cambia formas y aplica broadcasting en NumPy.</p></div></li>
+    <li><span class="outcome-number" aria-hidden="true">02</span><div><h3>Descubre la estructura.</h3><p>Descompón tensores. Explora convoluciones en casa.</p></div></li>
+    <li><span class="outcome-number" aria-hidden="true">03</span><div><h3>Conecta con el ML.</h3><p>Interpreta las matemáticas de la compresión y las redes neuronales.</p></div></li>
+  </ul>
+</section>
+<div class="credibility-strip">
+  <div class="instructor-credit"><span class="instructor-monogram" aria-hidden="true">RK</span><p><span>Tu instructor</span><strong>Ravi Kalia</strong></p></div>
+  <a href="{{< var repo.url >}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
+  <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Discusión en directo</strong><span>Grupos pequeños en Discord</span></p></div>
+</div>
+<section class="learning-journey" aria-labelledby="journey-title">
+  <p class="section-eyebrow">LA RUTA DE APRENDIZAJE</p>
+  <h2 id="journey-title">Tu ruta de los arrays al ML.</h2>
+  <p class="journey-intro">Seis ideas conectadas. Programa. Visualiza. Comprende.</p>
+  <ol class="curriculum-track" aria-label="Ruta de aprendizaje">
+    <li><span class="stage-number">01</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Fundamentos</h3><p>Lee formas y ejes.</p></li>
+    <li><span class="stage-number">02</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Operaciones tensoriales</h3><p>Transforma. Expande. Contrae.</p></li>
+    <li><span class="stage-number">03</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Álgebra lineal</h3><p>Resuelve sistemas. Busca estructura.</p></li>
+    <li><span class="stage-number">04</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convoluciones</h3><p>De píxeles a características.</p><span class="stage-extra">Para casa</span></li>
+    <li><span class="stage-number">05</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizaciones</h3><p>Comprime. Conserva lo esencial.</p></li>
+    <li><span class="stage-number">06</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>Aplicaciones de ML</h3><p>Conecta las matemáticas con los modelos.</p></li>
+  </ol>
+  <a class="journey-link" href="./notebooks.html">Explora los cuadernos <span aria-hidden="true">→</span></a>
+</section>
+```
 
 ## Tus recursos para el taller {#qué-hay-aquí}
 
