@@ -1,6 +1,9 @@
-# Guía de facilitación
+---
+title: "Guía de facilitación"
+lang: es
+---
 
-[English](../facilitator-guide.md) · [README](../README.md)
+[English](../facilitator-guide.md) · [Enseñar este taller](teach.qmd)
 
 Mantén la **agenda de 210 minutos**. Estas actividades sustituyen tiempo de
 práctica o discusión; no alargan el taller. El cuaderno 13 queda para después.
@@ -70,4 +73,4 @@ Quienes terminen pronto pueden diseñar un contraejemplo.
 
 Ofrece el [formulario de opinión](workshop-feedback.md) de dos minutos.
 Anota el commit, tiempos reales, errores frecuentes y un cambio para la próxima sesión.
-Antes de publicarlo, usa la [lista de publicación](../RELEASE_CHECKLIST.md).
+Antes de publicarlo, usa la [lista de publicación](https://github.com/project-delphi/tensors-workshop/blob/main/RELEASE_CHECKLIST.md).

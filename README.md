@@ -54,7 +54,8 @@ is on the **[workshop homepage](https://project-delphi.github.io/tensors-worksho
 One task per notebook. Use them during a discussion break or after the session.
 Each includes a time box, questions, and a short group deliverable.
 
-Teaching kit: [run sheet](facilitator-guide.md) · [entry/exit checks](assessments.md) ·
+Teaching kit: [Teach this workshop](https://project-delphi.github.io/tensors-workshop/teach.html) ·
+[run sheet](facilitator-guide.md) · [entry/exit checks](assessments.md) ·
 [worked mistakes](worked-mistakes.md) · [feedback form](workshop-feedback.md).
 
 Maintainers: [release checklist](RELEASE_CHECKLIST.md) · [changelog](CHANGELOG.md).
@@ -72,13 +73,18 @@ handbook rather than trusted over it.
 **[The companion page](https://project-delphi.github.io/tensors-workshop/companion.html)**
  · 🇪🇸 [En español](https://project-delphi.github.io/tensors-workshop/es/companion.html)
 
-## All the data is real
+## Real data, with deliberate synthetic examples
 
-No synthetic random arrays anywhere. Real tumour measurements, real handwritten
-digits, real histology and microscopy images, real New York taxi trips, real
-airline traffic. Real data carries problems that random numbers never show:
+The workshop uses real tumour measurements, handwritten digits, histology and
+microscopy images, New York taxi trips, and airline traffic. Real data carries
+problems that random numbers alone do not show:
 missing values, features on incompatible scales, pixels that never change.
 Finding those problems is part of the work.
+
+Some examples deliberately use synthetic data to isolate a concept. Notebook
+12 uses synthetic queries, keys, and values for attention, independent noise
+for Cholesky, and controlled noise added to real audio to measure denoising.
+The worked mistakes also use small constructed arrays to expose specific errors.
 
 Most of it ships inside scikit-learn and scikit-image (`load_breast_cancer`,
 `load_digits`, `data.camera()`, `data.astronaut()`). California Housing, NYC
@@ -244,17 +250,24 @@ mantiene.
 Una actividad por cuaderno, para una pausa de discusión o después del taller.
 Cada una incluye tiempo, preguntas y un resultado breve para compartir.
 
-Para enseñar: [guion](es/facilitator-guide.md) · [evaluación](es/assessments.md) ·
+Para enseñar: [Enseñar este taller](https://project-delphi.github.io/tensors-workshop/es/teach.html) ·
+[guion](es/facilitator-guide.md) · [evaluación](es/assessments.md) ·
 [errores resueltos](es/worked-mistakes.md) · [opinión](es/workshop-feedback.md).
 
-## Todos los datos son reales
+## Datos reales, con ejemplos sintéticos deliberados
 
-Ni un solo array aleatorio. Medidas reales de tumores, dígitos manuscritos
-reales, imágenes reales de histología y microscopía, viajes reales en taxi de
-Nueva York, tráfico aéreo real. Los datos reales traen problemas que los
-aleatorios nunca muestran: valores faltantes, variables en escalas
+El taller usa medidas reales de tumores, dígitos manuscritos, imágenes de
+histología y microscopía, viajes en taxi de Nueva York y tráfico aéreo.
+Los datos reales traen problemas que los números aleatorios por sí solos no
+muestran: valores faltantes, variables en escalas
 incompatibles, píxeles que nunca cambian. Encontrar esos problemas es parte del
 trabajo.
+
+Algunos ejemplos usan datos sintéticos deliberadamente para aislar un concepto.
+El cuaderno 12 usa consultas, claves y valores sintéticos para la atención,
+ruido independiente para Cholesky y ruido controlado añadido a audio real para
+medir la reducción de ruido. Los errores resueltos también usan arrays pequeños
+construidos para mostrar errores concretos.
 
 ## Las secciones
 

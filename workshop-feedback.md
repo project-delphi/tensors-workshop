@@ -1,6 +1,9 @@
-# Workshop feedback · 2 minutes
+---
+title: "Workshop feedback · 2 minutes"
+lang: en
+---
 
-[Español](es/workshop-feedback.md) · [README](README.md)
+[Español](es/workshop-feedback.md) · [Teach this workshop](teach.qmd)
 
 Copy this into your usual survey or give it out on paper. No name or account
 needed. Return privately to the facilitator; do not post learner responses in

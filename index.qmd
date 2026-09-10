@@ -90,6 +90,43 @@ Turn arrays into intuition. Reshape images. Compress data. Decode the math behin
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Workshop repository</strong><span>Explore the code on GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on Discord</span></p></div>
 </div>
+<section class="workshop-audience" aria-labelledby="who-this-is-for">
+  <h2 id="who-this-is-for">Who this is for</h2>
+  <div class="audience-grid">
+    <article class="audience-card">
+      <h3>Software Engineers Pivoting to AI</h3>
+      <ul>
+        <li>Stop guessing array shapes—read PyTorch and JAX code with total confidence.</li>
+        <li>Bridge the gap between clean Python architecture and high-dimensional ML math.</li>
+        <li>Turn your engineering background into practical deep learning fluency.</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <h3>Data Analysts &amp; Traditional Data Scientists</h3>
+      <ul>
+        <li>Break out of 2D DataFrames and master the 3D/4D tensors powering deep learning.</li>
+        <li>Move beyond Scikit-Learn to process complex image, text, and sequence data.</li>
+        <li>Upgrade your tabular analytics skills into neural network expertise.</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <h3>Self-Taught ML Practitioners</h3>
+      <ul>
+        <li>Never get stuck on a <code>RuntimeError: size mismatch</code> again.</li>
+        <li>Look under the hood of high-level APIs to debug broken tensor operations fast.</li>
+        <li>Stop treating models as black boxes—understand what happens at every layer.</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <h3>STEM Grads (CS, Physics, Math)</h3>
+      <ul>
+        <li>Turn theoretical linear algebra into hands-on, production-ready Python code.</li>
+        <li>Apply matrix decompositions directly to data compression and neural networks.</li>
+        <li>Connect abstract classwork to real-world machine learning architectures.</li>
+      </ul>
+    </article>
+  </div>
+</section>
 <section class="learning-journey" aria-labelledby="journey-title">
   <p class="section-eyebrow">THE LEARNING JOURNEY</p>
   <h2 id="journey-title">Your path from arrays to ML.</h2>

@@ -10,10 +10,22 @@ project:
     - kahoot.qmd
     - references.qmd
     - companion.qmd
+    - teach.qmd
+    - facilitator-guide.md
+    - assessments.md
+    - worked-mistakes.md
+    - group-tasks.md
+    - workshop-feedback.md
     - es/index.qmd
     - es/notebooks.qmd
     - es/references.qmd
     - es/companion.qmd
+    - es/teach.qmd
+    - es/facilitator-guide.md
+    - es/assessments.md
+    - es/worked-mistakes.md
+    - es/group-tasks.md
+    - es/workshop-feedback.md
     - es/tensors_workshop_plan_with_quizzes.md
     - slides/en/index.qmd
     - slides/es/index.qmd
@@ -29,7 +41,7 @@ project:
 
 website:
   title: "Tensors for Machine Learning"
-  description: "A 3-hour workshop on tensors for machine learning, in English and Spanish."
+  description: "A 210-minute workshop on tensors for machine learning, including quizzes and breaks, in English and Spanish."
   site-url: https://project-delphi.github.io/tensors-workshop
   repo-url: https://github.com/project-delphi/tensors-workshop
   favicon: favicon.svg
@@ -96,6 +108,12 @@ website:
       - href: es/companion.qmd
         text: Complemento
         rel: lang-es
+      - href: teach.qmd
+        text: Teach
+        rel: lang-en
+      - href: es/teach.qmd
+        text: Enseñar
+        rel: lang-es
       # Visible only on Kahoot, the one English-only page left -- see
       # `custom.scss`. It is deliberately the whole Spanish side rather than a
       # single link home, so a Spanish reader who lands there reaches
@@ -114,6 +132,8 @@ website:
             text: Diapositivas
           - href: es/companion.qmd
             text: Complemento
+          - href: es/teach.qmd
+            text: Enseñar este taller
     right:
       # Both always visible -- this is the control that switches the rest of
       # the navbar. `lang-switch-*` marks them so the current language can be

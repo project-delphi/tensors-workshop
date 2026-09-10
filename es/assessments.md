@@ -1,6 +1,9 @@
-# Comprobaciones inicial y final
+---
+title: "Comprobaciones inicial y final"
+lang: es
+---
 
-[English](../assessments.md) · [Guía de facilitación](facilitator-guide.md)
+[English](../assessments.md) · [Guía de facilitación](facilitator-guide.md) · [Enseñar este taller](teach.qmd)
 
 Responde individualmente, con frases cortas. No necesitas código.
 Las preguntas también están en los cuadernos 00 y 12.

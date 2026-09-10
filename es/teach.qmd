@@ -1,0 +1,39 @@
+---
+title: "Enseñar este taller"
+subtitle: "Materiales prácticos para docentes"
+lang: es
+---
+
+[English](../teach.qmd)
+
+Prepara e imparte el taller de {{< var workshop.minutes >}} minutos con los
+recursos siguientes. La agenda incluye cuestionarios y pausas. Las actividades
+grupales sustituyen tiempo de práctica o discusión; el cuaderno 13 queda para casa.
+
+## Prepara la sesión
+
+1. Comparte los [requisitos previos](index.qmd#requisitos-previos) y pide que los
+   participantes ejecuten el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) antes de clase.
+2. Lee la [guía de facilitación](facilitator-guide.md) junto con el
+   [horario del taller](tensors_workshop_plan_with_quizzes.md).
+3. Prueba los [cuadernos](notebooks.qmd) elegidos en sesiones nuevas. Sigue
+   **Core prep** y luego **Core activity**, y prepara las
+   [diapositivas](../slides/es/index.qmd) y los [cuestionarios en inglés](../kahoot.qmd).
+
+## Recursos para enseñar
+
+- **[Guía de facilitación](facilitator-guide.md)** — Prepara el grupo, sigue los tiempos de cada sección y ayuda a quienes se atasquen.
+- **[Comprobaciones inicial y final](assessments.md)** — Recoge el razonamiento individual al principio y al final; usa la clave y la rúbrica incluidas.
+- **[Actividades grupales](group-tasks.md)** — Elige discusiones breves con un tiempo definido y un resultado concreto para compartir.
+- **[Errores resueltos](worked-mistakes.md)** — Pide una predicción, una prueba con un contraejemplo y una explicación de la corrección.
+- **[Formulario de opinión](workshop-feedback.md)** — Recoge dos minutos de comentarios al terminar y elige una mejora para la próxima sesión.
+
+## Durante y después del taller
+
+Usa **Predice → Ejecuta → Explica → Comprueba**. Pide un intento antes de abrir
+las soluciones, rota los roles y conserva las pausas y la comprobación final.
+La guía de facilitación sitúa las actividades dentro de los bloques existentes.
+
+Después de la sesión, registra los tiempos reales y los errores frecuentes
+junto con la versión del taller que impartiste. Conserva las respuestas en
+privado y usa los comentarios para elegir un cambio concreto para la próxima sesión.

@@ -1,6 +1,9 @@
-# Opinión sobre el taller · 2 minutos
+---
+title: "Opinión sobre el taller · 2 minutos"
+lang: es
+---
 
-[English](../workshop-feedback.md) · [README](../README.md)
+[English](../workshop-feedback.md) · [Enseñar este taller](teach.qmd)
 
 Copia esto en tu encuesta habitual o repártelo en papel. No requiere nombre
 ni cuenta. Devuélvelo en privado al facilitador; no publiques las respuestas

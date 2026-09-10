@@ -1,6 +1,9 @@
-# Cuatro errores que vale la pena probar
+---
+title: "Cuatro errores que vale la pena probar"
+lang: es
+---
 
-[English](../worked-mistakes.md) · [Guía de facilitación](facilitator-guide.md)
+[English](../worked-mistakes.md) · [Guía de facilitación](facilitator-guide.md) · [Enseñar este taller](teach.qmd)
 
 Predice, ejecuta el contraejemplo y corrige la afirmación en una frase.
 Estos ejemplos sintéticos aíslan un error; los cuadernos usan datos reales.

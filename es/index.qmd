@@ -90,6 +90,43 @@ Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra l
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Discusión en directo</strong><span>Grupos pequeños en Discord</span></p></div>
 </div>
+<section class="workshop-audience" aria-labelledby="para-quien-es">
+  <h2 id="para-quien-es">¿Para quién es este taller?</h2>
+  <div class="audience-grid">
+    <article class="audience-card">
+      <h3>Ingenieros de software que dan el salto a la IA</h3>
+      <ul>
+        <li>Deja de adivinar las formas de los arrays: lee código de PyTorch y JAX con total confianza.</li>
+        <li>Conecta una arquitectura limpia en Python con las matemáticas de alta dimensionalidad del ML.</li>
+        <li>Convierte tu experiencia en ingeniería en soltura práctica con el aprendizaje profundo.</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <h3>Analistas de datos y científicos de datos tradicionales</h3>
+      <ul>
+        <li>Sal de los DataFrames 2D y domina los tensores 3D/4D que impulsan el aprendizaje profundo.</li>
+        <li>Ve más allá de Scikit-Learn para procesar imágenes, texto y secuencias complejas.</li>
+        <li>Amplía tus habilidades de análisis tabular hasta dominar las redes neuronales.</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <h3>Practicantes autodidactas de ML</h3>
+      <ul>
+        <li>No vuelvas a quedarte atascado con un <code>RuntimeError: size mismatch</code>.</li>
+        <li>Explora el funcionamiento interno de las API de alto nivel para depurar rápidamente operaciones tensoriales que fallan.</li>
+        <li>Deja de tratar los modelos como cajas negras: entiende qué ocurre en cada capa.</li>
+      </ul>
+    </article>
+    <article class="audience-card">
+      <h3>Graduados STEM (Informática, Física, Matemáticas)</h3>
+      <ul>
+        <li>Lleva la teoría del álgebra lineal a código práctico en Python, listo para producción.</li>
+        <li>Aplica descomposiciones matriciales directamente a la compresión de datos y las redes neuronales.</li>
+        <li>Conecta los conceptos abstractos de clase con arquitecturas reales de aprendizaje automático.</li>
+      </ul>
+    </article>
+  </div>
+</section>
 <section class="learning-journey" aria-labelledby="journey-title">
   <p class="section-eyebrow">LA RUTA DE APRENDIZAJE</p>
   <h2 id="journey-title">Tu ruta de los arrays al ML.</h2>

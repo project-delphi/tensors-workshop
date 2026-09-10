@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Cuadernos – Tensors for Machine Learning</title>
+<title>Cuatro errores que vale la pena probar – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -143,7 +143,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../es/notebooks.html" rel="lang-es" aria-current="page"> 
+    <a class="nav-link" href="../es/notebooks.html" rel="lang-es"> 
 <span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
@@ -248,11 +248,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">En esta página</h2>
    
   <ul>
-  <li><a href="#cómo-están-construidos" id="toc-cómo-están-construidos" class="nav-link active" data-scroll-target="#cómo-están-construidos">Cómo están construidos</a></li>
-  <li><a href="#los-cuadernos" id="toc-los-cuadernos" class="nav-link" data-scroll-target="#los-cuadernos">Los cuadernos</a></li>
-  <li><a href="#para-ir-más-lejos" id="toc-para-ir-más-lejos" class="nav-link" data-scroll-target="#para-ir-más-lejos">Para ir más lejos</a></li>
-  <li><a href="#ejecutarlos-fuera-de-colab" id="toc-ejecutarlos-fuera-de-colab" class="nav-link" data-scroll-target="#ejecutarlos-fuera-de-colab">Ejecutarlos fuera de Colab</a></li>
-  <li><a href="#qué-necesita-cada-cuaderno" id="toc-qué-necesita-cada-cuaderno" class="nav-link" data-scroll-target="#qué-necesita-cada-cuaderno">Qué necesita cada cuaderno</a></li>
+  <li><a href="#la-media-demuestra-que-el-orden-no-cambió" id="toc-la-media-demuestra-que-el-orden-no-cambió" class="nav-link active" data-scroll-target="#la-media-demuestra-que-el-orden-no-cambió">02 · La media demuestra que el orden no cambió</a></li>
+  <li><a href="#la-forma-demuestra-que-reshape-funcionó" id="toc-la-forma-demuestra-que-reshape-funcionó" class="nav-link" data-scroll-target="#la-forma-demuestra-que-reshape-funcionó">04 · La forma demuestra que reshape funcionó</a></li>
+  <li><a href="#un-residuo-pequeño-demuestra-coeficientes-fiables" id="toc-un-residuo-pequeño-demuestra-coeficientes-fiables" class="nav-link" data-scroll-target="#un-residuo-pequeño-demuestra-coeficientes-fiables">09 · Un residuo pequeño demuestra coeficientes fiables</a></li>
+  <li><a href="#rangos-iguales-implican-presupuestos-iguales" id="toc-rangos-iguales-implican-presupuestos-iguales" class="nav-link" data-scroll-target="#rangos-iguales-implican-presupuestos-iguales">11 · Rangos iguales implican presupuestos iguales</a></li>
   </ul>
 </nav>
     </div>
@@ -261,8 +260,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Cuadernos</h1>
-<p class="subtitle lead">Un cuaderno por sección, más un estudio a fondo para casa, y cada uno se ejecuta en frío en Colab</p>
+<h1 class="title">Cuatro errores que vale la pena probar</h1>
 </div>
 
 
@@ -279,243 +277,71 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como estudio a fondo para casa. Están <strong>escritos principalmente en inglés</strong>, y cada encabezado lleva un resumen de una línea en español.</p>
-<section id="cómo-están-construidos" class="level2">
-<h2 class="anchored" data-anchor-id="cómo-están-construidos">Cómo están construidos</h2>
-<p>Todos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde estás:</p>
-<ol type="1">
-<li><strong>Encabezado</strong>: el título de la sección, sus objetivos y una insignia <em>Open in Colab</em>.</li>
-<li><strong>Preparación</strong>: instala e importa solo lo que esa sección necesita, y carga sus propios datos. Cada cuaderno es autónomo: sin archivos locales y sin depender de ningún otro cuaderno.</li>
-<li><strong>Explicación y código</strong>, alternándose. Construyen poco a poco, en lugar de soltarte un muro de código.</li>
-<li><strong>Ejercicios</strong>: esqueletos <code># TODO</code> sacados del manual, cada uno seguido de una celda de solución plegada. Ábrela después de intentarlo.</li>
-<li><strong>Cierre</strong>: el control de Kahoot de esa sección y un enlace de vuelta aquí.</li>
-</ol>
-<div class="callout callout-style-simple callout-important">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>Los cuadernos se guardan <strong>sin salidas y sin números de ejecución</strong>. Cada número que veas es uno que has producido tú. El texto cita los resultados esperados, así que puedes comprobar si los tuyos son correctos. Si los tuyos difieren, eso merece investigarse en lugar de descartarse.</p>
-</div>
-</div>
-</div>
+<p><a href="../worked-mistakes.html">English</a> · <a href="../es/facilitator-guide.html">Guía de facilitación</a> · <a href="../es/teach.html">Enseñar este taller</a></p>
+<p>Predice, ejecuta el contraejemplo y corrige la afirmación en una frase. Estos ejemplos sintéticos aíslan un error; los cuadernos usan datos reales.</p>
+<section id="la-media-demuestra-que-el-orden-no-cambió" class="level2">
+<h2 class="anchored" data-anchor-id="la-media-demuestra-que-el-orden-no-cambió">02 · La media demuestra que el orden no cambió</h2>
+<p>«La media es idéntica después de barajar; no se perdió información».</p>
+<details>
+<summary>
+Prueba y corrección
+</summary>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>frames <span class="op">=</span> np.array([<span class="fl">0.</span>, <span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>shuffled <span class="op">=</span> frames[[<span class="dv">0</span>, <span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">2</span>]]</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> frames.mean() <span class="op">==</span> shuffled.mean()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> <span class="kw">not</span> np.array_equal(np.diff(frames), np.diff(shuffled))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Ambas medias son 1.5. Los cambios son <code>[1, 1, 1]</code> frente a <code>[3, -2, 1]</code>. La media no establece la cronología. Comprueba marcas de tiempo o índices originales. Transferencia: ¿cuándo puedes barajar imágenes independientes y sus etiquetas?</p>
+</details>
 </section>
-<section id="los-cuadernos" class="level2">
-<h2 class="anchored" data-anchor-id="los-cuadernos">Los cuadernos</h2>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Cuaderno</th>
-<th>Contenido</th>
-<th>Colab</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>00</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><code>00-setup-and-data.ipynb</code></a></td>
-<td>Preparación y bienvenida — Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>01</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><code>01-what-a-tensor-is.ipynb</code></a></td>
-<td>Qué es un tensor — Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>02</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><code>02-thinking-in-n-dimensions.ipynb</code></a></td>
-<td>Pensar en N dimensiones — Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>03</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><code>03-indexing-and-broadcasting.ipynb</code></a></td>
-<td>Indexación y broadcasting con datos reales — Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>04</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><code>04-reshape-and-transpose.ipynb</code></a></td>
-<td>Reshape y transposición de imágenes reales — Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué <code>reshape</code> puede conservar la forma mientras destruye el significado.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>05</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><code>05-video-pipeline-design.ipynb</code></a></td>
-<td>Diseño de un pipeline de vídeo — Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>06</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><code>06-contraction-with-einsum.ipynb</code></a></td>
-<td>Contracción con einsum — Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>07</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><code>07-inverses-and-pseudoinverse.ipynb</code></a></td>
-<td>Inversas y la pseudoinversa — Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>08</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><code>08-recursion-with-matrices.ipynb</code></a></td>
-<td>Recursión con matrices y vectores — Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>09</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><code>09-matrix-factorizations.ipynb</code></a></td>
-<td>Factorizaciones matriciales — Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><code>10-tucker-decomposition.ipynb</code></a></td>
-<td>Descomposición de Tucker con datos reales — Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><code>11-tensor-factorizations.ipynb</code></a></td>
-<td>Factorizaciones tensoriales — Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><code>12-wrap-up-and-take-homes.ipynb</code></a></td>
-<td>Cierre y ejercicios para casa — Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-</tbody>
-</table>
+<section id="la-forma-demuestra-que-reshape-funcionó" class="level2">
+<h2 class="anchored" data-anchor-id="la-forma-demuestra-que-reshape-funcionó">04 · La forma demuestra que reshape funcionó</h2>
+<p>«Ambos resultados tienen forma <code>(3, 2, 2)</code>; ambos son imágenes CHW válidas».</p>
+<details>
+<summary>
+Prueba y corrección
+</summary>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>hwc <span class="op">=</span> np.arange(<span class="dv">12</span>).reshape(<span class="dv">2</span>, <span class="dv">2</span>, <span class="dv">3</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>right <span class="op">=</span> hwc.transpose(<span class="dv">2</span>, <span class="dv">0</span>, <span class="dv">1</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>wrong <span class="op">=</span> hwc.reshape(<span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> right.shape <span class="op">==</span> wrong.shape</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> right[<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>] <span class="op">==</span> hwc[<span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>] <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> wrong[<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>] <span class="op">==</span> <span class="dv">4</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.array_equal(right.transpose(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>), hwc)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>La forma coincide; un valor de canal no. Usa transpose para reordenar ejes. Transferencia: escribe una comprobación de coordenadas para NHWC → NCHW.</p>
+</details>
 </section>
-<section id="para-ir-más-lejos" class="level2">
-<h2 class="anchored" data-anchor-id="para-ir-más-lejos">Para ir más lejos</h2>
-<p>Este <strong>no es una sección</strong>. Es un estudio a fondo, entregado como material para casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la agenda de 210 minutos es exactamente la misma sin él.</p>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Estudio a fondo</th>
-<th>Colab</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>13</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><code>13-convolution-and-deconvolution.ipynb</code></a> — Convolución y deconvolución — Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-</tbody>
-</table>
+<section id="un-residuo-pequeño-demuestra-coeficientes-fiables" class="level2">
+<h2 class="anchored" data-anchor-id="un-residuo-pequeño-demuestra-coeficientes-fiables">09 · Un residuo pequeño demuestra coeficientes fiables</h2>
+<p>«Ambos ajustes son casi exactos; sus coeficientes deben coincidir».</p>
+<details>
+<summary>
+Prueba y corrección
+</summary>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> np.array([[<span class="fl">1.</span>, <span class="fl">1.</span>], [<span class="fl">1.</span>, <span class="fl">1.000001</span>]])</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>a, b <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">1.</span>]), np.array([<span class="fl">2.</span>, <span class="fl">0.</span>])</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> X <span class="op">@</span> a</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.linalg.norm(X <span class="op">@</span> a <span class="op">-</span> y) <span class="op">==</span> <span class="dv">0</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.isclose(np.linalg.norm(X <span class="op">@</span> b <span class="op">-</span> y), <span class="fl">1e-6</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> np.isclose(np.linalg.norm(a <span class="op">-</span> b), np.sqrt(<span class="dv">2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Los coeficientes difieren aproximadamente 1.414; las predicciones, solo 0.000001. Las columnas casi dependientes lo permiten. Revisa condicionamiento y sensibilidad de coeficientes, además del ajuste. QR evita formar <code>X.T @ X</code>; no elimina la sensibilidad del problema. Transferencia: ¿qué pasa si un pequeño error de medición cambia <code>y</code>?</p>
+</details>
 </section>
-<section id="ejecutarlos-fuera-de-colab" class="level2">
-<h2 class="anchored" data-anchor-id="ejecutarlos-fuera-de-colab">Ejecutarlos fuera de Colab</h2>
-<p>Los cuadernos solo necesitan el stack científico de Python. En local:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/project-delphi/tensors-workshop.git</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tensors-workshop</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>matplotlib</code> y <code>ipywidgets</code> están en esa lista porque todos los cuadernos dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab, así que si falta uno solo se nota al ejecutar en local.</p>
-<p><code>scikit-learn</code> y <code>scikit-image</code> traen consigo los datos de tumores, los dígitos manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se ejecutan sin red. Los otros nueve descargan algo la primera vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia, o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo dice cuál, cuaderno por cuaderno.</p>
-</section>
-<section id="qué-necesita-cada-cuaderno" class="level2">
-<h2 class="anchored" data-anchor-id="qué-necesita-cada-cuaderno">Qué necesita cada cuaderno</h2>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<caption>Colab ya tiene instalado todo lo de esta lista.</caption>
-<colgroup>
-<col style="width: 12%">
-<col style="width: 57%">
-<col style="width: 30%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Cuaderno</th>
-<th>Además de NumPy</th>
-<th>Red</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>00</td>
-<td><code>matplotlib</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code>, <code>imageio</code>†</td>
-<td>sí — vivienda en California, pasajeros de aerolínea, viajes en taxi de Nueva York, el clip de la tormenta (solo un sondeo de 1 KB)</td>
-</tr>
-<tr class="even">
-<td>01</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>02</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>imageio</code>†</td>
-<td>sí — el clip de la tormenta</td>
-</tr>
-<tr class="even">
-<td>03</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>04</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td>05</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>imageio</code>†</td>
-<td>sí — el clip de la tormenta</td>
-</tr>
-<tr class="odd">
-<td>06</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td>07</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code></td>
-<td>sí — vivienda en California</td>
-</tr>
-<tr class="odd">
-<td>08</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
-<td>sí — pasajeros de aerolínea</td>
-</tr>
-<tr class="even">
-<td>09</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>sí — pasajeros de aerolínea</td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
-<td>sí — viajes en taxi de Nueva York</td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
-<td>sí — viajes en taxi de Nueva York, el clip de la tormenta</td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
-<td>sí — una grabación de voz (para el ejercicio E)</td>
-</tr>
-<tr class="even">
-<td>13</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-<p>† Lo instala el propio cuaderno con <code>%pip install -q</code>, y por eso ninguno de los dos está en el comando de arriba.</p>
+<section id="rangos-iguales-implican-presupuestos-iguales" class="level2">
+<h2 class="anchored" data-anchor-id="rangos-iguales-implican-presupuestos-iguales">11 · Rangos iguales implican presupuestos iguales</h2>
+<p>«CP de rango 3 y Tucker con rangos <code>(3, 3, 3)</code> ocupan lo mismo».</p>
+<details>
+<summary>
+Prueba y corrección
+</summary>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>shape <span class="op">=</span> (<span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">24</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cp <span class="op">=</span> <span class="dv">3</span> <span class="op">*</span> <span class="bu">sum</span>(shape)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>tucker <span class="op">=</span> <span class="dv">3</span><span class="op">**</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">3</span> <span class="op">*</span> <span class="bu">sum</span>(shape)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span> (cp, tucker) <span class="op">==</span> (<span class="dv">96</span>, <span class="dv">123</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Tucker también guarda un núcleo: aquí son 27 valores más. Esta convención de CP absorbe los pesos en un factor; cuenta 3 valores adicionales si se guardan aparte. Iguala los parámetros almacenados y compara el error sobre los mismos datos. Transferencia: si los presupuestos no coinciden exactamente, ¿cómo informarías la diferencia?</p>
+</details>
 
 
 </section>

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-10
+
+- Added English and Spanish teaching-kit pages and published the facilitator guide, assessments, group tasks, worked mistakes, and feedback form on the website.
+- Corrected the website duration to 210 minutes and clarified the README's deliberate use of synthetic teaching examples in both languages.
+
 ## 2026-09-09
 
 - Linked the NotebookLM overview from the home and companion pages using the supplied video poster.

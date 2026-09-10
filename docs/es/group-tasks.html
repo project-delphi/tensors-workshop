@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Cuadernos – Tensors for Machine Learning</title>
+<title>Actividades y preguntas para grupos – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -19,40 +19,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -143,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../es/notebooks.html" rel="lang-es" aria-current="page"> 
+    <a class="nav-link" href="../es/notebooks.html" rel="lang-es"> 
 <span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
@@ -248,11 +214,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">En esta página</h2>
    
   <ul>
-  <li><a href="#cómo-están-construidos" id="toc-cómo-están-construidos" class="nav-link active" data-scroll-target="#cómo-están-construidos">Cómo están construidos</a></li>
-  <li><a href="#los-cuadernos" id="toc-los-cuadernos" class="nav-link" data-scroll-target="#los-cuadernos">Los cuadernos</a></li>
-  <li><a href="#para-ir-más-lejos" id="toc-para-ir-más-lejos" class="nav-link" data-scroll-target="#para-ir-más-lejos">Para ir más lejos</a></li>
-  <li><a href="#ejecutarlos-fuera-de-colab" id="toc-ejecutarlos-fuera-de-colab" class="nav-link" data-scroll-target="#ejecutarlos-fuera-de-colab">Ejecutarlos fuera de Colab</a></li>
-  <li><a href="#qué-necesita-cada-cuaderno" id="toc-qué-necesita-cada-cuaderno" class="nav-link" data-scroll-target="#qué-necesita-cada-cuaderno">Qué necesita cada cuaderno</a></li>
+  <li><a href="#cómo-usarlas" id="toc-cómo-usarlas" class="nav-link active" data-scroll-target="#cómo-usarlas">Cómo usarlas</a></li>
+  <li><a href="#confiarías-en-estos-datos" id="toc-confiarías-en-estos-datos" class="nav-link" data-scroll-target="#confiarías-en-estos-datos">00 · ¿Confiarías en estos datos?</a></li>
+  <li><a href="#diseña-un-tensor-que-otra-persona-entienda" id="toc-diseña-un-tensor-que-otra-persona-entienda" class="nav-link" data-scroll-target="#diseña-un-tensor-que-otra-persona-entienda">01 · Diseña un tensor que otra persona entienda</a></li>
+  <li><a href="#misma-forma-distintas-reglas" id="toc-misma-forma-distintas-reglas" class="nav-link" data-scroll-target="#misma-forma-distintas-reglas">02 · Misma forma, distintas reglas</a></li>
+  <li><a href="#qué-debería-significar-normal" id="toc-qué-debería-significar-normal" class="nav-link" data-scroll-target="#qué-debería-significar-normal">03 · ¿Qué debería significar «normal»?</a></li>
+  <li><a href="#una-prueba-que-detecte-el-error" id="toc-una-prueba-que-detecte-el-error" class="nav-link" data-scroll-target="#una-prueba-que-detecte-el-error">04 · Una prueba que detecte el error</a></li>
+  <li><a href="#conserva-el-evento-dentro-del-presupuesto" id="toc-conserva-el-evento-dentro-del-presupuesto" class="nav-link" data-scroll-target="#conserva-el-evento-dentro-del-presupuesto">05 · Conserva el evento dentro del presupuesto</a></li>
+  <li><a href="#qué-hace-similares-a-dos-dígitos" id="toc-qué-hace-similares-a-dos-dígitos" class="nav-link" data-scroll-target="#qué-hace-similares-a-dos-dígitos">06 · ¿Qué hace similares a dos dígitos?</a></li>
+  <li><a href="#mismas-predicciones-distintos-coeficientes" id="toc-mismas-predicciones-distintos-coeficientes" class="nav-link" data-scroll-target="#mismas-predicciones-distintos-coeficientes">07 · Mismas predicciones, distintos coeficientes</a></li>
+  <li><a href="#una-buena-predicción-no-basta" id="toc-una-buena-predicción-no-basta" class="nav-link" data-scroll-target="#una-buena-predicción-no-basta">08 · Una buena predicción no basta</a></li>
+  <li><a href="#defiende-una-factorización" id="toc-defiende-una-factorización" class="nav-link" data-scroll-target="#defiende-una-factorización">09 · Defiende una factorización</a></li>
+  <li><a href="#qué-debe-conservar-la-compresión" id="toc-qué-debe-conservar-la-compresión" class="nav-link" data-scroll-target="#qué-debe-conservar-la-compresión">10 · ¿Qué debe conservar la compresión?</a></li>
+  <li><a href="#es-justa-esta-comparación" id="toc-es-justa-esta-comparación" class="nav-link" data-scroll-target="#es-justa-esta-comparación">11 · ¿Es justa esta comparación?</a></li>
+  <li><a href="#trae-un-problema-de-tu-campo" id="toc-trae-un-problema-de-tu-campo" class="nav-link" data-scroll-target="#trae-un-problema-de-tu-campo">12 · Trae un problema de tu campo</a></li>
+  <li><a href="#confiarías-en-la-imagen-más-nítida" id="toc-confiarías-en-la-imagen-más-nítida" class="nav-link" data-scroll-target="#confiarías-en-la-imagen-más-nítida">13 · ¿Confiarías en la imagen más nítida?</a></li>
+  <li><a href="#preguntas-para-facilitar-la-discusión" id="toc-preguntas-para-facilitar-la-discusión" class="nav-link" data-scroll-target="#preguntas-para-facilitar-la-discusión">Preguntas para facilitar la discusión</a></li>
   </ul>
 </nav>
     </div>
@@ -261,8 +238,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Cuadernos</h1>
-<p class="subtitle lead">Un cuaderno por sección, más un estudio a fondo para casa, y cada uno se ejecuta en frío en Colab</p>
+<h1 class="title">Actividades y preguntas para grupos</h1>
 </div>
 
 
@@ -279,243 +255,183 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como estudio a fondo para casa. Están <strong>escritos principalmente en inglés</strong>, y cada encabezado lleva un resumen de una línea en español.</p>
-<section id="cómo-están-construidos" class="level2">
-<h2 class="anchored" data-anchor-id="cómo-están-construidos">Cómo están construidos</h2>
-<p>Todos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde estás:</p>
-<ol type="1">
-<li><strong>Encabezado</strong>: el título de la sección, sus objetivos y una insignia <em>Open in Colab</em>.</li>
-<li><strong>Preparación</strong>: instala e importa solo lo que esa sección necesita, y carga sus propios datos. Cada cuaderno es autónomo: sin archivos locales y sin depender de ningún otro cuaderno.</li>
-<li><strong>Explicación y código</strong>, alternándose. Construyen poco a poco, en lugar de soltarte un muro de código.</li>
-<li><strong>Ejercicios</strong>: esqueletos <code># TODO</code> sacados del manual, cada uno seguido de una celda de solución plegada. Ábrela después de intentarlo.</li>
-<li><strong>Cierre</strong>: el control de Kahoot de esa sección y un enlace de vuelta aquí.</li>
-</ol>
-<div class="callout callout-style-simple callout-important">
-<div class="callout-body d-flex">
-<div class="callout-icon-container">
-<i class="callout-icon"></i>
-</div>
-<div class="callout-body-container">
-<p>Los cuadernos se guardan <strong>sin salidas y sin números de ejecución</strong>. Cada número que veas es uno que has producido tú. El texto cita los resultados esperados, así que puedes comprobar si los tuyos son correctos. Si los tuyos difieren, eso merece investigarse en lugar de descartarse.</p>
-</div>
-</div>
-</div>
+<p>Actividades breves y abiertas para usar durante o después de los cuadernos. <a href="../group-tasks.html">English</a> · <a href="../es/teach.html">Enseñar este taller</a></p>
+<section id="cómo-usarlas" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-usarlas">Cómo usarlas</h2>
+<p>Forma grupos de 3–4. Elijan quién presenta, quién toma notas y quién cuestiona los supuestos. Una cuarta persona puede ejecutar comprobaciones breves. Cambien los roles. Pueden hablar en español o en inglés.</p>
+<p>Elige algunas actividades. Sustituye un espacio de discusión o úsalas después del taller; no son requisitos adicionales para cada cuaderno.</p>
+<p>Para una actividad de 6 minutos: 1 para pensar a solas, 4 para discutir y 1 para compartir. Para una de 8 minutos, dedica 6 a la discusión. Ejecuta la preparación antes de empezar. Reutiliza resultados; basta un dibujo o pseudocódigo.</p>
+<p>Cada grupo comparte: <strong>nuestra elección → nuestra evidencia → qué nos haría cambiar de opinión</strong>. Se admiten decisiones distintas. Aclaren sus supuestos. Publiquen esas tres líneas en Discord. Invita a un grupo a explicar su elección.</p>
+<p>Para empezar: <a href="#axis-meaning">significado de los ejes</a>, <a href="#silent-bugs">errores silenciosos</a> y <a href="#compression">compresión</a>.</p>
 </section>
-<section id="los-cuadernos" class="level2">
-<h2 class="anchored" data-anchor-id="los-cuadernos">Los cuadernos</h2>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Cuaderno</th>
-<th>Contenido</th>
-<th>Colab</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>00</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><code>00-setup-and-data.ipynb</code></a></td>
-<td>Preparación y bienvenida — Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>01</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><code>01-what-a-tensor-is.ipynb</code></a></td>
-<td>Qué es un tensor — Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>02</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><code>02-thinking-in-n-dimensions.ipynb</code></a></td>
-<td>Pensar en N dimensiones — Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>03</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><code>03-indexing-and-broadcasting.ipynb</code></a></td>
-<td>Indexación y broadcasting con datos reales — Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>04</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><code>04-reshape-and-transpose.ipynb</code></a></td>
-<td>Reshape y transposición de imágenes reales — Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué <code>reshape</code> puede conservar la forma mientras destruye el significado.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>05</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><code>05-video-pipeline-design.ipynb</code></a></td>
-<td>Diseño de un pipeline de vídeo — Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>06</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><code>06-contraction-with-einsum.ipynb</code></a></td>
-<td>Contracción con einsum — Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>07</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><code>07-inverses-and-pseudoinverse.ipynb</code></a></td>
-<td>Inversas y la pseudoinversa — Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>08</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><code>08-recursion-with-matrices.ipynb</code></a></td>
-<td>Recursión con matrices y vectores — Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>09</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><code>09-matrix-factorizations.ipynb</code></a></td>
-<td>Factorizaciones matriciales — Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><code>10-tucker-decomposition.ipynb</code></a></td>
-<td>Descomposición de Tucker con datos reales — Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><code>11-tensor-factorizations.ipynb</code></a></td>
-<td>Factorizaciones tensoriales — Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><code>12-wrap-up-and-take-homes.ipynb</code></a></td>
-<td>Cierre y ejercicios para casa — Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-</tbody>
-</table>
+<section id="confiarías-en-estos-datos" class="level2">
+<h2 class="anchored" data-anchor-id="confiarías-en-estos-datos">00 · ¿Confiarías en estos datos?</h2>
+<p><strong>Cuándo:</strong> Después de las comprobaciones de datos del <a href="../notebooks/00-setup-and-data.ipynb">cuaderno 00</a>. <strong>Tiempo:</strong> 6 minutos.</p>
+<p>Elijan un conjunto de datos cargado. Decidan si está listo para un análisis concreto. Primero acuerden cuál será ese análisis.</p>
+<ul>
+<li>¿Qué representa una observación?</li>
+<li>¿Qué defecto afectaría más al análisis? ¿Cuál podría no importar?</li>
+<li>¿Qué comprobarían además de que el archivo cargue y su forma parezca correcta?</li>
+</ul>
+<p><strong>Compartan:</strong> Tres comprobaciones para aceptar los datos. Señalen un resultado del cuaderno y una pregunta que este no puede responder.</p>
 </section>
-<section id="para-ir-más-lejos" class="level2">
-<h2 class="anchored" data-anchor-id="para-ir-más-lejos">Para ir más lejos</h2>
-<p>Este <strong>no es una sección</strong>. Es un estudio a fondo, entregado como material para casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la agenda de 210 minutos es exactamente la misma sin él.</p>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th>#</th>
-<th>Estudio a fondo</th>
-<th>Colab</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>13</td>
-<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><code>13-convolution-and-deconvolution.ipynb</code></a> — Convolución y deconvolución — Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada.</td>
-<td><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid" alt="Open In Colab"></a></td>
-</tr>
-</tbody>
-</table>
+<section id="diseña-un-tensor-que-otra-persona-entienda" class="level2">
+<h2 class="anchored" data-anchor-id="diseña-un-tensor-que-otra-persona-entienda">01 · Diseña un tensor que otra persona entienda</h2>
+<p><strong>Cuándo:</strong> Después de leer formas como frases en el <a href="../notebooks/01-what-a-tensor-is.ipynb">cuaderno 01</a>. <strong>Tiempo:</strong> 6 minutos.</p>
+<p>Diseñen un tensor para fotografías repetidas de las mismas plantas. Decidan cuántas plantas, visitas y canales de imagen conservar.</p>
+<ul>
+<li>¿Qué ejes necesitan? ¿Qué significa cada índice?</li>
+<li>¿Qué podría revelar un corte o una fibra?</li>
+<li>¿Qué podría malinterpretarse si entregaran solo la forma?</li>
+</ul>
+<p><strong>Compartan:</strong> Una forma con etiquetas, una selección útil y una frase que explique su resultado. Pidan a otro grupo que lo interprete sin más ayuda.</p>
+<p><a id="axis-meaning"></a></p>
 </section>
-<section id="ejecutarlos-fuera-de-colab" class="level2">
-<h2 class="anchored" data-anchor-id="ejecutarlos-fuera-de-colab">Ejecutarlos fuera de Colab</h2>
-<p>Los cuadernos solo necesitan el stack científico de Python. En local:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/project-delphi/tensors-workshop.git</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tensors-workshop</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ex">uv</span> run <span class="at">--with</span> numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><code>matplotlib</code> y <code>ipywidgets</code> están en esa lista porque todos los cuadernos dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab, así que si falta uno solo se nota al ejecutar en local.</p>
-<p><code>scikit-learn</code> y <code>scikit-image</code> traen consigo los datos de tumores, los dígitos manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se ejecutan sin red. Los otros nueve descargan algo la primera vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia, o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo dice cuál, cuaderno por cuaderno.</p>
+<section id="misma-forma-distintas-reglas" class="level2">
+<h2 class="anchored" data-anchor-id="misma-forma-distintas-reglas">02 · Misma forma, distintas reglas</h2>
+<p><strong>Cuándo:</strong> Después de comparar reorganizaciones en el <a href="../notebooks/02-thinking-in-n-dimensions.ipynb">cuaderno 02</a>. <strong>Tiempo:</strong> 6 minutos.</p>
+<p>Dos arrays tienen forma <code>(20, 8, 8)</code>. Uno contiene imágenes independientes de dígitos; el otro, fotogramas consecutivos. Propongan una operación razonable para una tarea pero engañosa para la otra.</p>
+<ul>
+<li>¿Qué ocurre al mezclar o promediar el primer eje?</li>
+<li>¿Para qué pregunta serviría promediar? ¿Qué pregunta impediría responder?</li>
+<li>¿Qué metadatos deben acompañar al array?</li>
+</ul>
+<p><strong>Compartan:</strong> Dos interpretaciones de la misma operación. Incluyan una condición que cambiaría su recomendación.</p>
 </section>
-<section id="qué-necesita-cada-cuaderno" class="level2">
-<h2 class="anchored" data-anchor-id="qué-necesita-cada-cuaderno">Qué necesita cada cuaderno</h2>
-<!-- GENERATED by scripts/gen_tables.py from _variables.yml. Do not edit by hand. -->
-<table class="caption-top table">
-<caption>Colab ya tiene instalado todo lo de esta lista.</caption>
-<colgroup>
-<col style="width: 12%">
-<col style="width: 57%">
-<col style="width: 30%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Cuaderno</th>
-<th>Además de NumPy</th>
-<th>Red</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>00</td>
-<td><code>matplotlib</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code>, <code>imageio</code>†</td>
-<td>sí — vivienda en California, pasajeros de aerolínea, viajes en taxi de Nueva York, el clip de la tormenta (solo un sondeo de 1 KB)</td>
-</tr>
-<tr class="even">
-<td>01</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>02</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>imageio</code>†</td>
-<td>sí — el clip de la tormenta</td>
-</tr>
-<tr class="even">
-<td>03</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code></td>
-<td>no</td>
-</tr>
-<tr class="odd">
-<td>04</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td>05</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>imageio</code>†</td>
-<td>sí — el clip de la tormenta</td>
-</tr>
-<tr class="odd">
-<td>06</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-learn</code>, <code>scikit-image</code></td>
-<td>no</td>
-</tr>
-<tr class="even">
-<td>07</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code></td>
-<td>sí — vivienda en California</td>
-</tr>
-<tr class="odd">
-<td>08</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
-<td>sí — pasajeros de aerolínea</td>
-</tr>
-<tr class="even">
-<td>09</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>sí — pasajeros de aerolínea</td>
-</tr>
-<tr class="odd">
-<td>10</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code></td>
-<td>sí — viajes en taxi de Nueva York</td>
-</tr>
-<tr class="even">
-<td>11</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>tensorly</code>†, <code>imageio</code>†</td>
-<td>sí — viajes en taxi de Nueva York, el clip de la tormenta</td>
-</tr>
-<tr class="odd">
-<td>12</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>pandas</code>, <code>scikit-learn</code>, <code>scipy</code></td>
-<td>sí — una grabación de voz (para el ejercicio E)</td>
-</tr>
-<tr class="even">
-<td>13</td>
-<td><code>matplotlib</code>, <code>ipywidgets</code>, <code>scikit-image</code>, <code>scipy</code></td>
-<td>no</td>
-</tr>
-</tbody>
-</table>
-<p>† Lo instala el propio cuaderno con <code>%pip install -q</code>, y por eso ninguno de los dos está en el comando de arriba.</p>
+<section id="qué-debería-significar-normal" class="level2">
+<h2 class="anchored" data-anchor-id="qué-debería-significar-normal">03 · ¿Qué debería significar «normal»?</h2>
+<p><strong>Cuándo:</strong> Después de estandarizar en el <a href="../notebooks/03-indexing-and-broadcasting.ipynb">cuaderno 03</a>. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Quieren comparar dígitos manuscritos. Decidan si estandarizar cada imagen por separado o cada posición de píxel entre imágenes.</p>
+<ul>
+<li>¿Qué variación elimina cada opción? ¿Cuál conserva?</li>
+<li>¿Cuándo sería útil conservar el brillo total?</li>
+<li>¿Qué harán con un píxel de varianza cero?</li>
+</ul>
+<p><strong>Compartan:</strong> Su regla, los ejes usados para calcular sus estadísticas y un caso en que sería una mala elección. Usen una gráfica del cuaderno o un dibujo.</p>
+<p><a id="silent-bugs"></a></p>
+</section>
+<section id="una-prueba-que-detecte-el-error" class="level2">
+<h2 class="anchored" data-anchor-id="una-prueba-que-detecte-el-error">04 · Una prueba que detecte el error</h2>
+<p><strong>Cuándo:</strong> Después del ejercicio sobre código que funciona pero está mal en el <a href="../notebooks/04-reshape-and-transpose.ipynb">cuaderno 04</a>. <strong>Tiempo:</strong> 6 minutos.</p>
+<p>Alguien convierte imágenes NHWC a NCHW con <code>reshape</code>. La salida tiene la forma pedida. Diseñen una revisión que compruebe si se conservó el significado de los píxeles.</p>
+<ul>
+<li>¿Qué error podría escapar a una comprobación de forma?</li>
+<li>¿Qué píxel o canal seguirían durante la conversión?</li>
+<li>¿Qué prueba funcionaría aunque dos ejes tuvieran el mismo tamaño?</li>
+</ul>
+<p><strong>Compartan:</strong> Una prueba en código o pseudocódigo y una comprobación visual. Expliquen qué detecta cada una. Pruébenlas con ambas conversiones del cuaderno.</p>
+</section>
+<section id="conserva-el-evento-dentro-del-presupuesto" class="level2">
+<h2 class="anchored" data-anchor-id="conserva-el-evento-dentro-del-presupuesto">05 · Conserva el evento dentro del presupuesto</h2>
+<p><strong>Cuándo:</strong> Durante «¿padding o muestreo?» en el <a href="../notebooks/05-video-pipeline-design.ipynb">cuaderno 05</a>. Úsala como alternativa a su discusión en grupo. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Diseñen un proceso para agrupar clips de distintas duraciones. Buscan detectar un evento breve. Pueden guardar como máximo 16 fotogramas por clip.</p>
+<ul>
+<li>¿Muestrearían, recortarían, rellenarían o combinarían métodos? ¿Por qué?</li>
+<li>¿Qué pasa si el evento ocurre entre los fotogramas seleccionados?</li>
+<li>¿Cómo distinguiría el modelo el relleno de un fotograma oscuro medido?</li>
+</ul>
+<p><strong>Compartan:</strong> Un esquema desde la entrada hasta el lote, con ejes y una máscara si hace falta. Nombren un posible fallo y cómo detectarlo.</p>
+</section>
+<section id="qué-hace-similares-a-dos-dígitos" class="level2">
+<h2 class="anchored" data-anchor-id="qué-hace-similares-a-dos-dígitos">06 · ¿Qué hace similares a dos dígitos?</h2>
+<p><strong>Cuándo:</strong> Después del explorador de búsqueda en el <a href="../notebooks/06-contraction-with-einsum.ipynb">cuaderno 06</a>. <strong>Tiempo:</strong> 6 minutos.</p>
+<p>Elijan un dígito de consulta. Definan un objetivo y decidan si el producto punto sin normalizar o la similitud coseno ofrece vecinos más útiles.</p>
+<ul>
+<li>¿«Similar» significa misma etiqueta, trazos parecidos o cantidad de tinta?</li>
+<li>¿Dónde difieren las dos listas? ¿Qué podría explicarlo?</li>
+<li>¿Cómo evaluarían su elección más allá de esta consulta?</li>
+</ul>
+<p><strong>Compartan:</strong> El objetivo, dos ejemplos recuperados y una evaluación propuesta. Expliquen qué representa el índice sumado en <code>id,jd-&gt;ij</code>.</p>
+</section>
+<section id="mismas-predicciones-distintos-coeficientes" class="level2">
+<h2 class="anchored" data-anchor-id="mismas-predicciones-distintos-coeficientes">07 · Mismas predicciones, distintos coeficientes</h2>
+<p><strong>Cuándo:</strong> Después del ejercicio de sistemas singulares en el <a href="../notebooks/07-inverses-and-pseudoinverse.ipynb">cuaderno 07</a>. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Alguien duplica una columna de variables. Dos vectores de coeficientes producen ahora las mismas predicciones. Decidan qué conclusiones pueden sostener.</p>
+<ul>
+<li>¿Un residuo pequeño basta para elegir los coeficientes más fiables?</li>
+<li>¿Qué elige la pseudoinversa si varias soluciones ajustan igual de bien?</li>
+<li>¿Qué información adicional ayudaría a interpretar cada coeficiente?</li>
+</ul>
+<p><strong>Compartan:</strong> Un mensaje breve: qué permite afirmar el ajuste, qué no demuestra y qué comprobarían después.</p>
+</section>
+<section id="una-buena-predicción-no-basta" class="level2">
+<h2 class="anchored" data-anchor-id="una-buena-predicción-no-basta">08 · Una buena predicción no basta</h2>
+<p><strong>Cuándo:</strong> Después del pronóstico recursivo en el <a href="../notebooks/08-recursion-with-matrices.ipynb">cuaderno 08</a>. <strong>Tiempo:</strong> 6 minutos.</p>
+<p>El pronóstico funciona bien para el mes siguiente. Quieren reutilizarlo de forma recursiva durante un año. Diseñen una prueba antes de aprobar el cambio.</p>
+<ul>
+<li>¿Qué cambia cuando el modelo recibe sus propias predicciones?</li>
+<li>¿Cómo podría crecer o reducirse un error pequeño con cada actualización?</li>
+<li>¿Qué horizonte y modelo de referencia usarían para evaluar?</li>
+</ul>
+<p><strong>Compartan:</strong> Un plan de evaluación y un criterio para detener el uso. Apoyen una preocupación con el pronóstico de pasajeros o el explorador de estados.</p>
+</section>
+<section id="defiende-una-factorización" class="level2">
+<h2 class="anchored" data-anchor-id="defiende-una-factorización">09 · Defiende una factorización</h2>
+<p><strong>Cuándo:</strong> Después del selector de método en el <a href="../notebooks/09-matrix-factorizations.ipynb">cuaderno 09</a>. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Elijan una tarea: ajustar una matriz alta una vez; resolver el mismo sistema cuadrado muchas veces; o comprimir una imagen con almacenamiento limitado. Recomienden un método y compárenlo con una alternativa razonable.</p>
+<ul>
+<li>¿Qué propiedad de la matriz deben comprobar primero?</li>
+<li>¿Qué importa más: estabilidad, tiempo, almacenamiento o factores interpretables?</li>
+<li>¿Qué dato nuevo les haría cambiar de método?</li>
+</ul>
+<p><strong>Compartan:</strong> Una recomendación con una condición y una medida. Otro grupo aporta el dato nuevo; revisen su respuesta si hace falta.</p>
+<p><a id="compression"></a></p>
+</section>
+<section id="qué-debe-conservar-la-compresión" class="level2">
+<h2 class="anchored" data-anchor-id="qué-debe-conservar-la-compresión">10 · ¿Qué debe conservar la compresión?</h2>
+<p><strong>Cuándo:</strong> Después del explorador de rango en el <a href="../notebooks/10-tucker-decomposition.ipynb">cuaderno 10</a>. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Dos personas usan el tensor de taxis. Una estudia el patrón diario general; la otra, una ruta concreta de origen a destino en su hora más concurrida. Propongan una compresión para cada una.</p>
+<ul>
+<li>¿Servirían los mismos rangos por modo de Tucker?</li>
+<li>¿Podría un error global pequeño ocultar un error grande en esa ruta?</li>
+<li>¿Qué gráfica o error local revisarían antes de aceptar el resultado?</li>
+</ul>
+<p><strong>Compartan:</strong> Dos propuestas de rango, o una común con una justificación. Usen un resultado del cuaderno y propongan una comprobación adicional.</p>
+</section>
+<section id="es-justa-esta-comparación" class="level2">
+<h2 class="anchored" data-anchor-id="es-justa-esta-comparación">11 · ¿Es justa esta comparación?</h2>
+<p><strong>Cuándo:</strong> Después de comparar presupuestos similares en el <a href="../notebooks/11-tensor-factorizations.ipynb">cuaderno 11</a>. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Un informe declara que CP supera a Tucker porque obtuvo menor error con «rango 3». Diseñen una comparación que permita recomendar un método útil.</p>
+<ul>
+<li>¿Qué significa rango 3 en cada modelo? ¿Qué se almacenó realmente?</li>
+<li>¿Qué presupuesto igualarían: parámetros, bytes o tiempo?</li>
+<li>Además del error de reconstrucción, ¿qué resultado importa para la tarea?</li>
+</ul>
+<p><strong>Compartan:</strong> Un plan con tres medidas. Nombren qué mantendrán fijo y una incertidumbre que seguiría pendiente tras ejecutar la comparación.</p>
+</section>
+<section id="trae-un-problema-de-tu-campo" class="level2">
+<h2 class="anchored" data-anchor-id="trae-un-problema-de-tu-campo">12 · Trae un problema de tu campo</h2>
+<p><strong>Cuándo:</strong> Durante la discusión final del <a href="../notebooks/12-wrap-up-and-take-homes.ipynb">cuaderno 12</a>. <strong>Tiempo:</strong> 5 minutos: 1 para pensar, 3 para discutir y 1 para compartir.</p>
+<p>Elijan un problema real que interese a alguien del grupo. Dibujen cómo podrían ayudar los tensores. Hoy no necesitan los datos.</p>
+<ul>
+<li>¿Qué significaría cada eje? ¿Qué sería una observación?</li>
+<li>¿Qué operación del taller ayudaría a responder su pregunta?</li>
+<li>¿Qué sería un resultado satisfactorio? ¿Qué supuesto podría fallar?</li>
+</ul>
+<p><strong>Compartan:</strong> Una forma con etiquetas, una operación propuesta y el primer experimento. Cada persona añade algo que todavía necesita comprender.</p>
+</section>
+<section id="confiarías-en-la-imagen-más-nítida" class="level2">
+<h2 class="anchored" data-anchor-id="confiarías-en-la-imagen-más-nítida">13 · ¿Confiarías en la imagen más nítida?</h2>
+<p><strong>Cuándo:</strong> Después de la deconvolución en el <a href="../notebooks/13-convolution-and-deconvolution.ipynb">cuaderno 13</a>. Solo como actividad posterior. <strong>Tiempo:</strong> 8 minutos.</p>
+<p>Dos restauraciones de la imagen difieren. Una parece más nítida; la otra tiene menor error respecto al original conocido. Decidan cómo evaluarlas.</p>
+<ul>
+<li>¿Qué artefactos podrían parecer detalles recuperados?</li>
+<li>¿Cómo afectan el ruido, el kernel supuesto y los bordes de la imagen?</li>
+<li>¿Qué podrían comprobar con una imagen nueva sin un original limpio?</li>
+</ul>
+<p><strong>Compartan:</strong> Una lista de criterios de aceptación. Separen las pruebas que necesitan una referencia limpia de las que no. Digan qué no puede demostrar ninguna de ellas.</p>
+</section>
+<section id="preguntas-para-facilitar-la-discusión" class="level2">
+<h2 class="anchored" data-anchor-id="preguntas-para-facilitar-la-discusión">Preguntas para facilitar la discusión</h2>
+<p>Usa una cuando un grupo se atasque:</p>
+<ul>
+<li>«¿Qué están suponiendo?»</li>
+<li>«Muestren un caso en que esa elección falle».</li>
+<li>«¿Qué resultado respalda esa afirmación?»</li>
+<li>«¿Qué haría que ambos grupos tuvieran razón?»</li>
+<li>«¿Cuál es el experimento más pequeño que resolvería el desacuerdo?»</li>
+</ul>
+<p>Busca significado de los ejes, evidencia y decisiones justificadas. Puede haber varios diseños válidos; comprueba las afirmaciones matemáticas por separado. Cierra con una distinción útil y una pregunta abierta. Deja las investigaciones largas para después.</p>
 
 
 </section>

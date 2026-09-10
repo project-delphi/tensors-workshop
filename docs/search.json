@@ -490,6 +490,97 @@
     "text": "—\n\n\n12 · Wrap-up and take-homes\n\n\nTake-home 13 is convolution and deconvolution: a small kernel reused across positions, correlation against true convolution, transposed convolution as overlap-add, and Richardson-Lucy recovering a real blurred photograph. It is the third instance of the workshop’s connecting idea, and the one the room no longer runs.\n\n\nSection 12 · Wrap-up and take-homes — 5 min, running +03:25 to +03:30. Five take-home extensions — PCA, attention, CP, Cholesky and audio — under the closing message that tensors are the language connecting the models. Thanks: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Take-home 13 ↗\n📖 Attention as two contractions ↗"
   },
   {
+    "objectID": "es/workshop-feedback.html",
+    "href": "es/workshop-feedback.html",
+    "title": "Opinión sobre el taller · 2 minutos",
+    "section": "",
+    "text": "English · Enseñar este taller\nCopia esto en tu encuesta habitual o repártelo en papel. No requiere nombre ni cuenta. Devuélvelo en privado al facilitador; no publiques las respuestas en incidencias públicas. No incluyas datos personales, clínicos ni laborales.\nCompleta el facilitador: fecha ___ · commit/versión ___ · entorno ___\n\n¿Qué puedes explicar ahora? Marca: significado de ejes / broadcasting / contracción / presupuesto de rango / aún ninguno.\n¿Dónde te atascaste? Cuaderno y encabezado: ___\n¿Qué te hizo cambiar de opinión? Una predicción y su evidencia: ___\n¿Qué cambiamos? Acortar ___ / añadir un ejemplo de ___ / dar más tiempo a ___\n\nNota del facilitador: registra tiempos reales y conteos anónimos de errores frecuentes. Abre una incidencia concreta para la próxima sesión. Conserva las respuestas originales en privado."
+  },
+  {
+    "objectID": "es/worked-mistakes.html",
+    "href": "es/worked-mistakes.html",
+    "title": "Cuatro errores que vale la pena probar",
+    "section": "",
+    "text": "English · Guía de facilitación · Enseñar este taller\nPredice, ejecuta el contraejemplo y corrige la afirmación en una frase. Estos ejemplos sintéticos aíslan un error; los cuadernos usan datos reales."
+  },
+  {
+    "objectID": "es/worked-mistakes.html#la-media-demuestra-que-el-orden-no-cambió",
+    "href": "es/worked-mistakes.html#la-media-demuestra-que-el-orden-no-cambió",
+    "title": "Cuatro errores que vale la pena probar",
+    "section": "02 · La media demuestra que el orden no cambió",
+    "text": "02 · La media demuestra que el orden no cambió\n«La media es idéntica después de barajar; no se perdió información».\n\n\nPrueba y corrección\n\nimport numpy as np\nframes = np.array([0., 1., 2., 3.])\nshuffled = frames[[0, 3, 1, 2]]\nassert frames.mean() == shuffled.mean()\nassert not np.array_equal(np.diff(frames), np.diff(shuffled))\nAmbas medias son 1.5. Los cambios son [1, 1, 1] frente a [3, -2, 1]. La media no establece la cronología. Comprueba marcas de tiempo o índices originales. Transferencia: ¿cuándo puedes barajar imágenes independientes y sus etiquetas?"
+  },
+  {
+    "objectID": "es/worked-mistakes.html#la-forma-demuestra-que-reshape-funcionó",
+    "href": "es/worked-mistakes.html#la-forma-demuestra-que-reshape-funcionó",
+    "title": "Cuatro errores que vale la pena probar",
+    "section": "04 · La forma demuestra que reshape funcionó",
+    "text": "04 · La forma demuestra que reshape funcionó\n«Ambos resultados tienen forma (3, 2, 2); ambos son imágenes CHW válidas».\n\n\nPrueba y corrección\n\nimport numpy as np\nhwc = np.arange(12).reshape(2, 2, 3)\nright = hwc.transpose(2, 0, 1)\nwrong = hwc.reshape(3, 2, 2)\nassert right.shape == wrong.shape\nassert right[1, 0, 0] == hwc[0, 0, 1] == 1\nassert wrong[1, 0, 0] == 4\nassert np.array_equal(right.transpose(1, 2, 0), hwc)\nLa forma coincide; un valor de canal no. Usa transpose para reordenar ejes. Transferencia: escribe una comprobación de coordenadas para NHWC → NCHW."
+  },
+  {
+    "objectID": "es/worked-mistakes.html#un-residuo-pequeño-demuestra-coeficientes-fiables",
+    "href": "es/worked-mistakes.html#un-residuo-pequeño-demuestra-coeficientes-fiables",
+    "title": "Cuatro errores que vale la pena probar",
+    "section": "09 · Un residuo pequeño demuestra coeficientes fiables",
+    "text": "09 · Un residuo pequeño demuestra coeficientes fiables\n«Ambos ajustes son casi exactos; sus coeficientes deben coincidir».\n\n\nPrueba y corrección\n\nimport numpy as np\nX = np.array([[1., 1.], [1., 1.000001]])\na, b = np.array([1., 1.]), np.array([2., 0.])\ny = X @ a\nassert np.linalg.norm(X @ a - y) == 0\nassert np.isclose(np.linalg.norm(X @ b - y), 1e-6)\nassert np.isclose(np.linalg.norm(a - b), np.sqrt(2))\nLos coeficientes difieren aproximadamente 1.414; las predicciones, solo 0.000001. Las columnas casi dependientes lo permiten. Revisa condicionamiento y sensibilidad de coeficientes, además del ajuste. QR evita formar X.T @ X; no elimina la sensibilidad del problema. Transferencia: ¿qué pasa si un pequeño error de medición cambia y?"
+  },
+  {
+    "objectID": "es/worked-mistakes.html#rangos-iguales-implican-presupuestos-iguales",
+    "href": "es/worked-mistakes.html#rangos-iguales-implican-presupuestos-iguales",
+    "title": "Cuatro errores que vale la pena probar",
+    "section": "11 · Rangos iguales implican presupuestos iguales",
+    "text": "11 · Rangos iguales implican presupuestos iguales\n«CP de rango 3 y Tucker con rangos (3, 3, 3) ocupan lo mismo».\n\n\nPrueba y corrección\n\nshape = (4, 4, 24)\ncp = 3 * sum(shape)\ntucker = 3**3 + 3 * sum(shape)\nassert (cp, tucker) == (96, 123)\nTucker también guarda un núcleo: aquí son 27 valores más. Esta convención de CP absorbe los pesos en un factor; cuenta 3 valores adicionales si se guardan aparte. Iguala los parámetros almacenados y compara el error sobre los mismos datos. Transferencia: si los presupuestos no coinciden exactamente, ¿cómo informarías la diferencia?"
+  },
+  {
+    "objectID": "es/facilitator-guide.html",
+    "href": "es/facilitator-guide.html",
+    "title": "Guía de facilitación",
+    "section": "",
+    "text": "English · Enseñar este taller\nMantén la agenda de 210 minutos. Estas actividades sustituyen tiempo de práctica o discusión; no alargan el taller. El cuaderno 13 queda para después."
+  },
+  {
+    "objectID": "es/facilitator-guide.html#antes-del-taller",
+    "href": "es/facilitator-guide.html#antes-del-taller",
+    "title": "Guía de facilitación",
+    "section": "Antes del taller",
+    "text": "Antes del taller\n\nEjecuta el cuaderno 00 antes de clase. Prueba cada cuaderno elegido en una sesión nueva.\nSigue Core prep y luego Core activity. Omite los demás ejercicios y exploradores.\nForma grupos de 3–4: relator, portavoz, crítico y, si hay una cuarta persona, programador.\nTen una sesión funcionando para demostrar si falla una descarga."
+  },
+  {
+    "objectID": "es/facilitator-guide.html#ritmo-de-trabajo",
+    "href": "es/facilitator-guide.html#ritmo-de-trabajo",
+    "title": "Guía de facilitación",
+    "section": "Ritmo de trabajo",
+    "text": "Ritmo de trabajo\nPredice → Ejecuta → Explica → Comprueba. Pide una predicción escrita antes de ejecutar. Después, un resultado y una explicación revisada. Rota los roles. Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegidas; el código plegado también necesita ejecutarse."
+  },
+  {
+    "objectID": "es/facilitator-guide.html#guion",
+    "href": "es/facilitator-guide.html#guion",
+    "title": "Guía de facilitación",
+    "section": "Guion",
+    "text": "Guion\nSigue la agenda del taller. Conserva cuestionarios y pausas. Distribuye así cada bloque:\n\n\n\n\n\n\n\nCuaderno\nUso del tiempo\n\n\n\n\n00 · 5 min\nDiagnóstico inicial 3; bienvenida y comprobación técnica 2. La preparación era previa.\n\n\n01 · 20 min\nModelar una forma 4; Ejercicio 1 y revisión en pareja 16.\n\n\n02 · 20 min\nClave de ejes y Ejercicio 2: 14; actividad grupal 02: 6.\n\n\n03 · 15 min\nModelar indexación 3; Ejercicio 3 y comprobaciones 12.\n\n\n04 · 15 min\nEjercicio 1: 9; actividad grupal 04: 6.\n\n\n05 · 15 min\nEjercicio 1: 7; actividad grupal 05: 8.\n\n\n06 · 15 min\nModelar una contracción 4; Ejercicio 1 y comprobación 11.\n\n\n07 · 15 min\nPredecir singularidad 3; Ejercicio 1 y comprobación 12.\n\n\n08 · 10 min\nModelar una actualización 3; Ejercicio 1 y comprobación 7.\n\n\n09 · 15 min\nEjercicio 1: 12; error sobre residuos: 3. Sin barridos de tiempos.\n\n\n10 · 15 min\nExplicar núcleo y factores 4; explorador de rangos 8; defender una elección 3.\n\n\n11 · 15 min\nEjercicio 1 en parejas: 7; actividad grupal 11: 8. Sin barridos de modelos.\n\n\n12 · 5 min\nComprobación individual de salida. Asignar tareas después de recogerla.\n\n\n\nBusca las actividades grupales por número de cuaderno. Usa las preguntas escritas; los exploradores opcionales no son requisitos. Para la actividad 04, usa el ejemplo pequeño de reshape si hace falta. Cada bloque incluye la puesta en común. Habla un grupo; los demás entregan: elección → evidencia → qué nos haría cambiar de opinión.\nEn el cuaderno 11, primero predicen el almacenamiento. Si el ajuste tarda mucho, demuestra la solución incluida después del intento. Discutan su salida; no gasten el tiempo grupal en arreglar una instalación."
+  },
+  {
+    "objectID": "es/facilitator-guide.html#comprobaciones-inicial-y-final",
+    "href": "es/facilitator-guide.html#comprobaciones-inicial-y-final",
+    "title": "Guía de facilitación",
+    "section": "Comprobaciones inicial y final",
+    "text": "Comprobaciones inicial y final\nUsa las preguntas de los cuadernos 00 y 12. La clave de evaluación incluye puntuación y próximos pasos. Recoge respuestas individuales. Compara cada dimensión del razonamiento; no es una prueba de aprendizaje validada."
+  },
+  {
+    "objectID": "es/facilitator-guide.html#análisis-de-errores",
+    "href": "es/facilitator-guide.html#análisis-de-errores",
+    "title": "Guía de facilitación",
+    "section": "Análisis de errores",
+    "text": "Análisis de errores\nUsa los errores resueltos dentro de los bloques anteriores: orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11. Muestra la afirmación. Pide un contraejemplo. Revela la corrección al final.\nSi la mitad del grupo repite un error, modela el ejemplo pequeño y pide otra predicción. Omite una demostración opcional, no la pausa ni la comprobación final. Quienes terminen pronto pueden diseñar un contraejemplo."
+  },
+  {
+    "objectID": "es/facilitator-guide.html#después-del-taller",
+    "href": "es/facilitator-guide.html#después-del-taller",
+    "title": "Guía de facilitación",
+    "section": "Después del taller",
+    "text": "Después del taller\nOfrece el formulario de opinión de dos minutos. Anota el commit, tiempos reales, errores frecuentes y un cambio para la próxima sesión. Antes de publicarlo, usa la lista de publicación."
+  },
+  {
     "objectID": "es/companion.html",
     "href": "es/companion.html",
     "title": "Complemento del taller",
@@ -593,6 +684,97 @@
     "title": "Cuadernos",
     "section": "Qué necesita cada cuaderno",
     "text": "Qué necesita cada cuaderno\n\n\nColab ya tiene instalado todo lo de esta lista.\n\n\n\n\n\n\n\nCuaderno\nAdemás de NumPy\nRed\n\n\n\n\n00\nmatplotlib, pandas, scikit-learn, scikit-image, scipy, imageio†\nsí — vivienda en California, pasajeros de aerolínea, viajes en taxi de Nueva York, el clip de la tormenta (solo un sondeo de 1 KB)\n\n\n01\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n02\nmatplotlib, ipywidgets, scikit-learn, scikit-image, imageio†\nsí — el clip de la tormenta\n\n\n03\nmatplotlib, ipywidgets, scikit-learn\nno\n\n\n04\nmatplotlib, ipywidgets, scikit-image\nno\n\n\n05\nmatplotlib, ipywidgets, imageio†\nsí — el clip de la tormenta\n\n\n06\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n07\nmatplotlib, ipywidgets, pandas, scikit-learn\nsí — vivienda en California\n\n\n08\nmatplotlib, ipywidgets, pandas\nsí — pasajeros de aerolínea\n\n\n09\nmatplotlib, ipywidgets, pandas, scikit-learn, scikit-image, scipy\nsí — pasajeros de aerolínea\n\n\n10\nmatplotlib, ipywidgets, pandas\nsí — viajes en taxi de Nueva York\n\n\n11\nmatplotlib, ipywidgets, pandas, tensorly†, imageio†\nsí — viajes en taxi de Nueva York, el clip de la tormenta\n\n\n12\nmatplotlib, ipywidgets, pandas, scikit-learn, scipy\nsí — una grabación de voz (para el ejercicio E)\n\n\n13\nmatplotlib, ipywidgets, scikit-image, scipy\nno\n\n\n\n† Lo instala el propio cuaderno con %pip install -q, y por eso ninguno de los dos está en el comando de arriba."
+  },
+  {
+    "objectID": "workshop-feedback.html",
+    "href": "workshop-feedback.html",
+    "title": "Workshop feedback · 2 minutes",
+    "section": "",
+    "text": "Español · Teach this workshop\nCopy this into your usual survey or give it out on paper. No name or account needed. Return privately to the facilitator; do not post learner responses in public issues. Do not include personal, patient, or workplace data.\nFacilitator fills in: date ___ · workshop commit/tag ___ · runtime ___\n\nWhich can you explain now? Check any: axis meaning / broadcasting / contraction / rank budget / none yet.\nWhere did you get stuck? Notebook and heading: ___\nWhat changed your mind? Name one prediction and the evidence: ___\nWhat should we change? Shorten ___ / add an example of ___ / allow more time for ___\n\nFacilitator note: record actual section times and anonymous counts of common errors. Open one concrete issue for the next run. Keep raw responses private."
+  },
+  {
+    "objectID": "worked-mistakes.html",
+    "href": "worked-mistakes.html",
+    "title": "Four mistakes worth testing",
+    "section": "",
+    "text": "Español · Facilitator guide · Teach this workshop\nPredict first. Run the tiny counterexample. Rewrite the claim in one sentence. These synthetic examples isolate a mistake; the notebooks use real data."
+  },
+  {
+    "objectID": "worked-mistakes.html#the-mean-proves-the-order-is-unchanged",
+    "href": "worked-mistakes.html#the-mean-proves-the-order-is-unchanged",
+    "title": "Four mistakes worth testing",
+    "section": "02 · The mean proves the order is unchanged",
+    "text": "02 · The mean proves the order is unchanged\n“The average is identical after shuffling, so no information was lost.”\n\n\nTest and correction\n\nimport numpy as np\nframes = np.array([0., 1., 2., 3.])\nshuffled = frames[[0, 3, 1, 2]]\nassert frames.mean() == shuffled.mean()\nassert not np.array_equal(np.diff(frames), np.diff(shuffled))\nBoth means are 1.5. The changes are [1, 1, 1] versus [3, -2, 1]. The mean cannot establish chronology. Check timestamps or source indices. Transfer: when is shuffling acceptable for independent images and their labels?"
+  },
+  {
+    "objectID": "worked-mistakes.html#the-shape-proves-reshape-worked",
+    "href": "worked-mistakes.html#the-shape-proves-reshape-worked",
+    "title": "Four mistakes worth testing",
+    "section": "04 · The shape proves reshape worked",
+    "text": "04 · The shape proves reshape worked\n“Both results have shape (3, 2, 2), so both are valid CHW images.”\n\n\nTest and correction\n\nimport numpy as np\nhwc = np.arange(12).reshape(2, 2, 3)\nright = hwc.transpose(2, 0, 1)\nwrong = hwc.reshape(3, 2, 2)\nassert right.shape == wrong.shape\nassert right[1, 0, 0] == hwc[0, 0, 1] == 1\nassert wrong[1, 0, 0] == 4\nassert np.array_equal(right.transpose(1, 2, 0), hwc)\nShape checks pass; a channel-value check fails. Use transpose to reorder axes. Transfer: write the matching coordinate check for NHWC → NCHW."
+  },
+  {
+    "objectID": "worked-mistakes.html#a-tiny-residual-proves-reliable-coefficients",
+    "href": "worked-mistakes.html#a-tiny-residual-proves-reliable-coefficients",
+    "title": "Four mistakes worth testing",
+    "section": "09 · A tiny residual proves reliable coefficients",
+    "text": "09 · A tiny residual proves reliable coefficients\n“Both fits are almost exact, so their coefficients must agree.”\n\n\nTest and correction\n\nimport numpy as np\nX = np.array([[1., 1.], [1., 1.000001]])\na, b = np.array([1., 1.]), np.array([2., 0.])\ny = X @ a\nassert np.linalg.norm(X @ a - y) == 0\nassert np.isclose(np.linalg.norm(X @ b - y), 1e-6)\nassert np.isclose(np.linalg.norm(a - b), np.sqrt(2))\nThe coefficients differ by about 1.414, while predictions differ by only 0.000001. Nearly dependent columns make this possible. Inspect conditioning and coefficient sensitivity as well as fit. QR avoids forming X.T @ X; it does not remove the problem’s sensitivity. Transfer: what happens if a small measurement error changes y?"
+  },
+  {
+    "objectID": "worked-mistakes.html#equal-ranks-mean-equal-budgets",
+    "href": "worked-mistakes.html#equal-ranks-mean-equal-budgets",
+    "title": "Four mistakes worth testing",
+    "section": "11 · Equal ranks mean equal budgets",
+    "text": "11 · Equal ranks mean equal budgets\n“CP rank 3 and Tucker ranks (3, 3, 3) use the same storage.”\n\n\nTest and correction\n\nshape = (4, 4, 24)\ncp = 3 * sum(shape)\ntucker = 3**3 + 3 * sum(shape)\nassert (cp, tucker) == (96, 123)\nTucker also stores a core: 27 more values here. This CP convention absorbs component weights into one factor; count 3 extra values if weights are stored separately. Match stored parameters, then report error on the same data. Transfer: if budgets cannot match exactly, how should you disclose the gap?"
+  },
+  {
+    "objectID": "facilitator-guide.html",
+    "href": "facilitator-guide.html",
+    "title": "Facilitator run sheet",
+    "section": "",
+    "text": "Español · Teach this workshop\nUse the existing 210-minute agenda. These activities replace practice or discussion time; they do not extend the session. Notebook 13 is take-home work."
+  },
+  {
+    "objectID": "facilitator-guide.html#before-the-session",
+    "href": "facilitator-guide.html#before-the-session",
+    "title": "Facilitator run sheet",
+    "section": "Before the session",
+    "text": "Before the session\n\nRun Notebook 00 before class. Test each selected notebook in a fresh runtime.\nFollow Core prep, then Core activity. Skip other exercises and explorers.\nPrepare groups of 3–4: recorder, speaker, challenger, optional code runner.\nKeep a working runtime ready to demonstrate if a download fails."
+  },
+  {
+    "objectID": "facilitator-guide.html#live-rhythm",
+    "href": "facilitator-guide.html#live-rhythm",
+    "title": "Facilitator run sheet",
+    "section": "Live rhythm",
+    "text": "Live rhythm\nPredict → Run → Explain → Check. Get a written prediction before execution. Then ask for one result and one revised explanation. Rotate group roles. Open solutions only after an attempt. Run selected folded plotting cells; folded code still needs to execute."
+  },
+  {
+    "objectID": "facilitator-guide.html#run-sheet",
+    "href": "facilitator-guide.html#run-sheet",
+    "title": "Facilitator run sheet",
+    "section": "Run sheet",
+    "text": "Run sheet\nFollow the workshop agenda. Keep its quizzes and breaks. Within the selected notebook slots:\n\n\n\nNotebook\nUse the slot this way\n\n\n\n\n00 · 5 min\nEntry check 3; runtime check and welcome 2. Setup was pre-work.\n\n\n01 · 20 min\nModel one shape 4; Exercise 1 and partner check 16.\n\n\n02 · 20 min\nAxis key and Exercise 2: 14; axis-meaning task: 6.\n\n\n03 · 15 min\nModel indexing 3; Exercise 3 and checks 12.\n\n\n04 · 15 min\nExercise 1: 9; silent-bug task: 6.\n\n\n05 · 15 min\nExercise 1: 7; group task 05: 8.\n\n\n06 · 15 min\nModel one contraction 4; Exercise 1 and check 11.\n\n\n07 · 15 min\nPredict singularity 3; Exercise 1 and check 12.\n\n\n08 · 10 min\nModel one update 3; Exercise 1 and check 7.\n\n\n09 · 15 min\nExercise 1: 12; residual mistake below: 3. No timing sweeps.\n\n\n10 · 15 min\nExplain core and factors 4; rank explorer 8; defend a choice 3.\n\n\n11 · 15 min\nExercise 1 in pairs: 7; group task 11: 8. No model sweeps.\n\n\n12 · 5 min\nIndividual exit check. Assign take-homes after collection.\n\n\n\nUse group tasks 05 and 11 at their notebook headings. Use the written prompts; optional explorers are not prerequisites. For task 04, use the tiny reshape example in worked mistakes if needed. Each time box includes sharing. Ask one group to speak; others submit three lines: choice → evidence → what would change our mind.\nIn Notebook 11, predict storage first. If fitting takes too long, demonstrate the supplied solution after their attempt. Discuss its output; do not spend the group slot debugging an installation."
+  },
+  {
+    "objectID": "facilitator-guide.html#entry-and-exit-checks",
+    "href": "facilitator-guide.html#entry-and-exit-checks",
+    "title": "Facilitator run sheet",
+    "section": "Entry and exit checks",
+    "text": "Entry and exit checks\nUse the prompts in Notebooks 00 and 12. The assessment key has scoring and follow-up actions. Collect individual answers, not group answers. Compare reasoning by dimension; this is not a validated learning test."
+  },
+  {
+    "objectID": "facilitator-guide.html#wrong-answer-clinic",
+    "href": "facilitator-guide.html#wrong-answer-clinic",
+    "title": "Facilitator run sheet",
+    "section": "Wrong-answer clinic",
+    "text": "Wrong-answer clinic\nUse worked mistakes inside the slots above: axis order in 02, reshape in 04, residuals in 09, and rank budgets in 11. Show the claim first. Ask for a counterexample. Reveal the correction last.\nIf half the room makes the same error, model the tiny example and ask a new prediction. Drop an optional demonstration, not the next break or exit check. Fast finishers design a counterexample before opening another exercise."
+  },
+  {
+    "objectID": "facilitator-guide.html#after-the-session",
+    "href": "facilitator-guide.html#after-the-session",
+    "title": "Facilitator run sheet",
+    "section": "After the session",
+    "text": "After the session\nOffer the two-minute feedback form. Record the workshop commit, actual timings, common errors, and one change for the next run. Use the release checklist before publishing that change."
   },
   {
     "objectID": "companion.html",
@@ -704,7 +886,7 @@
     "href": "index.html",
     "title": "See tensors. Think in ML.",
     "section": "",
-    "text": "210 minutes · Hands-on Python\n\n\nTurn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.\nStart the workshop →\nOpen the setup notebook\nTaught in English · Questions in English & Spanish\n\n\n\n\n  From one number to a neural-network operation\n  A scalar becomes a vector, then a matrix, then a three-dimensional tensor. A neural-network layer uses tensor operations to turn inputs into outputs.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    THE SHAPE OF MACHINE LEARNING\n    ScalarVectorMatrix\n    \n    7\n    \n    \n    \n    \n    \n    3D tensor\n    Three axes. More possibilities.\n    Neural network\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    inputoutput\n  \n\n\n\n\n  \n  \n    01Slice, reshape, and broadcast tensors in NumPy.\n    02Decompose tensors. Explore convolutions in the take-home.\n    03Read the tensor math behind compression and neural networks.\n  \n\n\n  Workshop byRavi Kalia and Sebastian Laverde Chunza\n  Workshop repositoryExplore the code on GitHub ↗\n  Live discussionSmall groups on Discord\n\n\n  THE LEARNING JOURNEY\n  \n  Six connected ideas. Code them. See them. Make them click.\n  \n    01Read shapes and axes.\n    02Reshape. Broadcast. Contract.\n    03Solve systems. Find structure.\n    04Turn pixels into features.Take-home\n    05Compress without losing the plot.\n    06Connect the math to models.\n  \n  Explore the notebooks →\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 and complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
+    "text": "210 minutes · Hands-on Python\n\n\nTurn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.\nStart the workshop →\nOpen the setup notebook\nTaught in English · Questions in English & Spanish\n\n\n\n\n  From one number to a neural-network operation\n  A scalar becomes a vector, then a matrix, then a three-dimensional tensor. A neural-network layer uses tensor operations to turn inputs into outputs.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    THE SHAPE OF MACHINE LEARNING\n    ScalarVectorMatrix\n    \n    7\n    \n    \n    \n    \n    \n    3D tensor\n    Three axes. More possibilities.\n    Neural network\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    inputoutput\n  \n\n\n\n\n  \n  \n    01Slice, reshape, and broadcast tensors in NumPy.\n    02Decompose tensors. Explore convolutions in the take-home.\n    03Read the tensor math behind compression and neural networks.\n  \n\n\n  Workshop byRavi Kalia and Sebastian Laverde Chunza\n  Workshop repositoryExplore the code on GitHub ↗\n  Live discussionSmall groups on Discord\n\n\n  \n  \n    \n      \n      \n        Stop guessing array shapes—read PyTorch and JAX code with total confidence.\n        Bridge the gap between clean Python architecture and high-dimensional ML math.\n        Turn your engineering background into practical deep learning fluency.\n      \n    \n    \n      \n      \n        Break out of 2D DataFrames and master the 3D/4D tensors powering deep learning.\n        Move beyond Scikit-Learn to process complex image, text, and sequence data.\n        Upgrade your tabular analytics skills into neural network expertise.\n      \n    \n    \n      \n      \n        Never get stuck on a RuntimeError: size mismatch again.\n        Look under the hood of high-level APIs to debug broken tensor operations fast.\n        Stop treating models as black boxes—understand what happens at every layer.\n      \n    \n    \n      \n      \n        Turn theoretical linear algebra into hands-on, production-ready Python code.\n        Apply matrix decompositions directly to data compression and neural networks.\n        Connect abstract classwork to real-world machine learning architectures.\n      \n    \n  \n\n\n  THE LEARNING JOURNEY\n  \n  Six connected ideas. Code them. See them. Make them click.\n  \n    01Read shapes and axes.\n    02Reshape. Broadcast. Contract.\n    03Solve systems. Find structure.\n    04Turn pixels into features.Take-home\n    05Compress without losing the plot.\n    06Connect the math to models.\n  \n  Explore the notebooks →\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 and complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
   },
   {
     "objectID": "index.html#whats-here",
@@ -812,30 +994,198 @@
     "text": "Related resources\n\nPrerequisites — prepare for the session.\nHandbook — theory, exercises, and solutions.\nCompanion — NotebookLM summaries and practice questions."
   },
   {
+    "objectID": "teach.html",
+    "href": "teach.html",
+    "title": "Teach this workshop",
+    "section": "",
+    "text": "Español\nPlan and run the 210-minute workshop with the resources below. The agenda includes the quizzes and breaks. Group activities replace practice or discussion time; notebook 13 stays take-home work."
+  },
+  {
+    "objectID": "teach.html#prepare-your-session",
+    "href": "teach.html#prepare-your-session",
+    "title": "Teach this workshop",
+    "section": "Prepare your session",
+    "text": "Prepare your session\n\nShare the prerequisites with learners and ask them to run notebook 00 before class.\nRead the facilitator guide alongside the workshop schedule.\nTest your selected notebooks in fresh runtimes. Follow Core prep, then Core activity, and prepare the slides and quizzes."
+  },
+  {
+    "objectID": "teach.html#teaching-resources",
+    "href": "teach.html#teaching-resources",
+    "title": "Teach this workshop",
+    "section": "Teaching resources",
+    "text": "Teaching resources\n\nFacilitator guide — Prepare the room, follow the section timings, and respond when learners get stuck.\nEntry and exit checks — Collect individual reasoning at the start and end; use the included key and rubric.\nGroup tasks — Choose short discussions with a time box and a concrete group deliverable.\nWorked mistakes — Ask learners to predict, test a counterexample, and explain the correction.\nFeedback form — Collect two minutes of feedback after the session and choose one improvement for the next run."
+  },
+  {
+    "objectID": "teach.html#during-and-after-the-workshop",
+    "href": "teach.html#during-and-after-the-workshop",
+    "title": "Teach this workshop",
+    "section": "During and after the workshop",
+    "text": "During and after the workshop\nUse Predict → Run → Explain → Check. Ask for an attempt before opening solutions, rotate group roles, and keep the scheduled breaks and exit check. The facilitator guide places the activities within the existing time slots.\nAfter the session, record actual section timings and common errors with the workshop version you taught. Keep learner responses private and use the feedback to choose one concrete change for your next session."
+  },
+  {
+    "objectID": "assessments.html",
+    "href": "assessments.html",
+    "title": "Entry and exit checks",
+    "section": "",
+    "text": "Español · Facilitator guide · Teach this workshop\nAnswer alone. Short sentences are enough. No code needed. The learner prompts are also in Notebooks 00 and 12."
+  },
+  {
+    "objectID": "assessments.html#entry-3-minutes",
+    "href": "assessments.html#entry-3-minutes",
+    "title": "Entry and exit checks",
+    "section": "Entry · 3 minutes",
+    "text": "Entry · 3 minutes\nX.shape == (20, 8, 8).\n\nGive two possible meanings for its axes.\nPredict X[:, 3, 4].shape. Name the remaining axis in each interpretation.\nWhat evidence would distinguish independent images from video frames?"
+  },
+  {
+    "objectID": "assessments.html#exit-5-minutes",
+    "href": "assessments.html#exit-5-minutes",
+    "title": "Entry and exit checks",
+    "section": "Exit · 5 minutes",
+    "text": "Exit · 5 minutes\nX.shape == (6, 4, 3, 8, 8): plants, visits, channels, rows, columns.\n\nPredict X[:, -1, 1].shape. Name its axes.\nPredict X.mean(axis=1).shape. Name its axes.\nWhat could averaging visits hide? Give one test for that loss.\nCompare with your entry answer. Name one corrected idea and one open question.\n\n\n\nFacilitator key and rubric · reveal after collection\n\nEntry: (images, rows, columns) or (time, rows, columns) both fit. The selection has shape (20,): one pixel across images or time. Acquisition records, timestamps and sample IDs establish the meaning; shape alone cannot.\nExit: selection (6, 8, 8) means plants, rows, columns: last visit, channel 1. The mean has shape (6, 3, 8, 8): plants, channels, rows, columns. Averaging can hide a brief disease signal or growth trend. Compare the visit sequence with its average, using a known transient or a downstream detection test. Other concrete, defensible tests are valid.\nScore each dimension 0 (missing/wrong), 1 (partly right), or 2 (correct and explained). Score entry and exit separately, out of 6:\n\n\n\n\n\n\n\n\nDimension\nEntry evidence\nExit evidence\n\n\n\n\nAxis meaning\nBoth interpretations, all axes named\nRemaining axes named in both results\n\n\nShape reasoning\nCorrect selection shape and why\nBoth output shapes and why\n\n\nEvidence\nMetadata that establishes batch versus time\nA specific loss and a test that can detect it\n\n\n\nIf axis or shape reasoning scores 0–1, revisit the slice in Notebook 01. If evidence scores 0–1, use group task 02. If all three score 2, assign a take-home chosen by interest. Reflection is unscored. Do not treat score differences as a causal measure of workshop impact."
+  },
+  {
+    "objectID": "group-tasks.html",
+    "href": "group-tasks.html",
+    "title": "Group tasks and discussion questions",
+    "section": "",
+    "text": "Short, open-ended tasks to use during or after the notebooks. Español · Teach this workshop"
+  },
+  {
+    "objectID": "group-tasks.html#how-to-use-these",
+    "href": "group-tasks.html#how-to-use-these",
+    "title": "Group tasks and discussion questions",
+    "section": "How to use these",
+    "text": "How to use these\nWork in groups of 3–4. Choose a speaker, a recorder, and someone to challenge assumptions. A fourth person can run short checks. Rotate roles. Discuss in English or Spanish.\nPick a few tasks. Replace an existing discussion slot or use them after the session; these are not extra requirements for every notebook.\nFor a 6-minute task: think alone for 1 minute, discuss for 4, then share for 1. For an 8-minute task, give the discussion 6 minutes. Run setup before starting the timer. Reuse notebook outputs; a sketch or pseudocode is enough.\nEvery group shares: our choice → our evidence → what could change our mind. Different choices are welcome. Make the assumptions clear. Post these three lines in Discord. Invite one group to explain its choice.\nQuick picks: axis meaning, silent bugs, and compression."
+  },
+  {
+    "objectID": "group-tasks.html#would-you-trust-this-dataset",
+    "href": "group-tasks.html#would-you-trust-this-dataset",
+    "title": "Group tasks and discussion questions",
+    "section": "00 · Would you trust this dataset?",
+    "text": "00 · Would you trust this dataset?\nWhen: After the data checks in Notebook 00. Time: 6 minutes.\nChoose one loaded dataset. Your team must decide whether it is ready for a specific analysis. Agree on that analysis first.\n\nWhat does one observation represent?\nWhich defect would matter most for your analysis? Which might not matter?\nWhat would you check beyond whether the file loaded and its shape looks right?\n\nShare: A three-check acceptance list. Point to one notebook result and name one question the notebook cannot answer."
+  },
+  {
+    "objectID": "group-tasks.html#design-a-tensor-someone-else-can-read",
+    "href": "group-tasks.html#design-a-tensor-someone-else-can-read",
+    "title": "Group tasks and discussion questions",
+    "section": "01 · Design a tensor someone else can read",
+    "text": "01 · Design a tensor someone else can read\nWhen: After “read shapes as sentences” in Notebook 01. Time: 6 minutes.\nDesign a tensor for repeated photographs of the same plants. You decide how many plants, visits, and image channels to keep.\n\nWhich axes do you need? What does each index mean?\nWhat would a slice or fiber tell a researcher?\nWhich detail could someone misread if you gave them only the shape?\n\nShare: A labeled shape, one useful selection, and a sentence explaining its result. Ask another group to interpret it without extra help."
+  },
+  {
+    "objectID": "group-tasks.html#same-shape-different-rules",
+    "href": "group-tasks.html#same-shape-different-rules",
+    "title": "Group tasks and discussion questions",
+    "section": "02 · Same shape, different rules",
+    "text": "02 · Same shape, different rules\nWhen: After the shuffle comparison in Notebook 02. Time: 6 minutes.\nTwo arrays have shape (20, 8, 8). One contains independent digit images. The other contains consecutive video frames. Propose an operation that is reasonable for one task but misleading for the other.\n\nWhat happens if you shuffle or average the first axis?\nWhat question would make averaging useful? What question would it destroy?\nWhat metadata must travel with the array?\n\nShare: Two interpretations of the same operation. Include a condition under which your recommendation would change."
+  },
+  {
+    "objectID": "group-tasks.html#what-should-normal-mean",
+    "href": "group-tasks.html#what-should-normal-mean",
+    "title": "Group tasks and discussion questions",
+    "section": "03 · What should “normal” mean?",
+    "text": "03 · What should “normal” mean?\nWhen: After the standardization exercise in Notebook 03. Time: 8 minutes.\nYour team wants to compare handwritten digits. Decide whether to standardize each image separately or each pixel position across images.\n\nWhat variation does each choice remove? What does it keep?\nWhen might overall brightness be useful information?\nHow will you handle a pixel with zero variance?\n\nShare: Your rule, the axes used to compute its statistics, and one example where it would be a poor choice. Use a notebook plot or a small sketch."
+  },
+  {
+    "objectID": "group-tasks.html#a-test-that-catches-the-bug",
+    "href": "group-tasks.html#a-test-that-catches-the-bug",
+    "title": "Group tasks and discussion questions",
+    "section": "04 · A test that catches the bug",
+    "text": "04 · A test that catches the bug\nWhen: After “code that runs and is still wrong” in Notebook 04. Time: 6 minutes.\nA teammate converts NHWC images to NCHW using reshape. The output has the requested shape. Design a review that can tell whether pixel meaning survived.\n\nWhat could a shape check miss?\nWhich pixel or channel would you track through the conversion?\nWhat test would still work when two axes have the same size?\n\nShare: One test in code or pseudocode and one visual check. Explain what each catches. Try them on the notebook’s correct and incorrect conversions."
+  },
+  {
+    "objectID": "group-tasks.html#keep-the-event-fit-the-budget",
+    "href": "group-tasks.html#keep-the-event-fit-the-budget",
+    "title": "Group tasks and discussion questions",
+    "section": "05 · Keep the event, fit the budget",
+    "text": "05 · Keep the event, fit the budget\nWhen: During “pad or sample?” in Notebook 05. Use this as an alternative to its group discussion. Time: 8 minutes.\nDesign a batch pipeline for clips of different lengths. Your task is to detect a brief event. Each clip gets at most 16 stored frames.\n\nWould you sample, crop, pad, or combine them? Explain the trade-off.\nWhat happens when the event falls between selected frames?\nHow would a model distinguish padding from a measured dark frame?\n\nShare: An input-to-batch sketch with axis labels and a mask if needed. Name one failure case and one way to test for it."
+  },
+  {
+    "objectID": "group-tasks.html#what-counts-as-a-similar-digit",
+    "href": "group-tasks.html#what-counts-as-a-similar-digit",
+    "title": "Group tasks and discussion questions",
+    "section": "06 · What counts as a similar digit?",
+    "text": "06 · What counts as a similar digit?\nWhen: After the retrieval explorer in Notebook 06. Time: 6 minutes.\nChoose a query digit. Decide whether raw dot product or cosine similarity gives the more useful neighbors for a goal your group defines.\n\nDoes “similar” mean the same label, stroke pattern, or amount of ink?\nWhere do the two rankings disagree? What might explain that?\nHow would you evaluate the choice beyond this one query?\n\nShare: Your goal, two retrieved examples, and a proposed evaluation. Explain what the summed index in id,jd-&gt;ij represents."
+  },
+  {
+    "objectID": "group-tasks.html#same-predictions-different-coefficients",
+    "href": "group-tasks.html#same-predictions-different-coefficients",
+    "title": "Group tasks and discussion questions",
+    "section": "07 · Same predictions, different coefficients",
+    "text": "07 · Same predictions, different coefficients\nWhen: After the singular-system exercise in Notebook 07. Time: 8 minutes.\nA teammate duplicates a feature column. Two fitted coefficient vectors now give the same predictions. Decide what your team can responsibly conclude.\n\nWould a small residual settle which coefficients to trust?\nWhat does the pseudoinverse choose when several solutions fit equally well?\nWhat extra information would help you interpret individual coefficients?\n\nShare: A short message to the teammate: what the fit supports, what it does not establish, and what you would check next."
+  },
+  {
+    "objectID": "group-tasks.html#one-good-prediction-is-not-enough",
+    "href": "group-tasks.html#one-good-prediction-is-not-enough",
+    "title": "Group tasks and discussion questions",
+    "section": "08 · One good prediction is not enough",
+    "text": "08 · One good prediction is not enough\nWhen: After recursive forecasting in Notebook 08. Time: 6 minutes.\nA forecast looks good one month ahead. Your team wants to reuse it recursively for a year. Design a test before approving that change.\n\nWhat changes when the model starts consuming its own predictions?\nHow could a small error grow or shrink through repeated updates?\nWhich forecast horizon and baseline would you report?\n\nShare: An evaluation plan and a stopping rule. Use the airline forecast or state-update explorer to support one concern."
+  },
+  {
+    "objectID": "group-tasks.html#defend-a-factorization",
+    "href": "group-tasks.html#defend-a-factorization",
+    "title": "Group tasks and discussion questions",
+    "section": "09 · Defend a factorization",
+    "text": "09 · Defend a factorization\nWhen: After the method chooser in Notebook 09. Time: 8 minutes.\nChoose one brief: fit a tall data matrix once; solve the same square system many times; or compress an image under a storage budget. Recommend a method and compare it with one plausible alternative.\n\nWhich matrix property must you check first?\nWhat matters most: stability, runtime, storage, or readable factors?\nWhat new fact would make you switch methods?\n\nShare: A recommendation with one condition and one measurement. Another group supplies the new fact; revise your answer if needed."
+  },
+  {
+    "objectID": "group-tasks.html#what-must-compression-preserve",
+    "href": "group-tasks.html#what-must-compression-preserve",
+    "title": "Group tasks and discussion questions",
+    "section": "10 · What must compression preserve?",
+    "text": "10 · What must compression preserve?\nWhen: After the rank explorer in Notebook 10. Time: 8 minutes.\nThe taxi tensor supports two users: one studies the overall daily pattern; the other studies a particular pickup–dropoff route at its busiest hour. Propose a compression choice for each.\n\nWould the same Tucker mode ranks suit both users?\nCould a small global error hide a large error in the route they care about?\nWhich plot or local error would you inspect before accepting the result?\n\nShare: Two rank proposals, or one shared proposal with a defense. Use a notebook result and specify one additional check."
+  },
+  {
+    "objectID": "group-tasks.html#is-this-comparison-fair",
+    "href": "group-tasks.html#is-this-comparison-fair",
+    "title": "Group tasks and discussion questions",
+    "section": "11 · Is this comparison fair?",
+    "text": "11 · Is this comparison fair?\nWhen: After the matched-budget comparison in Notebook 11. Time: 8 minutes.\nA report declares CP better than Tucker because CP had lower error at “rank 3.” Design a comparison that could support a useful recommendation.\n\nWhat does rank 3 mean for each model? What was actually stored?\nWhich budget should be matched: parameters, bytes, or runtime?\nBesides reconstruction error, what outcome matters for the intended task?\n\nShare: A three-measure benchmark plan. Name what you will hold fixed and one uncertainty that would remain after running it."
+  },
+  {
+    "objectID": "group-tasks.html#bring-a-problem-from-your-field",
+    "href": "group-tasks.html#bring-a-problem-from-your-field",
+    "title": "Group tasks and discussion questions",
+    "section": "12 · Bring a problem from your field",
+    "text": "12 · Bring a problem from your field\nWhen: During the final discussion in Notebook 12. Time: 5 minutes: 1 to think, 3 to discuss, 1 to share.\nChoose a real problem one group member cares about. Sketch how tensors could help. You do not need the data today.\n\nWhat would each axis mean? What would one observation be?\nWhich workshop operation would help answer your question?\nWhat would count as success? What assumption might fail?\n\nShare: A labeled shape, a proposed operation, and the first experiment you would run. Each learner adds one thing they still need to understand."
+  },
+  {
+    "objectID": "group-tasks.html#would-you-trust-the-sharper-image",
+    "href": "group-tasks.html#would-you-trust-the-sharper-image",
+    "title": "Group tasks and discussion questions",
+    "section": "13 · Would you trust the sharper image?",
+    "text": "13 · Would you trust the sharper image?\nWhen: After deconvolution in Notebook 13. Follow-up only. Time: 8 minutes.\nTwo restorations of the notebook image disagree. One looks sharper; the other has lower error against the known original. Decide how you would judge them.\n\nWhat kinds of artifact might look like recovered detail?\nHow do noise, the assumed blur kernel, and image borders affect the comparison?\nWhat could you check on a new image with no clean original?\n\nShare: An acceptance checklist. Separate checks that need a clean reference from checks available without one. State what neither can prove."
+  },
+  {
+    "objectID": "group-tasks.html#facilitator-prompts",
+    "href": "group-tasks.html#facilitator-prompts",
+    "title": "Group tasks and discussion questions",
+    "section": "Facilitator prompts",
+    "text": "Facilitator prompts\nUse one follow-up when a discussion stalls:\n\n“What are you assuming?”\n“Show us a case where that choice fails.”\n“Which output supports that claim?”\n“What would make both groups right?”\n“What is the smallest experiment that could settle the disagreement?”\n\nListen for axis meaning, evidence, and trade-offs. Several designs may work; check mathematical claims separately. Close with one useful distinction and one open question. Save longer investigations for later."
+  },
+  {
     "objectID": "es/index.html",
     "href": "es/index.html",
     "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
-    "text": "210 minutos · Python en práctica\n\n\nConvierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra las matemáticas del ML.\nEmpieza el taller →\nAbre el cuaderno de preparación\nTaller en inglés · Preguntas en español e inglés\n\n\n\n\n  De un número a una operación de red neuronal\n  Un escalar pasa a vector, luego a matriz y a tensor tridimensional. Una capa de red neuronal usa operaciones tensoriales para transformar entradas en salidas.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    LA FORMA DEL APRENDIZAJE AUTOMÁTICO\n    EscalarVectorMatriz\n    \n    7\n    \n    \n    \n    \n    \n    Tensor 3D\n    Tres ejes. Más posibilidades.\n    Red neuronal\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    entradasalida\n  \n\n\n\n\n  \n  \n    01Indexa, cambia formas y aplica broadcasting en NumPy.\n    02Descompón tensores. Explora convoluciones en casa.\n    03Interpreta las matemáticas de la compresión y las redes neuronales.\n  \n\n\n  Taller deRavi Kalia y Sebastian Laverde Chunza\n  Repositorio del tallerExplora el código en GitHub ↗\n  Discusión en directoGrupos pequeños en Discord\n\n\n  LA RUTA DE APRENDIZAJE\n  \n  Seis ideas conectadas. Programa. Visualiza. Comprende.\n  \n    01Lee formas y ejes.\n    02Transforma. Expande. Contrae.\n    03Resuelve sistemas. Busca estructura.\n    04De píxeles a características.Para casa\n    05Comprime. Conserva lo esencial.\n    06Conecta las matemáticas con los modelos.\n  \n  Explora los cuadernos →\n\n\n\n\n\n\nTeoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes\n\n\n\n\n\n\n\n\nRepasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown.\n\n\n\n\n\n\n  💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
+    "text": "210 minutos · Python en práctica\n\n\nConvierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra las matemáticas del ML.\nEmpieza el taller →\nAbre el cuaderno de preparación\nTaller en inglés · Preguntas en español e inglés\n\n\n\n\n  De un número a una operación de red neuronal\n  Un escalar pasa a vector, luego a matriz y a tensor tridimensional. Una capa de red neuronal usa operaciones tensoriales para transformar entradas en salidas.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    LA FORMA DEL APRENDIZAJE AUTOMÁTICO\n    EscalarVectorMatriz\n    \n    7\n    \n    \n    \n    \n    \n    Tensor 3D\n    Tres ejes. Más posibilidades.\n    Red neuronal\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    entradasalida\n  \n\n\n\n\n  \n  \n    01Indexa, cambia formas y aplica broadcasting en NumPy.\n    02Descompón tensores. Explora convoluciones en casa.\n    03Interpreta las matemáticas de la compresión y las redes neuronales.\n  \n\n\n  Taller deRavi Kalia y Sebastian Laverde Chunza\n  Repositorio del tallerExplora el código en GitHub ↗\n  Discusión en directoGrupos pequeños en Discord\n\n\n  \n  \n    \n      \n      \n        Deja de adivinar las formas de los arrays: lee código de PyTorch y JAX con total confianza.\n        Conecta una arquitectura limpia en Python con las matemáticas de alta dimensionalidad del ML.\n        Convierte tu experiencia en ingeniería en soltura práctica con el aprendizaje profundo.\n      \n    \n    \n      \n      \n        Sal de los DataFrames 2D y domina los tensores 3D/4D que impulsan el aprendizaje profundo.\n        Ve más allá de Scikit-Learn para procesar imágenes, texto y secuencias complejas.\n        Amplía tus habilidades de análisis tabular hasta dominar las redes neuronales.\n      \n    \n    \n      \n      \n        No vuelvas a quedarte atascado con un RuntimeError: size mismatch.\n        Explora el funcionamiento interno de las API de alto nivel para depurar rápidamente operaciones tensoriales que fallan.\n        Deja de tratar los modelos como cajas negras: entiende qué ocurre en cada capa.\n      \n    \n    \n      \n      \n        Lleva la teoría del álgebra lineal a código práctico en Python, listo para producción.\n        Aplica descomposiciones matriciales directamente a la compresión de datos y las redes neuronales.\n        Conecta los conceptos abstractos de clase con arquitecturas reales de aprendizaje automático.\n      \n    \n  \n\n\n  LA RUTA DE APRENDIZAJE\n  \n  Seis ideas conectadas. Programa. Visualiza. Comprende.\n  \n    01Lee formas y ejes.\n    02Transforma. Expande. Contrae.\n    03Resuelve sistemas. Busca estructura.\n    04De píxeles a características.Para casa\n    05Comprime. Conserva lo esencial.\n    06Conecta las matemáticas con los modelos.\n  \n  Explora los cuadernos →\n\n\n\n\n\n\nTeoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes\n\n\n\n\n\n\n\n\nRepasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown.\n\n\n\n\n\n\n  💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   },
   {
-    "objectID": "es/index.html#whats-here",
-    "href": "es/index.html#whats-here",
-    "title": "Domina los tensores en 210 minutos",
+    "objectID": "es/index.html#qué-hay-aquí",
+    "href": "es/index.html#qué-hay-aquí",
+    "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
     "text": "Teoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes"
   },
   {
-    "objectID": "es/index.html#prerequisites",
-    "href": "es/index.html#prerequisites",
-    "title": "Domina los tensores en 210 minutos",
+    "objectID": "es/index.html#requisitos-previos",
+    "href": "es/index.html#requisitos-previos",
+    "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
-    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow o completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
+    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
   },
   {
-    "objectID": "es/index.html#how-we-work",
-    "href": "es/index.html#how-we-work",
-    "title": "Domina los tensores en 210 minutos",
+    "objectID": "es/index.html#cómo-trabajamos",
+    "href": "es/index.html#cómo-trabajamos",
+    "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
     "text": "💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   },
@@ -880,6 +1230,174 @@
     "title": "Referencias y lectura adicional",
     "section": "Recursos relacionados",
     "text": "Recursos relacionados\n\nRequisitos previos — prepara la sesión.\nManual — teoría, ejercicios y soluciones. Traducción automática del original en inglés.\nComplemento — resúmenes y preguntas de NotebookLM."
+  },
+  {
+    "objectID": "es/teach.html",
+    "href": "es/teach.html",
+    "title": "Enseñar este taller",
+    "section": "",
+    "text": "English\nPrepara e imparte el taller de 210 minutos con los recursos siguientes. La agenda incluye cuestionarios y pausas. Las actividades grupales sustituyen tiempo de práctica o discusión; el cuaderno 13 queda para casa."
+  },
+  {
+    "objectID": "es/teach.html#prepara-la-sesión",
+    "href": "es/teach.html#prepara-la-sesión",
+    "title": "Enseñar este taller",
+    "section": "Prepara la sesión",
+    "text": "Prepara la sesión\n\nComparte los requisitos previos y pide que los participantes ejecuten el cuaderno 00 antes de clase.\nLee la guía de facilitación junto con el horario del taller.\nPrueba los cuadernos elegidos en sesiones nuevas. Sigue Core prep y luego Core activity, y prepara las diapositivas y los cuestionarios en inglés."
+  },
+  {
+    "objectID": "es/teach.html#recursos-para-enseñar",
+    "href": "es/teach.html#recursos-para-enseñar",
+    "title": "Enseñar este taller",
+    "section": "Recursos para enseñar",
+    "text": "Recursos para enseñar\n\nGuía de facilitación — Prepara el grupo, sigue los tiempos de cada sección y ayuda a quienes se atasquen.\nComprobaciones inicial y final — Recoge el razonamiento individual al principio y al final; usa la clave y la rúbrica incluidas.\nActividades grupales — Elige discusiones breves con un tiempo definido y un resultado concreto para compartir.\nErrores resueltos — Pide una predicción, una prueba con un contraejemplo y una explicación de la corrección.\nFormulario de opinión — Recoge dos minutos de comentarios al terminar y elige una mejora para la próxima sesión."
+  },
+  {
+    "objectID": "es/teach.html#durante-y-después-del-taller",
+    "href": "es/teach.html#durante-y-después-del-taller",
+    "title": "Enseñar este taller",
+    "section": "Durante y después del taller",
+    "text": "Durante y después del taller\nUsa Predice → Ejecuta → Explica → Comprueba. Pide un intento antes de abrir las soluciones, rota los roles y conserva las pausas y la comprobación final. La guía de facilitación sitúa las actividades dentro de los bloques existentes.\nDespués de la sesión, registra los tiempos reales y los errores frecuentes junto con la versión del taller que impartiste. Conserva las respuestas en privado y usa los comentarios para elegir un cambio concreto para la próxima sesión."
+  },
+  {
+    "objectID": "es/assessments.html",
+    "href": "es/assessments.html",
+    "title": "Comprobaciones inicial y final",
+    "section": "",
+    "text": "English · Guía de facilitación · Enseñar este taller\nResponde individualmente, con frases cortas. No necesitas código. Las preguntas también están en los cuadernos 00 y 12."
+  },
+  {
+    "objectID": "es/assessments.html#entrada-3-minutos",
+    "href": "es/assessments.html#entrada-3-minutos",
+    "title": "Comprobaciones inicial y final",
+    "section": "Entrada · 3 minutos",
+    "text": "Entrada · 3 minutos\nX.shape == (20, 8, 8).\n\nDa dos interpretaciones de sus ejes.\nPredice X[:, 3, 4].shape. Nombra el eje restante en cada interpretación.\n¿Qué evidencia distinguiría imágenes independientes de fotogramas de video?"
+  },
+  {
+    "objectID": "es/assessments.html#salida-5-minutos",
+    "href": "es/assessments.html#salida-5-minutos",
+    "title": "Comprobaciones inicial y final",
+    "section": "Salida · 5 minutos",
+    "text": "Salida · 5 minutos\nX.shape == (6, 4, 3, 8, 8): plantas, visitas, canales, filas, columnas.\n\nPredice X[:, -1, 1].shape. Nombra sus ejes.\nPredice X.mean(axis=1).shape. Nombra sus ejes.\n¿Qué podría ocultar promediar visitas? Propón una prueba de esa pérdida.\nCompara con tu respuesta inicial. Nombra una idea corregida y una pregunta pendiente.\n\n\n\nClave y rúbrica · revelar después de recoger respuestas\n\nEntrada: (imágenes, filas, columnas) o (tiempo, filas, columnas) son válidas. La selección tiene forma (20,): un píxel a través de imágenes o del tiempo. Los registros de adquisición, marcas de tiempo e identificadores establecen el significado; la forma por sí sola no basta.\nSalida: la selección tiene forma (6, 8, 8): plantas, filas, columnas; última visita y canal 1. La media tiene forma (6, 3, 8, 8): plantas, canales, filas, columnas. Promediar puede ocultar una señal breve de enfermedad o una tendencia. Compara la secuencia con su promedio usando un evento conocido o una prueba de detección. También valen otras pruebas concretas y justificadas.\nPuntúa cada dimensión: 0 (ausente/incorrecta), 1 (parcial) o 2 (correcta y explicada). Puntúa entrada y salida por separado, sobre 6:\n\n\n\n\n\n\n\n\nDimensión\nEvidencia de entrada\nEvidencia de salida\n\n\n\n\nSignificado\nDos interpretaciones con todos los ejes\nEjes restantes de ambos resultados\n\n\nForma\nForma de la selección y explicación\nAmbas formas de salida y explicación\n\n\nEvidencia\nMetadatos que distinguen lote de tiempo\nUna pérdida concreta y una prueba que la detecte\n\n\n\nSi significado o forma recibe 0–1, repasa el corte del cuaderno 01. Si evidencia recibe 0–1, usa la actividad grupal 02. Si las tres reciben 2, asigna una tarea según sus intereses. La reflexión no se puntúa. La diferencia de puntuaciones no mide el impacto causal del taller."
+  },
+  {
+    "objectID": "es/group-tasks.html",
+    "href": "es/group-tasks.html",
+    "title": "Actividades y preguntas para grupos",
+    "section": "",
+    "text": "Actividades breves y abiertas para usar durante o después de los cuadernos. English · Enseñar este taller"
+  },
+  {
+    "objectID": "es/group-tasks.html#cómo-usarlas",
+    "href": "es/group-tasks.html#cómo-usarlas",
+    "title": "Actividades y preguntas para grupos",
+    "section": "Cómo usarlas",
+    "text": "Cómo usarlas\nForma grupos de 3–4. Elijan quién presenta, quién toma notas y quién cuestiona los supuestos. Una cuarta persona puede ejecutar comprobaciones breves. Cambien los roles. Pueden hablar en español o en inglés.\nElige algunas actividades. Sustituye un espacio de discusión o úsalas después del taller; no son requisitos adicionales para cada cuaderno.\nPara una actividad de 6 minutos: 1 para pensar a solas, 4 para discutir y 1 para compartir. Para una de 8 minutos, dedica 6 a la discusión. Ejecuta la preparación antes de empezar. Reutiliza resultados; basta un dibujo o pseudocódigo.\nCada grupo comparte: nuestra elección → nuestra evidencia → qué nos haría cambiar de opinión. Se admiten decisiones distintas. Aclaren sus supuestos. Publiquen esas tres líneas en Discord. Invita a un grupo a explicar su elección.\nPara empezar: significado de los ejes, errores silenciosos y compresión."
+  },
+  {
+    "objectID": "es/group-tasks.html#confiarías-en-estos-datos",
+    "href": "es/group-tasks.html#confiarías-en-estos-datos",
+    "title": "Actividades y preguntas para grupos",
+    "section": "00 · ¿Confiarías en estos datos?",
+    "text": "00 · ¿Confiarías en estos datos?\nCuándo: Después de las comprobaciones de datos del cuaderno 00. Tiempo: 6 minutos.\nElijan un conjunto de datos cargado. Decidan si está listo para un análisis concreto. Primero acuerden cuál será ese análisis.\n\n¿Qué representa una observación?\n¿Qué defecto afectaría más al análisis? ¿Cuál podría no importar?\n¿Qué comprobarían además de que el archivo cargue y su forma parezca correcta?\n\nCompartan: Tres comprobaciones para aceptar los datos. Señalen un resultado del cuaderno y una pregunta que este no puede responder."
+  },
+  {
+    "objectID": "es/group-tasks.html#diseña-un-tensor-que-otra-persona-entienda",
+    "href": "es/group-tasks.html#diseña-un-tensor-que-otra-persona-entienda",
+    "title": "Actividades y preguntas para grupos",
+    "section": "01 · Diseña un tensor que otra persona entienda",
+    "text": "01 · Diseña un tensor que otra persona entienda\nCuándo: Después de leer formas como frases en el cuaderno 01. Tiempo: 6 minutos.\nDiseñen un tensor para fotografías repetidas de las mismas plantas. Decidan cuántas plantas, visitas y canales de imagen conservar.\n\n¿Qué ejes necesitan? ¿Qué significa cada índice?\n¿Qué podría revelar un corte o una fibra?\n¿Qué podría malinterpretarse si entregaran solo la forma?\n\nCompartan: Una forma con etiquetas, una selección útil y una frase que explique su resultado. Pidan a otro grupo que lo interprete sin más ayuda."
+  },
+  {
+    "objectID": "es/group-tasks.html#misma-forma-distintas-reglas",
+    "href": "es/group-tasks.html#misma-forma-distintas-reglas",
+    "title": "Actividades y preguntas para grupos",
+    "section": "02 · Misma forma, distintas reglas",
+    "text": "02 · Misma forma, distintas reglas\nCuándo: Después de comparar reorganizaciones en el cuaderno 02. Tiempo: 6 minutos.\nDos arrays tienen forma (20, 8, 8). Uno contiene imágenes independientes de dígitos; el otro, fotogramas consecutivos. Propongan una operación razonable para una tarea pero engañosa para la otra.\n\n¿Qué ocurre al mezclar o promediar el primer eje?\n¿Para qué pregunta serviría promediar? ¿Qué pregunta impediría responder?\n¿Qué metadatos deben acompañar al array?\n\nCompartan: Dos interpretaciones de la misma operación. Incluyan una condición que cambiaría su recomendación."
+  },
+  {
+    "objectID": "es/group-tasks.html#qué-debería-significar-normal",
+    "href": "es/group-tasks.html#qué-debería-significar-normal",
+    "title": "Actividades y preguntas para grupos",
+    "section": "03 · ¿Qué debería significar «normal»?",
+    "text": "03 · ¿Qué debería significar «normal»?\nCuándo: Después de estandarizar en el cuaderno 03. Tiempo: 8 minutos.\nQuieren comparar dígitos manuscritos. Decidan si estandarizar cada imagen por separado o cada posición de píxel entre imágenes.\n\n¿Qué variación elimina cada opción? ¿Cuál conserva?\n¿Cuándo sería útil conservar el brillo total?\n¿Qué harán con un píxel de varianza cero?\n\nCompartan: Su regla, los ejes usados para calcular sus estadísticas y un caso en que sería una mala elección. Usen una gráfica del cuaderno o un dibujo."
+  },
+  {
+    "objectID": "es/group-tasks.html#una-prueba-que-detecte-el-error",
+    "href": "es/group-tasks.html#una-prueba-que-detecte-el-error",
+    "title": "Actividades y preguntas para grupos",
+    "section": "04 · Una prueba que detecte el error",
+    "text": "04 · Una prueba que detecte el error\nCuándo: Después del ejercicio sobre código que funciona pero está mal en el cuaderno 04. Tiempo: 6 minutos.\nAlguien convierte imágenes NHWC a NCHW con reshape. La salida tiene la forma pedida. Diseñen una revisión que compruebe si se conservó el significado de los píxeles.\n\n¿Qué error podría escapar a una comprobación de forma?\n¿Qué píxel o canal seguirían durante la conversión?\n¿Qué prueba funcionaría aunque dos ejes tuvieran el mismo tamaño?\n\nCompartan: Una prueba en código o pseudocódigo y una comprobación visual. Expliquen qué detecta cada una. Pruébenlas con ambas conversiones del cuaderno."
+  },
+  {
+    "objectID": "es/group-tasks.html#conserva-el-evento-dentro-del-presupuesto",
+    "href": "es/group-tasks.html#conserva-el-evento-dentro-del-presupuesto",
+    "title": "Actividades y preguntas para grupos",
+    "section": "05 · Conserva el evento dentro del presupuesto",
+    "text": "05 · Conserva el evento dentro del presupuesto\nCuándo: Durante «¿padding o muestreo?» en el cuaderno 05. Úsala como alternativa a su discusión en grupo. Tiempo: 8 minutos.\nDiseñen un proceso para agrupar clips de distintas duraciones. Buscan detectar un evento breve. Pueden guardar como máximo 16 fotogramas por clip.\n\n¿Muestrearían, recortarían, rellenarían o combinarían métodos? ¿Por qué?\n¿Qué pasa si el evento ocurre entre los fotogramas seleccionados?\n¿Cómo distinguiría el modelo el relleno de un fotograma oscuro medido?\n\nCompartan: Un esquema desde la entrada hasta el lote, con ejes y una máscara si hace falta. Nombren un posible fallo y cómo detectarlo."
+  },
+  {
+    "objectID": "es/group-tasks.html#qué-hace-similares-a-dos-dígitos",
+    "href": "es/group-tasks.html#qué-hace-similares-a-dos-dígitos",
+    "title": "Actividades y preguntas para grupos",
+    "section": "06 · ¿Qué hace similares a dos dígitos?",
+    "text": "06 · ¿Qué hace similares a dos dígitos?\nCuándo: Después del explorador de búsqueda en el cuaderno 06. Tiempo: 6 minutos.\nElijan un dígito de consulta. Definan un objetivo y decidan si el producto punto sin normalizar o la similitud coseno ofrece vecinos más útiles.\n\n¿«Similar» significa misma etiqueta, trazos parecidos o cantidad de tinta?\n¿Dónde difieren las dos listas? ¿Qué podría explicarlo?\n¿Cómo evaluarían su elección más allá de esta consulta?\n\nCompartan: El objetivo, dos ejemplos recuperados y una evaluación propuesta. Expliquen qué representa el índice sumado en id,jd-&gt;ij."
+  },
+  {
+    "objectID": "es/group-tasks.html#mismas-predicciones-distintos-coeficientes",
+    "href": "es/group-tasks.html#mismas-predicciones-distintos-coeficientes",
+    "title": "Actividades y preguntas para grupos",
+    "section": "07 · Mismas predicciones, distintos coeficientes",
+    "text": "07 · Mismas predicciones, distintos coeficientes\nCuándo: Después del ejercicio de sistemas singulares en el cuaderno 07. Tiempo: 8 minutos.\nAlguien duplica una columna de variables. Dos vectores de coeficientes producen ahora las mismas predicciones. Decidan qué conclusiones pueden sostener.\n\n¿Un residuo pequeño basta para elegir los coeficientes más fiables?\n¿Qué elige la pseudoinversa si varias soluciones ajustan igual de bien?\n¿Qué información adicional ayudaría a interpretar cada coeficiente?\n\nCompartan: Un mensaje breve: qué permite afirmar el ajuste, qué no demuestra y qué comprobarían después."
+  },
+  {
+    "objectID": "es/group-tasks.html#una-buena-predicción-no-basta",
+    "href": "es/group-tasks.html#una-buena-predicción-no-basta",
+    "title": "Actividades y preguntas para grupos",
+    "section": "08 · Una buena predicción no basta",
+    "text": "08 · Una buena predicción no basta\nCuándo: Después del pronóstico recursivo en el cuaderno 08. Tiempo: 6 minutos.\nEl pronóstico funciona bien para el mes siguiente. Quieren reutilizarlo de forma recursiva durante un año. Diseñen una prueba antes de aprobar el cambio.\n\n¿Qué cambia cuando el modelo recibe sus propias predicciones?\n¿Cómo podría crecer o reducirse un error pequeño con cada actualización?\n¿Qué horizonte y modelo de referencia usarían para evaluar?\n\nCompartan: Un plan de evaluación y un criterio para detener el uso. Apoyen una preocupación con el pronóstico de pasajeros o el explorador de estados."
+  },
+  {
+    "objectID": "es/group-tasks.html#defiende-una-factorización",
+    "href": "es/group-tasks.html#defiende-una-factorización",
+    "title": "Actividades y preguntas para grupos",
+    "section": "09 · Defiende una factorización",
+    "text": "09 · Defiende una factorización\nCuándo: Después del selector de método en el cuaderno 09. Tiempo: 8 minutos.\nElijan una tarea: ajustar una matriz alta una vez; resolver el mismo sistema cuadrado muchas veces; o comprimir una imagen con almacenamiento limitado. Recomienden un método y compárenlo con una alternativa razonable.\n\n¿Qué propiedad de la matriz deben comprobar primero?\n¿Qué importa más: estabilidad, tiempo, almacenamiento o factores interpretables?\n¿Qué dato nuevo les haría cambiar de método?\n\nCompartan: Una recomendación con una condición y una medida. Otro grupo aporta el dato nuevo; revisen su respuesta si hace falta."
+  },
+  {
+    "objectID": "es/group-tasks.html#qué-debe-conservar-la-compresión",
+    "href": "es/group-tasks.html#qué-debe-conservar-la-compresión",
+    "title": "Actividades y preguntas para grupos",
+    "section": "10 · ¿Qué debe conservar la compresión?",
+    "text": "10 · ¿Qué debe conservar la compresión?\nCuándo: Después del explorador de rango en el cuaderno 10. Tiempo: 8 minutos.\nDos personas usan el tensor de taxis. Una estudia el patrón diario general; la otra, una ruta concreta de origen a destino en su hora más concurrida. Propongan una compresión para cada una.\n\n¿Servirían los mismos rangos por modo de Tucker?\n¿Podría un error global pequeño ocultar un error grande en esa ruta?\n¿Qué gráfica o error local revisarían antes de aceptar el resultado?\n\nCompartan: Dos propuestas de rango, o una común con una justificación. Usen un resultado del cuaderno y propongan una comprobación adicional."
+  },
+  {
+    "objectID": "es/group-tasks.html#es-justa-esta-comparación",
+    "href": "es/group-tasks.html#es-justa-esta-comparación",
+    "title": "Actividades y preguntas para grupos",
+    "section": "11 · ¿Es justa esta comparación?",
+    "text": "11 · ¿Es justa esta comparación?\nCuándo: Después de comparar presupuestos similares en el cuaderno 11. Tiempo: 8 minutos.\nUn informe declara que CP supera a Tucker porque obtuvo menor error con «rango 3». Diseñen una comparación que permita recomendar un método útil.\n\n¿Qué significa rango 3 en cada modelo? ¿Qué se almacenó realmente?\n¿Qué presupuesto igualarían: parámetros, bytes o tiempo?\nAdemás del error de reconstrucción, ¿qué resultado importa para la tarea?\n\nCompartan: Un plan con tres medidas. Nombren qué mantendrán fijo y una incertidumbre que seguiría pendiente tras ejecutar la comparación."
+  },
+  {
+    "objectID": "es/group-tasks.html#trae-un-problema-de-tu-campo",
+    "href": "es/group-tasks.html#trae-un-problema-de-tu-campo",
+    "title": "Actividades y preguntas para grupos",
+    "section": "12 · Trae un problema de tu campo",
+    "text": "12 · Trae un problema de tu campo\nCuándo: Durante la discusión final del cuaderno 12. Tiempo: 5 minutos: 1 para pensar, 3 para discutir y 1 para compartir.\nElijan un problema real que interese a alguien del grupo. Dibujen cómo podrían ayudar los tensores. Hoy no necesitan los datos.\n\n¿Qué significaría cada eje? ¿Qué sería una observación?\n¿Qué operación del taller ayudaría a responder su pregunta?\n¿Qué sería un resultado satisfactorio? ¿Qué supuesto podría fallar?\n\nCompartan: Una forma con etiquetas, una operación propuesta y el primer experimento. Cada persona añade algo que todavía necesita comprender."
+  },
+  {
+    "objectID": "es/group-tasks.html#confiarías-en-la-imagen-más-nítida",
+    "href": "es/group-tasks.html#confiarías-en-la-imagen-más-nítida",
+    "title": "Actividades y preguntas para grupos",
+    "section": "13 · ¿Confiarías en la imagen más nítida?",
+    "text": "13 · ¿Confiarías en la imagen más nítida?\nCuándo: Después de la deconvolución en el cuaderno 13. Solo como actividad posterior. Tiempo: 8 minutos.\nDos restauraciones de la imagen difieren. Una parece más nítida; la otra tiene menor error respecto al original conocido. Decidan cómo evaluarlas.\n\n¿Qué artefactos podrían parecer detalles recuperados?\n¿Cómo afectan el ruido, el kernel supuesto y los bordes de la imagen?\n¿Qué podrían comprobar con una imagen nueva sin un original limpio?\n\nCompartan: Una lista de criterios de aceptación. Separen las pruebas que necesitan una referencia limpia de las que no. Digan qué no puede demostrar ninguna de ellas."
+  },
+  {
+    "objectID": "es/group-tasks.html#preguntas-para-facilitar-la-discusión",
+    "href": "es/group-tasks.html#preguntas-para-facilitar-la-discusión",
+    "title": "Actividades y preguntas para grupos",
+    "section": "Preguntas para facilitar la discusión",
+    "text": "Preguntas para facilitar la discusión\nUsa una cuando un grupo se atasque:\n\n«¿Qué están suponiendo?»\n«Muestren un caso en que esa elección falle».\n«¿Qué resultado respalda esa afirmación?»\n«¿Qué haría que ambos grupos tuvieran razón?»\n«¿Cuál es el experimento más pequeño que resolvería el desacuerdo?»\n\nBusca significado de los ejes, evidencia y decisiones justificadas. Puede haber varios diseños válidos; comprueba las afirmaciones matemáticas por separado. Cierra con una distinción útil y una pregunta abierta. Deja las investigaciones largas para después."
   },
   {
     "objectID": "es/tensors_workshop_plan_with_quizzes.html",
@@ -1370,26 +1888,5 @@
     "title": "Tensors for Machine Learning",
     "section": "",
     "text": "—\n\n\n12 · Cierre y ejercicios para casa\n\n\nEl ejercicio para casa 13 es convolución y deconvolución: un kernel pequeño reutilizado en muchas posiciones, correlación frente a convolución verdadera, la convolución transpuesta como superposición y suma, y Richardson-Lucy recuperando una fotografía real desenfocada. Es el tercer caso de la idea que conecta el taller, y el único que la sala ya no ejecuta.\n\n\nSección 12 · Cierre y ejercicios para casa — 5 min, de +03:25 a +03:30. Cinco extensiones para después — PCA, atención, CP, Cholesky y audio — bajo el mensaje de cierre de que los tensores son el lenguaje que conecta los modelos. Gracias: Ravi Kalia, Sebastian Laverde Chunza.\n\nColab ↗ Take-home 13 ↗\n📖 La atención como dos contracciones ↗"
-  },
-  {
-    "objectID": "es/index.html#qué-hay-aquí",
-    "href": "es/index.html#qué-hay-aquí",
-    "title": "Visualiza tensores. Piensa en ML.",
-    "section": "",
-    "text": "Teoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes"
-  },
-  {
-    "objectID": "es/index.html#requisitos-previos",
-    "href": "es/index.html#requisitos-previos",
-    "title": "Visualiza tensores. Piensa en ML.",
-    "section": "",
-    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
-  },
-  {
-    "objectID": "es/index.html#cómo-trabajamos",
-    "href": "es/index.html#cómo-trabajamos",
-    "title": "Visualiza tensores. Piensa en ML.",
-    "section": "",
-    "text": "💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   }
 ]

@@ -1,0 +1,39 @@
+---
+title: "Teach this workshop"
+subtitle: "A practical kit for instructors"
+lang: en
+---
+
+[Español](es/teach.qmd)
+
+Plan and run the {{< var workshop.minutes >}}-minute workshop with the resources
+below. The agenda includes the quizzes and breaks. Group activities replace
+practice or discussion time; notebook 13 stays take-home work.
+
+## Prepare your session
+
+1. Share the [prerequisites](index.qmd#prerequisites) with learners and ask them
+   to run [notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) before class.
+2. Read the [facilitator guide](facilitator-guide.md) alongside the
+   [workshop schedule](tensors_workshop_plan_with_quizzes.md#schedule).
+3. Test your selected [notebooks](notebooks.qmd) in fresh runtimes. Follow
+   **Core prep**, then **Core activity**, and prepare the
+   [slides](slides/en/index.qmd) and [quizzes](kahoot.qmd).
+
+## Teaching resources
+
+- **[Facilitator guide](facilitator-guide.md)** — Prepare the room, follow the section timings, and respond when learners get stuck.
+- **[Entry and exit checks](assessments.md)** — Collect individual reasoning at the start and end; use the included key and rubric.
+- **[Group tasks](group-tasks.md)** — Choose short discussions with a time box and a concrete group deliverable.
+- **[Worked mistakes](worked-mistakes.md)** — Ask learners to predict, test a counterexample, and explain the correction.
+- **[Feedback form](workshop-feedback.md)** — Collect two minutes of feedback after the session and choose one improvement for the next run.
+
+## During and after the workshop
+
+Use **Predict → Run → Explain → Check**. Ask for an attempt before opening
+solutions, rotate group roles, and keep the scheduled breaks and exit check.
+The facilitator guide places the activities within the existing time slots.
+
+After the session, record actual section timings and common errors with the
+workshop version you taught. Keep learner responses private and use the
+feedback to choose one concrete change for your next session.

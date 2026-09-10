@@ -1,6 +1,9 @@
-# Entry and exit checks
+---
+title: "Entry and exit checks"
+lang: en
+---
 
-[Español](es/assessments.md) · [Facilitator guide](facilitator-guide.md)
+[Español](es/assessments.md) · [Facilitator guide](facilitator-guide.md) · [Teach this workshop](teach.qmd)
 
 Answer alone. Short sentences are enough. No code needed.
 The learner prompts are also in Notebooks 00 and 12.

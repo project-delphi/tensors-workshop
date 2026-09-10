@@ -1,7 +1,10 @@
-# Group tasks and discussion questions
+---
+title: "Group tasks and discussion questions"
+lang: en
+---
 
 Short, open-ended tasks to use during or after the notebooks.
-[Español](es/group-tasks.md) · [Workshop README](README.md)
+[Español](es/group-tasks.md) · [Teach this workshop](teach.qmd)
 
 ## How to use these
 

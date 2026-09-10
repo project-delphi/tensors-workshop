@@ -1,6 +1,9 @@
-# Four mistakes worth testing
+---
+title: "Four mistakes worth testing"
+lang: en
+---
 
-[Español](es/worked-mistakes.md) · [Facilitator guide](facilitator-guide.md)
+[Español](es/worked-mistakes.md) · [Facilitator guide](facilitator-guide.md) · [Teach this workshop](teach.qmd)
 
 Predict first. Run the tiny counterexample. Rewrite the claim in one sentence.
 These synthetic examples isolate a mistake; the notebooks use real data.

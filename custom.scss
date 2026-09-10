@@ -94,7 +94,9 @@ html[lang|="es"] .navbar-nav {
 // `:has(> .dropdown-menu)` is what picks the dropdown out — it is the only
 // one in this navbar, and unlike a `rel` it survives Quarto owning the markup
 // of a `menu:` item.
-.navbar:has(.nav-link[rel="lang-en"].active, .nav-link[rel="lang-es"].active)
+// Resource pages have no active navbar item. Keep the extra language menu
+// hidden there too: their own EN/ES links lead to the matching resource.
+.navbar:not(:has(.nav-link.active:not([rel])))
   .nav-item:has(> .dropdown-menu) { display: none; }
 
 // The EN/ES pair itself, which is the control for all of the above and so is

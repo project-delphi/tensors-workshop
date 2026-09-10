@@ -2,11 +2,23 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/tensors_workshop_plan_with_quizzes.html</loc>
-    <lastmod>2026-09-09T16:19:27.891Z</lastmod>
+    <lastmod>2026-09-10T10:29:29.328Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/slides/en/index.html</loc>
     <lastmod>2026-09-09T16:54:44.532Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/workshop-feedback.html</loc>
+    <lastmod>2026-09-10T10:26:45.056Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/worked-mistakes.html</loc>
+    <lastmod>2026-09-10T10:26:45.056Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/facilitator-guide.html</loc>
+    <lastmod>2026-09-10T10:26:45.056Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/es/companion.html</loc>
@@ -15,6 +27,18 @@
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/es/notebooks.html</loc>
     <lastmod>2026-09-09T16:19:27.866Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/workshop-feedback.html</loc>
+    <lastmod>2026-09-10T10:26:45.056Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/worked-mistakes.html</loc>
+    <lastmod>2026-09-10T10:26:45.054Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/facilitator-guide.html</loc>
+    <lastmod>2026-09-10T10:26:45.053Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/companion.html</loc>
@@ -26,7 +50,7 @@
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/index.html</loc>
-    <lastmod>2026-09-10T03:19:08.770Z</lastmod>
+    <lastmod>2026-09-10T10:04:11.721Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/notebooks.html</loc>
@@ -37,16 +61,40 @@
     <lastmod>2026-09-09T16:19:27.888Z</lastmod>
   </url>
   <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/teach.html</loc>
+    <lastmod>2026-09-10T10:28:59.061Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/assessments.html</loc>
+    <lastmod>2026-09-10T10:26:45.054Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/group-tasks.html</loc>
+    <lastmod>2026-09-10T10:26:45.055Z</lastmod>
+  </url>
+  <url>
     <loc>https://project-delphi.github.io/tensors-workshop/es/index.html</loc>
-    <lastmod>2026-09-10T03:19:08.834Z</lastmod>
+    <lastmod>2026-09-10T10:04:11.784Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/es/references.html</loc>
     <lastmod>2026-09-09T16:19:27.866Z</lastmod>
   </url>
   <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/teach.html</loc>
+    <lastmod>2026-09-10T10:28:59.061Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/assessments.html</loc>
+    <lastmod>2026-09-10T10:26:45.056Z</lastmod>
+  </url>
+  <url>
+    <loc>https://project-delphi.github.io/tensors-workshop/es/group-tasks.html</loc>
+    <lastmod>2026-09-10T10:26:45.056Z</lastmod>
+  </url>
+  <url>
     <loc>https://project-delphi.github.io/tensors-workshop/es/tensors_workshop_plan_with_quizzes.html</loc>
-    <lastmod>2026-09-09T11:37:12.418Z</lastmod>
+    <lastmod>2026-09-10T10:29:29.329Z</lastmod>
   </url>
   <url>
     <loc>https://project-delphi.github.io/tensors-workshop/slides/es/index.html</loc>

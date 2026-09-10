@@ -1,7 +1,10 @@
-# Actividades y preguntas para grupos
+---
+title: "Actividades y preguntas para grupos"
+lang: es
+---
 
 Actividades breves y abiertas para usar durante o después de los cuadernos.
-[English](../group-tasks.md) · [README del taller](../README.md)
+[English](../group-tasks.md) · [Enseñar este taller](teach.qmd)
 
 ## Cómo usarlas
 

@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Master tensors in 210 minutes with real-world data and hands-on Python code.">
 
-<title>Tensors for Machine Learning</title>
+<title>Group tasks and discussion questions – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -35,11 +34,12 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/quarto.js"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-6ee7c0cd20da5fa43d9500a513175565.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-c962d84d17879c2bfc92d8644b9ef1f2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -89,7 +89,7 @@ ul.task-list li input[type="checkbox"] {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" rel="lang-en" aria-current="page"> 
+    <a class="nav-link" href="./index.html" rel="lang-en"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
@@ -206,199 +206,235 @@ ul.task-list li input[type="checkbox"] {
     </nav>
 </header>
 <!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
-<!-- main -->
-<main class="content column-page" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
-
-
-
-
-<div class="workshop-landing">
-<div class="workshop-hero">
-<div class="hero-copy">
-<p><span class="workshop-badge">210 minutes · Hands-on Python</span></p>
-<section id="see-tensors.-think-in-ml." class="level1">
-<h1>See tensors. <span class="hero-highlight">Think in ML.</span></h1>
-<p>Turn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.</p>
-<p><a href="./tensors_workshop_plan_with_quizzes.html" class="hero-button">Start the workshop →</a></p>
-<p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb" class="hero-secondary">Open the setup notebook</a></p>
-<p><span class="hero-language">Taught in English · Questions in English &amp; Spanish</span></p>
-</section>
-</div>
-<div class="hero-visual">
-<svg width="480" height="380" style="max-width: 100%; height: auto;" viewbox="0 0 480 380" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
-  <title id="tensor-title">From one number to a neural-network operation</title>
-  <desc id="tensor-desc">A scalar becomes a vector, then a matrix, then a three-dimensional tensor. A neural-network layer uses tensor operations to turn inputs into outputs.</desc>
-  <defs>
-    <radialgradient id="tensor-glow"><stop stop-color="#277c9a" stop-opacity=".45"></stop><stop offset="1" stop-color="#0c192e" stop-opacity="0"></stop></radialgradient>
-    <lineargradient id="tensor-top" x2="1" y2="1"><stop stop-color="#9cf4e2"></stop><stop offset="1" stop-color="#54bedd"></stop></lineargradient>
-    <pattern id="tensor-dots" width="20" height="20" patternunits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#9ebdd7" opacity=".2"></circle></pattern>
-    <marker id="tensor-arrow" viewbox="0 0 10 10" refx="8" refy="5" markerwidth="5" markerheight="5" orient="auto-start-reverse"><path d="m1 1 7 4-7 4" fill="none" stroke="#91a7c5" stroke-width="1.5"></path></marker>
-    <g id="tensor-slice" stroke="#0d354c" stroke-width="1.2" stroke-linejoin="round">
-      <path d="m0 38 88-44 88 44-88 44Z" fill="url(#tensor-top)"></path>
-      <path d="m0 38 88 44v19L0 57Z" fill="#369fb9"></path>
-      <path d="m88 82 88-44v19l-88 44Z" fill="#32769a"></path>
-      <path d="m22 27 88 44m-66-55 88 44m-66-55 88 44M22 49l88-44M44 60l88-44M66 71l88-44" fill="none" opacity=".6"></path>
-      <path d="M22 49v19m22-8v19m22-8v19m44-19v19m22-30v19m22-30v19" fill="none" opacity=".5"></path>
-    </g>
-  </defs>
-  <rect width="480" height="380" rx="20" fill="#0c192e"></rect>
-  <rect width="480" height="380" rx="20" fill="url(#tensor-dots)"></rect>
-  <ellipse cx="198" cy="216" rx="220" ry="165" fill="url(#tensor-glow)"></ellipse>
-  <g font-family="system-ui, sans-serif">
-    <text x="26" y="29" fill="#a9c0d9" font-size="10" letter-spacing="1.5">THE SHAPE OF MACHINE LEARNING</text>
-    <g fill="#91a7c5" font-size="11" text-anchor="middle"><text x="62" y="116">Scalar</text><text x="214" y="116">Vector</text><text x="393" y="116">Matrix</text></g>
-    <rect x="48" y="60" width="28" height="28" rx="7" fill="#91edda"></rect>
-    <text x="62" y="79" text-anchor="middle" fill="#10263b" font-size="14" font-weight="700">7</text>
-    <g fill="#91edda"><rect x="161" y="65" width="22" height="22" rx="4" opacity=".4"></rect><rect x="189" y="65" width="22" height="22" rx="4" opacity=".6"></rect><rect x="217" y="65" width="22" height="22" rx="4" opacity=".8"></rect><rect x="245" y="65" width="22" height="22" rx="4"></rect></g>
-    <g transform="translate(369 50)" fill="#a9b5ff"><rect x="0" y="0" width="14" height="14" rx="2" opacity="0.4"></rect><rect x="17" y="0" width="14" height="14" rx="2" opacity="0.52"></rect><rect x="34" y="0" width="14" height="14" rx="2" opacity="0.64"></rect><rect x="0" y="17" width="14" height="14" rx="2" opacity="0.52"></rect><rect x="17" y="17" width="14" height="14" rx="2" opacity="0.64"></rect><rect x="34" y="17" width="14" height="14" rx="2" opacity="0.76"></rect><rect x="0" y="34" width="14" height="14" rx="2" opacity="0.64"></rect><rect x="17" y="34" width="14" height="14" rx="2" opacity="0.76"></rect><rect x="34" y="34" width="14" height="14" rx="2" opacity="0.88"></rect></g>
-    <g fill="none" stroke="#91a7c5" stroke-width="1.2" marker-end="url(#tensor-arrow)"><path d="M95 75h44"></path><path d="M286 75h61"></path><path d="M395 133v21q0 12-12 12h-80"></path></g>
-    <g transform="translate(61 140)"><use href="#tensor-slice" y="66"></use><use href="#tensor-slice" y="33"></use><use href="#tensor-slice"></use></g>
-    <path d="M49 225v58h28" fill="none" stroke="#7ba3bb" stroke-width="1"></path>
-    <text x="92" y="332" fill="#d5fff5" font-size="17" font-weight="650">3D tensor</text>
-    <text x="92" y="351" fill="#a9c0d9" font-size="11">Three axes. More possibilities.</text>
-    <text x="288" y="211" fill="#dce5ff" font-size="14" font-weight="650">Neural network</text>
-    <text x="288" y="234" fill="#a9b5ff" font-size="14" font-family="ui-monospace, monospace">y = σ(Wx + b)</text>
-    <path d="M251 272h27" fill="none" stroke="#91a7c5" marker-end="url(#tensor-arrow)"></path>
-    <g fill="none" stroke="#8799e8" stroke-opacity=".4" stroke-width="1.2"><path d="M305 281 357 275"></path><path d="M305 281 357 297"></path><path d="M305 281 357 319"></path><path d="M305 281 357 341"></path><path d="M305 303 357 275"></path><path d="M305 303 357 297"></path><path d="M305 303 357 319"></path><path d="M305 303 357 341"></path><path d="M305 325 357 275"></path><path d="M305 325 357 297"></path><path d="M305 325 357 319"></path><path d="M305 325 357 341"></path><path d="M357 275 410 291"></path><path d="M357 275 410 325"></path><path d="M357 297 410 291"></path><path d="M357 297 410 325"></path><path d="M357 319 410 291"></path><path d="M357 319 410 325"></path><path d="M357 341 410 291"></path><path d="M357 341 410 325"></path></g>
-    <g fill="#91edda" stroke="#0c192e" stroke-width="2"><circle cx="305" cy="281" r="5"></circle><circle cx="305" cy="303" r="5"></circle><circle cx="305" cy="325" r="5"></circle></g>
-    <g fill="#a9b5ff" stroke="#0c192e" stroke-width="2"><circle cx="357" cy="275" r="6"></circle><circle cx="357" cy="297" r="6"></circle><circle cx="357" cy="319" r="6"></circle><circle cx="357" cy="341" r="6"></circle></g>
-    <g fill="#ffcb97" stroke="#0c192e" stroke-width="2"><circle cx="410" cy="291" r="6"></circle><circle cx="410" cy="325" r="6"></circle></g>
-    <g fill="#a9c0d9" font-size="10" text-anchor="middle"><text x="305" y="362">input</text><text x="410" y="362">output</text></g>
-  </g>
-</svg>
-</div>
-</div>
-<section class="learning-outcomes" aria-labelledby="outcomes-title">
-  <h2 id="outcomes-title">By the end, you’ll be able to…</h2>
-  <ul class="outcome-grid">
-    <li><span class="outcome-number" aria-hidden="true">01</span><div><h3>Own the shape.</h3><p>Slice, reshape, and broadcast tensors in NumPy.</p></div></li>
-    <li><span class="outcome-number" aria-hidden="true">02</span><div><h3>See the structure.</h3><p>Decompose tensors. Explore convolutions in the take-home.</p></div></li>
-    <li><span class="outcome-number" aria-hidden="true">03</span><div><h3>Connect it to ML.</h3><p>Read the tensor math behind compression and neural networks.</p></div></li>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#how-to-use-these" id="toc-how-to-use-these" class="nav-link active" data-scroll-target="#how-to-use-these">How to use these</a></li>
+  <li><a href="#would-you-trust-this-dataset" id="toc-would-you-trust-this-dataset" class="nav-link" data-scroll-target="#would-you-trust-this-dataset">00 · Would you trust this dataset?</a></li>
+  <li><a href="#design-a-tensor-someone-else-can-read" id="toc-design-a-tensor-someone-else-can-read" class="nav-link" data-scroll-target="#design-a-tensor-someone-else-can-read">01 · Design a tensor someone else can read</a></li>
+  <li><a href="#same-shape-different-rules" id="toc-same-shape-different-rules" class="nav-link" data-scroll-target="#same-shape-different-rules">02 · Same shape, different rules</a></li>
+  <li><a href="#what-should-normal-mean" id="toc-what-should-normal-mean" class="nav-link" data-scroll-target="#what-should-normal-mean">03 · What should “normal” mean?</a></li>
+  <li><a href="#a-test-that-catches-the-bug" id="toc-a-test-that-catches-the-bug" class="nav-link" data-scroll-target="#a-test-that-catches-the-bug">04 · A test that catches the bug</a></li>
+  <li><a href="#keep-the-event-fit-the-budget" id="toc-keep-the-event-fit-the-budget" class="nav-link" data-scroll-target="#keep-the-event-fit-the-budget">05 · Keep the event, fit the budget</a></li>
+  <li><a href="#what-counts-as-a-similar-digit" id="toc-what-counts-as-a-similar-digit" class="nav-link" data-scroll-target="#what-counts-as-a-similar-digit">06 · What counts as a similar digit?</a></li>
+  <li><a href="#same-predictions-different-coefficients" id="toc-same-predictions-different-coefficients" class="nav-link" data-scroll-target="#same-predictions-different-coefficients">07 · Same predictions, different coefficients</a></li>
+  <li><a href="#one-good-prediction-is-not-enough" id="toc-one-good-prediction-is-not-enough" class="nav-link" data-scroll-target="#one-good-prediction-is-not-enough">08 · One good prediction is not enough</a></li>
+  <li><a href="#defend-a-factorization" id="toc-defend-a-factorization" class="nav-link" data-scroll-target="#defend-a-factorization">09 · Defend a factorization</a></li>
+  <li><a href="#what-must-compression-preserve" id="toc-what-must-compression-preserve" class="nav-link" data-scroll-target="#what-must-compression-preserve">10 · What must compression preserve?</a></li>
+  <li><a href="#is-this-comparison-fair" id="toc-is-this-comparison-fair" class="nav-link" data-scroll-target="#is-this-comparison-fair">11 · Is this comparison fair?</a></li>
+  <li><a href="#bring-a-problem-from-your-field" id="toc-bring-a-problem-from-your-field" class="nav-link" data-scroll-target="#bring-a-problem-from-your-field">12 · Bring a problem from your field</a></li>
+  <li><a href="#would-you-trust-the-sharper-image" id="toc-would-you-trust-the-sharper-image" class="nav-link" data-scroll-target="#would-you-trust-the-sharper-image">13 · Would you trust the sharper image?</a></li>
+  <li><a href="#facilitator-prompts" id="toc-facilitator-prompts" class="nav-link" data-scroll-target="#facilitator-prompts">Facilitator prompts</a></li>
   </ul>
-</section>
-<div class="credibility-strip">
-  <div class="instructor-credit"><p><span>Workshop by</span><strong><a href="https://www.linkedin.com/in/ravi-kalia-phd/">Ravi Kalia</a> and <a href="https://www.linkedin.com/in/sebastian-analytics/">Sebastian Laverde Chunza</a></strong></p></div>
-  <a href="https://github.com/project-delphi/tensors-workshop"><svg width="24" height="24" viewbox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"></path></svg><span><strong>Workshop repository</strong><span>Explore the code on GitHub ↗</span></span></a>
-  <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on Discord</span></p></div>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Group tasks and discussion questions</h1>
 </div>
-<section class="workshop-audience" aria-labelledby="who-this-is-for">
-  <h2 id="who-this-is-for">Who this is for</h2>
-  <div class="audience-grid">
-    <article class="audience-card">
-      <h3>Software Engineers Pivoting to AI</h3>
-      <ul>
-        <li>Stop guessing array shapes—read PyTorch and JAX code with total confidence.</li>
-        <li>Bridge the gap between clean Python architecture and high-dimensional ML math.</li>
-        <li>Turn your engineering background into practical deep learning fluency.</li>
-      </ul>
-    </article>
-    <article class="audience-card">
-      <h3>Data Analysts &amp; Traditional Data Scientists</h3>
-      <ul>
-        <li>Break out of 2D DataFrames and master the 3D/4D tensors powering deep learning.</li>
-        <li>Move beyond Scikit-Learn to process complex image, text, and sequence data.</li>
-        <li>Upgrade your tabular analytics skills into neural network expertise.</li>
-      </ul>
-    </article>
-    <article class="audience-card">
-      <h3>Self-Taught ML Practitioners</h3>
-      <ul>
-        <li>Never get stuck on a <code>RuntimeError: size mismatch</code> again.</li>
-        <li>Look under the hood of high-level APIs to debug broken tensor operations fast.</li>
-        <li>Stop treating models as black boxes—understand what happens at every layer.</li>
-      </ul>
-    </article>
-    <article class="audience-card">
-      <h3>STEM Grads (CS, Physics, Math)</h3>
-      <ul>
-        <li>Turn theoretical linear algebra into hands-on, production-ready Python code.</li>
-        <li>Apply matrix decompositions directly to data compression and neural networks.</li>
-        <li>Connect abstract classwork to real-world machine learning architectures.</li>
-      </ul>
-    </article>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
   </div>
-</section>
-<section class="learning-journey" aria-labelledby="journey-title">
-  <p class="section-eyebrow">THE LEARNING JOURNEY</p>
-  <h2 id="journey-title">Your path from arrays to ML.</h2>
-  <p class="journey-intro">Six connected ideas. Code them. See them. Make them click.</p>
-  <ol class="curriculum-track" aria-label="Learning journey">
-    <li><span class="stage-number">01</span><svg width="60" height="58" viewbox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"></path><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"></path><circle cx="38" cy="24" r="3"></circle></svg><h3>Foundations</h3><p>Read shapes and axes.</p></li>
-    <li><span class="stage-number">02</span><svg width="60" height="58" viewbox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"></rect><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"></path><rect x="35" y="35" width="24" height="16" rx="2"></rect><path d="M43 35v16m8-16v16M35 43h24"></path></svg><h3>Tensor Operations</h3><p>Reshape. Broadcast. Contract.</p></li>
-    <li><span class="stage-number">03</span><svg width="60" height="58" viewbox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"></path><path d="m18 24 3-6 3 6m14-1h7v7"></path><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"></path></svg><h3>Linear Algebra</h3><p>Solve systems. Find structure.</p></li>
-    <li><span class="stage-number">04</span><svg width="60" height="58" viewbox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"></path><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"></path><path d="m47 49 11 7m-6-8 6 8-9 1"></path></svg><h3>Convolutions</h3><p>Turn pixels into features.</p><span class="stage-extra">Take-home</span></li>
-    <li><span class="stage-number">05</span><svg width="60" height="58" viewbox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"></rect><path d="M30 28h7m-7 7h7"></path><rect x="42" y="17" width="7" height="30" rx="1"></rect><rect x="54" y="17" width="7" height="12" rx="1"></rect></svg><h3>Factorizations</h3><p>Compress without losing the plot.</p></li>
-    <li><span class="stage-number">06</span><svg width="60" height="58" viewbox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"></path><g fill="currentColor"><circle cx="12" cy="17" r="4"></circle><circle cx="12" cy="32" r="4"></circle><circle cx="12" cy="47" r="4"></circle><circle cx="33" cy="17" r="4"></circle><circle cx="33" cy="47" r="4"></circle><circle cx="53" cy="32" r="5"></circle></g></svg><h3>ML Applications</h3><p>Connect the math to models.</p></li>
-  </ol>
-  <a class="journey-link" href="./notebooks.html">Explore the notebooks <span aria-hidden="true">→</span></a>
-</section>
-<section id="whats-here" class="level2">
-<h2 data-anchor-id="whats-here">Your workshop toolkit</h2>
-<div class="resource-grid">
-<section id="handbook" class="level3 resource-card">
-<h3 data-anchor-id="handbook">📖 Handbook</h3>
-<p>Full theory, exercises, and step-by-step solutions.</p>
-<p><a href="./tensors_workshop_plan_with_quizzes.html" class="resource-button">Read Handbook</a></p>
-</section>
-<section id="notebooks" class="level3 resource-card">
-<h3 data-anchor-id="notebooks">🚀 Notebooks</h3>
-<p>Interactive Python notebooks running in Google Colab.</p>
-<p><a href="./notebooks.html" class="resource-button">Run Code</a></p>
-</section>
-<section id="slides" class="level3 resource-card">
-<h3 data-anchor-id="slides">📊 Slides</h3>
-<p>Visual presentation decks for workshop sessions.</p>
-<p><a href="./slides/en/index.html" class="resource-button">View Decks</a></p>
-</section>
-<section id="companion-hub" class="level3 resource-card">
-<h3 data-anchor-id="companion-hub">💡 Companion Hub</h3>
-<p>Mind maps, 1-minute shorts, audio overviews, and self-checks.</p>
-<p><a href="./companion.html" class="resource-button">Explore Hub</a></p>
-</section>
-<section id="kahoot" class="level3 resource-card">
-<h3 data-anchor-id="kahoot">🎯 Kahoot</h3>
-<p>Live interactive quizzes for concept checks.</p>
-<p><a href="https://kahoot.it/" class="resource-button">Join Quiz</a></p>
-</section>
-<section id="references" class="level3 resource-card">
-<h3 data-anchor-id="references">📚 References</h3>
-<p>Core papers, textbook chapters, and repository source code.</p>
-<p><a href="./references.html" class="resource-button">View Sources</a></p>
-</section>
-</div>
-</section>
-<section id="prerequisites" class="level2">
-<h2 data-anchor-id="prerequisites">Familiar with basic linear algebra? You’re ready to go.</h2>
-<div class="prerequisite-list">
-<section id="step-1-core-concepts-required" class="level3 prerequisite-step">
-<h3 data-anchor-id="step-1-core-concepts-required">Step 1: Core Concepts <span class="step-badge">Required</span></h3>
-<p>Review vectors, matrices, and SVD in <a href="https://www.deeplearningbook.org/contents/linear_algebra.html">Goodfellow Ch. 2</a> and complete the <a href="https://github.com/Laverde97/linear-algebra-deep-learning">pre-work notebooks</a>.</p>
-</section>
-<section id="step-2-setup-required-5-mins" class="level3 prerequisite-step">
-<h3 data-anchor-id="step-2-setup-required-5-mins">Step 2: Setup <span class="step-badge">Required, 5 mins</span></h3>
-<p>Run <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">Notebook 00</a> in Google Colab to pre-load datasets.</p>
-</section>
-<section id="step-3-visual-refresher-optional" class="level3 prerequisite-step">
-<h3 data-anchor-id="step-3-visual-refresher-optional">Step 3: Visual Refresher <span class="step-badge step-optional">Optional</span></h3>
-<p>Watch 3Blue1Brown’s <a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab"><em>Essence of linear algebra</em></a>.</p>
-</section>
-</div>
-</section>
-<section id="how-we-work" class="level2">
-<h2 data-anchor-id="how-we-work">210 minutes. One hands-on rhythm.</h2>
-<ol class="workshop-pipeline" aria-label="Workshop activity rhythm">
-  <li><span aria-hidden="true">💻</span> <strong>10m</strong> Code</li>
-  <li><span aria-hidden="true">💡</span> <strong>5m</strong> Concept Review</li>
-  <li><span aria-hidden="true">💬</span> <strong>10m</strong> Group Discussion</li>
-</ol>
-</section>
-</div>
+  
 
 
+</header>
+
+
+<p>Short, open-ended tasks to use during or after the notebooks. <a href="./es/group-tasks.html">Español</a> · <a href="./teach.html">Teach this workshop</a></p>
+<section id="how-to-use-these" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-use-these">How to use these</h2>
+<p>Work in groups of 3–4. Choose a speaker, a recorder, and someone to challenge assumptions. A fourth person can run short checks. Rotate roles. Discuss in English or Spanish.</p>
+<p>Pick a few tasks. Replace an existing discussion slot or use them after the session; these are not extra requirements for every notebook.</p>
+<p>For a 6-minute task: think alone for 1 minute, discuss for 4, then share for 1. For an 8-minute task, give the discussion 6 minutes. Run setup before starting the timer. Reuse notebook outputs; a sketch or pseudocode is enough.</p>
+<p>Every group shares: <strong>our choice → our evidence → what could change our mind</strong>. Different choices are welcome. Make the assumptions clear. Post these three lines in Discord. Invite one group to explain its choice.</p>
+<p>Quick picks: <a href="#axis-meaning">axis meaning</a>, <a href="#silent-bugs">silent bugs</a>, and <a href="#compression">compression</a>.</p>
+</section>
+<section id="would-you-trust-this-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="would-you-trust-this-dataset">00 · Would you trust this dataset?</h2>
+<p><strong>When:</strong> After the data checks in <a href="notebooks/00-setup-and-data.ipynb">Notebook 00</a>. <strong>Time:</strong> 6 minutes.</p>
+<p>Choose one loaded dataset. Your team must decide whether it is ready for a specific analysis. Agree on that analysis first.</p>
+<ul>
+<li>What does one observation represent?</li>
+<li>Which defect would matter most for your analysis? Which might not matter?</li>
+<li>What would you check beyond whether the file loaded and its shape looks right?</li>
+</ul>
+<p><strong>Share:</strong> A three-check acceptance list. Point to one notebook result and name one question the notebook cannot answer.</p>
+</section>
+<section id="design-a-tensor-someone-else-can-read" class="level2">
+<h2 class="anchored" data-anchor-id="design-a-tensor-someone-else-can-read">01 · Design a tensor someone else can read</h2>
+<p><strong>When:</strong> After “read shapes as sentences” in <a href="notebooks/01-what-a-tensor-is.ipynb">Notebook 01</a>. <strong>Time:</strong> 6 minutes.</p>
+<p>Design a tensor for repeated photographs of the same plants. You decide how many plants, visits, and image channels to keep.</p>
+<ul>
+<li>Which axes do you need? What does each index mean?</li>
+<li>What would a slice or fiber tell a researcher?</li>
+<li>Which detail could someone misread if you gave them only the shape?</li>
+</ul>
+<p><strong>Share:</strong> A labeled shape, one useful selection, and a sentence explaining its result. Ask another group to interpret it without extra help.</p>
+<p><a id="axis-meaning"></a></p>
+</section>
+<section id="same-shape-different-rules" class="level2">
+<h2 class="anchored" data-anchor-id="same-shape-different-rules">02 · Same shape, different rules</h2>
+<p><strong>When:</strong> After the shuffle comparison in <a href="notebooks/02-thinking-in-n-dimensions.ipynb">Notebook 02</a>. <strong>Time:</strong> 6 minutes.</p>
+<p>Two arrays have shape <code>(20, 8, 8)</code>. One contains independent digit images. The other contains consecutive video frames. Propose an operation that is reasonable for one task but misleading for the other.</p>
+<ul>
+<li>What happens if you shuffle or average the first axis?</li>
+<li>What question would make averaging useful? What question would it destroy?</li>
+<li>What metadata must travel with the array?</li>
+</ul>
+<p><strong>Share:</strong> Two interpretations of the same operation. Include a condition under which your recommendation would change.</p>
+</section>
+<section id="what-should-normal-mean" class="level2">
+<h2 class="anchored" data-anchor-id="what-should-normal-mean">03 · What should “normal” mean?</h2>
+<p><strong>When:</strong> After the standardization exercise in <a href="notebooks/03-indexing-and-broadcasting.ipynb">Notebook 03</a>. <strong>Time:</strong> 8 minutes.</p>
+<p>Your team wants to compare handwritten digits. Decide whether to standardize each image separately or each pixel position across images.</p>
+<ul>
+<li>What variation does each choice remove? What does it keep?</li>
+<li>When might overall brightness be useful information?</li>
+<li>How will you handle a pixel with zero variance?</li>
+</ul>
+<p><strong>Share:</strong> Your rule, the axes used to compute its statistics, and one example where it would be a poor choice. Use a notebook plot or a small sketch.</p>
+<p><a id="silent-bugs"></a></p>
+</section>
+<section id="a-test-that-catches-the-bug" class="level2">
+<h2 class="anchored" data-anchor-id="a-test-that-catches-the-bug">04 · A test that catches the bug</h2>
+<p><strong>When:</strong> After “code that runs and is still wrong” in <a href="notebooks/04-reshape-and-transpose.ipynb">Notebook 04</a>. <strong>Time:</strong> 6 minutes.</p>
+<p>A teammate converts NHWC images to NCHW using <code>reshape</code>. The output has the requested shape. Design a review that can tell whether pixel meaning survived.</p>
+<ul>
+<li>What could a shape check miss?</li>
+<li>Which pixel or channel would you track through the conversion?</li>
+<li>What test would still work when two axes have the same size?</li>
+</ul>
+<p><strong>Share:</strong> One test in code or pseudocode and one visual check. Explain what each catches. Try them on the notebook’s correct and incorrect conversions.</p>
+</section>
+<section id="keep-the-event-fit-the-budget" class="level2">
+<h2 class="anchored" data-anchor-id="keep-the-event-fit-the-budget">05 · Keep the event, fit the budget</h2>
+<p><strong>When:</strong> During “pad or sample?” in <a href="notebooks/05-video-pipeline-design.ipynb">Notebook 05</a>. Use this as an alternative to its group discussion. <strong>Time:</strong> 8 minutes.</p>
+<p>Design a batch pipeline for clips of different lengths. Your task is to detect a brief event. Each clip gets at most 16 stored frames.</p>
+<ul>
+<li>Would you sample, crop, pad, or combine them? Explain the trade-off.</li>
+<li>What happens when the event falls between selected frames?</li>
+<li>How would a model distinguish padding from a measured dark frame?</li>
+</ul>
+<p><strong>Share:</strong> An input-to-batch sketch with axis labels and a mask if needed. Name one failure case and one way to test for it.</p>
+</section>
+<section id="what-counts-as-a-similar-digit" class="level2">
+<h2 class="anchored" data-anchor-id="what-counts-as-a-similar-digit">06 · What counts as a similar digit?</h2>
+<p><strong>When:</strong> After the retrieval explorer in <a href="notebooks/06-contraction-with-einsum.ipynb">Notebook 06</a>. <strong>Time:</strong> 6 minutes.</p>
+<p>Choose a query digit. Decide whether raw dot product or cosine similarity gives the more useful neighbors for a goal your group defines.</p>
+<ul>
+<li>Does “similar” mean the same label, stroke pattern, or amount of ink?</li>
+<li>Where do the two rankings disagree? What might explain that?</li>
+<li>How would you evaluate the choice beyond this one query?</li>
+</ul>
+<p><strong>Share:</strong> Your goal, two retrieved examples, and a proposed evaluation. Explain what the summed index in <code>id,jd-&gt;ij</code> represents.</p>
+</section>
+<section id="same-predictions-different-coefficients" class="level2">
+<h2 class="anchored" data-anchor-id="same-predictions-different-coefficients">07 · Same predictions, different coefficients</h2>
+<p><strong>When:</strong> After the singular-system exercise in <a href="notebooks/07-inverses-and-pseudoinverse.ipynb">Notebook 07</a>. <strong>Time:</strong> 8 minutes.</p>
+<p>A teammate duplicates a feature column. Two fitted coefficient vectors now give the same predictions. Decide what your team can responsibly conclude.</p>
+<ul>
+<li>Would a small residual settle which coefficients to trust?</li>
+<li>What does the pseudoinverse choose when several solutions fit equally well?</li>
+<li>What extra information would help you interpret individual coefficients?</li>
+</ul>
+<p><strong>Share:</strong> A short message to the teammate: what the fit supports, what it does not establish, and what you would check next.</p>
+</section>
+<section id="one-good-prediction-is-not-enough" class="level2">
+<h2 class="anchored" data-anchor-id="one-good-prediction-is-not-enough">08 · One good prediction is not enough</h2>
+<p><strong>When:</strong> After recursive forecasting in <a href="notebooks/08-recursion-with-matrices.ipynb">Notebook 08</a>. <strong>Time:</strong> 6 minutes.</p>
+<p>A forecast looks good one month ahead. Your team wants to reuse it recursively for a year. Design a test before approving that change.</p>
+<ul>
+<li>What changes when the model starts consuming its own predictions?</li>
+<li>How could a small error grow or shrink through repeated updates?</li>
+<li>Which forecast horizon and baseline would you report?</li>
+</ul>
+<p><strong>Share:</strong> An evaluation plan and a stopping rule. Use the airline forecast or state-update explorer to support one concern.</p>
+</section>
+<section id="defend-a-factorization" class="level2">
+<h2 class="anchored" data-anchor-id="defend-a-factorization">09 · Defend a factorization</h2>
+<p><strong>When:</strong> After the method chooser in <a href="notebooks/09-matrix-factorizations.ipynb">Notebook 09</a>. <strong>Time:</strong> 8 minutes.</p>
+<p>Choose one brief: fit a tall data matrix once; solve the same square system many times; or compress an image under a storage budget. Recommend a method and compare it with one plausible alternative.</p>
+<ul>
+<li>Which matrix property must you check first?</li>
+<li>What matters most: stability, runtime, storage, or readable factors?</li>
+<li>What new fact would make you switch methods?</li>
+</ul>
+<p><strong>Share:</strong> A recommendation with one condition and one measurement. Another group supplies the new fact; revise your answer if needed.</p>
+<p><a id="compression"></a></p>
+</section>
+<section id="what-must-compression-preserve" class="level2">
+<h2 class="anchored" data-anchor-id="what-must-compression-preserve">10 · What must compression preserve?</h2>
+<p><strong>When:</strong> After the rank explorer in <a href="notebooks/10-tucker-decomposition.ipynb">Notebook 10</a>. <strong>Time:</strong> 8 minutes.</p>
+<p>The taxi tensor supports two users: one studies the overall daily pattern; the other studies a particular pickup–dropoff route at its busiest hour. Propose a compression choice for each.</p>
+<ul>
+<li>Would the same Tucker mode ranks suit both users?</li>
+<li>Could a small global error hide a large error in the route they care about?</li>
+<li>Which plot or local error would you inspect before accepting the result?</li>
+</ul>
+<p><strong>Share:</strong> Two rank proposals, or one shared proposal with a defense. Use a notebook result and specify one additional check.</p>
+</section>
+<section id="is-this-comparison-fair" class="level2">
+<h2 class="anchored" data-anchor-id="is-this-comparison-fair">11 · Is this comparison fair?</h2>
+<p><strong>When:</strong> After the matched-budget comparison in <a href="notebooks/11-tensor-factorizations.ipynb">Notebook 11</a>. <strong>Time:</strong> 8 minutes.</p>
+<p>A report declares CP better than Tucker because CP had lower error at “rank 3.” Design a comparison that could support a useful recommendation.</p>
+<ul>
+<li>What does rank 3 mean for each model? What was actually stored?</li>
+<li>Which budget should be matched: parameters, bytes, or runtime?</li>
+<li>Besides reconstruction error, what outcome matters for the intended task?</li>
+</ul>
+<p><strong>Share:</strong> A three-measure benchmark plan. Name what you will hold fixed and one uncertainty that would remain after running it.</p>
+</section>
+<section id="bring-a-problem-from-your-field" class="level2">
+<h2 class="anchored" data-anchor-id="bring-a-problem-from-your-field">12 · Bring a problem from your field</h2>
+<p><strong>When:</strong> During the final discussion in <a href="notebooks/12-wrap-up-and-take-homes.ipynb">Notebook 12</a>. <strong>Time:</strong> 5 minutes: 1 to think, 3 to discuss, 1 to share.</p>
+<p>Choose a real problem one group member cares about. Sketch how tensors could help. You do not need the data today.</p>
+<ul>
+<li>What would each axis mean? What would one observation be?</li>
+<li>Which workshop operation would help answer your question?</li>
+<li>What would count as success? What assumption might fail?</li>
+</ul>
+<p><strong>Share:</strong> A labeled shape, a proposed operation, and the first experiment you would run. Each learner adds one thing they still need to understand.</p>
+</section>
+<section id="would-you-trust-the-sharper-image" class="level2">
+<h2 class="anchored" data-anchor-id="would-you-trust-the-sharper-image">13 · Would you trust the sharper image?</h2>
+<p><strong>When:</strong> After deconvolution in <a href="notebooks/13-convolution-and-deconvolution.ipynb">Notebook 13</a>. Follow-up only. <strong>Time:</strong> 8 minutes.</p>
+<p>Two restorations of the notebook image disagree. One looks sharper; the other has lower error against the known original. Decide how you would judge them.</p>
+<ul>
+<li>What kinds of artifact might look like recovered detail?</li>
+<li>How do noise, the assumed blur kernel, and image borders affect the comparison?</li>
+<li>What could you check on a new image with no clean original?</li>
+</ul>
+<p><strong>Share:</strong> An acceptance checklist. Separate checks that need a clean reference from checks available without one. State what neither can prove.</p>
+</section>
+<section id="facilitator-prompts" class="level2">
+<h2 class="anchored" data-anchor-id="facilitator-prompts">Facilitator prompts</h2>
+<p>Use one follow-up when a discussion stalls:</p>
+<ul>
+<li>“What are you assuming?”</li>
+<li>“Show us a case where that choice fails.”</li>
+<li>“Which output supports that claim?”</li>
+<li>“What would make both groups right?”</li>
+<li>“What is the smallest experiment that could settle the disagreement?”</li>
+</ul>
+<p>Listen for axis meaning, evidence, and trade-offs. Several designs may work; check mathematical claims separately. Close with one useful distinction and one open question. Save longer investigations for later.</p>
+
+
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -421,6 +457,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
   toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
   const isCodeAnnotation = (el) => {
     for (const clz of el.classList) {
       if (clz.startsWith('code-annotation-')) {                     

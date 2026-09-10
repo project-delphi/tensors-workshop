@@ -1,6 +1,9 @@
-# Facilitator run sheet
+---
+title: "Facilitator run sheet"
+lang: en
+---
 
-[Español](es/facilitator-guide.md) · [README](README.md)
+[Español](es/facilitator-guide.md) · [Teach this workshop](teach.qmd)
 
 Use the existing **210-minute agenda**. These activities replace practice or
 discussion time; they do not extend the session. Notebook 13 is take-home work.
@@ -70,4 +73,4 @@ Fast finishers design a counterexample before opening another exercise.
 
 Offer the two-minute [feedback form](workshop-feedback.md). Record the workshop
 commit, actual timings, common errors, and one change for the next run.
-Use the [release checklist](RELEASE_CHECKLIST.md) before publishing that change.
+Use the [release checklist](https://github.com/project-delphi/tensors-workshop/blob/main/RELEASE_CHECKLIST.md) before publishing that change.
