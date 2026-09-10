@@ -1,0 +1,124 @@
+---
+title: "Preguntas frecuentes"
+subtitle: "Prepárate, encuentra tu ritmo y sigue aprendiendo"
+description: "Respuestas sobre requisitos del taller, cuadernos, idiomas, solución de problemas y estudio autónomo."
+lang: es
+toc-depth: 2
+---
+
+[English](../faq.qmd)
+
+Empieza aquí si tienes preguntas prácticas sobre el taller. Para estudiar el
+contenido, abre el [manual](tensors_workshop_plan_with_quizzes.md).
+
+## Antes del taller {#before}
+
+### ¿A quién está dirigido este taller? {#audience}
+
+A personas que conocen álgebra lineal básica y quieren usar tensores en
+aprendizaje automático. No necesitas conocimientos previos de teoría de
+tensores: los términos nuevos se presentan a medida que avanzas. Leerás y
+editarás código Python en los cuadernos.
+
+### ¿Qué debo hacer antes de asistir? {#preparation}
+
+Sigue los [requisitos de la página de inicio](index.qmd#requisitos-previos): repasa
+la lectura obligatoria de álgebra lineal, completa los cuadernos de trabajo
+previo y ejecuta el
+[cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb).
+Informa de cualquier fallo de preparación o descarga antes de la sesión para
+poder resolverlo a tiempo.
+
+### ¿Cuánto dura el taller? {#duration}
+
+La agenda en vivo dura **{{< var workshop.minutes >}} minutos**, incluidos los
+cuestionarios y los descansos. La preparación se hace antes; los ejercicios
+opcionales y la profundización en convolución y deconvolución quedan para
+casa. Consulta los tiempos en el
+[horario](tensors_workshop_plan_with_quizzes.md#agenda).
+
+### ¿En qué idioma se imparte? {#languages}
+
+El taller se imparte en inglés y puedes preguntar en inglés o en español.
+El sitio incluye ambos idiomas. Los cuadernos están principalmente en inglés,
+con un breve resumen en español debajo de cada encabezado. El manual en
+español es una traducción automática; el manual en inglés sigue siendo la
+fuente de referencia.
+
+## Ejecutar los cuadernos {#notebooks}
+
+### ¿Necesito instalar algo en mi computador? {#installation}
+
+Puedes trabajar en Google Colab desde los enlaces de la
+[página de cuadernos](notebooks.qmd). Cada cuaderno tiene una sección de
+**Setup** que carga sus datos e instala los paquetes adicionales que necesita.
+Ejecuta Setup antes de los ejercicios. Si prefieres Jupyter en tu computador,
+sigue las [instrucciones de instalación local](notebooks.qmd#ejecutarlos-fuera-de-colab).
+
+### ¿Los cuadernos comparten datos o variables? {#independence}
+
+No. Cada cuaderno es independiente: puedes abrir una sección sin ejecutar
+los cuadernos anteriores. Ejecuta su Setup y las celdas de preparación de la
+actividad elegida. Ejecutar el cuaderno 00 comprueba la preparación y las
+descargas; no carga datos ni variables en el entorno de otro cuaderno.
+
+### ¿Puedo trabajar sin conexión? {#offline}
+
+Algunos cuadernos usan datos incluidos en las bibliotecas de Python; otros
+descargan datos. Para trabajar localmente sin conexión, instala antes los
+paquetes necesarios y consulta la
+[tabla de dependencias y red](notebooks.qmd#qué-necesita-cada-cuaderno)
+del cuaderno que quieras usar. Pruébalo sin conexión antes de depender de él
+durante una sesión.
+
+### ¿Qué hago si falla una celda o una descarga? {#troubleshooting}
+
+Revisa el primer error y confirma que ejecutaste Setup y las celdas de
+preparación necesarias en el entorno actual. Si reiniciaste el entorno,
+ejecútalas de nuevo. Si falla una descarga, comprueba tu conexión y los
+requisitos de red del cuaderno. Durante el taller, comparte con quien lo
+facilita el número del cuaderno, la celda y el mensaje de error en Discord.
+
+Si el código se ejecuta pero el resultado parece incorrecto, compáralo con el
+resultado esperado y usa los [errores resueltos](worked-mistakes.md) para
+practicar la revisión de formas, ejes y supuestos.
+
+## Aprender durante y después de la sesión {#learning}
+
+### ¿Debo terminar todos los ejercicios durante el taller? {#pace}
+
+No. Sigue primero las celdas **Core prep** y la **Core activity** del cuaderno.
+Usa **Predecir → Ejecutar → Explicar → Comprobar**: predice el resultado,
+ejecuta el código, explica lo ocurrido y comprueba tu comprensión. Deja los
+ejercicios opcionales para después si necesitas más tiempo.
+
+### ¿Dónde están las soluciones? {#solutions}
+
+Los ejercicios tienen celdas de solución plegadas en los cuadernos y el
+manual contiene soluciones desarrolladas. Intenta resolver el ejercicio
+antes de abrir la respuesta. Los cuadernos se guardan sin salidas: al ejecutar
+las celdas produces los resultados que comparas con la explicación.
+
+### ¿Puedo estudiar por mi cuenta con estos materiales? {#self-study}
+
+Sí. Empieza por los requisitos y luego lee el
+[manual](tensors_workshop_plan_with_quizzes.md) junto con los
+[cuadernos](notebooks.qmd) correspondientes. Haz pausas para resolver los
+ejercicios y usa las [evaluaciones de entrada y salida](assessments.md) para
+comprobar tu razonamiento. Las [referencias](references.qmd) ofrecen lecturas
+adicionales y la [profundización para casa](notebooks.qmd#para-ir-más-lejos)
+amplía el taller.
+
+### ¿Cómo uso los recursos del complemento? {#companion}
+
+El [complemento](companion.qmd) ofrece resúmenes, audio, vídeos y
+autoevaluaciones para repasar. Su material de NotebookLM se genera
+automáticamente y puede contener errores. Contrasta las explicaciones con el
+manual y los resultados de tus cuadernos.
+
+### ¿Por dónde deben empezar los docentes? {#teaching}
+
+Abre [Enseñar este taller](teach.qmd) para encontrar la guía de facilitación,
+las tareas grupales, las evaluaciones, los errores resueltos y el formulario
+de comentarios. Allí se explica cómo integrar estas actividades en la agenda
+existente.

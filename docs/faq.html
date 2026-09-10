@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Answers about workshop prerequisites, notebooks, languages, troubleshooting, and self-study.">
 
-<title>Entry and exit checks – Tensors for Machine Learning</title>
+<title>Frequently asked questions – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -149,7 +150,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Enseñar</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./faq.html" rel="lang-en"> 
+    <a class="nav-link active" href="./faq.html" rel="lang-en" aria-current="page"> 
 <span class="menu-text">FAQ</span></a>
   </li>  
   <li class="nav-item">
@@ -225,9 +226,10 @@ ul.task-list li input[type="checkbox"] {
         <nav id="TOC" role="doc-toc" class="toc-active">
     <h2 id="toc-title">On this page</h2>
    
-  <ul>
-  <li><a href="#entry-3-minutes" id="toc-entry-3-minutes" class="nav-link active" data-scroll-target="#entry-3-minutes">Entry · 3 minutes</a></li>
-  <li><a href="#exit-5-minutes" id="toc-exit-5-minutes" class="nav-link" data-scroll-target="#exit-5-minutes">Exit · 5 minutes</a></li>
+  <ul class="collapse">
+  <li><a href="#before" id="toc-before" class="nav-link active" data-scroll-target="#before">Before the workshop</a></li>
+  <li><a href="#notebooks" id="toc-notebooks" class="nav-link" data-scroll-target="#notebooks">Running the notebooks</a></li>
+  <li><a href="#learning" id="toc-learning" class="nav-link" data-scroll-target="#learning">Learning during and after the session</a></li>
   </ul>
 </nav>
     </div>
@@ -236,9 +238,15 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Entry and exit checks</h1>
+<h1 class="title">Frequently asked questions</h1>
+<p class="subtitle lead">Get ready, find your pace, and keep learning</p>
 </div>
 
+<div>
+  <div class="description">
+    Answers about workshop prerequisites, notebooks, languages, troubleshooting, and self-study.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -253,68 +261,71 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><a href="./es/assessments.html">Español</a> · <a href="./facilitator-guide.html">Facilitator guide</a> · <a href="./teach.html">Teach this workshop</a></p>
-<p>Answer alone. Short sentences are enough. No code needed. The learner prompts are also in Notebooks 00 and 12.</p>
-<section id="entry-3-minutes" class="level2">
-<h2 class="anchored" data-anchor-id="entry-3-minutes">Entry · 3 minutes</h2>
-<p><code>X.shape == (20, 8, 8)</code>.</p>
-<ol type="1">
-<li>Give two possible meanings for its axes.</li>
-<li>Predict <code>X[:, 3, 4].shape</code>. Name the remaining axis in each interpretation.</li>
-<li>What evidence would distinguish independent images from video frames?</li>
-</ol>
+<p><a href="./es/faq.html">Español</a></p>
+<p>Start here for practical questions about the workshop. For the lesson itself, open the <a href="./tensors_workshop_plan_with_quizzes.html">handbook</a>.</p>
+<section id="before" class="level2">
+<h2 class="anchored" data-anchor-id="before">Before the workshop</h2>
+<section id="audience" class="level3">
+<h3 class="anchored" data-anchor-id="audience">Who is this workshop for?</h3>
+<p>People who know basic linear algebra and want to use tensors in machine learning. You do not need previous tensor theory: new terms are introduced as you go. You will read and edit Python code in the notebooks.</p>
 </section>
-<section id="exit-5-minutes" class="level2">
-<h2 class="anchored" data-anchor-id="exit-5-minutes">Exit · 5 minutes</h2>
-<p><code>X.shape == (6, 4, 3, 8, 8)</code>: plants, visits, channels, rows, columns.</p>
-<ol type="1">
-<li>Predict <code>X[:, -1, 1].shape</code>. Name its axes.</li>
-<li>Predict <code>X.mean(axis=1).shape</code>. Name its axes.</li>
-<li>What could averaging visits hide? Give one test for that loss.</li>
-<li>Compare with your entry answer. Name one corrected idea and one open question.</li>
-</ol>
-<details>
-<summary>
-Facilitator key and rubric · reveal after collection
-</summary>
-<p>Entry: <code>(images, rows, columns)</code> or <code>(time, rows, columns)</code> both fit. The selection has shape <code>(20,)</code>: one pixel across images or time. Acquisition records, timestamps and sample IDs establish the meaning; shape alone cannot.</p>
-<p>Exit: selection <code>(6, 8, 8)</code> means plants, rows, columns: last visit, channel 1. The mean has shape <code>(6, 3, 8, 8)</code>: plants, channels, rows, columns. Averaging can hide a brief disease signal or growth trend. Compare the visit sequence with its average, using a known transient or a downstream detection test. Other concrete, defensible tests are valid.</p>
-<p>Score each dimension <strong>0</strong> (missing/wrong), <strong>1</strong> (partly right), or <strong>2</strong> (correct and explained). Score entry and exit separately, out of 6:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Dimension</th>
-<th>Entry evidence</th>
-<th>Exit evidence</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Axis meaning</td>
-<td>Both interpretations, all axes named</td>
-<td>Remaining axes named in both results</td>
-</tr>
-<tr class="even">
-<td>Shape reasoning</td>
-<td>Correct selection shape and why</td>
-<td>Both output shapes and why</td>
-</tr>
-<tr class="odd">
-<td>Evidence</td>
-<td>Metadata that establishes batch versus time</td>
-<td>A specific loss and a test that can detect it</td>
-</tr>
-</tbody>
-</table>
-<p>If axis or shape reasoning scores 0–1, revisit the slice in Notebook 01. If evidence scores 0–1, use group task 02. If all three score 2, assign a take-home chosen by interest. Reflection is unscored. Do not treat score differences as a causal measure of workshop impact.</p>
-</details>
+<section id="preparation" class="level3">
+<h3 class="anchored" data-anchor-id="preparation">What should I do beforehand?</h3>
+<p>Follow the <a href="./index.html#prerequisites">prerequisites on the homepage</a>: review the required linear algebra reading, complete the pre-work notebooks, and run <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">notebook 00</a>. Report setup or download failures before the session so they can be addressed early.</p>
+</section>
+<section id="duration" class="level3">
+<h3 class="anchored" data-anchor-id="duration">How long does the workshop take?</h3>
+<p>The live agenda lasts <strong>210 minutes</strong>, including quizzes and breaks. Preparation happens beforehand; optional exercises and the convolution and deconvolution deep dive are take-home material. See the <a href="./tensors_workshop_plan_with_quizzes.html#schedule">schedule</a> for the session timings.</p>
+</section>
+<section id="languages" class="level3">
+<h3 class="anchored" data-anchor-id="languages">Which language is used?</h3>
+<p>The workshop is taught in English, with questions welcome in English or Spanish. The site includes both languages. Notebooks are primarily in English, with a short Spanish summary under each heading. The Spanish handbook is a machine translation; the English handbook remains the source of truth.</p>
+</section>
+</section>
+<section id="notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="notebooks">Running the notebooks</h2>
+<section id="installation" class="level3">
+<h3 class="anchored" data-anchor-id="installation">Do I need to install anything on my computer?</h3>
+<p>You can work in Google Colab through the links on the <a href="./notebooks.html">notebooks page</a>. Each notebook has a <strong>Setup</strong> section that loads its own data and installs any additional packages it needs. Run Setup before the exercises. For a local Jupyter environment, use the <a href="./notebooks.html#running-them-somewhere-other-than-colab">local setup instructions</a>.</p>
+</section>
+<section id="independence" class="level3">
+<h3 class="anchored" data-anchor-id="independence">Do the notebooks share data or variables?</h3>
+<p>No.&nbsp;Each notebook is self-contained, so you can open a section without running the earlier notebooks. Run that notebook’s Setup and the preparation cells for your chosen activity. Running notebook 00 checks your setup and downloads; it does not populate another notebook’s runtime.</p>
+</section>
+<section id="offline" class="level3">
+<h3 class="anchored" data-anchor-id="offline">Can I work offline?</h3>
+<p>Some notebooks use datasets bundled with the Python libraries; others download data. For local offline work, install the required packages in advance and check the <a href="./notebooks.html#what-each-notebook-needs">dependency and network table</a> for the notebook you want to use. Test it without a connection before relying on it during a session.</p>
+</section>
+<section id="troubleshooting" class="level3">
+<h3 class="anchored" data-anchor-id="troubleshooting">What if a cell fails or a download does not work?</h3>
+<p>Check the first error and confirm that Setup and the required preparation cells have run in the current runtime. If you restarted the runtime, run them again. For a download failure, check your connection and the notebook’s network requirements. During the workshop, share the notebook number, the cell, and the error message with the facilitator in Discord.</p>
+<p>If code runs but a result seems wrong, compare it with the notebook’s expected result and use the <a href="./worked-mistakes.html">worked mistakes</a> to practice checking shapes, axes, and assumptions.</p>
+</section>
+</section>
+<section id="learning" class="level2">
+<h2 class="anchored" data-anchor-id="learning">Learning during and after the session</h2>
+<section id="pace" class="level3">
+<h3 class="anchored" data-anchor-id="pace">Do I need to finish every exercise during the workshop?</h3>
+<p>No.&nbsp;Follow the notebook’s <strong>Core prep</strong> cells and <strong>Core activity</strong> first. Use <strong>Predict → Run → Explain → Check</strong>: predict the result, run the code, explain what happened, and check your understanding. Save optional exercises for later if you need more time.</p>
+</section>
+<section id="solutions" class="level3">
+<h3 class="anchored" data-anchor-id="solutions">Where are the solutions?</h3>
+<p>Exercises have folded solution cells in the notebooks, and the handbook contains worked solutions. Try the exercise before opening the answer. The notebooks are saved without outputs, so running the cells produces the results you compare with the explanation.</p>
+</section>
+<section id="self-study" class="level3">
+<h3 class="anchored" data-anchor-id="self-study">Can I use the material for self-study?</h3>
+<p>Yes. Start with the prerequisites, then read the <a href="./tensors_workshop_plan_with_quizzes.html">handbook</a> alongside the corresponding <a href="./notebooks.html">notebooks</a>. Pause to solve exercises and use the <a href="./assessments.html">entry and exit checks</a> to assess your reasoning. The <a href="./references.html">references</a> provide further reading, and the <a href="./notebooks.html#going-further">take-home deep dive</a> extends the workshop.</p>
+</section>
+<section id="companion" class="level3">
+<h3 class="anchored" data-anchor-id="companion">How should I use the companion resources?</h3>
+<p>The <a href="./companion.html">companion</a> offers summaries, audio, videos, and self-checks for review. Its NotebookLM material is machine-generated and may contain errors. Check explanations against the handbook and your notebook results.</p>
+</section>
+<section id="teaching" class="level3">
+<h3 class="anchored" data-anchor-id="teaching">Where should instructors start?</h3>
+<p>Open <a href="./teach.html">Teach this workshop</a> for the facilitator guide, group tasks, assessments, worked mistakes, and feedback form. It explains how to fit those activities into the existing agenda.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

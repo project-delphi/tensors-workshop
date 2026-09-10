@@ -11,6 +11,7 @@ project:
     - references.qmd
     - companion.qmd
     - teach.qmd
+    - faq.qmd
     - facilitator-guide.md
     - assessments.md
     - worked-mistakes.md
@@ -21,6 +22,7 @@ project:
     - es/references.qmd
     - es/companion.qmd
     - es/teach.qmd
+    - es/faq.qmd
     - es/facilitator-guide.md
     - es/assessments.md
     - es/worked-mistakes.md
@@ -114,6 +116,12 @@ website:
       - href: es/teach.qmd
         text: Enseñar
         rel: lang-es
+      - href: faq.qmd
+        text: FAQ
+        rel: lang-en
+      - href: es/faq.qmd
+        text: FAQ
+        rel: lang-es
       # Visible only on Kahoot, the one English-only page left -- see
       # `custom.scss`. It is deliberately the whole Spanish side rather than a
       # single link home, so a Spanish reader who lands there reaches
@@ -134,6 +142,8 @@ website:
             text: Complemento
           - href: es/teach.qmd
             text: Enseñar este taller
+          - href: es/faq.qmd
+            text: Preguntas frecuentes
     right:
       # Both always visible -- this is the control that switches the rest of
       # the navbar. `lang-switch-*` marks them so the current language can be

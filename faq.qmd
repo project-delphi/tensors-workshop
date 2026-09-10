@@ -1,0 +1,114 @@
+---
+title: "Frequently asked questions"
+subtitle: "Get ready, find your pace, and keep learning"
+description: "Answers about workshop prerequisites, notebooks, languages, troubleshooting, and self-study."
+lang: en
+toc-depth: 2
+---
+
+[Español](es/faq.qmd)
+
+Start here for practical questions about the workshop. For the lesson itself,
+open the [handbook](tensors_workshop_plan_with_quizzes.md).
+
+## Before the workshop {#before}
+
+### Who is this workshop for? {#audience}
+
+People who know basic linear algebra and want to use tensors in machine
+learning. You do not need previous tensor theory: new terms are introduced
+as you go. You will read and edit Python code in the notebooks.
+
+### What should I do beforehand? {#preparation}
+
+Follow the [prerequisites on the homepage](index.qmd#prerequisites): review the
+required linear algebra reading, complete the pre-work notebooks, and run
+[notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb).
+Report setup or download failures before the session so they can be addressed early.
+
+### How long does the workshop take? {#duration}
+
+The live agenda lasts **{{< var workshop.minutes >}} minutes**, including
+quizzes and breaks. Preparation happens beforehand; optional exercises and
+the convolution and deconvolution deep dive are take-home material. See the
+[schedule](tensors_workshop_plan_with_quizzes.md#schedule) for the session timings.
+
+### Which language is used? {#languages}
+
+The workshop is taught in English, with questions welcome in English or
+Spanish. The site includes both languages. Notebooks are primarily in English,
+with a short Spanish summary under each heading. The Spanish handbook is a
+machine translation; the English handbook remains the source of truth.
+
+## Running the notebooks {#notebooks}
+
+### Do I need to install anything on my computer? {#installation}
+
+You can work in Google Colab through the links on the [notebooks page](notebooks.qmd).
+Each notebook has a **Setup** section that loads its own data and installs
+any additional packages it needs. Run Setup before the exercises.
+For a local Jupyter environment, use the [local setup instructions](notebooks.qmd#running-them-somewhere-other-than-colab).
+
+### Do the notebooks share data or variables? {#independence}
+
+No. Each notebook is self-contained, so you can open a section without running
+the earlier notebooks. Run that notebook's Setup and the preparation cells
+for your chosen activity. Running notebook 00 checks your setup and downloads;
+it does not populate another notebook's runtime.
+
+### Can I work offline? {#offline}
+
+Some notebooks use datasets bundled with the Python libraries; others download
+data. For local offline work, install the required packages in advance and
+check the [dependency and network table](notebooks.qmd#what-each-notebook-needs)
+for the notebook you want to use. Test it without a connection before relying
+on it during a session.
+
+### What if a cell fails or a download does not work? {#troubleshooting}
+
+Check the first error and confirm that Setup and the required preparation
+cells have run in the current runtime. If you restarted the runtime, run them
+again. For a download failure, check your connection and the notebook's
+network requirements. During the workshop, share the notebook number, the
+cell, and the error message with the facilitator in Discord.
+
+If code runs but a result seems wrong, compare it with the notebook's expected
+result and use the [worked mistakes](worked-mistakes.md) to practice checking
+shapes, axes, and assumptions.
+
+## Learning during and after the session {#learning}
+
+### Do I need to finish every exercise during the workshop? {#pace}
+
+No. Follow the notebook's **Core prep** cells and **Core activity** first.
+Use **Predict → Run → Explain → Check**: predict the result, run the code,
+explain what happened, and check your understanding. Save optional exercises
+for later if you need more time.
+
+### Where are the solutions? {#solutions}
+
+Exercises have folded solution cells in the notebooks, and the handbook
+contains worked solutions. Try the exercise before opening the answer.
+The notebooks are saved without outputs, so running the cells produces the
+results you compare with the explanation.
+
+### Can I use the material for self-study? {#self-study}
+
+Yes. Start with the prerequisites, then read the
+[handbook](tensors_workshop_plan_with_quizzes.md) alongside the corresponding
+[notebooks](notebooks.qmd). Pause to solve exercises and use the
+[entry and exit checks](assessments.md) to assess your reasoning.
+The [references](references.qmd) provide further reading, and the
+[take-home deep dive](notebooks.qmd#going-further) extends the workshop.
+
+### How should I use the companion resources? {#companion}
+
+The [companion](companion.qmd) offers summaries, audio, videos, and self-checks
+for review. Its NotebookLM material is machine-generated and may contain
+errors. Check explanations against the handbook and your notebook results.
+
+### Where should instructors start? {#teaching}
+
+Open [Teach this workshop](teach.qmd) for the facilitator guide, group tasks,
+assessments, worked mistakes, and feedback form. It explains how to fit those
+activities into the existing agenda.
