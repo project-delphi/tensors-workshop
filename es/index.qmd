@@ -6,17 +6,13 @@ description: "Domina los tensores en 210 minutos con datos reales y ejercicios p
 toc: false
 anchor-sections: false
 page-layout: full
-css: ../homepage.css
+theme:
+  - cosmo
+  - ../custom.scss
+  - ../homepage.scss
 ---
 
 ::::: {.workshop-landing}
-
-```{=html}
-<nav class="landing-language-switch" aria-label="Idioma">
-  <a href="../index.html" lang="en" hreflang="en"><span aria-hidden="true">🇬🇧</span> English</a>
-  <a href="./index.html" lang="es" hreflang="es" aria-current="page"><span aria-hidden="true">🇪🇸</span> Español</a>
-</nav>
-```
 
 :::: {.workshop-hero}
 ::: {.hero-copy}
@@ -35,7 +31,7 @@ Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra l
 
 ::: {.hero-visual}
 ```{=html}
-<svg viewBox="0 0 480 380" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
+<svg width="480" height="380" style="max-width: 100%; height: auto;" viewBox="0 0 480 380" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
   <title id="tensor-title">De un número a una operación de red neuronal</title>
   <desc id="tensor-desc">Un escalar pasa a vector, luego a matriz y a tensor tridimensional. Una capa de red neuronal usa operaciones tensoriales para transformar entradas en salidas.</desc>
   <defs>
@@ -91,7 +87,7 @@ Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra l
 </section>
 <div class="credibility-strip">
   <div class="instructor-credit"><p><span>Taller de</span><strong><a href="{{< var workshop.authors.ravi.url >}}">{{< var workshop.authors.ravi.name >}}</a> y <a href="{{< var workshop.authors.sebastian.url >}}">{{< var workshop.authors.sebastian.name >}}</a></strong></p></div>
-  <a href="{{< var repo.url >}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
+  <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Discusión en directo</strong><span>Grupos pequeños en Discord</span></p></div>
 </div>
 <section class="learning-journey" aria-labelledby="journey-title">
@@ -99,12 +95,12 @@ Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra l
   <h2 id="journey-title">Tu ruta de los arrays al ML.</h2>
   <p class="journey-intro">Seis ideas conectadas. Programa. Visualiza. Comprende.</p>
   <ol class="curriculum-track" aria-label="Ruta de aprendizaje">
-    <li><span class="stage-number">01</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Fundamentos</h3><p>Lee formas y ejes.</p></li>
-    <li><span class="stage-number">02</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Operaciones tensoriales</h3><p>Transforma. Expande. Contrae.</p></li>
-    <li><span class="stage-number">03</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Álgebra lineal</h3><p>Resuelve sistemas. Busca estructura.</p></li>
-    <li><span class="stage-number">04</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convoluciones</h3><p>De píxeles a características.</p><span class="stage-extra">Para casa</span></li>
-    <li><span class="stage-number">05</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizaciones</h3><p>Comprime. Conserva lo esencial.</p></li>
-    <li><span class="stage-number">06</span><svg viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>Aplicaciones de ML</h3><p>Conecta las matemáticas con los modelos.</p></li>
+    <li><span class="stage-number">01</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Fundamentos</h3><p>Lee formas y ejes.</p></li>
+    <li><span class="stage-number">02</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Operaciones tensoriales</h3><p>Transforma. Expande. Contrae.</p></li>
+    <li><span class="stage-number">03</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Álgebra lineal</h3><p>Resuelve sistemas. Busca estructura.</p></li>
+    <li><span class="stage-number">04</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convoluciones</h3><p>De píxeles a características.</p><span class="stage-extra">Para casa</span></li>
+    <li><span class="stage-number">05</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizaciones</h3><p>Comprime. Conserva lo esencial.</p></li>
+    <li><span class="stage-number">06</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>Aplicaciones de ML</h3><p>Conecta las matemáticas con los modelos.</p></li>
   </ol>
   <a class="journey-link" href="./notebooks.html">Explora los cuadernos <span aria-hidden="true">→</span></a>
 </section>
