@@ -164,7 +164,7 @@ Core papers, textbook chapters, and repository source code.
 ::: {.prerequisite-step}
 ### Step 1: Core Concepts [Required]{.step-badge}
 
-Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) or complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
+Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
 :::
 
 ::: {.prerequisite-step}

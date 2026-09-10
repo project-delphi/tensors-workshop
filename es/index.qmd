@@ -164,7 +164,7 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 ::: {.prerequisite-step}
 ### Paso 1: Conceptos básicos [Obligatorio]{.step-badge}
 
-Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) o completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}).
+Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}).
 :::
 
 ::: {.prerequisite-step}
