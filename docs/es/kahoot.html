@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>Comprobaciones inicial y final – Tensors for Machine Learning</title>
+<title>Kahoot – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -117,7 +117,7 @@ ul.task-list li input[type="checkbox"] {
 <span class="menu-text">Kahoot</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../es/kahoot.html" rel="lang-es"> 
+    <a class="nav-link active" href="../es/kahoot.html" rel="lang-es" aria-current="page"> 
 <span class="menu-text">Kahoot</span></a>
   </li>  
   <li class="nav-item">
@@ -191,8 +191,11 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">En esta página</h2>
    
   <ul>
-  <li><a href="#entrada-3-minutos" id="toc-entrada-3-minutos" class="nav-link active" data-scroll-target="#entrada-3-minutos">Entrada · 3 minutos</a></li>
-  <li><a href="#salida-5-minutos" id="toc-salida-5-minutos" class="nav-link" data-scroll-target="#salida-5-minutos">Salida · 5 minutos</a></li>
+  <li><a href="#quiz-1" id="toc-quiz-1" class="nav-link active" data-scroll-target="#quiz-1">Cuestionario 1 — Vocabulario de tensores y formas</a></li>
+  <li><a href="#quiz-2" id="toc-quiz-2" class="nav-link" data-scroll-target="#quiz-2">Cuestionario 2 — Einsum, distancia y la pseudoinversa</a></li>
+  <li><a href="#quiz-3" id="toc-quiz-3" class="nav-link" data-scroll-target="#quiz-3">Cuestionario 3 — Convolución y descomposiciones tensoriales</a></li>
+  <li><a href="#cómo-lanzarlos" id="toc-cómo-lanzarlos" class="nav-link" data-scroll-target="#cómo-lanzarlos">Cómo lanzarlos</a></li>
+  <li><a href="#si-te-falta-tiempo" id="toc-si-te-falta-tiempo" class="nav-link" data-scroll-target="#si-te-falta-tiempo">Si te falta tiempo</a></li>
   </ul>
 </nav>
     </div>
@@ -201,7 +204,8 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Comprobaciones inicial y final</h1>
+<h1 class="title">Kahoot</h1>
+<p class="subtitle lead">Tres controles de 6 preguntas, y cómo lanzarlos</p>
 </div>
 
 
@@ -218,66 +222,150 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><a href="../assessments.html">English</a> · <a href="../es/facilitator-guide.html">Guía de facilitación</a> · <a href="../es/teach.html">Enseñar este taller</a></p>
-<p>Responde individualmente, con frases cortas. No necesitas código. Las preguntas también están en los cuadernos 00 y 12.</p>
-<section id="entrada-3-minutos" class="level2">
-<h2 class="anchored" data-anchor-id="entrada-3-minutos">Entrada · 3 minutos</h2>
-<p><code>X.shape == (20, 8, 8)</code>.</p>
-<ol type="1">
-<li>Da dos interpretaciones de sus ejes.</li>
-<li>Predice <code>X[:, 3, 4].shape</code>. Nombra el eje restante en cada interpretación.</li>
-<li>¿Qué evidencia distinguiría imágenes independientes de fotogramas de video?</li>
-</ol>
-</section>
-<section id="salida-5-minutos" class="level2">
-<h2 class="anchored" data-anchor-id="salida-5-minutos">Salida · 5 minutos</h2>
-<p><code>X.shape == (6, 4, 3, 8, 8)</code>: plantas, visitas, canales, filas, columnas.</p>
-<ol type="1">
-<li>Predice <code>X[:, -1, 1].shape</code>. Nombra sus ejes.</li>
-<li>Predice <code>X.mean(axis=1).shape</code>. Nombra sus ejes.</li>
-<li>¿Qué podría ocultar promediar visitas? Propón una prueba de esa pérdida.</li>
-<li>Compara con tu respuesta inicial. Nombra una idea corregida y una pregunta pendiente.</li>
-</ol>
-<details>
-<summary>
-Clave y rúbrica · revelar después de recoger respuestas
-</summary>
-<p>Entrada: <code>(imágenes, filas, columnas)</code> o <code>(tiempo, filas, columnas)</code> son válidas. La selección tiene forma <code>(20,)</code>: un píxel a través de imágenes o del tiempo. Los registros de adquisición, marcas de tiempo e identificadores establecen el significado; la forma por sí sola no basta.</p>
-<p>Salida: la selección tiene forma <code>(6, 8, 8)</code>: plantas, filas, columnas; última visita y canal 1. La media tiene forma <code>(6, 3, 8, 8)</code>: plantas, canales, filas, columnas. Promediar puede ocultar una señal breve de enfermedad o una tendencia. Compara la secuencia con su promedio usando un evento conocido o una prueba de detección. También valen otras pruebas concretas y justificadas.</p>
-<p>Puntúa cada dimensión: <strong>0</strong> (ausente/incorrecta), <strong>1</strong> (parcial) o <strong>2</strong> (correcta y explicada). Puntúa entrada y salida por separado, sobre 6:</p>
+<p><a href="../kahoot.html">English</a></p>
+<p>Tres cuestionarios marcan las tres costuras naturales del taller: después del trabajo de formas y vocabulario, después del tramo de einsum y pseudoinversa, y después de las descomposiciones.</p>
+<p>Cada uno se lanza justo después de los bloques que aportan su contenido, mientras el material sigue fresco. Cada uno también se lanza <strong>antes</strong> del siguiente cambio de contexto: una pausa o una Parte nueva. Así el cuestionario refuerza el trabajo en lugar de interrumpirlo.</p>
+<div class="callout callout-style-simple callout-note">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>kahoot.it y las preguntas del <code>.xlsx</code> están en inglés.</strong> Esta página explica cómo lanzarlos. El alumnado puede preguntar en español; las opciones que verán en pantalla siguen en inglés.</p>
+</div>
+</div>
+</div>
+<div class="kahoot-note">
+<p><strong>Quien imparte: importa cada hoja de cálculo en kahoot.it <em>antes</em> de la sesión.</strong> Create → Add question → Import → Import spreadsheet. Hacerlo en directo cuesta varios minutos que no tienes.</p>
+<p>Los tres <strong>enlaces de entrada de abajo siguen apuntando a <code>kahoot.it</code></strong>. Eso funciona: el alumnado introduce ahí el PIN de tu pantalla. Cuando cada cuestionario exista, pega su URL de entrada en el campo <code>url:</code> de <code>_variables.yml</code> y vuelve a renderizar. Cada enlace de este sitio, en ambas barajas y en los catorce cuadernos, se lee de ese archivo.</p>
+</div>
+<section id="quiz-1" class="level2">
+<h2 class="anchored" data-anchor-id="quiz-1">Cuestionario 1 — Vocabulario de tensores y formas</h2>
+<p><em>Tensor Vocabulary &amp; Shapes</em></p>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
+<col style="width: 20%">
+<col style="width: 80%">
 </colgroup>
-<thead>
-<tr class="header">
-<th>Dimensión</th>
-<th>Evidencia de entrada</th>
-<th>Evidencia de salida</th>
-</tr>
-</thead>
 <tbody>
 <tr class="odd">
-<td>Significado</td>
-<td>Dos interpretaciones con todos los ejes</td>
-<td>Ejes restantes de ambos resultados</td>
+<td><strong>Se lanza después de</strong></td>
+<td>Sección 04 — Reshape y transposición, antes de la primera pausa</td>
 </tr>
 <tr class="even">
-<td>Forma</td>
-<td>Forma de la selección y explicación</td>
-<td>Ambas formas de salida y explicación</td>
+<td><strong>Cubre</strong></td>
+<td>Secciones 01, 03, 04</td>
 </tr>
 <tr class="odd">
-<td>Evidencia</td>
-<td>Metadatos que distinguen lote de tiempo</td>
-<td>Una pérdida concreta y una prueba que la detecte</td>
+<td><strong>Duración</strong></td>
+<td>6 preguntas, ~5 min con el podio incluido</td>
+</tr>
+<tr class="even">
+<td><strong>Archivo para importar</strong></td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/../kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx"><code>../kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx</code></a></td>
+</tr>
+<tr class="odd">
+<td><strong>Enlace de entrada</strong></td>
+<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
 </tr>
 </tbody>
 </table>
-<p>Si significado o forma recibe 0–1, repasa el corte del cuaderno 01. Si evidencia recibe 0–1, usa la actividad grupal 02. Si las tres reciben 2, asigna una tarea según sus intereses. La reflexión no se puntúa. La diferencia de puntuaciones no mide el impacto causal del taller.</p>
-</details>
+<p>La sala acaba de usar <em>orden</em>, <em>eje</em>, <em>forma</em>, <em>corte</em>, <em>fibra</em>, <em>varianza</em>, <em>reshape</em> y <em>transposición</em>. Es el momento en que esas palabras están más frescas. Dos preguntas vuelven a los ejercicios: la de NaN es la de los píxeles de varianza cero de la sección 03, y la última es la de reshape frente a transposición de la sección 04.</p>
+</section>
+<section id="quiz-2" class="level2">
+<h2 class="anchored" data-anchor-id="quiz-2">Cuestionario 2 — Einsum, distancia y la pseudoinversa</h2>
+<p><em>Einsum, Distance &amp; the Pseudoinverse</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Se lanza después de</strong></td>
+<td>Sección 07 — Inversas y la pseudoinversa, antes de la demo de recursión</td>
+</tr>
+<tr class="even">
+<td><strong>Cubre</strong></td>
+<td>Secciones 06, 07</td>
+</tr>
+<tr class="odd">
+<td><strong>Duración</strong></td>
+<td>6 preguntas, ~5 min</td>
+</tr>
+<tr class="even">
+<td><strong>Archivo para importar</strong></td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/../kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx"><code>../kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx</code></a></td>
+</tr>
+<tr class="odd">
+<td><strong>Enlace de entrada</strong></td>
+<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
+</tr>
+</tbody>
+</table>
+<div class="callout callout-style-simple callout-warning">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p><strong>Dos preguntas van por delante del material.</strong> El cuestionario 2 pregunta por la distancia euclídea y la similitud del coseno, y el manual no define ninguna de las dos directamente. El puente es el TODO 4 de la sección 06, la matriz de similitud 1797×1797 entre dígitos, construida con un solo <code>einsum</code>. Di las dos palabras en voz alta durante ese ejercicio. Si no, las dos últimas preguntas caen en frío.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="quiz-3" class="level2">
+<h2 class="anchored" data-anchor-id="quiz-3">Cuestionario 3 — Convolución y descomposiciones tensoriales</h2>
+<p><em>Convolution &amp; Tensor Decompositions</em></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 80%">
+</colgroup>
+<tbody>
+<tr class="odd">
+<td><strong>Se lanza después de</strong></td>
+<td>Sección 10 — Descomposición de Tucker, justo antes del cierre</td>
+</tr>
+<tr class="even">
+<td><strong>Cubre</strong></td>
+<td>Secciones 09, 10</td>
+</tr>
+<tr class="odd">
+<td><strong>Duración</strong></td>
+<td>6 preguntas, ~5 min</td>
+</tr>
+<tr class="even">
+<td><strong>Archivo para importar</strong></td>
+<td><a href="https://github.com/project-delphi/tensors-workshop/blob/main/../kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"><code>../kahoot/kahoot_quiz_3_convolution_decompositions.xlsx</code></a></td>
+</tr>
+<tr class="odd">
+<td><strong>Enlace de entrada</strong></td>
+<td><a href="https://kahoot.it/">https://kahoot.it/</a></td>
+</tr>
+</tbody>
+</table>
+<p>Lánzalo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Su última pregunta nombra la hora 18, así que <strong>tiene</strong> que ir después del TODO 6 de la sección 10. Lanzarlo antes regala la respuesta. Sirve además de ensayo en vivo del propio repaso del cierre, así que pasa del podio al cierre sin interrupción.</p>
+</section>
+<section id="cómo-lanzarlos" class="level2">
+<h2 class="anchored" data-anchor-id="cómo-lanzarlos">Cómo lanzarlos</h2>
+<ul>
+<li><strong>Presupuesta 5 minutos cada uno, con el podio incluido.</strong> A los grupos les suele apetecer ver la clasificación, y está bien. Es la recompensa.</li>
+<li><strong>No importes en directo.</strong> Ver la nota al comienzo de esta página.</li>
+<li><strong>Estos suman 15 minutos</strong> y llevan el taller de 180 a 210.</li>
+</ul>
+</section>
+<section id="si-te-falta-tiempo" class="level2">
+<h2 class="anchored" data-anchor-id="si-te-falta-tiempo">Si te falta tiempo</h2>
+<p>El orden de recorte del manual, en este orden:</p>
+<ol type="1">
+<li><strong>Cuestionario 2</strong> — el menos novedoso de los tres; la pseudoinversa y la distancia se vuelven a cubrir narrativamente en el cierre.</li>
+<li>El TODO 4 de la sección 09 (deconvolución verdadera: lo más exigente técnicamente).</li>
+<li>El fragmento de RNN de la sección 08.</li>
+<li>La pregunta 5 de cualquiera de los bloques de grupo.</li>
+<li><strong>Cuestionario 1.</strong></li>
+</ol>
+<p><strong>No recortes nunca</strong> las <em>Tres operaciones que importan</em> de la sección 01, la sección 10 ni el <strong>cuestionario 3</strong>. El cuestionario 3 es la forma más barata de comprobar si Tucker y CP han calado, y solo puedes comprobarlo antes de que la gente se vaya.</p>
 
 
 </section>

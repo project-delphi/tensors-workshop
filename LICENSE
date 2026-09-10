@@ -1,0 +1,73 @@
+This workshop uses two licenses, the same split The Carpentries use:
+code is MIT, teaching text is CC BY 4.0. Third-party data keeps its own terms.
+
+Copyright (c) 2026 Ravi Kalia and Sebastian Laverde Chunza
+
+
+Instructional material
+----------------------
+
+The handbooks, Quarto pages, slide decks, notebooks (markdown cells), Kahoot
+spreadsheets, teaching kit, generated tables, and original figures and slide
+art are licensed under Creative Commons Attribution 4.0 International
+(CC BY 4.0):
+
+    https://creativecommons.org/licenses/by/4.0/
+
+You are free to copy, redistribute, remix, transform, and build upon the
+material for any purpose, including commercially, provided you give appropriate
+credit, provide a link to the license, and indicate if changes were made. See
+the legal code for the full terms:
+
+    https://creativecommons.org/licenses/by/4.0/legalcode
+
+Suggested attribution:
+
+    Tensors for Machine Learning by Ravi Kalia and Sebastian Laverde Chunza,
+    CC BY 4.0. https://github.com/project-delphi/tensors-workshop
+
+
+Software
+--------
+
+The MIT License applies to `scripts/`, `tests/`, `.githooks/`, `.claude/`,
+GitHub workflows and issue templates, and the code cells of every notebook.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+What this does not cover
+------------------------
+
+Photographs, the storm clip, and the voice recording used as data are CC0.
+Credit is recorded in `scripts/gen_thumbnails.py` and in the slide speaker
+notes. Dataset arrays shipped with scikit-learn and scikit-image keep those
+projects' terms.
+
+The NotebookLM companion (video, audio, infographics, quiz, flashcards, mind
+map) is generated from this workshop's sources. The authors license their
+contribution under CC BY 4.0 to the extent they can; Google's terms for
+NotebookLM also apply.
+
+"Kahoot" is a trademark of Kahoot! ASA. The quiz spreadsheets in `kahoot/`
+are original workshop questions and follow the instructional-material license
+above.
+
+Cited works — the Deep Learning book, papers, `tensorly` docs, and the ML
+blog posts — are not part of this repository and are not licensed here.

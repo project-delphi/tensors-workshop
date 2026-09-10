@@ -77,28 +77,6 @@ html[lang|="es"] .navbar-nav {
   .nav-link[rel="lang-en"] { display: none; }
 }
 
-// Kahoot exists in English only, so it is `lang: en` and the rules above leave
-// a Spanish reader who opens it with nothing Spanish in the navbar at all —
-// the ES chip goes to the Spanish homepage and no further, so `Complemento`,
-// one click away a moment earlier, is now two. The `Español` dropdown is the
-// Spanish affordance that page needs, and it appears on exactly it, with no
-// per-page markup: Quarto marks the current page's own item `.active`, and it
-// is the only page where the active item carries no language of its own.
-//
-// Showing the whole Spanish half there instead is what this replaced. Eleven
-// flat items do not fit a laptop: at 1100px the brand and the EN/ES chips are
-// pushed off the right-hand edge, which costs a Spanish reader the very
-// switch they need. One dropdown fits, and it lands them on the page they
-// wanted rather than on the homepage.
-//
-// `:has(> .dropdown-menu)` is what picks the dropdown out — it is the only
-// one in this navbar, and unlike a `rel` it survives Quarto owning the markup
-// of a `menu:` item.
-// Resource pages have no active navbar item. Keep the extra language menu
-// hidden there too: their own EN/ES links lead to the matching resource.
-.navbar:not(:has(.nav-link.active:not([rel])))
-  .nav-item:has(> .dropdown-menu) { display: none; }
-
 // The EN/ES pair itself, which is the control for all of the above and so is
 // the one thing that shows in both languages. Small caps-ish spacing sets it
 // apart from the section links, and the language you are reading is marked by

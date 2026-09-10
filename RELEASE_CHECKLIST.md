@@ -8,7 +8,7 @@
 - [ ] Check folding, spacing and headings in Colab; test the top language switch.
 - [ ] Run the checks below. Review and commit generated changes, including `docs/`.
 - [ ] Add a brief learner-facing note to [CHANGELOG.md](CHANGELOG.md).
-- [ ] Open a PR, wait for CI, then merge with approval. Verify the published site.
+- [ ] Open a PR, wait for the `render` check, then merge. Direct pushes to `main` are rejected. Verify the published site.
 - [ ] Record the commit/tag on the [feedback form](workshop-feedback.md).
 
 ```bash

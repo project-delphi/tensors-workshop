@@ -19,6 +19,7 @@ project:
     - workshop-feedback.md
     - es/index.qmd
     - es/notebooks.qmd
+    - es/kahoot.qmd
     - es/references.qmd
     - es/companion.qmd
     - es/teach.qmd
@@ -59,18 +60,6 @@ website:
     # So a reader on a Spanish page sees a Spanish navbar, and the EN/ES
     # switch at the right does the switching -- rather than every destination
     # appearing twice on every page, which is what this navbar used to do.
-    #
-    # Kahoot is the one item with no `rel`: it exists in English only, and it
-    # keeps its English label on the Spanish navbar on purpose — the label's
-    # language is what tells you the page's language, and a Spanish label
-    # leading to an English page is the worse surprise.
-    #
-    # Being untagged does a second job. That page is `lang: en`, so it shows an
-    # English navbar, which would strand a Spanish reader who opened it — the
-    # ES chip only goes back to the Spanish homepage. The `Español` dropdown at
-    # the end is the way across, and it shows on exactly that page because it
-    # is the only one whose own navbar item carries no language for
-    # `custom.scss` to match `.active` against. Tagging it would take that away.
     left:
       - href: index.qmd
         text: Home
@@ -92,6 +81,10 @@ website:
         rel: lang-es
       - href: kahoot.qmd
         text: Kahoot
+        rel: lang-en
+      - href: es/kahoot.qmd
+        text: Kahoot
+        rel: lang-es
       - href: references.qmd
         text: References
         rel: lang-en
@@ -122,28 +115,6 @@ website:
       - href: es/faq.qmd
         text: FAQ
         rel: lang-es
-      # Visible only on Kahoot, the one English-only page left -- see
-      # `custom.scss`. It is deliberately the whole Spanish side rather than a
-      # single link home, so a Spanish reader who lands there reaches
-      # `Complemento` in one click rather than by way of the homepage.
-      - text: "Español"
-        menu:
-          - href: es/index.qmd
-            text: Inicio
-          - href: es/tensors_workshop_plan_with_quizzes.md
-            text: Manual
-          - href: es/notebooks.qmd
-            text: Cuadernos
-          - href: es/references.qmd
-            text: Referencias
-          - href: slides/es/index.qmd
-            text: Diapositivas
-          - href: es/companion.qmd
-            text: Complemento
-          - href: es/teach.qmd
-            text: Enseñar este taller
-          - href: es/faq.qmd
-            text: Preguntas frecuentes
     right:
       # Both always visible -- this is the control that switches the rest of
       # the navbar. `lang-switch-*` marks them so the current language can be

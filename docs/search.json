@@ -592,7 +592,7 @@
     "href": "es/teach.html#prepara-la-sesión",
     "title": "Enseñar este taller",
     "section": "Prepara la sesión",
-    "text": "Prepara la sesión\n\nComparte los requisitos previos y pide que los participantes ejecuten el cuaderno 00 antes de clase.\nLee la guía de facilitación junto con el horario del taller.\nPrueba los cuadernos elegidos en sesiones nuevas. Sigue Core prep y luego Core activity, y prepara las diapositivas y los cuestionarios en inglés."
+    "text": "Prepara la sesión\n\nComparte los requisitos previos y pide que los participantes ejecuten el cuaderno 00 antes de clase.\nLee la guía de facilitación junto con el horario del taller.\nPrueba los cuadernos elegidos en sesiones nuevas. Sigue Core prep y luego Core activity, y prepara las diapositivas y los cuestionarios."
   },
   {
     "objectID": "es/teach.html#recursos-para-enseñar",
@@ -651,32 +651,431 @@
     "text": "Recursos relacionados\n\nRequisitos previos — prepara la sesión.\nManual — teoría, ejercicios y soluciones. Traducción automática del original en inglés.\nComplemento — resúmenes y preguntas de NotebookLM."
   },
   {
-    "objectID": "es/index.html",
-    "href": "es/index.html",
-    "title": "Visualiza tensores. Piensa en ML.",
+    "objectID": "es/notebooks.html",
+    "href": "es/notebooks.html",
+    "title": "Cuadernos",
     "section": "",
-    "text": "210 minutos · Python en práctica\n\n\nConvierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra las matemáticas del ML.\nEmpieza el taller →\nAbre el cuaderno de preparación\nTaller en inglés · Preguntas en español e inglés\n\n\n\n\n  De un número a una operación de red neuronal\n  Un escalar pasa a vector, luego a matriz y a tensor tridimensional. Una capa de red neuronal usa operaciones tensoriales para transformar entradas en salidas.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    LA FORMA DEL APRENDIZAJE AUTOMÁTICO\n    EscalarVectorMatriz\n    \n    7\n    \n    \n    \n    \n    \n    Tensor 3D\n    Tres ejes. Más posibilidades.\n    Red neuronal\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    entradasalida\n  \n\n\n\n\n  \n  \n    01Indexa, cambia formas y aplica broadcasting en NumPy.\n    02Descompón tensores. Explora convoluciones en casa.\n    03Interpreta las matemáticas de la compresión y las redes neuronales.\n  \n\n\n  Taller deRavi Kalia y Sebastian Laverde Chunza\n  Repositorio del tallerExplora el código en GitHub ↗\n  Discusión en directoGrupos pequeños en Discord\n\n\n  \n  \n    \n      \n      \n        Deja de adivinar las formas de los arrays: lee código de PyTorch y JAX con total confianza.\n        Conecta una arquitectura limpia en Python con las matemáticas de alta dimensionalidad del ML.\n        Convierte tu experiencia en ingeniería en soltura práctica con el aprendizaje profundo.\n      \n    \n    \n      \n      \n        Sal de los DataFrames 2D y domina los tensores 3D/4D que impulsan el aprendizaje profundo.\n        Ve más allá de Scikit-Learn para procesar imágenes, texto y secuencias complejas.\n        Amplía tus habilidades de análisis tabular hasta dominar las redes neuronales.\n      \n    \n    \n      \n      \n        No vuelvas a quedarte atascado con un RuntimeError: size mismatch.\n        Explora el funcionamiento interno de las API de alto nivel para depurar rápidamente operaciones tensoriales que fallan.\n        Deja de tratar los modelos como cajas negras: entiende qué ocurre en cada capa.\n      \n    \n    \n      \n      \n        Lleva la teoría del álgebra lineal a código práctico en Python, listo para producción.\n        Aplica descomposiciones matriciales directamente a la compresión de datos y las redes neuronales.\n        Conecta los conceptos abstractos de clase con arquitecturas reales de aprendizaje automático.\n      \n    \n  \n\n\n  LA RUTA DE APRENDIZAJE\n  \n  Seis ideas conectadas. Programa. Visualiza. Comprende.\n  \n    01Lee formas y ejes.\n    02Transforma. Expande. Contrae.\n    03Resuelve sistemas. Busca estructura.\n    04De píxeles a características.Para casa\n    05Comprime. Conserva lo esencial.\n    06Conecta las matemáticas con los modelos.\n  \n  Explora los cuadernos →\n\n\n\n\n\n\nTeoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes\n\n\n\n\n\n\n\n\nRepasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown.\n\n\n\n\n\n\n  💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
+    "text": "Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como estudio a fondo para casa. Están escritos principalmente en inglés, y cada encabezado lleva un resumen de una línea en español."
   },
   {
-    "objectID": "es/index.html#qué-hay-aquí",
-    "href": "es/index.html#qué-hay-aquí",
-    "title": "Visualiza tensores. Piensa en ML.",
-    "section": "",
-    "text": "Teoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes"
+    "objectID": "es/notebooks.html#cómo-están-construidos",
+    "href": "es/notebooks.html#cómo-están-construidos",
+    "title": "Cuadernos",
+    "section": "Cómo están construidos",
+    "text": "Cómo están construidos\nTodos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde estás:\n\nEncabezado: el título de la sección, sus objetivos y una insignia Open in Colab.\nPreparación: instala e importa solo lo que esa sección necesita, y carga sus propios datos. Cada cuaderno es autónomo: sin archivos locales y sin depender de ningún otro cuaderno.\nExplicación y código, alternándose. Construyen poco a poco, en lugar de soltarte un muro de código.\nEjercicios: esqueletos # TODO sacados del manual, cada uno seguido de una celda de solución plegada. Ábrela después de intentarlo.\nCierre: el control de Kahoot de esa sección y un enlace de vuelta aquí.\n\n\n\n\n\n\n\nLos cuadernos se guardan sin salidas y sin números de ejecución. Cada número que veas es uno que has producido tú. El texto cita los resultados esperados, así que puedes comprobar si los tuyos son correctos. Si los tuyos difieren, eso merece investigarse en lugar de descartarse."
   },
   {
-    "objectID": "es/index.html#requisitos-previos",
-    "href": "es/index.html#requisitos-previos",
-    "title": "Visualiza tensores. Piensa en ML.",
-    "section": "",
-    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
+    "objectID": "es/notebooks.html#los-cuadernos",
+    "href": "es/notebooks.html#los-cuadernos",
+    "title": "Cuadernos",
+    "section": "Los cuadernos",
+    "text": "Los cuadernos\n\n\n\n\n#\nCuaderno\nContenido\nColab\n\n\n\n\n00\n00-setup-and-data.ipynb\nPreparación y bienvenida — Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller.\n\n\n\n01\n01-what-a-tensor-is.ipynb\nQué es un tensor — Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.\n\n\n\n02\n02-thinking-in-n-dimensions.ipynb\nPensar en N dimensiones — Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.\n\n\n\n03\n03-indexing-and-broadcasting.ipynb\nIndexación y broadcasting con datos reales — Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.\n\n\n\n04\n04-reshape-and-transpose.ipynb\nReshape y transposición de imágenes reales — Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué reshape puede conservar la forma mientras destruye el significado.\n\n\n\n05\n05-video-pipeline-design.ipynb\nDiseño de un pipeline de vídeo — Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.\n\n\n\n06\n06-contraction-with-einsum.ipynb\nContracción con einsum — Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.\n\n\n\n07\n07-inverses-and-pseudoinverse.ipynb\nInversas y la pseudoinversa — Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.\n\n\n\n08\n08-recursion-with-matrices.ipynb\nRecursión con matrices y vectores — Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.\n\n\n\n09\n09-matrix-factorizations.ipynb\nFactorizaciones matriciales — Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.\n\n\n\n10\n10-tucker-decomposition.ipynb\nDescomposición de Tucker con datos reales — Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.\n\n\n\n11\n11-tensor-factorizations.ipynb\nFactorizaciones tensoriales — Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.\n\n\n\n12\n12-wrap-up-and-take-homes.ipynb\nCierre y ejercicios para casa — Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio."
   },
   {
-    "objectID": "es/index.html#cómo-trabajamos",
-    "href": "es/index.html#cómo-trabajamos",
-    "title": "Visualiza tensores. Piensa en ML.",
+    "objectID": "es/notebooks.html#para-ir-más-lejos",
+    "href": "es/notebooks.html#para-ir-más-lejos",
+    "title": "Cuadernos",
+    "section": "Para ir más lejos",
+    "text": "Para ir más lejos\nEste no es una sección. Es un estudio a fondo, entregado como material para casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la agenda de 210 minutos es exactamente la misma sin él.\n\n\n\n\n#\nEstudio a fondo\nColab\n\n\n\n\n13\n13-convolution-and-deconvolution.ipynb — Convolución y deconvolución — Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada."
+  },
+  {
+    "objectID": "es/notebooks.html#ejecutarlos-fuera-de-colab",
+    "href": "es/notebooks.html#ejecutarlos-fuera-de-colab",
+    "title": "Cuadernos",
+    "section": "Ejecutarlos fuera de Colab",
+    "text": "Ejecutarlos fuera de Colab\nLos cuadernos solo necesitan el stack científico de Python. En local:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab\nmatplotlib y ipywidgets están en esa lista porque todos los cuadernos dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab, así que si falta uno solo se nota al ejecutar en local.\nscikit-learn y scikit-image traen consigo los datos de tumores, los dígitos manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se ejecutan sin red. Los otros nueve descargan algo la primera vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia, o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo dice cuál, cuaderno por cuaderno."
+  },
+  {
+    "objectID": "es/notebooks.html#qué-necesita-cada-cuaderno",
+    "href": "es/notebooks.html#qué-necesita-cada-cuaderno",
+    "title": "Cuadernos",
+    "section": "Qué necesita cada cuaderno",
+    "text": "Qué necesita cada cuaderno\n\n\nColab ya tiene instalado todo lo de esta lista.\n\n\n\n\n\n\n\nCuaderno\nAdemás de NumPy\nRed\n\n\n\n\n00\nmatplotlib, pandas, scikit-learn, scikit-image, scipy, imageio†\nsí — vivienda en California, pasajeros de aerolínea, viajes en taxi de Nueva York, el clip de la tormenta (solo un sondeo de 1 KB)\n\n\n01\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n02\nmatplotlib, ipywidgets, scikit-learn, scikit-image, imageio†\nsí — el clip de la tormenta\n\n\n03\nmatplotlib, ipywidgets, scikit-learn\nno\n\n\n04\nmatplotlib, ipywidgets, scikit-image\nno\n\n\n05\nmatplotlib, ipywidgets, imageio†\nsí — el clip de la tormenta\n\n\n06\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n07\nmatplotlib, ipywidgets, pandas, scikit-learn\nsí — vivienda en California\n\n\n08\nmatplotlib, ipywidgets, pandas\nsí — pasajeros de aerolínea\n\n\n09\nmatplotlib, ipywidgets, pandas, scikit-learn, scikit-image, scipy\nsí — pasajeros de aerolínea\n\n\n10\nmatplotlib, ipywidgets, pandas\nsí — viajes en taxi de Nueva York\n\n\n11\nmatplotlib, ipywidgets, pandas, tensorly†, imageio†\nsí — viajes en taxi de Nueva York, el clip de la tormenta\n\n\n12\nmatplotlib, ipywidgets, pandas, scikit-learn, scipy\nsí — una grabación de voz (para el ejercicio E)\n\n\n13\nmatplotlib, ipywidgets, scikit-image, scipy\nno\n\n\n\n† Lo instala el propio cuaderno con %pip install -q, y por eso ninguno de los dos está en el comando de arriba."
+  },
+  {
+    "objectID": "workshop-feedback.html",
+    "href": "workshop-feedback.html",
+    "title": "Workshop feedback · 2 minutes",
     "section": "",
-    "text": "💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
+    "text": "Español · Teach this workshop\nCopy this into your usual survey or give it out on paper. No name or account needed. Return privately to the facilitator; do not post learner responses in public issues. Do not include personal, patient, or workplace data.\nFacilitator fills in: date ___ · workshop commit/tag ___ · runtime ___\n\nWhich can you explain now? Check any: axis meaning / broadcasting / contraction / rank budget / none yet.\nWhere did you get stuck? Notebook and heading: ___\nWhat changed your mind? Name one prediction and the evidence: ___\nWhat should we change? Shorten ___ / add an example of ___ / allow more time for ___\n\nFacilitator note: record actual section times and anonymous counts of common errors. Open one concrete issue for the next run. Keep raw responses private."
+  },
+  {
+    "objectID": "worked-mistakes.html",
+    "href": "worked-mistakes.html",
+    "title": "Four mistakes worth testing",
+    "section": "",
+    "text": "Español · Facilitator guide · Teach this workshop\nPredict first. Run the tiny counterexample. Rewrite the claim in one sentence. These synthetic examples isolate a mistake; the notebooks use real data."
+  },
+  {
+    "objectID": "worked-mistakes.html#the-mean-proves-the-order-is-unchanged",
+    "href": "worked-mistakes.html#the-mean-proves-the-order-is-unchanged",
+    "title": "Four mistakes worth testing",
+    "section": "02 · The mean proves the order is unchanged",
+    "text": "02 · The mean proves the order is unchanged\n“The average is identical after shuffling, so no information was lost.”\n\n\nTest and correction\n\nimport numpy as np\nframes = np.array([0., 1., 2., 3.])\nshuffled = frames[[0, 3, 1, 2]]\nassert frames.mean() == shuffled.mean()\nassert not np.array_equal(np.diff(frames), np.diff(shuffled))\nBoth means are 1.5. The changes are [1, 1, 1] versus [3, -2, 1]. The mean cannot establish chronology. Check timestamps or source indices. Transfer: when is shuffling acceptable for independent images and their labels?"
+  },
+  {
+    "objectID": "worked-mistakes.html#the-shape-proves-reshape-worked",
+    "href": "worked-mistakes.html#the-shape-proves-reshape-worked",
+    "title": "Four mistakes worth testing",
+    "section": "04 · The shape proves reshape worked",
+    "text": "04 · The shape proves reshape worked\n“Both results have shape (3, 2, 2), so both are valid CHW images.”\n\n\nTest and correction\n\nimport numpy as np\nhwc = np.arange(12).reshape(2, 2, 3)\nright = hwc.transpose(2, 0, 1)\nwrong = hwc.reshape(3, 2, 2)\nassert right.shape == wrong.shape\nassert right[1, 0, 0] == hwc[0, 0, 1] == 1\nassert wrong[1, 0, 0] == 4\nassert np.array_equal(right.transpose(1, 2, 0), hwc)\nShape checks pass; a channel-value check fails. Use transpose to reorder axes. Transfer: write the matching coordinate check for NHWC → NCHW."
+  },
+  {
+    "objectID": "worked-mistakes.html#a-tiny-residual-proves-reliable-coefficients",
+    "href": "worked-mistakes.html#a-tiny-residual-proves-reliable-coefficients",
+    "title": "Four mistakes worth testing",
+    "section": "09 · A tiny residual proves reliable coefficients",
+    "text": "09 · A tiny residual proves reliable coefficients\n“Both fits are almost exact, so their coefficients must agree.”\n\n\nTest and correction\n\nimport numpy as np\nX = np.array([[1., 1.], [1., 1.000001]])\na, b = np.array([1., 1.]), np.array([2., 0.])\ny = X @ a\nassert np.linalg.norm(X @ a - y) == 0\nassert np.isclose(np.linalg.norm(X @ b - y), 1e-6)\nassert np.isclose(np.linalg.norm(a - b), np.sqrt(2))\nThe coefficients differ by about 1.414, while predictions differ by only 0.000001. Nearly dependent columns make this possible. Inspect conditioning and coefficient sensitivity as well as fit. QR avoids forming X.T @ X; it does not remove the problem’s sensitivity. Transfer: what happens if a small measurement error changes y?"
+  },
+  {
+    "objectID": "worked-mistakes.html#equal-ranks-mean-equal-budgets",
+    "href": "worked-mistakes.html#equal-ranks-mean-equal-budgets",
+    "title": "Four mistakes worth testing",
+    "section": "11 · Equal ranks mean equal budgets",
+    "text": "11 · Equal ranks mean equal budgets\n“CP rank 3 and Tucker ranks (3, 3, 3) use the same storage.”\n\n\nTest and correction\n\nshape = (4, 4, 24)\ncp = 3 * sum(shape)\ntucker = 3**3 + 3 * sum(shape)\nassert (cp, tucker) == (96, 123)\nTucker also stores a core: 27 more values here. This CP convention absorbs component weights into one factor; count 3 extra values if weights are stored separately. Match stored parameters, then report error on the same data. Transfer: if budgets cannot match exactly, how should you disclose the gap?"
+  },
+  {
+    "objectID": "facilitator-guide.html",
+    "href": "facilitator-guide.html",
+    "title": "Facilitator run sheet",
+    "section": "",
+    "text": "Español · Teach this workshop\nUse the existing 210-minute agenda. These activities replace practice or discussion time; they do not extend the session. Notebook 13 is take-home work."
+  },
+  {
+    "objectID": "facilitator-guide.html#before-the-session",
+    "href": "facilitator-guide.html#before-the-session",
+    "title": "Facilitator run sheet",
+    "section": "Before the session",
+    "text": "Before the session\n\nRun Notebook 00 before class. Test each selected notebook in a fresh runtime.\nFollow Core prep, then Core activity. Skip other exercises and explorers.\nPrepare groups of 3–4: recorder, speaker, challenger, optional code runner.\nKeep a working runtime ready to demonstrate if a download fails."
+  },
+  {
+    "objectID": "facilitator-guide.html#live-rhythm",
+    "href": "facilitator-guide.html#live-rhythm",
+    "title": "Facilitator run sheet",
+    "section": "Live rhythm",
+    "text": "Live rhythm\nPredict → Run → Explain → Check. Get a written prediction before execution. Then ask for one result and one revised explanation. Rotate group roles. Open solutions only after an attempt. Run selected folded plotting cells; folded code still needs to execute."
+  },
+  {
+    "objectID": "facilitator-guide.html#run-sheet",
+    "href": "facilitator-guide.html#run-sheet",
+    "title": "Facilitator run sheet",
+    "section": "Run sheet",
+    "text": "Run sheet\nFollow the workshop agenda. Keep its quizzes and breaks. Within the selected notebook slots:\n\n\n\nNotebook\nUse the slot this way\n\n\n\n\n00 · 5 min\nEntry check 3; runtime check and welcome 2. Setup was pre-work.\n\n\n01 · 20 min\nModel one shape 4; Exercise 1 and partner check 16.\n\n\n02 · 20 min\nAxis key and Exercise 2: 14; axis-meaning task: 6.\n\n\n03 · 15 min\nModel indexing 3; Exercise 3 and checks 12.\n\n\n04 · 15 min\nExercise 1: 9; silent-bug task: 6.\n\n\n05 · 15 min\nExercise 1: 7; group task 05: 8.\n\n\n06 · 15 min\nModel one contraction 4; Exercise 1 and check 11.\n\n\n07 · 15 min\nPredict singularity 3; Exercise 1 and check 12.\n\n\n08 · 10 min\nModel one update 3; Exercise 1 and check 7.\n\n\n09 · 15 min\nExercise 1: 12; residual mistake below: 3. No timing sweeps.\n\n\n10 · 15 min\nExplain core and factors 4; rank explorer 8; defend a choice 3.\n\n\n11 · 15 min\nExercise 1 in pairs: 7; group task 11: 8. No model sweeps.\n\n\n12 · 5 min\nIndividual exit check. Assign take-homes after collection.\n\n\n\nUse group tasks 05 and 11 at their notebook headings. Use the written prompts; optional explorers are not prerequisites. For task 04, use the tiny reshape example in worked mistakes if needed. Each time box includes sharing. Ask one group to speak; others submit three lines: choice → evidence → what would change our mind.\nIn Notebook 11, predict storage first. If fitting takes too long, demonstrate the supplied solution after their attempt. Discuss its output; do not spend the group slot debugging an installation."
+  },
+  {
+    "objectID": "facilitator-guide.html#entry-and-exit-checks",
+    "href": "facilitator-guide.html#entry-and-exit-checks",
+    "title": "Facilitator run sheet",
+    "section": "Entry and exit checks",
+    "text": "Entry and exit checks\nUse the prompts in Notebooks 00 and 12. The assessment key has scoring and follow-up actions. Collect individual answers, not group answers. Compare reasoning by dimension; this is not a validated learning test."
+  },
+  {
+    "objectID": "facilitator-guide.html#wrong-answer-clinic",
+    "href": "facilitator-guide.html#wrong-answer-clinic",
+    "title": "Facilitator run sheet",
+    "section": "Wrong-answer clinic",
+    "text": "Wrong-answer clinic\nUse worked mistakes inside the slots above: axis order in 02, reshape in 04, residuals in 09, and rank budgets in 11. Show the claim first. Ask for a counterexample. Reveal the correction last.\nIf half the room makes the same error, model the tiny example and ask a new prediction. Drop an optional demonstration, not the next break or exit check. Fast finishers design a counterexample before opening another exercise."
+  },
+  {
+    "objectID": "facilitator-guide.html#after-the-session",
+    "href": "facilitator-guide.html#after-the-session",
+    "title": "Facilitator run sheet",
+    "section": "After the session",
+    "text": "After the session\nOffer the two-minute feedback form. Record the workshop commit, actual timings, common errors, and one change for the next run. Use the release checklist before publishing that change."
+  },
+  {
+    "objectID": "teach.html",
+    "href": "teach.html",
+    "title": "Teach this workshop",
+    "section": "",
+    "text": "Español\nPlan and run the 210-minute workshop with the resources below. The agenda includes the quizzes and breaks. Group activities replace practice or discussion time; notebook 13 stays take-home work."
+  },
+  {
+    "objectID": "teach.html#prepare-your-session",
+    "href": "teach.html#prepare-your-session",
+    "title": "Teach this workshop",
+    "section": "Prepare your session",
+    "text": "Prepare your session\n\nShare the prerequisites with learners and ask them to run notebook 00 before class.\nRead the facilitator guide alongside the workshop schedule.\nTest your selected notebooks in fresh runtimes. Follow Core prep, then Core activity, and prepare the slides and quizzes."
+  },
+  {
+    "objectID": "teach.html#teaching-resources",
+    "href": "teach.html#teaching-resources",
+    "title": "Teach this workshop",
+    "section": "Teaching resources",
+    "text": "Teaching resources\n\nFacilitator guide — Prepare the room, follow the section timings, and respond when learners get stuck.\nEntry and exit checks — Collect individual reasoning at the start and end; use the included key and rubric.\nGroup tasks — Choose short discussions with a time box and a concrete group deliverable.\nWorked mistakes — Ask learners to predict, test a counterexample, and explain the correction.\nFeedback form — Collect two minutes of feedback after the session and choose one improvement for the next run."
+  },
+  {
+    "objectID": "teach.html#during-and-after-the-workshop",
+    "href": "teach.html#during-and-after-the-workshop",
+    "title": "Teach this workshop",
+    "section": "During and after the workshop",
+    "text": "During and after the workshop\nUse Predict → Run → Explain → Check. Ask for an attempt before opening solutions, rotate group roles, and keep the scheduled breaks and exit check. The facilitator guide places the activities within the existing time slots.\nAfter the session, record actual section timings and common errors with the workshop version you taught. Keep learner responses private and use the feedback to choose one concrete change for your next session."
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References and further reading",
+    "section": "",
+    "text": "Look up a concept or explore it further. For tensors, start with the Kolda–Bader survey. Then choose the paper for the method you need.\nBackground: Chapter 2 of Deep Learning. See the pre-work before the session."
+  },
+  {
+    "objectID": "references.html#ref-linear-algebra",
+    "href": "references.html#ref-linear-algebra",
+    "title": "References and further reading",
+    "section": "Linear algebra",
+    "text": "Linear algebra\nFrom an introduction to numerical methods.\n\nStrang, G. — Introduction to Linear Algebra — an introduction. Author pages: Gilbert Strang\nTrefethen, L. N. & Bau, D. — Numerical Linear Algebra — numerical methods and SVD. Author pages: Nick Trefethen\nGolub, G. H. & Van Loan, C. F. — Matrix Computations — matrix algorithms. Author pages: Gene Golub · Charles Van Loan"
+  },
+  {
+    "objectID": "references.html#ref-tensors",
+    "href": "references.html#ref-tensors",
+    "title": "References and further reading",
+    "section": "Tensors",
+    "text": "Tensors\nStart with the survey. Then choose a method.\n\nKolda, T. G. & Bader, B. W. (2009). Tensor Decompositions and Applications, SIAM Review 51(3), 455–500 — the survey; start here. Author pages: Tamara Kolda · Brett Bader\nTucker, L. R. (1966). Some mathematical notes on three-mode factor analysis, Psychometrika 31, 279–311 — Tucker decomposition.\nCarroll, J. D. & Chang, J.-J. (1970). Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition, Psychometrika 35, 283–319 — CP decomposition.\nHarshman, R. A. (1970). Foundations of the PARAFAC procedure, UCLA Working Papers in Phonetics 16, 1–84 — PARAFAC, also known as CP. Author pages: Richard Harshman\nEckart, C. & Young, G. (1936). The approximation of one matrix by another of lower rank, Psychometrika 1, 211–218 — optimal low-rank matrix approximation."
+  },
+  {
+    "objectID": "references.html#ref-software",
+    "href": "references.html#ref-software",
+    "title": "References and further reading",
+    "section": "Software",
+    "text": "Software\nImplementations for your own projects.\n\nHarris, C. R., Millman, K. J., van der Walt, S. J. et al. (2020). Array programming with NumPy, Nature 585, 357–362 — the foundational NumPy paper: array programming and the scientific Python ecosystem.\ntensorly — implementations of Tucker and CP. Author pages: Jean Kossaifi"
+  },
+  {
+    "objectID": "references.html#ref-blog",
+    "href": "references.html#ref-blog",
+    "title": "References and further reading",
+    "section": "Posts from the ML blog",
+    "text": "Posts from the ML blog\nOne idea per post, with examples.\nEvery post lives on The ML blog.\n\nWhy so many matrix factorizations?\nFactorizations as optimization\nRotate, stretch, rotate again\nThe directions a matrix refuses to turn\nCan you invert a recursive function?\nTensor factorizations and inverses\nWhat a tensor factorization buys you\nTensor inverses in practice\nTensor inverses, worked through\nSparse tensors\nAttention as two contractions"
+  },
+  {
+    "objectID": "references.html#elsewhere",
+    "href": "references.html#elsewhere",
+    "title": "References and further reading",
+    "section": "Related resources",
+    "text": "Related resources\n\nPrerequisites — prepare for the session.\nHandbook — theory, exercises, and solutions.\nCompanion — NotebookLM summaries and practice questions."
+  },
+  {
+    "objectID": "notebooks.html",
+    "href": "notebooks.html",
+    "title": "Notebooks",
+    "section": "",
+    "text": "Every section of the workshop has a notebook. One more sits past the end of the day, as a take-home deep dive. They are English-primary, and every heading carries a one-line Spanish summary — cada encabezado lleva un resumen en español."
+  },
+  {
+    "objectID": "notebooks.html#how-they-are-built",
+    "href": "notebooks.html#how-they-are-built",
+    "title": "Notebooks",
+    "section": "How they are built",
+    "text": "How they are built\nEvery notebook has the same five parts, so you always know where you are:\n\nHeader — the section title, its objectives, and an Open in Colab badge.\nSetup — installs and imports only what this section needs, and loads its own data. Each notebook is self-contained: no local files, and no dependency on any other notebook.\nExplanation and code, alternating. They build up, rather than dropping a wall of code on you.\nExercises — # TODO stubs taken from the handbook, each followed by a folded solution cell. Open it after you have tried.\nClosing — the Kahoot check for that section, and a link back here.\n\n\n\n\n\n\n\nThe notebooks are committed with no outputs and no execution counts. Every number you see is one you produced. The prose quotes the expected results, so you can tell whether yours are right. If yours differ, that is worth investigating rather than dismissing."
+  },
+  {
+    "objectID": "notebooks.html#the-notebooks",
+    "href": "notebooks.html#the-notebooks",
+    "title": "Notebooks",
+    "section": "The notebooks",
+    "text": "The notebooks\n\n\n\n\n#\nNotebook\nCovers\nColab\n\n\n\n\n00\n00-setup-and-data.ipynb\nSetup and welcome — Load every dataset and confirm your runtime works before the workshop starts.\n\n\n\n01\n01-what-a-tensor-is.ipynb\nWhat a tensor is — Learn to read a tensor’s structure and track what its axes mean as you fix, rearrange, or contract them.\n\n\n\n02\n02-thinking-in-n-dimensions.ipynb\nThinking in N dimensions — Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.\n\n\n\n03\n03-indexing-and-broadcasting.ipynb\nIndexing and broadcasting real data — Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely.\n\n\n\n04\n04-reshape-and-transpose.ipynb\nReshape and transpose real images — Use real images to move between HWC↔︎CHW and NHWC↔︎NCHW, then show why matching shapes do not guarantee matching axis semantics.\n\n\n\n05\n05-video-pipeline-design.ipynb\nVideo pipeline design — Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines.\n\n\n\n06\n06-contraction-with-einsum.ipynb\nContraction with einsum — Use one index rule on real data, then change the inputs interactively to test which index disappears.\n\n\n\n07\n07-inverses-and-pseudoinverse.ipynb\nInverses and the pseudoinverse — Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively.\n\n\n\n08\n08-recursion-with-matrices.ipynb\nRecursion with matrices and vectors — Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data.\n\n\n\n09\n09-matrix-factorizations.ipynb\nMatrix factorizations — Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers, and what each one costs.\n\n\n\n10\n10-tucker-decomposition.ipynb\nTucker decomposition on real data — Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure.\n\n\n\n11\n11-tensor-factorizations.ipynb\nTensor factorizations — Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs.\n\n\n\n12\n12-wrap-up-and-take-homes.ipynb\nWrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio."
+  },
+  {
+    "objectID": "notebooks.html#going-further",
+    "href": "notebooks.html#going-further",
+    "title": "Notebooks",
+    "section": "Going further",
+    "text": "Going further\nThis one is not a section. It is a deep dive, handed out as take-home material. It has no slides, no Kahoot, and no minutes on the workshop clock: the 210-minute agenda is exactly what it was without it.\n\n\n\n\n#\nDeep dive\nColab\n\n\n\n\n13\n13-convolution-and-deconvolution.ipynb — Convolution and deconvolution — Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image."
+  },
+  {
+    "objectID": "notebooks.html#running-them-somewhere-other-than-colab",
+    "href": "notebooks.html#running-them-somewhere-other-than-colab",
+    "title": "Notebooks",
+    "section": "Running them somewhere other than Colab",
+    "text": "Running them somewhere other than Colab\nThe notebooks only need the scientific Python stack. Locally:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab\nmatplotlib and ipywidgets are in that list because every notebook plots, and all but 00 use sliders. Both ship with Colab, so a missing one only shows up when you run locally.\nscikit-learn and scikit-image ship the tumour data, the handwritten digits and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at all. The other nine download something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or the voice recording for notebook 12’s take-home E. The table below says which, notebook by notebook."
+  },
+  {
+    "objectID": "notebooks.html#what-each-notebook-needs",
+    "href": "notebooks.html#what-each-notebook-needs",
+    "title": "Notebooks",
+    "section": "What each notebook needs",
+    "text": "What each notebook needs\n\n\nColab already has every one of these installed.\n\n\n\n\n\n\n\nNotebook\nBeyond NumPy\nNetwork\n\n\n\n\n00\nmatplotlib, pandas, scikit-learn, scikit-image, scipy, imageio†\nyes — California housing, airline passengers, NYC taxi trips, the storm clip (only a 1 KB probe)\n\n\n01\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n02\nmatplotlib, ipywidgets, scikit-learn, scikit-image, imageio†\nyes — the storm clip\n\n\n03\nmatplotlib, ipywidgets, scikit-learn\nno\n\n\n04\nmatplotlib, ipywidgets, scikit-image\nno\n\n\n05\nmatplotlib, ipywidgets, imageio†\nyes — the storm clip\n\n\n06\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n07\nmatplotlib, ipywidgets, pandas, scikit-learn\nyes — California housing\n\n\n08\nmatplotlib, ipywidgets, pandas\nyes — airline passengers\n\n\n09\nmatplotlib, ipywidgets, pandas, scikit-learn, scikit-image, scipy\nyes — airline passengers\n\n\n10\nmatplotlib, ipywidgets, pandas\nyes — NYC taxi trips\n\n\n11\nmatplotlib, ipywidgets, pandas, tensorly†, imageio†\nyes — NYC taxi trips, the storm clip\n\n\n12\nmatplotlib, ipywidgets, pandas, scikit-learn, scipy\nyes — a voice recording (for take-home E)\n\n\n13\nmatplotlib, ipywidgets, scikit-image, scipy\nno\n\n\n\n† Installed by the notebook itself with %pip install -q, which is why neither is in the command above."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "See tensors. Think in ML.",
+    "section": "",
+    "text": "210 minutes · Hands-on Python\n\n\nTurn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.\nStart the workshop →\nOpen the setup notebook\nTaught in English · Questions in English & Spanish\n\n\n\n\n  From one number to a neural-network operation\n  A scalar becomes a vector, then a matrix, then a three-dimensional tensor. A neural-network layer uses tensor operations to turn inputs into outputs.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    THE SHAPE OF MACHINE LEARNING\n    ScalarVectorMatrix\n    \n    7\n    \n    \n    \n    \n    \n    3D tensor\n    Three axes. More possibilities.\n    Neural network\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    inputoutput\n  \n\n\n\n\n  \n  \n    01Slice, reshape, and broadcast tensors in NumPy.\n    02Decompose tensors. Explore convolutions in the take-home.\n    03Read the tensor math behind compression and neural networks.\n  \n\n\n  Workshop byRavi Kalia and Sebastian Laverde Chunza\n  Workshop repositoryExplore the code on GitHub ↗\n  Live discussionSmall groups on Discord\n\n\n  \n  \n    \n      \n      \n        Stop guessing array shapes—read PyTorch and JAX code with total confidence.\n        Bridge the gap between clean Python architecture and high-dimensional ML math.\n        Turn your engineering background into practical deep learning fluency.\n      \n    \n    \n      \n      \n        Break out of 2D DataFrames and master the 3D/4D tensors powering deep learning.\n        Move beyond Scikit-Learn to process complex image, text, and sequence data.\n        Upgrade your tabular analytics skills into neural network expertise.\n      \n    \n    \n      \n      \n        Never get stuck on a RuntimeError: size mismatch again.\n        Look under the hood of high-level APIs to debug broken tensor operations fast.\n        Stop treating models as black boxes—understand what happens at every layer.\n      \n    \n    \n      \n      \n        Turn theoretical linear algebra into hands-on, production-ready Python code.\n        Apply matrix decompositions directly to data compression and neural networks.\n        Connect abstract classwork to real-world machine learning architectures.\n      \n    \n  \n\n\n  THE LEARNING JOURNEY\n  \n  Six connected ideas. Code them. See them. Make them click.\n  \n    01Read shapes and axes.\n    02Reshape. Broadcast. Contract.\n    03Solve systems. Find structure.\n    04Turn pixels into features.Take-home\n    05Compress without losing the plot.\n    06Connect the math to models.\n  \n  Explore the notebooks →\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 and complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
+  },
+  {
+    "objectID": "index.html#whats-here",
+    "href": "index.html#whats-here",
+    "title": "See tensors. Think in ML.",
+    "section": "",
+    "text": "Full theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources"
+  },
+  {
+    "objectID": "index.html#prerequisites",
+    "href": "index.html#prerequisites",
+    "title": "See tensors. Think in ML.",
+    "section": "",
+    "text": "Review vectors, matrices, and SVD in Goodfellow Ch. 2 and complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra."
+  },
+  {
+    "objectID": "index.html#how-we-work",
+    "href": "index.html#how-we-work",
+    "title": "See tensors. Think in ML.",
+    "section": "",
+    "text": "💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
+  },
+  {
+    "objectID": "kahoot.html",
+    "href": "kahoot.html",
+    "title": "Kahoot",
+    "section": "",
+    "text": "Español\nThree quizzes sit at the three natural seams of the workshop: after the shape and vocabulary work, after the einsum and pseudoinverse stretch, and after the decompositions.\nEach one runs right after the blocks that supply its content, while the material is still fresh. Each one also runs before the next context switch — a break, or a new Part. That way a quiz reinforces the work rather than interrupting it."
+  },
+  {
+    "objectID": "kahoot.html#quiz-1",
+    "href": "kahoot.html#quiz-1",
+    "title": "Kahoot",
+    "section": "Quiz 1 — Tensor Vocabulary & Shapes",
+    "text": "Quiz 1 — Tensor Vocabulary & Shapes\nVocabulario de tensores y formas\n\n\n\n\n\n\n\nRuns after\nSection 04 — Reshape and transpose, before the first break\n\n\nCovers\nSections 01, 03, 04\n\n\nLength\n6 questions, ~5 min including the podium\n\n\nImport file\nkahoot/kahoot_quiz_1_vocabulary_shapes.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\nThe room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest. Two questions reach back into the exercises: the NaN question is section 03’s zero-variance pixels, and the last one is section 04’s reshape-versus-transpose."
+  },
+  {
+    "objectID": "kahoot.html#quiz-2",
+    "href": "kahoot.html#quiz-2",
+    "title": "Kahoot",
+    "section": "Quiz 2 — Einsum, Distance & the Pseudoinverse",
+    "text": "Quiz 2 — Einsum, Distance & the Pseudoinverse\nEinsum, distancia y la pseudoinversa\n\n\n\n\n\n\n\nRuns after\nSection 07 — Inverses and the pseudoinverse, before the recursion demo\n\n\nCovers\nSections 06, 07\n\n\nLength\n6 questions, ~5 min\n\n\nImport file\nkahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\n\n\n\n\n\n\nTwo questions here are ahead of the material. Quiz 2 asks about Euclidean distance and cosine similarity, and the handbook never defines either directly. The bridge is section 06’s TODO 4, the 1797×1797 digit similarity matrix built with one einsum. Say the two words out loud during that exercise. Otherwise the last two questions land cold."
+  },
+  {
+    "objectID": "kahoot.html#quiz-3",
+    "href": "kahoot.html#quiz-3",
+    "title": "Kahoot",
+    "section": "Quiz 3 — Convolution & Tensor Decompositions",
+    "text": "Quiz 3 — Convolution & Tensor Decompositions\nConvolución y descomposiciones tensoriales\n\n\n\n\n\n\n\nRuns after\nSection 10 — Tucker decomposition, immediately before the wrap-up\n\n\nCovers\nSections 09, 10\n\n\nLength\n6 questions, ~5 min\n\n\nImport file\nkahoot/kahoot_quiz_3_convolution_decompositions.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\nRun it while the taxi-tensor rush-hour result is still on screen. Its final question names hour 18, so it must come after section 10’s TODO 6. Running it early gives the answer away. It doubles as a live rehearsal of the wrap-up’s own recap, so go straight from the podium into the wrap-up."
+  },
+  {
+    "objectID": "kahoot.html#running-them",
+    "href": "kahoot.html#running-them",
+    "title": "Kahoot",
+    "section": "Running them",
+    "text": "Running them\n\nBudget 5 minutes each, including the podium. Groups want to see the leaderboard, and that is fine. It is the payoff.\nDo not import live. See the note at the top of this page.\nThese add 15 minutes, taking the workshop from 180 to 210."
+  },
+  {
+    "objectID": "kahoot.html#if-you-are-running-out-of-time",
+    "href": "kahoot.html#if-you-are-running-out-of-time",
+    "title": "Kahoot",
+    "section": "If you are running out of time",
+    "text": "If you are running out of time\nThe handbook’s cutting order, in order:\n\nQuiz 2 — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.\nTODO 4 of section 09 (true deconvolution — the most technically demanding).\nThe RNN snippet in section 08.\nQuestion 5 of either group block.\nQuiz 1.\n\nNever cut section 01’s Three Operations That Matter, section 10, or Quiz 3. Quiz 3 is the cheapest way to find out whether Tucker and CP landed, and the only chance to find out is before students leave."
+  },
+  {
+    "objectID": "companion.html",
+    "href": "companion.html",
+    "title": "Workshop companion",
+    "section": "",
+    "text": "Review the workshop with these NotebookLM materials, generated 2026-09-07. They have not been checked by a person. Use the handbook to check answers."
+  },
+  {
+    "objectID": "companion.html#brainstorm",
+    "href": "companion.html#brainstorm",
+    "title": "Workshop companion",
+    "section": "The whole day in one picture",
+    "text": "The whole day in one picture\nFour ideas connect the sections. This diagram was drawn by hand.\n\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home.\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home."
+  },
+  {
+    "objectID": "companion.html#video",
+    "href": "companion.html#video",
+    "title": "Workshop companion",
+    "section": "Video overview",
+    "text": "Video overview\n\n\n\n\nTensors in machine learning — video overview — Watch in NotebookLM."
+  },
+  {
+    "objectID": "companion.html#shorts",
+    "href": "companion.html#shorts",
+    "title": "Workshop companion",
+    "section": "One-minute shorts",
+    "text": "One-minute shorts\n\nAbout a minute per idea. Opens in NotebookLM.\n\n\nDecoding NumPy tensor dimensions1:17 · section 01\n\n\nHow memory flattens tensors1:20 · section 04 In Spanish.\n\n\nHow the pseudoinverse solves messy data1:12 · section 07\n\n\nHow SVD compresses sequential matrices1:10 · section 09\n\n\nHow Tucker decomposition compresses data1:16 · section 10\n\n\nHow HOSVD compresses multidimensional data1:27 · section 10\n\n\nHow tensor decomposition extracts meaning1:19 · section 10\n\n\nHow CP decomposition cracks N-dimensional tensors1:19 · section 11"
+  },
+  {
+    "objectID": "companion.html#infographics",
+    "href": "companion.html#infographics",
+    "title": "Workshop companion",
+    "section": "Infographics",
+    "text": "Infographics\n\nView in NotebookLM:\n\n\nTensors — overview\n\n\nReshape vs transpose\n\n\nInverses and pseudoinverses\n\n\nNavigating tensor inverses\n\n\nMatrix and tensor factorizations"
+  },
+  {
+    "objectID": "companion.html#listen",
+    "href": "companion.html#listen",
+    "title": "Workshop companion",
+    "section": "Listen",
+    "text": "Listen\nListen to two hosts explain the main ideas.\n\nAudio overview — 2 minutes. Listen in NotebookLM."
+  },
+  {
+    "objectID": "companion.html#test-yourself",
+    "href": "companion.html#test-yourself",
+    "title": "Workshop companion",
+    "section": "Test yourself",
+    "text": "Test yourself\nPractice at your own pace. For the live quizzes, use Kahoot.\n\nOpen a preview to try the activity in NotebookLM.\n\n\n\nSelf-check quiz26 multiple-choice questions.Find what to review. Opens in NotebookLM. Preview of the interactive activity.\n\n\n\nFlashcards60 cards on linear algebra and tensors.Practice recalling key ideas. Opens in NotebookLM. Preview of the interactive activity."
+  },
+  {
+    "objectID": "companion.html#map",
+    "href": "companion.html#map",
+    "title": "Workshop companion",
+    "section": "The map",
+    "text": "The map\n\nOpen a preview to try the activity in NotebookLM.\n\n\n\nMind mapFive branches connect the workshop’s ideas.Expand a branch to explore. Opens in NotebookLM. Preview of the interactive activity."
+  },
+  {
+    "objectID": "companion.html#notebooklm",
+    "href": "companion.html#notebooklm",
+    "title": "Workshop companion",
+    "section": "In NotebookLM",
+    "text": "In NotebookLM\nOpen the notebook to explore the sources. View the overview infographic."
+  },
+  {
+    "objectID": "faq.html",
+    "href": "faq.html",
+    "title": "Frequently asked questions",
+    "section": "",
+    "text": "Español\nStart here for practical questions about the workshop. For the lesson itself, open the handbook."
+  },
+  {
+    "objectID": "faq.html#before",
+    "href": "faq.html#before",
+    "title": "Frequently asked questions",
+    "section": "Before the workshop",
+    "text": "Before the workshop\n\nWho is this workshop for?\nPeople who know basic linear algebra and want to use tensors in machine learning. You do not need previous tensor theory: new terms are introduced as you go. You will read and edit Python code in the notebooks.\n\n\nWhat should I do beforehand?\nFollow the prerequisites on the homepage: review the required linear algebra reading, complete the pre-work notebooks, and run notebook 00. Report setup or download failures before the session so they can be addressed early.\n\n\nHow long does the workshop take?\nThe live agenda lasts 210 minutes, including quizzes and breaks. Preparation happens beforehand; optional exercises and the convolution and deconvolution deep dive are take-home material. See the schedule for the session timings.\n\n\nWhich language is used?\nThe workshop is taught in English, with questions welcome in English or Spanish. The site includes both languages. Notebooks are primarily in English, with a short Spanish summary under each heading. The Spanish handbook is a machine translation; the English handbook remains the source of truth. The Kahoot how-to exists in both languages; the live questions on kahoot.it stay in English."
+  },
+  {
+    "objectID": "faq.html#notebooks",
+    "href": "faq.html#notebooks",
+    "title": "Frequently asked questions",
+    "section": "Running the notebooks",
+    "text": "Running the notebooks\n\nDo I need to install anything on my computer?\nYou can work in Google Colab through the links on the notebooks page. Each notebook has a Setup section that loads its own data and installs any additional packages it needs. Run Setup before the exercises. For a local Jupyter environment, use the local setup instructions.\n\n\nDo the notebooks share data or variables?\nNo. Each notebook is self-contained, so you can open a section without running the earlier notebooks. Run that notebook’s Setup and the preparation cells for your chosen activity. Running notebook 00 checks your setup and downloads; it does not populate another notebook’s runtime.\n\n\nCan I work offline?\nSome notebooks use datasets bundled with the Python libraries; others download data. For local offline work, install the required packages in advance and check the dependency and network table for the notebook you want to use. Test it without a connection before relying on it during a session.\n\n\nWhat if a cell fails or a download does not work?\nCheck the first error and confirm that Setup and the required preparation cells have run in the current runtime. If you restarted the runtime, run them again. For a download failure, check your connection and the notebook’s network requirements. During the workshop, share the notebook number, the cell, and the error message with the facilitator in Discord.\nIf code runs but a result seems wrong, compare it with the notebook’s expected result and use the worked mistakes to practice checking shapes, axes, and assumptions."
+  },
+  {
+    "objectID": "faq.html#learning",
+    "href": "faq.html#learning",
+    "title": "Frequently asked questions",
+    "section": "Learning during and after the session",
+    "text": "Learning during and after the session\n\nDo I need to finish every exercise during the workshop?\nNo. Follow the notebook’s Core prep cells and Core activity first. Use Predict → Run → Explain → Check: predict the result, run the code, explain what happened, and check your understanding. Save optional exercises for later if you need more time.\n\n\nWhere are the solutions?\nExercises have folded solution cells in the notebooks, and the handbook contains worked solutions. Try the exercise before opening the answer. The notebooks are saved without outputs, so running the cells produces the results you compare with the explanation.\n\n\nCan I use the material for self-study?\nYes. Start with the prerequisites, then read the handbook alongside the corresponding notebooks. Pause to solve exercises and use the entry and exit checks to assess your reasoning. The references provide further reading, and the take-home deep dive extends the workshop.\n\n\nHow should I use the companion resources?\nThe companion offers summaries, audio, videos, and self-checks for review. Its NotebookLM material is machine-generated and may contain errors. Check explanations against the handbook and your notebook results.\n\n\nWhere should instructors start?\nOpen Teach this workshop for the facilitator guide, group tasks, assessments, worked mistakes, and feedback form. It explains how to fit those activities into the existing agenda."
+  },
+  {
+    "objectID": "assessments.html",
+    "href": "assessments.html",
+    "title": "Entry and exit checks",
+    "section": "",
+    "text": "Español · Facilitator guide · Teach this workshop\nAnswer alone. Short sentences are enough. No code needed. The learner prompts are also in Notebooks 00 and 12."
+  },
+  {
+    "objectID": "assessments.html#entry-3-minutes",
+    "href": "assessments.html#entry-3-minutes",
+    "title": "Entry and exit checks",
+    "section": "Entry · 3 minutes",
+    "text": "Entry · 3 minutes\nX.shape == (20, 8, 8).\n\nGive two possible meanings for its axes.\nPredict X[:, 3, 4].shape. Name the remaining axis in each interpretation.\nWhat evidence would distinguish independent images from video frames?"
+  },
+  {
+    "objectID": "assessments.html#exit-5-minutes",
+    "href": "assessments.html#exit-5-minutes",
+    "title": "Entry and exit checks",
+    "section": "Exit · 5 minutes",
+    "text": "Exit · 5 minutes\nX.shape == (6, 4, 3, 8, 8): plants, visits, channels, rows, columns.\n\nPredict X[:, -1, 1].shape. Name its axes.\nPredict X.mean(axis=1).shape. Name its axes.\nWhat could averaging visits hide? Give one test for that loss.\nCompare with your entry answer. Name one corrected idea and one open question.\n\n\n\nFacilitator key and rubric · reveal after collection\n\nEntry: (images, rows, columns) or (time, rows, columns) both fit. The selection has shape (20,): one pixel across images or time. Acquisition records, timestamps and sample IDs establish the meaning; shape alone cannot.\nExit: selection (6, 8, 8) means plants, rows, columns: last visit, channel 1. The mean has shape (6, 3, 8, 8): plants, channels, rows, columns. Averaging can hide a brief disease signal or growth trend. Compare the visit sequence with its average, using a known transient or a downstream detection test. Other concrete, defensible tests are valid.\nScore each dimension 0 (missing/wrong), 1 (partly right), or 2 (correct and explained). Score entry and exit separately, out of 6:\n\n\n\n\n\n\n\n\nDimension\nEntry evidence\nExit evidence\n\n\n\n\nAxis meaning\nBoth interpretations, all axes named\nRemaining axes named in both results\n\n\nShape reasoning\nCorrect selection shape and why\nBoth output shapes and why\n\n\nEvidence\nMetadata that establishes batch versus time\nA specific loss and a test that can detect it\n\n\n\nIf axis or shape reasoning scores 0–1, revisit the slice in Notebook 01. If evidence scores 0–1, use group task 02. If all three score 2, assign a take-home chosen by interest. Reflection is unscored. Do not treat score differences as a causal measure of workshop impact."
   },
   {
     "objectID": "group-tasks.html",
@@ -798,431 +1197,74 @@
     "text": "Facilitator prompts\nUse one follow-up when a discussion stalls:\n\n“What are you assuming?”\n“Show us a case where that choice fails.”\n“Which output supports that claim?”\n“What would make both groups right?”\n“What is the smallest experiment that could settle the disagreement?”\n\nListen for axis meaning, evidence, and trade-offs. Several designs may work; check mathematical claims separately. Close with one useful distinction and one open question. Save longer investigations for later."
   },
   {
-    "objectID": "assessments.html",
-    "href": "assessments.html",
-    "title": "Entry and exit checks",
+    "objectID": "es/index.html",
+    "href": "es/index.html",
+    "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
-    "text": "Español · Facilitator guide · Teach this workshop\nAnswer alone. Short sentences are enough. No code needed. The learner prompts are also in Notebooks 00 and 12."
+    "text": "210 minutos · Python en práctica\n\n\nConvierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra las matemáticas del ML.\nEmpieza el taller →\nAbre el cuaderno de preparación\nTaller en inglés · Preguntas en español e inglés\n\n\n\n\n  De un número a una operación de red neuronal\n  Un escalar pasa a vector, luego a matriz y a tensor tridimensional. Una capa de red neuronal usa operaciones tensoriales para transformar entradas en salidas.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    LA FORMA DEL APRENDIZAJE AUTOMÁTICO\n    EscalarVectorMatriz\n    \n    7\n    \n    \n    \n    \n    \n    Tensor 3D\n    Tres ejes. Más posibilidades.\n    Red neuronal\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    entradasalida\n  \n\n\n\n\n  \n  \n    01Indexa, cambia formas y aplica broadcasting en NumPy.\n    02Descompón tensores. Explora convoluciones en casa.\n    03Interpreta las matemáticas de la compresión y las redes neuronales.\n  \n\n\n  Taller deRavi Kalia y Sebastian Laverde Chunza\n  Repositorio del tallerExplora el código en GitHub ↗\n  Discusión en directoGrupos pequeños en Discord\n\n\n  \n  \n    \n      \n      \n        Deja de adivinar las formas de los arrays: lee código de PyTorch y JAX con total confianza.\n        Conecta una arquitectura limpia en Python con las matemáticas de alta dimensionalidad del ML.\n        Convierte tu experiencia en ingeniería en soltura práctica con el aprendizaje profundo.\n      \n    \n    \n      \n      \n        Sal de los DataFrames 2D y domina los tensores 3D/4D que impulsan el aprendizaje profundo.\n        Ve más allá de Scikit-Learn para procesar imágenes, texto y secuencias complejas.\n        Amplía tus habilidades de análisis tabular hasta dominar las redes neuronales.\n      \n    \n    \n      \n      \n        No vuelvas a quedarte atascado con un RuntimeError: size mismatch.\n        Explora el funcionamiento interno de las API de alto nivel para depurar rápidamente operaciones tensoriales que fallan.\n        Deja de tratar los modelos como cajas negras: entiende qué ocurre en cada capa.\n      \n    \n    \n      \n      \n        Lleva la teoría del álgebra lineal a código práctico en Python, listo para producción.\n        Aplica descomposiciones matriciales directamente a la compresión de datos y las redes neuronales.\n        Conecta los conceptos abstractos de clase con arquitecturas reales de aprendizaje automático.\n      \n    \n  \n\n\n  LA RUTA DE APRENDIZAJE\n  \n  Seis ideas conectadas. Programa. Visualiza. Comprende.\n  \n    01Lee formas y ejes.\n    02Transforma. Expande. Contrae.\n    03Resuelve sistemas. Busca estructura.\n    04De píxeles a características.Para casa\n    05Comprime. Conserva lo esencial.\n    06Conecta las matemáticas con los modelos.\n  \n  Explora los cuadernos →\n\n\n\n\n\n\nTeoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes\n\n\n\n\n\n\n\n\nRepasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown.\n\n\n\n\n\n\n  💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   },
   {
-    "objectID": "assessments.html#entry-3-minutes",
-    "href": "assessments.html#entry-3-minutes",
-    "title": "Entry and exit checks",
-    "section": "Entry · 3 minutes",
-    "text": "Entry · 3 minutes\nX.shape == (20, 8, 8).\n\nGive two possible meanings for its axes.\nPredict X[:, 3, 4].shape. Name the remaining axis in each interpretation.\nWhat evidence would distinguish independent images from video frames?"
-  },
-  {
-    "objectID": "assessments.html#exit-5-minutes",
-    "href": "assessments.html#exit-5-minutes",
-    "title": "Entry and exit checks",
-    "section": "Exit · 5 minutes",
-    "text": "Exit · 5 minutes\nX.shape == (6, 4, 3, 8, 8): plants, visits, channels, rows, columns.\n\nPredict X[:, -1, 1].shape. Name its axes.\nPredict X.mean(axis=1).shape. Name its axes.\nWhat could averaging visits hide? Give one test for that loss.\nCompare with your entry answer. Name one corrected idea and one open question.\n\n\n\nFacilitator key and rubric · reveal after collection\n\nEntry: (images, rows, columns) or (time, rows, columns) both fit. The selection has shape (20,): one pixel across images or time. Acquisition records, timestamps and sample IDs establish the meaning; shape alone cannot.\nExit: selection (6, 8, 8) means plants, rows, columns: last visit, channel 1. The mean has shape (6, 3, 8, 8): plants, channels, rows, columns. Averaging can hide a brief disease signal or growth trend. Compare the visit sequence with its average, using a known transient or a downstream detection test. Other concrete, defensible tests are valid.\nScore each dimension 0 (missing/wrong), 1 (partly right), or 2 (correct and explained). Score entry and exit separately, out of 6:\n\n\n\n\n\n\n\n\nDimension\nEntry evidence\nExit evidence\n\n\n\n\nAxis meaning\nBoth interpretations, all axes named\nRemaining axes named in both results\n\n\nShape reasoning\nCorrect selection shape and why\nBoth output shapes and why\n\n\nEvidence\nMetadata that establishes batch versus time\nA specific loss and a test that can detect it\n\n\n\nIf axis or shape reasoning scores 0–1, revisit the slice in Notebook 01. If evidence scores 0–1, use group task 02. If all three score 2, assign a take-home chosen by interest. Reflection is unscored. Do not treat score differences as a causal measure of workshop impact."
-  },
-  {
-    "objectID": "faq.html",
-    "href": "faq.html",
-    "title": "Frequently asked questions",
+    "objectID": "es/index.html#qué-hay-aquí",
+    "href": "es/index.html#qué-hay-aquí",
+    "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
-    "text": "Español\nStart here for practical questions about the workshop. For the lesson itself, open the handbook."
+    "text": "Teoría completa, ejercicios y soluciones paso a paso.\nLee el manual\n\n\n\nCuadernos interactivos de Python para ejecutar en Google Colab.\nEjecuta el código\n\n\n\nPresentaciones visuales para seguir las sesiones del taller.\nVer diapositivas\n\n\n\nMapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.\nExplora el complemento\n\n\n\nCuestionarios interactivos en directo para comprobar lo aprendido.\nEntra al cuestionario\n\n\n\nArtículos clave, capítulos de libros y código fuente del repositorio.\nConsulta las fuentes"
   },
   {
-    "objectID": "faq.html#before",
-    "href": "faq.html#before",
-    "title": "Frequently asked questions",
-    "section": "Before the workshop",
-    "text": "Before the workshop\n\nWho is this workshop for?\nPeople who know basic linear algebra and want to use tensors in machine learning. You do not need previous tensor theory: new terms are introduced as you go. You will read and edit Python code in the notebooks.\n\n\nWhat should I do beforehand?\nFollow the prerequisites on the homepage: review the required linear algebra reading, complete the pre-work notebooks, and run notebook 00. Report setup or download failures before the session so they can be addressed early.\n\n\nHow long does the workshop take?\nThe live agenda lasts 210 minutes, including quizzes and breaks. Preparation happens beforehand; optional exercises and the convolution and deconvolution deep dive are take-home material. See the schedule for the session timings.\n\n\nWhich language is used?\nThe workshop is taught in English, with questions welcome in English or Spanish. The site includes both languages. Notebooks are primarily in English, with a short Spanish summary under each heading. The Spanish handbook is a machine translation; the English handbook remains the source of truth."
-  },
-  {
-    "objectID": "faq.html#notebooks",
-    "href": "faq.html#notebooks",
-    "title": "Frequently asked questions",
-    "section": "Running the notebooks",
-    "text": "Running the notebooks\n\nDo I need to install anything on my computer?\nYou can work in Google Colab through the links on the notebooks page. Each notebook has a Setup section that loads its own data and installs any additional packages it needs. Run Setup before the exercises. For a local Jupyter environment, use the local setup instructions.\n\n\nDo the notebooks share data or variables?\nNo. Each notebook is self-contained, so you can open a section without running the earlier notebooks. Run that notebook’s Setup and the preparation cells for your chosen activity. Running notebook 00 checks your setup and downloads; it does not populate another notebook’s runtime.\n\n\nCan I work offline?\nSome notebooks use datasets bundled with the Python libraries; others download data. For local offline work, install the required packages in advance and check the dependency and network table for the notebook you want to use. Test it without a connection before relying on it during a session.\n\n\nWhat if a cell fails or a download does not work?\nCheck the first error and confirm that Setup and the required preparation cells have run in the current runtime. If you restarted the runtime, run them again. For a download failure, check your connection and the notebook’s network requirements. During the workshop, share the notebook number, the cell, and the error message with the facilitator in Discord.\nIf code runs but a result seems wrong, compare it with the notebook’s expected result and use the worked mistakes to practice checking shapes, axes, and assumptions."
-  },
-  {
-    "objectID": "faq.html#learning",
-    "href": "faq.html#learning",
-    "title": "Frequently asked questions",
-    "section": "Learning during and after the session",
-    "text": "Learning during and after the session\n\nDo I need to finish every exercise during the workshop?\nNo. Follow the notebook’s Core prep cells and Core activity first. Use Predict → Run → Explain → Check: predict the result, run the code, explain what happened, and check your understanding. Save optional exercises for later if you need more time.\n\n\nWhere are the solutions?\nExercises have folded solution cells in the notebooks, and the handbook contains worked solutions. Try the exercise before opening the answer. The notebooks are saved without outputs, so running the cells produces the results you compare with the explanation.\n\n\nCan I use the material for self-study?\nYes. Start with the prerequisites, then read the handbook alongside the corresponding notebooks. Pause to solve exercises and use the entry and exit checks to assess your reasoning. The references provide further reading, and the take-home deep dive extends the workshop.\n\n\nHow should I use the companion resources?\nThe companion offers summaries, audio, videos, and self-checks for review. Its NotebookLM material is machine-generated and may contain errors. Check explanations against the handbook and your notebook results.\n\n\nWhere should instructors start?\nOpen Teach this workshop for the facilitator guide, group tasks, assessments, worked mistakes, and feedback form. It explains how to fit those activities into the existing agenda."
-  },
-  {
-    "objectID": "companion.html",
-    "href": "companion.html",
-    "title": "Workshop companion",
+    "objectID": "es/index.html#requisitos-previos",
+    "href": "es/index.html#requisitos-previos",
+    "title": "Visualiza tensores. Piensa en ML.",
     "section": "",
-    "text": "Review the workshop with these NotebookLM materials, generated 2026-09-07. They have not been checked by a person. Use the handbook to check answers."
+    "text": "Repasa vectores, matrices y SVD en el capítulo 2 de Goodfellow y completa los cuadernos de trabajo previo.\n\n\n\nEjecuta el cuaderno 00 en Google Colab para cargar los conjuntos de datos.\n\n\n\nMira Essence of linear algebra, de 3Blue1Brown."
   },
   {
-    "objectID": "companion.html#brainstorm",
-    "href": "companion.html#brainstorm",
-    "title": "Workshop companion",
-    "section": "The whole day in one picture",
-    "text": "The whole day in one picture\nFour ideas connect the sections. This diagram was drawn by hand.\n\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home.\n\n\n\nFour ideas, one object\n\nEvery section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home. Four ideas, one object Every section serves one of these four ideas.   ⊞ It generalizes a matrix The same object, with as many axes as the data needs. 01 What a tensor is 02 Thinking in N dimensions   ▦ It holds the data Images, video, taxi trips: one box of numbers. 00 Setup and welcome 03 Indexing and broadcasting real data 05 Video pipeline design   ⇄ Its axes can move reshape re-reads the numbers. transpose moves the axes. 04 Reshape and transpose real images 06 Contraction with einsum   ∏ It factors Break it into simpler parts you can use. 07 Inverses and the pseudoinverse 08 Recursion with matrices and vectors 09 Matrix factorizations 10 Tucker decomposition on real data 11 Tensor factorizations  One thread runs through all four. When there is no exact answer, find the best approximation you can trust. You watch it happen in sections 07, 10 and 13. 12 pulls the four together. 13 is the take-home."
+    "objectID": "es/index.html#cómo-trabajamos",
+    "href": "es/index.html#cómo-trabajamos",
+    "title": "Visualiza tensores. Piensa en ML.",
+    "section": "",
+    "text": "💻 10 min Código\n  💡 5 min Repaso de conceptos\n  💬 10 min Discusión en grupo"
   },
   {
-    "objectID": "companion.html#video",
-    "href": "companion.html#video",
-    "title": "Workshop companion",
-    "section": "Video overview",
-    "text": "Video overview\n\n\n\n\nTensors in machine learning — video overview — Watch in NotebookLM."
-  },
-  {
-    "objectID": "companion.html#shorts",
-    "href": "companion.html#shorts",
-    "title": "Workshop companion",
-    "section": "One-minute shorts",
-    "text": "One-minute shorts\n\nAbout a minute per idea. Opens in NotebookLM.\n\n\nDecoding NumPy tensor dimensions1:17 · section 01\n\n\nHow memory flattens tensors1:20 · section 04 In Spanish.\n\n\nHow the pseudoinverse solves messy data1:12 · section 07\n\n\nHow SVD compresses sequential matrices1:10 · section 09\n\n\nHow Tucker decomposition compresses data1:16 · section 10\n\n\nHow HOSVD compresses multidimensional data1:27 · section 10\n\n\nHow tensor decomposition extracts meaning1:19 · section 10\n\n\nHow CP decomposition cracks N-dimensional tensors1:19 · section 11"
-  },
-  {
-    "objectID": "companion.html#infographics",
-    "href": "companion.html#infographics",
-    "title": "Workshop companion",
-    "section": "Infographics",
-    "text": "Infographics\n\nView in NotebookLM:\n\n\nTensors — overview\n\n\nReshape vs transpose\n\n\nInverses and pseudoinverses\n\n\nNavigating tensor inverses\n\n\nMatrix and tensor factorizations"
-  },
-  {
-    "objectID": "companion.html#listen",
-    "href": "companion.html#listen",
-    "title": "Workshop companion",
-    "section": "Listen",
-    "text": "Listen\nListen to two hosts explain the main ideas.\n\nAudio overview — 2 minutes. Listen in NotebookLM."
-  },
-  {
-    "objectID": "companion.html#test-yourself",
-    "href": "companion.html#test-yourself",
-    "title": "Workshop companion",
-    "section": "Test yourself",
-    "text": "Test yourself\nPractice at your own pace. For the live quizzes, use Kahoot.\n\nOpen a preview to try the activity in NotebookLM.\n\n\n\nSelf-check quiz26 multiple-choice questions.Find what to review. Opens in NotebookLM. Preview of the interactive activity.\n\n\n\nFlashcards60 cards on linear algebra and tensors.Practice recalling key ideas. Opens in NotebookLM. Preview of the interactive activity."
-  },
-  {
-    "objectID": "companion.html#map",
-    "href": "companion.html#map",
-    "title": "Workshop companion",
-    "section": "The map",
-    "text": "The map\n\nOpen a preview to try the activity in NotebookLM.\n\n\n\nMind mapFive branches connect the workshop’s ideas.Expand a branch to explore. Opens in NotebookLM. Preview of the interactive activity."
-  },
-  {
-    "objectID": "companion.html#notebooklm",
-    "href": "companion.html#notebooklm",
-    "title": "Workshop companion",
-    "section": "In NotebookLM",
-    "text": "In NotebookLM\nOpen the notebook to explore the sources. View the overview infographic."
-  },
-  {
-    "objectID": "kahoot.html",
-    "href": "kahoot.html",
+    "objectID": "es/kahoot.html",
+    "href": "es/kahoot.html",
     "title": "Kahoot",
     "section": "",
-    "text": "Three quizzes sit at the three natural seams of the workshop: after the shape and vocabulary work, after the einsum and pseudoinverse stretch, and after the decompositions.\nEach one runs right after the blocks that supply its content, while the material is still fresh. Each one also runs before the next context switch — a break, or a new Part. That way a quiz reinforces the work rather than interrupting it."
+    "text": "English\nTres cuestionarios marcan las tres costuras naturales del taller: después del trabajo de formas y vocabulario, después del tramo de einsum y pseudoinversa, y después de las descomposiciones.\nCada uno se lanza justo después de los bloques que aportan su contenido, mientras el material sigue fresco. Cada uno también se lanza antes del siguiente cambio de contexto: una pausa o una Parte nueva. Así el cuestionario refuerza el trabajo en lugar de interrumpirlo."
   },
   {
-    "objectID": "kahoot.html#quiz-1",
-    "href": "kahoot.html#quiz-1",
+    "objectID": "es/kahoot.html#quiz-1",
+    "href": "es/kahoot.html#quiz-1",
     "title": "Kahoot",
-    "section": "Quiz 1 — Tensor Vocabulary & Shapes",
-    "text": "Quiz 1 — Tensor Vocabulary & Shapes\nVocabulario de tensores y formas\n\n\n\n\n\n\n\nRuns after\nSection 04 — Reshape and transpose, before the first break\n\n\nCovers\nSections 01, 03, 04\n\n\nLength\n6 questions, ~5 min including the podium\n\n\nImport file\nkahoot/kahoot_quiz_1_vocabulary_shapes.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\nThe room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest. Two questions reach back into the exercises: the NaN question is section 03’s zero-variance pixels, and the last one is section 04’s reshape-versus-transpose."
+    "section": "Cuestionario 1 — Vocabulario de tensores y formas",
+    "text": "Cuestionario 1 — Vocabulario de tensores y formas\nTensor Vocabulary & Shapes\n\n\n\n\n\n\n\nSe lanza después de\nSección 04 — Reshape y transposición, antes de la primera pausa\n\n\nCubre\nSecciones 01, 03, 04\n\n\nDuración\n6 preguntas, ~5 min con el podio incluido\n\n\nArchivo para importar\n../kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx\n\n\nEnlace de entrada\nhttps://kahoot.it/\n\n\n\nLa sala acaba de usar orden, eje, forma, corte, fibra, varianza, reshape y transposición. Es el momento en que esas palabras están más frescas. Dos preguntas vuelven a los ejercicios: la de NaN es la de los píxeles de varianza cero de la sección 03, y la última es la de reshape frente a transposición de la sección 04."
   },
   {
-    "objectID": "kahoot.html#quiz-2",
-    "href": "kahoot.html#quiz-2",
+    "objectID": "es/kahoot.html#quiz-2",
+    "href": "es/kahoot.html#quiz-2",
     "title": "Kahoot",
-    "section": "Quiz 2 — Einsum, Distance & the Pseudoinverse",
-    "text": "Quiz 2 — Einsum, Distance & the Pseudoinverse\nEinsum, distancia y la pseudoinversa\n\n\n\n\n\n\n\nRuns after\nSection 07 — Inverses and the pseudoinverse, before the recursion demo\n\n\nCovers\nSections 06, 07\n\n\nLength\n6 questions, ~5 min\n\n\nImport file\nkahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\n\n\n\n\n\n\nTwo questions here are ahead of the material. Quiz 2 asks about Euclidean distance and cosine similarity, and the handbook never defines either directly. The bridge is section 06’s TODO 4, the 1797×1797 digit similarity matrix built with one einsum. Say the two words out loud during that exercise. Otherwise the last two questions land cold."
+    "section": "Cuestionario 2 — Einsum, distancia y la pseudoinversa",
+    "text": "Cuestionario 2 — Einsum, distancia y la pseudoinversa\nEinsum, Distance & the Pseudoinverse\n\n\n\n\n\n\n\nSe lanza después de\nSección 07 — Inversas y la pseudoinversa, antes de la demo de recursión\n\n\nCubre\nSecciones 06, 07\n\n\nDuración\n6 preguntas, ~5 min\n\n\nArchivo para importar\n../kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx\n\n\nEnlace de entrada\nhttps://kahoot.it/\n\n\n\n\n\n\n\n\n\nDos preguntas van por delante del material. El cuestionario 2 pregunta por la distancia euclídea y la similitud del coseno, y el manual no define ninguna de las dos directamente. El puente es el TODO 4 de la sección 06, la matriz de similitud 1797×1797 entre dígitos, construida con un solo einsum. Di las dos palabras en voz alta durante ese ejercicio. Si no, las dos últimas preguntas caen en frío."
   },
   {
-    "objectID": "kahoot.html#quiz-3",
-    "href": "kahoot.html#quiz-3",
+    "objectID": "es/kahoot.html#quiz-3",
+    "href": "es/kahoot.html#quiz-3",
     "title": "Kahoot",
-    "section": "Quiz 3 — Convolution & Tensor Decompositions",
-    "text": "Quiz 3 — Convolution & Tensor Decompositions\nConvolución y descomposiciones tensoriales\n\n\n\n\n\n\n\nRuns after\nSection 10 — Tucker decomposition, immediately before the wrap-up\n\n\nCovers\nSections 09, 10\n\n\nLength\n6 questions, ~5 min\n\n\nImport file\nkahoot/kahoot_quiz_3_convolution_decompositions.xlsx\n\n\nJoin link\nhttps://kahoot.it/\n\n\n\nRun it while the taxi-tensor rush-hour result is still on screen. Its final question names hour 18, so it must come after section 10’s TODO 6. Running it early gives the answer away. It doubles as a live rehearsal of the wrap-up’s own recap, so go straight from the podium into the wrap-up."
+    "section": "Cuestionario 3 — Convolución y descomposiciones tensoriales",
+    "text": "Cuestionario 3 — Convolución y descomposiciones tensoriales\nConvolution & Tensor Decompositions\n\n\n\n\n\n\n\nSe lanza después de\nSección 10 — Descomposición de Tucker, justo antes del cierre\n\n\nCubre\nSecciones 09, 10\n\n\nDuración\n6 preguntas, ~5 min\n\n\nArchivo para importar\n../kahoot/kahoot_quiz_3_convolution_decompositions.xlsx\n\n\nEnlace de entrada\nhttps://kahoot.it/\n\n\n\nLánzalo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Su última pregunta nombra la hora 18, así que tiene que ir después del TODO 6 de la sección 10. Lanzarlo antes regala la respuesta. Sirve además de ensayo en vivo del propio repaso del cierre, así que pasa del podio al cierre sin interrupción."
   },
   {
-    "objectID": "kahoot.html#running-them",
-    "href": "kahoot.html#running-them",
+    "objectID": "es/kahoot.html#cómo-lanzarlos",
+    "href": "es/kahoot.html#cómo-lanzarlos",
     "title": "Kahoot",
-    "section": "Running them",
-    "text": "Running them\n\nBudget 5 minutes each, including the podium. Groups want to see the leaderboard, and that is fine. It is the payoff.\nDo not import live. See the note at the top of this page.\nThese add 15 minutes, taking the workshop from 180 to 210."
+    "section": "Cómo lanzarlos",
+    "text": "Cómo lanzarlos\n\nPresupuesta 5 minutos cada uno, con el podio incluido. A los grupos les suele apetecer ver la clasificación, y está bien. Es la recompensa.\nNo importes en directo. Ver la nota al comienzo de esta página.\nEstos suman 15 minutos y llevan el taller de 180 a 210."
   },
   {
-    "objectID": "kahoot.html#if-you-are-running-out-of-time",
-    "href": "kahoot.html#if-you-are-running-out-of-time",
+    "objectID": "es/kahoot.html#si-te-falta-tiempo",
+    "href": "es/kahoot.html#si-te-falta-tiempo",
     "title": "Kahoot",
-    "section": "If you are running out of time",
-    "text": "If you are running out of time\nThe handbook’s cutting order, in order:\n\nQuiz 2 — the least novel of the three; the pseudoinverse and distance get re-covered narratively in the wrap-up.\nTODO 4 of section 09 (true deconvolution — the most technically demanding).\nThe RNN snippet in section 08.\nQuestion 5 of either group block.\nQuiz 1.\n\nNever cut section 01’s Three Operations That Matter, section 10, or Quiz 3. Quiz 3 is the cheapest way to find out whether Tucker and CP landed, and the only chance to find out is before students leave."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "See tensors. Think in ML.",
-    "section": "",
-    "text": "210 minutes · Hands-on Python\n\n\nTurn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.\nStart the workshop →\nOpen the setup notebook\nTaught in English · Questions in English & Spanish\n\n\n\n\n  From one number to a neural-network operation\n  A scalar becomes a vector, then a matrix, then a three-dimensional tensor. A neural-network layer uses tensor operations to turn inputs into outputs.\n  \n    \n    \n    \n    \n    \n      \n      \n      \n      \n      \n    \n  \n  \n  \n  \n  \n    THE SHAPE OF MACHINE LEARNING\n    ScalarVectorMatrix\n    \n    7\n    \n    \n    \n    \n    \n    3D tensor\n    Three axes. More possibilities.\n    Neural network\n    y = σ(Wx + b)\n    \n    \n    \n    \n    \n    inputoutput\n  \n\n\n\n\n  \n  \n    01Slice, reshape, and broadcast tensors in NumPy.\n    02Decompose tensors. Explore convolutions in the take-home.\n    03Read the tensor math behind compression and neural networks.\n  \n\n\n  Workshop byRavi Kalia and Sebastian Laverde Chunza\n  Workshop repositoryExplore the code on GitHub ↗\n  Live discussionSmall groups on Discord\n\n\n  \n  \n    \n      \n      \n        Stop guessing array shapes—read PyTorch and JAX code with total confidence.\n        Bridge the gap between clean Python architecture and high-dimensional ML math.\n        Turn your engineering background into practical deep learning fluency.\n      \n    \n    \n      \n      \n        Break out of 2D DataFrames and master the 3D/4D tensors powering deep learning.\n        Move beyond Scikit-Learn to process complex image, text, and sequence data.\n        Upgrade your tabular analytics skills into neural network expertise.\n      \n    \n    \n      \n      \n        Never get stuck on a RuntimeError: size mismatch again.\n        Look under the hood of high-level APIs to debug broken tensor operations fast.\n        Stop treating models as black boxes—understand what happens at every layer.\n      \n    \n    \n      \n      \n        Turn theoretical linear algebra into hands-on, production-ready Python code.\n        Apply matrix decompositions directly to data compression and neural networks.\n        Connect abstract classwork to real-world machine learning architectures.\n      \n    \n  \n\n\n  THE LEARNING JOURNEY\n  \n  Six connected ideas. Code them. See them. Make them click.\n  \n    01Read shapes and axes.\n    02Reshape. Broadcast. Contract.\n    03Solve systems. Find structure.\n    04Turn pixels into features.Take-home\n    05Compress without losing the plot.\n    06Connect the math to models.\n  \n  Explore the notebooks →\n\n\n\n\n\n\nFull theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources\n\n\n\n\n\n\n\n\nReview vectors, matrices, and SVD in Goodfellow Ch. 2 and complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra.\n\n\n\n\n\n\n  💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
-  },
-  {
-    "objectID": "index.html#whats-here",
-    "href": "index.html#whats-here",
-    "title": "See tensors. Think in ML.",
-    "section": "",
-    "text": "Full theory, exercises, and step-by-step solutions.\nRead Handbook\n\n\n\nInteractive Python notebooks running in Google Colab.\nRun Code\n\n\n\nVisual presentation decks for workshop sessions.\nView Decks\n\n\n\nMind maps, 1-minute shorts, audio overviews, and self-checks.\nExplore Hub\n\n\n\nLive interactive quizzes for concept checks.\nJoin Quiz\n\n\n\nCore papers, textbook chapters, and repository source code.\nView Sources"
-  },
-  {
-    "objectID": "index.html#prerequisites",
-    "href": "index.html#prerequisites",
-    "title": "See tensors. Think in ML.",
-    "section": "",
-    "text": "Review vectors, matrices, and SVD in Goodfellow Ch. 2 and complete the pre-work notebooks.\n\n\n\nRun Notebook 00 in Google Colab to pre-load datasets.\n\n\n\nWatch 3Blue1Brown’s Essence of linear algebra."
-  },
-  {
-    "objectID": "index.html#how-we-work",
-    "href": "index.html#how-we-work",
-    "title": "See tensors. Think in ML.",
-    "section": "",
-    "text": "💻 10m Code\n  💡 5m Concept Review\n  💬 10m Group Discussion"
-  },
-  {
-    "objectID": "notebooks.html",
-    "href": "notebooks.html",
-    "title": "Notebooks",
-    "section": "",
-    "text": "Every section of the workshop has a notebook. One more sits past the end of the day, as a take-home deep dive. They are English-primary, and every heading carries a one-line Spanish summary — cada encabezado lleva un resumen en español."
-  },
-  {
-    "objectID": "notebooks.html#how-they-are-built",
-    "href": "notebooks.html#how-they-are-built",
-    "title": "Notebooks",
-    "section": "How they are built",
-    "text": "How they are built\nEvery notebook has the same five parts, so you always know where you are:\n\nHeader — the section title, its objectives, and an Open in Colab badge.\nSetup — installs and imports only what this section needs, and loads its own data. Each notebook is self-contained: no local files, and no dependency on any other notebook.\nExplanation and code, alternating. They build up, rather than dropping a wall of code on you.\nExercises — # TODO stubs taken from the handbook, each followed by a folded solution cell. Open it after you have tried.\nClosing — the Kahoot check for that section, and a link back here.\n\n\n\n\n\n\n\nThe notebooks are committed with no outputs and no execution counts. Every number you see is one you produced. The prose quotes the expected results, so you can tell whether yours are right. If yours differ, that is worth investigating rather than dismissing."
-  },
-  {
-    "objectID": "notebooks.html#the-notebooks",
-    "href": "notebooks.html#the-notebooks",
-    "title": "Notebooks",
-    "section": "The notebooks",
-    "text": "The notebooks\n\n\n\n\n#\nNotebook\nCovers\nColab\n\n\n\n\n00\n00-setup-and-data.ipynb\nSetup and welcome — Load every dataset and confirm your runtime works before the workshop starts.\n\n\n\n01\n01-what-a-tensor-is.ipynb\nWhat a tensor is — Learn to read a tensor’s structure and track what its axes mean as you fix, rearrange, or contract them.\n\n\n\n02\n02-thinking-in-n-dimensions.ipynb\nThinking in N dimensions — Learn to read real tensors by asking what every axis counts and why a batch axis is not the same thing as a time axis.\n\n\n\n03\n03-indexing-and-broadcasting.ipynb\nIndexing and broadcasting real data — Select named measurements from real tumour-sample data, compare meaningful subsets, then standardize real image data safely.\n\n\n\n04\n04-reshape-and-transpose.ipynb\nReshape and transpose real images — Use real images to move between HWC↔︎CHW and NHWC↔︎NCHW, then show why matching shapes do not guarantee matching axis semantics.\n\n\n\n05\n05-video-pipeline-design.ipynb\nVideo pipeline design — Process one pinned real video end to end, then use what its axes actually mean to design two downstream video pipelines.\n\n\n\n06\n06-contraction-with-einsum.ipynb\nContraction with einsum — Use one index rule on real data, then change the inputs interactively to test which index disappears.\n\n\n\n07\n07-inverses-and-pseudoinverse.ipynb\nInverses and the pseudoinverse — Use the pseudoinverse on real singular, tall, and wide systems, then inspect the geometry interactively.\n\n\n\n08\n08-recursion-with-matrices.ipynb\nRecursion with matrices and vectors — Treat recursion as repeated state updates, connect repeated multiplication with dominant eigen-directions, and test recursive forecasting on real airline-passenger data.\n\n\n\n09\n09-matrix-factorizations.ipynb\nMatrix factorizations — Put LU, QR, Cholesky, eigendecomposition, SVD and NMF side by side on real data and see which question each one answers, and what each one costs.\n\n\n\n10\n10-tucker-decomposition.ipynb\nTucker decomposition on real data — Build a real tensor from New York taxi trips, compress each mode with HOSVD, and explore the trade-off between size, reconstruction error, and interpretable structure.\n\n\n\n11\n11-tensor-factorizations.ipynb\nTensor factorizations — Compare CP, Tucker/HOSVD, Tensor Train and t-SVD, understand the structure each one preserves, and measure what each representation costs.\n\n\n\n12\n12-wrap-up-and-take-homes.ipynb\nWrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio."
-  },
-  {
-    "objectID": "notebooks.html#going-further",
-    "href": "notebooks.html#going-further",
-    "title": "Notebooks",
-    "section": "Going further",
-    "text": "Going further\nThis one is not a section. It is a deep dive, handed out as take-home material. It has no slides, no Kahoot, and no minutes on the workshop clock: the 210-minute agenda is exactly what it was without it.\n\n\n\n\n#\nDeep dive\nColab\n\n\n\n\n13\n13-convolution-and-deconvolution.ipynb — Convolution and deconvolution — Treat convolution as a structured linear operator, separate it from correlation, understand transposed convolution, and partially recover a real blurred image."
-  },
-  {
-    "objectID": "notebooks.html#running-them-somewhere-other-than-colab",
-    "href": "notebooks.html#running-them-somewhere-other-than-colab",
-    "title": "Notebooks",
-    "section": "Running them somewhere other than Colab",
-    "text": "Running them somewhere other than Colab\nThe notebooks only need the scientific Python stack. Locally:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab\nmatplotlib and ipywidgets are in that list because every notebook plots, and all but 00 use sliders. Both ship with Colab, so a missing one only shows up when you run locally.\nscikit-learn and scikit-image ship the tumour data, the handwritten digits and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at all. The other nine download something the first time they run: a CSV from GitHub, the storm video clip from Wikimedia, or the voice recording for notebook 12’s take-home E. The table below says which, notebook by notebook."
-  },
-  {
-    "objectID": "notebooks.html#what-each-notebook-needs",
-    "href": "notebooks.html#what-each-notebook-needs",
-    "title": "Notebooks",
-    "section": "What each notebook needs",
-    "text": "What each notebook needs\n\n\nColab already has every one of these installed.\n\n\n\n\n\n\n\nNotebook\nBeyond NumPy\nNetwork\n\n\n\n\n00\nmatplotlib, pandas, scikit-learn, scikit-image, scipy, imageio†\nyes — California housing, airline passengers, NYC taxi trips, the storm clip (only a 1 KB probe)\n\n\n01\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n02\nmatplotlib, ipywidgets, scikit-learn, scikit-image, imageio†\nyes — the storm clip\n\n\n03\nmatplotlib, ipywidgets, scikit-learn\nno\n\n\n04\nmatplotlib, ipywidgets, scikit-image\nno\n\n\n05\nmatplotlib, ipywidgets, imageio†\nyes — the storm clip\n\n\n06\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n07\nmatplotlib, ipywidgets, pandas, scikit-learn\nyes — California housing\n\n\n08\nmatplotlib, ipywidgets, pandas\nyes — airline passengers\n\n\n09\nmatplotlib, ipywidgets, pandas, scikit-learn, scikit-image, scipy\nyes — airline passengers\n\n\n10\nmatplotlib, ipywidgets, pandas\nyes — NYC taxi trips\n\n\n11\nmatplotlib, ipywidgets, pandas, tensorly†, imageio†\nyes — NYC taxi trips, the storm clip\n\n\n12\nmatplotlib, ipywidgets, pandas, scikit-learn, scipy\nyes — a voice recording (for take-home E)\n\n\n13\nmatplotlib, ipywidgets, scikit-image, scipy\nno\n\n\n\n† Installed by the notebook itself with %pip install -q, which is why neither is in the command above."
-  },
-  {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References and further reading",
-    "section": "",
-    "text": "Look up a concept or explore it further. For tensors, start with the Kolda–Bader survey. Then choose the paper for the method you need.\nBackground: Chapter 2 of Deep Learning. See the pre-work before the session."
-  },
-  {
-    "objectID": "references.html#ref-linear-algebra",
-    "href": "references.html#ref-linear-algebra",
-    "title": "References and further reading",
-    "section": "Linear algebra",
-    "text": "Linear algebra\nFrom an introduction to numerical methods.\n\nStrang, G. — Introduction to Linear Algebra — an introduction. Author pages: Gilbert Strang\nTrefethen, L. N. & Bau, D. — Numerical Linear Algebra — numerical methods and SVD. Author pages: Nick Trefethen\nGolub, G. H. & Van Loan, C. F. — Matrix Computations — matrix algorithms. Author pages: Gene Golub · Charles Van Loan"
-  },
-  {
-    "objectID": "references.html#ref-tensors",
-    "href": "references.html#ref-tensors",
-    "title": "References and further reading",
-    "section": "Tensors",
-    "text": "Tensors\nStart with the survey. Then choose a method.\n\nKolda, T. G. & Bader, B. W. (2009). Tensor Decompositions and Applications, SIAM Review 51(3), 455–500 — the survey; start here. Author pages: Tamara Kolda · Brett Bader\nTucker, L. R. (1966). Some mathematical notes on three-mode factor analysis, Psychometrika 31, 279–311 — Tucker decomposition.\nCarroll, J. D. & Chang, J.-J. (1970). Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition, Psychometrika 35, 283–319 — CP decomposition.\nHarshman, R. A. (1970). Foundations of the PARAFAC procedure, UCLA Working Papers in Phonetics 16, 1–84 — PARAFAC, also known as CP. Author pages: Richard Harshman\nEckart, C. & Young, G. (1936). The approximation of one matrix by another of lower rank, Psychometrika 1, 211–218 — optimal low-rank matrix approximation."
-  },
-  {
-    "objectID": "references.html#ref-software",
-    "href": "references.html#ref-software",
-    "title": "References and further reading",
-    "section": "Software",
-    "text": "Software\nImplementations for your own projects.\n\nHarris, C. R., Millman, K. J., van der Walt, S. J. et al. (2020). Array programming with NumPy, Nature 585, 357–362 — the foundational NumPy paper: array programming and the scientific Python ecosystem.\ntensorly — implementations of Tucker and CP. Author pages: Jean Kossaifi"
-  },
-  {
-    "objectID": "references.html#ref-blog",
-    "href": "references.html#ref-blog",
-    "title": "References and further reading",
-    "section": "Posts from the ML blog",
-    "text": "Posts from the ML blog\nOne idea per post, with examples.\nEvery post lives on The ML blog.\n\nWhy so many matrix factorizations?\nFactorizations as optimization\nRotate, stretch, rotate again\nThe directions a matrix refuses to turn\nCan you invert a recursive function?\nTensor factorizations and inverses\nWhat a tensor factorization buys you\nTensor inverses in practice\nTensor inverses, worked through\nSparse tensors\nAttention as two contractions"
-  },
-  {
-    "objectID": "references.html#elsewhere",
-    "href": "references.html#elsewhere",
-    "title": "References and further reading",
-    "section": "Related resources",
-    "text": "Related resources\n\nPrerequisites — prepare for the session.\nHandbook — theory, exercises, and solutions.\nCompanion — NotebookLM summaries and practice questions."
-  },
-  {
-    "objectID": "teach.html",
-    "href": "teach.html",
-    "title": "Teach this workshop",
-    "section": "",
-    "text": "Español\nPlan and run the 210-minute workshop with the resources below. The agenda includes the quizzes and breaks. Group activities replace practice or discussion time; notebook 13 stays take-home work."
-  },
-  {
-    "objectID": "teach.html#prepare-your-session",
-    "href": "teach.html#prepare-your-session",
-    "title": "Teach this workshop",
-    "section": "Prepare your session",
-    "text": "Prepare your session\n\nShare the prerequisites with learners and ask them to run notebook 00 before class.\nRead the facilitator guide alongside the workshop schedule.\nTest your selected notebooks in fresh runtimes. Follow Core prep, then Core activity, and prepare the slides and quizzes."
-  },
-  {
-    "objectID": "teach.html#teaching-resources",
-    "href": "teach.html#teaching-resources",
-    "title": "Teach this workshop",
-    "section": "Teaching resources",
-    "text": "Teaching resources\n\nFacilitator guide — Prepare the room, follow the section timings, and respond when learners get stuck.\nEntry and exit checks — Collect individual reasoning at the start and end; use the included key and rubric.\nGroup tasks — Choose short discussions with a time box and a concrete group deliverable.\nWorked mistakes — Ask learners to predict, test a counterexample, and explain the correction.\nFeedback form — Collect two minutes of feedback after the session and choose one improvement for the next run."
-  },
-  {
-    "objectID": "teach.html#during-and-after-the-workshop",
-    "href": "teach.html#during-and-after-the-workshop",
-    "title": "Teach this workshop",
-    "section": "During and after the workshop",
-    "text": "During and after the workshop\nUse Predict → Run → Explain → Check. Ask for an attempt before opening solutions, rotate group roles, and keep the scheduled breaks and exit check. The facilitator guide places the activities within the existing time slots.\nAfter the session, record actual section timings and common errors with the workshop version you taught. Keep learner responses private and use the feedback to choose one concrete change for your next session."
-  },
-  {
-    "objectID": "facilitator-guide.html",
-    "href": "facilitator-guide.html",
-    "title": "Facilitator run sheet",
-    "section": "",
-    "text": "Español · Teach this workshop\nUse the existing 210-minute agenda. These activities replace practice or discussion time; they do not extend the session. Notebook 13 is take-home work."
-  },
-  {
-    "objectID": "facilitator-guide.html#before-the-session",
-    "href": "facilitator-guide.html#before-the-session",
-    "title": "Facilitator run sheet",
-    "section": "Before the session",
-    "text": "Before the session\n\nRun Notebook 00 before class. Test each selected notebook in a fresh runtime.\nFollow Core prep, then Core activity. Skip other exercises and explorers.\nPrepare groups of 3–4: recorder, speaker, challenger, optional code runner.\nKeep a working runtime ready to demonstrate if a download fails."
-  },
-  {
-    "objectID": "facilitator-guide.html#live-rhythm",
-    "href": "facilitator-guide.html#live-rhythm",
-    "title": "Facilitator run sheet",
-    "section": "Live rhythm",
-    "text": "Live rhythm\nPredict → Run → Explain → Check. Get a written prediction before execution. Then ask for one result and one revised explanation. Rotate group roles. Open solutions only after an attempt. Run selected folded plotting cells; folded code still needs to execute."
-  },
-  {
-    "objectID": "facilitator-guide.html#run-sheet",
-    "href": "facilitator-guide.html#run-sheet",
-    "title": "Facilitator run sheet",
-    "section": "Run sheet",
-    "text": "Run sheet\nFollow the workshop agenda. Keep its quizzes and breaks. Within the selected notebook slots:\n\n\n\nNotebook\nUse the slot this way\n\n\n\n\n00 · 5 min\nEntry check 3; runtime check and welcome 2. Setup was pre-work.\n\n\n01 · 20 min\nModel one shape 4; Exercise 1 and partner check 16.\n\n\n02 · 20 min\nAxis key and Exercise 2: 14; axis-meaning task: 6.\n\n\n03 · 15 min\nModel indexing 3; Exercise 3 and checks 12.\n\n\n04 · 15 min\nExercise 1: 9; silent-bug task: 6.\n\n\n05 · 15 min\nExercise 1: 7; group task 05: 8.\n\n\n06 · 15 min\nModel one contraction 4; Exercise 1 and check 11.\n\n\n07 · 15 min\nPredict singularity 3; Exercise 1 and check 12.\n\n\n08 · 10 min\nModel one update 3; Exercise 1 and check 7.\n\n\n09 · 15 min\nExercise 1: 12; residual mistake below: 3. No timing sweeps.\n\n\n10 · 15 min\nExplain core and factors 4; rank explorer 8; defend a choice 3.\n\n\n11 · 15 min\nExercise 1 in pairs: 7; group task 11: 8. No model sweeps.\n\n\n12 · 5 min\nIndividual exit check. Assign take-homes after collection.\n\n\n\nUse group tasks 05 and 11 at their notebook headings. Use the written prompts; optional explorers are not prerequisites. For task 04, use the tiny reshape example in worked mistakes if needed. Each time box includes sharing. Ask one group to speak; others submit three lines: choice → evidence → what would change our mind.\nIn Notebook 11, predict storage first. If fitting takes too long, demonstrate the supplied solution after their attempt. Discuss its output; do not spend the group slot debugging an installation."
-  },
-  {
-    "objectID": "facilitator-guide.html#entry-and-exit-checks",
-    "href": "facilitator-guide.html#entry-and-exit-checks",
-    "title": "Facilitator run sheet",
-    "section": "Entry and exit checks",
-    "text": "Entry and exit checks\nUse the prompts in Notebooks 00 and 12. The assessment key has scoring and follow-up actions. Collect individual answers, not group answers. Compare reasoning by dimension; this is not a validated learning test."
-  },
-  {
-    "objectID": "facilitator-guide.html#wrong-answer-clinic",
-    "href": "facilitator-guide.html#wrong-answer-clinic",
-    "title": "Facilitator run sheet",
-    "section": "Wrong-answer clinic",
-    "text": "Wrong-answer clinic\nUse worked mistakes inside the slots above: axis order in 02, reshape in 04, residuals in 09, and rank budgets in 11. Show the claim first. Ask for a counterexample. Reveal the correction last.\nIf half the room makes the same error, model the tiny example and ask a new prediction. Drop an optional demonstration, not the next break or exit check. Fast finishers design a counterexample before opening another exercise."
-  },
-  {
-    "objectID": "facilitator-guide.html#after-the-session",
-    "href": "facilitator-guide.html#after-the-session",
-    "title": "Facilitator run sheet",
-    "section": "After the session",
-    "text": "After the session\nOffer the two-minute feedback form. Record the workshop commit, actual timings, common errors, and one change for the next run. Use the release checklist before publishing that change."
-  },
-  {
-    "objectID": "worked-mistakes.html",
-    "href": "worked-mistakes.html",
-    "title": "Four mistakes worth testing",
-    "section": "",
-    "text": "Español · Facilitator guide · Teach this workshop\nPredict first. Run the tiny counterexample. Rewrite the claim in one sentence. These synthetic examples isolate a mistake; the notebooks use real data."
-  },
-  {
-    "objectID": "worked-mistakes.html#the-mean-proves-the-order-is-unchanged",
-    "href": "worked-mistakes.html#the-mean-proves-the-order-is-unchanged",
-    "title": "Four mistakes worth testing",
-    "section": "02 · The mean proves the order is unchanged",
-    "text": "02 · The mean proves the order is unchanged\n“The average is identical after shuffling, so no information was lost.”\n\n\nTest and correction\n\nimport numpy as np\nframes = np.array([0., 1., 2., 3.])\nshuffled = frames[[0, 3, 1, 2]]\nassert frames.mean() == shuffled.mean()\nassert not np.array_equal(np.diff(frames), np.diff(shuffled))\nBoth means are 1.5. The changes are [1, 1, 1] versus [3, -2, 1]. The mean cannot establish chronology. Check timestamps or source indices. Transfer: when is shuffling acceptable for independent images and their labels?"
-  },
-  {
-    "objectID": "worked-mistakes.html#the-shape-proves-reshape-worked",
-    "href": "worked-mistakes.html#the-shape-proves-reshape-worked",
-    "title": "Four mistakes worth testing",
-    "section": "04 · The shape proves reshape worked",
-    "text": "04 · The shape proves reshape worked\n“Both results have shape (3, 2, 2), so both are valid CHW images.”\n\n\nTest and correction\n\nimport numpy as np\nhwc = np.arange(12).reshape(2, 2, 3)\nright = hwc.transpose(2, 0, 1)\nwrong = hwc.reshape(3, 2, 2)\nassert right.shape == wrong.shape\nassert right[1, 0, 0] == hwc[0, 0, 1] == 1\nassert wrong[1, 0, 0] == 4\nassert np.array_equal(right.transpose(1, 2, 0), hwc)\nShape checks pass; a channel-value check fails. Use transpose to reorder axes. Transfer: write the matching coordinate check for NHWC → NCHW."
-  },
-  {
-    "objectID": "worked-mistakes.html#a-tiny-residual-proves-reliable-coefficients",
-    "href": "worked-mistakes.html#a-tiny-residual-proves-reliable-coefficients",
-    "title": "Four mistakes worth testing",
-    "section": "09 · A tiny residual proves reliable coefficients",
-    "text": "09 · A tiny residual proves reliable coefficients\n“Both fits are almost exact, so their coefficients must agree.”\n\n\nTest and correction\n\nimport numpy as np\nX = np.array([[1., 1.], [1., 1.000001]])\na, b = np.array([1., 1.]), np.array([2., 0.])\ny = X @ a\nassert np.linalg.norm(X @ a - y) == 0\nassert np.isclose(np.linalg.norm(X @ b - y), 1e-6)\nassert np.isclose(np.linalg.norm(a - b), np.sqrt(2))\nThe coefficients differ by about 1.414, while predictions differ by only 0.000001. Nearly dependent columns make this possible. Inspect conditioning and coefficient sensitivity as well as fit. QR avoids forming X.T @ X; it does not remove the problem’s sensitivity. Transfer: what happens if a small measurement error changes y?"
-  },
-  {
-    "objectID": "worked-mistakes.html#equal-ranks-mean-equal-budgets",
-    "href": "worked-mistakes.html#equal-ranks-mean-equal-budgets",
-    "title": "Four mistakes worth testing",
-    "section": "11 · Equal ranks mean equal budgets",
-    "text": "11 · Equal ranks mean equal budgets\n“CP rank 3 and Tucker ranks (3, 3, 3) use the same storage.”\n\n\nTest and correction\n\nshape = (4, 4, 24)\ncp = 3 * sum(shape)\ntucker = 3**3 + 3 * sum(shape)\nassert (cp, tucker) == (96, 123)\nTucker also stores a core: 27 more values here. This CP convention absorbs component weights into one factor; count 3 extra values if weights are stored separately. Match stored parameters, then report error on the same data. Transfer: if budgets cannot match exactly, how should you disclose the gap?"
-  },
-  {
-    "objectID": "workshop-feedback.html",
-    "href": "workshop-feedback.html",
-    "title": "Workshop feedback · 2 minutes",
-    "section": "",
-    "text": "Español · Teach this workshop\nCopy this into your usual survey or give it out on paper. No name or account needed. Return privately to the facilitator; do not post learner responses in public issues. Do not include personal, patient, or workplace data.\nFacilitator fills in: date ___ · workshop commit/tag ___ · runtime ___\n\nWhich can you explain now? Check any: axis meaning / broadcasting / contraction / rank budget / none yet.\nWhere did you get stuck? Notebook and heading: ___\nWhat changed your mind? Name one prediction and the evidence: ___\nWhat should we change? Shorten ___ / add an example of ___ / allow more time for ___\n\nFacilitator note: record actual section times and anonymous counts of common errors. Open one concrete issue for the next run. Keep raw responses private."
-  },
-  {
-    "objectID": "es/notebooks.html",
-    "href": "es/notebooks.html",
-    "title": "Cuadernos",
-    "section": "",
-    "text": "Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como estudio a fondo para casa. Están escritos principalmente en inglés, y cada encabezado lleva un resumen de una línea en español."
-  },
-  {
-    "objectID": "es/notebooks.html#cómo-están-construidos",
-    "href": "es/notebooks.html#cómo-están-construidos",
-    "title": "Cuadernos",
-    "section": "Cómo están construidos",
-    "text": "Cómo están construidos\nTodos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde estás:\n\nEncabezado: el título de la sección, sus objetivos y una insignia Open in Colab.\nPreparación: instala e importa solo lo que esa sección necesita, y carga sus propios datos. Cada cuaderno es autónomo: sin archivos locales y sin depender de ningún otro cuaderno.\nExplicación y código, alternándose. Construyen poco a poco, en lugar de soltarte un muro de código.\nEjercicios: esqueletos # TODO sacados del manual, cada uno seguido de una celda de solución plegada. Ábrela después de intentarlo.\nCierre: el control de Kahoot de esa sección y un enlace de vuelta aquí.\n\n\n\n\n\n\n\nLos cuadernos se guardan sin salidas y sin números de ejecución. Cada número que veas es uno que has producido tú. El texto cita los resultados esperados, así que puedes comprobar si los tuyos son correctos. Si los tuyos difieren, eso merece investigarse en lugar de descartarse."
-  },
-  {
-    "objectID": "es/notebooks.html#los-cuadernos",
-    "href": "es/notebooks.html#los-cuadernos",
-    "title": "Cuadernos",
-    "section": "Los cuadernos",
-    "text": "Los cuadernos\n\n\n\n\n#\nCuaderno\nContenido\nColab\n\n\n\n\n00\n00-setup-and-data.ipynb\nPreparación y bienvenida — Carga todos los conjuntos de datos y confirma que tu entorno funciona antes de que empiece el taller.\n\n\n\n01\n01-what-a-tensor-is.ipynb\nQué es un tensor — Aprender a leer la estructura de un tensor y seguir el significado de sus ejes al fijarlos, reorganizarlos o contraerlos.\n\n\n\n02\n02-thinking-in-n-dimensions.ipynb\nPensar en N dimensiones — Aprender a leer tensores reales preguntando qué cuenta cada eje y por qué un eje de lote no significa lo mismo que un eje temporal.\n\n\n\n03\n03-indexing-and-broadcasting.ipynb\nIndexación y broadcasting con datos reales — Seleccionar medidas reales por nombre, comparar subconjuntos con máscaras booleanas y detectar píxeles de varianza cero.\n\n\n\n04\n04-reshape-and-transpose.ipynb\nReshape y transposición de imágenes reales — Reordenar ejes correctamente en imágenes y lotes reales, y comprobar por qué reshape puede conservar la forma mientras destruye el significado.\n\n\n\n05\n05-video-pipeline-design.ipynb\nDiseño de un pipeline de vídeo — Convertir un archivo de vídeo real en un tensor, observar qué se pierde al muestrear fotogramas y diseñar formas tensoriales que respeten el significado del tiempo.\n\n\n\n06\n06-contraction-with-einsum.ipynb\nContracción con einsum — Aprender una sola regla de índices, comprobarla con datos reales y cambiar las entradas de forma interactiva para identificar qué índice desaparece.\n\n\n\n07\n07-inverses-and-pseudoinverse.ipynb\nInversas y la pseudoinversa — Usar la pseudoinversa en sistemas reales singulares, altos y anchos, e inspeccionar su geometría de forma interactiva.\n\n\n\n08\n08-recursion-with-matrices.ipynb\nRecursión con matrices y vectores — Entender una recurrencia como una actualización de estado repetida, observar cuándo domina una dirección propia y comprobar qué ocurre cuando un pronóstico reutiliza sus propias predicciones.\n\n\n\n09\n09-matrix-factorizations.ipynb\nFactorizaciones matriciales — Compara LU, QR, Cholesky, descomposición espectral, SVD y NMF sobre datos reales y descubre qué pregunta responde cada una y cuánto cuesta.\n\n\n\n10\n10-tucker-decomposition.ipynb\nDescomposición de Tucker con datos reales — Construir un tensor real de viajes en taxi, comprimir cada modo con HOSVD y explorar el compromiso entre tamaño, error e interpretación.\n\n\n\n11\n11-tensor-factorizations.ipynb\nFactorizaciones tensoriales — Compara CP, Tucker/HOSVD, Tensor Train y t-SVD, entiende qué estructura conserva cada método y mide cuánto cuesta cada representación.\n\n\n\n12\n12-wrap-up-and-take-homes.ipynb\nCierre y ejercicios para casa — Resume la idea que conecta el taller y luego elige entre cinco extensiones: PCA, atención, CP, Cholesky y audio."
-  },
-  {
-    "objectID": "es/notebooks.html#para-ir-más-lejos",
-    "href": "es/notebooks.html#para-ir-más-lejos",
-    "title": "Cuadernos",
-    "section": "Para ir más lejos",
-    "text": "Para ir más lejos\nEste no es una sección. Es un estudio a fondo, entregado como material para casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la agenda de 210 minutos es exactamente la misma sin él.\n\n\n\n\n#\nEstudio a fondo\nColab\n\n\n\n\n13\n13-convolution-and-deconvolution.ipynb — Convolución y deconvolución — Ver la convolución como un operador lineal estructurado, distinguir correlación de convolución, entender la convolución transpuesta y recuperar parcialmente una imagen real desenfocada."
-  },
-  {
-    "objectID": "es/notebooks.html#ejecutarlos-fuera-de-colab",
-    "href": "es/notebooks.html#ejecutarlos-fuera-de-colab",
-    "title": "Cuadernos",
-    "section": "Ejecutarlos fuera de Colab",
-    "text": "Ejecutarlos fuera de Colab\nLos cuadernos solo necesitan el stack científico de Python. En local:\ngit clone https://github.com/project-delphi/tensors-workshop.git\ncd tensors-workshop\nuv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab\nmatplotlib y ipywidgets están en esa lista porque todos los cuadernos dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab, así que si falta uno solo se nota al ejecutar en local.\nscikit-learn y scikit-image traen consigo los datos de tumores, los dígitos manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se ejecutan sin red. Los otros nueve descargan algo la primera vez que se ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia, o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo dice cuál, cuaderno por cuaderno."
-  },
-  {
-    "objectID": "es/notebooks.html#qué-necesita-cada-cuaderno",
-    "href": "es/notebooks.html#qué-necesita-cada-cuaderno",
-    "title": "Cuadernos",
-    "section": "Qué necesita cada cuaderno",
-    "text": "Qué necesita cada cuaderno\n\n\nColab ya tiene instalado todo lo de esta lista.\n\n\n\n\n\n\n\nCuaderno\nAdemás de NumPy\nRed\n\n\n\n\n00\nmatplotlib, pandas, scikit-learn, scikit-image, scipy, imageio†\nsí — vivienda en California, pasajeros de aerolínea, viajes en taxi de Nueva York, el clip de la tormenta (solo un sondeo de 1 KB)\n\n\n01\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n02\nmatplotlib, ipywidgets, scikit-learn, scikit-image, imageio†\nsí — el clip de la tormenta\n\n\n03\nmatplotlib, ipywidgets, scikit-learn\nno\n\n\n04\nmatplotlib, ipywidgets, scikit-image\nno\n\n\n05\nmatplotlib, ipywidgets, imageio†\nsí — el clip de la tormenta\n\n\n06\nmatplotlib, ipywidgets, scikit-learn, scikit-image\nno\n\n\n07\nmatplotlib, ipywidgets, pandas, scikit-learn\nsí — vivienda en California\n\n\n08\nmatplotlib, ipywidgets, pandas\nsí — pasajeros de aerolínea\n\n\n09\nmatplotlib, ipywidgets, pandas, scikit-learn, scikit-image, scipy\nsí — pasajeros de aerolínea\n\n\n10\nmatplotlib, ipywidgets, pandas\nsí — viajes en taxi de Nueva York\n\n\n11\nmatplotlib, ipywidgets, pandas, tensorly†, imageio†\nsí — viajes en taxi de Nueva York, el clip de la tormenta\n\n\n12\nmatplotlib, ipywidgets, pandas, scikit-learn, scipy\nsí — una grabación de voz (para el ejercicio E)\n\n\n13\nmatplotlib, ipywidgets, scikit-image, scipy\nno\n\n\n\n† Lo instala el propio cuaderno con %pip install -q, y por eso ninguno de los dos está en el comando de arriba."
+    "section": "Si te falta tiempo",
+    "text": "Si te falta tiempo\nEl orden de recorte del manual, en este orden:\n\nCuestionario 2 — el menos novedoso de los tres; la pseudoinversa y la distancia se vuelven a cubrir narrativamente en el cierre.\nEl TODO 4 de la sección 09 (deconvolución verdadera: lo más exigente técnicamente).\nEl fragmento de RNN de la sección 08.\nLa pregunta 5 de cualquiera de los bloques de grupo.\nCuestionario 1.\n\nNo recortes nunca las Tres operaciones que importan de la sección 01, la sección 10 ni el cuestionario 3. El cuestionario 3 es la forma más barata de comprobar si Tucker y CP han calado, y solo puedes comprobarlo antes de que la gente se vaya."
   },
   {
     "objectID": "es/companion.html",
@@ -1299,7 +1341,7 @@
     "href": "es/faq.html#before",
     "title": "Preguntas frecuentes",
     "section": "Antes del taller",
-    "text": "Antes del taller\n\n¿A quién está dirigido este taller?\nA personas que conocen álgebra lineal básica y quieren usar tensores en aprendizaje automático. No necesitas conocimientos previos de teoría de tensores: los términos nuevos se presentan a medida que avanzas. Leerás y editarás código Python en los cuadernos.\n\n\n¿Qué debo hacer antes de asistir?\nSigue los requisitos de la página de inicio: repasa la lectura obligatoria de álgebra lineal, completa los cuadernos de trabajo previo y ejecuta el cuaderno 00. Informa de cualquier fallo de preparación o descarga antes de la sesión para poder resolverlo a tiempo.\n\n\n¿Cuánto dura el taller?\nLa agenda en vivo dura 210 minutos, incluidos los cuestionarios y los descansos. La preparación se hace antes; los ejercicios opcionales y la profundización en convolución y deconvolución quedan para casa. Consulta los tiempos en el horario.\n\n\n¿En qué idioma se imparte?\nEl taller se imparte en inglés y puedes preguntar en inglés o en español. El sitio incluye ambos idiomas. Los cuadernos están principalmente en inglés, con un breve resumen en español debajo de cada encabezado. El manual en español es una traducción automática; el manual en inglés sigue siendo la fuente de referencia."
+    "text": "Antes del taller\n\n¿A quién está dirigido este taller?\nA personas que conocen álgebra lineal básica y quieren usar tensores en aprendizaje automático. No necesitas conocimientos previos de teoría de tensores: los términos nuevos se presentan a medida que avanzas. Leerás y editarás código Python en los cuadernos.\n\n\n¿Qué debo hacer antes de asistir?\nSigue los requisitos de la página de inicio: repasa la lectura obligatoria de álgebra lineal, completa los cuadernos de trabajo previo y ejecuta el cuaderno 00. Informa de cualquier fallo de preparación o descarga antes de la sesión para poder resolverlo a tiempo.\n\n\n¿Cuánto dura el taller?\nLa agenda en vivo dura 210 minutos, incluidos los cuestionarios y los descansos. La preparación se hace antes; los ejercicios opcionales y la profundización en convolución y deconvolución quedan para casa. Consulta los tiempos en el horario.\n\n\n¿En qué idioma se imparte?\nEl taller se imparte en inglés y puedes preguntar en inglés o en español. El sitio incluye ambos idiomas. Los cuadernos están principalmente en inglés, con un breve resumen en español debajo de cada encabezado. El manual en español es una traducción automática; el manual en inglés sigue siendo la fuente de referencia. La página de Kahoot existe en ambos idiomas; las preguntas en vivo en kahoot.it siguen en inglés."
   },
   {
     "objectID": "es/faq.html#notebooks",

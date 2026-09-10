@@ -43,7 +43,8 @@ El taller se imparte en inglés y puedes preguntar en inglés o en español.
 El sitio incluye ambos idiomas. Los cuadernos están principalmente en inglés,
 con un breve resumen en español debajo de cada encabezado. El manual en
 español es una traducción automática; el manual en inglés sigue siendo la
-fuente de referencia.
+fuente de referencia. La [página de Kahoot](kahoot.qmd) existe en ambos
+idiomas; las preguntas en vivo en kahoot.it siguen en inglés.
 
 ## Ejecutar los cuadernos {#notebooks}
 

@@ -3,6 +3,8 @@
 [![Publish](https://github.com/project-delphi/tensors-workshop/actions/workflows/publish.yml/badge.svg)](https://github.com/project-delphi/tensors-workshop/actions/workflows/publish.yml)
 [![Site](https://img.shields.io/badge/site-GitHub%20Pages-2f4858)](https://project-delphi.github.io/tensors-workshop)
 [![Built with Quarto](https://img.shields.io/badge/built%20with-Quarto-2c5f8a)](https://quarto.org)
+[![License: CC BY 4.0](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
 [![Slides EN](https://img.shields.io/badge/slides-EN-informational)](https://project-delphi.github.io/tensors-workshop/slides/en/)
 [![Diapositivas ES](https://img.shields.io/badge/diapositivas-ES-informational)](https://project-delphi.github.io/tensors-workshop/slides/es/)
@@ -171,7 +173,7 @@ _quarto.yml             website config; renders to docs/
 _includes/              generated tables, included by the .qmd pages
 index.qmd  es/index.qmd landing pages, EN and ES
 notebooks.qmd  es/notebooks.qmd   the notebook index, EN and ES
-kahoot.qmd              the three quizzes — English only
+kahoot.qmd  es/kahoot.qmd   the three quizzes, EN and ES
 slides/en/  slides/es/  the two revealjs decks + shared slides.scss
 notebooks/              14 Colab notebooks — 13 sections + 1 take-home extra
 group-tasks.md  es/group-tasks.md   open-ended group activities, EN and ES
@@ -197,6 +199,14 @@ see **[References](https://project-delphi.github.io/tensors-workshop/references.
 It is the single home for all of them, and it exists in
 [Spanish](https://project-delphi.github.io/tensors-workshop/es/references.html)
 too.
+
+## License
+
+Teaching text, slides, notebooks, and quizzes are
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Scripts and notebook
+code cells are [MIT](https://opensource.org/licenses/MIT). Third-party data
+(CC0 photographs, scikit-learn, scikit-image) keeps its own terms. The full
+split is in [LICENSE](LICENSE).
 
 ---
 
@@ -275,16 +285,16 @@ construidos para mostrar errores concretos.
 | # | Sección | Diapos EN | Diapos ES | Cuaderno | Quiz |
 |---|---|---|---|---|---|
 | 00 | Preparación y bienvenida | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-00-setup-and-data) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-00-setup-and-data) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) | — |
-| 01 | Qué es un tensor | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-01-what-a-tensor-is) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-01-what-a-tensor-is) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb) | [Q1](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-1) |
+| 01 | Qué es un tensor | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-01-what-a-tensor-is) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-01-what-a-tensor-is) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb) | [Q1](https://project-delphi.github.io/tensors-workshop/es/kahoot.html#quiz-1) |
 | 02 | Pensar en N dimensiones | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-02-thinking-in-n-dimensions) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-02-thinking-in-n-dimensions) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb) | — |
-| 03 | Indexación y broadcasting con datos reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-03-indexing-and-broadcasting) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-03-indexing-and-broadcasting) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb) | [Q1](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-1) |
-| 04 | Reshape y transposición de imágenes reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-04-reshape-and-transpose) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-04-reshape-and-transpose) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb) | [Q1](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-1) |
+| 03 | Indexación y broadcasting con datos reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-03-indexing-and-broadcasting) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-03-indexing-and-broadcasting) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb) | [Q1](https://project-delphi.github.io/tensors-workshop/es/kahoot.html#quiz-1) |
+| 04 | Reshape y transposición de imágenes reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-04-reshape-and-transpose) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-04-reshape-and-transpose) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb) | [Q1](https://project-delphi.github.io/tensors-workshop/es/kahoot.html#quiz-1) |
 | 05 | Diseño de un pipeline de vídeo | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-05-video-pipeline-design) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-05-video-pipeline-design) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb) | — |
-| 06 | Contracción con einsum | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-06-contraction-with-einsum) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-06-contraction-with-einsum) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2) |
-| 07 | Inversas y la pseudoinversa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-07-inverses-and-pseudoinverse) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-07-inverses-and-pseudoinverse) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-2) |
+| 06 | Contracción con einsum | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-06-contraction-with-einsum) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-06-contraction-with-einsum) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/es/kahoot.html#quiz-2) |
+| 07 | Inversas y la pseudoinversa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-07-inverses-and-pseudoinverse) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-07-inverses-and-pseudoinverse) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | [Q2](https://project-delphi.github.io/tensors-workshop/es/kahoot.html#quiz-2) |
 | 08 | Recursión con matrices y vectores | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-08-recursion-with-matrices) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-08-recursion-with-matrices) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | — |
 | 09 | Factorizaciones matriciales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-09-matrix-factorizations) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-09-matrix-factorizations) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | — |
-| 10 | Descomposición de Tucker con datos reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-10-tucker-decomposition) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-10-tucker-decomposition) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | [Q3](https://project-delphi.github.io/tensors-workshop/kahoot.html#quiz-3) |
+| 10 | Descomposición de Tucker con datos reales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-10-tucker-decomposition) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-10-tucker-decomposition) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | [Q3](https://project-delphi.github.io/tensors-workshop/es/kahoot.html#quiz-3) |
 | 11 | Factorizaciones tensoriales | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-11-tensor-factorizations) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-11-tensor-factorizations) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | — |
 | 12 | Cierre y ejercicios para casa | [EN](https://project-delphi.github.io/tensors-workshop/slides/en/#sec-12-wrap-up-and-take-homes) | [ES](https://project-delphi.github.io/tensors-workshop/slides/es/#sec-12-wrap-up-and-take-homes) | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | — |
 <!-- END sections-es -->
@@ -342,3 +352,11 @@ consulta
 **[Referencias](https://project-delphi.github.io/tensors-workshop/es/references.html)**.
 Es el único sitio donde viven, y la página existe también
 [en inglés](https://project-delphi.github.io/tensors-workshop/references.html).
+
+## Licencia
+
+El texto didáctico, las diapositivas, los cuadernos y los cuestionarios están
+bajo [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Los scripts y
+las celdas de código son [MIT](https://opensource.org/licenses/MIT). Los datos
+de terceros (fotografías CC0, scikit-learn, scikit-image) conservan sus propios
+términos. El desglose está en [LICENSE](LICENSE).

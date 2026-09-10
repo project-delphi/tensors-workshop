@@ -18,7 +18,7 @@ grupales sustituyen tiempo de práctica o discusión; el cuaderno 13 queda para 
    [horario del taller](tensors_workshop_plan_with_quizzes.md).
 3. Prueba los [cuadernos](notebooks.qmd) elegidos en sesiones nuevas. Sigue
    **Core prep** y luego **Core activity**, y prepara las
-   [diapositivas](../slides/es/index.qmd) y los [cuestionarios en inglés](../kahoot.qmd).
+   [diapositivas](../slides/es/index.qmd) y los [cuestionarios](kahoot.qmd).
 
 ## Recursos para enseñar
 

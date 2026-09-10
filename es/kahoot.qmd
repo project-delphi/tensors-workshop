@@ -1,0 +1,122 @@
+---
+title: "Kahoot"
+subtitle: "Tres controles de 6 preguntas, y cómo lanzarlos"
+lang: es
+---
+
+[English](../kahoot.qmd)
+
+Tres cuestionarios marcan las tres costuras naturales del taller: después del
+trabajo de formas y vocabulario, después del tramo de einsum y pseudoinversa, y
+después de las descomposiciones.
+
+Cada uno se lanza justo después de los bloques que aportan su contenido,
+mientras el material sigue fresco. Cada uno también se lanza **antes** del
+siguiente cambio de contexto: una pausa o una Parte nueva. Así el cuestionario
+refuerza el trabajo en lugar de interrumpirlo.
+
+::: {.callout-note appearance="simple"}
+**kahoot.it y las preguntas del `.xlsx` están en inglés.** Esta página explica
+cómo lanzarlos. El alumnado puede preguntar en español; las opciones que verán
+en pantalla siguen en inglés.
+:::
+
+::: {.kahoot-note}
+**Quien imparte: importa cada hoja de cálculo en kahoot.it *antes* de la
+sesión.** Create → Add question → Import → Import spreadsheet. Hacerlo en
+directo cuesta varios minutos que no tienes.
+
+Los tres **enlaces de entrada de abajo siguen apuntando a `kahoot.it`**. Eso
+funciona: el alumnado introduce ahí el PIN de tu pantalla. Cuando cada
+cuestionario exista, pega su URL de entrada en el campo `url:` de
+`_variables.yml` y vuelve a renderizar. Cada enlace de este sitio, en ambas
+barajas y en los catorce cuadernos, se lee de ese archivo.
+:::
+
+## Cuestionario 1 — {{< var kahoot.q1.title_es >}} {#quiz-1}
+
+*{{< var kahoot.q1.title_en >}}*
+
+|  |  |
+|---|---|
+| **Se lanza después de** | Sección 04 — Reshape y transposición, antes de la primera pausa |
+| **Cubre** | Secciones 01, 03, 04 |
+| **Duración** | {{< var kahoot.q1.questions >}} preguntas, ~5 min con el podio incluido |
+| **Archivo para importar** | [`{{< var kahoot.q1.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q1.xlsx >}}) |
+| **Enlace de entrada** | [{{< var kahoot.q1.url >}}]({{< var kahoot.q1.url >}}) |
+
+: {tbl-colwidths="[20,80]"}
+
+La sala acaba de usar *orden*, *eje*, *forma*, *corte*, *fibra*, *varianza*,
+*reshape* y *transposición*. Es el momento en que esas palabras están más
+frescas. Dos preguntas vuelven a los ejercicios: la de NaN es la de los píxeles
+de varianza cero de la sección 03, y la última es la de reshape frente a
+transposición de la sección 04.
+
+## Cuestionario 2 — {{< var kahoot.q2.title_es >}} {#quiz-2}
+
+*{{< var kahoot.q2.title_en >}}*
+
+|  |  |
+|---|---|
+| **Se lanza después de** | Sección 07 — Inversas y la pseudoinversa, antes de la demo de recursión |
+| **Cubre** | Secciones 06, 07 |
+| **Duración** | {{< var kahoot.q2.questions >}} preguntas, ~5 min |
+| **Archivo para importar** | [`{{< var kahoot.q2.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q2.xlsx >}}) |
+| **Enlace de entrada** | [{{< var kahoot.q2.url >}}]({{< var kahoot.q2.url >}}) |
+
+: {tbl-colwidths="[20,80]"}
+
+::: {.callout-warning appearance="simple"}
+**Dos preguntas van por delante del material.** El cuestionario 2 pregunta por
+la distancia euclídea y la similitud del coseno, y el manual no define ninguna
+de las dos directamente. El puente es el TODO 4 de la sección 06, la matriz de
+similitud 1797×1797 entre dígitos, construida con un solo `einsum`. Di las dos
+palabras en voz alta durante ese ejercicio. Si no, las dos últimas preguntas
+caen en frío.
+:::
+
+## Cuestionario 3 — {{< var kahoot.q3.title_es >}} {#quiz-3}
+
+*{{< var kahoot.q3.title_en >}}*
+
+|  |  |
+|---|---|
+| **Se lanza después de** | Sección 10 — Descomposición de Tucker, justo antes del cierre |
+| **Cubre** | Secciones 09, 10 |
+| **Duración** | {{< var kahoot.q3.questions >}} preguntas, ~5 min |
+| **Archivo para importar** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
+| **Enlace de entrada** | [{{< var kahoot.q3.url >}}]({{< var kahoot.q3.url >}}) |
+
+: {tbl-colwidths="[20,80]"}
+
+Lánzalo mientras el resultado de la hora punta del tensor de taxis siga en
+pantalla. Su última pregunta nombra la hora 18, así que **tiene** que ir
+después del TODO 6 de la sección 10. Lanzarlo antes regala la respuesta. Sirve
+además de ensayo en vivo del propio repaso del cierre, así que pasa del podio
+al cierre sin interrupción.
+
+## Cómo lanzarlos
+
+- **Presupuesta 5 minutos cada uno, con el podio incluido.** A los grupos les
+  suele apetecer ver la clasificación, y está bien. Es la recompensa.
+- **No importes en directo.** Ver la nota al comienzo de esta página.
+- **Estos suman 15 minutos** y llevan el taller de 180 a
+  {{< var workshop.minutes >}}.
+
+## Si te falta tiempo
+
+El orden de recorte del manual, en este orden:
+
+1. **Cuestionario 2** — el menos novedoso de los tres; la pseudoinversa y la
+   distancia se vuelven a cubrir narrativamente en el cierre.
+2. El TODO 4 de la sección 09 (deconvolución verdadera: lo más exigente
+   técnicamente).
+3. El fragmento de RNN de la sección 08.
+4. La pregunta 5 de cualquiera de los bloques de grupo.
+5. **Cuestionario 1.**
+
+**No recortes nunca** las *Tres operaciones que importan* de la sección 01, la
+sección 10 ni el **cuestionario 3**. El cuestionario 3 es la forma más barata
+de comprobar si Tucker y CP han calado, y solo puedes comprobarlo antes de que
+la gente se vaya.

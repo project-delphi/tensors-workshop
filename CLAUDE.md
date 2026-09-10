@@ -150,7 +150,7 @@ a paragraph, find whose job it is:
 | `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, and how we work. | Teaching content or exercises. A section table, Colab instructions, or a tour of the datasets — the homepage is a front door, and all three were cut from it. |
 | The handbook (`tensors_workshop_plan_with_quizzes.md`, and `es/` beside it) | The session text: theory, exercises, worked solutions, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. The bibliography — it links to `references.qmd`, and its `## Further Reading` section is now only that pointer. |
 | `notebooks.qmd` / `es/notebooks.qmd` | The list of every notebook, how they are built, what each one needs, and how to run them off Colab. The only page left that enumerates all thirteen sections in both languages, which is what check 6 now watches. Its *What each notebook needs* table is generated from the notebooks themselves — do not hand-edit it. | The workshop's content or its schedule. |
-| `kahoot.qmd` | The three quizzes and how to run them. English only — the one page that still is, and therefore the only one showing the navbar's `Español` dropdown. | — |
+| `kahoot.qmd` / `es/kahoot.qmd` | The three quizzes and how to run them. The live questions on kahoot.it stay in English; this page is the how-to. | — |
 | `references.qmd` / `es/references.qmd` | Every citation: the linear algebra books, the Tucker/CP/Eckart–Young papers, the `tensorly` docs, and the ML blog posts. With DOIs and author pages. | Prerequisites — it links to the homepage. Teaching content: it says what a work is *for*, never what it says. |
 | `companion.qmd` / `es/companion.qmd` | The machine-generated companion: the NotebookLM notebook and every artifact out of it — video, infographics, audio, quiz, flashcards, mind map — and the standing note that none of it was written or checked by a person. It owns those links, so nothing else carries one. It also carries the **brainstorm diagram**, which is the one thing on the page a person drew, and says so. | The workshop's own content. It explains material, it never defines it. |
 | `README.md` | The GitHub shopfront: what this is, who it is for, prerequisites **in brief**, and links out. | Anything the site already owns. |
@@ -254,15 +254,16 @@ an extra to any of them would be the bug. Their tables are separate and narrower
 
 ## No commits on main
 
-Work goes on a branch and reaches `main` through a pull request. Two guards
-enforce this, and both need to be enabled per clone:
+Work goes on a branch and reaches `main` through a pull request. Three guards
+enforce this. The first two need to be enabled per clone; the third lives on
+`origin` and does not:
 
 ```bash
 git config core.hooksPath .githooks    # required once per clone
 ```
 
-`.githooks/pre-commit` is the one that actually holds the line: it runs inside
-git, knows the branch exactly, and refuses any commit made while HEAD is
+`.githooks/pre-commit` is the one that actually holds the line locally: it runs
+inside git, knows the branch exactly, and refuses any commit made while HEAD is
 `main`. At your own terminal, `ALLOW_MAIN_COMMIT=1` overrides it for one commit
 and `--no-verify` skips it entirely.
 
@@ -275,20 +276,28 @@ but a session started before the file existed needs `/hooks` opened once, or a
 restart, to load it. Without `python3` it cannot check anything, so it blocks
 any command mentioning "commit" rather than waving it through.
 
+The [protect-main ruleset](https://github.com/project-delphi/tensors-workshop/rules/21154813)
+is the boundary that does not depend on a clone. It targets the default branch,
+blocks deletion and force-push, requires a pull request, and requires the
+`render` check from `.github/workflows/publish.yml` to pass on a branch that is
+up to date with `main`. Nobody is in the bypass list, including admins. It does
+not require an approving review: a two-person workshop would stall on that, and
+the PR itself is the gate.
+
 Which guard covers what:
 
-| | `pre-commit` | Claude hook |
-|---|---|---|
-| `git commit` | yes | yes |
-| `git cherry-pick`, `revert`, `am` | **no** — git runs no `pre-commit` for these | yes |
-| `git merge`, `rebase`, force-push | no | no |
-| Your own terminal | yes | no |
-| A fresh clone before `core.hooksPath` | no | yes |
+| | `pre-commit` | Claude hook | GitHub ruleset |
+|---|---|---|---|
+| `git commit` | yes | yes | no — the commit is local |
+| `git cherry-pick`, `revert`, `am` | **no** — git runs no `pre-commit` for these | yes | no — still local |
+| `git push` to `main` | no | no | yes — rejected; open a PR |
+| `git merge`, `rebase`, force-push of `main` on `origin` | no | no | yes |
+| Your own terminal | yes | no | yes, once you push |
+| A fresh clone before `core.hooksPath` | no | yes | yes, once you push |
 
-Closing the remaining gaps needs a GitHub ruleset on `origin`; that is
-deliberately not part of this setup. Deciding which repo a shell command will
-commit into is not decidable in general, so treat the Claude hook as an early,
-explanatory failure rather than the boundary.
+Deciding which repo a shell command will commit into is not decidable in
+general, so treat the Claude hook as an early, explanatory failure rather than
+the boundary. The ruleset is the boundary.
 
 ## Commands
 
@@ -310,7 +319,7 @@ uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
 `check_links.py` is the site test suite — there is no pytest here. It prints
-thirteen numbered checks, in the order they run. Eleven can fail, and any
+fourteen numbered checks, in the order they run. Twelve can fail, and any
 failure exits non-zero: notebooks are valid with no outputs or execution
 counts; every notebook `docs/` serves is byte-identical to the one committed in
 `notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
@@ -331,11 +340,12 @@ and no visible notebook cell depends on a name bound only inside a folded
 solution cell (easy to introduce, invisible when you run the notebook top to
 bottom). Check 13 compares the **shape** of the two handbooks — heading counts, table
 rows, the notebooks each links — because `CLAUDE.md` requires them to change
-together and nothing else verifies it. It is numbered last because the numbers
+together and nothing else verifies it. It is numbered 13 because the numbers
 are a contract this file refers to, and inserting it where it reads best would
 renumber three others. It catches a heading added to one side only; **it cannot
 catch wording**, which is the half that actually drifts, and its docstring says
-so.
+so. Check 14 is the same idea for the two Kahoot pages: both must carry
+`#quiz-1`, `#quiz-2` and `#quiz-3`.
 
 Checks 11 and 12 — Kahoot join URLs, and the companion's artifact links
 and exports — only print a TODO. That output is **not** a failure: both cover
@@ -400,9 +410,8 @@ auto-generates an id from it, which silently destroys every `#sec-NN` anchor.
 `_quarto.yml` has an explicit `render:` list on purpose — without it Quarto
 sweeps up every notebook and tries to execute them, and renders every README as
 a page. Adding a page means adding it there — and, if it has a counterpart in
-the other language, tagging both navbar items `rel: lang-en` / `rel: lang-es`,
-because an untagged item is what `custom.scss` reads as "English only" and uses
-to decide where the `Español` dropdown shows.
+the other language, tagging both navbar items `rel: lang-en` / `rel: lang-es`.
+An untagged item would show in both languages.
 
 ## Working on WSL2 (Windows)
 
