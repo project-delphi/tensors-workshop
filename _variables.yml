@@ -22,6 +22,13 @@ repo:
   site: https://project-delphi.github.io/tensors-workshop
 
 workshop:
+  authors:
+    ravi:
+      name: "Ravi Kalia"
+      url: "https://www.linkedin.com/in/ravi-kalia-phd/"
+    sebastian:
+      name: "Sebastian Laverde Chunza"
+      url: "https://www.linkedin.com/in/sebastian-analytics/"
   title_en: "Tensors for Machine Learning"
   title_es: "Tensores para Aprendizaje Automático"
   subtitle_en: "A 3.5-hour workshop, plus three Kahoot knowledge checks"

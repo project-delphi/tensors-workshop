@@ -90,7 +90,7 @@ Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra l
   </ul>
 </section>
 <div class="credibility-strip">
-  <div class="instructor-credit"><span class="instructor-monogram" aria-hidden="true">RK</span><p><span>Tu instructor</span><strong>Ravi Kalia</strong></p></div>
+  <div class="instructor-credit"><p><span>Taller de</span><strong><a href="{{< var workshop.authors.ravi.url >}}">{{< var workshop.authors.ravi.name >}}</a> y <a href="{{< var workshop.authors.sebastian.url >}}">{{< var workshop.authors.sebastian.name >}}</a></strong></p></div>
   <a href="{{< var repo.url >}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Discusión en directo</strong><span>Grupos pequeños en Discord</span></p></div>
 </div>

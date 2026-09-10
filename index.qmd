@@ -90,7 +90,7 @@ Turn arrays into intuition. Reshape images. Compress data. Decode the math behin
   </ul>
 </section>
 <div class="credibility-strip">
-  <div class="instructor-credit"><span class="instructor-monogram" aria-hidden="true">RK</span><p><span>Your instructor</span><strong>Ravi Kalia</strong></p></div>
+  <div class="instructor-credit"><p><span>Workshop by</span><strong><a href="{{< var workshop.authors.ravi.url >}}">{{< var workshop.authors.ravi.name >}}</a> and <a href="{{< var workshop.authors.sebastian.url >}}">{{< var workshop.authors.sebastian.name >}}</a></strong></p></div>
   <a href="{{< var repo.url >}}"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Workshop repository</strong><span>Explore the code on GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on Discord</span></p></div>
 </div>
