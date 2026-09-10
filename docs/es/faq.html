@@ -1,13 +1,14 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.6.40">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="description" content="Respuestas sobre requisitos del taller, cuadernos, idiomas, solución de problemas y estudio autónomo.">
 
-<title>Entry and exit checks – Tensors for Machine Learning</title>
+<title>Preguntas frecuentes – Tensors for Machine Learning</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,23 +24,23 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<link href="./favicon.svg" rel="icon" type="image/svg+xml">
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-c962d84d17879c2bfc92d8644b9ef1f2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-c962d84d17879c2bfc92d8644b9ef1f2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -54,17 +55,17 @@ ul.task-list li input[type="checkbox"] {
   ],
   "show-item-context": false,
   "language": {
-    "search-no-results-text": "No results",
-    "search-matching-documents-text": "matching documents",
-    "search-copy-link-title": "Copy link to search",
-    "search-hide-matches-text": "Hide additional matches",
-    "search-more-match-text": "more match in this document",
-    "search-more-matches-text": "more matches in this document",
-    "search-clear-button-title": "Clear",
+    "search-no-results-text": "Sin resultados",
+    "search-matching-documents-text": "documentos encontrados",
+    "search-copy-link-title": "Copiar el enlace en la búsqueda",
+    "search-hide-matches-text": "Ocultar resultados adicionales",
+    "search-more-match-text": "resultado adicional en este documento",
+    "search-more-matches-text": "resultados adicionales en este documento",
+    "search-clear-button-title": "Borrar",
     "search-text-placeholder": "",
-    "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit",
-    "search-label": "Search"
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Buscar"
   }
 }</script>
 
@@ -78,82 +79,82 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Tensors for Machine Learning</span>
     </a>
   </div>
-            <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+            <div id="quarto-search" class="" title="Buscar"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Navegación de palanca" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="lang-en"> 
+    <a class="nav-link" href="../index.html" rel="lang-en"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/index.html" rel="lang-es"> 
+    <a class="nav-link" href="../es/index.html" rel="lang-es"> 
 <span class="menu-text">Inicio</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./tensors_workshop_plan_with_quizzes.html" rel="lang-en"> 
+    <a class="nav-link" href="../tensors_workshop_plan_with_quizzes.html" rel="lang-en"> 
 <span class="menu-text">Handbook</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/tensors_workshop_plan_with_quizzes.html" rel="lang-es"> 
+    <a class="nav-link" href="../es/tensors_workshop_plan_with_quizzes.html" rel="lang-es"> 
 <span class="menu-text">Manual</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./notebooks.html" rel="lang-en"> 
+    <a class="nav-link" href="../notebooks.html" rel="lang-en"> 
 <span class="menu-text">Notebooks</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/notebooks.html" rel="lang-es"> 
+    <a class="nav-link" href="../es/notebooks.html" rel="lang-es"> 
 <span class="menu-text">Cuadernos</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./kahoot.html"> 
+    <a class="nav-link" href="../kahoot.html"> 
 <span class="menu-text">Kahoot</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./references.html" rel="lang-en"> 
+    <a class="nav-link" href="../references.html" rel="lang-en"> 
 <span class="menu-text">References</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/references.html" rel="lang-es"> 
+    <a class="nav-link" href="../es/references.html" rel="lang-es"> 
 <span class="menu-text">Referencias</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./slides/en/index.html" rel="lang-en"> 
+    <a class="nav-link" href="../slides/en/index.html" rel="lang-en"> 
 <span class="menu-text">Slides</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./slides/es/index.html" rel="lang-es"> 
+    <a class="nav-link" href="../slides/es/index.html" rel="lang-es"> 
 <span class="menu-text">Diapositivas</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./companion.html" rel="lang-en"> 
+    <a class="nav-link" href="../companion.html" rel="lang-en"> 
 <span class="menu-text">Companion</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/companion.html" rel="lang-es"> 
+    <a class="nav-link" href="../es/companion.html" rel="lang-es"> 
 <span class="menu-text">Complemento</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./teach.html" rel="lang-en"> 
+    <a class="nav-link" href="../teach.html" rel="lang-en"> 
 <span class="menu-text">Teach</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/teach.html" rel="lang-es"> 
+    <a class="nav-link" href="../es/teach.html" rel="lang-es"> 
 <span class="menu-text">Enseñar</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./faq.html" rel="lang-en"> 
+    <a class="nav-link" href="../faq.html" rel="lang-en"> 
 <span class="menu-text">FAQ</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/faq.html" rel="lang-es"> 
+    <a class="nav-link active" href="../es/faq.html" rel="lang-es" aria-current="page"> 
 <span class="menu-text">FAQ</span></a>
   </li>  
   <li class="nav-item dropdown ">
@@ -162,35 +163,35 @@ ul.task-list li input[type="checkbox"] {
     </a>
     <ul class="dropdown-menu" aria-labelledby="nav-menu-español">    
         <li>
-    <a class="dropdown-item" href="./es/index.html">
+    <a class="dropdown-item" href="../es/index.html">
  <span class="dropdown-text">Inicio</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/tensors_workshop_plan_with_quizzes.html">
+    <a class="dropdown-item" href="../es/tensors_workshop_plan_with_quizzes.html">
  <span class="dropdown-text">Manual</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/notebooks.html">
+    <a class="dropdown-item" href="../es/notebooks.html">
  <span class="dropdown-text">Cuadernos</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/references.html">
+    <a class="dropdown-item" href="../es/references.html">
  <span class="dropdown-text">Referencias</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./slides/es/index.html">
+    <a class="dropdown-item" href="../slides/es/index.html">
  <span class="dropdown-text">Diapositivas</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/companion.html">
+    <a class="dropdown-item" href="../es/companion.html">
  <span class="dropdown-text">Complemento</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/teach.html">
+    <a class="dropdown-item" href="../es/teach.html">
  <span class="dropdown-text">Enseñar este taller</span></a>
   </li>  
         <li>
-    <a class="dropdown-item" href="./es/faq.html">
+    <a class="dropdown-item" href="../es/faq.html">
  <span class="dropdown-text">Preguntas frecuentes</span></a>
   </li>  
     </ul>
@@ -198,11 +199,11 @@ ul.task-list li input[type="checkbox"] {
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./index.html" rel="lang-switch-en"> 
+    <a class="nav-link" href="../index.html" rel="lang-switch-en"> 
 <span class="menu-text">🇬🇧 EN</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./es/index.html" rel="lang-switch-es"> 
+    <a class="nav-link" href="../es/index.html" rel="lang-switch-es"> 
 <span class="menu-text">🇪🇸 ES</span></a>
   </li>  
   <li class="nav-item compact">
@@ -223,11 +224,12 @@ ul.task-list li input[type="checkbox"] {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
-    <h2 id="toc-title">On this page</h2>
+    <h2 id="toc-title">En esta página</h2>
    
-  <ul>
-  <li><a href="#entry-3-minutes" id="toc-entry-3-minutes" class="nav-link active" data-scroll-target="#entry-3-minutes">Entry · 3 minutes</a></li>
-  <li><a href="#exit-5-minutes" id="toc-exit-5-minutes" class="nav-link" data-scroll-target="#exit-5-minutes">Exit · 5 minutes</a></li>
+  <ul class="collapse">
+  <li><a href="#before" id="toc-before" class="nav-link active" data-scroll-target="#before">Antes del taller</a></li>
+  <li><a href="#notebooks" id="toc-notebooks" class="nav-link" data-scroll-target="#notebooks">Ejecutar los cuadernos</a></li>
+  <li><a href="#learning" id="toc-learning" class="nav-link" data-scroll-target="#learning">Aprender durante y después de la sesión</a></li>
   </ul>
 </nav>
     </div>
@@ -236,9 +238,15 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Entry and exit checks</h1>
+<h1 class="title">Preguntas frecuentes</h1>
+<p class="subtitle lead">Prepárate, encuentra tu ritmo y sigue aprendiendo</p>
 </div>
 
+<div>
+  <div class="description">
+    Respuestas sobre requisitos del taller, cuadernos, idiomas, solución de problemas y estudio autónomo.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
@@ -253,68 +261,71 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p><a href="./es/assessments.html">Español</a> · <a href="./facilitator-guide.html">Facilitator guide</a> · <a href="./teach.html">Teach this workshop</a></p>
-<p>Answer alone. Short sentences are enough. No code needed. The learner prompts are also in Notebooks 00 and 12.</p>
-<section id="entry-3-minutes" class="level2">
-<h2 class="anchored" data-anchor-id="entry-3-minutes">Entry · 3 minutes</h2>
-<p><code>X.shape == (20, 8, 8)</code>.</p>
-<ol type="1">
-<li>Give two possible meanings for its axes.</li>
-<li>Predict <code>X[:, 3, 4].shape</code>. Name the remaining axis in each interpretation.</li>
-<li>What evidence would distinguish independent images from video frames?</li>
-</ol>
+<p><a href="../faq.html">English</a></p>
+<p>Empieza aquí si tienes preguntas prácticas sobre el taller. Para estudiar el contenido, abre el <a href="../es/tensors_workshop_plan_with_quizzes.html">manual</a>.</p>
+<section id="before" class="level2">
+<h2 class="anchored" data-anchor-id="before">Antes del taller</h2>
+<section id="audience" class="level3">
+<h3 class="anchored" data-anchor-id="audience">¿A quién está dirigido este taller?</h3>
+<p>A personas que conocen álgebra lineal básica y quieren usar tensores en aprendizaje automático. No necesitas conocimientos previos de teoría de tensores: los términos nuevos se presentan a medida que avanzas. Leerás y editarás código Python en los cuadernos.</p>
 </section>
-<section id="exit-5-minutes" class="level2">
-<h2 class="anchored" data-anchor-id="exit-5-minutes">Exit · 5 minutes</h2>
-<p><code>X.shape == (6, 4, 3, 8, 8)</code>: plants, visits, channels, rows, columns.</p>
-<ol type="1">
-<li>Predict <code>X[:, -1, 1].shape</code>. Name its axes.</li>
-<li>Predict <code>X.mean(axis=1).shape</code>. Name its axes.</li>
-<li>What could averaging visits hide? Give one test for that loss.</li>
-<li>Compare with your entry answer. Name one corrected idea and one open question.</li>
-</ol>
-<details>
-<summary>
-Facilitator key and rubric · reveal after collection
-</summary>
-<p>Entry: <code>(images, rows, columns)</code> or <code>(time, rows, columns)</code> both fit. The selection has shape <code>(20,)</code>: one pixel across images or time. Acquisition records, timestamps and sample IDs establish the meaning; shape alone cannot.</p>
-<p>Exit: selection <code>(6, 8, 8)</code> means plants, rows, columns: last visit, channel 1. The mean has shape <code>(6, 3, 8, 8)</code>: plants, channels, rows, columns. Averaging can hide a brief disease signal or growth trend. Compare the visit sequence with its average, using a known transient or a downstream detection test. Other concrete, defensible tests are valid.</p>
-<p>Score each dimension <strong>0</strong> (missing/wrong), <strong>1</strong> (partly right), or <strong>2</strong> (correct and explained). Score entry and exit separately, out of 6:</p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 33%">
-<col style="width: 33%">
-<col style="width: 33%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Dimension</th>
-<th>Entry evidence</th>
-<th>Exit evidence</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>Axis meaning</td>
-<td>Both interpretations, all axes named</td>
-<td>Remaining axes named in both results</td>
-</tr>
-<tr class="even">
-<td>Shape reasoning</td>
-<td>Correct selection shape and why</td>
-<td>Both output shapes and why</td>
-</tr>
-<tr class="odd">
-<td>Evidence</td>
-<td>Metadata that establishes batch versus time</td>
-<td>A specific loss and a test that can detect it</td>
-</tr>
-</tbody>
-</table>
-<p>If axis or shape reasoning scores 0–1, revisit the slice in Notebook 01. If evidence scores 0–1, use group task 02. If all three score 2, assign a take-home chosen by interest. Reflection is unscored. Do not treat score differences as a causal measure of workshop impact.</p>
-</details>
+<section id="preparation" class="level3">
+<h3 class="anchored" data-anchor-id="preparation">¿Qué debo hacer antes de asistir?</h3>
+<p>Sigue los <a href="../es/index.html#requisitos-previos">requisitos de la página de inicio</a>: repasa la lectura obligatoria de álgebra lineal, completa los cuadernos de trabajo previo y ejecuta el <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">cuaderno 00</a>. Informa de cualquier fallo de preparación o descarga antes de la sesión para poder resolverlo a tiempo.</p>
+</section>
+<section id="duration" class="level3">
+<h3 class="anchored" data-anchor-id="duration">¿Cuánto dura el taller?</h3>
+<p>La agenda en vivo dura <strong>210 minutos</strong>, incluidos los cuestionarios y los descansos. La preparación se hace antes; los ejercicios opcionales y la profundización en convolución y deconvolución quedan para casa. Consulta los tiempos en el <a href="../es/tensors_workshop_plan_with_quizzes.html#agenda">horario</a>.</p>
+</section>
+<section id="languages" class="level3">
+<h3 class="anchored" data-anchor-id="languages">¿En qué idioma se imparte?</h3>
+<p>El taller se imparte en inglés y puedes preguntar en inglés o en español. El sitio incluye ambos idiomas. Los cuadernos están principalmente en inglés, con un breve resumen en español debajo de cada encabezado. El manual en español es una traducción automática; el manual en inglés sigue siendo la fuente de referencia.</p>
+</section>
+</section>
+<section id="notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="notebooks">Ejecutar los cuadernos</h2>
+<section id="installation" class="level3">
+<h3 class="anchored" data-anchor-id="installation">¿Necesito instalar algo en mi computador?</h3>
+<p>Puedes trabajar en Google Colab desde los enlaces de la <a href="../es/notebooks.html">página de cuadernos</a>. Cada cuaderno tiene una sección de <strong>Setup</strong> que carga sus datos e instala los paquetes adicionales que necesita. Ejecuta Setup antes de los ejercicios. Si prefieres Jupyter en tu computador, sigue las <a href="../es/notebooks.html#ejecutarlos-fuera-de-colab">instrucciones de instalación local</a>.</p>
+</section>
+<section id="independence" class="level3">
+<h3 class="anchored" data-anchor-id="independence">¿Los cuadernos comparten datos o variables?</h3>
+<p>No.&nbsp;Cada cuaderno es independiente: puedes abrir una sección sin ejecutar los cuadernos anteriores. Ejecuta su Setup y las celdas de preparación de la actividad elegida. Ejecutar el cuaderno 00 comprueba la preparación y las descargas; no carga datos ni variables en el entorno de otro cuaderno.</p>
+</section>
+<section id="offline" class="level3">
+<h3 class="anchored" data-anchor-id="offline">¿Puedo trabajar sin conexión?</h3>
+<p>Algunos cuadernos usan datos incluidos en las bibliotecas de Python; otros descargan datos. Para trabajar localmente sin conexión, instala antes los paquetes necesarios y consulta la <a href="../es/notebooks.html#qué-necesita-cada-cuaderno">tabla de dependencias y red</a> del cuaderno que quieras usar. Pruébalo sin conexión antes de depender de él durante una sesión.</p>
+</section>
+<section id="troubleshooting" class="level3">
+<h3 class="anchored" data-anchor-id="troubleshooting">¿Qué hago si falla una celda o una descarga?</h3>
+<p>Revisa el primer error y confirma que ejecutaste Setup y las celdas de preparación necesarias en el entorno actual. Si reiniciaste el entorno, ejecútalas de nuevo. Si falla una descarga, comprueba tu conexión y los requisitos de red del cuaderno. Durante el taller, comparte con quien lo facilita el número del cuaderno, la celda y el mensaje de error en Discord.</p>
+<p>Si el código se ejecuta pero el resultado parece incorrecto, compáralo con el resultado esperado y usa los <a href="../es/worked-mistakes.html">errores resueltos</a> para practicar la revisión de formas, ejes y supuestos.</p>
+</section>
+</section>
+<section id="learning" class="level2">
+<h2 class="anchored" data-anchor-id="learning">Aprender durante y después de la sesión</h2>
+<section id="pace" class="level3">
+<h3 class="anchored" data-anchor-id="pace">¿Debo terminar todos los ejercicios durante el taller?</h3>
+<p>No.&nbsp;Sigue primero las celdas <strong>Core prep</strong> y la <strong>Core activity</strong> del cuaderno. Usa <strong>Predecir → Ejecutar → Explicar → Comprobar</strong>: predice el resultado, ejecuta el código, explica lo ocurrido y comprueba tu comprensión. Deja los ejercicios opcionales para después si necesitas más tiempo.</p>
+</section>
+<section id="solutions" class="level3">
+<h3 class="anchored" data-anchor-id="solutions">¿Dónde están las soluciones?</h3>
+<p>Los ejercicios tienen celdas de solución plegadas en los cuadernos y el manual contiene soluciones desarrolladas. Intenta resolver el ejercicio antes de abrir la respuesta. Los cuadernos se guardan sin salidas: al ejecutar las celdas produces los resultados que comparas con la explicación.</p>
+</section>
+<section id="self-study" class="level3">
+<h3 class="anchored" data-anchor-id="self-study">¿Puedo estudiar por mi cuenta con estos materiales?</h3>
+<p>Sí. Empieza por los requisitos y luego lee el <a href="../es/tensors_workshop_plan_with_quizzes.html">manual</a> junto con los <a href="../es/notebooks.html">cuadernos</a> correspondientes. Haz pausas para resolver los ejercicios y usa las <a href="../es/assessments.html">evaluaciones de entrada y salida</a> para comprobar tu razonamiento. Las <a href="../es/references.html">referencias</a> ofrecen lecturas adicionales y la <a href="../es/notebooks.html#para-ir-más-lejos">profundización para casa</a> amplía el taller.</p>
+</section>
+<section id="companion" class="level3">
+<h3 class="anchored" data-anchor-id="companion">¿Cómo uso los recursos del complemento?</h3>
+<p>El <a href="../es/companion.html">complemento</a> ofrece resúmenes, audio, vídeos y autoevaluaciones para repasar. Su material de NotebookLM se genera automáticamente y puede contener errores. Contrasta las explicaciones con el manual y los resultados de tus cuadernos.</p>
+</section>
+<section id="teaching" class="level3">
+<h3 class="anchored" data-anchor-id="teaching">¿Por dónde deben empezar los docentes?</h3>
+<p>Abre <a href="../es/teach.html">Enseñar este taller</a> para encontrar la guía de facilitación, las tareas grupales, las evaluaciones, los errores resueltos y el formulario de comentarios. Allí se explica cómo integrar estas actividades en la agenda existente.</p>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -361,12 +372,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // flash "checked"
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
+    button.setAttribute("title", "Copiado");
     let tooltip;
     if (window.bootstrap) {
       button.setAttribute("data-bs-toggle", "tooltip");
       button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
+      button.setAttribute("data-bs-title", "Copiado");
       tooltip = new bootstrap.Tooltip(button, 
         { trigger: "manual", 
           customClass: "code-copy-button-tooltip",
