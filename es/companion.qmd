@@ -34,7 +34,7 @@ Escucha a dos voces explicar las ideas principales.
 
 ## Ponte a prueba {#test-yourself}
 
-Practica a tu ritmo. Para los cuestionarios en vivo, usa [Kahoot](../kahoot.qmd).
+Practica a tu ritmo. Para los cuestionarios en vivo, usa [Kahoot](kahoot.qmd).
 
 {{< include ../_includes/companion-selfcheck-es.md >}}
 

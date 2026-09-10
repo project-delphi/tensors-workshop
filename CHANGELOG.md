@@ -4,6 +4,8 @@
 
 - Added English and Spanish teaching-kit pages and published the facilitator guide, assessments, group tasks, worked mistakes, and feedback form on the website.
 - Corrected the website duration to 210 minutes and clarified the README's deliberate use of synthetic teaching examples in both languages.
+- Licensed teaching materials under CC BY 4.0 and software under MIT.
+- Added a Spanish Kahoot how-to page. Live quiz questions on kahoot.it stay in English.
 
 ## 2026-09-09
 

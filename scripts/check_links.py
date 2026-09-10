@@ -4,7 +4,7 @@
     uv run --with pyyaml,nbformat python scripts/check_links.py
     uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
 
-Thirteen checks, each of which catches a mistake that is otherwise invisible.
+Fourteen checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order
 below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
@@ -53,6 +53,9 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
     and the notebooks each links. `CLAUDE.md` requires them to change in the
     same commit and nothing else verifies it. Structure only — it cannot see
     wording, which is the half that actually drifts.
+  - Both Kahoot pages carry the three quiz anchors. Adding a quiz heading to
+    one language and forgetting the other is the same drift the notebooks-page
+    check already watches.
 
 Exit code is non-zero on any failure, so CI can gate on it.
 """
@@ -760,10 +763,11 @@ def check_handbooks() -> None:
     worse than none, so: this catches a heading, a table or a notebook link
     added to one side only, and nothing else.
 
-    It runs last, and is numbered last, because the numbers are a contract --
+    It is numbered 13 because the numbers are a contract --
     `CLAUDE.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
     inserting this one where it reads best would silently renumber three of
-    them.
+    them. Check 14 (Kahoot page parity) was added after it, not inserted
+    before.
     """
     step("EN / ES handbooks have the same shape")
     en, es = ROOT / HANDBOOK, ROOT / "es" / HANDBOOK
@@ -791,6 +795,31 @@ def check_handbooks() -> None:
               + " — identical in both")
 
 
+def check_kahoot_pages() -> None:
+    """Both Kahoot pages carry the three quiz anchors.
+
+    The English how-to used to be the last unpaired page. The Spanish one is
+    now a real counterpart, so a heading added on one side only would strand
+    every Q1/Q2/Q3 link that gen_tables.py emits for that language.
+    """
+    step("EN / ES Kahoot pages have the quiz anchors")
+    expected = [f"quiz-{n}" for n in (1, 2, 3)]
+    pages = (("en", DOCS / "kahoot.html"),
+             ("es", DOCS / "es" / "kahoot.html"))
+    found = {}
+    for lang, page in pages:
+        if not page.exists():
+            fail(f"missing Kahoot page {page.relative_to(DOCS)}")
+            continue
+        found[lang] = harvest(page).ids
+        for anchor in expected:
+            if anchor not in found[lang]:
+                fail(f"kahoot ({lang}): missing anchor #{anchor}")
+    if len(found) == 2 and all(a in found["en"] and a in found["es"]
+                               for a in expected):
+        print("      quiz-1, quiz-2, quiz-3 present on both pages")
+
+
 def main() -> int:
     only_nb = "--notebooks-only" in sys.argv
     print(f"Checking {'notebooks' if only_nb else 'docs/ and notebooks/'} "
@@ -809,6 +838,7 @@ def main() -> int:
         check_kahoot_urls()
         check_companion()
         check_handbooks()
+        check_kahoot_pages()
 
     print()
     if failures:

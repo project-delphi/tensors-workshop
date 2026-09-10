@@ -1,7 +1,10 @@
 ---
 title: "Kahoot"
 subtitle: "Three 6-question knowledge checks, and how to run them"
+lang: en
 ---
+
+[Español](es/kahoot.qmd)
 
 Three quizzes sit at the three natural seams of the workshop: after the shape
 and vocabulary work, after the einsum and pseudoinverse stretch, and after the

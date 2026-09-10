@@ -38,7 +38,9 @@ the convolution and deconvolution deep dive are take-home material. See the
 The workshop is taught in English, with questions welcome in English or
 Spanish. The site includes both languages. Notebooks are primarily in English,
 with a short Spanish summary under each heading. The Spanish handbook is a
-machine translation; the English handbook remains the source of truth.
+machine translation; the English handbook remains the source of truth. The
+[Kahoot how-to](kahoot.qmd) exists in both languages; the live questions on
+kahoot.it stay in English.
 
 ## Running the notebooks {#notebooks}
 

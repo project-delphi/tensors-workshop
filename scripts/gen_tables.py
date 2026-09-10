@@ -385,7 +385,9 @@ def readme_table(lang: str) -> str:
     for s in SECTIONS:
         anchor = f"sec-{s['n']}-{s['slug']}"
         q = quiz_for(s["n"])
-        qc = f"[Q{q['n']}]({site}/kahoot.html#quiz-{q['n']})" if q else "—"
+        kahoot = (f"{site}/kahoot.html" if lang == "en"
+                  else f"{site}/es/kahoot.html")
+        qc = f"[Q{q['n']}]({kahoot}#quiz-{q['n']})" if q else "—"
         rows.append(
             f"| {s['n']} | {s[title_key]} "
             f"| [EN]({site}/slides/en/#{anchor}) | [ES]({site}/slides/es/#{anchor}) "

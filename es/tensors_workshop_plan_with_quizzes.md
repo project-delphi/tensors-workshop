@@ -25,7 +25,7 @@ y lo que conservas después. Los libros y artículos que hay detrás están en l
 de trabajo previo y qué tener a mano el día del taller. La página principal es
 también donde se describe cada uno de los demás recursos: las
 [diapositivas](../slides/es/index.qmd), los [cuadernos](notebooks.qmd) en los que
-escribes, los tres [controles de Kahoot](../kahoot.qmd) y las
+escribes, los tres [controles de Kahoot](kahoot.qmd) y las
 [referencias](references.qmd).
 
 **Una nota sobre la numeración.** Este manual agrupa el taller en cuatro
