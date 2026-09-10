@@ -698,6 +698,15 @@ references:
       note_es: >-
         Implementaciones para tus proyectos.
       items:
+        - authors: "Harris, C. R., Millman, K. J., van der Walt, S. J. et al."
+          year: 2020
+          title: "Array programming with NumPy"
+          url: "https://www.nature.com/articles/s41586-020-2649-2"
+          where: "Nature 585, 357–362"
+          note_en: >-
+            the foundational NumPy paper: array programming and the scientific Python ecosystem
+          note_es: >-
+            el artículo fundamental de NumPy: programación con arrays y el ecosistema científico de Python
         - title: "tensorly"
           code: true
           url: "https://tensorly.org"

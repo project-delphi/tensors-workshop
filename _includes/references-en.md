@@ -28,6 +28,7 @@ Start with the survey. Then choose a method.
 
 Implementations for your own projects.
 
+- Harris, C. R., Millman, K. J., van der Walt, S. J. et al. (2020). [*Array programming with NumPy*](https://www.nature.com/articles/s41586-020-2649-2), Nature 585, 357–362 — the foundational NumPy paper: array programming and the scientific Python ecosystem.
 - [`tensorly`](https://tensorly.org) — implementations of [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html) and [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html).<br>
   <small>Author pages: [Jean Kossaifi](https://jeankossaifi.com/)</small>
 
