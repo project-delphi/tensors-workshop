@@ -1,4 +1,5 @@
-/* Homepage-only layout; all other pages keep the shared reading theme. */
+/*-- scss:rules --*/
+/* Homepage-only layout, bundled into Quarto's content-hashed theme. */
 #title-block-header:empty { display: none; }
 .workshop-landing {
   --landing-ink: #172e46;
@@ -11,32 +12,6 @@
 .workshop-landing h1,
 .workshop-landing h2,
 .workshop-landing h3 { color: var(--landing-ink); }
-.landing-language-switch {
-  display: flex;
-  justify-content: flex-end;
-  gap: .25rem;
-  margin-bottom: 1rem;
-}
-.landing-language-switch a {
-  display: inline-flex;
-  align-items: center;
-  gap: .4rem;
-  min-height: 44px;
-  padding: .45rem .8rem;
-  border: 1px solid #bdcfdd;
-  border-radius: 9px;
-  background: #fff;
-  color: var(--landing-accent);
-  font-size: .85rem;
-  font-weight: 600;
-  text-decoration: none;
-}
-.landing-language-switch a:hover { background: #eaf3f9; }
-.landing-language-switch a[aria-current="page"] {
-  background: var(--landing-accent);
-  border-color: var(--landing-accent);
-  color: #fff;
-}
 .workshop-landing h2 {
   margin: 2.5rem 0 1.2rem;
   padding: 0;
@@ -131,7 +106,8 @@
 .credibility-strip p > span, .credibility-strip a > span > span { color: var(--landing-muted); font-size: .7rem; }
 .credibility-strip a { text-decoration: none; min-height: 44px; }
 .credibility-strip a:hover strong { color: var(--landing-accent); text-decoration: underline; }
-.instructor-monogram { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: #e7edf5; color: #31536c; font-size: .8rem; font-weight: 700; }
+.instructor-credit a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+.instructor-credit a:hover { color: var(--landing-accent); }
 .credibility-strip svg { width: 25px; height: 25px; fill: none; stroke: #31536c; stroke-width: 1.6; }
 .community-dot { width: 8px; height: 8px; background: #29816e; border-radius: 50%; box-shadow: 0 0 0 5px #e8f4ef; margin: 0 .3rem; }
 .learning-journey { margin-top: 2.8rem; padding: 0 0 1.5rem; border-bottom: 1px solid #d7e4ed; }
@@ -244,7 +220,6 @@
 }
 @media (max-width: 540px) {
   .workshop-landing { padding-top: .25rem; }
-  .landing-language-switch { margin-bottom: .65rem; }
   .workshop-hero { padding: 1.1rem; gap: 1.25rem; border-radius: 16px; }
   .workshop-badge { font-size: .63rem; letter-spacing: .025em; }
   .hero-copy p { font-size: .9rem; }
