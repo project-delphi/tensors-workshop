@@ -143,8 +143,11 @@ Only Quarto is needed to build the site — the notebooks are **not** executed a
 render time. To run the notebooks locally instead of in Colab:
 
 ```bash
-uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+uv run --group notebooks jupyter lab
 ```
+
+The `notebooks` group lives in `pyproject.toml` and is generated from what the
+notebooks import, so it cannot drift from the code it installs for.
 
 ### Regenerating the derived files
 
@@ -155,9 +158,9 @@ only the generated header and footer and clears outputs and transient metadata.
 See [Contributing](CONTRIBUTING.md) for the full ownership guide.
 
 ```bash
-uv run --with pyyaml python scripts/gen_tables.py               # tables + README tables
-uv run --with pyyaml,nbformat python scripts/gen_notebooks.py   # sections + extras
-uv run --with pyyaml,nbformat python scripts/check_links.py     # verify docs/
+uv run --group site python scripts/gen_tables.py      # tables + README tables
+uv run --group site python scripts/gen_notebooks.py   # sections + extras
+uv run --group site python scripts/check_links.py     # verify docs/
 ```
 
 ## How it deploys
@@ -336,11 +339,13 @@ Solo hace falta Quarto para construir el sitio: los cuadernos **no** se ejecutan
 al renderizar. Para ejecutar los cuadernos en local en lugar de en Colab:
 
 ```bash
-uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+uv run --group notebooks jupyter lab
 ```
 
-`matplotlib` e `ipywidgets` vienen con Colab pero no con una instalación pelada
-de `jupyterlab`, y casi todos los cuadernos los necesitan.
+El grupo `notebooks` vive en `pyproject.toml` y se genera a partir de lo que
+los cuadernos importan. `matplotlib` e `ipywidgets` vienen con Colab pero no con
+una instalación pelada de `jupyterlab`, y casi todos los cuadernos los
+necesitan.
 
 ## Cómo se publica
 

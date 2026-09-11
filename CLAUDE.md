@@ -36,7 +36,7 @@ text, then run the appropriate generator:
 | Generated | Owned by |
 |---|---|
 | `_includes/*.md` (both notebook tables, the agenda both decks show, the companion's video, shorts, audio, infographic, self-check and mind-map blocks, the brainstorm diagram's inline SVG, **the notebooks page's dependency table**, and the whole body of both references pages) | `scripts/gen_tables.py` |
-| The marker-delimited table regions inside `README.md`, `notebooks/README.md` and each language's handbook schedule — the rest of all four files is hand-maintained | `scripts/gen_tables.py` |
+| The marker-delimited regions inside `README.md`, `notebooks/README.md`, each language's handbook schedule and **the `notebooks` dependency group in `pyproject.toml`** — the rest of all five files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` — header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
@@ -45,9 +45,10 @@ text, then run the appropriate generator:
 | `docs/` | `quarto render` |
 
 CI reruns `gen_tables.py` and `gen_notebooks.py` and fails if the working tree
-changes. This gate *is* byte-exact — both are deterministic pure Python —
-unlike the render gate under Publishing, which cannot be. A hand-edit is
-caught, but only once you push.
+changes — `notebooks/`, `_includes/`, `README.md` and `pyproject.toml`. This
+gate *is* byte-exact — both are deterministic pure Python — unlike the render
+gate under Publishing, which cannot be. A hand-edit is caught, but only once
+you push.
 
 **The three image generators are not in that gate**, deliberately: they need
 the network, and a scientific stack or a browser the workflow does not install.
@@ -308,16 +309,14 @@ the boundary. The ruleset is the boundary.
 quarto preview          # live site at http://localhost:4200
 quarto render           # writes docs/
 
-uv run --with pyyaml python scripts/gen_tables.py
-uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
-uv run --with pyyaml,nbformat python scripts/check_links.py     # verifies docs/
-uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
+uv run --group site python scripts/gen_tables.py
+uv run --group site python scripts/gen_notebooks.py
+uv run --group site python scripts/check_links.py     # verifies docs/
+uv run --group site python scripts/check_links.py --notebooks-only
 
 # The image generators. Network, heavy deps, not run by CI — see above.
-uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
-scikit-learn,scikit-image python scripts/gen_thumbnails.py
-uv run --with numpy,pandas,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
-scikit-learn,scikit-image python scripts/gen_figures.py
+uv run --group figures python scripts/gen_thumbnails.py
+uv run --group figures python scripts/gen_figures.py
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
@@ -357,13 +356,16 @@ between. `--notebooks-only` runs the notebook and
 solution-independence checks alone. Run it after any content change.
 
 Quarto never executes the notebooks, so building needs Quarto only. To run them
-locally: `uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab`.
+locally: `uv run --group notebooks jupyter lab`.
 
-`matplotlib` and `ipywidgets` both ship with Colab but not with a local
-`jupyterlab` install. Every notebook plots something, and every one except 00
-uses `ipywidgets` sliders on top of that. Notebook
-cells that need `tensorly` install it themselves with `%pip install -q
-tensorly`, so it is not in this list.
+That group is in `pyproject.toml`, and `gen_tables.py` generates it from the
+same read of the notebooks that builds the *what each notebook needs* table —
+so the environment and the table cannot disagree, and neither can drift from
+the imports. `matplotlib` and `ipywidgets` both ship with Colab but not with a
+local `jupyterlab` install. Every notebook plots something, and every one
+except 00 uses `ipywidgets` sliders on top of that. Notebook cells that need
+`tensorly` install it themselves with `%pip install -q tensorly`, so it is not
+in the group — the generator drops anything a notebook `%pip`-installs.
 
 ## Publishing
 

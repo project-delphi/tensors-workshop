@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Verify the rendered site against _variables.yml.
 
-    uv run --with pyyaml,nbformat python scripts/check_links.py
-    uv run --with pyyaml,nbformat python scripts/check_links.py --notebooks-only
+    uv run --group site python scripts/check_links.py
+    uv run --group site python scripts/check_links.py --notebooks-only
 
 Fourteen checks, each of which catches a mistake that is otherwise invisible.
 They are printed numbered in the order they actually run, which is the order

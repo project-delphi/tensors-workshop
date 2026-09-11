@@ -21,8 +21,10 @@ Keep core-route cell IDs and tags aligned with their visible labels. Keep the
 `solution` and `hide-input` tags on folded solutions.
 
 Edit source files, then regenerate their outputs. Do not edit generated
-`_includes/` blocks, marked table regions, or `docs/` directly. The rendered
-`docs/` directory is committed because GitHub Pages serves it.
+`_includes/` blocks, marked table regions, or `docs/` directly. That includes
+the `notebooks` dependency group in `pyproject.toml`: it is read off what the
+notebooks import, so a new import reaches it through `scripts/gen_tables.py`.
+The rendered `docs/` directory is committed because GitHub Pages serves it.
 
 Paired website headings may have an invisible `data-language-key` span beneath
 them. Keep the same key with the corresponding heading in both languages,
@@ -41,15 +43,18 @@ The [notebook guide](notebooks/README.md#colab-to-github-workflow) describes
 editing through Colab. [CLAUDE.md](CLAUDE.md) documents the site internals and
 asset generators.
 
-For navigation changes, run the browser regression check after rendering:
+The browser regression check runs in CI on every pull request, against the
+fresh render. To run it yourself after rendering:
 
 ```bash
-npm install --no-save --package-lock=false playwright
+npm ci
 npx playwright install chromium
-node scripts/check_navigation.cjs
+npm run check:navigation          # or check:slides for the decks alone
 ```
 
-The checker serves `docs/` locally, checks both languages and mobile/desktop
+Playwright is pinned in `package.json`; `npm ci` installs that version rather
+than resolving a new one, so the check behaves the same for you as in CI. The
+checker serves `docs/` locally, checks both languages and mobile/desktop
 widths, and tests section links, keyboard activation and fallback navigation.
 It saves assessment screenshots in the system temporary directory. To use an
 existing Chrome installation, set `BROWSER_EXECUTABLE` to its executable path.

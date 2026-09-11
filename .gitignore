@@ -8,8 +8,17 @@ __pycache__/
 .venv/
 venv/
 
-# Local browser-check dependencies
+# Local browser-check dependencies. package.json and package-lock.json ARE
+# committed: the navigation check runs in CI, and `npm ci` needs the lock to
+# install the pinned Playwright rather than resolving a new one.
 node_modules/
+
+# uv's resolution of pyproject.toml, written on the first `uv run`. Not
+# committed, deliberately. The groups there carry floors rather than pins so a
+# local environment tracks Colab, which moves; a lockfile would freeze the
+# teaching environment away from the one students actually get. Nothing in CI
+# reads it either — every step resolves from pyproject.toml.
+uv.lock
 
 # Excel lock files
 ~$*.xlsx

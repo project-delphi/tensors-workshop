@@ -37,19 +37,24 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install checker dependencies
-        # Quarto never executes the notebooks, so the scientific stack is not
-        # needed here — NumPy runs only the tiny teaching counterexamples.
-        run: python -m pip install --quiet pyyaml nbformat numpy
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      # Dependencies come from the groups in pyproject.toml, so CI runs exactly
+      # the commands CONTRIBUTING and the release checklist give a human. The
+      # scientific stack is in neither group used here: Quarto never executes
+      # the notebooks, and NumPy is present only for the tiny teaching
+      # counterexamples in tests/.
 
       - name: Regenerate derived files
         # Pure Python and deterministic, so this one CAN be byte-exact: it
-        # catches a notebook or a section table edited by hand instead of
-        # through _variables.yml.
+        # catches a notebook, a section table, or the notebooks dependency
+        # group edited by hand instead of through _variables.yml.
         run: |
-          python scripts/gen_tables.py
-          python scripts/gen_notebooks.py
-          DRIFT=$(git status --porcelain -- notebooks _includes README.md)
+          uv run --group site python scripts/gen_tables.py
+          uv run --group site python scripts/gen_notebooks.py
+          DRIFT=$(git status --porcelain -- notebooks _includes README.md pyproject.toml)
           if [ -n "$DRIFT" ]; then
             echo "::error::Generated files differ from what was committed."
             echo "Run scripts/gen_tables.py and scripts/gen_notebooks.py, then commit."
@@ -60,12 +65,12 @@ jobs:
       - name: Check the committed site
         # Runs against docs/ AS COMMITTED, before any re-render — this is what
         # GitHub Pages is actually serving right now.
-        run: python scripts/check_links.py
+        run: uv run --group site python scripts/check_links.py
 
       - name: Check teaching materials
         run: |
-          python scripts/check_teaching_materials.py
-          python -m unittest discover -s tests -v
+          uv run --group test python scripts/check_teaching_materials.py
+          uv run --group test python -m unittest discover -s tests -v
 
       - name: Keep a copy of the committed site
         run: cp -R docs "$RUNNER_TEMP/docs-committed"
@@ -74,7 +79,7 @@ jobs:
         uses: quarto-dev/quarto-actions/render@v2
 
       - name: Check the fresh render
-        run: python scripts/check_links.py
+        run: uv run --group site python scripts/check_links.py
 
       - name: Fail if the committed pages are out of date
         # NOT a byte comparison. Quarto compiles the theme SCSS at render time
@@ -83,4 +88,25 @@ jobs:
         # page linking to it differs too. compare_render.py normalizes those
         # hashes away and compares the rest, which still catches the case this
         # gate exists for: prose edited without re-rendering.
-        run: python scripts/compare_render.py "$RUNNER_TEMP/docs-committed" docs
+        run: uv run --group site python scripts/compare_render.py "$RUNNER_TEMP/docs-committed" docs
+
+      # The browser regression check. It needs a rendered docs/ and a real
+      # Chromium, so it runs last, against the fresh render above. check_links
+      # reads the HTML; this drives it — the language switch carrying the
+      # matching section across languages, keyboard activation, the collapsed
+      # mobile menu, the scrollable handbook tables, and the two decks. None of
+      # that is visible to a parser, and it was landed without a gate.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Playwright
+        # `npm ci` installs the pinned version from package-lock.json; the
+        # browser itself is versioned with it and is not in the npm cache.
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+
+      - name: Check navigation in a browser
+        run: npm run check:navigation

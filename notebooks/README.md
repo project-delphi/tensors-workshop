@@ -100,8 +100,8 @@ with the visible labels; `scripts/check_teaching_materials.py` checks the links.
 1. Open the notebook from its Open in Colab badge.
 2. Edit the teaching body with Gemini or by hand.
 3. Use File > Save a copy in GitHub and save to your feature branch.
-4. Run `uv run --with pyyaml,nbformat python scripts/gen_notebooks.py`.
-5. Run `uv run --with pyyaml,nbformat python scripts/check_links.py`.
+4. Run `uv run --group site python scripts/gen_notebooks.py`.
+5. Run `uv run --group site python scripts/check_links.py`.
 6. Render with the repository-pinned Quarto version.
 7. Review the diff and open a pull request.
 
@@ -113,13 +113,15 @@ Running `gen_notebooks.py` twice must produce no additional changes.
 ## Running them somewhere other than Colab
 
 ```bash
-uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+uv run --group notebooks jupyter lab
 ```
 
-`matplotlib` and `ipywidgets` are in that list because every notebook plots and
-all but 00 use sliders; both ship with Colab, so their absence only shows up
-locally. `imageio[ffmpeg]` and `tensorly` are not, because the notebooks that
-need them install them themselves.
+The `notebooks` group is declared in `pyproject.toml` and generated from what
+these notebooks import, so adding an import and rerunning `gen_tables.py` is
+what changes the environment. `matplotlib` and `ipywidgets` are in it because
+every notebook plots and all but 00 use sliders; both ship with Colab, so their
+absence only shows up locally. `imageio` and `tensorly` are not, because the
+notebooks that need them install them themselves.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the digits and the
 photographs, so notebooks 01, 03, 04, 06 and 13 need no network at all. The other
