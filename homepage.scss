@@ -1,6 +1,10 @@
 /*-- scss:rules --*/
 /* Homepage-only layout, bundled into Quarto's content-hashed theme. */
 #title-block-header:empty { display: none; }
+/* The band has to start at the navbar; Quarto's own top margin and padding on
+   the content column would leave a white strip above it. That padding comes
+   from `#quarto-content > *`, so the id has to be matched to outweigh it. */
+#quarto-content > main.content { margin-top: 0; padding-top: 0; }
 .workshop-landing {
   --landing-ink: #172e46;
   --landing-accent: #245b85;
@@ -20,26 +24,53 @@
   font-weight: 700;
   letter-spacing: -.025em;
 }
-/* The hero is a diagram and a promise, side by side. */
+/* The hero is a full-bleed band: the diagram is drawn on navy, so the band
+   carries the same navy and the two read as one object rather than as a dark
+   rectangle floating in a pale card. The breakout is the standard
+   `50% - 50vw` trick. A classic scrollbar makes 100vw a few pixels wider than
+   the visible page, so `body` clips that overhang. Quarto's header is
+   `position: fixed`, but `overflow` does not make an element a containing
+   block for fixed descendants (only transform/filter/contain do), and body's
+   overflow propagates to the viewport, so the header stays pinned and the
+   page still scrolls. */
+body { overflow-x: clip; }
+.workshop-landing { padding-top: 0; }
 .workshop-hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
   align-items: center;
-  gap: clamp(1.5rem, 3vw, 2.6rem);
-  padding: clamp(1.2rem, 2.6vw, 2rem);
-  border: 1px solid #d7e4ed;
-  border-radius: 24px;
-  background: linear-gradient(120deg, #fff 15%, #eef5fb 65%, #e8f5f1);
-  box-shadow: 0 16px 48px #18384c09;
+  gap: clamp(1.6rem, 3.4vw, 3.2rem);
+  /* The body offset is a flat 64px, but the collapsed navbar measures ~62,
+     leaving a hairline of page background above the band. The header is
+     opaque and sits at z-index 1030, so the band can simply start under it. */
+  margin-top: -6px;
+  margin-inline: calc(50% - 50vw);
+  padding: clamp(2.4rem, 5vw, 4rem) max(1.25rem, calc(50vw - 50%));
+  background:
+    radial-gradient(90% 120% at 78% 18%, #1d5570cc 0%, #0e253c00 58%),
+    linear-gradient(135deg, #071626 0%, #0f2740 52%, #11364a 100%);
+  color: #e7f0f8;
+  isolation: isolate;
+}
+/* A faint dot field, the same one the diagram used to paint for itself. */
+.workshop-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(#9ebdd7 .8px, transparent .9px);
+  background-size: 22px 22px;
+  opacity: .12;
 }
 .workshop-badge {
   display: inline-flex;
   align-items: center;
-  gap: .5rem;
-  color: #31536c;
+  gap: .55rem;
+  color: #8fd6cd;
   font-size: .72rem;
   font-weight: 700;
-  letter-spacing: .06em;
+  letter-spacing: .08em;
   text-transform: uppercase;
 }
 .workshop-badge::before {
@@ -47,20 +78,29 @@
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #258675;
+  background: #4fd8b4;
+  box-shadow: 0 0 0 4px #4fd8b433;
 }
-.workshop-hero h1 {
-  margin: .8rem 0 1rem;
-  font-size: clamp(2.3rem, 4.2vw, 3.5rem);
-  line-height: 1.05;
+.workshop-landing .workshop-hero h1 {
+  margin: 1rem 0 1.1rem;
+  color: #f4f9ff;
+  font-size: clamp(2.4rem, 4.4vw, 3.7rem);
+  line-height: 1.04;
   font-weight: 800;
   letter-spacing: -.055em;
 }
-.hero-highlight { display: block; color: #287780; }
-.hero-copy p { margin-bottom: .7rem; line-height: 1.55; color: #42566a; }
+.hero-highlight { display: block; color: #6fe0c6; }
+.hero-copy p { margin-bottom: .7rem; line-height: 1.6; color: #bacfe2; }
 .hero-copy > p:first-child { margin-bottom: 0; }
-.hero-copy .level1 > p:last-child { margin: .75rem 0 0; line-height: 1.3; }
-.hero-language { font-size: .67rem; color: var(--landing-muted); }
+.hero-copy .level1 > p { max-width: 34rem; font-size: 1.02rem; }
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .8rem 1.1rem;
+  margin: 1.4rem 0 .9rem;
+}
+.hero-actions p { margin: 0; }
 .hero-button,
 .resource-button {
   display: inline-flex;
@@ -76,21 +116,36 @@
 }
 .hero-button {
   gap: 1.5rem;
-  margin-top: .5rem;
-  color: #fff;
-  background: var(--landing-ink);
-  box-shadow: 0 4px 12px #245b8526;
+  padding-inline: 1.45rem;
+  color: #07223a;
+  background: #f2f9ff;
+  box-shadow: 0 10px 26px #0000004d;
 }
-.hero-button:hover { background: #245b85; color: #fff; }
-.hero-secondary { display: inline-block; padding: .2rem 0; font-size: .8rem; color: var(--landing-accent); }
+.hero-button:hover { background: #6fe0c6; color: #06202f; }
+.hero-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .65rem 1.1rem;
+  border: 1px solid #93b6d359;
+  border-radius: 9px;
+  color: #d2e6f7;
+  font-size: .92rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+.hero-secondary:hover { border-color: #6fe0c6; color: #6fe0c6; }
+.hero-copy .level1 > p:nth-last-child(2) { margin-bottom: .25rem; }
+.hero-copy .level1 > p:last-child { margin-bottom: 0; }
+.hero-note { font-size: .82rem; color: #a3bdd4; }
+.hero-language { font-size: .72rem; color: #7f99b3; }
+/* The page-wide focus ring is a dark orange, unreadable on navy. It is
+   declared further down at the same specificity, so this one has to outweigh
+   it rather than merely precede it. */
+.workshop-landing .workshop-hero a:focus-visible { outline: 3px solid #ffc27a; outline-offset: 4px; }
 .hero-visual { min-width: 0; }
-.hero-visual svg {
-  display: block;
-  width: 100%;
-  height: auto;
-  border-radius: 20px;
-  box-shadow: 0 14px 28px #10263b25;
-}
+.hero-diagram { display: block; width: 100%; height: auto; }
 .learning-outcomes { padding: 1.3rem .3rem 1.2rem; }
 .workshop-landing .learning-outcomes h2 { margin: 0 0 .85rem; font-size: 1.05rem; letter-spacing: -.02em; }
 .outcome-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; margin: 0; padding: 0; list-style: none; }
@@ -228,20 +283,37 @@
   .curriculum-track { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 1rem; }
   .curriculum-track li:nth-child(3n+1) { border-left: 0; }
 }
-@media (max-width: 800px) {
+/* The hero stacks earlier than the rest of the page: two columns leave the
+   copy under ~470px, which is too narrow for the headline and wraps the two
+   buttons onto separate lines anyway. */
+@media (max-width: 1100px) {
   .workshop-hero { grid-template-columns: minmax(0, 1fr); }
-  .hero-visual { width: 100%; max-width: 520px; margin: 0 auto; }
-  .workshop-hero h1 { font-size: clamp(2.3rem, 7vw, 3.5rem); }
+  .hero-visual { width: 100%; max-width: 520px; }
+  .workshop-landing .workshop-hero h1 { font-size: clamp(2.3rem, 7vw, 3.5rem); }
+}
+@media (max-width: 800px) {
   .outcome-grid { gap: 1rem; }
   .credibility-strip { flex-wrap: wrap; justify-content: flex-start; column-gap: 2rem; }
   .resource-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+/* On a phone the diagram is drawn at about two-thirds scale, which takes its
+   annotations under 7px. The geometry stays put; only the type steps up. */
+@media (max-width: 460px) {
+  .hero-diagram .d-eyebrow { font-size: 14px; }
+  .hero-diagram .d-label,
+  .hero-diagram .d-io { font-size: 15px; }
+  .hero-diagram .d-shape { font-size: 14px; }
+  .hero-diagram .d-title { font-size: 19px; }
+  .hero-diagram .d-eq { font-size: 16px; }
+}
 @media (max-width: 540px) {
-  .workshop-landing { padding-top: .25rem; }
-  .workshop-hero { padding: 1.1rem; gap: 1.25rem; border-radius: 16px; }
-  .workshop-badge { font-size: .63rem; letter-spacing: .025em; }
-  .hero-copy p { font-size: .9rem; }
-  .hero-visual svg { border-radius: 12px; }
+  .workshop-hero { gap: 1.5rem; padding-block: 2rem 2.2rem; }
+  .workshop-badge { font-size: .63rem; letter-spacing: .04em; }
+  .hero-copy .level1 > p { font-size: .95rem; }
+  /* Stacked, the two buttons must match: each `<p>` is the flex item, so the
+     width has to be stretched onto it, not onto the anchor inside. */
+  .hero-actions { flex-direction: column; align-items: stretch; gap: .6rem; margin-top: 1.2rem; }
+  .hero-actions p, .hero-button, .hero-secondary { width: 100%; }
   .outcome-grid { grid-template-columns: minmax(0, 1fr); gap: 1rem; }
   .learning-outcomes { padding: 1.4rem .3rem; }
   .credibility-strip { padding: 1rem .3rem; gap: 1rem 1.5rem; }
@@ -268,7 +340,6 @@
   .curriculum-track p { grid-column: 3; }
   .stage-extra { grid-column: 3; justify-self: start; }
   .audience-grid, .resource-grid, .workshop-pipeline { grid-template-columns: minmax(0, 1fr); }
-  .hero-button { width: 100%; }
   .workshop-pipeline { gap: 1.8rem; }
   .workshop-pipeline li + li::before {
     content: "↓";

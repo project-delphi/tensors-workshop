@@ -2,6 +2,7 @@
 
 ## 2026-09-11
 
+- The home page opens on a full-width hero: the tensor diagram now runs from a scalar through a vector, a matrix and a 3D tensor to a neural network, with each stage labelled by its NumPy shape.
 - Running the notebooks off Colab is now one command, `uv run --group notebooks jupyter lab`; the package list it used to spell out is derived from what the notebooks import.
 - The browser navigation check runs on every pull request, so a broken language switch or a page that overflows on a phone is caught before it reaches the site.
 
