@@ -12,6 +12,8 @@ practice or discussion time; notebook 13 stays take-home work.
 
 ## Prepare your session
 
+<span data-language-key="prepare-your-session"></span>
+
 1. Share the [prerequisites](index.qmd#prerequisites) with learners and ask them
    to run [notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) before class.
 2. Read the [facilitator guide](facilitator-guide.md) alongside the
@@ -22,6 +24,8 @@ practice or discussion time; notebook 13 stays take-home work.
 
 ## Teaching resources
 
+<span data-language-key="teaching-resources"></span>
+
 - **[Facilitator guide](facilitator-guide.md)** — Prepare the room, follow the section timings, and respond when learners get stuck.
 - **[Entry and exit checks](assessments.md)** — Collect individual reasoning at the start and end; use the included key and rubric.
 - **[Group tasks](group-tasks.md)** — Choose short discussions with a time box and a concrete group deliverable.
@@ -29,6 +33,8 @@ practice or discussion time; notebook 13 stays take-home work.
 - **[Feedback form](workshop-feedback.md)** — Collect two minutes of feedback after the session and choose one improvement for the next run.
 
 ## During and after the workshop
+
+<span data-language-key="during-and-after-the-workshop"></span>
 
 Use **Predict → Run → Explain → Check**. Ask for an attempt before opening
 solutions, rotate group roles, and keep the scheduled breaks and exit check.

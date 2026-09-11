@@ -82,9 +82,9 @@ verified numbers all reproduce.
 
 ## Editing notebooks with Colab and Gemini
 
-The teaching body of each notebook is editable directly. Edits made in Colab,
-including edits made with Gemini, no longer need to be retyped into
-`scripts/content.py`.
+The teaching body of each notebook is editable directly, including in Colab
+with Gemini. See [Contributing](../CONTRIBUTING.md) for the repository's editing
+boundaries and validation workflow.
 
 Ownership is split deliberately, for sections and extras alike:
 

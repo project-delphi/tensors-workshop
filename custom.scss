@@ -33,8 +33,9 @@ h2 {
 
 // Wide tables — the handbook's cost table, the notebooks page's dependency
 // table — scroll inside themselves on a phone rather than scrolling the page
-// sideways. Bootstrap emits the class; this is the behaviour it needs.
+// sideways. responsive_tables.lua adds a focusable wrapper around each table.
 .table-responsive { overflow-x: auto; }
+.table-responsive:focus-visible { outline: 2px solid $primary; outline-offset: 2px; }
 
 table { font-size: .93rem; }
 table th { font-weight: 600; white-space: nowrap; }
@@ -81,8 +82,8 @@ html[lang|="es"] .navbar-nav {
 // the one thing that shows in both languages. Small caps-ish spacing sets it
 // apart from the section links, and the language you are reading is marked by
 // `lang` rather than by Quarto's `.active` — which never reaches the pair at
-// all: Quarto marks one item per page, and Home/Inicio matches the two
-// homepages the pair points at first.
+// all: Quarto marks one item per page. language-switch.html sets the actual
+// destinations and aria-current after that initial navigation is rendered.
 .navbar-nav .nav-link[rel^="lang-switch-"] {
   letter-spacing: .06em;
   font-size: .82rem;
@@ -97,6 +98,9 @@ html[lang|="es"] .navbar-nav .nav-link[rel="lang-switch-es"],
 
 .navbar-brand { font-weight: 600; letter-spacing: -.01em; }
 main a { text-underline-offset: 2px; }
+
+// Translation markers carry no learner-facing content or spacing.
+p:has(> [data-language-key]:only-child) { display: none; }
 
 // ─── page texture ───────────────────────────────────────────────────────────
 // A lattice of points, one every 24px, at about 5% of the ink. It is meant to

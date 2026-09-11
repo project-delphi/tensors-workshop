@@ -22,6 +22,8 @@ label into the other.
 
 ## Schedule
 
+<span data-language-key="schedule"></span>
+
 <!-- BEGIN handbook-schedule -->
 | # | Part | Block | Segment | Format | Min | Start |
 |---|---|---|---|---|---|---|
@@ -57,6 +59,8 @@ and 10, right before the wrap-up.
 ---
 
 ## The Data We Use
+
+<span data-language-key="the-data-we-use"></span>
 
 **Included inside the libraries** (no download, works offline):
 
@@ -97,7 +101,11 @@ FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights
 
 # PART I — What a Tensor Is (section 01, 20 min)
 
+<span data-language-key="part-i-what-a-tensor-is-section-01-20-min"></span>
+
 ## 1.1 Vocabulary
+
+<span data-language-key="1-1-vocabulary"></span>
 
 Keep this table open from section 00 to section 12.
 
@@ -117,6 +125,8 @@ Keep this table open from section 00 to section 12.
 ⚠️ **Warning about the word "rank".** In Chapter 2, *rank* means the number of independent columns of a matrix. In tensor theory, *rank* often means the number of axes. To avoid confusion, this workshop says **order** for the number of axes, and **rank** only in Chapter 2's sense.
 
 ## 1.2 Shape in NumPy
+
+<span data-language-key="1-2-shape-in-numpy"></span>
 
 Every NumPy array has `.shape`, a tuple giving the size along each axis. The length of that tuple is `.ndim`, the number of axes.
 
@@ -156,6 +166,8 @@ Both are order 3, but their axes mean completely different things. `digits.image
 
 ## 1.3 The Three Operations That Matter
 
+<span data-language-key="1-3-the-three-operations-that-matter"></span>
+
 **Slices and fibers** — fixing indices takes a tensor apart.
 
 ```python
@@ -188,6 +200,8 @@ np.einsum('ik,kj->ij', A, B)      # matrix product, sum over k       (eq 2.5)
 **The rule, in one sentence:** an index that appears in the inputs but **not** after the arrow is summed over. An index that appears after the arrow is kept.
 
 ## 1.4 The Map of Factorizations
+
+<span data-language-key="1-4-the-map-of-factorizations"></span>
 
 A **factorization** writes one object as a product of simpler objects. You met two in Chapter 2. Here are the eight we will use today:
 
@@ -226,6 +240,8 @@ Every method in that table above the double line works on **matrices** — two a
 
 # PART II — Thinking in N Dimensions (section 02, 20 min)
 
+<span data-language-key="part-ii-thinking-in-n-dimensions-section-02-20-min"></span>
+
 A live coding demo in the notebook, on real image and video tensors. Open it in Colab and run the Setup cell first — it downloads and checksums the real video clip used by the exercises. Three exercises:
 
 1. **Read the axes on real tensors.** `digits.images` is `(1797, 8, 8)` and a photo is `(512, 512, 3)`. Both are order 3. But axis 0 counts whole images in one, and rows of pixels in the other. `digit_batch` and `video_patch` are *both* `(8, 8, 8)`. Before you run a line of code, say what every axis counts.
@@ -236,7 +252,11 @@ A live coding demo in the notebook, on real image and video tensors. Open it in 
 
 # PART III — Working With Tensor Axes (sections 03–05)
 
+<span data-language-key="part-iii-working-with-tensor-axes-sections-03-05"></span>
+
 ## 03 · Indexing and Broadcasting Real Data (Block 1, 15 min)
+
+<span data-language-key="03-indexing-and-broadcasting-real-data-block-1-15-min"></span>
 
 **Why this matters.** The `breast_cancer` data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column produces no error. It returns a *different real measurement*, your analysis continues, and it gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.
 
@@ -284,6 +304,8 @@ Two real results. **Malignant tumours really do have a larger mean radius** — 
 
 ## 04 · Reshape and Transpose Real Images (Block 2, 15 min)
 
+<span data-language-key="04-reshape-and-transpose-real-images-block-2-15-min"></span>
+
 **Why this matters.** Microscopes and cameras order their axes according to the hardware, not according to what a model expects. Getting this wrong does not crash — the model runs on scrambled data and returns confident, meaningless output. In a drug screen, that is a wrong decision about whether a compound works. The famous version in tech: a model trained in TensorFlow (`NHWC`) deployed into PyTorch (`NCHW`) with no transpose.
 
 **Exercise (10 min)**
@@ -313,11 +335,17 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 
+<span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>
+
 **Run this before the break, right after section 04.** The room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest. Launch `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.
 
 ## Break (5 min)
 
+<span data-language-key="break-5-min"></span>
+
 ## 05 · Group Exercise — Video Pipeline Design (15 min)
+
+<span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span>
 
 Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.
 
@@ -339,7 +367,11 @@ Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is
 
 # PART IV — Computing With Tensors (sections 06–11)
 
+<span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span>
+
 ## 06 · Contraction With `einsum` (Block 3, 15 min)
+
+<span data-language-key="06-contraction-with-einsum-block-3-15-min"></span>
 
 **Why this matters.** Recommendation and search systems rank items by the dot product between a user vector and every item vector. That is one user against millions of items, many times per second. That contraction *is* the ranking signal. Sum over the wrong axis and every user gets wrong results.
 
@@ -374,7 +406,11 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 
 ## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
 
+<span data-language-key="07-inverses-and-the-pseudoinverse-block-4-15-min"></span>
+
 ### The theory, in three steps
+
+<span data-language-key="the-theory-in-three-steps"></span>
 
 **Step 1 — square matrices.** Chapter 2 §2.3 defines `A⁻¹` for a square matrix, with `A⁻¹A = I`. But this only exists when the columns are linearly independent. A matrix with dependent columns is **singular** and has no inverse:
 
@@ -460,9 +496,13 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 ## Kahoot Quiz 2 — Einsum, Distance & the Pseudoinverse (5 min)
 
+<span data-language-key="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min"></span>
+
 **Run this right after section 07, before the recursion demo.** It covers contraction (section 06's `einsum`), the pseudoinverse and singular matrices (section 07), and distance and similarity. The digit-similarity matrix from section 06 TODO 4 is the natural bridge between the two. Launch `kahoot_quiz_2_distance_pseudoinverse.xlsx` (6 questions, ~5 min).
 
 ## 08 · Recursion With Matrices and Vectors (10 min — demo)
+
+<span data-language-key="08-recursion-with-matrices-and-vectors-10-min-demo"></span>
 
 **Recursion** means defining something in terms of itself. With matrices this becomes: apply the same matrix again and again. Three examples, increasing in usefulness.
 
@@ -520,6 +560,8 @@ for t in range(6):
 ```
 
 ## 09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 15 min)
+
+<span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-15-min"></span>
 
 Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing: LU and QR in §1.4 itself, and the pseudoinverse in section 07. None of them answered the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This section answers both. It is also where **eigendecomposition** finally gets named, an hour before section 10 leans on the same machinery. The notebook is **[09 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
 
@@ -602,9 +644,15 @@ k = int(np.argmax(db >= target_db))
 
 ## Break (5 min)
 
+<span data-language-key="break-5-min-2"></span>
+
 ## 10 · Tucker Decomposition on Real Data (Block 6, 15 min)
 
+<span data-language-key="10-tucker-decomposition-on-real-data-block-6-15-min"></span>
+
 ### The theory
+
+<span data-language-key="the-theory"></span>
 
 PCA compresses a **matrix** — two axes. Real data often has more. **Tucker decomposition** generalizes PCA to a tensor of any order: one **factor matrix per axis**, plus a small **core tensor** describing how the factors combine.
 
@@ -667,17 +715,23 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 
 ## Kahoot Quiz 3 — Convolution & Tensor Decompositions (5 min)
 
+<span data-language-key="kahoot-quiz-3-convolution-tensor-decompositions-5-min"></span>
+
 **Run this right after section 10, before section 11.** Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up's own recap, so segue straight from the quiz into it.
 
 ---
 
 ## 11 · Tensor Factorizations: Which One, and What It Costs (Block 7, 15 min)
 
+<span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-15-min"></span>
+
 [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) asked *which factorization, and what does it cost* one order down, on matrices. This section asks it of tensors, straight after section 10 has shown one answer. The notebook is **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
 A tensor decomposition is not only a compression technique. Each one makes a different assumption about **which structure in the data should be kept**, and that assumption — not the flop count — is what you choose between.
 
 ### Four decompositions, four bargains
+
+<span data-language-key="four-decompositions-four-bargains"></span>
 
 | Method | Main idea | Storage | Best fit |
 |---|---|---|---|
@@ -690,6 +744,8 @@ A tensor decomposition is not only a compression technique. Each one makes a dif
 
 ### Why not flatten first?
 
+<span data-language-key="why-not-flatten-first"></span>
+
 Flattening preserves the numerical entries but can hide the meaning carried by separate tensor modes. The synthetic fluorescence-unmixing example in the notebook makes the difference measurable:
 
 - CP recovers the true component amounts at correlation `1.00`.
@@ -701,6 +757,8 @@ That example is synthetic by design: it isolates the structural question without
 > 🇪🇸 Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos dos modos cuyo significado separado era precisamente la información que queríamos interpretar.
 
 ### Fair comparison: CP versus Tucker
+
+<span data-language-key="fair-comparison-cp-versus-tucker"></span>
 
 **Do not compare CP rank `R` against Tucker rank `(R, R, R)`.** Those two representations store different numbers of parameters, so the comparison measures the budget, not the model. A fair experiment is:
 
@@ -723,6 +781,8 @@ Step 3 is where this goes wrong most easily. Picking the candidate whose paramet
 
 ### Why Tensor Train matters as order grows
 
+<span data-language-key="why-tensor-train-matters-as-order-grows"></span>
+
 For a dense order-`N` tensor with equal mode size `I`, dense storage is `I^N`. At a fixed TT bond rank `r`, TT storage is `≈ O(N · I · r²)`: **exponential in the order against linear in the order**, with `I` and `r` held fixed.
 
 CP storage is also linear in the order under a fixed global rank. TT's practical advantage is different: it represents high-order interactions through *local* bond ranks, rather than through one Tucker core that grows exponentially with the order.
@@ -735,6 +795,8 @@ CP storage is also linear in the order under a fixed global rank. TT's practical
 ```
 
 ### Tensor decomposition inside neural networks
+
+<span data-language-key="tensor-decomposition-inside-neural-networks"></span>
 
 A dense convolution kernel of shape `3 × 3 × 512 × 512` holds 2,359,296 weights, and costs about 462 million multiply-adds on a 14 × 14 feature map. A CP factorization at rank 64 stores `64 × (3 + 3 + 512 + 512) = 65,920` weights — **35.8× fewer** — and runs as four skinny convolutions in sequence: `1×1 → 3×1 → 1×3 → 1×1`.
 
@@ -753,6 +815,8 @@ The storage ratio is the easy half. The workflow that makes it usable is **train
 
 ### The decision rule
 
+<span data-language-key="the-decision-rule"></span>
+
 **Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.** Keep that order. The first question has no numerical answer, and the second has no answer at all until the first is settled.
 
 > 🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.
@@ -763,6 +827,8 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 
 ## 12 · Wrap-Up (5 min)
+
+<span data-language-key="12-wrap-up-5-min"></span>
 
 What you did today:
 
@@ -785,6 +851,8 @@ What you did today:
 
 ## Further Reading
 
+<span data-language-key="further-reading"></span>
+
 The bibliography moved to its own page, in both languages:
 **[References and further reading](references.qmd)**.
 
@@ -805,6 +873,8 @@ The [machine-generated companion](companion.qmd) is a different kind of thing, a
 ---
 
 ## Appendix A — Take-Home: How Many Principal Components Are Enough?
+
+<span data-language-key="appendix-a-take-home-how-many-principal-components-are-enough"></span>
 
 Real data contains a trap here. Find it.
 
@@ -836,6 +906,8 @@ Without standardizing, the first component appears to explain **98.2%** of the v
 </details>
 
 ## Appendix B — Take-Home: Attention Is Two Contractions
+
+<span data-language-key="appendix-b-take-home-attention-is-two-contractions"></span>
 
 Attention answers question 5 from the video-pipeline discussion: *which parts of a sequence matter most?* Protein language models use it so every amino acid can look at every other one. Recommenders use it to weight a user's past interactions.
 
@@ -872,11 +944,15 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 ## Appendix C — Take-Home: CP vs Tucker
 
+<span data-language-key="appendix-c-take-home-cp-vs-tucker"></span>
+
 The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. There CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook.
 
 > 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 
 ## Appendix D — Take-Home: Cholesky Builds Correlated Data
+
+<span data-language-key="appendix-d-take-home-cholesky-builds-correlated-data"></span>
 
 [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise, and it hands back correlated draws with exactly that covariance. That is the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors or scenarios.
 
@@ -936,6 +1012,8 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 </details>
 
 ## Appendix E — Take-Home: Audio Denoising by Low-Rank STFT
+
+<span data-language-key="appendix-e-take-home-audio-denoising-by-low-rank-stft"></span>
 
 The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the [references](references.qmd#ref-tensors)). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows, and ask which frequencies are present in each. That is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
 
@@ -998,7 +1076,11 @@ Both ends fail, for opposite reasons. At `k = 2` the approximation is so aggress
 
 ## Appendix F — Take-Home: Convolution and Deconvolution
 
+<span data-language-key="appendix-f-take-home-convolution-and-deconvolution"></span>
+
 ### The theory
+
+<span data-language-key="the-theory-2"></span>
 
 **Convolution** slides a small array (the **kernel**, or **filter**) across a larger one, multiplying and summing at each position. It is the operation at the heart of every convolutional neural network, and it is also how every blur, sharpen, and edge-detection filter works.
 
@@ -1088,6 +1170,8 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 
 ## Appendix G — Facilitator Notes
+
+<span data-language-key="appendix-g-facilitator-notes"></span>
 
 *(Students may ignore this section.)*
 

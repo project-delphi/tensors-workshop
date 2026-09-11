@@ -10,6 +10,8 @@ discussion time; they do not extend the session. Notebook 13 is take-home work.
 
 ## Before the session
 
+<span data-language-key="before-the-session"></span>
+
 - Run Notebook 00 before class. Test each selected notebook in a fresh runtime.
 - Follow **Core prep**, then **Core activity**. Skip other exercises and explorers.
 - Prepare groups of 3–4: recorder, speaker, challenger, optional code runner.
@@ -17,12 +19,16 @@ discussion time; they do not extend the session. Notebook 13 is take-home work.
 
 ## Live rhythm
 
+<span data-language-key="live-rhythm"></span>
+
 **Predict → Run → Explain → Check.** Get a written prediction before execution.
 Then ask for one result and one revised explanation. Rotate group roles.
 Open solutions only after an attempt. Run selected folded plotting cells;
 folded code still needs to execute.
 
 ## Run sheet
+
+<span data-language-key="run-sheet"></span>
 
 Follow the [workshop agenda](tensors_workshop_plan_with_quizzes.md).
 Keep its quizzes and breaks. Within the selected notebook slots:
@@ -55,11 +61,18 @@ the group slot debugging an installation.
 
 ## Entry and exit checks
 
+<span data-language-key="entry-and-exit-checks"></span>
+
 Use the prompts in Notebooks 00 and 12. The [assessment key](assessments.md)
 has scoring and follow-up actions. Collect individual answers, not group answers.
 Compare reasoning by dimension; this is not a validated learning test.
+Keep the exit check to five minutes: three for axes and evidence, two for the
+Tucker transfer question. Record transfer separately because it has no entry
+counterpart; use its result to plan follow-up on Notebook 10.
 
 ## Wrong-answer clinic
+
+<span data-language-key="wrong-answer-clinic"></span>
 
 Use [worked mistakes](worked-mistakes.md) inside the slots above:
 axis order in 02, reshape in 04, residuals in 09, and rank budgets in 11.
@@ -70,6 +83,8 @@ prediction. Drop an optional demonstration, not the next break or exit check.
 Fast finishers design a counterexample before opening another exercise.
 
 ## After the session
+
+<span data-language-key="after-the-session"></span>
 
 Offer the two-minute [feedback form](workshop-feedback.md). Record the workshop
 commit, actual timings, common errors, and one change for the next run.

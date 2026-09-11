@@ -60,7 +60,7 @@ Teaching kit: [Teach this workshop](https://project-delphi.github.io/tensors-wor
 [run sheet](facilitator-guide.md) · [entry/exit checks](assessments.md) ·
 [worked mistakes](worked-mistakes.md) · [feedback form](workshop-feedback.md).
 
-Maintainers: [release checklist](RELEASE_CHECKLIST.md) · [changelog](CHANGELOG.md).
+Contributors: [editing guide](CONTRIBUTING.md) · [release checklist](RELEASE_CHECKLIST.md) · [changelog](CHANGELOG.md).
 
 ## A machine-generated companion
 
@@ -148,9 +148,11 @@ uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab
 
 ### Regenerating the derived files
 
-`_variables.yml` is the single source of truth: repo coordinates, the thirteen
-sections, the two take-home extras, the three quizzes. Two scripts read it, and
-**what they produce is never edited by hand**:
+`_variables.yml` owns shared facts: repo coordinates, the thirteen sections,
+one take-home extra, and three quizzes. **Edit notebook body cells directly**,
+including Setup, exercises and solutions. The notebook normalizer refreshes
+only the generated header and footer and clears outputs and transient metadata.
+See [Contributing](CONTRIBUTING.md) for the full ownership guide.
 
 ```bash
 uv run --with pyyaml python scripts/gen_tables.py               # tables + README tables
@@ -263,6 +265,9 @@ Cada una incluye tiempo, preguntas y un resultado breve para compartir.
 Para enseñar: [Enseñar este taller](https://project-delphi.github.io/tensors-workshop/es/teach.html) ·
 [guion](es/facilitator-guide.md) · [evaluación](es/assessments.md) ·
 [errores resueltos](es/worked-mistakes.md) · [opinión](es/workshop-feedback.md).
+
+Para contribuir: [guía de edición](CONTRIBUTING.md#contribuir-en-español) ·
+[lista de publicación](RELEASE_CHECKLIST.md) · [cambios](CHANGELOG.md).
 
 ## Datos reales, con ejemplos sintéticos deliberados
 

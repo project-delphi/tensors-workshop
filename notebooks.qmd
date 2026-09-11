@@ -10,6 +10,8 @@ español.*
 
 ## How they are built
 
+<span data-language-key="how-they-are-built"></span>
+
 Every notebook has the same five parts, so you always know where you are:
 
 1. **Header** — the section title, its objectives, and an *Open in Colab* badge.
@@ -31,9 +33,13 @@ investigating rather than dismissing.
 
 ## The notebooks
 
+<span data-language-key="the-notebooks"></span>
+
 {{< include _includes/notebooks-en.md >}}
 
 ## Going further
+
+<span data-language-key="going-further"></span>
 
 This one is **not a section**. It is a deep dive, handed out as take-home
 material. It has no slides, no Kahoot, and no minutes on the workshop clock: the
@@ -42,6 +48,8 @@ material. It has no slides, no Kahoot, and no minutes on the workshop clock: the
 {{< include _includes/notebooks-extra-en.md >}}
 
 ## Running them somewhere other than Colab
+
+<span data-language-key="running-them-somewhere-other-than-colab"></span>
 
 The notebooks only need the scientific Python stack. Locally:
 
@@ -62,6 +70,8 @@ GitHub, the storm video clip from Wikimedia, or the voice recording for
 notebook 12's take-home E. The table below says which, notebook by notebook.
 
 ## What each notebook needs
+
+<span data-language-key="what-each-notebook-needs"></span>
 
 {{< include _includes/notebook-deps-en.md >}}
 

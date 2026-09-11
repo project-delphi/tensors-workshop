@@ -8,6 +8,8 @@ Actividades breves y abiertas para usar durante o después de los cuadernos.
 
 ## Cómo usarlas
 
+<span data-language-key="how-to-use-these"></span>
+
 Forma grupos de 3–4. Elijan quién presenta, quién toma notas y quién cuestiona
 los supuestos. Una cuarta persona puede ejecutar comprobaciones breves.
 Cambien los roles. Pueden hablar en español o en inglés.
@@ -28,6 +30,8 @@ Para empezar: [significado de los ejes](#axis-meaning),
 
 ## 00 · ¿Confiarías en estos datos?
 
+<span data-language-key="00-would-you-trust-this-dataset"></span>
+
 **Cuándo:** Después de las comprobaciones de datos del
 [cuaderno 00](../notebooks/00-setup-and-data.ipynb).
 **Tiempo:** 6 minutos.
@@ -43,6 +47,8 @@ concreto. Primero acuerden cuál será ese análisis.
 del cuaderno y una pregunta que este no puede responder.
 
 ## 01 · Diseña un tensor que otra persona entienda
+
+<span data-language-key="01-design-a-tensor-someone-else-can-read"></span>
 
 **Cuándo:** Después de leer formas como frases en el
 [cuaderno 01](../notebooks/01-what-a-tensor-is.ipynb).
@@ -62,6 +68,8 @@ explique su resultado. Pidan a otro grupo que lo interprete sin más ayuda.
 
 ## 02 · Misma forma, distintas reglas
 
+<span data-language-key="02-same-shape-different-rules"></span>
+
 **Cuándo:** Después de comparar reorganizaciones en el
 [cuaderno 02](../notebooks/02-thinking-in-n-dimensions.ipynb).
 **Tiempo:** 6 minutos.
@@ -78,6 +86,8 @@ para una tarea pero engañosa para la otra.
 condición que cambiaría su recomendación.
 
 ## 03 · ¿Qué debería significar «normal»?
+
+<span data-language-key="03-what-should-normal-mean"></span>
 
 **Cuándo:** Después de estandarizar en el
 [cuaderno 03](../notebooks/03-indexing-and-broadcasting.ipynb).
@@ -97,6 +107,8 @@ caso en que sería una mala elección. Usen una gráfica del cuaderno o un dibuj
 
 ## 04 · Una prueba que detecte el error
 
+<span data-language-key="04-a-test-that-catches-the-bug"></span>
+
 **Cuándo:** Después del ejercicio sobre código que funciona pero está mal en el
 [cuaderno 04](../notebooks/04-reshape-and-transpose.ipynb).
 **Tiempo:** 6 minutos.
@@ -113,6 +125,8 @@ píxeles.
 Expliquen qué detecta cada una. Pruébenlas con ambas conversiones del cuaderno.
 
 ## 05 · Conserva el evento dentro del presupuesto
+
+<span data-language-key="05-keep-the-event-fit-the-budget"></span>
 
 **Cuándo:** Durante «¿padding o muestreo?» en el
 [cuaderno 05](../notebooks/05-video-pipeline-design.ipynb). Úsala como alternativa
@@ -131,6 +145,8 @@ si hace falta. Nombren un posible fallo y cómo detectarlo.
 
 ## 06 · ¿Qué hace similares a dos dígitos?
 
+<span data-language-key="06-what-counts-as-a-similar-digit"></span>
+
 **Cuándo:** Después del explorador de búsqueda en el
 [cuaderno 06](../notebooks/06-contraction-with-einsum.ipynb).
 **Tiempo:** 6 minutos.
@@ -146,6 +162,8 @@ sin normalizar o la similitud coseno ofrece vecinos más útiles.
 Expliquen qué representa el índice sumado en `id,jd->ij`.
 
 ## 07 · Mismas predicciones, distintos coeficientes
+
+<span data-language-key="07-same-predictions-different-coefficients"></span>
 
 **Cuándo:** Después del ejercicio de sistemas singulares en el
 [cuaderno 07](../notebooks/07-inverses-and-pseudoinverse.ipynb).
@@ -163,6 +181,8 @@ y qué comprobarían después.
 
 ## 08 · Una buena predicción no basta
 
+<span data-language-key="08-one-good-prediction-is-not-enough"></span>
+
 **Cuándo:** Después del pronóstico recursivo en el
 [cuaderno 08](../notebooks/08-recursion-with-matrices.ipynb).
 **Tiempo:** 6 minutos.
@@ -178,6 +198,8 @@ forma recursiva durante un año. Diseñen una prueba antes de aprobar el cambio.
 una preocupación con el pronóstico de pasajeros o el explorador de estados.
 
 ## 09 · Defiende una factorización
+
+<span data-language-key="09-defend-a-factorization"></span>
 
 **Cuándo:** Después del selector de método en el
 [cuaderno 09](../notebooks/09-matrix-factorizations.ipynb).
@@ -198,6 +220,8 @@ aporta el dato nuevo; revisen su respuesta si hace falta.
 
 ## 10 · ¿Qué debe conservar la compresión?
 
+<span data-language-key="10-what-must-compression-preserve"></span>
+
 **Cuándo:** Después del explorador de rango en el
 [cuaderno 10](../notebooks/10-tucker-decomposition.ipynb).
 **Tiempo:** 8 minutos.
@@ -215,6 +239,8 @@ Usen un resultado del cuaderno y propongan una comprobación adicional.
 
 ## 11 · ¿Es justa esta comparación?
 
+<span data-language-key="11-is-this-comparison-fair"></span>
+
 **Cuándo:** Después de comparar presupuestos similares en el
 [cuaderno 11](../notebooks/11-tensor-factorizations.ipynb).
 **Tiempo:** 8 minutos.
@@ -231,6 +257,8 @@ incertidumbre que seguiría pendiente tras ejecutar la comparación.
 
 ## 12 · Trae un problema de tu campo
 
+<span data-language-key="12-bring-a-problem-from-your-field"></span>
+
 **Cuándo:** Durante la discusión final del
 [cuaderno 12](../notebooks/12-wrap-up-and-take-homes.ipynb).
 **Tiempo:** 5 minutos: 1 para pensar, 3 para discutir y 1 para compartir.
@@ -246,6 +274,8 @@ ayudar los tensores. Hoy no necesitan los datos.
 experimento. Cada persona añade algo que todavía necesita comprender.
 
 ## 13 · ¿Confiarías en la imagen más nítida?
+
+<span data-language-key="13-would-you-trust-the-sharper-image"></span>
 
 **Cuándo:** Después de la deconvolución en el
 [cuaderno 13](../notebooks/13-convolution-and-deconvolution.ipynb).
@@ -264,6 +294,8 @@ necesitan una referencia limpia de las que no. Digan qué no puede demostrar
 ninguna de ellas.
 
 ## Preguntas para facilitar la discusión
+
+<span data-language-key="facilitator-prompts"></span>
 
 Usa una cuando un grupo se atasque:
 

@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-d76f86b455da21ff19b9eee337db4fe9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-583367e685d76bbf654b4d970c1aec1e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -242,6 +242,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="quiz-1" class="level2">
 <h2 class="anchored" data-anchor-id="quiz-1">Cuestionario 1 — Vocabulario de tensores y formas</h2>
 <p><em>Tensor Vocabulary &amp; Shapes</em></p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -270,11 +271,13 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+</div>
 <p>La sala acaba de usar <em>orden</em>, <em>eje</em>, <em>forma</em>, <em>corte</em>, <em>fibra</em>, <em>varianza</em>, <em>reshape</em> y <em>transposición</em>. Es el momento en que esas palabras están más frescas. Dos preguntas vuelven a los ejercicios: la de NaN es la de los píxeles de varianza cero de la sección 03, y la última es la de reshape frente a transposición de la sección 04.</p>
 </section>
 <section id="quiz-2" class="level2">
 <h2 class="anchored" data-anchor-id="quiz-2">Cuestionario 2 — Einsum, distancia y la pseudoinversa</h2>
 <p><em>Einsum, Distance &amp; the Pseudoinverse</em></p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -303,6 +306,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+</div>
 <div class="callout callout-style-simple callout-warning">
 <div class="callout-body d-flex">
 <div class="callout-icon-container">
@@ -317,6 +321,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="quiz-3" class="level2">
 <h2 class="anchored" data-anchor-id="quiz-3">Cuestionario 3 — Convolución y descomposiciones tensoriales</h2>
 <p><em>Convolution &amp; Tensor Decompositions</em></p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -345,10 +350,12 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+</div>
 <p>Lánzalo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Su última pregunta nombra la hora 18, así que <strong>tiene</strong> que ir después del TODO 6 de la sección 10. Lanzarlo antes regala la respuesta. Sirve además de ensayo en vivo del propio repaso del cierre, así que pasa del podio al cierre sin interrupción.</p>
 </section>
 <section id="cómo-lanzarlos" class="level2">
 <h2 class="anchored" data-anchor-id="cómo-lanzarlos">Cómo lanzarlos</h2>
+<p><span data-language-key="running-them"></span></p>
 <ul>
 <li><strong>Presupuesta 5 minutos cada uno, con el podio incluido.</strong> A los grupos les suele apetecer ver la clasificación, y está bien. Es la recompensa.</li>
 <li><strong>No importes en directo.</strong> Ver la nota al comienzo de esta página.</li>
@@ -357,6 +364,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="si-te-falta-tiempo" class="level2">
 <h2 class="anchored" data-anchor-id="si-te-falta-tiempo">Si te falta tiempo</h2>
+<p><span data-language-key="if-you-are-running-out-of-time"></span></p>
 <p>El orden de recorte del manual, en este orden:</p>
 <ol type="1">
 <li><strong>Cuestionario 2</strong> — el menos novedoso de los tres; la pseudoinversa y la distancia se vuelven a cubrir narrativamente en el cierre.</li>
@@ -371,6 +379,80 @@ ul.task-list li input[type="checkbox"] {
 </section>
 
 </main> <!-- /main -->
+<script>
+// Keep ordinary links (including keyboard and open-in-new-tab behavior).
+// Shared IDs and explicit translation keys preserve sections without guessing
+// that headings at the same position have the same meaning.
+(() => {
+  function setupLanguageSwitches() {
+    const links = [...document.querySelectorAll(
+      'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+    if (!links.length) return;
+    const language = document.documentElement.lang.split('-')[0];
+    const isDeck = !!document.querySelector('.reveal');
+    const english = links.find(a => a.relList.contains('lang-switch-en'));
+    const root = !isDeck && english ? new URL('./', english.href) : null;
+    const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+    const destinations = links.map(link => {
+      const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+      const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                       : new URL(link.href);
+      url.search = location.search;
+      url.hash = '';
+      link.href = url.href;
+      link.hreflang = lang;
+      link.lang = lang;
+      link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+      if (lang === language) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+      return {link, lang, url};
+    });
+    const documents = new Map();
+    function counterpart(url) {
+      if (!documents.has(url.href)) {
+        documents.set(url.href, fetch(url.href).then(response => {
+          if (!response.ok) throw new Error('Translation unavailable');
+          return response.text();
+        }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+          .catch(() => null));
+      }
+      return documents.get(url.href);
+    }
+    let revision = 0;
+    async function update() {
+      const current = ++revision;
+      const hash = location.hash;
+      let id;
+      try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+      catch { id = ''; }
+      const source = document.getElementById(id);
+      const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+      const key = marker?.dataset.languageKey;
+      await Promise.all(destinations.map(async ({link, lang, url}) => {
+        const destination = new URL(url);
+        if (lang === language) destination.hash = hash;
+        else if (id) {
+          const target = await counterpart(url);
+          const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+            .find(element => element.dataset.languageKey === key);
+          const match = keyed?.closest('section[id]') || target?.getElementById(id);
+          if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+        }
+        // If the fragment has no counterpart, link to the translated page.
+        // A failed fetch also leaves a usable page link.
+        if (current === revision) link.href = destination.href;
+      }));
+    }
+    window.addEventListener('hashchange', update);
+    update();
+  }
+  if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+    Reveal.on('ready', setupLanguageSwitches);
+  } else {
+    setupLanguageSwitches();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

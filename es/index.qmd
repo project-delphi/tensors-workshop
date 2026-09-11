@@ -20,6 +20,8 @@ theme:
 
 # Visualiza tensores. [Piensa en ML.]{.hero-highlight}
 
+<span data-language-key="see-tensors-think-in-ml"></span>
+
 Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra las matemáticas del ML.
 
 [Empieza el taller →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
@@ -145,9 +147,13 @@ Convierte arrays en intuición. Transforma imágenes. Comprime datos. Descifra l
 
 ## Tus recursos para el taller {#qué-hay-aquí}
 
+<span data-language-key="your-workshop-toolkit"></span>
+
 :::: {.resource-grid}
 ::: {.resource-card}
 ### 📖 Manual
+
+<span data-language-key="handbook"></span>
 
 Teoría completa, ejercicios y soluciones paso a paso.
 
@@ -157,6 +163,8 @@ Teoría completa, ejercicios y soluciones paso a paso.
 ::: {.resource-card}
 ### 🚀 Cuadernos
 
+<span data-language-key="notebooks"></span>
+
 Cuadernos interactivos de Python para ejecutar en Google Colab.
 
 [Ejecuta el código](notebooks.qmd){.resource-button}
@@ -164,6 +172,8 @@ Cuadernos interactivos de Python para ejecutar en Google Colab.
 
 ::: {.resource-card}
 ### 📊 Diapositivas
+
+<span data-language-key="slides"></span>
 
 Presentaciones visuales para seguir las sesiones del taller.
 
@@ -173,6 +183,8 @@ Presentaciones visuales para seguir las sesiones del taller.
 ::: {.resource-card}
 ### 💡 Complemento
 
+<span data-language-key="companion-hub"></span>
+
 Mapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.
 
 [Explora el complemento](companion.qmd){.resource-button}
@@ -180,6 +192,8 @@ Mapas mentales, vídeos de un minuto, resúmenes en audio y autoevaluaciones.
 
 ::: {.resource-card}
 ### 🎯 Kahoot
+
+<span data-language-key="kahoot"></span>
 
 Cuestionarios interactivos en directo para comprobar lo aprendido.
 
@@ -189,6 +203,8 @@ Cuestionarios interactivos en directo para comprobar lo aprendido.
 ::: {.resource-card}
 ### 📚 Referencias
 
+<span data-language-key="references"></span>
+
 Artículos clave, capítulos de libros y código fuente del repositorio.
 
 [Consulta las fuentes](references.qmd){.resource-button}
@@ -197,9 +213,13 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 
 ## ¿Conoces el álgebra lineal básica? Ya puedes empezar. {#requisitos-previos}
 
+<span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
+
 :::: {.prerequisite-list}
 ::: {.prerequisite-step}
 ### Paso 1: Conceptos básicos [Obligatorio]{.step-badge}
+
+<span data-language-key="step-1-core-concepts-required"></span>
 
 Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}).
 :::
@@ -207,17 +227,23 @@ Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.de
 ::: {.prerequisite-step}
 ### Paso 2: Preparación [Obligatorio, 5 min]{.step-badge}
 
+<span data-language-key="step-2-setup-required-5-mins"></span>
+
 Ejecuta el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Google Colab para cargar los conjuntos de datos.
 :::
 
 ::: {.prerequisite-step}
 ### Paso 3: Repaso visual [Opcional]{.step-badge .step-optional}
 
+<span data-language-key="step-3-visual-refresher-optional"></span>
+
 Mira [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}), de 3Blue1Brown.
 :::
 ::::
 
 ## {{< var workshop.minutes >}} minutos de práctica a un ritmo constante. {#cómo-trabajamos}
+
+<span data-language-key="minutes-one-hands-on-rhythm"></span>
 
 ```{=html}
 <ol class="workshop-pipeline" aria-label="Ritmo de actividades del taller">

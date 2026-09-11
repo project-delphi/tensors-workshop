@@ -20,6 +20,8 @@ theme:
 
 # See tensors. [Think in ML.]{.hero-highlight}
 
+<span data-language-key="see-tensors-think-in-ml"></span>
+
 Turn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.
 
 [Start the workshop →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
@@ -145,9 +147,13 @@ Turn arrays into intuition. Reshape images. Compress data. Decode the math behin
 
 ## Your workshop toolkit {#whats-here}
 
+<span data-language-key="your-workshop-toolkit"></span>
+
 :::: {.resource-grid}
 ::: {.resource-card}
 ### 📖 Handbook
+
+<span data-language-key="handbook"></span>
 
 Full theory, exercises, and step-by-step solutions.
 
@@ -157,6 +163,8 @@ Full theory, exercises, and step-by-step solutions.
 ::: {.resource-card}
 ### 🚀 Notebooks
 
+<span data-language-key="notebooks"></span>
+
 Interactive Python notebooks running in Google Colab.
 
 [Run Code](notebooks.qmd){.resource-button}
@@ -164,6 +172,8 @@ Interactive Python notebooks running in Google Colab.
 
 ::: {.resource-card}
 ### 📊 Slides
+
+<span data-language-key="slides"></span>
 
 Visual presentation decks for workshop sessions.
 
@@ -173,6 +183,8 @@ Visual presentation decks for workshop sessions.
 ::: {.resource-card}
 ### 💡 Companion Hub
 
+<span data-language-key="companion-hub"></span>
+
 Mind maps, 1-minute shorts, audio overviews, and self-checks.
 
 [Explore Hub](companion.qmd){.resource-button}
@@ -180,6 +192,8 @@ Mind maps, 1-minute shorts, audio overviews, and self-checks.
 
 ::: {.resource-card}
 ### 🎯 Kahoot
+
+<span data-language-key="kahoot"></span>
 
 Live interactive quizzes for concept checks.
 
@@ -189,6 +203,8 @@ Live interactive quizzes for concept checks.
 ::: {.resource-card}
 ### 📚 References
 
+<span data-language-key="references"></span>
+
 Core papers, textbook chapters, and repository source code.
 
 [View Sources](references.qmd){.resource-button}
@@ -197,9 +213,13 @@ Core papers, textbook chapters, and repository source code.
 
 ## Familiar with basic linear algebra? You're ready to go. {#prerequisites}
 
+<span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
+
 :::: {.prerequisite-list}
 ::: {.prerequisite-step}
 ### Step 1: Core Concepts [Required]{.step-badge}
+
+<span data-language-key="step-1-core-concepts-required"></span>
 
 Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
 :::
@@ -207,17 +227,23 @@ Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearning
 ::: {.prerequisite-step}
 ### Step 2: Setup [Required, 5 mins]{.step-badge}
 
+<span data-language-key="step-2-setup-required-5-mins"></span>
+
 Run [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) in Google Colab to pre-load datasets.
 :::
 
 ::: {.prerequisite-step}
 ### Step 3: Visual Refresher [Optional]{.step-badge .step-optional}
 
+<span data-language-key="step-3-visual-refresher-optional"></span>
+
 Watch 3Blue1Brown's [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}).
 :::
 ::::
 
 ## {{< var workshop.minutes >}} minutes. One hands-on rhythm. {#how-we-work}
+
+<span data-language-key="minutes-one-hands-on-rhythm"></span>
 
 ```{=html}
 <ol class="workshop-pipeline" aria-label="Workshop activity rhythm">

@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-d76f86b455da21ff19b9eee337db4fe9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-583367e685d76bbf654b4d970c1aec1e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -226,6 +226,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Use the existing <strong>210-minute agenda</strong>. These activities replace practice or discussion time; they do not extend the session. Notebook 13 is take-home work.</p>
 <section id="before-the-session" class="level2">
 <h2 class="anchored" data-anchor-id="before-the-session">Before the session</h2>
+<p><span data-language-key="before-the-session"></span></p>
 <ul>
 <li>Run Notebook 00 before class. Test each selected notebook in a fresh runtime.</li>
 <li>Follow <strong>Core prep</strong>, then <strong>Core activity</strong>. Skip other exercises and explorers.</li>
@@ -235,11 +236,14 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="live-rhythm" class="level2">
 <h2 class="anchored" data-anchor-id="live-rhythm">Live rhythm</h2>
+<p><span data-language-key="live-rhythm"></span></p>
 <p><strong>Predict → Run → Explain → Check.</strong> Get a written prediction before execution. Then ask for one result and one revised explanation. Rotate group roles. Open solutions only after an attempt. Run selected folded plotting cells; folded code still needs to execute.</p>
 </section>
 <section id="run-sheet" class="level2">
 <h2 class="anchored" data-anchor-id="run-sheet">Run sheet</h2>
+<p><span data-language-key="run-sheet"></span></p>
 <p>Follow the <a href="./tensors_workshop_plan_with_quizzes.html">workshop agenda</a>. Keep its quizzes and breaks. Within the selected notebook slots:</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -302,26 +306,104 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+</div>
 <p>Use <a href="./group-tasks.html">group tasks 05 and 11</a> at their notebook headings. Use the written prompts; optional explorers are not prerequisites. For task 04, use the tiny reshape example in <a href="./worked-mistakes.html">worked mistakes</a> if needed. Each time box includes sharing. Ask one group to speak; others submit three lines: <strong>choice → evidence → what would change our mind</strong>.</p>
 <p>In Notebook 11, predict storage first. If fitting takes too long, demonstrate the supplied solution after their attempt. Discuss its output; do not spend the group slot debugging an installation.</p>
 </section>
 <section id="entry-and-exit-checks" class="level2">
 <h2 class="anchored" data-anchor-id="entry-and-exit-checks">Entry and exit checks</h2>
-<p>Use the prompts in Notebooks 00 and 12. The <a href="./assessments.html">assessment key</a> has scoring and follow-up actions. Collect individual answers, not group answers. Compare reasoning by dimension; this is not a validated learning test.</p>
+<p><span data-language-key="entry-and-exit-checks"></span></p>
+<p>Use the prompts in Notebooks 00 and 12. The <a href="./assessments.html">assessment key</a> has scoring and follow-up actions. Collect individual answers, not group answers. Compare reasoning by dimension; this is not a validated learning test. Keep the exit check to five minutes: three for axes and evidence, two for the Tucker transfer question. Record transfer separately because it has no entry counterpart; use its result to plan follow-up on Notebook 10.</p>
 </section>
 <section id="wrong-answer-clinic" class="level2">
 <h2 class="anchored" data-anchor-id="wrong-answer-clinic">Wrong-answer clinic</h2>
+<p><span data-language-key="wrong-answer-clinic"></span></p>
 <p>Use <a href="./worked-mistakes.html">worked mistakes</a> inside the slots above: axis order in 02, reshape in 04, residuals in 09, and rank budgets in 11. Show the claim first. Ask for a counterexample. Reveal the correction last.</p>
 <p>If half the room makes the same error, model the tiny example and ask a new prediction. Drop an optional demonstration, not the next break or exit check. Fast finishers design a counterexample before opening another exercise.</p>
 </section>
 <section id="after-the-session" class="level2">
 <h2 class="anchored" data-anchor-id="after-the-session">After the session</h2>
+<p><span data-language-key="after-the-session"></span></p>
 <p>Offer the two-minute <a href="./workshop-feedback.html">feedback form</a>. Record the workshop commit, actual timings, common errors, and one change for the next run. Use the <a href="https://github.com/project-delphi/tensors-workshop/blob/main/RELEASE_CHECKLIST.md">release checklist</a> before publishing that change.</p>
 
 
 </section>
 
 </main> <!-- /main -->
+<script>
+// Keep ordinary links (including keyboard and open-in-new-tab behavior).
+// Shared IDs and explicit translation keys preserve sections without guessing
+// that headings at the same position have the same meaning.
+(() => {
+  function setupLanguageSwitches() {
+    const links = [...document.querySelectorAll(
+      'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+    if (!links.length) return;
+    const language = document.documentElement.lang.split('-')[0];
+    const isDeck = !!document.querySelector('.reveal');
+    const english = links.find(a => a.relList.contains('lang-switch-en'));
+    const root = !isDeck && english ? new URL('./', english.href) : null;
+    const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+    const destinations = links.map(link => {
+      const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+      const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                       : new URL(link.href);
+      url.search = location.search;
+      url.hash = '';
+      link.href = url.href;
+      link.hreflang = lang;
+      link.lang = lang;
+      link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+      if (lang === language) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+      return {link, lang, url};
+    });
+    const documents = new Map();
+    function counterpart(url) {
+      if (!documents.has(url.href)) {
+        documents.set(url.href, fetch(url.href).then(response => {
+          if (!response.ok) throw new Error('Translation unavailable');
+          return response.text();
+        }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+          .catch(() => null));
+      }
+      return documents.get(url.href);
+    }
+    let revision = 0;
+    async function update() {
+      const current = ++revision;
+      const hash = location.hash;
+      let id;
+      try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+      catch { id = ''; }
+      const source = document.getElementById(id);
+      const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+      const key = marker?.dataset.languageKey;
+      await Promise.all(destinations.map(async ({link, lang, url}) => {
+        const destination = new URL(url);
+        if (lang === language) destination.hash = hash;
+        else if (id) {
+          const target = await counterpart(url);
+          const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+            .find(element => element.dataset.languageKey === key);
+          const match = keyed?.closest('section[id]') || target?.getElementById(id);
+          if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+        }
+        // If the fragment has no counterpart, link to the translated page.
+        // A failed fetch also leaves a usable page link.
+        if (current === revision) link.href = destination.href;
+      }));
+    }
+    window.addEventListener('hashchange', update);
+    update();
+  }
+  if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+    Reveal.on('ready', setupLanguageSwitches);
+  } else {
+    setupLanguageSwitches();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

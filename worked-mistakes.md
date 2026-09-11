@@ -10,6 +10,8 @@ These synthetic examples isolate a mistake; the notebooks use real data.
 
 ## 02 · The mean proves the order is unchanged
 
+<span data-language-key="02-the-mean-proves-the-order-is-unchanged"></span>
+
 “The average is identical after shuffling, so no information was lost.”
 
 <details>
@@ -30,6 +32,8 @@ Transfer: when is shuffling acceptable for independent images and their labels?
 </details>
 
 ## 04 · The shape proves reshape worked
+
+<span data-language-key="04-the-shape-proves-reshape-worked"></span>
 
 “Both results have shape `(3, 2, 2)`, so both are valid CHW images.”
 
@@ -53,6 +57,8 @@ Transfer: write the matching coordinate check for NHWC → NCHW.
 </details>
 
 ## 09 · A tiny residual proves reliable coefficients
+
+<span data-language-key="09-a-tiny-residual-proves-reliable-coefficients"></span>
 
 “Both fits are almost exact, so their coefficients must agree.”
 
@@ -78,6 +84,8 @@ Transfer: what happens if a small measurement error changes `y`?
 </details>
 
 ## 11 · Equal ranks mean equal budgets
+
+<span data-language-key="11-equal-ranks-mean-equal-budgets"></span>
 
 “CP rank 3 and Tucker ranks `(3, 3, 3)` use the same storage.”
 

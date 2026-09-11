@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-d76f86b455da21ff19b9eee337db4fe9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-583367e685d76bbf654b4d970c1aec1e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -324,7 +324,9 @@ background-size: cover;
 <hr>
 <section id="schedule" class="level2">
 <h2 class="anchored" data-anchor-id="schedule">Schedule</h2>
+<p><span data-language-key="schedule"></span></p>
 <!-- BEGIN handbook-schedule -->
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -511,13 +513,16 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+</div>
 <!-- END handbook-schedule -->
 <p><strong>Why the quizzes sit where they do.</strong> Each one follows the sections that supply its content, while the material is still fresh. Each also lands before the next context switch — a break, or a new Part. So a quiz reinforces the work rather than interrupting it. Quiz 1 closes out the shape-and-vocabulary work of sections 03 and 04. Quiz 2 closes out the einsum and pseudoinverse stretch, sections 06 and 07. Quiz 3 closes out the decomposition stretch, sections 09 and 10, right before the wrap-up.</p>
 <hr>
 </section>
 <section id="the-data-we-use" class="level2">
 <h2 class="anchored" data-anchor-id="the-data-we-use">The Data We Use</h2>
+<p><span data-language-key="the-data-we-use"></span></p>
 <p><strong>Included inside the libraries</strong> (no download, works offline):</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -554,7 +559,9 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+</div>
 <p><strong>Downloaded once</strong> (needs internet, takes a few seconds):</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -586,6 +593,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+</div>
 <p>Every code snippet in this handbook assumes the names notebook 00’s setup cell binds, so if you are reading along outside a notebook, start here:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -602,9 +610,12 @@ background-size: cover;
 </section>
 <section id="part-i-what-a-tensor-is-section-01-20-min" class="level1 page-columns page-full">
 <h1>PART I — What a Tensor Is (section 01, 20 min)</h1>
+<p><span data-language-key="part-i-what-a-tensor-is-section-01-20-min"></span></p>
 <section id="vocabulary" class="level2">
 <h2 class="anchored" data-anchor-id="vocabulary">1.1 Vocabulary</h2>
+<p><span data-language-key="1-1-vocabulary"></span></p>
 <p>Keep this table open from section 00 to section 12.</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -683,10 +694,12 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+</div>
 <p>⚠️ <strong>Warning about the word “rank”.</strong> In Chapter 2, <em>rank</em> means the number of independent columns of a matrix. In tensor theory, <em>rank</em> often means the number of axes. To avoid confusion, this workshop says <strong>order</strong> for the number of axes, and <strong>rank</strong> only in Chapter 2’s sense.</p>
 </section>
 <section id="shape-in-numpy" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="shape-in-numpy">1.2 Shape in NumPy</h2>
+<p><span data-language-key="1-2-shape-in-numpy"></span></p>
 <p>Every NumPy array has <code>.shape</code>, a tuple giving the size along each axis. The length of that tuple is <code>.ndim</code>, the number of axes.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>scalar <span class="op">=</span> np.array(<span class="fl">3.0</span>)                     <span class="co"># book: a           — order 0</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>vector <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>])            <span class="co"># book: x, x_i      — order 1</span></span>
@@ -714,6 +727,7 @@ background-size: cover;
 </section>
 <section id="the-three-operations-that-matter" class="level2">
 <h2 class="anchored" data-anchor-id="the-three-operations-that-matter">1.3 The Three Operations That Matter</h2>
+<p><span data-language-key="1-3-the-three-operations-that-matter"></span></p>
 <p><strong>Slices and fibers</strong> — fixing indices takes a tensor apart.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>photo[:, :, <span class="dv">0</span>].shape       <span class="co"># (512, 512) — a slice: one colour channel, still an image</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>photo[<span class="dv">100</span>, <span class="dv">200</span>, :].shape   <span class="co"># (3,)       — a fiber: the 3 colour values of one pixel</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -734,7 +748,9 @@ background-size: cover;
 </section>
 <section id="the-map-of-factorizations" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="the-map-of-factorizations">1.4 The Map of Factorizations</h2>
+<p><span data-language-key="1-4-the-map-of-factorizations"></span></p>
 <p>A <strong>factorization</strong> writes one object as a product of simpler objects. You met two in Chapter 2. Here are the eight we will use today:</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -801,6 +817,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+</div>
 <p>Today uses each of these where it happens to be needed. <a href="#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min">Section 09</a> puts six factorizations side by side — five from this table, plus NMF — and asks what each one <em>costs</em>. This table does not answer that question.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> np.array([[<span class="fl">4.</span>, <span class="fl">3.</span>, <span class="fl">2.</span>], [<span class="fl">2.</span>, <span class="fl">1.</span>, <span class="fl">1.</span>], [<span class="fl">6.</span>, <span class="fl">3.</span>, <span class="fl">5.</span>]])</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -818,6 +835,7 @@ background-size: cover;
 </section>
 <section id="part-ii-thinking-in-n-dimensions-section-02-20-min" class="level1">
 <h1>PART II — Thinking in N Dimensions (section 02, 20 min)</h1>
+<p><span data-language-key="part-ii-thinking-in-n-dimensions-section-02-20-min"></span></p>
 <p>A live coding demo in the notebook, on real image and video tensors. Open it in Colab and run the Setup cell first — it downloads and checksums the real video clip used by the exercises. Three exercises:</p>
 <ol type="1">
 <li><strong>Read the axes on real tensors.</strong> <code>digits.images</code> is <code>(1797, 8, 8)</code> and a photo is <code>(512, 512, 3)</code>. Both are order 3. But axis 0 counts whole images in one, and rows of pixels in the other. <code>digit_batch</code> and <code>video_patch</code> are <em>both</em> <code>(8, 8, 8)</code>. Before you run a line of code, say what every axis counts.</li>
@@ -828,8 +846,10 @@ background-size: cover;
 </section>
 <section id="part-iii-working-with-tensor-axes-sections-0305" class="level1 page-columns page-full">
 <h1>PART III — Working With Tensor Axes (sections 03–05)</h1>
+<p><span data-language-key="part-iii-working-with-tensor-axes-sections-03-05"></span></p>
 <section id="indexing-and-broadcasting-real-data-block-1-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="indexing-and-broadcasting-real-data-block-1-15-min">03 · Indexing and Broadcasting Real Data (Block 1, 15 min)</h2>
+<p><span data-language-key="03-indexing-and-broadcasting-real-data-block-1-15-min"></span></p>
 <p><strong>Why this matters.</strong> The <code>breast_cancer</code> data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column produces no error. It returns a <em>different real measurement</em>, your analysis continues, and it gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.</p>
 <p><strong>In tech</strong>, the identical operation runs on a <code>(users, items)</code> matrix to pull one user’s history before making a recommendation.</p>
 <p><strong>Exercise (10 min)</strong></p>
@@ -868,6 +888,7 @@ background-size: cover;
 </section>
 <section id="reshape-and-transpose-real-images-block-2-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="reshape-and-transpose-real-images-block-2-15-min">04 · Reshape and Transpose Real Images (Block 2, 15 min)</h2>
+<p><span data-language-key="04-reshape-and-transpose-real-images-block-2-15-min"></span></p>
 <p><strong>Why this matters.</strong> Microscopes and cameras order their axes according to the hardware, not according to what a model expects. Getting this wrong does not crash — the model runs on scrambled data and returns confident, meaningless output. In a drug screen, that is a wrong decision about whether a compound works. The famous version in tech: a model trained in TensorFlow (<code>NHWC</code>) deployed into PyTorch (<code>NCHW</code>) with no transpose.</p>
 <p><strong>Exercise (10 min)</strong></p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry()   <span class="co"># (512, 512, 3) real histology</span></span>
@@ -890,13 +911,16 @@ background-size: cover;
 </section>
 <section id="kahoot-quiz-1-tensor-vocabulary-shapes-5-min" class="level2">
 <h2 class="anchored" data-anchor-id="kahoot-quiz-1-tensor-vocabulary-shapes-5-min">Kahoot Quiz 1 — Tensor Vocabulary &amp; Shapes (5 min)</h2>
+<p><span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span></p>
 <p><strong>Run this before the break, right after section 04.</strong> The room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest. Launch <code>kahoot_quiz_1_vocabulary_shapes.xlsx</code> (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.</p>
 </section>
 <section id="break-5-min" class="level2">
 <h2 class="anchored" data-anchor-id="break-5-min">Break (5 min)</h2>
+<p><span data-language-key="break-5-min"></span></p>
 </section>
 <section id="group-exercise-video-pipeline-design-15-min" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="group-exercise-video-pipeline-design-15-min">05 · Group Exercise — Video Pipeline Design (15 min)</h2>
+<p><span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span></p>
 <p>Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.</p>
 <blockquote class="blockquote">
 <p>Design the tensor shape at each stage — <em>raw file → decoded frames → preprocessed batch → model input → model output</em> — for <strong>both</strong> systems: - <strong>Tech:</strong> a short-video app computing one embedding per video from sampled frames, to choose what to play next. - <strong>Biotech:</strong> a surgical-video model that labels the current phase of an operation from an operating-room camera.</p>
@@ -915,8 +939,10 @@ background-size: cover;
 </section>
 <section id="part-iv-computing-with-tensors-sections-0611" class="level1 page-columns page-full">
 <h1>PART IV — Computing With Tensors (sections 06–11)</h1>
+<p><span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span></p>
 <section id="contraction-with-einsum-block-3-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="contraction-with-einsum-block-3-15-min">06 · Contraction With <code>einsum</code> (Block 3, 15 min)</h2>
+<p><span data-language-key="06-contraction-with-einsum-block-3-15-min"></span></p>
 <p><strong>Why this matters.</strong> Recommendation and search systems rank items by the dot product between a user vector and every item vector. That is one user against millions of items, many times per second. That contraction <em>is</em> the ranking signal. Sum over the wrong axis and every user gets wrong results.</p>
 <p><strong>Exercise (10 min)</strong></p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>photo <span class="op">=</span> data.immunohistochemistry().astype(<span class="bu">float</span>)        <span class="co"># (512, 512, 3)</span></span>
@@ -943,8 +969,10 @@ background-size: cover;
 </section>
 <section id="inverses-and-the-pseudoinverse-block-4-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="inverses-and-the-pseudoinverse-block-4-15-min">07 · Inverses and the Pseudoinverse (Block 4, 15 min)</h2>
+<p><span data-language-key="07-inverses-and-the-pseudoinverse-block-4-15-min"></span></p>
 <section id="the-theory-in-three-steps" class="level3">
 <h3 class="anchored" data-anchor-id="the-theory-in-three-steps">The theory, in three steps</h3>
+<p><span data-language-key="the-theory-in-three-steps"></span></p>
 <p><strong>Step 1 — square matrices.</strong> Chapter 2 §2.3 defines <code>A⁻¹</code> for a square matrix, with <code>A⁻¹A = I</code>. But this only exists when the columns are linearly independent. A matrix with dependent columns is <strong>singular</strong> and has no inverse:</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>S <span class="op">=</span> np.array([[<span class="fl">2.</span>, <span class="fl">1.</span>], [<span class="fl">1.</span>, <span class="fl">3.</span>]])</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>np.linalg.inv(S) <span class="op">@</span> S                       <span class="co"># ≈ identity, fine</span></span>
@@ -1003,10 +1031,12 @@ background-size: cover;
 </section>
 <section id="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min" class="level2">
 <h2 class="anchored" data-anchor-id="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min">Kahoot Quiz 2 — Einsum, Distance &amp; the Pseudoinverse (5 min)</h2>
+<p><span data-language-key="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min"></span></p>
 <p><strong>Run this right after section 07, before the recursion demo.</strong> It covers contraction (section 06’s <code>einsum</code>), the pseudoinverse and singular matrices (section 07), and distance and similarity. The digit-similarity matrix from section 06 TODO 4 is the natural bridge between the two. Launch <code>kahoot_quiz_2_distance_pseudoinverse.xlsx</code> (6 questions, ~5 min).</p>
 </section>
 <section id="recursion-with-matrices-and-vectors-10-min-demo" class="level2">
 <h2 class="anchored" data-anchor-id="recursion-with-matrices-and-vectors-10-min-demo">08 · Recursion With Matrices and Vectors (10 min — demo)</h2>
+<p><span data-language-key="08-recursion-with-matrices-and-vectors-10-min-demo"></span></p>
 <p><strong>Recursion</strong> means defining something in terms of itself. With matrices this becomes: apply the same matrix again and again. Three examples, increasing in usefulness.</p>
 <p><strong>1. Fibonacci as repeated matrix multiplication.</strong> The rule <code>f(n) = f(n-1) + f(n-2)</code> is one matrix applied repeatedly:</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>F <span class="op">=</span> np.array([[<span class="dv">1</span>, <span class="dv">1</span>], [<span class="dv">1</span>, <span class="dv">0</span>]])</span>
@@ -1047,9 +1077,11 @@ background-size: cover;
 </section>
 <section id="matrix-factorizations-which-one-and-what-it-costs-block-5-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="matrix-factorizations-which-one-and-what-it-costs-block-5-15-min">09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 15 min)</h2>
+<p><span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-15-min"></span></p>
 <p>Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing: LU and QR in §1.4 itself, and the pseudoinverse in section 07. None of them answered the two questions a practitioner actually has: <strong>which one do I reach for on this data, and what does it cost me?</strong> This section answers both. It is also where <strong>eigendecomposition</strong> finally gets named, an hour before section 10 leans on the same machinery. The notebook is <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb">09 · Matrix factorizations</a></strong>.</p>
 <p>The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes <code>‖y − Xβ‖</code> subject to an orthonormal <code>Q</code>. The truncated SVD minimizes <code>‖A − B‖_F</code> subject to <code>rank(B) ≤ k</code>, and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to <code>W, H ≥ 0</code>. That extra constraint must be worse on error, and it is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all. They are exact rewrites, and their value is all downstream, where a solve costs <code>O(n²)</code> instead of <code>O(n³)</code>.</p>
 <p><strong>The cost table.</strong> Leading-term flop counts for a dense <code>m × n</code> factorization with <code>m ≥ n</code>, from Trefethen &amp; Bau, <em>Numerical Linear Algebra</em>:</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1101,6 +1133,7 @@ background-size: cover;
 </tr>
 </tbody>
 </table>
+</div>
 <p>Three consequences are worth stating outright, because each one is a mistake that costs a single line of code:</p>
 <ol type="1">
 <li><strong>Factor once, solve many.</strong> Cholesky costs <code>n³/3</code> once; each later solve is two triangular substitutions at <code>O(n²)</code>. So <code>m</code> right-hand sides cost <code>O(n³ + mn²)</code>, <strong>not</strong> <code>O(mn³)</code>. <code>np.linalg.inv(A) @ B</code> is both slower and less accurate than factoring, and is never the right call.</li>
@@ -1159,11 +1192,14 @@ Solution
 </section>
 <section id="break-5-min-1" class="level2">
 <h2 class="anchored" data-anchor-id="break-5-min-1">Break (5 min)</h2>
+<p><span data-language-key="break-5-min-2"></span></p>
 </section>
 <section id="tucker-decomposition-on-real-data-block-6-15-min" class="level2 page-columns page-full">
 <h2 class="anchored" data-anchor-id="tucker-decomposition-on-real-data-block-6-15-min">10 · Tucker Decomposition on Real Data (Block 6, 15 min)</h2>
+<p><span data-language-key="10-tucker-decomposition-on-real-data-block-6-15-min"></span></p>
 <section id="the-theory" class="level3 page-columns page-full">
 <h3 class="anchored" data-anchor-id="the-theory">The theory</h3>
+<p><span data-language-key="the-theory"></span></p>
 <p>PCA compresses a <strong>matrix</strong> — two axes. Real data often has more. <strong>Tucker decomposition</strong> generalizes PCA to a tensor of any order: one <strong>factor matrix per axis</strong>, plus a small <strong>core tensor</strong> describing how the factors combine.</p>
 <p>The way to compute it, called <strong>HOSVD</strong>, uses only tools you already have: 1. Unfold the tensor along each axis (Part I). 2. Run SVD on each unfolding; keep the top components. These are the factor matrices. 3. Contract the original tensor against all factor matrices to get the core (section 06).</p>
 <p>The related <strong>CP decomposition</strong> instead writes the tensor as a sum of simple rank-1 pieces. Tucker is usually more accurate at the same size; CP is often easier to interpret.</p>
@@ -1208,15 +1244,19 @@ Solution
 </section>
 <section id="kahoot-quiz-3-convolution-tensor-decompositions-5-min" class="level2">
 <h2 class="anchored" data-anchor-id="kahoot-quiz-3-convolution-tensor-decompositions-5-min">Kahoot Quiz 3 — Convolution &amp; Tensor Decompositions (5 min)</h2>
+<p><span data-language-key="kahoot-quiz-3-convolution-tensor-decompositions-5-min"></span></p>
 <p><strong>Run this right after section 10, before section 11.</strong> Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch <code>kahoot_quiz_3_convolution_decompositions.xlsx</code> (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up’s own recap, so segue straight from the quiz into it.</p>
 <hr>
 </section>
 <section id="tensor-factorizations-which-one-and-what-it-costs-block-7-15-min" class="level2">
 <h2 class="anchored" data-anchor-id="tensor-factorizations-which-one-and-what-it-costs-block-7-15-min">11 · Tensor Factorizations: Which One, and What It Costs (Block 7, 15 min)</h2>
+<p><span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-15-min"></span></p>
 <p><a href="#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min">Section 09</a> asked <em>which factorization, and what does it cost</em> one order down, on matrices. This section asks it of tensors, straight after section 10 has shown one answer. The notebook is <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb">11 · Tensor factorizations</a></strong>.</p>
 <p>A tensor decomposition is not only a compression technique. Each one makes a different assumption about <strong>which structure in the data should be kept</strong>, and that assumption — not the flop count — is what you choose between.</p>
 <section id="four-decompositions-four-bargains" class="level3">
 <h3 class="anchored" data-anchor-id="four-decompositions-four-bargains">Four decompositions, four bargains</h3>
+<p><span data-language-key="four-decompositions-four-bargains"></span></p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1259,12 +1299,14 @@ Solution
 </tr>
 </tbody>
 </table>
+</div>
 <blockquote class="blockquote">
 <p>🇪🇸 Cada método conserva una estructura distinta. CP busca componentes individuales, Tucker permite un rango diferente por modo, Tensor Train evita que un núcleo de orden alto crezca exponencialmente, y t-SVD conserva la estructura del tercer modo mediante FFT.</p>
 </blockquote>
 </section>
 <section id="why-not-flatten-first" class="level3">
 <h3 class="anchored" data-anchor-id="why-not-flatten-first">Why not flatten first?</h3>
+<p><span data-language-key="why-not-flatten-first"></span></p>
 <p>Flattening preserves the numerical entries but can hide the meaning carried by separate tensor modes. The synthetic fluorescence-unmixing example in the notebook makes the difference measurable:</p>
 <ul>
 <li>CP recovers the true component amounts at correlation <code>1.00</code>.</li>
@@ -1278,6 +1320,7 @@ Solution
 </section>
 <section id="fair-comparison-cp-versus-tucker" class="level3">
 <h3 class="anchored" data-anchor-id="fair-comparison-cp-versus-tucker">Fair comparison: CP versus Tucker</h3>
+<p><span data-language-key="fair-comparison-cp-versus-tucker"></span></p>
 <p><strong>Do not compare CP rank <code>R</code> against Tucker rank <code>(R, R, R)</code>.</strong> Those two representations store different numbers of parameters, so the comparison measures the budget, not the model. A fair experiment is:</p>
 <ol type="1">
 <li>choose a CP rank;</li>
@@ -1296,6 +1339,7 @@ Solution
 </section>
 <section id="why-tensor-train-matters-as-order-grows" class="level3">
 <h3 class="anchored" data-anchor-id="why-tensor-train-matters-as-order-grows">Why Tensor Train matters as order grows</h3>
+<p><span data-language-key="why-tensor-train-matters-as-order-grows"></span></p>
 <p>For a dense order-<code>N</code> tensor with equal mode size <code>I</code>, dense storage is <code>I^N</code>. At a fixed TT bond rank <code>r</code>, TT storage is <code>≈ O(N · I · r²)</code>: <strong>exponential in the order against linear in the order</strong>, with <code>I</code> and <code>r</code> held fixed.</p>
 <p>CP storage is also linear in the order under a fixed global rank. TT’s practical advantage is different: it represents high-order interactions through <em>local</em> bond ranks, rather than through one Tucker core that grows exponentially with the order.</p>
 <div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># </span><span class="al">TODO</span><span class="co"> 1: Fix I and the TT bond rank r.</span></span>
@@ -1305,6 +1349,7 @@ Solution
 </section>
 <section id="tensor-decomposition-inside-neural-networks" class="level3">
 <h3 class="anchored" data-anchor-id="tensor-decomposition-inside-neural-networks">Tensor decomposition inside neural networks</h3>
+<p><span data-language-key="tensor-decomposition-inside-neural-networks"></span></p>
 <p>A dense convolution kernel of shape <code>3 × 3 × 512 × 512</code> holds 2,359,296 weights, and costs about 462 million multiply-adds on a 14 × 14 feature map. A CP factorization at rank 64 stores <code>64 × (3 + 3 + 512 + 512) = 65,920</code> weights — <strong>35.8× fewer</strong> — and runs as four skinny convolutions in sequence: <code>1×1 → 3×1 → 1×3 → 1×1</code>.</p>
 <p>One order up, a transformer output matrix <code>W_O</code> of shape <code>4096 × 4096</code> stores 16,777,216 weights; a TT-matrix representation at rank 16 stores 34,816, or <strong>481.9× fewer</strong>.</p>
 <p>The storage ratio is the easy half. The workflow that makes it usable is <strong>train → compress → fine-tune</strong>. Compression buys you nothing unless the downstream task stays accurate enough, and that is a property of the trained weights, not of the shape.</p>
@@ -1317,6 +1362,7 @@ Solution
 </section>
 <section id="the-decision-rule" class="level3">
 <h3 class="anchored" data-anchor-id="the-decision-rule">The decision rule</h3>
+<p><span data-language-key="the-decision-rule"></span></p>
 <p><strong>Choose the decomposition from the structure you need to preserve, then choose the rank from the loss you can afford.</strong> Keep that order. The first question has no numerical answer, and the second has no answer at all until the first is settled.</p>
 <blockquote class="blockquote">
 <p>🇪🇸 Elige primero el método según la estructura que necesitas conservar. Después elige el rango según el error, el almacenamiento o el coste que puedes aceptar.</p>
@@ -1327,6 +1373,7 @@ Solution
 </section>
 <section id="wrap-up-5-min" class="level2">
 <h2 class="anchored" data-anchor-id="wrap-up-5-min">12 · Wrap-Up (5 min)</h2>
+<p><span data-language-key="12-wrap-up-5-min"></span></p>
 <p>What you did today:</p>
 <ol type="1">
 <li><strong>Part I</strong> — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing a single number.</li>
@@ -1340,6 +1387,7 @@ Solution
 </section>
 <section id="further-reading" class="level2">
 <h2 class="anchored" data-anchor-id="further-reading">Further Reading</h2>
+<p><span data-language-key="further-reading"></span></p>
 <p>The bibliography moved to its own page, in both languages: <strong><a href="./references.html">References and further reading</a></strong>.</p>
 <p>It carries what this section used to: the linear algebra books, the Kolda &amp; Bader survey, the Tucker, CP/PARAFAC and Eckart–Young papers with their DOIs and author pages, and the <code>tensorly</code> docs. It adds the ML blog posts the slides link, which were never listed here at all. Each work is cited in exactly one place now, and the Spanish half of the site can reach it.</p>
 <p>Jump straight to a group: <a href="./references.html#ref-linear-algebra">linear algebra</a> · <a href="./references.html#ref-tensors">tensors</a> · <a href="./references.html#ref-software">software</a> · <a href="./references.html#ref-blog">the ML blog</a>.</p>
@@ -1348,6 +1396,7 @@ Solution
 </section>
 <section id="appendix-a-take-home-how-many-principal-components-are-enough" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-a-take-home-how-many-principal-components-are-enough">Appendix A — Take-Home: How Many Principal Components Are Enough?</h2>
+<p><span data-language-key="appendix-a-take-home-how-many-principal-components-are-enough"></span></p>
 <p>Real data contains a trap here. Find it.</p>
 <div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>bc <span class="op">=</span> load_breast_cancer()<span class="op">;</span> X, y <span class="op">=</span> bc.data, bc.target</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1375,6 +1424,7 @@ Without standardizing, the first component appears to explain <strong>98.2%</str
 </section>
 <section id="appendix-b-take-home-attention-is-two-contractions" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-b-take-home-attention-is-two-contractions">Appendix B — Take-Home: Attention Is Two Contractions</h2>
+<p><span data-language-key="appendix-b-take-home-attention-is-two-contractions"></span></p>
 <p>Attention answers question 5 from the video-pipeline discussion: <em>which parts of a sequence matter most?</em> Protein language models use it so every amino acid can look at every other one. Recommenders use it to weight a user’s past interactions.</p>
 <div class="sourceCode" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">6</span>)</span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>batch, seq_len, dim <span class="op">=</span> <span class="dv">4</span>, <span class="dv">12</span>, <span class="dv">16</span></span>
@@ -1406,6 +1456,7 @@ Solution
 </section>
 <section id="appendix-c-take-home-cp-vs-tucker" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-c-take-home-cp-vs-tucker">Appendix C — Take-Home: CP vs Tucker</h2>
+<p><span data-language-key="appendix-c-take-home-cp-vs-tucker"></span></p>
 <p>The CP-versus-Tucker exercise that lived here has moved into the session itself, as <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb">11 · Tensor factorizations</a></strong>. There CP and Tucker are compared at a <strong>matched parameter budget</strong> rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. <a href="#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min">Section 11</a> is the written companion to that notebook.</p>
 <blockquote class="blockquote">
 <p>🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb">cuaderno 11 · Factorizaciones tensoriales</a></strong>, donde CP y Tucker se comparan con un <strong>presupuesto de parámetros equivalente</strong>, y el análisis se amplía a Tensor Train y t-SVD.</p>
@@ -1413,6 +1464,7 @@ Solution
 </section>
 <section id="appendix-d-take-home-cholesky-builds-correlated-data" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-d-take-home-cholesky-builds-correlated-data">Appendix D — Take-Home: Cholesky Builds Correlated Data</h2>
+<p><span data-language-key="appendix-d-take-home-cholesky-builds-correlated-data"></span></p>
 <p><a href="#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min">Section 09</a> covers Cholesky as a <em>solver</em> — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a <strong>sampler</strong>. Feed a lower-triangular <code>L</code> with <code>L @ L.T == Sigma</code> some independent Gaussian noise, and it hands back correlated draws with exactly that covariance. That is the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors or scenarios.</p>
 <div class="sourceCode" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>vol <span class="op">=</span> np.array([<span class="fl">0.012</span>, <span class="fl">0.015</span>, <span class="fl">0.010</span>])</span>
 <span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>corr <span class="op">=</span> np.array([[<span class="fl">1.00</span>, <span class="fl">0.85</span>, <span class="fl">0.20</span>],</span>
@@ -1468,6 +1520,7 @@ Solution
 </section>
 <section id="appendix-e-take-home-audio-denoising-by-low-rank-stft" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-e-take-home-audio-denoising-by-low-rank-stft">Appendix E — Take-Home: Audio Denoising by Low-Rank STFT</h2>
+<p><span data-language-key="appendix-e-take-home-audio-denoising-by-low-rank-stft"></span></p>
 <p>The truncated SVD is the <em>optimal</em> low-rank approximation (Eckart–Young, in the <a href="./references.html#ref-tensors">references</a>). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows, and ask which frequencies are present in each. That is the <strong>short-time Fourier transform</strong>, and its output is a matrix, <code>frequency × time</code>. Truncating that matrix’s SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.</p>
 <p>Optimal on <code>‖A − B‖_F</code> is not the same as optimal on <em>the thing you care about</em>, so the criterion has to be measured, not assumed. Here the criterion is signal-to-noise ratio against a known clean reference — which is why the noise is added deliberately rather than found. The recording is real and pinned to a SHA-256; the noise is synthetic by design, because only a known clean signal makes SNR measurable at all.</p>
 <p><strong>real voice → controlled noise → STFT matrix → SVD truncation → ISTFT → SNR</strong></p>
@@ -1504,6 +1557,7 @@ Solution
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(clean), <span class="bu">len</span>(rec))</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(k, snr_db(clean[:n], rec[:n]), np.<span class="bu">sum</span>(s[:k]<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> np.<span class="bu">sum</span>(s<span class="op">**</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>4.949 seconds at 48 kHz gives a <code>(513, 465)</code> STFT, so full rank is 465. The noisy input measures <strong>5.00 dB</strong>, as constructed:</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1564,14 +1618,17 @@ Solution
 </tr>
 </tbody>
 </table>
+</div>
 <p>Both ends fail, for opposite reasons. At <code>k = 2</code> the approximation is so aggressive that it discards voice along with noise, and lands <strong>below</strong> the noisy signal — a “denoiser” that made things worse. At full rank nothing is discarded at all: <code>U Σ Vᵀ</code> reconstructs <code>Z</code> exactly, ISTFT inverts STFT, and you get the noisy audio back, 5.00 dB, unchanged. The useful region is the middle, and the peak here retains 78% of the singular-value energy from 8.6% of the ranks — which is the same compression story as the taxi tensor in section 10, measured against a different criterion.</p>
 <strong>Retained energy is not the criterion.</strong> Going from <code>k = 40</code> to <code>k = 80</code> retains <em>more</em> energy (87% against 78%) and produces <em>worse</em> audio, because the energy being added back is noise. Low rank does not mean clean; it means small. Whether it also means better is an empirical question. This is the one take-home where the answer is “only in a window, and you have to measure to find it”.
 </details>
 </section>
 <section id="appendix-f-take-home-convolution-and-deconvolution" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-f-take-home-convolution-and-deconvolution">Appendix F — Take-Home: Convolution and Deconvolution</h2>
+<p><span data-language-key="appendix-f-take-home-convolution-and-deconvolution"></span></p>
 <section id="the-theory-1" class="level3">
 <h3 class="anchored" data-anchor-id="the-theory-1">The theory</h3>
+<p><span data-language-key="the-theory-2"></span></p>
 <p><strong>Convolution</strong> slides a small array (the <strong>kernel</strong>, or <strong>filter</strong>) across a larger one, multiplying and summing at each position. It is the operation at the heart of every convolutional neural network, and it is also how every blur, sharpen, and edge-detection filter works.</p>
 <div class="sourceCode" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">2.</span>, <span class="fl">3.</span>, <span class="fl">4.</span>, <span class="fl">5.</span>])</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> np.array([<span class="fl">1.</span>, <span class="fl">0.</span>, <span class="op">-</span><span class="fl">1.</span>])</span>
@@ -1635,6 +1692,7 @@ Solution
 </section>
 <section id="appendix-g-facilitator-notes" class="level2">
 <h2 class="anchored" data-anchor-id="appendix-g-facilitator-notes">Appendix G — Facilitator Notes</h2>
+<p><span data-language-key="appendix-g-facilitator-notes"></span></p>
 <p><em>(Students may ignore this section.)</em></p>
 <p><strong>Structure.</strong> Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Sections 07, 09 and 10 share one theme: <em>no exact inverse exists, so find the best stable approximation</em>. Stating that connection out loud at the wrap-up is what makes the second half feel like one lesson rather than four.</p>
 <p><strong>Do not rush Part I.</strong> It is the students’ first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.</p>
@@ -1652,6 +1710,80 @@ Solution
 </section>
 
 </main> <!-- /main -->
+<script>
+// Keep ordinary links (including keyboard and open-in-new-tab behavior).
+// Shared IDs and explicit translation keys preserve sections without guessing
+// that headings at the same position have the same meaning.
+(() => {
+  function setupLanguageSwitches() {
+    const links = [...document.querySelectorAll(
+      'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+    if (!links.length) return;
+    const language = document.documentElement.lang.split('-')[0];
+    const isDeck = !!document.querySelector('.reveal');
+    const english = links.find(a => a.relList.contains('lang-switch-en'));
+    const root = !isDeck && english ? new URL('./', english.href) : null;
+    const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+    const destinations = links.map(link => {
+      const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+      const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                       : new URL(link.href);
+      url.search = location.search;
+      url.hash = '';
+      link.href = url.href;
+      link.hreflang = lang;
+      link.lang = lang;
+      link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+      if (lang === language) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+      return {link, lang, url};
+    });
+    const documents = new Map();
+    function counterpart(url) {
+      if (!documents.has(url.href)) {
+        documents.set(url.href, fetch(url.href).then(response => {
+          if (!response.ok) throw new Error('Translation unavailable');
+          return response.text();
+        }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+          .catch(() => null));
+      }
+      return documents.get(url.href);
+    }
+    let revision = 0;
+    async function update() {
+      const current = ++revision;
+      const hash = location.hash;
+      let id;
+      try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+      catch { id = ''; }
+      const source = document.getElementById(id);
+      const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+      const key = marker?.dataset.languageKey;
+      await Promise.all(destinations.map(async ({link, lang, url}) => {
+        const destination = new URL(url);
+        if (lang === language) destination.hash = hash;
+        else if (id) {
+          const target = await counterpart(url);
+          const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+            .find(element => element.dataset.languageKey === key);
+          const match = keyed?.closest('section[id]') || target?.getElementById(id);
+          if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+        }
+        // If the fragment has no counterpart, link to the translated page.
+        // A failed fetch also leaves a usable page link.
+        if (current === revision) link.href = destination.href;
+      }));
+    }
+    window.addEventListener('hashchange', update);
+    update();
+  }
+  if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+    Reveal.on('ready', setupLanguageSwitches);
+  } else {
+    setupLanguageSwitches();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

@@ -4,12 +4,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A bilingual (EN/ES) Quarto website for a 3-hour tensors workshop. No application
+A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
 code — the deliverables are the rendered site, fourteen Colab notebooks
 (thirteen sections plus one take-home extra), two revealjs decks and three
 Kahoot spreadsheets.
 
 ## The one rule that matters
+
+[CONTRIBUTING.md](CONTRIBUTING.md#where-to-edit) owns the contributor-facing
+editing boundaries. Keep this technical guidance consistent with it.
 
 `_variables.yml` is the single source of truth (repo coordinates, the thirteen
 sections, the extra, the three quizzes, the agenda). Three things read it:

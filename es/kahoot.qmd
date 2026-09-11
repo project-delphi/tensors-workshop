@@ -98,6 +98,8 @@ al cierre sin interrupción.
 
 ## Cómo lanzarlos
 
+<span data-language-key="running-them"></span>
+
 - **Presupuesta 5 minutos cada uno, con el podio incluido.** A los grupos les
   suele apetecer ver la clasificación, y está bien. Es la recompensa.
 - **No importes en directo.** Ver la nota al comienzo de esta página.
@@ -105,6 +107,8 @@ al cierre sin interrupción.
   {{< var workshop.minutes >}}.
 
 ## Si te falta tiempo
+
+<span data-language-key="if-you-are-running-out-of-time"></span>
 
 El orden de recorte del manual, en este orden:
 

@@ -118,8 +118,8 @@ website:
     right:
       # Both always visible -- this is the control that switches the rest of
       # the navbar. `lang-switch-*` marks them so the current language can be
-      # shown as the active one; each goes to that language's homepage.
-      # Landing pages also show a full-label switch outside the mobile menu.
+      # shown as the active one. language-switch.html upgrades these homepage
+      # fallbacks to the matching page and, where available, translated section.
       - text: "🇬🇧 EN"
         href: index.qmd
         rel: lang-switch-en
@@ -133,8 +133,12 @@ website:
     left: "Tensors for Machine Learning · Built with [Quarto](https://quarto.org)"
     right: "[Source](https://github.com/project-delphi/tensors-workshop)"
 
+filters:
+  - scripts/responsive_tables.lua
+
 format:
   html:
+    include-after-body: _includes/language-switch.html
     theme:
       - cosmo
       - custom.scss

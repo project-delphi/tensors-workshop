@@ -2,6 +2,11 @@
 
 ## 2026-09-10
 
+- Language switches keep the matching page and preserve corresponding sections in English and Spanish, including slide section links.
+- Wide tables scroll within the page on phones and can be reached with the keyboard.
+- Replaced the exit reflection with a Tucker reconstruction question and a separate transfer score, within the existing five-minute check.
+- Added a contributor editing guide and removed the obsolete setup-code source; notebook bodies remain directly editable.
+
 - Added English and Spanish teaching-kit pages and published the facilitator guide, assessments, group tasks, worked mistakes, and feedback form on the website.
 - Corrected the website duration to 210 minutes and clarified the README's deliberate use of synthetic teaching examples in both languages.
 - Licensed teaching materials under CC BY 4.0 and software under MIT.

@@ -4,13 +4,15 @@ format:
     theme: [default, ../slides.scss]
     slide-number: false
     progress: true
-    include-after-body: ../deck-pace.html
+    include-after-body:
+      - ../deck-pace.html
+      - ../../_includes/language-switch.html
     preview-links: false
     hash-type: title
     history: true
     width: 1920
     height: 1080
-    footer: "[Workshop site](https://project-delphi.github.io/tensors-workshop) · [Español](../es/)"
+    footer: "[Workshop site](https://project-delphi.github.io/tensors-workshop) · [Español](../es/){rel=lang-switch-es}"
 execute:
   enabled: false
 lang: en

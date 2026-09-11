@@ -1284,7 +1284,7 @@ Section 12 · Wrap-up and take-homes — 5 min, running +03:25 to +03:30. Five t
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-<p><a href="https://project-delphi.github.io/tensors-workshop">Workshop site</a> · <a href="../es/">Español</a></p>
+<p><a href="https://project-delphi.github.io/tensors-workshop">Workshop site</a> · <a href="../es/" rel="lang-switch-es">Español</a></p>
 </div>
 </div></div>
 
@@ -1994,6 +1994,80 @@ Section 12 · Wrap-up and take-homes — 5 min, running +03:25 to +03:30. Five t
         // broken panel degrades to the markdown links instead of to no link.
         reveal.classList.add("deck-colab-ready");
       });
+    })();
+    </script>
+    <script>
+    // Keep ordinary links (including keyboard and open-in-new-tab behavior).
+    // Shared IDs and explicit translation keys preserve sections without guessing
+    // that headings at the same position have the same meaning.
+    (() => {
+      function setupLanguageSwitches() {
+        const links = [...document.querySelectorAll(
+          'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+        if (!links.length) return;
+        const language = document.documentElement.lang.split('-')[0];
+        const isDeck = !!document.querySelector('.reveal');
+        const english = links.find(a => a.relList.contains('lang-switch-en'));
+        const root = !isDeck && english ? new URL('./', english.href) : null;
+        const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+        const destinations = links.map(link => {
+          const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+          const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                           : new URL(link.href);
+          url.search = location.search;
+          url.hash = '';
+          link.href = url.href;
+          link.hreflang = lang;
+          link.lang = lang;
+          link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+          if (lang === language) link.setAttribute('aria-current', 'page');
+          else link.removeAttribute('aria-current');
+          return {link, lang, url};
+        });
+        const documents = new Map();
+        function counterpart(url) {
+          if (!documents.has(url.href)) {
+            documents.set(url.href, fetch(url.href).then(response => {
+              if (!response.ok) throw new Error('Translation unavailable');
+              return response.text();
+            }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+              .catch(() => null));
+          }
+          return documents.get(url.href);
+        }
+        let revision = 0;
+        async function update() {
+          const current = ++revision;
+          const hash = location.hash;
+          let id;
+          try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+          catch { id = ''; }
+          const source = document.getElementById(id);
+          const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+          const key = marker?.dataset.languageKey;
+          await Promise.all(destinations.map(async ({link, lang, url}) => {
+            const destination = new URL(url);
+            if (lang === language) destination.hash = hash;
+            else if (id) {
+              const target = await counterpart(url);
+              const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+                .find(element => element.dataset.languageKey === key);
+              const match = keyed?.closest('section[id]') || target?.getElementById(id);
+              if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+            }
+            // If the fragment has no counterpart, link to the translated page.
+            // A failed fetch also leaves a usable page link.
+            if (current === revision) link.href = destination.href;
+          }));
+        }
+        window.addEventListener('hashchange', update);
+        update();
+      }
+      if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+        Reveal.on('ready', setupLanguageSwitches);
+      } else {
+        setupLanguageSwitches();
+      }
     })();
     </script>
     <script id="quarto-html-after-body" type="application/javascript">

@@ -125,7 +125,7 @@ def check(root: Path = ROOT) -> None:
             if not path.is_file():
                 raise ValueError(f"Missing teaching resource: {path}")
             check_links(path, root)
-    for name in ("README.md", "notebooks/README.md", "RELEASE_CHECKLIST.md", "CHANGELOG.md"):
+    for name in ("README.md", "notebooks/README.md", "CONTRIBUTING.md", "RELEASE_CHECKLIST.md", "CHANGELOG.md"):
         check_links(root / name, root)
     en = check_tasks(root / "group-tasks.md", notebooks)
     es = check_tasks(root / "es/group-tasks.md", notebooks)
@@ -133,6 +133,18 @@ def check(root: Path = ROOT) -> None:
         raise ValueError("Group task timings differ between English and Spanish")
     for path in paths:
         check_route(json.loads(path.read_text()), path.name)
+    for source in sorted(root.glob("*.md")) + sorted(root.glob("*.qmd")):
+        translated = root / "es" / source.name
+        if not translated.exists():
+            continue
+        keys = []
+        for page in (source, translated):
+            found = re.findall(r'data-language-key="([^"]+)"', prose(page.read_text()))
+            if len(found) != len(set(found)):
+                raise ValueError(f"{page}: duplicate language key")
+            keys.append(set(found))
+        if keys[0] != keys[1]:
+            raise ValueError(f"{source}: English and Spanish language keys differ")
     print(f"Teaching materials valid: {len(paths)} core routes, paired tasks and local links")
 
 

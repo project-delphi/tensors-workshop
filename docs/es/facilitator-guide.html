@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-d76f86b455da21ff19b9eee337db4fe9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-583367e685d76bbf654b4d970c1aec1e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -226,6 +226,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Mantén la <strong>agenda de 210 minutos</strong>. Estas actividades sustituyen tiempo de práctica o discusión; no alargan el taller. El cuaderno 13 queda para después.</p>
 <section id="antes-del-taller" class="level2">
 <h2 class="anchored" data-anchor-id="antes-del-taller">Antes del taller</h2>
+<p><span data-language-key="before-the-session"></span></p>
 <ul>
 <li>Ejecuta el cuaderno 00 antes de clase. Prueba cada cuaderno elegido en una sesión nueva.</li>
 <li>Sigue <strong>Core prep</strong> y luego <strong>Core activity</strong>. Omite los demás ejercicios y exploradores.</li>
@@ -235,11 +236,14 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="ritmo-de-trabajo" class="level2">
 <h2 class="anchored" data-anchor-id="ritmo-de-trabajo">Ritmo de trabajo</h2>
+<p><span data-language-key="live-rhythm"></span></p>
 <p><strong>Predice → Ejecuta → Explica → Comprueba.</strong> Pide una predicción escrita antes de ejecutar. Después, un resultado y una explicación revisada. Rota los roles. Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegidas; el código plegado también necesita ejecutarse.</p>
 </section>
 <section id="guion" class="level2">
 <h2 class="anchored" data-anchor-id="guion">Guion</h2>
+<p><span data-language-key="run-sheet"></span></p>
 <p>Sigue la <a href="../es/tensors_workshop_plan_with_quizzes.html">agenda del taller</a>. Conserva cuestionarios y pausas. Distribuye así cada bloque:</p>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 50%">
@@ -306,26 +310,104 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 </tbody>
 </table>
+</div>
 <p>Busca las <a href="../es/group-tasks.html">actividades grupales</a> por número de cuaderno. Usa las preguntas escritas; los exploradores opcionales no son requisitos. Para la actividad 04, usa el ejemplo pequeño de <a href="../es/worked-mistakes.html">reshape</a> si hace falta. Cada bloque incluye la puesta en común. Habla un grupo; los demás entregan: <strong>elección → evidencia → qué nos haría cambiar de opinión</strong>.</p>
 <p>En el cuaderno 11, primero predicen el almacenamiento. Si el ajuste tarda mucho, demuestra la solución incluida después del intento. Discutan su salida; no gasten el tiempo grupal en arreglar una instalación.</p>
 </section>
 <section id="comprobaciones-inicial-y-final" class="level2">
 <h2 class="anchored" data-anchor-id="comprobaciones-inicial-y-final">Comprobaciones inicial y final</h2>
-<p>Usa las preguntas de los cuadernos 00 y 12. La <a href="../es/assessments.html">clave de evaluación</a> incluye puntuación y próximos pasos. Recoge respuestas individuales. Compara cada dimensión del razonamiento; no es una prueba de aprendizaje validada.</p>
+<p><span data-language-key="entry-and-exit-checks"></span></p>
+<p>Usa las preguntas de los cuadernos 00 y 12. La <a href="../es/assessments.html">clave de evaluación</a> incluye puntuación y próximos pasos. Recoge respuestas individuales. Compara cada dimensión del razonamiento; no es una prueba de aprendizaje validada. Mantén los cinco minutos de salida: tres para ejes y evidencia, dos para la pregunta de transferencia sobre Tucker. Registra la transferencia aparte porque no tiene equivalente inicial; úsala para planear el repaso del cuaderno 10.</p>
 </section>
 <section id="análisis-de-errores" class="level2">
 <h2 class="anchored" data-anchor-id="análisis-de-errores">Análisis de errores</h2>
+<p><span data-language-key="wrong-answer-clinic"></span></p>
 <p>Usa los <a href="../es/worked-mistakes.html">errores resueltos</a> dentro de los bloques anteriores: orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11. Muestra la afirmación. Pide un contraejemplo. Revela la corrección al final.</p>
 <p>Si la mitad del grupo repite un error, modela el ejemplo pequeño y pide otra predicción. Omite una demostración opcional, no la pausa ni la comprobación final. Quienes terminen pronto pueden diseñar un contraejemplo.</p>
 </section>
 <section id="después-del-taller" class="level2">
 <h2 class="anchored" data-anchor-id="después-del-taller">Después del taller</h2>
+<p><span data-language-key="after-the-session"></span></p>
 <p>Ofrece el <a href="../es/workshop-feedback.html">formulario de opinión</a> de dos minutos. Anota el commit, tiempos reales, errores frecuentes y un cambio para la próxima sesión. Antes de publicarlo, usa la <a href="https://github.com/project-delphi/tensors-workshop/blob/main/RELEASE_CHECKLIST.md">lista de publicación</a>.</p>
 
 
 </section>
 
 </main> <!-- /main -->
+<script>
+// Keep ordinary links (including keyboard and open-in-new-tab behavior).
+// Shared IDs and explicit translation keys preserve sections without guessing
+// that headings at the same position have the same meaning.
+(() => {
+  function setupLanguageSwitches() {
+    const links = [...document.querySelectorAll(
+      'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+    if (!links.length) return;
+    const language = document.documentElement.lang.split('-')[0];
+    const isDeck = !!document.querySelector('.reveal');
+    const english = links.find(a => a.relList.contains('lang-switch-en'));
+    const root = !isDeck && english ? new URL('./', english.href) : null;
+    const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+    const destinations = links.map(link => {
+      const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+      const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                       : new URL(link.href);
+      url.search = location.search;
+      url.hash = '';
+      link.href = url.href;
+      link.hreflang = lang;
+      link.lang = lang;
+      link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+      if (lang === language) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+      return {link, lang, url};
+    });
+    const documents = new Map();
+    function counterpart(url) {
+      if (!documents.has(url.href)) {
+        documents.set(url.href, fetch(url.href).then(response => {
+          if (!response.ok) throw new Error('Translation unavailable');
+          return response.text();
+        }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+          .catch(() => null));
+      }
+      return documents.get(url.href);
+    }
+    let revision = 0;
+    async function update() {
+      const current = ++revision;
+      const hash = location.hash;
+      let id;
+      try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+      catch { id = ''; }
+      const source = document.getElementById(id);
+      const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+      const key = marker?.dataset.languageKey;
+      await Promise.all(destinations.map(async ({link, lang, url}) => {
+        const destination = new URL(url);
+        if (lang === language) destination.hash = hash;
+        else if (id) {
+          const target = await counterpart(url);
+          const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+            .find(element => element.dataset.languageKey === key);
+          const match = keyed?.closest('section[id]') || target?.getElementById(id);
+          if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+        }
+        // If the fragment has no counterpart, link to the translated page.
+        // A failed fetch also leaves a usable page link.
+        if (current === revision) link.href = destination.href;
+      }));
+    }
+    window.addEventListener('hashchange', update);
+    update();
+  }
+  if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+    Reveal.on('ready', setupLanguageSwitches);
+  } else {
+    setupLanguageSwitches();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
