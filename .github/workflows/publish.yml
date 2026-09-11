@@ -38,8 +38,12 @@ jobs:
           python-version: "3.12"
 
       - uses: astral-sh/setup-uv@v5
+        # No cache key: uv's default keys on **/uv.lock, which is deliberately
+        # not committed (see .gitignore), so caching here would key on nothing
+        # and claim to do more than it does. The two groups CI resolves are
+        # four small pure-Python wheels.
         with:
-          enable-cache: true
+          enable-cache: false
 
       # Dependencies come from the groups in pyproject.toml, so CI runs exactly
       # the commands CONTRIBUTING and the release checklist give a human. The
@@ -51,10 +55,19 @@ jobs:
         # Pure Python and deterministic, so this one CAN be byte-exact: it
         # catches a notebook, a section table, or the notebooks dependency
         # group edited by hand instead of through _variables.yml.
+        #
+        # The path list is every file gen_tables.py and gen_notebooks.py write
+        # into, the two handbook schedule regions included. Leave a file out and
+        # a hand-edit there does not fail here; it surfaces further down as a
+        # compare_render.py mismatch instead, which names the rendered page
+        # rather than the edit — because this step has already rewritten the
+        # source by the time `quarto render` runs.
         run: |
           uv run --group site python scripts/gen_tables.py
           uv run --group site python scripts/gen_notebooks.py
-          DRIFT=$(git status --porcelain -- notebooks _includes README.md pyproject.toml)
+          DRIFT=$(git status --porcelain -- notebooks _includes README.md \
+                    pyproject.toml tensors_workshop_plan_with_quizzes.md \
+                    es/tensors_workshop_plan_with_quizzes.md)
           if [ -n "$DRIFT" ]; then
             echo "::error::Generated files differ from what was committed."
             echo "Run scripts/gen_tables.py and scripts/gen_notebooks.py, then commit."
@@ -101,9 +114,27 @@ jobs:
           node-version: "22"
           cache: npm
 
+      # Chromium is ~150MB and is not in the npm cache, so without this the
+      # required `render` check downloads it on every run and goes red whenever
+      # the Playwright CDN is unreachable. The key is the resolved Playwright
+      # version, because the browser build is pinned to it.
+      - name: Read the pinned Playwright version
+        id: playwright
+        run: |
+          echo "version=$(node -p \
+            "require('./package-lock.json').packages['node_modules/playwright'].version")" \
+            >> "$GITHUB_OUTPUT"
+
+      - uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
+
       - name: Install Playwright
-        # `npm ci` installs the pinned version from package-lock.json; the
-        # browser itself is versioned with it and is not in the npm cache.
+        # `npm ci` installs the pinned version from package-lock.json. On a cache
+        # hit the browser is already there, but --with-deps still has to run:
+        # it installs system libraries, which the cache does not cover.
         run: |
           npm ci
           npx playwright install --with-deps chromium

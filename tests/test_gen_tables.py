@@ -48,13 +48,14 @@ class NotebookRequirements(unittest.TestCase):
         # the environment unless the notebook installs it itself.
         for s in gt.NOTEBOOKS:
             code = gt.notebook_code(ROOT / "notebooks" / gt.notebook_name(s))
-            pip = " ".join(gt.PIP_RE.findall(code))
+            pip = gt.pip_installed(code)
             for mod in gt.IMPORT_RE.findall(code):
                 name = gt.DEP_NAME.get(mod, mod)
                 if name in gt.DEP_SKIP or name in pip:
                     continue
                 with self.subTest(notebook=s["n"], module=name):
                     self.assertIn(name, self.deps)
+
 
     def test_no_duplicates_and_a_stable_order(self):
         self.assertEqual(len(self.deps), len(set(self.deps)))
@@ -73,6 +74,22 @@ class NotebookRequirements(unittest.TestCase):
         finally:
             gt.DEP_SKIP = original
 
+    def test_a_module_named_only_in_a_pip_comment_still_reaches_the_group(self):
+        # Pins the call site, not just the parser. The rule used to be a
+        # substring test against the whole `%pip install` line, so a package
+        # merely *mentioned* in a trailing comment was treated as
+        # self-installed and dropped from the environment.
+        original = gt.notebook_code
+        try:
+            gt.notebook_code = lambda path: (
+                "%pip install -q tensorly  # scipy comes from Colab\n"
+                "import scipy\n")
+            deps = gt.notebook_requirements()
+        finally:
+            gt.notebook_code = original
+        self.assertIn("scipy", deps)
+        self.assertNotIn("tensorly", deps)
+
     def test_group_renders_floors_for_known_names(self):
         rendered = gt.pyproject_group()
         self.assertIn('  "numpy>=', rendered)
@@ -87,6 +104,56 @@ class NotebookRequirements(unittest.TestCase):
                      .split("# END notebooks-group", 1)[0]
         self.assertEqual(region, gt.pyproject_group())
 
+
+class PipInstalled(unittest.TestCase):
+    """What a notebook installs for itself, which is what gets left out.
+
+    This decides whether a package reaches the environment, and the derivation
+    is the only thing that decides it: CI checks that the committed group
+    equals this, so a mistake here is agreed with rather than caught. It used
+    to be a substring test against the whole `%pip install` line, which is how
+    the comment case below got the wrong answer.
+    """
+
+    def test_plain_and_quoted_names(self):
+        self.assertEqual(gt.pip_installed("%pip install -q tensorly"),
+                         {"tensorly"})
+        self.assertEqual(gt.pip_installed('%pip install -q "imageio[ffmpeg]"'),
+                         {"imageio"})
+
+    def test_a_comment_is_not_a_requirement(self):
+        # The regression. `scipy` is named in a comment, not installed, so it
+        # must still reach the environment from its import.
+        self.assertEqual(
+            gt.pip_installed("%pip install -q tensorly  # scipy from Colab"),
+            {"tensorly"})
+
+    def test_version_specifiers_and_extras_are_stripped(self):
+        self.assertEqual(
+            gt.pip_installed('%pip install "imageio[ffmpeg]" tensorly==0.8.1'),
+            {"imageio", "tensorly"})
+        self.assertEqual(gt.pip_installed("%pip install 'scipy>=1.11,<2'"),
+                         {"scipy"})
+
+    def test_flags_are_not_requirements(self):
+        self.assertEqual(
+            gt.pip_installed("%pip install -q --no-input --upgrade tensorly"),
+            {"tensorly"})
+
+    def test_backslash_continuation_is_followed(self):
+        self.assertEqual(
+            gt.pip_installed("%pip install -q \\\n    scikit-image scipy"),
+            {"scikit-image", "scipy"})
+
+    def test_no_pip_line_is_an_empty_set(self):
+        self.assertEqual(gt.pip_installed("import numpy as np"), set())
+
+    def test_matches_what_the_notebooks_actually_install(self):
+        seen = set()
+        for s in gt.NOTEBOOKS:
+            seen |= gt.pip_installed(
+                gt.notebook_code(ROOT / "notebooks" / gt.notebook_name(s)))
+        self.assertEqual(seen, {"imageio", "tensorly"})
 
 if __name__ == "__main__":
     unittest.main()

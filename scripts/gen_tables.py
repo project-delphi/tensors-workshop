@@ -213,7 +213,11 @@ DEP_SKIP = {
 }
 
 IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)
-PIP_RE = re.compile(r"^\s*%pip install[^\n]*", re.M)
+# A `%pip install` line, following backslash continuations onto the next line.
+PIP_RE = re.compile(r"^[ \t]*%pip install(?:[^\n\\]*\\\n)*[^\n]*", re.M)
+# Where a requirement stops being a distribution name: an extra, a version
+# specifier, an environment marker, or a direct URL.
+REQ_END_RE = re.compile(r"[\[<>=!~;@\s]")
 URL_RE = re.compile(r"https?://[^\s\"')]+")
 # The contents of a double-quoted Python string, which is where every URL a
 # notebook actually fetches lives.
@@ -229,6 +233,37 @@ STRING_RE = re.compile(r'"([^"\n]*)"')
 NOT_A_DOWNLOAD = re.compile(
     r"colab\.research\.google\.com|github\.com/project-delphi/"
     r"|project-delphi\.github\.io|tensorly\.org|deeplearningbook|kahoot\.it")
+
+
+def pip_installed(code: str) -> set[str]:
+    """The distributions a notebook installs for itself, by name.
+
+    Parsed rather than matched as a substring. The old test was `name in pip`
+    against the whole `%pip install ...` line, comment and all, which answers
+    the wrong question: a setup cell reading
+
+        %pip install -q tensorly  # scipy comes from Colab
+
+    would report `scipy` as self-installed and silently drop it from the
+    environment in pyproject.toml. Nothing downstream could catch that -- the
+    regenerate gate only checks the committed group equals this derivation, so
+    it would agree with the mistake.
+
+    Only the arguments count, flags are dropped, and a requirement is cut at
+    the first character that stops being part of its name, so
+    `"imageio[ffmpeg]"` is `imageio` and `tensorly==0.8` is `tensorly`.
+    """
+    out: set[str] = set()
+    for line in PIP_RE.findall(code):
+        args = line.replace("\\\n", " ").split("install", 1)[1]
+        for token in args.split("#", 1)[0].split():
+            token = token.strip("\"'")
+            if not token or token.startswith("-"):
+                continue
+            name = REQ_END_RE.split(token, 1)[0]
+            if name:
+                out.add(name)
+    return out
 
 
 def notebook_code(path: pathlib.Path) -> str:
@@ -267,7 +302,7 @@ def notebook_deps_table(lang: str) -> str:
     for s in NOTEBOOKS:
         path = ROOT / "notebooks" / notebook_name(s)
         code = notebook_code(path)
-        pip = " ".join(PIP_RE.findall(code))
+        pip = pip_installed(code)
         mods = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
         mods |= {d for d in ("imageio", "tensorly") if d in pip}
         ranked = ([m for m in DEP_ORDER if m in mods]
@@ -340,9 +375,9 @@ def notebook_requirements() -> list[str]:
     mods: set[str] = set()
     for s in NOTEBOOKS:
         code = notebook_code(ROOT / "notebooks" / notebook_name(s))
-        pip = " ".join(PIP_RE.findall(code))
+        pip = pip_installed(code)
         found = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
-        mods |= {m for m in found if m not in pip}
+        mods |= found - pip
     ranked = ([m for m in DEP_ORDER if m in mods]
               + sorted(m for m in mods if m not in DEP_ORDER))
     return DEP_BASE + ranked + DEP_RUNNER
