@@ -89,15 +89,15 @@ stay in English** in both decks.
 2. Regenerate the tables and the notebooks — two separate commands, since
    neither script reads its arguments:
    ```bash
-   uv run --with pyyaml python scripts/gen_tables.py
-   uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
+   uv run --group site python scripts/gen_tables.py
+   uv run --group site python scripts/gen_notebooks.py
    ```
 3. Draw the section's slide art, save it as the next
    `en|es/images/slides-final/slide-NN.png`, and add
    `## {#sec-NN-slug background-image="images/slides-final/slide-NN.png" ...}`
    with its `.sec-part` marker, its `h1.sr-only` heading, its `sr-only`
    summary and its `.colab-tab` link to **both** decks.
-4. `quarto render && uv run --with pyyaml,nbformat python scripts/check_links.py`
+4. `quarto render && uv run --group site python scripts/check_links.py`
 
 Step 3 is the one nothing can do for you. Steps 1, 2 and 4 will tell you if you
 forget it.

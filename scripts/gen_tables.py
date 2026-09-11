@@ -10,11 +10,13 @@ tables. They are deliberately narrower: no Slides column, because an extra has
 no `#sec-NN` anchor in either deck, and no Quiz column, because no Kahoot
 covers one.
 
-    uv run --with pyyaml python scripts/gen_tables.py
+    uv run --group site python scripts/gen_tables.py
 
-It also owns marker-delimited regions inside four hand-written files: the
-section and extras tables in `README.md` and `notebooks/README.md`, and the
-schedule table in each language's handbook.
+It also owns marker-delimited regions inside five hand-written files: the
+section and extras tables in `README.md` and `notebooks/README.md`, the
+schedule table in each language's handbook, and the `notebooks` dependency
+group in `pyproject.toml` — which is read off the notebooks' own imports, so
+the environment a reader installs cannot drift from the code they run.
 
 Outputs (all overwritten, none hand-edited):
     _includes/notebooks-en.md     _includes/notebooks-es.md
@@ -182,6 +184,24 @@ DEP_ORDER = ["matplotlib", "ipywidgets", "pandas", "scikit-learn",
 # Import name -> the name a reader would install it under.
 DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn"}
 
+# Lower bounds for the `notebooks` dependency group in pyproject.toml. Floors,
+# never exact pins: the point of running locally is to match what Colab has,
+# and Colab moves. A floor says "older than this and the notebook breaks"; an
+# exact pin would freeze a teaching environment away from the one students see.
+# A dependency missing from this table is emitted unpinned rather than dropped,
+# the way DEP_ORDER appends what it does not rank.
+DEP_FLOOR = {
+    "numpy": "1.26", "matplotlib": "3.8", "ipywidgets": "8.1",
+    "pandas": "2.1", "scikit-learn": "1.4", "scikit-image": "0.22",
+    "scipy": "1.11", "jupyterlab": "4.1",
+}
+
+# NumPy is in every notebook and DEP_SKIP drops it from the table (whose column
+# is "beyond NumPy"), so the group has to put it back. JupyterLab is the other
+# direction: it is what *runs* a notebook, so no notebook imports it and no
+# amount of reading them would find it.
+DEP_BASE, DEP_RUNNER = ["numpy"], ["jupyterlab"]
+
 # Always present, or not a dependency a reader has to think about: the standard
 # library, NumPy (the column is "beyond NumPy"), and the three that only ever
 # appear inside Colab-specific plumbing.
@@ -193,7 +213,19 @@ DEP_SKIP = {
 }
 
 IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)
-PIP_RE = re.compile(r"^\s*%pip install[^\n]*", re.M)
+# A `%pip install` line, following backslash continuations onto the next line.
+PIP_RE = re.compile(r"^[ \t]*%pip install(?:[^\n\\]*\\\n)*[^\n]*", re.M)
+# Where a requirement stops being a distribution name: an extra, a version
+# specifier, an environment marker, or a direct URL.
+REQ_END_RE = re.compile(r"[\[<>=!~;@\s]")
+# pip flags whose value is the *next* token rather than part of the flag. Their
+# values are paths and URLs, not distributions, and reading one as a package
+# name would report something as self-installed that nothing installs.
+PIP_VALUE_FLAGS = {
+    "-i", "--index-url", "--extra-index-url", "-f", "--find-links",
+    "-r", "--requirement", "-c", "--constraint", "-t", "--target",
+    "-e", "--editable", "--prefix", "--root", "--proxy", "--timeout",
+}
 URL_RE = re.compile(r"https?://[^\s\"')]+")
 # The contents of a double-quoted Python string, which is where every URL a
 # notebook actually fetches lives.
@@ -209,6 +241,46 @@ STRING_RE = re.compile(r'"([^"\n]*)"')
 NOT_A_DOWNLOAD = re.compile(
     r"colab\.research\.google\.com|github\.com/project-delphi/"
     r"|project-delphi\.github\.io|tensorly\.org|deeplearningbook|kahoot\.it")
+
+
+def pip_installed(code: str) -> set[str]:
+    """The distributions a notebook installs for itself, by name.
+
+    Parsed rather than matched as a substring. The old test was `name in pip`
+    against the whole `%pip install ...` line, comment and all, which answers
+    the wrong question: a setup cell reading
+
+        %pip install -q tensorly  # scipy comes from Colab
+
+    would report `scipy` as self-installed and silently drop it from the
+    environment in pyproject.toml. Nothing downstream could catch that -- the
+    regenerate gate only checks the committed group equals this derivation, so
+    it would agree with the mistake.
+
+    Only the arguments count, flags are dropped along with the value of any
+    flag that takes one, and a requirement is cut at the first character that
+    stops being part of its name -- so `"imageio[ffmpeg]"` is `imageio` and
+    `tensorly==0.8` is `tensorly`, while the URL in `-i https://.../simple` is
+    neither.
+    """
+    out: set[str] = set()
+    for line in PIP_RE.findall(code):
+        args = line.replace("\\\n", " ").split("install", 1)[1]
+        tokens = args.split("#", 1)[0].split()
+        skip = False
+        for token in tokens:
+            if skip:                      # the value of the flag before it
+                skip = False
+                continue
+            if token.startswith("-"):
+                # `--index-url=X` carries its value; `--index-url X` does not.
+                skip = token in PIP_VALUE_FLAGS
+                continue
+            token = token.strip("\"'")
+            name = REQ_END_RE.split(token, 1)[0] if token else ""
+            if name:
+                out.add(name)
+    return out
 
 
 def notebook_code(path: pathlib.Path) -> str:
@@ -247,7 +319,7 @@ def notebook_deps_table(lang: str) -> str:
     for s in NOTEBOOKS:
         path = ROOT / "notebooks" / notebook_name(s)
         code = notebook_code(path)
-        pip = " ".join(PIP_RE.findall(code))
+        pip = pip_installed(code)
         mods = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
         mods |= {d for d in ("imageio", "tensorly") if d in pip}
         ranked = ([m for m in DEP_ORDER if m in mods]
@@ -297,6 +369,42 @@ def notebook_deps_table(lang: str) -> str:
         out.append(f"| {s['n']} | {deps} | {net} |")
     out += ["", f": {L[lang]['deps_caption']} {{tbl-colwidths=\"[12,58,30]\"}}"]
     return "\n".join(out) + "\n"
+
+
+# ── the environment those notebooks need ─────────────────────────────────────
+# The same read, spent on pyproject.toml instead of a table. The install list
+# used to be written out in full in six places -- README.md twice, both
+# notebooks pages, notebooks/README.md and CLAUDE.md -- with nothing comparing
+# them either to each other or to the notebooks. Now they all say
+# `uv run --group notebooks jupyter lab` and the list itself is derived here,
+# so a notebook that starts importing something new updates the environment
+# the same way it updates the table above: by being regenerated.
+
+
+def notebook_requirements() -> list[str]:
+    """Every distribution a reader needs to run the notebooks locally.
+
+    The union of what they import, minus the standard library, minus anything
+    a notebook installs for itself with `%pip` -- `tensorly` and `imageio` are
+    deliberately absent for that reason, exactly as the dagger in the table
+    above says -- plus NumPy and JupyterLab, which no import can reveal.
+    """
+    mods: set[str] = set()
+    for s in NOTEBOOKS:
+        code = notebook_code(ROOT / "notebooks" / notebook_name(s))
+        pip = pip_installed(code)
+        found = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
+        mods |= found - pip
+    ranked = ([m for m in DEP_ORDER if m in mods]
+              + sorted(m for m in mods if m not in DEP_ORDER))
+    return DEP_BASE + ranked + DEP_RUNNER
+
+
+def pyproject_group() -> str:
+    """The `notebooks` dependency group, as TOML lines."""
+    return "".join(f'  "{d}>={DEP_FLOOR[d]}",\n' if d in DEP_FLOOR
+                   else f'  "{d}",\n'
+                   for d in notebook_requirements())
 
 
 def agenda_table(lang: str) -> str:
@@ -1062,7 +1170,8 @@ BANNER = ("<!-- GENERATED by scripts/gen_tables.py from _variables.yml. "
           "Do not edit by hand. -->\n")
 
 
-def inject(path: pathlib.Path, marker: str, body: str) -> None:
+def inject(path: pathlib.Path, marker: str, body: str,
+           comment: tuple[str, str] = ("<!-- ", " -->")) -> None:
     """Replace the text between <!-- BEGIN marker --> and <!-- END marker -->.
 
     The READMEs are rendered by GitHub, not Quarto, so they cannot use
@@ -1071,8 +1180,12 @@ def inject(path: pathlib.Path, marker: str, body: str) -> None:
     Quarto page and could use `{{< include >}}`, but it is also read raw on
     GitHub, where a shortcode shows as literal text — so it gets a marker
     region too.
+
+    `comment` is how that file spells a comment, because pyproject.toml gets a
+    marker region on the same terms and TOML has no HTML comments.
     """
-    begin, end = f"<!-- BEGIN {marker} -->", f"<!-- END {marker} -->"
+    open_, close = comment
+    begin, end = f"{open_}BEGIN {marker}{close}", f"{open_}END {marker}{close}"
     text = path.read_text(encoding="utf-8")
     if begin not in text or end not in text:
         sys.exit(f"{path}: missing {begin} / {end} markers")
@@ -1146,6 +1259,9 @@ def main() -> int:
         inject(readme, "extras-es", extras_readme_table("es"))
     if nb_readme.exists():
         inject(nb_readme, "notebooks", notebooks_table("en"))
+    pyproject = ROOT / "pyproject.toml"
+    if pyproject.exists():
+        inject(pyproject, "notebooks-group", pyproject_group(), ("# ", ""))
 
     taught = sum(s["minutes"] for s in SECTIONS)
     print(f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, "

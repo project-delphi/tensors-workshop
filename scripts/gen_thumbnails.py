@@ -11,8 +11,7 @@ Every source below is CC0. That is deliberate: the slide shows nine datasets
 at once, and a deck is a bad place to owe nine attribution lines. Credit is
 given anyway, in the speaker notes and here.
 
-    uv run --with numpy,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
-scikit-learn,scikit-image python scripts/gen_thumbnails.py
+    uv run --group figures python scripts/gen_thumbnails.py
 
 Photographic cards are written as `images/ds-*.jpg`; the two flat-colour ones
 (the waveform and the digit sheet) are `images/ds-*.png`, because JPEG rings

@@ -58,12 +58,14 @@ Los cuadernos solo necesitan el stack científico de Python. En local:
 ```bash
 git clone {{< var repo.url >}}.git
 cd {{< var repo.name >}}
-uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+uv run --group notebooks jupyter lab
 ```
 
-`matplotlib` y `ipywidgets` están en esa lista porque todos los cuadernos
-dibujan algo, y todos menos el 00 usan deslizadores. Los dos vienen con Colab,
-así que si falta uno solo se nota al ejecutar en local.
+El grupo `notebooks` está declarado en `pyproject.toml`, y se deriva de los
+propios `import` de los cuadernos en lugar de escribirse a mano junto a ellos.
+`matplotlib` e `ipywidgets` están en él porque todos los cuadernos dibujan algo,
+y todos menos el 00 usan deslizadores; los dos vienen con Colab, así que si
+falta uno solo se nota al ejecutar en local.
 
 `scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
 manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se

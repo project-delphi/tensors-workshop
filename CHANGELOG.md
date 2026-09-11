@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-11
+
+- Running the notebooks off Colab is now one command, `uv run --group notebooks jupyter lab`; the package list it used to spell out is derived from what the notebooks import.
+- The browser navigation check runs on every pull request, so a broken language switch or a page that overflows on a phone is caught before it reaches the site.
+
 ## 2026-09-10
 
 - Language switches keep the matching page and preserve corresponding sections in English and Spanish, including slide section links.

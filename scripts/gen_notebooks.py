@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Normalize the notebooks in place: the thirteen sections and the extras.
 
-    uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
+    uv run --group site python scripts/gen_notebooks.py
 
 An *extra* is a notebook that is not a section — a take-home deep dive declared
 under `extras:` in _variables.yml rather than `sections:`. It carries no

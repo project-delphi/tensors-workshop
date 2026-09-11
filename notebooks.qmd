@@ -56,12 +56,13 @@ The notebooks only need the scientific Python stack. Locally:
 ```bash
 git clone {{< var repo.url >}}.git
 cd {{< var repo.name >}}
-uv run --with numpy,pandas,matplotlib,scikit-learn,scikit-image,scipy,jupyterlab,ipywidgets jupyter lab
+uv run --group notebooks jupyter lab
 ```
 
-`matplotlib` and `ipywidgets` are in that list because every notebook plots, and
-all but 00 use sliders. Both ship with Colab, so a missing one only shows up
-when you run locally.
+The `notebooks` group is declared in `pyproject.toml`, and it is read off the
+notebooks' own imports rather than written down beside them. `matplotlib` and
+`ipywidgets` are in it because every notebook plots and all but 00 use sliders;
+both ship with Colab, so a missing one only shows up when you run locally.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits
 and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at

@@ -1,0 +1,12 @@
+{
+  "name": "tensors-workshop",
+  "private": true,
+  "description": "Browser regression check for the rendered site. Not a package; see pyproject.toml for the Python environments.",
+  "scripts": {
+    "check:navigation": "node scripts/check_navigation.cjs",
+    "check:slides": "node scripts/check_navigation.cjs --slides-only"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  }
+}

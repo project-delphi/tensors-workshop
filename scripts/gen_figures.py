@@ -6,11 +6,10 @@ repeating it: the storm clip is already pinned there by SHA-256, `INK` and
 User-Agent Wikimedia insists on. One pin, one palette, one fetcher.
 
 Like `gen_thumbnails.py` this is **not** part of the CI regenerate gate — it
-needs the network, and the workflow installs only `pyyaml nbformat`. It exists
+needs the network, and CI installs only the `site` and `test` groups. It exists
 so the figures are reproducible artifacts rather than mystery binaries.
 
-    uv run --with numpy,pandas,pillow,scipy,matplotlib,imageio,imageio-ffmpeg,\
-scikit-learn,scikit-image python scripts/gen_figures.py
+    uv run --group figures python scripts/gen_figures.py
 
 Every figure is built from an array a participant actually touches during the
 session — `camera()`, `load_digits()`, the storm clip, the taxi CSV. That is the
