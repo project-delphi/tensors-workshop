@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-d76f86b455da21ff19b9eee337db4fe9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-583367e685d76bbf654b4d970c1aec1e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -224,6 +224,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Plan and run the 210-minute workshop with the resources below. The agenda includes the quizzes and breaks. Group activities replace practice or discussion time; notebook 13 stays take-home work.</p>
 <section id="prepare-your-session" class="level2">
 <h2 class="anchored" data-anchor-id="prepare-your-session">Prepare your session</h2>
+<p><span data-language-key="prepare-your-session"></span></p>
 <ol type="1">
 <li>Share the <a href="./index.html#prerequisites">prerequisites</a> with learners and ask them to run <a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb">notebook 00</a> before class.</li>
 <li>Read the <a href="./facilitator-guide.html">facilitator guide</a> alongside the <a href="./tensors_workshop_plan_with_quizzes.html#schedule">workshop schedule</a>.</li>
@@ -232,6 +233,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="teaching-resources" class="level2">
 <h2 class="anchored" data-anchor-id="teaching-resources">Teaching resources</h2>
+<p><span data-language-key="teaching-resources"></span></p>
 <ul>
 <li><strong><a href="./facilitator-guide.html">Facilitator guide</a></strong> — Prepare the room, follow the section timings, and respond when learners get stuck.</li>
 <li><strong><a href="./assessments.html">Entry and exit checks</a></strong> — Collect individual reasoning at the start and end; use the included key and rubric.</li>
@@ -242,6 +244,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="during-and-after-the-workshop" class="level2">
 <h2 class="anchored" data-anchor-id="during-and-after-the-workshop">During and after the workshop</h2>
+<p><span data-language-key="during-and-after-the-workshop"></span></p>
 <p>Use <strong>Predict → Run → Explain → Check</strong>. Ask for an attempt before opening solutions, rotate group roles, and keep the scheduled breaks and exit check. The facilitator guide places the activities within the existing time slots.</p>
 <p>After the session, record actual section timings and common errors with the workshop version you taught. Keep learner responses private and use the feedback to choose one concrete change for your next session.</p>
 
@@ -249,6 +252,80 @@ ul.task-list li input[type="checkbox"] {
 </section>
 
 </main> <!-- /main -->
+<script>
+// Keep ordinary links (including keyboard and open-in-new-tab behavior).
+// Shared IDs and explicit translation keys preserve sections without guessing
+// that headings at the same position have the same meaning.
+(() => {
+  function setupLanguageSwitches() {
+    const links = [...document.querySelectorAll(
+      'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+    if (!links.length) return;
+    const language = document.documentElement.lang.split('-')[0];
+    const isDeck = !!document.querySelector('.reveal');
+    const english = links.find(a => a.relList.contains('lang-switch-en'));
+    const root = !isDeck && english ? new URL('./', english.href) : null;
+    const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+    const destinations = links.map(link => {
+      const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+      const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                       : new URL(link.href);
+      url.search = location.search;
+      url.hash = '';
+      link.href = url.href;
+      link.hreflang = lang;
+      link.lang = lang;
+      link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+      if (lang === language) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+      return {link, lang, url};
+    });
+    const documents = new Map();
+    function counterpart(url) {
+      if (!documents.has(url.href)) {
+        documents.set(url.href, fetch(url.href).then(response => {
+          if (!response.ok) throw new Error('Translation unavailable');
+          return response.text();
+        }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+          .catch(() => null));
+      }
+      return documents.get(url.href);
+    }
+    let revision = 0;
+    async function update() {
+      const current = ++revision;
+      const hash = location.hash;
+      let id;
+      try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+      catch { id = ''; }
+      const source = document.getElementById(id);
+      const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+      const key = marker?.dataset.languageKey;
+      await Promise.all(destinations.map(async ({link, lang, url}) => {
+        const destination = new URL(url);
+        if (lang === language) destination.hash = hash;
+        else if (id) {
+          const target = await counterpart(url);
+          const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+            .find(element => element.dataset.languageKey === key);
+          const match = keyed?.closest('section[id]') || target?.getElementById(id);
+          if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+        }
+        // If the fragment has no counterpart, link to the translated page.
+        // A failed fetch also leaves a usable page link.
+        if (current === revision) link.href = destination.href;
+      }));
+    }
+    window.addEventListener('hashchange', update);
+    update();
+  }
+  if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+    Reveal.on('ready', setupLanguageSwitches);
+  } else {
+    setupLanguageSwitches();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

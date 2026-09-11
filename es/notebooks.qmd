@@ -10,6 +10,8 @@ encabezado lleva un resumen de una línea en español.
 
 ## Cómo están construidos
 
+<span data-language-key="how-they-are-built"></span>
+
 Todos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde
 estás:
 
@@ -33,9 +35,13 @@ merece investigarse en lugar de descartarse.
 
 ## Los cuadernos
 
+<span data-language-key="the-notebooks"></span>
+
 {{< include ../_includes/notebooks-es.md >}}
 
 ## Para ir más lejos
+
+<span data-language-key="going-further"></span>
 
 Este **no es una sección**. Es un estudio a fondo, entregado como material para
 casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la
@@ -44,6 +50,8 @@ agenda de {{< var workshop.minutes >}} minutos es exactamente la misma sin él.
 {{< include ../_includes/notebooks-extra-es.md >}}
 
 ## Ejecutarlos fuera de Colab
+
+<span data-language-key="running-them-somewhere-other-than-colab"></span>
 
 Los cuadernos solo necesitan el stack científico de Python. En local:
 
@@ -65,6 +73,8 @@ o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo
 dice cuál, cuaderno por cuaderno.
 
 ## Qué necesita cada cuaderno
+
+<span data-language-key="what-each-notebook-needs"></span>
 
 {{< include ../_includes/notebook-deps-es.md >}}
 

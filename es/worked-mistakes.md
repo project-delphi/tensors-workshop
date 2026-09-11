@@ -10,6 +10,8 @@ Estos ejemplos sintéticos aíslan un error; los cuadernos usan datos reales.
 
 ## 02 · La media demuestra que el orden no cambió
 
+<span data-language-key="02-the-mean-proves-the-order-is-unchanged"></span>
+
 «La media es idéntica después de barajar; no se perdió información».
 
 <details>
@@ -30,6 +32,8 @@ Transferencia: ¿cuándo puedes barajar imágenes independientes y sus etiquetas
 </details>
 
 ## 04 · La forma demuestra que reshape funcionó
+
+<span data-language-key="04-the-shape-proves-reshape-worked"></span>
 
 «Ambos resultados tienen forma `(3, 2, 2)`; ambos son imágenes CHW válidas».
 
@@ -53,6 +57,8 @@ Transferencia: escribe una comprobación de coordenadas para NHWC → NCHW.
 </details>
 
 ## 09 · Un residuo pequeño demuestra coeficientes fiables
+
+<span data-language-key="09-a-tiny-residual-proves-reliable-coefficients"></span>
 
 «Ambos ajustes son casi exactos; sus coeficientes deben coincidir».
 
@@ -78,6 +84,8 @@ Transferencia: ¿qué pasa si un pequeño error de medición cambia `y`?
 </details>
 
 ## 11 · Rangos iguales implican presupuestos iguales
+
+<span data-language-key="11-equal-ranks-mean-equal-budgets"></span>
 
 «CP de rango 3 y Tucker con rangos `(3, 3, 3)` ocupan lo mismo».
 

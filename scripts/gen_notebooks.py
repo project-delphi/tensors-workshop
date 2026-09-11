@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalize the notebooks in place: the twelve sections and the extras.
+"""Normalize the notebooks in place: the thirteen sections and the extras.
 
     uv run --with pyyaml,nbformat python scripts/gen_notebooks.py
 
@@ -23,8 +23,7 @@ cells are edited directly in notebooks/*.ipynb, including in Colab with Gemini.
 
 _variables.yml owns the bilingual header text: intro_en / intro_es,
 objectives_en / objectives_es, optional format_line_en / format_line_es, and
-workshop.closing_en / closing_es. gen_notebooks.py no longer reads
-CONTENT["NN"]["setup"] from scripts/content.py.
+workshop.closing_en / closing_es. Setup code lives only in the notebooks.
 
 Normalization removes outputs, execution counts and transient Colab per-cell
 metadata while preserving meaningful metadata such as folded solutions.

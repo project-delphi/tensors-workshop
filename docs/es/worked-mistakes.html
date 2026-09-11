@@ -73,7 +73,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-d76f86b455da21ff19b9eee337db4fe9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-583367e685d76bbf654b4d970c1aec1e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -258,6 +258,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Predice, ejecuta el contraejemplo y corrige la afirmación en una frase. Estos ejemplos sintéticos aíslan un error; los cuadernos usan datos reales.</p>
 <section id="la-media-demuestra-que-el-orden-no-cambió" class="level2">
 <h2 class="anchored" data-anchor-id="la-media-demuestra-que-el-orden-no-cambió">02 · La media demuestra que el orden no cambió</h2>
+<p><span data-language-key="02-the-mean-proves-the-order-is-unchanged"></span></p>
 <p>«La media es idéntica después de barajar; no se perdió información».</p>
 <details>
 <summary>
@@ -273,6 +274,7 @@ Prueba y corrección
 </section>
 <section id="la-forma-demuestra-que-reshape-funcionó" class="level2">
 <h2 class="anchored" data-anchor-id="la-forma-demuestra-que-reshape-funcionó">04 · La forma demuestra que reshape funcionó</h2>
+<p><span data-language-key="04-the-shape-proves-reshape-worked"></span></p>
 <p>«Ambos resultados tienen forma <code>(3, 2, 2)</code>; ambos son imágenes CHW válidas».</p>
 <details>
 <summary>
@@ -291,6 +293,7 @@ Prueba y corrección
 </section>
 <section id="un-residuo-pequeño-demuestra-coeficientes-fiables" class="level2">
 <h2 class="anchored" data-anchor-id="un-residuo-pequeño-demuestra-coeficientes-fiables">09 · Un residuo pequeño demuestra coeficientes fiables</h2>
+<p><span data-language-key="09-a-tiny-residual-proves-reliable-coefficients"></span></p>
 <p>«Ambos ajustes son casi exactos; sus coeficientes deben coincidir».</p>
 <details>
 <summary>
@@ -308,6 +311,7 @@ Prueba y corrección
 </section>
 <section id="rangos-iguales-implican-presupuestos-iguales" class="level2">
 <h2 class="anchored" data-anchor-id="rangos-iguales-implican-presupuestos-iguales">11 · Rangos iguales implican presupuestos iguales</h2>
+<p><span data-language-key="11-equal-ranks-mean-equal-budgets"></span></p>
 <p>«CP de rango 3 y Tucker con rangos <code>(3, 3, 3)</code> ocupan lo mismo».</p>
 <details>
 <summary>
@@ -324,6 +328,80 @@ Prueba y corrección
 </section>
 
 </main> <!-- /main -->
+<script>
+// Keep ordinary links (including keyboard and open-in-new-tab behavior).
+// Shared IDs and explicit translation keys preserve sections without guessing
+// that headings at the same position have the same meaning.
+(() => {
+  function setupLanguageSwitches() {
+    const links = [...document.querySelectorAll(
+      'a[rel~="lang-switch-en"], a[rel~="lang-switch-es"]')];
+    if (!links.length) return;
+    const language = document.documentElement.lang.split('-')[0];
+    const isDeck = !!document.querySelector('.reveal');
+    const english = links.find(a => a.relList.contains('lang-switch-en'));
+    const root = !isDeck && english ? new URL('./', english.href) : null;
+    const page = root ? location.pathname.slice(root.pathname.length).replace(/^es\//, '') : '';
+    const destinations = links.map(link => {
+      const lang = link.relList.contains('lang-switch-es') ? 'es' : 'en';
+      const url = root ? new URL((lang === 'es' ? 'es/' : '') + (page || 'index.html'), root)
+                       : new URL(link.href);
+      url.search = location.search;
+      url.hash = '';
+      link.href = url.href;
+      link.hreflang = lang;
+      link.lang = lang;
+      link.setAttribute('aria-label', lang === 'es' ? 'Leer esta página en español' : 'Read this page in English');
+      if (lang === language) link.setAttribute('aria-current', 'page');
+      else link.removeAttribute('aria-current');
+      return {link, lang, url};
+    });
+    const documents = new Map();
+    function counterpart(url) {
+      if (!documents.has(url.href)) {
+        documents.set(url.href, fetch(url.href).then(response => {
+          if (!response.ok) throw new Error('Translation unavailable');
+          return response.text();
+        }).then(html => new DOMParser().parseFromString(html, 'text/html'))
+          .catch(() => null));
+      }
+      return documents.get(url.href);
+    }
+    let revision = 0;
+    async function update() {
+      const current = ++revision;
+      const hash = location.hash;
+      let id;
+      try { id = decodeURIComponent(hash.replace(/^#\/?/, '')); }
+      catch { id = ''; }
+      const source = document.getElementById(id);
+      const marker = source?.querySelector(':scope > p > [data-language-key], :scope > [data-language-key]');
+      const key = marker?.dataset.languageKey;
+      await Promise.all(destinations.map(async ({link, lang, url}) => {
+        const destination = new URL(url);
+        if (lang === language) destination.hash = hash;
+        else if (id) {
+          const target = await counterpart(url);
+          const keyed = key && [...(target?.querySelectorAll('[data-language-key]') || [])]
+            .find(element => element.dataset.languageKey === key);
+          const match = keyed?.closest('section[id]') || target?.getElementById(id);
+          if (match?.id) destination.hash = (isDeck ? '/' : '') + match.id;
+        }
+        // If the fragment has no counterpart, link to the translated page.
+        // A failed fetch also leaves a usable page link.
+        if (current === revision) link.href = destination.href;
+      }));
+    }
+    window.addEventListener('hashchange', update);
+    update();
+  }
+  if (typeof Reveal !== 'undefined' && !Reveal.isReady()) {
+    Reveal.on('ready', setupLanguageSwitches);
+  } else {
+    setupLanguageSwitches();
+  }
+})();
+</script>
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

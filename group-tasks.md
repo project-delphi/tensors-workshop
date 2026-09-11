@@ -8,6 +8,8 @@ Short, open-ended tasks to use during or after the notebooks.
 
 ## How to use these
 
+<span data-language-key="how-to-use-these"></span>
+
 Work in groups of 3–4. Choose a speaker, a recorder, and someone to challenge
 assumptions. A fourth person can run short checks. Rotate roles.
 Discuss in English or Spanish.
@@ -28,6 +30,8 @@ Quick picks: [axis meaning](#axis-meaning), [silent bugs](#silent-bugs), and
 
 ## 00 · Would you trust this dataset?
 
+<span data-language-key="00-would-you-trust-this-dataset"></span>
+
 **When:** After the data checks in [Notebook 00](notebooks/00-setup-and-data.ipynb).
 **Time:** 6 minutes.
 
@@ -42,6 +46,8 @@ specific analysis. Agree on that analysis first.
 one question the notebook cannot answer.
 
 ## 01 · Design a tensor someone else can read
+
+<span data-language-key="01-design-a-tensor-someone-else-can-read"></span>
 
 **When:** After “read shapes as sentences” in
 [Notebook 01](notebooks/01-what-a-tensor-is.ipynb).
@@ -61,6 +67,8 @@ result. Ask another group to interpret it without extra help.
 
 ## 02 · Same shape, different rules
 
+<span data-language-key="02-same-shape-different-rules"></span>
+
 **When:** After the shuffle comparison in
 [Notebook 02](notebooks/02-thinking-in-n-dimensions.ipynb).
 **Time:** 6 minutes.
@@ -77,6 +85,8 @@ reasonable for one task but misleading for the other.
 which your recommendation would change.
 
 ## 03 · What should “normal” mean?
+
+<span data-language-key="03-what-should-normal-mean"></span>
 
 **When:** After the standardization exercise in
 [Notebook 03](notebooks/03-indexing-and-broadcasting.ipynb).
@@ -96,6 +106,8 @@ where it would be a poor choice. Use a notebook plot or a small sketch.
 
 ## 04 · A test that catches the bug
 
+<span data-language-key="04-a-test-that-catches-the-bug"></span>
+
 **When:** After “code that runs and is still wrong” in
 [Notebook 04](notebooks/04-reshape-and-transpose.ipynb).
 **Time:** 6 minutes.
@@ -111,6 +123,8 @@ requested shape. Design a review that can tell whether pixel meaning survived.
 each catches. Try them on the notebook's correct and incorrect conversions.
 
 ## 05 · Keep the event, fit the budget
+
+<span data-language-key="05-keep-the-event-fit-the-budget"></span>
 
 **When:** During “pad or sample?” in
 [Notebook 05](notebooks/05-video-pipeline-design.ipynb). Use this as an alternative
@@ -129,6 +143,8 @@ Name one failure case and one way to test for it.
 
 ## 06 · What counts as a similar digit?
 
+<span data-language-key="06-what-counts-as-a-similar-digit"></span>
+
 **When:** After the retrieval explorer in
 [Notebook 06](notebooks/06-contraction-with-einsum.ipynb).
 **Time:** 6 minutes.
@@ -144,6 +160,8 @@ the more useful neighbors for a goal your group defines.
 Explain what the summed index in `id,jd->ij` represents.
 
 ## 07 · Same predictions, different coefficients
+
+<span data-language-key="07-same-predictions-different-coefficients"></span>
 
 **When:** After the singular-system exercise in
 [Notebook 07](notebooks/07-inverses-and-pseudoinverse.ipynb).
@@ -161,6 +179,8 @@ not establish, and what you would check next.
 
 ## 08 · One good prediction is not enough
 
+<span data-language-key="08-one-good-prediction-is-not-enough"></span>
+
 **When:** After recursive forecasting in
 [Notebook 08](notebooks/08-recursion-with-matrices.ipynb).
 **Time:** 6 minutes.
@@ -176,6 +196,8 @@ for a year. Design a test before approving that change.
 state-update explorer to support one concern.
 
 ## 09 · Defend a factorization
+
+<span data-language-key="09-defend-a-factorization"></span>
 
 **When:** After the method chooser in
 [Notebook 09](notebooks/09-matrix-factorizations.ipynb).
@@ -196,6 +218,8 @@ group supplies the new fact; revise your answer if needed.
 
 ## 10 · What must compression preserve?
 
+<span data-language-key="10-what-must-compression-preserve"></span>
+
 **When:** After the rank explorer in
 [Notebook 10](notebooks/10-tucker-decomposition.ipynb).
 **Time:** 8 minutes.
@@ -213,6 +237,8 @@ notebook result and specify one additional check.
 
 ## 11 · Is this comparison fair?
 
+<span data-language-key="11-is-this-comparison-fair"></span>
+
 **When:** After the matched-budget comparison in
 [Notebook 11](notebooks/11-tensor-factorizations.ipynb).
 **Time:** 8 minutes.
@@ -228,6 +254,8 @@ A report declares CP better than Tucker because CP had lower error at
 one uncertainty that would remain after running it.
 
 ## 12 · Bring a problem from your field
+
+<span data-language-key="12-bring-a-problem-from-your-field"></span>
 
 **When:** During the final discussion in
 [Notebook 12](notebooks/12-wrap-up-and-take-homes.ipynb).
@@ -245,6 +273,8 @@ would run. Each learner adds one thing they still need to understand.
 
 ## 13 · Would you trust the sharper image?
 
+<span data-language-key="13-would-you-trust-the-sharper-image"></span>
+
 **When:** After deconvolution in
 [Notebook 13](notebooks/13-convolution-and-deconvolution.ipynb). Follow-up only.
 **Time:** 8 minutes.
@@ -260,6 +290,8 @@ has lower error against the known original. Decide how you would judge them.
 from checks available without one. State what neither can prove.
 
 ## Facilitator prompts
+
+<span data-language-key="facilitator-prompts"></span>
 
 Use one follow-up when a discussion stalls:
 

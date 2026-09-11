@@ -10,6 +10,8 @@ práctica o discusión; no alargan el taller. El cuaderno 13 queda para después
 
 ## Antes del taller
 
+<span data-language-key="before-the-session"></span>
+
 - Ejecuta el cuaderno 00 antes de clase. Prueba cada cuaderno elegido en una sesión nueva.
 - Sigue **Core prep** y luego **Core activity**. Omite los demás ejercicios y exploradores.
 - Forma grupos de 3–4: relator, portavoz, crítico y, si hay una cuarta persona, programador.
@@ -17,12 +19,16 @@ práctica o discusión; no alargan el taller. El cuaderno 13 queda para después
 
 ## Ritmo de trabajo
 
+<span data-language-key="live-rhythm"></span>
+
 **Predice → Ejecuta → Explica → Comprueba.** Pide una predicción escrita antes de
 ejecutar. Después, un resultado y una explicación revisada. Rota los roles.
 Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegidas;
 el código plegado también necesita ejecutarse.
 
 ## Guion
+
+<span data-language-key="run-sheet"></span>
 
 Sigue la [agenda del taller](tensors_workshop_plan_with_quizzes.md).
 Conserva cuestionarios y pausas. Distribuye así cada bloque:
@@ -55,11 +61,18 @@ no gasten el tiempo grupal en arreglar una instalación.
 
 ## Comprobaciones inicial y final
 
+<span data-language-key="entry-and-exit-checks"></span>
+
 Usa las preguntas de los cuadernos 00 y 12. La [clave de evaluación](assessments.md)
 incluye puntuación y próximos pasos. Recoge respuestas individuales.
 Compara cada dimensión del razonamiento; no es una prueba de aprendizaje validada.
+Mantén los cinco minutos de salida: tres para ejes y evidencia, dos para la
+pregunta de transferencia sobre Tucker. Registra la transferencia aparte porque
+no tiene equivalente inicial; úsala para planear el repaso del cuaderno 10.
 
 ## Análisis de errores
+
+<span data-language-key="wrong-answer-clinic"></span>
 
 Usa los [errores resueltos](worked-mistakes.md) dentro de los bloques anteriores:
 orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11.
@@ -70,6 +83,8 @@ predicción. Omite una demostración opcional, no la pausa ni la comprobación f
 Quienes terminen pronto pueden diseñar un contraejemplo.
 
 ## Después del taller
+
+<span data-language-key="after-the-session"></span>
 
 Ofrece el [formulario de opinión](workshop-feedback.md) de dos minutos.
 Anota el commit, tiempos reales, errores frecuentes y un cambio para la próxima sesión.

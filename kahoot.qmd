@@ -90,6 +90,8 @@ own recap, so go straight from the podium into the wrap-up.
 
 ## Running them
 
+<span data-language-key="running-them"></span>
+
 - **Budget 5 minutes each, including the podium.** Groups want to see the
   leaderboard, and that is fine. It is the payoff.
 - **Do not import live.** See the note at the top of this page.
@@ -97,6 +99,8 @@ own recap, so go straight from the podium into the wrap-up.
   {{< var workshop.minutes >}}.
 
 ## If you are running out of time
+
+<span data-language-key="if-you-are-running-out-of-time"></span>
 
 The handbook's cutting order, in order:
 

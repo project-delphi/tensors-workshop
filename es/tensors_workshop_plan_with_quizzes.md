@@ -39,6 +39,8 @@ etiqueta en la otra.
 
 ## Agenda
 
+<span data-language-key="schedule"></span>
+
 <!-- BEGIN handbook-schedule -->
 | # | Parte | Bloque | Segmento | Formato | Min | Inicio |
 |---|---|---|---|---|---|---|
@@ -74,6 +76,8 @@ cierra el tramo de descomposiciones, secciones 09 y 10, justo antes del cierre.
 ---
 
 ## Los datos que usamos
+
+<span data-language-key="the-data-we-use"></span>
 
 **Incluidos dentro de las bibliotecas** (sin descarga, funcionan sin conexión):
 
@@ -113,7 +117,11 @@ El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors
 
 # PARTE I — Qué es un tensor (sección 01, 20 min)
 
+<span data-language-key="part-i-what-a-tensor-is-section-01-20-min"></span>
+
 ## 1.1 Vocabulario
+
+<span data-language-key="1-1-vocabulary"></span>
 
 Ten esta tabla abierta durante todo el taller.
 
@@ -133,6 +141,8 @@ Ten esta tabla abierta durante todo el taller.
 ⚠️ **Aviso sobre la palabra «rango» (*rank*).** En el capítulo 2, *rango* es el número de columnas independientes de una matriz. En teoría de tensores, *rank* suele significar el número de ejes. Para evitar la confusión, este taller dice **orden** para el número de ejes, y **rango** solo en el sentido del capítulo 2.
 
 ## 1.2 La forma en NumPy
+
+<span data-language-key="1-2-shape-in-numpy"></span>
 
 Todo array de NumPy tiene `.shape`, una tupla que da el tamaño de cada eje. La longitud de esa tupla es `.ndim`, el número de ejes.
 
@@ -172,6 +182,8 @@ Los dos son de orden 3, pero sus ejes significan cosas completamente distintas. 
 
 ## 1.3 Las tres operaciones que importan
 
+<span data-language-key="1-3-the-three-operations-that-matter"></span>
+
 **Cortes y fibras**: fijar índices desmonta un tensor.
 
 ```python
@@ -204,6 +216,8 @@ np.einsum('ik,kj->ij', A, B)      # matrix product, sum over k       (eq 2.5)
 **La regla, en una frase:** un índice que aparece en las entradas pero **no** después de la flecha se suma; un índice que aparece después de la flecha se conserva.
 
 ## 1.4 El mapa de las factorizaciones
+
+<span data-language-key="1-4-the-map-of-factorizations"></span>
 
 Una **factorización** escribe un objeto como producto de objetos más simples. Conociste dos en el capítulo 2. Estas son las ocho que vamos a usar hoy:
 
@@ -242,6 +256,8 @@ Cada método de esa tabla por encima de la línea doble funciona sobre **matrice
 
 # PARTE II — Pensar en N dimensiones (sección 02, 20 min)
 
+<span data-language-key="part-ii-thinking-in-n-dimensions-section-02-20-min"></span>
+
 Una demostración de código en vivo en el cuaderno, sobre tensores reales de imagen y de vídeo. Ábrelo en Colab y ejecuta primero la celda de preparación: descarga y comprueba la suma de verificación del clip de vídeo real que usan los ejercicios. Tres ejercicios:
 
 1. **Leer los ejes en tensores reales.** `digits.images` es `(1797, 8, 8)` y una foto es `(512, 512, 3)`. Los dos son de orden 3, pero el eje 0 cuenta imágenes enteras en uno y filas de píxeles en el otro. `digit_batch` y `video_patch` son *los dos* `(8, 8, 8)`. Antes de ejecutar una sola línea de código, di qué cuenta cada eje.
@@ -252,7 +268,11 @@ Una demostración de código en vivo en el cuaderno, sobre tensores reales de im
 
 # PARTE III — Trabajar con los ejes de un tensor (secciones 03–05)
 
+<span data-language-key="part-iii-working-with-tensor-axes-sections-03-05"></span>
+
 ## 03 · Indexación y broadcasting con datos reales (Bloque 1, 15 min)
+
+<span data-language-key="03-indexing-and-broadcasting-real-data-block-1-15-min"></span>
 
 **Por qué importa.** Los datos de `breast_cancer` guardan 30 medidas reales de núcleos de células tumorales de 569 pacientes reales. Seleccionar la columna equivocada no produce ningún error: devuelve *otra medida real*, y tu análisis continúa y da una respuesta segura de sí misma y equivocada. En investigación, eso produce resultados que nadie puede reproducir. En una herramienta clínica, produce una recomendación equivocada sobre una persona real.
 
@@ -300,6 +320,8 @@ Dos resultados reales. **Los tumores malignos sí tienen un radio medio mayor**:
 
 ## 04 · Reshape y transposición de imágenes reales (Bloque 2, 15 min)
 
+<span data-language-key="04-reshape-and-transpose-real-images-block-2-15-min"></span>
+
 **Por qué importa.** Los microscopios y las cámaras ordenan sus ejes según el hardware, no según lo que espera un modelo. Equivocarse aquí no provoca ningún fallo: el modelo se ejecuta sobre datos revueltos y devuelve una salida segura de sí misma y sin sentido. En un cribado de fármacos, eso es una decisión equivocada sobre si un compuesto funciona. La versión famosa en tecnología: un modelo entrenado en TensorFlow (`NHWC`) desplegado en PyTorch (`NCHW`) sin transponer.
 
 **Ejercicio (10 min)**
@@ -329,11 +351,17 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 
+<span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>
+
 **Hazlo antes de la pausa, justo después de la sección 04.** La sala acaba de usar orden, eje, forma, corte, fibra, varianza, reshape y transposición. Es el momento en que esas palabras están más frescas. Lanza `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 preguntas, ~5 min con el podio incluido). No hace falta preparación más allá de haberlo importado a un kahoot con antelación.
 
 ## Pausa (5 min)
 
+<span data-language-key="break-5-min"></span>
+
 ## 05 · Ejercicio en grupo — Diseño de un pipeline de vídeo (15 min)
+
+<span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span>
 
 De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No hay una única respuesta correcta.
 
@@ -355,7 +383,11 @@ De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No 
 
 # PARTE IV — Calcular con tensores (secciones 06–11)
 
+<span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span>
+
 ## 06 · Contracción con `einsum` (Bloque 3, 15 min)
+
+<span data-language-key="06-contraction-with-einsum-block-3-15-min"></span>
 
 **Por qué importa.** Los sistemas de recomendación y de búsqueda ordenan los artículos por el producto escalar entre un vector de usuario y todos los vectores de artículo. Eso es un usuario contra millones de artículos, muchas veces por segundo. Esa contracción *es* la señal de ordenación. Suma sobre el eje equivocado y todos los usuarios reciben resultados erróneos.
 
@@ -390,7 +422,11 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 
 ## 07 · Inversas y la pseudoinversa (Bloque 4, 15 min)
 
+<span data-language-key="07-inverses-and-the-pseudoinverse-block-4-15-min"></span>
+
 ### La teoría, en tres pasos
+
+<span data-language-key="the-theory-in-three-steps"></span>
 
 **Paso 1: matrices cuadradas.** El §2.3 del capítulo 2 define `A⁻¹` para una matriz cuadrada, con `A⁻¹A = I`. Pero eso solo existe cuando las columnas son linealmente independientes. Una matriz con columnas dependientes es **singular** y no tiene inversa:
 
@@ -477,9 +513,13 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 ## Kahoot 2 — Einsum, distancia y la pseudoinversa (5 min)
 
+<span data-language-key="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min"></span>
+
 **Hazlo justo después de la sección 07, antes de la demo de recursión.** Cubre la contracción (el `einsum` de la sección 06), la pseudoinversa y las matrices singulares (sección 07), y distancia y similitud. La matriz de similitud entre dígitos del TODO 4 de la sección 06 es el puente natural entre las dos. Lanza `kahoot_quiz_2_distance_pseudoinverse.xlsx` (6 preguntas, ~5 min).
 
 ## 08 · Recursión con matrices y vectores (10 min — demo)
+
+<span data-language-key="08-recursion-with-matrices-and-vectors-10-min-demo"></span>
 
 **Recursión** significa definir algo en función de sí mismo. Con matrices esto se convierte en: aplicar la misma matriz una y otra vez. Tres ejemplos, cada uno más útil que el anterior.
 
@@ -537,6 +577,8 @@ for t in range(6):
 ```
 
 ## 09 · Factorizaciones matriciales: cuál elegir y qué cuesta (Bloque 5, 15 min) {#sec-09-factorizaciones-matriciales}
+
+<span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-15-min"></span>
 
 La §1.4 de la Parte I dibujó el mapa. Las secciones 03 a 08 usaron de pasada tres de las factorizaciones que hay en él: LU y QR en la propia §1.4, y la pseudoinversa en la sección 07. Ninguna respondió a las dos preguntas que se hace de verdad quien practica: **¿a cuál echo mano con estos datos, y qué me cuesta?** Esta sección responde a las dos. Es también donde la **descomposición espectral** por fin se nombra, una hora antes de que la sección 10 se apoye en la misma maquinaria. El cuaderno es **[09 · Factorizaciones matriciales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
 
@@ -619,9 +661,15 @@ k = int(np.argmax(db >= target_db))
 
 ## Pausa (5 min)
 
+<span data-language-key="break-5-min-2"></span>
+
 ## 10 · Descomposición de Tucker con datos reales (Bloque 6, 15 min)
 
+<span data-language-key="10-tucker-decomposition-on-real-data-block-6-15-min"></span>
+
 ### La teoría
+
+<span data-language-key="the-theory"></span>
 
 PCA comprime una **matriz**: dos ejes. Los datos reales a menudo tienen más. La **descomposición de Tucker** generaliza PCA a un tensor de cualquier orden: una **matriz de factores por eje**, más un **tensor núcleo** pequeño que describe cómo se combinan los factores.
 
@@ -685,17 +733,23 @@ Fíjate en las cadenas de einsum: `'ijk,ia,jb,kc->abc'` contrae tres ejes en una
 
 ## Kahoot 3 — Convolución y descomposiciones tensoriales (5 min)
 
+<span data-language-key="kahoot-quiz-3-convolution-tensor-decompositions-5-min"></span>
+
 **Hazlo justo después de la sección 10, antes de la sección 11.** Sus seis preguntas siguen cubriendo convolución y correlación junto con Tucker y CP. La convolución pasó a ser el ejercicio para casa 13 cuando las factorizaciones entraron en la jornada, y las preguntas todavía no se han reescrito. Hazlo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Lanza `kahoot_quiz_3_convolution_decompositions.xlsx` (6 preguntas, ~5 min). Sirve además de ensayo en vivo del propio repaso del cierre, así que enlaza directamente del cuestionario al cierre.
 
 ---
 
 ## 11 · Factorizaciones tensoriales: cuál elegir y qué cuesta (Bloque 7, 15 min) {#sec-11-factorizaciones-tensoriales}
 
+<span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-15-min"></span>
+
 La [sección 09](#sec-09-factorizaciones-matriciales) preguntó *qué factorización y qué cuesta* un orden más abajo, sobre matrices. Esta sección se lo pregunta a los tensores, justo después de que la sección 10 haya enseñado una respuesta. El cuaderno es **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
 Una descomposición tensorial no es solo una técnica de compresión. Cada una hace una suposición distinta sobre **qué estructura de los datos hay que conservar**, y esa suposición —no el recuento de operaciones— es entre lo que eliges.
 
 ### Cuatro descomposiciones, cuatro tratos
+
+<span data-language-key="four-decompositions-four-bargains"></span>
 
 | Método | Idea principal | Almacenamiento | Cuándo encaja mejor |
 |---|---|---|---|
@@ -708,6 +762,8 @@ Cada método conserva una estructura distinta. CP busca componentes individuales
 
 ### ¿Por qué no aplanar primero?
 
+<span data-language-key="why-not-flatten-first"></span>
+
 Aplanar conserva los valores numéricos, pero puede esconder el significado que llevan los modos separados del tensor. El ejemplo sintético de separación de fluorescencias del cuaderno hace medible la diferencia:
 
 - CP recupera las cantidades reales de cada componente con correlación `1.00`.
@@ -719,6 +775,8 @@ Ese ejemplo es sintético a propósito: aísla la pregunta estructural sin exigi
 Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos dos modos cuyo significado separado era precisamente la información que queríamos interpretar.
 
 ### Comparación justa: CP frente a Tucker
+
+<span data-language-key="fair-comparison-cp-versus-tucker"></span>
 
 **No compares el rango CP `R` contra el rango Tucker `(R, R, R)`.** Esas dos representaciones almacenan un número distinto de parámetros, así que la comparación mide el presupuesto, no el modelo. Un experimento justo es:
 
@@ -741,6 +799,8 @@ El paso 3 es donde esto se tuerce con más facilidad. Elegir el candidato cuyo n
 
 ### Por qué Tensor Train importa cuando crece el orden
 
+<span data-language-key="why-tensor-train-matters-as-order-grows"></span>
+
 Para un tensor denso de orden `N` con todos los modos de tamaño `I`, el almacenamiento denso es `I^N`. Con un rango de enlace TT fijo `r`, el almacenamiento TT es `≈ O(N · I · r²)`: **exponencial en el orden frente a lineal en el orden**, con `I` y `r` fijos.
 
 El almacenamiento de CP también es lineal en el orden bajo un rango global fijo. La ventaja práctica de TT es distinta. Representa interacciones de orden alto mediante rangos de enlace *locales*, en vez de mediante un único núcleo de Tucker que crece exponencialmente con el orden.
@@ -753,6 +813,8 @@ El almacenamiento de CP también es lineal en el orden bajo un rango global fijo
 ```
 
 ### Descomposición tensorial dentro de las redes neuronales
+
+<span data-language-key="tensor-decomposition-inside-neural-networks"></span>
 
 Un núcleo de convolución denso de forma `3 × 3 × 512 × 512` guarda 2 359 296 pesos, y cuesta unos 462 millones de multiplicaciones-sumas sobre un mapa de características de 14 × 14. Una factorización CP de rango 64 guarda `64 × (3 + 3 + 512 + 512) = 65 920` pesos —**35,8× menos**— y se ejecuta como cuatro convoluciones estrechas en secuencia: `1×1 → 3×1 → 1×3 → 1×1`.
 
@@ -771,6 +833,8 @@ La razón de almacenamiento es la mitad fácil. El flujo de trabajo que lo hace 
 
 ### La regla de decisión
 
+<span data-language-key="the-decision-rule"></span>
+
 **Elige la descomposición según la estructura que necesitas conservar, y después elige el rango según la pérdida que puedes permitirte.** Mantén ese orden. La primera pregunta no tiene respuesta numérica, y la segunda no tiene respuesta en absoluto hasta que la primera está resuelta.
 
 Para el tratamiento interactivo completo —selector de método, tiempos medidos, comparación CP/Tucker con presupuesto igualado, compresión aguas abajo y el widget de presupuesto de almacenamiento— sigue con **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
@@ -778,6 +842,8 @@ Para el tratamiento interactivo completo —selector de método, tiempos medidos
 ---
 
 ## 12 · Cierre (5 min)
+
+<span data-language-key="12-wrap-up-5-min"></span>
 
 Lo que has hecho hoy:
 
@@ -805,6 +871,8 @@ Lo que has hecho hoy:
 
 ## Lecturas adicionales
 
+<span data-language-key="further-reading"></span>
+
 La bibliografía se mudó a su propia página, en los dos idiomas:
 **[Referencias y lecturas adicionales](references.qmd)**.
 
@@ -828,6 +896,8 @@ obras de esa página, no al revés.
 ---
 
 ## Apéndice A — Para casa: ¿cuántas componentes principales bastan? {#apendice-a-componentes-principales}
+
+<span data-language-key="appendix-a-take-home-how-many-principal-components-are-enough"></span>
 
 Aquí los datos reales esconden una trampa. Encuéntrala.
 
@@ -859,6 +929,8 @@ Sin estandarizar, la primera componente parece explicar el **98,2 %** de la vari
 </details>
 
 ## Apéndice B — Para casa: la atención son dos contracciones {#apendice-b-atencion}
+
+<span data-language-key="appendix-b-take-home-attention-is-two-contractions"></span>
 
 La atención responde a la pregunta 5 de la discusión sobre el pipeline de vídeo: *¿qué partes de una secuencia importan más?* Los modelos de lenguaje de proteínas la usan para que cada aminoácido pueda mirar a todos los demás. Los recomendadores la usan para ponderar las interacciones pasadas de un usuario.
 
@@ -895,9 +967,13 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 ## Apéndice C — Para casa: CP frente a Tucker {#apendice-c-cp-tucker}
 
+<span data-language-key="appendix-c-take-home-cp-vs-tucker"></span>
+
 El ejercicio de CP frente a Tucker que vivía aquí se mudó a la propia sesión, como **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. Allí CP y Tucker se comparan con un **presupuesto de parámetros equivalente** en lugar de rango contra rango, y el análisis se amplía a Tensor Train y t-SVD. La [sección 11](#sec-11-factorizaciones-tensoriales) es el texto que acompaña a ese cuaderno.
 
 ## Apéndice D — Para casa: Cholesky construye datos correlacionados {#apendice-d-cholesky}
+
+<span data-language-key="appendix-d-take-home-cholesky-builds-correlated-data"></span>
 
 La [sección 09](#sec-09-factorizaciones-matriciales) cubre Cholesky como *resolvedor*: factorizar una vez y luego resolver barato muchas veces. Este apéndice es la otra mitad: Cholesky como **muestreador**. Dale a una `L` triangular inferior con `L @ L.T == Sigma` un poco de ruido gaussiano independiente, y te devuelve muestras correlacionadas con exactamente esa covarianza. Ese es el mecanismo detrás de toda simulación de Monte Carlo que necesite activos, sensores o escenarios correlacionados.
 
@@ -957,6 +1033,8 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 </details>
 
 ## Apéndice E — Para casa: eliminar ruido de audio con una STFT de rango bajo {#apendice-e-audio}
+
+<span data-language-key="appendix-e-take-home-audio-denoising-by-low-rank-stft"></span>
 
 La SVD truncada es la aproximación de rango bajo *óptima* (Eckart–Young, en las [referencias](references.qmd#ref-tensors)). Este apéndice es donde esa optimalidad deja de bastar. Corta una grabación de voz real en ventanas temporales cortas y solapadas, y pregunta qué frecuencias hay en cada una. Eso es la **transformada de Fourier de tiempo corto**, y su salida es una matriz, `frecuencia × tiempo`. Truncar la SVD de esa matriz conserva la estructura concentrada en las direcciones singulares principales y tira el resto. Si la voz está más concentrada ahí que el ruido, el resultado es más limpio. Si no lo está, has tirado la voz.
 
@@ -1019,7 +1097,11 @@ Los dos extremos fallan, por razones opuestas. Con `k = 2` la aproximación es t
 
 ## Apéndice F — Para casa: convolución y deconvolución {#apendice-f-convolucion-y-deconvolucion}
 
+<span data-language-key="appendix-f-take-home-convolution-and-deconvolution"></span>
+
 ### La teoría
+
+<span data-language-key="the-theory-2"></span>
 
 La **convolución** desliza un array pequeño (el **núcleo**, o **filtro**) sobre otro más grande, multiplicando y sumando en cada posición. Es la operación en el corazón de toda red neuronal convolucional, y es también como funciona cualquier filtro de desenfoque, de enfoque o de detección de bordes.
 
@@ -1109,6 +1191,8 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 
 ## Apéndice G — Notas para quien imparte {#apendice-g-notas-facilitacion}
+
+<span data-language-key="appendix-g-facilitator-notes"></span>
 
 *(El alumnado puede saltarse esta sección.)*
 
