@@ -2,8 +2,9 @@
 /* Homepage-only layout, bundled into Quarto's content-hashed theme. */
 #title-block-header:empty { display: none; }
 /* The band has to start at the navbar; Quarto's own top margin and padding on
-   the content column would leave a white strip above it. */
-main.content { margin-top: 0; padding-top: 0; }
+   the content column would leave a white strip above it. That padding comes
+   from `#quarto-content > *`, so the id has to be matched to outweigh it. */
+#quarto-content > main.content { margin-top: 0; padding-top: 0; }
 .workshop-landing {
   --landing-ink: #172e46;
   --landing-accent: #245b85;
@@ -27,8 +28,11 @@ main.content { margin-top: 0; padding-top: 0; }
    carries the same navy and the two read as one object rather than as a dark
    rectangle floating in a pale card. The breakout is the standard
    `50% - 50vw` trick. A classic scrollbar makes 100vw a few pixels wider than
-   the visible page, so `body` clips that overhang; the navbar here is static,
-   not sticky, so clipping costs nothing. */
+   the visible page, so `body` clips that overhang. Quarto's header is
+   `position: fixed`, but `overflow` does not make an element a containing
+   block for fixed descendants (only transform/filter/contain do), and body's
+   overflow propagates to the viewport, so the header stays pinned and the
+   page still scrolls. */
 body { overflow-x: clip; }
 .workshop-landing { padding-top: 0; }
 .workshop-hero {
@@ -37,6 +41,10 @@ body { overflow-x: clip; }
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
   align-items: center;
   gap: clamp(1.6rem, 3.4vw, 3.2rem);
+  /* The body offset is a flat 64px, but the collapsed navbar measures ~62,
+     leaving a hairline of page background above the band. The header is
+     opaque and sits at z-index 1030, so the band can simply start under it. */
+  margin-top: -6px;
   margin-inline: calc(50% - 50vw);
   padding: clamp(2.4rem, 5vw, 4rem) max(1.25rem, calc(50vw - 50%));
   background:
@@ -117,6 +125,7 @@ body { overflow-x: clip; }
 .hero-secondary {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   min-height: 44px;
   padding: .65rem 1.1rem;
   border: 1px solid #93b6d359;
@@ -131,8 +140,10 @@ body { overflow-x: clip; }
 .hero-copy .level1 > p:last-child { margin-bottom: 0; }
 .hero-note { font-size: .82rem; color: #a3bdd4; }
 .hero-language { font-size: .72rem; color: #7f99b3; }
-/* The page-wide focus ring is a dark orange, unreadable on navy. */
-.workshop-hero a:focus-visible { outline: 3px solid #ffc27a; outline-offset: 4px; }
+/* The page-wide focus ring is a dark orange, unreadable on navy. It is
+   declared further down at the same specificity, so this one has to outweigh
+   it rather than merely precede it. */
+.workshop-landing .workshop-hero a:focus-visible { outline: 3px solid #ffc27a; outline-offset: 4px; }
 .hero-visual { min-width: 0; }
 .hero-diagram { display: block; width: 100%; height: auto; }
 .learning-outcomes { padding: 1.3rem .3rem 1.2rem; }
@@ -296,7 +307,6 @@ body { overflow-x: clip; }
   .hero-diagram .d-eq { font-size: 16px; }
 }
 @media (max-width: 540px) {
-  .workshop-landing { padding-top: .25rem; }
   .workshop-hero { gap: 1.5rem; padding-block: 2rem 2.2rem; }
   .workshop-badge { font-size: .63rem; letter-spacing: .04em; }
   .hero-copy .level1 > p { font-size: .95rem; }
