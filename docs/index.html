@@ -39,7 +39,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-2966bc7d51021a06e0e41baaa2f8597d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-23ac2eca4ec08072d51ec1199daea7b3.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-801d895200ed6b086a85c73c5cc58525.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -200,52 +200,57 @@ ul.task-list li input[type="checkbox"] {
 <section id="see-tensors.-think-in-ml." class="level1">
 <h1>See tensors. <span class="hero-highlight">Think in ML.</span></h1>
 <p><span data-language-key="see-tensors-think-in-ml"></span></p>
-<p>Turn arrays into intuition. Reshape images. Compress data. Decode the math behind modern ML.</p>
+<p>A hands-on session on reshaping, solving, convolving and factorizing tensors — written in NumPy, run on real images, video and city data.</p>
+<div class="hero-actions">
 <p><a href="./tensors_workshop_plan_with_quizzes.html" class="hero-button">Start the workshop →</a></p>
 <p><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb" class="hero-secondary">Open the setup notebook</a></p>
+</div>
+<p><span class="hero-note">No install — every notebook runs in Google Colab.</span></p>
 <p><span class="hero-language">Taught in English · Questions in English &amp; Spanish</span></p>
 </section>
 </div>
 <div class="hero-visual">
-<svg width="480" height="380" style="max-width: 100%; height: auto;" viewbox="0 0 480 380" role="img" aria-labelledby="tensor-title tensor-desc" xmlns="http://www.w3.org/2000/svg">
-  <title id="tensor-title">From one number to a neural-network operation</title>
-  <desc id="tensor-desc">A scalar becomes a vector, then a matrix, then a three-dimensional tensor. A neural-network layer uses tensor operations to turn inputs into outputs.</desc>
+<svg class="hero-diagram" viewbox="-14 0 534 400" role="img" aria-labelledby="tensor-title-en tensor-desc-en" xmlns="http://www.w3.org/2000/svg">
+  <title id="tensor-title-en">From one number to a neural-network operation</title>
+  <desc id="tensor-desc-en">A scalar becomes a vector, then a matrix, then a three-dimensional tensor, each labelled with its NumPy shape. The tensor feeds a neural-network layer that turns inputs into outputs.</desc>
   <defs>
-    <radialgradient id="tensor-glow"><stop stop-color="#277c9a" stop-opacity=".45"></stop><stop offset="1" stop-color="#0c192e" stop-opacity="0"></stop></radialgradient>
-    <lineargradient id="tensor-top" x2="1" y2="1"><stop stop-color="#9cf4e2"></stop><stop offset="1" stop-color="#54bedd"></stop></lineargradient>
-    <pattern id="tensor-dots" width="20" height="20" patternunits="userSpaceOnUse"><circle cx="1" cy="1" r=".8" fill="#9ebdd7" opacity=".2"></circle></pattern>
-    <marker id="tensor-arrow" viewbox="0 0 10 10" refx="8" refy="5" markerwidth="5" markerheight="5" orient="auto-start-reverse"><path d="m1 1 7 4-7 4" fill="none" stroke="#91a7c5" stroke-width="1.5"></path></marker>
-    <g id="tensor-slice" stroke="#0d354c" stroke-width="1.2" stroke-linejoin="round">
-      <path d="m0 38 88-44 88 44-88 44Z" fill="url(#tensor-top)"></path>
-      <path d="m0 38 88 44v19L0 57Z" fill="#369fb9"></path>
-      <path d="m88 82 88-44v19l-88 44Z" fill="#32769a"></path>
-      <path d="m22 27 88 44m-66-55 88 44m-66-55 88 44M22 49l88-44M44 60l88-44M66 71l88-44" fill="none" opacity=".6"></path>
-      <path d="M22 49v19m22-8v19m22-8v19m44-19v19m22-30v19m22-30v19" fill="none" opacity=".5"></path>
+    <lineargradient id="slice-top" x2="1" y2="1"><stop stop-color="#a6f6e6"></stop><stop offset="1" stop-color="#56c3e2"></stop></lineargradient>
+    <marker id="tensor-arrow" viewbox="0 0 10 10" refx="8" refy="5" markerwidth="5" markerheight="5" orient="auto-start-reverse"><path d="m1 1 7 4-7 4" fill="none" stroke="#8aa3c2" stroke-width="1.6"></path></marker>
+    <g id="tensor-slice" stroke="#0b3247" stroke-width="1.1" stroke-linejoin="round">
+      <path d="M0 36 72 0l72 36-72 36Z" fill="url(#slice-top)"></path>
+      <path d="M0 36v10l72 36V72Z" fill="#2f93b0"></path>
+      <path d="M72 72v10l72-36V36Z" fill="#2b6c93"></path>
+      <path d="M18 27l72 36 M36 18l72 36 M54 9l72 36 M18 45l72-36 M36 54l72-36 M54 63l72-36" fill="none" stroke-opacity=".55"></path>
     </g>
   </defs>
-  <rect width="480" height="380" rx="20" fill="#0c192e"></rect>
-  <rect width="480" height="380" rx="20" fill="url(#tensor-dots)"></rect>
-  <ellipse cx="198" cy="216" rx="220" ry="165" fill="url(#tensor-glow)"></ellipse>
-  <g font-family="system-ui, sans-serif">
-    <text x="26" y="29" fill="#a9c0d9" font-size="10" letter-spacing="1.5">THE SHAPE OF MACHINE LEARNING</text>
-    <g fill="#91a7c5" font-size="11" text-anchor="middle"><text x="62" y="116">Scalar</text><text x="214" y="116">Vector</text><text x="393" y="116">Matrix</text></g>
-    <rect x="48" y="60" width="28" height="28" rx="7" fill="#91edda"></rect>
-    <text x="62" y="79" text-anchor="middle" fill="#10263b" font-size="14" font-weight="700">7</text>
-    <g fill="#91edda"><rect x="161" y="65" width="22" height="22" rx="4" opacity=".4"></rect><rect x="189" y="65" width="22" height="22" rx="4" opacity=".6"></rect><rect x="217" y="65" width="22" height="22" rx="4" opacity=".8"></rect><rect x="245" y="65" width="22" height="22" rx="4"></rect></g>
-    <g transform="translate(369 50)" fill="#a9b5ff"><rect x="0" y="0" width="14" height="14" rx="2" opacity="0.4"></rect><rect x="17" y="0" width="14" height="14" rx="2" opacity="0.52"></rect><rect x="34" y="0" width="14" height="14" rx="2" opacity="0.64"></rect><rect x="0" y="17" width="14" height="14" rx="2" opacity="0.52"></rect><rect x="17" y="17" width="14" height="14" rx="2" opacity="0.64"></rect><rect x="34" y="17" width="14" height="14" rx="2" opacity="0.76"></rect><rect x="0" y="34" width="14" height="14" rx="2" opacity="0.64"></rect><rect x="17" y="34" width="14" height="14" rx="2" opacity="0.76"></rect><rect x="34" y="34" width="14" height="14" rx="2" opacity="0.88"></rect></g>
-    <g fill="none" stroke="#91a7c5" stroke-width="1.2" marker-end="url(#tensor-arrow)"><path d="M95 75h44"></path><path d="M286 75h61"></path><path d="M395 133v21q0 12-12 12h-80"></path></g>
-    <g transform="translate(61 140)"><use href="#tensor-slice" y="66"></use><use href="#tensor-slice" y="33"></use><use href="#tensor-slice"></use></g>
-    <path d="M49 225v58h28" fill="none" stroke="#7ba3bb" stroke-width="1"></path>
-    <text x="92" y="332" fill="#d5fff5" font-size="17" font-weight="650">3D tensor</text>
-    <text x="92" y="351" fill="#a9c0d9" font-size="11">Three axes. More possibilities.</text>
-    <text x="288" y="211" fill="#dce5ff" font-size="14" font-weight="650">Neural network</text>
-    <text x="288" y="234" fill="#a9b5ff" font-size="14" font-family="ui-monospace, monospace">y = σ(Wx + b)</text>
-    <path d="M251 272h27" fill="none" stroke="#91a7c5" marker-end="url(#tensor-arrow)"></path>
-    <g fill="none" stroke="#8799e8" stroke-opacity=".4" stroke-width="1.2"><path d="M305 281 357 275"></path><path d="M305 281 357 297"></path><path d="M305 281 357 319"></path><path d="M305 281 357 341"></path><path d="M305 303 357 275"></path><path d="M305 303 357 297"></path><path d="M305 303 357 319"></path><path d="M305 303 357 341"></path><path d="M305 325 357 275"></path><path d="M305 325 357 297"></path><path d="M305 325 357 319"></path><path d="M305 325 357 341"></path><path d="M357 275 410 291"></path><path d="M357 275 410 325"></path><path d="M357 297 410 291"></path><path d="M357 297 410 325"></path><path d="M357 319 410 291"></path><path d="M357 319 410 325"></path><path d="M357 341 410 291"></path><path d="M357 341 410 325"></path></g>
-    <g fill="#91edda" stroke="#0c192e" stroke-width="2"><circle cx="305" cy="281" r="5"></circle><circle cx="305" cy="303" r="5"></circle><circle cx="305" cy="325" r="5"></circle></g>
-    <g fill="#a9b5ff" stroke="#0c192e" stroke-width="2"><circle cx="357" cy="275" r="6"></circle><circle cx="357" cy="297" r="6"></circle><circle cx="357" cy="319" r="6"></circle><circle cx="357" cy="341" r="6"></circle></g>
-    <g fill="#ffcb97" stroke="#0c192e" stroke-width="2"><circle cx="410" cy="291" r="6"></circle><circle cx="410" cy="325" r="6"></circle></g>
-    <g fill="#a9c0d9" font-size="10" text-anchor="middle"><text x="305" y="362">input</text><text x="410" y="362">output</text></g>
+  <g font-family="system-ui, -apple-system, Segoe UI, Roboto, sans-serif">
+    <text class="d-eyebrow" x="2" y="13" fill="#7e9bb8" font-size="10.5" letter-spacing="1.6">THE SHAPE OF MACHINE LEARNING</text>
+
+    <rect x="4" y="46" width="32" height="32" rx="8" fill="#8ff0da"></rect>
+    <text x="20" y="68" text-anchor="middle" fill="#08202f" font-size="15" font-weight="700">7</text>
+    <g fill="#8ff0da"><rect x="96" y="51" width="22" height="22" rx="4" opacity=".45"></rect><rect x="122" y="51" width="22" height="22" rx="4" opacity=".62"></rect><rect x="148" y="51" width="22" height="22" rx="4" opacity=".8"></rect><rect x="174" y="51" width="22" height="22" rx="4" opacity="1"></rect></g>
+    <g fill="#aab6ff"><rect x="256" y="28" width="20" height="20" rx="3" opacity=".45"></rect><rect x="280" y="28" width="20" height="20" rx="3" opacity=".58"></rect><rect x="304" y="28" width="20" height="20" rx="3" opacity=".7"></rect><rect x="256" y="52" width="20" height="20" rx="3" opacity=".58"></rect><rect x="280" y="52" width="20" height="20" rx="3" opacity=".7"></rect><rect x="304" y="52" width="20" height="20" rx="3" opacity=".82"></rect><rect x="256" y="76" width="20" height="20" rx="3" opacity=".7"></rect><rect x="280" y="76" width="20" height="20" rx="3" opacity=".82"></rect><rect x="304" y="76" width="20" height="20" rx="3" opacity=".94"></rect></g>
+
+    <g fill="none" stroke="#8aa3c2" stroke-width="1.3" marker-end="url(#tensor-arrow)">
+      <path d="M48 62h34"></path><path d="M208 62h34"></path>
+      <path d="M290 142v6q0 8-8 8H138q-8 0-8 8v10"></path>
+    </g>
+
+    <g text-anchor="middle">
+      <g class="d-label" fill="#9db3cd" font-size="11.5"><text x="20" y="116">Scalar</text><text x="146" y="116">Vector</text><text x="290" y="116">Matrix</text></g>
+      <g class="d-shape" fill="#6fe0c6" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace"><text x="20" y="132">()</text><text x="146" y="132">(4,)</text><text x="290" y="132">(3, 3)</text></g>
+    </g>
+
+    <g transform="translate(46 186)"><use href="#tensor-slice" y="68"></use><use href="#tensor-slice" y="34"></use><use href="#tensor-slice"></use></g>
+    <text class="d-title" x="48" y="366" fill="#dcfff7" font-size="16" font-weight="650">3D tensor</text>
+    <text class="d-shape" x="48" y="385" fill="#6fe0c6" font-size="11" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">(3, 4, 4)</text>
+
+    <path d="M204 268h74" fill="none" stroke="#8aa3c2" stroke-width="1.3" marker-end="url(#tensor-arrow)"></path>
+    <text class="d-title" x="298" y="188" fill="#e2e9ff" font-size="14" font-weight="650">Neural network</text>
+    <text class="d-eq" x="298" y="210" fill="#aab6ff" font-size="13.5" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">y = σ(Wx + b)</text>
+    <path d="M298 238 366 222M298 238 366 254M298 238 366 286M298 238 366 318M298 270 366 222M298 270 366 254M298 270 366 286M298 270 366 318M298 302 366 222M298 302 366 254M298 302 366 286M298 302 366 318M366 222 434 246M366 222 434 294M366 254 434 246M366 254 434 294M366 286 434 246M366 286 434 294M366 318 434 246M366 318 434 294" fill="none" stroke="#8494e6" stroke-opacity=".42" stroke-width="1.2"></path>
+    <g fill="#8ff0da"><circle cx="298" cy="238" r="5"></circle><circle cx="298" cy="270" r="5"></circle><circle cx="298" cy="302" r="5"></circle></g><g fill="#aab6ff"><circle cx="366" cy="222" r="6"></circle><circle cx="366" cy="254" r="6"></circle><circle cx="366" cy="286" r="6"></circle><circle cx="366" cy="318" r="6"></circle></g><g fill="#ffc98f"><circle cx="434" cy="246" r="6"></circle><circle cx="434" cy="294" r="6"></circle></g>
+    <g class="d-io" fill="#9db3cd" font-size="10.5" text-anchor="middle"><text x="298" y="346">input</text><text x="434" y="346">output</text></g>
   </g>
 </svg>
 </div>
