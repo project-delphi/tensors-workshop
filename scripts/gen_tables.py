@@ -218,6 +218,14 @@ PIP_RE = re.compile(r"^[ \t]*%pip install(?:[^\n\\]*\\\n)*[^\n]*", re.M)
 # Where a requirement stops being a distribution name: an extra, a version
 # specifier, an environment marker, or a direct URL.
 REQ_END_RE = re.compile(r"[\[<>=!~;@\s]")
+# pip flags whose value is the *next* token rather than part of the flag. Their
+# values are paths and URLs, not distributions, and reading one as a package
+# name would report something as self-installed that nothing installs.
+PIP_VALUE_FLAGS = {
+    "-i", "--index-url", "--extra-index-url", "-f", "--find-links",
+    "-r", "--requirement", "-c", "--constraint", "-t", "--target",
+    "-e", "--editable", "--prefix", "--root", "--proxy", "--timeout",
+}
 URL_RE = re.compile(r"https?://[^\s\"')]+")
 # The contents of a double-quoted Python string, which is where every URL a
 # notebook actually fetches lives.
@@ -249,18 +257,27 @@ def pip_installed(code: str) -> set[str]:
     regenerate gate only checks the committed group equals this derivation, so
     it would agree with the mistake.
 
-    Only the arguments count, flags are dropped, and a requirement is cut at
-    the first character that stops being part of its name, so
-    `"imageio[ffmpeg]"` is `imageio` and `tensorly==0.8` is `tensorly`.
+    Only the arguments count, flags are dropped along with the value of any
+    flag that takes one, and a requirement is cut at the first character that
+    stops being part of its name -- so `"imageio[ffmpeg]"` is `imageio` and
+    `tensorly==0.8` is `tensorly`, while the URL in `-i https://.../simple` is
+    neither.
     """
     out: set[str] = set()
     for line in PIP_RE.findall(code):
         args = line.replace("\\\n", " ").split("install", 1)[1]
-        for token in args.split("#", 1)[0].split():
-            token = token.strip("\"'")
-            if not token or token.startswith("-"):
+        tokens = args.split("#", 1)[0].split()
+        skip = False
+        for token in tokens:
+            if skip:                      # the value of the flag before it
+                skip = False
                 continue
-            name = REQ_END_RE.split(token, 1)[0]
+            if token.startswith("-"):
+                # `--index-url=X` carries its value; `--index-url X` does not.
+                skip = token in PIP_VALUE_FLAGS
+                continue
+            token = token.strip("\"'")
+            name = REQ_END_RE.split(token, 1)[0] if token else ""
             if name:
                 out.add(name)
     return out

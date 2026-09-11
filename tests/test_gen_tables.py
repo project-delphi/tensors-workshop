@@ -145,6 +145,21 @@ class PipInstalled(unittest.TestCase):
             gt.pip_installed("%pip install -q \\\n    scikit-image scipy"),
             {"scikit-image", "scipy"})
 
+    def test_value_taking_flags_do_not_contribute_their_value(self):
+        # A flag's value is a path or a URL, never a distribution. Reading one
+        # as a package name would report something as self-installed that
+        # nothing installs, and drop it from the environment.
+        self.assertEqual(
+            gt.pip_installed("%pip install -q -i https://pypi.org/simple tensorly"),
+            {"tensorly"})
+        self.assertEqual(gt.pip_installed("%pip install -r requirements.txt"),
+                         set())
+        # The `--flag=value` form carries its value, so the next token is a
+        # requirement and must not be swallowed.
+        self.assertEqual(
+            gt.pip_installed("%pip install --index-url=https://x/simple scipy"),
+            {"scipy"})
+
     def test_no_pip_line_is_an_empty_set(self):
         self.assertEqual(gt.pip_installed("import numpy as np"), set())
 
