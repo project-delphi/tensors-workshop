@@ -326,7 +326,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="schedule">Schedule</h2>
 <p><span data-language-key="schedule"></span></p>
 <!-- BEGIN handbook-schedule -->
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -522,7 +522,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="the-data-we-use">The Data We Use</h2>
 <p><span data-language-key="the-data-we-use"></span></p>
 <p><strong>Included inside the libraries</strong> (no download, works offline):</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -561,7 +561,7 @@ background-size: cover;
 </table>
 </div>
 <p><strong>Downloaded once</strong> (needs internet, takes a few seconds):</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -615,7 +615,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="vocabulary">1.1 Vocabulary</h2>
 <p><span data-language-key="1-1-vocabulary"></span></p>
 <p>Keep this table open from section 00 to section 12.</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -750,7 +750,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="the-map-of-factorizations">1.4 The Map of Factorizations</h2>
 <p><span data-language-key="1-4-the-map-of-factorizations"></span></p>
 <p>A <strong>factorization</strong> writes one object as a product of simpler objects. You met two in Chapter 2. Here are the eight we will use today:</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1081,7 +1081,7 @@ background-size: cover;
 <p>Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing: LU and QR in §1.4 itself, and the pseudoinverse in section 07. None of them answered the two questions a practitioner actually has: <strong>which one do I reach for on this data, and what does it cost me?</strong> This section answers both. It is also where <strong>eigendecomposition</strong> finally gets named, an hour before section 10 leans on the same machinery. The notebook is <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb">09 · Matrix factorizations</a></strong>.</p>
 <p>The organizing idea is that all six are constrained optimizations, and the constraint is what gives each factorization its shape. QR minimizes <code>‖y − Xβ‖</code> subject to an orthonormal <code>Q</code>. The truncated SVD minimizes <code>‖A − B‖_F</code> subject to <code>rank(B) ≤ k</code>, and Eckart–Young–Mirsky proves nothing else does better. NMF minimizes the same quantity subject to <code>W, H ≥ 0</code>. That extra constraint must be worse on error, and it is chosen anyway, because the components come out as parts you can name. Cholesky and LU optimize nothing at all. They are exact rewrites, and their value is all downstream, where a solve costs <code>O(n²)</code> instead of <code>O(n³)</code>.</p>
 <p><strong>The cost table.</strong> Leading-term flop counts for a dense <code>m × n</code> factorization with <code>m ≥ n</code>, from Trefethen &amp; Bau, <em>Numerical Linear Algebra</em>:</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1256,7 +1256,7 @@ Solution
 <section id="four-decompositions-four-bargains" class="level3">
 <h3 class="anchored" data-anchor-id="four-decompositions-four-bargains">Four decompositions, four bargains</h3>
 <p><span data-language-key="four-decompositions-four-bargains"></span></p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1557,7 +1557,7 @@ Solution
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(clean), <span class="bu">len</span>(rec))</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(k, snr_db(clean[:n], rec[:n]), np.<span class="bu">sum</span>(s[:k]<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> np.<span class="bu">sum</span>(s<span class="op">**</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>4.949 seconds at 48 kHz gives a <code>(513, 465)</code> STFT, so full rank is 465. The noisy input measures <strong>5.00 dB</strong>, as constructed:</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" role="region" tabindex="0">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">

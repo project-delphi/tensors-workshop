@@ -336,7 +336,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="agenda">Agenda</h2>
 <p><span data-language-key="schedule"></span></p>
 <!-- BEGIN handbook-schedule -->
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -532,7 +532,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="los-datos-que-usamos">Los datos que usamos</h2>
 <p><span data-language-key="the-data-we-use"></span></p>
 <p><strong>Incluidos dentro de las bibliotecas</strong> (sin descarga, funcionan sin conexión):</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -571,7 +571,7 @@ background-size: cover;
 </table>
 </div>
 <p><strong>Se descargan una vez</strong> (necesitan internet, tardan unos segundos):</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -625,7 +625,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="vocabulario">1.1 Vocabulario</h2>
 <p><span data-language-key="1-1-vocabulary"></span></p>
 <p>Ten esta tabla abierta durante todo el taller.</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -760,7 +760,7 @@ background-size: cover;
 <h2 class="anchored" data-anchor-id="el-mapa-de-las-factorizaciones">1.4 El mapa de las factorizaciones</h2>
 <p><span data-language-key="1-4-the-map-of-factorizations"></span></p>
 <p>Una <strong>factorización</strong> escribe un objeto como producto de objetos más simples. Conociste dos en el capítulo 2. Estas son las ocho que vamos a usar hoy:</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1095,7 +1095,7 @@ background-size: cover;
 <p>La §1.4 de la Parte I dibujó el mapa. Las secciones 03 a 08 usaron de pasada tres de las factorizaciones que hay en él: LU y QR en la propia §1.4, y la pseudoinversa en la sección 07. Ninguna respondió a las dos preguntas que se hace de verdad quien practica: <strong>¿a cuál echo mano con estos datos, y qué me cuesta?</strong> Esta sección responde a las dos. Es también donde la <strong>descomposición espectral</strong> por fin se nombra, una hora antes de que la sección 10 se apoye en la misma maquinaria. El cuaderno es <strong><a href="https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb">09 · Factorizaciones matriciales</a></strong>.</p>
 <p>La idea que lo organiza todo es que las seis son optimizaciones con restricciones, y la restricción es lo que da su forma a cada factorización. QR minimiza <code>‖y − Xβ‖</code> sujeto a que <code>Q</code> sea ortonormal. La SVD truncada minimiza <code>‖A − B‖_F</code> sujeto a <code>rank(B) ≤ k</code>, y Eckart–Young–Mirsky demuestra que nada lo hace mejor. NMF minimiza esa misma cantidad sujeta a <code>W, H ≥ 0</code>. Esa restricción extra es forzosamente peor en error, y se elige de todos modos, porque las componentes salen como partes a las que puedes ponerles nombre. Cholesky y LU no optimizan nada en absoluto. Son reescrituras exactas, y su valor está entero aguas abajo, donde una resolución cuesta <code>O(n²)</code> en lugar de <code>O(n³)</code>.</p>
 <p><strong>La tabla de costes.</strong> Recuento de operaciones en coma flotante del término dominante para una factorización densa <code>m × n</code> con <code>m ≥ n</code>, de Trefethen y Bau, <em>Numerical Linear Algebra</em>:</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 33%">
@@ -1275,7 +1275,7 @@ Solución
 <section id="cuatro-descomposiciones-cuatro-tratos" class="level3">
 <h3 class="anchored" data-anchor-id="cuatro-descomposiciones-cuatro-tratos">Cuatro descomposiciones, cuatro tratos</h3>
 <p><span data-language-key="four-decompositions-four-bargains"></span></p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
@@ -1578,7 +1578,7 @@ Solución
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    n <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(clean), <span class="bu">len</span>(rec))</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(k, snr_db(clean[:n], rec[:n]), np.<span class="bu">sum</span>(s[:k]<span class="op">**</span><span class="dv">2</span>) <span class="op">/</span> np.<span class="bu">sum</span>(s<span class="op">**</span><span class="dv">2</span>))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>4,949 segundos a 48 kHz dan una STFT de <code>(513, 465)</code>, así que el rango completo es 465. La entrada ruidosa mide <strong>5,00 dB</strong>, tal y como se construyó:</p>
-<div class="table-responsive" aria-label="Scrollable table / Tabla desplazable" tabindex="0" role="region">
+<div class="table-responsive" tabindex="0" role="region" aria-label="Scrollable table / Tabla desplazable">
 <table class="caption-top table">
 <colgroup>
 <col style="width: 25%">
