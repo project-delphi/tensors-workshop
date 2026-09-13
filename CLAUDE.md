@@ -372,12 +372,23 @@ in the group — the generator drops anything a notebook `%pip`-installs.
 
 ## Publishing
 
-Pages serves `docs/` on `main`, so **`docs/` is committed** — render and commit
-it with every content change. `.github/workflows/publish.yml` is a guard, not
-the publisher: it re-renders and runs `scripts/compare_render.py`, which
+**`.github/workflows/publish.yml` is the publisher.** Its `render` job
+regenerates the derived files, renders the site, and runs `check_links.py` and
+the browser check over the result; `actions/upload-pages-artifact` then hands
+that exact `docs/` to the `deploy` job, which is the only thing in the repo
+holding `pages: write`. `deploy` is a separate job guarded by
+`github.event_name == 'push' && github.ref == 'refs/heads/main'`, because
+`render` is the required status check and runs on every PR — a PR must not be
+able to publish. So the live site is the render that passed, not a copy
+somebody remembered to commit.
+
+**`docs/` is still committed, for now**, and the workflow still fails if the
+committed copy has gone stale: it runs `scripts/compare_render.py`, which
 compares committed vs fresh HTML with Quarto's content-hashed asset names
 normalized away (a byte-exact gate is impossible — SCSS compilation differs
-between macOS and ubuntu-latest at the same version).
+between macOS and ubuntu-latest at the same version). That gate, the committed
+copy and the script all go once the artifact deploy has proved itself on
+`main`; until then, render and commit `docs/` with every content change.
 
 **That gate only walks `*.html`.** `notebooks/*.ipynb` are `resources:` in
 `_quarto.yml`, not `render:` targets — Quarto copies them into
@@ -395,7 +406,8 @@ to normalize away. CI runs the checker against `docs/` as committed before it
 re-renders, which is the copy Pages is serving. Re-render after *any* notebook
 change, not only after a prose or `_variables.yml` change.
 
-Quarto is pinned to **1.6.40** in the workflow. Use that version locally; a
+Quarto is pinned to **1.6.40** in the workflow, and CI renders what ships, so
+the pin decides the markup a visitor gets. Use that version locally; a
 different one changes markup and the staleness gate goes red. Bump the pin and
 re-render together.
 

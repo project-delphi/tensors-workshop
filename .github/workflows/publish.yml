@@ -1,13 +1,14 @@
 name: Publish
 
-# GitHub Pages serves the docs/ folder on main, so docs/ is committed and this
-# workflow does not upload anything — it is the guard that keeps what is
-# committed honest. It re-renders from scratch, regenerates every derived file,
-# and fails if the result differs from what was pushed.
+# This workflow IS the publisher. `render` regenerates every derived file,
+# renders the site, and runs the checkers and the browser check over the
+# result; `deploy` then hands that exact render to Pages. So what a visitor
+# gets is the build that just passed, rather than a copy of docs/ somebody
+# remembered to commit.
 #
-# (If you would rather have Actions itself publish, switch Pages to the
-# "GitHub Actions" source and add an actions/deploy-pages step. Then docs/ no
-# longer needs committing and the drift check below becomes unnecessary.)
+# docs/ is still committed while this change beds in, and the staleness gate
+# below still guards it. Once Pages is confirmed serving the artifact, the
+# committed copy and that gate both go.
 
 on:
   push:
@@ -141,3 +142,41 @@ jobs:
 
       - name: Check navigation in a browser
         run: npm run check:navigation
+
+      # The tested build is what ships. Everything above has run against this
+      # exact docs/ — the checkers, the byte-identity check on the notebooks,
+      # and the browser pass — so the artifact `deploy` publishes is the render
+      # that passed, not a re-render nobody looked at.
+      #
+      # Uploaded on pull requests too, though only `deploy` ever consumes it: a
+      # render that succeeds but cannot be packaged should go red on the PR,
+      # not afterwards on a main whose required check is already green.
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  # Publishes the artifact `render` just built.
+  #
+  # A separate job, not a step, because `render` is the required status check
+  # and runs on every pull request — a PR must not be able to deploy. The `if`
+  # says so twice over, and the split keeps `pages: write` and `id-token:
+  # write` off every other job in the file.
+  deploy:
+    needs: render
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    # One deploy at a time, and never cancel one in flight — a half-applied
+    # deploy is a broken site. Scoped to this job on purpose: at workflow level
+    # the same group would serialize unrelated pull-request runs.
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
