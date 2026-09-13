@@ -6,9 +6,9 @@ name: Publish
 # gets is the build that just passed, rather than a copy of docs/ somebody
 # remembered to commit.
 #
-# docs/ is still committed while this change beds in, and the staleness gate
-# below still guards it. Once Pages is confirmed serving the artifact, the
-# committed copy and that gate both go.
+# Nothing rendered is committed. docs/ is gitignored build output, so a content
+# PR carries only source and there is no staleness gate to keep honest — the
+# only copy of the site that exists is the one this workflow just made.
 
 on:
   push:
@@ -58,11 +58,10 @@ jobs:
         # group edited by hand instead of through _variables.yml.
         #
         # The path list is every file gen_tables.py and gen_notebooks.py write
-        # into, the two handbook schedule regions included. Leave a file out and
-        # a hand-edit there does not fail here; it surfaces further down as a
-        # compare_render.py mismatch instead, which names the rendered page
-        # rather than the edit — because this step has already rewritten the
-        # source by the time `quarto render` runs.
+        # into, the two handbook schedule regions included, and it is the whole
+        # of the gate: this step rewrites the source before `quarto render`
+        # sees it, so a hand-edit to a generated path left off this list is
+        # silently overwritten and ships. Add the path when you add the file.
         run: |
           uv run --group site python scripts/gen_tables.py
           uv run --group site python scripts/gen_notebooks.py
@@ -76,33 +75,17 @@ jobs:
             exit 1
           fi
 
-      - name: Check the committed site
-        # Runs against docs/ AS COMMITTED, before any re-render — this is what
-        # GitHub Pages is actually serving right now.
-        run: uv run --group site python scripts/check_links.py
-
       - name: Check teaching materials
         run: |
           uv run --group test python scripts/check_teaching_materials.py
           uv run --group test python -m unittest discover -s tests -v
 
-      - name: Keep a copy of the committed site
-        run: cp -R docs "$RUNNER_TEMP/docs-committed"
-
       - name: Render site
         uses: quarto-dev/quarto-actions/render@v2
 
-      - name: Check the fresh render
+      - name: Check the site
+        # The render that is about to ship, so this is the last word on it.
         run: uv run --group site python scripts/check_links.py
-
-      - name: Fail if the committed pages are out of date
-        # NOT a byte comparison. Quarto compiles the theme SCSS at render time
-        # and names it by content hash, and that compilation differs between
-        # macOS and ubuntu-latest even at the same pinned version — so every
-        # page linking to it differs too. compare_render.py normalizes those
-        # hashes away and compares the rest, which still catches the case this
-        # gate exists for: prose edited without re-rendering.
-        run: uv run --group site python scripts/compare_render.py "$RUNNER_TEMP/docs-committed" docs
 
       # The browser regression check. It needs a rendered docs/ and a real
       # Chromium, so it runs last, against the fresh render above. check_links

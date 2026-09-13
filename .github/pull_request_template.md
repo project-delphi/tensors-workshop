@@ -22,7 +22,8 @@ run is the only wrong answer here.
 
 - [ ] `uv run --group site python scripts/gen_tables.py` and `gen_notebooks.py`
       rerun, and a **second** run changed nothing
-- [ ] `quarto render` at the pinned Quarto version (1.6.40), and `docs/` committed
+- [ ] `quarto render` at the pinned Quarto version (1.6.40) — the checks below
+      read the site from `docs/`, which is gitignored and never committed
 - [ ] `uv run --group site python scripts/check_links.py` — all fourteen checks pass
 - [ ] `uv run --group test python -m unittest discover -s tests` passes
 - [ ] `uv run --group test python scripts/check_teaching_materials.py` passes

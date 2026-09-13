@@ -282,10 +282,11 @@ class Notebooks(unittest.TestCase):
 # ── check 2: docs/ serves what is committed ──────────────────────────────────
 
 class ServedNotebooks(unittest.TestCase):
-    """The gate that closed the hole neither other gate could see.
+    """The only check that opens docs/notebooks/.
 
-    The regenerate gate never looks in docs/; compare_render.py walks *.html
-    only. docs/notebooks/ went stale twice, once to nine notebooks at a stroke.
+    The regenerate gate never looks in docs/. Written when docs/ was committed
+    and went stale twice, once to nine notebooks at a stroke; now it guards the
+    `notebooks/*.ipynb` line in `resources:`, whose loss 404s every Colab badge.
     """
 
     def served(self, nbdir, docs, sections):

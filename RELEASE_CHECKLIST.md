@@ -9,9 +9,10 @@ Start with the [editing ownership guide](CONTRIBUTING.md#where-to-edit).
 - [ ] Attempt exercises before revealing solutions. Check widgets and downloads.
 - [ ] Check folding, spacing and headings in Colab; test the top language switch.
 - [ ] For navigation changes, run the [browser regression check](CONTRIBUTING.md#validate-and-submit) — CI runs it too, on every PR.
-- [ ] Run the checks below. Review and commit generated changes, including `docs/`.
+- [ ] Run the checks below. Review and commit generated changes — but not
+      `docs/`, which is gitignored and built by Actions.
 - [ ] Add a brief learner-facing note to [CHANGELOG.md](CHANGELOG.md).
-- [ ] Open a PR, wait for the `render` check, then merge. Direct pushes to `main` are rejected. Verify the published site.
+- [ ] Open a PR, wait for the `render` check, then merge. Direct pushes to `main` are rejected. Merging deploys; verify the published site.
 - [ ] Record the commit/tag on the [feedback form](workshop-feedback.md).
 
 ```bash
