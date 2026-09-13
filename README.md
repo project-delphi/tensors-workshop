@@ -165,10 +165,15 @@ uv run --group site python scripts/check_links.py     # verify docs/
 
 ## How it deploys
 
-GitHub Pages serves the **`docs/` folder on `main`**, so `docs/` is committed.
-`.github/workflows/publish.yml` re-renders on every push and fails if the
-committed `docs/` is stale or any link is broken — it is a guard, not the
-publisher. Render and commit `docs/` along with your change.
+`.github/workflows/publish.yml` is the publisher. On every push and pull
+request it regenerates the derived files, renders the site, and runs the link
+checker and the browser check over the result; on `main` it then uploads that
+render to Pages. So the live site is the build that passed, not a copy anybody
+had to remember to commit.
+
+`docs/` is still committed for now, and the workflow still fails if the
+committed copy is stale — render and commit it along with your change. That
+requirement goes away once the artifact deploy has proved itself.
 
 ## Repo layout
 
@@ -349,10 +354,16 @@ necesitan.
 
 ## Cómo se publica
 
-GitHub Pages sirve la carpeta **`docs/` de `main`**, así que `docs/` está en el
-repositorio. `.github/workflows/publish.yml` vuelve a renderizar en cada push y
-falla si el `docs/` publicado está desactualizado o si algún enlace está roto.
-Renderiza y haz commit de `docs/` junto con tu cambio.
+`.github/workflows/publish.yml` es quien publica. En cada push y cada pull
+request regenera los archivos derivados, renderiza el sitio y le pasa el
+verificador de enlaces y la prueba en navegador; en `main` sube ese render a
+Pages. El sitio en vivo es, por tanto, la compilación que pasó las
+comprobaciones.
+
+`docs/` sigue estando en el repositorio por ahora, y el workflow todavía falla
+si la copia publicada está desactualizada: renderiza y haz commit de `docs/`
+junto con tu cambio. Ese requisito desaparecerá cuando el despliegue por
+artefacto esté confirmado.
 
 ## Referencias y lectura adicional
 
