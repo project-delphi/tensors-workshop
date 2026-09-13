@@ -42,19 +42,19 @@ text, then run the appropriate generator:
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
-| `docs/` | `quarto render` |
+| `docs/` (build output, gitignored — never committed) | `quarto render` |
 
 CI reruns `gen_tables.py` and `gen_notebooks.py` and fails if the working tree
 changes. The paths it watches are every file those two write into —
 `notebooks/`, `_includes/`, `README.md`, `pyproject.toml` and both handbooks,
-whose schedule tables are marker regions. This gate *is* byte-exact — both are
-deterministic pure Python — unlike the render gate under Publishing, which
-cannot be. A hand-edit is caught, but only once you push.
+whose schedule tables are marker regions. This gate is byte-exact: both
+generators are deterministic pure Python. A hand-edit is caught, but only once
+you push.
 
-Leave a path out of that list and a hand-edit there does not fail at the
-regenerate step; it reappears further down as a `compare_render.py` mismatch
-naming the rendered page rather than the edit, because the regenerate step has
-already rewritten the source by the time `quarto render` runs.
+That list is the whole of the gate. Leave a path off it and a hand-edit there
+fails nowhere and ships: the regenerate step has already rewritten the source
+by the time `quarto render` runs, and nothing downstream compares the render
+against anything. Add the path when you add the file.
 
 **The three image generators are not in that gate**, deliberately: they need
 the network, and a scientific stack or a browser the workflow does not install.
@@ -326,8 +326,8 @@ uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 `check_links.py` is the site test suite — there is no pytest here. It prints
 fourteen numbered checks, in the order they run. Twelve can fail, and any
 failure exits non-zero: notebooks are valid with no outputs or execution
-counts; every notebook `docs/` serves is byte-identical to the one committed in
-`notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
+counts; every notebook the rendered `docs/` serves is byte-identical to the one
+committed in `notebooks/`; internal links resolve *including the `#fragment`*; every Colab badge points at its own
 existing notebook, **and every link from one notebook to another names an
 `.ipynb` that exists** — nothing else looks at those, because a notebook
 reaches `docs/` as a verbatim copy rather than a rendered page, which is how
@@ -382,34 +382,34 @@ holding `pages: write`. `deploy` is a separate job guarded by
 able to publish. So the live site is the render that passed, not a copy
 somebody remembered to commit.
 
-**`docs/` is still committed, for now**, and the workflow still fails if the
-committed copy has gone stale: it runs `scripts/compare_render.py`, which
-compares committed vs fresh HTML with Quarto's content-hashed asset names
-normalized away (a byte-exact gate is impossible — SCSS compilation differs
-between macOS and ubuntu-latest at the same version). That gate, the committed
-copy and the script all go once the artifact deploy has proved itself on
-`main`; until then, render and commit `docs/` with every content change.
+**`docs/` is gitignored build output and is never committed.** A content PR
+carries source only. `quarto render` still writes it locally, and both
+checkers read it from there — `check_links.py` resolves every link against it,
+`check_navigation.cjs` serves it to a real browser — so render first and
+expect `git status` to stay empty afterwards.
 
-**That gate only walks `*.html`.** `notebooks/*.ipynb` are `resources:` in
-`_quarto.yml`, not `render:` targets — Quarto copies them into
-`docs/notebooks/` verbatim. So a notebook change committed without a re-render
-leaves `docs/notebooks/` serving the old copy, and neither the regenerate gate
-nor `compare_render.py` would say so: the first reruns
-`scripts/gen_notebooks.py` and only fails if the tracked `notebooks/` drift
-from the normalizer's output, never looking in `docs/`, while the second skips
-non-HTML entirely. That is what let it happen twice, once to nine notebooks at
-a stroke.
+This retired a gate rather than replacing one. While `docs/` was committed, CI
+had to prove the committed copy still matched a fresh render, and could not do
+it byte-exactly: Quarto compiles the theme SCSS at render time and names it by
+content hash, and that compilation differs between macOS and ubuntu-latest at
+the same pinned version, so `scripts/compare_render.py` normalized the hashes
+away and compared the rest. It walked `*.html` only, which left
+`docs/notebooks/` — `resources:` in `_quarto.yml`, copied verbatim rather than
+rendered — with no gate at all, and it went stale twice, once to nine
+notebooks at a stroke. Both the script and that whole failure mode are gone:
+there is no committed copy to drift, because the site is built from source on
+every deploy.
 
-Check 2 in `check_links.py` closes it, and it *is* byte-exact — Quarto copies
-these files instead of transforming them, so there is no SCSS-style difference
-to normalize away. CI runs the checker against `docs/` as committed before it
-re-renders, which is the copy Pages is serving. Re-render after *any* notebook
-change, not only after a prose or `_variables.yml` change.
+Check 2 in `check_links.py` survives it, narrowed. It still byte-compares
+`docs/notebooks/` against `notebooks/`, but a fresh render cannot produce a
+stale copy, so what it now catches is the `notebooks/*.ipynb` line disappearing
+from `resources:` — which would ship a site whose every Colab badge 404s — and
+a rename leaving an orphan behind in a `docs/` you did not clean locally.
 
 Quarto is pinned to **1.6.40** in the workflow, and CI renders what ships, so
-the pin decides the markup a visitor gets. Use that version locally; a
-different one changes markup and the staleness gate goes red. Bump the pin and
-re-render together.
+the pin alone decides the markup a visitor gets. Nothing now compares your
+local render against it — use the pinned version anyway, or what you check
+locally is not what deploys.
 
 `slides/deck-pace.html` is pulled into both decks with `include-after-body`.
 It draws the audience-facing timer and the section breadcrumb, and it owns

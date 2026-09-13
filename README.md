@@ -171,9 +171,9 @@ checker and the browser check over the result; on `main` it then uploads that
 render to Pages. So the live site is the build that passed, not a copy anybody
 had to remember to commit.
 
-`docs/` is still committed for now, and the workflow still fails if the
-committed copy is stale — render and commit it along with your change. That
-requirement goes away once the artifact deploy has proved itself.
+`docs/` is gitignored build output and is never committed, so a PR carries
+source only. Render it locally anyway — the link checker and the browser check
+both read the site from there.
 
 ## Repo layout
 
@@ -195,7 +195,7 @@ worked-mistakes.md      small counterexamples (also in es/)
 workshop-feedback.md    reusable pilot feedback form (also in es/)
 tensors_workshop_plan_with_quizzes.md      the handbook — the session text
 es/tensors_workshop_plan_with_quizzes.md   the same, machine-translated
-docs/                   rendered site (committed — this is what Pages serves)
+docs/                   rendered site (gitignored — Actions builds and deploys it)
 ```
 
 Directory READMEs: [`notebooks/`](notebooks/README.md) ·
@@ -360,10 +360,9 @@ verificador de enlaces y la prueba en navegador; en `main` sube ese render a
 Pages. El sitio en vivo es, por tanto, la compilación que pasó las
 comprobaciones.
 
-`docs/` sigue estando en el repositorio por ahora, y el workflow todavía falla
-si la copia publicada está desactualizada: renderiza y haz commit de `docs/`
-junto con tu cambio. Ese requisito desaparecerá cuando el despliegue por
-artefacto esté confirmado.
+`docs/` está en `.gitignore` y nunca se hace commit, así que un PR solo lleva
+código fuente. Renderízalo en local de todos modos: tanto el verificador de
+enlaces como la prueba en navegador leen el sitio desde ahí.
 
 ## Referencias y lectura adicional
 

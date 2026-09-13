@@ -25,6 +25,14 @@ uv.lock
 
 /.quarto/
 
+# The rendered site. Actions builds it and uploads it to Pages as an artifact
+# (.github/workflows/publish.yml), so no copy of it is committed and a content
+# PR carries only source. `quarto render` still writes it here, and both
+# checkers read it from here: check_links.py resolves every link against it,
+# and check_navigation.cjs serves it to a real browser. So render before you
+# check, and expect an empty `git status` afterwards.
+/docs/
+
 # Quarto
 /.luarc.json
 /_freeze/

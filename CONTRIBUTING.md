@@ -24,7 +24,9 @@ Edit source files, then regenerate their outputs. Do not edit generated
 `_includes/` blocks, marked table regions, or `docs/` directly. That includes
 the `notebooks` dependency group in `pyproject.toml`: it is read off what the
 notebooks import, so a new import reaches it through `scripts/gen_tables.py`.
-The rendered `docs/` directory is committed because GitHub Pages serves it.
+`docs/` is gitignored build output — Actions renders it and deploys it to
+Pages, so it is never part of a PR. Render it locally all the same: the link
+checker and the browser check both read the site from there.
 
 Paired website headings may have an invisible `data-language-key` span beneath
 them. Keep the same key with the corresponding heading in both languages,
@@ -67,4 +69,5 @@ celda se generan. Los datos compartidos y los textos de esas dos celdas viven
 en `_variables.yml`. Mantén alineadas las versiones en inglés y español.
 
 Sigue la [lista de publicación](RELEASE_CHECKLIST.md) para regenerar, comprobar
-y enviar los cambios. Incluye los archivos generados y `docs/` en el PR.
+y enviar los cambios. Incluye los archivos generados en el PR; `docs/` no, que
+lo construye y lo publica Actions.

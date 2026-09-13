@@ -359,20 +359,19 @@ def check_notebooks() -> None:
 # ── docs/ serves the notebooks that are committed ────────────────────────────
 
 def check_docs_notebooks() -> None:
-    """The one staleness check that walks something other than *.html.
+    """The site's notebooks are the committed ones, byte for byte.
 
     Notebooks are `resources:` in _quarto.yml, not `render:` targets, so
-    Quarto copies them into docs/ verbatim rather than building them. That
-    makes a notebook committed without a re-render invisible to both existing
-    gates: the regenerate step compares the tracked notebooks against the
-    normalizer and never looks in docs/, and compare_render.py walks *.html
-    only. docs/notebooks/ has gone stale twice that way, once to nine of the
-    twelve at a stroke, and both times Pages served the old copies.
+    Quarto copies them into docs/ verbatim rather than building them. Nothing
+    else looks at that copy: the regenerate gate compares the tracked
+    notebooks against the normalizer and never opens docs/.
 
-    Byte-for-byte is the right comparison here precisely because Quarto does
-    not transform these files — unlike the HTML gate, which cannot be exact.
-    CI runs this against docs/ AS COMMITTED, before any re-render, which is
-    what Pages is serving right now.
+    This check was written when docs/ was committed and could go stale — it
+    did, twice, once to nine of the twelve at a stroke. A render per deploy
+    retired that failure. What is left is still worth a check: drop the
+    `notebooks/*.ipynb` line from `resources:` and every Colab badge on the
+    site 404s, with no other symptom. Byte-for-byte is the right comparison
+    because Quarto does not transform these files.
     """
     step("docs/notebooks matches notebooks/")
     served_dir = DOCS / "notebooks"
@@ -387,13 +386,13 @@ def check_docs_notebooks() -> None:
         if not source.exists():
             continue          # check_notebooks already reported this one
         if not served.exists():
-            fail(f"docs/notebooks/{name} is missing — run `quarto render` "
-                 f"and commit docs/")
+            fail(f"docs/notebooks/{name} is missing — re-render, and check "
+                 f"`notebooks/*.ipynb` is still under `resources:`")
         elif served.read_bytes() != source.read_bytes():
             stale.append(name)
     if stale:
         fail(f"docs/ serves an old copy of {len(stale)} notebook(s): "
-             f"{', '.join(stale)} — run `quarto render` and commit docs/")
+             f"{', '.join(stale)} — re-render")
     for orphan in sorted({p.name for p in served_dir.glob("*.ipynb")}
                          - expected):
         fail(f"docs/notebooks/{orphan} is served but is neither a section nor "
@@ -401,7 +400,7 @@ def check_docs_notebooks() -> None:
 
     if not stale:
         print(f"      {len(expected)} notebooks served from docs/ are "
-              f"byte-identical to the committed notebooks/")
+              f"byte-identical to the ones in notebooks/")
 
 
 # ── EN and ES notebooks pages agree ──────────────────────────────────────────
