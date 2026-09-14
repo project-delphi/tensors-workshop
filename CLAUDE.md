@@ -219,8 +219,11 @@ that no widget callback failed. That last one needs its own machinery —
 `widgets.interactive_output` runs its callback inside an `Output` widget, whose
 `__exit__` hands the traceback to the frontend and returns `True`, so a broken
 callback leaves a clean cell and total silence. The runner patches that
-`__exit__` before the route runs, then drives every control to the far end of
-its range and reports what was swallowed.
+`__exit__` before the route runs, then drives controls to the far end of their
+range and reports what was swallowed. It is a **sweep, not a proof**: it stops
+after `WORKSHOP_PROBE_CHANGES` changes (8) or `WORKSHOP_PROBE_BUDGET` seconds
+(20), whichever comes first, and prints how many controls it skipped. A
+notebook with four explorers is sampled, not covered.
 
 Nothing is stripped or mocked — `%pip install` runs verbatim and the remote
 datasets are fetched for real, because Colab is the runtime this defends.

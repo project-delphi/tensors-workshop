@@ -179,6 +179,48 @@ PIP_INSTALL = re.compile(r"^[ \t]*[%!]pip[ \t]+install\b(.*)$", re.M)
 DEVICE_STRING = re.compile(r"""["'](?:cuda(?::\d+)?|mps)["']""")
 
 
+def guarded(src: str, match: re.Match) -> bool:
+    """Is this google.colab import inside a try: with an ImportError branch?
+
+    Indentation decides it, because that is what decides it in Python. Walk
+    back to the nearest `try:` less indented than the import, then forward from
+    the import to the first line at that same indent: a real guard reaches an
+    `except ImportError`/`except Exception` before it reaches anything else.
+    """
+    lines = src.splitlines()
+    line_no = src[:match.start()].count("\n")
+    if line_no >= len(lines):
+        return False
+
+    def indent(text: str) -> int:
+        return len(text) - len(text.lstrip())
+
+    own = indent(lines[line_no])
+
+    opener = None
+    for i in range(line_no - 1, -1, -1):
+        stripped = lines[i].strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if indent(lines[i]) < own and stripped == "try:":
+            opener = i
+            break
+        if indent(lines[i]) < own:
+            return False          # some other block opened first
+    if opener is None:
+        return False
+
+    base = indent(lines[opener])
+    for line in lines[line_no + 1:]:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if indent(line) > base:
+            continue              # still inside the try body
+        return bool(re.match(r"except\s+(ImportError|Exception)\b", stripped))
+    return False
+
+
 def check_colab_parity(nb: dict, label: str) -> None:
     """Keep a notebook runnable in Colab and in a bare local kernel alike.
 
@@ -196,8 +238,11 @@ def check_colab_parity(nb: dict, label: str) -> None:
             # The import only works on Colab, so it must sit under a try: with
             # an ImportError branch -- that branch is what every local and CI
             # run of this script actually takes.
-            before = src[:match.start()]
-            if "try:" not in before or "except ImportError" not in src[match.end():]:
+            # Scoped to the import's own block, not the whole cell: an
+            # unrelated earlier `try:` and an unrelated later
+            # `except ImportError:` would otherwise vouch for a bare import
+            # sitting between them -- the exact ImportError this guards.
+            if not guarded(src, match):
                 fail(f"{label}: cell {cid} imports google.colab without a "
                      f"try/except ImportError guard")
 
@@ -232,6 +277,12 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
     chosen = [ids.index(p) for p in prep]
     if cells[at].get("cell_type") == "code":
         chosen.append(at)
+    # Decide the fallback HERE, from the route itself. Reading it off `chosen`
+    # after the paired-solution block below has appended to it would let a
+    # route with no executable prep and a markdown activity run a lone solution
+    # cell with none of its setup -- a NameError that reads as a broken
+    # notebook rather than a broken run set.
+    route_has_code = bool(chosen)
 
     paired = None
     for j in range(at + 1, min(at + 3, len(cells))):
@@ -240,7 +291,7 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
             chosen.append(j)
             break
 
-    if not chosen:
+    if not route_has_code:
         # Notebooks 00 and 12: the route declares no executable code at all,
         # so run the whole notebook instead. Both are short and their code
         # cells are the setup and the answers.
@@ -344,6 +395,14 @@ def _workshop_probe():
             for value in values:
                 widget.value = value
                 driven += 1
+                # After, not only before. Setting a control to its far end
+                # fires its callback synchronously, and nothing here can
+                # preempt that -- so the budget can only be enforced between
+                # changes. Checking it beforehand alone let __CHANGES__ slow
+                # callbacks run back to back: notebook 12 spent the whole 300s
+                # cell timeout that way and failed CI.
+                if _time.monotonic() > deadline:
+                    break
             widget.value = start
         except Exception as exc:
             swallowed.append("driving %s: %r" % (type(widget).__name__, exc))
@@ -370,7 +429,21 @@ _workshop_probe()
 # point the kernel goes idle and the assignment never returns. Silencing
 # pyplot (in the probe) removes most of that traffic; these two bounds cover
 # the rest. Raise them with the environment variables if a notebook needs it --
-# a sweep that overruns is reported as a probe-cell timeout, not a silent pass.
+# a sweep that overruns says so rather than passing silently.
+
+# The probe's own cell timeout, well clear of CELL_TIMEOUT, because the probe
+# must never be the thing that fails a route.
+#
+# Measured: the probe's Python finishes in about 0.2s even on notebook 12,
+# whose whole-notebook fallback leaves 53 live widgets. The cell then sits
+# until this timeout anyway -- nbclient waits for an idle the kernel does not
+# send while those widget comms are open, and closing them first does not help.
+# Locally nbclient gives up and moves on; on a CI runner it raises
+# CellTimeoutError, which is what turned this job red at the 300s shared
+# ceiling. So: give the probe its own short ceiling, and treat overrunning it
+# as incomplete widget coverage rather than a broken notebook. The probe is a
+# sweep, not the lesson.
+PROBE_CELL_TIMEOUT = 60
 PROBE_BUDGET_SECONDS = float(os.environ.get("WORKSHOP_PROBE_BUDGET", "20"))
 PROBE_MAX_CHANGES = int(os.environ.get("WORKSHOP_PROBE_CHANGES", "8"))
 PROBE = (PROBE.replace("__BUDGET__", str(PROBE_BUDGET_SECONDS))
@@ -409,11 +482,10 @@ def errors_in(cell: dict) -> list[str]:
 def execute(path: Path, number: str, show_output: bool) -> None:
     import nbformat
     from nbclient import NotebookClient
-    from nbclient.exceptions import CellExecutionError
+    from nbclient.exceptions import CellExecutionError, CellTimeoutError
 
     label = path.name
     nb = nbformat.read(path, as_version=4)
-    check_colab_parity(nb, label)
 
     chosen, activity, paired = run_set(nb, label)
     ids = [c.get("id") for c in nb["cells"]]
@@ -448,6 +520,10 @@ def execute(path: Path, number: str, show_output: bool) -> None:
         client = NotebookClient(
             trimmed,
             timeout=CELL_TIMEOUT,
+            # Per cell, so the probe gets its own, tighter ceiling.
+            timeout_func=lambda cell: (
+                PROBE_CELL_TIMEOUT if cell.get("id") == "workshop-probe"
+                else CELL_TIMEOUT),
             kernel_name="python3",
             allow_errors=False,
             resources={"metadata": {"path": workdir}},
@@ -455,12 +531,22 @@ def execute(path: Path, number: str, show_output: bool) -> None:
             on_cell_executed=on_cell_executed,
         )
         stopped = None
+        probe_timed_out = False
         try:
             client.execute()
         except CellExecutionError as exc:
             # The offending cell keeps its own traceback, and the per-cell walk
             # below names it with the cell id. Hold this in case it did not.
             stopped = ANSI.sub("", str(exc).strip().splitlines()[-1])[:200]
+        except CellTimeoutError as exc:
+            # A timeout inside the probe means the widget sweep was cut short,
+            # not that the notebook is broken -- every teaching cell before it
+            # already ran clean. Say so and keep the route green; anything else
+            # lets an explorer nobody teaches from fail the whole gate.
+            if "_workshop_probe" in str(exc):
+                probe_timed_out = True
+            else:
+                fail(f"{label}: kernel error — {type(exc).__name__}: {exc}")
         except Exception as exc:  # noqa: BLE001 — report, do not raise
             fail(f"{label}: kernel error — {type(exc).__name__}: {exc}")
 
@@ -488,14 +574,24 @@ def execute(path: Path, number: str, show_output: bool) -> None:
                 fail(f"{label}: cell {cid} did not print {want!r}; got "
                      f"{out.strip()[:160]!r}")
 
+    if probe_timed_out:
+        print(f"        WARN  widget sweep hit {PROBE_CELL_TIMEOUT}s and was "
+              f"cut short — callbacks after that point are unchecked")
+
     if stopped and not reported:
         # No cell carried a traceback, so this was a timeout or a dead kernel.
         fail(f"{label}: execution stopped after {CELL_TIMEOUT}s or the kernel "
              f"died — {stopped}")
 
-    unseen = set(expected) - set(ids)
-    for cid in sorted(unseen):
-        fail(f"{label}: EXPECTED names cell {cid}, which no longer exists")
+    # Not `set(ids)`: a cell can still exist and yet have dropped out of the
+    # run set, and then its EXPECTED line asserts nothing while CI stays green.
+    # Compare against what actually ran.
+    ran = {ids[i] for i in chosen}
+    for cid in sorted(set(expected) - ran):
+        gone = cid not in ids
+        fail(f"{label}: EXPECTED names cell {cid}, which "
+             + ("no longer exists" if gone else
+                "exists but is not in the run set, so it asserts nothing"))
 
 
 # ── Entry point ──────────────────────────────────────────────────────────────
@@ -545,6 +641,16 @@ def main(argv: list[str] | None = None) -> int:
             print(f"      {len(chosen)} cell(s): "
                   f"{', '.join(ids[i] for i in chosen)}")
             continue
+
+        # Static, so it needs no kernel and no network. It runs here rather
+        # than inside execute() because --offline skips execute() wholesale for
+        # the nine network notebooks -- and an offline run that linted five of
+        # fourteen while reporting "executed cleanly" is worse than no lint.
+        try:
+            import nbformat
+            check_colab_parity(nbformat.read(path, as_version=4), path.name)
+        except (ValueError, KeyError) as exc:
+            fail(f"{path.name}: {exc}")
 
         if args.offline and number in NETWORK:
             print("      skipped — needs the network (--offline)")

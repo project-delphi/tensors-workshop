@@ -127,6 +127,26 @@ class RunSet(unittest.TestCase):
         self.assertEqual(paired, "s12-b-ccc")
 
 
+    def test_lone_paired_solution_does_not_suppress_the_fallback(self):
+        """A markdown activity with a solution right after it still falls back.
+
+        The fallback used to key on whether `chosen` was empty, which the
+        paired-solution block had already filled -- so this shape executed one
+        answer cell with none of its setup, and the NameError read as a broken
+        notebook rather than a broken run set.
+        """
+        nb = notebook(
+            cell("## Core activity\n", kind="markdown", cid="act",
+                 tags=["workshop-core-activity"]),
+            cell("answer()\n", cid="sol", tags=["solution", "hide-input"]),
+            cell("setup()\n", cid="setup"))
+        chosen, _, _ = tn.run_set(nb, "fixture")
+        ids = [nb["cells"][i]["id"] for i in chosen]
+        self.assertEqual(ids, ["sol", "setup"],
+                         "expected the whole-notebook fallback, not the "
+                         "solution cell on its own")
+
+
 class Stub(unittest.TestCase):
     def test_comments_only_is_a_stub(self):
         self.assertTrue(tn.is_stub(cell("# TODO 1 / TAREA 1\n#\n# EN: do it\n")))
@@ -190,6 +210,43 @@ class ColabParity(unittest.TestCase):
 
 
 # ── reading a kernel's results ───────────────────────────────────────────────
+
+class ColabGuardScope(unittest.TestCase):
+    """The guard must belong to the import, not merely share a cell with one."""
+
+    def test_real_guard_passes(self):
+        self.assertEqual(parity("try:\n"
+                                "    from google.colab import output\n"
+                                "except ImportError:\n"
+                                "    output = None\n"), [])
+
+    def test_bare_import_fails(self):
+        self.assertEqual(len(parity("from google.colab import output\n")), 1)
+
+    def test_unrelated_try_and_except_do_not_vouch_for_it(self):
+        """The case the unscoped check waved through.
+
+        An earlier try/except ValueError and a later except ImportError, with a
+        genuinely bare import between them: every substring the old test looked
+        for is present, and the import still raises on a non-Colab kernel.
+        """
+        found = parity("try:\n"
+                       "    x = 1\n"
+                       "except ValueError:\n"
+                       "    pass\n"
+                       "from google.colab import output\n"
+                       "try:\n"
+                       "    y = 2\n"
+                       "except ImportError:\n"
+                       "    pass\n")
+        self.assertEqual(len(found), 1)
+
+    def test_try_without_an_except_fails(self):
+        self.assertEqual(len(parity("try:\n"
+                                    "    from google.colab import output\n"
+                                    "finally:\n"
+                                    "    pass\n")), 1)
+
 
 class Outputs(unittest.TestCase):
     def test_stdout_joins_streams_and_results(self):

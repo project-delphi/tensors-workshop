@@ -178,6 +178,10 @@ jobs:
   # defends and parity with it is the point.
   notebooks:
     runs-on: ubuntu-latest
+    # Fourteen notebooks at a 300s cell ceiling, plus pip and dataset fetches.
+    # A healthy run is minutes; without this a stalled kernel would sit on a
+    # runner until GitHub's six-hour default killed it.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -199,6 +203,12 @@ jobs:
         # The runner executes in memory and never writes back. If that ever
         # regresses, notebooks/ drifts and the byte-exact regenerate gate in
         # `render` would fail later with a confusing message; catch it here.
+        #
+        # always(), because this is the only step that would report WHY a
+        # notebook changed. Skipping it whenever the run above fails hides the
+        # drift behind the route failure, which is the confusion it exists to
+        # prevent.
+        if: always()
         run: |
           DRIFT=$(git status --porcelain -- notebooks)
           if [ -n "$DRIFT" ]; then
