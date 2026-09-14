@@ -70,6 +70,15 @@ why sections 07, 10 and 12 all name it out loud.
 5. **Closing** — that section's Kahoot check, and a link back to the site. An
    extra has no Kahoot, so its closing is the next deep dive and the site links.
 
+Every notebook also carries **one animation**, in the explanation section: a
+small numbered cube performing the move that section teaches, drawn by
+`scripts/gen_cube_gifs.py` and served from the published site. It is an
+absolute URL because a notebook on Colab has no checkout to resolve a relative
+path against, which means a reader needs the network to *see* it — not to run
+anything. The five notebooks the deps table calls network-free still compute
+without a connection. Check 1 in `scripts/check_links.py` verifies that every
+one of those URLs names a file in `images/`, and that it has alt text.
+
 ## No outputs, no execution counts
 
 Committed deliberately clean, so every number a student sees is one they

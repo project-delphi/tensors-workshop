@@ -98,6 +98,15 @@ NB_REF_RE = re.compile(
     rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
     rf"{re.escape(REPO['branch'])}/)?notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)")
 
+# Images a notebook embeds from the published site. They have to be absolute
+# URLs -- a notebook opened in Colab has no checkout to resolve `images/...`
+# against -- which is exactly what puts them out of reach of every other
+# check here.
+NB_IMG_RE = re.compile(
+    rf"{re.escape(REPO['site'])}/images/([A-Za-z0-9._-]+)")
+IMG_TAG_RE = re.compile(r"<img\b[^>]*>")
+ALT_RE = re.compile(r'alt="([^"]*)"')
+
 # The ML blog posts both decks and the two deep dives link to. These are the
 # only external URLs in the deck, and nothing here fetches them — the checker
 # is offline by design, and whether a post is still published is a manual
@@ -300,7 +309,7 @@ def check_notebooks() -> None:
         nbformat = None
         print("      nbformat unavailable — structural checks only")
 
-    n_refs = 0
+    n_refs = n_imgs = 0
     for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         path = NBDIR / name
@@ -345,6 +354,23 @@ def check_notebooks() -> None:
             n_refs += 1
             if not (NBDIR / target).exists():
                 fail(f"{name}: links notebooks/{target}, which does not exist")
+        # Images a notebook embeds, for the same reason as the links above and
+        # then some: check 3 never sees them (a notebook is copied, not
+        # rendered), and it skips external http(s) URLs anyway -- which these
+        # have to be, because a notebook on Colab has no repo checkout to
+        # resolve a relative path against. So nothing else would catch a
+        # typo'd filename, and the reader meets it as a broken image.
+        shown = sorted(set(NB_IMG_RE.findall(body)))
+        n_imgs += len(shown)
+        for target in shown:
+            if not (ROOT / "images" / target).exists():
+                fail(f"{name}: shows images/{target}, which does not exist")
+        if len(shown) != 1:
+            fail(f"{name}: shows {len(shown)} images from the site, expected 1 "
+                 f"-- every notebook carries one cube animation")
+        for alt in IMG_TAG_RE.findall(body):
+            if not ALT_RE.search(alt) or not ALT_RE.search(alt).group(1).strip():
+                fail(f"{name}: an <img> has no alt text")
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
     for e in sorted(unknown):
@@ -354,6 +380,7 @@ def check_notebooks() -> None:
           f"{len(EXTRAS)} extras): valid, no outputs, no execution counts, "
           f"badges self-consistent")
     print(f"      {n_refs} links from one notebook to another, all resolving")
+    print(f"      {n_imgs} site images embedded, all present with alt text")
 
 
 # ── docs/ serves the notebooks that are committed ────────────────────────────

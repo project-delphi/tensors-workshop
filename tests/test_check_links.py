@@ -86,6 +86,15 @@ def badge_cell(name):
                 kind="markdown", cid="hdr")
 
 
+CUBE = "cube-00-x.gif"
+
+
+def cube_cell(gif=CUBE, alt="A cube animation.", cid="cube"):
+    """The one site image every notebook carries, as check 1 wants."""
+    return cell(f'<img src="{cl.REPO["site"]}/images/{gif}" alt="{alt}">',
+                kind="markdown", cid=cid)
+
+
 def section(n, slug):
     return {"n": n, "slug": slug}
 
@@ -107,6 +116,8 @@ def tree():
         root = Path(folder)
         (root / "notebooks").mkdir()
         (root / "docs").mkdir()
+        (root / "images").mkdir()
+        (root / "images" / CUBE).write_bytes(b"GIF89a")
         yield root, root / "notebooks", root / "docs"
 
 
@@ -209,21 +220,53 @@ class SolutionIndependence(unittest.TestCase):
 # ── check 1: the notebooks themselves ────────────────────────────────────────
 
 class Notebooks(unittest.TestCase):
-    def notebooks(self, nbdir, sections):
-        return run(cl.check_notebooks, NBDIR=nbdir, NOTEBOOKS=sections,
-                   SECTIONS=sections, EXTRAS=[])
+    def notebooks(self, nbdir, sections, root=None):
+        # ROOT as well as NBDIR: the embedded-image check resolves `images/`
+        # against the repository root, not against the notebooks directory.
+        return run(cl.check_notebooks, ROOT=root or nbdir.parent, NBDIR=nbdir,
+                   NOTEBOOKS=sections, SECTIONS=sections, EXTRAS=[])
 
     def test_clean_notebook_passes(self):
         with tree() as (_, nbdir, _docs):
             write_nb(nbdir, "00-x.ipynb",
-                     notebook(badge_cell("00-x.ipynb"), cell("x = 1")))
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("x = 1")))
             with self.notebooks(nbdir, [section("00", "x")]) as failures:
                 self.assertEqual(failures, [])
+
+    def test_missing_embedded_image_fails(self):
+        # The image lives at an absolute site URL, so check 3 never resolves
+        # it and check 2 never sees it. This is the only thing that would.
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"),
+                              cube_cell(gif="cube-00-typo.gif"), cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("cube-00-typo.gif" in f and
+                                    "does not exist" in f for f in failures),
+                                failures)
+
+    def test_notebook_without_an_image_fails(self):
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("expected 1" in f for f in failures),
+                                failures)
+
+    def test_image_without_alt_text_fails(self):
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(alt="  "),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("no alt text" in f for f in failures),
+                                failures)
 
     def test_committed_outputs_fail(self):
         with tree() as (_, nbdir, _docs):
             write_nb(nbdir, "00-x.ipynb", notebook(
-                badge_cell("00-x.ipynb"),
+                badge_cell("00-x.ipynb"), cube_cell(),
                 cell("x = 1", cid="out",
                      outputs=[{"output_type": "stream", "name": "stdout",
                                "text": ["1\n"]}])))
@@ -270,7 +313,8 @@ class Notebooks(unittest.TestCase):
     def test_notebook_declared_nowhere_fails(self):
         with tree() as (_, nbdir, _docs):
             write_nb(nbdir, "00-x.ipynb",
-                     notebook(badge_cell("00-x.ipynb"), cell("x = 1")))
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("x = 1")))
             write_nb(nbdir, "99-stray.ipynb",
                      notebook(badge_cell("99-stray.ipynb"), cell("x = 1")))
             with self.notebooks(nbdir, [section("00", "x")]) as failures:
@@ -315,7 +359,8 @@ class ServedNotebooks(unittest.TestCase):
     def test_missing_served_copy_fails(self):
         with tree() as (_, nbdir, docs):
             write_nb(nbdir, "00-x.ipynb",
-                     notebook(badge_cell("00-x.ipynb"), cell("x = 1")))
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("x = 1")))
             (docs / "notebooks").mkdir()
             with self.served(nbdir, docs, [section("00", "x")]) as failures:
                 self.assertTrue(any("is missing" in f for f in failures),

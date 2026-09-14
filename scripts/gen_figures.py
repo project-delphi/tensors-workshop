@@ -39,7 +39,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from gen_thumbnails import ACCENT, INK, IMAGES, VIDEO_SHA256, VIDEO_URL, get
+from gen_thumbnails import (ACCENT, INK, IMAGES, VIDEO_SHA256, VIDEO_URL,
+                            canvas_to_pil, get, write_gif)
 
 # Seaborn's "deep" red, which is what the bars in the existing
 # `nyc-taxi-pickups-by-hour.png` are drawn in. Reusing it exactly keeps the new
@@ -396,8 +397,6 @@ def hero_frame(arrays, rungs_shown: int = 5, partial: float = 1.0):
     `rungs_shown` and `partial` exist for the animation: rungs arrive one at a
     time, the newest fading in, which is the order the workshop meets them in.
     """
-    from PIL import Image
-
     plt = mpl()
     fig = plt.figure(figsize=(HERO[0] / 100, HERO[1] / 100), dpi=100)
     draws = rungs_for(arrays, annotate=False)
@@ -412,10 +411,7 @@ def hero_frame(arrays, rungs_shown: int = 5, partial: float = 1.0):
             ax.add_patch(plt.Rectangle((0, 0), 1, 1, facecolor=PAPER,
                                        alpha=1.0 - partial, zorder=99))
 
-    fig.canvas.draw()
-    img = Image.frombuffer(
-        "RGBA", fig.canvas.get_width_height(),
-        fig.canvas.buffer_rgba(), "raw", "RGBA", 0, 1).convert("RGB")
+    img = canvas_to_pil(fig)
     plt.close(fig)
     return img
 
@@ -717,7 +713,6 @@ def gif_video_stack(arrays) -> Path:
     them apart costs no memory.
     """
     import numpy as np
-    from PIL import Image
 
     frames = [f[::3, ::3] for f in arrays["clip"][:STRIP]]     # 180x320
     perm = _shuffled(STRIP)
@@ -738,21 +733,13 @@ def gif_video_stack(arrays) -> Path:
                 spine.set_linewidth(1.6)
             ax.set_title(label, fontsize=13, color=tint, family="monospace",
                          pad=7)
-        fig.canvas.draw()
-        out_frames.append(Image.frombuffer(
-            "RGBA", fig.canvas.get_width_height(),
-            fig.canvas.buffer_rgba(), "raw", "RGBA", 0, 1).convert("RGB"))
+        out_frames.append(canvas_to_pil(fig))
         plt.close(fig)
 
-    pal = out_frames[0].quantize(colors=96, method=2)
-    quant = [f.quantize(palette=pal, dither=0) for f in out_frames]
-
-    # `disposal=1`, and no optimizer, for the reason `gif_hero` gives: cropped
-    # difference frames render wrong in Chrome.
-    out = IMAGES / "fig-video-stack.gif"
-    quant[0].save(out, "GIF", save_all=True, append_images=quant[1:],
-                  duration=260, loop=3, disposal=1, optimize=False)
-    report(out, f"{len(quant)} frames, {quant[0].size[0]}x{quant[0].size[1]}")
+    out = write_gif(out_frames, IMAGES / "fig-video-stack.gif",
+                    duration=260, loop=3, colors=96)
+    report(out, f"{len(out_frames)} frames, "
+                f"{out_frames[0].size[0]}x{out_frames[0].size[1]}")
     return out
 
 
