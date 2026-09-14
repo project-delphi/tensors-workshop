@@ -309,7 +309,7 @@ def check_notebooks() -> None:
         nbformat = None
         print("      nbformat unavailable — structural checks only")
 
-    n_refs = n_imgs = 0
+    n_refs = n_imgs = n_maths = 0
     for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         path = NBDIR / name
@@ -365,12 +365,26 @@ def check_notebooks() -> None:
         for target in shown:
             if not (ROOT / "images" / target).exists():
                 fail(f"{name}: shows images/{target}, which does not exist")
-        if len(shown) != 1:
-            fail(f"{name}: shows {len(shown)} images from the site, expected 1 "
-                 f"-- every notebook carries one cube animation")
+        # Ownership, not a count. This was `len(shown) != 1` while a notebook
+        # carried one animation, and a count stopped being the useful question
+        # the moment a notebook carried two: what matters is that the
+        # animations a notebook shows are the ones drawn for it. `cube-NN-`
+        # is the prefix `gen_cube_gifs.SCENES` gives every stem, so a wrong
+        # number in a pasted URL -- the likeliest mistake by far, since these
+        # cells are copied between notebooks -- is caught by name.
+        own = {t for t in shown if t.startswith(f"cube-{name[:2]}-")}
+        if not own:
+            fail(f"{name}: shows no cube animation of its own "
+                 f"-- expected at least one images/cube-{name[:2]}-*")
+        stray = sorted(t for t in shown
+                       if t.startswith("cube-") and t not in own)
+        if stray:
+            fail(f"{name}: shows another notebook's animation: "
+                 f"{', '.join(stray)}")
         for alt in IMG_TAG_RE.findall(body):
             if not ALT_RE.search(alt) or not ALT_RE.search(alt).group(1).strip():
                 fail(f"{name}: an <img> has no alt text")
+        n_maths += check_notebook_maths(nb, name)
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
     for e in sorted(unknown):
@@ -380,7 +394,58 @@ def check_notebooks() -> None:
           f"{len(EXTRAS)} extras): valid, no outputs, no execution counts, "
           f"badges self-consistent")
     print(f"      {n_refs} links from one notebook to another, all resolving")
-    print(f"      {n_imgs} site images embedded, all present with alt text")
+    print(f"      {n_imgs} site images embedded, all present with alt "
+          f"text, each a cube animation of the notebook showing it")
+    print(f"      {n_maths} display-maths blocks, balanced and in plain "
+          f"markdown")
+
+
+def check_notebook_maths(nb, name) -> int:
+    """Display maths must be balanced, and must not sit inside another block.
+
+    Two failures, both of which shipped before this existed. A `$$` opened and
+    never closed swallows the rest of the cell. And an equation dropped into
+    the middle of a blockquote splits it in two, so a `**` that opened before
+    the equation closes after it and the reader gets literal asterisks -- which
+    is what happened to notebook 06's "sentence to remember".
+
+    A raw HTML block is the third case and the reason the rule exists at all:
+    nothing inside a `<div>` is parsed as markdown, so GitHub will not typeset
+    an equation written into the Spanish box -- it ships as dollar signs.
+    """
+    count = 0
+    for cell in nb["cells"]:
+        if cell.get("cell_type") != "markdown":
+            continue
+        text = "".join(cell.get("source", []))
+        if "$$" not in text:
+            continue
+        lines = text.split("\n")
+        opens = [i for i, line in enumerate(lines) if line.strip() == "$$"]
+        if text.count("$$") % 2:
+            fail(f"{name}: cell {cell.get('id')} has an unclosed $$")
+        if len(opens) != text.count("$$"):
+            fail(f"{name}: cell {cell.get('id')} has a $$ sharing a line with "
+                 f"other text -- put it on its own line")
+        count += text.count("$$") // 2
+        for i in opens:
+            head = "\n".join(lines[:i])
+            if head.count("<div") != head.count("</div>"):
+                fail(f"{name}: cell {cell.get('id')} has display maths inside "
+                     f"a raw HTML block, where it will not be typeset")
+            before = next((x for x in reversed(lines[:i]) if x.strip()), "")
+            # Find the closing fence the same way the opening one was found --
+            # by stripping. `lines.index("$$", ...)` matches the exact string,
+            # so a block indented under a list item ("  $$") was detected as
+            # open and then not found as closed, and the checker died with a
+            # ValueError instead of reporting anything at all.
+            j = next((n for n, x in enumerate(lines[i + 1:], i + 1)
+                      if x.strip() == "$$"), len(lines) - 1)
+            below = next((x for x in lines[j + 1:] if x.strip()), "")
+            if before.startswith(">") and below.startswith(">"):
+                fail(f"{name}: cell {cell.get('id')} has display maths inside "
+                     f"a blockquote, which splits it in two")
+    return count
 
 
 # ── docs/ serves the notebooks that are committed ────────────────────────────

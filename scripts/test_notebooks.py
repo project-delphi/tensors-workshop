@@ -20,7 +20,11 @@ execute the setup cells and then a comment.
 The code that actually demonstrates the lesson is the `solution`-tagged cell
 answering the activity, so a run is:
 
-    prep cells  ->  activity (asserted to stay a clean no-op)  ->  paired solution
+    prep + declared feedback helpers -> activity -> paired solution
+
+Feedback helpers are called by the paired solutions; focused unit tests also
+exercise plausible wrong learner results. The activity remains a blank TODO
+where the lesson expects the learner to write code.
 
 All fourteen of those sets are self-contained; none needs an intervening cell.
 Notebooks whose route holds no executable code at all fall back to running
@@ -61,7 +65,7 @@ ROOT = Path(__file__).resolve().parent.parent
 NBDIR = ROOT / "notebooks"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_teaching_materials import route_of, workshop_meta  # noqa: E402
+from check_teaching_materials import route_of, support_of, workshop_meta  # noqa: E402
 
 # Matplotlib must not try to open a window: this runs headless on a CI runner
 # and on a developer's Mac. Set before any kernel inherits the environment.
@@ -284,6 +288,7 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
     # cell with none of its setup -- a NameError that reads as a broken
     # notebook rather than a broken run set.
     route_has_code = bool(chosen)
+    support = support_of(nb, label)
 
     paired = None
     for j in range(at + 1, min(at + 3, len(cells))):
@@ -328,6 +333,8 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
             chosen = [i for i, c in enumerate(cells)
                       if c.get("cell_type") == "code"]
 
+    # Explicit fallback run sets also exercise their declared feedback helpers.
+    chosen.extend(ids.index(cid) for cid in support)
     return sorted(set(chosen)), activity, paired
 
 

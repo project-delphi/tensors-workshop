@@ -40,6 +40,7 @@ notebooks = [
   "scikit-learn>=1.4",
   "scikit-image>=0.22",
   "scipy>=1.11",
+  "pillow>=10.2",
   "jupyterlab>=4.1",
 # END notebooks-group
 ]
@@ -52,11 +53,12 @@ site = [
   "nbformat>=5.10",
 ]
 
-# The test suite. NumPy is here for the tiny worked counterexamples in
-# tests/test_teaching_materials.py, not for the notebooks.
+# The test suite. NumPy drives the tiny worked counterexamples and feedback
+# tests; SciPy checks convolution feedback against real convolution routines.
 test = [
   {include-group = "site"},
   "numpy>=1.26",
+  "scipy>=1.11",
 ]
 
 # The image generators. Network and a scientific stack, which is why CI does

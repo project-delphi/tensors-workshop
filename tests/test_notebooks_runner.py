@@ -67,6 +67,31 @@ def parity(source):
 # ── choosing what to execute ─────────────────────────────────────────────────
 
 class RunSet(unittest.TestCase):
+    def test_feedback_runs_before_attempt_and_solution(self):
+        nb = notebook(
+            cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),
+            cell("def check_answer(answer): pass\n", cid="feedback", tags=["workshop-support"]),
+            cell("# TODO\n", cid="act", tags=["workshop-core-activity"]),
+            cell("check_answer(42)\n", cid="sol", tags=["solution"]),
+            prep=["prep-1"])
+        nb["cells"][1]["metadata"]["workshop"]["support"] = ["feedback"]
+        chosen, _, paired = tn.run_set(nb, "fixture")
+        self.assertEqual([nb["cells"][i]["id"] for i in chosen],
+                         ["prep-1", "feedback", "act", "sol"])
+        self.assertEqual(paired, "sol")
+
+    def test_feedback_does_not_suppress_code_free_fallback(self):
+        nb = notebook(
+            cell("def check_answer(answer): pass\n", cid="feedback", tags=["workshop-support"]),
+            cell("## Core activity\n", kind="markdown", cid="act"),
+            cell("setup()\n", cid="setup"),
+            cell("check_answer(42)\n", cid="answer"))
+        nb["cells"][1]["metadata"]["workshop"]["support"] = ["feedback"]
+        nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", "answer"]
+        chosen, _, _ = tn.run_set(nb, "fixture")
+        self.assertEqual([nb["cells"][i]["id"] for i in chosen],
+                         ["feedback", "setup", "answer"])
+
     def test_prep_activity_and_paired_solution(self):
         nb = notebook(
             cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),

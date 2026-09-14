@@ -1,5 +1,16 @@
 # Changelog
 
+## 2026-09-14
+
+- Added brief retrieval prompts, graduated hints, and independent numerical feedback to notebook core activities, with matching English and Spanish instructions.
+- Put convolution predictions before their explanations, added a required SVD-to-Tucker bridge, and supplied partial-code support for the CP/Tucker comparison.
+- Added individual broadcasting and contraction checkpoints and facilitator keys within the existing 210-minute agenda.
+- The animations in each notebook now loop continuously instead of stopping after a few passes, and run at half speed; a folded cell beneath them steps through the frames one at a time.
+- Every notebook carries a second animation. Broadcasting is now drawn as a matrix and a vector, with the repeated rows shown as the copies NumPy never stores, and the einsum animations give each index its own colour.
+- Equations appear as typeset mathematics beside the code that implements them, each with a plain-English reading.
+- Colour images show each RGB channel in its own colour rather than in grey, and notebooks 03 and 10 show the table the data came from before it becomes an array.
+- The predict-first questions list their options one per line and set the revealed answer in readable type.
+
 ## 2026-09-11
 
 - The home page opens on a full-width hero: the tensor diagram now runs from a scalar through a vector, a matrix and a 3D tensor to a neural network, with each stage labelled by its NumPy shape.

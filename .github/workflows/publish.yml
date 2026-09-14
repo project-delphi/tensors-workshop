@@ -48,9 +48,8 @@ jobs:
 
       # Dependencies come from the groups in pyproject.toml, so CI runs exactly
       # the commands CONTRIBUTING and the release checklist give a human. The
-      # scientific stack is in neither group used here: Quarto never executes
-      # the notebooks, and NumPy is present only for the tiny teaching
-      # counterexamples in tests/.
+      # notebook stack is not installed here: Quarto never executes notebooks.
+      # NumPy and SciPy exercise small teaching examples and feedback tests.
 
       - name: Regenerate derived files
         # Pure Python and deterministic, so this one CAN be byte-exact: it

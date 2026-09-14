@@ -6,7 +6,7 @@ import re
 import tempfile
 import unittest
 
-from scripts.check_teaching_materials import ROOT, anchors, check_links, check_route, check_tasks
+from scripts.check_teaching_materials import ROOT, anchors, check_links, check_route, check_tasks, support_of
 
 
 class Links(unittest.TestCase):
@@ -59,6 +59,49 @@ class Routes(unittest.TestCase):
                     c["source"] = [s.replace("Predice → Ejecuta → Explica → Comprueba", "") for s in c["source"]]
             with self.subTest(mode=mode), self.assertRaises(ValueError):
                 check_route(nb, "fixture")
+
+
+class FeedbackRoutes(unittest.TestCase):
+    def fixture(self):
+        return {"cells": [
+            {"id": "route", "cell_type": "markdown", "source": "<!-- CORE-PATH -->",
+             "metadata": {"workshop": {"prep": [], "activity": "act", "support": ["feedback"]}}},
+            {"id": "feedback", "cell_type": "code", "source": "def check_answer(x): pass",
+             "metadata": {"tags": ["workshop-support"]}},
+            {"id": "act", "cell_type": "code", "source": "# TODO", "metadata": {}},
+        ]}
+
+    def test_valid_feedback(self):
+        self.assertEqual(support_of(self.fixture(), "fixture"), ["feedback"])
+
+    def test_invalid_feedback_declarations(self):
+        for mode in ("missing", "duplicate", "not-list", "not-id", "solution", "markdown",
+                     "untagged", "undeclared", "after", "overlap"):
+            nb = self.fixture()
+            route = nb["cells"][0]["metadata"]["workshop"]
+            feedback = nb["cells"][1]
+            if mode == "missing":
+                route["support"] = ["absent"]
+            elif mode == "duplicate":
+                route["support"] *= 2
+            elif mode == "not-list":
+                route["support"] = "feedback"
+            elif mode == "not-id":
+                route["support"] = [{}]
+            elif mode == "solution":
+                feedback["metadata"]["tags"].append("solution")
+            elif mode == "markdown":
+                feedback["cell_type"] = "markdown"
+            elif mode == "untagged":
+                feedback["metadata"]["tags"] = []
+            elif mode == "undeclared":
+                route["support"] = []
+            elif mode == "after":
+                nb["cells"][1:] = reversed(nb["cells"][1:])
+            elif mode == "overlap":
+                route["prep"] = ["feedback"]
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                support_of(nb, "fixture")
 
 
 class Tasks(unittest.TestCase):

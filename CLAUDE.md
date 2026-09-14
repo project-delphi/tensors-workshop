@@ -41,7 +41,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
-| `images/cube-*.gif` (one per notebook) | `scripts/gen_cube_gifs.py` |
+| `images/cube-*.gif` (two per notebook) | `scripts/gen_cube_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -106,17 +106,63 @@ What each one draws, and from where:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
-- `gen_cube_gifs.py` draws the fourteen cube animations the notebooks embed,
-  one per notebook, in that notebook's own accent from `gen_notebooks.ACCENTS`.
+- `gen_cube_gifs.py` draws the twenty-eight cube animations the notebooks
+  embed, **two per notebook**, in that notebook's own accent from
+  `gen_notebooks.ACCENTS`. The first draws the move the section is named after;
+  the second a move it needs and the first has no room for. `SCENES` holds them
+  as a list per notebook, and every stem keeps the `cube-NN-` prefix, which is
+  what check 1 reads to tell a notebook's own animation from another
+  notebook's pasted into it.
+
   It is the one generator whose arrays are **not** real data, and it says so at
   the top: these cubes are `np.arange`, because the lesson is index arithmetic
-  and `T[1, 2, 3] == 23` has to be checkable by eye. Two constraints shape
+  and `T[1, 2, 3] == 33` has to be checkable by eye. Two constraints shape
   every scene. Nothing on the images is prose — every caption is an expression
   or a shape, which reads the same in both languages, so one GIF serves EN and
   ES and there is no second asset to keep in step. And every frame is a
   complete picture, because `fig_hero` already recorded what a build animation
   does: Chrome parks on frame 0 at the end of a finite loop, which in a
   build-from-empty is the emptiest frame there is.
+
+  They **loop forever** (`loop=0`), which is a correction, not a preference.
+  At `loop=3` a browser started the animation when the image loaded rather
+  than when it scrolled into view, so it played out to an empty room and a
+  reader arriving at the cell met a parked frame 0 — a still, indistinguishable
+  from a broken image, which is exactly how it was reported. No finite loop
+  count survives that; it is a race against how fast somebody scrolls. The
+  other two GIFs in the repo (`gen_figures.gif_video_stack` and the hero band)
+  still carry `loop=3` and have the same flaw waiting in them.
+
+  Two things about a scene are not decidable by reading its code, so
+  `_check_layout` measures them after a draw and refuses the frame: the `sub`
+  and `note` captions share one baseline at opposite ends of it and a long pair
+  prints through itself, and a pile tall enough for its own shape grows up
+  through the label, because `centred` centres on the caption band without
+  asking how much band there is. Both were found by shipping them. A third trap
+  it cannot catch is occlusion: the planes are painted front-last and cover
+  exactly, so `lit` on a cell of plane 1 or 2 highlights something plane 0 is
+  painted over, and the frame comes out with nothing visibly selected. Light
+  plane 0, or `hide` what is in front.
+
+  **One accent per notebook is the default, not the whole palette.** The rule
+  exists so a reader can tell which notebook a screenshot came from, and that
+  survives as long as the accent is what ordinary data is drawn in. A second
+  colour appears only where the picture is making a claim about *identity* —
+  which axis, which index, which operand — because that is a claim one tint
+  cannot carry. `INDEX` holds those hues, from the Okabe–Ito colour-blind-safe
+  set, and `lit_tint` on `planes` is how a highlight takes one. Today that is
+  the two einsum scenes (`i` blue, `j` orange, `k` green, so "k is gone after
+  the arrow" is something a reader watches rather than reads), `cube-00-axes`
+  and `cube-10-unfold`, which agree with each other on what colour each axis
+  is. Colour is never the only carrier: every index is written out as a letter
+  and every caption still says which axis in words, for the reason the Spanish
+  box says `ESPAÑOL` rather than just being grey.
+
+  Frames run at `duration=1800`, one global value in `render` rather than a
+  per-scene one. A frame here is a whole labelled picture with a caption and a
+  shape line, not a tween, and the stepper cell in each notebook is the other
+  half of that answer — the GIF sets a pace for a reader watching, the stepper
+  hands over frames for a reader studying.
 - `gen_slide_art.py` draws slide art from HTML and CSS, screenshotted by
   headless Chrome at the deck's own 1920×1080. It owns only the `slide-NNa`
   insertions: the thirty-one PNGs the #45 redesign left have no source and are
@@ -343,6 +389,24 @@ A styled `<div>` is a raw HTML block, so nothing inside one is parsed as
 markdown: `**bold**` written there reaches the reader as asterisks. Use
 `<b>`, `<code>` and `<ul>` inside a box.
 
+**Equations are display maths in plain markdown, and never inside a box.** That
+same rule -- a raw HTML block is not parsed as markdown -- is why: GitHub will
+not typeset `$$...$$` inside a `<div>`, so an equation written in the Spanish
+box silently ships as dollar signs. Put it in the markdown body, on its own
+lines, with a blank line either side.
+
+One copy serves both languages, for the reason the cube animations give: an
+equation reads the same in English and in Spanish. What gets translated is the
+plain-English sentence under it, and there should always be one -- the maths
+restates the code, it never replaces the explanation.
+
+Two things about the notation are decided by the renderer rather than by taste.
+Multi-letter names are `\mathrm{ndim}`, not `\texttt{ndim}`: MathJax spaces
+`\texttt` as though each letter were a variable, so `ndim` comes out as
+"ndi m", and `\text{\texttt{...}}` is worse -- text mode does not define
+`\texttt` and the macro ships to the reader literally. A code identifier
+belongs in backticks in the prose, not in maths at all.
+
 `gen_notebooks.py` owns the vocabulary — `rule()`, `eyebrow()`, `es_box()` and
 one accent per notebook from `ACCENTS` — and spends it on the header and footer
 it generates. Body cells repeat the same inline styles by hand, because a body
@@ -357,6 +421,35 @@ cell folded:
 |---|---|---|
 | `solution` | an answer the reader should not see yet | **applies** — no visible cell may depend on a name only a solution binds, because a reader may never open one |
 | `plumbing` | widget and plotting scaffolding whose output is the lesson and whose source is noise | does not apply — the cell is meant to be run, and folding hides its source, not its execution |
+
+**The predict-first cells are the one place a `<style>` block is allowed.** The
+markdown rule above exists because Colab strips `<style>` from a markdown cell;
+it does not strip it from a cell's *output*, which is the path pandas' own
+`Styler` uses. ipywidgets exposes no way to set the space between radio options
+from Python, so the predict cell ships a `<style>` scoped to a class it adds
+itself, and the options still work if it is ever dropped. Do not copy this into
+a markdown cell, where it would do nothing at all.
+
+Those cells present the answer through `pred_panel`, which catches what
+`check_prediction` prints and lays it out: readings in monospace rows, sentences
+in prose type, and space between the two. The words are unchanged -- the check
+still just prints -- so an edit to the reveal is an ordinary edit to a `print`.
+`EN` and `ES` stay written out as tags rather than becoming a colour, for the
+reason the Spanish box says `ESPAÑOL` in words.
+
+**The frame stepper is `plumbing`, and it is the one cell no route runs.** Every
+notebook carries one under its two animations: a GIF cannot be paused, and at
+the end of a finite loop the browser goes back to frame 0, so the stepper
+fetches the same frames and hands them over one at a time. Two constraints are
+not style. It renders into a `widgets.Image`, **never** a `widgets.Output` —
+this file already records what a payload leaving an `Output` does to nbclient,
+and the stepper's whole job is to move images. And it is in no route and no
+`ci_cells`, so `test_notebooks.py` never executes it, deliberately: it is what
+a reader reaches for rather than something the lesson depends on, and the
+widget sweep has no business driving a control whose every change ships a PNG.
+The cost is that a broken stepper would ship, so check it in Colab by hand when
+you touch it. It catches its own network failure and says so in both languages,
+because a reader offline should meet a sentence, not a traceback.
 
 ## Extras: notebooks that are not sections
 
@@ -465,8 +558,11 @@ existing notebook, **and every link from one notebook to another names an
 reaches `docs/` as a verbatim copy rather than a rendered page, which is how
 notebook 01 spent months linking two files that had never existed; **and every
 image a notebook embeds from the site names a file in `images/`, with alt text,
-exactly one per notebook** — out of reach of check 3 for the same copied-not-
-rendered reason, and doubly so because those URLs must be absolute (a notebook
+and is one of that notebook's own `cube-NN-*` animations** — ownership rather
+than a count, because a count stopped being the useful question the moment a
+notebook carried two, and because the likeliest mistake by far is a cube cell
+copied between notebooks with the number left alone; out of reach of check 3
+for the same copied-not-rendered reason, and doubly so because those URLs must be absolute (a notebook
 on Colab has no checkout to resolve a relative path against) and check 3 skips
 external URLs; both decks carry every section anchor; the EN and ES
 notebooks pages list the same thirteen sections (extras appear in neither, by

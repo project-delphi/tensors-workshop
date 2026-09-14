@@ -73,3 +73,35 @@ a take-home chosen by interest.
 Do not treat score differences as a causal measure of workshop impact.
 
 </details>
+
+## Checkpoints during the lesson
+
+<a id="in-section-checkpoints"></a>
+
+<span data-language-key="in-section-checkpoints"></span>
+
+Use the final minute of the core activities in Notebooks 03 and 06 for these
+individual, closed-solution checks. They replace part of the activity's
+explain/check time; they do not add questions or time to the five-minute exit.
+Collect the first attempt before discussion or revealing the key.
+
+| Notebook | Independent prompt |
+|---|---|
+| 03 · Broadcasting | `X.shape == (3, 2)` and per-sample offsets `b.shape == (3,)`. Does `X - b` work? Write the corrected expression and output shape. Explain which axis repeats. |
+| 06 · Contraction | `S.shape == (2, 3, 4)` means batch, time, feature; `w.shape == (4,)`. Write an `einsum` that retains batch and time. Give the shape and contracted index. What changes with `'ntf,f->n'`? |
+
+<details>
+<summary>Checkpoint key and next teaching step · reveal after collection</summary>
+
+| Check | Evidence for 2 points | If incomplete, revisit |
+|---|---|---|
+| Broadcasting | `X - b` fails: trailing lengths 2 and 3 conflict. `X - b[:, None]` has shape `(3, 2)`; one offset per sample repeats across feature columns. | Align `(3, 2)` and `(3, 1)` on paper, label sample and feature, then retry with different dimensions. |
+| Contraction | `np.einsum('ntf,f->nt', S, w)` gives `(2, 3)` and sums `f`. `'ntf,f->n'` also sums time `t`, giving `(2,)`. | Cross out indices absent from the output, name the information each reduction removes, then retry a new output signature. |
+
+Record each checkpoint separately: **0** = missing or wrong operation;
+**1** = correct operation with an incomplete shape or axis explanation;
+**2** = all evidence in the table. Use 0–1 to choose the follow-up, then ask
+for another independent attempt. Keep these formative scores separate from
+the entry/exit comparison.
+
+</details>

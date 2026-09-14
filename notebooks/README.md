@@ -8,8 +8,11 @@ plus one take-home deep dive, numbered 13, that is **not** a section.
 *cada encabezado lleva un resumen en español.*
 
 Each notebook marks a **core path**, optional work, two outcomes, and a
-`predict → run → explain → check` activity. Run **Core prep** in order, then
-jump to **Core activity**. Facilitators can combine
+`predict → run → explain → check` activity. Follow the core route's short
+reading prompts, run **Core prep** in order and any feedback helper, then
+jump to **Core activity**. Try before opening the graduated hints; call the
+feedback helper with your own result before revealing a solution. Notebook 09
+ends its core route with a required SVD-to-Tucker bridge. Facilitators can combine
 these with the [group task library](../group-tasks.md) and
 [run sheet](../facilitator-guide.md).
 
@@ -70,14 +73,22 @@ why sections 07, 10 and 12 all name it out loud.
 5. **Closing** — that section's Kahoot check, and a link back to the site. An
    extra has no Kahoot, so its closing is the next deep dive and the site links.
 
-Every notebook also carries **one animation**, in the explanation section: a
-small numbered cube performing the move that section teaches, drawn by
-`scripts/gen_cube_gifs.py` and served from the published site. It is an
-absolute URL because a notebook on Colab has no checkout to resolve a relative
-path against, which means a reader needs the network to *see* it — not to run
+Every notebook also carries **two animations**, in the explanation section:
+small numbered cubes performing the moves that section teaches, drawn by
+`scripts/gen_cube_gifs.py` and served from the published site. They are
+absolute URLs because a notebook on Colab has no checkout to resolve a relative
+path against, which means a reader needs the network to *see* them — not to run
 anything. The five notebooks the deps table calls network-free still compute
 without a connection. Check 1 in `scripts/check_links.py` verifies that every
-one of those URLs names a file in `images/`, and that it has alt text.
+one of those URLs names a file in `images/`, that it has alt text, and that it
+is one of that notebook's own `cube-NN-*` animations rather than another
+notebook's.
+
+Under them sits a folded **frame stepper**: a GIF cannot be paused, and after
+its last loop the browser goes back to showing frame 0, so the stepper fetches
+the same frames and hands them over one at a time. It is plumbing, it needs the
+network like the images do, and it says so rather than raising when there is
+none.
 
 ## No outputs, no execution counts
 
@@ -101,8 +112,11 @@ Ownership is split deliberately, for sections and extras alike:
 - Notebook-owned: every body cell, including Setup, core routes and learning prompts.
 
 Shared objectives and workshop facts live in `_variables.yml`.
-Core-route metadata lists preparation and activity cell IDs. Keep it aligned
-with the visible labels; `scripts/check_teaching_materials.py` checks the links.
+Core-route metadata lists preparation and activity cell IDs. Its optional
+`support` list names executable feedback helpers before the activity, tagged
+`workshop-support`. Keep declarations aligned with the visible instructions;
+`scripts/check_teaching_materials.py` checks them and the execution runner
+includes the helpers before testing the paired solution.
 
 ### Colab to GitHub workflow
 

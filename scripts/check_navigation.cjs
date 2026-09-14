@@ -118,14 +118,34 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
         await page.keyboard.press('Enter');
         await page.waitForURL('**/es/assessments.html#salida-5-minutos');
         assert.equal(await page.locator('html').getAttribute('lang'), 'es');
-        assert.equal(await page.locator('main details').getAttribute('open'), null);
-        await page.locator('main summary').click();
-        assert.notEqual(await page.locator('main details').getAttribute('open'), null);
+        const exitKey = page.locator('#salida-5-minutos details');
+        assert.equal(await exitKey.getAttribute('open'), null);
+        await exitKey.locator('summary').click();
+        assert.notEqual(await exitKey.getAttribute('open'), null);
         await page.screenshot({path: path.join(screenshots, `workshop-assessment-es-${width}.png`), fullPage: true});
         if (width === 390) await page.locator('.navbar-toggler').click();
         await page.locator('nav a[rel="lang-switch-en"]').focus();
         await page.keyboard.press('Enter');
         await page.waitForURL('**/assessments.html#exit-5-minutes');
+      }
+
+      // Each assessment key stays folded until the learner chooses to reveal
+      // it. Scope by section: the page now has entry/exit and in-lesson keys.
+      for (const lang of ['en', 'es']) {
+        for (const width of [1440, 390]) {
+          await page.setViewportSize({width, height: 1000});
+          await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}assessments.html#in-section-checkpoints`);
+          const section = page.locator('section.level2').filter({
+            has: page.locator('[data-language-key="in-section-checkpoints"]')});
+          assert.equal(await section.count(), 1, 'Checkpoint marker belongs to a rendered section');
+          const key = section.locator('details');
+          assert.equal(await key.getAttribute('open'), null);
+          await key.locator('summary').focus();
+          await page.keyboard.press('Enter');
+          assert.notEqual(await key.getAttribute('open'), null);
+          await page.keyboard.press('Enter');
+          assert.equal(await key.getAttribute('open'), null);
+        }
       }
 
       // The wide handbook table is a focusable scroll region on a phone.
