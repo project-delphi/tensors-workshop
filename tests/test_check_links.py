@@ -314,6 +314,19 @@ class Notebooks(unittest.TestCase):
                 self.assertTrue(any("raw HTML block" in f for f in failures),
                                 failures)
 
+    def test_indented_display_maths_does_not_crash(self):
+        # The closing fence was searched for as the exact string "$$" while the
+        # opening one was found by stripping, so a block indented under a list
+        # item killed the checker with a ValueError instead of reporting.
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("- item\n\n  $$\n  a = b\n  $$",
+                                   kind="markdown", cid="m"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertEqual(failures, [])
+
     def test_maths_splitting_a_blockquote_fails(self):
         # What happened to notebook 06: the `**` opened before the equation and
         # closed after it, and both reached the reader as asterisks.

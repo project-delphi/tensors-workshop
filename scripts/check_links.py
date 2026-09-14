@@ -434,8 +434,13 @@ def check_notebook_maths(nb, name) -> int:
                 fail(f"{name}: cell {cell.get('id')} has display maths inside "
                      f"a raw HTML block, where it will not be typeset")
             before = next((x for x in reversed(lines[:i]) if x.strip()), "")
-            after = next((x for x in lines[i + 1:] if x.strip() == "$$"), None)
-            j = lines.index("$$", i + 1) if after else len(lines) - 1
+            # Find the closing fence the same way the opening one was found --
+            # by stripping. `lines.index("$$", ...)` matches the exact string,
+            # so a block indented under a list item ("  $$") was detected as
+            # open and then not found as closed, and the checker died with a
+            # ValueError instead of reporting anything at all.
+            j = next((n for n, x in enumerate(lines[i + 1:], i + 1)
+                      if x.strip() == "$$"), len(lines) - 1)
             below = next((x for x in lines[j + 1:] if x.strip()), "")
             if before.startswith(">") and below.startswith(">"):
                 fail(f"{name}: cell {cell.get('id')} has display maths inside "
