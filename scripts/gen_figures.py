@@ -40,7 +40,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from gen_thumbnails import (ACCENT, INK, IMAGES, VIDEO_SHA256, VIDEO_URL,
-                            canvas_to_pil, get, write_gif)
+                            canvas_to_pil, get, stack, write_gif)
 
 # Seaborn's "deep" red, which is what the bars in the existing
 # `nyc-taxi-pickups-by-hour.png` are drawn in. Reusing it exactly keeps the new
@@ -827,6 +827,7 @@ def fig_tucker_taxi(arrays) -> Path:
 
 
 if __name__ == "__main__":
+    stack()
     print("Loading the arrays (network: the pinned clip and the taxi CSV)")
     arrays = load_ladder()
     print("Figures")

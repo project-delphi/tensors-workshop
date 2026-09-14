@@ -63,7 +63,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from gen_notebooks import ACCENTS                                  # noqa: E402
-from gen_thumbnails import IMAGES, INK, canvas_to_pil, write_gif   # noqa: E402
+from gen_thumbnails import IMAGES, INK, canvas_to_pil, stack, write_gif  # noqa: E402
 
 PAPER = "#ffffff"
 MUTE = "#7b8794"
@@ -842,6 +842,7 @@ SCENES = {
 
 
 def main(only=None) -> None:
+    stack()
     print("Cube GIFs")
     total = 0
     for n, (stem, build) in SCENES.items():

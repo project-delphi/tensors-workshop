@@ -60,8 +60,35 @@ against anything. Add the path when you add the file.
 **The four image generators are not in that gate**, deliberately: they need
 the network, and a scientific stack or a browser the workflow does not install.
 So nothing will tell you an image is stale — rerun them by hand when their
-inputs change. All four are still deterministic, and all four record where
-every pixel came from, which is the actual point:
+inputs change. All four record where every pixel came from, which is the
+actual point.
+
+All four are deterministic **for a given stack**, and that is the whole of the
+guarantee — weaker than it reads, and now confirmed rather than theoretical.
+`figures` carries floors rather than pins and `uv.lock` is gitignored, both
+deliberately, so every `uv run --group figures` resolves whatever matplotlib
+and Pillow are newest that day; matplotlib is what decides glyph positions,
+hairline placement and how an image is downsampled. Rerunning the generators on
+2026-09-14, three weeks after the figures were drawn, rewrote all six of them
+and `ds-audio.png` with no input changed anywhere. Nothing any of them *says*
+moved: every printed number, every colour, every bar and every filled cell came
+back pixel-identical, and the entire diff was text glyphs, a few hairlines, and
+the resampling grain of the photographic panels. `ds-audio.png` was
+pixel-identical outright — only the PNG encoder's bytes had shifted. The eight
+photographic dataset cards and all fourteen cube GIFs came back byte-identical,
+because Pillow's crop-and-resize path and the GIF writer have not moved.
+Matplotlib is the one that drifts.
+
+So a dirty `git status` on these after a rerun is the expected consequence of a
+matplotlib release, not evidence that an input changed — and the two are worth
+telling apart before you either commit or panic. Each generator prints a
+`Stack:` line naming the versions that drew the files, which is what tells them
+apart: compare it against the line in the commit that last drew the image. Same
+versions and a changed image means an input moved; different versions and the
+diff is almost certainly rasterization, which a mask of the changed pixels will
+confirm in a minute.
+
+What each one draws, and from where:
 
 - `gen_thumbnails.py` builds the nine dataset cards from SHA-256-pinned CC0
   sources. Pinning matters: a Commons file can be overwritten under the same

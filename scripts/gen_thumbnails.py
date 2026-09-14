@@ -97,6 +97,42 @@ INK = "#2f4858"      # $presentation-heading-color, from slides/slides.scss
 ACCENT = "#2c5f8a"   # $link-color
 
 
+# The pinned sources say where the pixels came *from*. This says what turned
+# them into bytes, which is the other half of the provenance and the half that
+# was missing: `figures` carries floors rather than pins and there is no
+# lockfile, so every `uv run --group figures` resolves whatever matplotlib and
+# Pillow are newest that day. Those two decide glyph positions, hairline
+# placement, image downsampling and the encoders, so a rerun months later
+# rewrites every file it draws while changing nothing any of them says.
+#
+# Print it, and a future `git diff` on a binary is answerable: compare this
+# line against the one in the commit that last drew the file. Same versions and
+# a changed image means an input moved; different versions and the diff is
+# almost certainly rasterization, and worth confirming before assuming worse.
+STACK = ("matplotlib", "pillow", "freetype", "numpy", "scipy",
+         "scikit-image", "scikit-learn", "pandas", "imageio")
+
+
+def stack() -> None:
+    """Print the versions that decide the bytes about to be written."""
+    import importlib.metadata as md
+
+    parts = []
+    for name in STACK:
+        if name == "freetype":
+            try:
+                import matplotlib.ft2font
+                parts.append(f"freetype {matplotlib.ft2font.__freetype_version__}")
+            except Exception:
+                pass
+            continue
+        try:
+            parts.append(f"{name} {md.version(name)}")
+        except md.PackageNotFoundError:
+            pass
+    print("Stack: " + ", ".join(parts))
+
+
 def get(url: str, expected_sha256: str | None = None) -> bytes:
     req = urllib.request.Request(url, headers={"User-Agent": UA})
     raw = urllib.request.urlopen(req, timeout=120).read()
@@ -314,6 +350,7 @@ def video() -> None:
 
 
 if __name__ == "__main__":
+    stack()
     photos()
     digits()
     cell()
