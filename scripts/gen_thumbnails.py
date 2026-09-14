@@ -138,6 +138,47 @@ def save(img, name: str, lossless: bool = False) -> None:
           f"{img.size[0]}x{img.size[1]}  {out.stat().st_size // 1024} KB")
 
 
+def canvas_to_pil(fig):
+    """One matplotlib canvas as a PIL image, RGB.
+
+    Three call sites now -- the banner still, the clip GIF and every cube GIF
+    -- and the `frombuffer` incantation is easy to get subtly wrong. One copy.
+    """
+    from PIL import Image
+
+    fig.canvas.draw()
+    return Image.frombuffer(
+        "RGBA", fig.canvas.get_width_height(),
+        fig.canvas.buffer_rgba(), "raw", "RGBA", 0, 1).convert("RGB")
+
+
+def write_gif(frames, out: Path, *, duration: int, loop: int = 3,
+              colors: int = 96, max_kb: int | None = None) -> Path:
+    """Frames to an animated GIF, on one shared palette.
+
+    Quantizing every frame against the FIRST frame's palette rather than its
+    own is what stops the colours shifting mid-animation.
+
+    `disposal=1` and no optimizer, for the reason `gif_video_stack` records:
+    Pillow ignores `disposal` when optimizing and crops every frame after the
+    first to the rectangle that changed, which Chrome renders wrong.
+
+    `max_kb` is a ceiling, not a target. Nothing in CI looks at image sizes --
+    `images/companion-video.png` is 3.6 MB and no check has ever minded -- so
+    a generator that can quietly add megabytes should say so itself.
+    """
+    pal = frames[0].quantize(colors=colors, method=2)
+    quant = [f.quantize(palette=pal, dither=0) for f in frames]
+    quant[0].save(out, "GIF", save_all=True, append_images=quant[1:],
+                  duration=duration, loop=loop, disposal=1, optimize=False)
+    kb = out.stat().st_size / 1024
+    if max_kb is not None and kb > max_kb:
+        raise SystemExit(
+            f"{out.name} is {kb:.0f} KB, over the {max_kb} KB ceiling. "
+            f"Drop frames, shrink the figure, or lower `colors`.")
+    return out
+
+
 def photos() -> None:
     from PIL import Image
     print("Wikimedia photographs (CC0)")

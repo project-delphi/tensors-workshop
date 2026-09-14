@@ -41,6 +41,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
+| `images/cube-*.gif` (one per notebook) | `scripts/gen_cube_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -56,10 +57,10 @@ fails nowhere and ships: the regenerate step has already rewritten the source
 by the time `quarto render` runs, and nothing downstream compares the render
 against anything. Add the path when you add the file.
 
-**The three image generators are not in that gate**, deliberately: they need
+**The four image generators are not in that gate**, deliberately: they need
 the network, and a scientific stack or a browser the workflow does not install.
 So nothing will tell you an image is stale — rerun them by hand when their
-inputs change. All three are still deterministic, and all three record where
+inputs change. All four are still deterministic, and all four record where
 every pixel came from, which is the actual point:
 
 - `gen_thumbnails.py` builds the nine dataset cards from SHA-256-pinned CC0
@@ -78,6 +79,17 @@ every pixel came from, which is the actual point:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
+- `gen_cube_gifs.py` draws the fourteen cube animations the notebooks embed,
+  one per notebook, in that notebook's own accent from `gen_notebooks.ACCENTS`.
+  It is the one generator whose arrays are **not** real data, and it says so at
+  the top: these cubes are `np.arange`, because the lesson is index arithmetic
+  and `T[1, 2, 3] == 23` has to be checkable by eye. Two constraints shape
+  every scene. Nothing on the images is prose — every caption is an expression
+  or a shape, which reads the same in both languages, so one GIF serves EN and
+  ES and there is no second asset to keep in step. And every frame is a
+  complete picture, because `fig_hero` already recorded what a build animation
+  does: Chrome parks on frame 0 at the end of a finite loop, which in a
+  build-from-empty is the emptiest frame there is.
 - `gen_slide_art.py` draws slide art from HTML and CSS, screenshotted by
   headless Chrome at the deck's own 1920×1080. It owns only the `slide-NNa`
   insertions: the thirty-one PNGs the #45 redesign left have no source and are
@@ -399,6 +411,8 @@ uv run --group execute python scripts/test_notebooks.py --offline
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
+uv run --group figures python scripts/gen_cube_gifs.py        # all fourteen
+uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 
@@ -410,7 +424,12 @@ committed in `notebooks/`; internal links resolve *including the `#fragment`*; e
 existing notebook, **and every link from one notebook to another names an
 `.ipynb` that exists** — nothing else looks at those, because a notebook
 reaches `docs/` as a verbatim copy rather than a rendered page, which is how
-notebook 01 spent months linking two files that had never existed; both decks carry every section anchor; the EN and ES
+notebook 01 spent months linking two files that had never existed; **and every
+image a notebook embeds from the site names a file in `images/`, with alt text,
+exactly one per notebook** — out of reach of check 3 for the same copied-not-
+rendered reason, and doubly so because those URLs must be absolute (a notebook
+on Colab has no checkout to resolve a relative path against) and check 3 skips
+external URLs; both decks carry every section anchor; the EN and ES
 notebooks pages list the same thirteen sections (extras appear in neither, by
 design); the two
 references pages cite the same external works, with every ml-blog URL among
