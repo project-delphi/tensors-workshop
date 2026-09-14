@@ -8,8 +8,11 @@ plus one take-home deep dive, numbered 13, that is **not** a section.
 *cada encabezado lleva un resumen en español.*
 
 Each notebook marks a **core path**, optional work, two outcomes, and a
-`predict → run → explain → check` activity. Run **Core prep** in order, then
-jump to **Core activity**. Facilitators can combine
+`predict → run → explain → check` activity. Follow the core route's short
+reading prompts, run **Core prep** in order and any feedback helper, then
+jump to **Core activity**. Try before opening the graduated hints; call the
+feedback helper with your own result before revealing a solution. Notebook 09
+ends its core route with a required SVD-to-Tucker bridge. Facilitators can combine
 these with the [group task library](../group-tasks.md) and
 [run sheet](../facilitator-guide.md).
 
@@ -101,8 +104,11 @@ Ownership is split deliberately, for sections and extras alike:
 - Notebook-owned: every body cell, including Setup, core routes and learning prompts.
 
 Shared objectives and workshop facts live in `_variables.yml`.
-Core-route metadata lists preparation and activity cell IDs. Keep it aligned
-with the visible labels; `scripts/check_teaching_materials.py` checks the links.
+Core-route metadata lists preparation and activity cell IDs. Its optional
+`support` list names executable feedback helpers before the activity, tagged
+`workshop-support`. Keep declarations aligned with the visible instructions;
+`scripts/check_teaching_materials.py` checks them and the execution runner
+includes the helpers before testing the paired solution.
 
 ### Colab to GitHub workflow
 

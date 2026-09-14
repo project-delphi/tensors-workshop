@@ -20,6 +20,13 @@ those body cells while clearing outputs, execution counts and transient metadata
 Keep core-route cell IDs and tags aligned with their visible labels. Keep the
 `solution` and `hide-input` tags on folded solutions.
 
+Feedback helpers live in visible code cells before the core activity. Tag them
+`workshop-support` and list their IDs in the core scaffold's `workshop.support`.
+Accept learner results as function arguments; do not read names created only
+by a folded solution. Keep the core TODO comment-only and its paired solution
+within the following two cells. Test that feedback accepts correct results
+and rejects plausible mistakes; the paired solution should call it too.
+
 Edit source files, then regenerate their outputs. Do not edit generated
 `_includes/` blocks, marked table regions, or `docs/` directly. That includes
 the `notebooks` dependency group in `pyproject.toml`: it is read off what the
@@ -67,6 +74,13 @@ Trabaja en una rama y abre un pull request. Edita directamente las celdas del
 cuerpo de cada cuaderno, incluida la preparación; solo la primera y la última
 celda se generan. Los datos compartidos y los textos de esas dos celdas viven
 en `_variables.yml`. Mantén alineadas las versiones en inglés y español.
+
+Coloca las funciones de comprobación antes de la actividad esencial, con la
+etiqueta `workshop-support` y sus IDs en `workshop.support`. Reciben resultados
+del estudiante como argumentos, sin depender de variables de una solución
+plegada. Mantén el TODO como comentarios y su solución en una de las dos
+celdas siguientes. Prueba tanto resultados correctos como errores plausibles;
+la solución también debe llamar a la función.
 
 Sigue la [lista de publicación](RELEASE_CHECKLIST.md) para regenerar, comprobar
 y enviar los cambios. Incluye los archivos generados en el PR; `docs/` no, que

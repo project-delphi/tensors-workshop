@@ -13,7 +13,7 @@ discussion time; they do not extend the session. Notebook 13 is take-home work.
 <span data-language-key="before-the-session"></span>
 
 - Run Notebook 00 before class. Test each selected notebook in a fresh runtime.
-- Follow **Core prep**, then **Core activity**. Skip other exercises and explorers.
+- Follow the core route's reading prompts, **Core prep**, and any feedback helper before **Core activity**. Skip optional exercises and explorers.
 - Prepare groups of 3–4: recorder, speaker, challenger, optional code runner.
 - Keep a working runtime ready to demonstrate if a download fails.
 
@@ -25,6 +25,12 @@ discussion time; they do not extend the session. Notebook 13 is take-home work.
 Then ask for one result and one revised explanation. Rotate group roles.
 Open solutions only after an attempt. Run selected folded plotting cells;
 folded code still needs to execute.
+
+Use the opening retrieval question for about 30 seconds within each slot.
+Learners try first, open Hint 1 if stuck, then Hint 2 only if needed. Where a
+feedback helper is supplied, run its definition and call it with the learner's
+own results before revealing the solution. Passing its numerical checks still
+requires an explanation of the axes and the result.
 
 ## Run sheet
 
@@ -38,13 +44,13 @@ Keep its quizzes and breaks. Within the selected notebook slots:
 | 00 · 5 min | Entry check 3; runtime check and welcome 2. Setup was pre-work. |
 | 01 · 20 min | Model one shape 4; Exercise 1 and partner check 16. |
 | 02 · 20 min | Axis key and Exercise 2: 14; [axis-meaning task](group-tasks.md#axis-meaning): 6. |
-| 03 · 15 min | Model indexing 3; Exercise 3 and checks 12. |
+| 03 · 15 min | Model indexing 3; Exercise 3 and feedback 11; independent broadcasting checkpoint 1. |
 | 04 · 15 min | Exercise 1: 9; [silent-bug task](group-tasks.md#silent-bugs): 6. |
 | 05 · 15 min | Exercise 1: 7; group task 05: 8. |
-| 06 · 15 min | Model one contraction 4; Exercise 1 and check 11. |
+| 06 · 15 min | Model one contraction 4; Exercise 1 and feedback 10; independent contraction checkpoint 1. |
 | 07 · 15 min | Predict singularity 3; Exercise 1 and check 12. |
 | 08 · 10 min | Model one update 3; Exercise 1 and check 7. |
-| 09 · 15 min | Exercise 1: 12; residual mistake below: 3. No timing sweeps. |
+| 09 · 15 min | Exercise 1: 9; residual mistake below: 3; required SVD-to-Tucker bridge: 3. No timing sweeps. |
 | 10 · 15 min | Explain core and factors 4; rank explorer 8; defend a choice 3. |
 | 11 · 15 min | Exercise 1 in pairs: 7; group task 11: 8. No model sweeps. |
 | 12 · 5 min | Individual exit check. Assign take-homes after collection. |
@@ -55,9 +61,12 @@ use the tiny reshape example in [worked mistakes](worked-mistakes.md) if needed.
 Each time box includes sharing. Ask one group to speak; others submit three
 lines: **choice → evidence → what would change our mind**.
 
-In Notebook 11, predict storage first. If fitting takes too long, demonstrate
-the supplied solution after their attempt. Discuss its output; do not spend
-the group slot debugging an installation.
+In Notebook 11, predict storage first, then use the optional partial-code hint
+to complete the fit and comparison. Reserve the seven-minute pair slot for
+choosing, checking and interpreting; run installations during preparation.
+If fitting takes too long, demonstrate the supplied solution after their
+attempt. Keep the eight-minute group discussion. Record actual completion
+times and hint use to check whether this allocation works for the group.
 
 ## Entry and exit checks
 
@@ -69,6 +78,11 @@ Compare reasoning by dimension; this is not a validated learning test.
 Keep the exit check to five minutes: three for axes and evidence, two for the
 Tucker transfer question. Record transfer separately because it has no entry
 counterpart; use its result to plan follow-up on Notebook 10.
+
+Collect the one-minute checkpoints in Notebooks 03 and 06 before revealing
+their answers. Use the [in-section keys](assessments.md#in-section-checkpoints)
+to decide whether to revisit the axis rule. Keep these separate from the
+entry/exit scores and within the existing lesson slots.
 
 ## Wrong-answer clinic
 

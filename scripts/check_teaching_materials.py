@@ -104,6 +104,36 @@ def route_of(notebook: dict, label: str) -> tuple[list[str], str]:
     return prep, activity
 
 
+def support_of(notebook: dict, label: str) -> list[str]:
+    """Optional feedback helpers, available before a learner attempts the core.
+
+    Declare these separately from setup so adding hints/checkers cannot turn a
+    code-free entry or exit assessment into an executable route.
+    """
+    support = workshop_meta(notebook, label).get("support", [])
+    if not isinstance(support, list) or any(not isinstance(cid, str) for cid in support):
+        raise ValueError(f"{label}: support must be a list of cell IDs")
+    cells = notebook["cells"]
+    ids = [c.get("id") for c in cells]
+    prep, activity = route_of(notebook, label)
+    if len(set(support)) != len(support) or set(support) & set(prep + [activity]):
+        raise ValueError(f"{label}: support cells must be unique and separate from the core")
+    for cid in support:
+        if ids.count(cid) != 1:
+            raise ValueError(f"{label}: missing or duplicate support cell {cid}")
+        cell = cells[ids.index(cid)]
+        tags = cell.get("metadata", {}).get("tags", [])
+        if cell["cell_type"] != "code" or "solution" in tags or "workshop-support" not in tags:
+            raise ValueError(f"{label}: support {cid} must be tagged executable feedback, not a solution")
+        if activity not in ids or ids.index(cid) >= ids.index(activity):
+            raise ValueError(f"{label}: support {cid} must precede the activity")
+    marked = {c.get("id") for c in cells
+              if "workshop-support" in c.get("metadata", {}).get("tags", [])}
+    if marked != set(support):
+        raise ValueError(f"{label}: support metadata and tagged cells disagree")
+    return support
+
+
 def check_route(notebook: dict, label: str) -> None:
     cells = notebook["cells"]
     prep, activity = route_of(notebook, label)
@@ -135,6 +165,7 @@ def check_route(notebook: dict, label: str) -> None:
         before = cells[ids.index(cell_id)-1]
         if f"Core prep {step}/{len(prep)}" not in "".join(before.get("source", [])):
             raise ValueError(f"{label}: preparation label missing for {cell_id}")
+    support_of(notebook, label)
 
 
 def check(root: Path = ROOT) -> None:

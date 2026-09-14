@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-14
+
+- Added brief retrieval prompts, graduated hints, and independent numerical feedback to notebook core activities, with matching English and Spanish instructions.
+- Put convolution predictions before their explanations, added a required SVD-to-Tucker bridge, and supplied partial-code support for the CP/Tucker comparison.
+- Added individual broadcasting and contraction checkpoints and facilitator keys within the existing 210-minute agenda.
+
 ## 2026-09-11
 
 - The home page opens on a full-width hero: the tensor diagram now runs from a scalar through a vector, a matrix and a 3D tensor to a neural network, with each stage labelled by its NumPy shape.

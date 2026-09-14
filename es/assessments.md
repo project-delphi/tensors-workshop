@@ -75,3 +75,36 @@ dimensiones reciben 2, asigna una tarea según sus intereses.
 La diferencia de puntuaciones no mide el impacto causal del taller.
 
 </details>
+
+## Comprobaciones durante las secciones
+
+<a id="in-section-checkpoints"></a>
+
+<span data-language-key="in-section-checkpoints"></span>
+
+Usa el último minuto de las actividades esenciales de los cuadernos 03 y 06
+para estas comprobaciones individuales, sin consultar soluciones. Sustituyen
+parte del tiempo de explicar/comprobar de la actividad; no agregan preguntas
+ni tiempo al cierre de cinco minutos. Recoge el primer intento antes de
+conversar o revelar la clave.
+
+| Cuaderno | Pregunta individual |
+|---|---|
+| 03 · Broadcasting | `X.shape == (3, 2)` y desplazamientos por muestra `b.shape == (3,)`. ¿Funciona `X - b`? Escribe la expresión corregida y la forma de salida. Explica en qué eje se repiten los valores. |
+| 06 · Contracción | `S.shape == (2, 3, 4)` significa lote, tiempo, característica; `w.shape == (4,)`. Escribe un `einsum` que conserve lote y tiempo. Indica la forma y el índice contraído. ¿Qué cambia con `'ntf,f->n'`? |
+
+<details>
+<summary>Clave y siguiente paso docente · revelar después de recoger respuestas</summary>
+
+| Comprobación | Evidencia para 2 puntos | Si falta evidencia, repasar |
+|---|---|---|
+| Broadcasting | `X - b` falla: las longitudes finales 2 y 3 son incompatibles. `X - b[:, None]` tiene forma `(3, 2)`; un desplazamiento por muestra se repite por las columnas de características. | Alinear `(3, 2)` y `(3, 1)` en papel, nombrar muestra y característica, y reintentar con otras dimensiones. |
+| Contracción | `np.einsum('ntf,f->nt', S, w)` da `(2, 3)` y suma `f`. `'ntf,f->n'` también suma el tiempo `t` y da `(2,)`. | Tachar los índices ausentes de la salida, nombrar la información que elimina cada reducción y probar otra firma de salida. |
+
+Registra cada comprobación por separado: **0** = operación ausente o
+incorrecta; **1** = operación correcta con una explicación incompleta de
+forma o ejes; **2** = toda la evidencia de la tabla. Usa 0–1 para elegir el
+repaso y después solicita otro intento individual. Mantén estas puntuaciones
+formativas separadas de la comparación entre entrada y salida.
+
+</details>

@@ -13,7 +13,7 @@ práctica o discusión; no alargan el taller. El cuaderno 13 queda para después
 <span data-language-key="before-the-session"></span>
 
 - Ejecuta el cuaderno 00 antes de clase. Prueba cada cuaderno elegido en una sesión nueva.
-- Sigue **Core prep** y luego **Core activity**. Omite los demás ejercicios y exploradores.
+- Sigue las lecturas de la ruta esencial, **Core prep** y la función de comprobación, si la hay, antes de **Core activity**. Omite ejercicios y exploradores opcionales.
 - Forma grupos de 3–4: relator, portavoz, crítico y, si hay una cuarta persona, programador.
 - Ten una sesión funcionando para demostrar si falla una descarga.
 
@@ -25,6 +25,12 @@ práctica o discusión; no alargan el taller. El cuaderno 13 queda para después
 ejecutar. Después, un resultado y una explicación revisada. Rota los roles.
 Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegidas;
 el código plegado también necesita ejecutarse.
+
+Dedica unos 30 segundos a la pregunta inicial de recuperación dentro de cada
+bloque. Primero intentan resolver; si se atascan, abren la Pista 1 y luego la
+Pista 2 solo si hace falta. Si hay una función de comprobación, ejecuten su
+definición y llámenla con sus propios resultados antes de revelar la solución.
+Superar las comprobaciones numéricas todavía exige explicar los ejes y el resultado.
 
 ## Guion
 
@@ -38,13 +44,13 @@ Conserva cuestionarios y pausas. Distribuye así cada bloque:
 | 00 · 5 min | Diagnóstico inicial 3; bienvenida y comprobación técnica 2. La preparación era previa. |
 | 01 · 20 min | Modelar una forma 4; Ejercicio 1 y revisión en pareja 16. |
 | 02 · 20 min | Clave de ejes y Ejercicio 2: 14; actividad grupal 02: 6. |
-| 03 · 15 min | Modelar indexación 3; Ejercicio 3 y comprobaciones 12. |
+| 03 · 15 min | Modelar indexación 3; Ejercicio 3 y comprobación 11; comprobación individual de broadcasting 1. |
 | 04 · 15 min | Ejercicio 1: 9; actividad grupal 04: 6. |
 | 05 · 15 min | Ejercicio 1: 7; actividad grupal 05: 8. |
-| 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 11. |
+| 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 10; comprobación individual de contracción 1. |
 | 07 · 15 min | Predecir singularidad 3; Ejercicio 1 y comprobación 12. |
 | 08 · 10 min | Modelar una actualización 3; Ejercicio 1 y comprobación 7. |
-| 09 · 15 min | Ejercicio 1: 12; error sobre residuos: 3. Sin barridos de tiempos. |
+| 09 · 15 min | Ejercicio 1: 9; error sobre residuos: 3; puente obligatorio de SVD a Tucker: 3. Sin barridos de tiempos. |
 | 10 · 15 min | Explicar núcleo y factores 4; explorador de rangos 8; defender una elección 3. |
 | 11 · 15 min | Ejercicio 1 en parejas: 7; actividad grupal 11: 8. Sin barridos de modelos. |
 | 12 · 5 min | Comprobación individual de salida. Asignar tareas después de recogerla. |
@@ -55,9 +61,13 @@ Para la actividad 04, usa el ejemplo pequeño de [reshape](worked-mistakes.md) s
 Cada bloque incluye la puesta en común. Habla un grupo; los demás entregan:
 **elección → evidencia → qué nos haría cambiar de opinión**.
 
-En el cuaderno 11, primero predicen el almacenamiento. Si el ajuste tarda mucho,
-demuestra la solución incluida después del intento. Discutan su salida;
-no gasten el tiempo grupal en arreglar una instalación.
+En el cuaderno 11, primero predicen el almacenamiento y luego usan la pista
+opcional de código parcial para completar el ajuste y la comparación. Reserva
+los siete minutos en pareja para elegir, comprobar e interpretar; ejecuta las
+instalaciones durante la preparación. Si el ajuste tarda mucho, demuestra la
+solución incluida después del intento. Conserva los ocho minutos de discusión
+grupal. Anota tiempos reales de finalización y uso de pistas para comprobar
+si esta distribución funciona con el grupo.
 
 ## Comprobaciones inicial y final
 
@@ -69,6 +79,11 @@ Compara cada dimensión del razonamiento; no es una prueba de aprendizaje valida
 Mantén los cinco minutos de salida: tres para ejes y evidencia, dos para la
 pregunta de transferencia sobre Tucker. Registra la transferencia aparte porque
 no tiene equivalente inicial; úsala para planear el repaso del cuaderno 10.
+
+Recoge las comprobaciones de un minuto de los cuadernos 03 y 06 antes de
+revelar las respuestas. Usa las [claves de sección](assessments.md#in-section-checkpoints)
+para decidir si hay que repasar la regla de ejes. Regístralas aparte de las
+puntuaciones inicial y final, dentro de los bloques existentes.
 
 ## Análisis de errores
 
