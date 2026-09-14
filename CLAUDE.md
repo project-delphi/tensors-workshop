@@ -202,7 +202,34 @@ labels and `workshop-core-prep` / `workshop-core-activity` tags identify that ro
 Do not make a core route depend on an optional exercise or an unopened solution.
 `scripts/check_teaching_materials.py` checks these references and the teaching
 kit's local links; `tests/test_teaching_materials.py` tests the checker and tiny
-worked examples. These checks do not execute the full notebook routes.
+worked examples. Those two are static: they read the route, they do not run it.
+
+`scripts/test_notebooks.py` is what runs it. One fresh kernel per notebook
+executes the declared route and then the **paired solution** — the
+`solution`-tagged cell immediately after the activity. That extension is not
+optional decoration: twelve of the fourteen activity cells are the student's
+blank `# TODO` block and hold no executable code at all, so prep plus activity
+would execute the setup and then a comment. The answer is where the lesson
+runs. Notebooks whose route declares no executable code (00 and 12) fall back
+to every code cell in document order.
+
+It asserts three things beyond "nothing raised": that a blank activity stayed
+blank, that each route still prints the numbers in its `EXPECTED` table, and
+that no widget callback failed. That last one needs its own machinery —
+`widgets.interactive_output` runs its callback inside an `Output` widget, whose
+`__exit__` hands the traceback to the frontend and returns `True`, so a broken
+callback leaves a clean cell and total silence. The runner patches that
+`__exit__` before the route runs, then drives controls to the far end of their
+range and reports what was swallowed. It is a **sweep, not a proof**: it stops
+after `WORKSHOP_PROBE_CHANGES` changes (8) or `WORKSHOP_PROBE_BUDGET` seconds
+(20), whichever comes first, and prints how many controls it skipped. A
+notebook with four explorers is sampled, not covered.
+
+Nothing is stripped or mocked — `%pip install` runs verbatim and the remote
+datasets are fetched for real, because Colab is the runtime this defends.
+`check_colab_parity()` is the standing guard on that: guarded `google.colab`
+imports, no absolute paths, quiet `%pip`, no hardcoded device string.
+
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages aligned.
 
@@ -316,6 +343,13 @@ uv run --group site python scripts/gen_tables.py
 uv run --group site python scripts/gen_notebooks.py
 uv run --group site python scripts/check_links.py     # verifies docs/
 uv run --group site python scripts/check_links.py --notebooks-only
+
+# Runs the notebooks. A kernel per notebook, the network, and the scientific
+# stack — so it is its own CI job, not part of the render gate.
+uv run --group execute python scripts/test_notebooks.py
+uv run --group execute python scripts/test_notebooks.py --list       # no kernel
+uv run --group execute python scripts/test_notebooks.py --only 10
+uv run --group execute python scripts/test_notebooks.py --offline
 
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py

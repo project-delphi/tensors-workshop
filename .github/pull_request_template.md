@@ -51,7 +51,8 @@ run is the only wrong answer here.
 
 ## Not tested
 
-<!-- Required if any box above is unchecked. Nothing here executes a full
-     notebook, so say what you ran by hand and what you did not. "Ran 07 and 10
-     in Colab; did not rerun 00-06" is a good answer. "N/A" is fine when the
-     change is prose only. -->
+<!-- Required if any box above is unchecked. CI executes each notebook's core
+     route and its paired solution, but not the cells outside that route, and
+     nothing opens Colab — so say what you ran by hand and what you did not.
+     "Ran 07 and 10 in Colab; did not open the other explorers" is a good
+     answer. "N/A" is fine when the change is prose only. -->

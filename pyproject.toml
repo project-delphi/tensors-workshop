@@ -73,3 +73,21 @@ figures = [
   "scikit-learn>=1.4",
   "scikit-image>=0.22",
 ]
+
+# Executes the notebooks: scripts/test_notebooks.py. Kept out of `test`, which
+# is deliberately kernel-free, and out of the generated `notebooks` group
+# above -- that one is read off the notebooks' own imports and must not be
+# hand-edited. `tensorly` and `imageio` are absent on purpose: the notebooks
+# %pip-install them for themselves, exactly as they do in Colab, and that
+# install is part of what this group exists to exercise.
+#
+# `pip` is not redundant here. A uv virtualenv ships without it, and `%pip
+# install` shells out to `sys.executable -m pip` -- so without this line the
+# install cells fail silently, with no traceback and no cell error, leaving a
+# later `import tensorly` to fail for a reason that names nothing useful.
+execute = [
+  {include-group = "notebooks"},
+  "nbclient>=0.10",
+  "ipykernel>=6.29",
+  "pip>=24",
+]
