@@ -1861,10 +1861,14 @@ def scene_15(tint):
 
     Everything CP is stays fixed across the four frames: the same counts, the
     same predictions, the same residual in every cell. Only the penalty column
-    changes. The two lit cells are the pair the notebook's predict-first cell
-    argues about -- both missed by 1, on counts an order of magnitude apart --
-    and the whole animation exists to show that squared error prices them the
-    same and the Poisson loss does not.
+    changes. The two lit cells both miss by 2, on counts of
+    2 and 40, and the whole animation exists to show that squared error prices
+    them the same and the Poisson loss does not. They are the notebook's
+    predict-first argument at a size that survives being drawn: that cell uses
+    2/4 and 2000/2002, three orders of magnitude apart, and a 2000 does not fit
+    in a cell. 40 is about the largest count whose Poisson deviance still
+    renders at `cell_text`'s one decimal -- 0.1 rather than 0.0 -- which is
+    what puts the ratio here at 12x against the cell's 614x.
     """
     import numpy as np
     x = np.array([[2, 1, 7], [1, 40, 3]])
@@ -1918,9 +1922,12 @@ def scene_15_binary(tint):
     Four frames and one claim: a squared-error fit of a binary tensor puts
     numbers on the line where only two are meaningful, and a Bernoulli model
     cannot, without anything bounding it. The lit cells in frame 2 are the
-    ones outside [0, 1]; in frame 4 the same cells are lit and every one of
-    them is a probability. The arithmetic between them is printed, so the
-    frame is an argument rather than an assertion.
+    ones outside [0, 1]. Frame 4 lights every cell instead, deliberately: the
+    claim there is about the whole matrix, not about two cells in it, and
+    lighting only the two that used to be out of range would read as though
+    they had been repaired one at a time rather than that nothing can leave
+    the interval. The arithmetic between the two is printed, so the frame is
+    an argument rather than an assertion.
     """
     import numpy as np
     x = np.array([[1, 0, 1], [0, 1, 1]])
