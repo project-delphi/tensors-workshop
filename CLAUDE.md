@@ -310,6 +310,18 @@ imports, no absolute paths, quiet `%pip`, no hardcoded device string.
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages aligned.
 
+**`worked-mistakes.md` pairs one-to-one with the predict-first cells.** Each of
+the fourteen entries is that notebook's delimited counterexample, lifted out of
+the widget with the `pred_` prefixes dropped, so a reader can run it without
+ipywidgets and a facilitator can put the claim on a screen. Both languages
+carry byte-identical code — prose is translated, the counterexample is what the
+reader types — and `tests/test_teaching_materials.py` reads the expected
+section numbers off `notebooks/` rather than spelling them out, so a notebook
+added without its entry fails there. What that test cannot check is that the
+page's copy still *matches* the notebook's: the prefix strip makes them
+deliberately different text. Change a predict cell's arithmetic and change the
+entry in the same commit, the way the two handbooks go together.
+
 Two conventions carry the look of a notebook, and both are forced by *where*
 notebooks are read rather than chosen for taste.
 

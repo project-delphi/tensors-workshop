@@ -76,10 +76,27 @@ class Tasks(unittest.TestCase):
 
 class WorkedExamples(unittest.TestCase):
     def test_bilingual_examples_match_and_run(self):
+        """One worked mistake per notebook, in both languages, and they run.
+
+        The count is read off the notebooks rather than spelled out, the same
+        way `test_notebook_predictions_run` does it: the page pairs one-to-one
+        with the predict-first cells, so a notebook added without its entry
+        fails here instead of drifting quietly. The headings carry the section
+        numbers, which is what catches an entry written twice for 04 and none
+        for 05 -- a count alone would pass that.
+
+        Both languages must carry byte-identical code. Prose is translated;
+        the counterexample is what the reader types, so it is not.
+        """
+        expected = sorted(p.name[:2] for p in (ROOT / "notebooks").glob("*.ipynb"))
         blocks = []
         for path in (ROOT / "worked-mistakes.md", ROOT / "es/worked-mistakes.md"):
-            code = re.findall(r"```python\n(.*?)\n```", path.read_text(), re.DOTALL)
-            self.assertEqual(len(code), 4)
+            text = path.read_text()
+            with self.subTest(path=path):
+                self.assertEqual(re.findall(r"^## (\d{2}) · ", text, re.MULTILINE),
+                                 expected)
+            code = re.findall(r"```python\n(.*?)\n```", text, re.DOTALL)
+            self.assertEqual(len(code), len(expected))
             blocks.append(code)
             for i, source in enumerate(code):
                 with self.subTest(path=path, example=i):

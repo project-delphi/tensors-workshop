@@ -74,8 +74,9 @@ no tiene equivalente inicial; úsala para planear el repaso del cuaderno 10.
 
 <span data-language-key="wrong-answer-clinic"></span>
 
-Usa los [errores resueltos](worked-mistakes.md) dentro de los bloques anteriores:
-orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11.
+Usa los [errores resueltos](worked-mistakes.md) dentro de los bloques
+anteriores. Hay uno por cuaderno; los cuatro que encajan en un bloque de grupo
+son orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11.
 Muestra la afirmación. Pide un contraejemplo. Revela la corrección al final.
 
 Si la mitad del grupo repite un error, modela el ejemplo pequeño y pide otra
