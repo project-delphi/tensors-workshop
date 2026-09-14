@@ -13,7 +13,7 @@ Start with the [editing ownership guide](CONTRIBUTING.md#where-to-edit).
 - [ ] Run the checks below. Review and commit generated changes — but not
       `docs/`, which is gitignored and built by Actions.
 - [ ] Add a brief learner-facing note to [CHANGELOG.md](CHANGELOG.md).
-- [ ] Open a PR, wait for the `render` check, then merge. Direct pushes to `main` are rejected. Merging deploys; verify the published site.
+- [ ] Open a PR, wait for the `render` and `notebooks` checks, then merge. Direct pushes to `main` are rejected. Merging deploys; verify the published site.
 - [ ] Record the commit/tag on the [feedback form](workshop-feedback.md).
 
 ```bash

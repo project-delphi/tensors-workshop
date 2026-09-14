@@ -1,6 +1,7 @@
 <!--
 The PR is the gate. The protect-main ruleset requires a pull request and a
-green `render` check, but deliberately does not require an approving review —
+green `render` and `notebooks` checks, but deliberately does not require an
+approving review —
 a two-person workshop would stall on that. So this description is where a
 change explains itself.
 

@@ -352,9 +352,22 @@ def _workshop_probe():
 
     # Every state change re-runs a callback that redraws a figure, and each
     # redraw is a PNG pushed over iopub. Notebook 12 holds nineteen explorers;
-    # sweeping them at full fidelity trips ipykernel's iopub rate limit and the
-    # run stalls with an idle kernel. We only care that the callback RUNS
-    # without raising, so silence the rendering for the duration of the sweep.
+    # sweeping them at full fidelity stalls the run. We only care that the
+    # callback RUNS without raising, so silence the rendering for the sweep.
+    #
+    # Silencing pyplot saves the figure work. It is not enough on its own:
+    # what actually stalls the kernel is a large payload leaving an Output
+    # widget. Measured with a standalone nbclient script -- display the same
+    # bytes straight from a cell and 1MB is instant, but route them through
+    # widgets.interactive_output and anything past roughly 200KB makes nbclient
+    # wait out the cell's entire timeout. That is notebook 12's audio explorer
+    # exactly: a base64 WAV per change, small at the default k and much bigger
+    # further along the dropdown, which is why only the sweep tripped it.
+    #
+    # So silence the display PUBLISHER too, which is the one place every route
+    # funnels through -- plain display(), a rich repr, Output capture. Stubbing
+    # the name `display` does not work: a callback resolves it from whatever
+    # namespace it was defined in, not from ours.
     try:
         import matplotlib.pyplot as _plt
         _real_show = _plt.show
@@ -366,50 +379,61 @@ def _workshop_probe():
     except ImportError:
         _plt = None
 
+    _pub = _real_publish = None
+    try:
+        _pub = get_ipython().display_pub
+        _real_publish = _pub.publish
+        _pub.publish = lambda *a, **k: None
+    except Exception:
+        _pub = None
+
     # Bound the sweep so this stays a check rather than the slowest thing in
     # CI. What is skipped is printed, so partial coverage is visible.
-    deadline = _time.monotonic() + __BUDGET__
-    driven = 0
-    skipped = 0
-    numeric = (_w.IntSlider, _w.FloatSlider, _w.BoundedIntText, _w.BoundedFloatText)
-    chooser = (_w.Dropdown, _w.SelectionSlider, _w.ToggleButtons, _w.RadioButtons)
-    for widget in live:
-        # Type first: Layout, VBox and friends are in the registry too and
-        # have no `value` at all.
-        if not isinstance(widget, numeric + chooser + (_w.Checkbox,)):
-            continue
-        if driven >= __CHANGES__ or _time.monotonic() > deadline:
-            skipped += 1
-            continue
-        try:
-            start = widget.value
-            if isinstance(widget, numeric):
-                # The far end of the range is where a callback breaks.
-                values = (widget.max,)
-            elif isinstance(widget, chooser):
-                options = list(widget.options or ())
-                values = tuple(o[1] if isinstance(o, tuple) else o
-                               for o in options[-1:])
-            else:
-                values = (not start,)
-            for value in values:
-                widget.value = value
-                driven += 1
-                # After, not only before. Setting a control to its far end
-                # fires its callback synchronously, and nothing here can
-                # preempt that -- so the budget can only be enforced between
-                # changes. Checking it beforehand alone let __CHANGES__ slow
-                # callbacks run back to back: notebook 12 spent the whole 300s
-                # cell timeout that way and failed CI.
-                if _time.monotonic() > deadline:
-                    break
-            widget.value = start
-        except Exception as exc:
-            swallowed.append("driving %s: %r" % (type(widget).__name__, exc))
-
-    if _plt is not None:
-        _plt.show = _real_show
-        _plt.close("all")
+    try:
+        deadline = _time.monotonic() + __BUDGET__
+        driven = 0
+        skipped = 0
+        numeric = (_w.IntSlider, _w.FloatSlider, _w.BoundedIntText, _w.BoundedFloatText)
+        chooser = (_w.Dropdown, _w.SelectionSlider, _w.ToggleButtons, _w.RadioButtons)
+        for widget in live:
+            # Type first: Layout, VBox and friends are in the registry too and
+            # have no `value` at all.
+            if not isinstance(widget, numeric + chooser + (_w.Checkbox,)):
+                continue
+            if driven >= __CHANGES__ or _time.monotonic() > deadline:
+                skipped += 1
+                continue
+            try:
+                start = widget.value
+                if isinstance(widget, numeric):
+                    # The far end of the range is where a callback breaks.
+                    values = (widget.max,)
+                elif isinstance(widget, chooser):
+                    options = list(widget.options or ())
+                    values = tuple(o[1] if isinstance(o, tuple) else o
+                                   for o in options[-1:])
+                else:
+                    values = (not start,)
+                for value in values:
+                    widget.value = value
+                    driven += 1
+                    # After, not only before. Setting a control to its far end
+                    # fires its callback synchronously, and nothing here can
+                    # preempt that -- so the budget can only be enforced between
+                    # changes. Checking it beforehand alone let __CHANGES__ slow
+                    # callbacks run back to back: notebook 12 spent the whole 300s
+                    # cell timeout that way and failed CI.
+                    if _time.monotonic() > deadline:
+                        break
+                widget.value = start
+            except Exception as exc:
+                swallowed.append("driving %s: %r" % (type(widget).__name__, exc))
+    finally:
+        if _pub is not None and _real_publish is not None:
+            _pub.publish = _real_publish
+        if _plt is not None:
+            _plt.show = _real_show
+            _plt.close("all")
 
     swallowed += [e for e in getattr(_b, "__workshop_widget_errors__", [])
                   if e not in swallowed]
@@ -423,26 +447,22 @@ def _workshop_probe():
 _workshop_probe()
 """
 
-# Widget sweep limits. What a callback pushes over iopub is the expensive part,
-# not the arithmetic: notebook 12's audio explorer re-renders a base64 WAV on
-# every change, and enough of those trip ipykernel's iopub rate limit, at which
-# point the kernel goes idle and the assignment never returns. Silencing
-# pyplot (in the probe) removes most of that traffic; these two bounds cover
-# the rest. Raise them with the environment variables if a notebook needs it --
-# a sweep that overruns says so rather than passing silently.
+# Widget sweep limits. What a callback pushes is the expensive part, not the
+# arithmetic, so the probe silences rendering and these two bounds cap the
+# sweep. Raise them with the environment variables if a notebook needs it -- a
+# sweep that overruns says so rather than passing silently.
 
 # The probe's own cell timeout, well clear of CELL_TIMEOUT, because the probe
 # must never be the thing that fails a route.
 #
-# Measured: the probe's Python finishes in about 0.2s even on notebook 12,
-# whose whole-notebook fallback leaves 53 live widgets. The cell then sits
-# until this timeout anyway -- nbclient waits for an idle the kernel does not
-# send while those widget comms are open, and closing them first does not help.
-# Locally nbclient gives up and moves on; on a CI runner it raises
-# CellTimeoutError, which is what turned this job red at the 300s shared
-# ceiling. So: give the probe its own short ceiling, and treat overrunning it
-# as incomplete widget coverage rather than a broken notebook. The probe is a
-# sweep, not the lesson.
+# It is a backstop now rather than a load-bearing limit. The probe used to sit
+# here for the full ceiling on notebook 12 -- 60s for 0.2s of Python -- and on
+# a CI runner that surfaced as CellTimeoutError and turned this job red. The
+# cause is in the probe's own silencing comment: a large payload leaving an
+# Output widget, which the sweep no longer produces. Notebook 12 now finishes
+# in about 9s end to end. Keep the ceiling anyway: it costs nothing when
+# nothing is wrong, and overrunning it is reported as incomplete widget
+# coverage rather than a broken notebook. The probe is a sweep, not the lesson.
 PROBE_CELL_TIMEOUT = 60
 PROBE_BUDGET_SECONDS = float(os.environ.get("WORKSHOP_PROBE_BUDGET", "20"))
 PROBE_MAX_CHANGES = int(os.environ.get("WORKSHOP_PROBE_CHANGES", "8"))
