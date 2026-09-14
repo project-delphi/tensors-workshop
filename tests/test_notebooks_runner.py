@@ -295,6 +295,28 @@ class InjectedCells(unittest.TestCase):
         namespace = {}
         exec(compile(tn.PROLOGUE, "PROLOGUE", "exec"), namespace)
 
+    def test_probe_silences_the_display_publisher(self):
+        """Not decoration, and not interchangeable with stubbing display().
+
+        A large payload leaving an Output widget makes nbclient wait out the
+        whole cell timeout -- that is what turned the notebooks job red on
+        notebook 12, whose audio explorer renders a base64 WAV per change.
+        Silencing the publisher is what fixes it, because a callback resolves
+        the name `display` from its own namespace rather than the probe's.
+        """
+        self.assertIn("display_pub", tn.PROBE)
+        self.assertIn("publish", tn.PROBE)
+
+    def test_probe_restores_what_it_silenced(self):
+        """In a finally: a probe that raises must not leave the kernel mute."""
+        import ast
+        tree = ast.parse(tn.PROBE)
+        finallies = [n for n in ast.walk(tree) if isinstance(n, ast.Try) and n.finalbody]
+        self.assertTrue(finallies, "the sweep must restore in a finally:")
+        restored = "\n".join(ast.unparse(n) for f in finallies for n in f.finalbody)
+        self.assertIn("publish", restored)
+        self.assertIn("show", restored)
+
 
 if __name__ == "__main__":
     unittest.main()

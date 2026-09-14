@@ -225,6 +225,17 @@ after `WORKSHOP_PROBE_CHANGES` changes (8) or `WORKSHOP_PROBE_BUDGET` seconds
 (20), whichever comes first, and prints how many controls it skipped. A
 notebook with four explorers is sampled, not covered.
 
+The sweep silences rendering while it runs — pyplot, and the **display
+publisher** underneath it. That second one is not tidiness. A large payload
+leaving an `Output` widget makes nbclient wait out the whole cell timeout:
+display the same bytes straight from a cell and 1MB is instant, but route them
+through `interactive_output` and anything past roughly 200KB stalls. Notebook
+12's audio explorer is exactly that — a base64 WAV per change, small at the
+default `k` and much bigger further along the dropdown, which is why only the
+sweep tripped it and why the job once went red there. Silencing the publisher
+rather than the name `display` is what works: a callback resolves `display`
+from the namespace it was defined in, not the probe's.
+
 Nothing is stripped or mocked — `%pip install` runs verbatim and the remote
 datasets are fetched for real, because Colab is the runtime this defends.
 `check_colab_parity()` is the standing guard on that: guarded `google.colab`
@@ -312,11 +323,18 @@ any command mentioning "commit" rather than waving it through.
 
 The [protect-main ruleset](https://github.com/project-delphi/tensors-workshop/rules/21154813)
 is the boundary that does not depend on a clone. It targets the default branch,
-blocks deletion and force-push, requires a pull request, and requires the
-`render` check from `.github/workflows/publish.yml` to pass on a branch that is
-up to date with `main`. Nobody is in the bypass list, including admins. It does
-not require an approving review: a two-person workshop would stall on that, and
-the PR itself is the gate.
+blocks deletion and force-push, requires a pull request, and requires **both
+checks** from `.github/workflows/publish.yml` — `render` and `notebooks` — to
+pass on a branch that is up to date with `main`. Nobody is in the bypass list,
+including admins. It does not require an approving review: a two-person
+workshop would stall on that, and the PR itself is the gate.
+
+Requiring `notebooks` is the deliberate half. It executes real kernels against
+the live datasets, so a dead URL or a PyPI outage now blocks merging rather
+than only reporting — which is the point, because a notebook that no longer
+runs is the one failure a student meets first. When something upstream is
+genuinely down, fix it or take the check out of the ruleset for the day; do
+not merge around it.
 
 Which guard covers what:
 
@@ -412,7 +430,7 @@ the browser check over the result; `actions/upload-pages-artifact` then hands
 that exact `docs/` to the `deploy` job, which is the only thing in the repo
 holding `pages: write`. `deploy` is a separate job guarded by
 `github.event_name == 'push' && github.ref == 'refs/heads/main'`, because
-`render` is the required status check and runs on every PR — a PR must not be
+`render` is a required status check and runs on every PR — a PR must not be
 able to publish. So the live site is the render that passed, not a copy
 somebody remembered to commit.
 
