@@ -76,6 +76,10 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12",
            "14", "15"}
 
+# Bigger than any cell's own retry budget, so a slow-but-alive remote fails
+# with the bilingual sentence the fetch cells were written to print rather than
+# with an opaque timeout. Notebook 15's fetch_crime is the longest: three
+# attempts at 70s plus 9s of backoff.
 CELL_TIMEOUT = 300
 
 # Cells slower than this are named as they finish, so a long CI step says

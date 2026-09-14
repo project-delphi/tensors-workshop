@@ -1535,7 +1535,7 @@ extras:
 
       > **Least squares is maximum likelihood under Gaussian noise of constant variance.**
 
-      Counts are not that. The variance of a count grows with its mean, most cells are zero, and a Gaussian model will cheerfully predict −3 crimes. Binary data is not that either: a 0/1 tensor fitted by squared error predicts 1.4 and −0.2.
+      Counts are not that. The variance of a count grows with its mean, two cells in five are zero, and a Gaussian model will cheerfully predict −1.6 crimes. Binary data is not that either: a 0/1 tensor fitted by squared error predicts 1.27 and −0.26.
 
       **Generalized CP** keeps the CP model and replaces the loss, one element at a time. The factors are still what you read; the alternating structure still holds, because these losses stay convex in one factor with the others fixed. Only the question being asked of the data changes.
 
@@ -1545,7 +1545,7 @@ extras:
       >
       > **Los mínimos cuadrados son máxima verosimilitud bajo ruido gaussiano de varianza constante.**
       >
-      > Los conteos no son eso. La varianza de un conteo crece con su media, la mayoría de las celdas son cero y un modelo gaussiano predecirá tan campante −3 delitos. Los datos binarios tampoco son eso: un tensor de 0 y 1 ajustado por error cuadrático predice 1,4 y −0,2.
+      > Los conteos no son eso. La varianza de un conteo crece con su media, dos de cada cinco celdas son cero y un modelo gaussiano predecirá tan campante −1,6 delitos. Los datos binarios tampoco son eso: un tensor de 0 y 1 ajustado por error cuadrático predice 1,27 y −0,26.
       >
       > El **CP generalizado** conserva el modelo CP y sustituye la pérdida, elemento a elemento. Los factores siguen siendo lo que se lee; la estructura alterna sigue valiendo, porque estas pérdidas siguen siendo convexas en un factor con los demás fijos. Lo único que cambia es la pregunta que se le hace a los datos.
       >
