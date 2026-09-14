@@ -75,6 +75,20 @@ def check_tasks(path: Path, notebooks: dict[str, str]) -> list[tuple[str, int]]:
     return result
 
 
+def workshop_meta(notebook: dict, label: str) -> dict:
+    """The `workshop` block on the one CORE-PATH scaffold cell.
+
+    One function owns finding that cell, so the readers below and
+    scripts/test_notebooks.py cannot disagree about where the declaration
+    lives.
+    """
+    cells = notebook["cells"]
+    scaffold = [c for c in cells if "<!-- CORE-PATH -->" in "".join(c.get("source", []))]
+    if len(scaffold) != 1:
+        raise ValueError(f"{label}: expected exactly one core path")
+    return scaffold[0].get("metadata", {}).get("workshop", {})
+
+
 def route_of(notebook: dict, label: str) -> tuple[list[str], str]:
     """The core route a notebook declares: preparation cell ids, then activity.
 
@@ -83,11 +97,7 @@ def route_of(notebook: dict, label: str) -> tuple[list[str], str]:
     Cells are addressed by id and never by numeric prefix -- notebook 09 carries
     s12-* ids and notebook 11 s13-*, preserved through a renumbering.
     """
-    cells = notebook["cells"]
-    scaffold = [c for c in cells if "<!-- CORE-PATH -->" in "".join(c.get("source", []))]
-    if len(scaffold) != 1:
-        raise ValueError(f"{label}: expected exactly one core path")
-    route = scaffold[0].get("metadata", {}).get("workshop", {})
+    route = workshop_meta(notebook, label)
     prep, activity = route.get("prep"), route.get("activity")
     if not isinstance(prep, list) or not isinstance(activity, str):
         raise ValueError(f"{label}: missing core route metadata")

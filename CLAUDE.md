@@ -210,8 +210,22 @@ executes the declared route and then the **paired solution** — the
 optional decoration: twelve of the fourteen activity cells are the student's
 blank `# TODO` block and hold no executable code at all, so prep plus activity
 would execute the setup and then a comment. The answer is where the lesson
-runs. Notebooks whose route declares no executable code (00 and 12) fall back
-to every code cell in document order.
+runs.
+
+**A route with no executable code is answered separately.** Notebook 12's core
+path tells the student "Exit check (5 min). No code required ... Other
+exercises and explorers are optional", and that is the real lesson, so the
+route is not the thing to bend to suit CI. What CI executes is a different
+question, and `ci_cells` on the same scaffold cell answers it explicitly: for
+12, the setup and the five take-home TODO/solution pairs, and **not** the
+explorer widgets. Those explorers are what a facilitator demonstrates, they are
+the notebook's slowest cells, and one renders a base64 WAV big enough to stall
+the kernel; the answers a student works through alone are worth more.
+`run_set()` refuses a `ci_cells` entry that is not a unique code cell, and
+check 2's `EXPECTED` guard refuses one that drops an asserted cell -- narrow
+the list too far and CI names the cell you stopped asserting. Without
+`ci_cells` the blanket fallback stands, which is what notebook 00 uses: it is
+short and every code cell is setup.
 
 It asserts three things beyond "nothing raised": that a blank activity stayed
 blank, that each route still prints the numbers in its `EXPECTED` table, and
