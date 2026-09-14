@@ -534,17 +534,23 @@ def _check_layout(fig, ax, out_name, i) -> None:
                 f"carry them. Shorten them, or raise `sequence`'s `gap`.")
 
 
-def render(tint, states, out_name, *, duration=1800, colors=48):
+def render(tint, states, out_name, *, duration=2700, colors=48):
     """Each state is (label, note, sub, draw) -- draw gets the axes.
 
     `duration` is per frame, in milliseconds, and one global value rather than
     a per-scene one: a reader who has learnt the pace of one animation should
-    not have to relearn it on the next. 1800 ms is deliberately slow. A frame
+    not have to relearn it on the next. 2700 ms is deliberately slow. A frame
     here is not a tween -- it is a whole labelled picture with a caption and a
     shape line, and 900 ms was not long enough to read a 60-cell grid once,
     let alone compare it with the frame before. The stepper cell in each
     notebook is the other half of the answer: this sets the pace for a reader
     watching, that one hands the frames over for a reader studying.
+
+    It has been raised twice, both times by watching rather than by a rule:
+    900 ms could not be read at all, and 1800 ms could be read only if you
+    already knew what the frame was going to say. A reader meeting a scene for
+    the first time has to find the caption, find the pile it names, and then
+    look for what moved since the frame before -- three passes, not one.
     """
     frames = []
     for i, (label, note, sub, draw) in enumerate(states):
@@ -1767,6 +1773,195 @@ def scene_13_transposed(tint):
     ]
 
 
+def scene_14(tint):
+    """14 -- a component is one profile per axis, and the peaks are the point.
+
+    `cube-11-outer` already builds a rank-1 term out of three vectors, so this
+    does not build one again. It asks the question deep dive 14 opens with:
+    given the term, what is a reader allowed to read off it? Each vector is
+    lit at its own peak, and the last frame puts the single entry those three
+    peaks meet at. The peak is deliberately in plane 0 of the pile: `planes`
+    paints front-last and covers exactly, so a lit cell anywhere behind would
+    come out invisible.
+    """
+    import numpy as np
+    a = np.array([4, 1, 2])
+    b = np.array([2, 1, 5, 3])
+    c = np.array([3, 1, 2, 4, 1])
+    abc = np.einsum("i,j,k->ijk", a, b, c)
+
+    def peak(vec, shape, caption):
+        lit = np.zeros(len(vec), bool)
+        lit[int(np.argmax(vec))] = True
+
+        def draw(ax):
+            sequence(ax, [{"arr": vec.reshape(shape),
+                           "lit": lit.reshape(shape),
+                           "caption": caption}],
+                     tint=tint, cell=0.66, size=13)
+        return draw
+
+    def meeting(ax):
+        lit = np.zeros(abc.shape, bool)
+        lit[0, int(np.argmax(b)), int(np.argmax(c))] = True
+        planes(ax, abc, tint=tint, lit=lit, origin=centred(SHAPE),
+               label_size=8.0)
+
+    return [
+        ("a", "argmax = 0", "one number per neuron", peak(a, (3, 1), "a  (3,)")),
+        ("b", "argmax = 2", "one number per time step",
+         peak(b, (1, 4), "b  (4,)")),
+        ("c", "argmax = 3", "one number per trial",
+         peak(c, (1, 5), "c  (5,)")),
+        ("a x b x c", "T[0, 2, 3] = 80", "where the three peaks meet", meeting),
+    ]
+
+
+def scene_14_als(tint):
+    """14, second animation -- fix two factors, solve the third.
+
+    The move the notebook is named after is not the model, it is the fit: with
+    two factors held still the third is an ordinary least-squares problem, the
+    one section 07 already solved with a pseudoinverse. So each frame pales
+    two matrices and lights one, and the note carries the closed form that
+    frame is solving. The last frame lights all three, because a sweep is the
+    three of them in order and the error after it can only have fallen.
+    """
+    import numpy as np
+    rng = np.random.default_rng(14)
+    A = rng.integers(1, 5, (3, 2))
+    B = rng.integers(1, 5, (4, 2))
+    C = rng.integers(1, 5, (5, 2))
+    mats = [("A (3,2)", A), ("B (4,2)", B), ("C (5,2)", C)]
+
+    def sweep(active):
+        def draw(ax):
+            items = []
+            for i, (caption, M) in enumerate(mats):
+                if items:
+                    items.append("x")
+                items.append({"arr": M, "caption": caption,
+                              "lit": np.full(M.shape, active in (i, -1))})
+            sequence(ax, items, tint=tint, cell=0.56, size=11)
+        return draw
+
+    return [
+        ("solve A", "A = T(0) (B \u2299 C) G+", "B and C held still", sweep(0)),
+        ("solve B", "B = T(1) (A \u2299 C) G+", "now A and C are the fixed pair",
+         sweep(1)),
+        ("solve C", "C = T(2) (A \u2299 B) G+", "and once more, round the modes",
+         sweep(2)),
+        ("one sweep", "3 least squares", "each step is convex, so the error "
+         "cannot rise", sweep(-1)),
+    ]
+
+
+def scene_15(tint):
+    """15 -- one model, one residual, and what different losses charge for it.
+
+    Everything CP is stays fixed across the four frames: the same counts, the
+    same predictions, the same residual in every cell. Only the penalty column
+    changes. The two lit cells both miss by 2, on counts of
+    2 and 40, and the whole animation exists to show that squared error prices
+    them the same and the Poisson loss does not. They are the notebook's
+    predict-first argument at a size that survives being drawn: that cell uses
+    2/4 and 2000/2002, three orders of magnitude apart, and a 2000 does not fit
+    in a cell. 40 is about the largest count whose Poisson deviance still
+    renders at `cell_text`'s one decimal -- 0.1 rather than 0.0 -- which is
+    what puts the ratio here at 12x against the cell's 614x.
+    """
+    import numpy as np
+    x = np.array([[2, 1, 7], [1, 40, 3]])
+    m = np.array([[4, 2, 6], [2, 42, 4]])
+    squared = (x - m) ** 2
+    deviance = np.round(2 * (m - x + x * np.log(x / m)), 2)
+
+    lit = np.zeros(x.shape, bool)
+    lit[0, 0] = True
+    lit[1, 1] = True
+
+    def row(penalty, caption):
+        def draw(ax):
+            sequence(ax, [
+                {"arr": x, "lit": lit, "caption": "x  counts"},
+                {"arr": m, "lit": lit, "caption": "m  model"},
+                "->",
+                {"arr": penalty, "lit": lit, "caption": caption},
+            ], tint=tint, cell=0.62, size=11)
+        return draw
+
+    def both(ax):
+        sequence(ax, [
+            {"arr": squared, "lit": lit, "caption": "squared"},
+            "vs",
+            {"arr": deviance, "lit": lit, "caption": "Poisson"},
+        ], tint=tint, cell=0.72, size=12)
+
+    def data(ax):
+        sequence(ax, [
+            {"arr": x, "lit": lit, "caption": "x  counts"},
+            "vs",
+            {"arr": m, "lit": lit, "caption": "m  model"},
+        ], tint=tint, cell=0.72, size=12)
+
+    return [
+        ("x and m", "both lit cells miss by 2", "one count is 2, one is 40",
+         data),
+        ("squared error", "(x - m)^2", "both misses cost 4",
+         row(squared, "(x - m)^2")),
+        ("Poisson", "2(m - x + x log x/m)", "now they do not",
+         row(deviance, "deviance")),
+        ("same model", "1.2 vs 0.1", "the loss is where you say what x is",
+         both),
+    ]
+
+
+def scene_15_binary(tint):
+    """15, second animation -- why a 0/1 tensor needs a link, not a constraint.
+
+    Four frames and one claim: a squared-error fit of a binary tensor puts
+    numbers on the line where only two are meaningful, and a Bernoulli model
+    cannot, without anything bounding it. The lit cells in frame 2 are the
+    ones outside [0, 1]. Frame 4 lights every cell instead, deliberately: the
+    claim there is about the whole matrix, not about two cells in it, and
+    lighting only the two that used to be out of range would read as though
+    they had been repaired one at a time rather than that nothing can leave
+    the interval. The arithmetic between the two is printed, so the frame is
+    an argument rather than an assertion.
+    """
+    import numpy as np
+    x = np.array([[1, 0, 1], [0, 1, 1]])
+    gauss = np.array([[1.2, -0.1, 0.9], [0.2, 0.8, 0.95]])
+    odds = np.array([[5.0, 0.2, 3.0], [0.3, 2.0, 4.0]])
+    prob = np.round(odds / (1 + odds), 2)
+
+    outside = (gauss < 0) | (gauss > 1)
+
+    def one(arr, caption, lit=None, cell=0.78):
+        def draw(ax):
+            sequence(ax, [{"arr": arr, "lit": lit, "caption": caption}],
+                     tint=tint, cell=cell, size=13)
+        return draw
+
+    def link(ax):
+        sequence(ax, [
+            {"arr": odds, "caption": "m  odds"},
+            "->",
+            {"arr": prob, "caption": "m / (1 + m)"},
+        ], tint=tint, cell=0.68, size=12)
+
+    return [
+        ("x", "every entry 0 or 1", "did it happen at all",
+         one(x, "x  (2, 3)")),
+        ("squared error", "-0.1 and 1.2", "two cells left the interval",
+         one(gauss, "m  (2, 3)", lit=outside)),
+        ("Bernoulli", "m > 0", "the model value is the odds, not a probability",
+         one(odds, "m  odds")),
+        ("m / (1 + m)", "all of (0, 1)", "a probability, and nothing bounded it",
+         link),
+    ]
+
+
 # ─── the table ──────────────────────────────────────────────────────────────
 #
 # One row per notebook, so a filename, a notebook and the move it illustrates
@@ -1807,6 +2002,8 @@ SCENES = {
            ("cube-12-budget", scene_12_budget)],
     "13": [("cube-13-convolution", scene_13),
            ("cube-13-transposed", scene_13_transposed)],
+    "14": [("cube-14-profile", scene_14), ("cube-14-als", scene_14_als)],
+    "15": [("cube-15-loss", scene_15), ("cube-15-binary", scene_15_binary)],
 }
 
 

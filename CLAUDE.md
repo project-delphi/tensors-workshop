@@ -5,8 +5,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
-code — the deliverables are the rendered site, fourteen Colab notebooks
-(thirteen sections plus one take-home extra), two revealjs decks and three
+code — the deliverables are the rendered site, sixteen Colab notebooks
+(thirteen sections plus three take-home extras), two revealjs decks and three
 Kahoot spreadsheets.
 
 ## The one rule that matters
@@ -75,7 +75,7 @@ moved: every printed number, every colour, every bar and every filled cell came
 back pixel-identical, and the entire diff was text glyphs, a few hairlines, and
 the resampling grain of the photographic panels. `ds-audio.png` was
 pixel-identical outright — only the PNG encoder's bytes had shifted. The eight
-photographic dataset cards and all fourteen cube GIFs came back byte-identical,
+photographic dataset cards and all the cube GIFs came back byte-identical,
 because Pillow's crop-and-resize path and the GIF writer have not moved.
 Matplotlib is the one that drifts.
 
@@ -106,7 +106,7 @@ What each one draws, and from where:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
-- `gen_cube_gifs.py` draws the twenty-eight cube animations the notebooks
+- `gen_cube_gifs.py` draws the thirty-two cube animations the notebooks
   embed, **two per notebook**, in that notebook's own accent from
   `gen_notebooks.ACCENTS`. The first draws the move the section is named after;
   the second a move it needs and the first has no room for. `SCENES` holds them
@@ -158,11 +158,16 @@ What each one draws, and from where:
   and every caption still says which axis in words, for the reason the Spanish
   box says `ESPAÑOL` rather than just being grey.
 
-  Frames run at `duration=1800`, one global value in `render` rather than a
+  Frames run at `duration=2700`, one global value in `render` rather than a
   per-scene one. A frame here is a whole labelled picture with a caption and a
   shape line, not a tween, and the stepper cell in each notebook is the other
   half of that answer — the GIF sets a pace for a reader watching, the stepper
-  hands over frames for a reader studying.
+  hands over frames for a reader studying. The number has been raised twice,
+  900 → 1800 → 2700, each time by watching one rather than by reasoning about
+  it: a reader meeting a frame for the first time has to find the caption, find
+  the pile it names, and then look for what moved, which is three passes and
+  not one. Raising it rewrites every cube GIF in `images/` and changes nothing
+  else — frame delay is metadata, so `MAX_KB` is not at risk.
 - `gen_slide_art.py` draws slide art from HTML and CSS, screenshotted by
   headless Chrome at the deck's own 1920×1080. It owns only the `slide-NNa`
   insertions: the thirty-one PNGs the #45 redesign left have no source and are
@@ -292,7 +297,7 @@ worked examples. Those two are static: they read the route, they do not run it.
 `scripts/test_notebooks.py` is what runs it. One fresh kernel per notebook
 executes the declared route and then the **paired solution** — the
 `solution`-tagged cell immediately after the activity. That extension is not
-optional decoration: twelve of the fourteen activity cells are the student's
+optional decoration: fourteen of the sixteen activity cells are the student's
 blank `# TODO` block and hold no executable code at all, so prep plus activity
 would execute the setup and then a comment. The answer is where the lesson
 runs.
@@ -357,7 +362,7 @@ The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages aligned.
 
 **`worked-mistakes.md` pairs one-to-one with the predict-first cells.** Each of
-the fourteen entries is that notebook's delimited counterexample, lifted out of
+the sixteen entries is that notebook's delimited counterexample, lifted out of
 the widget with the `pred_` prefixes dropped, so a reader can run it without
 ipywidgets and a facilitator can put the claim on a screen. Both languages
 carry byte-identical code — prose is translated, the counterexample is what the
@@ -543,7 +548,7 @@ uv run --group execute python scripts/test_notebooks.py --offline
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
-uv run --group figures python scripts/gen_cube_gifs.py        # all fourteen
+uv run --group figures python scripts/gen_cube_gifs.py        # all sixteen
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```

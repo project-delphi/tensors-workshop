@@ -1,5 +1,5 @@
 ---
-title: "Catorce errores que vale la pena probar"
+title: "Dieciséis errores que vale la pena probar"
 lang: es
 ---
 
@@ -385,5 +385,73 @@ por eso suele pasar inadvertida — y por eso las capas de «convolución» del
 aprendizaje profundo son correlación.
 Transferencia: si se invirtieran los kernels de una capa entrenada, ¿qué
 cambiaría?
+
+</details>
+
+## 14 · Reescalar un vector factor reescala la componente
+
+<span data-language-key="14-rescaling-a-factor-vector-rescales-the-component"></span>
+
+«La neurona 12 tiene el mayor peso de este factor, así que manda en la componente».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+a = np.array([1., 2.])
+b = np.array([3., 4.])
+c = np.array([5.])
+t1 = np.einsum("i,j,k->ijk", a, b, c)
+t2 = np.einsum("i,j,k->ijk", 2 * a, b / 2, c)
+assert np.allclose(t1, t2)
+assert not np.allclose(2 * a, a)
+lam = np.linalg.norm(a) * np.linalg.norm(b) * np.linalg.norm(c)
+unit = np.einsum("i,j,k->ijk", a / np.linalg.norm(a), b / np.linalg.norm(b),
+                 c / np.linalg.norm(c))
+assert np.allclose(t1, lam * unit)
+```
+
+Duplica un vector y divide otro por dos: el tensor de rango 1 no se mueve, así
+que la magnitud de un vector factor es aritmética, no datos. Solo hay dos cosas
+legibles: el perfil de norma 1 — la forma de los picos y valles — y un peso que
+guarda todo el tamaño, que es lo que `tensorly` devuelve como `weights`.
+Normaliza antes de comparar dos componentes, o antes de nombrar un pico.
+Transferencia: dos ejecuciones devuelven las componentes en otro orden. ¿Con
+qué hay que emparejarlas antes de compararlas?
+
+</details>
+
+## 15 · Un error de 2 es un error de 2
+
+<span data-language-key="15-an-error-of-2-is-an-error-of-2"></span>
+
+«El modelo falló por 2, así que se equivocó lo mismo en los dos casos».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+def squared(x, m):
+    return (x - m) ** 2
+def deviance(x, m):
+    return 2 * (m - x + x * np.log(x / m))
+assert squared(2., 4.) == squared(2000., 2002.)
+assert round(deviance(2., 4.), 3) == 1.227
+assert round(deviance(2000., 2002.), 3) == 0.002
+assert deviance(2., 4.) > 600 * deviance(2000., 2002.)
+```
+
+El error cuadrático cobra 4 por ambos fallos, porque supone que el ruido tiene
+la misma dispersión en todas partes. La dispersión de un conteo crece con su
+media — la varianza de un conteo de Poisson *es* su media —, así que fallar por
+2 en una celda que promedia 2 es equivocarse de orden de magnitud, y fallar por
+2 en una celda de 2000 es redondear. La desviación de Poisson cobra unas 600
+veces más el primero. Elegir la pérdida es elegir qué clase de número crees
+tener.
+Transferencia: tu tensor tiene un 41% de ceros. ¿Qué pérdida deja al modelo
+predecir un conteo negativo, y por qué la otra no necesita una restricción para
+impedirlo?
 
 </details>

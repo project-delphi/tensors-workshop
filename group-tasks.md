@@ -289,6 +289,46 @@ has lower error against the known original. Decide how you would judge them.
 **Share:** An acceptance checklist. Separate checks that need a clean reference
 from checks available without one. State what neither can prove.
 
+## 14 · Which peak would you publish?
+
+<span data-language-key="14-which-peak-would-you-publish"></span>
+
+**When:** After the trial factor in
+[Notebook 14](notebooks/14-cp-factorization.ipynb). Follow-up only.
+**Time:** 8 minutes.
+
+A rank-3 non-negative CP fit hands you three components, each a neuron profile,
+a time course and a trial weighting. One is flat across all four reach targets;
+two are tuned. Decide what you would claim in a figure caption.
+
+- What does a peak in the time profile license you to say, and what does it not?
+- Two components have different weights. What, exactly, is being compared?
+- A colleague reruns the fit with a new seed and gets the components in a
+  different order. What breaks, and what does not?
+
+**Share:** One caption you would publish and one you would refuse, with the
+reason. Name the check that separates them.
+
+## 15 · Is it the city or the form?
+
+<span data-language-key="15-is-it-the-city-or-the-form"></span>
+
+**When:** After the midnight-and-noon component in
+[Notebook 15](notebooks/15-generalized-cp.ipynb). Follow-up only.
+**Time:** 10 minutes.
+
+A GCP-Poisson fit spends a third of its rank-3 budget on a component that
+spikes at exactly 00:00 and 12:00. Decide what to do about it.
+
+- What would have to be true of the *recording process* for a component to
+  look like this? Name a second dataset where the same thing could happen.
+- Dropping those reports, masking those cells, and leaving them in are three
+  different decisions. Who does each one hurt?
+- Would a Gaussian fit of the same tensor have shown you this? Why or why not?
+
+**Share:** Your decision and the sentence you would put in the methods section
+to disclose it. Say what a reader would need in order to disagree with you.
+
 ## Facilitator prompts
 
 <span data-language-key="facilitator-prompts"></span>

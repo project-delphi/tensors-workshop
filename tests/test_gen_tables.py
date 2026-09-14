@@ -168,7 +168,7 @@ class PipInstalled(unittest.TestCase):
         for s in gt.NOTEBOOKS:
             seen |= gt.pip_installed(
                 gt.notebook_code(ROOT / "notebooks" / gt.notebook_name(s)))
-        self.assertEqual(seen, {"imageio", "tensorly"})
+        self.assertEqual(seen, {"imageio", "tensorly", "pyttb", "torch"})
 
 if __name__ == "__main__":
     unittest.main()

@@ -73,8 +73,13 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 
 # Routes that fetch remote data or run %pip. --offline skips exactly these.
 # 12 is here for the voice.wav it fetches inside its fallback run.
-NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12"}
+NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12",
+           "14", "15"}
 
+# Bigger than any cell's own retry budget, so a slow-but-alive remote fails
+# with the bilingual sentence the fetch cells were written to print rather than
+# with an opaque timeout. Notebook 15's fetch_crime is the longest: three
+# attempts at 70s plus 9s of backoff.
 CELL_TIMEOUT = 300
 
 # Cells slower than this are named as they finish, so a long CI step says
@@ -151,6 +156,21 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
         "p11-cholesky-solution": ["L @ L.T == Sigma / L @ L.T == Sigma: True"],
     },
     "13": {"s09-02": ["Full image / Imagen completa: (512, 512)"]},
+    # 14's tensor is a file in a git repository, so every number it prints is
+    # as fixed as the file is, and asserting them costs nothing.
+    "14": {"s14-04": ["Tensor / Tensor: (43, 200, 88)",
+                      "Targets / Objetivos: [-90   0  90 180]"],
+           "s14-07": ["lam = 0.004784", "peak_t = 54"]},
+    # 15's tensor is a live query against a city data portal. Its *shape* is
+    # structural -- seven days, twenty-four hours, Chicago's 77 community
+    # areas plus the unassigned one, the ten commonest types -- and the
+    # deviance ratio is arithmetic on two literals. The report counts are
+    # neither: Chicago reclassifies and expunges historical records, so
+    # asserting 244,367 here would be asserting that nobody in the city ever
+    # corrects a 2023 filing.
+    "15": {"s15-03": ["Tensor / Tensor: (7, 24, 78, 10)"],
+           "s15-07": ["Squared error charges both misses 4",
+                      "614 times more"]},
 }
 
 failures: list[str] = []

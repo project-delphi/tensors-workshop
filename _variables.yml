@@ -380,6 +380,12 @@ datasets:
   - match: "pdx-cs-sound"
     label_en: "a voice recording"
     label_es: "una grabación de voz"
+  - match: "tensor_data_monkey_bmi"
+    label_en: "the monkey BMI recordings"
+    label_es: "las grabaciones BMI del mono"
+  - match: "data.cityofchicago.org"
+    label_en: "Chicago crime reports"
+    label_es: "informes de delitos de Chicago"
 
 # ── The brainstorm diagram ───────────────────────────────────────────────────
 # One picture of the whole day, on both companion pages. Four ideas, and every
@@ -430,7 +436,7 @@ brainstorm:
       title_es: "Se factoriza"
       gloss_en: "Break it into simpler parts you can use."
       gloss_es: "Divídelo en partes más simples que puedas usar."
-      sections: ["07", "08", "09", "10", "11"]
+      sections: ["07", "08", "09", "10", "11", "14", "15"]
 
   # The ribbon under the four cards. There are **two different claims** about
   # the workshop's connecting idea, and they name different sections. Keeping
@@ -658,6 +664,63 @@ references:
               url: "https://www.mathsci.ai/"
             - name: "Brett Bader"
               url: "https://scholar.google.com/citations?user=OJQ8pq0AAAAJ"
+        - authors: "Ballard, G. & Kolda, T. G."
+          year: 2025
+          title: "Tensor Decompositions for Data Science"
+          url: "https://www.cambridge.org/core/books/tensor-decompositions-for-data-science/640814D308696CD61CB9112EA57B2911"
+          where: "Cambridge University Press"
+          note_en: >-
+            the textbook the survey grew into; the authors keep a
+            [full draft](https://users.wfu.edu/ballard/pdfs/tensor_textbook.pdf)
+            free to read
+          note_es: >-
+            el libro de texto en que creció la revisión; los autores mantienen
+            un [borrador completo](https://users.wfu.edu/ballard/pdfs/tensor_textbook.pdf)
+            de lectura libre
+          also:
+            - name: "Grey Ballard"
+              url: "https://users.wfu.edu/ballard/"
+        - authors: "Hong, D., Kolda, T. G. & Duersch, J. A."
+          year: 2020
+          title: "Generalized Canonical Polyadic Tensor Decomposition"
+          url: "https://doi.org/10.1137/18M1203626"
+          where: "SIAM Review 62(1), 133–163"
+          note_en: >-
+            read this one when squared error is the wrong question: counts,
+            binary data, anything whose noise is not Gaussian. Table 1 is the
+            list of losses. Kolda also
+            [gives the talk](https://www.youtube.com/watch?v=eFZVOFo-14Q)
+          note_es: >-
+            léelo cuando el error cuadrático sea la pregunta equivocada:
+            conteos, datos binarios, cualquier cosa cuyo ruido no sea
+            gaussiano. La tabla 1 es la lista de pérdidas. Kolda también
+            [da la charla](https://www.youtube.com/watch?v=eFZVOFo-14Q)
+          also:
+            - name: "David Hong"
+              url: "https://dahong.gitlab.io/"
+        - authors: "Kruskal, J. B."
+          year: 1977
+          title: >-
+            Three-way arrays: rank and uniqueness of trilinear decompositions,
+            with application to arithmetic complexity and statistics
+          url: "https://doi.org/10.1016/0024-3795(77)90069-6"
+          where: "Linear Algebra and its Applications 18(2), 95–138"
+          note_en: >-
+            the condition under which a CP decomposition is essentially unique,
+            which is what section 11 claims and this is where it comes from
+          note_es: >-
+            la condición bajo la cual una descomposición CP es esencialmente
+            única, que es lo que afirma la sección 11 y de aquí viene
+        - authors: "Kolda, T. G."
+          year: 2021
+          title: "Monkey BMI Tensor Dataset"
+          url: "https://gitlab.com/tensors/tensor_data_monkey_bmi"
+          note_en: >-
+            the 43 × 200 × 88 neural tensor deep dive 14 decomposes, with the
+            preprocessing that produced it. Cite it if you use it
+          note_es: >-
+            el tensor neuronal de 43 × 200 × 88 que descompone el estudio a
+            fondo 14, con el preprocesamiento que lo produjo. Cítalo si lo usas
         - authors: "Tucker, L. R."
           year: 1966
           title: "Some mathematical notes on three-mode factor analysis"
@@ -729,6 +792,19 @@ references:
           also:
             - name: "Jean Kossaifi"
               url: "https://jeankossaifi.com/"
+        - title: "pyttb"
+          code: true
+          url: "https://github.com/sandialabs/pyttb"
+          note_en: >-
+            the Tensor Toolbox in Python, from the authors of the survey. Use it
+            for the things tensorly has no equivalent of:
+            [gcp_opt](https://pyttb.readthedocs.io/en/stable/tutorial/algorithm_gcp_opt.html)
+            fits CP under a loss you choose
+          note_es: >-
+            el Tensor Toolbox en Python, de los autores de la revisión. Úsalo
+            para lo que tensorly no tiene equivalente:
+            [gcp_opt](https://pyttb.readthedocs.io/en/stable/tutorial/algorithm_gcp_opt.html)
+            ajusta CP con la pérdida que elijas
     - anchor: ref-blog
       title_en: "Posts from the ML blog"
       title_es: "Entradas del blog de ML"
@@ -1388,3 +1464,111 @@ extras:
       - "Explicar la convolución transpuesta como **superposición y suma**, no como una inversa mágica."
       - "Desenfocar y recuperar parcialmente una imagen real con **deconvolución Richardson–Lucy**."
       - "Explicar por qué el ruido y los bordes hacen difícil un problema inverso."
+  x14:
+    n: "14"
+    slug: "cp-factorization"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home"
+    format_line_es: "estudio a fondo · para después"
+    title_en: "CP factorization and the rank-1 view"
+    title_es: "Factorización CP y la vista de rango 1"
+    summary_en: "Read a CP component as one vector per axis, fit it by alternating least squares, constrain it to be non-negative, and watch real neural recordings sort themselves by a label the method never saw."
+    summary_es: "Leer una componente CP como un vector por eje, ajustarla con mínimos cuadrados alternos, restringirla a valores no negativos y ver cómo grabaciones neuronales reales se ordenan solas según una etiqueta que el método nunca vio."
+    network_note_for: "tensor_data_monkey_bmi"
+    network_note_en: "5 MB, once"
+    network_note_es: "5 MB, una vez"
+    intro_en: |-
+      Section 11 fits a CP decomposition and compares its storage against Tucker's. This deep dive asks the other question:
+
+      > **What is a single CP component, and what can you read off it?**
+
+      The answer is the reason people reach for CP rather than Tucker. One component is one vector per axis, and each of those vectors is a profile over its own axis — where it peaks, where it dips, and what that means. A Tucker core mixes every basis vector with every other, so there is no component to read.
+
+      We will fit CP **by hand**, because the way it is fitted is the lesson. The problem is not convex in all the factors at once. Fix every factor but one and it becomes an ordinary least-squares problem — the one from section 07 — with a closed-form answer. That is **alternating least squares**, and it is the whole algorithm.
+
+      The data is Tamara Kolda's own demo tensor: 43 neurons × 200 time steps × 88 trials, recorded while a monkey moved a cursor to one of four targets.
+    intro_es: |-
+      > 🇪🇸 La sección 11 ajusta una descomposición CP y compara su almacenamiento con el de Tucker. Este estudio a fondo hace la otra pregunta:
+      >
+      > **¿Qué es una sola componente CP y qué puedes leer en ella?**
+      >
+      > La respuesta es la razón por la que se elige CP antes que Tucker. Una componente es un vector por eje, y cada uno de esos vectores es un perfil sobre su propio eje: dónde sube, dónde baja y qué significa eso. El núcleo de Tucker mezcla cada vector base con todos los demás, así que no hay componente que leer.
+      >
+      > Ajustaremos CP **a mano**, porque la forma de ajustarlo es la lección. El problema no es convexo en todos los factores a la vez. Fija todos los factores menos uno y se convierte en un problema de mínimos cuadrados corriente — el de la sección 07 — con solución cerrada. Eso es **mínimos cuadrados alternos**, y es todo el algoritmo.
+      >
+      > Los datos son el tensor de demostración de la propia Tamara Kolda: 43 neuronas × 200 instantes × 88 ensayos, grabados mientras un mono movía un cursor hacia uno de cuatro objetivos.
+    objectives_en:
+      - "Write a **rank-1 tensor** as an outer product `a ∘ b ∘ c` and say what each vector means."
+      - "Read **peaks and troughs** in a factor vector as a profile over that vector's own axis."
+      - "Explain why CP gives you components to read and **Tucker does not**."
+      - "Fix two factors and recognise the third subproblem as the **least squares** of section 07."
+      - "Implement **alternating least squares** yourself with a Khatri–Rao product and a pseudoinverse."
+      - "Explain why **non-negativity** changes the subproblem to NNLS and keeps it convex."
+      - "Fit non-negative CP to a real neural tensor and find a behavioural variable **the method never saw**."
+      - "Tell **essential uniqueness** apart from what a run of ALS actually returns."
+    objectives_es:
+      - "Escribir un **tensor de rango 1** como producto exterior `a ∘ b ∘ c` y decir qué significa cada vector."
+      - "Leer los **picos y valles** de un vector factor como un perfil sobre su propio eje."
+      - "Explicar por qué CP da componentes que se pueden leer y **Tucker no**."
+      - "Fijar dos factores y reconocer el tercer subproblema como los **mínimos cuadrados** de la sección 07."
+      - "Programar tú mismo **mínimos cuadrados alternos** con un producto Khatri–Rao y una pseudoinversa."
+      - "Explicar por qué la **no negatividad** convierte el subproblema en NNLS y lo mantiene convexo."
+      - "Ajustar CP no negativo a un tensor neuronal real y encontrar una variable de conducta **que el método nunca vio**."
+      - "Distinguir la **unicidad esencial** de lo que realmente devuelve una ejecución de ALS."
+  x15:
+    n: "15"
+    slug: "generalized-cp"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home"
+    format_line_es: "estudio a fondo · para después"
+    title_en: "Generalized CP for counts and binary data"
+    title_es: "CP generalizado para conteos y datos binarios"
+    summary_en: "Squared error is a modelling assumption, not a definition of fit. Swap it for a Poisson or Bernoulli loss, decompose a real tensor of crime counts — including one component that turns out to be an artifact of the file — then hand the same objective to PyTorch and watch what momentum does to it."
+    summary_es: "El error cuadrático es una hipótesis de modelado, no la definición de buen ajuste. Cámbialo por una pérdida de Poisson o Bernoulli, descompón un tensor real de conteos de delitos — incluida una componente que resulta ser un artefacto del fichero — y después entrégale el mismo objetivo a PyTorch para ver qué hace el momento con él."
+    network_note_for: "data.cityofchicago.org"
+    network_note_en: "3 MB, once"
+    network_note_es: "3 MB, una vez"
+    intro_en: |-
+      Every decomposition so far has minimised squared error. Deep dive 14 did too. This one asks what that choice was actually assuming:
+
+      > **Least squares is maximum likelihood under Gaussian noise of constant variance.**
+
+      Counts are not that. The variance of a count grows with its mean, two cells in five are zero, and a Gaussian model will cheerfully predict −1.6 crimes. Binary data is not that either: a 0/1 tensor fitted by squared error predicts 1.27 and −0.26.
+
+      **Generalized CP** keeps the CP model and replaces the loss, one element at a time. The factors are still what you read; the alternating structure still holds, because these losses stay convex in one factor with the others fixed. Only the question being asked of the data changes.
+
+      The data is one calendar year of Chicago crime reports, aggregated into a tensor of day-of-week × hour × community area × crime type. One of the components we fit is not a pattern in the city at all.
+    intro_es: |-
+      > 🇪🇸 Todas las descomposiciones hasta ahora han minimizado el error cuadrático. El estudio a fondo 14 también. Este pregunta qué suponía en realidad esa elección:
+      >
+      > **Los mínimos cuadrados son máxima verosimilitud bajo ruido gaussiano de varianza constante.**
+      >
+      > Los conteos no son eso. La varianza de un conteo crece con su media, dos de cada cinco celdas son cero y un modelo gaussiano predecirá tan campante −1,6 delitos. Los datos binarios tampoco son eso: un tensor de 0 y 1 ajustado por error cuadrático predice 1,27 y −0,26.
+      >
+      > El **CP generalizado** conserva el modelo CP y sustituye la pérdida, elemento a elemento. Los factores siguen siendo lo que se lee; la estructura alterna sigue valiendo, porque estas pérdidas siguen siendo convexas en un factor con los demás fijos. Lo único que cambia es la pregunta que se le hace a los datos.
+      >
+      > Los datos son un año natural de informes de delitos de Chicago, agregados en un tensor de día de la semana × hora × área comunitaria × tipo de delito. Una de las componentes que ajustamos no es un patrón de la ciudad en absoluto.
+    objectives_en:
+      - "State what **squared error assumes** about the data, and name two kinds of data that break it."
+      - "Write a **generalized CP** objective as an elementwise sum of a loss `f(x, m)`."
+      - "Write the **Poisson** and **Bernoulli** losses and their gradients, and say what each one is for."
+      - "Explain why the **alternating structure survives** the change of loss."
+      - "Build a real order-4 count tensor from an aggregated query, not from a downloaded file."
+      - "Fit **GCP-Poisson** to crime counts and read the day, hour, area and type profiles."
+      - "Recognise a component that is an artifact of **how the data was recorded**, not of the world."
+      - "Fit **GCP-Bernoulli** to the same data binarised, and say what the two fits disagree about."
+      - "Write the objective in **PyTorch** and let autograd replace the gradient you derived by hand."
+      - "Explain why plain gradient descent needs a far smaller step here, and what **momentum** and a per-parameter step size buy."
+    objectives_es:
+      - "Enunciar qué **supone el error cuadrático** sobre los datos y nombrar dos tipos de datos que lo rompen."
+      - "Escribir un objetivo de **CP generalizado** como suma elemento a elemento de una pérdida `f(x, m)`."
+      - "Escribir las pérdidas de **Poisson** y **Bernoulli** y sus gradientes, y decir para qué sirve cada una."
+      - "Explicar por qué **la estructura alterna sobrevive** al cambio de pérdida."
+      - "Construir un tensor real de orden 4 con conteos a partir de una consulta agregada, no de un fichero descargado."
+      - "Ajustar **GCP-Poisson** a conteos de delitos y leer los perfiles de día, hora, área y tipo."
+      - "Reconocer una componente que es un artefacto de **cómo se registraron los datos**, no del mundo."
+      - "Ajustar **GCP-Bernoulli** a los mismos datos binarizados y decir en qué discrepan los dos ajustes."
+      - "Escribir el objetivo en **PyTorch** y dejar que autograd sustituya al gradiente que derivaste a mano."
+      - "Explicar por qué el descenso por gradiente simple necesita aquí un paso mucho menor, y qué compran el **momento** y un paso por parámetro."
