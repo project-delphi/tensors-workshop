@@ -74,9 +74,10 @@ counterpart; use its result to plan follow-up on Notebook 10.
 
 <span data-language-key="wrong-answer-clinic"></span>
 
-Use [worked mistakes](worked-mistakes.md) inside the slots above:
-axis order in 02, reshape in 04, residuals in 09, and rank budgets in 11.
-Show the claim first. Ask for a counterexample. Reveal the correction last.
+Use [worked mistakes](worked-mistakes.md) inside the slots above. There is one
+per notebook; the four that fit a group slot are axis order in 02, reshape in
+04, residuals in 09, and rank budgets in 11. Show the claim first. Ask for a
+counterexample. Reveal the correction last.
 
 If half the room makes the same error, model the tiny example and ask a new
 prediction. Drop an optional demonstration, not the next break or exit check.
