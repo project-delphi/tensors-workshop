@@ -88,10 +88,17 @@ MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
 # One accent per notebook, indexed by section number, so a reader can tell at
 # a glance which notebook a screenshot came from. Mid-saturation hues only:
 # each has to hold its own against a white page and against Colab's #1e1e1e.
+#
+# The list must be at least as long as the notebook count, because `accent()`
+# indexes it modulo its own length: at fourteen entries notebook 14 wrapped
+# round to index 0 and took notebook 00's blue, which is the one thing the
+# per-notebook accent exists to prevent. Growing it is safe in a way that
+# reordering it is not -- every existing number is below the old length, so
+# none of them moves.
 ACCENTS = [
     "#0ea5e9", "#6366f1", "#0891b2", "#7c3aed", "#059669", "#d97706",
     "#db2777", "#0d9488", "#2563eb", "#c2410c", "#9333ea", "#16a34a",
-    "#e11d48", "#0284c7",
+    "#e11d48", "#0284c7", "#65a30d", "#b91c1c",
 ]
 
 

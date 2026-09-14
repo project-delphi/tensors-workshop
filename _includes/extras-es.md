@@ -2,3 +2,5 @@
 | # | Estudio a fondo | Colab |
 |---|---|---|
 | 13 | Convolución y deconvolución | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb) |
+| 14 | Factorización CP y la vista de rango 1 | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) |
+| 15 | CP generalizado para conteos y datos binarios | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/15-generalized-cp.ipynb) |

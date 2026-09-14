@@ -15,5 +15,7 @@
 | 11 | `matplotlib`, `ipywidgets`, `pandas`, `pillow`, `tensorly`†, `imageio`† | sí — viajes en taxi de Nueva York, el clip de la tormenta |
 | 12 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `scipy`, `pillow` | sí — una grabación de voz (para el ejercicio E) |
 | 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy`, `pillow` | no |
+| 14 | `matplotlib`, `ipywidgets`, `scipy`, `pillow`, `tensorly`† | sí — las grabaciones BMI del mono (5 MB, una vez) |
+| 15 | `matplotlib`, `ipywidgets`, `pandas`, `scipy`, `pillow`, `pyttb`†, `torch`† | sí — informes de delitos de Chicago (3 MB, una vez) |
 
 : Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}

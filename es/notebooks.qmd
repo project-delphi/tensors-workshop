@@ -43,9 +43,12 @@ merece investigarse en lugar de descartarse.
 
 <span data-language-key="going-further"></span>
 
-Este **no es una sección**. Es un estudio a fondo, entregado como material para
-casa. No tiene diapositivas, ni Kahoot, ni minutos en el reloj del taller: la
-agenda de {{< var workshop.minutes >}} minutos es exactamente la misma sin él.
+Estos **no son secciones**. Son estudios a fondo, entregados como material para
+casa. No tienen diapositivas, ni Kahoot, ni minutos en el reloj del taller: la
+agenda de {{< var workshop.minutes >}} minutos es exactamente la misma sin
+ellos. El 14 y el 15 retoman donde para la sección 11: allí CP se ajusta como
+uno de cuatro métodos, llamando a la librería como caja negra a propósito; aquí
+se ajusta a mano y después se cambia qué significa «ajustar».
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 

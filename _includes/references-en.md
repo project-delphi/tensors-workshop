@@ -18,6 +18,12 @@ Start with the survey. Then choose a method.
 
 - Kolda, T. G. & Bader, B. W. (2009). [*Tensor Decompositions and Applications*](https://doi.org/10.1137/07070111X), SIAM Review 51(3), 455–500 — the survey; start here.<br>
   <small>Author pages: [Tamara Kolda](https://www.mathsci.ai/) · [Brett Bader](https://scholar.google.com/citations?user=OJQ8pq0AAAAJ)</small>
+- Ballard, G. & Kolda, T. G. (2025). [*Tensor Decompositions for Data Science*](https://www.cambridge.org/core/books/tensor-decompositions-for-data-science/640814D308696CD61CB9112EA57B2911), Cambridge University Press — the textbook the survey grew into; the authors keep a [full draft](https://users.wfu.edu/ballard/pdfs/tensor_textbook.pdf) free to read.<br>
+  <small>Author pages: [Grey Ballard](https://users.wfu.edu/ballard/)</small>
+- Hong, D., Kolda, T. G. & Duersch, J. A. (2020). [*Generalized Canonical Polyadic Tensor Decomposition*](https://doi.org/10.1137/18M1203626), SIAM Review 62(1), 133–163 — read this one when squared error is the wrong question: counts, binary data, anything whose noise is not Gaussian. Table 1 is the list of losses. Kolda also [gives the talk](https://www.youtube.com/watch?v=eFZVOFo-14Q).<br>
+  <small>Author pages: [David Hong](https://dahong.gitlab.io/)</small>
+- Kruskal, J. B. (1977). [*Three-way arrays: rank and uniqueness of trilinear decompositions, with application to arithmetic complexity and statistics*](https://doi.org/10.1016/0024-3795(77)90069-6), Linear Algebra and its Applications 18(2), 95–138 — the condition under which a CP decomposition is essentially unique, which is what section 11 claims and this is where it comes from.
+- Kolda, T. G. (2021). [*Monkey BMI Tensor Dataset*](https://gitlab.com/tensors/tensor_data_monkey_bmi) — the 43 × 200 × 88 neural tensor deep dive 14 decomposes, with the preprocessing that produced it. Cite it if you use it.
 - Tucker, L. R. (1966). [*Some mathematical notes on three-mode factor analysis*](https://doi.org/10.1007/BF02289464), Psychometrika 31, 279–311 — Tucker decomposition.
 - Carroll, J. D. & Chang, J.-J. (1970). [*Analysis of individual differences in multidimensional scaling via an N-way generalization of “Eckart-Young” decomposition*](https://doi.org/10.1007/BF02310791), Psychometrika 35, 283–319 — CP decomposition.
 - Harshman, R. A. (1970). [*Foundations of the PARAFAC procedure*](https://www.psychology.uwo.ca/faculty/harshman/wpppfac0.pdf), UCLA Working Papers in Phonetics 16, 1–84 — PARAFAC, also known as CP.<br>
@@ -31,6 +37,7 @@ Implementations for your own projects.
 - Harris, C. R., Millman, K. J., van der Walt, S. J. et al. (2020). [*Array programming with NumPy*](https://www.nature.com/articles/s41586-020-2649-2), Nature 585, 357–362 — the foundational NumPy paper: array programming and the scientific Python ecosystem.
 - [`tensorly`](https://tensorly.org) — implementations of [Tucker](https://tensorly.org/stable/modules/generated/tensorly.decomposition.tucker.html) and [CP](https://tensorly.org/dev/modules/generated/tensorly.decomposition.CP.html).<br>
   <small>Author pages: [Jean Kossaifi](https://jeankossaifi.com/)</small>
+- [`pyttb`](https://github.com/sandialabs/pyttb) — the Tensor Toolbox in Python, from the authors of the survey. Use it for the things tensorly has no equivalent of: [gcp_opt](https://pyttb.readthedocs.io/en/stable/tutorial/algorithm_gcp_opt.html) fits CP under a loss you choose.
 
 ## Posts from the ML blog {#ref-blog}
 

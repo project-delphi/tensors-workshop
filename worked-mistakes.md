@@ -1,5 +1,5 @@
 ---
-title: "Fourteen mistakes worth testing"
+title: "Sixteen mistakes worth testing"
 lang: en
 ---
 
@@ -381,5 +381,71 @@ asymmetric one. Flip it yourself and correlation reproduces convolution
 exactly. For a symmetric kernel the distinction vanishes, which is why it goes
 unnoticed — and why deep-learning “convolution” layers are correlation.
 Transfer: if a trained layer's kernels were flipped, what would change?
+
+</details>
+
+## 14 · Rescaling a factor vector rescales the component
+
+<span data-language-key="14-rescaling-a-factor-vector-rescales-the-component"></span>
+
+“Neuron 12 has the biggest weight in this factor, so it drives the component.”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+a = np.array([1., 2.])
+b = np.array([3., 4.])
+c = np.array([5.])
+t1 = np.einsum("i,j,k->ijk", a, b, c)
+t2 = np.einsum("i,j,k->ijk", 2 * a, b / 2, c)
+assert np.allclose(t1, t2)
+assert not np.allclose(2 * a, a)
+lam = np.linalg.norm(a) * np.linalg.norm(b) * np.linalg.norm(c)
+unit = np.einsum("i,j,k->ijk", a / np.linalg.norm(a), b / np.linalg.norm(b),
+                 c / np.linalg.norm(c))
+assert np.allclose(t1, lam * unit)
+```
+
+Double one vector and halve another and the rank-1 tensor does not move, so a
+factor vector's magnitude is arithmetic, not data. Only two things are
+readable: the unit-norm profile — the shape of the peaks and troughs — and one
+weight holding all the size, which is what `tensorly` returns as `weights`.
+Normalise before you compare two components, or before you name a peak.
+Transfer: two runs return components in a different order. What must you match
+on before comparing them?
+
+</details>
+
+## 15 · An error of 2 is an error of 2
+
+<span data-language-key="15-an-error-of-2-is-an-error-of-2"></span>
+
+“The model missed by 2, so it made the same size of mistake either way.”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+def squared(x, m):
+    return (x - m) ** 2
+def deviance(x, m):
+    return 2 * (m - x + x * np.log(x / m))
+assert squared(2., 4.) == squared(2000., 2002.)
+assert round(deviance(2., 4.), 3) == 1.227
+assert round(deviance(2000., 2002.), 3) == 0.002
+assert deviance(2., 4.) > 600 * deviance(2000., 2002.)
+```
+
+Squared error charges both misses 4, because it assumes the noise has the same
+spread everywhere. A count's spread grows with its mean — a Poisson count's
+variance *is* its mean — so missing by 2 on a cell that averages 2 is being
+wrong about the order of magnitude, and missing by 2 on a cell holding 2000 is
+rounding. The Poisson deviance charges the first about 600 times more. Choosing
+the loss is choosing what kind of number you think you have.
+Transfer: your tensor is 41% zeros. Which loss lets the model predict a
+negative count, and why does the other one not need a constraint to stop it?
 
 </details>

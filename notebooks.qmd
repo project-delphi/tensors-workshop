@@ -41,9 +41,12 @@ investigating rather than dismissing.
 
 <span data-language-key="going-further"></span>
 
-This one is **not a section**. It is a deep dive, handed out as take-home
-material. It has no slides, no Kahoot, and no minutes on the workshop clock: the
-{{< var workshop.minutes >}}-minute agenda is exactly what it was without it.
+These are **not sections**. They are deep dives, handed out as take-home
+material. They have no slides, no Kahoot, and no minutes on the workshop clock:
+the {{< var workshop.minutes >}}-minute agenda is exactly what it was without
+them. 14 and 15 pick up where section 11 stops — section 11 fits CP as one of
+four methods and calls the library deliberately as a black box; these two fit it
+by hand and then change what "fit" means.
 
 {{< include _includes/notebooks-extra-en.md >}}
 

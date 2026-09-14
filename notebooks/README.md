@@ -44,22 +44,31 @@ same URLs more than once — that is deliberate, not accidental duplication.
 | 12 | [`12-wrap-up-and-take-homes.ipynb`](https://github.com/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | Wrap-up and take-homes — Wrap up the workshop around one connecting idea, then choose among five extensions: PCA, attention, CP, Cholesky, and audio. | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) |
 <!-- END notebooks -->
 
-## The extra
+## The extras
 
-`13-convolution-and-deconvolution.ipynb` is a deep dive, handed out as take-home
-material after the session. It is declared under `extras:` in `_variables.yml`
-rather than `sections:`, and that mapping is deliberately missing `minutes`,
-`start`, `end` and `part` — `scripts/timeline.py` only ever walks `sections`, so
-nothing about an extra can move a start time or the agenda. It also gets no
-`#sec-NN` slide anchor and no Kahoot.
+Three notebooks are deep dives, handed out as take-home material after the
+session: `13-convolution-and-deconvolution.ipynb`,
+`14-cp-factorization.ipynb` and `15-generalized-cp.ipynb`. Each is declared
+under `extras:` in `_variables.yml` rather than `sections:`, and that mapping is
+deliberately missing `minutes`, `start`, `end` and `part` —
+`scripts/timeline.py` only ever walks `sections`, so nothing about an extra can
+move a start time or the agenda. They also get no `#sec-NN` slide anchor and no
+Kahoot.
 
-Everything else about it is a notebook like any other: the same generated
+Everything else about them is a notebook like any other: the same generated
 header and footer, the same ownership boundary, the same checks.
 
-It was section 09 until matrix and tensor factorizations became sections 09 and
+13 was section 09 until matrix and tensor factorizations became sections 09 and
 11. The workshop's connecting idea still has three legs — pseudoinverse,
 deconvolution, Tucker — and this is the one the room no longer runs, which is
 why sections 07, 10 and 12 all name it out loud.
+
+14 and 15 go the other way: they pick up where section 11 stops. Section 11
+fits CP as one of four methods and calls `parafac` deliberately as a black box,
+so ALS is never named and the loss is never questioned. 14 fits CP by hand and
+reads the factors as profiles; 15 replaces squared error with a Poisson or
+Bernoulli loss. They are extras rather than sections because the room does not
+have forty minutes, not because they are optional to understand.
 
 ## Shape of each notebook
 
@@ -144,10 +153,10 @@ these notebooks import, so adding an import and rerunning `gen_tables.py` is
 what changes the environment. `matplotlib` and `ipywidgets` are in it because
 every notebook plots, and every one now builds widgets — the thirteen that
 carry sliders, and 00, whose only widget is its predict-first cell. Both ship
-with Colab, so their absence only shows up locally. `imageio` and `tensorly`
+with Colab, so their absence only shows up locally. `imageio`, `tensorly`, `torch` and `pyttb`
 are not, because the notebooks that need them install them themselves.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the digits and the
 photographs, so notebooks 01, 03, 04, 06 and 13 need no network at all. The other
-nine fetch something the first time they run — see the table on the
+eleven fetch something the first time they run — see the table on the
 [notebooks page](https://project-delphi.github.io/tensors-workshop/notebooks.html).

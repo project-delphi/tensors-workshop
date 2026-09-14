@@ -293,6 +293,50 @@ menor error respecto al original conocido. Decidan cómo evaluarlas.
 necesitan una referencia limpia de las que no. Digan qué no puede demostrar
 ninguna de ellas.
 
+## 14 · ¿Qué pico publicarías?
+
+<span data-language-key="14-which-peak-would-you-publish"></span>
+
+**Cuándo:** Después del factor de ensayos en el
+[cuaderno 14](../notebooks/14-cp-factorization.ipynb).
+Solo como actividad posterior.
+**Tiempo:** 8 minutos.
+
+Un ajuste CP no negativo de rango 3 les entrega tres componentes, cada una con
+un perfil de neuronas, un curso temporal y un peso por ensayo. Una es plana
+para los cuatro objetivos; dos son selectivas. Decidan qué afirmarían en el pie
+de una figura.
+
+- ¿Qué les permite decir un pico en el perfil temporal, y qué no?
+- Dos componentes tienen pesos distintos. ¿Qué se está comparando exactamente?
+- Un colega repite el ajuste con otra semilla y obtiene las componentes en otro
+  orden. ¿Qué se rompe y qué no?
+
+**Compartan:** Un pie de figura que publicarían y otro que rechazarían, con la
+razón. Nombren la comprobación que los separa.
+
+## 15 · ¿Es la ciudad o es el formulario?
+
+<span data-language-key="15-is-it-the-city-or-the-form"></span>
+
+**Cuándo:** Después de la componente de medianoche y mediodía en el
+[cuaderno 15](../notebooks/15-generalized-cp.ipynb).
+Solo como actividad posterior.
+**Tiempo:** 10 minutos.
+
+Un ajuste GCP-Poisson gasta un tercio de su presupuesto de rango 3 en una
+componente que se dispara exactamente a las 00:00 y las 12:00. Decidan qué
+hacer con ella.
+
+- ¿Qué tendría que ser cierto del *proceso de registro* para que una componente
+  se vea así? Nombren otro conjunto de datos donde pudiera pasar lo mismo.
+- Tirar esas denuncias, enmascarar esas celdas y dejarlas tal cual son tres
+  decisiones distintas. ¿A quién perjudica cada una?
+- ¿Se lo habría mostrado un ajuste gaussiano del mismo tensor? ¿Por qué?
+
+**Compartan:** Su decisión y la frase que pondrían en la sección de métodos
+para declararla. Digan qué necesitaría un lector para estar en desacuerdo.
+
 ## Preguntas para facilitar la discusión
 
 <span data-language-key="facilitator-prompts"></span>
