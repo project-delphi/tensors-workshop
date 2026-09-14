@@ -163,3 +163,46 @@ jobs:
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
+
+  # Starts a real kernel per notebook and runs the core route each one
+  # declares, through to the solution that answers it. This is the gate
+  # RELEASE_CHECKLIST.md used to hand to a human.
+  #
+  # A separate job, not a step in `render`, for two reasons. It needs the
+  # network and the scientific stack, which `render` deliberately does not
+  # install; and a dead dataset URL or a PyPI blip should not red-light
+  # `render`, which is the required check and the thing `deploy` publishes.
+  #
+  # Nothing here is stripped or mocked: %pip install runs verbatim and the
+  # remote datasets are fetched for real, because Colab is the runtime this
+  # defends and parity with it is the point.
+  notebooks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: false
+
+      - name: Execute the core routes
+        # Headless: the solutions plot, and no runner has a display.
+        env:
+          MPLBACKEND: Agg
+        run: uv run --group execute python scripts/test_notebooks.py
+
+      - name: Fail if executing a notebook changed it
+        # The runner executes in memory and never writes back. If that ever
+        # regresses, notebooks/ drifts and the byte-exact regenerate gate in
+        # `render` would fail later with a confusing message; catch it here.
+        run: |
+          DRIFT=$(git status --porcelain -- notebooks)
+          if [ -n "$DRIFT" ]; then
+            echo "::error::Executing the notebooks modified them."
+            echo "$DRIFT"
+            exit 1
+          fi

@@ -75,7 +75,14 @@ def check_tasks(path: Path, notebooks: dict[str, str]) -> list[tuple[str, int]]:
     return result
 
 
-def check_route(notebook: dict, label: str) -> None:
+def route_of(notebook: dict, label: str) -> tuple[list[str], str]:
+    """The core route a notebook declares: preparation cell ids, then activity.
+
+    Split out so that one function owns what a route *is*. check_route below
+    validates the convention around it; scripts/test_notebooks.py executes it.
+    Cells are addressed by id and never by numeric prefix -- notebook 09 carries
+    s12-* ids and notebook 11 s13-*, preserved through a renumbering.
+    """
     cells = notebook["cells"]
     scaffold = [c for c in cells if "<!-- CORE-PATH -->" in "".join(c.get("source", []))]
     if len(scaffold) != 1:
@@ -84,6 +91,12 @@ def check_route(notebook: dict, label: str) -> None:
     prep, activity = route.get("prep"), route.get("activity")
     if not isinstance(prep, list) or not isinstance(activity, str):
         raise ValueError(f"{label}: missing core route metadata")
+    return prep, activity
+
+
+def check_route(notebook: dict, label: str) -> None:
+    cells = notebook["cells"]
+    prep, activity = route_of(notebook, label)
     targets = prep + [activity]
     ids = [c.get("id") for c in cells]
     if len(set(targets)) != len(targets) or any(ids.count(t) != 1 for t in targets):
