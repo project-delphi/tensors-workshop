@@ -63,9 +63,10 @@ uv run --group notebooks jupyter lab
 
 El grupo `notebooks` está declarado en `pyproject.toml`, y se deriva de los
 propios `import` de los cuadernos en lugar de escribirse a mano junto a ellos.
-`matplotlib` e `ipywidgets` están en él porque todos los cuadernos dibujan algo,
-y todos menos el 00 usan deslizadores; los dos vienen con Colab, así que si
-falta uno solo se nota al ejecutar en local.
+`matplotlib` e `ipywidgets` están en él porque todos los cuadernos dibujan algo
+y todos construyen widgets: los trece con deslizadores, y el 00, cuyo único
+widget es su celda de predicción. Los dos vienen con Colab, así que si falta
+uno solo se nota al ejecutar en local.
 
 `scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
 manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se
