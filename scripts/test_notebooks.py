@@ -13,8 +13,9 @@ WHAT RUNS, AND WHY IT IS NOT JUST THE ROUTE
 -------------------------------------------
 Twelve of the fourteen core-activity cells hold no executable code: they are
 the student's blank `# TODO n / TAREA n` block. Notebooks 00 and 12 declare an
-empty `prep` and a markdown activity. Only notebook 10's activity is real code.
-So prep + activity would execute the setup cells and then a comment.
+empty `prep` and a markdown activity -- deliberately, because neither needs
+code live. Only notebook 10's activity is real code. So prep + activity would
+execute the setup cells and then a comment.
 
 The code that actually demonstrates the lesson is the `solution`-tagged cell
 answering the activity, so a run is:
@@ -60,7 +61,7 @@ ROOT = Path(__file__).resolve().parent.parent
 NBDIR = ROOT / "notebooks"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_teaching_materials import route_of  # noqa: E402
+from check_teaching_materials import route_of, workshop_meta  # noqa: E402
 
 # Matplotlib must not try to open a window: this runs headless on a CI runner
 # and on a developer's Mac. Set before any kernel inherits the environment.
@@ -292,10 +293,40 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
             break
 
     if not route_has_code:
-        # Notebooks 00 and 12: the route declares no executable code at all,
-        # so run the whole notebook instead. Both are short and their code
-        # cells are the setup and the answers.
-        chosen = [i for i, c in enumerate(cells) if c.get("cell_type") == "code"]
+        # The route declares no executable code. Notebook 12's says so to the
+        # student in as many words -- "Exit check (5 min). No code required...
+        # Other exercises and explorers are optional" -- and that is the real
+        # lesson, so the route is not the thing to change.
+        #
+        # What CI runs there is a separate question, and `ci_cells` answers it
+        # explicitly: the setup and the five take-home TODO/solution pairs, and
+        # not the explorer widgets. Those explorers are what a facilitator
+        # demonstrates, they are the notebook's slowest cells, and one of them
+        # renders a base64 WAV big enough to stall the kernel outright (see the
+        # probe's silencing comment). Executing the answers a student works
+        # through alone is worth far more than driving the widgets.
+        #
+        # Without `ci_cells` the old blanket fallback stands, which is what
+        # notebook 00 still uses: it is short and every code cell is setup.
+        #
+        # The list is a set, not an order: the return below sorts by position,
+        # so cells always execute in document order however they are written
+        # here. Leave a cell's setup out and it fails, whatever you list first.
+        declared = workshop_meta(nb, label).get("ci_cells")
+        if declared is not None:
+            if not isinstance(declared, list) or not declared:
+                raise ValueError(f"{label}: ci_cells must be a non-empty list")
+            for cid in declared:
+                if ids.count(cid) != 1:
+                    raise ValueError(f"{label}: ci_cells names {cid}, which is "
+                                     f"not a unique cell in this notebook")
+                if cells[ids.index(cid)].get("cell_type") != "code":
+                    raise ValueError(f"{label}: ci_cells names {cid}, which is "
+                                     f"not a code cell")
+            chosen = [ids.index(cid) for cid in declared]
+        else:
+            chosen = [i for i, c in enumerate(cells)
+                      if c.get("cell_type") == "code"]
 
     return sorted(set(chosen)), activity, paired
 

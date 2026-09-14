@@ -127,6 +127,46 @@ class RunSet(unittest.TestCase):
         self.assertEqual(paired, "s12-b-ccc")
 
 
+    def test_ci_cells_replaces_the_blanket_fallback(self):
+        """Notebook 12: the route is code-free on purpose, so CI declares a set.
+
+        The student-facing core path says "No code required ... explorers are
+        optional", which is the real lesson. What CI executes is a separate
+        question, answered explicitly rather than by running every code cell.
+        """
+        nb = notebook(
+            cell("## Core activity\n", kind="markdown", cid="act",
+                 tags=["workshop-core-activity"]),
+            cell("setup()\n", cid="setup"),
+            cell("answer()\n", cid="sol", tags=["solution", "hide-input"]),
+            cell("explorer()\n", cid="explorer"))
+        nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", "sol"]
+        chosen, _, _ = tn.run_set(nb, "fixture")
+        self.assertEqual([nb["cells"][i]["id"] for i in chosen], ["setup", "sol"],
+                         "the explorer must not be executed")
+
+    def test_ci_cells_must_name_real_code_cells(self):
+        for bad, why in (("nope", "no such cell"), ("prose", "not code")):
+            with self.subTest(case=why):
+                nb = notebook(
+                    cell("## Core activity\n", kind="markdown", cid="act",
+                         tags=["workshop-core-activity"]),
+                    cell("setup()\n", cid="setup"),
+                    cell("## prose\n", kind="markdown", cid="prose"))
+                nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", bad]
+                with self.assertRaises(ValueError):
+                    tn.run_set(nb, "fixture")
+
+    def test_a_code_free_route_without_ci_cells_still_falls_back(self):
+        """Notebook 00 keeps the blanket fallback: it is short and all setup."""
+        nb = notebook(
+            cell("## Core activity\n", kind="markdown", cid="act",
+                 tags=["workshop-core-activity"]),
+            cell("a()\n", cid="a"),
+            cell("b()\n", cid="b"))
+        chosen, _, _ = tn.run_set(nb, "fixture")
+        self.assertEqual([nb["cells"][i]["id"] for i in chosen], ["a", "b"])
+
     def test_lone_paired_solution_does_not_suppress_the_fallback(self):
         """A markdown activity with a solution right after it still falls back.
 
