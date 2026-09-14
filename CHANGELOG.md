@@ -10,6 +10,9 @@
 - Equations appear as typeset mathematics beside the code that implements them, each with a plain-English reading.
 - Colour images show each RGB channel in its own colour rather than in grey, and notebooks 03 and 10 show the table the data came from before it becomes an array.
 - The predict-first questions list their options one per line and set the revealed answer in readable type.
+- Notebook 03 now states the broadcasting rule itself — line the shapes up from the right, each facing pair equal or one, a missing leading axis counts as one — instead of leaving it to be inferred from a single worked case.
+- Notebook 11 defines the rank of a tensor where it already animates one: the smallest number of rank-1 terms that sum to it, which is the CP rank spent as a budget. It also notes that, unlike a matrix's, it can exceed every axis length.
+- Notebook 11's dye-mixing comparison is now presented as what it demonstrates — uniqueness — explaining why a CP component can be named and a Tucker or SVD column cannot.
 
 ## 2026-09-11
 
