@@ -86,6 +86,42 @@ class WorkedExamples(unittest.TestCase):
                     exec(compile(source, f"{path}:example-{i}", "exec"), {})
         self.assertEqual(*blocks)
 
+    def test_notebook_predictions_run(self):
+        """The predict-first cells carry the same counterexamples, and they run.
+
+        A prediction cell teaches by asserting a claim is false, so its
+        arithmetic has to be true. The block is delimited in the notebook so it
+        can be lifted out and executed without ipywidgets, which the notebooks
+        need and this test environment does not have.
+        """
+        begin = "# --- counterexample / contraejemplo"
+        end = "# --- end counterexample"
+        found = {}
+        for path in sorted((ROOT / "notebooks").glob("*.ipynb")):
+            cells = json.loads(path.read_text(encoding="utf-8"))["cells"]
+            for cell in cells:
+                if cell.get("cell_type") != "code":
+                    continue
+                source = "".join(cell.get("source", []))
+                if begin not in source:
+                    continue
+                block = source.split(begin, 1)[1].split(end, 1)[0]
+                block = block.split("\n", 1)[1]
+                with self.subTest(notebook=path.name, cell=cell.get("id")):
+                    self.assertIn("assert ", block)
+                    exec(compile(block, f"{path.name}:{cell['id']}", "exec"), {})
+                found[path.name] = cell["id"]
+
+        self.assertEqual(
+            sorted(found),
+            [
+                "02-thinking-in-n-dimensions.ipynb",
+                "04-reshape-and-transpose.ipynb",
+                "09-matrix-factorizations.ipynb",
+                "11-tensor-factorizations.ipynb",
+            ],
+        )
+
     def test_assessment_shapes(self):
         import numpy as np
         self.assertEqual(np.empty((20, 8, 8))[:, 3, 4].shape, (20,))
