@@ -93,6 +93,11 @@ class WorkedExamples(unittest.TestCase):
         arithmetic has to be true. The block is delimited in the notebook so it
         can be lifted out and executed without ipywidgets, which the notebooks
         need and this test environment does not have.
+
+        Every notebook carries exactly one, so the expectation is read off the
+        directory rather than spelled out: a notebook that loses its block
+        fails here, and so does one that gains a second -- which the old
+        one-cell-per-name bookkeeping would have hidden.
         """
         begin = "# --- counterexample / contraejemplo"
         end = "# --- end counterexample"
@@ -110,17 +115,14 @@ class WorkedExamples(unittest.TestCase):
                 with self.subTest(notebook=path.name, cell=cell.get("id")):
                     self.assertIn("assert ", block)
                     exec(compile(block, f"{path.name}:{cell['id']}", "exec"), {})
-                found[path.name] = cell["id"]
+                found.setdefault(path.name, []).append(cell["id"])
 
         self.assertEqual(
             sorted(found),
-            [
-                "02-thinking-in-n-dimensions.ipynb",
-                "04-reshape-and-transpose.ipynb",
-                "09-matrix-factorizations.ipynb",
-                "11-tensor-factorizations.ipynb",
-            ],
+            sorted(p.name for p in (ROOT / "notebooks").glob("*.ipynb")),
         )
+        for name, cells in sorted(found.items()):
+            self.assertEqual(len(cells), 1, f"{name} has {len(cells)}: {cells}")
 
     def test_assessment_shapes(self):
         import numpy as np

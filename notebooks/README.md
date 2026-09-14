@@ -119,9 +119,10 @@ uv run --group notebooks jupyter lab
 The `notebooks` group is declared in `pyproject.toml` and generated from what
 these notebooks import, so adding an import and rerunning `gen_tables.py` is
 what changes the environment. `matplotlib` and `ipywidgets` are in it because
-every notebook plots and all but 00 use sliders; both ship with Colab, so their
-absence only shows up locally. `imageio` and `tensorly` are not, because the
-notebooks that need them install them themselves.
+every notebook plots, and every one now builds widgets — the thirteen that
+carry sliders, and 00, whose only widget is its predict-first cell. Both ship
+with Colab, so their absence only shows up locally. `imageio` and `tensorly`
+are not, because the notebooks that need them install them themselves.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the digits and the
 photographs, so notebooks 01, 03, 04, 06 and 13 need no network at all. The other

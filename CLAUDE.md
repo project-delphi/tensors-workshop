@@ -223,9 +223,22 @@ the notebook's slowest cells, and one renders a base64 WAV big enough to stall
 the kernel; the answers a student works through alone are worth more.
 `run_set()` refuses a `ci_cells` entry that is not a unique code cell, and
 check 2's `EXPECTED` guard refuses one that drops an asserted cell -- narrow
-the list too far and CI names the cell you stopped asserting. Without
-`ci_cells` the blanket fallback stands, which is what notebook 00 uses: it is
-short and every code cell is setup.
+the list too far and CI names the cell you stopped asserting.
+
+Notebook 00 declares one too, for the same reason at smaller scale. Its route
+is a written exit answer, so the blanket fallback used to stand -- it is short
+and every code cell was setup. Then it gained a predict-first cell, and with a
+live `Dropdown` and `Checkbox` in the kernel the widget sweep began stalling
+for the whole `PROBE_CELL_TIMEOUT`: reproducible on two runs in three, with the
+probe's own loop reporting nothing over budget, so the wait is not in the
+driving. It is the payload-through-an-`Output` pathology this file already
+describes, reached with nothing but text. `ci_cells` names the six cells the
+fallback used to pick, which leaves the predict cell outside every route --
+where the other thirteen already sit, and where the delimited counterexample in
+it is gated by `tests/test_teaching_materials.py` rather than by a kernel.
+
+So the blanket fallback is now the path nothing takes. Keep it: a new notebook
+with no route gets a sensible default rather than silently executing nothing.
 
 It asserts three things beyond "nothing raised": that a blank activity stayed
 blank, that each route still prints the numbers in its `EXPECTED` table, and
