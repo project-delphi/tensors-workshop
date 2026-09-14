@@ -179,10 +179,11 @@ def extras_readme_table(lang: str) -> str:
 # always used and the order that reads best. Anything not named here is
 # appended alphabetically rather than dropped.
 DEP_ORDER = ["matplotlib", "ipywidgets", "pandas", "scikit-learn",
-             "scikit-image", "scipy", "tensorly", "imageio"]
+             "scikit-image", "scipy", "pillow", "tensorly", "imageio"]
 
 # Import name -> the name a reader would install it under.
-DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn"}
+DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn",
+            "PIL": "pillow"}
 
 # Lower bounds for the `notebooks` dependency group in pyproject.toml. Floors,
 # never exact pins: the point of running locally is to match what Colab has,
@@ -193,7 +194,7 @@ DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn"}
 DEP_FLOOR = {
     "numpy": "1.26", "matplotlib": "3.8", "ipywidgets": "8.1",
     "pandas": "2.1", "scikit-learn": "1.4", "scikit-image": "0.22",
-    "scipy": "1.11", "jupyterlab": "4.1",
+    "scipy": "1.11", "jupyterlab": "4.1", "pillow": "10.2",
 }
 
 # NumPy is in every notebook and DEP_SKIP drops it from the table (whose column
@@ -210,6 +211,12 @@ DEP_SKIP = {
     "warnings", "math", "textwrap", "collections", "functools", "itertools",
     "tempfile", "shutil", "subprocess", "contextlib", "dataclasses", "typing",
     "random", "csv", "re", "IPython", "google", "imageio_ffmpeg",
+    # `html` is standard library, and there is also an abandoned `html` on
+    # PyPI. Leaving it out of this set did not produce a wrong table -- it
+    # produced a `notebooks` group that no longer installs, which is how it
+    # was found. Any stdlib name that a squatted distribution shares is worth
+    # more care than the rest of this list.
+    "html",
 }
 
 IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)

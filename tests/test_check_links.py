@@ -87,10 +87,12 @@ def badge_cell(name):
 
 
 CUBE = "cube-00-x.gif"
+CUBE_2 = "cube-00-y.gif"
+FOREIGN = "cube-07-x.gif"
 
 
 def cube_cell(gif=CUBE, alt="A cube animation.", cid="cube"):
-    """The one site image every notebook carries, as check 1 wants."""
+    """A site image a notebook carries, as check 1 wants."""
     return cell(f'<img src="{cl.REPO["site"]}/images/{gif}" alt="{alt}">',
                 kind="markdown", cid=cid)
 
@@ -117,7 +119,8 @@ def tree():
         (root / "notebooks").mkdir()
         (root / "docs").mkdir()
         (root / "images").mkdir()
-        (root / "images" / CUBE).write_bytes(b"GIF89a")
+        for name in (CUBE, CUBE_2, FOREIGN):
+            (root / "images" / name).write_bytes(b"GIF89a")
         yield root, root / "notebooks", root / "docs"
 
 
@@ -251,7 +254,77 @@ class Notebooks(unittest.TestCase):
             write_nb(nbdir, "00-x.ipynb",
                      notebook(badge_cell("00-x.ipynb"), cell("x = 1")))
             with self.notebooks(nbdir, [section("00", "x")]) as failures:
-                self.assertTrue(any("expected 1" in f for f in failures),
+                self.assertTrue(any("no cube animation of its own" in f
+                                    for f in failures), failures)
+
+    def test_two_of_a_notebooks_own_animations_pass(self):
+        # The rule is ownership, not a count: a notebook carries as many of
+        # its own animations as it has something to say with.
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cube_cell(gif=CUBE_2, cid="cube2"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertEqual(failures, [])
+
+    def test_another_notebooks_animation_fails(self):
+        # The mistake a count could never catch, and the likeliest one: these
+        # cells are copied between notebooks, and the number in the URL is the
+        # part you have to remember to change.
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cube_cell(gif=FOREIGN, cid="cube2"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("another notebook's animation" in f and
+                                    FOREIGN in f for f in failures), failures)
+
+    def test_display_maths_passes(self):
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("Before.\n\n$$\na = b\n$$\n\nAfter.",
+                                   kind="markdown", cid="m"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertEqual(failures, [])
+
+    def test_unclosed_display_maths_fails(self):
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("$$\na = b\n", kind="markdown", cid="m"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("unclosed $$" in f for f in failures),
+                                failures)
+
+    def test_maths_inside_raw_html_fails(self):
+        # GitHub does not typeset maths inside a <div>, so an equation written
+        # into the Spanish box ships to the reader as dollar signs.
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell('<div style="x">\n\n$$\na = b\n$$\n\n</div>',
+                                   kind="markdown", cid="m"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("raw HTML block" in f for f in failures),
+                                failures)
+
+    def test_maths_splitting_a_blockquote_fails(self):
+        # What happened to notebook 06: the `**` opened before the equation and
+        # closed after it, and both reached the reader as asterisks.
+        with tree() as (_, nbdir, _docs):
+            write_nb(nbdir, "00-x.ipynb",
+                     notebook(badge_cell("00-x.ipynb"), cube_cell(),
+                              cell("> **Start.\n\n$$\na = b\n$$\n\n> end.**",
+                                   kind="markdown", cid="m"),
+                              cell("x = 1")))
+            with self.notebooks(nbdir, [section("00", "x")]) as failures:
+                self.assertTrue(any("blockquote" in f for f in failures),
                                 failures)
 
     def test_image_without_alt_text_fails(self):
