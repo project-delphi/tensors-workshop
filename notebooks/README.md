@@ -79,12 +79,19 @@ have forty minutes, not because they are optional to understand.
 Notebook 00 begins with an entry check, 12 with an exit check; 13–15 are
 entirely take-home material.
 
-Every notebook also carries **two animations**, in the explanation section:
-small numbered cubes performing the moves that section teaches, drawn by
-`scripts/gen_cube_gifs.py` and served from the published site. They are
-absolute URLs because a notebook on Colab has no checkout to resolve a relative
-path against, which means a reader needs the network to *see* them — not to run
-anything. The five notebooks the deps table calls network-free still compute
+Every notebook carries **at least two animations**: small numbered cubes
+performing the moves that section teaches, drawn by `scripts/gen_cube_gifs.py`
+and served from the published site.
+
+Three is the target — a third that shows the data the section teaches those
+moves on, placed in the main body rather than in the optional tail, where a
+reader who stops at *Core complete* would never reach it. Notebooks 00, 02, 04
+and 06 have it; the generator prints which of the rest are still short on every
+run.
+
+The URLs are absolute because a notebook on Colab has no checkout to resolve a
+relative path against, which means a reader needs the network to *see* them —
+not to run anything. The five notebooks the deps table calls network-free still compute
 without a connection. Check 1 in `scripts/check_links.py` verifies that every
 one of those URLs names a file in `images/`, that it has alt text, and that it
 is one of that notebook's own `cube-NN-*` animations rather than another

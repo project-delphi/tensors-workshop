@@ -41,7 +41,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
-| `images/cube-*.gif` (two per notebook) | `scripts/gen_cube_gifs.py` |
+| `images/cube-*.gif` (two per notebook, three where the rollout has reached) | `scripts/gen_cube_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -106,13 +106,34 @@ What each one draws, and from where:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
-- `gen_cube_gifs.py` draws the thirty-two cube animations the notebooks
-  embed, **two per notebook**, in that notebook's own accent from
+- `gen_cube_gifs.py` draws the cube animations the notebooks embed, **at
+  least three per notebook**, in that notebook's own accent from
   `gen_notebooks.ACCENTS`. The first draws the move the section is named after;
-  the second a move it needs and the first has no room for. `SCENES` holds them
-  as a list per notebook, and every stem keeps the `cube-NN-` prefix, which is
-  what check 1 reads to tell a notebook's own animation from another
-  notebook's pasted into it.
+  the second a move it needs and the first has no room for; the third the
+  section's own subject — its data, or its trap. `SCENES` holds them as a list
+  per notebook, and every stem keeps the `cube-NN-` prefix, which is what check
+  1 reads to tell a notebook's own animation from another notebook's pasted
+  into it.
+
+  The floor was two until the pictures were read side by side, and what that
+  showed was scene after scene opening on the identical `np.arange(60)` cube in
+  a different accent: the video pipeline, the colour images and the Tucker
+  unfoldings were all the same picture. Two slots went to the move and none to
+  the material. Three is the count that makes room for it, and `main()` prints
+  which notebooks are still short at the end of every run — `check_table()` is
+  a different guard, for a duplicate stem and for a stem filed under the wrong
+  notebook. **Nothing enforces the count**, in CI or here: check 1 tests
+  ownership and never a number, and a generator that refused to draw until
+  every notebook reached three would be useless for the rollout that gets them
+  there.
+
+  Frames run at `duration=4050`, raised from 2700 for the scenes that now draw
+  two piles side by side. And `render` overrides `write_gif`'s palette default
+  to `palette_from="all"`: one palette is shared by every frame so colours
+  cannot shift mid-animation, and reading it off frame 0 alone silently crushes
+  any hue a later frame introduces. That is not a colour-scene problem —
+  `cube-06-matmul` is drawn entirely in one accent and its green `lit_tint`
+  highlight rendered grey.
 
   It is the one generator whose arrays are **not** real data, and it says so at
   the top: these cubes are `np.arange`, because the lesson is index arithmetic
@@ -123,6 +144,14 @@ What each one draws, and from where:
   complete picture, because `fig_hero` already recorded what a build animation
   does: Chrome parks on frame 0 at the end of a finite loop, which in a
   build-from-empty is the emptiest frame there is.
+
+  **One scene paints real colour, and it is still not real data.** `cube-04-rgb`
+  draws a 3x4 swatch through `planes(cell_colors=...)`, and the swatch is as
+  synthetic as the cube: every channel value in it is 0, 128 or 255, so "the red
+  plane says 255 wherever the pixel looks red" is checkable by eye in exactly
+  the way `T[1, 2, 3] == 33` is. That is the test a colour scene has to pass,
+  and a photograph fails it — it would put 87 there and there would be nothing
+  to check. Real arrays stay in `gen_figures.py`.
 
   They **loop forever** (`loop=0`), which is a correction, not a preference.
   At `loop=3` a browser started the animation when the image loaded rather
@@ -151,23 +180,28 @@ What each one draws, and from where:
   which axis, which index, which operand — because that is a claim one tint
   cannot carry. `INDEX` holds those hues, from the Okabe–Ito colour-blind-safe
   set, and `lit_tint` on `planes` is how a highlight takes one. Today that is
-  the two einsum scenes (`i` blue, `j` orange, `k` green, so "k is gone after
+  the three einsum scenes (`i` blue, `j` orange, `k` green, so "k is gone after
   the arrow" is something a reader watches rather than reads), `cube-00-axes`
   and `cube-10-unfold`, which agree with each other on what colour each axis
-  is. Colour is never the only carrier: every index is written out as a letter
+  is. `cube-06-matmul` is the third of those, and the one that showed why
+  `render` had to stop reading its palette off frame 0: it is drawn entirely in
+  one accent, so its green `lit_tint` had no green anywhere in frame 0 to
+  quantize against and rendered grey. Colour is never the only carrier: every index is written out as a letter
   and every caption still says which axis in words, for the reason the Spanish
   box says `ESPAÑOL` rather than just being grey.
 
-  Frames run at `duration=2700`, one global value in `render` rather than a
-  per-scene one. A frame here is a whole labelled picture with a caption and a
-  shape line, not a tween, and the stepper cell in each notebook is the other
-  half of that answer — the GIF sets a pace for a reader watching, the stepper
-  hands over frames for a reader studying. The number has been raised twice,
-  900 → 1800 → 2700, each time by watching one rather than by reasoning about
-  it: a reader meeting a frame for the first time has to find the caption, find
-  the pile it names, and then look for what moved, which is three passes and
-  not one. Raising it rewrites every cube GIF in `images/` and changes nothing
-  else — frame delay is metadata, so `MAX_KB` is not at risk.
+  The frame duration is one global value in `render` rather than a per-scene
+  one, and its number is stated once, in the bullet above. A frame here is a
+  whole labelled picture with a caption and a shape line, not a tween, and the
+  stepper cell in each notebook is the other half of that answer — the GIF sets
+  a pace for a reader watching, the stepper hands over frames for a reader
+  studying. It has been raised three times, 900 → 1800 → 2700 → 4050, each time
+  by watching one rather than by reasoning about it: a reader meeting a frame
+  for the first time has to find the caption, find the pile it names, and then
+  look for what moved, which is three passes and not one — and four once the
+  frame holds two piles side by side. Raising it rewrites every cube GIF in
+  `images/` and changes nothing else — frame delay is metadata, so `MAX_KB` is
+  not at risk.
 - `gen_slide_art.py` draws slide art from HTML and CSS, screenshotted by
   headless Chrome at the deck's own 1920×1080. It owns only the `slide-NNa`
   insertions: the thirty-one PNGs the #45 redesign left have no source and are
@@ -443,7 +477,7 @@ still just prints -- so an edit to the reveal is an ordinary edit to a `print`.
 reason the Spanish box says `ESPAÑOL` in words.
 
 **The frame stepper is `plumbing`, and it is the one cell no route runs.** Every
-notebook carries one under its two animations: a GIF cannot be paused, and at
+notebook carries one under its animations: a GIF cannot be paused, and at
 the end of a finite loop the browser goes back to frame 0, so the stepper
 fetches the same frames and hands them over one at a time. Two constraints are
 not style. It renders into a `widgets.Image`, **never** a `widgets.Output` —

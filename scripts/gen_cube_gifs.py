@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Draw two small numbered cubes per notebook, doing the things it teaches.
+"""Draw three or more small numbered cubes per notebook, doing what it teaches.
 
     uv run --group figures python scripts/gen_cube_gifs.py
 
@@ -21,6 +21,25 @@ make it a lie, so they get their own module and their own rule:
 A cube of real pixel values would show the operation happening to numbers
 nobody can follow. `T[1, 2, 3] == 33` can be checked by eye, and being able to
 check it by eye is the entire reason the picture exists.
+
+THE ONE EXCEPTION, AND WHY IT IS NOT A CRACK IN THAT RULE
+---------------------------------------------------------
+`planes` takes `cell_colors`, and the RGB scenes fill a cell with the colour it
+actually is. That is real colour, so it needs saying why it is not real data.
+
+The swatch those scenes draw is 3x4 pixels of flat, saturated colour -- pure
+red, green, blue, yellow, white, mid-grey -- and every channel value in it is
+0, 128 or 255. So the rule above still holds exactly: a reader looks at a cell
+that is visibly red, looks at the red plane, and checks that it says 255. That
+is the same check as `T[1, 2, 3] == 33`, done with a colour instead of an
+index, and it is the only way to show that the three planes of numbers *are*
+the picture.
+
+What this is not is licence for a photograph. `gen_figures.py` is where real
+arrays go, and `data.astronaut()` through this module would produce three
+planes of numbers in the 80s and 90s with nothing checkable anywhere on the
+frame. The test a colour scene has to pass is the same one every scene here
+passes: can a reader verify one cell by eye, without running anything?
 
 FOUR RULES THE DRAWING FOLLOWS
 ------------------------------
@@ -65,21 +84,33 @@ notebook it sits in. One palette, in one place -- the same reason
 `gen_figures.py` imports its colours from `gen_thumbnails.py` rather than
 repeating them.
 
-TWO ANIMATIONS PER NOTEBOOK
----------------------------
+AT LEAST THREE ANIMATIONS PER NOTEBOOK
+--------------------------------------
 `SCENES` holds a list per notebook: the first draws the move the section is
-named after, the second a move it needs and the first has no room for. Every
-stem keeps the `cube-NN-` prefix, which is what check 1 in `check_links.py`
-reads to tell a notebook's own animation from another notebook's pasted into
-it -- the mistake a count could never catch, and the likeliest one, since these
-cells are copied between notebooks and the number in the URL is the part you
-have to remember to change.
+named after, the second a move it needs and the first has no room for, and the
+third the section's own subject -- its data, or its trap.
+
+That third one is what the floor was raised for. At two, most notebooks spent
+both on the move and neither on the material, so scene after scene opened on
+the same `np.arange(60).reshape(3, 4, 5)` cube in a different accent: the video
+pipeline, the colour images and the Tucker unfoldings were all drawn with the
+identical picture. A reader who had met one had met them all. The rule is now
+that a notebook's animations must between them show what that notebook is
+*about*, and "at least three" is the count that makes room for it.
+
+Every stem keeps the `cube-NN-` prefix, which is what check 1 in
+`check_links.py` reads to tell a notebook's own animation from another
+notebook's pasted into it -- the mistake a count could never catch, and the
+likeliest one, since these cells are copied between notebooks and the number in
+the URL is the part you have to remember to change. Note what check 1 does
+*not* do: it tests ownership, never a count, so nothing in CI will tell you a
+notebook dropped back to two. This docstring is the whole of that rule.
 
 THREE WAYS A SCENE GOES WRONG SILENTLY
 --------------------------------------
-Twenty-eight animations of four frames is more than anybody re-reads after a
-one-line change, and matplotlib reports none of these. `_check_layout` measures
-the first two after a draw and refuses the frame:
+Fifty animations of four frames is more than anybody re-reads after a one-line
+change, and matplotlib reports none of these. `_check_layout` measures the
+first two after a draw and refuses the frame:
 
 - The `sub` and `note` captions share one baseline at opposite ends of it, so a
   long pair prints one sentence through the other.
@@ -91,6 +122,17 @@ The third it cannot catch, and it is the one to know before writing a scene:
 the planes occlude exactly, so `lit` on a cell of plane 1 or 2 highlights
 something plane 0 is painted over, and the frame comes out with nothing
 visibly selected. Light plane 0, or `hide` what is in front of what you mean.
+This one has shipped: `cube-12-recap` lit `T[1]` in a three-deep pile for
+months, and what a reader saw was a sliver down the right-hand edge.
+
+A FOURTH, WHICH IS NOT A BUG BUT READS LIKE ONE
+-----------------------------------------------
+A frame that uses almost none of its canvas. `centred` places a pile but never
+sizes it, so a scene written at the default `CELL` and then narrowed to a small
+array leaves a stamp in a field of white -- and at 960x540 scaled into a Colab
+cell, the numbers stop being legible on a phone before they stop being legible
+on a laptop, which is where nobody checks. Pick `cell` to fill the band, and
+let `_check_layout` tell you when you have gone too far.
 """
 from __future__ import annotations
 
@@ -177,6 +219,23 @@ def _mix(hex_colour: str, weight: float, towards: str = "#ffffff") -> str:
         round(x + (y - x) * weight) for x, y in zip(a, b))
 
 
+def _ink_on(fill: str) -> str:
+    """Label ink that survives on `fill`, chosen by the fill's own luminance.
+
+    Every other colour here is a pale wash of an accent, so `INK` reads on all
+    of them and the question never came up. `cell_colors` is what raises it: a
+    channel plane is filled with the colour it actually is, and `255` in `INK`
+    on saturated blue is a smudge. Rec. 709 luminance, thresholded once --
+    dark ink above, near-white below.
+
+    Near-white rather than white: a pure `#ffffff` digit on a pure `#0000ff`
+    cell buzzes, and the GIF palette is quantized to a shared 48 or 64 entries,
+    which turns that buzz into fringing.
+    """
+    r, g, b = (int(fill[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    return INK if (0.2126 * r + 0.7152 * g + 0.0722 * b) > 0.55 else "#f6f7f8"
+
+
 # ─── the canvas ─────────────────────────────────────────────────────────────
 #
 # Nothing on these images is prose. Every caption is an expression or a shape
@@ -215,7 +274,7 @@ def frame(tint, label, note="", sub=""):
     # `render` checks these two for overlap before it keeps the frame. They
     # share a baseline at opposite ends of it, so a long pair silently prints
     # one sentence through the other -- legible in neither language, and
-    # invisible to anyone who does not open all 28 files and read every frame.
+    # invisible to anyone who does not open every file and read every frame.
     ax._furniture = (label_t, sub_t, note_t)
     return plt, fig, ax
 
@@ -327,7 +386,7 @@ def centred(shape, cell=CELL, y=None):
 
 def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
            cell=CELL, origin=BODY, label_size=10.0, edge_axis=True,
-           lit_tint=None):
+           lit_tint=None, cell_colors=None, ghost_labels=True):
     """One tensor as its pile of (axis 1, axis 2) matrices, drawn back to front.
 
     Three masks, each answering a different question about an entry:
@@ -345,6 +404,38 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
     three of them were never allocated. Filling them would say the opposite of
     what the caption says, and leaving them out would make the subtraction
     impossible to follow.
+
+    `cell_colors` is the fourth question and the only one not about emphasis:
+    *what colour is this number?* Given an array of colours broadcastable to
+    `arr.shape`, each cell is filled with its own rather than with the pile's
+    one `tint`, and the label ink follows the fill through `_ink_on` so a value
+    on saturated blue is still readable. It exists for one lesson: a colour
+    image is three planes of numbers, and the only way to show that the red
+    plane *is* the reds is to paint it.
+
+    That does not make this a place for real pixel data -- see the module
+    docstring. The colours a scene passes here are flat and few, and the
+    numbers under them stay checkable by eye. `lit` still dims: an unlit cell
+    is washed towards white the same way, so a highlight reads against a
+    colour image exactly as it does against an accent pile. `hide` and `ghost`
+    still win outright, since a cell that is not there has no colour.
+
+    `ghost_labels=False` keeps the dashed outlines and drops the numbers inside
+    them. Whether a ghost's value is worth printing depends on what the ghost
+    is *for*, and there are two kinds here. Under broadcasting it is the whole
+    point -- `scene_03` has to show the four rows NumPy acts as if it
+    allocated, and their values are the arithmetic the reader is following. In
+    a padded batch it is noise: the value is zero because nothing was measured,
+    and two ghost planes deep the dashed grids interpenetrate and the zeros
+    crowd into a tangle that reads as a mistake rather than as an absence.
+
+    `cell_colors` also beats `lit_tint`, and that is worth knowing before you
+    reach for both: a scene lighting one channel of an RGB image in its index
+    colour would get the index colour dropped, silently, because a cell's own
+    colour is a fact about the data and a `lit_tint` is only emphasis. Nothing
+    reports it -- `_check_layout` measures geometry, not intent. If a scene
+    ever needs both, give the lit cells their own entry in `cell_colors`
+    rather than adding a precedence rule here.
 
     Occlusion needs no depth sort. A plane is painted opaque, and the planes
     are painted from the back of the pile forwards, so a nearer plane simply
@@ -366,6 +457,9 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
     hide = np.zeros(arr.shape, bool) if hide is None else np.broadcast_to(hide, arr.shape)
     ghost = (np.zeros(arr.shape, bool) if ghost is None
              else np.broadcast_to(ghost, arr.shape))
+    if cell_colors is not None:
+        cell_colors = np.broadcast_to(np.asarray(cell_colors, dtype=object),
+                                      arr.shape)
 
     for i in range(d - 1, -1, -1):         # back of the pile first
         ox, oy = plane_origin(i, origin, cell)
@@ -377,25 +471,36 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
                 on = bool(lit[i, r, c])
                 faint = bool(ghost[i, r, c])
                 x, y = ox + c * cell, top - (r + 1) * cell
-                hot = lit_tint if (on and lit_tint) else tint
+                own = None if cell_colors is None else cell_colors[i, r, c]
+                hot = own or (lit_tint if (on and lit_tint) else tint)
                 if faint:
                     ax.add_patch(Rectangle(
                         (x, y), cell, cell, facecolor="none",
                         edgecolor=_mix(tint, 0.35), linewidth=1.0,
                         linestyle=(0, (2.4, 2.0)), zorder=2 * (d - i)))
                 else:
+                    # A cell_colors fill is the colour itself when lit, not a
+                    # wash of it: the whole claim is that this cell IS this
+                    # colour. Accent piles keep the 0.30 wash they always had,
+                    # which is what stops a whole cube reading as a solid slab.
+                    fill = (hot if (own and on)
+                            else _mix(hot, 0.30 if on else 0.88))
                     ax.add_patch(Rectangle(
-                        (x, y), cell, cell,
-                        facecolor=_mix(hot, 0.30 if on else 0.88),
+                        (x, y), cell, cell, facecolor=fill,
                         edgecolor=INK if on else _mix(INK, 0.70),
                         linewidth=0.7, zorder=2 * (d - i)))
-                if labels:
+                if labels and not (faint and not ghost_labels):
+                    if faint:
+                        ink = _mix(INK, 0.45)
+                    elif own:
+                        ink = _ink_on(fill)
+                    else:
+                        ink = INK if on else _mix(INK, 0.55)
                     ax.text(x + cell / 2, y + cell / 2, cell_text(arr[i, r, c]),
                             ha="center", va="center", fontsize=label_size,
                             family="monospace", zorder=2 * (d - i) + 1,
                             style="italic" if faint else "normal",
-                            color=_mix(INK, 0.45) if faint
-                            else (INK if on else _mix(INK, 0.55)))
+                            color=ink)
         # The solid left edge marks a plane that is really there, so a plane
         # that is entirely ghosted does not get one.
         if edge_axis and not (hide[i] | ghost[i]).all():
@@ -409,7 +514,7 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
 
     An item is either a string -- drawn as an operator between its neighbours,
     `=`, `x`, `->` -- or a dict with `arr` and optionally `lit`, `hide`,
-    `ghost`, `lit_tint`, `caption` and `labels`. `size` sets the label point size for
+    `ghost`, `lit_tint`, `cell_colors`, `ghost_labels`, `caption` and `labels`. `size` sets the label point size for
     every item at once, which is what a row of same-sized piles wants;
     an item's own `size` still wins where one pile is drawn smaller. Widths come from each pile's own extent, so a tall
     thin factor beside a wide one keeps its real proportions, the way
@@ -451,6 +556,8 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
             planes(ax, arr, tint=it.get("tint", tint), lit=it.get("lit"),
                    hide=it.get("hide"), ghost=it.get("ghost"),
                    labels=it.get("labels", True), lit_tint=it.get("lit_tint"),
+                   cell_colors=it.get("cell_colors"),
+                   ghost_labels=it.get("ghost_labels", True),
                    cell=cell, origin=(x, oy), label_size=it.get("size", size))
             if it.get("caption"):
                 t = ax.text(x + span / 2, base, it["caption"],
@@ -469,6 +576,69 @@ def cube():
     return np.arange(60).reshape(SHAPE)
 
 
+# ─── the colour swatch ──────────────────────────────────────────────────────
+#
+# Twelve pixels, and every channel value in them is 0, 128 or 255. That is the
+# whole of what keeps the RGB scenes inside this module's rule: a reader looks
+# at a cell that is visibly red, looks at the red plane, and reads 255 off it.
+# A photograph would put 87 there and the check would be unavailable.
+#
+# Chosen so that no two rows repeat a pattern and every channel takes all three
+# of its values somewhere in the image -- otherwise a reader can "verify" the
+# red plane by noticing it is the only one with any 255s in it, which is not
+# the same as reading the picture.
+SWATCH_ROWS = (
+    ((255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0)),
+    ((0, 255, 255), (255, 0, 255), (255, 255, 255), (0, 0, 0)),
+    ((128, 128, 128), (255, 128, 0), (0, 128, 128), (128, 0, 255)),
+)
+
+
+def swatch():
+    """The 3x4 colour image the RGB scenes draw, as (H, W, C)."""
+    import numpy as np
+    return np.array(SWATCH_ROWS, dtype=int)
+
+
+def _hex(rgb) -> str:
+    """An (r, g, b) triple as the hex string matplotlib wants."""
+    return "#%02x%02x%02x" % tuple(int(round(float(v))) for v in rgb)
+
+
+def swatch_hex(img):
+    """Each pixel of an (H, W, 3) image as the colour it actually is.
+
+    Shaped (1, H, W) so it lines up with what `planes` draws for a lone matrix
+    -- the image is one plane, not a pile of three.
+    """
+    import numpy as np
+    h, w, _ = img.shape
+    out = np.empty((1, h, w), dtype=object)
+    for r in range(h):
+        for c in range(w):
+            out[0, r, c] = _hex(img[r, c])
+    return out
+
+
+def channel_hex(values, channel):
+    """Each value as the colour that channel alone would show.
+
+    The other two channels zeroed, which is what a single plane of an RGB image
+    looks like on its own -- and deliberately the same thing notebook 04's own
+    `as_channel_image` helper does, so the animation and the widget under it
+    are showing a reader the same picture. Not a colormap: `Reds` runs white to
+    red, so a bright pixel comes out dark and the plane reads inverted.
+    """
+    import numpy as np
+    values = np.asarray(values)
+    out = np.empty(values.shape, dtype=object)
+    for idx in np.ndindex(values.shape):
+        rgb = [0, 0, 0]
+        rgb[channel] = values[idx]
+        out[idx] = _hex(rgb)
+    return out
+
+
 def _check_layout(fig, ax, out_name, i) -> None:
     """Refuse a frame whose furniture and picture do not fit alongside each other.
 
@@ -484,8 +654,8 @@ def _check_layout(fig, ax, out_name, i) -> None:
 
     A hard failure rather than a warning, for the reason `write_gif`'s `max_kb`
     is: nothing in CI looks at these images, so the generator is the only thing
-    that can notice. Twenty-eight animations of four frames is more than
-    anybody re-reads after a one-line change to a caption.
+    that can notice. Fifty animations of four frames is more than anybody
+    re-reads after a one-line change to a caption.
     """
     from matplotlib.transforms import Bbox
 
@@ -534,23 +704,63 @@ def _check_layout(fig, ax, out_name, i) -> None:
                 f"carry them. Shorten them, or raise `sequence`'s `gap`.")
 
 
-def render(tint, states, out_name, *, duration=2700, colors=48):
+def render(tint, states, out_name, *, duration=4050, colors=48,
+           palette_from="all"):
     """Each state is (label, note, sub, draw) -- draw gets the axes.
 
     `duration` is per frame, in milliseconds, and one global value rather than
     a per-scene one: a reader who has learnt the pace of one animation should
-    not have to relearn it on the next. 2700 ms is deliberately slow. A frame
+    not have to relearn it on the next. 4050 ms is deliberately slow. A frame
     here is not a tween -- it is a whole labelled picture with a caption and a
     shape line, and 900 ms was not long enough to read a 60-cell grid once,
     let alone compare it with the frame before. The stepper cell in each
     notebook is the other half of the answer: this sets the pace for a reader
     watching, that one hands the frames over for a reader studying.
 
-    It has been raised twice, both times by watching rather than by a rule:
-    900 ms could not be read at all, and 1800 ms could be read only if you
-    already knew what the frame was going to say. A reader meeting a scene for
-    the first time has to find the caption, find the pile it names, and then
-    look for what moved since the frame before -- three passes, not one.
+    It has been raised three times, every time by watching rather than by a
+    rule: 900 ms could not be read at all, 1800 ms could be read only if you
+    already knew what the frame was going to say, and 2700 ms was still short
+    for the scenes that now draw two piles side by side. A reader meeting a
+    scene for the first time has to find the caption, find the pile it names,
+    and then look for what moved since the frame before -- three passes, not
+    one, and a frame with two piles in it is four.
+
+    Raising it rewrites every cube GIF and changes nothing else. Frame delay
+    is metadata, not pixels, so `MAX_KB` is not at risk and no frame is
+    redrawn -- which is why this is the cheapest of all the knobs here and the
+    first one to reach for.
+
+    `colors` and `palette_from` are the two arguments a scene may legitimately
+    override, and a scene drawing real colour needs both.
+
+    48 is ample for flat accent tints -- and note it already buys a 64-entry
+    table, because a GIF's colour table is rounded up to a power of two, so
+    asking for 96 and asking for 128 cost the same bytes. A colour scene may as
+    well ask for 128.
+
+    `palette_from` is the one that bit, twice, and this module now overrides
+    `write_gif`'s own default because of it. One palette is shared by every
+    frame so the colours cannot shift mid-animation; the question is which
+    frames it is read off. Frame 0 alone is fine only if frame 0 already
+    contains every hue the animation will use, and two scenes here broke that
+    on their first render:
+
+    `cube-04-rgb` opens on twelve saturated pixels and then draws channel
+    planes where 128 is a half-bright fill. Off frame 0's palette the dark
+    green came out teal and the dark blue came out slate.
+
+    `cube-06-matmul` is the one that shows this is not a colour-scene problem.
+    It is drawn entirely in the notebook's pink accent, and its frame 1 lights
+    a row and a column in green with `lit_tint` -- an index colour, the thing
+    half the scenes in this module use. There is no green anywhere in frame 0,
+    so the highlight rendered grey: the frame still said "sum over k" and had
+    nothing green in it.
+
+    Both were wrong, both perfectly legible, and nothing would ever have
+    reported either. So `"all"` is the default here: read the palette off every
+    frame at once. It costs nothing a reader can see -- 48 entries is far more
+    than any of these scenes needs -- and `lit_tint` makes frame 0 the wrong
+    place to look in any scene that highlights something.
     """
     frames = []
     for i, (label, note, sub, draw) in enumerate(states):
@@ -560,7 +770,7 @@ def render(tint, states, out_name, *, duration=2700, colors=48):
         frames.append(canvas_to_pil(fig))
         plt.close(fig)
     out = write_gif(frames, IMAGES / out_name, duration=duration, loop=0,
-                    colors=colors, max_kb=MAX_KB)
+                    colors=colors, max_kb=MAX_KB, palette_from=palette_from)
     print(f"  {out.relative_to(IMAGES.parent)}  {out.stat().st_size // 1024} KB"
           f"  {len(frames)} frames")
     return out
@@ -653,6 +863,65 @@ def scene_00_index(tint):
     ]
 
 
+def scene_00_shape(tint):
+    """00, third animation — a shape is the label on the box, not the contents.
+
+    The notebook's own claim, in its own words: "A shape is the label on a box.
+    It says how the contents are arranged. It never says what they mean." Three
+    frames rearrange the identical sixty numbers, and the fourth shows what that
+    costs -- 33 is still in there, at a different address in every shape.
+
+    Pairs with `cube-00-index`, which is where a reader met 33 in the first
+    place. That one asks where a number lives; this one asks whether the
+    question even has one answer.
+    """
+    import numpy as np
+    T = cube()
+    flat = T.ravel()
+    wide = flat.reshape(4, 15)
+    tall = flat.reshape(6, 10)
+
+    def pile(ax):
+        o = centred(SHAPE)
+        planes(ax, T, tint=tint, origin=o)
+        axis_arrows(ax, SHAPE, origin=o, tints=AXIS_TINTS)
+
+    def flat_grid(arr, cell, size):
+        def draw(ax):
+            shape = (1,) + arr.shape
+            planes(ax, arr, tint=tint, origin=centred(shape, cell=cell),
+                   cell=cell, label_size=size)
+        return draw
+
+    def both(ax):
+        # Where 33 is: [1, 2, 3] in the cube, [2, 3] in the (4, 15). The lit
+        # cell is in plane 1 of the pile, which plane 0 paints over -- so
+        # plane 0 alone is hidden, the documented way out of the occlusion
+        # trap. Only the one: plane 2 is behind the cell and hiding it would
+        # cost the pile its depth for nothing.
+        cube_lit = np.zeros(SHAPE, bool)
+        cube_lit[1, 2, 3] = True
+        front = np.zeros(SHAPE, bool)
+        front[0] = True
+        wide_lit = np.zeros(wide.shape, bool)
+        wide_lit[2, 3] = True
+        sequence(ax, [
+            {"arr": T, "lit": cube_lit, "hide": front, "caption": "(3, 4, 5)"},
+            {"arr": wide, "lit": wide_lit, "caption": "(4, 15)"},
+        ], tint=tint, cell=0.40, size=7.5)
+
+    return [
+        ("T", "shape (3, 4, 5)", "sixty numbers, in a box with three sides",
+         pile),
+        ("T.reshape(4, 15)", "shape (4, 15)",
+         "the same sixty numbers, in a flatter box", flat_grid(wide, 0.56, 9)),
+        ("T.reshape(6, 10)", "shape (6, 10)",
+         "and again — not one number moved", flat_grid(tall, 0.62, 10)),
+        ("where 33 lives", "T[1, 2, 3]  and  [2, 3]",
+         "same number, a different address in each shape", both),
+    ]
+
+
 def scene_01(tint):
     """01 — the order ladder, every rung the same numbers at a different order."""
     import numpy as np
@@ -732,27 +1001,150 @@ def scene_01_slice_fibre(tint):
 
 
 def scene_02(tint):
-    """02 — same numbers, two readings. Nothing moves; only the naming changes."""
-    import numpy as np
-    T = cube()
-    first = np.zeros(SHAPE, bool)
-    first[0] = True
-    o = centred(SHAPE)
+    """02 — shuffle the axis, and watch which reading survives it.
 
-    def draw(lit):
-        def inner(ax):
-            planes(ax, T, tint=tint, lit=lit, origin=o)
-        return inner
+    This replaced `cube-02-relabel`, which drew the identical tensor four times
+    and changed only the caption. The claim was true -- the shape carries no
+    meaning by itself -- but a picture in which nothing whatsoever moves is not
+    a picture of it, and four frames of the same cube is how a reader learns
+    there is nothing to look for here.
+
+    So the scene applies the operation instead of naming it. The four planes are
+    permuted once, and the last two frames put the two readings against the same
+    permutation: the mean cannot tell it happened, and the series through one
+    cell can tell immediately. That is also the notebook's own predict-first
+    claim -- "the average is identical after shuffling, so no information was
+    lost" -- drawn rather than asserted.
+
+    Plane t starts at 10t so the ramp is visible without reading every cell:
+    a reader sees four blocks of tens and then sees them out of order.
+
+    And each plane carries a fixed step of a light-to-dark wash of the
+    notebook's own accent, which is what makes frame 1 land in the half-second
+    before anybody starts reading digits -- four shades in order, then the same
+    four out of order. The tens digit says the same thing for a reader who does
+    look, which is the rule this module applies to colour everywhere: never the
+    only carrier. The four steps are spread wide rather than kept close: at a
+    narrow spread the reader has to compare shades to see the reorder, which
+    is the same work as reading the digits and buys nothing.
+    """
+    import numpy as np
+    x = np.arange(4)[:, None, None] * 10 + np.arange(12).reshape(3, 4)
+    perm = [2, 0, 3, 1]
+    sx = x[perm]
+    wash = [_mix(tint, w) for w in (0.86, 0.62, 0.38, 0.14)]
+
+    def row(arr, names, shades):
+        def draw(ax):
+            sequence(ax, [
+                {"arr": arr[i], "caption": names[i],
+                 "cell_colors": np.full(arr[i].shape, shades[i], dtype=object)}
+                for i in range(len(names))
+            ], tint=tint, cell=0.46, size=8)
+        return draw
+
+    def means(ax):
+        sequence(ax, [
+            {"arr": x.mean(0), "caption": "x.mean(0)"},
+            "=",
+            {"arr": sx.mean(0), "caption": "x[perm].mean(0)"},
+        ], tint=tint, cell=0.60, size=11)
+
+    def series(ax):
+        # The same wash as frames 0 and 1, so the last frame is recognisably
+        # the first one flattened to a single cell -- the shades that were in
+        # order across four planes are out of order along four timesteps.
+        sequence(ax, [
+            {"arr": x[:, 0, 0].reshape(1, 4), "caption": "x[:, 0, 0]",
+             "cell_colors": np.array(wash, dtype=object).reshape(1, 4)},
+            "vs",
+            {"arr": sx[:, 0, 0].reshape(1, 4), "caption": "x[perm][:, 0, 0]",
+             "cell_colors": np.array([wash[i] for i in perm],
+                                     dtype=object).reshape(1, 4)},
+        ], tint=tint, cell=0.62, size=13)
 
     return [
-        ("(batch, time, feature)", "shape (3, 4, 5)",
-         "3 samples x 4 timesteps x 5 features", draw(None)),
-        ("T[0]  # batch 0", "shape (4, 5)",
-         "one sample, its whole history", draw(first)),
-        ("(time, batch, feature)", "shape (3, 4, 5)",
-         "4 samples x 3 timesteps x 5 features -- same numbers", draw(None)),
-        ("T[0]  # time 0", "shape (4, 5)",
-         "every sample at one instant -- same cells, other meaning", draw(first)),
+        ("x", "shape (4, 3, 4)", "four planes — plane t starts at 10t",
+         row(x, ["x[0]", "x[1]", "x[2]", "x[3]"], wash)),
+        ("x[perm]", "perm = [2, 0, 3, 1]",
+         "the same four planes, in a new order",
+         row(sx, ["x[2]", "x[0]", "x[3]", "x[1]"],
+             [wash[i] for i in perm])),
+        ("x.mean(0)", "identical",
+         "as a batch: the average never looks at order", means),
+        ("x[:, 0, 0]", "0 10 20 30  ->  20 0 30 10",
+         "as time: the order was the data", series),
+    ]
+
+
+def scene_02_pad(tint):
+    """02, third animation — padding, and the zeros nobody measured.
+
+    Section 2.3 is about clips of different lengths, and it is the part of the
+    notebook with the only equation in it: every clip is stretched to the
+    longest, and the difference is cells a model will read unless a mask says
+    not to. `ghost` is exactly the mark for that -- a dashed, unfilled cell
+    reads as "not really here" without a word of prose, in either language.
+
+    The last frame is why the mask is not optional. Averaging clip 0 over four
+    slots rather than two halves every number in it, and the halving is visible
+    without arithmetic: the cells on the right are the ones on the left, twice.
+    """
+    import numpy as np
+    lengths = [2, 4, 3]
+    longest = max(lengths)
+    frame_of = lambda t: np.full((2, 3), (t + 1) * 2)
+    clips = [np.stack([frame_of(t) for t in range(longest)]) for _ in lengths]
+    pads = []
+    for n, clip in zip(lengths, clips):
+        clip[n:] = 0
+        g = np.zeros(clip.shape, bool)
+        g[n:] = True
+        pads.append(g)
+
+    def real_only(ax):
+        sequence(ax, [
+            {"arr": clips[i][:lengths[i]], "caption": f"({lengths[i]}, 2, 3)"}
+            for i in range(3)
+        ], tint=tint, cell=0.46, size=9)
+
+    def padded(ax):
+        # No numbers inside the dashed planes. Clip 0 is two pads deep, and
+        # with labels on, its two ghost grids interpenetrate and the zeros
+        # crowd together into something that reads as a drawing mistake. The
+        # value is zero because nothing was measured, so the outline already
+        # says everything the cell has to say.
+        sequence(ax, [
+            {"arr": clips[i], "ghost": pads[i], "caption": "(4, 2, 3)",
+             "ghost_labels": False}
+            for i in range(3)
+        ], tint=tint, cell=0.46, size=9)
+
+    def mask(ax):
+        m = np.array([[1 if t < n else 0 for t in range(longest)]
+                      for n in lengths])
+        planes(ax, m, tint=tint, lit=m.astype(bool),
+               origin=centred((1,) + m.shape, cell=0.78), cell=0.78,
+               label_size=15)
+
+    def diluted(ax):
+        real = clips[0][:lengths[0]].mean(0)
+        whole = clips[0].mean(0)
+        sequence(ax, [
+            {"arr": real, "caption": "clip[:2].mean(0)"},
+            "vs",
+            {"arr": whole, "caption": "clip.mean(0)"},
+        ], tint=tint, cell=0.62, size=13)
+
+    return [
+        ("clips", "2, 4 and 3 frames", "three real clips, no two the same length",
+         real_only),
+        ("np.stack(padded)", "every clip now (4, 2, 3)",
+         "the dashed planes were never measured", padded),
+        ("mask", "shape (3, 4)",
+         "1 where a frame was measured, 0 where it was invented", mask),
+        ("clip.mean(0)", "halved, exactly",
+         "the padding is counted unless a mask says not to", diluted),
     ]
 
 
@@ -982,6 +1374,78 @@ def scene_04_ravel(tint):
     ]
 
 
+def scene_04_rgb(tint):
+    """04, third animation — an image is three planes of numbers, and here they are.
+
+    The one scene in this module that paints real colour, and the module
+    docstring says why that is not a crack in the indices rule: every channel
+    value in `swatch()` is 0, 128 or 255, so "the red plane says 255 wherever
+    the pixel looks red" is a claim a reader checks by eye, exactly like
+    `T[1, 2, 3] == 33`.
+
+    The last frame is the notebook's own most important sentence, drawn. Both
+    results are (3, 3, 4) and a shape check passes for both; the transpose is a
+    plane that is entirely red, and the reshape is a plane striped red, green,
+    blue, because it took every third number out of the flat buffer. The
+    scramble is not something a reader has to be told about -- it is stripes.
+    """
+    import numpy as np
+    img = swatch()
+    h, w, _ = img.shape
+    chw = img.transpose(2, 0, 1)
+    bad = img.reshape(3, h, w)
+
+    def picture(ax):
+        planes(ax, img[:, :, 0], tint=tint, cell_colors=swatch_hex(img),
+               labels=False, cell=0.92,
+               origin=centred((1, h, w), cell=0.92))
+
+    def channels(ax):
+        sequence(ax, [
+            {"arr": img[:, :, c], "cell_colors": channel_hex(img[:, :, c], c),
+             "caption": f"img[:, :, {c}]"}
+            for c in range(3)
+        ], tint=tint, cell=0.64, size=11)
+
+    def pile(ax):
+        o = centred(chw.shape, cell=0.70)
+        colours = np.empty(chw.shape, dtype=object)
+        for c in range(3):
+            colours[c] = channel_hex(chw[c], c)
+        planes(ax, chw, tint=tint, cell_colors=colours, origin=o, cell=0.70,
+               label_size=11)
+        axis_arrows(ax, chw.shape, origin=o, cell=0.70, tints=AXIS_TINTS)
+
+    def scramble(ax):
+        # Which channel each number in the reshaped plane 0 actually came from.
+        # The flat HWC buffer runs r, g, b, r, g, b -- so plane 0 is striped,
+        # and that stripe IS the bug.
+        flat_channel = (np.arange(h * w) % 3).reshape(h, w)
+        mixed = np.empty((h, w), dtype=object)
+        for r in range(h):
+            for c in range(w):
+                rgb = [0, 0, 0]
+                rgb[flat_channel[r, c]] = bad[0][r, c]
+                mixed[r, c] = _hex(rgb)
+        sequence(ax, [
+            {"arr": chw[0], "cell_colors": channel_hex(chw[0], 0),
+             "caption": "transpose[0]"},
+            "vs",
+            {"arr": bad[0], "cell_colors": mixed, "caption": "reshape[0]"},
+        ], tint=tint, cell=0.58, size=10)
+
+    return [
+        ("img", "shape (3, 4, 3)", "twelve pixels — H rows, W columns, C channels",
+         picture),
+        ("img[:, :, 0], [:, :, 1], [:, :, 2]", "each (3, 4)",
+         "the red plane says 255 wherever the pixel looks red", channels),
+        ("img.transpose(2, 0, 1)", "shape (3, 3, 4)",
+         "axis 0 is colour now — the same numbers, CHW", pile),
+        ("transpose vs reshape", "both (3, 3, 4)",
+         "one plane is the reds; the other is every third number", scramble),
+    ]
+
+
 def scene_05(tint):
     """05 — sampling: what a smaller tensor quietly threw away."""
     import numpy as np
@@ -1177,6 +1641,100 @@ def scene_06_outer(tint):
          "every entry is one product, no sum anywhere", one_entry),
         ("einsum('ij,j->i')", "shape (4,)",
          "now j is the one summed away — the arrow decides", contract),
+    ]
+
+
+def scene_06_matmul(tint):
+    """06, third animation — the einsum an ML reader already knows by another name.
+
+    The other two scenes here teach the rule; this one spends it on the two
+    expressions a reader will actually type. `ik,kj->ij` is the matrix product,
+    and seeing it fall out of the same rule is the moment einsum stops being a
+    separate thing to learn. `bik,bkj->bij` is the one after that: a batch axis
+    is an index written on both sides of the comma *and* after the arrow, so it
+    is carried rather than summed -- which is the whole of how a library
+    multiplies a batch of matrices without a loop, and it joins this notebook to
+    the batch axis section 02 spends twenty minutes on.
+
+    Same three colours as `cube-06-contract`, and the same reason: `k` green is
+    reserved for the index being summed, so a reader who has watched one scene
+    already knows which one is about to disappear.
+
+    Which is also why the batched form is spelt `bik,bkj->bij` rather than the
+    `bij,bjk->bik` a reader will meet in most documentation. The two compute
+    the same thing, but the conventional spelling moves the summed index from
+    `k` to `j`, and this module has spent two animations teaching that green
+    `k` is the one that goes. Prepending `b` to the letters frames 0 to 2
+    already established keeps every colour meaning what it meant, and the
+    batch axis is the only new thing in the frame -- which is the whole point
+    of putting it last.
+    """
+    import numpy as np
+    # Hand-picked rather than `arange`, for the reason `scene_06`'s docstring
+    # records: its first draft used weights of all ones, which made the
+    # multiply invisible and left a picture of a plain sum. Here the constraint
+    # is that `out[0, 0] = 1*2 + 2*1 + 3*3` has no zero term in it, so frame 1
+    # shows three products being added rather than one and two excuses.
+    A = np.array([[1, 2, 3], [3, 1, 2]])
+    B = np.array([[2, 0, 1, 3], [1, 4, 0, 2], [3, 1, 5, 1]])
+    out = A @ B
+    # X[0] is the A of frames 0 to 2, so a reader recognises it; X[1] is a
+    # different matrix, because a batch of two identical products would not
+    # show that the batch does two independent ones.
+    X = np.stack([A, A[::-1]])
+    Y = np.stack([B, B * 2])
+    outb = np.einsum("bik,bkj->bij", X, Y)
+
+    row_lit = np.zeros(A.shape, bool)
+    row_lit[0] = True
+    col_lit = np.zeros(B.shape, bool)
+    col_lit[:, 0] = True
+    corner = np.zeros(out.shape, bool)
+    corner[0, 0] = True
+
+    def operands(ax):
+        sequence(ax, [
+            {"arr": A, "caption": "A  (2, 3)  ik"},
+            "@",
+            {"arr": B, "caption": "B  (3, 4)  kj"},
+        ], tint=tint, cell=0.74, size=14)
+
+    def pairing(ax):
+        sequence(ax, [
+            {"arr": A, "lit": row_lit, "lit_tint": INDEX["k"],
+             "caption": "A[0, :]"},
+            "@",
+            {"arr": B, "lit": col_lit, "lit_tint": INDEX["k"],
+             "caption": "B[:, 0]"},
+        ], tint=tint, cell=0.74, size=14)
+
+    def product(ax):
+        o = centred((1,) + out.shape, cell=0.78)
+        planes(ax, out, tint=tint, lit=corner, origin=o, cell=0.78,
+               label_size=15)
+        axis_arrows(ax, (1,) + out.shape, origin=o, cell=0.78,
+                    names=(None, "i", "j"))
+
+    def batched(ax):
+        sequence(ax, [
+            {"arr": X, "caption": "X  bik"},
+            "@",
+            {"arr": Y, "caption": "Y  bkj"},
+            "=",
+            {"arr": outb, "caption": "out  bij"},
+        ], tint=tint, cell=0.40, size=7.5)
+
+    return [
+        ("A, B", "(2, 3) @ (3, 4)", "the 3 they share is k, and only k",
+         operands),
+        (f"out[0, 0] = {int(out[0, 0])}", "sum over k",
+         "one row against one column — three products, added", pairing),
+        ("einsum('ik,kj->ij', A, B)", "shape (2, 4)",
+         "k is on both operands, never after the arrow — so it goes",
+         product),
+        ("einsum('bik,bkj->bij', X, Y)", "shape (2, 2, 4)",
+         "b survives the arrow — a batch axis is carried, never summed",
+         batched),
     ]
 
 
@@ -1967,27 +2525,43 @@ def scene_15_binary(tint):
 # One row per notebook, so a filename, a notebook and the move it illustrates
 # cannot drift apart. `gen_slide_art.SLIDES` is the same idea for the decks.
 #
-# A row is a list because a notebook carries two animations, not one: the first
+# A row is a list because a notebook carries several animations: the first
 # draws the move the section is named after, the second a move it needs and the
-# first has no room for. Every stem keeps the `cube-NN-` prefix, which is what
+# first has no room for, the third the section's own subject. The floor is
+# `MIN_PER_NOTEBOOK`, which `main` reports against rather than enforces.
+#
+# A row may carry a third element, a dict of `render` keywords for the one
+# scene that needs them. Every stem keeps the `cube-NN-` prefix, which is what
 # check 1 in `check_links.py` reads to tell a notebook's own animation from
 # another notebook's pasted into it by mistake.
 
 SCENES = {
     "00": [("cube-00-axes", scene_00),
-           ("cube-00-index", scene_00_index)],
+           ("cube-00-index", scene_00_index),
+           ("cube-00-shape", scene_00_shape)],
     "01": [("cube-01-order", scene_01),
            ("cube-01-slice-fibre", scene_01_slice_fibre)],
-    "02": [("cube-02-relabel", scene_02),
-           ("cube-02-stack", scene_02_stack)],
+    # cube-02-relabel is gone, not renamed: the stem said what the old scene
+    # did (relabel the axes and change nothing) and the new one does the
+    # opposite. Nothing else in the repo refers to it but notebook 02's own
+    # two mentions, and check 1 catches a missed one by name.
+    "02": [("cube-02-shuffle", scene_02),
+           ("cube-02-stack", scene_02_stack),
+           ("cube-02-pad", scene_02_pad)],
     "03": [("cube-03-broadcast", scene_03),
            ("cube-03-scalar", scene_03_scalar)],
+    # cube-04-rgb is the one scene drawn in real colour, and the only one that
+    # needs a wider palette: twelve saturated fills, their washes, and the ink
+    # that flips between them. A GIF colour table rounds up to a power of two,
+    # so 128 and 96 cost the same bytes -- ask for 128.
     "04": [("cube-04-transpose-vs-reshape", scene_04),
-           ("cube-04-ravel", scene_04_ravel)],
+           ("cube-04-ravel", scene_04_ravel),
+           ("cube-04-rgb", scene_04_rgb, {"colors": 128})],
     "05": [("cube-05-sampling", scene_05),
            ("cube-05-window", scene_05_window)],
     "06": [("cube-06-contract", scene_06),
-           ("cube-06-outer", scene_06_outer)],
+           ("cube-06-outer", scene_06_outer),
+           ("cube-06-matmul", scene_06_matmul)],
     "07": [("cube-07-pinv", scene_07),
            ("cube-07-shapes", scene_07_shapes)],
     "08": [("cube-08-recurrence", scene_08),
@@ -2007,7 +2581,51 @@ SCENES = {
 }
 
 
+# The floor, not a number, and deliberately **not** enforced. Three counts in
+# this file went stale at once when the second animation per notebook became a
+# third -- two docstrings and a comment all said twenty-eight while `SCENES`
+# held thirty-two -- so the number lives here rather than in prose that nobody
+# re-reads. What `main` does with it is print which notebooks are still short;
+# a hard failure would make the generator refuse to draw anything at all while
+# the rollout that satisfies it is being done.
+MIN_PER_NOTEBOOK = 3
+
+
+def check_table() -> None:
+    """The table's own invariants, which nothing downstream can see.
+
+    Check 1 in `check_links.py` asks a notebook whether the animations it shows
+    are its own. Nothing asks `SCENES` the mirror question, and it has two
+    answers worth having:
+
+    A duplicate stem silently overwrites -- two entries, one file, and the
+    second render wins with no warning at all.
+
+    A stem filed under the wrong notebook is worse, because it half-works: the
+    file is drawn, in the *wrong notebook's accent*, under a name check 1 will
+    then reject as another notebook's animation. The failure surfaces two tools
+    away from its cause.
+
+    The count is a printed line rather than a failure. Not every notebook is at
+    three yet, and a generator that refuses to draw anything until all of them
+    are would be useless exactly while the work is being done.
+    """
+    stems = [stem for row in SCENES.values() for stem, *_ in row]
+    dupes = sorted({s for s in stems if stems.count(s) > 1})
+    if dupes:
+        raise SystemExit(f"SCENES has duplicate stems: {', '.join(dupes)} -- "
+                         f"the second would silently overwrite the first")
+    for n, row in SCENES.items():
+        for stem, *_ in row:
+            if not stem.startswith(f"cube-{n}-"):
+                raise SystemExit(
+                    f"{stem} is filed under notebook {n}, so it would be drawn "
+                    f"in {n}'s accent and then rejected by check 1 as another "
+                    f"notebook's animation")
+
+
 def main(only=None) -> None:
+    check_table()
     stack()
     print("Cube GIFs")
     total = 0
@@ -2016,11 +2634,20 @@ def main(only=None) -> None:
         if only and n not in only:
             continue
         tint = accent_of(n)
-        for stem, build in scenes:
-            out = render(tint, build(tint), f"{stem}.gif")
+        for stem, build, *rest in scenes:
+            # A scene is (stem, builder), or (stem, builder, options) where
+            # options is whatever `render` keyword this one scene needs --
+            # today only the RGB scene, and only for its palette.
+            out = render(tint, build(tint), f"{stem}.gif",
+                         **(rest[0] if rest else {}))
             total += out.stat().st_size
             count += 1
     print(f"  {count} animations, {total / 1024:.0f} KB total")
+    short = sorted(n for n, row in SCENES.items()
+                   if len(row) < MIN_PER_NOTEBOOK)
+    if short:
+        print(f"  {len(short)} notebooks still under {MIN_PER_NOTEBOOK} "
+              f"animations: {', '.join(short)}")
 
 
 if __name__ == "__main__":
