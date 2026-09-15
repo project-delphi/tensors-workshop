@@ -41,7 +41,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
-| `images/cube-*.gif` (at least three per notebook) | `scripts/gen_cube_gifs.py` |
+| `images/cube-*.gif` (two per notebook, three where the rollout has reached) | `scripts/gen_cube_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 

@@ -386,7 +386,7 @@ def centred(shape, cell=CELL, y=None):
 
 def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
            cell=CELL, origin=BODY, label_size=10.0, edge_axis=True,
-           lit_tint=None, cell_colors=None):
+           lit_tint=None, cell_colors=None, ghost_labels=True):
     """One tensor as its pile of (axis 1, axis 2) matrices, drawn back to front.
 
     Three masks, each answering a different question about an entry:
@@ -419,6 +419,23 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
     is washed towards white the same way, so a highlight reads against a
     colour image exactly as it does against an accent pile. `hide` and `ghost`
     still win outright, since a cell that is not there has no colour.
+
+    `ghost_labels=False` keeps the dashed outlines and drops the numbers inside
+    them. Whether a ghost's value is worth printing depends on what the ghost
+    is *for*, and there are two kinds here. Under broadcasting it is the whole
+    point -- `scene_03` has to show the four rows NumPy acts as if it
+    allocated, and their values are the arithmetic the reader is following. In
+    a padded batch it is noise: the value is zero because nothing was measured,
+    and two ghost planes deep the dashed grids interpenetrate and the zeros
+    crowd into a tangle that reads as a mistake rather than as an absence.
+
+    `cell_colors` also beats `lit_tint`, and that is worth knowing before you
+    reach for both: a scene lighting one channel of an RGB image in its index
+    colour would get the index colour dropped, silently, because a cell's own
+    colour is a fact about the data and a `lit_tint` is only emphasis. Nothing
+    reports it -- `_check_layout` measures geometry, not intent. If a scene
+    ever needs both, give the lit cells their own entry in `cell_colors`
+    rather than adding a precedence rule here.
 
     Occlusion needs no depth sort. A plane is painted opaque, and the planes
     are painted from the back of the pile forwards, so a nearer plane simply
@@ -472,7 +489,7 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
                         (x, y), cell, cell, facecolor=fill,
                         edgecolor=INK if on else _mix(INK, 0.70),
                         linewidth=0.7, zorder=2 * (d - i)))
-                if labels:
+                if labels and not (faint and not ghost_labels):
                     if faint:
                         ink = _mix(INK, 0.45)
                     elif own:
@@ -497,7 +514,7 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
 
     An item is either a string -- drawn as an operator between its neighbours,
     `=`, `x`, `->` -- or a dict with `arr` and optionally `lit`, `hide`,
-    `ghost`, `lit_tint`, `cell_colors`, `caption` and `labels`. `size` sets the label point size for
+    `ghost`, `lit_tint`, `cell_colors`, `ghost_labels`, `caption` and `labels`. `size` sets the label point size for
     every item at once, which is what a row of same-sized piles wants;
     an item's own `size` still wins where one pile is drawn smaller. Widths come from each pile's own extent, so a tall
     thin factor beside a wide one keeps its real proportions, the way
@@ -540,6 +557,7 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
                    hide=it.get("hide"), ghost=it.get("ghost"),
                    labels=it.get("labels", True), lit_tint=it.get("lit_tint"),
                    cell_colors=it.get("cell_colors"),
+                   ghost_labels=it.get("ghost_labels", True),
                    cell=cell, origin=(x, oy), label_size=it.get("size", size))
             if it.get("caption"):
                 t = ax.text(x + span / 2, base, it["caption"],
@@ -1091,8 +1109,14 @@ def scene_02_pad(tint):
         ], tint=tint, cell=0.46, size=9)
 
     def padded(ax):
+        # No numbers inside the dashed planes. Clip 0 is two pads deep, and
+        # with labels on, its two ghost grids interpenetrate and the zeros
+        # crowd together into something that reads as a drawing mistake. The
+        # value is zero because nothing was measured, so the outline already
+        # says everything the cell has to say.
         sequence(ax, [
-            {"arr": clips[i], "ghost": pads[i], "caption": "(4, 2, 3)"}
+            {"arr": clips[i], "ghost": pads[i], "caption": "(4, 2, 3)",
+             "ghost_labels": False}
             for i in range(3)
         ], tint=tint, cell=0.46, size=9)
 
@@ -2501,9 +2525,13 @@ def scene_15_binary(tint):
 # One row per notebook, so a filename, a notebook and the move it illustrates
 # cannot drift apart. `gen_slide_art.SLIDES` is the same idea for the decks.
 #
-# A row is a list because a notebook carries two animations, not one: the first
+# A row is a list because a notebook carries several animations: the first
 # draws the move the section is named after, the second a move it needs and the
-# first has no room for. Every stem keeps the `cube-NN-` prefix, which is what
+# first has no room for, the third the section's own subject. The floor is
+# `MIN_PER_NOTEBOOK`, which `main` reports against rather than enforces.
+#
+# A row may carry a third element, a dict of `render` keywords for the one
+# scene that needs them. Every stem keeps the `cube-NN-` prefix, which is what
 # check 1 in `check_links.py` reads to tell a notebook's own animation from
 # another notebook's pasted into it by mistake.
 
