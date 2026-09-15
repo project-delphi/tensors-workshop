@@ -79,15 +79,14 @@ have forty minutes, not because they are optional to understand.
 Notebook 00 begins with an entry check, 12 with an exit check; 13–15 are
 entirely take-home material.
 
-Every notebook carries **at least two animations**: small numbered cubes
+Every notebook carries **at least three animations**: small numbered cubes
 performing the moves that section teaches, drawn by `scripts/gen_cube_gifs.py`
-and served from the published site.
-
-Three is the target — a third that shows the data the section teaches those
-moves on, placed in the main body rather than in the optional tail, where a
-reader who stops at *Core complete* would never reach it. Notebooks 00, 02, 04
-and 06 have it; the generator prints which of the rest are still short on every
-run.
+and served from the published site. The first two draw the moves; the third
+draws the data the section teaches them on — a colour image being split into
+its channels, a clip losing a moment, a count nobody recorded. In every section
+notebook one of the three sits in the main body rather than in the optional
+tail, where a reader who stops at *Core complete* would never have reached it.
+`gen_cube_gifs.py` refuses to run if a notebook drops below three.
 
 The URLs are absolute because a notebook on Colab has no checkout to resolve a
 relative path against, which means a reader needs the network to *see* them —

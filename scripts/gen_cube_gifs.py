@@ -104,7 +104,8 @@ notebook's pasted into it -- the mistake a count could never catch, and the
 likeliest one, since these cells are copied between notebooks and the number in
 the URL is the part you have to remember to change. Note what check 1 does
 *not* do: it tests ownership, never a count, so nothing in CI will tell you a
-notebook dropped back to two. This docstring is the whole of that rule.
+notebook dropped back to two. `check_table` here does, against
+`MIN_PER_NOTEBOOK`, and it is the only thing anywhere that does.
 
 THREE WAYS A SCENE GOES WRONG SILENTLY
 --------------------------------------
@@ -347,17 +348,32 @@ def step_for(cell=CELL):
     return (STEP_RATIO[0] * cell, STEP_RATIO[1] * cell)
 
 
-def cell_text(v) -> str:
+def cell_text(v, decimals=None) -> str:
     """A number as it should appear inside a cell.
 
     Whole numbers stay whole -- the index cubes are `arange`, and `0.0` where a
     reader expects `0` reads as a bug. Everything else gets one decimal, which
     is all that fits and all a factor matrix needs to make its point.
+
+    `decimals` raises that for the one kind of scene where one is actively
+    wrong: a convergence. `cube-08-direction` watches a ratio settle on the
+    golden ratio, and at one decimal every frame after the second reads `1.6`
+    -- so the picture of something settling is a picture of something that was
+    never moving. Three decimals is the smallest that shows the approach, and
+    it is a per-scene choice rather than a new default because every other
+    scene here would only get wider cells out of it.
+
+    Passing it explicitly also overrides the whole-number rule above, and has
+    to: the same converging row starts at exactly 1 and exactly 2, and printing
+    those two bare while their neighbours carry three decimals breaks the
+    column and drops the two values the convergence is measured *from*. The
+    bare-integer shortcut is for `decimals=None`, which is every index cube in
+    the module.
     """
     v = float(v)
-    if v == int(v):
-        return str(int(v))
-    return f"{v:.1f}"
+    if decimals is None:
+        return str(int(v)) if v == int(v) else f"{v:.1f}"
+    return f"{v:.{decimals}f}"
 
 
 def plane_origin(i, origin, cell=CELL):
@@ -386,7 +402,8 @@ def centred(shape, cell=CELL, y=None):
 
 def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
            cell=CELL, origin=BODY, label_size=10.0, edge_axis=True,
-           lit_tint=None, cell_colors=None, ghost_labels=True):
+           lit_tint=None, cell_colors=None, ghost_labels=True,
+           decimals=None):
     """One tensor as its pile of (axis 1, axis 2) matrices, drawn back to front.
 
     Three masks, each answering a different question about an entry:
@@ -496,7 +513,8 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
                         ink = _ink_on(fill)
                     else:
                         ink = INK if on else _mix(INK, 0.55)
-                    ax.text(x + cell / 2, y + cell / 2, cell_text(arr[i, r, c]),
+                    ax.text(x + cell / 2, y + cell / 2,
+                            cell_text(arr[i, r, c], decimals),
                             ha="center", va="center", fontsize=label_size,
                             family="monospace", zorder=2 * (d - i) + 1,
                             style="italic" if faint else "normal",
@@ -514,7 +532,8 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
 
     An item is either a string -- drawn as an operator between its neighbours,
     `=`, `x`, `->` -- or a dict with `arr` and optionally `lit`, `hide`,
-    `ghost`, `lit_tint`, `cell_colors`, `ghost_labels`, `caption` and `labels`. `size` sets the label point size for
+    `ghost`, `lit_tint`, `cell_colors`, `ghost_labels`, `decimals`, `caption`
+    and `labels`. `size` sets the label point size for
     every item at once, which is what a row of same-sized piles wants;
     an item's own `size` still wins where one pile is drawn smaller. Widths come from each pile's own extent, so a tall
     thin factor beside a wide one keeps its real proportions, the way
@@ -558,6 +577,7 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
                    labels=it.get("labels", True), lit_tint=it.get("lit_tint"),
                    cell_colors=it.get("cell_colors"),
                    ghost_labels=it.get("ghost_labels", True),
+                   decimals=it.get("decimals"),
                    cell=cell, origin=(x, oy), label_size=it.get("size", size))
             if it.get("caption"):
                 t = ax.text(x + span / 2, base, it["caption"],
@@ -617,6 +637,23 @@ def swatch_hex(img):
     for r in range(h):
         for c in range(w):
             out[0, r, c] = _hex(img[r, c])
+    return out
+
+
+def clip_frames(n=3, rows=2, cols=3):
+    """A tiny colour clip: a bright dot one column further along each frame.
+
+    The same 0/128/255 discipline the swatch keeps -- a flat grey field and a
+    pure red dot -- so a reader can still read the red plane and check that
+    255 is exactly where the dot is. What it adds over the swatch is *motion*,
+    which is the only thing section 05 is about: a clip is not a pile of
+    unrelated pictures, it is one picture at several moments, and dropping a
+    frame is dropping a moment rather than a slab of numbers.
+    """
+    import numpy as np
+    out = np.full((n, rows, cols, 3), 128, dtype=int)
+    for t in range(n):
+        out[t, 0, t % cols] = (255, 0, 0)
     return out
 
 
@@ -1000,6 +1037,69 @@ def scene_01_slice_fibre(tint):
     ]
 
 
+def scene_01_rank(tint):
+    """01, third animation — order counts axes, rank counts directions.
+
+    Notebook 01 has a section called *Order vs. rank* and, until this, no
+    picture for it. The two words get confused because both answer "how many?"
+    about the same object, and a reader who has just learnt that order is the
+    number of axes reasonably assumes rank is a synonym for it.
+
+    So the scene holds the order fixed and changes only the rank. Both matrices
+    are (4, 3) and order 2. One is built as a single outer product, so every
+    row is a multiple of the first and seven numbers regenerate all twelve; the
+    other needs a second term. Nothing about the shape distinguishes them,
+    which is the whole point and the same shape of claim `cube-04-transpose-vs-reshape`
+    makes about transpose and reshape.
+
+    The second term touches rows 2 and 3 only, so rows 0 and 1 of `M2` are
+    still multiples of one another. The caption therefore says "two rows
+    stopped being multiples" rather than "no row is a multiple", because the
+    second is false and this is a picture a notebook embeds.
+    """
+    import numpy as np
+    a = np.array([1, 2, 3, 4])
+    b = np.array([1, 2, 3])
+    M1 = np.outer(a, b)
+    M2 = M1 + np.outer([0, 0, 1, 1], [1, 0, 0])
+
+    def whole(arr, lit=None):
+        def draw(ax):
+            planes(ax, arr, tint=tint, lit=lit,
+                   origin=centred((1,) + arr.shape, cell=0.78), cell=0.78,
+                   label_size=15)
+        return draw
+
+    def factored(ax):
+        sequence(ax, [
+            {"arr": a.reshape(4, 1), "tint": INDEX["i"], "caption": "a  (4,)"},
+            "x",
+            {"arr": b.reshape(1, 3), "tint": INDEX["j"], "caption": "b  (3,)"},
+            "=",
+            {"arr": M1, "caption": "M  (4, 3)"},
+        ], tint=tint, cell=0.56, size=12)
+
+    def both(ax):
+        first = np.zeros(M1.shape, bool)
+        first[0] = True
+        sequence(ax, [
+            {"arr": M1, "lit": first, "caption": "rank 1"},
+            "vs",
+            {"arr": M2, "lit": first, "caption": "rank 2"},
+        ], tint=tint, cell=0.56, size=12)
+
+    return [
+        ("M = a x b", "(4, 3), order 2",
+         "every row is a multiple of the first", whole(M1)),
+        ("a and b", "7 numbers, not 12",
+         "one direction is enough to rebuild all of it", factored),
+        ("M + c x d", "(4, 3), order 2",
+         "one term added, and two rows stopped being multiples", whole(M2)),
+        ("rank 1 vs rank 2", "both (4, 3), both order 2",
+         "order counts axes; rank counts directions", both),
+    ]
+
+
 def scene_02(tint):
     """02 — shuffle the axis, and watch which reading survives it.
 
@@ -1310,6 +1410,47 @@ def scene_03_scalar(tint):
     ]
 
 
+def scene_03_mask(tint):
+    """03, third animation — a Boolean mask is a test, not a list of positions.
+
+    Section 3.2 is *Fancy indexing and Boolean masks* and had no picture. The
+    confusion the scene is aimed at is a real one: `M[[2, 3]]` and `M[mask]`
+    return the same rows, so a reader concludes a mask is a roundabout way of
+    writing a list of indices. It is not -- it is one truth value per row, and
+    the count of rows that come back is not something you wrote down anywhere.
+
+    Frame 1 is therefore the whole lesson: the comparison happens first, on a
+    column, and produces four Booleans. The selection is what those Booleans
+    then do.
+    """
+    import numpy as np
+    M = np.arange(20).reshape(4, 5)
+    keep = M[:, 0] > 5
+    col = np.zeros(M.shape, bool)
+    col[:, 0] = True
+    rows = np.broadcast_to(keep[:, None], M.shape)
+
+    def draw(lit=None, arr=None, cell=0.72, size=14):
+        arr = M if arr is None else arr
+        def inner(ax):
+            planes(ax, arr, tint=tint, lit=lit,
+                   origin=centred((1,) + arr.shape, cell=cell), cell=cell,
+                   label_size=size)
+        return inner
+
+    return [
+        ("M", "shape (4, 5)", "four rows of five, and a question about each",
+         draw()),
+        ("M[:, 0] > 5", "one column, four answers",
+         "the test runs first, and it runs on a column", draw(lit=col)),
+        ("mask", "[False, False, True, True]",
+         "two rows passed — a Boolean each, not a position", draw(lit=rows)),
+        ("M[mask]", "shape (2, 5)",
+         "the rows that passed, and the count was never written down",
+         draw(arr=M[keep])),
+    ]
+
+
 def scene_04(tint):
     """04 — transpose against reshape: one shape, two different tensors."""
     import numpy as np
@@ -1447,31 +1588,104 @@ def scene_04_rgb(tint):
 
 
 def scene_05(tint):
-    """05 — sampling: what a smaller tensor quietly threw away."""
+    """05 — sampling: what a smaller tensor quietly threw away.
+
+    Redrawn on a colour clip. It used to open on the same `np.arange(60)` cube
+    every other scene opened on, captioned `clip`, and the caption was the only
+    thing making it a video at all -- so "the gap is the point" was a claim
+    about a slab of numbers rather than something a reader could see.
+
+    Now the frames are pictures and the dot moves one column per frame, so the
+    last frame does the work by itself: after `clip[::2]` the dot jumps two
+    columns, and a reader who has never thought about sampling can see that the
+    motion is wrong rather than be told the index means something else.
+    """
     import numpy as np
-    T = cube()
-    o = centred(SHAPE)
-    drop = np.zeros(SHAPE, bool)
-    drop[1] = True
+    clip = clip_frames()
+    hexes = [swatch_hex(clip[t])[0] for t in range(3)]
+    blank = np.ones(clip[0].shape[:2], bool)
 
-    def whole(ax):
-        planes(ax, T, tint=tint, origin=o)
+    def row(items):
+        def draw(ax):
+            sequence(ax, items, tint=tint, cell=0.62, size=9)
+        return draw
 
-    def dim(ax):
-        planes(ax, T, tint=tint, lit=~drop, origin=o)
+    def item(t, lit=None, hide=None, caption=None):
+        return {"arr": clip[t, :, :, 0], "cell_colors": hexes[t],
+                "labels": False, "lit": lit, "hide": hide,
+                "caption": caption if caption is not None else f"clip[{t}]"}
 
-    def gone(ax):
-        planes(ax, T, tint=tint, hide=drop, origin=o)
-
-    def kept(ax):
-        planes(ax, T[::2], tint=tint, origin=centred((2, 4, 5)))
+    dim = np.zeros(clip[0].shape[:2], bool)
 
     return [
-        ("clip", "shape (3, 4, 5)", "every recorded plane", whole),
-        ("clip[::2]", "keeping 2 of 3", "plane 1 is about to go", dim),
-        ("clip[::2]", "keeping 2 of 3", "and it is gone — the gap is the point", gone),
-        ("clip[::2]", "shape (2, 4, 5)",
-         "clip[1] is plane 2 now, not plane 1", kept),
+        ("clip", "shape (3, 2, 3, 3)",
+         "three moments — the dot moves one column each",
+         row([item(0), item(1), item(2)])),
+        ("clip[::2]", "keeping 2 of 3", "frame 1 is about to go",
+         row([item(0), item(1, lit=dim), item(2)])),
+        ("clip[::2]", "keeping 2 of 3", "and it is gone — the gap is the point",
+         row([item(0), item(1, hide=blank, caption=""), item(2)])),
+        ("clip[::2]", "shape (2, 2, 3, 3)",
+         "the dot jumps two columns now — clip[1] is the old frame 2",
+         row([item(0), item(2, caption="clip[1]")])),
+    ]
+
+
+def scene_05_axes(tint):
+    """05, third animation — (T, H, W, C), one axis at a time.
+
+    Section 05's core-path cell is a four-row table naming T, H, W and C, and
+    the notebook had no picture of any of them. A table can say "T is time";
+    it cannot show that the time axis is the one carrying the motion, which is
+    the claim every design decision later in the notebook rests on.
+
+    The last frame is the one to keep: the dot's column equals its frame index,
+    so `clip[t, 0, t]` is red for every t. The motion lives in T and only in T,
+    and that is why reordering or dropping along T is the operation that costs
+    something and reordering along H never is.
+    """
+    import numpy as np
+    clip = clip_frames()
+    hexes = [swatch_hex(clip[t])[0] for t in range(3)]
+
+    def strip(lit=None):
+        def draw(ax):
+            sequence(ax, [
+                {"arr": clip[t, :, :, 0], "cell_colors": hexes[t],
+                 "labels": False, "caption": f"clip[{t}]",
+                 "lit": None if lit is None else lit[t]}
+                for t in range(3)
+            ], tint=tint, cell=0.62, size=9)
+        return draw
+
+    def one_frame(ax):
+        o = centred((1, 2, 3), cell=1.05)
+        planes(ax, clip[1, :, :, 0], tint=tint, cell_colors=hexes[1],
+               labels=False, origin=o, cell=1.05)
+        axis_arrows(ax, (1, 2, 3), origin=o, cell=1.05,
+                    names=(None, "H", "W"), tints=AXIS_TINTS)
+
+    def red_planes(ax):
+        sequence(ax, [
+            {"arr": clip[t, :, :, 0],
+             "cell_colors": channel_hex(clip[t, :, :, 0], 0),
+             "caption": f"clip[{t}, :, :, 0]"}
+            for t in range(3)
+        ], tint=tint, cell=0.62, size=11)
+
+    dot = [np.zeros((2, 3), bool) for _ in range(3)]
+    for t in range(3):
+        dot[t][0, t] = True
+
+    return [
+        ("clip", "(T, H, W, C) = (3, 2, 3, 3)",
+         "T moments, each one an H x W x C picture", strip()),
+        ("clip[1]", "shape (2, 3, 3)",
+         "one moment — H down, W across, C inside each cell", one_frame),
+        ("clip[:, :, :, 0]", "shape (3, 2, 3)",
+         "the red channel of every frame — 255 is exactly the dot", red_planes),
+        ("clip[t, 0, t]", "red for every t",
+         "the motion lives in T, and in no other axis", strip(lit=dot)),
     ]
 
 
@@ -1812,6 +2026,79 @@ def scene_07_shapes(tint):
     ]
 
 
+def scene_07_residual(tint):
+    """07, third animation — the answer that does not solve the equation.
+
+    The two existing scenes are about what the pseudoinverse *is*: what a
+    duplicated column costs it, and what shape it comes back. Neither shows the
+    situation a reader actually meets, which is four equations and two
+    unknowns, and the quiet fact that `pinv` hands back a vector anyway.
+
+    So the numbers are the point here. `A @ x` is not `b` and no choice of `x`
+    would make it so -- the columns of a (4, 2) matrix span a plane and `b` is
+    not in it. What `pinv` returns is the closest thing there is, and frame 3
+    prints the residual so that "closest" is a number rather than a reassurance.
+
+    The design is the notebook's own: a column of ones and a column of times,
+    which is a straight-line fit, so the residual a reader sees here is the one
+    they already know from least squares.
+    """
+    import numpy as np
+    A = np.array([[1, 0], [1, 1], [1, 2], [1, 3]])
+    b = np.array([1, 3, 2, 5])
+    x = np.linalg.pinv(A) @ b
+    fit = A @ x
+    res = b - fit
+    ss = float(res @ res)
+
+    def system(ax):
+        sequence(ax, [
+            {"arr": A, "caption": "A  (4, 2)"},
+            "@",
+            # x is what is being asked for, so it is drawn empty: two cells
+            # with no numbers in them yet.
+            {"arr": np.zeros((2, 1)), "labels": False, "caption": "x  (2,)"},
+            "=",
+            {"arr": b.reshape(4, 1), "caption": "b  (4,)"},
+        ], tint=tint, cell=0.62, size=13)
+
+    def solve(ax):
+        sequence(ax, [
+            {"arr": np.linalg.pinv(A), "caption": "pinv(A)  (2, 4)"},
+            "@",
+            {"arr": b.reshape(4, 1), "caption": "b"},
+            "=",
+            {"arr": x.reshape(2, 1), "caption": "x"},
+        ], tint=tint, cell=0.52, size=11)
+
+    def compare(ax):
+        sequence(ax, [
+            {"arr": fit.reshape(4, 1), "caption": "A @ x"},
+            "vs",
+            {"arr": b.reshape(4, 1), "caption": "b"},
+        ], tint=tint, cell=0.74, size=14)
+
+    def residual(ax):
+        sequence(ax, [
+            {"arr": b.reshape(4, 1), "caption": "b"},
+            "-",
+            {"arr": fit.reshape(4, 1), "caption": "A @ x"},
+            "=",
+            {"arr": res.reshape(4, 1), "caption": "r"},
+        ], tint=tint, cell=0.62, size=13)
+
+    return [
+        ("A x = b", "(4, 2) and (4,)",
+         "four equations, two unknowns — two too many", system),
+        ("x = pinv(A) @ b", "shape (2,)",
+         "it hands back an answer without complaining", solve),
+        ("A @ x  vs  b", "not equal, and never will be",
+         "the columns span a plane, and b is not on it", compare),
+        ("b - A @ x", f"sum of squares {ss:.2f}",
+         "the smallest this can be — smallest is not zero", residual),
+    ]
+
+
 def scene_08(tint):
     """08 — one update rule, applied again and again."""
     import numpy as np
@@ -1868,6 +2155,67 @@ def scene_08_power(tint):
     ]
     return [(f"F ** {n + 1}", f"top left = {int(powers[n][0, 0])}", subs[n],
              show(n)) for n in range(4)]
+
+
+def scene_08_direction(tint):
+    """08, third animation — what repetition converges on, and why it is not zero.
+
+    Exercise 2 is called *when repetition chooses a direction* and the notebook
+    has a spectral-gap explorer for it, both behind widgets. The two existing
+    scenes show the mechanism -- one step, then the operator -- and neither
+    shows the consequence, which is the part that transfers: apply any matrix
+    enough times and the result stops being about where you started.
+
+    Fibonacci is the right vehicle because the reader has already built it in
+    the core exercise, and because the ratio of the two entries is something
+    they can watch settle without being told what a dominant eigenvalue is.
+    Frame 3 then names it, which is the whole arc of the section in four
+    pictures: notice, measure, converge, name.
+    """
+    import numpy as np
+    F = np.array([[1, 1], [1, 0]])
+    xs = [np.array([1, 0])]
+    for _ in range(12):
+        xs.append(F @ xs[-1])
+    early = np.stack(xs[1:5], axis=1)                 # (2, 4)
+    ratios = np.array([[xs[t][0] / xs[t][1] for t in range(1, 5)]])
+    late = np.array([[xs[t][0] / xs[t][1] for t in (9, 10, 11, 12)]])
+
+    def states(ax):
+        sequence(ax, [
+            {"arr": early[:, [t]], "caption": f"F^{t + 1} x"}
+            for t in range(4)
+        ], tint=tint, cell=0.74, size=15)
+
+    def row(arr):
+        def draw(ax):
+            planes(ax, arr, tint=tint,
+                   origin=centred((1,) + arr.shape, cell=0.94), cell=0.94,
+                   label_size=15, decimals=3)
+        return draw
+
+    vals = np.sort(np.linalg.eigvals(F).real)[::-1]
+
+    def spectrum(ax):
+        big = np.zeros((1, 2), bool)
+        big[0, 0] = True
+        planes(ax, vals.reshape(1, 2), tint=tint, lit=big,
+               origin=centred((1, 1, 2), cell=1.30), cell=1.30,
+               label_size=20, decimals=3)
+
+    return [
+        ("F @ x, applied again and again", "each shape (2,)",
+         "one rule, and nothing about it changes between steps", states),
+        ("x[0] / x[1]", "1, 2, then in towards 1.6",
+         "the ratio of the two entries, step by step", row(ratios)),
+        ("after ten more steps", "all 1.618",
+         "it stops moving, and not where it started", row(late)),
+        # Both values, with the sign: the second one is negative, and writing
+        # its magnitude here would have the caption disagree with the cell
+        # under it.
+        ("eigvals(F)", f"{vals[0]:.3f} and {vals[1]:.3f}",
+         "repetition finds the direction that stretches most", spectrum),
+    ]
 
 
 def scene_09(tint):
@@ -1955,6 +2303,83 @@ def scene_09_rank(tint):
          "closer — the dashed value is the one thrown away", keep(2)),
         ("rank 3", "nothing discarded", "all three back, and A exactly",
          keep(3)),
+    ]
+
+
+def scene_09_nmf(tint):
+    """09, third animation — the factorization you can point at.
+
+    Section 9.6 is *NMF -- parts you can name*, and the two existing scenes are
+    both about SVD. That leaves the notebook's own answer to "why would I ever
+    use anything else?" undrawn, and the answer is not about accuracy: SVD is
+    the best rank-k approximation there is, and `cube-09-rank` already says so.
+
+    It is about signs. The data here is counts, so every entry of `A` is at or
+    above zero, and a factor with negative entries describes it as a thing
+    partly cancelled by another thing -- true arithmetic, and not a sentence
+    anybody can say about counts. NMF gives up optimality to keep every number
+    in the factors as pointable as the numbers in the data.
+
+    `W` and `H` are exact here rather than fitted: `A` is built as their
+    product, so the frame is about what a non-negative pair looks like, not
+    about how an optimizer finds one. That also keeps it deterministic, which
+    a `NMF(init=...)` call would not be.
+    """
+    import numpy as np
+    W = np.array([[2, 0], [1, 1], [0, 2], [1, 0]])
+    H = np.array([[1, 0, 1], [0, 1, 1]])
+    A = W @ H
+    U, sv, Vt = np.linalg.svd(A, full_matrices=False)
+    # An SVD is unique only up to a sign per column, and numpy returns whichever
+    # sign LAPACK produced -- not part of its contract, and it moves between
+    # BLAS builds. This frame's caption says "the lit entries of U are
+    # negative", so a build that flipped column 0 would ship a frame lighting
+    # nothing under a caption claiming it lights something -- with no gate
+    # anywhere, since these images sit outside the CI regenerate gate and
+    # nothing compares a caption against its picture. Pin the sign rather than
+    # trust it: each column's largest-magnitude entry is made negative, which
+    # is arbitrary and, unlike the default, the same on every stack.
+    lead = np.argmax(np.abs(U), axis=0)
+    U = U * np.where(U[lead, np.arange(U.shape[1])] > 0, -1.0, 1.0)
+    U2 = np.round(U[:, :2], 1)
+    neg = U2 < 0
+    assert neg.any(), "frame 1's caption claims U has negative entries"
+
+    def whole(ax):
+        planes(ax, A, tint=tint, origin=centred((1,) + A.shape, cell=0.80),
+               cell=0.80, label_size=16)
+
+    def svd_signs(ax):
+        sequence(ax, [
+            {"arr": U2, "lit": neg, "caption": "U[:, :2]"},
+            {"arr": np.round(np.diag(sv[:2]), 1), "caption": "S"},
+        ], tint=tint, cell=0.62, size=12)
+
+    def parts(ax):
+        sequence(ax, [
+            {"arr": W, "caption": "W  (4, 2)"},
+            "@",
+            {"arr": H, "caption": "H  (2, 3)"},
+            "=",
+            {"arr": A, "caption": "A"},
+        ], tint=tint, cell=0.52, size=11)
+
+    def side(ax):
+        sequence(ax, [
+            {"arr": U2, "lit": neg, "caption": "U[:, :2]"},
+            "vs",
+            {"arr": W, "caption": "W"},
+        ], tint=tint, cell=0.70, size=14)
+
+    return [
+        ("A", "(4, 3), every entry >= 0",
+         "counts — nothing here can be less than nothing", whole),
+        ("A = U S Vt", "the best rank 2 there is",
+         "and the lit entries of U are negative", svd_signs),
+        ("A = W @ H", "both factors >= 0",
+         "every number in both factors is a quantity of something", parts),
+        ("U[:, :2]  vs  W", "same rank, same data",
+         "one is optimal; the other is the one you can read aloud", side),
     ]
 
 
@@ -2132,17 +2557,144 @@ def scene_11_outer(tint):
     ]
 
 
+def scene_10_modes(tint):
+    """10, third animation — one factor per mode, applied one at a time.
+
+    Section 10.2 is called *HOSVD -- compress each mode separately*, and the
+    word doing the work in it is *separately*. `cube-10-tucker` shows the core
+    and the three factor matrices together, which is the finished statement;
+    this shows the sentence being built, and the shape line under each frame is
+    the argument: 8 numbers, then 12, then 24, then 60.
+
+    Running it in the expanding direction rather than the compressing one is
+    deliberate. Compression frames it as loss, and a reader watching a tensor
+    shrink learns only that something went missing. Expansion frames it as
+    what it is -- a small core plus one basis per mode is a *recipe* for the
+    whole thing, and each mode product is one instruction in it.
+    """
+    import numpy as np
+    core = np.arange(1, 9).reshape(2, 2, 2)
+    U0 = np.array([[1, 0], [0, 1], [1, 1]])
+    U1 = np.array([[1, 0], [0, 1], [1, 1], [2, 0]])
+    U2 = np.array([[1, 0], [0, 1], [1, 1], [0, 2], [2, 1]])
+    s1 = np.einsum("ip,pjk->ijk", U0, core)
+    s2 = np.einsum("jq,iqk->ijk", U1, s1)
+    s3 = np.einsum("kr,ijr->ijk", U2, s2)
+
+    def pile(arr, cell, size):
+        def draw(ax):
+            planes(ax, arr, tint=tint, origin=centred(arr.shape, cell=cell),
+                   cell=cell, label_size=size)
+        return draw
+
+    return [
+        ("core", "(2, 2, 2) — 8 numbers",
+         "the whole tensor, before any mode gets its size back",
+         pile(core, 0.86, 17)),
+        ("core x0 U0", "(3, 2, 2) — 12",
+         "mode 0 grows to 3, and nothing else moves", pile(s1, 0.74, 14)),
+        ("... x1 U1", "(3, 4, 2) — 24",
+         "mode 1 grows to 4 — one factor, one axis", pile(s2, 0.60, 11)),
+        ("... x2 U2", "(3, 4, 5) — 60",
+         "three factors, three modes, the tensor is back", pile(s3, 0.50, 8)),
+    ]
+
+
+def scene_11_tt(tint):
+    """11, third animation — the tensor train, which is a chain, not a block.
+
+    Exercise 3 is *prove why TT matters* and it is the one model of the four in
+    this notebook with no picture. It also needs one most: CP and Tucker are
+    both "a small thing plus some factor matrices", so a reader can carry one
+    mental image for both, and TT is a genuinely different shape of answer --
+    the cores are strung in a line and each one touches only its neighbours.
+
+    Frame 3 is what that buys. An entry of `T` is not looked up; it is walked
+    to, one core at a time, and the rank between two cores is the width of the
+    passage between them. That is why the middle rank is the only knob, and why
+    a chain scales to twenty axes where a Tucker core does not.
+    """
+    import numpy as np
+    rng = np.random.default_rng(5)
+    G1 = rng.integers(0, 4, (3, 2))
+    G2 = rng.integers(0, 4, (2, 4, 2))
+    G3 = rng.integers(0, 4, (2, 5))
+    T = np.einsum("ip,pjq,qk->ijk", G1, G2, G3)
+    cost = G1.size + G2.size + G3.size
+
+    def whole(ax):
+        planes(ax, T, tint=tint, origin=centred(T.shape, cell=0.50),
+               cell=0.50, label_size=8)
+
+    def chain(ax):
+        sequence(ax, [
+            {"arr": G1, "caption": "G1  (3, 2)"},
+            "-",
+            {"arr": G2, "caption": "G2  (2, 4, 2)"},
+            "-",
+            {"arr": G3, "caption": "G3  (2, 5)"},
+        ], tint=tint, cell=0.46, size=9)
+
+    def budget(ax):
+        sequence(ax, [
+            {"arr": T, "labels": False, "caption": f"T  {T.size}"},
+            "vs",
+            {"arr": G1, "labels": False, "caption": str(G1.size)},
+            {"arr": G2, "labels": False, "caption": str(G2.size)},
+            {"arr": G3, "labels": False, "caption": str(G3.size)},
+        ], tint=tint, cell=0.40, size=8)
+
+    def one_entry(ax):
+        r1 = G1[[1]]
+        r3 = G3[:, [3]]
+        sequence(ax, [
+            {"arr": r1, "tint": INDEX["i"], "caption": "G1[1]"},
+            "@",
+            {"arr": G2[:, 2, :], "tint": INDEX["j"], "caption": "G2[:, 2]"},
+            "@",
+            {"arr": r3, "tint": INDEX["k"], "caption": "G3[:, 3]"},
+        ], tint=tint, cell=0.62, size=13)
+
+    return [
+        ("T", f"{T.size} numbers", "one block, and every entry stored in it",
+         whole),
+        ("G1, G2, G3", "(3, 2) (2, 4, 2) (2, 5)",
+         "a chain — each core touches only its neighbours", chain),
+        ("storage", f"{cost} against {T.size}",
+         "the rank between two cores is the width of the passage", budget),
+        ("T[1, 2, 3]", "one walk along the chain",
+         "an entry is not looked up, it is multiplied out", one_entry),
+    ]
+
+
 def scene_12(tint):
-    """12 — the whole day, in the four moves it kept coming back to."""
+    """12 — the whole day, in the four moves it kept coming back to.
+
+    Frame 0 hides plane 0, which is a fix rather than a flourish: `T[1]` is the
+    middle plane, the pile occludes exactly, and for months this scene rendered
+    the slice as a sliver down the right-hand edge. The module docstring names
+    that trap and `_check_layout` cannot catch it. Hiding the front plane rather
+    than dimming it, for the reason `planes` gives -- a dimmed plane still
+    paints over what is behind it.
+
+    Frame 1 shows why hiding is not a general answer. The obvious fibre,
+    `T[:, 1, 3]`, runs *back* through all three planes, and no mask fixes that:
+    leave the pile whole and planes 1 and 2 are covered, hide plane 0 and the
+    fibre loses a cell. Either way a frame captioned "fix two" shows one cell,
+    which is the next lesson rather than this one. So the fibre drawn here is
+    `T[0, :, 3]` -- two indices fixed, exactly as the caption says, and all four
+    of its cells lying in the plane nothing is in front of.
+    """
     import numpy as np
     T = cube()
     o = centred(SHAPE)
     plane = np.zeros(SHAPE, bool); plane[1] = True
-    fibre = np.zeros(SHAPE, bool); fibre[:, 1, 3] = True
+    fibre = np.zeros(SHAPE, bool); fibre[0, :, 3] = True
+    front = np.zeros(SHAPE, bool); front[0] = True
 
-    def lit(mask):
+    def lit(mask, hide=None):
         def draw(ax):
-            planes(ax, T, tint=tint, lit=mask, origin=o)
+            planes(ax, T, tint=tint, lit=mask, hide=hide, origin=o)
         return draw
 
     def transposed(ax):
@@ -2157,8 +2709,9 @@ def scene_12(tint):
                origin=centred((1, 3, 4)), label_size=12)
 
     return [
-        ("T[1]", "shape (4, 5)", "slice — fix one index", lit(plane)),
-        ("T[:, 1, 3]", "shape (3,)", "fibre — fix two", lit(fibre)),
+        ("T[1]", "shape (4, 5)", "slice — fix one index",
+         lit(plane, hide=front)),
+        ("T[0, :, 3]", "shape (4,)", "fibre — fix two", lit(fibre)),
         ("T.transpose(2, 0, 1)", "shape (5, 3, 4)",
          "reorder — every number keeps its neighbours", transposed),
         ("T.sum(axis=2)", "shape (3, 4)",
@@ -2230,6 +2783,71 @@ def scene_12_budget(tint):
              {"arr": A, "caption": "A (3,3)"}, "x",
              {"arr": B, "caption": "B (4,3)"}, "x",
              {"arr": C, "caption": "C (5,3)"}])),
+    ]
+
+
+def scene_12_attention(tint):
+    """12, third animation — the take-home the whole day was building towards.
+
+    Take-home B is called *Attention is two contractions*, and it is the one
+    place the workshop's own machinery lands on something a reader has already
+    heard of from somewhere else. It had no picture.
+
+    Deliberately drawn in `cube-06-matmul`'s vocabulary rather than a new one:
+    the two einsum strings are the scene, and both are shapes of expression the
+    reader met in section 06. `id,jd->ij` sums the feature axis away to score
+    every query against every key; `ij,jd->id` sums the key axis away to mix
+    the values. The softmax between them is the only step in the whole
+    operation that is not a contraction, and frame 2 says so.
+
+    Two queries and four keys, small enough that the row sums can be checked by
+    eye -- which is the point of frame 2 and the reason the weights are drawn
+    to two decimals rather than one.
+    """
+    import numpy as np
+    Q = np.array([[1, 0, 1], [0, 2, 1]])
+    K = np.array([[1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 2]])
+    V = np.array([[2, 0], [0, 2], [1, 1], [3, 3]])
+    scores = np.einsum("id,jd->ij", Q, K)
+    w = np.exp(scores - scores.max(1, keepdims=True))
+    w = np.round(w / w.sum(1, keepdims=True), 2)
+    out = np.round(np.einsum("ij,jd->id", w, V), 2)
+
+    def operands(ax):
+        sequence(ax, [
+            {"arr": Q, "tint": INDEX["i"], "caption": "Q  (2, 3)  id"},
+            {"arr": K, "tint": INDEX["j"], "caption": "K  (4, 3)  jd"},
+        ], tint=tint, cell=0.72, size=14)
+
+    def score(ax):
+        o = centred((1,) + scores.shape, cell=0.86)
+        planes(ax, scores, tint=tint, origin=o, cell=0.86, label_size=17)
+        axis_arrows(ax, (1,) + scores.shape, origin=o, cell=0.86,
+                    names=(None, "i", "j"))
+
+    def weights(ax):
+        planes(ax, w, tint=tint, origin=centred((1,) + w.shape, cell=0.86),
+               cell=0.86, label_size=15, decimals=2)
+
+    def mix(ax):
+        sequence(ax, [
+            {"arr": w, "caption": "softmax  (2, 4)", "decimals": 2},
+            "@",
+            {"arr": V, "tint": INDEX["j"], "caption": "V  (4, 2)"},
+            "=",
+            {"arr": out, "caption": "out  (2, 2)", "decimals": 2},
+        ], tint=tint, cell=0.50, size=10)
+
+    return [
+        ("Q, K", "(2, 3) and (4, 3)",
+         "two queries, four keys, both described by d = 3", operands),
+        ("einsum('id,jd->ij', Q, K)", "shape (2, 4)",
+         "d is summed away — one score per query-key pair", score),
+        ("softmax(scores)", "every row sums to 1",
+         "the one step in attention that is not a contraction", weights),
+        ("einsum('ij,jd->id', w, V)", "shape (2, 2)",
+         "j summed away — two contractions, and a softmax between",
+         mix),
     ]
 
 
@@ -2331,6 +2949,53 @@ def scene_13_transposed(tint):
     ]
 
 
+def scene_13_modes(tint):
+    """13, third animation — valid, same and full, as three output lengths.
+
+    The notebook has a section called *`valid`, `same`, and `full` in plain
+    language* and an explorer widget behind it, and no picture. The three modes
+    are the first thing that bites anybody wiring a convolution into a network,
+    because picking the wrong one is not an error -- it is a tensor of the
+    wrong length arriving somewhere that accepts it.
+
+    One dimension, five samples, three taps, so all three answers fit on one
+    row and the arithmetic in the captions is checkable without trusting
+    anything: 5 - 3 + 1, then 5, then 5 + 3 - 1.
+    """
+    import numpy as np
+    x = np.array([1, 2, 0, 3, 1])
+    k = np.array([1, 0, 2])
+    outs = {m: np.convolve(x, k, mode=m) for m in ("valid", "same", "full")}
+
+    def operands(ax):
+        sequence(ax, [
+            {"arr": x.reshape(1, 5), "caption": "x  (5,)"},
+            "*",
+            {"arr": k.reshape(1, 3), "tint": INDEX["k"], "caption": "k  (3,)"},
+        ], tint=tint, cell=0.80, size=16)
+
+    def mode(name):
+        def draw(ax):
+            y = outs[name]
+            sequence(ax, [
+                {"arr": x.reshape(1, 5), "caption": "x  (5,)"},
+                "->",
+                {"arr": y.reshape(1, len(y)), "caption": f"{name}  ({len(y)},)"},
+            ], tint=tint, cell=0.62, size=13)
+        return draw
+
+    return [
+        ("x * k", "(5,) and (3,)",
+         "five samples and a three-tap kernel", operands),
+        ("mode='valid'", "shape (3,)",
+         "only where the kernel fits whole — 5 - 3 + 1", mode("valid")),
+        ("mode='same'", "shape (5,)",
+         "padded so the output is as long as the input", mode("same")),
+        ("mode='full'", "shape (7,)",
+         "every overlap counts, edges included — 5 + 3 - 1", mode("full")),
+    ]
+
+
 def scene_14(tint):
     """14 -- a component is one profile per axis, and the peaks are the point.
 
@@ -2411,6 +3076,114 @@ def scene_14_als(tint):
          sweep(2)),
         ("one sweep", "3 least squares", "each step is convex, so the error "
          "cannot rise", sweep(-1)),
+    ]
+
+
+def scene_14_unique(tint):
+    """14, third animation — what "essentially unique" gives away, and what it keeps.
+
+    Exercise 5 is *essentially unique, and what ALS returns*, and the phrase
+    does a lot of quiet work. A reader who has just been told CP is unique --
+    unlike the rotation ambiguity notebook 11 shows for NMF -- then runs ALS
+    twice, gets two different-looking factor sets, and reasonably concludes
+    they were lied to.
+
+    They were not. Two things are free and nothing else is: which component is
+    called first, and how a component's size is split between its three
+    vectors. Both are drawn here, and both leave the tensor identical, which is
+    what the note says on frames 2 and 3. The direction of each vector is what
+    is pinned, and that is the part worth having.
+    """
+    import numpy as np
+    A = np.array([[1, 2], [2, 1]])
+    B = np.array([[3, 1], [1, 2]])
+    C = np.array([[2, 1], [1, 3]])
+    T = np.einsum("ir,jr,kr->ijk", A, B, C)
+
+    def factors(a, b, c):
+        def draw(ax):
+            sequence(ax, [
+                {"arr": a, "tint": INDEX["i"], "caption": "A"},
+                {"arr": b, "tint": INDEX["j"], "caption": "B"},
+                {"arr": c, "tint": INDEX["k"], "caption": "C"},
+            ], tint=tint, cell=0.80, size=16)
+        return draw
+
+    def tensor(ax):
+        planes(ax, T, tint=tint, origin=centred(T.shape, cell=0.82), cell=0.82,
+               label_size=16)
+
+    swap = [1, 0]
+    scaled_A = A * np.array([2, 1])
+    scaled_B = B * np.array([0.5, 1])
+    assert np.allclose(np.einsum("ir,jr,kr->ijk", A[:, swap], B[:, swap],
+                                 C[:, swap]), T)
+    assert np.allclose(np.einsum("ir,jr,kr->ijk", scaled_A, scaled_B, C), T)
+
+    return [
+        ("A, B, C", "rank 2", "two components, one vector per axis each",
+         factors(A, B, C)),
+        ("T = sum of two outer products", "shape (2, 2, 2)",
+         "the tensor those six vectors make", tensor),
+        ("columns swapped", "T is unchanged",
+         "which component is called first was never decided", 
+         factors(A[:, swap], B[:, swap], C[:, swap])),
+        ("A[:, 0] x 2, B[:, 0] / 2", "T is unchanged",
+         "order and scale are free; the directions are not",
+         factors(scaled_A, scaled_B, C)),
+    ]
+
+
+def scene_15_missing(tint):
+    """15, third animation — the term you do not add.
+
+    The notebook's closing idea is *missing data is one more term you do not
+    add*, and it had no picture. It is the natural last scene for the whole
+    module too, because it is the one place `ghost` means exactly what it means
+    under broadcasting -- a cell the shape promises and nothing filled in --
+    and the arithmetic turns on telling that apart from a zero.
+
+    Frame 2 is the mistake, drawn rather than described. Treating a missing
+    count as a measured zero does not fail; it contributes `m^2` to the
+    objective, and it contributes most where the model predicted most, so a
+    fit pulled towards the cells it knows least about is exactly what comes
+    out. The lit cells are the damage.
+    """
+    import numpy as np
+    X = np.array([[4, 2, 0, 3], [1, 5, 2, 0], [3, 0, 6, 2]])
+    seen = np.ones(X.shape, bool)
+    for r, c in ((0, 2), (1, 3), (2, 1)):
+        seen[r, c] = False
+    # The model is deliberately close on the cells that were measured and
+    # nowhere near zero on the three that were not -- that is what makes the
+    # third frame an argument rather than a diagram. A missing cell read as a
+    # measured zero contributes m^2, so the damage is largest exactly where
+    # the model is most confident, and the numbers say so: 25, 16 and 36
+    # against errors of 0 and 1 everywhere else.
+    M = np.array([[3, 2, 5, 3], [2, 4, 2, 4], [3, 6, 5, 2]])
+    err_all = (np.where(seen, X, 0) - M) ** 2
+    gone = ~seen
+
+    def grid(arr, ghost=None, lit=None, decimals=None, cell=0.80, size=16):
+        def draw(ax):
+            planes(ax, arr, tint=tint, ghost=ghost, lit=lit,
+                   ghost_labels=False, decimals=decimals,
+                   origin=centred((1,) + arr.shape, cell=cell), cell=cell,
+                   label_size=size)
+        return draw
+
+    return [
+        ("X", "12 cells, 9 of them measured",
+         "the dashed cells were never recorded", grid(X, ghost=gone)),
+        ("mask", "9 of 12",
+         "1 where there is a measurement, 0 where there is not",
+         grid(seen.astype(int))),
+        ("(X - M) ** 2, every cell", f"total {int(err_all.sum())}",
+         "a missing cell read as a zero — the lit ones are the damage",
+         grid(err_all, lit=gone, size=15)),
+        ("summed over the mask only", f"total {int(err_all[seen].sum())}",
+         "missing data is one more term you do not add",
+         grid(err_all, ghost=gone, size=15)),
     ]
 
 
@@ -2540,7 +3313,8 @@ SCENES = {
            ("cube-00-index", scene_00_index),
            ("cube-00-shape", scene_00_shape)],
     "01": [("cube-01-order", scene_01),
-           ("cube-01-slice-fibre", scene_01_slice_fibre)],
+           ("cube-01-slice-fibre", scene_01_slice_fibre),
+           ("cube-01-rank", scene_01_rank)],
     # cube-02-relabel is gone, not renamed: the stem said what the old scene
     # did (relabel the axes and change nothing) and the new one does the
     # opposite. Nothing else in the repo refers to it but notebook 02's own
@@ -2549,7 +3323,8 @@ SCENES = {
            ("cube-02-stack", scene_02_stack),
            ("cube-02-pad", scene_02_pad)],
     "03": [("cube-03-broadcast", scene_03),
-           ("cube-03-scalar", scene_03_scalar)],
+           ("cube-03-scalar", scene_03_scalar),
+           ("cube-03-mask", scene_03_mask)],
     # cube-04-rgb is the one scene drawn in real colour, and the only one that
     # needs a wider palette: twelve saturated fills, their washes, and the ink
     # that flips between them. A GIF colour table rounds up to a power of two,
@@ -2557,37 +3332,54 @@ SCENES = {
     "04": [("cube-04-transpose-vs-reshape", scene_04),
            ("cube-04-ravel", scene_04_ravel),
            ("cube-04-rgb", scene_04_rgb, {"colors": 128})],
-    "05": [("cube-05-sampling", scene_05),
-           ("cube-05-window", scene_05_window)],
+    # cube-05-sampling and cube-05-axes both paint real colour, for the reason
+    # cube-04-rgb does: a clip has to look like moments rather than numbers.
+    "05": [("cube-05-sampling", scene_05, {"colors": 128}),
+           ("cube-05-window", scene_05_window),
+           ("cube-05-axes", scene_05_axes, {"colors": 128})],
     "06": [("cube-06-contract", scene_06),
            ("cube-06-outer", scene_06_outer),
            ("cube-06-matmul", scene_06_matmul)],
     "07": [("cube-07-pinv", scene_07),
-           ("cube-07-shapes", scene_07_shapes)],
+           ("cube-07-shapes", scene_07_shapes),
+           ("cube-07-residual", scene_07_residual)],
     "08": [("cube-08-recurrence", scene_08),
-           ("cube-08-power", scene_08_power)],
+           ("cube-08-power", scene_08_power),
+           ("cube-08-direction", scene_08_direction)],
     "09": [("cube-09-svd", scene_09),
-           ("cube-09-rank", scene_09_rank)],
+           ("cube-09-rank", scene_09_rank),
+           ("cube-09-nmf", scene_09_nmf)],
     "10": [("cube-10-tucker", scene_10),
-           ("cube-10-unfold", scene_10_unfold)],
+           ("cube-10-unfold", scene_10_unfold),
+           ("cube-10-modes", scene_10_modes)],
     "11": [("cube-11-cp", scene_11),
-           ("cube-11-outer", scene_11_outer)],
+           ("cube-11-outer", scene_11_outer),
+           ("cube-11-tt", scene_11_tt)],
     "12": [("cube-12-recap", scene_12),
-           ("cube-12-budget", scene_12_budget)],
+           ("cube-12-budget", scene_12_budget),
+           ("cube-12-attention", scene_12_attention)],
     "13": [("cube-13-convolution", scene_13),
-           ("cube-13-transposed", scene_13_transposed)],
-    "14": [("cube-14-profile", scene_14), ("cube-14-als", scene_14_als)],
-    "15": [("cube-15-loss", scene_15), ("cube-15-binary", scene_15_binary)],
+           ("cube-13-transposed", scene_13_transposed),
+           ("cube-13-modes", scene_13_modes)],
+    "14": [("cube-14-profile", scene_14), ("cube-14-als", scene_14_als),
+           ("cube-14-unique", scene_14_unique)],
+    "15": [("cube-15-loss", scene_15), ("cube-15-binary", scene_15_binary),
+           ("cube-15-missing", scene_15_missing)],
 }
 
 
-# The floor, not a number, and deliberately **not** enforced. Three counts in
-# this file went stale at once when the second animation per notebook became a
-# third -- two docstrings and a comment all said twenty-eight while `SCENES`
-# held thirty-two -- so the number lives here rather than in prose that nobody
-# re-reads. What `main` does with it is print which notebooks are still short;
-# a hard failure would make the generator refuse to draw anything at all while
-# the rollout that satisfies it is being done.
+# The floor, and now enforced. Three counts in this file went stale at once when
+# the second animation per notebook became a third -- two docstrings and a
+# comment all said twenty-eight while `SCENES` held thirty-two -- so the number
+# lives here rather than in prose that nobody re-reads.
+#
+# It shipped as a printed advisory rather than a failure, deliberately: twelve
+# notebooks were still on two, and a generator that refused to draw anything
+# until every one of them reached three would have been useless for exactly the
+# work that got them there. All sixteen are there now, so the advisory becomes
+# the guard it was written to be. Nothing else can catch this -- check 1 in
+# `check_links.py` tests that a notebook's animations are its own and never how
+# many there are.
 MIN_PER_NOTEBOOK = 3
 
 
@@ -2606,9 +3398,9 @@ def check_table() -> None:
     then reject as another notebook's animation. The failure surfaces two tools
     away from its cause.
 
-    The count is a printed line rather than a failure. Not every notebook is at
-    three yet, and a generator that refuses to draw anything until all of them
-    are would be useless exactly while the work is being done.
+    And the count. That one was a printed line while the rollout was in flight;
+    now that every notebook is at `MIN_PER_NOTEBOOK` it is a failure, so a
+    notebook cannot quietly drop back to two.
     """
     stems = [stem for row in SCENES.values() for stem, *_ in row]
     dupes = sorted({s for s in stems if stems.count(s) > 1})
@@ -2622,6 +3414,14 @@ def check_table() -> None:
                     f"{stem} is filed under notebook {n}, so it would be drawn "
                     f"in {n}'s accent and then rejected by check 1 as another "
                     f"notebook's animation")
+    short = sorted(n for n, row in SCENES.items()
+                   if len(row) < MIN_PER_NOTEBOOK)
+    if short:
+        raise SystemExit(
+            f"notebooks {', '.join(short)} carry fewer than "
+            f"{MIN_PER_NOTEBOOK} animations. The third is the one that draws "
+            f"the section's own subject rather than the shared arange cube -- "
+            f"see the module docstring.")
 
 
 def main(only=None) -> None:
@@ -2643,11 +3443,6 @@ def main(only=None) -> None:
             total += out.stat().st_size
             count += 1
     print(f"  {count} animations, {total / 1024:.0f} KB total")
-    short = sorted(n for n, row in SCENES.items()
-                   if len(row) < MIN_PER_NOTEBOOK)
-    if short:
-        print(f"  {len(short)} notebooks still under {MIN_PER_NOTEBOOK} "
-              f"animations: {', '.join(short)}")
 
 
 if __name__ == "__main__":
