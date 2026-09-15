@@ -455,3 +455,35 @@ predecir un conteo negativo, y por qué la otra no necesita una restricción par
 impedirlo?
 
 </details>
+
+
+## 16 · Conservar el 99% de la varianza conserva las etiquetas
+
+<span data-language-key="16-variance-and-labels"></span>
+
+«La sombra conserva casi todo, así que debe bastar para clasificar».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+x = np.linspace(-30, 30, 100)
+cloud = np.column_stack([np.repeat(x, 2), np.tile([-1., 1.], len(x))])
+centered = cloud - cloud.mean(axis=0)
+_, singular_values, axes = np.linalg.svd(centered, full_matrices=False)
+shadow = centered @ axes[:1].T
+assert singular_values[0]**2 / np.sum(singular_values**2) > .99
+assert np.allclose(shadow[::2], shadow[1::2])
+assert np.all(cloud[::2, 1] != cloud[1::2, 1])
+```
+
+Las etiquetas opuestas comparten la coordenada horizontal. PCA conserva más
+del 99% de la varianza y asigna la misma puntuación a cada pareja opuesta.
+La pequeña coordenada vertical separa todas las parejas. Elige la
+representación mediante validación de entrenamiento para la tarea concreta y
+evalúala después con datos reservados.
+Transferencia: ¿ayudaría estandarizar este ejemplo y demostraría eso que ayuda
+en cualquier conjunto de datos?
+
+</details>

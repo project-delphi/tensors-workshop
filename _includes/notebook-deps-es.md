@@ -17,5 +17,6 @@
 | 13 | `matplotlib`, `ipywidgets`, `scikit-image`, `scipy`, `pillow` | no |
 | 14 | `matplotlib`, `ipywidgets`, `scipy`, `pillow`, `tensorly`† | sí — las grabaciones BMI del mono (5 MB, una vez) |
 | 15 | `matplotlib`, `ipywidgets`, `pandas`, `scipy`, `pillow`, `pyttb`†, `torch`† | sí — informes de delitos de Chicago (3 MB, una vez) |
+| 16 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `pillow` | sí — parches satelitales de UCI Landsat (archivo de 101 KB, con caché) |
 
 : Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}

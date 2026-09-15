@@ -1,10 +1,10 @@
 ---
 title: "Notebooks"
-subtitle: "One notebook per section, plus a take-home deep dive, each runnable cold in Colab"
+subtitle: "One notebook per section, plus take-home deep dives, each runnable cold in Colab"
 ---
 
-Every section of the workshop has a notebook. One more sits past the end of the
-day, as a take-home deep dive. They are **English-primary**, and every heading
+Every section of the workshop has a notebook. Four more sit past the end of the
+day, as take-home deep dives. They are **English-primary**, and every heading
 carries a one-line Spanish summary — *cada encabezado lleva un resumen en
 español.*
 
@@ -19,7 +19,7 @@ Notebooks 01–11 separate the live session from later study:
 3. **Core complete:** keep your explanation and follow the facilitator’s quiz and break schedule.
 4. **Explore later:** optional reference material, exercises, and explorers.
 
-Notebook 00 keeps the entry check and pre-work setup; 12 starts with the exit check. Notebooks 13–15 are take-home deep dives. Solutions remain folded: open them after an attempt. Each notebook loads its own data and runs independently.
+Notebook 00 keeps the entry check and pre-work setup; 12 starts with the exit check. Notebooks 13–16 are take-home deep dives. Solutions remain folded: open them after an attempt. Each notebook loads its own data and runs independently.
 
 ::: {.callout-important appearance="simple"}
 The notebooks are committed with **no outputs and no execution counts**. Every
@@ -45,6 +45,9 @@ them. 14 and 15 pick up where section 11 stops — section 11 fits CP as one of
 four methods and calls the library deliberately as a black box; these two fit it
 by hand and then change what "fit" means.
 
+16 connects PCA’s matrix views to satellite land-cover classification, clustering,
+and tensor PCA, with Plato’s cave and three animations.
+
 {{< include _includes/notebooks-extra-en.md >}}
 
 ## Running them somewhere other than Colab
@@ -68,7 +71,7 @@ you run locally.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits
 and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at
-all. The other nine download something the first time they run: a CSV from
+all. The other twelve download something the first time they run: a CSV from
 GitHub, the storm video clip from Wikimedia, or the voice recording for
 notebook 12's take-home E. The table below says which, notebook by notebook.
 

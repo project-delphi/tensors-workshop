@@ -130,6 +130,7 @@ through-line still names it, and section 12 still points at it.
 | 13 | Convolution and deconvolution | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb) |
 | 14 | CP factorization and the rank-1 view | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) |
 | 15 | Generalized CP for counts and binary data | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/15-generalized-cp.ipynb) |
+| 16 | PCA from a tensors perspective | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/16-pca-from-tensors.ipynb) |
 <!-- END extras-en -->
 
 ## Run it locally
@@ -333,6 +334,7 @@ la sección 12 sigue señalándolas.
 | 13 | Convolución y deconvolución | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb) |
 | 14 | Factorización CP y la vista de rango 1 | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) |
 | 15 | CP generalizado para conteos y datos binarios | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/15-generalized-cp.ipynb) |
+| 16 | PCA desde la perspectiva de los tensores | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/16-pca-from-tensors.ipynb) |
 <!-- END extras-es -->
 
 ## Ejecutarlo en local

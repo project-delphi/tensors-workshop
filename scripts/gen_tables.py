@@ -207,7 +207,7 @@ DEP_BASE, DEP_RUNNER = ["numpy"], ["jupyterlab"]
 # library, NumPy (the column is "beyond NumPy"), and the three that only ever
 # appear inside Colab-specific plumbing.
 DEP_SKIP = {
-    "numpy", "urllib", "io", "os", "sys", "json", "pathlib", "time", "hashlib",
+    "numpy", "urllib", "zipfile", "io", "os", "sys", "json", "pathlib", "time", "hashlib",
     "warnings", "math", "textwrap", "collections", "functools", "itertools",
     "tempfile", "shutil", "subprocess", "contextlib", "dataclasses", "typing",
     "random", "csv", "re", "logging", "IPython", "google", "imageio_ffmpeg",

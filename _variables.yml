@@ -365,6 +365,9 @@ companion:
 # until this list learns its name, rather than quietly dropping it from the
 # column that tells a student whether they can work on a train.
 datasets:
+  - match: "statlog+landsat+satellite.zip"
+    label_en: "UCI Landsat satellite patches"
+    label_es: "parches satelitales de UCI Landsat"
   - match: "housing.csv"
     label_en: "California housing"
     label_es: "vivienda en California"
@@ -436,7 +439,7 @@ brainstorm:
       title_es: "Se factoriza"
       gloss_en: "Break it into simpler parts you can use."
       gloss_es: "Divídelo en partes más simples que puedas usar."
-      sections: ["07", "08", "09", "10", "11", "14", "15"]
+      sections: ["07", "08", "09", "10", "11", "14", "15", "16"]
 
   # The ribbon under the four cards. There are **two different claims** about
   # the workshop's connecting idea, and they name different sections. Keeping
@@ -511,6 +514,10 @@ brainstorm:
 # Slug note: `sparse_tensors` uses an underscore where every other post uses
 # hyphens. That is the blog's URL, not a typo here.
 reading:
+  pca:
+    url: "https://project-delphi.github.io/ml-blog/posts/six-views-of-pca/"
+    title_en: "Six views of PCA"
+    title_es: "Seis perspectivas de PCA"
   # The blog itself, not a post. It is here so that the "read one of these"
   # preamble in the deep-dive notebooks names it from the same place the posts
   # come from, and so check_links.py's "every ml-blog URL is declared" rule has
@@ -1414,8 +1421,8 @@ sections:
   s12:
     practice_en: "Transfer axis reasoning to new data and explain why Tucker restores shape while losing information."
     practice_es: "Aplicar razonamiento sobre ejes a datos nuevos y explicar por qué Tucker recupera la forma mientras pierde información."
-    explore_en: "Choose take-home work on PCA, attention, CP, Cholesky, audio, or deep dives 13–15."
-    explore_es: "Elegir trabajo posterior sobre PCA, atención, CP, Cholesky, audio o los estudios 13–15."
+    explore_en: "Choose take-home work on PCA, attention, CP, Cholesky, audio, or deep dives 13–16."
+    explore_es: "Elegir trabajo posterior sobre PCA, atención, CP, Cholesky, audio o los estudios 13–16."
     n: "12"
     slug: "wrap-up-and-take-homes"
     part: "—"
@@ -1624,3 +1631,38 @@ extras:
       - "Ajustar **GCP-Bernoulli** a los mismos datos binarizados y decir en qué discrepan los dos ajustes."
       - "Escribir el objetivo en **PyTorch** y dejar que autograd sustituya al gradiente que derivaste a mano."
       - "Explicar por qué el descenso por gradiente simple necesita aquí un paso mucho menor, y qué compran el **momento** y un paso por parámetro."
+
+  x16:
+    n: "16"
+    slug: "pca-from-tensors"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home · about 90 minutes"
+    format_line_es: "estudio a fondo · para después · unos 90 minutos"
+    title_en: "PCA from a tensors perspective"
+    title_es: "PCA desde la perspectiva de los tensores"
+    summary_en: "Connect covariance, correlation, eigendecomposition and SVD on real satellite patches; evaluate classification and clustering, then fit multilinear PCA and recover a synthetic tensor signal."
+    summary_es: "Conectar covarianza, correlación, eigendescomposición y SVD con parches satelitales reales; evaluar clasificación y agrupamiento, ajustar PCA multilineal y recuperar una señal tensorial sintética."
+    network_note_for: "statlog+landsat+satellite.zip"
+    network_note_en: "101 KB archive, cached"
+    network_note_es: "archivo de 101 KB, con caché"
+    intro_en: |-
+      Plato's prisoners see shadows. PCA asks which projection preserves the most variation — and leaves open whether that shadow preserves the information a task needs.
+
+      Follow one real satellite dataset as a sample-by-feature matrix and as a sample-by-row-by-column-by-band tensor. Derive the matrix views, measure downstream classification and clustering, and explore two meanings of tensor PCA.
+    intro_es: |-
+      > 🇪🇸 Los prisioneros de Platón ven sombras. PCA busca la proyección que conserva más variación; queda por comprobar si conserva la información que necesita una tarea.
+      >
+      > Seguimos datos satelitales reales como matriz de muestras por características y como tensor de muestras, filas, columnas y bandas. Derivamos las vistas matriciales, medimos clasificación y agrupamiento y exploramos dos significados de PCA tensorial.
+    objectives_en:
+      - "Derive and numerically verify the covariance, eigenvector, SVD and reconstruction identities."
+      - "Explain how correlation PCA changes feature scales and the meaning of distances."
+      - "Evaluate reduced features for classification and clustering using training-only preprocessing."
+      - "Fit a shared multilinear subspace while preserving the sample axis."
+      - "Distinguish multilinear PCA from spiked-tensor recovery and explain their limitations."
+    objectives_es:
+      - "Derivar y verificar las identidades de covarianza, autovectores, SVD y reconstrucción."
+      - "Explicar cómo PCA de correlación cambia las escalas y las distancias."
+      - "Evaluar características reducidas para clasificación y agrupamiento con preprocesamiento ajustado solo en entrenamiento."
+      - "Ajustar un subespacio multilineal compartido conservando el eje de muestras."
+      - "Distinguir PCA multilineal de recuperación de una señal tensorial y explicar sus límites."

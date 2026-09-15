@@ -1,5 +1,10 @@
 # Changelog
 
+## PCA from a tensors perspective
+
+- Added take-home notebook 16: Plato’s cave, three animations, covariance and correlation PCA, eigendecomposition and SVD on real Landsat patches.
+- Compare classification and clustering, fit multilinear PCA, and explore synthetic spiked-tensor recovery. Includes training-only preprocessing and bilingual learning prompts.
+
 ## 2026-09-14
 
 - Matched “Practise today” and “Explore later” outcomes across notebook headers, slides and handbook in English and Spanish.

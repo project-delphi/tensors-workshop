@@ -337,6 +337,25 @@ hacer con ella.
 **Compartan:** Su decisión y la frase que pondrían en la sección de métodos
 para declararla. Digan qué necesitaría un lector para estar en desacuerdo.
 
+## 16 · ¿Qué sombra pertenece al mapa?
+
+<span data-language-key="16-which-shadow-belongs-on-the-map"></span>
+
+**Cuándo:** Después de las tablas comparativas del
+[cuaderno 16](../notebooks/16-pca-from-tensors.ipynb). Solo como actividad posterior.
+**Tiempo:** 10 minutos.
+
+Su clasificador de cobertura terrestre dispone de doce puntuaciones por
+muestra. Comparen PCA denso y multilineal para un estudio con otra escena.
+
+- ¿Qué tabla respalda clasificación y cuál respalda agrupamiento?
+- ¿Qué ahorra la representación tensorial y qué restringe?
+- ¿Cómo puede el solapamiento de parches hacer optimista la evaluación?
+
+**Compartan:** Una recomendación con un resultado medido, la forma de las
+puntuaciones y un plan para reservar otra escena. Expliquen qué no demuestra
+la sombra de la caverna.
+
 ## Preguntas para facilitar la discusión
 
 <span data-language-key="facilitator-prompts"></span>

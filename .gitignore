@@ -42,3 +42,6 @@ uv.lock
 # gate would go green while Pages served a page whose assets were never
 # committed.
 /*_files/
+
+# Cached archive created by the PCA notebook.
+pca_data/

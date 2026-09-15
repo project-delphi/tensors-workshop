@@ -449,3 +449,34 @@ Transfer: your tensor is 41% zeros. Which loss lets the model predict a
 negative count, and why does the other one not need a constraint to stop it?
 
 </details>
+
+
+## 16 · Keeping 99% of variance keeps the labels
+
+<span data-language-key="16-variance-and-labels"></span>
+
+“The shadow preserves almost everything, so it must be enough to classify.”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+x = np.linspace(-30, 30, 100)
+cloud = np.column_stack([np.repeat(x, 2), np.tile([-1., 1.], len(x))])
+centered = cloud - cloud.mean(axis=0)
+_, singular_values, axes = np.linalg.svd(centered, full_matrices=False)
+shadow = centered @ axes[:1].T
+assert singular_values[0]**2 / np.sum(singular_values**2) > .99
+assert np.allclose(shadow[::2], shadow[1::2])
+assert np.all(cloud[::2, 1] != cloud[1::2, 1])
+```
+
+Opposite labels share the same horizontal coordinate. PCA keeps over 99% of
+the variance and assigns each opposite-label pair the same score. The small
+vertical coordinate separates every pair. Choose the representation with
+training validation on the actual task, then evaluate it on held-out data.
+Transfer: would standardization help this constructed example, and would that
+prove it helps every dataset?
+
+</details>

@@ -329,6 +329,24 @@ spikes at exactly 00:00 and 12:00. Decide what to do about it.
 **Share:** Your decision and the sentence you would put in the methods section
 to disclose it. Say what a reader would need in order to disagree with you.
 
+## 16 · Which shadow belongs on the map?
+
+<span data-language-key="16-which-shadow-belongs-on-the-map"></span>
+
+**When:** After the comparison tables in
+[Notebook 16](notebooks/16-pca-from-tensors.ipynb). Follow-up only.
+**Time:** 10 minutes.
+
+Your land-cover classifier has a twelve-score budget. Compare dense PCA and
+multilinear PCA. Decide which representation to carry into a new-scene study.
+
+- Which table supports classification, and which supports clustering?
+- What does the tensor representation save, and what does it restrict?
+- How could overlapping patches make the evaluation look optimistic?
+
+**Share:** A recommendation with one measured result, the score shape, and a
+plan for holding out a new scene. Explain what the cave's shadow cannot prove.
+
 ## Facilitator prompts
 
 <span data-language-key="facilitator-prompts"></span>
