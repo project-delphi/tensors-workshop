@@ -104,7 +104,8 @@ notebook's pasted into it -- the mistake a count could never catch, and the
 likeliest one, since these cells are copied between notebooks and the number in
 the URL is the part you have to remember to change. Note what check 1 does
 *not* do: it tests ownership, never a count, so nothing in CI will tell you a
-notebook dropped back to two. This docstring is the whole of that rule.
+notebook dropped back to two. `check_table` here does, against
+`MIN_PER_NOTEBOOK`, and it is the only thing anywhere that does.
 
 THREE WAYS A SCENE GOES WRONG SILENTLY
 --------------------------------------
@@ -347,7 +348,7 @@ def step_for(cell=CELL):
     return (STEP_RATIO[0] * cell, STEP_RATIO[1] * cell)
 
 
-def cell_text(v, decimals=1) -> str:
+def cell_text(v, decimals=None) -> str:
     """A number as it should appear inside a cell.
 
     Whole numbers stay whole -- the index cubes are `arange`, and `0.0` where a
@@ -361,10 +362,17 @@ def cell_text(v, decimals=1) -> str:
     never moving. Three decimals is the smallest that shows the approach, and
     it is a per-scene choice rather than a new default because every other
     scene here would only get wider cells out of it.
+
+    Passing it explicitly also overrides the whole-number rule above, and has
+    to: the same converging row starts at exactly 1 and exactly 2, and printing
+    those two bare while their neighbours carry three decimals breaks the
+    column and drops the two values the convergence is measured *from*. The
+    bare-integer shortcut is for `decimals=None`, which is every index cube in
+    the module.
     """
     v = float(v)
-    if v == int(v):
-        return str(int(v))
+    if decimals is None:
+        return str(int(v)) if v == int(v) else f"{v:.1f}"
     return f"{v:.{decimals}f}"
 
 
@@ -394,7 +402,8 @@ def centred(shape, cell=CELL, y=None):
 
 def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
            cell=CELL, origin=BODY, label_size=10.0, edge_axis=True,
-           lit_tint=None, cell_colors=None, ghost_labels=True, decimals=1):
+           lit_tint=None, cell_colors=None, ghost_labels=True,
+           decimals=None):
     """One tensor as its pile of (axis 1, axis 2) matrices, drawn back to front.
 
     Three masks, each answering a different question about an entry:
@@ -568,7 +577,7 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
                    labels=it.get("labels", True), lit_tint=it.get("lit_tint"),
                    cell_colors=it.get("cell_colors"),
                    ghost_labels=it.get("ghost_labels", True),
-                   decimals=it.get("decimals", 1),
+                   decimals=it.get("decimals"),
                    cell=cell, origin=(x, oy), label_size=it.get("size", size))
             if it.get("caption"):
                 t = ax.text(x + span / 2, base, it["caption"],
@@ -646,11 +655,6 @@ def clip_frames(n=3, rows=2, cols=3):
     for t in range(n):
         out[t, 0, t % cols] = (255, 0, 0)
     return out
-
-
-def frame_hex(img):
-    """One frame of a colour clip as its (1, H, W) grid of colours."""
-    return swatch_hex(img)
 
 
 def channel_hex(values, channel):
@@ -1047,6 +1051,11 @@ def scene_01_rank(tint):
     other needs a second term. Nothing about the shape distinguishes them,
     which is the whole point and the same shape of claim `cube-04-transpose-vs-reshape`
     makes about transpose and reshape.
+
+    The second term touches rows 2 and 3 only, so rows 0 and 1 of `M2` are
+    still multiples of one another. The caption therefore says "two rows
+    stopped being multiples" rather than "no row is a multiple", because the
+    second is false and this is a picture a notebook embeds.
     """
     import numpy as np
     a = np.array([1, 2, 3, 4])
@@ -1085,7 +1094,7 @@ def scene_01_rank(tint):
         ("a and b", "7 numbers, not 12",
          "one direction is enough to rebuild all of it", factored),
         ("M + c x d", "(4, 3), order 2",
-         "one term added, and no row is a multiple now", whole(M2)),
+         "one term added, and two rows stopped being multiples", whole(M2)),
         ("rank 1 vs rank 2", "both (4, 3), both order 2",
          "order counts axes; rank counts directions", both),
     ]
@@ -1593,7 +1602,7 @@ def scene_05(tint):
     """
     import numpy as np
     clip = clip_frames()
-    hexes = [frame_hex(clip[t])[0] for t in range(3)]
+    hexes = [swatch_hex(clip[t])[0] for t in range(3)]
     blank = np.ones(clip[0].shape[:2], bool)
 
     def row(items):
@@ -1637,7 +1646,7 @@ def scene_05_axes(tint):
     """
     import numpy as np
     clip = clip_frames()
-    hexes = [frame_hex(clip[t])[0] for t in range(3)]
+    hexes = [swatch_hex(clip[t])[0] for t in range(3)]
 
     def strip(lit=None):
         def draw(ax):
@@ -2197,7 +2206,7 @@ def scene_08_direction(tint):
     return [
         ("F @ x, applied again and again", "each shape (2,)",
          "one rule, and nothing about it changes between steps", states),
-        ("x[0] / x[1]", "1.000 to 1.667",
+        ("x[0] / x[1]", "1, 2, then in towards 1.6",
          "the ratio of the two entries, step by step", row(ratios)),
         ("after ten more steps", "all 1.618",
          "it stops moving, and not where it started", row(late)),
@@ -2321,8 +2330,20 @@ def scene_09_nmf(tint):
     H = np.array([[1, 0, 1], [0, 1, 1]])
     A = W @ H
     U, sv, Vt = np.linalg.svd(A, full_matrices=False)
+    # An SVD is unique only up to a sign per column, and numpy returns whichever
+    # sign LAPACK produced -- not part of its contract, and it moves between
+    # BLAS builds. This frame's caption says "the lit entries of U are
+    # negative", so a build that flipped column 0 would ship a frame lighting
+    # nothing under a caption claiming it lights something -- with no gate
+    # anywhere, since these images sit outside the CI regenerate gate and
+    # nothing compares a caption against its picture. Pin the sign rather than
+    # trust it: each column's largest-magnitude entry is made negative, which
+    # is arbitrary and, unlike the default, the same on every stack.
+    lead = np.argmax(np.abs(U), axis=0)
+    U = U * np.where(U[lead, np.arange(U.shape[1])] > 0, -1.0, 1.0)
     U2 = np.round(U[:, :2], 1)
     neg = U2 < 0
+    assert neg.any(), "frame 1's caption claims U has negative entries"
 
     def whole(ax):
         planes(ax, A, tint=tint, origin=centred((1,) + A.shape, cell=0.80),
@@ -2649,22 +2670,26 @@ def scene_11_tt(tint):
 def scene_12(tint):
     """12 — the whole day, in the four moves it kept coming back to.
 
-    Frames 0 and 1 hide plane 0, and that is a fix rather than a flourish. Both
-    light something that lives behind it -- `T[1]` is the middle plane, and the
-    fibre `T[:, 1, 3]` runs back through all three -- and the pile occludes
-    exactly, so for months this scene rendered `T[1]` as a sliver down the
-    right-hand edge and a reader saw a highlight with no shape to it. The
-    module docstring names this trap and `_check_layout` cannot catch it; this
-    is the scene it was caught in.
+    Frame 0 hides plane 0, which is a fix rather than a flourish: `T[1]` is the
+    middle plane, the pile occludes exactly, and for months this scene rendered
+    the slice as a sliver down the right-hand edge. The module docstring names
+    that trap and `_check_layout` cannot catch it. Hiding the front plane rather
+    than dimming it, for the reason `planes` gives -- a dimmed plane still
+    paints over what is behind it.
 
-    Hiding the front plane rather than dimming it, for the reason `planes`
-    gives: a dimmed plane still paints over what is behind it.
+    Frame 1 shows why hiding is not a general answer. The obvious fibre,
+    `T[:, 1, 3]`, runs *back* through all three planes, and no mask fixes that:
+    leave the pile whole and planes 1 and 2 are covered, hide plane 0 and the
+    fibre loses a cell. Either way a frame captioned "fix two" shows one cell,
+    which is the next lesson rather than this one. So the fibre drawn here is
+    `T[0, :, 3]` -- two indices fixed, exactly as the caption says, and all four
+    of its cells lying in the plane nothing is in front of.
     """
     import numpy as np
     T = cube()
     o = centred(SHAPE)
     plane = np.zeros(SHAPE, bool); plane[1] = True
-    fibre = np.zeros(SHAPE, bool); fibre[:, 1, 3] = True
+    fibre = np.zeros(SHAPE, bool); fibre[0, :, 3] = True
     front = np.zeros(SHAPE, bool); front[0] = True
 
     def lit(mask, hide=None):
@@ -2686,8 +2711,7 @@ def scene_12(tint):
     return [
         ("T[1]", "shape (4, 5)", "slice — fix one index",
          lit(plane, hide=front)),
-        ("T[:, 1, 3]", "shape (3,)", "fibre — fix two",
-         lit(fibre, hide=front)),
+        ("T[0, :, 3]", "shape (4,)", "fibre — fix two", lit(fibre)),
         ("T.transpose(2, 0, 1)", "shape (5, 3, 4)",
          "reorder — every number keeps its neighbours", transposed),
         ("T.sum(axis=2)", "shape (3, 4)",
@@ -3076,13 +3100,12 @@ def scene_14_unique(tint):
     C = np.array([[2, 1], [1, 3]])
     T = np.einsum("ir,jr,kr->ijk", A, B, C)
 
-    def factors(a, b, c, lit=None):
+    def factors(a, b, c):
         def draw(ax):
-            mark = (lambda m: {"lit": m}) if lit is not None else (lambda m: {})
             sequence(ax, [
-                dict({"arr": a, "tint": INDEX["i"], "caption": "A"}, **mark(lit)),
-                dict({"arr": b, "tint": INDEX["j"], "caption": "B"}, **mark(lit)),
-                dict({"arr": c, "tint": INDEX["k"], "caption": "C"}, **mark(lit)),
+                {"arr": a, "tint": INDEX["i"], "caption": "A"},
+                {"arr": b, "tint": INDEX["j"], "caption": "B"},
+                {"arr": c, "tint": INDEX["k"], "caption": "C"},
             ], tint=tint, cell=0.80, size=16)
         return draw
 
@@ -3141,7 +3164,7 @@ def scene_15_missing(tint):
     err_all = (np.where(seen, X, 0) - M) ** 2
     gone = ~seen
 
-    def grid(arr, ghost=None, lit=None, decimals=1, cell=0.80, size=16):
+    def grid(arr, ghost=None, lit=None, decimals=None, cell=0.80, size=16):
         def draw(ax):
             planes(ax, arr, tint=tint, ghost=ghost, lit=lit,
                    ghost_labels=False, decimals=decimals,
