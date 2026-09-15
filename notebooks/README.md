@@ -79,8 +79,9 @@ have forty minutes, not because they are optional to understand.
 Notebook 00 begins with an entry check, 12 with an exit check; 13–15 are
 entirely take-home material.
 
-Every notebook also carries **two animations**, in the explanation section:
-small numbered cubes performing the moves that section teaches, drawn by
+Every notebook also carries **at least three animations**, one of them on the
+core path: small numbered cubes performing the moves that section teaches and
+showing the data it teaches them on, drawn by
 `scripts/gen_cube_gifs.py` and served from the published site. They are
 absolute URLs because a notebook on Colab has no checkout to resolve a relative
 path against, which means a reader needs the network to *see* them — not to run

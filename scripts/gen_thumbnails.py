@@ -189,11 +189,28 @@ def canvas_to_pil(fig):
 
 
 def write_gif(frames, out: Path, *, duration: int, loop: int = 3,
-              colors: int = 96, max_kb: int | None = None) -> Path:
+              colors: int = 96, max_kb: int | None = None,
+              palette_from: str = "first") -> Path:
     """Frames to an animated GIF, on one shared palette.
 
-    Quantizing every frame against the FIRST frame's palette rather than its
-    own is what stops the colours shifting mid-animation.
+    Quantizing every frame against ONE palette rather than each against its own
+    is what stops the colours shifting mid-animation. Which frame that palette
+    is read off is `palette_from`:
+
+    `"first"` -- the default and the original behaviour. Right whenever frame 0
+    already contains every colour the animation uses, which is true of every
+    scene drawn in washes of one accent.
+
+    `"all"` -- read it off every frame at once. Needed the moment a later frame
+    introduces a colour frame 0 does not have, because a palette that has never
+    seen that colour maps it to the nearest one it has, silently. That is not
+    hypothetical: `cube-04-rgb` opens on twelve saturated pixels and then draws
+    the channel planes, where a value of 128 is a half-bright fill. Off frame
+    0's palette the dark green came out teal and the dark blue came out slate
+    -- wrong, legible, and exactly the kind of thing nobody re-checks.
+
+    It is not the default because it changes the bytes of every GIF already
+    drawn, and for the single-accent scenes it would change them for nothing.
 
     `disposal=1` and no optimizer, for the reason `gif_video_stack` records:
     Pillow ignores `disposal` when optimizing and crops every frame after the
@@ -203,7 +220,19 @@ def write_gif(frames, out: Path, *, duration: int, loop: int = 3,
     `images/companion-video.png` is 3.6 MB and no check has ever minded -- so
     a generator that can quietly add megabytes should say so itself.
     """
-    pal = frames[0].quantize(colors=colors, method=2)
+    if palette_from == "all":
+        from PIL import Image
+
+        w, h = frames[0].size
+        strip = Image.new("RGB", (w, h * len(frames)))
+        for i, f in enumerate(frames):
+            strip.paste(f.convert("RGB"), (0, i * h))
+        pal = strip.quantize(colors=colors, method=2)
+    elif palette_from == "first":
+        pal = frames[0].quantize(colors=colors, method=2)
+    else:
+        raise ValueError(f"palette_from must be 'first' or 'all', "
+                         f"not {palette_from!r}")
     quant = [f.quantize(palette=pal, dither=0) for f in frames]
     quant[0].save(out, "GIF", save_all=True, append_images=quant[1:],
                   duration=duration, loop=loop, disposal=1, optimize=False)

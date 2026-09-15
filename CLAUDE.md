@@ -41,7 +41,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
-| `images/cube-*.gif` (two per notebook) | `scripts/gen_cube_gifs.py` |
+| `images/cube-*.gif` (at least three per notebook) | `scripts/gen_cube_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -106,13 +106,31 @@ What each one draws, and from where:
   actually uses — `camera()`, `load_digits()`, the storm clip, the taxi CSV —
   so the numbers printed on a figure are the numbers the exercise prints, and
   they stay that way.
-- `gen_cube_gifs.py` draws the thirty-two cube animations the notebooks
-  embed, **two per notebook**, in that notebook's own accent from
+- `gen_cube_gifs.py` draws the cube animations the notebooks embed, **at
+  least three per notebook**, in that notebook's own accent from
   `gen_notebooks.ACCENTS`. The first draws the move the section is named after;
-  the second a move it needs and the first has no room for. `SCENES` holds them
-  as a list per notebook, and every stem keeps the `cube-NN-` prefix, which is
-  what check 1 reads to tell a notebook's own animation from another
-  notebook's pasted into it.
+  the second a move it needs and the first has no room for; the third the
+  section's own subject — its data, or its trap. `SCENES` holds them as a list
+  per notebook, and every stem keeps the `cube-NN-` prefix, which is what check
+  1 reads to tell a notebook's own animation from another notebook's pasted
+  into it.
+
+  The floor was two until the pictures were read side by side, and what that
+  showed was scene after scene opening on the identical `np.arange(60)` cube in
+  a different accent: the video pipeline, the colour images and the Tucker
+  unfoldings were all the same picture. Two slots went to the move and none to
+  the material. Three is the count that makes room for the material, and
+  `gen_cube_gifs.check_table()` prints which notebooks are still under it —
+  **nothing in CI checks the count**, because check 1 tests ownership and never
+  a number.
+
+  Frames run at `duration=4050`, raised from 2700 for the scenes that now draw
+  two piles side by side. And `render` overrides `write_gif`'s palette default
+  to `palette_from="all"`: one palette is shared by every frame so colours
+  cannot shift mid-animation, and reading it off frame 0 alone silently crushes
+  any hue a later frame introduces. That is not a colour-scene problem —
+  `cube-06-matmul` is drawn entirely in one accent and its green `lit_tint`
+  highlight rendered grey.
 
   It is the one generator whose arrays are **not** real data, and it says so at
   the top: these cubes are `np.arange`, because the lesson is index arithmetic
@@ -123,6 +141,14 @@ What each one draws, and from where:
   complete picture, because `fig_hero` already recorded what a build animation
   does: Chrome parks on frame 0 at the end of a finite loop, which in a
   build-from-empty is the emptiest frame there is.
+
+  **One scene paints real colour, and it is still not real data.** `cube-04-rgb`
+  draws a 3x4 swatch through `planes(cell_colors=...)`, and the swatch is as
+  synthetic as the cube: every channel value in it is 0, 128 or 255, so "the red
+  plane says 255 wherever the pixel looks red" is checkable by eye in exactly
+  the way `T[1, 2, 3] == 33` is. That is the test a colour scene has to pass,
+  and a photograph fails it — it would put 87 there and there would be nothing
+  to check. Real arrays stay in `gen_figures.py`.
 
   They **loop forever** (`loop=0`), which is a correction, not a preference.
   At `loop=3` a browser started the animation when the image loaded rather
@@ -443,7 +469,7 @@ still just prints -- so an edit to the reveal is an ordinary edit to a `print`.
 reason the Spanish box says `ESPAÑOL` in words.
 
 **The frame stepper is `plumbing`, and it is the one cell no route runs.** Every
-notebook carries one under its two animations: a GIF cannot be paused, and at
+notebook carries one under its animations: a GIF cannot be paused, and at
 the end of a finite loop the browser goes back to frame 0, so the stepper
 fetches the same frames and hands them over one at a time. Two constraints are
 not style. It renders into a `widgets.Image`, **never** a `widgets.Output` —
