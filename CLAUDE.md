@@ -41,7 +41,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
-| `images/cube-*.gif` (two per notebook, three where the rollout has reached) | `scripts/gen_cube_gifs.py` |
+| `images/cube-*.gif` (at least three per notebook) | `scripts/gen_cube_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -119,13 +119,14 @@ What each one draws, and from where:
   showed was scene after scene opening on the identical `np.arange(60)` cube in
   a different accent: the video pipeline, the colour images and the Tucker
   unfoldings were all the same picture. Two slots went to the move and none to
-  the material. Three is the count that makes room for it, and `main()` prints
-  which notebooks are still short at the end of every run — `check_table()` is
-  a different guard, for a duplicate stem and for a stem filed under the wrong
-  notebook. **Nothing enforces the count**, in CI or here: check 1 tests
-  ownership and never a number, and a generator that refused to draw until
-  every notebook reached three would be useless for the rollout that gets them
-  there.
+  the material. Three is the count that makes room for it, and
+  `check_table()` now **enforces** it — along with a duplicate stem and a stem
+  filed under the wrong notebook, which would render in the wrong accent and
+  then be rejected by check 1 two tools away from its cause. It was a printed
+  advisory while twelve notebooks were still on two, because a generator that
+  refused to draw until all of them were done would have been useless for the
+  work that got them done. Nothing in CI checks any of this: check 1 tests
+  ownership and never a number.
 
   Frames run at `duration=4050`, raised from 2700 for the scenes that now draw
   two piles side by side. And `render` overrides `write_gif`'s palette default
