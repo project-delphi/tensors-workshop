@@ -13,9 +13,11 @@ discussion time; they do not extend the session. Notebook 13 is take-home work.
 <span data-language-key="before-the-session"></span>
 
 - Run Notebook 00 before class. Test each selected notebook in a fresh runtime.
-- Follow the core route's reading prompts, **Core prep**, and any feedback helper before **Core activity**. Skip optional exercises and explorers.
+- In notebooks 01–11, follow the contiguous core block from top to bottom: recall, example, attempt, feedback, checkpoint. Stop at **Core complete**. **Explore later** follows afterward.
 - Prepare groups of 3–4: recorder, speaker, challenger, optional code runner.
 - Keep a working runtime ready to demonstrate if a download fails.
+
+**Practise today** and **Explore later** match across notebook headers, slides, and handbook. In Notebook 07, the Moore–Penrose identities and housing fit are extensions; the core example needs only NumPy. In 11, the live comparison uses taxis, CP and Tucker; Tensor Train, t-SVD and the video download are extensions. Selected group discussions are already inside the core block; do not repeat them from another page. Checkpoints replace part of explain/check time within the listed slots.
 
 ## Live rhythm
 
@@ -48,7 +50,7 @@ Keep its quizzes and breaks. Within the selected notebook slots:
 | 04 · 15 min | Exercise 1: 9; [silent-bug task](group-tasks.md#silent-bugs): 6. |
 | 05 · 15 min | Exercise 1: 7; group task 05: 8. |
 | 06 · 15 min | Model one contraction 4; Exercise 1 and feedback 10; independent contraction checkpoint 1. |
-| 07 · 15 min | Predict singularity 3; Exercise 1 and check 12. |
+| 07 · 15 min | Model duplicate columns 3; compare coefficients and norms 9; explain what remains unidentified and checkpoint 3. |
 | 08 · 10 min | Model one update 3; Exercise 1 and check 7. |
 | 09 · 15 min | Exercise 1: 9; residual mistake below: 3; required SVD-to-Tucker bridge: 3. No timing sweeps. |
 | 10 · 15 min | Explain core and factors 4; rank explorer 8; defend a choice 3. |

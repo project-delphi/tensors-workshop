@@ -12,17 +12,14 @@ español.*
 
 <span data-language-key="how-they-are-built"></span>
 
-Every notebook has the same five parts, so you always know where you are:
+Notebooks 01–11 separate the live session from later study:
 
-1. **Header** — the section title, its objectives, and an *Open in Colab* badge.
-2. **Setup** — installs and imports only what this section needs, and loads its
-   own data. Each notebook is self-contained: no local files, and no dependency
-   on any other notebook.
-3. **Explanation and code**, alternating. They build up, rather than dropping a
-   wall of code on you.
-4. **Exercises** — `# TODO` stubs taken from the handbook, each followed by a
-   folded solution cell. Open it after you have tried.
-5. **Closing** — the Kahoot check for that section, and a link back here.
+1. **Header:** **Practise today** and **Explore later**, with the same outcomes as the slides and handbook.
+2. **Contiguous core block:** recall, example, attempt, feedback, checkpoint. Preparation and feedback definitions appear where needed. Work straight down.
+3. **Core complete:** keep your explanation and follow the facilitator’s quiz and break schedule.
+4. **Explore later:** optional reference material, exercises, and explorers.
+
+Notebook 00 keeps the entry check and pre-work setup; 12 starts with the exit check. Notebooks 13–15 are take-home deep dives. Solutions remain folded: open them after an attempt. Each notebook loads its own data and runs independently.
 
 ::: {.callout-important appearance="simple"}
 The notebooks are committed with **no outputs and no execution counts**. Every

@@ -39,6 +39,38 @@ $code-block-font-size: 0.62em;
 .reveal .callout { font-size: .8em; }
 .reveal .footer { font-size: .5em; opacity: .75; }
 
+// Native section outcomes share their copy with notebook headers and handbook.
+.reveal .slides section.outcomes-slide {
+  text-align: left;
+  color: #16233f;
+  padding: 36px 24px;
+  box-sizing: border-box;
+  font-family: $presentation-heading-font;
+  font-size: 52px;
+  h2 {
+    color: #16233f;
+    font-size: 76px;
+    line-height: 1.15;
+    border-bottom: 4px solid #1a6fd4;
+    padding-bottom: 24px;
+    margin: 0 0 22px;
+  }
+  h3 { color: #0f8f93; font-size: 36px; margin: 42px 0 12px; }
+  p { line-height: 1.35; margin: 0; }
+  .outcome-time { color: #53617a; font-size: 28px; }
+}
+
+.reveal .extension-label {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  padding: 10px 20px;
+  background: #fff;
+  border: 2px solid #0f8f93;
+  color: #16233f;
+  font-size: 26px;
+}
+
 // The generated agenda uses the same navy type and blue/teal accents as the
 // slide artwork. Keep the full schedule readable on the deck's 1920×1080 canvas.
 .reveal .slides section.agenda-slide {

@@ -8,13 +8,10 @@ plus one take-home deep dive, numbered 13, that is **not** a section.
 *cada encabezado lleva un resumen en español.*
 
 Each notebook marks a **core path**, optional work, two outcomes, and a
-`predict → run → explain → check` activity. Follow the core route's short
-reading prompts, run **Core prep** in order and any feedback helper, then
-jump to **Core activity**. Try before opening the graduated hints; call the
-feedback helper with your own result before revealing a solution. Notebook 09
-ends its core route with a required SVD-to-Tucker bridge. Facilitators can combine
-these with the [group task library](../group-tasks.md) and
-[run sheet](../facilitator-guide.md).
+`predict → run → explain → check` activity. Follow the
+contiguous core block in notebooks 01–11 from top to bottom: recall, example,
+attempt, feedback, checkpoint. Try before opening hints or solutions. Stop at
+**Core complete**; optional exercises and explorers follow under **Explore later**.
 
 ## Every notebook is self-contained
 
@@ -72,15 +69,15 @@ have forty minutes, not because they are optional to understand.
 
 ## Shape of each notebook
 
-1. **Header** — title, objectives, Spanish summary, *Open in Colab* badge.
-2. **Setup** — only what this section needs.
-3. **Explanation and code**, alternating, building up rather than dumping a wall
-   of code.
-4. **Exercises** — `# TODO` stubs taken from the handbook, each followed by a
-   folded solution cell (`cellView: form`, so Colab hides it behind a
-   *Show code* toggle).
-5. **Closing** — that section's Kahoot check, and a link back to the site. An
-   extra has no Kahoot, so its closing is the next deep dive and the site links.
+1. **Header** — **Practise today** and **Explore later**, in both languages.
+2. **Core block (01–11)** — recall, preparation, example, attempt, feedback,
+   and checkpoint, together in reading order. Solutions remain folded.
+3. **Core complete** — a stopping point with quiz/next-notebook links.
+4. **Explore later** — optional reference, exercises, and explorers.
+5. **Closing** — navigation for readers who continue through the extensions.
+
+Notebook 00 begins with an entry check, 12 with an exit check; 13–15 are
+entirely take-home material.
 
 Every notebook also carries **two animations**, in the explanation section:
 small numbered cubes performing the moves that section teaches, drawn by

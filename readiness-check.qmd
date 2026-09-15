@@ -1,0 +1,73 @@
+---
+title: "Optional readiness check"
+lang: en
+search: false
+draft: true
+toc: false
+navbar: false
+page-footer: false
+format:
+  html:
+    include-in-header:
+      text: '<meta name="robots" content="noindex, nofollow">'
+---
+
+[Español](es/readiness-check.html){data-noresolveinput="true"}
+
+**Optional readiness check · 10 minutes maximum**
+
+Your instructor will tell you whether to take this check. It helps choose useful preparation; it is not a grade or an admission test. No tensor theory is required.
+
+Work alone, without running code, notes, or an assistant. Write short answers on paper or in the instructor’s private collection form. You can answer in English or Spanish. If unsure, write what you know and mark “unsure”.
+
+**Timing:** 1 minute for instructions, 2 minutes per question, 1 minute to submit. Stop at 10 minutes, even if unfinished. This page does not collect or save answers.
+
+Assume `np` means NumPy. Indexing starts at 0; `:` keeps all entries of that axis. An axis is one direction in an array. `@` means matrix multiplication; `*` multiplies matching entries.
+
+## 1 · Indexing · 2 minutes
+
+```python
+X = np.array([[10, 11, 12],
+              [20, 21, 22]])
+```
+
+What are the **values and shape** of `X[:, 1]`? Explain what the `1` selects.
+
+Answer: ___
+
+## 2 · Broadcasting · 2 minutes
+
+```python
+X = np.array([[10, 11, 12],
+              [20, 21, 22]])
+b = np.array([1, 2, 3])
+```
+
+Does `X + b` work? Write the **result and its shape**. Explain how the three entries of `b` are used.
+
+Answer: ___
+
+## 3 · Matrix multiplication · 2 minutes
+
+```python
+A = np.array([[1, 2, 0],
+              [0, 1, 1]])
+w = np.array([2, 3, 4])
+```
+
+Calculate `A @ w` and give its **shape**. Would `A * w` have the same shape? Explain one output entry of `A @ w`.
+
+Answer: ___
+
+## 4 · Rank · 2 minutes
+
+```python
+M = np.array([[1, 2],
+              [2, 4]])
+```
+
+How many linearly independent columns does `M` have? Explain using the two columns. Does an ordinary matrix inverse exist?
+
+Answer: ___
+
+**Submit your first attempt to the instructor.** Include “unsure” where useful. The instructor will recommend specific refresher exercises after collecting answers.

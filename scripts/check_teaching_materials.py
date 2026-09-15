@@ -166,6 +166,41 @@ def check_route(notebook: dict, label: str) -> None:
         if f"Core prep {step}/{len(prep)}" not in "".join(before.get("source", [])):
             raise ValueError(f"{label}: preparation label missing for {cell_id}")
     support_of(notebook, label)
+    check_sequence(notebook, label)
+
+
+def check_sequence(notebook: dict, label: str) -> list[str]:
+    """A declared live sequence must be contiguous immediately after its route.
+
+    Include prose and folded solutions, so an optional explorer cannot creep
+    between the example and attempt while the executable route still passes.
+    Entry/exit checks and take-home notebooks may omit this declaration.
+    """
+    route = workshop_meta(notebook, label)
+    sequence = route.get("sequence")
+    if sequence is None:
+        return []
+    cells = notebook["cells"]
+    ids = [c.get("id") for c in cells]
+    if (not isinstance(sequence, list) or not sequence
+            or any(not isinstance(cid, str) for cid in sequence)
+            or len(set(sequence)) != len(sequence)
+            or any(ids.count(cid) != 1 for cid in sequence)):
+        raise ValueError(f"{label}: sequence needs unique existing cell IDs")
+    scaffold = next(i for i, c in enumerate(cells)
+                    if "<!-- CORE-PATH -->" in "".join(c.get("source", [])))
+    if scaffold != 1 or ids[scaffold + 1:scaffold + 1 + len(sequence)] != sequence:
+        raise ValueError(f"{label}: core sequence must follow the header and route without gaps")
+    prep, activity = route_of(notebook, label)
+    if not set(prep + [activity] + support_of(notebook, label)) <= set(sequence):
+        raise ValueError(f"{label}: core sequence omits preparation, feedback or activity")
+    checkpoint = route.get("checkpoint")
+    if checkpoint not in sequence or sequence.index(checkpoint) <= sequence.index(activity):
+        raise ValueError(f"{label}: checkpoint must follow the activity")
+    boundary = cells[scaffold + 1 + len(sequence)]
+    if "## Explore later / Explora después" not in "".join(boundary.get("source", [])):
+        raise ValueError(f"{label}: core sequence needs an explicit extension boundary")
+    return sequence
 
 
 def check(root: Path = ROOT) -> None:
@@ -186,7 +221,10 @@ def check(root: Path = ROOT) -> None:
     if en != es:
         raise ValueError("Group task timings differ between English and Spanish")
     for path in paths:
-        check_route(json.loads(path.read_text()), path.name)
+        notebook = json.loads(path.read_text())
+        check_route(notebook, path.name)
+        if 1 <= int(path.name[:2]) <= 11 and not check_sequence(notebook, path.name):
+            raise ValueError(f"{path}: live practice needs a contiguous core sequence")
     for source in sorted(root.glob("*.md")) + sorted(root.glob("*.qmd")):
         translated = root / "es" / source.name
         if not translated.exists():

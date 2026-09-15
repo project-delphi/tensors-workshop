@@ -6,7 +6,7 @@ import re
 import tempfile
 import unittest
 
-from scripts.check_teaching_materials import ROOT, anchors, check_links, check_route, check_tasks, support_of
+from scripts.check_teaching_materials import ROOT, anchors, check_links, check_route, check_tasks, support_of, check_sequence
 
 
 class Links(unittest.TestCase):
@@ -35,6 +35,28 @@ class Routes(unittest.TestCase):
 
     def test_valid(self):
         check_route(self.notebook, "fixture")
+
+    def test_live_core_cannot_be_split_by_optional_material(self):
+        for mode in ("interleaved", "missing", "checkpoint-before-attempt", "no-boundary"):
+            nb = copy.deepcopy(self.notebook)
+            route = nb["cells"][1]["metadata"]["workshop"]
+            if mode == "interleaved":
+                nb["cells"].insert(4, {"id": "optional", "cell_type": "markdown",
+                                      "source": ["Optional explorer"], "metadata": {}})
+            elif mode == "missing":
+                route["sequence"].remove(route["activity"])
+            elif mode == "checkpoint-before-attempt":
+                route["checkpoint"] = route["prep"][0]
+            else:
+                nb["cells"][2 + len(route["sequence"])]["source"] = []
+            with self.subTest(mode=mode), self.assertRaises(ValueError):
+                check_sequence(nb, "fixture")
+
+    def test_every_live_practice_has_a_top_core(self):
+        for number in range(1, 12):
+            path = next((ROOT / "notebooks").glob(f"{number:02}-*.ipynb"))
+            with self.subTest(notebook=path.name):
+                self.assertTrue(check_sequence(json.loads(path.read_text()), path.name))
 
     def test_broken_routes(self):
         for mode in ("missing", "duplicate", "solution", "order", "label", "translation"):

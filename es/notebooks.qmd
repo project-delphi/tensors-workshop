@@ -12,19 +12,14 @@ encabezado lleva un resumen de una línea en español.
 
 <span data-language-key="how-they-are-built"></span>
 
-Todos los cuadernos tienen las mismas cinco partes, así que siempre sabes dónde
-estás:
+Los cuadernos 01–11 separan la sesión en vivo del estudio posterior:
 
-1. **Encabezado**: el título de la sección, sus objetivos y una insignia *Open in
-   Colab*.
-2. **Preparación**: instala e importa solo lo que esa sección necesita, y carga
-   sus propios datos. Cada cuaderno es autónomo: sin archivos locales y sin
-   depender de ningún otro cuaderno.
-3. **Explicación y código**, alternándose. Construyen poco a poco, en lugar de
-   soltarte un muro de código.
-4. **Ejercicios**: esqueletos `# TODO` sacados del manual, cada uno seguido de una
-   celda de solución plegada. Ábrela después de intentarlo.
-5. **Cierre**: el control de Kahoot de esa sección y un enlace de vuelta aquí.
+1. **Encabezado:** **Practica hoy** y **Explora después**, con los mismos resultados que las diapositivas y el manual.
+2. **Bloque esencial continuo:** recuerda, ejemplo, intento, retroalimentación y comprobación. La preparación y funciones de comprobación aparecen donde se necesitan. Sigue de arriba abajo.
+3. **Fin de la ruta esencial:** guarda tu explicación y sigue las pausas y quizzes del facilitador.
+4. **Explora después:** material de consulta, ejercicios y exploradores opcionales.
+
+El cuaderno 00 conserva el diagnóstico de entrada y la preparación previa; el 12 empieza con la comprobación de salida. Los cuadernos 13–15 son estudios para después del taller. Las soluciones siguen plegadas: ábrelas tras un intento. Cada cuaderno carga sus propios datos y se ejecuta de forma independiente.
 
 ::: {.callout-important appearance="simple"}
 Los cuadernos se guardan **sin salidas y sin números de ejecución**. Cada número

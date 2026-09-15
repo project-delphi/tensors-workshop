@@ -910,6 +910,10 @@ agenda:
 # if they have drifted, so editing a `minutes` without re-deriving is caught.
 sections:
   s00:
+    practice_en: "Name possible axes and predict a slice in the entry check."
+    practice_es: "Nombrar ejes posibles y predecir un corte en el diagnóstico inicial."
+    explore_en: "After the entry check, revisit data-quality examples. Complete runtime setup before class."
+    explore_es: "Después del diagnóstico, repasar ejemplos de calidad de datos. Completar la preparación antes de clase."
     n: "00"
     slug: "setup-and-data"
     part: "—"
@@ -935,6 +939,10 @@ sections:
       - "Saber qué datos vienen incluidos en las librerías y cuáles se descargan."
       - "Reconocer las formas de los tensores con las que trabajarás durante todo el taller."
   s01:
+    practice_en: "Name image axes and distinguish shape, order, and element count."
+    practice_es: "Nombrar los ejes de imágenes y distinguir forma, orden y número de elementos."
+    explore_en: "Extract slices and fibers, and unfold images into matrices."
+    explore_es: "Extraer cortes y fibras, y desplegar imágenes como matrices."
     n: "01"
     slug: "what-a-tensor-is"
     part: "I"
@@ -963,6 +971,10 @@ sections:
       - "Nombrar qué ejes permanecen, se mueven o desaparecen en una operación."
       - "Predecir la forma de un resultado antes de ejecutar la línea que lo produce."
   s02:
+    practice_en: "Keep images and labels paired when shuffling; explain why shuffling time changes a sequence."
+    practice_es: "Mantener imágenes y etiquetas emparejadas al barajar; explicar por qué barajar el tiempo cambia una secuencia."
+    explore_en: "Build padded video batches and interpret additional experimental axes."
+    explore_es: "Construir lotes de video con relleno e interpretar otros ejes experimentales."
     n: "02"
     slug: "thinking-in-n-dimensions"
     part: "II"
@@ -996,6 +1008,10 @@ sections:
       - "Entender por qué reorganizar ejemplos independientes puede ser válido mientras reorganizar el tiempo cambia el significado."
       - "Construir un lote de video de orden 5 con padding y usar una máscara de validez para distinguir fotogramas reales de relleno."
   s03:
+    practice_en: "Predict broadcasting shapes and standardize pixel columns safely when variance is zero."
+    practice_es: "Predecir formas de broadcasting y estandarizar columnas de píxeles de forma segura si la varianza es cero."
+    explore_en: "Select observations with named features, fancy indexing, and Boolean masks."
+    explore_es: "Seleccionar observaciones con nombres de características, índices avanzados y máscaras booleanas."
     n: "03"
     slug: "indexing-and-broadcasting"
     part: "III"
@@ -1032,6 +1048,10 @@ sections:
       - "Estandarizar datos reales de imágenes mediante broadcasting."
       - "Detectar **píxeles de varianza cero** y explicar por qué dividir entre cero produce `NaN`."
   s04:
+    practice_en: "Convert HWC to CHW and test that pixel values keep their meaning."
+    practice_es: "Convertir HWC a CHW y comprobar que los valores de píxeles conservan su significado."
+    explore_en: "Build image batches, compare NHWC with NCHW, and inspect memory layout."
+    explore_es: "Construir lotes de imágenes, comparar NHWC con NCHW e inspeccionar la disposición en memoria."
     n: "04"
     slug: "reshape-and-transpose"
     part: "III"
@@ -1070,6 +1090,10 @@ sections:
       - "Explicar por qué dos ejes pueden tener el mismo tamaño y significados diferentes."
       - "Demostrar visualmente por qué `reshape` no puede sustituir `transpose` cuando debe cambiar la posición de los ejes."
   s05:
+    practice_en: "Trace sampled frames to source indices and defend a sampling strategy for a brief event."
+    practice_es: "Rastrear fotogramas muestreados hasta sus índices originales y defender un muestreo para un evento breve."
+    explore_en: "Compare complete pipelines, padding costs, and synchronized-camera layouts."
+    explore_es: "Comparar pipelines completos, costes de relleno y organización de cámaras sincronizadas."
     n: "05"
     slug: "video-pipeline-design"
     part: "III"
@@ -1110,6 +1134,10 @@ sections:
       - "Comparar padding para longitudes variables con muestreo de un número fijo de fotogramas."
       - "Razonar sobre un eje adicional de cámaras sincronizadas."
   s06:
+    practice_en: "Contract colour with einsum, name surviving axes, and verify a weighted pixel sum."
+    practice_es: "Contraer el color con einsum, nombrar los ejes restantes y verificar una suma ponderada de píxeles."
+    explore_en: "Express matrix operations with einsum and compare digit similarity measures."
+    explore_es: "Expresar operaciones matriciales con einsum y comparar medidas de similitud de dígitos."
     n: "06"
     slug: "contraction-with-einsum"
     part: "IV"
@@ -1150,6 +1178,10 @@ sections:
       - "Calcular las **3.229.209 similitudes por pares** entre 1.797 dígitos manuscritos reales."
       - "Explorar cómo similitud coseno y producto punto producen vecinos diferentes."
   s07:
+    practice_en: "Show how duplicate columns give identical predictions from different coefficients; explain the minimum-norm choice of pinv."
+    practice_es: "Mostrar cómo columnas duplicadas dan predicciones idénticas con coeficientes distintos; explicar la elección de norma mínima de pinv."
+    explore_en: "Verify the four Moore–Penrose identities, fit housing data, and apply pinv to unfolded images."
+    explore_es: "Verificar las cuatro identidades de Moore–Penrose, ajustar datos de vivienda y aplicar pinv a imágenes desplegadas."
     n: "07"
     slug: "inverses-and-pseudoinverse"
     part: "IV"
@@ -1186,6 +1218,10 @@ sections:
       - "Resolver un problema real de mínimos cuadrados de vivienda en California con forma `20.433 × 7`."
       - "Desplegar imágenes reales de dígitos en una matriz ancha e interpretar la solución de **norma mínima**."
   s08:
+    practice_en: "Explain a matrix state update and connect repeated updates with a matrix power."
+    practice_es: "Explicar una actualización de estado matricial y relacionar su repetición con una potencia de matriz."
+    explore_en: "Use power iteration and evaluate recursive forecasts on airline traffic."
+    explore_es: "Usar iteración de potencias y evaluar pronósticos recursivos del tráfico aéreo."
     n: "08"
     slug: "recursion-with-matrices"
     part: "IV"
@@ -1236,6 +1272,10 @@ sections:
       - "Ajustar un modelo autorregresivo real con la pseudoinversa."
       - "Comparar un pronóstico recursivo con un diagnóstico de un paso que usa valores previos reales."
   s09:
+    practice_en: "Compare solver residuals and coefficient sensitivity; trace reduced coordinates through reconstruction."
+    practice_es: "Comparar residuos y sensibilidad de coeficientes; seguir coordenadas reducidas hasta la reconstrucción."
+    explore_en: "Benchmark other factorizations, compress images with SVD, and inspect NMF factors."
+    explore_es: "Medir otras factorizaciones, comprimir imágenes con SVD e inspeccionar factores NMF."
     n: "09"
     slug: "matrix-factorizations"
     part: "IV"
@@ -1274,6 +1314,10 @@ sections:
       - "Conectar la SVD que ya usaste en la sección 07 con el resto de la familia."
       - "Leer los factores de una factorización como estructura de los datos y no como un resultado numérico opaco."
   s10:
+    practice_en: "Explain core and factor shapes, measure storage and error, and choose Tucker ranks against an error limit."
+    practice_es: "Explicar formas del núcleo y factores, medir almacenamiento y error, y elegir rangos Tucker según un límite de error."
+    explore_en: "Implement HOSVD and inspect unfoldings, core interactions, and rank sweeps."
+    explore_es: "Implementar HOSVD e inspeccionar desplegados, interacciones del núcleo y barridos de rangos."
     n: "10"
     slug: "tucker-decomposition"
     part: "IV"
@@ -1324,6 +1368,10 @@ sections:
       - "Cambiar independientemente los tres rangos Tucker y observar el compromiso entre error y almacenamiento."
       - "Interpretar componentes temporales aprendidos comparándolos con los conteos reales por hora."
   s11:
+    practice_en: "Compare CP and Tucker on the same tensor using parameter counts, reconstruction errors, and the budget gap."
+    practice_es: "Comparar CP y Tucker sobre el mismo tensor mediante conteos de parámetros, errores de reconstrucción y diferencia de presupuestos."
+    explore_en: "Study Tensor Train and t-SVD, investigate CP uniqueness, and compress neural-network layers."
+    explore_es: "Estudiar Tensor Train y t-SVD, investigar unicidad de CP y comprimir capas de redes neuronales."
     n: "11"
     slug: "tensor-factorizations"
     part: "IV"
@@ -1364,6 +1412,10 @@ sections:
       - "Explicar por qué Tensor Train es útil para tensores de orden muy alto."
       - "Distinguir una factorización exacta de la truncación y la compresión."
   s12:
+    practice_en: "Transfer axis reasoning to new data and explain why Tucker restores shape while losing information."
+    practice_es: "Aplicar razonamiento sobre ejes a datos nuevos y explicar por qué Tucker recupera la forma mientras pierde información."
+    explore_en: "Choose take-home work on PCA, attention, CP, Cholesky, audio, or deep dives 13–15."
+    explore_es: "Elegir trabajo posterior sobre PCA, atención, CP, Cholesky, audio o los estudios 13–15."
     n: "12"
     slug: "wrap-up-and-take-homes"
     part: "—"

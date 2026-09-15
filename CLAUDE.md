@@ -287,7 +287,7 @@ to be kept honest in both languages.
 ## How a notebook looks
 
 Core routes and learning prompts are notebook-owned body cells. The route cell's
-`metadata.workshop` lists preparation IDs and the activity ID. Visible **Core prep**
+`metadata.workshop` lists preparation IDs and the activity ID. Live notebooks 01–11 also declare the complete contiguous `sequence` and its `checkpoint`; the runtime runner executes every code cell in that sequence. Shared `practice_en/es` and `explore_en/es` in `_variables.yml` own the visible outcome labels in notebook headers, slides and handbook. Visible **Core prep**
 labels and `workshop-core-prep` / `workshop-core-activity` tags identify that route.
 Do not make a core route depend on an optional exercise or an unopened solution.
 `scripts/check_teaching_materials.py` checks these references and the teaching
