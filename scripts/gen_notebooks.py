@@ -239,6 +239,32 @@ def header_cell(s: dict) -> dict:
     a = accent(s)
     objs_en = "\n".join(f"- {o}" for o in s["objectives_en"])
 
+    if not is_extra(s):
+        # The shared live outcomes also appear in the decks and handbook.
+        # Broad reference objectives must not read as a promise for one slot.
+        return md(f"""# {s['n']} · {s['title_en']} / {s['title_es']}
+
+{badge}
+
+{rule(a)}
+
+{eyebrow(fmt_line.upper(), a)}
+
+## Practise today / Practica hoy
+
+{s['practice_en']}
+
+{es_prose(s['practice_es'])}
+
+## Explore later / Explora después
+
+{s['explore_en']}
+
+{es_prose(s['explore_es'])}
+
+Follow the core block immediately below. / Sigue el bloque esencial de abajo.
+""")
+
     # The heading stays a real markdown heading: Colab builds its outline from
     # those, and a styled <div> title would leave the notebook unnavigable.
     if s.get("intro_en"):

@@ -1,0 +1,60 @@
+---
+title: "Readiness check · instructor key"
+lang: en
+search: false
+draft: true
+toc: false
+navbar: false
+page-footer: false
+format:
+  html:
+    include-in-header:
+      text: '<meta name="robots" content="noindex, nofollow">'
+---
+
+[Español](es/readiness-instructor.html){data-noresolveinput="true"}
+
+## Optional administration
+
+Use only if the workshop organizer chooses it. A different instructor can administer it **3–5 days before the workshop**. It adds no time to the 210-minute workshop and does not replace its entry/exit checks.
+
+These pages are unlisted: omitted from site navigation and search, with a request to search engines not to index them. They are public files, not password-protected. Share only the learner link for the timed attempt; keep this key for administration.
+
+- [Learner sheet](readiness-check.html){data-noresolveinput="true"} · [Spanish learner sheet](es/readiness-check.html){data-noresolveinput="true"}
+- [Targeted refresher exercises](readiness-refresher.html){data-noresolveinput="true"}
+
+## Script and hard stop
+
+**Beforehand:** choose a private collection method (paper or your usual form). Open or print the learner sheet. No login, installation, or notebook runtime is needed. Arrange any access accommodations in advance; interpretation should take them into account.
+
+1. **0:00–1:00:** say: “This is optional preparation support, not a grade. Work alone. No code execution, notes, or AI. Either language is fine. Mark uncertain answers. You have eight minutes for four questions.”
+2. **1:00–9:00:** allow two minutes per question. Announce the next question at 3:00, 5:00 and 7:00. Clarify wording without teaching the answer.
+3. **9:00–10:00:** collect first attempts. **Stop at 10:00.** Do not extend the timed check for discussion, scoring, or remediation; do those afterward.
+
+## Key and scoring
+
+Score each question **0** for missing or incorrect reasoning, **1** for a partly correct answer, and **2** for a correct answer with the stated explanation. If calculation is correct but the explanation is missing, award 1. Record each skill separately; no overall pass/fail cutoff.
+
+| Item | Complete answer (2) | Common error and next step |
+|---|---|---|
+| 1 · Indexing | `[11, 21]`, shape `(2,)`; index 1 selects the second column across both rows, removing the column axis. | Row/column confusion or `(2, 1)`: [Refresher 1](readiness-refresher.html#indexing){data-noresolveinput="true"}. |
+| 2 · Broadcasting | `[[11, 13, 15], [21, 23, 25]]`, shape `(2, 3)`; the length-3 vector is added to each row, one offset per column. | Treating `b` as per-row offsets or changing shape: [Refresher 2](readiness-refresher.html#broadcasting){data-noresolveinput="true"}. |
+| 3 · Multiplication | `[8, 7]`, shape `(2,)`; first entry is `1*2 + 2*3 + 0*4`. `A * w` has shape `(2, 3)`, with no sum across columns. | Confusing `@` with `*`, or incompatible output shape: [Refresher 3](readiness-refresher.html#multiplication){data-noresolveinput="true"}. |
+| 4 · Rank | Rank 1: column 2 is twice column 1. A square rank-deficient matrix has no ordinary inverse. | Equating rank with the number of columns or shape: [Refresher 4](readiness-refresher.html#rank){data-noresolveinput="true"}. |
+
+## Route each learner
+
+For each **0 or 1**, assign only that skill’s linked refresher. Ask for its retry and one explanatory sentence before the workshop; use the folded answer for feedback after the retry. For a **2**, that refresher is optional. If every item is 2, continue with the normal workshop preparation and runtime check.
+
+If several skills need work, start with indexing, then broadcasting, multiplication, and rank. A low or unfinished response identifies a support need; it does not exclude a learner. If the same error is common across the group, tell the workshop instructor which prerequisite needs a brief worked example.
+
+## Handoff to the workshop instructor
+
+Send privately, using your usual channel; this page sends nothing:
+
+- Workshop version/commit and administration date.
+- Anonymous counts scoring 0/1/2 for each of the four skills.
+- Counts unfinished at the stop and any interpretation caveats.
+- Refreshers assigned and retry outcomes; one teaching adjustment to consider.
+
+Keep individual responses private. Keep these prerequisite results separate from the workshop’s entry/exit assessment; the items measure different things and this is not a validated placement test.

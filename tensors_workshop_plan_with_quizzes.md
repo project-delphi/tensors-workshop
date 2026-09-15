@@ -5,6 +5,8 @@ title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
 
+**During the live session:** follow the notebook’s contiguous core block. The labels below distinguish what you practise today from the reference material you can explore later.
+
 This is the session text: the theory, every exercise, the worked solutions and
 the take-home appendices. It is what to follow during the workshop and what to
 keep afterwards. The books and papers behind it are on the
@@ -19,6 +21,12 @@ The schedule below carries both, so any row can be read across to turn one
 label into the other.
 
 ---
+
+
+
+**Practise today:** {{< var sections.s00.practice_en >}}
+
+**Explore later:** {{< var sections.s00.explore_en >}}
 
 ## Schedule
 
@@ -100,6 +108,11 @@ FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights
 ---
 
 # PART I — What a Tensor Is (section 01, 20 min)
+
+**Practise today:** {{< var sections.s01.practice_en >}}
+
+**Explore later:** {{< var sections.s01.explore_en >}}
+
 
 <span data-language-key="part-i-what-a-tensor-is-section-01-20-min"></span>
 
@@ -240,6 +253,11 @@ Every method in that table above the double line works on **matrices** — two a
 
 # PART II — Thinking in N Dimensions (section 02, 20 min)
 
+**Practise today:** {{< var sections.s02.practice_en >}}
+
+**Explore later:** {{< var sections.s02.explore_en >}}
+
+
 <span data-language-key="part-ii-thinking-in-n-dimensions-section-02-20-min"></span>
 
 A live coding demo in the notebook, on real image and video tensors. Open it in Colab and run the Setup cell first — it downloads and checksums the real video clip used by the exercises. Three exercises:
@@ -255,6 +273,11 @@ A live coding demo in the notebook, on real image and video tensors. Open it in 
 <span data-language-key="part-iii-working-with-tensor-axes-sections-03-05"></span>
 
 ## 03 · Indexing and Broadcasting Real Data (Block 1, 15 min)
+
+**Practise today:** {{< var sections.s03.practice_en >}}
+
+**Explore later:** {{< var sections.s03.explore_en >}}
+
 
 <span data-language-key="03-indexing-and-broadcasting-real-data-block-1-15-min"></span>
 
@@ -304,6 +327,11 @@ Two real results. **Malignant tumours really do have a larger mean radius** — 
 
 ## 04 · Reshape and Transpose Real Images (Block 2, 15 min)
 
+**Practise today:** {{< var sections.s04.practice_en >}}
+
+**Explore later:** {{< var sections.s04.explore_en >}}
+
+
 <span data-language-key="04-reshape-and-transpose-real-images-block-2-15-min"></span>
 
 **Why this matters.** Microscopes and cameras order their axes according to the hardware, not according to what a model expects. Getting this wrong does not crash — the model runs on scrambled data and returns confident, meaningless output. In a drug screen, that is a wrong decision about whether a compound works. The famous version in tech: a model trained in TensorFlow (`NHWC`) deployed into PyTorch (`NCHW`) with no transpose.
@@ -345,6 +373,11 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 ## 05 · Group Exercise — Video Pipeline Design (15 min)
 
+**Practise today:** {{< var sections.s05.practice_en >}}
+
+**Explore later:** {{< var sections.s05.explore_en >}}
+
+
 <span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span>
 
 Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.
@@ -370,6 +403,11 @@ Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is
 <span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span>
 
 ## 06 · Contraction With `einsum` (Block 3, 15 min)
+
+**Practise today:** {{< var sections.s06.practice_en >}}
+
+**Explore later:** {{< var sections.s06.explore_en >}}
+
 
 <span data-language-key="06-contraction-with-einsum-block-3-15-min"></span>
 
@@ -406,7 +444,23 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 
 ## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
 
+**Practise today:** {{< var sections.s07.practice_en >}}
+
+**Explore later:** {{< var sections.s07.explore_en >}}
+
+
 <span data-language-key="07-inverses-and-the-pseudoinverse-block-4-15-min"></span>
+
+
+### Live core: what can the coefficients tell us?
+
+Use three deliberately synthetic observations: `x = [1, 2, 3]`, duplicate the feature to make `A = [x, x]`, and set `y = 2*x`. Coefficients `[2, 0]` and `[0, 2]` both reproduce `y`. Every row depends only on the sum of the coefficients, so these observations cannot identify the separate effects.
+
+Compute `pinv(A) @ y`: it selects `[1, 1]`. All exact solutions have the form `[1+t, 1-t]`, with squared norm `2 + 2*t**2`, minimized at `t=0`. Minimum norm is a mathematical selection rule; it does not establish equal real effects. With noisy observations, pinv selects the minimum-norm solution among the least-squares minimizers.
+
+**Attempt:** construct a different coefficient vector with the same predictions, compare norms, and explain what remains unknown. Follow the contiguous notebook core for feedback and its checkpoint.
+
+**Explore later:** the theory and housing exercises below, including the four Moore–Penrose identities, extend the live activity.
 
 ### The theory, in three steps
 
@@ -502,6 +556,11 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 ## 08 · Recursion With Matrices and Vectors (10 min — demo)
 
+**Practise today:** {{< var sections.s08.practice_en >}}
+
+**Explore later:** {{< var sections.s08.explore_en >}}
+
+
 <span data-language-key="08-recursion-with-matrices-and-vectors-10-min-demo"></span>
 
 **Recursion** means defining something in terms of itself. With matrices this becomes: apply the same matrix again and again. Three examples, increasing in usefulness.
@@ -560,6 +619,11 @@ for t in range(6):
 ```
 
 ## 09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 15 min)
+
+**Practise today:** {{< var sections.s09.practice_en >}}
+
+**Explore later:** {{< var sections.s09.explore_en >}}
+
 
 <span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-15-min"></span>
 
@@ -648,6 +712,11 @@ k = int(np.argmax(db >= target_db))
 
 ## 10 · Tucker Decomposition on Real Data (Block 6, 15 min)
 
+**Practise today:** {{< var sections.s10.practice_en >}}
+
+**Explore later:** {{< var sections.s10.explore_en >}}
+
+
 <span data-language-key="10-tucker-decomposition-on-real-data-block-6-15-min"></span>
 
 ### The theory
@@ -722,6 +791,11 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 ---
 
 ## 11 · Tensor Factorizations: Which One, and What It Costs (Block 7, 15 min)
+
+**Practise today:** {{< var sections.s11.practice_en >}}
+
+**Explore later:** {{< var sections.s11.explore_en >}}
+
 
 <span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-15-min"></span>
 
@@ -827,6 +901,11 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 
 ## 12 · Wrap-Up (5 min)
+
+**Practise today:** {{< var sections.s12.practice_en >}}
+
+**Explore later:** {{< var sections.s12.explore_en >}}
+
 
 <span data-language-key="12-wrap-up-5-min"></span>
 

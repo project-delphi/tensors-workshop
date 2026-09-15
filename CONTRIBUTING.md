@@ -7,7 +7,7 @@ local branch guard with `git config core.hooksPath .githooks`.
 
 | Change | Edit here | Regenerate with |
 |---|---|---|
-| Shared titles, objectives, durations, URLs and quiz metadata | `_variables.yml` | `scripts/gen_tables.py` and `scripts/gen_notebooks.py` |
+| Shared titles, practice/explore outcomes, objectives, durations, URLs and quiz metadata | `_variables.yml` | `scripts/gen_tables.py` and `scripts/gen_notebooks.py` |
 | Notebook explanations, Setup, exercises, solutions and core routes | Body cells in `notebooks/*.ipynb`, directly or through Colab | `scripts/gen_notebooks.py` |
 | Notebook header and footer | Their text in `_variables.yml`; layout in `scripts/gen_notebooks.py` | `scripts/gen_notebooks.py` |
 | Generated tables and resource blocks in `_includes/`, or marker-delimited tables in READMEs and handbook schedules | `_variables.yml` or `scripts/gen_tables.py` | `scripts/gen_tables.py` |
@@ -17,7 +17,7 @@ local branch guard with `git config core.hooksPath .githooks`.
 Only the first and final notebook cells are generated content. Every cell
 between them belongs to the notebook, including Setup. The normalizer preserves
 those body cells while clearing outputs, execution counts and transient metadata.
-Keep core-route cell IDs and tags aligned with their visible labels. Keep the
+Keep core-route cell IDs and tags aligned with their visible labels. In live notebooks 01–11, `workshop.sequence` lists every cell in the contiguous core block after the route scaffold, including prose and folded solutions; `workshop.checkpoint` identifies its final learning check. Keep the extension boundary immediately after that sequence. The runtime check executes all code in the sequence. Keep the
 `solution` and `hide-input` tags on folded solutions.
 
 Feedback helpers live in visible code cells before the core activity. Tag them

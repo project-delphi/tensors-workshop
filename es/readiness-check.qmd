@@ -1,0 +1,73 @@
+---
+title: "Diagnóstico opcional"
+lang: es
+search: false
+draft: true
+toc: false
+navbar: false
+page-footer: false
+format:
+  html:
+    include-in-header:
+      text: '<meta name="robots" content="noindex, nofollow">'
+---
+
+[English](../readiness-check.html){data-noresolveinput="true"}
+
+**Diagnóstico opcional · máximo 10 minutos**
+
+Tu instructor te dirá si debes hacer este diagnóstico. Sirve para elegir preparación útil; no es una calificación ni una prueba de admisión. No requiere teoría de tensores.
+
+Responde individualmente, sin ejecutar código, consultar apuntes ni usar un asistente. Escribe respuestas breves en papel o en el formulario privado del instructor. Puedes responder en español o inglés. Si dudas, escribe lo que sabes y marca «no estoy seguro/a».
+
+**Tiempo:** 1 minuto de instrucciones, 2 por pregunta y 1 para entregar. Detente a los 10 minutos, aunque falten respuestas. Esta página no recoge ni guarda respuestas.
+
+Supón que `np` significa NumPy. Los índices empiezan en 0; `:` conserva todas las entradas de ese eje. Un eje es una dirección de un array. `@` significa multiplicación matricial; `*` multiplica entradas correspondientes.
+
+## 1 · Indexación · 2 minutos
+
+```python
+X = np.array([[10, 11, 12],
+              [20, 21, 22]])
+```
+
+¿Cuáles son los **valores y la forma** de `X[:, 1]`? Explica qué selecciona el `1`.
+
+Respuesta: ___
+
+## 2 · Broadcasting · 2 minutos
+
+```python
+X = np.array([[10, 11, 12],
+              [20, 21, 22]])
+b = np.array([1, 2, 3])
+```
+
+¿Funciona `X + b`? Escribe el **resultado y su forma**. Explica cómo se usan las tres entradas de `b`.
+
+Respuesta: ___
+
+## 3 · Multiplicación matricial · 2 minutos
+
+```python
+A = np.array([[1, 2, 0],
+              [0, 1, 1]])
+w = np.array([2, 3, 4])
+```
+
+Calcula `A @ w` e indica su **forma**. ¿Tendría `A * w` la misma forma? Explica una entrada del resultado de `A @ w`.
+
+Respuesta: ___
+
+## 4 · Rango · 2 minutos
+
+```python
+M = np.array([[1, 2],
+              [2, 4]])
+```
+
+¿Cuántas columnas linealmente independientes tiene `M`? Explica usando las dos columnas. ¿Existe una inversa matricial ordinaria?
+
+Respuesta: ___
+
+**Entrega tu primer intento al instructor.** Indica tus dudas. El instructor recomendará ejercicios de repaso específicos tras recoger las respuestas.

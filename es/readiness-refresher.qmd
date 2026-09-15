@@ -1,0 +1,65 @@
+---
+title: "Ejercicios de repaso"
+lang: es
+search: false
+draft: true
+toc: false
+navbar: false
+page-footer: false
+format:
+  html:
+    include-in-header:
+      text: '<meta name="robots" content="noindex, nofollow">'
+---
+
+[English](../readiness-refresher.html){data-noresolveinput="true"}
+
+Haz solo los ejercicios que asigne tu instructor después del diagnóstico. Este repaso no es cronometrado y queda fuera de sus 10 minutos. Lee el ejemplo, responde sin código y después abre la solución. Puedes ejecutar el código después para comprobar.
+
+## 1 · Indexación {#indexing}
+
+**Ejemplo:** `P = [[4, 5, 6], [7, 8, 9]]`, como array NumPy, tiene forma `(2, 3)`. `P[:, 0]` selecciona `[4, 7]`, forma `(2,)`. Un índice de columna elimina ese eje. `P[:, 0:1]` conserva un eje de columnas de longitud 1 y tiene forma `(2, 1)`.
+
+**Nuevo intento:** para `Q = np.array([[2, 4], [6, 8], [10, 12]])`, da valores y formas de `Q[1, :]` y `Q[:, 1:2]`. Explica qué eje permanece.
+
+<details><summary>Respuesta después del intento</summary>
+
+`Q[1, :]` es `[6, 8]`, forma `(2,)`: quedan columnas. `Q[:, 1:2]` es `[[4], [8], [12]]`, forma `(3, 1)`: quedan ambos ejes, filas y columnas.
+
+</details>
+
+## 2 · Broadcasting {#broadcasting}
+
+**Ejemplo:** alinea las formas por la derecha. Las longitudes deben coincidir o una ser 1; un eje inicial ausente cuenta como 1. `(2, 3) + (3,)` da `(2, 3)`. Para `[[1, 2, 3], [4, 5, 6]] + [10, 20, 30]`, el resultado es `[[11, 22, 33], [14, 25, 36]]`.
+
+**Nuevo intento:** `Q.shape == (3, 2)` representa muestras × características. Los desplazamientos `b = np.array([10, 20, 30])` corresponden a muestras. ¿Funciona `Q + b`? Cambia la forma de `b` para que cada muestra reciba su desplazamiento en ambas características. Da la forma de salida.
+
+<details><summary>Respuesta después del intento</summary>
+
+`Q + b` falla porque las longitudes finales 2 y 3 no coinciden. `Q + b[:, None]` alinea `(3, 2)` con `(3, 1)` y devuelve `(3, 2)`. Cada desplazamiento por muestra se repite sobre características.
+
+</details>
+
+## 3 · Multiplicación matricial {#multiplication}
+
+**Ejemplo:** cada salida de matriz por vector es el producto escalar de una fila. `[[1, 0], [2, 1]] @ [3, 4]` da `[3, 10]`. Las formas `(2, 2) @ (2,)` producen `(2,)`. El producto elemento a elemento `*` conserva los dos ejes y no suma.
+
+**Nuevo intento:** calcula `B @ u` con `B = np.array([[2, 1], [1, 0], [0, 3]])` y `u = np.array([4, 2])`. Da su forma y compárala con la forma de `B * u`.
+
+<details><summary>Respuesta después del intento</summary>
+
+`B @ u` es `[10, 4, 6]`, forma `(3,)`, un producto escalar por fila. `B * u` tiene forma `(3, 2)`.
+
+</details>
+
+## 4 · Rango {#rank}
+
+**Ejemplo:** las columnas `[1, 3]` y `[2, 6]` tienen la misma dirección; la segunda es el doble de la primera. Su matriz tiene rango 1. Una matriz cuadrada necesita rango completo para tener inversa ordinaria.
+
+**Nuevo intento:** compara `C = [[1, 0], [0, 2]]` y `D = [[1, 3], [2, 6]]`. Da cada rango, explica independencia de columnas y decide cuál tiene inversa ordinaria.
+
+<details><summary>Respuesta después del intento</summary>
+
+`C` tiene rango 2: ninguna columna no nula es múltiplo de la otra. Su inversa es `[[1, 0], [0, 0.5]]`. `D` tiene rango 1 porque la segunda columna es el triple de la primera. No tiene inversa ordinaria aunque su forma sea `(2, 2)`.
+
+</details>

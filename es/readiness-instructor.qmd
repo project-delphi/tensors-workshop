@@ -1,0 +1,60 @@
+---
+title: "Diagnóstico · clave del instructor"
+lang: es
+search: false
+draft: true
+toc: false
+navbar: false
+page-footer: false
+format:
+  html:
+    include-in-header:
+      text: '<meta name="robots" content="noindex, nofollow">'
+---
+
+[English](../readiness-instructor.html){data-noresolveinput="true"}
+
+## Administración opcional
+
+Úsalo solo si lo decide quien organiza el taller. Otro instructor puede administrarlo **3–5 días antes del taller**. No añade tiempo a los 210 minutos del taller ni sustituye sus comprobaciones de entrada/salida.
+
+Estas páginas no están listadas: se omiten de la navegación y búsqueda del sitio, y se pide a los buscadores que no las indexen. Son archivos públicos, sin contraseña. Comparte solo la hoja del estudiante para el intento cronometrado; conserva esta clave para administrar.
+
+- [Hoja del estudiante](readiness-check.html){data-noresolveinput="true"} · [Hoja en inglés](../readiness-check.html){data-noresolveinput="true"}
+- [Ejercicios de repaso específicos](readiness-refresher.html){data-noresolveinput="true"}
+
+## Guion y límite estricto
+
+**Antes:** elige un medio privado de recogida (papel o tu formulario habitual). Abre o imprime la hoja. No se requiere cuenta, instalación ni entorno de cuaderno. Acuerda previamente las adaptaciones de acceso e interprétalas al revisar los resultados.
+
+1. **0:00–1:00:** di: «Esto es apoyo opcional de preparación, no una calificación. Responde individualmente. No ejecutes código ni uses apuntes o IA. Puedes usar cualquiera de los dos idiomas. Marca tus dudas. Tienes ocho minutos para cuatro preguntas».
+2. **1:00–9:00:** permite dos minutos por pregunta. Anuncia la siguiente a los 3:00, 5:00 y 7:00. Aclara el enunciado sin enseñar la respuesta.
+3. **9:00–10:00:** recoge los primeros intentos. **Detente a los 10:00.** La discusión, puntuación y recuperación se hacen después; no prolongan el diagnóstico.
+
+## Clave y puntuación
+
+Puntúa cada pregunta con **0** si falta o es incorrecta, **1** si es parcialmente correcta y **2** si es correcta con la explicación indicada. Si el cálculo es correcto pero falta la explicación, asigna 1. Registra cada habilidad por separado; no hay umbral global de aprobado.
+
+| Pregunta | Respuesta completa (2) | Error frecuente y paso siguiente |
+|---|---|---|
+| 1 · Indexación | `[11, 21]`, forma `(2,)`; el índice 1 selecciona la segunda columna de ambas filas y elimina el eje de columnas. | Confundir filas/columnas o dar `(2, 1)`: [Repaso 1](readiness-refresher.html#indexing){data-noresolveinput="true"}. |
+| 2 · Broadcasting | `[[11, 13, 15], [21, 23, 25]]`, forma `(2, 3)`; el vector de longitud 3 se suma a cada fila, un desplazamiento por columna. | Interpretar `b` como desplazamientos por fila o cambiar la forma: [Repaso 2](readiness-refresher.html#broadcasting){data-noresolveinput="true"}. |
+| 3 · Multiplicación | `[8, 7]`, forma `(2,)`; la primera entrada es `1*2 + 2*3 + 0*4`. `A * w` tiene forma `(2, 3)`, sin sumar columnas. | Confundir `@` con `*` o una forma incompatible: [Repaso 3](readiness-refresher.html#multiplication){data-noresolveinput="true"}. |
+| 4 · Rango | Rango 1: la columna 2 es el doble de la columna 1. Una matriz cuadrada con rango deficiente no tiene inversa ordinaria. | Igualar rango con número de columnas o forma: [Repaso 4](readiness-refresher.html#rank){data-noresolveinput="true"}. |
+
+## Asigna repasos por estudiante
+
+Para cada **0 o 1**, asigna solo el repaso enlazado de esa habilidad. Pide su nuevo intento y una frase de explicación antes del taller; usa la respuesta plegada después del intento. Con **2**, ese repaso es opcional. Si todas las preguntas tienen 2, continúa con la preparación habitual y la comprobación del entorno.
+
+Si varias habilidades necesitan repaso, empieza por indexación, después broadcasting, multiplicación y rango. Una respuesta baja o incompleta señala una necesidad de apoyo; no excluye a nadie. Si un error es frecuente, comunica al instructor qué requisito necesita un ejemplo resuelto breve.
+
+## Entrega al instructor del taller
+
+Envía de forma privada por tu canal habitual; esta página no envía nada:
+
+- Versión/commit del taller y fecha de administración.
+- Conteos anónimos de puntuaciones 0/1/2 para las cuatro habilidades.
+- Conteos sin terminar al límite y observaciones para interpretar resultados.
+- Repasos asignados y resultados de nuevos intentos; un ajuste docente a considerar.
+
+Conserva las respuestas individuales en privado. Separa estos resultados de las evaluaciones de entrada/salida del taller; miden cosas diferentes y este diagnóstico no es una prueba de nivel validada.

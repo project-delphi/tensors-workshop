@@ -1,0 +1,65 @@
+---
+title: "Readiness refresher exercises"
+lang: en
+search: false
+draft: true
+toc: false
+navbar: false
+page-footer: false
+format:
+  html:
+    include-in-header:
+      text: '<meta name="robots" content="noindex, nofollow">'
+---
+
+[Español](es/readiness-refresher.html){data-noresolveinput="true"}
+
+Use only the exercises your instructor assigns after the readiness check. This is untimed follow-up, outside the 10-minute diagnostic. Read the example, answer the retry without code, then open the answer. You may run the code afterward to check.
+
+## 1 · Indexing {#indexing}
+
+**Example:** for `P = [[4, 5, 6], [7, 8, 9]]`, `P` as a NumPy array has shape `(2, 3)`. `P[:, 0]` selects `[4, 7]`, shape `(2,)`. A single column index removes that axis. `P[:, 0:1]` keeps a length-1 column axis and has shape `(2, 1)`.
+
+**Retry:** for `Q = np.array([[2, 4], [6, 8], [10, 12]])`, give the values and shapes of `Q[1, :]` and `Q[:, 1:2]`. Explain which axis remains.
+
+<details><summary>Answer after attempting</summary>
+
+`Q[1, :]` is `[6, 8]`, shape `(2,)`: columns remain. `Q[:, 1:2]` is `[[4], [8], [12]]`, shape `(3, 1)`: both row and column axes remain.
+
+</details>
+
+## 2 · Broadcasting {#broadcasting}
+
+**Example:** align shapes from the right. Paired lengths must match or one must be 1; a missing leading axis counts as 1. `(2, 3) + (3,)` gives `(2, 3)`. For `[[1, 2, 3], [4, 5, 6]] + [10, 20, 30]`, the result is `[[11, 22, 33], [14, 25, 36]]`.
+
+**Retry:** `Q.shape == (3, 2)` holds samples × features. Offsets `b = np.array([10, 20, 30])` belong to samples. Does `Q + b` work? Change `b`’s shape so each sample gets its own offset on both features. Give the output shape.
+
+<details><summary>Answer after attempting</summary>
+
+`Q + b` fails because trailing lengths 2 and 3 conflict. `Q + b[:, None]` aligns `(3, 2)` with `(3, 1)` and returns `(3, 2)`. Each sample’s offset repeats across features.
+
+</details>
+
+## 3 · Matrix multiplication {#multiplication}
+
+**Example:** each matrix-vector output is a row’s dot product. `[[1, 0], [2, 1]] @ [3, 4]` gives `[3, 10]`. Shapes `(2, 2) @ (2,)` produce `(2,)`. Elementwise `*` retains the two axes and performs no summation.
+
+**Retry:** calculate `B @ u` for `B = np.array([[2, 1], [1, 0], [0, 3]])` and `u = np.array([4, 2])`. Give its shape and compare with the shape of `B * u`.
+
+<details><summary>Answer after attempting</summary>
+
+`B @ u` is `[10, 4, 6]`, shape `(3,)`, one dot product per row. `B * u` has shape `(3, 2)`.
+
+</details>
+
+## 4 · Rank {#rank}
+
+**Example:** columns `[1, 3]` and `[2, 6]` point along the same direction; the second is twice the first. Their matrix has rank 1. A square matrix needs full rank to have an ordinary inverse.
+
+**Retry:** compare `C = [[1, 0], [0, 2]]` and `D = [[1, 3], [2, 6]]`. Give each rank, explain column independence, and decide which has an ordinary inverse.
+
+<details><summary>Answer after attempting</summary>
+
+`C` has rank 2: neither nonzero column is a multiple of the other. Its inverse is `[[1, 0], [0, 0.5]]`. `D` has rank 1 because its second column is three times its first. It has no ordinary inverse despite its `(2, 2)` shape.
+
+</details>

@@ -12,6 +12,13 @@ project:
     - companion.qmd
     - teach.qmd
     - faq.qmd
+    # Optional diagnostics: rendered for direct sharing, absent from navigation/search.
+    - readiness-check.qmd
+    - readiness-instructor.qmd
+    - readiness-refresher.qmd
+    - es/readiness-check.qmd
+    - es/readiness-instructor.qmd
+    - es/readiness-refresher.qmd
     - facilitator-guide.md
     - assessments.md
     - worked-mistakes.md
@@ -43,6 +50,8 @@ project:
     - media/**
 
 website:
+  # Optional instructor diagnostics use draft: true for unlisted, direct-link access.
+  draft-mode: unlinked
   title: "Tensors for Machine Learning"
   description: "A 210-minute workshop on tensors for machine learning, including quizzes and breaks, in English and Spanish."
   site-url: https://project-delphi.github.io/tensors-workshop

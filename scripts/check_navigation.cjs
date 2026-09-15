@@ -149,6 +149,36 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
       }
 
       // The wide handbook table is a focusable scroll region on a phone.
+      // Optional diagnostics are reachable only by direct link. Keep them out
+      // of site discovery and keep the instructor key off the learner sheet.
+      const searchIndex = await fs.readFile(path.join(root, 'search.json'), 'utf8');
+      const sitemap = await fs.readFile(path.join(root, 'sitemap.xml'), 'utf8');
+      assert(!searchIndex.includes('readiness-'), 'Diagnostic leaked into site search');
+      assert(!sitemap.includes('readiness-'), 'Diagnostic leaked into sitemap');
+      for (const lang of ['en', 'es']) {
+        for (const width of [1440, 390]) {
+          await page.setViewportSize({width, height: 1000});
+          const base = `${origin}${prefix}${lang === 'es' ? 'es/' : ''}`;
+          for (const name of ['readiness-check', 'readiness-instructor', 'readiness-refresher']) {
+            await page.goto(`${base}${name}.html`);
+            assert.equal(await page.locator('nav.navbar').count(), 0);
+            assert((await page.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
+            assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+              `${lang}/${name}: horizontal overflow at ${width}`);
+            if (name === 'readiness-check') {
+              assert.equal(await page.locator('main section.level2').count(), 4);
+              assert.equal(await page.locator('main details, main a[href*="readiness-instructor"]').count(), 0);
+              await page.screenshot({path: path.join(screenshots, `${name}-${lang}-${width}.png`), fullPage: true});
+            }
+            if (name === 'readiness-instructor') {
+              assert.equal(await page.locator('main a[href*="readiness-refresher.html#"]').count(), 4);
+              // Explicit draft links must survive Quarto's link resolution.
+              assert((await page.locator('main a[href*="readiness-check.html"]').count()) >= 2);
+            }
+          }
+        }
+      }
+
       await page.goto(`${origin}${prefix}tensors_workshop_plan_with_quizzes.html`);
       const table = page.locator('.table-responsive').first();
       await table.focus();
@@ -177,6 +207,27 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
       const other = lang === 'en' ? 'es' : 'en';
       await page.goto(`${origin}${prefix}slides/${lang}/`);
       await page.waitForFunction(() => typeof Reveal !== 'undefined' && Reveal.isReady());
+      const outcomes = await page.locator('section.outcomes-slide').evaluateAll(slides => slides.map(s => s.id));
+      assert.equal(outcomes.length, 13, `${lang}: every section needs visible outcomes`);
+      for (const id of outcomes) {
+        await page.evaluate(id => {
+          const index = Reveal.getIndices(document.getElementById(id));
+          Reveal.slide(index.h, index.v);
+          Reveal.layout();
+        }, id);
+        const slide = page.locator(`section#${id}`);
+        assert((await slide.innerText()).includes(lang === 'en' ? 'Practise today' : 'Practica hoy'));
+        assert((await slide.innerText()).includes(lang === 'en' ? 'Explore later' : 'Explora después'));
+        const overflow = await slide.evaluate(s => {
+          const rect = s.getBoundingClientRect();
+          return [...s.querySelectorAll('h2, h3, p')].filter(e => !e.closest('.notes, .colab-tab'))
+            .filter(e => {const r = e.getBoundingClientRect();
+              return r.bottom > rect.bottom + 2 || r.right > rect.right + 2;})
+            .map(e => e.textContent);
+        });
+        assert.deepEqual(overflow, [], `${lang}/${id}: outcome text overflows`);
+        await page.screenshot({path: path.join(screenshots, `outcomes-${lang}-${id}.png`)});
+      }
       await page.evaluate(() => {
         const indices = Reveal.getIndices(document.getElementById('sec-07-inverses-and-pseudoinverse'));
         Reveal.slide(indices.h, indices.v);

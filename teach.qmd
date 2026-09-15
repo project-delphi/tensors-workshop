@@ -19,7 +19,7 @@ practice or discussion time; notebook 13 stays take-home work.
 2. Read the [facilitator guide](facilitator-guide.md) alongside the
    [workshop schedule](tensors_workshop_plan_with_quizzes.md#schedule).
 3. Test your selected [notebooks](notebooks.qmd) in fresh runtimes. Follow
-   **Core prep**, then **Core activity**, and prepare the
+   the contiguous core block through **Core complete**, and prepare the
    [slides](slides/en/index.qmd) and [quizzes](kahoot.qmd).
 
 ## Teaching resources

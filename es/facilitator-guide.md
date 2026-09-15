@@ -13,9 +13,11 @@ práctica o discusión; no alargan el taller. El cuaderno 13 queda para después
 <span data-language-key="before-the-session"></span>
 
 - Ejecuta el cuaderno 00 antes de clase. Prueba cada cuaderno elegido en una sesión nueva.
-- Sigue las lecturas de la ruta esencial, **Core prep** y la función de comprobación, si la hay, antes de **Core activity**. Omite ejercicios y exploradores opcionales.
+- En los cuadernos 01–11, sigue el bloque esencial continuo de arriba abajo: recuerda, ejemplo, intento, retroalimentación, comprobación. Detente en **Fin de la ruta esencial**. Después sigue **Explora después**.
 - Forma grupos de 3–4: relator, portavoz, crítico y, si hay una cuarta persona, programador.
 - Ten una sesión funcionando para demostrar si falla una descarga.
+
+Los encabezados **Practica hoy** y **Explora después** coinciden en cuadernos, diapositivas y manual. En el cuaderno 07, las identidades de Moore–Penrose y vivienda quedan para después; el ejemplo esencial solo necesita NumPy. En el 11, la comparación en vivo usa taxis, CP y Tucker; Tensor Train, t-SVD y la descarga de video son extensiones. Las discusiones grupales elegidas ya están dentro del bloque esencial; no las repitas desde otra página. Las comprobaciones sustituyen parte de explicar/comprobar dentro del tiempo indicado.
 
 ## Ritmo de trabajo
 
@@ -48,7 +50,7 @@ Conserva cuestionarios y pausas. Distribuye así cada bloque:
 | 04 · 15 min | Ejercicio 1: 9; actividad grupal 04: 6. |
 | 05 · 15 min | Ejercicio 1: 7; actividad grupal 05: 8. |
 | 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 10; comprobación individual de contracción 1. |
-| 07 · 15 min | Predecir singularidad 3; Ejercicio 1 y comprobación 12. |
+| 07 · 15 min | Modelar columnas duplicadas 3; comparar coeficientes y normas 9; explicar qué sigue sin identificarse y comprobar 3. |
 | 08 · 10 min | Modelar una actualización 3; Ejercicio 1 y comprobación 7. |
 | 09 · 15 min | Ejercicio 1: 9; error sobre residuos: 3; puente obligatorio de SVD a Tucker: 3. Sin barridos de tiempos. |
 | 10 · 15 min | Explicar núcleo y factores 4; explorador de rangos 8; defender una elección 3. |

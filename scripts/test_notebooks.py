@@ -65,7 +65,7 @@ ROOT = Path(__file__).resolve().parent.parent
 NBDIR = ROOT / "notebooks"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_teaching_materials import route_of, support_of, workshop_meta  # noqa: E402
+from check_teaching_materials import check_sequence, route_of, support_of, workshop_meta  # noqa: E402
 
 # Matplotlib must not try to open a window: this runs headless on a CI runner
 # and on a developer's Mac. Set before any kernel inherits the environment.
@@ -118,14 +118,10 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
            "s05-06": ["Axes / Ejes: (T, H, W, C)"]},
     "06": {"s06-02": ["Photo / Foto: (512, 512, 3)"]},
     "07": {
-        "s07-02": ["Housing design matrix / Matriz de diseño: (20433, 7)"],
-        # A duplicated column drops the rank and the four Moore-Penrose
-        # identities still hold. That is the whole section.
-        "s07-06": ["Original / Original: (7, 7) rank/rango = 7",
-                   "Duplicated / Duplicada: (7, 7) rank/rango = 6",
-                   "Mathematically singular? / ¿Singular matemáticamente?: True",
-                   "A A+ A = A: True", "A+ A A+ = A+: True",
-                   "(A A+)T = A A+: True", "(A+ A)T = A+ A: True"],
+        "p07-identifiability-solution": [
+            "Same predictions / Mismas predicciones: True",
+            "Minimum-norm coefficients / Coeficientes de norma mínima: [1. 1.]",
+            "Separate effects remain unknown / Los efectos separados siguen sin conocerse."],
     },
     "08": {
         "s08-02": ["Real months / Meses reales: 144",
@@ -143,8 +139,7 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
     },
     "10": {"s10-02": ["Tensor shape / Forma del tensor: (4, 5, 24)",
                       "Order / Orden: 3"]},
-    "11": {"s13-setup": ["Taxi tensor / Tensor taxis: (4, 5, 24) entries: 480",
-                         "Storm SHA-256 verified / verificado:"],
+    "11": {"s13-setup": ["Taxi tensor / Tensor taxis: (4, 5, 24) entries: 480"],
            "s13-ex1-solution": ["Taxi shape: (4, 5, 24)"]},
     "12": {
         # Unstandardized PCA answers a different question: one component
@@ -355,6 +350,10 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
 
     # Explicit fallback run sets also exercise their declared feedback helpers.
     chosen.extend(ids.index(cid) for cid in support)
+    # Execute every code cell in the physical live block, including worked
+    # examples and feedback widgets, rather than silently testing only the TODO.
+    chosen.extend(ids.index(cid) for cid in check_sequence(nb, label)
+                  if cells[ids.index(cid)].get("cell_type") == "code")
     return sorted(set(chosen)), activity, paired
 
 

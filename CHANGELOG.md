@@ -2,6 +2,11 @@
 
 ## 2026-09-14
 
+- Matched “Practise today” and “Explore later” outcomes across notebook headers, slides and handbook in English and Spanish.
+- Grouped each live practice block in notebooks 01–11 at the top, with examples, attempts, feedback, checkpoints and a clear stop before extensions.
+- Rebuilt the pseudoinverse core around duplicate columns, identical predictions and the minimum-norm choice; kept the four Moore–Penrose identities as follow-up.
+- Added an optional, unlisted 10-minute prerequisite diagnostic, separate instructor key and targeted refresher exercises in both languages.
+
 - Added brief retrieval prompts, graduated hints, and independent numerical feedback to notebook core activities, with matching English and Spanish instructions.
 - Put convolution predictions before their explanations, added a required SVD-to-Tucker bridge, and supplied partial-code support for the CP/Tucker comparison.
 - Added individual broadcasting and contraction checkpoints and facilitator keys within the existing 210-minute agenda.

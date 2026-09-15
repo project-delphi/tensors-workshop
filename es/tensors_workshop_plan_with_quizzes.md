@@ -6,6 +6,9 @@ title-block-banner: ../images/hero-band.png
 title-block-banner-color: body
 ---
 
+**Durante la sesión en vivo:** sigue el bloque esencial continuo del cuaderno. Las etiquetas de abajo distinguen lo que practicas hoy del material de consulta que puedes explorar después.
+
+
 ::: {.callout-warning appearance="simple"}
 **Esta es una traducción automática.** El original en inglés,
 [Tensors for Machine Learning](../tensors_workshop_plan_with_quizzes.md), es la
@@ -36,6 +39,12 @@ los dos, así que cualquier fila se puede leer de lado a lado para convertir una
 etiqueta en la otra.
 
 ---
+
+
+
+**Practica hoy:** {{< var sections.s00.practice_es >}}
+
+**Explora después:** {{< var sections.s00.explore_es >}}
 
 ## Agenda
 
@@ -116,6 +125,11 @@ El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors
 ---
 
 # PARTE I — Qué es un tensor (sección 01, 20 min)
+
+**Practica hoy:** {{< var sections.s01.practice_es >}}
+
+**Explora después:** {{< var sections.s01.explore_es >}}
+
 
 <span data-language-key="part-i-what-a-tensor-is-section-01-20-min"></span>
 
@@ -256,6 +270,11 @@ Cada método de esa tabla por encima de la línea doble funciona sobre **matrice
 
 # PARTE II — Pensar en N dimensiones (sección 02, 20 min)
 
+**Practica hoy:** {{< var sections.s02.practice_es >}}
+
+**Explora después:** {{< var sections.s02.explore_es >}}
+
+
 <span data-language-key="part-ii-thinking-in-n-dimensions-section-02-20-min"></span>
 
 Una demostración de código en vivo en el cuaderno, sobre tensores reales de imagen y de vídeo. Ábrelo en Colab y ejecuta primero la celda de preparación: descarga y comprueba la suma de verificación del clip de vídeo real que usan los ejercicios. Tres ejercicios:
@@ -271,6 +290,11 @@ Una demostración de código en vivo en el cuaderno, sobre tensores reales de im
 <span data-language-key="part-iii-working-with-tensor-axes-sections-03-05"></span>
 
 ## 03 · Indexación y broadcasting con datos reales (Bloque 1, 15 min)
+
+**Practica hoy:** {{< var sections.s03.practice_es >}}
+
+**Explora después:** {{< var sections.s03.explore_es >}}
+
 
 <span data-language-key="03-indexing-and-broadcasting-real-data-block-1-15-min"></span>
 
@@ -320,6 +344,11 @@ Dos resultados reales. **Los tumores malignos sí tienen un radio medio mayor**:
 
 ## 04 · Reshape y transposición de imágenes reales (Bloque 2, 15 min)
 
+**Practica hoy:** {{< var sections.s04.practice_es >}}
+
+**Explora después:** {{< var sections.s04.explore_es >}}
+
+
 <span data-language-key="04-reshape-and-transpose-real-images-block-2-15-min"></span>
 
 **Por qué importa.** Los microscopios y las cámaras ordenan sus ejes según el hardware, no según lo que espera un modelo. Equivocarse aquí no provoca ningún fallo: el modelo se ejecuta sobre datos revueltos y devuelve una salida segura de sí misma y sin sentido. En un cribado de fármacos, eso es una decisión equivocada sobre si un compuesto funciona. La versión famosa en tecnología: un modelo entrenado en TensorFlow (`NHWC`) desplegado en PyTorch (`NCHW`) sin transponer.
@@ -361,6 +390,11 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 ## 05 · Ejercicio en grupo — Diseño de un pipeline de vídeo (15 min)
 
+**Practica hoy:** {{< var sections.s05.practice_es >}}
+
+**Explora después:** {{< var sections.s05.explore_es >}}
+
+
 <span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span>
 
 De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No hay una única respuesta correcta.
@@ -386,6 +420,11 @@ De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No 
 <span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span>
 
 ## 06 · Contracción con `einsum` (Bloque 3, 15 min)
+
+**Practica hoy:** {{< var sections.s06.practice_es >}}
+
+**Explora después:** {{< var sections.s06.explore_es >}}
+
 
 <span data-language-key="06-contraction-with-einsum-block-3-15-min"></span>
 
@@ -422,7 +461,23 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 
 ## 07 · Inversas y la pseudoinversa (Bloque 4, 15 min)
 
+**Practica hoy:** {{< var sections.s07.practice_es >}}
+
+**Explora después:** {{< var sections.s07.explore_es >}}
+
+
 <span data-language-key="07-inverses-and-the-pseudoinverse-block-4-15-min"></span>
+
+
+### Actividad esencial: ¿qué nos dicen los coeficientes?
+
+Usa tres observaciones sintéticas a propósito: `x = [1, 2, 3]`, duplica la característica para formar `A = [x, x]` y define `y = 2*x`. Los coeficientes `[2, 0]` y `[0, 2]` reproducen `y`. Cada fila solo depende de la suma de coeficientes, así que estas observaciones no identifican los efectos separados.
+
+Calcula `pinv(A) @ y`: elige `[1, 1]`. Todas las soluciones exactas tienen forma `[1+t, 1-t]`, con norma al cuadrado `2 + 2*t**2`, mínima en `t=0`. La norma mínima es una regla matemática de elección; no demuestra efectos reales iguales. Con observaciones ruidosas, pinv elige la solución de menor norma entre las que minimizan el error de mínimos cuadrados.
+
+**Intento:** construye otro vector de coeficientes con las mismas predicciones, compara normas y explica qué sigue sin conocerse. Sigue el bloque esencial continuo del cuaderno para la retroalimentación y comprobación.
+
+**Explora después:** la teoría y los ejercicios de vivienda de abajo, incluidas las cuatro identidades de Moore–Penrose, amplían la actividad en vivo.
 
 ### La teoría, en tres pasos
 
@@ -519,6 +574,11 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 ## 08 · Recursión con matrices y vectores (10 min — demo)
 
+**Practica hoy:** {{< var sections.s08.practice_es >}}
+
+**Explora después:** {{< var sections.s08.explore_es >}}
+
+
 <span data-language-key="08-recursion-with-matrices-and-vectors-10-min-demo"></span>
 
 **Recursión** significa definir algo en función de sí mismo. Con matrices esto se convierte en: aplicar la misma matriz una y otra vez. Tres ejemplos, cada uno más útil que el anterior.
@@ -577,6 +637,11 @@ for t in range(6):
 ```
 
 ## 09 · Factorizaciones matriciales: cuál elegir y qué cuesta (Bloque 5, 15 min) {#sec-09-factorizaciones-matriciales}
+
+**Practica hoy:** {{< var sections.s09.practice_es >}}
+
+**Explora después:** {{< var sections.s09.explore_es >}}
+
 
 <span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-15-min"></span>
 
@@ -665,6 +730,11 @@ k = int(np.argmax(db >= target_db))
 
 ## 10 · Descomposición de Tucker con datos reales (Bloque 6, 15 min)
 
+**Practica hoy:** {{< var sections.s10.practice_es >}}
+
+**Explora después:** {{< var sections.s10.explore_es >}}
+
+
 <span data-language-key="10-tucker-decomposition-on-real-data-block-6-15-min"></span>
 
 ### La teoría
@@ -740,6 +810,11 @@ Fíjate en las cadenas de einsum: `'ijk,ia,jb,kc->abc'` contrae tres ejes en una
 ---
 
 ## 11 · Factorizaciones tensoriales: cuál elegir y qué cuesta (Bloque 7, 15 min) {#sec-11-factorizaciones-tensoriales}
+
+**Practica hoy:** {{< var sections.s11.practice_es >}}
+
+**Explora después:** {{< var sections.s11.explore_es >}}
+
 
 <span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-15-min"></span>
 
@@ -842,6 +917,11 @@ Para el tratamiento interactivo completo —selector de método, tiempos medidos
 ---
 
 ## 12 · Cierre (5 min)
+
+**Practica hoy:** {{< var sections.s12.practice_es >}}
+
+**Explora después:** {{< var sections.s12.explore_es >}}
+
 
 <span data-language-key="12-wrap-up-5-min"></span>
 
