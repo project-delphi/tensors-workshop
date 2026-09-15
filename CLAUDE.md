@@ -119,10 +119,13 @@ What each one draws, and from where:
   showed was scene after scene opening on the identical `np.arange(60)` cube in
   a different accent: the video pipeline, the colour images and the Tucker
   unfoldings were all the same picture. Two slots went to the move and none to
-  the material. Three is the count that makes room for the material, and
-  `gen_cube_gifs.check_table()` prints which notebooks are still under it —
-  **nothing in CI checks the count**, because check 1 tests ownership and never
-  a number.
+  the material. Three is the count that makes room for it, and `main()` prints
+  which notebooks are still short at the end of every run — `check_table()` is
+  a different guard, for a duplicate stem and for a stem filed under the wrong
+  notebook. **Nothing enforces the count**, in CI or here: check 1 tests
+  ownership and never a number, and a generator that refused to draw until
+  every notebook reached three would be useless for the rollout that gets them
+  there.
 
   Frames run at `duration=4050`, raised from 2700 for the scenes that now draw
   two piles side by side. And `render` overrides `write_gif`'s palette default
@@ -177,23 +180,28 @@ What each one draws, and from where:
   which axis, which index, which operand — because that is a claim one tint
   cannot carry. `INDEX` holds those hues, from the Okabe–Ito colour-blind-safe
   set, and `lit_tint` on `planes` is how a highlight takes one. Today that is
-  the two einsum scenes (`i` blue, `j` orange, `k` green, so "k is gone after
+  the three einsum scenes (`i` blue, `j` orange, `k` green, so "k is gone after
   the arrow" is something a reader watches rather than reads), `cube-00-axes`
   and `cube-10-unfold`, which agree with each other on what colour each axis
-  is. Colour is never the only carrier: every index is written out as a letter
+  is. `cube-06-matmul` is the third of those, and the one that showed why
+  `render` had to stop reading its palette off frame 0: it is drawn entirely in
+  one accent, so its green `lit_tint` had no green anywhere in frame 0 to
+  quantize against and rendered grey. Colour is never the only carrier: every index is written out as a letter
   and every caption still says which axis in words, for the reason the Spanish
   box says `ESPAÑOL` rather than just being grey.
 
-  Frames run at `duration=2700`, one global value in `render` rather than a
-  per-scene one. A frame here is a whole labelled picture with a caption and a
-  shape line, not a tween, and the stepper cell in each notebook is the other
-  half of that answer — the GIF sets a pace for a reader watching, the stepper
-  hands over frames for a reader studying. The number has been raised twice,
-  900 → 1800 → 2700, each time by watching one rather than by reasoning about
-  it: a reader meeting a frame for the first time has to find the caption, find
-  the pile it names, and then look for what moved, which is three passes and
-  not one. Raising it rewrites every cube GIF in `images/` and changes nothing
-  else — frame delay is metadata, so `MAX_KB` is not at risk.
+  The frame duration is one global value in `render` rather than a per-scene
+  one, and its number is stated once, in the bullet above. A frame here is a
+  whole labelled picture with a caption and a shape line, not a tween, and the
+  stepper cell in each notebook is the other half of that answer — the GIF sets
+  a pace for a reader watching, the stepper hands over frames for a reader
+  studying. It has been raised three times, 900 → 1800 → 2700 → 4050, each time
+  by watching one rather than by reasoning about it: a reader meeting a frame
+  for the first time has to find the caption, find the pile it names, and then
+  look for what moved, which is three passes and not one — and four once the
+  frame holds two piles side by side. Raising it rewrites every cube GIF in
+  `images/` and changes nothing else — frame delay is metadata, so `MAX_KB` is
+  not at risk.
 - `gen_slide_art.py` draws slide art from HTML and CSS, screenshotted by
   headless Chrome at the deck's own 1920×1080. It owns only the `slide-NNa`
   insertions: the thirty-one PNGs the #45 redesign left have no source and are

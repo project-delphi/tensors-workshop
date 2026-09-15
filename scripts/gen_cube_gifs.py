@@ -173,11 +173,6 @@ INDEX = {
     "j": "#e69f00",      # orange
     "k": "#009e73",      # green
     "d": "#cc79a7",      # reddish purple
-    # A batch index, sharing `d`'s hue rather than taking a fifth: no scene
-    # can use both, since `d` is a feature dimension and `b` is what a stack
-    # of them is batched along, and five hues is more than the Okabe-Ito set
-    # spares while still differing in lightness as well as in hue.
-    "b": "#cc79a7",
 }
 
 # The cube every scene starts from: np.arange(60).reshape(3, 4, 5).
@@ -882,9 +877,10 @@ def scene_00_shape(tint):
 
     def both(ax):
         # Where 33 is: [1, 2, 3] in the cube, [2, 3] in the (4, 15). The lit
-        # cell is in plane 1 of the pile, which plane 0 paints over -- so the
-        # pile is drawn with the two nearer planes hidden, the documented way
-        # out of the occlusion trap.
+        # cell is in plane 1 of the pile, which plane 0 paints over -- so
+        # plane 0 alone is hidden, the documented way out of the occlusion
+        # trap. Only the one: plane 2 is behind the cell and hiding it would
+        # cost the pile its depth for nothing.
         cube_lit = np.zeros(SHAPE, bool)
         cube_lit[1, 2, 3] = True
         front = np.zeros(SHAPE, bool)
@@ -1630,7 +1626,7 @@ def scene_06_matmul(tint):
     The other two scenes here teach the rule; this one spends it on the two
     expressions a reader will actually type. `ik,kj->ij` is the matrix product,
     and seeing it fall out of the same rule is the moment einsum stops being a
-    separate thing to learn. `bij,bjk->bik` is the one after that: a batch axis
+    separate thing to learn. `bik,bkj->bij` is the one after that: a batch axis
     is an index written on both sides of the comma *and* after the arrow, so it
     is carried rather than summed -- which is the whole of how a library
     multiplies a batch of matrices without a loop, and it joins this notebook to
@@ -1710,7 +1706,7 @@ def scene_06_matmul(tint):
         (f"out[0, 0] = {int(out[0, 0])}", "sum over k",
          "one row against one column — three products, added", pairing),
         ("einsum('ik,kj->ij', A, B)", "shape (2, 4)",
-         "k is on neither side of the arrow, so matmul is a contraction",
+         "k is on both operands, never after the arrow — so it goes",
          product),
         ("einsum('bik,bkj->bij', X, Y)", "shape (2, 2, 4)",
          "b survives the arrow — a batch axis is carried, never summed",
@@ -2557,10 +2553,13 @@ SCENES = {
 }
 
 
-# The floor, not a number. Three counts in this file went stale at once when
-# the second animation per notebook became a third -- two docstrings and a
-# comment all said twenty-eight while `SCENES` held thirty-two -- so the count
-# is checked here rather than asserted in prose nobody re-reads.
+# The floor, not a number, and deliberately **not** enforced. Three counts in
+# this file went stale at once when the second animation per notebook became a
+# third -- two docstrings and a comment all said twenty-eight while `SCENES`
+# held thirty-two -- so the number lives here rather than in prose that nobody
+# re-reads. What `main` does with it is print which notebooks are still short;
+# a hard failure would make the generator refuse to draw anything at all while
+# the rollout that satisfies it is being done.
 MIN_PER_NOTEBOOK = 3
 
 
