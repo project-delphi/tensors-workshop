@@ -266,7 +266,7 @@ class ColabParity(unittest.TestCase):
     def test_every_shipped_notebook_passes(self):
         import nbformat
         paths = sorted((ROOT / "notebooks").glob("[0-9][0-9]-*.ipynb"))
-        self.assertEqual(len(paths), 16)
+        self.assertEqual(len(paths), 17)
         with collected() as found:
             for path in paths:
                 tn.check_colab_parity(nbformat.read(path, as_version=4),

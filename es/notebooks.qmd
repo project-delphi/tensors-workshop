@@ -1,11 +1,11 @@
 ---
 title: "Cuadernos"
-subtitle: "Un cuaderno por sección, más un estudio a fondo para casa, y cada uno se ejecuta en frío en Colab"
+subtitle: "Un cuaderno por sección, más estudios a fondo para casa, y cada uno se ejecuta en frío en Colab"
 lang: es
 ---
 
-Cada sección del taller tiene su cuaderno. Uno más queda al final del día, como
-estudio a fondo para casa. Están **escritos principalmente en inglés**, y cada
+Cada sección del taller tiene su cuaderno. Cuatro más quedan al final del día, como
+estudios a fondo para casa. Están **escritos principalmente en inglés**, y cada
 encabezado lleva un resumen de una línea en español.
 
 ## Cómo están construidos
@@ -19,7 +19,7 @@ Los cuadernos 01–11 separan la sesión en vivo del estudio posterior:
 3. **Fin de la ruta esencial:** guarda tu explicación y sigue las pausas y quizzes del facilitador.
 4. **Explora después:** material de consulta, ejercicios y exploradores opcionales.
 
-El cuaderno 00 conserva el diagnóstico de entrada y la preparación previa; el 12 empieza con la comprobación de salida. Los cuadernos 13–15 son estudios para después del taller. Las soluciones siguen plegadas: ábrelas tras un intento. Cada cuaderno carga sus propios datos y se ejecuta de forma independiente.
+El cuaderno 00 conserva el diagnóstico de entrada y la preparación previa; el 12 empieza con la comprobación de salida. Los cuadernos 13–16 son estudios para después del taller. Las soluciones siguen plegadas: ábrelas tras un intento. Cada cuaderno carga sus propios datos y se ejecuta de forma independiente.
 
 ::: {.callout-important appearance="simple"}
 Los cuadernos se guardan **sin salidas y sin números de ejecución**. Cada número
@@ -45,6 +45,9 @@ ellos. El 14 y el 15 retoman donde para la sección 11: allí CP se ajusta como
 uno de cuatro métodos, llamando a la librería como caja negra a propósito; aquí
 se ajusta a mano y después se cambia qué significa «ajustar».
 
+El 16 conecta las vistas matriciales de PCA con clasificación de cobertura terrestre,
+agrupamiento y PCA tensorial, con la caverna de Platón y tres animaciones.
+
 {{< include ../_includes/notebooks-extra-es.md >}}
 
 ## Ejecutarlos fuera de Colab
@@ -68,7 +71,7 @@ uno solo se nota al ejecutar en local.
 
 `scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
 manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se
-ejecutan sin red. Los otros nueve descargan algo la primera vez que se
+ejecutan sin red. Los otros doce descargan algo la primera vez que se
 ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia,
 o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo
 dice cuál, cuaderno por cuaderno.

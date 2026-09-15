@@ -74,7 +74,7 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 # Routes that fetch remote data or run %pip. --offline skips exactly these.
 # 12 is here for the voice.wav it fetches inside its fallback run.
 NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12",
-           "14", "15"}
+           "14", "15", "16"}
 
 # Bigger than any cell's own retry budget, so a slow-but-alive remote fails
 # with the bilingual sentence the fetch cells were written to print rather than

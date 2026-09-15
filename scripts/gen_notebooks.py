@@ -98,7 +98,7 @@ MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
 ACCENTS = [
     "#0ea5e9", "#6366f1", "#0891b2", "#7c3aed", "#059669", "#d97706",
     "#db2777", "#0d9488", "#2563eb", "#c2410c", "#9333ea", "#16a34a",
-    "#e11d48", "#0284c7", "#65a30d", "#b91c1c",
+    "#e11d48", "#0284c7", "#65a30d", "#b91c1c", "#0f766e",
 ]
 
 
