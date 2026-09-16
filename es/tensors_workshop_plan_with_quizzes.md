@@ -940,7 +940,7 @@ Lo que has hecho hoy:
 - `np.linalg`: el resto del capítulo 2 — descomposición espectral, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` y `skimage.restoration`: convolución y deconvolución más allá de hoy.
 - **Los cinco ejercicios para casa**, apéndices A a E —PCA, atención, CP, Cholesky y eliminación de ruido en audio—, todos en el [cuaderno 12](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
-- **El estudio a fondo** que va más allá: [convolución y deconvolución](#apendice-f-convolucion-y-deconvolucion) (apéndice F, cuaderno 13), la tercera aparición de la idea que conecta el día de hoy, y la que la sala no llegó a ejecutar.
+- **Un estudio a fondo** que va más allá: [convolución y deconvolución](#apendice-f-convolucion-y-deconvolucion) (apéndice F, cuaderno 13), la tercera aparición de la idea que conecta el día de hoy, y la que la sala no llegó a ejecutar. Consulta el [índice de cuadernos](notebooks.qmd#para-ir-más-lejos) para ver todos los estudios a fondo para casa.
 - **[Referencias y lecturas adicionales](references.qmd)**: libros, los artículos fundacionales sobre Tucker/CP/SVD, `tensorly` y las entradas del blog, para profundizar más allá de los 210 minutos de hoy.
 
 > 🇪🇸 Ese es todo el taller. Gracias por participar.

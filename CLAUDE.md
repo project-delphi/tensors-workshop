@@ -5,17 +5,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## What this is
 
 A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
-code — the deliverables are the rendered site, sixteen Colab notebooks
-(thirteen sections plus three take-home extras), two revealjs decks and three
-Kahoot spreadsheets.
+code — the deliverables are the rendered site, Colab notebooks for the workshop
+sections and take-home extras, two revealjs decks and three Kahoot spreadsheets.
 
 ## The one rule that matters
 
 [CONTRIBUTING.md](CONTRIBUTING.md#where-to-edit) owns the contributor-facing
 editing boundaries. Keep this technical guidance consistent with it.
 
-`_variables.yml` is the single source of truth (repo coordinates, the thirteen
-sections, the extra, the three quizzes, the agenda). Three things read it:
+`_variables.yml` is the single source of truth (repo coordinates, the
+sections, extras, quizzes and agenda). Three things read it:
 `{{< var >}}`
 shortcodes in the `.qmd` pages and both decks, the two generator scripts, and
 the checker. The generator and the checker both need the running clock —
@@ -332,7 +331,7 @@ worked examples. Those two are static: they read the route, they do not run it.
 `scripts/test_notebooks.py` is what runs it. One fresh kernel per notebook
 executes the declared route and then the **paired solution** — the
 `solution`-tagged cell immediately after the activity. That extension is not
-optional decoration: fourteen of the sixteen activity cells are the student's
+optional decoration: many activity cells are the student's
 blank `# TODO` block and hold no executable code at all, so prep plus activity
 would execute the setup and then a comment. The answer is where the lesson
 runs.
@@ -396,8 +395,8 @@ imports, no absolute paths, quiet `%pip`, no hardcoded device string.
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages aligned.
 
-**`worked-mistakes.md` pairs one-to-one with the predict-first cells.** Each of
-the sixteen entries is that notebook's delimited counterexample, lifted out of
+**`worked-mistakes.md` pairs one-to-one with the predict-first cells.** Each
+entry is its notebook's delimited counterexample, lifted out of
 the widget with the `pred_` prefixes dropped, so a reader can run it without
 ipywidgets and a facilitator can put the claim on a screen. Both languages
 carry byte-identical code — prose is translated, the counterexample is what the
@@ -583,7 +582,7 @@ uv run --group execute python scripts/test_notebooks.py --offline
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
-uv run --group figures python scripts/gen_cube_gifs.py        # all sixteen
+uv run --group figures python scripts/gen_cube_gifs.py        # notebooks covered by this generator
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```

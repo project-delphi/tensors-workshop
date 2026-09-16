@@ -1,5 +1,5 @@
 ---
-title: "Sixteen mistakes worth testing"
+title: "Mistakes worth testing"
 lang: en
 ---
 
@@ -478,5 +478,50 @@ vertical coordinate separates every pair. Choose the representation with
 training validation on the actual task, then evaluate it on held-out data.
 Transfer: would standardization help this constructed example, and would that
 prove it helps every dataset?
+
+</details>
+
+
+## 17 · The right shape means the right heads
+
+<span data-language-key="17-head-identity"></span>
+
+“I can reshape directly to (B, H, S, D_k).”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+example = np.arange(24).reshape(2, 3, 4)
+correct = example.reshape(2, 3, 2, 2).transpose(0, 2, 1, 3)
+wrong = example.reshape(2, 2, 3, 2)
+assert wrong.shape == correct.shape
+assert not np.array_equal(wrong, correct)
+```
+
+Reshape groups adjacent storage; transpose moves the token and head axes. Trace a value to expose the mismatch. Transfer: when might singleton axes hide this mistake?
+
+</details>
+
+
+## 18 · Energy is the sum of singular values
+
+<span data-language-key="18-energy-and-storage"></span>
+
+“The first two singular values retain less than 95% energy.”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+spectrum_example = np.array([5., 3., 1.])
+wrong_retention = spectrum_example[:2].sum() / spectrum_example.sum()
+correct_retention = (spectrum_example[:2]**2).sum() / (spectrum_example**2).sum()
+assert wrong_retention < 0.95 <= correct_retention
+```
+
+Energy is squared amplitude. The correct ratio is 34/35, not 8/9. Transfer: why does a bright background weaken energy as a test of visual detail?
 
 </details>

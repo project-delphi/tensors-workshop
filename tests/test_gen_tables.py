@@ -46,6 +46,9 @@ class NotebookRequirements(unittest.TestCase):
     def test_archive_reader_is_standard_library(self):
         self.assertNotIn("zipfile", self.deps)
 
+    def test_future_annotations_are_not_a_package(self):
+        self.assertNotIn("__future__", self.deps)
+
     def test_every_imported_third_party_module_is_covered(self):
         # The property that matters: nothing a notebook imports is missing from
         # the environment unless the notebook installs it itself.

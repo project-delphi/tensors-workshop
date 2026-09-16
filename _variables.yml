@@ -433,13 +433,13 @@ brainstorm:
       title_es: "Sus ejes se mueven"
       gloss_en: "reshape re-reads the numbers. transpose moves the axes."
       gloss_es: "reshape relee los números. transpose mueve los ejes."
-      sections: ["04", "06"]
+      sections: ["04", "06", "17"]
     - glyph: "∏"
       title_en: "It factors"
       title_es: "Se factoriza"
       gloss_en: "Break it into simpler parts you can use."
       gloss_es: "Divídelo en partes más simples que puedas usar."
-      sections: ["07", "08", "09", "10", "11", "14", "15", "16"]
+      sections: ["07", "08", "09", "10", "11", "14", "15", "16", "18"]
 
   # The ribbon under the four cards. There are **two different claims** about
   # the workshop's connecting idea, and they name different sections. Keeping
@@ -1666,3 +1666,46 @@ extras:
       - "Evaluar características reducidas para clasificación y agrupamiento con preprocesamiento ajustado solo en entrenamiento."
       - "Ajustar un subespacio multilineal compartido conservando el eje de muestras."
       - "Distinguir PCA multilineal de recuperación de una señal tensorial y explicar sus límites."
+
+  x17:
+    n: "17"
+    slug: "multi-head-attention"
+    format_en: "hands-on deep dive"
+    format_es: "estudio práctico a fondo"
+    format_line_en: "deep dive · take-home · about 35 minutes"
+    format_line_es: "estudio a fondo · para después · unos 35 minutos"
+    title_en: "4D multi-head attention: reshape Q, K and V"
+    title_es: "Atención multicabeza 4D: reorganiza Q, K y V"
+    summary_en: "Split projected features into heads, verify strides and token identity, compute scaled dot-product attention, and compare NumPy with PyTorch."
+    summary_es: "Separar características en cabezas, verificar pasos de memoria e identidad de tokens, calcular atención escalada y comparar NumPy con PyTorch."
+    intro_en: "Follow each token from (B, S, D) to (B, H, S, D_k), then compute attention without losing track of an axis. Synthetic examples, inline tests and pausable explorers run independently on CPU."
+    intro_es: "Sigue cada token de (B, S, D) a (B, H, S, D_k) y calcula atención sin perder el significado de los ejes. Ejemplos sintéticos, pruebas integradas y exploradores con pausa funcionan de forma independiente en CPU."
+    objectives_en:
+      - "Implement split_heads and test shape, values, contiguity and memory sharing."
+      - "Compute attention scores, normalize over keys and concatenate head outputs."
+      - "Verify NumPy results against PyTorch and inspect attention interactively."
+    objectives_es:
+      - "Implementar split_heads y comprobar forma, valores, contigüidad y memoria compartida."
+      - "Calcular puntuaciones de atención, normalizar sobre claves y concatenar cabezas."
+      - "Verificar NumPy con PyTorch e inspeccionar atención de forma interactiva."
+  x18:
+    n: "18"
+    slug: "feature-compression"
+    format_en: "hands-on deep dive"
+    format_es: "estudio práctico a fondo"
+    format_line_en: "deep dive · take-home · about 40 minutes"
+    format_line_es: "estudio a fondo · para después · unos 40 minutos"
+    title_en: "Latent feature compression with SVD"
+    title_es: "Compresión de características latentes con SVD"
+    summary_en: "Compress an HWC image with truncated SVD, compare ranks and energy retention, test reconstruction against PyTorch, and distinguish matrix rank from CP rank."
+    summary_es: "Comprimir una imagen HWC con SVD truncada, comparar rangos y energía retenida, verificar la reconstrucción con PyTorch y distinguir rango matricial de rango CP."
+    intro_en: "Unfold a synthetic image into a matrix, retain its dominant patterns and reconstruct the original axes. Measure energy and factor storage separately; inspect what the numbers miss in the image."
+    intro_es: "Matriciza una imagen sintética, conserva sus patrones dominantes y reconstruye los ejes originales. Mide por separado energía y almacenamiento de factores; observa qué detalles omiten las cifras."
+    objectives_en:
+      - "Implement rank-k reconstruction of an HWC tensor using a documented unfolding."
+      - "Test the energy/error identity and find the smallest rank meeting a threshold."
+      - "Compare ranks 1, 5, 20 and 50, storage cost and a CP reconstruction."
+    objectives_es:
+      - "Implementar reconstrucción de rango k con una matricización documentada."
+      - "Comprobar la identidad energía/error y encontrar el menor rango para un umbral."
+      - "Comparar rangos 1, 5, 20 y 50, coste de almacenamiento y reconstrucción CP."

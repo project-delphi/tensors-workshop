@@ -18,5 +18,7 @@
 | 14 | `matplotlib`, `ipywidgets`, `scipy`, `pillow`, `tensorly`† | yes — the monkey BMI recordings (5 MB, once) |
 | 15 | `matplotlib`, `ipywidgets`, `pandas`, `scipy`, `pillow`, `pyttb`†, `torch`† | yes — Chicago crime reports (3 MB, once) |
 | 16 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `pillow` | yes — UCI Landsat satellite patches (101 KB archive, cached) |
+| 17 | `matplotlib`, `ipywidgets`, `torch` | no |
+| 18 | `matplotlib`, `ipywidgets`, `torch` | no |
 
 : Colab already has every one of these installed. {tbl-colwidths="[12,58,30]"}

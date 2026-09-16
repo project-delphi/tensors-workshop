@@ -5,3 +5,5 @@
 | 14 | Factorización CP y la vista de rango 1 | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) |
 | 15 | CP generalizado para conteos y datos binarios | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/15-generalized-cp.ipynb) |
 | 16 | PCA desde la perspectiva de los tensores | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/16-pca-from-tensors.ipynb) |
+| 17 | Atención multicabeza 4D: reorganiza Q, K y V | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) |
+| 18 | Compresión de características latentes con SVD | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/18-feature-compression.ipynb) |

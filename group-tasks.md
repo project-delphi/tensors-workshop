@@ -347,6 +347,30 @@ multilinear PCA. Decide which representation to carry into a new-scene study.
 **Share:** A recommendation with one measured result, the score shape, and a
 plan for holding out a new scene. Explain what the cave's shadow cannot prove.
 
+## 17 · Does the right shape contain the right tokens?
+
+<span data-language-key="17-head-identity"></span>
+
+**When:** After the tests in [Notebook 17](notebooks/17-multi-head-attention.ipynb). Follow-up only.
+**Time:** 8 minutes.
+
+Compare direct reshape with reshape followed by transpose. Trace one token's
+features through each and explain why a shape-only test misses the error.
+
+**Share:** One mismatched value, its four indices and the corrected permutation.
+
+## 18 · What did the energy threshold preserve?
+
+<span data-language-key="18-energy-and-storage"></span>
+
+**When:** After the rank gallery in [Notebook 18](notebooks/18-feature-compression.ipynb). Follow-up only.
+**Time:** 8 minutes.
+
+Choose a rank using the image, energy curve and factor storage ratio. Explain
+why the smallest rank reaching 95% energy might still erase an important detail.
+
+**Share:** Your chosen rank, retained energy, factor count and one limitation.
+
 ## Facilitator prompts
 
 <span data-language-key="facilitator-prompts"></span>

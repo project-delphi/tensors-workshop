@@ -177,7 +177,7 @@ jobs:
   # defends and parity with it is the point.
   notebooks:
     runs-on: ubuntu-latest
-    # Fourteen notebooks at a 300s cell ceiling, plus pip and dataset fetches.
+    # Each notebook has a 300s cell ceiling, plus pip and dataset fetches.
     # A healthy run is minutes; without this a stalled kernel would sit on a
     # runner until GitHub's six-hour default killed it.
     timeout-minutes: 45

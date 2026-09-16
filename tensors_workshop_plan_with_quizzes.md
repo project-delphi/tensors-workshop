@@ -923,7 +923,7 @@ What you did today:
 - `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
 - **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 12](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
-- **The one deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run.
+- **A deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run. See the [notebook index](notebooks.qmd#going-further) for all take-home deep dives.
 - **[References and further reading](references.qmd)** — books, the seminal Tucker/CP/SVD papers, `tensorly` and the blog posts, for going deeper than today's 210 minutes.
 
 ---

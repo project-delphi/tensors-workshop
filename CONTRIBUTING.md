@@ -5,6 +5,9 @@ local branch guard with `git config core.hooksPath .githooks`.
 
 ## Where to edit
 
+Keep notebook inventories in `sections:` and `extras:` in `_variables.yml`.
+Use the generated tables when listing notebooks; avoid repeating totals in prose.
+
 | Change | Edit here | Regenerate with |
 |---|---|---|
 | Shared titles, practice/explore outcomes, objectives, durations, URLs and quiz metadata | `_variables.yml` | `scripts/gen_tables.py` and `scripts/gen_notebooks.py` |
@@ -74,6 +77,8 @@ Trabaja en una rama y abre un pull request. Edita directamente las celdas del
 cuerpo de cada cuaderno, incluida la preparación; solo la primera y la última
 celda se generan. Los datos compartidos y los textos de esas dos celdas viven
 en `_variables.yml`. Mantén alineadas las versiones en inglés y español.
+Usa las tablas generadas desde `sections:` y `extras:` en `_variables.yml`
+para listar los cuadernos; evita repetir sus totales en el texto.
 
 Coloca las funciones de comprobación antes de la actividad esencial, con la
 etiqueta `workshop-support` y sus IDs en `workshop.support`. Reciben resultados

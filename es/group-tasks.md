@@ -356,6 +356,30 @@ muestra. Comparen PCA denso y multilineal para un estudio con otra escena.
 puntuaciones y un plan para reservar otra escena. Expliquen qué no demuestra
 la sombra de la caverna.
 
+## 17 · ¿La forma correcta contiene los tokens correctos?
+
+<span data-language-key="17-head-identity"></span>
+
+**Cuándo:** Después de las pruebas del [Cuaderno 17](../notebooks/17-multi-head-attention.ipynb). Solo seguimiento.
+**Tiempo:** 8 minutos.
+
+Comparen reshape directo con reshape seguido de transpose. Sigan las
+características de un token y expliquen por qué comprobar solo la forma no basta.
+
+**Compartan:** Un valor incorrecto, sus cuatro índices y la permutación correcta.
+
+## 18 · ¿Qué conservó el umbral de energía?
+
+<span data-language-key="18-energy-and-storage"></span>
+
+**Cuándo:** Después de la galería del [Cuaderno 18](../notebooks/18-feature-compression.ipynb). Solo seguimiento.
+**Tiempo:** 8 minutos.
+
+Elijan un rango usando la imagen, la curva de energía y el coste de los factores.
+Expliquen por qué conservar el 95% de energía puede borrar un detalle importante.
+
+**Compartan:** El rango, la energía retenida, el número de factores escalares y una limitación.
+
 ## Preguntas para facilitar la discusión
 
 <span data-language-key="facilitator-prompts"></span>
