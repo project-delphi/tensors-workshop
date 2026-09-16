@@ -266,7 +266,12 @@ class ColabParity(unittest.TestCase):
     def test_every_shipped_notebook_passes(self):
         import nbformat
         paths = sorted((ROOT / "notebooks").glob("[0-9][0-9]-*.ipynb"))
-        self.assertEqual(len(paths), 17)
+        import yaml
+        registry = yaml.safe_load((ROOT / "_variables.yml").read_text())
+        declared = [entry for group in ("sections", "extras")
+                    for entry in registry[group].values()]
+        self.assertEqual({p.name for p in paths},
+                         {f"{entry['n']}-{entry['slug']}.ipynb" for entry in declared})
         with collected() as found:
             for path in paths:
                 tn.check_colab_parity(nbformat.read(path, as_version=4),

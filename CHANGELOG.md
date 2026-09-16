@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-15
+
+- Added take-home labs 17 and 18 for 4D multi-head attention and SVD feature compression, with NumPy/PyTorch checks, synthetic data, inline tests, rank comparisons, pausable widgets and local GIF exports.
+
+- Removed stale notebook and deep-dive totals from English and Spanish documentation; the generated tables remain the notebook inventory.
+
 ## PCA from a tensors perspective
 
 - Added take-home notebook 16: Plato’s cave, three animations, covariance and correlation PCA, eigendecomposition and SVD on real Landsat patches.

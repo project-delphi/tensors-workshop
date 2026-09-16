@@ -118,11 +118,8 @@ The 🎯 quizzes run after sections 04, 07 and 10. The thirteen sections come to
 
 ## Going further
 
-One **deep dive** ships with the workshop without being part of it. It is
-take-home material: no slides, no Kahoot, and no place on the 210-minute clock,
-which does not move to make room for it. Convolution and deconvolution moved
-here when matrix and tensor factorizations became sections 09 and 11 — the
-through-line still names it, and section 12 still points at it.
+The **deep dives** listed below are take-home material: no slides, no Kahoot,
+and no minutes on the workshop clock. Choose one to explore after the session.
 
 <!-- BEGIN extras-en -->
 | # | Deep dive | Colab |
@@ -131,6 +128,8 @@ through-line still names it, and section 12 still points at it.
 | 14 | CP factorization and the rank-1 view | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) |
 | 15 | Generalized CP for counts and binary data | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/15-generalized-cp.ipynb) |
 | 16 | PCA from a tensors perspective | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/16-pca-from-tensors.ipynb) |
+| 17 | 4D multi-head attention: reshape Q, K and V | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) |
+| 18 | Latent feature compression with SVD | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/18-feature-compression.ipynb) |
 <!-- END extras-en -->
 
 ## Run it locally
@@ -154,8 +153,8 @@ notebooks import, so it cannot drift from the code it installs for.
 
 ### Regenerating the derived files
 
-`_variables.yml` owns shared facts: repo coordinates, the thirteen sections,
-one take-home extra, and three quizzes. **Edit notebook body cells directly**,
+`_variables.yml` owns shared facts: repo coordinates, sections, take-home extras,
+and quizzes. **Edit notebook body cells directly**,
 including Setup, exercises and solutions. The notebook normalizer refreshes
 only the generated header and footer and clears outputs and transient metadata.
 See [Contributing](CONTRIBUTING.md) for the full ownership guide.
@@ -188,7 +187,7 @@ index.qmd  es/index.qmd landing pages, EN and ES
 notebooks.qmd  es/notebooks.qmd   the notebook index, EN and ES
 kahoot.qmd  es/kahoot.qmd   the three quizzes, EN and ES
 slides/en/  slides/es/  the two revealjs decks + shared slides.scss
-notebooks/              14 Colab notebooks — 13 sections + 1 take-home extra
+notebooks/              Colab notebooks — workshop sections + take-home deep dives
 group-tasks.md  es/group-tasks.md   open-ended group activities, EN and ES
 kahoot/                 3 .xlsx quiz import files
 scripts/                generators and the link checker
@@ -321,12 +320,9 @@ de 5 minutos otros 15: en total, 210.
 
 ## Para seguir
 
-Un **estudio a fondo** acompaña al taller sin formar parte de él. Es material
-para después: sin diapositivas, sin Kahoot y sin sitio en el reloj de 210
-minutos, que no se mueve para hacerle hueco. La convolución y la deconvolución
-pasaron aquí cuando las factorizaciones matriciales y tensoriales se
-convirtieron en las secciones 09 y 11. El hilo conductor las sigue nombrando, y
-la sección 12 sigue señalándolas.
+Los **estudios a fondo** de la tabla siguiente son material para casa: sin
+diapositivas, sin Kahoot y sin minutos en el reloj del taller. Elige uno para
+explorar después de la sesión.
 
 <!-- BEGIN extras-es -->
 | # | Estudio a fondo | Colab |
@@ -335,6 +331,8 @@ la sección 12 sigue señalándolas.
 | 14 | Factorización CP y la vista de rango 1 | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) |
 | 15 | CP generalizado para conteos y datos binarios | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/15-generalized-cp.ipynb) |
 | 16 | PCA desde la perspectiva de los tensores | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/16-pca-from-tensors.ipynb) |
+| 17 | Atención multicabeza 4D: reorganiza Q, K y V | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) |
+| 18 | Compresión de características latentes con SVD | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/18-feature-compression.ipynb) |
 <!-- END extras-es -->
 
 ## Ejecutarlo en local

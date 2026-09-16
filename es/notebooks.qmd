@@ -4,7 +4,7 @@ subtitle: "Un cuaderno por sección, más estudios a fondo para casa, y cada uno
 lang: es
 ---
 
-Cada sección del taller tiene su cuaderno. Cuatro más quedan al final del día, como
+Cada sección del taller tiene su cuaderno. Otros cuadernos ofrecen
 estudios a fondo para casa. Están **escritos principalmente en inglés**, y cada
 encabezado lleva un resumen de una línea en español.
 
@@ -19,7 +19,7 @@ Los cuadernos 01–11 separan la sesión en vivo del estudio posterior:
 3. **Fin de la ruta esencial:** guarda tu explicación y sigue las pausas y quizzes del facilitador.
 4. **Explora después:** material de consulta, ejercicios y exploradores opcionales.
 
-El cuaderno 00 conserva el diagnóstico de entrada y la preparación previa; el 12 empieza con la comprobación de salida. Los cuadernos 13–16 son estudios para después del taller. Las soluciones siguen plegadas: ábrelas tras un intento. Cada cuaderno carga sus propios datos y se ejecuta de forma independiente.
+El cuaderno 00 conserva el diagnóstico de entrada y la preparación previa; el 12 empieza con la comprobación de salida. Los estudios a fondo aparecen más abajo, en **Para ir más lejos**. Las soluciones siguen plegadas: ábrelas tras un intento. Cada cuaderno carga sus propios datos y se ejecuta de forma independiente.
 
 ::: {.callout-important appearance="simple"}
 Los cuadernos se guardan **sin salidas y sin números de ejecución**. Cada número
@@ -64,17 +64,14 @@ uv run --group notebooks jupyter lab
 
 El grupo `notebooks` está declarado en `pyproject.toml`, y se deriva de los
 propios `import` de los cuadernos en lugar de escribirse a mano junto a ellos.
-`matplotlib` e `ipywidgets` están en él porque todos los cuadernos dibujan algo
-y todos construyen widgets: los trece con deslizadores, y el 00, cuyo único
-widget es su celda de predicción. Los dos vienen con Colab, así que si falta
+`matplotlib` e `ipywidgets` están en él porque los cuadernos usan gráficas
+y widgets interactivos. Los dos vienen con Colab, así que si falta
 uno solo se nota al ejecutar en local.
 
 `scikit-learn` y `scikit-image` traen consigo los datos de tumores, los dígitos
-manuscritos y las fotografías. Por eso los cuadernos 01, 03, 04, 06 y 13 se
-ejecutan sin red. Los otros doce descargan algo la primera vez que se
-ejecutan: un CSV desde GitHub, el clip de vídeo de la tormenta desde Wikimedia,
-o la grabación de voz para el ejercicio E del cuaderno 12. La tabla de abajo
-dice cuál, cuaderno por cuaderno.
+manuscritos y las fotografías. Algunos cuadernos usan solo datos incluidos;
+otros descargan datos o instalan paquetes. La tabla generada de abajo indica
+los requisitos de red de cada cuaderno.
 
 ## Qué necesita cada cuaderno
 

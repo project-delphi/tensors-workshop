@@ -30,7 +30,7 @@ Los tres **enlaces de entrada de abajo siguen apuntando a `kahoot.it`**. Eso
 funciona: el alumnado introduce ahí el PIN de tu pantalla. Cuando cada
 cuestionario exista, pega su URL de entrada en el campo `url:` de
 `_variables.yml` y vuelve a renderizar. Cada enlace de este sitio, en ambas
-barajas y en los catorce cuadernos, se lee de ese archivo.
+barajas y en los cuadernos, se lee de ese archivo.
 :::
 
 ## Cuestionario 1 — {{< var kahoot.q1.title_es >}} {#quiz-1}

@@ -11,7 +11,7 @@ RELEASE_CHECKLIST.md used to hand to a human.
 
 WHAT RUNS, AND WHY IT IS NOT JUST THE ROUTE
 -------------------------------------------
-Twelve of the fourteen core-activity cells hold no executable code: they are
+Many core-activity cells hold no executable code: they are
 the student's blank `# TODO n / TAREA n` block. Notebooks 00 and 12 declare an
 empty `prep` and a markdown activity -- deliberately, because neither needs
 code live. Only notebook 10's activity is real code. So prep + activity would
@@ -26,7 +26,7 @@ Feedback helpers are called by the paired solutions; focused unit tests also
 exercise plausible wrong learner results. The activity remains a blank TODO
 where the lesson expects the learner to write code.
 
-All fourteen of those sets are self-contained; none needs an intervening cell.
+Those run sets are self-contained; none needs an intervening cell.
 Notebooks whose route holds no executable code at all fall back to running
 every code cell in document order, solutions included.
 
@@ -721,8 +721,8 @@ def main(argv: list[str] | None = None) -> int:
 
         # Static, so it needs no kernel and no network. It runs here rather
         # than inside execute() because --offline skips execute() wholesale for
-        # the nine network notebooks -- and an offline run that linted five of
-        # fourteen while reporting "executed cleanly" is worse than no lint.
+        # notebooks marked as needing the network. Static checks must still
+        # cover them when their execution is skipped.
         try:
             import nbformat
             check_colab_parity(nbformat.read(path, as_version=4), path.name)

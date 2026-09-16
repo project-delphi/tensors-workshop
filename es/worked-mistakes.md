@@ -1,5 +1,5 @@
 ---
-title: "Dieciséis errores que vale la pena probar"
+title: "Errores que vale la pena probar"
 lang: es
 ---
 
@@ -485,5 +485,50 @@ representación mediante validación de entrenamiento para la tarea concreta y
 evalúala después con datos reservados.
 Transferencia: ¿ayudaría estandarizar este ejemplo y demostraría eso que ayuda
 en cualquier conjunto de datos?
+
+</details>
+
+
+## 17 · La forma correcta implica cabezas correctas
+
+<span data-language-key="17-head-identity"></span>
+
+«Puedo aplicar reshape directamente a (B, H, S, D_k)».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+example = np.arange(24).reshape(2, 3, 4)
+correct = example.reshape(2, 3, 2, 2).transpose(0, 2, 1, 3)
+wrong = example.reshape(2, 2, 3, 2)
+assert wrong.shape == correct.shape
+assert not np.array_equal(wrong, correct)
+```
+
+Reshape agrupa memoria consecutiva; transpose mueve los ejes de tokens y cabezas. Sigue un valor para revelar el error. Transferencia: ¿cuándo podrían los ejes de tamaño uno ocultarlo?
+
+</details>
+
+
+## 18 · La energía es la suma de valores singulares
+
+<span data-language-key="18-energy-and-storage"></span>
+
+«Los dos primeros valores singulares retienen menos del 95% de energía».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+spectrum_example = np.array([5., 3., 1.])
+wrong_retention = spectrum_example[:2].sum() / spectrum_example.sum()
+correct_retention = (spectrum_example[:2]**2).sum() / (spectrum_example**2).sum()
+assert wrong_retention < 0.95 <= correct_retention
+```
+
+La energía es amplitud al cuadrado. La proporción correcta es 34/35, no 8/9. Transferencia: ¿por qué un fondo brillante debilita la energía como prueba del detalle visual?
 
 </details>

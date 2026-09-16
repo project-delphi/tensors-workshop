@@ -3,8 +3,8 @@ title: "Notebooks"
 subtitle: "One notebook per section, plus take-home deep dives, each runnable cold in Colab"
 ---
 
-Every section of the workshop has a notebook. Four more sit past the end of the
-day, as take-home deep dives. They are **English-primary**, and every heading
+Every section of the workshop has a notebook. Additional notebooks offer
+take-home deep dives. They are **English-primary**, and every heading
 carries a one-line Spanish summary — *cada encabezado lleva un resumen en
 español.*
 
@@ -19,7 +19,7 @@ Notebooks 01–11 separate the live session from later study:
 3. **Core complete:** keep your explanation and follow the facilitator’s quiz and break schedule.
 4. **Explore later:** optional reference material, exercises, and explorers.
 
-Notebook 00 keeps the entry check and pre-work setup; 12 starts with the exit check. Notebooks 13–16 are take-home deep dives. Solutions remain folded: open them after an attempt. Each notebook loads its own data and runs independently.
+Notebook 00 keeps the entry check and pre-work setup; 12 starts with the exit check. The deep dives are listed under **Going further** below. Solutions remain folded: open them after an attempt. Each notebook loads its own data and runs independently.
 
 ::: {.callout-important appearance="simple"}
 The notebooks are committed with **no outputs and no execution counts**. Every
@@ -64,16 +64,13 @@ uv run --group notebooks jupyter lab
 
 The `notebooks` group is declared in `pyproject.toml`, and it is read off the
 notebooks' own imports rather than written down beside them. `matplotlib` and
-`ipywidgets` are in it because every notebook plots, and every one now builds
-widgets — the thirteen that carry sliders, and 00, whose only widget is its
-predict-first cell. Both ship with Colab, so a missing one only shows up when
-you run locally.
+`ipywidgets` are in it because the notebooks use plots and interactive widgets.
+Both ship with Colab, so a missing one only shows up when you run locally.
 
 `scikit-learn` and `scikit-image` ship the tumour data, the handwritten digits
-and the photographs. So notebooks 01, 03, 04, 06 and 13 run with no network at
-all. The other twelve download something the first time they run: a CSV from
-GitHub, the storm video clip from Wikimedia, or the voice recording for
-notebook 12's take-home E. The table below says which, notebook by notebook.
+and the photographs. Some notebooks use only bundled data; others download
+data or install packages. The generated table below lists each notebook's
+network requirements.
 
 ## What each notebook needs
 

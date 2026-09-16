@@ -194,7 +194,7 @@ DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn",
 DEP_FLOOR = {
     "numpy": "1.26", "matplotlib": "3.8", "ipywidgets": "8.1",
     "pandas": "2.1", "scikit-learn": "1.4", "scikit-image": "0.22",
-    "scipy": "1.11", "jupyterlab": "4.1", "pillow": "10.2",
+    "scipy": "1.11", "jupyterlab": "4.1", "pillow": "10.2", "torch": "2.2",
 }
 
 # NumPy is in every notebook and DEP_SKIP drops it from the table (whose column
@@ -216,7 +216,7 @@ DEP_SKIP = {
     # produced a `notebooks` group that no longer installs, which is how it
     # was found. Any stdlib name that a squatted distribution shares is worth
     # more care than the rest of this list.
-    "html",
+    "html", "__future__",
 }
 
 IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)
