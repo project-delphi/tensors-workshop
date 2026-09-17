@@ -16,7 +16,8 @@ quarto preview slides/es/index.qmd     # live reload while editing
 ```
 
 No Python or Jupyter is needed: `execute: enabled: false` means Quarto never
-runs code. Most slides use rendered PNGs under `en|es/images/slides-final/`.
+runs code. Most slides use rendered images under `en|es/images/slides-final/`:
+WebP, since the same art as PNG weighed 94 MB.
 The agenda and the three computing slides before section 02 use editable
 Quarto content. The computing slides cover NumPy memory, hardware acceleration,
 and BLAS/LAPACK plus ML frameworks, using a shared-buffer example, an architecture
@@ -29,7 +30,7 @@ The NumPy example shows expected output in comments, so it can be read without
 execution. **Nothing checks that a number shown in slide art still matches the
 notebook it came from**. When a notebook's output changes, redraw its slide art.
 
-The thirty-one PNGs numbered `slide-01` to `slide-31` were drawn by hand in a
+The thirty-one images numbered `slide-01` to `slide-31` were drawn by hand in a
 tool that is not in this repository, so redrawing one means redrawing it there.
 Anything added since — the `slide-NNa` insertions — has a source:
 [`scripts/gen_slide_art.py`](../scripts/gen_slide_art.py), which holds the copy
@@ -93,8 +94,8 @@ stay in English** in both decks.
    uv run --group site python scripts/gen_notebooks.py
    ```
 3. Draw the section's slide art, save it as the next
-   `en|es/images/slides-final/slide-NN.png`, and add
-   `## {#sec-NN-slug background-image="images/slides-final/slide-NN.png" ...}`
+   `en|es/images/slides-final/slide-NN.webp`, and add
+   `## {#sec-NN-slug background-image="images/slides-final/slide-NN.webp" ...}`
    with its `.sec-part` marker, its `h1.sr-only` heading, its `sr-only`
    summary and its `.colab-tab` link to **both** decks.
 4. `quarto render && uv run --group site python scripts/check_links.py`
@@ -184,8 +185,8 @@ section's.
 | 30 | · | 12 | One idea connects sections 07, 10 and take-home 13 |
 | **31a** | `sec-12-wrap-up-and-take-homes` | 12 · take-home 13 | Wrap-up and take-homes |
 
-**Unused art.** `slide-25.png` and `slide-26.png` (the old convolution slides)
-and `slide-31.png` (the old wrap-up, which read `11 ·`) are still in the
+**Unused art.** `slide-25.webp` and `slide-26.webp` (the old convolution slides)
+and `slide-31.webp` (the old wrap-up, which read `11 ·`) are still in the
 repository and referenced by nothing. They are kept because they cannot be
 regenerated: the tool that drew them is not here.
 
