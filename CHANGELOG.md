@@ -1,8 +1,15 @@
 # Changelog
 
+## 2026-09-17
+
+- Added a bilingual broadcasting simulator for section 03: two shapes lined up from the right, the padding NumPy adds made visible, and every axis of size 1 stretched out in dashed cells that say what they are — repeats in the picture, one copy in the buffer. Presets are the workshop's own cases, including the `(4,)` against `(4, 1)` trap from the section 03 checkpoint. Every verdict and result shape was checked against `np.broadcast_shapes`.
+- The layout visualizer's 3-D renderer now runs. It never had: it asked for a three.js UMD build deleted at r160, so the request 404'd and every reader got the isometric canvas under a message blaming their WebGL. three.js is vendored in the repo now, and the browser check asserts it loaded. Fixing it exposed three bugs in code nobody had executed — a camera that clipped any shape past the default and rendered an 8×8×8×8 tensor as nothing at all, a material allocated per element per frame, and four leaked arrow materials per render.
+- The visualizer's stage takes the keyboard, a phone can scroll past it, pinch-to-zoom works where the caption had always promised it, and the panel prints NumPy and PyTorch you can run instead of pseudo-code — which also settles which of its stride columns is bytes and which is elements.
+- Moved the agent guidance to `AGENTS.md`; `CLAUDE.md` now points there.
+
 ## 2026-09-16
 
-- Published a bilingual layout visualizer for section 04: a 4D tensor you can rotate, with live strides in NumPy bytes and PyTorch elements, C-contiguous / F-contiguous / channels-last, and a canvas fallback when WebGL is unavailable. Cell fill is the fastest-varying axis (Okabe–Ito, same hue on the arrows, sliders and formula); lightness runs along that axis so a layout change recolors the direction the numbers run.
+- Published a bilingual layout visualizer for section 04: a 4D tensor you can rotate, with live strides in NumPy bytes and PyTorch elements, C-contiguous / F-contiguous / channels-last, and an isometric canvas fallback. (The fallback was in fact the only thing that rendered, for the reason corrected on 2026-09-17.) Cell fill is the fastest-varying axis (Okabe–Ito, same hue on the arrows, sliders and formula); lightness runs along that axis so a layout change recolors the direction the numbers run.
 - Aligned Kahoot 3's coverage note and the cutting-order copy with extra 13 (Appendix F), and corrected the Kahoot README's duration from 195 to 210 minutes.
 - The handbook video-stack GIF and notebook 16's PCA animations now loop continuously, matching the cube GIFs.
 

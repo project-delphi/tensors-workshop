@@ -190,7 +190,7 @@ slides/en/  slides/es/  the two revealjs decks + shared slides.scss
 notebooks/              Colab notebooks — workshop sections + take-home deep dives
 group-tasks.md  es/group-tasks.md   open-ended group activities, EN and ES
 kahoot/                 3 .xlsx quiz import files
-interactive/            standalone layout visualizer (copied into docs/)
+interactive/            standalone widgets + vendored three.js (copied into docs/)
 scripts/                generators and the link checker
 facilitator-guide.md    live teaching run sheet (Spanish copy in es/)
 assessments.md          entry/exit checks and rubric (also in es/)

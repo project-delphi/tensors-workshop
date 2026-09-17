@@ -194,15 +194,18 @@ def check_links() -> None:
         return
 
     # Only when this is the real docs/: unit tests point DOCS at a temp tree
-    # that has no reason to carry the visualizer. The file is a resource, not
-    # a render target, so dropping `interactive/**` from `_quarto.yml` would
-    # otherwise 404 every handbook and notebook link with no other symptom.
-    viz = REPO.get("visualizer")
-    if viz and DOCS.resolve() == (ROOT / "docs").resolve():
-        if not (ROOT / viz).exists():
-            fail(f"{viz} is missing")
-        elif not (DOCS / viz).exists():
-            fail(f"docs/{viz} is missing — add interactive/** to resources:")
+    # that has no reason to carry the widgets. They are resources, not render
+    # targets, so dropping `interactive/**` from `_quarto.yml` would otherwise
+    # 404 every handbook and notebook link with no other symptom. The vendored
+    # three.js is in the list for a reason no other check covers: the
+    # visualizer imports it from inside a module script, so it is not a `src`
+    # anywhere for the link harvest below to find.
+    if DOCS.resolve() == (ROOT / "docs").resolve():
+        for widget in REPO.get("widgets", []):
+            if not (ROOT / widget).exists():
+                fail(f"{widget} is missing")
+            elif not (DOCS / widget).exists():
+                fail(f"docs/{widget} is missing — add interactive/** to resources:")
 
     harvested = {p: harvest(p) for p in pages}
     ids_by_page = {p: h.ids for p, h in harvested.items()}

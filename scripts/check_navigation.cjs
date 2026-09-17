@@ -99,22 +99,46 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
         }
       }
 
-      // The stride visualizer is a resource, not a Quarto page, so it has no
-      // navbar. Three.js is on a CDN and this check aborts off-origin
-      // requests, which is the designed fallback: the isometric canvas.
-      console.log('Checking tensor visualizer');
-      for (const lang of ['en', 'es']) {
-        await page.goto(`${origin}${prefix}interactive/tensor-visualizer.html?lang=${lang}`);
-        assert.equal(await page.locator('html').getAttribute('lang'), lang);
-        await page.waitForSelector('#stage canvas');
-        const expected = lang === 'en' ? 'Tensor layout and strides'
-          : 'Disposición en memoria y strides';
-        assert.equal(await page.locator('#title').innerText(), expected);
-        for (const width of [1440, 390]) {
-          await page.setViewportSize({width, height: 1000});
-          const fits = await page.evaluate(() =>
-            document.documentElement.scrollWidth <= innerWidth + 1);
-          assert(fits, `visualizer ${lang}: horizontal overflow at ${width}`);
+      // The two widgets are resources, not Quarto pages, so neither has a
+      // navbar and neither is reachable by clicking. Three.js is vendored, so
+      // it is same-origin and this check -- which aborts every off-origin
+      // request -- can finally load it. That is what `window.THREE` asserts.
+      // The render mode is deliberately not asserted: whether headless
+      // Chromium gives us WebGL is not something to hang CI on, and the
+      // isometric canvas is a designed fallback, not a failure.
+      const widgets = [
+        {file: 'tensor-visualizer', en: 'Tensor layout and strides',
+         es: 'Disposición en memoria y strides', three: true},
+        {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
+         es: 'Broadcasting, paso a paso', three: false}
+      ];
+      for (const widget of widgets) {
+        console.log(`Checking ${widget.file}`);
+        for (const lang of ['en', 'es']) {
+          const where = `${widget.file} ${lang}`;
+          await page.goto(
+            `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
+          assert.equal(await page.locator('html').getAttribute('lang'), lang);
+          assert.equal(await page.locator('#title').innerText(), widget[lang]);
+          if (widget.three) {
+            // `attached`, not `visible`: once three.js loads, the isometric
+            // fallback canvas is the one that gets display:none, and it is
+            // also the first match.
+            await page.waitForSelector('#stage canvas', {state: 'attached'});
+            await page.waitForFunction(() => window.THREE !== undefined,
+              null, {timeout: 10000});
+            assert.equal(await page.evaluate(() => window.THREE.REVISION), '169',
+              `${where}: vendored three.js did not load`);
+          } else {
+            await page.waitForSelector('#draw .cell');
+          }
+          for (const width of [1440, 390]) {
+            await page.setViewportSize({width, height: 1000});
+            const fits = await page.evaluate(() =>
+              document.documentElement.scrollWidth <= innerWidth + 1);
+            assert(fits, `${where}: horizontal overflow at ${width}`);
+          }
+          await page.setViewportSize({width: 1440, height: 1000});
         }
       }
 
@@ -266,7 +290,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
     }
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and the tensor visualizer.`);
+      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and both interactive widgets.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

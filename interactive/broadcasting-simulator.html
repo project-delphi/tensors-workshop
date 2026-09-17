@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Broadcasting, step by step</title>
+<style>
+  :root {
+    --bg: #f7f5ef;
+    --ink: #1c1917;
+    --ink-mute: #57534e;
+    --panel: #fffcf7;
+    --sunk: #ebe6dc;
+    --line: #d6d0c4;
+    /* Section 03's accent is #7c3aed (gen_notebooks.ACCENTS[3]); this is the
+       nearest shade of it that clears 4.5:1 on this background, with the
+       foreground that belongs on top of it. */
+    --accent: #6d28d9;
+    --on-accent: #ffffff;
+    --a: #0072b2;          /* Okabe-Ito: operand A */
+    --b: #d55e00;          /* Okabe-Ito: operand B */
+    --ok: #046c4e;
+    --bad: #a4341c;
+    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917;
+      --ink: #f5f0e8;
+      --ink-mute: #a8a29e;
+      --panel: #292524;
+      --sunk: #1c1917;
+      --line: #44403c;
+      --accent: #a78bfa;
+      --on-accent: #1c1917;
+      --a: #56b4e9;
+      --b: #e69f00;
+      --ok: #34d399;
+      --bad: #f87171;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
+  a { color: var(--accent); }
+  .wrap { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+  header p { max-width: 40rem; color: var(--ink-mute); overflow-wrap: break-word; }
+  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
+  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 23rem); gap: 1.25rem; align-items: start; }
+  @media (max-width: 54rem) { .grid { grid-template-columns: 1fr; } }
+
+  #stage {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 0.9rem 1rem 1.1rem; min-height: 22rem; overflow-x: auto;
+  }
+  /* Shrink-to-fit, so "align right" means against the widest operand rather
+     than against the far side of a wide stage. */
+  #draw { display: inline-block; min-width: 0; }
+  #draw.right .tiles, #draw.right .oplabel { justify-content: flex-end; }
+  #stagenote { margin: 0 0 0.9rem; font: 500 0.82rem/1.4 var(--sans); color: var(--ink-mute); overflow-wrap: break-word; }
+  .operand { margin: 0 0 1.15rem; }
+  .operand:last-child { margin-bottom: 0; }
+  .oplabel {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.5rem;
+    font: 700 0.78rem/1.3 var(--mono); margin: 0 0 0.4rem;
+  }
+  .oplabel .shape { font-weight: 500; color: var(--ink-mute); }
+  .oplabel .trunc { font: 500 0.7rem/1.3 var(--sans); color: var(--ink-mute); }
+  .tiles { display: flex; flex-wrap: wrap; gap: 0.55rem; }
+  .tile { display: grid; gap: 2px; }
+  .cell {
+    width: 1.1rem; height: 1.1rem; border-radius: 3px;
+    border: 1px solid currentColor; background: currentColor;
+    transition: opacity 260ms ease, transform 260ms ease;
+  }
+  /* A stretched cell is dashed and hollow, because it is not in memory: the
+     picture shows the copies, the buffer holds one. Same language as
+     images/cube-03-broadcast.gif. */
+  .cell.copy { background: none; border-style: dashed; opacity: 0.55; }
+  .cell.hidden { opacity: 0; transform: scale(0.55); }
+  .cell.gap { border: none; background: none; }
+  .tile.a, .op-a .oplabel { color: var(--a); }
+  .tile.b, .op-b .oplabel { color: var(--b); }
+  .tile.r, .op-r .oplabel { color: var(--accent); }
+  .ellipsis { align-self: center; font: 700 0.9rem/1 var(--mono); color: var(--ink-mute); padding: 0 0.15rem; }
+
+  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; min-width: 0; }
+  aside h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.9rem 0 0.45rem; color: var(--ink-mute); }
+  aside h2:first-child { margin-top: 0; }
+  label.field { display: block; margin: 0 0 0.55rem; }
+  label.field span { display: block; font: 700 0.75rem/1.6 var(--mono); }
+  label.field.a span { color: var(--a); }
+  label.field.b span { color: var(--b); }
+  input[type=text] {
+    width: 100%; padding: 0.4rem 0.55rem; font: 0.85rem/1.3 var(--mono);
+    color: var(--ink); background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 7px;
+  }
+  input[type=text]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .presets { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+  .presets button {
+    font: 500 0.75rem/1.3 var(--sans); padding: 0.3rem 0.55rem; cursor: pointer;
+    color: var(--ink); background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 999px;
+  }
+  .presets button:hover { border-color: var(--accent); }
+  .presets button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .badge {
+    display: flex; gap: 0.5rem; align-items: flex-start;
+    border-radius: 8px; padding: 0.5rem 0.65rem; margin: 0.2rem 0 0;
+    font: 0.8rem/1.4 var(--sans); border: 1px solid;
+  }
+  .badge .glyph { font: 700 0.95rem/1.35 var(--mono); flex: none; }
+  .badge b { display: block; }
+  .badge.ok { color: var(--ok); border-color: currentColor; background: color-mix(in srgb, currentColor 9%, transparent); }
+  .badge.bad { color: var(--bad); border-color: currentColor; background: color-mix(in srgb, currentColor 9%, transparent); }
+  .badge .why { color: var(--ink); }
+  table { width: 100%; border-collapse: collapse; font: 0.78rem/1.35 var(--mono); }
+  th { text-align: right; font: 600 0.68rem/1.2 var(--sans); color: var(--ink-mute); padding: 0.15rem 0 0.25rem 0.4rem; }
+  th:last-child { text-align: left; }
+  td { padding: 0.22rem 0 0.22rem 0.4rem; border-top: 1px solid var(--line); text-align: right; }
+  td.verdict { text-align: left; font: 500 0.7rem/1.3 var(--sans); color: var(--ink-mute); white-space: nowrap; }
+  td.ax { color: var(--ink-mute); }
+  td.va { color: var(--a); }
+  td.vb { color: var(--b); }
+  td.out { color: var(--accent); font-weight: 700; }
+  tr.clash td { color: var(--bad); font-weight: 700; }
+  .implied { opacity: 0.62; font-style: italic; }
+  .steps { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .steps label {
+    flex: 1; text-align: center; padding: 0.35rem 0.3rem; font-size: 0.75rem;
+    cursor: pointer; background: var(--sunk);
+  }
+  .steps input { position: absolute; opacity: 0; pointer-events: none; }
+  .steps input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .steps input:checked + label { background: var(--accent); color: var(--on-accent); font-weight: 650; }
+  .steps input:disabled + label { opacity: 0.4; cursor: not-allowed; }
+  .replay {
+    margin: 0.45rem 0 0; font: 500 0.75rem/1.3 var(--sans); cursor: pointer;
+    color: var(--ink); background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 7px; padding: 0.3rem 0.6rem;
+  }
+  .replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  pre {
+    margin: 0.5rem 0 0; padding: 0.55rem 0.7rem; background: var(--sunk);
+    border-radius: 8px; font: 0.76rem/1.45 var(--mono); overflow-x: auto; max-width: 100%;
+  }
+  .note { font-size: 0.72rem; line-height: 1.4; color: var(--ink-mute); margin: 0.4rem 0 0; }
+  .err { color: var(--bad); font: 500 0.75rem/1.4 var(--sans); margin: 0.3rem 0 0; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  @media (prefers-reduced-motion: reduce) { .cell { transition: none; } }
+</style>
+</head>
+<body>
+  <noscript>
+    <p style="max-width:40rem;margin:1.25rem;padding:0.8rem 1rem;border:1px solid var(--line);border-radius:10px;background:var(--panel)">
+      <b>This page needs JavaScript.</b> It compares the two shapes and draws the
+      stretch in the browser, so with scripting off there is nothing to show. The
+      same material is in section 03 of the handbook and in notebook 03.
+      <br><span lang="es"><b>Esta página necesita JavaScript.</b> Compara las dos
+      formas y dibuja el estiramiento en el navegador, así que sin scripting no
+      hay nada que mostrar. El mismo material está en la sección 03 del manual y
+      en el cuaderno 03.</span>
+    </p>
+  </noscript>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow" id="eyebrow">Section 03 · indexing and broadcasting</div>
+      <h1 id="title">Broadcasting, step by step</h1>
+      <p id="lead"></p>
+      <p><a id="back" href="../notebooks.html">← Notebooks</a></p>
+    </header>
+    <div class="grid">
+      <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp">
+        <p id="stagenote"></p>
+        <div id="draw"></div>
+      </div>
+      <aside>
+        <h2 id="h-shapes">Shapes</h2>
+        <label class="field a"><span id="l-a">Shape A</span>
+          <input type="text" id="in-a" value="3, 1, 4" autocomplete="off" spellcheck="false"></label>
+        <label class="field b"><span id="l-b">Shape B</span>
+          <input type="text" id="in-b" value="2, 4" autocomplete="off" spellcheck="false"></label>
+        <p class="err" id="err" hidden></p>
+        <h2 id="h-presets">Try these</h2>
+        <div class="presets" id="presets"></div>
+        <h2 id="h-verdict">Result</h2>
+        <div class="badge" id="badge"></div>
+        <h2 id="h-align">Aligned from the right</h2>
+        <table>
+          <thead><tr>
+            <th id="th-axis">Axis</th><th id="th-a">A</th><th id="th-b">B</th>
+            <th id="th-out">Result</th><th id="th-rule">Rule</th>
+          </tr></thead>
+          <tbody id="align-body"></tbody>
+        </table>
+        <p class="note" id="align-note"></p>
+        <h2 id="h-steps">Step</h2>
+        <div class="steps" id="steps" role="radiogroup" aria-labelledby="h-steps"></div>
+        <button class="replay" id="replay" type="button"></button>
+        <h2 id="h-code">In code</h2>
+        <pre><code id="code"></code></pre>
+      </aside>
+    </div>
+    <p class="sr" id="stagehelp"></p>
+    <p class="sr" aria-live="polite" id="status"></p>
+  </div>
+<script>
+(function () {
+  "use strict";
+
+  // How much of a shape is drawn. A preset in this workshop reaches 1797 rows,
+  // so the picture has to be a sample and has to say that it is one.
+  const CAP = 6;
+  const TILE_CAP = 4;
+  const STEPS = ["written", "aligned", "stretched", "result"];
+
+  const EN = {
+    title: "Broadcasting, step by step",
+    eyebrow: "Section 03 · indexing and broadcasting",
+    lead: "Two shapes, lined up from the right. NumPy stretches any axis of size 1 to match the other, and refuses anything else. A dashed cell is a copy that is never made: the picture shows the repeats, the buffer holds one.",
+    back: "← Notebooks",
+    shapes: "Shapes",
+    a: "Shape A",
+    b: "Shape B",
+    presets: "Try these",
+    verdict: "Result",
+    align: "Aligned from the right",
+    stepsH: "Step",
+    code: "In code",
+    thAxis: "Axis",
+    thA: "A",
+    thB: "B",
+    thOut: "Result",
+    thRule: "Rule",
+    same: "equal",
+    stretchA: "A stretches",
+    stretchB: "B stretches",
+    clash: "neither equal nor 1",
+    implied: "Grey italic is an axis the shape does not have. NumPy pads the short shape on the left with 1s, which is why alignment starts at the right.",
+    okTitle: "Compatible",
+    okWhy: (s) => `Result shape ${s}.`,
+    badTitle: "Incompatible",
+    badWhy: (ax, x, y) => `Axis ${ax}: ${x} and ${y} are neither equal nor 1, so neither one can stretch to the other.`,
+    stepNames: { written: "As written", aligned: "Aligned", stretched: "Stretched", result: "Result" },
+    replay: "▶ Play it again",
+    stageWritten: "The two shapes as you typed them.",
+    stageAligned: "Lined up from the right. A shape that is short is padded on the left with 1s.",
+    stageStretched: "Every axis of size 1 is repeated to match. Dashed cells are the repeats, and none of them is in memory.",
+    stageResult: "The broadcast result, one cell per element.",
+    stageBad: "Nothing to stretch: the axes below disagree, so NumPy raises instead.",
+    scalarName: "scalar",
+    truncated: (shown, real) => `showing ${shown} of ${real}`,
+    label: (name, dims) => `${name} — ${shapeText(dims)}`,
+    errToken: (tok) => `“${tok}” is not a whole number. Write a shape as 3, 1, 4.`,
+    errZero: "A shape cannot have an axis of size 0. Use 1 for an axis that stretches.",
+    errLong: "That is more axes than this page draws. Try 4 or fewer.",
+    statusOk: (s) => `Compatible. Result shape ${s}.`,
+    statusBad: (ax) => `Incompatible at axis ${ax}.`,
+    stageHelp: "The two shapes are drawn as grids of cells. Use the step control to move through alignment, stretching and the result. A dashed cell is a repeat that is never stored.",
+    scalarNote: "An empty box means a scalar: no axes at all, reused everywhere.",
+    raises: "raises ValueError"
+  };
+  const ES = {
+    title: "Broadcasting, paso a paso",
+    eyebrow: "Sección 03 · indexación y broadcasting",
+    lead: "Dos formas, alineadas desde la derecha. NumPy estira cualquier eje de tamaño 1 para que coincida con el otro, y rechaza todo lo demás. Una celda discontinua es una copia que nunca se hace: la imagen muestra las repeticiones, el búfer guarda una.",
+    back: "← Cuadernos",
+    shapes: "Formas",
+    a: "Forma A",
+    b: "Forma B",
+    presets: "Prueba estas",
+    verdict: "Resultado",
+    align: "Alineadas desde la derecha",
+    stepsH: "Paso",
+    code: "En código",
+    thAxis: "Eje",
+    thA: "A",
+    thB: "B",
+    thOut: "Resultado",
+    thRule: "Regla",
+    same: "iguales",
+    stretchA: "A se estira",
+    stretchB: "B se estira",
+    clash: "ni iguales ni 1",
+    implied: "En gris y cursiva, un eje que la forma no tiene. NumPy rellena por la izquierda con 1 la forma más corta, y por eso la alineación empieza por la derecha.",
+    okTitle: "Compatible",
+    okWhy: (s) => `Forma resultante ${s}.`,
+    badTitle: "Incompatible",
+    badWhy: (ax, x, y) => `Eje ${ax}: ${x} y ${y} no son iguales ni 1, así que ninguno puede estirarse hasta el otro.`,
+    stepNames: { written: "Tal cual", aligned: "Alineadas", stretched: "Estiradas", result: "Resultado" },
+    replay: "▶ Reproducir otra vez",
+    stageWritten: "Las dos formas tal como las escribiste.",
+    stageAligned: "Alineadas desde la derecha. La forma más corta se rellena por la izquierda con 1.",
+    stageStretched: "Cada eje de tamaño 1 se repite hasta coincidir. Las celdas discontinuas son las repeticiones, y ninguna está en memoria.",
+    stageResult: "El resultado del broadcasting, una celda por elemento.",
+    stageBad: "No hay nada que estirar: los ejes de abajo no concuerdan, así que NumPy lanza un error.",
+    scalarName: "escalar",
+    truncated: (shown, real) => `se muestran ${shown} de ${real}`,
+    label: (name, dims) => `${name} — ${shapeText(dims)}`,
+    errToken: (tok) => `«${tok}» no es un número entero. Escribe una forma como 3, 1, 4.`,
+    errZero: "Una forma no puede tener un eje de tamaño 0. Usa 1 para un eje que se estira.",
+    errLong: "Son más ejes de los que esta página dibuja. Prueba con 4 o menos.",
+    statusOk: (s) => `Compatible. Forma resultante ${s}.`,
+    statusBad: (ax) => `Incompatible en el eje ${ax}.`,
+    stageHelp: "Las dos formas se dibujan como cuadrículas de celdas. Usa el control de pasos para recorrer la alineación, el estiramiento y el resultado. Una celda discontinua es una repetición que nunca se guarda.",
+    scalarNote: "Una casilla vacía significa un escalar: sin ejes, reutilizado en todas partes.",
+    raises: "lanza ValueError"
+  };
+
+  // Chosen from this workshop's own material rather than invented. The second
+  // and third are the trap in notebook 03 and its checkpoint: one offset per
+  // row has to be a column before it broadcasts.
+  const PRESETS = [
+    { en: "digits: standardize", es: "dígitos: estandarizar", a: "1797, 64", b: "64" },
+    { en: "one offset per row ✗", es: "un offset por fila ✗", a: "4, 5", b: "4" },
+    { en: "…as a column ✓", es: "…como columna ✓", a: "4, 5", b: "4, 1" },
+    { en: "a scalar", es: "un escalar", a: "4, 5", b: "" },
+    { en: "outer product", es: "producto externo", a: "3, 1", b: "4" },
+    { en: "RGB per channel", es: "RGB por canal", a: "2, 3, 4, 4", b: "3, 1, 1" }
+  ];
+
+  const params = new URLSearchParams(location.search);
+  const lang = params.get("lang") === "es" ? "es" : "en";
+  const T = lang === "es" ? ES : EN;
+  document.documentElement.lang = lang;
+  document.title = T.title;
+
+  const $ = (id) => document.getElementById(id);
+  const state = { a: "3, 1, 4", b: "2, 4", step: "result" };
+
+  function shapeText(dims) {
+    if (!dims.length) return "()";
+    if (dims.length === 1) return `(${dims[0]},)`;
+    return `(${dims.join(", ")})`;
+  }
+
+  // Lenient on purpose: (3,1,4), 3x1x4 and "3 1 4" are all the same shape, and
+  // a reader copying one out of a traceback should not have to reformat it.
+  function parseShape(raw) {
+    const cleaned = raw.replace(/[()[\]]/g, " ").replace(/[x×*]/gi, " ");
+    const parts = cleaned.split(/[,\s]+/).filter(Boolean);
+    const dims = [];
+    for (const part of parts) {
+      if (!/^\d+$/.test(part)) return { err: T.errToken(part) };
+      const n = Number(part);
+      if (n < 1) return { err: T.errZero };
+      dims.push(n);
+    }
+    if (dims.length > 4) return { err: T.errLong };
+    return { dims };
+  }
+
+  function align(a, b) {
+    const n = Math.max(a.length, b.length);
+    const pa = Array(n - a.length).fill(1).concat(a);
+    const pb = Array(n - b.length).fill(1).concat(b);
+    const rows = [];
+    const out = [];
+    let ok = true;
+    for (let i = 0; i < n; i++) {
+      const x = pa[i], y = pb[i];
+      let rule, size;
+      if (x === y) { rule = "same"; size = x; }
+      else if (x === 1) { rule = "stretchA"; size = y; }
+      else if (y === 1) { rule = "stretchB"; size = x; }
+      else { rule = "clash"; size = null; ok = false; }
+      out.push(size);
+      rows.push({
+        axis: i - n, x, y, size, rule,
+        impliedA: i < n - a.length,
+        impliedB: i < n - b.length
+      });
+    }
+    return { ok, pa, pb, out, rows, n };
+  }
+
+  // Which axes are drawn, and how much of each. The last axis is columns, the
+  // one before it rows, and anything further left becomes separate tiles.
+  function plan(dims) {
+    const shown = dims.map((d) => Math.min(d, CAP));
+    const cols = shown.length >= 1 ? shown[shown.length - 1] : 1;
+    const rows = shown.length >= 2 ? shown[shown.length - 2] : 1;
+    const lead = shown.slice(0, Math.max(shown.length - 2, 0));
+    let tiles = lead.reduce((p, d) => p * d, 1);
+    const tileCap = Math.min(tiles, TILE_CAP);
+    return { shown, cols, rows, lead, tiles, tileCap };
+  }
+
+  // The index of one drawn cell, as a full index into the result shape.
+  function cellIndex(p, tile, r, c) {
+    const idx = [];
+    let rest = tile;
+    for (let i = p.lead.length - 1; i >= 0; i--) {
+      idx.unshift(rest % p.lead[i]);
+      rest = Math.floor(rest / p.lead[i]);
+    }
+    if (p.shown.length >= 2) idx.push(r);
+    if (p.shown.length >= 1) idx.push(c);
+    return idx;
+  }
+
+  // `grid` is the shape drawn; `own` is the shape actually in memory. When
+  // they differ, the cells `own` does not have are the copies -- dashed,
+  // because that is the whole lesson: the picture repeats, the buffer does not.
+  function drawOperand(host, name, own, grid, cssClass, reveal) {
+    const wrap = document.createElement("div");
+    wrap.className = `operand op-${cssClass}`;
+
+    const label = document.createElement("div");
+    label.className = "oplabel";
+    const nm = document.createElement("span");
+    nm.textContent = name;
+    const sh = document.createElement("span");
+    sh.className = "shape";
+    const base = own.length ? shapeText(own) : `${shapeText(own)} · ${T.scalarName}`;
+    sh.textContent = shapeText(own) === shapeText(grid)
+      ? base : `${base} → ${shapeText(grid)}`;
+    label.append(nm, sh);
+    const clipped = grid.filter((d) => d > CAP);
+    if (clipped.length) {
+      const trunc = document.createElement("span");
+      trunc.className = "trunc";
+      trunc.textContent = T.truncated(
+        grid.map((d) => Math.min(d, CAP)).join("×"), grid.join("×"));
+      label.appendChild(trunc);
+    }
+    wrap.appendChild(label);
+
+    const p = plan(grid);
+    const off = grid.length - own.length;
+    const tiles = document.createElement("div");
+    tiles.className = "tiles";
+    for (let tIdx = 0; tIdx < p.tileCap; tIdx++) {
+      const tile = document.createElement("div");
+      tile.className = `tile ${cssClass}`;
+      tile.style.gridTemplateColumns = `repeat(${p.cols}, 1.1rem)`;
+      for (let r = 0; r < p.rows; r++) {
+        for (let c = 0; c < p.cols; c++) {
+          const cell = document.createElement("div");
+          cell.className = "cell";
+          const idx = cellIndex(p, tIdx, r, c);
+          // Past index 0 on an axis this operand has only one of -- or has
+          // not got at all -- is a repeat.
+          const copy = idx.some((v, i) => {
+            const mine = own[i - off];
+            return v > 0 && (mine === undefined || mine === 1) && grid[i] > 1;
+          });
+          if (copy) {
+            cell.classList.add("copy");
+            if (!reveal) cell.classList.add("hidden");
+          }
+          tile.appendChild(cell);
+        }
+      }
+      tiles.appendChild(tile);
+    }
+    if (p.tiles > p.tileCap) {
+      const dots = document.createElement("span");
+      dots.className = "ellipsis";
+      dots.textContent = "…";
+      tiles.appendChild(dots);
+    }
+    wrap.appendChild(tiles);
+    host.appendChild(wrap);
+  }
+
+  function snippet(a, b, res) {
+    const sa = shapeText(a), sb = shapeText(b);
+    const lines = [
+      "import numpy as np",
+      `a = np.ones(${sa})`,
+      `b = np.ones(${sb})`
+    ];
+    if (res.ok) {
+      lines.push(`(a + b).shape   # ${shapeText(res.out)}`);
+      lines.push(`np.broadcast_shapes(${sa}, ${sb})`);
+      lines.push(`torch.broadcast_shapes(${sa}, ${sb})`);
+    } else {
+      const bad = res.rows.find((r) => r.rule === "clash");
+      const tight = (d) => d.length === 1 ? `(${d[0]},)` : `(${d.join(",")})`;
+      lines.push(`a + b   # ${T.raises}`);
+      lines.push("# operands could not be broadcast together");
+      lines.push(`# with shapes ${tight(a)} ${tight(b)}`);
+      lines.push(`# axis ${bad.axis}: ${bad.x} vs ${bad.y}`);
+    }
+    return lines.join("\n");
+  }
+
+  function applyCopy() {
+    $("title").textContent = T.title;
+    $("eyebrow").textContent = T.eyebrow;
+    $("lead").textContent = T.lead;
+    $("back").textContent = T.back;
+    $("back").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
+    $("h-shapes").textContent = T.shapes;
+    $("l-a").textContent = T.a;
+    $("l-b").textContent = T.b;
+    $("h-presets").textContent = T.presets;
+    $("h-verdict").textContent = T.verdict;
+    $("h-align").textContent = T.align;
+    $("h-steps").textContent = T.stepsH;
+    $("h-code").textContent = T.code;
+    $("th-axis").textContent = T.thAxis;
+    $("th-a").textContent = T.thA;
+    $("th-b").textContent = T.thB;
+    $("th-out").textContent = T.thOut;
+    $("th-rule").textContent = T.thRule;
+    $("align-note").textContent = T.implied;
+    $("replay").textContent = T.replay;
+    $("stagehelp").textContent = T.stageHelp;
+    $("in-a").setAttribute("aria-label", T.a);
+    $("in-b").setAttribute("aria-label", T.b);
+  }
+
+  function buildPresets() {
+    $("presets").innerHTML = "";
+    PRESETS.forEach((preset) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.textContent = preset[lang];
+      button.addEventListener("click", () => {
+        state.a = preset.a;
+        state.b = preset.b;
+        $("in-a").value = preset.a;
+        $("in-b").value = preset.b;
+        play();
+      });
+      $("presets").appendChild(button);
+    });
+  }
+
+  function buildSteps() {
+    $("steps").innerHTML = STEPS.map((s) => {
+      const id = `step-${s}`;
+      return `<input type="radio" name="step" id="${id}" value="${s}"` +
+        `${state.step === s ? " checked" : ""}>` +
+        `<label for="${id}">${T.stepNames[s]}</label>`;
+    }).join("");
+    $("steps").addEventListener("change", (e) => {
+      state.step = e.target.value;
+      render();
+    });
+  }
+
+  let timer = 0;
+  function play() {
+    clearTimeout(timer);
+    const run = (i) => {
+      state.step = STEPS[i];
+      render();
+      if (i < STEPS.length - 1) timer = setTimeout(() => run(i + 1), 1100);
+    };
+    run(0);
+  }
+
+  function render() {
+    const pa = parseShape(state.a);
+    const pb = parseShape(state.b);
+    const err = pa.err || pb.err;
+    $("err").hidden = !err;
+    if (err) {
+      $("err").textContent = err;
+      return;
+    }
+    const a = pa.dims, b = pb.dims;
+    const res = align(a, b);
+
+    STEPS.forEach((s) => {
+      const el = $(`step-${s}`);
+      el.disabled = !res.ok && (s === "stretched" || s === "result");
+      el.checked = state.step === s;
+    });
+    if (!res.ok && (state.step === "stretched" || state.step === "result")) {
+      state.step = "aligned";
+      $("step-aligned").checked = true;
+    }
+
+    // Verdict.
+    const badge = $("badge");
+    const bad = res.rows.find((r) => r.rule === "clash");
+    badge.className = `badge ${res.ok ? "ok" : "bad"}`;
+    badge.innerHTML = "";
+    const glyph = document.createElement("span");
+    glyph.className = "glyph";
+    glyph.textContent = res.ok ? "✓" : "✗";
+    const text = document.createElement("span");
+    const title = document.createElement("b");
+    title.textContent = res.ok ? T.okTitle : T.badTitle;
+    const why = document.createElement("span");
+    why.className = "why";
+    why.textContent = res.ok ? T.okWhy(shapeText(res.out))
+      : T.badWhy(bad.axis, bad.x, bad.y);
+    text.append(title, why);
+    badge.append(glyph, text);
+
+    // Alignment table.
+    $("align-body").innerHTML = res.rows.map((r) => {
+      const ai = r.impliedA ? ' class="implied"' : "";
+      const bi = r.impliedB ? ' class="implied"' : "";
+      return `<tr class="${r.rule === "clash" ? "clash" : ""}">` +
+        `<td class="ax">${r.axis}</td>` +
+        `<td class="va"><span${ai}>${r.x}</span></td>` +
+        `<td class="vb"><span${bi}>${r.y}</span></td>` +
+        `<td class="out">${r.size === null ? "—" : r.size}</td>` +
+        `<td class="verdict">${T[r.rule]}</td></tr>`;
+    }).join("");
+
+    $("code").textContent = snippet(a, b, res);
+
+    // The drawing.
+    const draw = $("draw");
+    draw.innerHTML = "";
+    const step = state.step;
+    draw.classList.toggle("right", step !== "written");
+    const stretch = res.ok && (step === "stretched" || step === "result");
+    // Three shapes per operand, one per step: what you typed, what it becomes
+    // once it is padded on the left, and what it is stretched to.
+    const gridA = stretch ? res.out : (step === "written" ? a : res.pa);
+    const gridB = stretch ? res.out : (step === "written" ? b : res.pb);
+    const ownA = step === "written" ? a : res.pa;
+    const ownB = step === "written" ? b : res.pb;
+    drawOperand(draw, "A", ownA, gridA, "a", step === "result");
+    drawOperand(draw, "B", ownB, gridB, "b", step === "result");
+    if (step === "result") {
+      drawOperand(draw, T.thOut, res.out, res.out, "r", true);
+    }
+    if (step === "stretched") {
+      // One frame later, so the transition has something to run from.
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        draw.querySelectorAll(".cell.hidden").forEach((cell, i) => {
+          cell.style.transitionDelay = `${Math.min(i * 12, 600)}ms`;
+          cell.classList.remove("hidden");
+        });
+      }));
+    }
+
+    const noteFor = {
+      written: T.stageWritten, aligned: T.stageAligned,
+      stretched: T.stageStretched, result: T.stageResult
+    };
+    $("stagenote").textContent = res.ok ? noteFor[step] : T.stageBad;
+    $("stage").setAttribute("aria-label",
+      `${T.label("A", ownA)}. ${T.label("B", ownB)}. ` +
+      (res.ok ? T.okWhy(shapeText(res.out)) : T.badWhy(bad.axis, bad.x, bad.y)));
+    $("status").textContent = res.ok
+      ? T.statusOk(shapeText(res.out)) : T.statusBad(bad.axis);
+  }
+
+  applyCopy();
+  buildPresets();
+  buildSteps();
+  ["a", "b"].forEach((key) => {
+    $(`in-${key}`).addEventListener("input", (e) => {
+      state[key] = e.target.value;
+      render();
+    });
+  });
+  $("replay").addEventListener("click", play);
+  render();
+})();
+</script>
+</body>
+</html>

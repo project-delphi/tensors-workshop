@@ -342,6 +342,8 @@ Z = (D - mean) / np.where(std == 0, 1.0, std)
 
 Dos resultados reales. **Los tumores malignos sí tienen un radio medio mayor**: 17,5 frente a 12,1. Y **tres píxeles están siempre oscuros en las 1797 imágenes de dígitos**: están en esquinas donde nadie escribe. Su desviación típica es exactamente cero, así que dividir produce NaN. Con datos aleatorios nunca habrías visto esto.
 
+La regla de formas tiene su propia página: el <a href="../interactive/broadcasting-simulator.html?lang=es">simulador de broadcasting</a> alinea dos formas desde la derecha y recorre el estiramiento paso a paso. Prueba `(4, 5)` contra `(4,)`, y después contra `(4, 1)`.
+
 ## 04 · Reshape y transposición de imágenes reales (Bloque 2, 15 min)
 
 **Practica hoy:** {{< var sections.s04.practice_es >}}

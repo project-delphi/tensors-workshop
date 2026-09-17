@@ -214,6 +214,29 @@ What each one draws, and from where:
   lives in one `SLIDES` table, so EN and ES cannot be edited apart. Rerunning it
   rewrites the same bytes, which is what makes `git status` a staleness check.
 
+**`interactive/` is hand-written, and it is the one asset class with neither a
+generator nor a byte-exact gate.** Two standalone widgets — the section 04
+layout visualizer and the section 03 broadcasting simulator — each a single
+self-contained HTML file with its own `:root` palette, its own EN/ES copy tables
+and `?lang=`, and its section's accent from `gen_notebooks.ACCENTS` adjusted per
+theme so it clears 4.5:1. They are **not** render targets: `interactive/**` is in
+`resources:`, so Quarto copies them verbatim the way it copies the notebooks, and
+`_quarto.yml`'s `render:` list deliberately leaves them out.
+
+Two things watch them. `repo.widgets` in `_variables.yml` lists every file that
+has to reach `docs/`, and `check_links.py` fails the build on any one missing —
+which is what would happen if `interactive/**` fell out of `resources:`, with no
+other symptom than every link to them 404ing. `check_navigation.cjs` loads both
+in both languages and asserts no horizontal overflow at 1440 and 390.
+
+three.js is **vendored**, at `interactive/vendor/`, with its source URL, SHA-256
+and fetch date in a README beside it. Not a preference: the widget shipped
+pointing at `three@0.169.0/build/three.min.js`, which has not existed since r160,
+and because `check_navigation.cjs` aborts every off-origin request that check
+could never have caught it. Same-origin, it loads, and the check asserts
+`THREE.REVISION`. Upgrading means replacing both files and updating the README,
+the import in `three-boot.js` and the path in `_variables.yml`.
+
 **The companion's assets are the one class with no generator at all.** The
 infographic PNGs and the Audio Overview under `media/` are exported by hand out
 of NotebookLM, so there is no script to rerun and no SHA-256 pin to compare
