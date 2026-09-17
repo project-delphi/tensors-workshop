@@ -45,9 +45,12 @@ signs (equations belong in the plain markdown body). Colour is never the only
 carrier of meaning. Headings stay real markdown headings. And check 10's rule:
 **no visible cell may depend on a name bound only inside a folded `solution`
 cell** — easy to introduce, invisible when you run the notebook top to bottom.
-That rule has exactly one exemption and `plumbing` is **not** it: check 10
-keys on `"solution" in tags` alone, so a `plumbing` cell is checked like any
-other visible cell. What the tag changes is folding, not execution.
+`plumbing` is **not** an exemption from it: check 10 keys on
+`"solution" in tags` alone, so a `plumbing` cell is checked like any other
+visible cell. What the tag changes is folding, not execution. The two things
+the check does carve out are builtins, and names the cell binds for itself — a
+cell that assigns `x` before using it is self-sufficient even if some solution
+also binds `x`.
 
 **5. A new generated path missing from the CI gate.** The path list to read is
 the `git status --porcelain --` in the **Regenerate derived files** step of
@@ -70,8 +73,14 @@ folded solution binds. A section is `00`–`12` everywhere; prose saying "Block 
 where it means section 07 is a bug.
 
 **8. The `extras:` boundary.** An extra is a take-home notebook, not a section.
-Everywhere a *notebook* is handled it is included — `gen_notebooks.py` and
-checks 1, 3 and 8. Everywhere a *section* is handled it is not: checks 5 (deck
+Everywhere a *notebook* is handled it is included — `gen_notebooks.py`, and
+the four checks that read `NOTEBOOKS` (= `SECTIONS + EXTRAS`): check 1
+(notebooks valid), check 2 (`docs/notebooks` byte-compare), check 4 (Colab
+URLs) and check 10 (solution independence). Those are the ones that catch a
+missing or unreferenced extra. Note that `CLAUDE.md` says "checks 1, 3 and 8"
+here; that is wrong — check 3 is the internal-link sweep and never reads the
+notebook list, and check 8 is the clock, which the next sentence correctly puts
+on `SECTIONS` alone. Everywhere a *section* is handled it is not: checks 5 (deck
 anchors), 6 (notebooks-page parity) and the clock walk in `timeline.py` stay on
 `SECTIONS` alone, and an extra given a `#sec-NN` anchor, a Kahoot, a slide or a
 row in the notebooks page's section table is the bug. Its tables are separate
