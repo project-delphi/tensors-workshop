@@ -69,6 +69,8 @@ not a content problem. Say so explicitly if it happens.
 Then:
 
 ```bash
+uv run --group lint ruff check scripts tests
+uv run --group lint ruff format --check scripts tests
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests
 quarto render

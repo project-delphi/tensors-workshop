@@ -131,6 +131,9 @@
   aside h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.95rem 0 0.45rem; color: var(--ink-mute); }
   aside h2:first-child { margin-top: 0; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
+  /* `hidden` must win over the display rules above and below: the numbers-mode
+     size sliders are hidden in photo mode, and a grid rule was un-hiding them. */
+  [hidden] { display: none !important; }
   .field { min-width: 0; }
   .field .k { display: flex; justify-content: space-between; font: 600 0.75rem/1.2 var(--mono); }
   .field input[type=range] { width: 100%; accent-color: var(--accent); }
@@ -253,6 +256,8 @@
         <h2 id="h-data">Data</h2>
         <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
         <p class="note" id="data-note"></p>
+        <label class="toggle"><input type="checkbox" id="values" checked><span id="values-label"></span></label>
+        <p class="note" id="values-note"></p>
         <h2 id="h-size">Shape</h2>
         <div id="shape-photo">
           <div class="checks" id="photo-checks"></div>
@@ -264,6 +269,9 @@
         <div class="presets" id="order-presets" role="group" aria-labelledby="h-order"></div>
         <div class="chips" id="chips" role="group" aria-labelledby="h-order"></div>
         <p class="note" id="order-note"></p>
+        <h2 id="h-arrange"></h2>
+        <div class="seg stack" id="arranges" role="radiogroup" aria-labelledby="h-arrange"></div>
+        <p class="note" id="arrange-note"></p>
         <h2 id="h-layout">Memory layout</h2>
         <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="h-layout"></div>
         <p class="note" id="layout-note"></p>
@@ -313,7 +321,10 @@
   const ZGAP = 0.55;             // between channel planes, along z
   const FIT = 1.55;
   const MAX_SIDE = 8;
-  const MAX_CELLS = MAX_SIDE ** 4;
+  const MAX_RES = 32;            // the largest photo side photos.json carries
+  const MAX_CELLS = Math.max(MAX_SIDE ** 4, 3 * 3 * MAX_RES * MAX_RES);
+  const VALUE_MIN_PX = 20;       // narrower than this, a cube cannot carry a legible number
+  const VALUE_MAX_LABELS = 1024;
 
   // Memory layouts, by *position* in the logical shape: which position runs
   // slowest first. That is how NumPy and PyTorch define them -- channels_last
@@ -332,12 +343,19 @@
     dataNotePhotos: "The histology slide, the astronaut and the coffee cup notebook 04 stacks -- shipped with scikit-image, downsampled here.",
     dataNoteNumbers: "np.arange, so every value is its own position in the original buffer and T[b, c, h, w] can be checked by eye.",
     dataNoteFailed: "The photos did not load, so the cubes count instead.",
+    values: "Values in the cubes",
+    valuesNote: "Drawn when a cube is wide enough to read: 4×4, fewer photos, or zoom in.",
     size: "Shape",
     resLabel: (r) => `${r}×${r}`,
     shapeOf: "shape",
     order: "Axis order · transpose",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H↔W", reverse: "reverse (.T)" },
     orderNote: "Click two letters to swap them. Same buffer, new shape, new strides -- a view, no copy.",
+    arrange: "Arrange the cubes",
+    arranges: { meaning: "by meaning: B, C, H, W stay put", position: "by position: follow the shape" },
+    arrangeNoteMeaning: "A transpose changes the shape and the strides, and no cube moves: each byte keeps its place. Switch to “by position” to watch the rearrangement instead.",
+    arrangeNotePosition: "The cubes follow the shape: position 0 runs across in batch slots, 1 in depth, 2 down, 3 across. A transpose rearranges them, the way the notebook’s animations draw it; the bytes underneath are the same.",
+    stageArranged: (a, d, z, b) => `Arranged by position: ${a} runs across, ${d} down, ${z} in depth, ${b} across the batch slots.`,
     layout: "Memory layout",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     layoutNoteC: "The last axis of the shape is contiguous. NumPy's default.",
@@ -410,12 +428,19 @@
     dataNotePhotos: "El corte histológico, la astronauta y la taza de café que apila el cuaderno 04: vienen con scikit-image, aquí reducidas.",
     dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer original y T[b, c, h, w] se comprueba a ojo.",
     dataNoteFailed: "Las fotos no se cargaron, así que los cubos cuentan.",
+    values: "Valores en los cubos",
+    valuesNote: "Se dibujan cuando un cubo es lo bastante ancho para leerse: 4×4, menos fotos, o acerca el zoom.",
     size: "Forma",
     resLabel: (r) => `${r}×${r}`,
     shapeOf: "forma",
     order: "Orden de los ejes · transpose",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H↔W", reverse: "invertir (.T)" },
     orderNote: "Haz clic en dos letras para intercambiarlas. El mismo búfer, nueva forma, nuevos strides: una vista, sin copia.",
+    arrange: "Disponer los cubos",
+    arranges: { meaning: "por significado: B, C, H, W no se mueven", position: "por posición: siguen la forma" },
+    arrangeNoteMeaning: "Un transpose cambia la forma y los strides, y ningún cubo se mueve: cada byte conserva su sitio. Cambia a «por posición» para ver la reorganización.",
+    arrangeNotePosition: "Los cubos siguen la forma: la posición 0 corre en horizontal por lotes, la 1 en profundidad, la 2 hacia abajo y la 3 en horizontal. Un transpose los reorganiza, como lo dibujan las animaciones del cuaderno; los bytes debajo son los mismos.",
+    stageArranged: (a, d, z, b) => `Dispuesto por posición: ${a} corre en horizontal, ${d} hacia abajo, ${z} en profundidad y ${b} por los lotes.`,
     layout: "Disposición en memoria",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     layoutNoteC: "El último eje de la forma es contiguo. Lo que NumPy hace por defecto.",
@@ -498,6 +523,8 @@
     perm: ORDER_PRESETS.NHWC.slice(),   // logical order: identity at each position
     mem: ORDER_PRESETS.NHWC.slice(),    // memory order: identities, slowest first
     reshape: false,
+    arrange: "meaning",           // where a cube sits: by identity, or by shape position
+    values: true,                 // print each value on its cube when there is room
     idx: [0, 0, 0, 0],            // by identity
     slice: -1                     // identity, or -1
   };
@@ -629,6 +656,26 @@
     return axisFill(fastestAxis(), numel() > 1 ? v / (numel() - 1) : 0.5);
   }
 
+  // Where a cube sits on the stage. By meaning, the four identities keep
+  // fixed directions -- W across, H down, C in depth, B in slots -- so a
+  // transpose moves nothing. By position the *shape* decides: position 3
+  // runs across, 2 down, 1 in depth, 0 in slots, so a transpose rearranges
+  // the cubes the way notebook 04's animations draw it. Same bytes either way;
+  // the embed on the front door keeps the by-meaning picture.
+  const byPos = () => state.arrange === "position" && !embed;
+  const gdims = () => byPos() ? shape() : dims();
+  const gindex = (id) => byPos() ? logicalOf(id) : id;
+  const gaxes = () => byPos() ? state.perm : [0, 1, 2, 3];   // the identity in each stage role
+  const showValues = () => state.values && !embed;
+  function inkOn(fill) {
+    const [r, g, b] = parseRgb(fill);
+    return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? css("--ink") : "#ffffff";
+  }
+  function labelFont(text, half) {
+    const px = Math.min(half * 0.72, (half * 2.1) / Math.max(text.length, 1));
+    return `700 ${px.toFixed(1)}px ${css("--mono") || "ui-monospace, monospace"}`;
+  }
+
   // ─── copy ─────────────────────────────────────────────────────────────────
 
   function applyCopy() {
@@ -641,6 +688,9 @@
     $("h-size").textContent = T.size;
     $("h-order").textContent = T.order;
     $("order-note").textContent = T.orderNote;
+    $("h-arrange").textContent = T.arrange;
+    $("values-label").textContent = T.values;
+    $("values-note").textContent = T.valuesNote;
     $("h-layout").textContent = T.layout;
     $("reshape-label").textContent = T.reshape;
     $("reshape-note").textContent = T.reshapeNote;
@@ -811,6 +861,10 @@
       state.res = Number(e.target.value);
       restart();
     });
+    $("values").addEventListener("change", (e) => {
+      state.values = e.target.checked;
+      render();
+    });
 
     // Axis order.
     $("order-presets").innerHTML = "";
@@ -837,6 +891,14 @@
       const next = state.perm.map((a) => a === ax ? other : a === other ? ax : a);
       $("status").textContent = T.swapped(LETTER[other], LETTER[ax]);
       setPerm(next);
+    });
+
+    // Arrangement.
+    $("arranges").innerHTML = ["meaning", "position"].map((k) =>
+      radio("arrange", k, T.arranges[k], state.arrange === k)).join("");
+    $("arranges").addEventListener("change", (e) => {
+      state.arrange = e.target.value;
+      render();
     });
 
     // Memory layout.
@@ -932,6 +994,9 @@
     $("data-note").textContent = !PHOTOS ? T.dataNoteFailed
       : (photoMode ? T.dataNotePhotos : T.dataNoteNumbers);
     document.querySelectorAll("#res input").forEach((el) => { el.checked = Number(el.value) === state.res; });
+    $("values").checked = state.values;
+    document.querySelectorAll("#arranges input").forEach((el) => { el.checked = el.value === state.arrange; });
+    $("arrange-note").textContent = state.arrange === "position" ? T.arrangeNotePosition : T.arrangeNoteMeaning;
     const layout = currentLayout();
     document.querySelectorAll("#layouts input").forEach((el) => { el.checked = el.value === layout; });
     $("layout-note").textContent = layout
@@ -948,7 +1013,7 @@
   // ─── geometry ─────────────────────────────────────────────────────────────
 
   function centre() {
-    const [B, C, H, W] = dims();
+    const [B, C, H, W] = gdims();
     return {
       cx: ((B - 1) * (W + GAP) + W - 1) / 2,
       cy: -(H - 1) / 2,
@@ -956,24 +1021,25 @@
     };
   }
   function axisHandles() {
-    const [B, C, H, W] = dims();
+    const [B, C, H, W] = gdims();
+    const ax = gaxes();
     const { cx, cy, cz } = centre();
     const x0 = -cx - 0.55;
     const yTop = -cy + 0.55;
     const yBot = -(H - 1) - cy - 0.55;
     const zFront = -cz + 0.55;
     const bHandle = B > 1
-      ? { i: 0, o: { x: W - cx + 0.1, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(GAP - 0.35, 0.9) }
-      : { i: 0, o: { x: x0, y: yBot - 1.05, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(W, 1.1) };
+      ? { i: ax[0], o: { x: W - cx + 0.1, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(GAP - 0.35, 0.9) }
+      : { i: ax[0], o: { x: x0, y: yBot - 1.05, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(W, 1.1) };
     return [
-      { i: 3, o: { x: x0, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: W },
-      { i: 2, o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: -1, z: 0 }, len: H },
-      { i: 1, o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: 0, z: -1 }, len: C * (1 + ZGAP) - ZGAP },
+      { i: ax[3], o: { x: x0, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: W },
+      { i: ax[2], o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: -1, z: 0 }, len: H },
+      { i: ax[1], o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: 0, z: -1 }, len: C * (1 + ZGAP) - ZGAP },
       bHandle
     ];
   }
   function cellScale(w, h) {
-    const [B, C, H, W] = dims();
+    const [B, C, H, W] = gdims();
     const extent = Math.max((B - 1) * (W + GAP) + W, H, C * (1 + ZGAP), 2);
     return Math.min(w, h) / (extent * FIT) * view.scale;
   }
@@ -1027,6 +1093,7 @@
 
   function buildVoxels() {
     const [B, C, H, W] = dims();
+    const GW = gdims()[3];
     const st = strides();
     const { cx, cy, cz } = centre();
     const out = [];
@@ -1039,10 +1106,11 @@
             const sel = id.every((v, i) => v === state.idx[i]);
             const lit = state.slice < 0 || id[state.slice] === state.idx[state.slice];
             const value = shownValueAt(id);
+            const [gb, gc, gh, gw] = gindex(id);
             out.push({
-              x: b * (W + GAP) + w - cx,
-              y: -h - cy,
-              z: -c * (1 + ZGAP) - cz,
+              x: gb * (GW + GAP) + gw - cx,
+              y: -gh - cy,
+              z: -gc * (1 + ZGAP) - cz,
               color: colourAt(id, value),
               alpha: lit ? 1 : 0.15,
               sel, off, id, lit, value
@@ -1092,6 +1160,8 @@
     const s = cellScale(w, h);
     const half = 0.42 * s;
     const ink = css("--ink");
+    const labels = showValues() && s >= VALUE_MIN_PX;
+    if (labels) { ctx.textAlign = "center"; ctx.textBaseline = "middle"; }
 
     sorted.forEach((v) => {
       const [px, py] = to(v.x, v.y, v.z);
@@ -1108,7 +1178,13 @@
       ctx.lineTo(px - half, py - half * 0.4);
       ctx.closePath();
       ctx.fill();
-      ctx.stroke();
+      if (half >= 2) ctx.stroke();
+      if (labels) {
+        const text = String(v.value);
+        ctx.fillStyle = inkOn(v.color);
+        ctx.font = labelFont(text, half);
+        ctx.fillText(text, px, py + half * 0.22);
+      }
     });
     ctx.globalAlpha = 1;
     axisHandles().forEach((a) => {
@@ -1207,8 +1283,84 @@
       group.add(a);
       return a;
     });
-    Object.assign(GL, { ready: true, THREE, renderer, scene, camera, group, box, lit, dim, outline, arrows });
+    Object.assign(GL, { ready: true, THREE, renderer, scene, camera, group, box, lit, dim, outline, arrows,
+                        labels: [], texCache: new Map() });
     return true;
+  }
+
+  // The value printed on a cube, as a billboard just outside its face nearest
+  // the camera. A sprite is depth-tested, so a cube behind another keeps its
+  // number to itself -- which an HTML overlay could not do. One texture per
+  // distinct (text, colour), cached; a value is at most four characters.
+  function labelTexture(text, color) {
+    const THREE = GL.THREE;
+    const key = `${text}|${color}`;
+    let tex = GL.texCache.get(key);
+    if (tex) return tex;
+    if (GL.texCache.size > 2048) {
+      GL.texCache.forEach((t) => t.dispose());
+      GL.texCache.clear();
+    }
+    const cv = document.createElement("canvas");
+    cv.width = cv.height = 96;
+    const ctx = cv.getContext("2d");
+    ctx.font = `700 ${Math.min(46, 160 / Math.max(text.length, 1))}px ${css("--mono") || "ui-monospace, monospace"}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = color;
+    ctx.fillText(text, 48, 50);
+    tex = new THREE.CanvasTexture(cv);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    GL.texCache.set(key, tex);
+    return tex;
+  }
+
+  // Runs after the camera is placed, on every repaint: the labels are shown
+  // only when a cell is wide enough on screen, and zooming changes that.
+  function syncLabels(voxels) {
+    const THREE = GL.THREE;
+    let n = 0;
+    if (showValues() && voxels.length) {
+      const stage = $("stage");
+      const v0 = voxels[0];
+      const [ax, ay] = glTo(v0.x, v0.y, v0.z, stage.clientWidth, stage.clientHeight);
+      const [bx, by] = glTo(v0.x + 1, v0.y, v0.z, stage.clientWidth, stage.clientHeight);
+      if (Math.hypot(bx - ax, by - ay) >= VALUE_MIN_PX) {
+        // 0.78 clears the cube's corner (0.43 * sqrt 3) along any view direction
+        // and stays short of the neighbour in front.
+        const toward = GL.camera.position.clone().normalize().multiplyScalar(0.78);
+        // Nearest the camera first, so if the cap is hit it is the back of the
+        // pile that goes unlabelled, as in the flat renderer's paint order.
+        const cam = GL.camera.position;
+        const near = voxels.filter((v) => v.alpha >= 1);
+        if (near.length > VALUE_MAX_LABELS) {
+          const d2 = (v) => (v.x - cam.x) ** 2 + (v.y - cam.y) ** 2 + (v.z - cam.z) ** 2;
+          near.sort((a, b) => d2(a) - d2(b));
+        }
+        for (const v of near) {
+          if (n >= VALUE_MAX_LABELS) break;
+          let sprite = GL.labels[n];
+          if (!sprite) {
+            sprite = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false }));
+            sprite.scale.set(0.8, 0.8, 1);
+            GL.group.add(sprite);
+            GL.labels[n] = sprite;
+          }
+          const text = String(v.value);
+          const color = inkOn(v.color);
+          const key = `${text}|${color}`;
+          if (sprite.userData.key !== key) {
+            sprite.material.map = labelTexture(text, color);
+            sprite.material.needsUpdate = true;
+            sprite.userData.key = key;
+          }
+          sprite.position.set(v.x + toward.x, v.y + toward.y, v.z + toward.z);
+          sprite.visible = true;
+          n++;
+        }
+      }
+    }
+    for (let i = n; i < GL.labels.length; i++) GL.labels[i].visible = false;
   }
 
   function setMode(next, why) {
@@ -1221,7 +1373,7 @@
 
   // Frame the bounding extents against whichever field of view is tighter.
   function glDistance(pitch) {
-    const [B, C, H, W] = dims();
+    const [B, C, H, W] = gdims();
     const spanX = (B - 1) * (W + GAP) + W;
     const rXZ = 0.5 * Math.hypot(spanX, C * (1 + ZGAP)) + 1.1;
     const rY = 0.5 * H + 1.1;
@@ -1247,6 +1399,7 @@
         Math.cos(view.yaw) * dist * Math.cos(pitch)
       );
       GL.camera.lookAt(0, 0, 0);
+      syncLabels(VOX);
       GL.renderer.render(GL.scene, GL.camera);
       const stage = $("stage");
       placeOverlays(stage.clientWidth, stage.clientHeight);
@@ -1419,6 +1572,10 @@
     const base = isPhotos() ? T.stagePhotos : T.stageNumbers(LETTER[fastest]);
     const parts = [state.reshape ? T.stageReshape : base];
     if (state.slice >= 0) parts.push(T.lit(LETTER[state.slice]));
+    if (byPos()) {
+      const ax = gaxes();
+      parts.push(T.stageArranged(LETTER[ax[3]], LETTER[ax[2]], LETTER[ax[1]], LETTER[ax[0]]));
+    }
     parts.push(T.drag);
     $("stagenote").textContent = embed ? "" : parts.join(" ");
 
@@ -1603,6 +1760,10 @@
       if (!res.ok) throw new Error(String(res.status));
       const json = await res.json();
       if (!json.photos || json.photos.length !== 3) throw new Error("shape");
+      // The instanced mesh is sized for MAX_RES; a larger side added to
+      // WIDGET_RES in gen_figures.py would overflow it silently, so drop it.
+      json.res = json.res.filter((r) => r <= MAX_RES);
+      if (!json.res.includes(state.res)) state.res = Math.max(...json.res);
       PHOTOS = json;
       $("stage").dataset.photos = String(json.photos.length);
     } catch (_) {

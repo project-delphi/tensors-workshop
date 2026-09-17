@@ -45,3 +45,7 @@ uv.lock
 
 # Cached archive created by the PCA notebook.
 pca_data/
+
+# Claude Code's resume checkpoint, written near a context limit. Session
+# state, not source.
+/.claude/RESUME.md

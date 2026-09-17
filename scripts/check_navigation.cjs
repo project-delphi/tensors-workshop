@@ -8,7 +8,8 @@ const root = path.resolve(__dirname, '../docs');
 const screenshots = process.env.SCREENSHOT_DIR || require('node:os').tmpdir();
 const prefix = '/tensors-workshop/';
 const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
-  '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.woff2':'font/woff2'};
+  '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif',
+  '.webp':'image/webp', '.woff2':'font/woff2'};
 const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach',
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
@@ -360,7 +361,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
     }
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and both interactive widgets.`);
+      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and both interactive widgets.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

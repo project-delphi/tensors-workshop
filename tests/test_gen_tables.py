@@ -12,11 +12,12 @@ is *why* the group holds what it holds, which is what breaks when someone adds
 a `%pip install` to a notebook and the environment quietly grows a package the
 notebook installs for itself.
 """
+
 from __future__ import annotations
 
-from pathlib import Path
 import sys
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -62,7 +63,6 @@ class NotebookRequirements(unittest.TestCase):
                 with self.subTest(notebook=s["n"], module=name):
                     self.assertIn(name, self.deps)
 
-
     def test_no_duplicates_and_a_stable_order(self):
         self.assertEqual(len(self.deps), len(set(self.deps)))
         self.assertEqual(self.deps, gt.notebook_requirements())
@@ -88,8 +88,8 @@ class NotebookRequirements(unittest.TestCase):
         original = gt.notebook_code
         try:
             gt.notebook_code = lambda path: (
-                "%pip install -q tensorly  # scipy comes from Colab\n"
-                "import scipy\n")
+                "%pip install -q tensorly  # scipy comes from Colab\nimport scipy\n"
+            )
             deps = gt.notebook_requirements()
         finally:
             gt.notebook_code = original
@@ -106,8 +106,9 @@ class NotebookRequirements(unittest.TestCase):
     def test_committed_group_matches_the_derivation(self):
         # The same guarantee CI's regenerate gate gives, one push earlier.
         body = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-        region = body.split("# BEGIN notebooks-group\n", 1)[1] \
-                     .split("# END notebooks-group", 1)[0]
+        region = body.split("# BEGIN notebooks-group\n", 1)[1].split(
+            "# END notebooks-group", 1
+        )[0]
         self.assertEqual(region, gt.pyproject_group())
 
 
@@ -122,34 +123,37 @@ class PipInstalled(unittest.TestCase):
     """
 
     def test_plain_and_quoted_names(self):
-        self.assertEqual(gt.pip_installed("%pip install -q tensorly"),
-                         {"tensorly"})
-        self.assertEqual(gt.pip_installed('%pip install -q "imageio[ffmpeg]"'),
-                         {"imageio"})
+        self.assertEqual(gt.pip_installed("%pip install -q tensorly"), {"tensorly"})
+        self.assertEqual(
+            gt.pip_installed('%pip install -q "imageio[ffmpeg]"'), {"imageio"}
+        )
 
     def test_a_comment_is_not_a_requirement(self):
         # The regression. `scipy` is named in a comment, not installed, so it
         # must still reach the environment from its import.
         self.assertEqual(
             gt.pip_installed("%pip install -q tensorly  # scipy from Colab"),
-            {"tensorly"})
+            {"tensorly"},
+        )
 
     def test_version_specifiers_and_extras_are_stripped(self):
         self.assertEqual(
             gt.pip_installed('%pip install "imageio[ffmpeg]" tensorly==0.8.1'),
-            {"imageio", "tensorly"})
-        self.assertEqual(gt.pip_installed("%pip install 'scipy>=1.11,<2'"),
-                         {"scipy"})
+            {"imageio", "tensorly"},
+        )
+        self.assertEqual(gt.pip_installed("%pip install 'scipy>=1.11,<2'"), {"scipy"})
 
     def test_flags_are_not_requirements(self):
         self.assertEqual(
             gt.pip_installed("%pip install -q --no-input --upgrade tensorly"),
-            {"tensorly"})
+            {"tensorly"},
+        )
 
     def test_backslash_continuation_is_followed(self):
         self.assertEqual(
             gt.pip_installed("%pip install -q \\\n    scikit-image scipy"),
-            {"scikit-image", "scipy"})
+            {"scikit-image", "scipy"},
+        )
 
     def test_value_taking_flags_do_not_contribute_their_value(self):
         # A flag's value is a path or a URL, never a distribution. Reading one
@@ -157,14 +161,15 @@ class PipInstalled(unittest.TestCase):
         # nothing installs, and drop it from the environment.
         self.assertEqual(
             gt.pip_installed("%pip install -q -i https://pypi.org/simple tensorly"),
-            {"tensorly"})
-        self.assertEqual(gt.pip_installed("%pip install -r requirements.txt"),
-                         set())
+            {"tensorly"},
+        )
+        self.assertEqual(gt.pip_installed("%pip install -r requirements.txt"), set())
         # The `--flag=value` form carries its value, so the next token is a
         # requirement and must not be swallowed.
         self.assertEqual(
             gt.pip_installed("%pip install --index-url=https://x/simple scipy"),
-            {"scipy"})
+            {"scipy"},
+        )
 
     def test_no_pip_line_is_an_empty_set(self):
         self.assertEqual(gt.pip_installed("import numpy as np"), set())
@@ -173,8 +178,10 @@ class PipInstalled(unittest.TestCase):
         seen = set()
         for s in gt.NOTEBOOKS:
             seen |= gt.pip_installed(
-                gt.notebook_code(ROOT / "notebooks" / gt.notebook_name(s)))
+                gt.notebook_code(ROOT / "notebooks" / gt.notebook_name(s))
+            )
         self.assertEqual(seen, {"imageio", "tensorly", "pyttb", "torch"})
+
 
 if __name__ == "__main__":
     unittest.main()

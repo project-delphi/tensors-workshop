@@ -163,8 +163,9 @@ format:
     # -- the anchor sat between the `<p>` and the `<img>`, so custom.scss's
     # figure rules stopped matching and the paragraph fell back to the prose
     # measure. Written as a mapping *without* `match: auto`, the filter only
-    # wraps an image that carries `.lightbox` -- and only the companion's
-    # infographics do, because only they are worth reading at full size.
+    # wraps an image that carries `.lightbox`: the companion's infographics,
+    # and the handbook's four figures, which are boxed to the prose measure
+    # by custom.scss and open at full size on a click.
     # Quarto's schema has no `match: manual`, so naming the effect (its
     # default) is what spells "opt-in" here.
     lightbox:

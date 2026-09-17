@@ -135,6 +135,7 @@ cell, the numbers stop being legible on a phone before they stop being legible
 on a laptop, which is where nobody checks. Pick `cell` to fill the band, and
 let `_check_layout` tell you when you have gone too far.
 """
+
 from __future__ import annotations
 
 import sys
@@ -142,7 +143,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from gen_notebooks import ACCENTS                                  # noqa: E402
+from gen_notebooks import ACCENTS  # noqa: E402
 from gen_thumbnails import IMAGES, INK, canvas_to_pil, stack, write_gif  # noqa: E402
 
 PAPER = "#ffffff"
@@ -170,10 +171,10 @@ CAPTION_GAP_PX = 24
 # as well as in hue. Colour is never the only carrier: every index is written
 # out as a letter too, for the reason every Spanish box says ESPAÑOL in words.
 INDEX = {
-    "i": "#0072b2",      # blue
-    "j": "#e69f00",      # orange
-    "k": "#009e73",      # green
-    "d": "#cc79a7",      # reddish purple
+    "i": "#0072b2",  # blue
+    "j": "#e69f00",  # orange
+    "k": "#009e73",  # green
+    "d": "#cc79a7",  # reddish purple
 }
 
 # The cube every scene starts from: np.arange(60).reshape(3, 4, 5).
@@ -187,8 +188,8 @@ CELL = 0.70
 # distance -- a pile drawn at half size has to lean back half as far, or the
 # depth swamps the plane and the pile walks off the canvas.
 STEP_RATIO = (0.88, 0.68)
-BODY = (1.15, 1.05)      # where a pile starts, clear of both caption lines
-BAND_MID = 2.95          # the middle of the space between the two caption lines
+BODY = (1.15, 1.05)  # where a pile starts, clear of both caption lines
+BAND_MID = 2.95  # the middle of the space between the two caption lines
 
 
 def accent_of(n: str) -> str:
@@ -199,25 +200,29 @@ def accent_of(n: str) -> str:
 def mpl():
     """matplotlib with Agg and the house defaults, as `gen_figures.mpl` sets them."""
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "text.color": INK,
-        "axes.edgecolor": INK,
-        "savefig.facecolor": PAPER,
-        "figure.facecolor": PAPER,
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "text.color": INK,
+            "axes.edgecolor": INK,
+            "savefig.facecolor": PAPER,
+            "figure.facecolor": PAPER,
+        }
+    )
     return plt
 
 
 def _mix(hex_colour: str, weight: float, towards: str = "#ffffff") -> str:
     """`hex_colour` blended `weight` of the way towards white (or black)."""
-    a = [int(hex_colour[i:i + 2], 16) for i in (1, 3, 5)]
-    b = [int(towards[i:i + 2], 16) for i in (1, 3, 5)]
-    return "#%02x%02x%02x" % tuple(
-        round(x + (y - x) * weight) for x, y in zip(a, b))
+    a = [int(hex_colour[i : i + 2], 16) for i in (1, 3, 5)]
+    b = [int(towards[i : i + 2], 16) for i in (1, 3, 5)]
+    return "#{:02x}{:02x}{:02x}".format(
+        *(round(x + (y - x) * weight) for x, y in zip(a, b))
+    )
 
 
 def _ink_on(fill: str) -> str:
@@ -233,7 +238,7 @@ def _ink_on(fill: str) -> str:
     cell buzzes, and the GIF palette is quantized to a shared 48 or 64 entries,
     which turns that buzz into fringing.
     """
-    r, g, b = (int(fill[i:i + 2], 16) / 255 for i in (1, 3, 5))
+    r, g, b = (int(fill[i : i + 2], 16) / 255 for i in (1, 3, 5))
     return INK if (0.2126 * r + 0.7152 * g + 0.0722 * b) > 0.55 else "#f6f7f8"
 
 
@@ -244,7 +249,7 @@ def _ink_on(fill: str) -> str:
 # Spanish, so one GIF serves both languages and there is no second asset to
 # keep in step. The sentence explaining it lives in the notebook cell, in both.
 
-W, H = 9.6, 5.4          # inches at dpi=100 -> 960x540
+W, H = 9.6, 5.4  # inches at dpi=100 -> 960x540
 # Axes units chosen 16:9 like the figure, so `aspect="equal"` letterboxes
 # nothing and one unit means the same thing horizontally and vertically.
 XLIM = (0.0, 9.6)
@@ -261,17 +266,41 @@ def frame(tint, label, note="", sub=""):
     ax.set_aspect("equal")
     ax.axis("off")
 
-    label_t = ax.text(0.30, YLIM[1] - 0.30, label, ha="left", va="top",
-                      fontsize=17, family="monospace", color=tint)
+    label_t = ax.text(
+        0.30,
+        YLIM[1] - 0.30,
+        label,
+        ha="left",
+        va="top",
+        fontsize=17,
+        family="monospace",
+        color=tint,
+    )
     note_t = sub_t = None
     if note:
         # Bottom right, not top right: the axis 0 arrow runs up into the top
         # right corner on every scene that draws one, and the two collided.
-        note_t = ax.text(XLIM[1] - 0.30, 0.22, note, ha="right", va="bottom",
-                         fontsize=15, family="monospace", color=MUTE)
+        note_t = ax.text(
+            XLIM[1] - 0.30,
+            0.22,
+            note,
+            ha="right",
+            va="bottom",
+            fontsize=15,
+            family="monospace",
+            color=MUTE,
+        )
     if sub:
-        sub_t = ax.text(0.30, 0.22, sub, ha="left", va="bottom",
-                        fontsize=13.5, family="monospace", color=MUTE)
+        sub_t = ax.text(
+            0.30,
+            0.22,
+            sub,
+            ha="left",
+            va="bottom",
+            fontsize=13.5,
+            family="monospace",
+            color=MUTE,
+        )
     # `render` checks these two for overlap before it keeps the frame. They
     # share a baseline at opposite ends of it, so a long pair silently prints
     # one sentence through the other -- legible in neither language, and
@@ -315,32 +344,65 @@ def axis_arrows(ax, shape, origin=BODY, cell=CELL, names=None, tints=None):
     # axis 2 runs across the front plane, under it.
     label, colour = look(2, f"axis 2 ({cols})")
     if label:
-        ax.annotate("", xy=(x0 + cols * cell, y0 - 0.26),
-                    xytext=(x0, y0 - 0.26),
-                    arrowprops=dict(arrowstyle="->", color=colour, lw=1.6))
-        ax.text(x0 + cols * cell / 2, y0 - 0.44, label, ha="center",
-                va="top", fontsize=12, family="monospace", color=colour)
+        ax.annotate(
+            "",
+            xy=(x0 + cols * cell, y0 - 0.26),
+            xytext=(x0, y0 - 0.26),
+            arrowprops=dict(arrowstyle="->", color=colour, lw=1.6),
+        )
+        ax.text(
+            x0 + cols * cell / 2,
+            y0 - 0.44,
+            label,
+            ha="center",
+            va="top",
+            fontsize=12,
+            family="monospace",
+            color=colour,
+        )
 
     # axis 1 runs down the front plane, to its left.
     label, colour = look(1, f"axis 1 ({rows})")
     if label:
-        ax.annotate("", xy=(x0 - 0.26, y0), xytext=(x0 - 0.26, y0 + rows * cell),
-                    arrowprops=dict(arrowstyle="->", color=colour, lw=1.6))
-        ax.text(x0 - 0.40, y0 + rows * cell / 2, label, ha="right",
-                va="center", fontsize=12, family="monospace", color=colour,
-                rotation=90)
+        ax.annotate(
+            "",
+            xy=(x0 - 0.26, y0),
+            xytext=(x0 - 0.26, y0 + rows * cell),
+            arrowprops=dict(arrowstyle="->", color=colour, lw=1.6),
+        )
+        ax.text(
+            x0 - 0.40,
+            y0 + rows * cell / 2,
+            label,
+            ha="right",
+            va="center",
+            fontsize=12,
+            family="monospace",
+            color=colour,
+            rotation=90,
+        )
 
     # axis 0 runs back along the pile, above it.
     label, colour = look(0, f"axis 0 ({d})")
     if label:
         dx, dy = step_for(cell)
         bx, by = x0 + cols * cell + 0.18, y0 + rows * cell + 0.14
-        ax.annotate("", xy=(bx + (d - 1) * dx, by + (d - 1) * dy),
-                    xytext=(bx, by),
-                    arrowprops=dict(arrowstyle="->", color=colour, lw=1.6))
-        ax.text(bx + (d - 1) * dx + 0.16, by + (d - 1) * dy + 0.10,
-                label, ha="left", va="bottom", fontsize=12,
-                family="monospace", color=colour)
+        ax.annotate(
+            "",
+            xy=(bx + (d - 1) * dx, by + (d - 1) * dy),
+            xytext=(bx, by),
+            arrowprops=dict(arrowstyle="->", color=colour, lw=1.6),
+        )
+        ax.text(
+            bx + (d - 1) * dx + 0.16,
+            by + (d - 1) * dy + 0.10,
+            label,
+            ha="left",
+            va="bottom",
+            fontsize=12,
+            family="monospace",
+            color=colour,
+        )
 
 
 def step_for(cell=CELL):
@@ -400,10 +462,24 @@ def centred(shape, cell=CELL, y=None):
     return ((XLIM[1] - w) / 2, (BAND_MID - h / 2) if y is None else y)
 
 
-def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
-           cell=CELL, origin=BODY, label_size=10.0, edge_axis=True,
-           lit_tint=None, cell_colors=None, ghost_labels=True,
-           decimals=None):
+def planes(
+    ax,
+    arr,
+    *,
+    tint,
+    lit=None,
+    hide=None,
+    ghost=None,
+    labels=True,
+    cell=CELL,
+    origin=BODY,
+    label_size=10.0,
+    edge_axis=True,
+    lit_tint=None,
+    cell_colors=None,
+    ghost_labels=True,
+    decimals=None,
+):
     """One tensor as its pile of (axis 1, axis 2) matrices, drawn back to front.
 
     Three masks, each answering a different question about an entry:
@@ -467,18 +543,22 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
     from matplotlib.patches import Rectangle
 
     arr = np.asarray(arr)
-    if arr.ndim == 2:                      # a lone matrix is a pile of one
+    if arr.ndim == 2:  # a lone matrix is a pile of one
         arr = arr[None, :, :]
     d, rows, cols = arr.shape
     lit = np.ones(arr.shape, bool) if lit is None else np.broadcast_to(lit, arr.shape)
-    hide = np.zeros(arr.shape, bool) if hide is None else np.broadcast_to(hide, arr.shape)
-    ghost = (np.zeros(arr.shape, bool) if ghost is None
-             else np.broadcast_to(ghost, arr.shape))
+    hide = (
+        np.zeros(arr.shape, bool) if hide is None else np.broadcast_to(hide, arr.shape)
+    )
+    ghost = (
+        np.zeros(arr.shape, bool)
+        if ghost is None
+        else np.broadcast_to(ghost, arr.shape)
+    )
     if cell_colors is not None:
-        cell_colors = np.broadcast_to(np.asarray(cell_colors, dtype=object),
-                                      arr.shape)
+        cell_colors = np.broadcast_to(np.asarray(cell_colors, dtype=object), arr.shape)
 
-    for i in range(d - 1, -1, -1):         # back of the pile first
+    for i in range(d - 1, -1, -1):  # back of the pile first
         ox, oy = plane_origin(i, origin, cell)
         top = oy + rows * cell
         for r in range(rows):
@@ -491,21 +571,35 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
                 own = None if cell_colors is None else cell_colors[i, r, c]
                 hot = own or (lit_tint if (on and lit_tint) else tint)
                 if faint:
-                    ax.add_patch(Rectangle(
-                        (x, y), cell, cell, facecolor="none",
-                        edgecolor=_mix(tint, 0.35), linewidth=1.0,
-                        linestyle=(0, (2.4, 2.0)), zorder=2 * (d - i)))
+                    ax.add_patch(
+                        Rectangle(
+                            (x, y),
+                            cell,
+                            cell,
+                            facecolor="none",
+                            edgecolor=_mix(tint, 0.35),
+                            linewidth=1.0,
+                            linestyle=(0, (2.4, 2.0)),
+                            zorder=2 * (d - i),
+                        )
+                    )
                 else:
                     # A cell_colors fill is the colour itself when lit, not a
                     # wash of it: the whole claim is that this cell IS this
                     # colour. Accent piles keep the 0.30 wash they always had,
                     # which is what stops a whole cube reading as a solid slab.
-                    fill = (hot if (own and on)
-                            else _mix(hot, 0.30 if on else 0.88))
-                    ax.add_patch(Rectangle(
-                        (x, y), cell, cell, facecolor=fill,
-                        edgecolor=INK if on else _mix(INK, 0.70),
-                        linewidth=0.7, zorder=2 * (d - i)))
+                    fill = hot if (own and on) else _mix(hot, 0.30 if on else 0.88)
+                    ax.add_patch(
+                        Rectangle(
+                            (x, y),
+                            cell,
+                            cell,
+                            facecolor=fill,
+                            edgecolor=INK if on else _mix(INK, 0.70),
+                            linewidth=0.7,
+                            zorder=2 * (d - i),
+                        )
+                    )
                 if labels and not (faint and not ghost_labels):
                     if faint:
                         ink = _mix(INK, 0.45)
@@ -513,21 +607,33 @@ def planes(ax, arr, *, tint, lit=None, hide=None, ghost=None, labels=True,
                         ink = _ink_on(fill)
                     else:
                         ink = INK if on else _mix(INK, 0.55)
-                    ax.text(x + cell / 2, y + cell / 2,
-                            cell_text(arr[i, r, c], decimals),
-                            ha="center", va="center", fontsize=label_size,
-                            family="monospace", zorder=2 * (d - i) + 1,
-                            style="italic" if faint else "normal",
-                            color=ink)
+                    ax.text(
+                        x + cell / 2,
+                        y + cell / 2,
+                        cell_text(arr[i, r, c], decimals),
+                        ha="center",
+                        va="center",
+                        fontsize=label_size,
+                        family="monospace",
+                        zorder=2 * (d - i) + 1,
+                        style="italic" if faint else "normal",
+                        color=ink,
+                    )
         # The solid left edge marks a plane that is really there, so a plane
         # that is entirely ghosted does not get one.
         if edge_axis and not (hide[i] | ghost[i]).all():
-            ax.plot([ox, ox], [oy, top], color=_mix(tint, 0.45),
-                    linewidth=1.4, zorder=2 * (d - i) + 1)
+            ax.plot(
+                [ox, ox],
+                [oy, top],
+                color=_mix(tint, 0.45),
+                linewidth=1.4,
+                zorder=2 * (d - i) + 1,
+            )
 
 
-def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
-             caption_dy=0.30, size=7.5):
+def sequence(
+    ax, items, *, tint, cell=0.46, gap=0.42, y=None, caption_dy=0.30, size=7.5
+):
     """Several tensors in a row, with glyphs between them.
 
     An item is either a string -- drawn as an operator between its neighbours,
@@ -554,16 +660,30 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
 
     # One baseline for every caption, set under the tallest pile. Hanging each
     # caption off its own pile leaves them stepped, which reads as a mistake.
-    heights = [extent(np.asarray(it["arr"]).shape
-                      if np.asarray(it["arr"]).ndim == 3
-                      else (1,) + np.asarray(it["arr"]).shape, cell=cell)[1]
-               for it in items if not isinstance(it, str)]
+    heights = [
+        extent(
+            np.asarray(it["arr"]).shape
+            if np.asarray(it["arr"]).ndim == 3
+            else (1,) + np.asarray(it["arr"]).shape,
+            cell=cell,
+        )[1]
+        for it in items
+        if not isinstance(it, str)
+    ]
     base = BAND_MID - max(heights) / 2 - caption_dy
 
     for it, span in zip(items, spans):
         if isinstance(it, str):
-            ax.text(x + span / 2, BAND_MID, it, ha="center", va="center",
-                    fontsize=20, family="monospace", color=MUTE)
+            ax.text(
+                x + span / 2,
+                BAND_MID,
+                it,
+                ha="center",
+                va="center",
+                fontsize=20,
+                family="monospace",
+                color=MUTE,
+            )
         else:
             arr = np.asarray(it["arr"])
             shape = arr.shape if arr.ndim == 3 else (1,) + arr.shape
@@ -572,17 +692,33 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
             # factor beside a tall one lines up through the middle rather than
             # sitting on a shared floor.
             oy = (BAND_MID - h / 2) if y is None else y
-            planes(ax, arr, tint=it.get("tint", tint), lit=it.get("lit"),
-                   hide=it.get("hide"), ghost=it.get("ghost"),
-                   labels=it.get("labels", True), lit_tint=it.get("lit_tint"),
-                   cell_colors=it.get("cell_colors"),
-                   ghost_labels=it.get("ghost_labels", True),
-                   decimals=it.get("decimals"),
-                   cell=cell, origin=(x, oy), label_size=it.get("size", size))
+            planes(
+                ax,
+                arr,
+                tint=it.get("tint", tint),
+                lit=it.get("lit"),
+                hide=it.get("hide"),
+                ghost=it.get("ghost"),
+                labels=it.get("labels", True),
+                lit_tint=it.get("lit_tint"),
+                cell_colors=it.get("cell_colors"),
+                ghost_labels=it.get("ghost_labels", True),
+                decimals=it.get("decimals"),
+                cell=cell,
+                origin=(x, oy),
+                label_size=it.get("size", size),
+            )
             if it.get("caption"):
-                t = ax.text(x + span / 2, base, it["caption"],
-                            ha="center", va="top", fontsize=12.5,
-                            family="monospace", color=MUTE)
+                t = ax.text(
+                    x + span / 2,
+                    base,
+                    it["caption"],
+                    ha="center",
+                    va="top",
+                    fontsize=12.5,
+                    family="monospace",
+                    color=MUTE,
+                )
                 # A caption is centred under its own pile, so two thin piles
                 # with wide captions collide however wide the gap between the
                 # piles is. `_check_layout` compares these.
@@ -593,6 +729,7 @@ def sequence(ax, items, *, tint, cell=0.46, gap=0.42, y=None,
 
 def cube():
     import numpy as np
+
     return np.arange(60).reshape(SHAPE)
 
 
@@ -617,12 +754,13 @@ SWATCH_ROWS = (
 def swatch():
     """The 3x4 colour image the RGB scenes draw, as (H, W, C)."""
     import numpy as np
+
     return np.array(SWATCH_ROWS, dtype=int)
 
 
 def _hex(rgb) -> str:
     """An (r, g, b) triple as the hex string matplotlib wants."""
-    return "#%02x%02x%02x" % tuple(int(round(float(v))) for v in rgb)
+    return "#{:02x}{:02x}{:02x}".format(*(int(round(float(v))) for v in rgb))
 
 
 def swatch_hex(img):
@@ -632,6 +770,7 @@ def swatch_hex(img):
     -- the image is one plane, not a pile of three.
     """
     import numpy as np
+
     h, w, _ = img.shape
     out = np.empty((1, h, w), dtype=object)
     for r in range(h):
@@ -651,6 +790,7 @@ def clip_frames(n=3, rows=2, cols=3):
     frame is dropping a moment rather than a slab of numbers.
     """
     import numpy as np
+
     out = np.full((n, rows, cols, 3), 128, dtype=int)
     for t in range(n):
         out[t, 0, t % cols] = (255, 0, 0)
@@ -667,6 +807,7 @@ def channel_hex(values, channel):
     red, so a bright pixel comes out dark and the plane reads inverted.
     """
     import numpy as np
+
     values = np.asarray(values)
     out = np.empty(values.shape, dtype=object)
     for idx in np.ndindex(values.shape):
@@ -710,14 +851,15 @@ def _check_layout(fig, ax, out_name, i) -> None:
                 f"{gap:.0f}px apart, under the {CAPTION_GAP_PX}px minimum. "
                 f"Shorten one of\n"
                 f"  sub:  {sub_t.get_text()}\n"
-                f"  note: {note_t.get_text()}")
+                f"  note: {note_t.get_text()}"
+            )
 
     # Only the cell rectangles, not the arrow patches an `axis_arrows` adds:
     # the axis 0 arrow is meant to run up past the top of the pile, and the
     # label sits clear of it on the other side of the frame.
     from matplotlib.patches import Rectangle
-    boxes = [q.get_window_extent(r) for q in ax.patches
-             if type(q) is Rectangle]
+
+    boxes = [q.get_window_extent(r) for q in ax.patches if type(q) is Rectangle]
     if not boxes:
         return
     body = Bbox.union(boxes)
@@ -728,21 +870,21 @@ def _check_layout(fig, ax, out_name, i) -> None:
             raise SystemExit(
                 f"{out_name} frame {i}: the drawing runs into the {name} "
                 f"({t.get_text()!r}). Draw it at a smaller `cell`, or give "
-                f"`centred` a `y`.")
+                f"`centred` a `y`."
+            )
 
     caps = getattr(ax, "_captions", [])
     for a, b in zip(caps, caps[1:]):
-        ba, bb = (a.get_window_extent(renderer=r),
-                  b.get_window_extent(renderer=r))
+        ba, bb = (a.get_window_extent(renderer=r), b.get_window_extent(renderer=r))
         if bb.x0 - ba.x1 < CAPTION_GAP_PX:
             raise SystemExit(
                 f"{out_name} frame {i}: the captions {a.get_text()!r} and "
                 f"{b.get_text()!r} run together under piles too narrow to "
-                f"carry them. Shorten them, or raise `sequence`'s `gap`.")
+                f"carry them. Shorten them, or raise `sequence`'s `gap`."
+            )
 
 
-def render(tint, states, out_name, *, duration=4050, colors=48,
-           palette_from="all"):
+def render(tint, states, out_name, *, duration=4050, colors=48, palette_from="all"):
     """Each state is (label, note, sub, draw) -- draw gets the axes.
 
     `duration` is per frame, in milliseconds, and one global value rather than
@@ -806,14 +948,24 @@ def render(tint, states, out_name, *, duration=4050, colors=48,
         _check_layout(fig, ax, out_name, i)
         frames.append(canvas_to_pil(fig))
         plt.close(fig)
-    out = write_gif(frames, IMAGES / out_name, duration=duration, loop=0,
-                    colors=colors, max_kb=MAX_KB, palette_from=palette_from)
-    print(f"  {out.relative_to(IMAGES.parent)}  {out.stat().st_size // 1024} KB"
-          f"  {len(frames)} frames")
+    out = write_gif(
+        frames,
+        IMAGES / out_name,
+        duration=duration,
+        loop=0,
+        colors=colors,
+        max_kb=MAX_KB,
+        palette_from=palette_from,
+    )
+    print(
+        f"  {out.relative_to(IMAGES.parent)}  {out.stat().st_size // 1024} KB"
+        f"  {len(frames)} frames"
+    )
     return out
 
 
 # ─── the scenes, one per notebook ───────────────────────────────────────────
+
 
 def scene_00(tint):
     """00 — what the three axes are. The cube never changes; the naming does.
@@ -822,6 +974,7 @@ def scene_00(tint):
     browser parks on and a perfectly good thing to be left looking at.
     """
     import numpy as np
+
     T = cube()
     lit_axis = [np.zeros(SHAPE, bool) for _ in range(3)]
     for a in range(3):
@@ -840,17 +993,26 @@ def scene_00(tint):
         # arrow naming it are visibly the same thing. The caption still says
         # which axis in words: the colour is a second channel, never the only.
         def draw(ax):
-            planes(ax, T, tint=tint, lit=lit_axis[a], lit_tint=AXIS_TINTS[a],
-                   origin=o)
+            planes(ax, T, tint=tint, lit=lit_axis[a], lit_tint=AXIS_TINTS[a], origin=o)
             axis_arrows(ax, SHAPE, origin=o, tints=AXIS_TINTS)
+
         return draw
 
     return [
-        ("T = np.arange(60).reshape(3, 4, 5)", "shape (3, 4, 5)",
-         "60 numbers, three directions, three colours", whole),
+        (
+            "T = np.arange(60).reshape(3, 4, 5)",
+            "shape (3, 4, 5)",
+            "60 numbers, three directions, three colours",
+            whole,
+        ),
         ("T[0]", "shape (4, 5)", "axis 0 fixed — one plane of the pile", face(0)),
         ("T[:, 0]", "shape (3, 5)", "axis 1 fixed — one row from every plane", face(1)),
-        ("T[:, :, 0]", "shape (3, 4)", "axis 2 fixed — one column from every plane", face(2)),
+        (
+            "T[:, :, 0]",
+            "shape (3, 4)",
+            "axis 2 fixed — one column from every plane",
+            face(2),
+        ),
     ]
 
 
@@ -864,6 +1026,7 @@ def scene_00_index(tint):
     to (5,) to nothing at all.
     """
     import numpy as np
+
     T = cube()
     o = centred(SHAPE)
 
@@ -888,15 +1051,24 @@ def scene_00_index(tint):
     def draw_of(mask):
         def draw(ax):
             planes(ax, T, tint=tint, lit=mask, hide=front, origin=o)
+
         return draw
 
     return [
         ("T", "shape (3, 4, 5)", "60 numbers, and one of them is 33", opening),
-        ("T[1]", "shape (4, 5)",
-         "the front plane lifted away — this is the next one", draw_of(lit_of(1))),
+        (
+            "T[1]",
+            "shape (4, 5)",
+            "the front plane lifted away — this is the next one",
+            draw_of(lit_of(1)),
+        ),
         ("T[1, 2]", "shape (5,)", "and its third row", draw_of(lit_of(1, 2))),
-        ("T[1, 2, 3]", "= 33", "1 x 20 + 2 x 5 + 3, checkable by eye",
-         draw_of(lit_of(1, 2, 3))),
+        (
+            "T[1, 2, 3]",
+            "= 33",
+            "1 x 20 + 2 x 5 + 3, checkable by eye",
+            draw_of(lit_of(1, 2, 3)),
+        ),
     ]
 
 
@@ -913,6 +1085,7 @@ def scene_00_shape(tint):
     question even has one answer.
     """
     import numpy as np
+
     T = cube()
     flat = T.ravel()
     wide = flat.reshape(4, 15)
@@ -926,8 +1099,15 @@ def scene_00_shape(tint):
     def flat_grid(arr, cell, size):
         def draw(ax):
             shape = (1,) + arr.shape
-            planes(ax, arr, tint=tint, origin=centred(shape, cell=cell),
-                   cell=cell, label_size=size)
+            planes(
+                ax,
+                arr,
+                tint=tint,
+                origin=centred(shape, cell=cell),
+                cell=cell,
+                label_size=size,
+            )
+
         return draw
 
     def both(ax):
@@ -942,26 +1122,44 @@ def scene_00_shape(tint):
         front[0] = True
         wide_lit = np.zeros(wide.shape, bool)
         wide_lit[2, 3] = True
-        sequence(ax, [
-            {"arr": T, "lit": cube_lit, "hide": front, "caption": "(3, 4, 5)"},
-            {"arr": wide, "lit": wide_lit, "caption": "(4, 15)"},
-        ], tint=tint, cell=0.40, size=7.5)
+        sequence(
+            ax,
+            [
+                {"arr": T, "lit": cube_lit, "hide": front, "caption": "(3, 4, 5)"},
+                {"arr": wide, "lit": wide_lit, "caption": "(4, 15)"},
+            ],
+            tint=tint,
+            cell=0.40,
+            size=7.5,
+        )
 
     return [
-        ("T", "shape (3, 4, 5)", "sixty numbers, in a box with three sides",
-         pile),
-        ("T.reshape(4, 15)", "shape (4, 15)",
-         "the same sixty numbers, in a flatter box", flat_grid(wide, 0.56, 9)),
-        ("T.reshape(6, 10)", "shape (6, 10)",
-         "and again — not one number moved", flat_grid(tall, 0.62, 10)),
-        ("where 33 lives", "T[1, 2, 3]  and  [2, 3]",
-         "same number, a different address in each shape", both),
+        ("T", "shape (3, 4, 5)", "sixty numbers, in a box with three sides", pile),
+        (
+            "T.reshape(4, 15)",
+            "shape (4, 15)",
+            "the same sixty numbers, in a flatter box",
+            flat_grid(wide, 0.56, 9),
+        ),
+        (
+            "T.reshape(6, 10)",
+            "shape (6, 10)",
+            "and again — not one number moved",
+            flat_grid(tall, 0.62, 10),
+        ),
+        (
+            "where 33 lives",
+            "T[1, 2, 3]  and  [2, 3]",
+            "same number, a different address in each shape",
+            both,
+        ),
     ]
 
 
 def scene_01(tint):
     """01 — the order ladder, every rung the same numbers at a different order."""
     import numpy as np
+
     T = cube()
 
     def rung(arr, shape_note):
@@ -971,10 +1169,16 @@ def scene_01(tint):
             a = a.reshape(1, 1, -1) if arr.ndim == 1 else a
             a = a.reshape(1, 1, 1) if arr.ndim == 0 else a
             planes(ax, a, tint=tint, origin=centred(a.shape), label_size=13)
+
         return draw, shape_note
 
     rows = [
-        ("T[0, 0, 0]", "shape ()      ndim 0", "a scalar — no axis at all", np.array(0)),
+        (
+            "T[0, 0, 0]",
+            "shape ()      ndim 0",
+            "a scalar — no axis at all",
+            np.array(0),
+        ),
         ("T[0, 0]", "shape (5,)    ndim 1", "a vector — one axis", T[0, 0]),
         ("T[0]", "shape (4, 5)  ndim 2", "a matrix — two axes", T[0]),
         ("T", "shape (3, 4, 5)  ndim 3", "an order-3 tensor — three axes", T),
@@ -1001,6 +1205,7 @@ def scene_01_slice_fibre(tint):
     shown a frame with nothing visibly selected.
     """
     import numpy as np
+
     T = cube()
     plane = np.zeros(SHAPE, bool)
     plane[0] = True
@@ -1011,29 +1216,58 @@ def scene_01_slice_fibre(tint):
 
     def cut(lit, out, caption):
         def draw(ax):
-            sequence(ax, [
-                {"arr": T, "lit": lit, "caption": "T  (3, 4, 5)"},
-                "->",
-                {"arr": out, "caption": caption},
-            ], tint=tint, cell=0.40, size=7.5)
+            sequence(
+                ax,
+                [
+                    {"arr": T, "lit": lit, "caption": "T  (3, 4, 5)"},
+                    "->",
+                    {"arr": out, "caption": caption},
+                ],
+                tint=tint,
+                cell=0.40,
+                size=7.5,
+            )
+
         return draw
 
     def compare(ax):
-        sequence(ax, [
-            {"arr": T[0], "caption": "T[0]  (4, 5)"},
-            "vs",
-            {"arr": T[0, 2].reshape(1, 5), "caption": "T[0, 2]  (5,)"},
-        ], tint=tint, cell=0.52, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": T[0], "caption": "T[0]  (4, 5)"},
+                "vs",
+                {"arr": T[0, 2].reshape(1, 5), "caption": "T[0, 2]  (5,)"},
+            ],
+            tint=tint,
+            cell=0.52,
+            size=11,
+        )
 
     return [
-        ("T[0]", "2 axes survive", "a slice — fix one index",
-         cut(plane, T[0], "T[0]  (4, 5)")),
-        ("T[0, 2]", "1 axis survives", "a fibre — fix two",
-         cut(fibre, T[0, 2].reshape(1, 5), "T[0, 2]  (5,)")),
-        ("slice vs fibre", "2 axes against 1",
-         "how many you fixed decides how many are left", compare),
-        ("T[0, 2, 3]", "= 13", "fix all three and no axis is left at all",
-         cut(one, np.array([[13]]), "T[0, 2, 3]  ()")),
+        (
+            "T[0]",
+            "2 axes survive",
+            "a slice — fix one index",
+            cut(plane, T[0], "T[0]  (4, 5)"),
+        ),
+        (
+            "T[0, 2]",
+            "1 axis survives",
+            "a fibre — fix two",
+            cut(fibre, T[0, 2].reshape(1, 5), "T[0, 2]  (5,)"),
+        ),
+        (
+            "slice vs fibre",
+            "2 axes against 1",
+            "how many you fixed decides how many are left",
+            compare,
+        ),
+        (
+            "T[0, 2, 3]",
+            "= 13",
+            "fix all three and no axis is left at all",
+            cut(one, np.array([[13]]), "T[0, 2, 3]  ()"),
+        ),
     ]
 
 
@@ -1058,6 +1292,7 @@ def scene_01_rank(tint):
     second is false and this is a picture a notebook embeds.
     """
     import numpy as np
+
     a = np.array([1, 2, 3, 4])
     b = np.array([1, 2, 3])
     M1 = np.outer(a, b)
@@ -1065,38 +1300,73 @@ def scene_01_rank(tint):
 
     def whole(arr, lit=None):
         def draw(ax):
-            planes(ax, arr, tint=tint, lit=lit,
-                   origin=centred((1,) + arr.shape, cell=0.78), cell=0.78,
-                   label_size=15)
+            planes(
+                ax,
+                arr,
+                tint=tint,
+                lit=lit,
+                origin=centred((1,) + arr.shape, cell=0.78),
+                cell=0.78,
+                label_size=15,
+            )
+
         return draw
 
     def factored(ax):
-        sequence(ax, [
-            {"arr": a.reshape(4, 1), "tint": INDEX["i"], "caption": "a  (4,)"},
-            "x",
-            {"arr": b.reshape(1, 3), "tint": INDEX["j"], "caption": "b  (3,)"},
-            "=",
-            {"arr": M1, "caption": "M  (4, 3)"},
-        ], tint=tint, cell=0.56, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": a.reshape(4, 1), "tint": INDEX["i"], "caption": "a  (4,)"},
+                "x",
+                {"arr": b.reshape(1, 3), "tint": INDEX["j"], "caption": "b  (3,)"},
+                "=",
+                {"arr": M1, "caption": "M  (4, 3)"},
+            ],
+            tint=tint,
+            cell=0.56,
+            size=12,
+        )
 
     def both(ax):
         first = np.zeros(M1.shape, bool)
         first[0] = True
-        sequence(ax, [
-            {"arr": M1, "lit": first, "caption": "rank 1"},
-            "vs",
-            {"arr": M2, "lit": first, "caption": "rank 2"},
-        ], tint=tint, cell=0.56, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": M1, "lit": first, "caption": "rank 1"},
+                "vs",
+                {"arr": M2, "lit": first, "caption": "rank 2"},
+            ],
+            tint=tint,
+            cell=0.56,
+            size=12,
+        )
 
     return [
-        ("M = a x b", "(4, 3), order 2",
-         "every row is a multiple of the first", whole(M1)),
-        ("a and b", "7 numbers, not 12",
-         "one direction is enough to rebuild all of it", factored),
-        ("M + c x d", "(4, 3), order 2",
-         "one term added, and two rows stopped being multiples", whole(M2)),
-        ("rank 1 vs rank 2", "both (4, 3), both order 2",
-         "order counts axes; rank counts directions", both),
+        (
+            "M = a x b",
+            "(4, 3), order 2",
+            "every row is a multiple of the first",
+            whole(M1),
+        ),
+        (
+            "a and b",
+            "7 numbers, not 12",
+            "one direction is enough to rebuild all of it",
+            factored,
+        ),
+        (
+            "M + c x d",
+            "(4, 3), order 2",
+            "one term added, and two rows stopped being multiples",
+            whole(M2),
+        ),
+        (
+            "rank 1 vs rank 2",
+            "both (4, 3), both order 2",
+            "order counts axes; rank counts directions",
+            both,
+        ),
     ]
 
 
@@ -1129,6 +1399,7 @@ def scene_02(tint):
     is the same work as reading the digits and buys nothing.
     """
     import numpy as np
+
     x = np.arange(4)[:, None, None] * 10 + np.arange(12).reshape(3, 4)
     perm = [2, 0, 3, 1]
     sx = x[perm]
@@ -1136,44 +1407,87 @@ def scene_02(tint):
 
     def row(arr, names, shades):
         def draw(ax):
-            sequence(ax, [
-                {"arr": arr[i], "caption": names[i],
-                 "cell_colors": np.full(arr[i].shape, shades[i], dtype=object)}
-                for i in range(len(names))
-            ], tint=tint, cell=0.46, size=8)
+            sequence(
+                ax,
+                [
+                    {
+                        "arr": arr[i],
+                        "caption": names[i],
+                        "cell_colors": np.full(arr[i].shape, shades[i], dtype=object),
+                    }
+                    for i in range(len(names))
+                ],
+                tint=tint,
+                cell=0.46,
+                size=8,
+            )
+
         return draw
 
     def means(ax):
-        sequence(ax, [
-            {"arr": x.mean(0), "caption": "x.mean(0)"},
-            "=",
-            {"arr": sx.mean(0), "caption": "x[perm].mean(0)"},
-        ], tint=tint, cell=0.60, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": x.mean(0), "caption": "x.mean(0)"},
+                "=",
+                {"arr": sx.mean(0), "caption": "x[perm].mean(0)"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=11,
+        )
 
     def series(ax):
         # The same wash as frames 0 and 1, so the last frame is recognisably
         # the first one flattened to a single cell -- the shades that were in
         # order across four planes are out of order along four timesteps.
-        sequence(ax, [
-            {"arr": x[:, 0, 0].reshape(1, 4), "caption": "x[:, 0, 0]",
-             "cell_colors": np.array(wash, dtype=object).reshape(1, 4)},
-            "vs",
-            {"arr": sx[:, 0, 0].reshape(1, 4), "caption": "x[perm][:, 0, 0]",
-             "cell_colors": np.array([wash[i] for i in perm],
-                                     dtype=object).reshape(1, 4)},
-        ], tint=tint, cell=0.62, size=13)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": x[:, 0, 0].reshape(1, 4),
+                    "caption": "x[:, 0, 0]",
+                    "cell_colors": np.array(wash, dtype=object).reshape(1, 4),
+                },
+                "vs",
+                {
+                    "arr": sx[:, 0, 0].reshape(1, 4),
+                    "caption": "x[perm][:, 0, 0]",
+                    "cell_colors": np.array(
+                        [wash[i] for i in perm], dtype=object
+                    ).reshape(1, 4),
+                },
+            ],
+            tint=tint,
+            cell=0.62,
+            size=13,
+        )
 
     return [
-        ("x", "shape (4, 3, 4)", "four planes — plane t starts at 10t",
-         row(x, ["x[0]", "x[1]", "x[2]", "x[3]"], wash)),
-        ("x[perm]", "perm = [2, 0, 3, 1]",
-         "the same four planes, in a new order",
-         row(sx, ["x[2]", "x[0]", "x[3]", "x[1]"],
-             [wash[i] for i in perm])),
-        ("x.mean(0)", "identical",
-         "as a batch: the average never looks at order", means),
-        ("x[:, 0, 0]", "0 10 20 30  ->  20 0 30 10",
-         "as time: the order was the data", series),
+        (
+            "x",
+            "shape (4, 3, 4)",
+            "four planes — plane t starts at 10t",
+            row(x, ["x[0]", "x[1]", "x[2]", "x[3]"], wash),
+        ),
+        (
+            "x[perm]",
+            "perm = [2, 0, 3, 1]",
+            "the same four planes, in a new order",
+            row(sx, ["x[2]", "x[0]", "x[3]", "x[1]"], [wash[i] for i in perm]),
+        ),
+        (
+            "x.mean(0)",
+            "identical",
+            "as a batch: the average never looks at order",
+            means,
+        ),
+        (
+            "x[:, 0, 0]",
+            "0 10 20 30  ->  20 0 30 10",
+            "as time: the order was the data",
+            series,
+        ),
     ]
 
 
@@ -1191,9 +1505,13 @@ def scene_02_pad(tint):
     without arithmetic: the cells on the right are the ones on the left, twice.
     """
     import numpy as np
+
     lengths = [2, 4, 3]
     longest = max(lengths)
-    frame_of = lambda t: np.full((2, 3), (t + 1) * 2)
+
+    def frame_of(t):
+        return np.full((2, 3), (t + 1) * 2)
+
     clips = [np.stack([frame_of(t) for t in range(longest)]) for _ in lengths]
     pads = []
     for n, clip in zip(lengths, clips):
@@ -1203,10 +1521,16 @@ def scene_02_pad(tint):
         pads.append(g)
 
     def real_only(ax):
-        sequence(ax, [
-            {"arr": clips[i][:lengths[i]], "caption": f"({lengths[i]}, 2, 3)"}
-            for i in range(3)
-        ], tint=tint, cell=0.46, size=9)
+        sequence(
+            ax,
+            [
+                {"arr": clips[i][: lengths[i]], "caption": f"({lengths[i]}, 2, 3)"}
+                for i in range(3)
+            ],
+            tint=tint,
+            cell=0.46,
+            size=9,
+        )
 
     def padded(ax):
         # No numbers inside the dashed planes. Clip 0 is two pads deep, and
@@ -1214,37 +1538,74 @@ def scene_02_pad(tint):
         # crowd together into something that reads as a drawing mistake. The
         # value is zero because nothing was measured, so the outline already
         # says everything the cell has to say.
-        sequence(ax, [
-            {"arr": clips[i], "ghost": pads[i], "caption": "(4, 2, 3)",
-             "ghost_labels": False}
-            for i in range(3)
-        ], tint=tint, cell=0.46, size=9)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": clips[i],
+                    "ghost": pads[i],
+                    "caption": "(4, 2, 3)",
+                    "ghost_labels": False,
+                }
+                for i in range(3)
+            ],
+            tint=tint,
+            cell=0.46,
+            size=9,
+        )
 
     def mask(ax):
-        m = np.array([[1 if t < n else 0 for t in range(longest)]
-                      for n in lengths])
-        planes(ax, m, tint=tint, lit=m.astype(bool),
-               origin=centred((1,) + m.shape, cell=0.78), cell=0.78,
-               label_size=15)
+        m = np.array([[1 if t < n else 0 for t in range(longest)] for n in lengths])
+        planes(
+            ax,
+            m,
+            tint=tint,
+            lit=m.astype(bool),
+            origin=centred((1,) + m.shape, cell=0.78),
+            cell=0.78,
+            label_size=15,
+        )
 
     def diluted(ax):
-        real = clips[0][:lengths[0]].mean(0)
+        real = clips[0][: lengths[0]].mean(0)
         whole = clips[0].mean(0)
-        sequence(ax, [
-            {"arr": real, "caption": "clip[:2].mean(0)"},
-            "vs",
-            {"arr": whole, "caption": "clip.mean(0)"},
-        ], tint=tint, cell=0.62, size=13)
+        sequence(
+            ax,
+            [
+                {"arr": real, "caption": "clip[:2].mean(0)"},
+                "vs",
+                {"arr": whole, "caption": "clip.mean(0)"},
+            ],
+            tint=tint,
+            cell=0.62,
+            size=13,
+        )
 
     return [
-        ("clips", "2, 4 and 3 frames", "three real clips, no two the same length",
-         real_only),
-        ("np.stack(padded)", "every clip now (4, 2, 3)",
-         "the dashed planes were never measured", padded),
-        ("mask", "shape (3, 4)",
-         "1 where a frame was measured, 0 where it was invented", mask),
-        ("clip.mean(0)", "halved, exactly",
-         "the padding is counted unless a mask says not to", diluted),
+        (
+            "clips",
+            "2, 4 and 3 frames",
+            "three real clips, no two the same length",
+            real_only,
+        ),
+        (
+            "np.stack(padded)",
+            "every clip now (4, 2, 3)",
+            "the dashed planes were never measured",
+            padded,
+        ),
+        (
+            "mask",
+            "shape (3, 4)",
+            "1 where a frame was measured, 0 where it was invented",
+            mask,
+        ),
+        (
+            "clip.mean(0)",
+            "halved, exactly",
+            "the padding is counted unless a mask says not to",
+            diluted,
+        ),
     ]
 
 
@@ -1257,40 +1618,69 @@ def scene_02_stack(tint):
     knows where each frame ended. The last frame puts the two shapes side by
     side, because that is the only place the difference is visible.
     """
-    import numpy as np
+
     T = cube()
     joined = T.reshape(12, 5)
 
     def apart(ax):
-        sequence(ax, [
-            {"arr": T[0], "caption": "frames[0]"},
-            {"arr": T[1], "caption": "frames[1]"},
-            {"arr": T[2], "caption": "frames[2]"},
-        ], tint=tint, cell=0.40, size=7.5)
+        sequence(
+            ax,
+            [
+                {"arr": T[0], "caption": "frames[0]"},
+                {"arr": T[1], "caption": "frames[1]"},
+                {"arr": T[2], "caption": "frames[2]"},
+            ],
+            tint=tint,
+            cell=0.40,
+            size=7.5,
+        )
 
     def stacked(ax):
         planes(ax, T, tint=tint, origin=centred(SHAPE))
 
     def concatenated(ax):
-        planes(ax, joined.reshape(1, 12, 5), tint=tint,
-               origin=centred((1, 12, 5), cell=0.30), cell=0.30, label_size=6.5)
+        planes(
+            ax,
+            joined.reshape(1, 12, 5),
+            tint=tint,
+            origin=centred((1, 12, 5), cell=0.30),
+            cell=0.30,
+            label_size=6.5,
+        )
 
     def both(ax):
-        sequence(ax, [
-            {"arr": T, "caption": "stack  (3, 4, 5)"},
-            "vs",
-            {"arr": joined, "caption": "concatenate  (12, 5)"},
-        ], tint=tint, cell=0.30, size=6)
+        sequence(
+            ax,
+            [
+                {"arr": T, "caption": "stack  (3, 4, 5)"},
+                "vs",
+                {"arr": joined, "caption": "concatenate  (12, 5)"},
+            ],
+            tint=tint,
+            cell=0.30,
+            size=6,
+        )
 
     return [
         ("frames", "3 x (4, 5)", "three matrices — not a tensor yet", apart),
-        ("np.stack(frames)", "shape (3, 4, 5)",
-         "a new axis at the front, one entry per frame", stacked),
-        ("np.concatenate(frames)", "shape (12, 5)",
-         "no new axis — the rows are joined along one that exists",
-         concatenated),
-        ("stack vs concatenate", "60 numbers either way",
-         "only one of them still knows where a frame ends", both),
+        (
+            "np.stack(frames)",
+            "shape (3, 4, 5)",
+            "a new axis at the front, one entry per frame",
+            stacked,
+        ),
+        (
+            "np.concatenate(frames)",
+            "shape (12, 5)",
+            "no new axis — the rows are joined along one that exists",
+            concatenated,
+        ),
+        (
+            "stack vs concatenate",
+            "60 numbers either way",
+            "only one of them still knows where a frame ends",
+            both,
+        ),
     ]
 
 
@@ -1309,47 +1699,73 @@ def scene_03(tint):
     holds one row.
     """
     import numpy as np
+
     M = np.arange(20).reshape(4, 5)
-    w = M.mean(axis=0)                      # (5,) — one number per column
+    w = M.mean(axis=0)  # (5,) — one number per column
     tile = np.broadcast_to(w, (4, 5))
     every = np.ones((4, 5), bool)
 
     def operands(ax):
-        sequence(ax, [
-            {"arr": M, "caption": "M  (4, 5)"},
-            "-",
-            {"arr": w.reshape(1, 5), "caption": "w  (5,)"},
-        ], tint=tint, cell=0.60, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": M, "caption": "M  (4, 5)"},
+                "-",
+                {"arr": w.reshape(1, 5), "caption": "w  (5,)"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=11,
+        )
 
     def stretch(ax):
-        sequence(ax, [
-            {"arr": w.reshape(1, 5), "caption": "w  (5,)"},
-            "->",
-            {"arr": tile, "ghost": every, "caption": "(4, 5)"},
-        ], tint=tint, cell=0.60, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": w.reshape(1, 5), "caption": "w  (5,)"},
+                "->",
+                {"arr": tile, "ghost": every, "caption": "(4, 5)"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=11,
+        )
 
     def subtract(ax):
-        sequence(ax, [
-            {"arr": M, "caption": "M"},
-            "-",
-            {"arr": tile, "ghost": every, "caption": "w, four times"},
-            "=",
-            {"arr": M - w, "caption": "M - w"},
-        ], tint=tint, cell=0.42, size=8)
+        sequence(
+            ax,
+            [
+                {"arr": M, "caption": "M"},
+                "-",
+                {"arr": tile, "ghost": every, "caption": "w, four times"},
+                "=",
+                {"arr": M - w, "caption": "M - w"},
+            ],
+            tint=tint,
+            cell=0.42,
+            size=8,
+        )
 
     def result(ax):
-        sequence(ax, [{"arr": M - w, "caption": "M - w"}],
-                 tint=tint, cell=0.70, size=12)
+        sequence(
+            ax, [{"arr": M - w, "caption": "M - w"}], tint=tint, cell=0.70, size=12
+        )
 
     return [
-        ("M - w", "(4, 5) - (5,)",
-         "a matrix and a vector — five numbers against five columns", operands),
-        ("w stretches", "(5,) -> (4, 5)",
-         "dashed: NumPy acts as if, and allocates nothing", stretch),
-        ("M - w", "(4, 5) - (4, 5)",
-         "four subtractions, one w", subtract),
-        ("M - w", "shape (4, 5)",
-         "every column now sits at its own mean", result),
+        (
+            "M - w",
+            "(4, 5) - (5,)",
+            "a matrix and a vector — five numbers against five columns",
+            operands,
+        ),
+        (
+            "w stretches",
+            "(5,) -> (4, 5)",
+            "dashed: NumPy acts as if, and allocates nothing",
+            stretch,
+        ),
+        ("M - w", "(4, 5) - (4, 5)", "four subtractions, one w", subtract),
+        ("M - w", "shape (4, 5)", "every column now sits at its own mean", result),
     ]
 
 
@@ -1366,6 +1782,7 @@ def scene_03_scalar(tint):
     row instead of down the column. Same numbers, same intent, one `None`.
     """
     import numpy as np
+
     M = np.arange(20).reshape(4, 5)
     k = 3
     scalar_tile = np.full((4, 5), k)
@@ -1374,39 +1791,64 @@ def scene_03_scalar(tint):
     every = np.ones((4, 5), bool)
 
     def operands(ax):
-        sequence(ax, [
-            {"arr": M, "caption": "M  (4, 5)"},
-            "-",
-            {"arr": np.array([[k]]), "caption": "3  ()"},
-        ], tint=tint, cell=0.60, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": M, "caption": "M  (4, 5)"},
+                "-",
+                {"arr": np.array([[k]]), "caption": "3  ()"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=11,
+        )
 
     def stretch(ax):
-        sequence(ax, [
-            {"arr": np.array([[k]]), "caption": "3  ()"},
-            "->",
-            {"arr": scalar_tile, "ghost": every, "caption": "(4, 5)"},
-        ], tint=tint, cell=0.60, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": np.array([[k]]), "caption": "3  ()"},
+                "->",
+                {"arr": scalar_tile, "ghost": every, "caption": "(4, 5)"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=11,
+        )
 
     def result(ax):
-        sequence(ax, [{"arr": M - k, "caption": "M - 3"}],
-                 tint=tint, cell=0.70, size=12)
+        sequence(
+            ax, [{"arr": M - k, "caption": "M - 3"}], tint=tint, cell=0.70, size=12
+        )
 
     def column(ax):
-        sequence(ax, [
-            {"arr": b.reshape(4, 1), "caption": "b[:, None]  (4, 1)"},
-            "->",
-            {"arr": col_tile, "ghost": every, "caption": "(4, 5)"},
-        ], tint=tint, cell=0.60, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": b.reshape(4, 1), "caption": "b[:, None]  (4, 1)"},
+                "->",
+                {"arr": col_tile, "ghost": every, "caption": "(4, 5)"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=11,
+        )
 
     return [
-        ("M - 3", "(4, 5) - ()",
-         "a scalar has no axis to line up with", operands),
-        ("3 stretches", "() -> (4, 5)",
-         "one number, twenty subtractions, nothing allocated", stretch),
-        ("M - 3", "shape (4, 5)",
-         "every entry moved by the same amount", result),
-        ("b[:, None]", "(4, 1) -> (4, 5)",
-         "a bare (4,) fails — a (4, 1) column stretches across", column),
+        ("M - 3", "(4, 5) - ()", "a scalar has no axis to line up with", operands),
+        (
+            "3 stretches",
+            "() -> (4, 5)",
+            "one number, twenty subtractions, nothing allocated",
+            stretch,
+        ),
+        ("M - 3", "shape (4, 5)", "every entry moved by the same amount", result),
+        (
+            "b[:, None]",
+            "(4, 1) -> (4, 5)",
+            "a bare (4,) fails — a (4, 1) column stretches across",
+            column,
+        ),
     ]
 
 
@@ -1424,6 +1866,7 @@ def scene_03_mask(tint):
     then do.
     """
     import numpy as np
+
     M = np.arange(20).reshape(4, 5)
     keep = M[:, 0] > 5
     col = np.zeros(M.shape, bool)
@@ -1432,28 +1875,47 @@ def scene_03_mask(tint):
 
     def draw(lit=None, arr=None, cell=0.72, size=14):
         arr = M if arr is None else arr
+
         def inner(ax):
-            planes(ax, arr, tint=tint, lit=lit,
-                   origin=centred((1,) + arr.shape, cell=cell), cell=cell,
-                   label_size=size)
+            planes(
+                ax,
+                arr,
+                tint=tint,
+                lit=lit,
+                origin=centred((1,) + arr.shape, cell=cell),
+                cell=cell,
+                label_size=size,
+            )
+
         return inner
 
     return [
-        ("M", "shape (4, 5)", "four rows of five, and a question about each",
-         draw()),
-        ("M[:, 0] > 5", "one column, four answers",
-         "the test runs first, and it runs on a column", draw(lit=col)),
-        ("mask", "[False, False, True, True]",
-         "two rows passed — a Boolean each, not a position", draw(lit=rows)),
-        ("M[mask]", "shape (2, 5)",
-         "the rows that passed, and the count was never written down",
-         draw(arr=M[keep])),
+        ("M", "shape (4, 5)", "four rows of five, and a question about each", draw()),
+        (
+            "M[:, 0] > 5",
+            "one column, four answers",
+            "the test runs first, and it runs on a column",
+            draw(lit=col),
+        ),
+        (
+            "mask",
+            "[False, False, True, True]",
+            "two rows passed — a Boolean each, not a position",
+            draw(lit=rows),
+        ),
+        (
+            "M[mask]",
+            "shape (2, 5)",
+            "the rows that passed, and the count was never written down",
+            draw(arr=M[keep]),
+        ),
     ]
 
 
 def scene_04(tint):
     """04 — transpose against reshape: one shape, two different tensors."""
     import numpy as np
+
     T = cube()
     tr = T.transpose(2, 0, 1)
     rs = T.reshape(5, 3, 4)
@@ -1463,23 +1925,41 @@ def scene_04(tint):
     def one(arr, lit=None):
         def draw(ax):
             sequence(ax, [{"arr": arr, "lit": lit}], tint=tint, cell=0.52)
+
         return draw
 
     def both(ax):
-        sequence(ax, [
-            {"arr": tr, "lit": mark, "caption": "transpose(2, 0, 1)"},
-            "vs",
-            {"arr": rs, "lit": mark, "caption": "reshape(5, 3, 4)"},
-        ], tint=tint, cell=0.40)
+        sequence(
+            ax,
+            [
+                {"arr": tr, "lit": mark, "caption": "transpose(2, 0, 1)"},
+                "vs",
+                {"arr": rs, "lit": mark, "caption": "reshape(5, 3, 4)"},
+            ],
+            tint=tint,
+            cell=0.40,
+        )
 
     return [
         ("T", "shape (3, 4, 5)", "where every number starts", one(T)),
-        ("T.transpose(2, 0, 1)", "shape (5, 3, 4)",
-         "axes reordered — every number keeps its neighbours", one(tr)),
-        ("T.reshape(5, 3, 4)", "shape (5, 3, 4)",
-         "the same 60 numbers read off in order", one(rs)),
-        ("same shape, different tensor", "[1, 0, 0] is 1 against 12",
-         "a shape check passes for both", both),
+        (
+            "T.transpose(2, 0, 1)",
+            "shape (5, 3, 4)",
+            "axes reordered — every number keeps its neighbours",
+            one(tr),
+        ),
+        (
+            "T.reshape(5, 3, 4)",
+            "shape (5, 3, 4)",
+            "the same 60 numbers read off in order",
+            one(rs),
+        ),
+        (
+            "same shape, different tensor",
+            "[1, 0, 0] is 1 against 12",
+            "a shape check passes for both",
+            both,
+        ),
     ]
 
 
@@ -1496,22 +1976,37 @@ def scene_04_ravel(tint):
     `ravel` has to reorder. Same buffer, two readings.
     """
     import numpy as np
+
     a = np.arange(6).reshape(2, 3)
 
     def one(arr, caption):
         def draw(ax):
-            sequence(ax, [{"arr": arr, "caption": caption}],
-                     tint=tint, cell=0.80, size=15)
+            sequence(
+                ax, [{"arr": arr, "caption": caption}], tint=tint, cell=0.80, size=15
+            )
+
         return draw
 
     return [
         ("a", "shape (2, 3)", "six numbers, two rows", one(a, "a")),
-        ("a.ravel()", "0 1 2 3 4 5", "reshape reads along the rows",
-         one(a.ravel().reshape(1, 6), "a.ravel()")),
-        ("a.T", "shape (3, 2)", "the strides were permuted, not the buffer",
-         one(a.T, "a.T")),
-        ("a.T.ravel()", "0 3 1 4 2 5", "same six bytes, a different reading",
-         one(a.T.ravel().reshape(1, 6), "a.T.ravel()")),
+        (
+            "a.ravel()",
+            "0 1 2 3 4 5",
+            "reshape reads along the rows",
+            one(a.ravel().reshape(1, 6), "a.ravel()"),
+        ),
+        (
+            "a.T",
+            "shape (3, 2)",
+            "the strides were permuted, not the buffer",
+            one(a.T, "a.T"),
+        ),
+        (
+            "a.T.ravel()",
+            "0 3 1 4 2 5",
+            "same six bytes, a different reading",
+            one(a.T.ravel().reshape(1, 6), "a.T.ravel()"),
+        ),
     ]
 
 
@@ -1531,30 +2026,47 @@ def scene_04_rgb(tint):
     scramble is not something a reader has to be told about -- it is stripes.
     """
     import numpy as np
+
     img = swatch()
     h, w, _ = img.shape
     chw = img.transpose(2, 0, 1)
     bad = img.reshape(3, h, w)
 
     def picture(ax):
-        planes(ax, img[:, :, 0], tint=tint, cell_colors=swatch_hex(img),
-               labels=False, cell=0.92,
-               origin=centred((1, h, w), cell=0.92))
+        planes(
+            ax,
+            img[:, :, 0],
+            tint=tint,
+            cell_colors=swatch_hex(img),
+            labels=False,
+            cell=0.92,
+            origin=centred((1, h, w), cell=0.92),
+        )
 
     def channels(ax):
-        sequence(ax, [
-            {"arr": img[:, :, c], "cell_colors": channel_hex(img[:, :, c], c),
-             "caption": f"img[:, :, {c}]"}
-            for c in range(3)
-        ], tint=tint, cell=0.64, size=11)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": img[:, :, c],
+                    "cell_colors": channel_hex(img[:, :, c], c),
+                    "caption": f"img[:, :, {c}]",
+                }
+                for c in range(3)
+            ],
+            tint=tint,
+            cell=0.64,
+            size=11,
+        )
 
     def pile(ax):
         o = centred(chw.shape, cell=0.70)
         colours = np.empty(chw.shape, dtype=object)
         for c in range(3):
             colours[c] = channel_hex(chw[c], c)
-        planes(ax, chw, tint=tint, cell_colors=colours, origin=o, cell=0.70,
-               label_size=11)
+        planes(
+            ax, chw, tint=tint, cell_colors=colours, origin=o, cell=0.70, label_size=11
+        )
         axis_arrows(ax, chw.shape, origin=o, cell=0.70, tints=AXIS_TINTS)
 
     def scramble(ax):
@@ -1568,22 +2080,47 @@ def scene_04_rgb(tint):
                 rgb = [0, 0, 0]
                 rgb[flat_channel[r, c]] = bad[0][r, c]
                 mixed[r, c] = _hex(rgb)
-        sequence(ax, [
-            {"arr": chw[0], "cell_colors": channel_hex(chw[0], 0),
-             "caption": "transpose[0]"},
-            "vs",
-            {"arr": bad[0], "cell_colors": mixed, "caption": "reshape[0]"},
-        ], tint=tint, cell=0.58, size=10)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": chw[0],
+                    "cell_colors": channel_hex(chw[0], 0),
+                    "caption": "transpose[0]",
+                },
+                "vs",
+                {"arr": bad[0], "cell_colors": mixed, "caption": "reshape[0]"},
+            ],
+            tint=tint,
+            cell=0.58,
+            size=10,
+        )
 
     return [
-        ("img", "shape (3, 4, 3)", "twelve pixels — H rows, W columns, C channels",
-         picture),
-        ("img[:, :, 0], [:, :, 1], [:, :, 2]", "each (3, 4)",
-         "the red plane says 255 wherever the pixel looks red", channels),
-        ("img.transpose(2, 0, 1)", "shape (3, 3, 4)",
-         "axis 0 is colour now — the same numbers, CHW", pile),
-        ("transpose vs reshape", "both (3, 3, 4)",
-         "one plane is the reds; the other is every third number", scramble),
+        (
+            "img",
+            "shape (3, 4, 3)",
+            "twelve pixels — H rows, W columns, C channels",
+            picture,
+        ),
+        (
+            "img[:, :, 0], [:, :, 1], [:, :, 2]",
+            "each (3, 4)",
+            "the red plane says 255 wherever the pixel looks red",
+            channels,
+        ),
+        (
+            "img.transpose(2, 0, 1)",
+            "shape (3, 3, 4)",
+            "axis 0 is colour now — the same numbers, CHW",
+            pile,
+        ),
+        (
+            "transpose vs reshape",
+            "both (3, 3, 4)",
+            "one plane is the reds; the other is every third number",
+            scramble,
+        ),
     ]
 
 
@@ -1601,6 +2138,7 @@ def scene_05(tint):
     motion is wrong rather than be told the index means something else.
     """
     import numpy as np
+
     clip = clip_frames()
     hexes = [swatch_hex(clip[t])[0] for t in range(3)]
     blank = np.ones(clip[0].shape[:2], bool)
@@ -1608,26 +2146,46 @@ def scene_05(tint):
     def row(items):
         def draw(ax):
             sequence(ax, items, tint=tint, cell=0.62, size=9)
+
         return draw
 
     def item(t, lit=None, hide=None, caption=None):
-        return {"arr": clip[t, :, :, 0], "cell_colors": hexes[t],
-                "labels": False, "lit": lit, "hide": hide,
-                "caption": caption if caption is not None else f"clip[{t}]"}
+        return {
+            "arr": clip[t, :, :, 0],
+            "cell_colors": hexes[t],
+            "labels": False,
+            "lit": lit,
+            "hide": hide,
+            "caption": caption if caption is not None else f"clip[{t}]",
+        }
 
     dim = np.zeros(clip[0].shape[:2], bool)
 
     return [
-        ("clip", "shape (3, 2, 3, 3)",
-         "three moments — the dot moves one column each",
-         row([item(0), item(1), item(2)])),
-        ("clip[::2]", "keeping 2 of 3", "frame 1 is about to go",
-         row([item(0), item(1, lit=dim), item(2)])),
-        ("clip[::2]", "keeping 2 of 3", "and it is gone — the gap is the point",
-         row([item(0), item(1, hide=blank, caption=""), item(2)])),
-        ("clip[::2]", "shape (2, 2, 3, 3)",
-         "the dot jumps two columns now — clip[1] is the old frame 2",
-         row([item(0), item(2, caption="clip[1]")])),
+        (
+            "clip",
+            "shape (3, 2, 3, 3)",
+            "three moments — the dot moves one column each",
+            row([item(0), item(1), item(2)]),
+        ),
+        (
+            "clip[::2]",
+            "keeping 2 of 3",
+            "frame 1 is about to go",
+            row([item(0), item(1, lit=dim), item(2)]),
+        ),
+        (
+            "clip[::2]",
+            "keeping 2 of 3",
+            "and it is gone — the gap is the point",
+            row([item(0), item(1, hide=blank, caption=""), item(2)]),
+        ),
+        (
+            "clip[::2]",
+            "shape (2, 2, 3, 3)",
+            "the dot jumps two columns now — clip[1] is the old frame 2",
+            row([item(0), item(2, caption="clip[1]")]),
+        ),
     ]
 
 
@@ -1645,47 +2203,91 @@ def scene_05_axes(tint):
     something and reordering along H never is.
     """
     import numpy as np
+
     clip = clip_frames()
     hexes = [swatch_hex(clip[t])[0] for t in range(3)]
 
     def strip(lit=None):
         def draw(ax):
-            sequence(ax, [
-                {"arr": clip[t, :, :, 0], "cell_colors": hexes[t],
-                 "labels": False, "caption": f"clip[{t}]",
-                 "lit": None if lit is None else lit[t]}
-                for t in range(3)
-            ], tint=tint, cell=0.62, size=9)
+            sequence(
+                ax,
+                [
+                    {
+                        "arr": clip[t, :, :, 0],
+                        "cell_colors": hexes[t],
+                        "labels": False,
+                        "caption": f"clip[{t}]",
+                        "lit": None if lit is None else lit[t],
+                    }
+                    for t in range(3)
+                ],
+                tint=tint,
+                cell=0.62,
+                size=9,
+            )
+
         return draw
 
     def one_frame(ax):
         o = centred((1, 2, 3), cell=1.05)
-        planes(ax, clip[1, :, :, 0], tint=tint, cell_colors=hexes[1],
-               labels=False, origin=o, cell=1.05)
-        axis_arrows(ax, (1, 2, 3), origin=o, cell=1.05,
-                    names=(None, "H", "W"), tints=AXIS_TINTS)
+        planes(
+            ax,
+            clip[1, :, :, 0],
+            tint=tint,
+            cell_colors=hexes[1],
+            labels=False,
+            origin=o,
+            cell=1.05,
+        )
+        axis_arrows(
+            ax, (1, 2, 3), origin=o, cell=1.05, names=(None, "H", "W"), tints=AXIS_TINTS
+        )
 
     def red_planes(ax):
-        sequence(ax, [
-            {"arr": clip[t, :, :, 0],
-             "cell_colors": channel_hex(clip[t, :, :, 0], 0),
-             "caption": f"clip[{t}, :, :, 0]"}
-            for t in range(3)
-        ], tint=tint, cell=0.62, size=11)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": clip[t, :, :, 0],
+                    "cell_colors": channel_hex(clip[t, :, :, 0], 0),
+                    "caption": f"clip[{t}, :, :, 0]",
+                }
+                for t in range(3)
+            ],
+            tint=tint,
+            cell=0.62,
+            size=11,
+        )
 
     dot = [np.zeros((2, 3), bool) for _ in range(3)]
     for t in range(3):
         dot[t][0, t] = True
 
     return [
-        ("clip", "(T, H, W, C) = (3, 2, 3, 3)",
-         "T moments, each one an H x W x C picture", strip()),
-        ("clip[1]", "shape (2, 3, 3)",
-         "one moment — H down, W across, C inside each cell", one_frame),
-        ("clip[:, :, :, 0]", "shape (3, 2, 3)",
-         "the red channel of every frame — 255 is exactly the dot", red_planes),
-        ("clip[t, 0, t]", "red for every t",
-         "the motion lives in T, and in no other axis", strip(lit=dot)),
+        (
+            "clip",
+            "(T, H, W, C) = (3, 2, 3, 3)",
+            "T moments, each one an H x W x C picture",
+            strip(),
+        ),
+        (
+            "clip[1]",
+            "shape (2, 3, 3)",
+            "one moment — H down, W across, C inside each cell",
+            one_frame,
+        ),
+        (
+            "clip[:, :, :, 0]",
+            "shape (3, 2, 3)",
+            "the red channel of every frame — 255 is exactly the dot",
+            red_planes,
+        ),
+        (
+            "clip[t, 0, t]",
+            "red for every t",
+            "the motion lives in T, and in no other axis",
+            strip(lit=dot),
+        ),
     ]
 
 
@@ -1699,15 +2301,16 @@ def scene_05_window(tint):
     the two numbers somebody had to choose.
     """
     import numpy as np
+
     clip = np.arange(6 * 3 * 4).reshape(6, 3, 4)
     o = centred(clip.shape, cell=0.45)
 
     def window(lo):
         def draw(ax):
             lit = np.zeros(clip.shape, bool)
-            lit[lo:lo + 2] = True
-            planes(ax, clip, tint=tint, lit=lit, origin=o, cell=0.45,
-                   label_size=7)
+            lit[lo : lo + 2] = True
+            planes(ax, clip, tint=tint, lit=lit, origin=o, cell=0.45, label_size=7)
+
         return draw
 
     def whole(ax):
@@ -1715,12 +2318,14 @@ def scene_05_window(tint):
 
     return [
         ("clip", "shape (6, 3, 4)", "six frames, as recorded", whole),
-        ("clip[0:2]", "shape (2, 3, 4)", "window 1 — length 2, stride 2",
-         window(0)),
-        ("clip[2:4]", "shape (2, 3, 4)", "window 2 — no frame shared",
-         window(2)),
-        ("clip[4:6]", "shape (2, 3, 4)",
-         "window 3 — the batch is (3, 2, 3, 4)", window(4)),
+        ("clip[0:2]", "shape (2, 3, 4)", "window 1 — length 2, stride 2", window(0)),
+        ("clip[2:4]", "shape (2, 3, 4)", "window 2 — no frame shared", window(2)),
+        (
+            "clip[4:6]",
+            "shape (2, 3, 4)",
+            "window 3 — the batch is (3, 2, 3, 4)",
+            window(4),
+        ),
     ]
 
 
@@ -1739,6 +2344,7 @@ def scene_06(tint):
     the missing third arrow is the whole claim.
     """
     import numpy as np
+
     T = cube()
     w = np.array([2, 0, 1, 3, 1])
     out = np.einsum("ijk,k->ij", T, w)
@@ -1756,37 +2362,74 @@ def scene_06(tint):
         axis_arrows(ax, SHAPE, origin=o, names=("i", "j", "k"))
 
     def share_k(ax):
-        sequence(ax, [
-            {"arr": T, "lit": fibre_in_pile, "lit_tint": INDEX["k"],
-             "caption": "T[0, 0]  along k", "size": 7},
-            {"arr": w.reshape(1, 5), "tint": INDEX["k"], "caption": "w  (5,)",
-             "size": 11},
-        ], tint=tint, cell=0.44)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": T,
+                    "lit": fibre_in_pile,
+                    "lit_tint": INDEX["k"],
+                    "caption": "T[0, 0]  along k",
+                    "size": 7,
+                },
+                {
+                    "arr": w.reshape(1, 5),
+                    "tint": INDEX["k"],
+                    "caption": "w  (5,)",
+                    "size": 11,
+                },
+            ],
+            tint=tint,
+            cell=0.44,
+        )
 
     def arithmetic(ax):
-        sequence(ax, [
-            {"arr": fibre, "tint": INDEX["k"], "caption": "T[0, 0]"},
-            "x",
-            {"arr": w.reshape(1, 5), "tint": INDEX["k"], "caption": "w"},
-            "=",
-            {"arr": products, "caption": "products"},
-        ], tint=tint, cell=0.40, size=10)
+        sequence(
+            ax,
+            [
+                {"arr": fibre, "tint": INDEX["k"], "caption": "T[0, 0]"},
+                "x",
+                {"arr": w.reshape(1, 5), "tint": INDEX["k"], "caption": "w"},
+                "=",
+                {"arr": products, "caption": "products"},
+            ],
+            tint=tint,
+            cell=0.40,
+            size=10,
+        )
 
     def result(ax):
         origin = centred((1, 3, 4))
-        planes(ax, out.reshape(1, 3, 4), tint=tint, lit=corner.reshape(1, 3, 4),
-               origin=origin, label_size=12)
+        planes(
+            ax,
+            out.reshape(1, 3, 4),
+            tint=tint,
+            lit=corner.reshape(1, 3, 4),
+            origin=origin,
+            label_size=12,
+        )
         axis_arrows(ax, (1, 3, 4), origin=origin, names=(None, "i", "j"))
 
     return [
-        ("T", "shape (3, 4, 5)", "three indices, and each one has a colour",
-         whole),
-        ("T[0, 0] and w", "both indexed by k",
-         "they line up because they share an index", share_k),
-        ("out[0, 0] = sum(T[0, 0] * w)", f"= {int(out[0, 0])}",
-         "multiply the pairs, then add the five together", arithmetic),
-        ("einsum('ijk,k->ij', T, w)", "shape (3, 4)",
-         "i and j survive — there is no k arrow left to draw", result),
+        ("T", "shape (3, 4, 5)", "three indices, and each one has a colour", whole),
+        (
+            "T[0, 0] and w",
+            "both indexed by k",
+            "they line up because they share an index",
+            share_k,
+        ),
+        (
+            "out[0, 0] = sum(T[0, 0] * w)",
+            f"= {int(out[0, 0])}",
+            "multiply the pairs, then add the five together",
+            arithmetic,
+        ),
+        (
+            "einsum('ijk,k->ij', T, w)",
+            "shape (3, 4)",
+            "i and j survive — there is no k arrow left to draw",
+            result,
+        ),
     ]
 
 
@@ -1801,6 +2444,7 @@ def scene_06_outer(tint):
     what survives is decided entirely by what you wrote after the arrow.
     """
     import numpy as np
+
     a = np.arange(1, 5)
     b = np.arange(1, 6)
     outer = np.einsum("i,j->ij", a, b)
@@ -1813,48 +2457,90 @@ def scene_06_outer(tint):
     b_lit[0, 3] = True
 
     def operands(ax):
-        sequence(ax, [
-            {"arr": a.reshape(4, 1), "tint": INDEX["i"], "caption": "a  (4,)  i"},
-            "x",
-            {"arr": b.reshape(1, 5), "tint": INDEX["j"], "caption": "b  (5,)  j"},
-        ], tint=tint, cell=0.68, size=13)
+        sequence(
+            ax,
+            [
+                {"arr": a.reshape(4, 1), "tint": INDEX["i"], "caption": "a  (4,)  i"},
+                "x",
+                {"arr": b.reshape(1, 5), "tint": INDEX["j"], "caption": "b  (5,)  j"},
+            ],
+            tint=tint,
+            cell=0.68,
+            size=13,
+        )
 
     def product(ax):
         origin = centred((1, 4, 5), cell=0.68)
-        planes(ax, outer.reshape(1, 4, 5), tint=tint, origin=origin,
-               cell=0.68, label_size=13)
-        axis_arrows(ax, (1, 4, 5), origin=origin, cell=0.68,
-                    names=(None, "i", "j"))
+        planes(
+            ax,
+            outer.reshape(1, 4, 5),
+            tint=tint,
+            origin=origin,
+            cell=0.68,
+            label_size=13,
+        )
+        axis_arrows(ax, (1, 4, 5), origin=origin, cell=0.68, names=(None, "i", "j"))
 
     def one_entry(ax):
-        sequence(ax, [
-            {"arr": a.reshape(4, 1), "tint": INDEX["i"], "lit": a_lit,
-             "caption": "a[2]"},
-            "x",
-            {"arr": b.reshape(1, 5), "tint": INDEX["j"], "lit": b_lit,
-             "caption": "b[3]"},
-            "=",
-            {"arr": outer, "lit": hit, "caption": "out[2, 3]"},
-        ], tint=tint, cell=0.46, size=9)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": a.reshape(4, 1),
+                    "tint": INDEX["i"],
+                    "lit": a_lit,
+                    "caption": "a[2]",
+                },
+                "x",
+                {
+                    "arr": b.reshape(1, 5),
+                    "tint": INDEX["j"],
+                    "lit": b_lit,
+                    "caption": "b[3]",
+                },
+                "=",
+                {"arr": outer, "lit": hit, "caption": "out[2, 3]"},
+            ],
+            tint=tint,
+            cell=0.46,
+            size=9,
+        )
 
     def contract(ax):
-        sequence(ax, [
-            {"arr": outer, "caption": "ij"},
-            "x",
-            {"arr": b.reshape(1, 5), "tint": INDEX["j"], "caption": "j"},
-            "->",
-            {"arr": back.reshape(4, 1), "tint": INDEX["i"], "caption": "i"},
-        ], tint=tint, cell=0.46, size=9)
+        sequence(
+            ax,
+            [
+                {"arr": outer, "caption": "ij"},
+                "x",
+                {"arr": b.reshape(1, 5), "tint": INDEX["j"], "caption": "j"},
+                "->",
+                {"arr": back.reshape(4, 1), "tint": INDEX["i"], "caption": "i"},
+            ],
+            tint=tint,
+            cell=0.46,
+            size=9,
+        )
 
     return [
-        ("a, b", "(4,) and (5,)", "two vectors, nine numbers between them",
-         operands),
-        ("einsum('i,j->ij', a, b)", "shape (4, 5)",
-         "ij is on neither side of the comma — the axis is new", product),
-        ("out[2, 3] = a[2] * b[3]", f"= {int(outer[2, 3])}",
-         "every entry is one product, no sum anywhere", one_entry),
-        ("einsum('ij,j->i')", "shape (4,)",
-         "now j is the one summed away — the arrow decides", contract),
+        ("a, b", "(4,) and (5,)", "two vectors, nine numbers between them", operands),
+        (
+            "einsum('i,j->ij', a, b)",
+            "shape (4, 5)",
+            "ij is on neither side of the comma — the axis is new",
+            product,
+        ),
+        (
+            "out[2, 3] = a[2] * b[3]",
+            f"= {int(outer[2, 3])}",
+            "every entry is one product, no sum anywhere",
+            one_entry,
+        ),
+        (
+            "einsum('ij,j->i')",
+            "shape (4,)",
+            "now j is the one summed away — the arrow decides",
+            contract,
+        ),
     ]
 
 
@@ -1884,6 +2570,7 @@ def scene_06_matmul(tint):
     of putting it last.
     """
     import numpy as np
+
     # Hand-picked rather than `arange`, for the reason `scene_06`'s docstring
     # records: its first draft used weights of all ones, which made the
     # multiply invisible and left a picture of a plain sum. Here the constraint
@@ -1907,81 +2594,136 @@ def scene_06_matmul(tint):
     corner[0, 0] = True
 
     def operands(ax):
-        sequence(ax, [
-            {"arr": A, "caption": "A  (2, 3)  ik"},
-            "@",
-            {"arr": B, "caption": "B  (3, 4)  kj"},
-        ], tint=tint, cell=0.74, size=14)
+        sequence(
+            ax,
+            [
+                {"arr": A, "caption": "A  (2, 3)  ik"},
+                "@",
+                {"arr": B, "caption": "B  (3, 4)  kj"},
+            ],
+            tint=tint,
+            cell=0.74,
+            size=14,
+        )
 
     def pairing(ax):
-        sequence(ax, [
-            {"arr": A, "lit": row_lit, "lit_tint": INDEX["k"],
-             "caption": "A[0, :]"},
-            "@",
-            {"arr": B, "lit": col_lit, "lit_tint": INDEX["k"],
-             "caption": "B[:, 0]"},
-        ], tint=tint, cell=0.74, size=14)
+        sequence(
+            ax,
+            [
+                {
+                    "arr": A,
+                    "lit": row_lit,
+                    "lit_tint": INDEX["k"],
+                    "caption": "A[0, :]",
+                },
+                "@",
+                {
+                    "arr": B,
+                    "lit": col_lit,
+                    "lit_tint": INDEX["k"],
+                    "caption": "B[:, 0]",
+                },
+            ],
+            tint=tint,
+            cell=0.74,
+            size=14,
+        )
 
     def product(ax):
         o = centred((1,) + out.shape, cell=0.78)
-        planes(ax, out, tint=tint, lit=corner, origin=o, cell=0.78,
-               label_size=15)
-        axis_arrows(ax, (1,) + out.shape, origin=o, cell=0.78,
-                    names=(None, "i", "j"))
+        planes(ax, out, tint=tint, lit=corner, origin=o, cell=0.78, label_size=15)
+        axis_arrows(ax, (1,) + out.shape, origin=o, cell=0.78, names=(None, "i", "j"))
 
     def batched(ax):
-        sequence(ax, [
-            {"arr": X, "caption": "X  bik"},
-            "@",
-            {"arr": Y, "caption": "Y  bkj"},
-            "=",
-            {"arr": outb, "caption": "out  bij"},
-        ], tint=tint, cell=0.40, size=7.5)
+        sequence(
+            ax,
+            [
+                {"arr": X, "caption": "X  bik"},
+                "@",
+                {"arr": Y, "caption": "Y  bkj"},
+                "=",
+                {"arr": outb, "caption": "out  bij"},
+            ],
+            tint=tint,
+            cell=0.40,
+            size=7.5,
+        )
 
     return [
-        ("A, B", "(2, 3) @ (3, 4)", "the 3 they share is k, and only k",
-         operands),
-        (f"out[0, 0] = {int(out[0, 0])}", "sum over k",
-         "one row against one column — three products, added", pairing),
-        ("einsum('ik,kj->ij', A, B)", "shape (2, 4)",
-         "k is on both operands, never after the arrow — so it goes",
-         product),
-        ("einsum('bik,bkj->bij', X, Y)", "shape (2, 2, 4)",
-         "b survives the arrow — a batch axis is carried, never summed",
-         batched),
+        ("A, B", "(2, 3) @ (3, 4)", "the 3 they share is k, and only k", operands),
+        (
+            f"out[0, 0] = {int(out[0, 0])}",
+            "sum over k",
+            "one row against one column — three products, added",
+            pairing,
+        ),
+        (
+            "einsum('ik,kj->ij', A, B)",
+            "shape (2, 4)",
+            "k is on both operands, never after the arrow — so it goes",
+            product,
+        ),
+        (
+            "einsum('bik,bkj->bij', X, Y)",
+            "shape (2, 2, 4)",
+            "b survives the arrow — a batch axis is carried, never summed",
+            batched,
+        ),
     ]
 
 
 def scene_07(tint):
     """07 — a duplicated column, and what the pseudoinverse can still do."""
     import numpy as np
-    A = np.array([[2., 1., 3.], [1., 4., 2.], [3., 2., 1.], [0., 1., 2.]])
+
+    A = np.array([[2.0, 1.0, 3.0], [1.0, 4.0, 2.0], [3.0, 2.0, 1.0], [0.0, 1.0, 2.0]])
     Adup = A.copy()
     Adup[:, 2] = Adup[:, 1]
     P = np.linalg.pinv(Adup).round(1) + 0.0
-    I = (P @ Adup).round(1)
+    almost_identity = (P @ Adup).round(1)
     dup = np.zeros((1, 4, 3), bool)
     dup[0, :, 1:] = True
 
     def show(items, cell=0.52):
         def draw(ax):
             sequence(ax, items, tint=tint, cell=cell)
+
         return draw
 
     return [
-        ("A", "shape (4, 3)", "four equations, three unknowns", show(
-            [{"arr": A.astype(int), "caption": "A"}])),
-        ("A[:, 2] = A[:, 1]", "rank 2, not 3",
-         "two columns now carry one direction", show(
-             [{"arr": Adup.astype(int), "lit": dup, "caption": "A"}])),
-        ("np.linalg.pinv(A)", "shape (3, 4)",
-         "pinv is defined for every matrix — it returns quietly", show(
-             [{"arr": P, "caption": "A+"}], cell=0.62)),
-        ("A+ @ A", "not the identity",
-         "no error was ever going to tell you", show(
-             [{"arr": P, "caption": "A+"}, "@",
-              {"arr": Adup.astype(int), "caption": "A"}, "=",
-              {"arr": I, "caption": "not I"}], cell=0.42)),
+        (
+            "A",
+            "shape (4, 3)",
+            "four equations, three unknowns",
+            show([{"arr": A.astype(int), "caption": "A"}]),
+        ),
+        (
+            "A[:, 2] = A[:, 1]",
+            "rank 2, not 3",
+            "two columns now carry one direction",
+            show([{"arr": Adup.astype(int), "lit": dup, "caption": "A"}]),
+        ),
+        (
+            "np.linalg.pinv(A)",
+            "shape (3, 4)",
+            "pinv is defined for every matrix — it returns quietly",
+            show([{"arr": P, "caption": "A+"}], cell=0.62),
+        ),
+        (
+            "A+ @ A",
+            "not the identity",
+            "no error was ever going to tell you",
+            show(
+                [
+                    {"arr": P, "caption": "A+"},
+                    "@",
+                    {"arr": Adup.astype(int), "caption": "A"},
+                    "=",
+                    {"arr": almost_identity, "caption": "not I"},
+                ],
+                cell=0.42,
+            ),
+        ),
     ]
 
 
@@ -1995,34 +2737,57 @@ def scene_07_shapes(tint):
     exact, least squares, or minimum norm.
     """
     import numpy as np
+
     square = np.array([[2, 1, 3], [1, 4, 2], [3, 2, 1]])
     tall = np.array([[2, 1], [1, 4], [3, 2], [0, 1]])
     wide = np.array([[2, 1, 3, 0], [1, 4, 2, 1]])
 
     def one(arr, caption):
         def draw(ax):
-            sequence(ax, [{"arr": arr, "caption": caption}],
-                     tint=tint, cell=0.70, size=14)
+            sequence(
+                ax, [{"arr": arr, "caption": caption}], tint=tint, cell=0.70, size=14
+            )
+
         return draw
 
     def all_three(ax):
-        sequence(ax, [
-            {"arr": square, "caption": "(3, 3)"},
-            {"arr": tall, "caption": "(4, 2)"},
-            {"arr": wide, "caption": "(2, 4)"},
-        ], tint=tint, cell=0.44, size=9)
+        sequence(
+            ax,
+            [
+                {"arr": square, "caption": "(3, 3)"},
+                {"arr": tall, "caption": "(4, 2)"},
+                {"arr": wide, "caption": "(2, 4)"},
+            ],
+            tint=tint,
+            cell=0.44,
+            size=9,
+        )
 
     return [
-        ("A", "shape (3, 3)", "square — one solution, if the rank allows",
-         one(square, "A")),
-        ("A", "shape (4, 2)",
-         "tall — more equations than unknowns, so least squares",
-         one(tall, "A")),
-        ("A", "shape (2, 4)",
-         "wide — more unknowns than equations, so smallest answer",
-         one(wide, "A")),
-        ("pinv(A)", "(m, n) -> (n, m)",
-         "pinv gives (3, 3), (2, 4), (4, 2) — always the transpose", all_three),
+        (
+            "A",
+            "shape (3, 3)",
+            "square — one solution, if the rank allows",
+            one(square, "A"),
+        ),
+        (
+            "A",
+            "shape (4, 2)",
+            "tall — more equations than unknowns, so least squares",
+            one(tall, "A"),
+        ),
+        (
+            "A",
+            "shape (2, 4)",
+            "wide — more unknowns than equations, so smallest answer",
+            one(wide, "A"),
+        ),
+        (
+            "pinv(A)",
+            "(m, n) -> (n, m)",
+            "pinv gives (3, 3), (2, 4), (4, 2) — always the transpose",
+            all_three,
+        ),
     ]
 
 
@@ -2044,6 +2809,7 @@ def scene_07_residual(tint):
     they already know from least squares.
     """
     import numpy as np
+
     A = np.array([[1, 0], [1, 1], [1, 2], [1, 3]])
     b = np.array([1, 3, 2, 5])
     x = np.linalg.pinv(A) @ b
@@ -2052,56 +2818,97 @@ def scene_07_residual(tint):
     ss = float(res @ res)
 
     def system(ax):
-        sequence(ax, [
-            {"arr": A, "caption": "A  (4, 2)"},
-            "@",
-            # x is what is being asked for, so it is drawn empty: two cells
-            # with no numbers in them yet.
-            {"arr": np.zeros((2, 1)), "labels": False, "caption": "x  (2,)"},
-            "=",
-            {"arr": b.reshape(4, 1), "caption": "b  (4,)"},
-        ], tint=tint, cell=0.62, size=13)
+        sequence(
+            ax,
+            [
+                {"arr": A, "caption": "A  (4, 2)"},
+                "@",
+                # x is what is being asked for, so it is drawn empty: two cells
+                # with no numbers in them yet.
+                {"arr": np.zeros((2, 1)), "labels": False, "caption": "x  (2,)"},
+                "=",
+                {"arr": b.reshape(4, 1), "caption": "b  (4,)"},
+            ],
+            tint=tint,
+            cell=0.62,
+            size=13,
+        )
 
     def solve(ax):
-        sequence(ax, [
-            {"arr": np.linalg.pinv(A), "caption": "pinv(A)  (2, 4)"},
-            "@",
-            {"arr": b.reshape(4, 1), "caption": "b"},
-            "=",
-            {"arr": x.reshape(2, 1), "caption": "x"},
-        ], tint=tint, cell=0.52, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": np.linalg.pinv(A), "caption": "pinv(A)  (2, 4)"},
+                "@",
+                {"arr": b.reshape(4, 1), "caption": "b"},
+                "=",
+                {"arr": x.reshape(2, 1), "caption": "x"},
+            ],
+            tint=tint,
+            cell=0.52,
+            size=11,
+        )
 
     def compare(ax):
-        sequence(ax, [
-            {"arr": fit.reshape(4, 1), "caption": "A @ x"},
-            "vs",
-            {"arr": b.reshape(4, 1), "caption": "b"},
-        ], tint=tint, cell=0.74, size=14)
+        sequence(
+            ax,
+            [
+                {"arr": fit.reshape(4, 1), "caption": "A @ x"},
+                "vs",
+                {"arr": b.reshape(4, 1), "caption": "b"},
+            ],
+            tint=tint,
+            cell=0.74,
+            size=14,
+        )
 
     def residual(ax):
-        sequence(ax, [
-            {"arr": b.reshape(4, 1), "caption": "b"},
-            "-",
-            {"arr": fit.reshape(4, 1), "caption": "A @ x"},
-            "=",
-            {"arr": res.reshape(4, 1), "caption": "r"},
-        ], tint=tint, cell=0.62, size=13)
+        sequence(
+            ax,
+            [
+                {"arr": b.reshape(4, 1), "caption": "b"},
+                "-",
+                {"arr": fit.reshape(4, 1), "caption": "A @ x"},
+                "=",
+                {"arr": res.reshape(4, 1), "caption": "r"},
+            ],
+            tint=tint,
+            cell=0.62,
+            size=13,
+        )
 
     return [
-        ("A x = b", "(4, 2) and (4,)",
-         "four equations, two unknowns — two too many", system),
-        ("x = pinv(A) @ b", "shape (2,)",
-         "it hands back an answer without complaining", solve),
-        ("A @ x  vs  b", "not equal, and never will be",
-         "the columns span a plane, and b is not on it", compare),
-        ("b - A @ x", f"sum of squares {ss:.2f}",
-         "the smallest this can be — smallest is not zero", residual),
+        (
+            "A x = b",
+            "(4, 2) and (4,)",
+            "four equations, two unknowns — two too many",
+            system,
+        ),
+        (
+            "x = pinv(A) @ b",
+            "shape (2,)",
+            "it hands back an answer without complaining",
+            solve,
+        ),
+        (
+            "A @ x  vs  b",
+            "not equal, and never will be",
+            "the columns span a plane, and b is not on it",
+            compare,
+        ),
+        (
+            "b - A @ x",
+            f"sum of squares {ss:.2f}",
+            "the smallest this can be — smallest is not zero",
+            residual,
+        ),
     ]
 
 
 def scene_08(tint):
     """08 — one update rule, applied again and again."""
     import numpy as np
+
     F = np.array([[1, 1], [1, 0]])
     states = [np.array([1, 0])]
     for _ in range(4):
@@ -2109,20 +2916,38 @@ def scene_08(tint):
 
     def step(t):
         def draw(ax):
-            sequence(ax, [
-                {"arr": F.reshape(1, 2, 2), "caption": "F", "size": 13},
-                "@",
-                {"arr": states[t].reshape(1, 2, 1), "caption": f"x[{t}]", "size": 13},
-                "=",
-                {"arr": states[t + 1].reshape(1, 2, 1),
-                 "caption": f"x[{t + 1}]", "size": 13},
-            ], tint=tint, cell=0.74)
+            sequence(
+                ax,
+                [
+                    {"arr": F.reshape(1, 2, 2), "caption": "F", "size": 13},
+                    "@",
+                    {
+                        "arr": states[t].reshape(1, 2, 1),
+                        "caption": f"x[{t}]",
+                        "size": 13,
+                    },
+                    "=",
+                    {
+                        "arr": states[t + 1].reshape(1, 2, 1),
+                        "caption": f"x[{t + 1}]",
+                        "size": 13,
+                    },
+                ],
+                tint=tint,
+                cell=0.74,
+            )
+
         return draw
 
-    return [(f"x[{t + 1}] = F @ x[{t}]",
-             f"x[{t + 1}] = {tuple(int(v) for v in states[t + 1])}",
-             "the same rule, the state carried forward", step(t))
-            for t in range(4)]
+    return [
+        (
+            f"x[{t + 1}] = F @ x[{t}]",
+            f"x[{t + 1}] = {tuple(int(v) for v in states[t + 1])}",
+            "the same rule, the state carried forward",
+            step(t),
+        )
+        for t in range(4)
+    ]
 
 
 def scene_08_power(tint):
@@ -2136,6 +2961,7 @@ def scene_08_power(tint):
     told.
     """
     import numpy as np
+
     F = np.array([[1, 1], [1, 0]])
     powers = [F]
     for _ in range(3):
@@ -2143,8 +2969,14 @@ def scene_08_power(tint):
 
     def show(n):
         def draw(ax):
-            sequence(ax, [{"arr": powers[n], "caption": f"F ** {n + 1}"}],
-                     tint=tint, cell=1.00, size=20)
+            sequence(
+                ax,
+                [{"arr": powers[n], "caption": f"F ** {n + 1}"}],
+                tint=tint,
+                cell=1.00,
+                size=20,
+            )
+
         return draw
 
     subs = [
@@ -2153,8 +2985,10 @@ def scene_08_power(tint):
         "three — and the entries are Fibonacci numbers",
         "n steps cost one matrix power, not n loops",
     ]
-    return [(f"F ** {n + 1}", f"top left = {int(powers[n][0, 0])}", subs[n],
-             show(n)) for n in range(4)]
+    return [
+        (f"F ** {n + 1}", f"top left = {int(powers[n][0, 0])}", subs[n], show(n))
+        for n in range(4)
+    ]
 
 
 def scene_08_direction(tint):
@@ -2173,25 +3007,36 @@ def scene_08_direction(tint):
     pictures: notice, measure, converge, name.
     """
     import numpy as np
+
     F = np.array([[1, 1], [1, 0]])
     xs = [np.array([1, 0])]
     for _ in range(12):
         xs.append(F @ xs[-1])
-    early = np.stack(xs[1:5], axis=1)                 # (2, 4)
+    early = np.stack(xs[1:5], axis=1)  # (2, 4)
     ratios = np.array([[xs[t][0] / xs[t][1] for t in range(1, 5)]])
     late = np.array([[xs[t][0] / xs[t][1] for t in (9, 10, 11, 12)]])
 
     def states(ax):
-        sequence(ax, [
-            {"arr": early[:, [t]], "caption": f"F^{t + 1} x"}
-            for t in range(4)
-        ], tint=tint, cell=0.74, size=15)
+        sequence(
+            ax,
+            [{"arr": early[:, [t]], "caption": f"F^{t + 1} x"} for t in range(4)],
+            tint=tint,
+            cell=0.74,
+            size=15,
+        )
 
     def row(arr):
         def draw(ax):
-            planes(ax, arr, tint=tint,
-                   origin=centred((1,) + arr.shape, cell=0.94), cell=0.94,
-                   label_size=15, decimals=3)
+            planes(
+                ax,
+                arr,
+                tint=tint,
+                origin=centred((1,) + arr.shape, cell=0.94),
+                cell=0.94,
+                label_size=15,
+                decimals=3,
+            )
+
         return draw
 
     vals = np.sort(np.linalg.eigvals(F).real)[::-1]
@@ -2199,28 +3044,52 @@ def scene_08_direction(tint):
     def spectrum(ax):
         big = np.zeros((1, 2), bool)
         big[0, 0] = True
-        planes(ax, vals.reshape(1, 2), tint=tint, lit=big,
-               origin=centred((1, 1, 2), cell=1.30), cell=1.30,
-               label_size=20, decimals=3)
+        planes(
+            ax,
+            vals.reshape(1, 2),
+            tint=tint,
+            lit=big,
+            origin=centred((1, 1, 2), cell=1.30),
+            cell=1.30,
+            label_size=20,
+            decimals=3,
+        )
 
     return [
-        ("F @ x, applied again and again", "each shape (2,)",
-         "one rule, and nothing about it changes between steps", states),
-        ("x[0] / x[1]", "1, 2, then in towards 1.6",
-         "the ratio of the two entries, step by step", row(ratios)),
-        ("after ten more steps", "all 1.618",
-         "it stops moving, and not where it started", row(late)),
+        (
+            "F @ x, applied again and again",
+            "each shape (2,)",
+            "one rule, and nothing about it changes between steps",
+            states,
+        ),
+        (
+            "x[0] / x[1]",
+            "1, 2, then in towards 1.6",
+            "the ratio of the two entries, step by step",
+            row(ratios),
+        ),
+        (
+            "after ten more steps",
+            "all 1.618",
+            "it stops moving, and not where it started",
+            row(late),
+        ),
         # Both values, with the sign: the second one is negative, and writing
         # its magnitude here would have the caption disagree with the cell
         # under it.
-        ("eigvals(F)", f"{vals[0]:.3f} and {vals[1]:.3f}",
-         "repetition finds the direction that stretches most", spectrum),
+        (
+            "eigvals(F)",
+            f"{vals[0]:.3f} and {vals[1]:.3f}",
+            "repetition finds the direction that stretches most",
+            spectrum,
+        ),
     ]
 
 
 def scene_09(tint):
     """09 — one matrix, three factors, and what rank 1 already captures."""
     import numpy as np
+
     # Chosen so all three singular values survive one decimal place -- a
     # figure whose point is trustworthy numbers must not print 0 for a
     # singular value that is not zero.
@@ -2231,30 +3100,61 @@ def scene_09(tint):
         return (U[:, :k] @ np.diag(sv[:k]) @ Vt[:k]).round(1)
 
     def split(ax):
-        sequence(ax, [
-            {"arr": A, "caption": "A"}, "=",
-            {"arr": U.round(1) + 0.0, "caption": "U"}, "@",
-            {"arr": np.diag(sv).round(1) + 0.0, "caption": "S"}, "@",
-            {"arr": Vt.round(1) + 0.0, "caption": "Vt"},
-        ], tint=tint, cell=0.42)
+        sequence(
+            ax,
+            [
+                {"arr": A, "caption": "A"},
+                "=",
+                {"arr": U.round(1) + 0.0, "caption": "U"},
+                "@",
+                {"arr": np.diag(sv).round(1) + 0.0, "caption": "S"},
+                "@",
+                {"arr": Vt.round(1) + 0.0, "caption": "Vt"},
+            ],
+            tint=tint,
+            cell=0.42,
+        )
 
     def rank(k):
         def draw(ax):
-            sequence(ax, [
-                {"arr": A, "caption": "A"}, "~",
-                {"arr": approx(k), "caption": f"rank {k}"},
-            ], tint=tint, cell=0.60)
+            sequence(
+                ax,
+                [
+                    {"arr": A, "caption": "A"},
+                    "~",
+                    {"arr": approx(k), "caption": f"rank {k}"},
+                ],
+                tint=tint,
+                cell=0.60,
+            )
+
         return draw
 
     return [
-        ("A", "shape (4, 3)", "one real matrix", lambda ax: sequence(
-            ax, [{"arr": A, "caption": "A"}], tint=tint, cell=0.68)),
-        ("U, S, Vt = svd(A)", "(4, 3) (3, 3) (3, 3)",
-         "three factors, one product", split),
-        ("rank 1", "one singular value kept",
-         "the biggest direction, on its own", rank(1)),
-        ("rank 2", "two singular values kept",
-         "closer, and still smaller than A", rank(2)),
+        (
+            "A",
+            "shape (4, 3)",
+            "one real matrix",
+            lambda ax: sequence(ax, [{"arr": A, "caption": "A"}], tint=tint, cell=0.68),
+        ),
+        (
+            "U, S, Vt = svd(A)",
+            "(4, 3) (3, 3) (3, 3)",
+            "three factors, one product",
+            split,
+        ),
+        (
+            "rank 1",
+            "one singular value kept",
+            "the biggest direction, on its own",
+            rank(1),
+        ),
+        (
+            "rank 2",
+            "two singular values kept",
+            "closer, and still smaller than A",
+            rank(2),
+        ),
     ]
 
 
@@ -2268,6 +3168,7 @@ def scene_09_rank(tint):
     beside it says what that cost.
     """
     import numpy as np
+
     A = np.array([[1, 2, 2], [6, 5, 1], [9, 5, 4], [9, 6, 5]])
     U, sv, Vt = np.linalg.svd(A.astype(float), full_matrices=False)
     s = sv.round(1).reshape(1, 3) + 0.0
@@ -2276,33 +3177,57 @@ def scene_09_rank(tint):
         return (U[:, :k] @ np.diag(sv[:k]) @ Vt[:k]).round(1) + 0.0
 
     def opening(ax):
-        sequence(ax, [
-            {"arr": A, "caption": "A  (4, 3)"},
-            "->",
-            {"arr": s, "caption": "s  (3,)"},
-        ], tint=tint, cell=0.60, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": A, "caption": "A  (4, 3)"},
+                "->",
+                {"arr": s, "caption": "s  (3,)"},
+            ],
+            tint=tint,
+            cell=0.60,
+            size=12,
+        )
 
     def keep(k):
         dropped = np.zeros((1, 3), bool)
         dropped[0, k:] = True
 
         def draw(ax):
-            sequence(ax, [
-                {"arr": s, "ghost": dropped, "caption": f"keep {k} of 3"},
-                "->",
-                {"arr": approx(k), "caption": f"rank {k}"},
-            ], tint=tint, cell=0.60, size=12)
+            sequence(
+                ax,
+                [
+                    {"arr": s, "ghost": dropped, "caption": f"keep {k} of 3"},
+                    "->",
+                    {"arr": approx(k), "caption": f"rank {k}"},
+                ],
+                tint=tint,
+                cell=0.60,
+                size=12,
+            )
+
         return draw
 
     return [
-        ("U, s, Vt = svd(A)", "3 singular values",
-         "how much of A each direction carries", opening),
-        ("rank 1", f"s = {s[0, 0]}, 0, 0",
-         "the largest direction, on its own", keep(1)),
-        ("rank 2", f"s = {s[0, 0]}, {s[0, 1]}, 0",
-         "closer — the dashed value is the one thrown away", keep(2)),
-        ("rank 3", "nothing discarded", "all three back, and A exactly",
-         keep(3)),
+        (
+            "U, s, Vt = svd(A)",
+            "3 singular values",
+            "how much of A each direction carries",
+            opening,
+        ),
+        (
+            "rank 1",
+            f"s = {s[0, 0]}, 0, 0",
+            "the largest direction, on its own",
+            keep(1),
+        ),
+        (
+            "rank 2",
+            f"s = {s[0, 0]}, {s[0, 1]}, 0",
+            "closer — the dashed value is the one thrown away",
+            keep(2),
+        ),
+        ("rank 3", "nothing discarded", "all three back, and A exactly", keep(3)),
     ]
 
 
@@ -2326,6 +3251,7 @@ def scene_09_nmf(tint):
     a `NMF(init=...)` call would not be.
     """
     import numpy as np
+
     W = np.array([[2, 0], [1, 1], [0, 2], [1, 0]])
     H = np.array([[1, 0, 1], [0, 1, 1]])
     A = W @ H
@@ -2346,46 +3272,87 @@ def scene_09_nmf(tint):
     assert neg.any(), "frame 1's caption claims U has negative entries"
 
     def whole(ax):
-        planes(ax, A, tint=tint, origin=centred((1,) + A.shape, cell=0.80),
-               cell=0.80, label_size=16)
+        planes(
+            ax,
+            A,
+            tint=tint,
+            origin=centred((1,) + A.shape, cell=0.80),
+            cell=0.80,
+            label_size=16,
+        )
 
     def svd_signs(ax):
-        sequence(ax, [
-            {"arr": U2, "lit": neg, "caption": "U[:, :2]"},
-            {"arr": np.round(np.diag(sv[:2]), 1), "caption": "S"},
-        ], tint=tint, cell=0.62, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": U2, "lit": neg, "caption": "U[:, :2]"},
+                {"arr": np.round(np.diag(sv[:2]), 1), "caption": "S"},
+            ],
+            tint=tint,
+            cell=0.62,
+            size=12,
+        )
 
     def parts(ax):
-        sequence(ax, [
-            {"arr": W, "caption": "W  (4, 2)"},
-            "@",
-            {"arr": H, "caption": "H  (2, 3)"},
-            "=",
-            {"arr": A, "caption": "A"},
-        ], tint=tint, cell=0.52, size=11)
+        sequence(
+            ax,
+            [
+                {"arr": W, "caption": "W  (4, 2)"},
+                "@",
+                {"arr": H, "caption": "H  (2, 3)"},
+                "=",
+                {"arr": A, "caption": "A"},
+            ],
+            tint=tint,
+            cell=0.52,
+            size=11,
+        )
 
     def side(ax):
-        sequence(ax, [
-            {"arr": U2, "lit": neg, "caption": "U[:, :2]"},
-            "vs",
-            {"arr": W, "caption": "W"},
-        ], tint=tint, cell=0.70, size=14)
+        sequence(
+            ax,
+            [
+                {"arr": U2, "lit": neg, "caption": "U[:, :2]"},
+                "vs",
+                {"arr": W, "caption": "W"},
+            ],
+            tint=tint,
+            cell=0.70,
+            size=14,
+        )
 
     return [
-        ("A", "(4, 3), every entry >= 0",
-         "counts — nothing here can be less than nothing", whole),
-        ("A = U S Vt", "the best rank 2 there is",
-         "and the lit entries of U are negative", svd_signs),
-        ("A = W @ H", "both factors >= 0",
-         "every number in both factors is a quantity of something", parts),
-        ("U[:, :2]  vs  W", "same rank, same data",
-         "one is optimal; the other is the one you can read aloud", side),
+        (
+            "A",
+            "(4, 3), every entry >= 0",
+            "counts — nothing here can be less than nothing",
+            whole,
+        ),
+        (
+            "A = U S Vt",
+            "the best rank 2 there is",
+            "and the lit entries of U are negative",
+            svd_signs,
+        ),
+        (
+            "A = W @ H",
+            "both factors >= 0",
+            "every number in both factors is a quantity of something",
+            parts,
+        ),
+        (
+            "U[:, :2]  vs  W",
+            "same rank, same data",
+            "one is optimal; the other is the one you can read aloud",
+            side,
+        ),
     ]
 
 
 def scene_10(tint):
     """10 — Tucker: a small core plus one basis per mode."""
     import numpy as np
+
     T = cube()
     core = np.arange(8).reshape(2, 2, 2) * 7
     U0 = np.arange(6).reshape(3, 2)
@@ -2399,27 +3366,48 @@ def scene_10(tint):
         planes(ax, core, tint=tint, origin=centred((2, 2, 2)), label_size=13)
 
     def parts(ax):
-        sequence(ax, [
-            {"arr": core, "caption": "core (2,2,2)"}, "x",
-            {"arr": U0, "caption": "U0 (3,2)"}, "x",
-            {"arr": U1, "caption": "U1 (4,2)"}, "x",
-            {"arr": U2, "caption": "U2 (5,2)"},
-        ], tint=tint, cell=0.44)
+        sequence(
+            ax,
+            [
+                {"arr": core, "caption": "core (2,2,2)"},
+                "x",
+                {"arr": U0, "caption": "U0 (3,2)"},
+                "x",
+                {"arr": U1, "caption": "U1 (4,2)"},
+                "x",
+                {"arr": U2, "caption": "U2 (5,2)"},
+            ],
+            tint=tint,
+            cell=0.44,
+        )
 
     def budget(ax):
-        sequence(ax, [
-            {"arr": T, "caption": "60 numbers"}, "vs",
-            {"arr": core, "caption": "8 + 6 + 8 + 10 = 32"},
-        ], tint=tint, cell=0.42)
+        sequence(
+            ax,
+            [
+                {"arr": T, "caption": "60 numbers"},
+                "vs",
+                {"arr": core, "caption": "8 + 6 + 8 + 10 = 32"},
+            ],
+            tint=tint,
+            cell=0.42,
+        )
 
     return [
         ("T", "shape (3, 4, 5) — 60 numbers", "the tensor to compress", whole),
-        ("core", "shape (2, 2, 2) — 8 numbers",
-         "rank 2 on every mode", just_core),
-        ("core x U0 x U1 x U2", "one basis per mode",
-         "every original index keeps a row — a budget, not a subset", parts),
-        ("32 against 60", "what Tucker costs here",
-         "each mode gets its own budget", budget),
+        ("core", "shape (2, 2, 2) — 8 numbers", "rank 2 on every mode", just_core),
+        (
+            "core x U0 x U1 x U2",
+            "one basis per mode",
+            "every original index keeps a row — a budget, not a subset",
+            parts,
+        ),
+        (
+            "32 against 60",
+            "what Tucker costs here",
+            "each mode gets its own budget",
+            budget,
+        ),
     ]
 
 
@@ -2432,14 +3420,20 @@ def scene_10_unfold(tint):
     results are comparable: the row count is the axis you kept, the column
     count is everything else multiplied together, and 60 stays 60.
     """
-    import numpy as np
+
     T = cube()
     unfolds = [
         (T.reshape(3, 20), "(3, 20)", "axis 0 kept — 4 x 5 = 20 columns"),
-        (T.transpose(1, 0, 2).reshape(4, 15), "(4, 15)",
-         "axis 1 kept — 3 x 5 = 15 columns"),
-        (T.transpose(2, 0, 1).reshape(5, 12), "(5, 12)",
-         "axis 2 kept — 3 x 4 = 12 columns"),
+        (
+            T.transpose(1, 0, 2).reshape(4, 15),
+            "(4, 15)",
+            "axis 1 kept — 3 x 5 = 15 columns",
+        ),
+        (
+            T.transpose(2, 0, 1).reshape(5, 12),
+            "(5, 12)",
+            "axis 2 kept — 3 x 4 = 12 columns",
+        ),
     ]
 
     def flat(arr, caption, mode):
@@ -2447,8 +3441,14 @@ def scene_10_unfold(tint):
         # results are told apart by more than a caption -- and the colour is
         # the same one `cube-00-axes` gave that axis.
         def draw(ax):
-            sequence(ax, [{"arr": arr, "tint": AXIS_TINTS[mode],
-                           "caption": caption}], tint=tint, cell=0.40, size=7)
+            sequence(
+                ax,
+                [{"arr": arr, "tint": AXIS_TINTS[mode], "caption": caption}],
+                tint=tint,
+                cell=0.40,
+                size=7,
+            )
+
         return draw
 
     def whole(ax):
@@ -2456,8 +3456,7 @@ def scene_10_unfold(tint):
         planes(ax, T, tint=tint, origin=o)
         axis_arrows(ax, SHAPE, origin=o, tints=AXIS_TINTS)
 
-    return [("T", "shape (3, 4, 5)",
-             "no tensor has an SVD — a matrix does", whole)] + [
+    return [("T", "shape (3, 4, 5)", "no tensor has an SVD — a matrix does", whole)] + [
         (f"unfold(T, {m})", f"shape {shape}", sub, flat(arr, f"mode {m}", m))
         for m, (arr, shape, sub) in enumerate(unfolds)
     ]
@@ -2466,6 +3465,7 @@ def scene_10_unfold(tint):
 def scene_11(tint):
     """11 — CP: a sum of rank-1 terms, and every partial sum is a real tensor."""
     import numpy as np
+
     rng = np.random.default_rng(3)
     A = rng.integers(1, 4, (3, 3))
     B = rng.integers(1, 4, (4, 3))
@@ -2480,25 +3480,52 @@ def scene_11(tint):
     def draw_of(arr):
         def draw(ax):
             planes(ax, arr, tint=tint, origin=centred(SHAPE))
+
         return draw
 
-    states = [("term 1", "one outer product", "rank 1 — a whole tensor already",
-               draw_of(term(0)))]
+    states = [
+        (
+            "term 1",
+            "one outer product",
+            "rank 1 — a whole tensor already",
+            draw_of(term(0)),
+        )
+    ]
     for r in (1, 2):
-        states.append((f"term 1 + ... + {r + 1}", f"{r + 1} rank-1 terms",
-                       "each term adds, none replaces", draw_of(partial(r))))
+        states.append(
+            (
+                f"term 1 + ... + {r + 1}",
+                f"{r + 1} rank-1 terms",
+                "each term adds, none replaces",
+                draw_of(partial(r)),
+            )
+        )
+
     # The last frame is the factors themselves, not the sum again: repeating
     # the previous picture under a new caption spends a quarter of the
     # animation saying nothing new.
     def factors(ax):
-        sequence(ax, [
-            {"arr": A, "caption": "A (3,3)"}, "x",
-            {"arr": B, "caption": "B (4,3)"}, "x",
-            {"arr": C, "caption": "C (5,3)"},
-        ], tint=tint, cell=0.62)
+        sequence(
+            ax,
+            [
+                {"arr": A, "caption": "A (3,3)"},
+                "x",
+                {"arr": B, "caption": "B (4,3)"},
+                "x",
+                {"arr": C, "caption": "C (5,3)"},
+            ],
+            tint=tint,
+            cell=0.62,
+        )
 
-    states.append(("A, B, C", "9 + 12 + 15 = 36 numbers",
-                   "three factors against the tensor's 60", factors))
+    states.append(
+        (
+            "A, B, C",
+            "9 + 12 + 15 = 36 numbers",
+            "three factors against the tensor's 60",
+            factors,
+        )
+    )
     return states
 
 
@@ -2512,6 +3539,7 @@ def scene_11_outer(tint):
     reason anybody runs CP.
     """
     import numpy as np
+
     a = np.arange(1, 4)
     b = np.arange(1, 5)
     c = np.arange(1, 6)
@@ -2519,41 +3547,60 @@ def scene_11_outer(tint):
     abc = np.einsum("i,j,k->ijk", a, b, c)
 
     def vectors(ax):
-        sequence(ax, [
-            {"arr": a.reshape(3, 1), "caption": "a  (3,)"},
-            "x",
-            {"arr": b.reshape(4, 1), "caption": "b  (4,)"},
-            "x",
-            {"arr": c.reshape(5, 1), "caption": "c  (5,)"},
-        ], tint=tint, cell=0.62, size=13)
+        sequence(
+            ax,
+            [
+                {"arr": a.reshape(3, 1), "caption": "a  (3,)"},
+                "x",
+                {"arr": b.reshape(4, 1), "caption": "b  (4,)"},
+                "x",
+                {"arr": c.reshape(5, 1), "caption": "c  (5,)"},
+            ],
+            tint=tint,
+            cell=0.62,
+            size=13,
+        )
 
     def matrix(ax):
-        sequence(ax, [{"arr": ab, "caption": "a x b  (3, 4)"}],
-                 tint=tint, cell=0.68, size=13)
+        sequence(
+            ax, [{"arr": ab, "caption": "a x b  (3, 4)"}], tint=tint, cell=0.68, size=13
+        )
 
     def tensor(ax):
         planes(ax, abc, tint=tint, origin=centred(SHAPE))
 
     def budget(ax):
-        sequence(ax, [
-            {"arr": a.reshape(3, 1), "caption": "a"},
-            "x",
-            {"arr": b.reshape(4, 1), "caption": "b"},
-            "x",
-            {"arr": c.reshape(5, 1), "caption": "c"},
-            "->",
-            {"arr": abc, "caption": "60 entries"},
-        ], tint=tint, cell=0.34, size=6)
+        sequence(
+            ax,
+            [
+                {"arr": a.reshape(3, 1), "caption": "a"},
+                "x",
+                {"arr": b.reshape(4, 1), "caption": "b"},
+                "x",
+                {"arr": c.reshape(5, 1), "caption": "c"},
+                "->",
+                {"arr": abc, "caption": "60 entries"},
+            ],
+            tint=tint,
+            cell=0.34,
+            size=6,
+        )
 
     return [
-        ("a, b, c", "3 + 4 + 5 = 12 numbers", "three vectors, nothing else",
-         vectors),
-        ("a x b", "shape (3, 4)",
-         "every pair multiplied — no sums, so rank stays 1", matrix),
-        ("a x b x c", "shape (3, 4, 5)",
-         "one more vector, one more axis", tensor),
-        ("one rank-1 term", "12 numbers, 60 entries",
-         "this ratio is the only reason to run CP", budget),
+        ("a, b, c", "3 + 4 + 5 = 12 numbers", "three vectors, nothing else", vectors),
+        (
+            "a x b",
+            "shape (3, 4)",
+            "every pair multiplied — no sums, so rank stays 1",
+            matrix,
+        ),
+        ("a x b x c", "shape (3, 4, 5)", "one more vector, one more axis", tensor),
+        (
+            "one rank-1 term",
+            "12 numbers, 60 entries",
+            "this ratio is the only reason to run CP",
+            budget,
+        ),
     ]
 
 
@@ -2573,6 +3620,7 @@ def scene_10_modes(tint):
     whole thing, and each mode product is one instruction in it.
     """
     import numpy as np
+
     core = np.arange(1, 9).reshape(2, 2, 2)
     U0 = np.array([[1, 0], [0, 1], [1, 1]])
     U1 = np.array([[1, 0], [0, 1], [1, 1], [2, 0]])
@@ -2583,20 +3631,42 @@ def scene_10_modes(tint):
 
     def pile(arr, cell, size):
         def draw(ax):
-            planes(ax, arr, tint=tint, origin=centred(arr.shape, cell=cell),
-                   cell=cell, label_size=size)
+            planes(
+                ax,
+                arr,
+                tint=tint,
+                origin=centred(arr.shape, cell=cell),
+                cell=cell,
+                label_size=size,
+            )
+
         return draw
 
     return [
-        ("core", "(2, 2, 2) — 8 numbers",
-         "the whole tensor, before any mode gets its size back",
-         pile(core, 0.86, 17)),
-        ("core x0 U0", "(3, 2, 2) — 12",
-         "mode 0 grows to 3, and nothing else moves", pile(s1, 0.74, 14)),
-        ("... x1 U1", "(3, 4, 2) — 24",
-         "mode 1 grows to 4 — one factor, one axis", pile(s2, 0.60, 11)),
-        ("... x2 U2", "(3, 4, 5) — 60",
-         "three factors, three modes, the tensor is back", pile(s3, 0.50, 8)),
+        (
+            "core",
+            "(2, 2, 2) — 8 numbers",
+            "the whole tensor, before any mode gets its size back",
+            pile(core, 0.86, 17),
+        ),
+        (
+            "core x0 U0",
+            "(3, 2, 2) — 12",
+            "mode 0 grows to 3, and nothing else moves",
+            pile(s1, 0.74, 14),
+        ),
+        (
+            "... x1 U1",
+            "(3, 4, 2) — 24",
+            "mode 1 grows to 4 — one factor, one axis",
+            pile(s2, 0.60, 11),
+        ),
+        (
+            "... x2 U2",
+            "(3, 4, 5) — 60",
+            "three factors, three modes, the tensor is back",
+            pile(s3, 0.50, 8),
+        ),
     ]
 
 
@@ -2615,6 +3685,7 @@ def scene_11_tt(tint):
     a chain scales to twenty axes where a Tucker core does not.
     """
     import numpy as np
+
     rng = np.random.default_rng(5)
     G1 = rng.integers(0, 4, (3, 2))
     G2 = rng.integers(0, 4, (2, 4, 2))
@@ -2623,47 +3694,82 @@ def scene_11_tt(tint):
     cost = G1.size + G2.size + G3.size
 
     def whole(ax):
-        planes(ax, T, tint=tint, origin=centred(T.shape, cell=0.50),
-               cell=0.50, label_size=8)
+        planes(
+            ax,
+            T,
+            tint=tint,
+            origin=centred(T.shape, cell=0.50),
+            cell=0.50,
+            label_size=8,
+        )
 
     def chain(ax):
-        sequence(ax, [
-            {"arr": G1, "caption": "G1  (3, 2)"},
-            "-",
-            {"arr": G2, "caption": "G2  (2, 4, 2)"},
-            "-",
-            {"arr": G3, "caption": "G3  (2, 5)"},
-        ], tint=tint, cell=0.46, size=9)
+        sequence(
+            ax,
+            [
+                {"arr": G1, "caption": "G1  (3, 2)"},
+                "-",
+                {"arr": G2, "caption": "G2  (2, 4, 2)"},
+                "-",
+                {"arr": G3, "caption": "G3  (2, 5)"},
+            ],
+            tint=tint,
+            cell=0.46,
+            size=9,
+        )
 
     def budget(ax):
-        sequence(ax, [
-            {"arr": T, "labels": False, "caption": f"T  {T.size}"},
-            "vs",
-            {"arr": G1, "labels": False, "caption": str(G1.size)},
-            {"arr": G2, "labels": False, "caption": str(G2.size)},
-            {"arr": G3, "labels": False, "caption": str(G3.size)},
-        ], tint=tint, cell=0.40, size=8)
+        sequence(
+            ax,
+            [
+                {"arr": T, "labels": False, "caption": f"T  {T.size}"},
+                "vs",
+                {"arr": G1, "labels": False, "caption": str(G1.size)},
+                {"arr": G2, "labels": False, "caption": str(G2.size)},
+                {"arr": G3, "labels": False, "caption": str(G3.size)},
+            ],
+            tint=tint,
+            cell=0.40,
+            size=8,
+        )
 
     def one_entry(ax):
         r1 = G1[[1]]
         r3 = G3[:, [3]]
-        sequence(ax, [
-            {"arr": r1, "tint": INDEX["i"], "caption": "G1[1]"},
-            "@",
-            {"arr": G2[:, 2, :], "tint": INDEX["j"], "caption": "G2[:, 2]"},
-            "@",
-            {"arr": r3, "tint": INDEX["k"], "caption": "G3[:, 3]"},
-        ], tint=tint, cell=0.62, size=13)
+        sequence(
+            ax,
+            [
+                {"arr": r1, "tint": INDEX["i"], "caption": "G1[1]"},
+                "@",
+                {"arr": G2[:, 2, :], "tint": INDEX["j"], "caption": "G2[:, 2]"},
+                "@",
+                {"arr": r3, "tint": INDEX["k"], "caption": "G3[:, 3]"},
+            ],
+            tint=tint,
+            cell=0.62,
+            size=13,
+        )
 
     return [
-        ("T", f"{T.size} numbers", "one block, and every entry stored in it",
-         whole),
-        ("G1, G2, G3", "(3, 2) (2, 4, 2) (2, 5)",
-         "a chain — each core touches only its neighbours", chain),
-        ("storage", f"{cost} against {T.size}",
-         "the rank between two cores is the width of the passage", budget),
-        ("T[1, 2, 3]", "one walk along the chain",
-         "an entry is not looked up, it is multiplied out", one_entry),
+        ("T", f"{T.size} numbers", "one block, and every entry stored in it", whole),
+        (
+            "G1, G2, G3",
+            "(3, 2) (2, 4, 2) (2, 5)",
+            "a chain — each core touches only its neighbours",
+            chain,
+        ),
+        (
+            "storage",
+            f"{cost} against {T.size}",
+            "the rank between two cores is the width of the passage",
+            budget,
+        ),
+        (
+            "T[1, 2, 3]",
+            "one walk along the chain",
+            "an entry is not looked up, it is multiplied out",
+            one_entry,
+        ),
     ]
 
 
@@ -2686,36 +3792,54 @@ def scene_12(tint):
     of its cells lying in the plane nothing is in front of.
     """
     import numpy as np
+
     T = cube()
     o = centred(SHAPE)
-    plane = np.zeros(SHAPE, bool); plane[1] = True
-    fibre = np.zeros(SHAPE, bool); fibre[0, :, 3] = True
-    front = np.zeros(SHAPE, bool); front[0] = True
+    plane = np.zeros(SHAPE, bool)
+    plane[1] = True
+    fibre = np.zeros(SHAPE, bool)
+    fibre[0, :, 3] = True
+    front = np.zeros(SHAPE, bool)
+    front[0] = True
 
     def lit(mask, hide=None):
         def draw(ax):
             planes(ax, T, tint=tint, lit=mask, hide=hide, origin=o)
+
         return draw
 
     def transposed(ax):
         # A (5, 3, 4) pile is five planes deep, and five set-backs at the full
         # CELL reach up through the label. Drawn smaller rather than moved: the
         # frame is about the shape, and a shape reads off a whole pile.
-        planes(ax, T.transpose(2, 0, 1), tint=tint, cell=0.58,
-               origin=centred((5, 3, 4), cell=0.58), label_size=9)
+        planes(
+            ax,
+            T.transpose(2, 0, 1),
+            tint=tint,
+            cell=0.58,
+            origin=centred((5, 3, 4), cell=0.58),
+            label_size=9,
+        )
 
     def summed(ax):
-        planes(ax, T.sum(axis=2).reshape(1, 3, 4), tint=tint,
-               origin=centred((1, 3, 4)), label_size=12)
+        planes(
+            ax,
+            T.sum(axis=2).reshape(1, 3, 4),
+            tint=tint,
+            origin=centred((1, 3, 4)),
+            label_size=12,
+        )
 
     return [
-        ("T[1]", "shape (4, 5)", "slice — fix one index",
-         lit(plane, hide=front)),
+        ("T[1]", "shape (4, 5)", "slice — fix one index", lit(plane, hide=front)),
         ("T[0, :, 3]", "shape (4,)", "fibre — fix two", lit(fibre)),
-        ("T.transpose(2, 0, 1)", "shape (5, 3, 4)",
-         "reorder — every number keeps its neighbours", transposed),
-        ("T.sum(axis=2)", "shape (3, 4)",
-         "contract — an axis is summed away", summed),
+        (
+            "T.transpose(2, 0, 1)",
+            "shape (5, 3, 4)",
+            "reorder — every number keeps its neighbours",
+            transposed,
+        ),
+        ("T.sum(axis=2)", "shape (3, 4)", "contract — an axis is summed away", summed),
     ]
 
 
@@ -2739,6 +3863,7 @@ def scene_12_budget(tint):
     about counting, so counting is all that is drawn.
     """
     import numpy as np
+
     T = cube()
     U0 = np.arange(6).reshape(3, 2)
     U1 = np.arange(8).reshape(4, 2)
@@ -2757,32 +3882,69 @@ def scene_12_budget(tint):
 
     def row(items):
         def draw(ax):
-            sequence(ax, [it if isinstance(it, str) else {**it, "labels": False}
-                          for it in items], tint=tint, cell=UNIT)
+            sequence(
+                ax,
+                [
+                    it if isinstance(it, str) else {**it, "labels": False}
+                    for it in items
+                ],
+                tint=tint,
+                cell=UNIT,
+            )
+
         return draw
 
     def whole(ax):
-        planes(ax, T, tint=tint, cell=UNIT, labels=False,
-               origin=centred(SHAPE, cell=UNIT))
+        planes(
+            ax, T, tint=tint, cell=UNIT, labels=False, origin=centred(SHAPE, cell=UNIT)
+        )
 
     return [
         ("T", "60 numbers", "every frame after this one is smaller", whole),
-        ("svd(unfold(T, 0))", "6 + 2 + 40 = 48",
-         "flatten first — one matrix, and one axis privileged", row([
-             {"arr": Uf, "caption": "U  (3, 2)"}, "x",
-             {"arr": sf, "caption": "s  (2,)"}, "x",
-             {"arr": Vf, "caption": "Vt  (2, 20)"}])),
-        ("Tucker (2, 2, 2)", "8 + 6 + 8 + 10 = 32",
-         "a core, and one basis per mode", row([
-             {"arr": core, "caption": "core (2,2,2)"}, "x",
-             {"arr": U0, "caption": "U0 (3,2)"}, "x",
-             {"arr": U1, "caption": "U1 (4,2)"}, "x",
-             {"arr": U2, "caption": "U2 (5,2)"}])),
-        ("CP, rank 3", "9 + 12 + 15 = 36",
-         "no core at all — three thin factors", row([
-             {"arr": A, "caption": "A (3,3)"}, "x",
-             {"arr": B, "caption": "B (4,3)"}, "x",
-             {"arr": C, "caption": "C (5,3)"}])),
+        (
+            "svd(unfold(T, 0))",
+            "6 + 2 + 40 = 48",
+            "flatten first — one matrix, and one axis privileged",
+            row(
+                [
+                    {"arr": Uf, "caption": "U  (3, 2)"},
+                    "x",
+                    {"arr": sf, "caption": "s  (2,)"},
+                    "x",
+                    {"arr": Vf, "caption": "Vt  (2, 20)"},
+                ]
+            ),
+        ),
+        (
+            "Tucker (2, 2, 2)",
+            "8 + 6 + 8 + 10 = 32",
+            "a core, and one basis per mode",
+            row(
+                [
+                    {"arr": core, "caption": "core (2,2,2)"},
+                    "x",
+                    {"arr": U0, "caption": "U0 (3,2)"},
+                    "x",
+                    {"arr": U1, "caption": "U1 (4,2)"},
+                    "x",
+                    {"arr": U2, "caption": "U2 (5,2)"},
+                ]
+            ),
+        ),
+        (
+            "CP, rank 3",
+            "9 + 12 + 15 = 36",
+            "no core at all — three thin factors",
+            row(
+                [
+                    {"arr": A, "caption": "A (3,3)"},
+                    "x",
+                    {"arr": B, "caption": "B (4,3)"},
+                    "x",
+                    {"arr": C, "caption": "C (5,3)"},
+                ]
+            ),
+        ),
     ]
 
 
@@ -2805,6 +3967,7 @@ def scene_12_attention(tint):
     to two decimals rather than one.
     """
     import numpy as np
+
     Q = np.array([[1, 0, 1], [0, 2, 1]])
     K = np.array([[1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 2]])
     V = np.array([[2, 0], [0, 2], [1, 1], [3, 3]])
@@ -2814,81 +3977,132 @@ def scene_12_attention(tint):
     out = np.round(np.einsum("ij,jd->id", w, V), 2)
 
     def operands(ax):
-        sequence(ax, [
-            {"arr": Q, "tint": INDEX["i"], "caption": "Q  (2, 3)  id"},
-            {"arr": K, "tint": INDEX["j"], "caption": "K  (4, 3)  jd"},
-        ], tint=tint, cell=0.72, size=14)
+        sequence(
+            ax,
+            [
+                {"arr": Q, "tint": INDEX["i"], "caption": "Q  (2, 3)  id"},
+                {"arr": K, "tint": INDEX["j"], "caption": "K  (4, 3)  jd"},
+            ],
+            tint=tint,
+            cell=0.72,
+            size=14,
+        )
 
     def score(ax):
         o = centred((1,) + scores.shape, cell=0.86)
         planes(ax, scores, tint=tint, origin=o, cell=0.86, label_size=17)
-        axis_arrows(ax, (1,) + scores.shape, origin=o, cell=0.86,
-                    names=(None, "i", "j"))
+        axis_arrows(
+            ax, (1,) + scores.shape, origin=o, cell=0.86, names=(None, "i", "j")
+        )
 
     def weights(ax):
-        planes(ax, w, tint=tint, origin=centred((1,) + w.shape, cell=0.86),
-               cell=0.86, label_size=15, decimals=2)
+        planes(
+            ax,
+            w,
+            tint=tint,
+            origin=centred((1,) + w.shape, cell=0.86),
+            cell=0.86,
+            label_size=15,
+            decimals=2,
+        )
 
     def mix(ax):
-        sequence(ax, [
-            {"arr": w, "caption": "softmax  (2, 4)", "decimals": 2},
-            "@",
-            {"arr": V, "tint": INDEX["j"], "caption": "V  (4, 2)"},
-            "=",
-            {"arr": out, "caption": "out  (2, 2)", "decimals": 2},
-        ], tint=tint, cell=0.50, size=10)
+        sequence(
+            ax,
+            [
+                {"arr": w, "caption": "softmax  (2, 4)", "decimals": 2},
+                "@",
+                {"arr": V, "tint": INDEX["j"], "caption": "V  (4, 2)"},
+                "=",
+                {"arr": out, "caption": "out  (2, 2)", "decimals": 2},
+            ],
+            tint=tint,
+            cell=0.50,
+            size=10,
+        )
 
     return [
-        ("Q, K", "(2, 3) and (4, 3)",
-         "two queries, four keys, both described by d = 3", operands),
-        ("einsum('id,jd->ij', Q, K)", "shape (2, 4)",
-         "d is summed away — one score per query-key pair", score),
-        ("softmax(scores)", "every row sums to 1",
-         "the one step in attention that is not a contraction", weights),
-        ("einsum('ij,jd->id', w, V)", "shape (2, 2)",
-         "j summed away — two contractions, and a softmax between",
-         mix),
+        (
+            "Q, K",
+            "(2, 3) and (4, 3)",
+            "two queries, four keys, both described by d = 3",
+            operands,
+        ),
+        (
+            "einsum('id,jd->ij', Q, K)",
+            "shape (2, 4)",
+            "d is summed away — one score per query-key pair",
+            score,
+        ),
+        (
+            "softmax(scores)",
+            "every row sums to 1",
+            "the one step in attention that is not a contraction",
+            weights,
+        ),
+        (
+            "einsum('ij,jd->id', w, V)",
+            "shape (2, 2)",
+            "j summed away — two contractions, and a softmax between",
+            mix,
+        ),
     ]
 
 
 def scene_13(tint):
     """13 — a kernel sliding, and the one flip that separates the two names."""
     import numpy as np
+
     img = np.arange(20).reshape(4, 5)
     k = np.array([[1, 2], [3, 4]])
     out = np.zeros((3, 4), int)
     for r in range(3):
         for c in range(4):
-            out[r, c] = int((img[r:r + 2, c:c + 2] * k).sum())
+            out[r, c] = int((img[r : r + 2, c : c + 2] * k).sum())
 
     def window(r, c):
         def draw(ax):
             lit = np.zeros((1, 4, 5), bool)
-            lit[0, r:r + 2, c:c + 2] = True
+            lit[0, r : r + 2, c : c + 2] = True
             hit = np.zeros((1, 3, 4), bool)
             hit[0, r, c] = True
-            sequence(ax, [
-                {"arr": img.reshape(1, 4, 5), "lit": lit, "caption": "image"},
-                "*",
-                {"arr": k.reshape(1, 2, 2), "caption": "kernel"},
-                "->",
-                {"arr": out.reshape(1, 3, 4), "lit": hit, "caption": "output"},
-            ], tint=tint, cell=0.52)
+            sequence(
+                ax,
+                [
+                    {"arr": img.reshape(1, 4, 5), "lit": lit, "caption": "image"},
+                    "*",
+                    {"arr": k.reshape(1, 2, 2), "caption": "kernel"},
+                    "->",
+                    {"arr": out.reshape(1, 3, 4), "lit": hit, "caption": "output"},
+                ],
+                tint=tint,
+                cell=0.52,
+            )
+
         return draw
 
     def flip(ax):
-        sequence(ax, [
-            {"arr": k.reshape(1, 2, 2), "caption": "kernel"},
-            "vs",
-            {"arr": k[::-1, ::-1].reshape(1, 2, 2), "caption": "flipped"},
-        ], tint=tint, cell=0.78)
+        sequence(
+            ax,
+            [
+                {"arr": k.reshape(1, 2, 2), "caption": "kernel"},
+                "vs",
+                {"arr": k[::-1, ::-1].reshape(1, 2, 2), "caption": "flipped"},
+            ],
+            tint=tint,
+            cell=0.78,
+        )
 
     return [
         ("out[0, 0]", f"= {out[0, 0]}", "the window at the top left", window(0, 0)),
         ("out[0, 1]", f"= {out[0, 1]}", "slide one column", window(0, 1)),
         ("out[1, 0]", f"= {out[1, 0]}", "and one row down", window(1, 0)),
-        ("convolution flips first", "correlation does not",
-         "for an asymmetric kernel the two disagree", flip),
+        (
+            "convolution flips first",
+            "correlation does not",
+            "for an asymmetric kernel the two disagree",
+            flip,
+        ),
     ]
 
 
@@ -2903,13 +4117,14 @@ def scene_13_transposed(tint):
     frame says shape and not values. Nothing here inverts a blur.
     """
     import numpy as np
+
     x = np.array([[1, 2], [3, 4]])
     k = np.array([[1, 2], [3, 4]])
     full = np.zeros((3, 3), int)
     partial = []
     for r in range(2):
         for c in range(2):
-            full[r:r + 2, c:c + 2] += x[r, c] * k
+            full[r : r + 2, c : c + 2] += x[r, c] * k
             partial.append((r, c, full.copy()))
 
     def scatter(n):
@@ -2917,35 +4132,63 @@ def scene_13_transposed(tint):
         src = np.zeros((2, 2), bool)
         src[r, c] = True
         hit = np.zeros((3, 3), bool)
-        hit[r:r + 2, c:c + 2] = True
+        hit[r : r + 2, c : c + 2] = True
 
         def draw(ax):
-            sequence(ax, [
-                {"arr": x, "lit": src, "caption": "x  (2, 2)"},
-                "*",
-                {"arr": k, "caption": "k  (2, 2)"},
-                "->",
-                {"arr": out, "lit": hit, "caption": "out  (3, 3)"},
-            ], tint=tint, cell=0.62, size=13)
+            sequence(
+                ax,
+                [
+                    {"arr": x, "lit": src, "caption": "x  (2, 2)"},
+                    "*",
+                    {"arr": k, "caption": "k  (2, 2)"},
+                    "->",
+                    {"arr": out, "lit": hit, "caption": "out  (3, 3)"},
+                ],
+                tint=tint,
+                cell=0.62,
+                size=13,
+            )
+
         return draw
 
     def shapes(ax):
-        sequence(ax, [
-            {"arr": x, "caption": "in  (2, 2)"},
-            "->",
-            {"arr": full, "caption": "out  (3, 3)"},
-        ], tint=tint, cell=0.72, size=14)
+        sequence(
+            ax,
+            [
+                {"arr": x, "caption": "in  (2, 2)"},
+                "->",
+                {"arr": full, "caption": "out  (3, 3)"},
+            ],
+            tint=tint,
+            cell=0.72,
+            size=14,
+        )
 
     return [
-        ("x[0, 0] scatters", "1 x k into out[0:2, 0:2]",
-         "every input writes a whole kernel, scaled", scatter(0)),
-        ("x[0, 1] scatters", "2 x k, one column across",
-         "where two scatters overlap, they add", scatter(1)),
-        ("x[1, 1] scatters", "4 x k, the last one",
-         "four scatters, nine output cells", scatter(3)),
-        ("conv_transpose", "(2, 2) -> (3, 3)",
-         "the shape convolution consumed, given back — not the values",
-         shapes),
+        (
+            "x[0, 0] scatters",
+            "1 x k into out[0:2, 0:2]",
+            "every input writes a whole kernel, scaled",
+            scatter(0),
+        ),
+        (
+            "x[0, 1] scatters",
+            "2 x k, one column across",
+            "where two scatters overlap, they add",
+            scatter(1),
+        ),
+        (
+            "x[1, 1] scatters",
+            "4 x k, the last one",
+            "four scatters, nine output cells",
+            scatter(3),
+        ),
+        (
+            "conv_transpose",
+            "(2, 2) -> (3, 3)",
+            "the shape convolution consumed, given back — not the values",
+            shapes,
+        ),
     ]
 
 
@@ -2963,36 +4206,61 @@ def scene_13_modes(tint):
     anything: 5 - 3 + 1, then 5, then 5 + 3 - 1.
     """
     import numpy as np
+
     x = np.array([1, 2, 0, 3, 1])
     k = np.array([1, 0, 2])
     outs = {m: np.convolve(x, k, mode=m) for m in ("valid", "same", "full")}
 
     def operands(ax):
-        sequence(ax, [
-            {"arr": x.reshape(1, 5), "caption": "x  (5,)"},
-            "*",
-            {"arr": k.reshape(1, 3), "tint": INDEX["k"], "caption": "k  (3,)"},
-        ], tint=tint, cell=0.80, size=16)
+        sequence(
+            ax,
+            [
+                {"arr": x.reshape(1, 5), "caption": "x  (5,)"},
+                "*",
+                {"arr": k.reshape(1, 3), "tint": INDEX["k"], "caption": "k  (3,)"},
+            ],
+            tint=tint,
+            cell=0.80,
+            size=16,
+        )
 
     def mode(name):
         def draw(ax):
             y = outs[name]
-            sequence(ax, [
-                {"arr": x.reshape(1, 5), "caption": "x  (5,)"},
-                "->",
-                {"arr": y.reshape(1, len(y)), "caption": f"{name}  ({len(y)},)"},
-            ], tint=tint, cell=0.62, size=13)
+            sequence(
+                ax,
+                [
+                    {"arr": x.reshape(1, 5), "caption": "x  (5,)"},
+                    "->",
+                    {"arr": y.reshape(1, len(y)), "caption": f"{name}  ({len(y)},)"},
+                ],
+                tint=tint,
+                cell=0.62,
+                size=13,
+            )
+
         return draw
 
     return [
-        ("x * k", "(5,) and (3,)",
-         "five samples and a three-tap kernel", operands),
-        ("mode='valid'", "shape (3,)",
-         "only where the kernel fits whole — 5 - 3 + 1", mode("valid")),
-        ("mode='same'", "shape (5,)",
-         "padded so the output is as long as the input", mode("same")),
-        ("mode='full'", "shape (7,)",
-         "every overlap counts, edges included — 5 + 3 - 1", mode("full")),
+        ("x * k", "(5,) and (3,)", "five samples and a three-tap kernel", operands),
+        (
+            "mode='valid'",
+            "shape (3,)",
+            "only where the kernel fits whole — 5 - 3 + 1",
+            mode("valid"),
+        ),
+        (
+            "mode='same'",
+            "shape (5,)",
+            "padded so the output is as long as the input",
+            mode("same"),
+        ),
+        (
+            "mode='full'",
+            "shape (7,)",
+            "every overlap counts, edges included — 5 + 3 - 1",
+            mode("full"),
+        ),
     ]
 
 
@@ -3008,6 +4276,7 @@ def scene_14(tint):
     come out invisible.
     """
     import numpy as np
+
     a = np.array([4, 1, 2])
     b = np.array([2, 1, 5, 3])
     c = np.array([3, 1, 2, 4, 1])
@@ -3018,24 +4287,31 @@ def scene_14(tint):
         lit[int(np.argmax(vec))] = True
 
         def draw(ax):
-            sequence(ax, [{"arr": vec.reshape(shape),
-                           "lit": lit.reshape(shape),
-                           "caption": caption}],
-                     tint=tint, cell=0.66, size=13)
+            sequence(
+                ax,
+                [
+                    {
+                        "arr": vec.reshape(shape),
+                        "lit": lit.reshape(shape),
+                        "caption": caption,
+                    }
+                ],
+                tint=tint,
+                cell=0.66,
+                size=13,
+            )
+
         return draw
 
     def meeting(ax):
         lit = np.zeros(abc.shape, bool)
         lit[0, int(np.argmax(b)), int(np.argmax(c))] = True
-        planes(ax, abc, tint=tint, lit=lit, origin=centred(SHAPE),
-               label_size=8.0)
+        planes(ax, abc, tint=tint, lit=lit, origin=centred(SHAPE), label_size=8.0)
 
     return [
         ("a", "argmax = 0", "one number per neuron", peak(a, (3, 1), "a  (3,)")),
-        ("b", "argmax = 2", "one number per time step",
-         peak(b, (1, 4), "b  (4,)")),
-        ("c", "argmax = 3", "one number per trial",
-         peak(c, (1, 5), "c  (5,)")),
+        ("b", "argmax = 2", "one number per time step", peak(b, (1, 4), "b  (4,)")),
+        ("c", "argmax = 3", "one number per trial", peak(c, (1, 5), "c  (5,)")),
         ("a x b x c", "T[0, 2, 3] = 80", "where the three peaks meet", meeting),
     ]
 
@@ -3051,6 +4327,7 @@ def scene_14_als(tint):
     three of them in order and the error after it can only have fallen.
     """
     import numpy as np
+
     rng = np.random.default_rng(14)
     A = rng.integers(1, 5, (3, 2))
     B = rng.integers(1, 5, (4, 2))
@@ -3063,19 +4340,37 @@ def scene_14_als(tint):
             for i, (caption, M) in enumerate(mats):
                 if items:
                     items.append("x")
-                items.append({"arr": M, "caption": caption,
-                              "lit": np.full(M.shape, active in (i, -1))})
+                items.append(
+                    {
+                        "arr": M,
+                        "caption": caption,
+                        "lit": np.full(M.shape, active in (i, -1)),
+                    }
+                )
             sequence(ax, items, tint=tint, cell=0.56, size=11)
+
         return draw
 
     return [
         ("solve A", "A = T(0) (B \u2299 C) G+", "B and C held still", sweep(0)),
-        ("solve B", "B = T(1) (A \u2299 C) G+", "now A and C are the fixed pair",
-         sweep(1)),
-        ("solve C", "C = T(2) (A \u2299 B) G+", "and once more, round the modes",
-         sweep(2)),
-        ("one sweep", "3 least squares", "each step is convex, so the error "
-         "cannot rise", sweep(-1)),
+        (
+            "solve B",
+            "B = T(1) (A \u2299 C) G+",
+            "now A and C are the fixed pair",
+            sweep(1),
+        ),
+        (
+            "solve C",
+            "C = T(2) (A \u2299 B) G+",
+            "and once more, round the modes",
+            sweep(2),
+        ),
+        (
+            "one sweep",
+            "3 least squares",
+            "each step is convex, so the error cannot rise",
+            sweep(-1),
+        ),
     ]
 
 
@@ -3095,6 +4390,7 @@ def scene_14_unique(tint):
     is pinned, and that is the part worth having.
     """
     import numpy as np
+
     A = np.array([[1, 2], [2, 1]])
     B = np.array([[3, 1], [1, 2]])
     C = np.array([[2, 1], [1, 3]])
@@ -3102,35 +4398,63 @@ def scene_14_unique(tint):
 
     def factors(a, b, c):
         def draw(ax):
-            sequence(ax, [
-                {"arr": a, "tint": INDEX["i"], "caption": "A"},
-                {"arr": b, "tint": INDEX["j"], "caption": "B"},
-                {"arr": c, "tint": INDEX["k"], "caption": "C"},
-            ], tint=tint, cell=0.80, size=16)
+            sequence(
+                ax,
+                [
+                    {"arr": a, "tint": INDEX["i"], "caption": "A"},
+                    {"arr": b, "tint": INDEX["j"], "caption": "B"},
+                    {"arr": c, "tint": INDEX["k"], "caption": "C"},
+                ],
+                tint=tint,
+                cell=0.80,
+                size=16,
+            )
+
         return draw
 
     def tensor(ax):
-        planes(ax, T, tint=tint, origin=centred(T.shape, cell=0.82), cell=0.82,
-               label_size=16)
+        planes(
+            ax,
+            T,
+            tint=tint,
+            origin=centred(T.shape, cell=0.82),
+            cell=0.82,
+            label_size=16,
+        )
 
     swap = [1, 0]
     scaled_A = A * np.array([2, 1])
     scaled_B = B * np.array([0.5, 1])
-    assert np.allclose(np.einsum("ir,jr,kr->ijk", A[:, swap], B[:, swap],
-                                 C[:, swap]), T)
+    assert np.allclose(
+        np.einsum("ir,jr,kr->ijk", A[:, swap], B[:, swap], C[:, swap]), T
+    )
     assert np.allclose(np.einsum("ir,jr,kr->ijk", scaled_A, scaled_B, C), T)
 
     return [
-        ("A, B, C", "rank 2", "two components, one vector per axis each",
-         factors(A, B, C)),
-        ("T = sum of two outer products", "shape (2, 2, 2)",
-         "the tensor those six vectors make", tensor),
-        ("columns swapped", "T is unchanged",
-         "which component is called first was never decided", 
-         factors(A[:, swap], B[:, swap], C[:, swap])),
-        ("A[:, 0] x 2, B[:, 0] / 2", "T is unchanged",
-         "order and scale are free; the directions are not",
-         factors(scaled_A, scaled_B, C)),
+        (
+            "A, B, C",
+            "rank 2",
+            "two components, one vector per axis each",
+            factors(A, B, C),
+        ),
+        (
+            "T = sum of two outer products",
+            "shape (2, 2, 2)",
+            "the tensor those six vectors make",
+            tensor,
+        ),
+        (
+            "columns swapped",
+            "T is unchanged",
+            "which component is called first was never decided",
+            factors(A[:, swap], B[:, swap], C[:, swap]),
+        ),
+        (
+            "A[:, 0] x 2, B[:, 0] / 2",
+            "T is unchanged",
+            "order and scale are free; the directions are not",
+            factors(scaled_A, scaled_B, C),
+        ),
     ]
 
 
@@ -3150,6 +4474,7 @@ def scene_15_missing(tint):
     out. The lit cells are the damage.
     """
     import numpy as np
+
     X = np.array([[4, 2, 0, 3], [1, 5, 2, 0], [3, 0, 6, 2]])
     seen = np.ones(X.shape, bool)
     for r, c in ((0, 2), (1, 3), (2, 1)):
@@ -3166,24 +4491,46 @@ def scene_15_missing(tint):
 
     def grid(arr, ghost=None, lit=None, decimals=None, cell=0.80, size=16):
         def draw(ax):
-            planes(ax, arr, tint=tint, ghost=ghost, lit=lit,
-                   ghost_labels=False, decimals=decimals,
-                   origin=centred((1,) + arr.shape, cell=cell), cell=cell,
-                   label_size=size)
+            planes(
+                ax,
+                arr,
+                tint=tint,
+                ghost=ghost,
+                lit=lit,
+                ghost_labels=False,
+                decimals=decimals,
+                origin=centred((1,) + arr.shape, cell=cell),
+                cell=cell,
+                label_size=size,
+            )
+
         return draw
 
     return [
-        ("X", "12 cells, 9 of them measured",
-         "the dashed cells were never recorded", grid(X, ghost=gone)),
-        ("mask", "9 of 12",
-         "1 where there is a measurement, 0 where there is not",
-         grid(seen.astype(int))),
-        ("(X - M) ** 2, every cell", f"total {int(err_all.sum())}",
-         "a missing cell read as a zero — the lit ones are the damage",
-         grid(err_all, lit=gone, size=15)),
-        ("summed over the mask only", f"total {int(err_all[seen].sum())}",
-         "missing data is one more term you do not add",
-         grid(err_all, ghost=gone, size=15)),
+        (
+            "X",
+            "12 cells, 9 of them measured",
+            "the dashed cells were never recorded",
+            grid(X, ghost=gone),
+        ),
+        (
+            "mask",
+            "9 of 12",
+            "1 where there is a measurement, 0 where there is not",
+            grid(seen.astype(int)),
+        ),
+        (
+            "(X - M) ** 2, every cell",
+            f"total {int(err_all.sum())}",
+            "a missing cell read as a zero — the lit ones are the damage",
+            grid(err_all, lit=gone, size=15),
+        ),
+        (
+            "summed over the mask only",
+            f"total {int(err_all[seen].sum())}",
+            "missing data is one more term you do not add",
+            grid(err_all, ghost=gone, size=15),
+        ),
     ]
 
 
@@ -3202,6 +4549,7 @@ def scene_15(tint):
     what puts the ratio here at 12x against the cell's 614x.
     """
     import numpy as np
+
     x = np.array([[2, 1, 7], [1, 40, 3]])
     m = np.array([[4, 2, 6], [2, 42, 4]])
     squared = (x - m) ** 2
@@ -3213,37 +4561,57 @@ def scene_15(tint):
 
     def row(penalty, caption):
         def draw(ax):
-            sequence(ax, [
-                {"arr": x, "lit": lit, "caption": "x  counts"},
-                {"arr": m, "lit": lit, "caption": "m  model"},
-                "->",
-                {"arr": penalty, "lit": lit, "caption": caption},
-            ], tint=tint, cell=0.62, size=11)
+            sequence(
+                ax,
+                [
+                    {"arr": x, "lit": lit, "caption": "x  counts"},
+                    {"arr": m, "lit": lit, "caption": "m  model"},
+                    "->",
+                    {"arr": penalty, "lit": lit, "caption": caption},
+                ],
+                tint=tint,
+                cell=0.62,
+                size=11,
+            )
+
         return draw
 
     def both(ax):
-        sequence(ax, [
-            {"arr": squared, "lit": lit, "caption": "squared"},
-            "vs",
-            {"arr": deviance, "lit": lit, "caption": "Poisson"},
-        ], tint=tint, cell=0.72, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": squared, "lit": lit, "caption": "squared"},
+                "vs",
+                {"arr": deviance, "lit": lit, "caption": "Poisson"},
+            ],
+            tint=tint,
+            cell=0.72,
+            size=12,
+        )
 
     def data(ax):
-        sequence(ax, [
-            {"arr": x, "lit": lit, "caption": "x  counts"},
-            "vs",
-            {"arr": m, "lit": lit, "caption": "m  model"},
-        ], tint=tint, cell=0.72, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": x, "lit": lit, "caption": "x  counts"},
+                "vs",
+                {"arr": m, "lit": lit, "caption": "m  model"},
+            ],
+            tint=tint,
+            cell=0.72,
+            size=12,
+        )
 
     return [
-        ("x and m", "both lit cells miss by 2", "one count is 2, one is 40",
-         data),
-        ("squared error", "(x - m)^2", "both misses cost 4",
-         row(squared, "(x - m)^2")),
-        ("Poisson", "2(m - x + x log x/m)", "now they do not",
-         row(deviance, "deviance")),
-        ("same model", "1.2 vs 0.1", "the loss is where you say what x is",
-         both),
+        ("x and m", "both lit cells miss by 2", "one count is 2, one is 40", data),
+        ("squared error", "(x - m)^2", "both misses cost 4", row(squared, "(x - m)^2")),
+        (
+            "Poisson",
+            "2(m - x + x log x/m)",
+            "now they do not",
+            row(deviance, "deviance"),
+        ),
+        ("same model", "1.2 vs 0.1", "the loss is where you say what x is", both),
     ]
 
 
@@ -3261,6 +4629,7 @@ def scene_15_binary(tint):
     an argument rather than an assertion.
     """
     import numpy as np
+
     x = np.array([[1, 0, 1], [0, 1, 1]])
     gauss = np.array([[1.2, -0.1, 0.9], [0.2, 0.8, 0.95]])
     odds = np.array([[5.0, 0.2, 3.0], [0.3, 2.0, 4.0]])
@@ -3270,26 +4639,44 @@ def scene_15_binary(tint):
 
     def one(arr, caption, lit=None, cell=0.78):
         def draw(ax):
-            sequence(ax, [{"arr": arr, "lit": lit, "caption": caption}],
-                     tint=tint, cell=cell, size=13)
+            sequence(
+                ax,
+                [{"arr": arr, "lit": lit, "caption": caption}],
+                tint=tint,
+                cell=cell,
+                size=13,
+            )
+
         return draw
 
     def link(ax):
-        sequence(ax, [
-            {"arr": odds, "caption": "m  odds"},
-            "->",
-            {"arr": prob, "caption": "m / (1 + m)"},
-        ], tint=tint, cell=0.68, size=12)
+        sequence(
+            ax,
+            [
+                {"arr": odds, "caption": "m  odds"},
+                "->",
+                {"arr": prob, "caption": "m / (1 + m)"},
+            ],
+            tint=tint,
+            cell=0.68,
+            size=12,
+        )
 
     return [
-        ("x", "every entry 0 or 1", "did it happen at all",
-         one(x, "x  (2, 3)")),
-        ("squared error", "-0.1 and 1.2", "two cells left the interval",
-         one(gauss, "m  (2, 3)", lit=outside)),
-        ("Bernoulli", "m > 0", "the model value is the odds, not a probability",
-         one(odds, "m  odds")),
-        ("m / (1 + m)", "all of (0, 1)", "a probability, and nothing bounded it",
-         link),
+        ("x", "every entry 0 or 1", "did it happen at all", one(x, "x  (2, 3)")),
+        (
+            "squared error",
+            "-0.1 and 1.2",
+            "two cells left the interval",
+            one(gauss, "m  (2, 3)", lit=outside),
+        ),
+        (
+            "Bernoulli",
+            "m > 0",
+            "the model value is the odds, not a probability",
+            one(odds, "m  odds"),
+        ),
+        ("m / (1 + m)", "all of (0, 1)", "a probability, and nothing bounded it", link),
     ]
 
 
@@ -3309,62 +4696,96 @@ def scene_15_binary(tint):
 # another notebook's pasted into it by mistake.
 
 SCENES = {
-    "00": [("cube-00-axes", scene_00),
-           ("cube-00-index", scene_00_index),
-           ("cube-00-shape", scene_00_shape)],
-    "01": [("cube-01-order", scene_01),
-           ("cube-01-slice-fibre", scene_01_slice_fibre),
-           ("cube-01-rank", scene_01_rank)],
+    "00": [
+        ("cube-00-axes", scene_00),
+        ("cube-00-index", scene_00_index),
+        ("cube-00-shape", scene_00_shape),
+    ],
+    "01": [
+        ("cube-01-order", scene_01),
+        ("cube-01-slice-fibre", scene_01_slice_fibre),
+        ("cube-01-rank", scene_01_rank),
+    ],
     # cube-02-relabel is gone, not renamed: the stem said what the old scene
     # did (relabel the axes and change nothing) and the new one does the
     # opposite. Nothing else in the repo refers to it but notebook 02's own
     # two mentions, and check 1 catches a missed one by name.
-    "02": [("cube-02-shuffle", scene_02),
-           ("cube-02-stack", scene_02_stack),
-           ("cube-02-pad", scene_02_pad)],
-    "03": [("cube-03-broadcast", scene_03),
-           ("cube-03-scalar", scene_03_scalar),
-           ("cube-03-mask", scene_03_mask)],
+    "02": [
+        ("cube-02-shuffle", scene_02),
+        ("cube-02-stack", scene_02_stack),
+        ("cube-02-pad", scene_02_pad),
+    ],
+    "03": [
+        ("cube-03-broadcast", scene_03),
+        ("cube-03-scalar", scene_03_scalar),
+        ("cube-03-mask", scene_03_mask),
+    ],
     # cube-04-rgb is the one scene drawn in real colour, and the only one that
     # needs a wider palette: twelve saturated fills, their washes, and the ink
     # that flips between them. A GIF colour table rounds up to a power of two,
     # so 128 and 96 cost the same bytes -- ask for 128.
-    "04": [("cube-04-transpose-vs-reshape", scene_04),
-           ("cube-04-ravel", scene_04_ravel),
-           ("cube-04-rgb", scene_04_rgb, {"colors": 128})],
+    "04": [
+        ("cube-04-transpose-vs-reshape", scene_04),
+        ("cube-04-ravel", scene_04_ravel),
+        ("cube-04-rgb", scene_04_rgb, {"colors": 128}),
+    ],
     # cube-05-sampling and cube-05-axes both paint real colour, for the reason
     # cube-04-rgb does: a clip has to look like moments rather than numbers.
-    "05": [("cube-05-sampling", scene_05, {"colors": 128}),
-           ("cube-05-window", scene_05_window),
-           ("cube-05-axes", scene_05_axes, {"colors": 128})],
-    "06": [("cube-06-contract", scene_06),
-           ("cube-06-outer", scene_06_outer),
-           ("cube-06-matmul", scene_06_matmul)],
-    "07": [("cube-07-pinv", scene_07),
-           ("cube-07-shapes", scene_07_shapes),
-           ("cube-07-residual", scene_07_residual)],
-    "08": [("cube-08-recurrence", scene_08),
-           ("cube-08-power", scene_08_power),
-           ("cube-08-direction", scene_08_direction)],
-    "09": [("cube-09-svd", scene_09),
-           ("cube-09-rank", scene_09_rank),
-           ("cube-09-nmf", scene_09_nmf)],
-    "10": [("cube-10-tucker", scene_10),
-           ("cube-10-unfold", scene_10_unfold),
-           ("cube-10-modes", scene_10_modes)],
-    "11": [("cube-11-cp", scene_11),
-           ("cube-11-outer", scene_11_outer),
-           ("cube-11-tt", scene_11_tt)],
-    "12": [("cube-12-recap", scene_12),
-           ("cube-12-budget", scene_12_budget),
-           ("cube-12-attention", scene_12_attention)],
-    "13": [("cube-13-convolution", scene_13),
-           ("cube-13-transposed", scene_13_transposed),
-           ("cube-13-modes", scene_13_modes)],
-    "14": [("cube-14-profile", scene_14), ("cube-14-als", scene_14_als),
-           ("cube-14-unique", scene_14_unique)],
-    "15": [("cube-15-loss", scene_15), ("cube-15-binary", scene_15_binary),
-           ("cube-15-missing", scene_15_missing)],
+    "05": [
+        ("cube-05-sampling", scene_05, {"colors": 128}),
+        ("cube-05-window", scene_05_window),
+        ("cube-05-axes", scene_05_axes, {"colors": 128}),
+    ],
+    "06": [
+        ("cube-06-contract", scene_06),
+        ("cube-06-outer", scene_06_outer),
+        ("cube-06-matmul", scene_06_matmul),
+    ],
+    "07": [
+        ("cube-07-pinv", scene_07),
+        ("cube-07-shapes", scene_07_shapes),
+        ("cube-07-residual", scene_07_residual),
+    ],
+    "08": [
+        ("cube-08-recurrence", scene_08),
+        ("cube-08-power", scene_08_power),
+        ("cube-08-direction", scene_08_direction),
+    ],
+    "09": [
+        ("cube-09-svd", scene_09),
+        ("cube-09-rank", scene_09_rank),
+        ("cube-09-nmf", scene_09_nmf),
+    ],
+    "10": [
+        ("cube-10-tucker", scene_10),
+        ("cube-10-unfold", scene_10_unfold),
+        ("cube-10-modes", scene_10_modes),
+    ],
+    "11": [
+        ("cube-11-cp", scene_11),
+        ("cube-11-outer", scene_11_outer),
+        ("cube-11-tt", scene_11_tt),
+    ],
+    "12": [
+        ("cube-12-recap", scene_12),
+        ("cube-12-budget", scene_12_budget),
+        ("cube-12-attention", scene_12_attention),
+    ],
+    "13": [
+        ("cube-13-convolution", scene_13),
+        ("cube-13-transposed", scene_13_transposed),
+        ("cube-13-modes", scene_13_modes),
+    ],
+    "14": [
+        ("cube-14-profile", scene_14),
+        ("cube-14-als", scene_14_als),
+        ("cube-14-unique", scene_14_unique),
+    ],
+    "15": [
+        ("cube-15-loss", scene_15),
+        ("cube-15-binary", scene_15_binary),
+        ("cube-15-missing", scene_15_missing),
+    ],
 }
 
 
@@ -3405,23 +4826,26 @@ def check_table() -> None:
     stems = [stem for row in SCENES.values() for stem, *_ in row]
     dupes = sorted({s for s in stems if stems.count(s) > 1})
     if dupes:
-        raise SystemExit(f"SCENES has duplicate stems: {', '.join(dupes)} -- "
-                         f"the second would silently overwrite the first")
+        raise SystemExit(
+            f"SCENES has duplicate stems: {', '.join(dupes)} -- "
+            f"the second would silently overwrite the first"
+        )
     for n, row in SCENES.items():
         for stem, *_ in row:
             if not stem.startswith(f"cube-{n}-"):
                 raise SystemExit(
                     f"{stem} is filed under notebook {n}, so it would be drawn "
                     f"in {n}'s accent and then rejected by check 1 as another "
-                    f"notebook's animation")
-    short = sorted(n for n, row in SCENES.items()
-                   if len(row) < MIN_PER_NOTEBOOK)
+                    f"notebook's animation"
+                )
+    short = sorted(n for n, row in SCENES.items() if len(row) < MIN_PER_NOTEBOOK)
     if short:
         raise SystemExit(
             f"notebooks {', '.join(short)} carry fewer than "
             f"{MIN_PER_NOTEBOOK} animations. The third is the one that draws "
             f"the section's own subject rather than the shared arange cube -- "
-            f"see the module docstring.")
+            f"see the module docstring."
+        )
 
 
 def main(only=None) -> None:
@@ -3438,8 +4862,7 @@ def main(only=None) -> None:
             # A scene is (stem, builder), or (stem, builder, options) where
             # options is whatever `render` keyword this one scene needs --
             # today only the RGB scene, and only for its palette.
-            out = render(tint, build(tint), f"{stem}.gif",
-                         **(rest[0] if rest else {}))
+            out = render(tint, build(tint), f"{stem}.gif", **(rest[0] if rest else {}))
             total += out.stat().st_size
             count += 1
     print(f"  {count} animations, {total / 1024:.0f} KB total")

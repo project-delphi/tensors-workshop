@@ -18,7 +18,7 @@ execute:
 lang: es
 ---
 
-## {background-image="images/slides-final/slide-01.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-01.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Tensores para Machine Learning — de datos reales a modelos modernos. Ravi Kalia y Sebastian Laverde Chunza.</p>
 
@@ -28,11 +28,11 @@ nuevo se define la primera vez que aparece. Habla despacio y evita modismos;
 nombra pronto los cognados: eje, descomposición, contracción, convolución.
 :::
 
-## {background-image="images/slides-final/slide-02.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-02.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">La idea del workshop: cuatro tarjetas muestran escalar, vector, matriz y tensor como arreglos 0D, 1D, 2D y ND, cada uno definido por su forma. La pregunta guía del día: antes de operar, ¿qué representa cada eje?</p>
 
-## {background-image="images/slides-final/slide-02a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-02a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Cuatro ideas, un solo objeto. Todo el día en cuatro tarjetas. Tarjeta uno: un tensor generaliza la matriz. Un escalar no tiene ejes, un vector uno, una matriz dos, y un tensor tantos como pidan los datos. Tarjeta dos: contiene los datos. Imágenes, fotogramas, viajes en taxi y precios son una sola caja de números, y cada eje representa algo. Tarjeta tres: sus ejes se mueven. transpose los permuta. reshape relee los mismos números planos, así que la misma forma puede tener otro significado. Tarjeta cuatro: se factoriza. Los números en primos, las cuadráticas en raíces, las matrices en LU, QR y SVD, y los tensores también. Y donde no hay inversa, responde la pseudoinversa. Llévate esto todo el día: antes de operar sobre un tensor, nombra sus ejes.</p>
 
@@ -48,7 +48,7 @@ Di "ejes", no "dimensiones", de aquí en adelante — y recuerda que la
 advertencia sobre "rango" toca al empezar la Parte I.
 :::
 
-## {background-image="images/slides-final/slide-03.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-03.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Datos reales, problemas reales. Cuatro conjuntos de datos reales usados en el taller: dígitos manuscritos, histología teñida, vivienda en California y viajes en taxi de NYC. Cada uno lleva el papel que cumple más adelante.</p>
 
@@ -128,7 +128,7 @@ La preparación se hizo antes. Recoge el diagnóstico individual antes de discut
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-06.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Mapa de las factorizaciones: seis factorizaciones de matrices y tensores en una escalera desde LU hasta Cholesky, QR, SVD, Tucker y CP, cada una con una frase que resume qué aporta.</p>
 <p class="sr-only">La sección 09 recorre este mapa sobre datos reales: cada factorización escrita como un problema de optimización con restricciones, el coste de cada una deducido y luego medido, y la SVD como la mejor aproximación de rango k que existe. La pregunta "cuál elijo y cuánto me cuesta" que plantea esta escalera se responde dos horas después, en la sala.</p>
@@ -156,7 +156,7 @@ por qué hay tantas, y 09 es donde se recorre el mapa con una columna de coste
 al lado.
 :::
 
-## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-07.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">¿Qué aporta una factorización? Un diagrama de cuatro pasos — número, polinomio, matriz, tensor — muestra que factorizar revela estructura útil y no solo reescribe una expresión.</p>
 
@@ -348,7 +348,7 @@ Fuentes: [BLAS](https://www.netlib.org/blas/),
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-09.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-09.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Batch no es tiempo. Dieciséis dígitos manuscritos barajados siguen siendo reconocibles, mientras que los fotogramas de vídeo barajados vuelven la secuencia de la tormenta irreconocible. Reordenar un eje de lote es seguro. Reordenar el tiempo no lo es.</p>
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 02 en Google Colab"}
@@ -385,7 +385,7 @@ validez.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-11.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-11.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Indexación en acción: los mismos cuatro paneles de indexación, máscaras, recorte satelital y broadcasting, con una franja resumen que nombra cada técnica.</p>
 [Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 03 en Google Colab"}
@@ -414,12 +414,12 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-13.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-13.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">transpose no es reshape: la misma comparación de histología entre transpose y reshape, más un lote real NHWC a NCHW con una imagen de histología, una foto de astronauta y una foto de gato, cada una reordenada correctamente.</p>
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 04 en Google Colab"}
 
-## {#sec-kahoot-1 background-image="images/slides-final/slide-14.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-kahoot-1 background-image="images/slides-final/slide-14.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 1 — {{< var kahoot.q1.title_es >}}</h1>
 <p class="sr-only">Pausa activa: Kahoot 1, {{< var kahoot.q1.title_es >}}. {{< var kahoot.q1.questions >}} preguntas sobre ejes, formas, indexación y transpose. Entrad en {{< var kahoot.join >}}; respondan primero con intuición y luego justifiquen con formas.</p>
@@ -468,7 +468,7 @@ recorta antes el Kahoot 2.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-16.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-16.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Archivo a frames a tensor a modelo: una tubería de cuatro etapas muestra cómo un vídeo se convierte en un tensor enmascarado, con la fórmula de la máscara de validez.</p>
 [Colab ↗]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 05 en Google Colab"}
@@ -497,11 +497,11 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-18.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-18.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Anatomía de einsum: la expresión np.einsum('ij,jk-&gt;ik', A, B) se descompone en sus etiquetas de entrada, el índice compartido y los índices que sobreviven, con un diagrama de las matrices que indexa cada letra.</p>
 
-## {background-image="images/slides-final/slide-19.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-19.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">NumPy y einsum: una tabla asocia producto interno, producto externo, matmul, transpose, traza, diagonal, matmul por lotes y suma por eje con su equivalente en einsum.</p>
 [Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 06 en Google Colab"}
@@ -547,7 +547,7 @@ Para columnas duplicadas `A = [x, x]`, las predicciones dependen de la suma de c
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer"}
 
 
-## {.extension-slide background-image="images/slides-final/slide-21.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {.extension-slide background-image="images/slides-final/slide-21.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.extension-label}
 Explora después
@@ -558,7 +558,7 @@ Explora después
 
 [📖 {{< var reading.svd.title_es >}} ↗]({{< var reading.svd.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 
-## {.extension-slide background-image="images/slides-final/slide-21a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {.extension-slide background-image="images/slides-final/slide-21a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.extension-label}
 Explora después
@@ -574,7 +574,7 @@ Explora después
 Extensión opcional tras la actividad de columnas duplicadas. Las cuatro identidades de Moore–Penrose y el ajuste de vivienda quedan para después.
 :::
 
-## {#sec-kahoot-2 background-image="images/slides-final/slide-22.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-kahoot-2 background-image="images/slides-final/slide-22.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 2 — {{< var kahoot.q2.title_es >}}</h1>
 <p class="sr-only">Pausa activa: Kahoot 2, {{< var kahoot.q2.title_es >}}. {{< var kahoot.q2.questions >}} preguntas sobre einsum, similitud y la pseudoinversa. Entrad en {{< var kahoot.join >}}; decidan primero la operación y luego justifíquenla con índices y formas.</p>
@@ -618,7 +618,7 @@ pseudoinversa y la distancia se repasan de forma narrativa en el cierre.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-24.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-24.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.</p>
 [Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 08 en Google Colab"}
@@ -650,7 +650,7 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-26a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-26a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir, y elevan al cuadrado el número de condición. QR es la opción estable por defecto, y nunca forma A-traspuesta-A. La SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
@@ -686,7 +686,7 @@ Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {background-image="images/slides-final/slide-28.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-28.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.</p>
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 10 en Google Colab"}
@@ -700,7 +700,7 @@ biotecnología, sobre datos (genes × muestras × condiciones), encuentran
 estructura que PCA no alcanza: PCA solo puede ver dos ejes.
 :::
 
-## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-kahoot-3 background-image="images/slides-final/slide-29.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_es >}}</h1>
 <p class="sr-only">Pausa activa: Kahoot 3, {{< var kahoot.q3.title_es >}}. {{< var kahoot.q3.questions >}} preguntas sobre convolución, correlación, Tucker y CP. Entrad en {{< var kahoot.join >}}; reconozcan primero la estructura y luego elijan el operador.</p>
@@ -742,7 +742,7 @@ del cierre, así que enlaza directamente del podio con el cierre.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
-## {.extension-slide background-image="images/slides-final/slide-29b.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {.extension-slide background-image="images/slides-final/slide-29b.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.extension-label}
 Explora después
@@ -755,7 +755,7 @@ Explora después
 Referencia opcional: Tensor Train y t-SVD quedan fuera de la comparación CP–Tucker de hoy. Vuelve a la actividad esencial durante el taller.
 :::
 
-## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Una idea conecta el taller: la pseudoinversa de la sección 07, Tucker en la 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 aparecen juntas como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.</p>
 

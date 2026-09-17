@@ -1,6 +1,6 @@
 """Draw the slide art that the #45 redesign left with no source.
 
-Since #45 every slide in both decks is a PNG under
+Since #45 every slide in both decks is an image under
 `slides/{en,es}/images/slides-final/`, drawn by hand in a tool that is not in
 this repository. `slides/README.md` says the consequence out loud: "the slide
 art has to be redrawn by hand." That is fine for thirty-one slides that already
@@ -14,12 +14,20 @@ library to lay out a card grid is an hour not spent on the words. Chrome already
 lays out card grids, the deck is already 1920x1080, and the browser that renders
 the deck is the one that draws its art.
 
-    uv run python scripts/gen_slide_art.py
+    uv run --group figures python scripts/gen_slide_art.py
 
 Like `gen_thumbnails.py` and `gen_figures.py` this is **not** in the CI
 regenerate gate: it shells out to a browser the workflow does not install and
 fetches a webfont it cannot reach. Nothing will tell you a slide is stale --
-rerun it by hand when the copy here changes, and commit the PNGs.
+rerun it by hand when the copy here changes, and commit the images.
+
+The files are WebP, not PNG. Chrome's `--screenshot` writes PNG only, so each
+slide is shot to a temporary PNG and re-encoded with Pillow at quality 90 --
+which is why the `figures` group is needed. The decks are photographs and
+gradients as much as they are type, and as PNGs the seventy-eight of them
+weighed 94 MB, most of the site's payload and most of a clone; as WebP they
+weigh 11 MB and look the same at 1920 wide. `background-size: contain` in the
+deck does not care which format is behind it.
 
 Two things it deliberately does not do:
 
@@ -50,17 +58,22 @@ import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-DECKS = {lang: ROOT / "slides" / lang / "images" / "slides-final"
-         for lang in ("en", "es")}
+DECKS = {
+    lang: ROOT / "slides" / lang / "images" / "slides-final" for lang in ("en", "es")
+}
 
 # The deck's own dimensions, from the revealjs header in both index.qmd files.
 # The pre-existing art is 1672x941, which is the same 16:9 at a different
 # export size; `background-size: contain` makes the two interchangeable.
 WIDTH, HEIGHT = 1920, 1080
 
-CHROME = ("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-          "/Applications/Chromium.app/Contents/MacOS/Chromium",
-          "chromium", "google-chrome", "chrome")
+CHROME = (
+    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    "/Applications/Chromium.app/Contents/MacOS/Chromium",
+    "chromium",
+    "google-chrome",
+    "chrome",
+)
 
 # Read off the existing PNGs with a colour picker rather than invented. NAVY is
 # the title ink, BLUE the accent half of a title and the eyebrow, TEAL the
@@ -79,10 +92,13 @@ DISC = "#dce9f9"
 # `gen_thumbnails.py` already carries. Without the network Chrome falls back
 # down the stack and the PNG differs -- which is why this script is not a CI
 # gate and why the render is checked by eye before the PNGs are committed.
-FONT_URL = ("https://fonts.googleapis.com/css2"
-            "?family=Montserrat:wght@400;500;600;700;800&display=swap")
-FONT_STACK = ('Montserrat, "Avenir Next", "Segoe UI", system-ui, '
-              '-apple-system, sans-serif')
+FONT_URL = (
+    "https://fonts.googleapis.com/css2"
+    "?family=Montserrat:wght@400;500;600;700;800&display=swap"
+)
+FONT_STACK = (
+    'Montserrat, "Avenir Next", "Segoe UI", system-ui, -apple-system, sans-serif'
+)
 
 
 # ── The copy ────────────────────────────────────────────────────────────────
@@ -101,67 +117,102 @@ SLIDES = [
         "en": {
             "eyebrow": "The whole day · Four ideas",
             "title": ["Four ideas,", "one object"],
-            "subtitle": "Every section today serves one of these four, on "
-                        "real data",
+            "subtitle": "Every section today serves one of these four, on real data",
             "cards": [
-                ("⊞", "Generalizes a matrix", [
-                    "A scalar has no axes, a vector one, a matrix two.",
-                    "A tensor is the same object with as many axes as the "
-                    "data needs.",
-                ]),
-                ("▦", "Holds the data", [
-                    "Images, video frames, taxi trips, prices: each one is "
-                    "a box of numbers.",
-                    "The box arrives with a shape, and every axis stands for "
-                    "something.",
-                ]),
-                ("⇄", "Axes you can move", [
-                    "transpose permutes the axes; reshape re-reads the same "
-                    "flat numbers.",
-                    "The same shape can carry a different meaning. That is "
-                    "the bug this day prevents.",
-                ]),
-                ("∏", "Factors and inverses", [
-                    "Numbers factor into primes, quadratics into roots, "
-                    "matrices into LU, QR, SVD.",
-                    "Tensors factor too, and where an inverse does not exist "
-                    "the pseudoinverse answers.",
-                ]),
+                (
+                    "⊞",
+                    "Generalizes a matrix",
+                    [
+                        "A scalar has no axes, a vector one, a matrix two.",
+                        "A tensor is the same object with as many axes as the "
+                        "data needs.",
+                    ],
+                ),
+                (
+                    "▦",
+                    "Holds the data",
+                    [
+                        "Images, video frames, taxi trips, prices: each one is "
+                        "a box of numbers.",
+                        "The box arrives with a shape, and every axis stands for "
+                        "something.",
+                    ],
+                ),
+                (
+                    "⇄",
+                    "Axes you can move",
+                    [
+                        "transpose permutes the axes; reshape re-reads the same "
+                        "flat numbers.",
+                        "The same shape can carry a different meaning. That is "
+                        "the bug this day prevents.",
+                    ],
+                ),
+                (
+                    "∏",
+                    "Factors and inverses",
+                    [
+                        "Numbers factor into primes, quadratics into roots, "
+                        "matrices into LU, QR, SVD.",
+                        "Tensors factor too, and where an inverse does not exist "
+                        "the pseudoinverse answers.",
+                    ],
+                ),
             ],
-            "callout": ("Carry this all day:", "before you operate on a "
-                        "tensor, name its axes."),
+            "callout": (
+                "Carry this all day:",
+                "before you operate on a tensor, name its axes.",
+            ),
         },
         "es": {
             "eyebrow": "Todo el día · Cuatro ideas",
             "title": ["Cuatro ideas,", "un solo objeto"],
             "subtitle": "Cada sección de hoy sirve a una de estas cuatro, "
-                        "sobre datos reales",
+            "sobre datos reales",
             "cards": [
-                ("⊞", "Generaliza la matriz", [
-                    "Un escalar no tiene ejes, un vector uno, una matriz dos.",
-                    "Un tensor es el mismo objeto con tantos ejes como pidan "
-                    "los datos.",
-                ]),
-                ("▦", "Contiene los datos", [
-                    "Imágenes, fotogramas, viajes en taxi, precios: cada uno "
-                    "es una caja de números.",
-                    "La caja llega con una forma, y cada eje representa algo.",
-                ]),
-                ("⇄", "Ejes que se mueven", [
-                    "transpose permuta los ejes; reshape relee los mismos "
-                    "números planos.",
-                    "La misma forma puede tener otro significado. Ese es el "
-                    "error que este día evita.",
-                ]),
-                ("∏", "Factoriza e invierte", [
-                    "Los números en primos, las cuadráticas en raíces, las "
-                    "matrices en LU, QR, SVD.",
-                    "Los tensores también; y sin inversa, responde la "
-                    "pseudoinversa.",
-                ]),
+                (
+                    "⊞",
+                    "Generaliza la matriz",
+                    [
+                        "Un escalar no tiene ejes, un vector uno, una matriz dos.",
+                        "Un tensor es el mismo objeto con tantos ejes como pidan "
+                        "los datos.",
+                    ],
+                ),
+                (
+                    "▦",
+                    "Contiene los datos",
+                    [
+                        "Imágenes, fotogramas, viajes en taxi, precios: cada uno "
+                        "es una caja de números.",
+                        "La caja llega con una forma, y cada eje representa algo.",
+                    ],
+                ),
+                (
+                    "⇄",
+                    "Ejes que se mueven",
+                    [
+                        "transpose permuta los ejes; reshape relee los mismos "
+                        "números planos.",
+                        "La misma forma puede tener otro significado. Ese es el "
+                        "error que este día evita.",
+                    ],
+                ),
+                (
+                    "∏",
+                    "Factoriza e invierte",
+                    [
+                        "Los números en primos, las cuadráticas en raíces, las "
+                        "matrices en LU, QR, SVD.",
+                        "Los tensores también; y sin inversa, responde la "
+                        "pseudoinversa.",
+                    ],
+                ),
             ],
-            "callout": ("Llévate esto todo el día:", "antes de operar sobre "
-                        "un tensor, nombra sus ejes."),
+            "callout": (
+                "Llévate esto todo el día:",
+                "antes de operar sobre un tensor, nombra sus ejes.",
+            ),
         },
     },
     {
@@ -171,7 +222,7 @@ SLIDES = [
             "eyebrow": "",
             "title": ["12 · One idea to", "take away"],
             "subtitle": "Tensors are not the final topic: they are the "
-                        "language that connects the models",
+            "language that connects the models",
             "cards": [
                 ("∴", "PCA", ["reduce dimension"]),
                 ("⇝", "Attention", ["compare representations"]),
@@ -186,7 +237,7 @@ SLIDES = [
             "eyebrow": "",
             "title": ["12 · Una idea para", "llevarte"],
             "subtitle": "Los tensores no son el tema final: son el lenguaje "
-                        "que conecta los modelos",
+            "que conecta los modelos",
             "cards": [
                 ("∴", "PCA", ["reducir dimensión"]),
                 ("⇝", "Attention", ["comparar representaciones"]),
@@ -203,54 +254,89 @@ SLIDES = [
         "en": {
             "eyebrow": "Notebook 07 · Inverses",
             "title": ["Three shapes,", "three answers"],
-            "subtitle": "What A⁻¹ and A⁺ give you depends entirely on the "
-                        "geometry",
+            "subtitle": "What A⁻¹ and A⁺ give you depends entirely on the geometry",
             "cards": [
-                ("■", "Square, full rank", [
-                    "A⁻¹ exists.",
-                    "A⁻¹A = I, and Ax = b has exactly one solution.",
-                ]),
-                ("▨", "Square, singular", [
-                    "Columns are dependent.",
-                    "A⁻¹ is undefined — but A⁺ still is, from the SVD.",
-                ]),
-                ("▮", "Tall · m > n", [
-                    "More equations than unknowns.",
-                    "Usually no exact solution; A⁺b minimises ‖Ax − b‖₂.",
-                ]),
-                ("▬", "Wide · m < n", [
-                    "Infinitely many solutions.",
-                    "A⁺b returns the one with the smallest ‖x‖₂.",
-                ]),
+                (
+                    "■",
+                    "Square, full rank",
+                    [
+                        "A⁻¹ exists.",
+                        "A⁻¹A = I, and Ax = b has exactly one solution.",
+                    ],
+                ),
+                (
+                    "▨",
+                    "Square, singular",
+                    [
+                        "Columns are dependent.",
+                        "A⁻¹ is undefined — but A⁺ still is, from the SVD.",
+                    ],
+                ),
+                (
+                    "▮",
+                    "Tall · m > n",
+                    [
+                        "More equations than unknowns.",
+                        "Usually no exact solution; A⁺b minimises ‖Ax − b‖₂.",
+                    ],
+                ),
+                (
+                    "▬",
+                    "Wide · m < n",
+                    [
+                        "Infinitely many solutions.",
+                        "A⁺b returns the one with the smallest ‖x‖₂.",
+                    ],
+                ),
             ],
-            "callout": ("Before TODO 3:", "the LinAlgError you are about to "
-                        "see is the expected result, not your mistake."),
+            "callout": (
+                "Before TODO 3:",
+                "the LinAlgError you are about to "
+                "see is the expected result, not your mistake.",
+            ),
         },
         "es": {
             "eyebrow": "Notebook 07 · Inversas",
             "title": ["Tres formas,", "tres respuestas"],
-            "subtitle": "Lo que A⁻¹ y A⁺ te dan depende por completo de la "
-                        "geometría",
+            "subtitle": "Lo que A⁻¹ y A⁺ te dan depende por completo de la geometría",
             "cards": [
-                ("■", "Cuadrada, rango completo", [
-                    "A⁻¹ existe.",
-                    "A⁻¹A = I, y Ax = b tiene exactamente una solución.",
-                ]),
-                ("▨", "Cuadrada, singular", [
-                    "Las columnas son dependientes.",
-                    "A⁻¹ no está definida; A⁺ sí, a partir de la SVD.",
-                ]),
-                ("▮", "Alta · m > n", [
-                    "Más ecuaciones que incógnitas.",
-                    "Casi nunca hay solución exacta; A⁺b minimiza ‖Ax − b‖₂.",
-                ]),
-                ("▬", "Ancha · m < n", [
-                    "Infinitas soluciones.",
-                    "A⁺b devuelve la de menor ‖x‖₂.",
-                ]),
+                (
+                    "■",
+                    "Cuadrada, rango completo",
+                    [
+                        "A⁻¹ existe.",
+                        "A⁻¹A = I, y Ax = b tiene exactamente una solución.",
+                    ],
+                ),
+                (
+                    "▨",
+                    "Cuadrada, singular",
+                    [
+                        "Las columnas son dependientes.",
+                        "A⁻¹ no está definida; A⁺ sí, a partir de la SVD.",
+                    ],
+                ),
+                (
+                    "▮",
+                    "Alta · m > n",
+                    [
+                        "Más ecuaciones que incógnitas.",
+                        "Casi nunca hay solución exacta; A⁺b minimiza ‖Ax − b‖₂.",
+                    ],
+                ),
+                (
+                    "▬",
+                    "Ancha · m < n",
+                    [
+                        "Infinitas soluciones.",
+                        "A⁺b devuelve la de menor ‖x‖₂.",
+                    ],
+                ),
             ],
-            "callout": ("Antes de la TAREA 3:", "el LinAlgError que verás es "
-                        "el resultado esperado, no un error tuyo."),
+            "callout": (
+                "Antes de la TAREA 3:",
+                "el LinAlgError que verás es el resultado esperado, no un error tuyo.",
+            ),
         },
     },
     {
@@ -259,53 +345,83 @@ SLIDES = [
             "eyebrow": "Notebook 07 · Tensor inverses",
             "title": ["What about", "tensors?"],
             "subtitle": "There is no single tensor inverse, so you borrow the "
-                        "matrix one",
+            "matrix one",
             "cards": [
-                ("∄", "No single definition", [
-                    "Nobody agrees on one tensor inverse.",
-                    "This is a fair question with an honest answer, not a gap "
-                    "in your reading.",
-                ]),
-                ("⊗", "Several do exist", [
-                    "Built on the Einstein product, or the t-product for "
-                    "order-3 tensors.",
-                    "Both are active research.",
-                ]),
-                ("⇄", "What you actually do", [
-                    "Unfold → pinv → fold back.",
-                    "T (4, 3, 5) → M (4, 15) → M⁺ (15, 4), and M M⁺ M = M: "
-                    "unfolding loses nothing.",
-                ]),
+                (
+                    "∄",
+                    "No single definition",
+                    [
+                        "Nobody agrees on one tensor inverse.",
+                        "This is a fair question with an honest answer, not a gap "
+                        "in your reading.",
+                    ],
+                ),
+                (
+                    "⊗",
+                    "Several do exist",
+                    [
+                        "Built on the Einstein product, or the t-product for "
+                        "order-3 tensors.",
+                        "Both are active research.",
+                    ],
+                ),
+                (
+                    "⇄",
+                    "What you actually do",
+                    [
+                        "Unfold → pinv → fold back.",
+                        "T (4, 3, 5) → M (4, 15) → M⁺ (15, 4), and M M⁺ M = M: "
+                        "unfolding loses nothing.",
+                    ],
+                ),
             ],
-            "callout": ("The move to remember:", "when a tensor problem is "
-                        "hard, unfold it to a matrix, solve it there, and "
-                        "fold back."),
+            "callout": (
+                "The move to remember:",
+                "when a tensor problem is "
+                "hard, unfold it to a matrix, solve it there, and "
+                "fold back.",
+            ),
         },
         "es": {
             "eyebrow": "Notebook 07 · Inversas tensoriales",
             "title": ["¿Y los", "tensores?"],
             "subtitle": "No existe una única inversa tensorial, así que se "
-                        "toma prestada la de matrices",
+            "toma prestada la de matrices",
             "cards": [
-                ("∄", "Ninguna definición única", [
-                    "No hay acuerdo sobre una sola inversa tensorial.",
-                    "Es una pregunta legítima con una respuesta honesta, no un "
-                    "hueco en tu lectura.",
-                ]),
-                ("⊗", "Sí existen varias", [
-                    "Basadas en el producto de Einstein, o en el t-producto "
-                    "para tensores de orden 3.",
-                    "Ambas son investigación activa.",
-                ]),
-                ("⇄", "Lo que se hace en la práctica", [
-                    "Desplegado → pinv → volver a plegar.",
-                    "T (4, 3, 5) → M (4, 15) → M⁺ (15, 4), y M M⁺ M = M: el "
-                    "desplegado no pierde nada.",
-                ]),
+                (
+                    "∄",
+                    "Ninguna definición única",
+                    [
+                        "No hay acuerdo sobre una sola inversa tensorial.",
+                        "Es una pregunta legítima con una respuesta honesta, no un "
+                        "hueco en tu lectura.",
+                    ],
+                ),
+                (
+                    "⊗",
+                    "Sí existen varias",
+                    [
+                        "Basadas en el producto de Einstein, o en el t-producto "
+                        "para tensores de orden 3.",
+                        "Ambas son investigación activa.",
+                    ],
+                ),
+                (
+                    "⇄",
+                    "Lo que se hace en la práctica",
+                    [
+                        "Desplegado → pinv → volver a plegar.",
+                        "T (4, 3, 5) → M (4, 15) → M⁺ (15, 4), y M M⁺ M = M: el "
+                        "desplegado no pierde nada.",
+                    ],
+                ),
             ],
-            "callout": ("El movimiento que hay que recordar:", "cuando un "
-                        "problema tensorial es difícil, despliégalo a matriz, "
-                        "resuélvelo ahí y vuelve a plegarlo."),
+            "callout": (
+                "El movimiento que hay que recordar:",
+                "cuando un "
+                "problema tensorial es difícil, despliégalo a matriz, "
+                "resuélvelo ahí y vuelve a plegarlo.",
+            ),
         },
     },
     {
@@ -315,51 +431,86 @@ SLIDES = [
             "eyebrow": "Notebook 09 · Factorizations",
             "title": ["09 ·", "Matrix factorizations"],
             "badge": "15 min · exercise",
-            "objective": ("Objective:", "walk section 01's map on real data, "
-                          "and find out what each factorization costs."),
+            "objective": (
+                "Objective:",
+                "walk section 01's map on real data, "
+                "and find out what each factorization costs.",
+            ),
             "cards": [
-                ("◧", "Six methods, one shape", [
-                    "LU, QR, Cholesky, eigendecomposition, SVD, NMF.",
-                    "Each is the same optimization under a different "
-                    "constraint.",
-                ]),
-                ("◷", "Cost, derived then measured", [
-                    "The flop table first, the stopwatch second.",
-                    "They disagree, and the disagreement is the lesson.",
-                ]),
-                ("◐", "Eigendecomposition, named", [
-                    "The tool section 10 leans on.",
-                    "Introduced here rather than assumed.",
-                ]),
+                (
+                    "◧",
+                    "Six methods, one shape",
+                    [
+                        "LU, QR, Cholesky, eigendecomposition, SVD, NMF.",
+                        "Each is the same optimization under a different constraint.",
+                    ],
+                ),
+                (
+                    "◷",
+                    "Cost, derived then measured",
+                    [
+                        "The flop table first, the stopwatch second.",
+                        "They disagree, and the disagreement is the lesson.",
+                    ],
+                ),
+                (
+                    "◐",
+                    "Eigendecomposition, named",
+                    [
+                        "The tool section 10 leans on.",
+                        "Introduced here rather than assumed.",
+                    ],
+                ),
             ],
-            "callout": ("Predict before you run:", "every exercise asks for "
-                        "your guess first. That is what makes the cost and "
-                        "conditioning lessons land."),
+            "callout": (
+                "Predict before you run:",
+                "every exercise asks for "
+                "your guess first. That is what makes the cost and "
+                "conditioning lessons land.",
+            ),
         },
         "es": {
             "eyebrow": "Notebook 09 · Factorizaciones",
             "title": ["09 ·", "Factorizaciones matriciales"],
             "badge": "15 min · ejercicio",
-            "objective": ("Objetivo:", "recorrer sobre datos reales el mapa "
-                          "de la sección 01 y descubrir cuánto cuesta cada "
-                          "factorización."),
+            "objective": (
+                "Objetivo:",
+                "recorrer sobre datos reales el mapa "
+                "de la sección 01 y descubrir cuánto cuesta cada "
+                "factorización.",
+            ),
             "cards": [
-                ("◧", "Seis métodos, una forma", [
-                    "LU, QR, Cholesky, descomposición espectral, SVD, NMF.",
-                    "Cada una es la misma optimización con otra restricción.",
-                ]),
-                ("◷", "Coste, deducido y medido", [
-                    "Primero la tabla de operaciones, después el cronómetro.",
-                    "No coinciden, y ese desacuerdo es la lección.",
-                ]),
-                ("◐", "La descomposición espectral, nombrada", [
-                    "La herramienta en la que se apoya la sección 10.",
-                    "Se presenta aquí en vez de darse por sabida.",
-                ]),
+                (
+                    "◧",
+                    "Seis métodos, una forma",
+                    [
+                        "LU, QR, Cholesky, descomposición espectral, SVD, NMF.",
+                        "Cada una es la misma optimización con otra restricción.",
+                    ],
+                ),
+                (
+                    "◷",
+                    "Coste, deducido y medido",
+                    [
+                        "Primero la tabla de operaciones, después el cronómetro.",
+                        "No coinciden, y ese desacuerdo es la lección.",
+                    ],
+                ),
+                (
+                    "◐",
+                    "La descomposición espectral, nombrada",
+                    [
+                        "La herramienta en la que se apoya la sección 10.",
+                        "Se presenta aquí en vez de darse por sabida.",
+                    ],
+                ),
             ],
-            "callout": ("Predice antes de ejecutar:", "cada ejercicio pide "
-                        "tu conjetura primero. Eso es lo que hace que las "
-                        "lecciones de coste y condicionamiento calen."),
+            "callout": (
+                "Predice antes de ejecutar:",
+                "cada ejercicio pide "
+                "tu conjetura primero. Eso es lo que hace que las "
+                "lecciones de coste y condicionamiento calen.",
+            ),
         },
     },
     {
@@ -369,49 +520,78 @@ SLIDES = [
             "title": ["Factor once,", "solve many"],
             "subtitle": "The same real least-squares problem, three ways",
             "cards": [
-                ("∑", "Normal equations", [
-                    "Fastest to write.",
-                    "Squares the condition number. The answer degrades long "
-                    "before the clock does.",
-                ]),
-                ("⊿", "QR", [
-                    "The stable default.",
-                    "A predictable cost, and it never forms AᵀA.",
-                ]),
-                ("≈", "SVD", [
-                    "The most expensive and the most informative.",
-                    "Eckart–Young gives the truncation error without "
-                    "building the truncation.",
-                ]),
+                (
+                    "∑",
+                    "Normal equations",
+                    [
+                        "Fastest to write.",
+                        "Squares the condition number. The answer degrades long "
+                        "before the clock does.",
+                    ],
+                ),
+                (
+                    "⊿",
+                    "QR",
+                    [
+                        "The stable default.",
+                        "A predictable cost, and it never forms AᵀA.",
+                    ],
+                ),
+                (
+                    "≈",
+                    "SVD",
+                    [
+                        "The most expensive and the most informative.",
+                        "Eckart–Young gives the truncation error without "
+                        "building the truncation.",
+                    ],
+                ),
             ],
-            "callout": ("What survives the machine:", "the flop table says a "
-                        "full SVD costs about 39× a Cholesky, and you measure "
-                        "near that. The exponent it predicts, you do not."),
+            "callout": (
+                "What survives the machine:",
+                "the flop table says a "
+                "full SVD costs about 39× a Cholesky, and you measure "
+                "near that. The exponent it predicts, you do not.",
+            ),
         },
         "es": {
             "eyebrow": "Notebook 09 · Coste",
             "title": ["Factoriza una vez,", "resuelve muchas"],
-            "subtitle": "El mismo problema real de mínimos cuadrados, de tres "
-                        "formas",
+            "subtitle": "El mismo problema real de mínimos cuadrados, de tres formas",
             "cards": [
-                ("∑", "Ecuaciones normales", [
-                    "Las más rápidas de escribir.",
-                    "Elevan al cuadrado el número de condición. La respuesta "
-                    "se degrada mucho antes que el reloj.",
-                ]),
-                ("⊿", "QR", [
-                    "La opción estable por defecto.",
-                    "Coste predecible, y nunca forma AᵀA.",
-                ]),
-                ("≈", "SVD", [
-                    "La más cara y la más informativa.",
-                    "Eckart–Young da el error de truncamiento sin construir "
-                    "el truncamiento.",
-                ]),
+                (
+                    "∑",
+                    "Ecuaciones normales",
+                    [
+                        "Las más rápidas de escribir.",
+                        "Elevan al cuadrado el número de condición. La respuesta "
+                        "se degrada mucho antes que el reloj.",
+                    ],
+                ),
+                (
+                    "⊿",
+                    "QR",
+                    [
+                        "La opción estable por defecto.",
+                        "Coste predecible, y nunca forma AᵀA.",
+                    ],
+                ),
+                (
+                    "≈",
+                    "SVD",
+                    [
+                        "La más cara y la más informativa.",
+                        "Eckart–Young da el error de truncamiento sin construir "
+                        "el truncamiento.",
+                    ],
+                ),
             ],
-            "callout": ("Lo que sobrevive a la máquina:", "la tabla predice "
-                        "que una SVD completa cuesta unas 39× una Cholesky, y "
-                        "eso lo mides. El exponente que predice, no."),
+            "callout": (
+                "Lo que sobrevive a la máquina:",
+                "la tabla predice "
+                "que una SVD completa cuesta unas 39× una Cholesky, y "
+                "eso lo mides. El exponente que predice, no.",
+            ),
         },
     },
     {
@@ -421,51 +601,87 @@ SLIDES = [
             "eyebrow": "Notebook 11 · Tensor factorizations",
             "title": ["11 ·", "Tensor factorizations"],
             "badge": "15 min · exercise",
-            "objective": ("Objective:", "choose the decomposition from the "
-                          "structure you need to keep, and the rank from the "
-                          "loss you can afford."),
+            "objective": (
+                "Objective:",
+                "choose the decomposition from the "
+                "structure you need to keep, and the rank from the "
+                "loss you can afford.",
+            ),
             "cards": [
-                ("⊟", "Why not flatten first?", [
-                    "Flattening keeps every number.",
-                    "It loses which direction meant what.",
-                ]),
-                ("⚖", "Matched budget, not matched rank", [
-                    "CP against Tucker at the same parameter count.",
-                    "Rank for rank is not a fair comparison.",
-                ]),
-                ("↗", "Growth, not constants", [
-                    "A faster machine changes the constants.",
-                    "It does not change which formula grows exponentially.",
-                ]),
+                (
+                    "⊟",
+                    "Why not flatten first?",
+                    [
+                        "Flattening keeps every number.",
+                        "It loses which direction meant what.",
+                    ],
+                ),
+                (
+                    "⚖",
+                    "Matched budget, not matched rank",
+                    [
+                        "CP against Tucker at the same parameter count.",
+                        "Rank for rank is not a fair comparison.",
+                    ],
+                ),
+                (
+                    "↗",
+                    "Growth, not constants",
+                    [
+                        "A faster machine changes the constants.",
+                        "It does not change which formula grows exponentially.",
+                    ],
+                ),
             ],
-            "callout": ("Following section 10:", "Tucker was one bargain. "
-                        "This section puts the other three beside it and "
-                        "makes you pay for each."),
+            "callout": (
+                "Following section 10:",
+                "Tucker was one bargain. "
+                "This section puts the other three beside it and "
+                "makes you pay for each.",
+            ),
         },
         "es": {
             "eyebrow": "Notebook 11 · Factorizaciones tensoriales",
             "title": ["11 ·", "Factorizaciones tensoriales"],
             "badge": "15 min · ejercicio",
-            "objective": ("Objetivo:", "elegir la descomposición según la "
-                          "estructura que necesitas conservar, y el rango "
-                          "según la pérdida que puedes aceptar."),
+            "objective": (
+                "Objetivo:",
+                "elegir la descomposición según la "
+                "estructura que necesitas conservar, y el rango "
+                "según la pérdida que puedes aceptar.",
+            ),
             "cards": [
-                ("⊟", "¿Por qué no aplanar primero?", [
-                    "Aplanar conserva todos los números.",
-                    "Pierde qué significaba cada dirección.",
-                ]),
-                ("⚖", "Mismo presupuesto, no mismo rango", [
-                    "CP frente a Tucker con el mismo número de parámetros.",
-                    "Rango contra rango no es una comparación justa.",
-                ]),
-                ("↗", "Crecimiento, no constantes", [
-                    "Una máquina más rápida cambia las constantes.",
-                    "No cambia qué fórmula crece exponencialmente.",
-                ]),
+                (
+                    "⊟",
+                    "¿Por qué no aplanar primero?",
+                    [
+                        "Aplanar conserva todos los números.",
+                        "Pierde qué significaba cada dirección.",
+                    ],
+                ),
+                (
+                    "⚖",
+                    "Mismo presupuesto, no mismo rango",
+                    [
+                        "CP frente a Tucker con el mismo número de parámetros.",
+                        "Rango contra rango no es una comparación justa.",
+                    ],
+                ),
+                (
+                    "↗",
+                    "Crecimiento, no constantes",
+                    [
+                        "Una máquina más rápida cambia las constantes.",
+                        "No cambia qué fórmula crece exponencialmente.",
+                    ],
+                ),
             ],
-            "callout": ("Después de la sección 10:", "Tucker fue un trato. "
-                        "Esta sección pone los otros tres a su lado y te hace "
-                        "pagar por cada uno."),
+            "callout": (
+                "Después de la sección 10:",
+                "Tucker fue un trato. "
+                "Esta sección pone los otros tres a su lado y te hace "
+                "pagar por cada uno.",
+            ),
         },
     },
     {
@@ -474,63 +690,101 @@ SLIDES = [
             "eyebrow": "Notebook 11 · Four bargains",
             "title": ["Four decompositions,", "four bargains"],
             "subtitle": "Each one keeps a different structure. That choice "
-                        "is the decision",
+            "is the decision",
             "cards": [
-                ("∑", "CP", [
-                    "A sum of rank-1 components.",
-                    "R(I + J + K)",
-                    "When the components must be read one by one.",
-                ]),
-                ("⊞", "Tucker / HOSVD", [
-                    "One subspace per mode, plus a core.",
-                    "R₁R₂R₃ + IR₁ + JR₂ + KR₃",
-                    "When each mode needs a rank of its own.",
-                ]),
-                ("⧉", "Tensor Train", [
-                    "A chain of small cores.",
-                    "≈ O(N · I · r²)",
-                    "When the order is high and a dense core explodes.",
-                ]),
-                ("≋", "t-SVD", [
-                    "FFT along mode 3, matrix SVDs, inverse FFT.",
-                    "Storage set by the tubal rank kept",
-                    "When mode 3 carries a meaning of its own.",
-                ]),
+                (
+                    "∑",
+                    "CP",
+                    [
+                        "A sum of rank-1 components.",
+                        "R(I + J + K)",
+                        "When the components must be read one by one.",
+                    ],
+                ),
+                (
+                    "⊞",
+                    "Tucker / HOSVD",
+                    [
+                        "One subspace per mode, plus a core.",
+                        "R₁R₂R₃ + IR₁ + JR₂ + KR₃",
+                        "When each mode needs a rank of its own.",
+                    ],
+                ),
+                (
+                    "⧉",
+                    "Tensor Train",
+                    [
+                        "A chain of small cores.",
+                        "≈ O(N · I · r²)",
+                        "When the order is high and a dense core explodes.",
+                    ],
+                ),
+                (
+                    "≋",
+                    "t-SVD",
+                    [
+                        "FFT along mode 3, matrix SVDs, inverse FFT.",
+                        "Storage set by the tubal rank kept",
+                        "When mode 3 carries a meaning of its own.",
+                    ],
+                ),
             ],
-            "callout": ("The decision, in order:", "structure first, "
-                        "then rank. The flop count is the last thing you "
-                        "should choose on."),
+            "callout": (
+                "The decision, in order:",
+                "structure first, "
+                "then rank. The flop count is the last thing you "
+                "should choose on.",
+            ),
         },
         "es": {
             "eyebrow": "Notebook 11 · Cuatro tratos",
             "title": ["Cuatro descomposiciones,", "cuatro tratos"],
             "subtitle": "Cada una conserva una estructura distinta. Esa "
-                        "elección es la decisión",
+            "elección es la decisión",
             "cards": [
-                ("∑", "CP", [
-                    "Una suma de componentes de rango 1.",
-                    "R(I + J + K)",
-                    "Cuando hay que leer los componentes uno a uno.",
-                ]),
-                ("⊞", "Tucker / HOSVD", [
-                    "Un subespacio por modo, más un núcleo.",
-                    "R₁R₂R₃ + IR₁ + JR₂ + KR₃",
-                    "Cuando cada modo necesita su propio rango.",
-                ]),
-                ("⧉", "Tensor Train", [
-                    "Una cadena de núcleos pequeños.",
-                    "≈ O(N · I · r²)",
-                    "Cuando el orden es alto y un núcleo denso explota.",
-                ]),
-                ("≋", "t-SVD", [
-                    "FFT sobre el modo 3, SVD matriciales, FFT inversa.",
-                    "Almacenamiento según el rango tubular conservado",
-                    "Cuando el modo 3 tiene un significado propio.",
-                ]),
+                (
+                    "∑",
+                    "CP",
+                    [
+                        "Una suma de componentes de rango 1.",
+                        "R(I + J + K)",
+                        "Cuando hay que leer los componentes uno a uno.",
+                    ],
+                ),
+                (
+                    "⊞",
+                    "Tucker / HOSVD",
+                    [
+                        "Un subespacio por modo, más un núcleo.",
+                        "R₁R₂R₃ + IR₁ + JR₂ + KR₃",
+                        "Cuando cada modo necesita su propio rango.",
+                    ],
+                ),
+                (
+                    "⧉",
+                    "Tensor Train",
+                    [
+                        "Una cadena de núcleos pequeños.",
+                        "≈ O(N · I · r²)",
+                        "Cuando el orden es alto y un núcleo denso explota.",
+                    ],
+                ),
+                (
+                    "≋",
+                    "t-SVD",
+                    [
+                        "FFT sobre el modo 3, SVD matriciales, FFT inversa.",
+                        "Almacenamiento según el rango tubular conservado",
+                        "Cuando el modo 3 tiene un significado propio.",
+                    ],
+                ),
             ],
-            "callout": ("La decisión, en orden:", "primero la estructura, "
-                        "después el rango. El número de operaciones es lo "
-                        "último por lo que deberías decidir."),
+            "callout": (
+                "La decisión, en orden:",
+                "primero la estructura, "
+                "después el rango. El número de operaciones es lo "
+                "último por lo que deberías decidir.",
+            ),
         },
     },
 ]
@@ -874,12 +1128,14 @@ def page(copy: dict, lang: str, kind: str) -> str:
         # breaking it after the number reads as a list item.
         title = f'{e(first)} <span class="accent">{e(accent)}</span>'
         if kind == "closing":
-            head = CONTENT_HEAD.format(title=title,
-                                       subtitle=e(copy["subtitle"]))
+            head = CONTENT_HEAD.format(title=title, subtitle=e(copy["subtitle"]))
         else:
-            head = DIVIDER_HEAD.format(title=title, badge=e(copy["badge"]),
-                                       objective_lead=e(copy["objective"][0]),
-                                       objective=e(copy["objective"][1]))
+            head = DIVIDER_HEAD.format(
+                title=title,
+                badge=e(copy["badge"]),
+                objective_lead=e(copy["objective"][0]),
+                objective=e(copy["objective"][1]),
+            )
     else:
         title = f'{e(first)}<br><span class="accent">{e(accent)}</span>'
         head = CONTENT_HEAD.format(title=title, subtitle=e(copy["subtitle"]))
@@ -894,16 +1150,25 @@ def page(copy: dict, lang: str, kind: str) -> str:
     )
     if kind == "closing":
         line, accent_line = copy["closing"]
-        tail = CLOSING.format(line=e(line), accent=e(accent_line),
-                              thanks_lead=e(copy["thanks"][0]),
-                              thanks=e(copy["thanks"][1]))
+        tail = CLOSING.format(
+            line=e(line),
+            accent=e(accent_line),
+            thanks_lead=e(copy["thanks"][0]),
+            thanks=e(copy["thanks"][1]),
+        )
     else:
         lead, rest = copy["callout"]
         tail = CALLOUT.format(lead=e(lead), rest=e(rest))
-    return HEAD.format(lang=lang, css=CSS, eyebrow=e(copy["eyebrow"]),
-                       head=head, n=len(copy["cards"]),
-                       centered=" centered" if kind == "closing" else "",
-                       cards=cards, tail=tail)
+    return HEAD.format(
+        lang=lang,
+        css=CSS,
+        eyebrow=e(copy["eyebrow"]),
+        head=head,
+        n=len(copy["cards"]),
+        centered=" centered" if kind == "closing" else "",
+        cards=cards,
+        tail=tail,
+    )
 
 
 def chrome() -> str:
@@ -915,20 +1180,32 @@ def chrome() -> str:
 
 
 def shoot(browser: str, source: Path, out: Path) -> None:
-    """Screenshot one page. `--virtual-time-budget` is what waits for the
-    webfont: without it Chrome shoots the fallback stack and the PNG is a
-    different picture with no error to say so."""
+    """Screenshot one page to a PNG beside `source`, then encode it as the
+    WebP at `out`. `--virtual-time-budget` is what waits for the webfont:
+    without it Chrome shoots the fallback stack and the image is a different
+    picture with no error to say so."""
+    from PIL import Image
+
     out.parent.mkdir(parents=True, exist_ok=True)
+    png = source.with_suffix(".png")
     subprocess.run(
-        [browser, "--headless", "--disable-gpu", "--hide-scrollbars",
-         "--force-device-scale-factor=1",
-         f"--window-size={WIDTH},{HEIGHT}",
-         "--virtual-time-budget=10000",
-         f"--screenshot={out}", source.as_uri()],
-        check=True, capture_output=True,
+        [
+            browser,
+            "--headless",
+            "--disable-gpu",
+            "--hide-scrollbars",
+            "--force-device-scale-factor=1",
+            f"--window-size={WIDTH},{HEIGHT}",
+            "--virtual-time-budget=10000",
+            f"--screenshot={png}",
+            source.as_uri(),
+        ],
+        check=True,
+        capture_output=True,
     )
-    if not out.exists():
+    if not png.exists():
         sys.exit(f"Chrome wrote no file for {out.name}")
+    Image.open(png).convert("RGB").save(out, "WEBP", quality=90, method=6)
 
 
 def main() -> None:
@@ -939,9 +1216,8 @@ def main() -> None:
             kind = slide.get("kind", "content")
             for lang, directory in DECKS.items():
                 source = tmpdir / f"{slide['stem']}-{lang}.html"
-                source.write_text(page(slide[lang], lang, kind),
-                                  encoding="utf-8")
-                out = directory / f"{slide['stem']}.png"
+                source.write_text(page(slide[lang], lang, kind), encoding="utf-8")
+                out = directory / f"{slide['stem']}.webp"
                 shoot(browser, source, out)
                 print(f"  {out.relative_to(ROOT)}")
     print(f"{len(SLIDES) * len(DECKS)} slides drawn at {WIDTH}x{HEIGHT}")

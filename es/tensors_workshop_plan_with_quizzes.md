@@ -188,7 +188,7 @@ photo = data.immunohistochemistry()
 print(photo.shape)               # (512, 512, 3) — height, width, colour
 ```
 
-![](../images/fig-ladder.png){.column-page fig-alt="Cinco arrays reales en fila, subiendo del orden 0 al orden 4: un único cuadrado gris con un píxel de la fotografía camera, una tira larga y fina con una de sus filas, un dígito manuscrito como una rejilla de ocho por ocho cuadrados grises con separaciones blancas, una fotografía de histología teñida mostrada como tres planos de color separados, y dieciséis fotogramas de un clip de tormenta apilados. Cada uno está etiquetado con su forma, ndim y size."}
+![](../images/fig-ladder.png){.lightbox fig-alt="Cinco arrays reales en fila, subiendo del orden 0 al orden 4: un único cuadrado gris con un píxel de la fotografía camera, una tira larga y fina con una de sus filas, un dígito manuscrito como una rejilla de ocho por ocho cuadrados grises con separaciones blancas, una fotografía de histología teñida mostrada como tres planos de color separados, y dieciséis fotogramas de un clip de tormenta apilados. Cada uno está etiquetado con su forma, ndim y size."}
 
 *La misma subida, con arrays que vas a encontrar hoy. `shape` gana un número en cada peldaño; los dos últimos peldaños llevan un `3`, y esos dos treses no significan nada parecido.*
 
@@ -260,7 +260,7 @@ print(np.allclose(Q.T @ Q, np.eye(3)))      # True — book eq 2.37
 
 **LU** es la eliminación gaussiana guardada como dos matrices triangulares, de modo que `Ax = b` se puede resolver barato muchas veces con distintos `b`. **QR** (calculada con Gram-Schmidt, o de forma más estable con otros métodos) produce direcciones *ortonormales*: mutuamente perpendiculares y de longitud 1. Se usa para la inicialización ortogonal de pesos en redes neuronales y para mínimos cuadrados estables.
 
-![](../images/fig-factorization-map.png){.column-page fig-alt="Un dígito manuscrito de ocho por ocho factorizado de tres formas, cada fila mostrando la matriz original y sus factores como pequeños mapas de calor: A igual a P por L por U, con L visiblemente triangular inferior y U triangular superior; A igual a Q por R; y A igual a U por Sigma por V traspuesta, con Sigma vacía salvo su diagonal. Bajo una línea divisoria, una pila de cuatro cortes del tensor real de taxis, etiquetada como de cualquier número de ejes, apuntando a la sección 10."}
+![](../images/fig-factorization-map.png){.lightbox fig-alt="Un dígito manuscrito de ocho por ocho factorizado de tres formas, cada fila mostrando la matriz original y sus factores como pequeños mapas de calor: A igual a P por L por U, con L visiblemente triangular inferior y U triangular superior; A igual a Q por R; y A igual a U por Sigma por V traspuesta, con Sigma vacía salvo su diagonal. Bajo una línea divisoria, una pila de cuatro cortes del tensor real de taxis, etiquetada como de cualquier número de ejes, apuntando a la sección 10."}
 
 *El mismo dígito de 8×8, factorizado de tres formas. Las formas son lo importante: `L` es de verdad triangular inferior, `U` superior, y `Σ` está vacía salvo su diagonal. Debajo de la línea hay un objeto que ninguna de las tres puede tocar.*
 
@@ -407,7 +407,7 @@ De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No 
 > - **Tecnología:** una app de vídeos cortos que calcula una representación por vídeo a partir de fotogramas muestreados, para elegir qué reproducir a continuación.
 > - **Biotecnología:** un modelo de vídeo quirúrgico que etiqueta la fase actual de una operación a partir de la cámara del quirófano.
 
-![](../images/fig-video-stack.gif){.column-page fig-alt="Dos paneles de vídeo lado a lado, los dos recorriendo los mismos ocho fotogramas de una tormenta en una costa rocosa. El panel izquierdo, etiquetado clip, los reproduce en orden y el oleaje crece de forma constante. El panel derecho, etiquetado clip permuted, reproduce los mismos fotogramas en orden barajado y el mar salta de una toma a otra."}
+![](../images/fig-video-stack.gif){.lightbox fig-alt="Dos paneles de vídeo lado a lado, los dos recorriendo los mismos ocho fotogramas de una tormenta en una costa rocosa. El panel izquierdo, etiquetado clip, los reproduce en orden y el oleaje crece de forma constante. El panel derecho, etiquetado clip permuted, reproduce los mismos fotogramas en orden barajado y el mar salta de una toma a otra."}
 
 *Los dos paneles tienen los mismos ocho fotogramas, la misma forma y la misma suma. Solo cambia el orden del eje 0, y ninguna operación aritmética de este taller puede decirte cuál de los dos es el vídeo.*
 
@@ -793,7 +793,7 @@ error = np.linalg.norm(T - recon) / np.linalg.norm(T)            # 0.067
 ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 ```
 
-![](../images/fig-tucker-taxi.png){.column-page fig-alt="El tensor de taxis descompuesto. Arriba, T como una pila de cuatro cortes en mapa de calor igual a un núcleo pequeño G por tres matrices de factores A, B y C, cada una etiquetada con su forma. Debajo, dos diagramas de barras frente a la hora del día: los recuentos brutos de recogidas y la primera columna del factor de hora. Los dos tienen su barra más alta en la hora 18, dibujada en rojo."}
+![](../images/fig-tucker-taxi.png){.lightbox fig-alt="El tensor de taxis descompuesto. Arriba, T como una pila de cuatro cortes en mapa de calor igual a un núcleo pequeño G por tres matrices de factores A, B y C, cada una etiquetada con su forma. Debajo, dos diagramas de barras frente a la hora del día: los recuentos brutos de recogidas y la primera columna del factor de hora. Los dos tienen su barra más alta en la hora 18, dibujada en rojo."}
 
 *480 números se convierten en 102. Los dos diagramas son el TODO 6. A la izquierda, la hora con más viajes en los recuentos brutos. A la derecha, el pico del factor de hora, que la descomposición construyó sin que nadie le dijera nunca qué es una hora.*
 

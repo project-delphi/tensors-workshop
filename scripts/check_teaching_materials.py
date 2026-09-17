@@ -4,6 +4,7 @@
 Stdlib only. Checks structure and local links, not translation quality or runtime
 dependencies. The full site checker owns rendered pages and notebook validity.
 """
+
 from __future__ import annotations
 
 import json
@@ -12,25 +13,29 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
-PAIRED = ("group-tasks.md", "facilitator-guide.md", "assessments.md",
-          "worked-mistakes.md", "workshop-feedback.md")
+PAIRED = (
+    "group-tasks.md",
+    "facilitator-guide.md",
+    "assessments.md",
+    "worked-mistakes.md",
+    "workshop-feedback.md",
+)
 
 
 def prose(text: str) -> str:
-    return re.sub(r"^```[^\n]*\n.*?^```\s*$", "", text,
-                  flags=re.MULTILINE | re.DOTALL)
+    return re.sub(r"^```[^\n]*\n.*?^```\s*$", "", text, flags=re.MULTILINE | re.DOTALL)
 
 
 def anchors(text: str) -> set[str]:
     """GitHub-style heading slugs plus explicit HTML/Quarto anchors."""
     text = prose(text)
-    result = set(re.findall(r'\bid=[\"\']([^\"\']+)[\"\']', text))
+    result = set(re.findall(r"\bid=[\"\']([^\"\']+)[\"\']", text))
     seen: dict[str, int] = {}
     for heading in re.findall(r"^#{1,6}\s+(.+?)\s*#*\s*$", text, re.MULTILINE):
         explicit = re.search(r"\{#([^} ]+)[^}]*\}", heading)
         if explicit:
             result.add(explicit[1])
-            heading = heading[:explicit.start()].rstrip()
+            heading = heading[: explicit.start()].rstrip()
         heading = re.sub(r"\[([^]]+)\]\([^)]*\)", r"\1", heading)
         heading = re.sub(r"<[^>]+>", "", heading).lower()
         slug = re.sub(r"[^\w\- ]", "", heading).replace(" ", "-")
@@ -45,7 +50,11 @@ def check_links(path: Path, root: Path) -> None:
         parsed = urlsplit(target.strip("<>"))
         if parsed.scheme or parsed.netloc:
             continue
-        destination = (path.parent / unquote(parsed.path)).resolve() if parsed.path else path.resolve()
+        destination = (
+            (path.parent / unquote(parsed.path)).resolve()
+            if parsed.path
+            else path.resolve()
+        )
         if not destination.is_relative_to(root.resolve()):
             raise ValueError(f"{path}: link escapes repository: {target}")
         if not destination.exists():
@@ -62,14 +71,28 @@ def check_tasks(path: Path, notebooks: dict[str, str]) -> list[tuple[str, int]]:
         raise ValueError(f"{path}: tasks must match notebook numbers in order")
     result = []
     for i, match in enumerate(sections):
-        body = text[match.end():sections[i+1].start() if i+1 < len(sections) else len(text)]
+        body = text[
+            match.end() : sections[i + 1].start()
+            if i + 1 < len(sections)
+            else len(text)
+        ]
         times = re.findall(r"\*\*(?:Time|Tiempo):\*\* (\d+)", body)
         shares = re.findall(r"^\*\*(?:Share|Compartan):\*\*", body, re.MULTILINE)
         links = re.findall(r"\]\(([^)]+\.ipynb)\)", body)
         if len(times) != 1 or not 1 <= int(times[0]) <= 15 or len(shares) != 1:
-            raise ValueError(f"{path}: task {match[1]} needs one time box and deliverable")
-        expected = path.parents[1] / "notebooks" if path.parent.name == "es" else path.parent / "notebooks"
-        if len(links) != 1 or (path.parent / links[0]).resolve() != (expected / notebooks[match[1]]).resolve():
+            raise ValueError(
+                f"{path}: task {match[1]} needs one time box and deliverable"
+            )
+        expected = (
+            path.parents[1] / "notebooks"
+            if path.parent.name == "es"
+            else path.parent / "notebooks"
+        )
+        if (
+            len(links) != 1
+            or (path.parent / links[0]).resolve()
+            != (expected / notebooks[match[1]]).resolve()
+        ):
             raise ValueError(f"{path}: task {match[1]} must link to its own notebook")
         result.append((match[1], int(times[0])))
     return result
@@ -83,7 +106,9 @@ def workshop_meta(notebook: dict, label: str) -> dict:
     lives.
     """
     cells = notebook["cells"]
-    scaffold = [c for c in cells if "<!-- CORE-PATH -->" in "".join(c.get("source", []))]
+    scaffold = [
+        c for c in cells if "<!-- CORE-PATH -->" in "".join(c.get("source", []))
+    ]
     if len(scaffold) != 1:
         raise ValueError(f"{label}: expected exactly one core path")
     return scaffold[0].get("metadata", {}).get("workshop", {})
@@ -111,24 +136,37 @@ def support_of(notebook: dict, label: str) -> list[str]:
     code-free entry or exit assessment into an executable route.
     """
     support = workshop_meta(notebook, label).get("support", [])
-    if not isinstance(support, list) or any(not isinstance(cid, str) for cid in support):
+    if not isinstance(support, list) or any(
+        not isinstance(cid, str) for cid in support
+    ):
         raise ValueError(f"{label}: support must be a list of cell IDs")
     cells = notebook["cells"]
     ids = [c.get("id") for c in cells]
     prep, activity = route_of(notebook, label)
     if len(set(support)) != len(support) or set(support) & set(prep + [activity]):
-        raise ValueError(f"{label}: support cells must be unique and separate from the core")
+        raise ValueError(
+            f"{label}: support cells must be unique and separate from the core"
+        )
     for cid in support:
         if ids.count(cid) != 1:
             raise ValueError(f"{label}: missing or duplicate support cell {cid}")
         cell = cells[ids.index(cid)]
         tags = cell.get("metadata", {}).get("tags", [])
-        if cell["cell_type"] != "code" or "solution" in tags or "workshop-support" not in tags:
-            raise ValueError(f"{label}: support {cid} must be tagged executable feedback, not a solution")
+        if (
+            cell["cell_type"] != "code"
+            or "solution" in tags
+            or "workshop-support" not in tags
+        ):
+            raise ValueError(
+                f"{label}: support {cid} must be tagged executable feedback, not a solution"
+            )
         if activity not in ids or ids.index(cid) >= ids.index(activity):
             raise ValueError(f"{label}: support {cid} must precede the activity")
-    marked = {c.get("id") for c in cells
-              if "workshop-support" in c.get("metadata", {}).get("tags", [])}
+    marked = {
+        c.get("id")
+        for c in cells
+        if "workshop-support" in c.get("metadata", {}).get("tags", [])
+    }
     if marked != set(support):
         raise ValueError(f"{label}: support metadata and tagged cells disagree")
     return support
@@ -147,22 +185,36 @@ def check_route(notebook: dict, label: str) -> None:
     for cell_id in targets:
         cell = cells[ids.index(cell_id)]
         tags = cell.get("metadata", {}).get("tags", [])
-        required = "workshop-core-activity" if cell_id == activity else "workshop-core-prep"
+        required = (
+            "workshop-core-activity" if cell_id == activity else "workshop-core-prep"
+        )
         if required not in tags or "solution" in tags:
             raise ValueError(f"{label}: {cell_id} must be tagged and not a solution")
         if cell_id in prep and cell["cell_type"] != "code":
             raise ValueError(f"{label}: preparation {cell_id} must be executable")
-    marked = {c.get("id") for c in cells if any(t in c.get("metadata", {}).get("tags", [])
-              for t in ("workshop-core-prep", "workshop-core-activity"))}
+    marked = {
+        c.get("id")
+        for c in cells
+        if any(
+            t in c.get("metadata", {}).get("tags", [])
+            for t in ("workshop-core-prep", "workshop-core-activity")
+        )
+    }
     if marked != set(targets):
         raise ValueError(f"{label}: route metadata and tagged cells disagree")
     at = ids.index(activity)
-    prompt = "\n".join("".join(c.get("source", [])) for c in cells[max(0, at-1):at+1])
-    for text in ("Core activity", "Predict → Run → Explain → Check", "Predice → Ejecuta → Explica → Comprueba"):
+    prompt = "\n".join(
+        "".join(c.get("source", [])) for c in cells[max(0, at - 1) : at + 1]
+    )
+    for text in (
+        "Core activity",
+        "Predict → Run → Explain → Check",
+        "Predice → Ejecuta → Explica → Comprueba",
+    ):
         if text not in prompt:
             raise ValueError(f"{label}: activity lacks nearby bilingual loop: {text}")
     for step, cell_id in enumerate(prep, 1):
-        before = cells[ids.index(cell_id)-1]
+        before = cells[ids.index(cell_id) - 1]
         if f"Core prep {step}/{len(prep)}" not in "".join(before.get("source", [])):
             raise ValueError(f"{label}: preparation label missing for {cell_id}")
     support_of(notebook, label)
@@ -182,20 +234,32 @@ def check_sequence(notebook: dict, label: str) -> list[str]:
         return []
     cells = notebook["cells"]
     ids = [c.get("id") for c in cells]
-    if (not isinstance(sequence, list) or not sequence
-            or any(not isinstance(cid, str) for cid in sequence)
-            or len(set(sequence)) != len(sequence)
-            or any(ids.count(cid) != 1 for cid in sequence)):
+    if (
+        not isinstance(sequence, list)
+        or not sequence
+        or any(not isinstance(cid, str) for cid in sequence)
+        or len(set(sequence)) != len(sequence)
+        or any(ids.count(cid) != 1 for cid in sequence)
+    ):
         raise ValueError(f"{label}: sequence needs unique existing cell IDs")
-    scaffold = next(i for i, c in enumerate(cells)
-                    if "<!-- CORE-PATH -->" in "".join(c.get("source", [])))
-    if scaffold != 1 or ids[scaffold + 1:scaffold + 1 + len(sequence)] != sequence:
-        raise ValueError(f"{label}: core sequence must follow the header and route without gaps")
+    scaffold = next(
+        i
+        for i, c in enumerate(cells)
+        if "<!-- CORE-PATH -->" in "".join(c.get("source", []))
+    )
+    if scaffold != 1 or ids[scaffold + 1 : scaffold + 1 + len(sequence)] != sequence:
+        raise ValueError(
+            f"{label}: core sequence must follow the header and route without gaps"
+        )
     prep, activity = route_of(notebook, label)
     if not set(prep + [activity] + support_of(notebook, label)) <= set(sequence):
-        raise ValueError(f"{label}: core sequence omits preparation, feedback or activity")
+        raise ValueError(
+            f"{label}: core sequence omits preparation, feedback or activity"
+        )
     checkpoint = route.get("checkpoint")
-    if checkpoint not in sequence or sequence.index(checkpoint) <= sequence.index(activity):
+    if checkpoint not in sequence or sequence.index(checkpoint) <= sequence.index(
+        activity
+    ):
         raise ValueError(f"{label}: checkpoint must follow the activity")
     boundary = cells[scaffold + 1 + len(sequence)]
     if "## Explore later / Explora después" not in "".join(boundary.get("source", [])):
@@ -214,7 +278,13 @@ def check(root: Path = ROOT) -> None:
             if not path.is_file():
                 raise ValueError(f"Missing teaching resource: {path}")
             check_links(path, root)
-    for name in ("README.md", "notebooks/README.md", "CONTRIBUTING.md", "RELEASE_CHECKLIST.md", "CHANGELOG.md"):
+    for name in (
+        "README.md",
+        "notebooks/README.md",
+        "CONTRIBUTING.md",
+        "RELEASE_CHECKLIST.md",
+        "CHANGELOG.md",
+    ):
         check_links(root / name, root)
     en = check_tasks(root / "group-tasks.md", notebooks)
     es = check_tasks(root / "es/group-tasks.md", notebooks)
@@ -237,7 +307,9 @@ def check(root: Path = ROOT) -> None:
             keys.append(set(found))
         if keys[0] != keys[1]:
             raise ValueError(f"{source}: English and Spanish language keys differ")
-    print(f"Teaching materials valid: {len(paths)} core routes, paired tasks and local links")
+    print(
+        f"Teaching materials valid: {len(paths)} core routes, paired tasks and local links"
+    )
 
 
 if __name__ == "__main__":

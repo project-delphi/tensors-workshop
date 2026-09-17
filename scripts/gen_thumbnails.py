@@ -88,13 +88,12 @@ VOICE_SHA256 = "2c4b4d9d5f90715fdbf599869a465d521638f40ca978b186df96f1543a4d67dc
 # has continuous large-scale motion (so a shuffled time axis is obviously
 # wrong), and shows no identifiable people.
 VIDEO_URL = (
-    "https://upload.wikimedia.org/wikipedia/commons/1/1e/"
-    "Tormenta_en_l%27Almadrava.webm"
+    "https://upload.wikimedia.org/wikipedia/commons/1/1e/Tormenta_en_l%27Almadrava.webm"
 )
 VIDEO_SHA256 = "e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b"
 
-INK = "#2f4858"      # $presentation-heading-color, from slides/slides.scss
-ACCENT = "#2c5f8a"   # $link-color
+INK = "#2f4858"  # $presentation-heading-color, from slides/slides.scss
+ACCENT = "#2c5f8a"  # $link-color
 
 
 # The pinned sources say where the pixels came *from*. This says what turned
@@ -109,8 +108,17 @@ ACCENT = "#2c5f8a"   # $link-color
 # line against the one in the commit that last drew the file. Same versions and
 # a changed image means an input moved; different versions and the diff is
 # almost certainly rasterization, and worth confirming before assuming worse.
-STACK = ("matplotlib", "pillow", "freetype", "numpy", "scipy",
-         "scikit-image", "scikit-learn", "pandas", "imageio")
+STACK = (
+    "matplotlib",
+    "pillow",
+    "freetype",
+    "numpy",
+    "scipy",
+    "scikit-image",
+    "scikit-learn",
+    "pandas",
+    "imageio",
+)
 
 
 def stack() -> None:
@@ -122,6 +130,7 @@ def stack() -> None:
         if name == "freetype":
             try:
                 import matplotlib.ft2font
+
                 parts.append(f"freetype {matplotlib.ft2font.__freetype_version__}")
             except Exception:
                 pass
@@ -141,7 +150,8 @@ def get(url: str, expected_sha256: str | None = None) -> bytes:
         if got != expected_sha256:
             raise ValueError(
                 f"checksum mismatch for {url}: expected {expected_sha256}, "
-                f"got {got}. Refusing to build a thumbnail from it.")
+                f"got {got}. Refusing to build a thumbnail from it."
+            )
     return raw
 
 
@@ -149,6 +159,7 @@ def cover(img, size=CARD):
     """Resize to fill `size`, cropping the overflowing axis — every card is the
     same shape, so the grid stays on a baseline."""
     from PIL import Image
+
     tw, th = size
     sw, sh = img.size
     scale = max(tw / sw, th / sh)
@@ -170,8 +181,10 @@ def save(img, name: str, lossless: bool = False) -> None:
     else:
         out = IMAGES / f"{name}.jpg"
         img.save(out, "JPEG", quality=82, optimize=True, progressive=True)
-    print(f"  {out.relative_to(IMAGES.parent)}  "
-          f"{img.size[0]}x{img.size[1]}  {out.stat().st_size // 1024} KB")
+    print(
+        f"  {out.relative_to(IMAGES.parent)}  "
+        f"{img.size[0]}x{img.size[1]}  {out.stat().st_size // 1024} KB"
+    )
 
 
 def canvas_to_pil(fig):
@@ -184,13 +197,26 @@ def canvas_to_pil(fig):
 
     fig.canvas.draw()
     return Image.frombuffer(
-        "RGBA", fig.canvas.get_width_height(),
-        fig.canvas.buffer_rgba(), "raw", "RGBA", 0, 1).convert("RGB")
+        "RGBA",
+        fig.canvas.get_width_height(),
+        fig.canvas.buffer_rgba(),
+        "raw",
+        "RGBA",
+        0,
+        1,
+    ).convert("RGB")
 
 
-def write_gif(frames, out: Path, *, duration: int, loop: int = 0,
-              colors: int = 96, max_kb: int | None = None,
-              palette_from: str = "first") -> Path:
+def write_gif(
+    frames,
+    out: Path,
+    *,
+    duration: int,
+    loop: int = 0,
+    colors: int = 96,
+    max_kb: int | None = None,
+    palette_from: str = "first",
+) -> Path:
     """Frames to an animated GIF, on one shared palette.
 
     Quantizing every frame against ONE palette rather than each against its own
@@ -231,21 +257,30 @@ def write_gif(frames, out: Path, *, duration: int, loop: int = 0,
     elif palette_from == "first":
         pal = frames[0].quantize(colors=colors, method=2)
     else:
-        raise ValueError(f"palette_from must be 'first' or 'all', "
-                         f"not {palette_from!r}")
+        raise ValueError(f"palette_from must be 'first' or 'all', not {palette_from!r}")
     quant = [f.quantize(palette=pal, dither=0) for f in frames]
-    quant[0].save(out, "GIF", save_all=True, append_images=quant[1:],
-                  duration=duration, loop=loop, disposal=1, optimize=False)
+    quant[0].save(
+        out,
+        "GIF",
+        save_all=True,
+        append_images=quant[1:],
+        duration=duration,
+        loop=loop,
+        disposal=1,
+        optimize=False,
+    )
     kb = out.stat().st_size / 1024
     if max_kb is not None and kb > max_kb:
         raise SystemExit(
             f"{out.name} is {kb:.0f} KB, over the {max_kb} KB ceiling. "
-            f"Drop frames, shrink the figure, or lower `colors`.")
+            f"Drop frames, shrink the figure, or lower `colors`."
+        )
     return out
 
 
 def photos() -> None:
     from PIL import Image
+
     print("Wikimedia photographs (CC0)")
     for name, (url, sha256, credit) in PHOTOS.items():
         img = Image.open(io.BytesIO(get(url, sha256)))
@@ -256,6 +291,7 @@ def photos() -> None:
 def audio() -> None:
     """The waveform of the exact recording section 11 denoises."""
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     import numpy as np
@@ -278,8 +314,10 @@ def audio() -> None:
     fig.savefig(IMAGES / "ds-audio.png", dpi=100, facecolor="white")
     plt.close(fig)
     out = IMAGES / "ds-audio.png"
-    print(f"  {out.relative_to(IMAGES.parent)}  {len(x)} samples at {fs} Hz  "
-          f"{out.stat().st_size // 1024} KB")
+    print(
+        f"  {out.relative_to(IMAGES.parent)}  {len(x)} samples at {fs} Hz  "
+        f"{out.stat().st_size // 1024} KB"
+    )
 
 
 def digits() -> None:
@@ -304,9 +342,13 @@ def digits() -> None:
         # NEAREST on purpose: the pixels are the data, and smoothing them away
         # would hide exactly what "shape (1797, 8, 8)" means.
         tile = Image.fromarray(a, "L").resize((min(cw, ch),) * 2, Image.NEAREST)
-        sheet.paste(tile.convert("RGB"),
-                    (k % cols * (cw + gap) + (cw - tile.width) // 2,
-                     k // cols * (ch + gap) + (ch - tile.height) // 2))
+        sheet.paste(
+            tile.convert("RGB"),
+            (
+                k % cols * (cw + gap) + (cw - tile.width) // 2,
+                k // cols * (ch + gap) + (ch - tile.height) // 2,
+            ),
+        )
     save(sheet, "ds-digits", lossless=True)
 
 
@@ -331,7 +373,7 @@ def cell() -> None:
     side = 280
     top = int(np.clip(cy - side // 2, 0, a.shape[0] - side))
     left = int(np.clip(cx - side // 2, 0, a.shape[1] - side))
-    a = a[top:top + side, left:left + side]
+    a = a[top : top + side, left : left + side]
 
     lo, hi = np.percentile(a, (2, 99.8))
     a = np.clip((a - lo) / (hi - lo), 0, 1)
@@ -363,7 +405,8 @@ def video() -> None:
     raw = get(VIDEO_URL, VIDEO_SHA256)
     frames = []
     for i, frame in enumerate(
-            iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")):
+        iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")
+    ):
         if i % 60 == 0:
             frames.append(frame)
             if len(frames) == 3:

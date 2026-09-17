@@ -59,6 +59,7 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
 
 Exit code is non-zero on any failure, so CI can gate on it.
 """
+
 from __future__ import annotations
 
 import html.parser
@@ -87,7 +88,8 @@ REPO = V["repo"]
 COLAB_RE = re.compile(
     r"^https://colab\.research\.google\.com/github/"
     rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
-    rf"{re.escape(REPO['branch'])}/notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)$")
+    rf"{re.escape(REPO['branch'])}/notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)$"
+)
 
 # Any reference to a notebook from *inside* another notebook. Two forms reach
 # a reader: the full Colab URL, and the bare repo-relative path. Unanchored,
@@ -96,19 +98,20 @@ COLAB_RE = re.compile(
 NB_REF_RE = re.compile(
     r"(?:https://colab\.research\.google\.com/github/"
     rf"{re.escape(REPO['user'])}/{re.escape(REPO['name'])}/blob/"
-    rf"{re.escape(REPO['branch'])}/)?notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)")
+    rf"{re.escape(REPO['branch'])}/)?notebooks/([0-9]{{2}}-[a-z0-9-]+\.ipynb)"
+)
 
 # Images a notebook embeds from the published site. They have to be absolute
 # URLs -- a notebook opened in Colab has no checkout to resolve `images/...`
 # against -- which is exactly what puts them out of reach of every other
 # check here.
-NB_IMG_RE = re.compile(
-    rf"{re.escape(REPO['site'])}/images/([A-Za-z0-9._-]+)")
+NB_IMG_RE = re.compile(rf"{re.escape(REPO['site'])}/images/([A-Za-z0-9._-]+)")
 # Standalone widgets a notebook links, same absolute-URL reason as the
 # images. Check 3 never sees these: a notebook is copied, not rendered,
 # and the URL is https.
 NB_VIZ_RE = re.compile(
-    rf"{re.escape(REPO['site'])}/(interactive/[A-Za-z0-9._-]+\.html)")
+    rf"{re.escape(REPO['site'])}/(interactive/[A-Za-z0-9._-]+\.html)"
+)
 IMG_TAG_RE = re.compile(r"<img\b[^>]*>")
 ALT_RE = re.compile(r'alt="([^"]*)"')
 
@@ -151,8 +154,10 @@ def step(title: str) -> None:
 def check_reading(urls: set[str], where: str) -> None:
     """Fail for any ml-blog URL `where` uses that _variables.yml does not own."""
     for url in sorted(urls - READING_URLS):
-        fail(f"{where}: ml-blog URL {url} is not declared under `reading:` "
-             f"in _variables.yml")
+        fail(
+            f"{where}: ml-blog URL {url} is not declared under `reading:` "
+            f"in _variables.yml"
+        )
 
 
 class Harvester(html.parser.HTMLParser):
@@ -181,6 +186,7 @@ def harvest(path: pathlib.Path) -> Harvester:
 
 
 # ── links ────────────────────────────────────────────────────────────────────
+
 
 def check_links() -> None:
     pages = sorted(DOCS.rglob("*.html"))
@@ -225,8 +231,10 @@ def check_links() -> None:
                     if not m:
                         fail(f"{page.relative_to(DOCS)}: malformed Colab URL {raw}")
                     elif not (NBDIR / m.group(1)).exists():
-                        fail(f"{page.relative_to(DOCS)}: Colab URL points at "
-                             f"notebooks/{m.group(1)}, which does not exist")
+                        fail(
+                            f"{page.relative_to(DOCS)}: Colab URL points at "
+                            f"notebooks/{m.group(1)}, which does not exist"
+                        )
                     else:
                         seen_notebooks.add(m.group(1))
                 continue
@@ -234,9 +242,11 @@ def check_links() -> None:
             url = urllib.parse.urlparse(raw)
             n_internal += 1
 
-            if not url.path:                       # bare "#anchor" — same page
+            if not url.path:  # bare "#anchor" — same page
                 if url.fragment and url.fragment not in h.ids:
-                    fail(f"{page.relative_to(DOCS)}: no anchor #{url.fragment} on this page")
+                    fail(
+                        f"{page.relative_to(DOCS)}: no anchor #{url.fragment} on this page"
+                    )
                 continue
 
             path_part = urllib.parse.unquote(url.path)
@@ -261,13 +271,17 @@ def check_links() -> None:
                 if target not in ids_by_page:
                     ids_by_page[target] = harvest(target).ids
                 if url.fragment not in ids_by_page[target]:
-                    fail(f"{page.relative_to(DOCS)}: {raw} — page exists but "
-                         f"has no anchor #{url.fragment}")
+                    fail(
+                        f"{page.relative_to(DOCS)}: {raw} — page exists but "
+                        f"has no anchor #{url.fragment}"
+                    )
 
     print(f"      {n_internal} internal links checked (path + fragment)")
     step("Colab URLs")
-    print(f"      {n_colab} Colab URLs, all well-formed, "
-          f"{len(seen_notebooks)}/{len(NOTEBOOKS)} notebooks referenced")
+    print(
+        f"      {n_colab} Colab URLs, all well-formed, "
+        f"{len(seen_notebooks)}/{len(NOTEBOOKS)} notebooks referenced"
+    )
     for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         if name not in seen_notebooks:
@@ -275,6 +289,7 @@ def check_links() -> None:
 
 
 # ── both decks carry every section ───────────────────────────────────────────
+
 
 def check_decks() -> None:
     step("Section anchors in both decks")
@@ -291,8 +306,9 @@ def check_decks() -> None:
             continue
         h = harvest(deck)
         found[lang] = h.ids
-        reading[lang] = {u for u in h.links if u in READING_URLS or
-                         BLOG_RE.fullmatch(u)}
+        reading[lang] = {
+            u for u in h.links if u in READING_URLS or BLOG_RE.fullmatch(u)
+        }
         check_reading(reading[lang], f"slides/{lang}")
         for anchor in expected:
             if anchor not in found[lang]:
@@ -313,14 +329,18 @@ def check_decks() -> None:
     for a in sorted(only_es):
         fail(f"anchor #{a} is in the ES deck but not the EN deck")
     print(f"      {len(expected)} anchors present in both decks, no extras in either")
-    print(f"      {len(reading['en'])} reading links, identical in both decks, "
-          f"all declared in _variables.yml")
+    print(
+        f"      {len(reading['en'])} reading links, identical in both decks, "
+        f"all declared in _variables.yml"
+    )
 
 
 # ── notebooks ────────────────────────────────────────────────────────────────
 
+
 def check_notebooks() -> None:
     import json
+
     step("Notebooks")
     try:
         import nbformat
@@ -338,8 +358,9 @@ def check_notebooks() -> None:
         nb = json.loads(path.read_text(encoding="utf-8"))
         if nbformat is not None:
             try:
-                nbformat.validate(nbformat.reads(path.read_text(encoding="utf-8"),
-                                                 as_version=4))
+                nbformat.validate(
+                    nbformat.reads(path.read_text(encoding="utf-8"), as_version=4)
+                )
             except Exception as e:  # noqa: BLE001 — report, do not raise
                 fail(f"{name}: nbformat.validate — {e}")
         for c in nb["cells"]:
@@ -393,13 +414,13 @@ def check_notebooks() -> None:
         # cells are copied between notebooks -- is caught by name.
         own = {t for t in shown if t.startswith(f"cube-{name[:2]}-")}
         if not own:
-            fail(f"{name}: shows no cube animation of its own "
-                 f"-- expected at least one images/cube-{name[:2]}-*")
-        stray = sorted(t for t in shown
-                       if t.startswith("cube-") and t not in own)
+            fail(
+                f"{name}: shows no cube animation of its own "
+                f"-- expected at least one images/cube-{name[:2]}-*"
+            )
+        stray = sorted(t for t in shown if t.startswith("cube-") and t not in own)
         if stray:
-            fail(f"{name}: shows another notebook's animation: "
-                 f"{', '.join(stray)}")
+            fail(f"{name}: shows another notebook's animation: {', '.join(stray)}")
         for alt in IMG_TAG_RE.findall(body):
             if not ALT_RE.search(alt) or not ALT_RE.search(alt).group(1).strip():
                 fail(f"{name}: an <img> has no alt text")
@@ -408,18 +429,21 @@ def check_notebooks() -> None:
                 fail(f"{name}: links {target}, which does not exist")
         n_maths += check_notebook_maths(nb, name)
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
-        f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
+        f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS
+    }
     for e in sorted(unknown):
-        fail(f"notebooks/{e} is neither a section nor an extra "
-             f"in _variables.yml")
-    print(f"      {len(NOTEBOOKS)} notebooks ({len(SECTIONS)} sections, "
-          f"{len(EXTRAS)} extras): valid, no outputs, no execution counts, "
-          f"badges self-consistent")
+        fail(f"notebooks/{e} is neither a section nor an extra in _variables.yml")
+    print(
+        f"      {len(NOTEBOOKS)} notebooks ({len(SECTIONS)} sections, "
+        f"{len(EXTRAS)} extras): valid, no outputs, no execution counts, "
+        f"badges self-consistent"
+    )
     print(f"      {n_refs} links from one notebook to another, all resolving")
-    print(f"      {n_imgs} site images embedded, all present with alt "
-          f"text, each a cube animation of the notebook showing it")
-    print(f"      {n_maths} display-maths blocks, balanced and in plain "
-          f"markdown")
+    print(
+        f"      {n_imgs} site images embedded, all present with alt "
+        f"text, each a cube animation of the notebook showing it"
+    )
+    print(f"      {n_maths} display-maths blocks, balanced and in plain markdown")
 
 
 def check_notebook_maths(nb, name) -> int:
@@ -447,30 +471,39 @@ def check_notebook_maths(nb, name) -> int:
         if text.count("$$") % 2:
             fail(f"{name}: cell {cell.get('id')} has an unclosed $$")
         if len(opens) != text.count("$$"):
-            fail(f"{name}: cell {cell.get('id')} has a $$ sharing a line with "
-                 f"other text -- put it on its own line")
+            fail(
+                f"{name}: cell {cell.get('id')} has a $$ sharing a line with "
+                f"other text -- put it on its own line"
+            )
         count += text.count("$$") // 2
         for i in opens:
             head = "\n".join(lines[:i])
             if head.count("<div") != head.count("</div>"):
-                fail(f"{name}: cell {cell.get('id')} has display maths inside "
-                     f"a raw HTML block, where it will not be typeset")
+                fail(
+                    f"{name}: cell {cell.get('id')} has display maths inside "
+                    f"a raw HTML block, where it will not be typeset"
+                )
             before = next((x for x in reversed(lines[:i]) if x.strip()), "")
             # Find the closing fence the same way the opening one was found --
             # by stripping. `lines.index("$$", ...)` matches the exact string,
             # so a block indented under a list item ("  $$") was detected as
             # open and then not found as closed, and the checker died with a
             # ValueError instead of reporting anything at all.
-            j = next((n for n, x in enumerate(lines[i + 1:], i + 1)
-                      if x.strip() == "$$"), len(lines) - 1)
-            below = next((x for x in lines[j + 1:] if x.strip()), "")
+            j = next(
+                (n for n, x in enumerate(lines[i + 1 :], i + 1) if x.strip() == "$$"),
+                len(lines) - 1,
+            )
+            below = next((x for x in lines[j + 1 :] if x.strip()), "")
             if before.startswith(">") and below.startswith(">"):
-                fail(f"{name}: cell {cell.get('id')} has display maths inside "
-                     f"a blockquote, which splits it in two")
+                fail(
+                    f"{name}: cell {cell.get('id')} has display maths inside "
+                    f"a blockquote, which splits it in two"
+                )
     return count
 
 
 # ── docs/ serves the notebooks that are committed ────────────────────────────
+
 
 def check_docs_notebooks() -> None:
     """The site's notebooks are the committed ones, byte for byte.
@@ -498,26 +531,34 @@ def check_docs_notebooks() -> None:
     for name in sorted(expected):
         source, served = NBDIR / name, served_dir / name
         if not source.exists():
-            continue          # check_notebooks already reported this one
+            continue  # check_notebooks already reported this one
         if not served.exists():
-            fail(f"docs/notebooks/{name} is missing — re-render, and check "
-                 f"`notebooks/*.ipynb` is still under `resources:`")
+            fail(
+                f"docs/notebooks/{name} is missing — re-render, and check "
+                f"`notebooks/*.ipynb` is still under `resources:`"
+            )
         elif served.read_bytes() != source.read_bytes():
             stale.append(name)
     if stale:
-        fail(f"docs/ serves an old copy of {len(stale)} notebook(s): "
-             f"{', '.join(stale)} — re-render")
-    for orphan in sorted({p.name for p in served_dir.glob("*.ipynb")}
-                         - expected):
-        fail(f"docs/notebooks/{orphan} is served but is neither a section nor "
-             f"an extra — a rename left it behind; delete it")
+        fail(
+            f"docs/ serves an old copy of {len(stale)} notebook(s): "
+            f"{', '.join(stale)} — re-render"
+        )
+    for orphan in sorted({p.name for p in served_dir.glob("*.ipynb")} - expected):
+        fail(
+            f"docs/notebooks/{orphan} is served but is neither a section nor "
+            f"an extra — a rename left it behind; delete it"
+        )
 
     if not stale:
-        print(f"      {len(expected)} notebooks served from docs/ are "
-              f"byte-identical to the ones in notebooks/")
+        print(
+            f"      {len(expected)} notebooks served from docs/ are "
+            f"byte-identical to the ones in notebooks/"
+        )
 
 
 # ── EN and ES notebooks pages agree ──────────────────────────────────────────
+
 
 def check_notebooks_parity() -> None:
     """The EN and ES notebooks pages must list the same thirteen sections.
@@ -542,10 +583,8 @@ def check_notebooks_parity() -> None:
         text = page.read_text(encoding="utf-8")
         for s in SECTIONS:
             if f"{s['n']}-{s['slug']}.ipynb" not in text:
-                fail(f"{page.relative_to(DOCS)}: no notebook link for "
-                     f"section {s['n']}")
-    print(f"      both pages list all {len(SECTIONS)} sections "
-          f"with notebook links")
+                fail(f"{page.relative_to(DOCS)}: no notebook link for section {s['n']}")
+    print(f"      both pages list all {len(SECTIONS)} sections with notebook links")
 
 
 def check_references() -> None:
@@ -572,8 +611,9 @@ def check_references() -> None:
         h = harvest(page)
         ids[lang] = h.ids
         external[lang] = {u for u in h.links if u.startswith(("http://", "https://"))}
-        check_reading({u for u in external[lang] if BLOG_RE.fullmatch(u)},
-                      f"references ({lang})")
+        check_reading(
+            {u for u in external[lang] if BLOG_RE.fullmatch(u)}, f"references ({lang})"
+        )
 
     for url in sorted(external["en"] - external["es"]):
         fail(f"references: {url} is cited on the EN page but not the ES page")
@@ -595,10 +635,12 @@ def check_references() -> None:
     # Reporting the shared count rather than the EN one: with a mismatch above,
     # "N citations, identical on both pages" would be the one line in the run
     # that contradicts the FAILs printed directly over it.
-    both = "identical on both pages" if external["en"] == external["es"] else \
-           "on both pages, plus the mismatches above"
-    print(f"      {len(shared)} external citations {both}, "
-          f"across {n_groups} groups")
+    both = (
+        "identical on both pages"
+        if external["en"] == external["es"]
+        else "on both pages, plus the mismatches above"
+    )
+    print(f"      {len(shared)} external citations {both}, across {n_groups} groups")
 
 
 def check_schedule() -> None:
@@ -613,8 +655,13 @@ def check_schedule() -> None:
     every segment exactly once and in order, since the table both decks print
     is generated straight from them.
     """
-    from timeline import (ScheduleError, agenda_rows,  # noqa: PLC0415
-                          clock, section_windows, total_minutes)
+    from timeline import (
+        ScheduleError,
+        agenda_rows,  # noqa: PLC0415
+        clock,
+        section_windows,
+        total_minutes,
+    )
 
     step("Section start and end times")
     windows = section_windows()
@@ -622,16 +669,22 @@ def check_schedule() -> None:
         want = (clock(start, "+"), clock(end, "+"))
         got = (s.get("start"), s.get("end"))
         if got != want:
-            fail(f"section {s['n']}: start/end is {got[0]}–{got[1]}, "
-                 f"derived {want[0]}–{want[1]}")
+            fail(
+                f"section {s['n']}: start/end is {got[0]}–{got[1]}, "
+                f"derived {want[0]}–{want[1]}"
+            )
 
     minute, total = total_minutes(), V["workshop"]["minutes"]
     if minute != total:
-        fail(f"sections + quizzes + breaks come to {minute} min, "
-             f"workshop.minutes says {total}")
+        fail(
+            f"sections + quizzes + breaks come to {minute} min, "
+            f"workshop.minutes says {total}"
+        )
     else:
-        print(f"      {len(windows)} sections end at {clock(minute, '+')}"
-              f" — {total} min including quizzes and breaks")
+        print(
+            f"      {len(windows)} sections end at {clock(minute, '+')}"
+            f" — {total} min including quizzes and breaks"
+        )
 
     # gen_tables.py raises rather than writing a wrong agenda, so this fails
     # only on a tree where _variables.yml has moved on and the generator has
@@ -642,9 +695,11 @@ def check_schedule() -> None:
     except ScheduleError as e:
         fail(str(e))
     else:
-        print(f"      {len(rows)} agenda rows account for all {len(windows)} "
-              f"sections, 3 quizzes and "
-              f"{len(V['schedule']['break_after'])} breaks, in clock order")
+        print(
+            f"      {len(rows)} agenda rows account for all {len(windows)} "
+            f"sections, 3 quizzes and "
+            f"{len(V['schedule']['break_after'])} breaks, in clock order"
+        )
 
 
 def check_deck_total() -> None:
@@ -664,11 +719,15 @@ def check_deck_total() -> None:
         return
     got, want = int(m.group(1)), V["workshop"]["minutes"] * 60
     if got != want:
-        fail(f"deck-pace.html TOTAL_SECONDS is {got}, "
-             f"workshop.minutes ({V['workshop']['minutes']}) wants {want}")
+        fail(
+            f"deck-pace.html TOTAL_SECONDS is {got}, "
+            f"workshop.minutes ({V['workshop']['minutes']}) wants {want}"
+        )
     else:
-        print(f"      TOTAL_SECONDS {got} = {V['workshop']['minutes']} min, "
-              f"matching workshop.minutes")
+        print(
+            f"      TOTAL_SECONDS {got} = {V['workshop']['minutes']} min, "
+            f"matching workshop.minutes"
+        )
 
 
 def check_solution_independence() -> None:
@@ -681,6 +740,7 @@ def check_solution_independence() -> None:
     """
     import ast
     import builtins
+
     step("Visible cells do not depend on folded solutions")
     checked = 0
     for s in NOTEBOOKS:
@@ -688,14 +748,18 @@ def check_solution_independence() -> None:
         if not path.exists():
             continue
         import json
+
         nb = json.loads(path.read_text(encoding="utf-8"))
         visible_bound: set[str] = set(dir(builtins))
         solution_bound: set[str] = set()
         for c in nb["cells"]:
             if c["cell_type"] != "code":
                 continue
-            src = "\n".join(l for l in "".join(c["source"]).split("\n")
-                             if not l.lstrip().startswith(("#@title", "%", "!")))
+            src = "\n".join(
+                line
+                for line in "".join(c["source"]).split("\n")
+                if not line.lstrip().startswith(("#@title", "%", "!"))
+            )
             try:
                 tree = ast.parse(src)
             except SyntaxError as e:
@@ -704,22 +768,36 @@ def check_solution_independence() -> None:
                 fail(f"{path.name}: cell {c['id']} does not parse — {e}")
                 continue
             is_solution = "solution" in c["metadata"].get("tags", [])
-            loads = {n.id for n in ast.walk(tree)
-                     if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
-            binds = {n.id for n in ast.walk(tree)
-                     if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)}
-            binds |= {n.name for n in ast.walk(tree)
-                      if isinstance(n, (ast.FunctionDef, ast.ClassDef))}
-            binds |= {(a.asname or a.name).split(".")[0]
-                      for n in ast.walk(tree)
-                      if isinstance(n, (ast.Import, ast.ImportFrom))
-                      for a in n.names}
+            loads = {
+                n.id
+                for n in ast.walk(tree)
+                if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)
+            }
+            binds = {
+                n.id
+                for n in ast.walk(tree)
+                if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Store)
+            }
+            binds |= {
+                n.name
+                for n in ast.walk(tree)
+                if isinstance(n, (ast.FunctionDef, ast.ClassDef))
+            }
+            binds |= {
+                (a.asname or a.name).split(".")[0]
+                for n in ast.walk(tree)
+                if isinstance(n, (ast.Import, ast.ImportFrom))
+                for a in n.names
+            }
             # Parameters bind, they do not load. Without this, the `err = lambda
             # a: ...` idiom in notebook 09 false-positives as soon as any
             # solution cell happens to bind a name matching a parameter.
             binds |= {n.arg for n in ast.walk(tree) if isinstance(n, ast.arg)}
-            binds |= {n.name for n in ast.walk(tree)
-                      if isinstance(n, ast.ExceptHandler) and n.name}
+            binds |= {
+                n.name
+                for n in ast.walk(tree)
+                if isinstance(n, ast.ExceptHandler) and n.name
+            }
             if is_solution:
                 solution_bound |= binds
             else:
@@ -728,12 +806,16 @@ def check_solution_independence() -> None:
                 # the same name. That is exactly how s09-20 was fixed.
                 leaked = (loads & solution_bound) - visible_bound - binds
                 for name in sorted(leaked):
-                    fail(f"{path.name}: visible cell {c['id']} uses `{name}`, "
-                         f"which only a folded solution cell defines")
+                    fail(
+                        f"{path.name}: visible cell {c['id']} uses `{name}`, "
+                        f"which only a folded solution cell defines"
+                    )
                 visible_bound |= binds
                 checked += 1
-    print(f"      {checked} visible code cells across {len(NOTEBOOKS)} "
-          f"notebooks are self-sufficient")
+    print(
+        f"      {checked} visible code cells across {len(NOTEBOOKS)} "
+        f"notebooks are self-sufficient"
+    )
 
 
 def check_kahoot_urls() -> None:
@@ -741,13 +823,20 @@ def check_kahoot_urls() -> None:
     the facilitator's screen works. It is a reminder that the direct join links
     have not been pasted in yet."""
     step("Kahoot join URLs")
-    todo = [q for q in ("q1", "q2", "q3")
-            if V["kahoot"][q]["url"] == V["kahoot"]["default_url"]]
+    todo = [
+        q
+        for q in ("q1", "q2", "q3")
+        if V["kahoot"][q]["url"] == V["kahoot"]["default_url"]
+    ]
     if todo:
-        print(f"      TODO  {len(todo)} of 3 still use the generic "
-              f"{V['kahoot']['default_url']} fallback: {', '.join(todo)}")
-        print(f"      Import each .xlsx at kahoot.it, then paste the join URLs "
-              f"into _variables.yml.")
+        print(
+            f"      TODO  {len(todo)} of 3 still use the generic "
+            f"{V['kahoot']['default_url']} fallback: {', '.join(todo)}"
+        )
+        print(
+            "      Import each .xlsx at kahoot.it, then paste the join URLs "
+            "into _variables.yml."
+        )
     else:
         print("      all three point at a specific kahoot")
 
@@ -800,8 +889,9 @@ def check_companion() -> None:
         # YouTube id lands in both languages the embed carries its own, and
         # video_block() stops reading `thumb` entirely. Asking for it then
         # would be asking for a PNG that changes nothing on the page.
-        if name == "video" and all(c["video"].get(f"youtube_id_{la}")
-                                   for la in ("en", "es")):
+        if name == "video" and all(
+            c["video"].get(f"youtube_id_{la}") for la in ("en", "es")
+        ):
             continue
         if not c[name].get("thumb"):
             pending.append(f"{name}.thumb")
@@ -815,17 +905,26 @@ def check_companion() -> None:
     # this check and always will be.
     known = {s["n"] for s in SECTIONS}
     for n, s in enumerate(c.get("shorts") or [], 1):
-        missing = [k for k in ("url", "title_en", "title_es", "length",
-                               "lang", "covers") if not s.get(k)]
+        missing = [
+            k
+            for k in ("url", "title_en", "title_es", "length", "lang", "covers")
+            if not s.get(k)
+        ]
         if missing:
-            fail(f"companion.shorts[{n}] ({s.get('title_en') or 'untitled'}): "
-                 f"missing {', '.join(missing)}")
+            fail(
+                f"companion.shorts[{n}] ({s.get('title_en') or 'untitled'}): "
+                f"missing {', '.join(missing)}"
+            )
         elif s["covers"] not in known:
-            fail(f"companion.shorts[{n}] ({s['title_en']}): covers "
-                 f"{s['covers']!r}, which is not a section")
+            fail(
+                f"companion.shorts[{n}] ({s['title_en']}): covers "
+                f"{s['covers']!r}, which is not a section"
+            )
         elif s["lang"] not in ("en", "es"):
-            fail(f"companion.shorts[{n}] ({s['title_en']}): lang "
-                 f"{s['lang']!r} is neither en nor es")
+            fail(
+                f"companion.shorts[{n}] ({s['title_en']}): lang "
+                f"{s['lang']!r} is neither en nor es"
+            )
     if not c.get("shorts"):
         pending.append("shorts")
     if not c.get("infographics"):
@@ -834,31 +933,37 @@ def check_companion() -> None:
         # An entry still holding the notebook's own front door is a
         # placeholder, not a published link -- the same distinction the
         # quiz/flashcards/mindmap loop above draws with `default_url`.
-        placeholder = [i for i in c["infographics"]
-                       if i.get("url") == c["default_url"]]
+        placeholder = [i for i in c["infographics"] if i.get("url") == c["default_url"]]
         if placeholder:
-            pending.append(f"{len(placeholder)} infographic url(s) still at "
-                           f"default_url")
-        unexported = [i for i in c["infographics"]
-                      if not i.get("file") and i not in placeholder]
+            pending.append(
+                f"{len(placeholder)} infographic url(s) still at default_url"
+            )
+        unexported = [
+            i for i in c["infographics"] if not i.get("file") and i not in placeholder
+        ]
         if unexported:
-            interim.append(f"{len(unexported)} infographic(s) linked, not "
-                           f"exported")
+            interim.append(f"{len(unexported)} infographic(s) linked, not exported")
     if pending:
-        print(f"      TODO  {len(pending)} companion fields still unset: "
-              f"{', '.join(pending)}")
-        print("      Each one degrades to an honest note on the page, so the "
-              "site is publishable meanwhile.")
+        print(
+            f"      TODO  {len(pending)} companion fields still unset: "
+            f"{', '.join(pending)}"
+        )
+        print(
+            "      Each one degrades to an honest note on the page, so the "
+            "site is publishable meanwhile."
+        )
     if interim:
-        print(f"      TODO  published as NotebookLM links, not yet exported: "
-              f"{', '.join(interim)}")
-        print("      These work today, but only for a visitor with a Google "
-              "account.")
+        print(
+            f"      TODO  published as NotebookLM links, not yet exported: "
+            f"{', '.join(interim)}"
+        )
+        print("      These work today, but only for a visitor with a Google account.")
     if not pending and not interim:
         print("      every companion artifact has a link or a committed file")
 
 
 # ── the two handbooks move together ──────────────────────────────────────────
+
 
 def check_handbooks() -> None:
     """The EN and ES handbooks still have the same shape.
@@ -894,18 +999,24 @@ def check_handbooks() -> None:
             "## headings": len(re.findall(r"^## ", t, re.M)),
             "### headings": len(re.findall(r"^### ", t, re.M)),
             "table rows": len(re.findall(r"^\|", t, re.M)),
-            "notebooks linked":
-                len(set(re.findall(r"notebooks/(\d\d-[a-z0-9-]+)\.ipynb", t))),
+            "notebooks linked": len(
+                set(re.findall(r"notebooks/(\d\d-[a-z0-9-]+)\.ipynb", t))
+            ),
         }
 
     a, b = shape(en), shape(es)
     for k in a:
         if a[k] != b[k]:
-            fail(f"handbooks disagree on {k}: EN has {a[k]}, ES has {b[k]} — "
-                 f"the two must change in the same commit")
+            fail(
+                f"handbooks disagree on {k}: EN has {a[k]}, ES has {b[k]} — "
+                f"the two must change in the same commit"
+            )
     if a == b:
-        print("      " + ", ".join(f"{v} {k}" for k, v in a.items())
-              + " — identical in both")
+        print(
+            "      "
+            + ", ".join(f"{v} {k}" for k, v in a.items())
+            + " — identical in both"
+        )
 
 
 def check_kahoot_pages() -> None:
@@ -917,8 +1028,7 @@ def check_kahoot_pages() -> None:
     """
     step("EN / ES Kahoot pages have the quiz anchors")
     expected = [f"quiz-{n}" for n in (1, 2, 3)]
-    pages = (("en", DOCS / "kahoot.html"),
-             ("es", DOCS / "es" / "kahoot.html"))
+    pages = (("en", DOCS / "kahoot.html"), ("es", DOCS / "es" / "kahoot.html"))
     found = {}
     for lang, page in pages:
         if not page.exists():
@@ -928,15 +1038,16 @@ def check_kahoot_pages() -> None:
         for anchor in expected:
             if anchor not in found[lang]:
                 fail(f"kahoot ({lang}): missing anchor #{anchor}")
-    if len(found) == 2 and all(a in found["en"] and a in found["es"]
-                               for a in expected):
+    if len(found) == 2 and all(a in found["en"] and a in found["es"] for a in expected):
         print("      quiz-1, quiz-2, quiz-3 present on both pages")
 
 
 def main() -> int:
     only_nb = "--notebooks-only" in sys.argv
-    print(f"Checking {'notebooks' if only_nb else 'docs/ and notebooks/'} "
-          f"against _variables.yml")
+    print(
+        f"Checking {'notebooks' if only_nb else 'docs/ and notebooks/'} "
+        f"against _variables.yml"
+    )
     check_notebooks()
     if not only_nb:
         check_docs_notebooks()

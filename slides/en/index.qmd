@@ -18,7 +18,7 @@ execute:
 lang: en
 ---
 
-## {background-image="images/slides-final/slide-01.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-01.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Tensors for Machine Learning — from real data to modern models. Ravi Kalia and Sebastian Laverde Chunza.</p>
 
@@ -29,11 +29,11 @@ avoid idiom, and name the Spanish cognates early: eje, descomposición,
 contracción, convolución.
 :::
 
-## {background-image="images/slides-final/slide-02.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-02.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">The workshop idea: four cards show scalar, vector, matrix and tensor as 0D, 1D, 2D and ND arrays, each defined by its shape. The guiding question of the day: before operating, what does each axis represent?</p>
 
-## {background-image="images/slides-final/slide-02a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-02a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Four ideas, one object. The whole day in four cards. Card one: a tensor generalizes a matrix. A scalar has no axes, a vector one, a matrix two, and a tensor as many as the data needs. Card two: it holds the data. Images, video frames, taxi trips and prices are all one box of numbers, and every axis stands for something. Card three: its axes can be moved. Transpose permutes them. Reshape re-reads the same flat numbers, so the same shape can carry a different meaning. Card four: it factors. Numbers into primes, quadratics into roots, matrices into LU, QR and SVD, and tensors too. Where an inverse does not exist, the pseudoinverse answers. Carry this all day: before you operate on a tensor, name its axes.</p>
 
@@ -46,7 +46,7 @@ Say "axes", not "dimensions", from here on — and remember the "rank" warning i
 due at the start of Part I.
 :::
 
-## {background-image="images/slides-final/slide-03.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-03.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Real data, real problems. Four real datasets used throughout the workshop: handwritten digits, stained histology, California housing, and NYC taxi trips. Each carries the role it plays later.</p>
 
@@ -126,7 +126,7 @@ Setup was pre-work. Collect the individual entry check before discussion.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-06.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-06.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Map of factorizations: six matrix and tensor factorizations arranged on a ladder from LU through Cholesky, QR, SVD, Tucker and CP, each with one phrase describing what it buys.</p>
 <p class="sr-only">Section 09 walks this map on real data: every factorization written as a constrained optimization, the cost of each one derived and then measured, and SVD as the best rank-k approximation there is. The "which one, and what does it cost me" question this ladder raises is answered two hours later, in the room.</p>
@@ -152,7 +152,7 @@ there are so many of these, and 09 is where the map gets walked with a cost
 column attached.
 :::
 
-## {background-image="images/slides-final/slide-07.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-07.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">What does a factorization give you? A four-step diagram — number, polynomial, matrix, tensor — shows that factorizing reveals useful structure rather than just rewriting an expression.</p>
 
@@ -341,7 +341,7 @@ Sources: [BLAS](https://www.netlib.org/blas/),
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-09.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-09.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Batch is not time. Sixteen shuffled handwritten digits stay recognisable, while shuffled video frames turn the storm sequence meaningless. Reordering a batch axis is safe. Reordering a time axis is not.</p>
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 02 in Google Colab"}
@@ -377,7 +377,7 @@ padded batch with its validity mask.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-11.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-11.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Indexing in action: the same four indexing, masking, satellite-cropping and broadcasting panels, with a summary strip naming each technique.</p>
 [Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 03 in Google Colab"}
@@ -406,12 +406,12 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-13.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-13.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Transpose is not reshape: the histology transpose-versus-reshape comparison, plus a real NHWC-to-NCHW batch of a histology slide, an astronaut photo and a cat photo, each correctly reordered.</p>
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 04 in Google Colab"}
 
-## {#sec-kahoot-1 background-image="images/slides-final/slide-14.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-kahoot-1 background-image="images/slides-final/slide-14.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 1 — {{< var kahoot.q1.title_en >}}</h1>
 <p class="sr-only">Active break: Kahoot 1, {{< var kahoot.q1.title_en >}}. {{< var kahoot.q1.questions >}} questions covering axes, shapes, indexing and transpose. Join at {{< var kahoot.join >}}; answer with intuition first, then justify with shapes.</p>
@@ -456,7 +456,7 @@ If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-16.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-16.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">File to frames to tensor to model: a four-stage pipeline showing how a video becomes a masked tensor, with the validity-mask formula spelled out.</p>
 [Colab ↗]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 05 in Google Colab"}
@@ -485,11 +485,11 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-18.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-18.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Anatomy of einsum: the expression np.einsum('ij,jk-&gt;ik', A, B) is broken into its input labels, its shared index, and the indices that survive, with a diagram of the matrices each letter indexes.</p>
 
-## {background-image="images/slides-final/slide-19.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-19.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">NumPy to einsum: a table maps inner product, outer product, matmul, transpose, trace, diagonal, batched matmul and axis-sum to their einsum equivalents.</p>
 [Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 06 in Google Colab"}
@@ -535,7 +535,7 @@ For duplicated columns `A = [x, x]`, predictions depend on the sum of the coeffi
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer"}
 
 
-## {.extension-slide background-image="images/slides-final/slide-21.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {.extension-slide background-image="images/slides-final/slide-21.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.extension-label}
 Explore later
@@ -546,7 +546,7 @@ Explore later
 
 [📖 {{< var reading.svd.title_en >}} ↗]({{< var reading.svd.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
-## {.extension-slide background-image="images/slides-final/slide-21a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {.extension-slide background-image="images/slides-final/slide-21a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.extension-label}
 Explore later
@@ -562,7 +562,7 @@ Explore later
 Optional extension after the duplicate-column core. The four Moore–Penrose identities and housing fit are follow-up work.
 :::
 
-## {#sec-kahoot-2 background-image="images/slides-final/slide-22.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-kahoot-2 background-image="images/slides-final/slide-22.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 2 — {{< var kahoot.q2.title_en >}}</h1>
 <p class="sr-only">Active break: Kahoot 2, {{< var kahoot.q2.title_en >}}. {{< var kahoot.q2.questions >}} questions covering einsum, similarity and the pseudoinverse. Join at {{< var kahoot.join >}}; decide the operation first, then justify with indices and shapes.</p>
@@ -605,7 +605,7 @@ distance both get re-covered narratively in the wrap-up.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-24.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-24.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08's own output once Issue #49 is implemented.</p>
 [Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 08 in Google Colab"}
@@ -637,7 +637,7 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-26a.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-26a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Factor once, solve many: the same real least-squares problem three ways. Normal equations are fastest to write, and they square the condition number. QR is the stable default, and never forms A-transpose-A. SVD is the most expensive and the most informative, because Eckart-Young gives the truncation error without building the truncation.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
@@ -675,7 +675,7 @@ If you are short of time, run Exercise 2 and skip Exercise 3.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {background-image="images/slides-final/slide-28.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-28.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.</p>
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
@@ -688,7 +688,7 @@ tensors so models run on phones. In biotech, on (genes × samples × conditions)
 they find structure PCA cannot reach — PCA can only ever see two axes.
 :::
 
-## {#sec-kahoot-3 background-image="images/slides-final/slide-29.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {#sec-kahoot-3 background-image="images/slides-final/slide-29.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_en >}}</h1>
 <p class="sr-only">Active break: Kahoot 3, {{< var kahoot.q3.title_en >}}. {{< var kahoot.q3.questions >}} questions covering convolution, correlation, Tucker and CP. Join at {{< var kahoot.join >}}; recognise the structure first, then choose the operator.</p>
@@ -730,7 +730,7 @@ wrap-up's own recap, so segue straight from the podium into the wrap-up.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
-## {.extension-slide background-image="images/slides-final/slide-29b.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {.extension-slide background-image="images/slides-final/slide-29b.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 ::: {.extension-label}
 Explore later
@@ -743,7 +743,7 @@ Explore later
 Optional reference: Tensor Train and t-SVD are outside today’s CP–Tucker comparison. Return to the core activity if teaching live.
 :::
 
-## {background-image="images/slides-final/slide-30.png" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">One idea connects the workshop: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
 

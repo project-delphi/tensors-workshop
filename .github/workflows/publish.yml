@@ -74,6 +74,20 @@ jobs:
             exit 1
           fi
 
+      - name: Lint
+        # ruff over the scripts and tests, configured in pyproject.toml; and
+        # the whitespace half of `git diff --check`, over the whole tree rather
+        # than a diff, because on a push to main there is no diff to check.
+        # Notebooks are excluded: they are JSON, and their Markdown cells end
+        # lines with two spaces on purpose.
+        run: |
+          uv run --group lint ruff check scripts tests
+          uv run --group lint ruff format --check scripts tests
+          if git grep -n -I -E '[[:space:]]+$' -- ':!*.ipynb'; then
+            echo "::error::Trailing whitespace (see above)."
+            exit 1
+          fi
+
       - name: Check teaching materials
         run: |
           uv run --group test python scripts/check_teaching_materials.py

@@ -184,23 +184,30 @@ body .quarto-title-block .quarto-title-banner {
 }
 
 // ─── figures ────────────────────────────────────────────────────────────────
-// The figures are wider than the 46rem the prose is set to, and shrinking a
-// five-panel band to the text measure makes its labels unreadable. Only
-// paragraphs that hold nothing but an image are let out; a paragraph with an
-// inline image in it stays at the reading width.
+// A figure-only paragraph is boxed, and kept to the prose measure it sits in.
+// The four handbook figures used to be `{.column-page}`, which let each one
+// out into Quarto's page grid -- and with the table of contents open that
+// grid is asymmetric, so on a laptop every figure sat off to the right of the
+// text it illustrates, edge to edge with nothing around it. Boxed and centred
+// on the 46rem measure, a figure reads as part of the page. The labels on the
+// wide ones are small at that width, which is what `.lightbox` on each of
+// them is for: a click opens the full-size image (see `lightbox:` in
+// _quarto.yml). Only paragraphs that hold nothing but an image are boxed; a
+// paragraph with an inline image in it is prose.
 main img { max-width: 100%; height: auto; }
 // Both spellings, because a lightboxed image is `p > a > img` and the anchor
-// once defeated this rule site-wide (see `lightbox:` in _quarto.yml). The
-// `{.column-page}` on each figure turns its paragraph into a page-wide grid,
-// so the paragraph itself must be free of the prose measure or "page width"
-// is computed inside a 46rem box. The cap keeps the tallest figure -- the
-// 1300x1160 factorization map -- from becoming a wall on a wide monitor.
+// once defeated this rule site-wide.
 main p:has(> img:only-child),
 main p:has(> a:only-child > img:only-child) {
-  max-width: min(100%, 68rem);
-  margin: 1.8rem auto .6rem;
+  max-width: 46rem;
+  margin: 1.8rem 0 .6rem;
+  padding: .9rem 1rem;
+  border: 1px solid #d9dee3;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, .05);
   text-align: center;
-  // Quarto makes this paragraph a grid, and `text-align` does not centre a
+  // Quarto can make this paragraph a grid, and `text-align` does not centre a
   // grid item -- the 760px video figure sat at the left of its column.
   justify-items: center;
 }

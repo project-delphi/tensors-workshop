@@ -50,6 +50,7 @@ or execution count would fail CI and check 1.
     uv run --group execute python scripts/test_notebooks.py --only 10
     uv run --group execute python scripts/test_notebooks.py --offline
 """
+
 from __future__ import annotations
 
 import argparse
@@ -65,7 +66,12 @@ ROOT = Path(__file__).resolve().parent.parent
 NBDIR = ROOT / "notebooks"
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from check_teaching_materials import check_sequence, route_of, support_of, workshop_meta  # noqa: E402
+from check_teaching_materials import (  # noqa: E402
+    check_sequence,
+    route_of,
+    support_of,
+    workshop_meta,
+)
 
 # Matplotlib must not try to open a window: this runs headless on a CI runner
 # and on a developer's Mac. Set before any kernel inherits the environment.
@@ -73,8 +79,7 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 
 # Routes that fetch remote data or run %pip. --offline skips exactly these.
 # 12 is here for the voice.wav it fetches inside its fallback run.
-NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12",
-           "14", "15", "16"}
+NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16"}
 
 # Bigger than any cell's own retry budget, so a slow-but-alive remote fails
 # with the bilingual sentence the fetch cells were written to print rather than
@@ -91,71 +96,107 @@ SLOW_CELL_SECONDS = float(os.environ.get("WORKSHOP_SLOW_CELL", "20"))
 # not merely that nothing raised. Cells absent from the table are still
 # required to execute cleanly.
 EXPECTED: dict[str, dict[str, list[str]]] = {
-    "00": {"s00-11": ["Housing shape / Forma de vivienda: (20640, 10)",
-                      "Busiest pickup hour / Hora con más recogidas: 18"]},
-    "01": {"s01-11": ["order-3 tensor / tensor de orden 3: shape=(2, 3, 4), ndim=3, size=24",
-                      "Digits / Dígitos: (1797, 8, 8)",
-                      "Astronaut / Astronauta: (512, 512, 3)"]},
-    "02": {"s02-02": ["real_video / video real: (16, 540, 960, 3)"],
-           # Shuffling reorders presentation, not the pairing of X with y.
-           "s02-09": ["Same labeled examples / Mismos ejemplos etiquetados: True"]},
+    "00": {
+        "s00-11": [
+            "Housing shape / Forma de vivienda: (20640, 10)",
+            "Busiest pickup hour / Hora con más recogidas: 18",
+        ]
+    },
+    "01": {
+        "s01-11": [
+            "order-3 tensor / tensor de orden 3: shape=(2, 3, 4), ndim=3, size=24",
+            "Digits / Dígitos: (1797, 8, 8)",
+            "Astronaut / Astronauta: (512, 512, 3)",
+        ]
+    },
+    "02": {
+        "s02-02": ["real_video / video real: (16, 540, 960, 3)"],
+        # Shuffling reorders presentation, not the pairing of X with y.
+        "s02-09": ["Same labeled examples / Mismos ejemplos etiquetados: True"],
+    },
     "03": {
-        "s03-02": ["Breast-cancer matrix / Matriz de cáncer de mama: (569, 30)",
-                   "Digit images / Imágenes de dígitos: (1797, 8, 8)"],
+        "s03-02": [
+            "Breast-cancer matrix / Matriz de cáncer de mama: (569, 30)",
+            "Digit images / Imágenes de dígitos: (1797, 8, 8)",
+        ],
         "s03-13": ["Flattened matrix / Matriz aplanada: (1797, 64)"],
         # Dividing by a zero-variance column makes NaN; the safe denominator
         # removes it. Both halves are asserted, because either alone can pass.
-        "s03-16": ["NaN before fix / NaN antes de corregir: True",
-                   "Zero-variance pixels / Píxeles de varianza cero: 3",
-                   "NaN after fix / NaN después de corregir: False"],
+        "s03-16": [
+            "NaN before fix / NaN antes de corregir: True",
+            "Zero-variance pixels / Píxeles de varianza cero: 3",
+            "NaN after fix / NaN después de corregir: False",
+        ],
     },
     "04": {
-        "s04-02": ["Histology / Histología: (512, 512, 3)",
-                   "Microscopy / Microscopía: (660, 550)"],
+        "s04-02": [
+            "Histology / Histología: (512, 512, 3)",
+            "Microscopy / Microscopía: (660, 550)",
+        ],
         "s04-06": ["HWC: (512, 512, 3)", "CHW: (3, 512, 512)"],
     },
-    "05": {"s05-02": ["Recorded source frames / Fotogramas grabados:"],
-           "s05-06": ["Axes / Ejes: (T, H, W, C)"]},
+    "05": {
+        "s05-02": ["Recorded source frames / Fotogramas grabados:"],
+        "s05-06": ["Axes / Ejes: (T, H, W, C)"],
+    },
     "06": {"s06-02": ["Photo / Foto: (512, 512, 3)"]},
     "07": {
         "p07-identifiability-solution": [
             "Same predictions / Mismas predicciones: True",
             "Minimum-norm coefficients / Coeficientes de norma mínima: [1. 1.]",
-            "Separate effects remain unknown / Los efectos separados siguen sin conocerse."],
+            "Separate effects remain unknown / Los efectos separados siguen sin conocerse.",
+        ],
     },
     "08": {
-        "s08-02": ["Real months / Meses reales: 144",
-                   "Passengers min/max / Pasajeros mín/máx: 104 622"],
+        "s08-02": [
+            "Real months / Meses reales: 144",
+            "Passengers min/max / Pasajeros mín/máx: 104 622",
+        ],
         # Fibonacci by repeated matrix multiplication must match matrix_power.
-        "s08-06": ["Loop final / Final del ciclo: [89, 55]",
-                   "matrix_power: [89, 55]",
-                   "Same result / Mismo resultado: True",
-                   "Fibonacci(10): 55"],
+        "s08-06": [
+            "Loop final / Final del ciclo: [89, 55]",
+            "matrix_power: [89, 55]",
+            "Same result / Mismo resultado: True",
+            "Fibonacci(10): 55",
+        ],
     },
     "09": {
-        "s12-b-4e9353481f91": ["Digit matrix / Matriz de dígitos: (1797, 64)",
-                               "Airline months / Meses de aerolíneas: (144,)"],
+        "s12-b-4e9353481f91": [
+            "Digit matrix / Matriz de dígitos: (1797, 64)",
+            "Airline months / Meses de aerolíneas: (144,)",
+        ],
         "s12-b-a673c50f1008": ["Design matrix / Matriz de diseño: (144, 11)"],
     },
-    "10": {"s10-02": ["Tensor shape / Forma del tensor: (4, 5, 24)",
-                      "Order / Orden: 3"]},
-    "11": {"s13-setup": ["Taxi tensor / Tensor taxis: (4, 5, 24) entries: 480"],
-           "s13-ex1-solution": ["Taxi shape: (4, 5, 24)"]},
+    "10": {
+        "s10-02": ["Tensor shape / Forma del tensor: (4, 5, 24)", "Order / Orden: 3"]
+    },
+    "11": {
+        "s13-setup": ["Taxi tensor / Tensor taxis: (4, 5, 24) entries: 480"],
+        "s13-ex1-solution": ["Taxi shape: (4, 5, 24)"],
+    },
     "12": {
         # Unstandardized PCA answers a different question: one component
         # against ten. The contrast is the lesson, so assert both numbers.
-        "p11-pca-solution": ["95% components — raw / sin estandarizar: 1",
-                             "95% components — standardized / estandarizado: 10"],
-        "p11-attention-solution": ["Rows sum to 1 / Filas suman 1: True",
-                                   "Largest padded weight / Mayor peso en padding: 0.0"],
+        "p11-pca-solution": [
+            "95% components — raw / sin estandarizar: 1",
+            "95% components — standardized / estandarizado: 10",
+        ],
+        "p11-attention-solution": [
+            "Rows sum to 1 / Filas suman 1: True",
+            "Largest padded weight / Mayor peso en padding: 0.0",
+        ],
         "p11-cholesky-solution": ["L @ L.T == Sigma / L @ L.T == Sigma: True"],
     },
     "13": {"s09-02": ["Full image / Imagen completa: (512, 512)"]},
     # 14's tensor is a file in a git repository, so every number it prints is
     # as fixed as the file is, and asserting them costs nothing.
-    "14": {"s14-04": ["Tensor / Tensor: (43, 200, 88)",
-                      "Targets / Objetivos: [-90   0  90 180]"],
-           "s14-07": ["lam = 0.004784", "peak_t = 54"]},
+    "14": {
+        "s14-04": [
+            "Tensor / Tensor: (43, 200, 88)",
+            "Targets / Objetivos: [-90   0  90 180]",
+        ],
+        "s14-07": ["lam = 0.004784", "peak_t = 54"],
+    },
     # 15's tensor is a live query against a city data portal. Its *shape* is
     # structural -- seven days, twenty-four hours, Chicago's 77 community
     # areas plus the unassigned one, the ten commonest types -- and the
@@ -163,9 +204,10 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
     # neither: Chicago reclassifies and expunges historical records, so
     # asserting 244,367 here would be asserting that nobody in the city ever
     # corrects a 2023 filing.
-    "15": {"s15-03": ["Tensor / Tensor: (7, 24, 78, 10)"],
-           "s15-07": ["Squared error charges both misses 4",
-                      "614 times more"]},
+    "15": {
+        "s15-03": ["Tensor / Tensor: (7, 24, 78, 10)"],
+        "s15-07": ["Squared error charges both misses 4", "614 times more"],
+    },
 }
 
 failures: list[str] = []
@@ -187,8 +229,11 @@ def source(cell: dict) -> str:
 
 def is_stub(cell: dict) -> bool:
     """A student's blank exercise: comments and whitespace, nothing to run."""
-    return not [line for line in source(cell).splitlines()
-                if line.strip() and not line.strip().startswith("#")]
+    return not [
+        line
+        for line in source(cell).splitlines()
+        if line.strip() and not line.strip().startswith("#")
+    ]
 
 
 # ── Colab parity ─────────────────────────────────────────────────────────────
@@ -208,7 +253,7 @@ def guarded(src: str, match: re.Match) -> bool:
     `except ImportError`/`except Exception` before it reaches anything else.
     """
     lines = src.splitlines()
-    line_no = src[:match.start()].count("\n")
+    line_no = src[: match.start()].count("\n")
     if line_no >= len(lines):
         return False
 
@@ -226,17 +271,17 @@ def guarded(src: str, match: re.Match) -> bool:
             opener = i
             break
         if indent(lines[i]) < own:
-            return False          # some other block opened first
+            return False  # some other block opened first
     if opener is None:
         return False
 
     base = indent(lines[opener])
-    for line in lines[line_no + 1:]:
+    for line in lines[line_no + 1 :]:
         stripped = line.strip()
         if not stripped or stripped.startswith("#"):
             continue
         if indent(line) > base:
-            continue              # still inside the try body
+            continue  # still inside the try body
         return bool(re.match(r"except\s+(ImportError|Exception)\b", stripped))
     return False
 
@@ -263,25 +308,34 @@ def check_colab_parity(nb: dict, label: str) -> None:
             # `except ImportError:` would otherwise vouch for a bare import
             # sitting between them -- the exact ImportError this guards.
             if not guarded(src, match):
-                fail(f"{label}: cell {cid} imports google.colab without a "
-                     f"try/except ImportError guard")
+                fail(
+                    f"{label}: cell {cid} imports google.colab without a "
+                    f"try/except ImportError guard"
+                )
 
         if ABSOLUTE_PATH.search(src):
-            fail(f"{label}: cell {cid} hardcodes an absolute path; it would "
-                 f"not resolve on Colab")
+            fail(
+                f"{label}: cell {cid} hardcodes an absolute path; it would "
+                f"not resolve on Colab"
+            )
 
         for args in PIP_INSTALL.findall(src):
             if "-q" not in args.split("#")[0].split():
-                fail(f"{label}: cell {cid} has a %pip install without -q; "
-                     f"Colab output fills with resolver noise")
+                fail(
+                    f"{label}: cell {cid} has a %pip install without -q; "
+                    f"Colab output fills with resolver noise"
+                )
 
         if DEVICE_STRING.search(src):
-            fail(f"{label}: cell {cid} hardcodes a device string. These "
-                 f"notebooks carry no accelerator code, and Colab, CI and a "
-                 f"Mac do not agree on one")
+            fail(
+                f"{label}: cell {cid} hardcodes a device string. These "
+                f"notebooks carry no accelerator code, and Colab, CI and a "
+                f"Mac do not agree on one"
+            )
 
 
 # ── Choosing what to execute ─────────────────────────────────────────────────
+
 
 def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
     """Indices to execute, the activity cell id, and the paired solution id.
@@ -338,22 +392,27 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
                 raise ValueError(f"{label}: ci_cells must be a non-empty list")
             for cid in declared:
                 if ids.count(cid) != 1:
-                    raise ValueError(f"{label}: ci_cells names {cid}, which is "
-                                     f"not a unique cell in this notebook")
+                    raise ValueError(
+                        f"{label}: ci_cells names {cid}, which is "
+                        f"not a unique cell in this notebook"
+                    )
                 if cells[ids.index(cid)].get("cell_type") != "code":
-                    raise ValueError(f"{label}: ci_cells names {cid}, which is "
-                                     f"not a code cell")
+                    raise ValueError(
+                        f"{label}: ci_cells names {cid}, which is not a code cell"
+                    )
             chosen = [ids.index(cid) for cid in declared]
         else:
-            chosen = [i for i, c in enumerate(cells)
-                      if c.get("cell_type") == "code"]
+            chosen = [i for i, c in enumerate(cells) if c.get("cell_type") == "code"]
 
     # Explicit fallback run sets also exercise their declared feedback helpers.
     chosen.extend(ids.index(cid) for cid in support)
     # Execute every code cell in the physical live block, including worked
     # examples and feedback widgets, rather than silently testing only the TODO.
-    chosen.extend(ids.index(cid) for cid in check_sequence(nb, label)
-                  if cells[ids.index(cid)].get("cell_type") == "code")
+    chosen.extend(
+        ids.index(cid)
+        for cid in check_sequence(nb, label)
+        if cells[ids.index(cid)].get("cell_type") == "code"
+    )
     return sorted(set(chosen)), activity, paired
 
 
@@ -523,11 +582,13 @@ _workshop_probe()
 PROBE_CELL_TIMEOUT = 60
 PROBE_BUDGET_SECONDS = float(os.environ.get("WORKSHOP_PROBE_BUDGET", "20"))
 PROBE_MAX_CHANGES = int(os.environ.get("WORKSHOP_PROBE_CHANGES", "8"))
-PROBE = (PROBE.replace("__BUDGET__", str(PROBE_BUDGET_SECONDS))
-              .replace("__CHANGES__", str(PROBE_MAX_CHANGES)))
+PROBE = PROBE.replace("__BUDGET__", str(PROBE_BUDGET_SECONDS)).replace(
+    "__CHANGES__", str(PROBE_MAX_CHANGES)
+)
 
 
 # ── Execution ────────────────────────────────────────────────────────────────
+
 
 def stdout_of(cell: dict) -> str:
     chunks = []
@@ -551,8 +612,11 @@ def errors_in(cell: dict) -> list[str]:
             head = ANSI.sub("", f"{item.get('ename')}: {item.get('evalue')}")
             last = ANSI.sub("", trace[-1]).strip() if trace else ""
             # The final traceback line is usually the exception line again.
-            found.append(head if last.startswith(str(item.get("ename")))
-                         else f"{head} {last}".strip())
+            found.append(
+                head
+                if last.startswith(str(item.get("ename")))
+                else f"{head} {last}".strip()
+            )
     return found
 
 
@@ -573,12 +637,11 @@ def execute(path: Path, number: str, show_output: bool) -> None:
     prologue["id"] = "workshop-prologue"
     probe = nbformat.v4.new_code_cell(PROBE)
     probe["id"] = "workshop-probe"
-    trimmed["cells"] = ([prologue]
-                        + [copy.deepcopy(nb["cells"][i]) for i in chosen]
-                        + [probe])
+    trimmed["cells"] = (
+        [prologue] + [copy.deepcopy(nb["cells"][i]) for i in chosen] + [probe]
+    )
 
-    print(f"      {len(chosen)} cell(s): "
-          f"{', '.join(ids[i] for i in chosen)} + probe")
+    print(f"      {len(chosen)} cell(s): {', '.join(ids[i] for i in chosen)} + probe")
 
     # A scratch cwd, so nothing a cell writes can land in the repository.
     with tempfile.TemporaryDirectory() as workdir:
@@ -599,8 +662,10 @@ def execute(path: Path, number: str, show_output: bool) -> None:
             timeout=CELL_TIMEOUT,
             # Per cell, so the probe gets its own, tighter ceiling.
             timeout_func=lambda cell: (
-                PROBE_CELL_TIMEOUT if cell.get("id") == "workshop-probe"
-                else CELL_TIMEOUT),
+                PROBE_CELL_TIMEOUT
+                if cell.get("id") == "workshop-probe"
+                else CELL_TIMEOUT
+            ),
             kernel_name="python3",
             allow_errors=False,
             resources={"metadata": {"path": workdir}},
@@ -643,22 +708,30 @@ def execute(path: Path, number: str, show_output: bool) -> None:
         # The blank exercise must stay blank. A student's TODO cell that
         # suddenly prints means an answer was pasted into it.
         if cid == activity and stub is not None and is_stub(stub) and out.strip():
-            fail(f"{label}: the core activity {cid} is a blank exercise but "
-                 f"produced output — has an answer been pasted into it?")
+            fail(
+                f"{label}: the core activity {cid} is a blank exercise but "
+                f"produced output — has an answer been pasted into it?"
+            )
 
         for want in expected.get(cid, []):
             if want not in out:
-                fail(f"{label}: cell {cid} did not print {want!r}; got "
-                     f"{out.strip()[:160]!r}")
+                fail(
+                    f"{label}: cell {cid} did not print {want!r}; got "
+                    f"{out.strip()[:160]!r}"
+                )
 
     if probe_timed_out:
-        print(f"        WARN  widget sweep hit {PROBE_CELL_TIMEOUT}s and was "
-              f"cut short — callbacks after that point are unchecked")
+        print(
+            f"        WARN  widget sweep hit {PROBE_CELL_TIMEOUT}s and was "
+            f"cut short — callbacks after that point are unchecked"
+        )
 
     if stopped and not reported:
         # No cell carried a traceback, so this was a timeout or a dead kernel.
-        fail(f"{label}: execution stopped after {CELL_TIMEOUT}s or the kernel "
-             f"died — {stopped}")
+        fail(
+            f"{label}: execution stopped after {CELL_TIMEOUT}s or the kernel "
+            f"died — {stopped}"
+        )
 
     # Not `set(ids)`: a cell can still exist and yet have dropped out of the
     # run set, and then its EXPECTED line asserts nothing while CI stays green.
@@ -666,23 +739,40 @@ def execute(path: Path, number: str, show_output: bool) -> None:
     ran = {ids[i] for i in chosen}
     for cid in sorted(set(expected) - ran):
         gone = cid not in ids
-        fail(f"{label}: EXPECTED names cell {cid}, which "
-             + ("no longer exists" if gone else
-                "exists but is not in the run set, so it asserts nothing"))
+        fail(
+            f"{label}: EXPECTED names cell {cid}, which "
+            + (
+                "no longer exists"
+                if gone
+                else "exists but is not in the run set, so it asserts nothing"
+            )
+        )
 
 
 # ── Entry point ──────────────────────────────────────────────────────────────
 
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--only", action="append", metavar="NN",
-                        help="run just this notebook number; repeatable")
-    parser.add_argument("--list", action="store_true",
-                        help="print the resolved run set and exit, no kernel")
-    parser.add_argument("--offline", action="store_true",
-                        help="skip the routes that fetch data or run %%pip")
-    parser.add_argument("--show-output", action="store_true",
-                        help="echo each executed cell's stdout")
+    parser.add_argument(
+        "--only",
+        action="append",
+        metavar="NN",
+        help="run just this notebook number; repeatable",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        help="print the resolved run set and exit, no kernel",
+    )
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="skip the routes that fetch data or run %%pip",
+    )
+    parser.add_argument(
+        "--show-output", action="store_true", help="echo each executed cell's stdout"
+    )
     args = parser.parse_args(argv)
 
     paths = sorted(NBDIR.glob("[0-9][0-9]-*.ipynb"))
@@ -706,6 +796,7 @@ def main(argv: list[str] | None = None) -> int:
 
         if args.list:
             import nbformat
+
             nb = nbformat.read(path, as_version=4)
             try:
                 chosen, activity, paired = run_set(nb, path.name)
@@ -713,10 +804,11 @@ def main(argv: list[str] | None = None) -> int:
                 fail(f"{path.name}: {exc}")
                 continue
             ids = [c.get("id") for c in nb["cells"]]
-            print(f"      activity={activity} paired={paired} "
-                  f"network={'yes' if number in NETWORK else 'no'}")
-            print(f"      {len(chosen)} cell(s): "
-                  f"{', '.join(ids[i] for i in chosen)}")
+            print(
+                f"      activity={activity} paired={paired} "
+                f"network={'yes' if number in NETWORK else 'no'}"
+            )
+            print(f"      {len(chosen)} cell(s): {', '.join(ids[i] for i in chosen)}")
             continue
 
         # Static, so it needs no kernel and no network. It runs here rather
@@ -725,6 +817,7 @@ def main(argv: list[str] | None = None) -> int:
         # cover them when their execution is skipped.
         try:
             import nbformat
+
             check_colab_parity(nbformat.read(path, as_version=4), path.name)
         except (ValueError, KeyError) as exc:
             fail(f"{path.name}: {exc}")
@@ -745,8 +838,9 @@ def main(argv: list[str] | None = None) -> int:
     if failures:
         print(f"{len(failures)} FAILURE(S)")
         return 1
-    print("Run sets resolved." if args.list
-          else "All notebook routes executed cleanly.")
+    print(
+        "Run sets resolved." if args.list else "All notebook routes executed cleanly."
+    )
     return 0
 
 

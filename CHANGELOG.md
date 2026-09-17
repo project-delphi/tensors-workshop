@@ -2,6 +2,10 @@
 
 ## 2026-09-17
 
+- The layout visualizer gained a 32×32 size, prints each value on its cube whenever the cubes are wide enough to read (4×4, or zoomed in), and has an *Arrange the cubes* switch: *by meaning* keeps every cube in place under a transpose, as before; *by position* lays the cubes out as the shape says, so a transpose visibly rearranges them the way notebook 04's animations draw it. Also fixed: the counting-numbers size sliders were showing in photo mode, where they do nothing.
+- The handbook's four figures are boxed and sit on the prose column instead of spilling into the page margin beside the table of contents; click one for the full-size image.
+- The slide art in both decks is WebP now, 11 MB where the PNGs were 94 MB, so the decks load faster and a clone is smaller. Nothing changes on screen.
+
 - Rebuilt the layout visualizer around real data: the histology slide, the astronaut and the coffee cup notebook 04 stacks are now the cubes, one per byte, with the three colour channels as planes. Transpose (NHWC, NCHW, swap, reverse, or click two letters) permutes the shape, the sliders and the strides and leaves every cube in place; the memory layout (C, Fortran, PyTorch `channels_last`) rewrites a new buffer ribbon and leaves the shape alone; a reshape comparison shows the same bytes poured into the shape and, under it, the picture it breaks. The code panel is now a running log — one NumPy and one PyTorch line per click, with a copy button. The old counting-numbers mode is still there as a second data source. The photos ship as `interactive/data/photos.json`, written by `gen_figures.py widget`.
 - Both widgets gained an embed mode (`?embed=1&theme=navy`), and the homepage hero now shows them live behind two tabs where the static diagram was. The diagram stays as the fallback with scripting off, under reduced motion and on a phone.
 - The handbook's four figures render at page width and centred again. `lightbox: true` had wrapped every image on the site in an anchor, which defeated the figure rules in `custom.scss` and left each figure 766 px wide against the left margin; it is `match: manual` now, as the comment always claimed.

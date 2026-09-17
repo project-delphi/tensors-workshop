@@ -10,13 +10,14 @@ Every test asserts both halves — that a broken notebook fails, and that the
 same notebook fixed does not. A test that pinned only the first half would
 still pass against a check that rejects everything.
 """
+
 from __future__ import annotations
 
 import contextlib
 import io
-from pathlib import Path
 import sys
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 # test_notebooks.py does `from check_teaching_materials import route_of`, which
@@ -26,8 +27,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 import scripts.test_notebooks as tn  # noqa: E402
 
-
 # ── harness ──────────────────────────────────────────────────────────────────
+
 
 def cell(source, *, kind="code", cid="c", tags=None):
     out = {"cell_type": kind, "id": cid, "source": source, "metadata": {}}
@@ -43,8 +44,7 @@ def notebook(*cells, prep=(), activity="act"):
     """A notebook with the CORE-PATH scaffold check_teaching_materials wants."""
     scaffold = cell("<!-- CORE-PATH -->\n", kind="markdown", cid="core-path")
     scaffold["metadata"]["workshop"] = {"prep": list(prep), "activity": activity}
-    return {"cells": [cell("# header\n", kind="markdown", cid="hdr"),
-                      scaffold, *cells]}
+    return {"cells": [cell("# header\n", kind="markdown", cid="hdr"), scaffold, *cells]}
 
 
 @contextlib.contextmanager
@@ -66,31 +66,44 @@ def parity(source):
 
 # ── choosing what to execute ─────────────────────────────────────────────────
 
+
 class RunSet(unittest.TestCase):
     def test_feedback_runs_before_attempt_and_solution(self):
         nb = notebook(
             cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),
-            cell("def check_answer(answer): pass\n", cid="feedback", tags=["workshop-support"]),
+            cell(
+                "def check_answer(answer): pass\n",
+                cid="feedback",
+                tags=["workshop-support"],
+            ),
             cell("# TODO\n", cid="act", tags=["workshop-core-activity"]),
             cell("check_answer(42)\n", cid="sol", tags=["solution"]),
-            prep=["prep-1"])
+            prep=["prep-1"],
+        )
         nb["cells"][1]["metadata"]["workshop"]["support"] = ["feedback"]
         chosen, _, paired = tn.run_set(nb, "fixture")
-        self.assertEqual([nb["cells"][i]["id"] for i in chosen],
-                         ["prep-1", "feedback", "act", "sol"])
+        self.assertEqual(
+            [nb["cells"][i]["id"] for i in chosen], ["prep-1", "feedback", "act", "sol"]
+        )
         self.assertEqual(paired, "sol")
 
     def test_feedback_does_not_suppress_code_free_fallback(self):
         nb = notebook(
-            cell("def check_answer(answer): pass\n", cid="feedback", tags=["workshop-support"]),
+            cell(
+                "def check_answer(answer): pass\n",
+                cid="feedback",
+                tags=["workshop-support"],
+            ),
             cell("## Core activity\n", kind="markdown", cid="act"),
             cell("setup()\n", cid="setup"),
-            cell("check_answer(42)\n", cid="answer"))
+            cell("check_answer(42)\n", cid="answer"),
+        )
         nb["cells"][1]["metadata"]["workshop"]["support"] = ["feedback"]
         nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", "answer"]
         chosen, _, _ = tn.run_set(nb, "fixture")
-        self.assertEqual([nb["cells"][i]["id"] for i in chosen],
-                         ["feedback", "setup", "answer"])
+        self.assertEqual(
+            [nb["cells"][i]["id"] for i in chosen], ["feedback", "setup", "answer"]
+        )
 
     def test_prep_activity_and_paired_solution(self):
         nb = notebook(
@@ -99,7 +112,8 @@ class RunSet(unittest.TestCase):
             cell("# TODO 1\n", cid="act", tags=["workshop-core-activity"]),
             cell("answer()\n", cid="sol", tags=["solution", "hide-input"]),
             cell("later()\n", cid="after"),
-            prep=["prep-1"])
+            prep=["prep-1"],
+        )
         chosen, activity, paired = tn.run_set(nb, "fixture")
         ids = [nb["cells"][i]["id"] for i in chosen]
         self.assertEqual(ids, ["prep-1", "act", "sol"])
@@ -108,9 +122,14 @@ class RunSet(unittest.TestCase):
     def test_markdown_activity_is_not_executed(self):
         nb = notebook(
             cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),
-            cell("## Core activity\n", kind="markdown", cid="act",
-                 tags=["workshop-core-activity"]),
-            prep=["prep-1"])
+            cell(
+                "## Core activity\n",
+                kind="markdown",
+                cid="act",
+                tags=["workshop-core-activity"],
+            ),
+            prep=["prep-1"],
+        )
         chosen, _, paired = tn.run_set(nb, "fixture")
         self.assertEqual([nb["cells"][i]["id"] for i in chosen], ["prep-1"])
         self.assertIsNone(paired)
@@ -118,12 +137,17 @@ class RunSet(unittest.TestCase):
     def test_empty_route_falls_back_to_every_code_cell(self):
         """Notebooks 00 and 12: no prep, a markdown activity, nothing to run."""
         nb = notebook(
-            cell("## Core activity\n", kind="markdown", cid="act",
-                 tags=["workshop-core-activity"]),
+            cell(
+                "## Core activity\n",
+                kind="markdown",
+                cid="act",
+                tags=["workshop-core-activity"],
+            ),
             cell("setup()\n", cid="a"),
             cell("## prose\n", kind="markdown", cid="b"),
             cell("answer()\n", cid="c", tags=["solution", "hide-input"]),
-            prep=[])
+            prep=[],
+        )
         chosen, _, _ = tn.run_set(nb, "fixture")
         self.assertEqual([nb["cells"][i]["id"] for i in chosen], ["a", "c"])
 
@@ -132,9 +156,11 @@ class RunSet(unittest.TestCase):
         nb = notebook(
             cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),
             cell("# TODO 1\n", cid="act", tags=["workshop-core-activity"]),
-            cell("a()\n", cid="x"), cell("b()\n", cid="y"),
+            cell("a()\n", cid="x"),
+            cell("b()\n", cid="y"),
             cell("answer()\n", cid="sol", tags=["solution"]),
-            prep=["prep-1"])
+            prep=["prep-1"],
+        )
         _, _, paired = tn.run_set(nb, "fixture")
         self.assertIsNone(paired)
 
@@ -145,12 +171,15 @@ class RunSet(unittest.TestCase):
             cell("setup()\n", cid="s12-b-aaa", tags=["workshop-core-prep"]),
             cell("# TODO\n", cid="s12-b-bbb", tags=["workshop-core-activity"]),
             cell("answer()\n", cid="s12-b-ccc", tags=["solution"]),
-            prep=["s12-b-aaa"], activity="s12-b-bbb")
+            prep=["s12-b-aaa"],
+            activity="s12-b-bbb",
+        )
         chosen, activity, paired = tn.run_set(nb, "fixture")
-        self.assertEqual([nb["cells"][i]["id"] for i in chosen],
-                         ["s12-b-aaa", "s12-b-bbb", "s12-b-ccc"])
+        self.assertEqual(
+            [nb["cells"][i]["id"] for i in chosen],
+            ["s12-b-aaa", "s12-b-bbb", "s12-b-ccc"],
+        )
         self.assertEqual(paired, "s12-b-ccc")
-
 
     def test_ci_cells_replaces_the_blanket_fallback(self):
         """Notebook 12: the route is code-free on purpose, so CI declares a set.
@@ -160,24 +189,37 @@ class RunSet(unittest.TestCase):
         question, answered explicitly rather than by running every code cell.
         """
         nb = notebook(
-            cell("## Core activity\n", kind="markdown", cid="act",
-                 tags=["workshop-core-activity"]),
+            cell(
+                "## Core activity\n",
+                kind="markdown",
+                cid="act",
+                tags=["workshop-core-activity"],
+            ),
             cell("setup()\n", cid="setup"),
             cell("answer()\n", cid="sol", tags=["solution", "hide-input"]),
-            cell("explorer()\n", cid="explorer"))
+            cell("explorer()\n", cid="explorer"),
+        )
         nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", "sol"]
         chosen, _, _ = tn.run_set(nb, "fixture")
-        self.assertEqual([nb["cells"][i]["id"] for i in chosen], ["setup", "sol"],
-                         "the explorer must not be executed")
+        self.assertEqual(
+            [nb["cells"][i]["id"] for i in chosen],
+            ["setup", "sol"],
+            "the explorer must not be executed",
+        )
 
     def test_ci_cells_must_name_real_code_cells(self):
         for bad, why in (("nope", "no such cell"), ("prose", "not code")):
             with self.subTest(case=why):
                 nb = notebook(
-                    cell("## Core activity\n", kind="markdown", cid="act",
-                         tags=["workshop-core-activity"]),
+                    cell(
+                        "## Core activity\n",
+                        kind="markdown",
+                        cid="act",
+                        tags=["workshop-core-activity"],
+                    ),
                     cell("setup()\n", cid="setup"),
-                    cell("## prose\n", kind="markdown", cid="prose"))
+                    cell("## prose\n", kind="markdown", cid="prose"),
+                )
                 nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", bad]
                 with self.assertRaises(ValueError):
                     tn.run_set(nb, "fixture")
@@ -185,10 +227,15 @@ class RunSet(unittest.TestCase):
     def test_a_code_free_route_without_ci_cells_still_falls_back(self):
         """Notebook 00 keeps the blanket fallback: it is short and all setup."""
         nb = notebook(
-            cell("## Core activity\n", kind="markdown", cid="act",
-                 tags=["workshop-core-activity"]),
+            cell(
+                "## Core activity\n",
+                kind="markdown",
+                cid="act",
+                tags=["workshop-core-activity"],
+            ),
             cell("a()\n", cid="a"),
-            cell("b()\n", cid="b"))
+            cell("b()\n", cid="b"),
+        )
         chosen, _, _ = tn.run_set(nb, "fixture")
         self.assertEqual([nb["cells"][i]["id"] for i in chosen], ["a", "b"])
 
@@ -201,15 +248,22 @@ class RunSet(unittest.TestCase):
         notebook rather than a broken run set.
         """
         nb = notebook(
-            cell("## Core activity\n", kind="markdown", cid="act",
-                 tags=["workshop-core-activity"]),
+            cell(
+                "## Core activity\n",
+                kind="markdown",
+                cid="act",
+                tags=["workshop-core-activity"],
+            ),
             cell("answer()\n", cid="sol", tags=["solution", "hide-input"]),
-            cell("setup()\n", cid="setup"))
+            cell("setup()\n", cid="setup"),
+        )
         chosen, _, _ = tn.run_set(nb, "fixture")
         ids = [nb["cells"][i]["id"] for i in chosen]
-        self.assertEqual(ids, ["sol", "setup"],
-                         "expected the whole-notebook fallback, not the "
-                         "solution cell on its own")
+        self.assertEqual(
+            ids,
+            ["sol", "setup"],
+            "expected the whole-notebook fallback, not the solution cell on its own",
+        )
 
 
 class Stub(unittest.TestCase):
@@ -223,12 +277,15 @@ class Stub(unittest.TestCase):
 
 # ── Colab parity ─────────────────────────────────────────────────────────────
 
+
 class ColabParity(unittest.TestCase):
-    GUARDED = ("try:\n"
-               "    from google.colab import output\n"
-               "    output.enable_custom_widget_manager()\n"
-               "except ImportError:\n"
-               "    pass\n")
+    GUARDED = (
+        "try:\n"
+        "    from google.colab import output\n"
+        "    output.enable_custom_widget_manager()\n"
+        "except ImportError:\n"
+        "    pass\n"
+    )
 
     def test_guarded_colab_import_is_accepted(self):
         self.assertEqual(parity(self.GUARDED), [])
@@ -239,8 +296,11 @@ class ColabParity(unittest.TestCase):
         self.assertIn("google.colab", found[0])
 
     def test_absolute_paths_are_rejected(self):
-        for path in ('"/Users/me/data.csv"', '"/content/drive/x"',
-                     '"C:\\\\data\\\\x.csv"'):
+        for path in (
+            '"/Users/me/data.csv"',
+            '"/content/drive/x"',
+            '"C:\\\\data\\\\x.csv"',
+        ):
             with self.subTest(path=path):
                 self.assertTrue(parity(f"p = {path}\n"))
         self.assertEqual(parity('p = "data/x.csv"\n'), [])
@@ -250,45 +310,57 @@ class ColabParity(unittest.TestCase):
         self.assertEqual(parity('%pip install -q "imageio[ffmpeg]"\n'), [])
 
     def test_hardcoded_device_strings_are_rejected(self):
-        for source in ('device = "mps"\n', 'device = "cuda"\n',
-                       'x.to("cuda:0")\n'):
+        for source in ('device = "mps"\n', 'device = "cuda"\n', 'x.to("cuda:0")\n'):
             with self.subTest(source=source):
                 self.assertTrue(parity(source))
         self.assertEqual(parity('mode = "nearest"\n'), [])
 
     def test_markdown_cells_are_not_linted(self):
-        nb = notebook(cell("Run `%pip install tensorly` on /Users/you",
-                           kind="markdown", cid="m"))
+        nb = notebook(
+            cell("Run `%pip install tensorly` on /Users/you", kind="markdown", cid="m")
+        )
         with collected() as found:
             tn.check_colab_parity(nb, "fixture")
         self.assertEqual(found, [])
 
     def test_every_shipped_notebook_passes(self):
         import nbformat
+
         paths = sorted((ROOT / "notebooks").glob("[0-9][0-9]-*.ipynb"))
         import yaml
+
         registry = yaml.safe_load((ROOT / "_variables.yml").read_text())
-        declared = [entry for group in ("sections", "extras")
-                    for entry in registry[group].values()]
-        self.assertEqual({p.name for p in paths},
-                         {f"{entry['n']}-{entry['slug']}.ipynb" for entry in declared})
+        declared = [
+            entry
+            for group in ("sections", "extras")
+            for entry in registry[group].values()
+        ]
+        self.assertEqual(
+            {p.name for p in paths},
+            {f"{entry['n']}-{entry['slug']}.ipynb" for entry in declared},
+        )
         with collected() as found:
             for path in paths:
-                tn.check_colab_parity(nbformat.read(path, as_version=4),
-                                      path.name)
+                tn.check_colab_parity(nbformat.read(path, as_version=4), path.name)
         self.assertEqual(found, [])
 
 
 # ── reading a kernel's results ───────────────────────────────────────────────
 
+
 class ColabGuardScope(unittest.TestCase):
     """The guard must belong to the import, not merely share a cell with one."""
 
     def test_real_guard_passes(self):
-        self.assertEqual(parity("try:\n"
-                                "    from google.colab import output\n"
-                                "except ImportError:\n"
-                                "    output = None\n"), [])
+        self.assertEqual(
+            parity(
+                "try:\n"
+                "    from google.colab import output\n"
+                "except ImportError:\n"
+                "    output = None\n"
+            ),
+            [],
+        )
 
     def test_bare_import_fails(self):
         self.assertEqual(len(parity("from google.colab import output\n")), 1)
@@ -300,36 +372,56 @@ class ColabGuardScope(unittest.TestCase):
         genuinely bare import between them: every substring the old test looked
         for is present, and the import still raises on a non-Colab kernel.
         """
-        found = parity("try:\n"
-                       "    x = 1\n"
-                       "except ValueError:\n"
-                       "    pass\n"
-                       "from google.colab import output\n"
-                       "try:\n"
-                       "    y = 2\n"
-                       "except ImportError:\n"
-                       "    pass\n")
+        found = parity(
+            "try:\n"
+            "    x = 1\n"
+            "except ValueError:\n"
+            "    pass\n"
+            "from google.colab import output\n"
+            "try:\n"
+            "    y = 2\n"
+            "except ImportError:\n"
+            "    pass\n"
+        )
         self.assertEqual(len(found), 1)
 
     def test_try_without_an_except_fails(self):
-        self.assertEqual(len(parity("try:\n"
-                                    "    from google.colab import output\n"
-                                    "finally:\n"
-                                    "    pass\n")), 1)
+        self.assertEqual(
+            len(
+                parity(
+                    "try:\n    from google.colab import output\nfinally:\n    pass\n"
+                )
+            ),
+            1,
+        )
 
 
 class Outputs(unittest.TestCase):
     def test_stdout_joins_streams_and_results(self):
-        got = tn.stdout_of({"outputs": [
-            {"output_type": "stream", "text": ["a\n", "b\n"]},
-            {"output_type": "display_data", "data": {"image/png": "..."}},
-            {"output_type": "execute_result", "data": {"text/plain": "42"}}]})
+        got = tn.stdout_of(
+            {
+                "outputs": [
+                    {"output_type": "stream", "text": ["a\n", "b\n"]},
+                    {"output_type": "display_data", "data": {"image/png": "..."}},
+                    {"output_type": "execute_result", "data": {"text/plain": "42"}},
+                ]
+            }
+        )
         self.assertEqual(got, "a\nb\n42")
 
     def test_errors_are_reported_without_ansi_escapes(self):
-        found = tn.errors_in({"outputs": [{
-            "output_type": "error", "ename": "ValueError", "evalue": "bad",
-            "traceback": ["\x1b[31mValueError\x1b[39m: bad"]}]})
+        found = tn.errors_in(
+            {
+                "outputs": [
+                    {
+                        "output_type": "error",
+                        "ename": "ValueError",
+                        "evalue": "bad",
+                        "traceback": ["\x1b[31mValueError\x1b[39m: bad"],
+                    }
+                ]
+            }
+        )
         self.assertEqual(len(found), 1)
         self.assertNotIn("\x1b", found[0])
         self.assertIn("ValueError: bad", found[0])
@@ -337,6 +429,7 @@ class Outputs(unittest.TestCase):
     def test_every_expected_cell_id_exists_in_its_notebook(self):
         """EXPECTED names cells by id; a renamed cell must not go unnoticed."""
         import nbformat
+
         for number, wanted in tn.EXPECTED.items():
             path = next((ROOT / "notebooks").glob(f"{number}-*.ipynb"))
             ids = {c.get("id") for c in nbformat.read(path, as_version=4)["cells"]}
@@ -355,6 +448,7 @@ class InjectedCells(unittest.TestCase):
 
     def test_both_cells_are_valid_python(self):
         import ast
+
         for name, src in (("PROLOGUE", tn.PROLOGUE), ("PROBE", tn.PROBE)):
             with self.subTest(cell=name):
                 ast.parse(src)
@@ -380,8 +474,11 @@ class InjectedCells(unittest.TestCase):
     def test_probe_restores_what_it_silenced(self):
         """In a finally: a probe that raises must not leave the kernel mute."""
         import ast
+
         tree = ast.parse(tn.PROBE)
-        finallies = [n for n in ast.walk(tree) if isinstance(n, ast.Try) and n.finalbody]
+        finallies = [
+            n for n in ast.walk(tree) if isinstance(n, ast.Try) and n.finalbody
+        ]
         self.assertTrue(finallies, "the sweep must restore in a finally:")
         restored = "\n".join(ast.unparse(n) for f in finallies for n in f.finalbody)
         self.assertIn("publish", restored)
