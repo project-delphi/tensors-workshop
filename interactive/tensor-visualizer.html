@@ -34,10 +34,10 @@
   html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
   a { color: var(--accent); }
   .wrap { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
-  header p { max-width: 40rem; color: var(--ink-mute); }
-  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; }
+  header p { max-width: 40rem; color: var(--ink-mute); overflow-wrap: break-word; }
+  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
   .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 22rem; gap: 1.25rem; align-items: start; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 22rem); gap: 1.25rem; align-items: start; }
   @media (max-width: 52rem) { .grid { grid-template-columns: 1fr; } }
   #stage {
     position: relative;
@@ -54,6 +54,7 @@
   #stagenote {
     position: absolute; left: 0.8rem; right: 0.8rem; top: 0.7rem; margin: 0;
     font: 500 0.82rem/1.35 var(--sans); color: var(--ink-mute); pointer-events: none;
+    overflow-wrap: break-word;
   }
   #overlays { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
   #overlays .lab {
@@ -75,7 +76,7 @@
   #axis-legend .swatch { width: 0.65rem; height: 0.65rem; border-radius: 2px; flex: none; }
   #axis-legend b { font-family: var(--mono); font-size: 0.85rem; }
   #axis-legend em { font-style: normal; font-weight: 700; color: var(--ink); }
-  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; }
+  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; min-width: 0; }
   aside h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.85rem 0 0.45rem; color: var(--ink-mute); }
   aside h2:first-child { margin-top: 0; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
@@ -104,13 +105,14 @@
   td .dot { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; margin-right: 0.35rem; vertical-align: -0.05rem; }
   tr.fast td { font-weight: 700; }
   .mark { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; margin-left: 0.25rem; }
-  .formula { font: 0.75rem/1.45 var(--mono); background: var(--sunk); border-radius: 8px; padding: 0.55rem 0.7rem; overflow-x: auto; }
+  .formula { font: 0.75rem/1.45 var(--mono); background: var(--sunk); border-radius: 8px; padding: 0.55rem 0.7rem; overflow-x: auto; max-width: 100%; overflow-wrap: anywhere; }
   .formula .eq { display: block; margin-top: 0.35rem; color: var(--ink-mute); }
   .formula .term { white-space: nowrap; }
   .formula b { color: var(--accent); font-weight: 700; }
   pre {
     margin: 0.5rem 0 0; padding: 0.55rem 0.7rem; background: var(--sunk);
     border-radius: 8px; font: 0.78rem/1.4 var(--mono); overflow-x: auto;
+    max-width: 100%; white-space: pre-wrap; overflow-wrap: anywhere;
   }
   .fallback { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
@@ -346,7 +348,7 @@
         lab.append(name, val);
         const input = document.createElement("input");
         input.type = "range";
-        input.min = "0";
+        input.min = key === "size" ? "1" : "0";
         input.max = String(maxFor(i));
         input.value = String(state[key][i]);
         input.setAttribute("aria-label", `${L} ${key}`);
