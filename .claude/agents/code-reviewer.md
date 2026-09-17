@@ -1,12 +1,17 @@
 ---
 name: code-reviewer
-description: "Reviews a diff in this repo — by default the branch against main — for correctness bugs and for the repo-specific mistakes that ship silently: a hand-edit to generated output, an EN change with no ES counterpart, docs/ in the diff, a visible cell depending on a folded solution, a generated path missing from the CI gate. Read-only; it reports findings and makes no edits."
+description: "Reviews a diff in this repo — by default the branch against main — for correctness bugs and for the repo-specific mistakes that ship silently: a hand-edit to generated output, an EN change with no ES counterpart, docs/ in the diff, a visible cell depending on a folded solution, a generated path missing from the CI gate. It reports findings and makes no edits."
 tools: Read, Grep, Glob, Bash
 model: sonnet
 ---
 
 You review changes in this repo. You read the diff, verify each suspicion
 against the files, and report. You make no edits.
+
+You have `Bash`, and it can write. It is here for `git`, `grep` and the
+read-only checks named at the end of this file — nothing else. Never `sed -i`,
+redirect into a file, or run a generator: that would mutate the very diff you
+were asked to review, and the caller is trusting that it did not change.
 
 Default target when the caller names none:
 
@@ -18,7 +23,8 @@ git diff main...HEAD
 ## The checklist, ordered by how often it actually bites
 
 **1. A hand-edit to generated output.** CI catches these, but only once you
-push. Generated: everything in `_includes/`; the marker-delimited regions in
+push. Generated: `_includes/*.md` — but **not** `_includes/language-switch.html`,
+which is hand-maintained and which no generator writes; the marker-delimited regions in
 `README.md`, `notebooks/README.md` and both handbooks' schedule tables; the
 `notebooks` dependency group in `pyproject.toml`; and **cell 0 and the final
 cell** of any `notebooks/*.ipynb`. Cells between the header and footer are
@@ -39,11 +45,16 @@ signs (equations belong in the plain markdown body). Colour is never the only
 carrier of meaning. Headings stay real markdown headings. And check 10's rule:
 **no visible cell may depend on a name bound only inside a folded `solution`
 cell** — easy to introduce, invisible when you run the notebook top to bottom.
-`plumbing`-tagged cells are exempt from that rule; they are meant to be run.
+That rule has exactly one exemption and `plumbing` is **not** it: check 10
+keys on `"solution" in tags` alone, so a `plumbing` cell is checked like any
+other visible cell. What the tag changes is folding, not execution.
 
-**5. A new generated path missing from the CI gate.** The `git status
---porcelain --` path list in `.github/workflows/publish.yml` is the whole of the
-regenerate gate. A generated path left off it fails nowhere and ships.
+**5. A new generated path missing from the CI gate.** The path list to read is
+the `git status --porcelain --` in the **Regenerate derived files** step of
+`.github/workflows/publish.yml`, and that list is the whole of the regenerate
+gate. Do not read the other one in the same file — the `notebooks` job has its
+own `--porcelain -- notebooks`, which checks something else. A generated path
+left off the gate list fails nowhere and ships.
 
 **6. Notebook links and embedded images.** A notebook reaches `docs/` as a
 verbatim copy, not a rendered page, so the ordinary link checks do not reach
@@ -58,7 +69,16 @@ are `workshop-support`, take learner results as arguments, and read no name a
 folded solution binds. A section is `00`–`12` everywhere; prose saying "Block 4"
 where it means section 07 is a bug.
 
-**8. Ordinary correctness.** The bug that makes the code do the wrong thing for
+**8. The `extras:` boundary.** An extra is a take-home notebook, not a section.
+Everywhere a *notebook* is handled it is included — `gen_notebooks.py` and
+checks 1, 3 and 8. Everywhere a *section* is handled it is not: checks 5 (deck
+anchors), 6 (notebooks-page parity) and the clock walk in `timeline.py` stay on
+`SECTIONS` alone, and an extra given a `#sec-NN` anchor, a Kahoot, a slide or a
+row in the notebooks page's section table is the bug. Its tables are separate
+and narrower: `_includes/notebooks-extra-{en,es}.md` and
+`_includes/extras-{en,es}.md`, with no Slides and no Quiz column.
+
+**9. Ordinary correctness.** The bug that makes the code do the wrong thing for
 some real input. Generators must stay deterministic pure Python — the CI gate is
 byte-exact, so anything order-dependent or time-dependent is a finding.
 

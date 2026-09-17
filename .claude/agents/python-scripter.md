@@ -39,7 +39,14 @@ handbooks. That gate is **byte-exact**, so both generators must stay
 deterministic pure Python: no timestamps, no set iteration order, no dict
 ordering that depends on input order you did not sort.
 
-**Run every generator twice. The second run must change nothing.**
+**Run `gen_tables.py` and `gen_notebooks.py` twice. The second run must change
+nothing.** That rule is theirs alone: they are the two in the byte-exact gate.
+The four image generators are outside it deliberately, and are deterministic
+only *for a given stack* — `figures` carries floors rather than pins, so a
+matplotlib release rewrites figures with no input changed. A dirty tree after
+rerunning one of those is not a determinism failure. Compare the generator's
+printed `Stack:` line against the commit that last drew the file before you
+report anything.
 
 ## If you add a file a generator writes into
 

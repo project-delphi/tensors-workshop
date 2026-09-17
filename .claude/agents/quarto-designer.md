@@ -58,7 +58,7 @@ rename or move one. That is what lets the language switch find a translated
 section while keeping existing heading URLs intact. Sections with the same
 explicit id in both languages need no marker.
 
-`check_links.py` enforces parity in four places, and they are the checks your
+`check_links.py` enforces parity in five places, and they are the checks your
 work breaks most often:
 
 - check 5 — both decks carry every section anchor.
