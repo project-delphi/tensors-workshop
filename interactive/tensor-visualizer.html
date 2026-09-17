@@ -108,11 +108,16 @@
   .seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
   .seg input:checked + label { background: var(--accent); color: var(--on-accent); font-weight: 650; }
   .seg.axes label { font-family: var(--mono); font-weight: 700; background: var(--panel); color: var(--ink); }
-  .seg.axes input:checked + label { color: #fff; }   /* on an Okabe-Ito hue, not the accent */
-  .seg.axes input#slice-0:checked + label { background: var(--ax0); }
-  .seg.axes input#slice-1:checked + label { background: var(--ax1); }
-  .seg.axes input#slice-2:checked + label { background: var(--ax2); }
-  .seg.axes input#slice-3:checked + label { background: var(--ax3); }
+  /* These sit on an Okabe-Ito hue rather than on --accent. The hues were
+     picked to be told apart from each other, not to be backgrounds, and no
+     single foreground clears 4.5:1 on all four: white passes on the blue and
+     fails on the other three, near-black the reverse. So each hue names its
+     own. The "none" option falls through to the rule above and gets
+     --on-accent, which is per-theme for the same reason. */
+  .seg.axes input#slice-0:checked + label { background: var(--ax0); color: #ffffff; }
+  .seg.axes input#slice-1:checked + label { background: var(--ax1); color: #14110f; }
+  .seg.axes input#slice-2:checked + label { background: var(--ax2); color: #14110f; }
+  .seg.axes input#slice-3:checked + label { background: var(--ax3); color: #14110f; }
   table { width: 100%; border-collapse: collapse; font: 0.8rem/1.35 var(--mono); }
   th { text-align: left; font: 600 0.7rem/1.2 var(--sans); color: var(--ink-mute); padding: 0.15rem 0.3rem 0.25rem 0; }
   td { padding: 0.2rem 0.3rem 0.2rem 0; border-top: 1px solid var(--line); }
@@ -234,7 +239,7 @@
     glNoScript: "The 3-D renderer did not load — showing the isometric canvas instead. Everything on the panel is the same.",
     status: (o, i, s) => `Offset ${o} elements at [${i.join(", ")}]${s ? `, ${s}` : ""}`,
     stageLabel: "A 4-D tensor drawn as cubes, one per element.",
-    stageHelp: "Drag, or use the arrow keys, to rotate. Scroll, pinch, or press plus and minus to zoom. Home resets the view. Click a cube, or use the index sliders, to select an element.",
+    stageHelp: "Drag, or use the arrow keys, to rotate. Pinch, hold Ctrl and scroll, or press plus and minus to zoom. Home resets the view. Click a cube, or use the index sliders, to select an element.",
     sliderSize: (ax) => `Size of the ${ax} axis`,
     sliderIdx: (ax) => `Index along the ${ax} axis`,
     sameBuf: "same buffer",
@@ -243,7 +248,7 @@
     isElement: (idx, off, n) => `x[${idx}] is element ${off} of ${n}`,
     ramp: (ax) => `Fill is ${ax}: pale is ${ax}=0, deep is the far end of that axis. Arrows name each axis.`,
     lit: (ax) => `Slice along ${ax} is lit in that axis colour; everything else is dimmed.`,
-    drag: "Drag to rotate. Scroll or pinch to zoom."
+    drag: "Drag to rotate. Pinch, or hold Ctrl (⌘ on a Mac) and scroll, to zoom."
   };
   const ES = {
     title: "Disposición en memoria y strides",
@@ -270,7 +275,7 @@
     glNoScript: "El renderizador 3-D no se cargó: se muestra el canvas isométrico. Todo lo del panel es igual.",
     status: (o, i, s) => `Offset ${o} elementos en [${i.join(", ")}]${s ? `, ${s}` : ""}`,
     stageLabel: "Un tensor 4-D dibujado como cubos, uno por elemento.",
-    stageHelp: "Arrastra, o usa las flechas del teclado, para rotar. Rueda, pellizca o pulsa más y menos para hacer zoom. Inicio restablece la vista. Haz clic en un cubo, o usa los deslizadores de índice, para seleccionar un elemento.",
+    stageHelp: "Arrastra, o usa las flechas del teclado, para rotar. Pellizca, mantén Ctrl y usa la rueda, o pulsa más y menos para hacer zoom. Inicio restablece la vista. Haz clic en un cubo, o usa los deslizadores de índice, para seleccionar un elemento.",
     sliderSize: (ax) => `Tamaño del eje ${ax}`,
     sliderIdx: (ax) => `Índice sobre el eje ${ax}`,
     sameBuf: "el mismo búfer",
@@ -279,7 +284,7 @@
     isElement: (idx, off, n) => `x[${idx}] es el elemento ${off} de ${n}`,
     ramp: (ax) => `El relleno es ${ax}: pálido es ${ax}=0, oscuro es el extremo de ese eje. Las flechas nombran cada eje.`,
     lit: (ax) => `El corte sobre ${ax} se ilumina con el color de ese eje; el resto se atenúa.`,
-    drag: "Arrastra para rotar. Rueda o pellizca para zoom."
+    drag: "Arrastra para rotar. Pellizca, o mantén Ctrl (⌘ en Mac) y usa la rueda, para hacer zoom."
   };
 
   const params = new URLSearchParams(location.search);
@@ -896,8 +901,12 @@
     };
 
     el.addEventListener("pointerdown", (e) => {
-      el.setPointerCapture(e.pointerId);
-      live.set(e.pointerId, { x: e.clientX, y: e.clientY, moved: false });
+      // Capture is an optimisation, not a requirement, and it throws for a
+      // pointer the browser no longer considers active. Losing it must not
+      // take the whole gesture with it.
+      try { el.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
+      live.set(e.pointerId,
+        { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false });
       if (live.size === 2) pinch = spread();
     });
 
@@ -905,7 +914,10 @@
       const me = live.get(e.pointerId);
       if (!me) return;
       const dx = e.clientX - me.x, dy = e.clientY - me.y;
-      if (Math.hypot(dx, dy) > 3) me.moved = true;
+      // Against the origin, not the previous move. Measured per-event, a slow
+      // drag arrives in sub-3px steps, never trips the threshold, and releases
+      // as a tap -- so orbiting quietly selected whatever was under the finger.
+      if (Math.hypot(e.clientX - me.x0, e.clientY - me.y0) > 3) me.moved = true;
       me.x = e.clientX;
       me.y = e.clientY;
 
@@ -932,7 +944,12 @@
     el.addEventListener("pointerup", (e) => release(e, true));
     el.addEventListener("pointercancel", (e) => release(e, false));
 
+    // The same trap `touch-action: pan-y` fixes for a finger: this box owns
+    // most of the viewport, and swallowing every wheel event left a desktop
+    // reader unable to scroll the page off it. Zoom is on the modifier the
+    // browser already reserves for zooming; a plain wheel scrolls.
     el.addEventListener("wheel", (e) => {
+      if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       zoomBy(e.deltaY > 0 ? 0.92 : 1.08);
     }, { passive: false });
