@@ -129,6 +129,27 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
               null, {timeout: 10000});
             assert.equal(await page.evaluate(() => window.THREE.REVISION), '169',
               `${where}: vendored three.js did not load`);
+            // The photos are a generated JSON fetched same-origin
+            // (interactive/data/photos.json, from gen_figures.py). Without
+            // them the widget silently falls back to counting numbers, which
+            // is a designed fallback for a reader and a regression for CI.
+            await page.waitForFunction(() =>
+              document.querySelector('#stage').dataset.photos === '3',
+              null, {timeout: 10000})
+              .catch(() => assert.fail(`${where}: photos.json did not load`));
+            const readout = () => page.locator('#shape-readout').innerText();
+            assert((await readout()).includes('(3, 16, 16, 3)'),
+              `${where}: photo batch is not NHWC 16px by default`);
+            // Transpose permutes the shape; the reshape comparison adds a row.
+            await page.locator('#order-NCHW').click();
+            assert((await readout()).includes('(3, 3, 16, 16)'),
+              `${where}: NCHW preset did not permute the shape`);
+            assert.equal(await page.locator('#imgstrip .strip-row').count(), 1);
+            await page.locator('#reshape').check();
+            assert.equal(await page.locator('#imgstrip .strip-row').count(), 2,
+              `${where}: reshape comparison did not add its row`);
+            assert(await page.locator('#imgstrip .strip-row.wrong').count() === 1,
+              `${where}: reshape of a transposed view should be marked wrong`);
           } else {
             await page.waitForSelector('#draw .cell');
           }
@@ -139,7 +160,56 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
             assert(fits, `${where}: horizontal overflow at ${width}`);
           }
           await page.setViewportSize({width: 1440, height: 1000});
+
+          // Embed mode is what the homepage hero shows: stage and caption
+          // only, no three.js, on the band's navy.
+          await page.goto(
+            `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}&embed=1&theme=navy`);
+          await page.waitForSelector('#embedcap a');
+          assert(await page.locator('aside').isHidden(), `${where} embed: panel shown`);
+          assert(await page.locator('header').isHidden(), `${where} embed: header shown`);
+          assert.equal(await page.locator('html').getAttribute('data-theme'), 'navy');
+          if (widget.three) {
+            await page.waitForFunction(() =>
+              document.querySelector('#stage').dataset.photos === '3', null, {timeout: 10000});
+            assert.equal(await page.evaluate(() => window.THREE), undefined,
+              `${where} embed: three.js must not be fetched on the front door`);
+          } else {
+            await page.waitForSelector('#draw .cell');
+          }
+          for (const [width, height] of [[560, 448], [330, 264]]) {
+            await page.setViewportSize({width, height});
+            const fits = await page.evaluate(() =>
+              document.documentElement.scrollWidth <= innerWidth + 1);
+            assert(fits, `${where} embed: horizontal overflow at ${width}`);
+          }
+          await page.setViewportSize({width: 1440, height: 1000});
         }
+      }
+
+      // The hero carries both widgets live, behind two tabs, in the page's
+      // own language. The static diagram is the fallback and must still be
+      // in the document for reduced motion and phones.
+      for (const lang of ['en', 'es']) {
+        console.log(`Checking the hero demos (${lang})`);
+        await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
+        const frames = page.locator('iframe.hero-embed');
+        assert.equal(await frames.count(), 2, `${lang}/index: two hero embeds`);
+        for (const src of await frames.evaluateAll(els => els.map(e => e.getAttribute('src')))) {
+          assert(src.includes(`lang=${lang}`) && src.includes('embed=1') && src.includes('theme=navy'),
+            `${lang}/index: hero embed src ${src}`);
+        }
+        assert(await page.locator('.hero-visual.has-js').count() === 1, `${lang}/index: tab script did not run`);
+        assert(await page.locator('#hero-panel-layout').isVisible());
+        assert(await page.locator('#hero-panel-broadcast').isHidden());
+        await page.locator('#hero-tab-broadcast').click();
+        assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
+        assert(await page.locator('#hero-panel-layout').isHidden());
+        assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
+        await page.setViewportSize({width: 390, height: 1000});
+        assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
+        assert(await page.locator('.hero-demos').isHidden(), `${lang}/index: embeds hidden on a phone`);
+        await page.setViewportSize({width: 1440, height: 1000});
       }
 
       // Keyboard activation on desktop and through the collapsed mobile menu.

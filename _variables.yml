@@ -33,6 +33,7 @@ repo:
   # script, so there is no `src` attribute for check 3 to harvest.
   widgets:
     - interactive/tensor-visualizer.html
+    - interactive/data/photos.json
     - interactive/broadcasting-simulator.html
     - interactive/vendor/three-boot.js
     - interactive/vendor/three-0.169.0.module.min.js
