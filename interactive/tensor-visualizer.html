@@ -160,6 +160,9 @@
     </div>
     <p class="sr" aria-live="polite" id="status"></p>
   </div>
+<!-- The vendored three.js, bridged to the classic script below. Deferred, so
+     it always runs after that script has bound its listener. -->
+<script type="module" src="vendor/three-boot.js"></script>
 <script>
 (function () {
   "use strict";
@@ -169,7 +172,8 @@
   const ITEMSIZE = 4;
   const GAP = 1.5;
   const FIT = 1.55;
-  const THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js";
+  const MAX_SIDE = 8;
+  const MAX_CELLS = MAX_SIDE ** 4;
 
   const ORDERS = {
     C:    [0, 1, 2, 3],
@@ -198,7 +202,8 @@
     cNote: "NumPy default; last axis is contiguous",
     fNote: "Fortran / some SciPy; first axis is contiguous",
     nhwcNote: "PyTorch memory_format=channels_last",
-    glNote: "WebGL unavailable — isometric canvas.",
+    glNoWebgl: "This browser has no WebGL — showing the isometric canvas instead. Everything on the panel is the same.",
+    glNoScript: "The 3-D renderer did not load — showing the isometric canvas instead. Everything on the panel is the same.",
     status: (o, i) => `Offset ${o} at [${i.join(", ")}]`,
     ramp: (ax) => `Fill is ${ax}: pale is ${ax}=0, deep is the far end of that axis. Arrows name each axis.`,
     lit: (ax) => `Slice along ${ax} is lit in that axis colour; everything else is dimmed.`,
@@ -225,7 +230,8 @@
     cNote: "NumPy por defecto; el último eje es contiguo",
     fNote: "Fortran / algo de SciPy; el primer eje es contiguo",
     nhwcNote: "PyTorch memory_format=channels_last",
-    glNote: "WebGL no disponible — canvas isométrico.",
+    glNoWebgl: "Este navegador no tiene WebGL: se muestra el canvas isométrico. Todo lo del panel es igual.",
+    glNoScript: "El renderizador 3-D no se cargó: se muestra el canvas isométrico. Todo lo del panel es igual.",
     status: (o, i) => `Offset ${o} en [${i.join(", ")}]`,
     ramp: (ax) => `El relleno es ${ax}: pálido es ${ax}=0, oscuro es el extremo de ese eje. Las flechas nombran cada eje.`,
     lit: (ax) => `El corte sobre ${ax} se ilumina con el color de ese eje; el resto se atenúa.`,
@@ -245,6 +251,10 @@
     slice: -1
   };
   const view = { yaw: 0.55, el: 0.55, scale: 1 };
+  // The current voxel list. Rebuilt only when the shape, index, layout or
+  // slice moves -- rotating and zooming do not touch it, and at 8^4 rebuilding
+  // it per pointermove was 4096 objects a frame, three times over.
+  let VOX = [];
   let mode = "flat";
   const GL = { ready: false };
 
@@ -263,10 +273,6 @@
     const pa = parseRgb(a), pb = parseRgb(b);
     const m = pa.map((v, i) => Math.round(v + (pb[i] - v) * t));
     return `rgb(${m.join(",")})`;
-  }
-  function hexInt(c) {
-    const p = parseRgb(c);
-    return (p[0] << 16) | (p[1] << 8) | p[2];
   }
   function axSpan(i, text) {
     return `<span style="color:var(${AXVAR[i]})">${text}</span>`;
@@ -313,7 +319,6 @@
     $("th-ax").textContent = T.ax;
     $("th-np").textContent = T.np;
     $("th-pt").textContent = T.pt;
-    $("glnote").textContent = T.glNote;
   }
 
   function radio(name, value, label, checked, color) {
@@ -364,7 +369,7 @@
         host.appendChild(wrap);
       });
     }
-    sliders($("sizes"), "size", () => 8);
+    sliders($("sizes"), "size", () => MAX_SIDE);
     sliders($("indices"), "idx", (i) => state.size[i] - 1);
 
     const sliceOpts = [-1, 0, 1, 2, 3].map((v) => {
@@ -441,8 +446,7 @@
       el.style.top = `${py}px`;
       host.appendChild(el);
     });
-    const voxels = buildVoxels();
-    const sel = voxels.find((v) => v.sel);
+    const sel = VOX.find((v) => v.sel);
     if (sel) {
       const el = document.createElement("span");
       el.className = "off";
@@ -560,42 +564,46 @@
 
   function syncGL(voxels) {
     const THREE = GL.THREE;
-    const geo = GL.box;
-    while (GL.group.children.length) {
-      const ch = GL.group.children[0];
-      GL.group.remove(ch);
-      if (ch.geometry && ch.geometry !== geo) ch.geometry.dispose();
-      if (ch.material) {
-        const mats = Array.isArray(ch.material) ? ch.material : [ch.material];
-        mats.forEach((m) => { if (m.map) m.map.dispose(); m.dispose(); });
-      }
-    }
+    const m = new THREE.Matrix4();
+    const c = new THREE.Color();
+    // Two meshes rather than one: a cell is either in the slice or dimmed to
+    // 0.15, and instance colour carries no alpha. Splitting on that one bit
+    // keeps both materials constant, so nothing is allocated per cell per
+    // frame. Capacity is the 8^4 the sliders can reach; `count` is what is
+    // drawn.
+    let nLit = 0, nDim = 0;
     voxels.forEach((v) => {
-      const mat = new THREE.MeshLambertMaterial({
-        color: v.color,
-        transparent: v.alpha < 1,
-        opacity: v.alpha,
-        emissive: v.sel ? css("--ink") : "#000000",
-        emissiveIntensity: v.sel ? 0.18 : 0
-      });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(v.x, v.y, v.z);
-      mesh.userData.off = v.off;
-      GL.group.add(mesh);
-      if (v.sel) {
-        const edge = new THREE.LineSegments(
-          new THREE.EdgesGeometry(geo),
-          new THREE.LineBasicMaterial({ color: css("--ink") })
-        );
-        edge.position.copy(mesh.position);
-        GL.group.add(edge);
-      }
+      const mesh = v.alpha < 1 ? GL.dim : GL.lit;
+      const i = v.alpha < 1 ? nDim++ : nLit++;
+      m.makeTranslation(v.x, v.y, v.z);
+      mesh.setMatrixAt(i, m);
+      mesh.setColorAt(i, c.set(v.color));
     });
-    axisHandles().forEach((a) => {
-      const dir = new THREE.Vector3(a.d.x, a.d.y, a.d.z).normalize();
-      const origin = new THREE.Vector3(a.o.x, a.o.y, a.o.z);
-      const arrow = new THREE.ArrowHelper(dir, origin, a.len, hexInt(css(AXVAR[a.i])), 0.38, 0.22);
-      GL.group.add(arrow);
+    GL.lit.count = nLit;
+    GL.dim.count = nDim;
+    [GL.lit, GL.dim].forEach((mesh) => {
+      mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+      mesh.computeBoundingSphere();
+    });
+
+    const sel = voxels.find((v) => v.sel);
+    GL.outline.visible = !!sel;
+    if (sel) {
+      GL.outline.position.set(sel.x, sel.y, sel.z);
+      GL.outline.material.color.set(css("--ink"));
+    }
+
+    // The arrows are repointed, never rebuilt. An ArrowHelper keeps its
+    // materials on its `.line` and `.cone` children, so the old teardown --
+    // which looked for `.geometry` and `.material` on the helper itself --
+    // walked straight past them and leaked two materials per axis per render.
+    axisHandles().forEach((a, i) => {
+      const arrow = GL.arrows[i];
+      arrow.position.set(a.o.x, a.o.y, a.o.z);
+      arrow.setDirection(new THREE.Vector3(a.d.x, a.d.y, a.d.z).normalize());
+      arrow.setLength(a.len, 0.38, 0.22);
+      arrow.setColor(new THREE.Color(css(AXVAR[a.i])));
     });
   }
 
@@ -617,18 +625,50 @@
     const group = new THREE.Group();
     scene.add(group);
     $("stage").appendChild(canvas);
+
+    const box = new THREE.BoxGeometry(0.86, 0.86, 0.86);
+    const instanced = (opacity) => {
+      const mat = new THREE.MeshLambertMaterial({
+        transparent: opacity < 1, opacity, depthWrite: opacity === 1
+      });
+      const mesh = new THREE.InstancedMesh(box, mat, MAX_CELLS);
+      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      mesh.setColorAt(0, new THREE.Color("#ffffff"));   // allocates instanceColor
+      mesh.count = 0;
+      mesh.frustumCulled = false;
+      group.add(mesh);
+      return mesh;
+    };
+    const lit = instanced(1);
+    const dim = instanced(0.15);
+
+    const outline = new THREE.LineSegments(
+      new THREE.EdgesGeometry(box),
+      new THREE.LineBasicMaterial({ color: css("--ink") })
+    );
+    outline.visible = false;
+    group.add(outline);
+
+    const arrows = axisHandles().map(() => {
+      const a = new THREE.ArrowHelper(
+        new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 1, 0xffffff, 0.38, 0.22);
+      group.add(a);
+      return a;
+    });
+
     Object.assign(GL, {
       ready: true, THREE, renderer, scene, camera, group,
-      box: new THREE.BoxGeometry(0.86, 0.86, 0.86)
+      box, lit, dim, outline, arrows
     });
     return true;
   }
 
-  function setMode(next) {
+  function setMode(next, why) {
     mode = next;
     $("view").style.display = next === "flat" ? "block" : "none";
     if (GL.renderer) GL.renderer.domElement.style.display = next === "gl" ? "block" : "none";
     $("glnote").hidden = next === "gl";
+    if (why) $("glnote").textContent = T[why];
   }
 
   function renderLegend() {
@@ -640,11 +680,11 @@
   }
 
   function render() {
+    VOX = buildVoxels();
     const st = strides();
     const off = offsetOf(state.idx);
     const fastest = fastestAxis();
     document.querySelectorAll("#sizes input").forEach((el, i) => {
-      el.max = "8";
       el.value = String(state.size[i]);
       el.parentElement.querySelector(".val").textContent = String(state.size[i]);
     });
@@ -677,9 +717,8 @@
     $("stagenote").textContent = `${state.slice >= 0 ? T.lit(hueLetter) : T.ramp(hueLetter)} ${T.drag}`;
     renderLegend();
 
-    const voxels = buildVoxels();
     if (mode === "gl" && GL.ready) {
-      syncGL(voxels);
+      syncGL(VOX);
       const stage = $("stage");
       GL.renderer.setSize(stage.clientWidth, stage.clientHeight, false);
       GL.camera.aspect = stage.clientWidth / Math.max(stage.clientHeight, 1);
@@ -688,14 +727,46 @@
     repaint();
   }
 
+  // The flat renderer has always scaled itself to the shape, through
+  // `cellScale`. The GL camera sat at a fixed distance instead, which nobody
+  // could see was wrong while the renderer never loaded: anything past the
+  // default shape hung off the bottom of the stage. Frame the bounding sphere
+  // against whichever of the two field-of-view angles is tighter.
+  function glDistance(pitch) {
+    const [B, C, H, W] = state.size;
+    const spanX = (B - 1) * (W + GAP) + W;
+    // Yaw only spins the tensor about Y, so the widest it can ever look is the
+    // XZ diagonal, and it is never taller than H. Fitting those two separately
+    // rather than the full 3-D bounding sphere is what keeps eight batches of
+    // 8x8x8 from being framed as if they were a cube.
+    const rXZ = 0.5 * Math.hypot(spanX, C) + 1.1;   // + room for the arrows
+    const rY = 0.5 * H + 1.1;
+    const vfov = GL.camera.fov * Math.PI / 180;
+    const hfov = 2 * Math.atan(Math.tan(vfov / 2) * Math.max(GL.camera.aspect, 0.2));
+    const needV = rY * Math.cos(pitch) + rXZ * Math.sin(pitch);
+    // 1.12 because a perspective camera magnifies the near end of a long pile:
+    // fitting the extents exactly leaves the batch closest to the camera
+    // clipped at the edge.
+    const fit = Math.max(rXZ / Math.tan(hfov / 2), needV / Math.tan(vfov / 2));
+    return fit * 1.12 / view.scale;
+  }
+
   function repaint() {
-    const voxels = buildVoxels();
     if (mode === "gl" && GL.ready) {
-      const dist = 14 / view.scale;
+      const pitch = Math.atan(view.el * 0.6);
+      const dist = glDistance(pitch);
+      // The far plane was a fixed 80, which an 8x8x8x8 tensor sits well
+      // outside -- it clipped the whole scene to nothing. It follows the fit
+      // distance now.
+      const far = dist * 3;
+      if (GL.camera.far !== far) {
+        GL.camera.far = far;
+        GL.camera.updateProjectionMatrix();
+      }
       GL.camera.position.set(
-        Math.sin(view.yaw) * dist,
-        6 * view.el + 2,
-        Math.cos(view.yaw) * dist
+        Math.sin(view.yaw) * dist * Math.cos(pitch),
+        Math.sin(pitch) * dist,
+        Math.cos(view.yaw) * dist * Math.cos(pitch)
       );
       GL.camera.lookAt(0, 0, 0);
       GL.group.rotation.y = 0;
@@ -703,7 +774,7 @@
       const stage = $("stage");
       placeOverlays(stage.clientWidth, stage.clientHeight);
     } else {
-      drawFlat(voxels);
+      drawFlat(VOX);
     }
   }
 
@@ -714,9 +785,8 @@
     const to = (x, y, z) => (mode === "gl" && GL.ready)
       ? glTo(x, y, z, rect.width, rect.height)
       : canvasTo(x, y, z, rect.width, rect.height);
-    const voxels = buildVoxels();
     let best = null, bestD = 28;
-    voxels.forEach((v) => {
+    VOX.forEach((v) => {
       const [x, y] = to(v.x, v.y, v.z);
       const d = Math.hypot(x - px, y - py);
       if (d < bestD) { bestD = d; best = v; }
@@ -751,38 +821,57 @@
     el.addEventListener("wheel", (e) => {
       e.preventDefault();
       view.scale = Math.min(2.4, Math.max(0.5, view.scale * (e.deltaY > 0 ? 0.92 : 1.08)));
-      render();
+      repaint();
     }, { passive: false });
   }
 
-  function loadScript(src) {
+  // vendor/three-boot.js imports the vendored build and fires this. It is a
+  // deferred module, so it lands after this script; if the import never
+  // resolves -- a file:// open, a blocked request -- nothing fires and the
+  // timeout below settles it.
+  function whenThree(ms) {
     return new Promise((resolve, reject) => {
-      const s = document.createElement("script");
-      s.src = src;
-      s.onload = resolve;
-      s.onerror = reject;
-      document.head.appendChild(s);
+      if (window.THREE) return resolve();
+      const timer = setTimeout(() => reject(new Error("timeout")), ms);
+      window.addEventListener("three-ready", () => {
+        clearTimeout(timer);
+        resolve();
+      }, { once: true });
     });
+  }
+
+  function boot() {
+    let settled = false;
+    const flat = (why) => {
+      if (settled) return;
+      settled = true;
+      setMode("flat", why);
+      render();
+    };
+    whenThree(6000).then(() => {
+      if (settled) return;
+      settled = true;
+      // Two different failures, two different sentences. The old copy said
+      // "WebGL unavailable" for both, and for eleven days it said it to
+      // everybody, because the script URL it asked for had 404'd since r160.
+      if (initGL()) setMode("gl");
+      else setMode("flat", "glNoWebgl");
+      render();
+    }).catch(() => flat("glNoScript"));
   }
 
   applyCopy();
   buildControls();
   bindPointer();
-  window.addEventListener("resize", render);
 
-  loadScript(THREE_URL).then(() => {
-    if (initGL()) setMode("gl");
-    render();
-  }).catch(() => {
-    setMode("flat");
-    render();
+  let resizeTimer = 0;
+  window.addEventListener("resize", () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(render, 120);
   });
-  setTimeout(() => {
-    if (!GL.ready) {
-      setMode("flat");
-      render();
-    }
-  }, 2500);
+
+  render();
+  boot();
 })();
 </script>
 </body>
