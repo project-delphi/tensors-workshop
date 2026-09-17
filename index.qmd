@@ -217,6 +217,37 @@ Core papers, textbook chapters, and repository source code.
 :::
 ::::
 
+## Try one in the browser {#interactive}
+
+<span data-language-key="try-one-in-the-browser"></span>
+
+No install and no account. Two live tools that answer a question the pages can
+only describe.
+
+:::: {.widget-grid}
+::: {.resource-card}
+### 🧮 Broadcasting simulator
+
+<span data-language-key="broadcasting-simulator"></span>
+
+Type two shapes. Watch NumPy line them up from the right, pad the short one, and
+stretch every axis of size 1 — or refuse, and say which axis. Section 03.
+
+[Try shapes](interactive/broadcasting-simulator.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 🧊 Layout visualizer
+
+<span data-language-key="layout-visualizer"></span>
+
+Turn a 4-D tensor and see four indices become one offset in a flat buffer.
+C-contiguous, Fortran order, or channels-last. Section 04.
+
+[Try layouts](interactive/tensor-visualizer.html?lang=en){.resource-button}
+:::
+::::
+
 ## Familiar with basic linear algebra? You're ready to go. {#prerequisites}
 
 <span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>

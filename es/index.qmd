@@ -217,6 +217,38 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 :::
 ::::
 
+## Pruébalos en el navegador {#interactive}
+
+<span data-language-key="try-one-in-the-browser"></span>
+
+Sin instalar nada y sin cuenta. Dos herramientas vivas que responden una
+pregunta que las páginas solo pueden describir.
+
+:::: {.widget-grid}
+::: {.resource-card}
+### 🧮 Simulador de broadcasting
+
+<span data-language-key="broadcasting-simulator"></span>
+
+Escribe dos formas. Mira cómo NumPy las alinea desde la derecha, rellena la más
+corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Sección 03.
+
+<a href="../interactive/broadcasting-simulator.html?lang=es" class="resource-button">Probar formas</a>
+:::
+
+::: {.resource-card}
+### 🧊 Visualizador de disposición
+
+<span data-language-key="layout-visualizer"></span>
+
+Gira un tensor 4-D y observa cómo cuatro índices se convierten en un
+desplazamiento dentro de un búfer plano. C-contiguo, orden Fortran o
+channels-last. Sección 04.
+
+<a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Probar disposiciones</a>
+:::
+::::
+
 ## ¿Conoces el álgebra lineal básica? Ya puedes empezar. {#requisitos-previos}
 
 <span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
