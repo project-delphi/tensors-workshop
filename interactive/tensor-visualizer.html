@@ -442,6 +442,7 @@
   const LETTER = ["B", "C", "H", "W"];
   const AXVAR = ["--ax0", "--ax1", "--ax2", "--ax3"];
   const CHANVAR = ["--chan0", "--chan1", "--chan2"];
+  const NEUTRAL_AX = "--ink-mute";   // an axis a reshape left with no identity
   const ITEMSIZE = 1;            // uint8: one byte per element, as the photos are
   const BASE_GAP = 1.5;          // between the outermost slots, along x
   const BASE_ZGAP = 0.55;        // between planes, along z
@@ -1110,8 +1111,16 @@
     state.axisId.forEach((id, p) => {
       if (id != null && !used.has(id)) { hues[p] = AXVAR[id]; used.add(id); }
     });
-    const free = AXVAR.filter((_, i) => !used.has(i));
-    return hues.map((h, p) => h || free.shift() || AXVAR[p % 4]);
+    // By meaning the stage still draws every source axis in its own hue, so
+    // those hues are spoken for even where a reshape has merged the axis out
+    // of the view. Handing one of them to the merged axis put the panel's
+    // swatch and the stage's arrow in the same colour for two different
+    // things, on a page whose whole point is that colour says which axis.
+    const reserved = new Set(used);
+    if (!byPos() && SRC) SRC.ids.forEach((id) => reserved.add(id));
+    const free = AXVAR.filter((_, i) => !reserved.has(i));
+    // Nothing left: an axis with no identity is grey rather than a lie.
+    return hues.map((h) => h || free.shift() || NEUTRAL_AX);
   }
   const axLetter = (p) => (SRC && SRC.letters && state.axisId[p] != null) ? SRC.letters[state.axisId[p]] : null;
   const axTag = (p) => axLetter(p) || String(p);
@@ -1947,7 +1956,16 @@
         `<line x1="0" y1="0" stroke-width="3" stroke-linecap="round"></line>` +
         `<circle r="9"></circle><text text-anchor="middle"></text></g>`).join("");
     }
-    arms.sort((a, b) => a.p[1] - b.p[1]).forEach(({ arm, role, p }) => {
+    arms.sort((a, b) => a.p[1] - b.p[1]);
+    // Re-inserting an element is a remove and an insert, which blurs it. The
+    // order really does change as the view turns -- activating an arm starts a
+    // glide that reorders them -- so the restack is kept and the focus is put
+    // back afterwards, rather than leaving the reader on <body>.
+    const order = arms.map((a) => a.arm.r).join(",");
+    const restack = svg.dataset.order !== order;
+    const focused = restack && svg.contains(document.activeElement) ? document.activeElement : null;
+    if (restack) svg.dataset.order = order;
+    arms.forEach(({ arm, role, p }) => {
       const g = svg.querySelector(`[data-arm="${arm.r}"]`);
       const hue = css(role.hue);
       g.setAttribute("aria-label", T.gizmoArm(role.label));
@@ -1963,8 +1981,9 @@
       text.setAttribute("y", (p[1] + 3.2).toFixed(1));
       text.setAttribute("fill", inkOn(hue));
       text.textContent = role.label;
-      svg.appendChild(g);   // paint order: nearest last
+      if (restack) svg.appendChild(g);   // paint order: nearest last
     });
+    if (focused) focused.focus({ preventScroll: true });
   }
 
   // ─── the flat renderer ────────────────────────────────────────────────────
@@ -2260,6 +2279,7 @@
   }
 
   function repaint() {
+    if (!SRC) return;
     const draw = drawList();
     // The buffer strip is part of the same animation: a copy slides its bars.
     if (anim && !embed) renderRibbon();
@@ -2468,6 +2488,10 @@
   let ELS = [];
 
   function render() {
+    // bindPointer() is installed before photos.json resolves, so a drag, a
+    // click or a resize can land in that window. Without an array there is
+    // nothing to draw and every geometry helper dereferences SRC.
+    if (!SRC) return;
     flushCss();
     ELS = elements();
     VOX = buildVoxels();
@@ -2800,10 +2824,12 @@
   }
 
   applyCopy();
-  bindPointer();
   $("snap").textContent = T.snapIn;
   loadPhotos().then(() => {
     rebuildSource();
+    // Only now: a drag, a click or a snap before there is an array reaches
+    // the geometry helpers, and every one of them dereferences SRC.
+    bindPointer();
     buildControls();
     if (embed) {
       // The front door: the isometric canvas only, no three.js to fetch.
