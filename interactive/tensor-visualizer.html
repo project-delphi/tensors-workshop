@@ -1329,8 +1329,15 @@
         // 0.78 clears the cube's corner (0.43 * sqrt 3) along any view direction
         // and stays short of the neighbour in front.
         const toward = GL.camera.position.clone().normalize().multiplyScalar(0.78);
-        for (const v of voxels) {
-          if (v.alpha < 1) continue;
+        // Nearest the camera first, so if the cap is hit it is the back of the
+        // pile that goes unlabelled, as in the flat renderer's paint order.
+        const cam = GL.camera.position;
+        const near = voxels.filter((v) => v.alpha >= 1);
+        if (near.length > VALUE_MAX_LABELS) {
+          const d2 = (v) => (v.x - cam.x) ** 2 + (v.y - cam.y) ** 2 + (v.z - cam.z) ** 2;
+          near.sort((a, b) => d2(a) - d2(b));
+        }
+        for (const v of near) {
           if (n >= VALUE_MAX_LABELS) break;
           let sprite = GL.labels[n];
           if (!sprite) {
@@ -1753,6 +1760,10 @@
       if (!res.ok) throw new Error(String(res.status));
       const json = await res.json();
       if (!json.photos || json.photos.length !== 3) throw new Error("shape");
+      // The instanced mesh is sized for MAX_RES; a larger side added to
+      // WIDGET_RES in gen_figures.py would overflow it silently, so drop it.
+      json.res = json.res.filter((r) => r <= MAX_RES);
+      if (!json.res.includes(state.res)) state.res = Math.max(...json.res);
       PHOTOS = json;
       $("stage").dataset.photos = String(json.photos.length);
     } catch (_) {
