@@ -17,9 +17,14 @@ so it reinforces rather than interrupts.
 | **2 — Einsum, Distance & the Pseudoinverse** | [`kahoot_quiz_2_distance_pseudoinverse.xlsx`](kahoot_quiz_2_distance_pseudoinverse.xlsx) | Section 07, before the recursion demo | 06, 07 | 6 |
 | **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, immediately before the wrap-up | 10, plus leftover convolution from extra 13 | 6 |
 
-Sections **00, 02, 05, 08 and 11** have no quiz. That is deliberate: the
-quizzes are checkpoints after exercise stretches, so the setup, the two group
-blocks, the recursion demo and the wrap-up are not covered by one.
+Sections **00, 02, 05, 08, 09 and 11** have no quiz. Five of those are
+deliberate: the quizzes are checkpoints after exercise stretches, so the setup,
+the two group blocks, the recursion demo and the wrap-up are not covered by one.
+
+**09 is not.** Quiz 3 used to cover it, and it no longer does — half that
+quiz still asks about convolution, which left the live agenda when it became
+extra 13, and rewriting those questions is the open job the table above records.
+Until that happens, matrix factorizations reach the room without a checkpoint.
 
 ## How to run them
 
