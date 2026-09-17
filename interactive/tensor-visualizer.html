@@ -484,6 +484,7 @@
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H↔W", reverse: "reverse (.T)" },
     orderNote: "Click two axes to swap them. Same buffer, new shape, new strides -- a view, no copy.",
     orderNoteLost: "Click two axes to swap them. The named presets need B, C, H and W, and a reshape has merged or split them away.",
+    orderNoteNumbers: "Click two axes to swap them. np.arange has no named axes -- nothing here is a batch or a channel -- so the presets that name them are off.",
     layout: "Memory layout",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     contig: ".contiguous()",
@@ -606,6 +607,7 @@
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H↔W", reverse: "invertir (.T)" },
     orderNote: "Haz clic en dos ejes para intercambiarlos. El mismo búfer, nueva forma, nuevos strides: una vista, sin copia.",
     orderNoteLost: "Haz clic en dos ejes para intercambiarlos. Los presets con nombre necesitan B, C, H y W, y un reshape los ha fundido o partido.",
+    orderNoteNumbers: "Haz clic en dos ejes para intercambiarlos. np.arange no tiene ejes con nombre (aquí nada es un lote ni un canal), así que los presets que los nombran están desactivados.",
     layout: "Disposición en memoria",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     contig: ".contiguous()",
@@ -1415,9 +1417,11 @@
     });
 
     const named = hasAllIds();
+    const hasLetters = !!(SRC && SRC.letters);
     ["NHWC", "NCHW"].forEach((k) => { $(`order-${k}`).disabled = !named; });
-    $("order-swapHW").disabled = !(posOfId(2) >= 0 && posOfId(3) >= 0);
-    $("order-note").textContent = named ? T.orderNote : T.orderNoteLost;
+    $("order-swapHW").disabled = !(hasLetters && posOfId(2) >= 0 && posOfId(3) >= 0);
+    $("order-note").textContent = named ? T.orderNote
+      : (hasLetters ? T.orderNoteLost : T.orderNoteNumbers);
 
     const photoMode = !!isPhotos();
     $("shape-photo").hidden = !photoMode;
@@ -2206,7 +2210,11 @@
     paint(W, H, (data, o, h, w) => {
       L[wp] = w;
       if (R >= 2) L[hp] = h;
-      const rgb = parseRgb(axisFill(fastestPos(), n > 1 ? read(L) / (n - 1) : 0.5));
+      // A photo byte is 0-255 whatever the element count; only np.arange runs
+      // to n - 1. Normalising both the same way washed the merged photo out.
+      const v = read(L);
+      const t = isPhotos() ? v / 255 : (n > 1 ? v / (n - 1) : 0.5);
+      const rgb = parseRgb(axisFill(fastestPos(), t));
       data[o] = rgb[0]; data[o + 1] = rgb[1]; data[o + 2] = rgb[2];
       data[o + 3] = 255;
     }, kind);
@@ -2537,9 +2545,14 @@
     let step = 0;
     const apply = () => {
       rebuildSource();
-      if (step >= 1) applyTranspose(ORDER_PRESETS.NCHW.map(posOfId));
-      state.compare = step === 2;
-      text.innerHTML = `<b>${T.embedSteps[step]}</b>`;
+      // Without the photos there is no NHWC to permute: the fallback array is
+      // a rank-3 np.arange, so `posOfId(3)` is -1 and a permutation built from
+      // it would hand the shape an undefined axis and a NaN element count.
+      // Both later steps are about the photos anyway, so the fallback holds.
+      const at = hasAllIds() ? step : 0;
+      if (at >= 1) applyTranspose(ORDER_PRESETS.NCHW.map(posOfId));
+      state.compare = at === 2;
+      text.innerHTML = `<b>${T.embedSteps[at]}</b>`;
       render();
     };
     apply();
@@ -2605,6 +2618,7 @@
       // The instanced mesh is sized for MAX_RES; a larger side added to
       // WIDGET_RES in gen_figures.py would overflow it silently, so drop it.
       json.res = json.res.filter((r) => r <= MAX_RES);
+      if (!json.res.length) throw new Error("res");
       if (!json.res.includes(state.res)) state.res = Math.max(...json.res);
       PHOTOS = json;
       $("stage").dataset.photos = String(json.photos.length);
