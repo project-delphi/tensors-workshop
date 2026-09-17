@@ -44,11 +44,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
     <iframe class="hero-embed" src="interactive/tensor-visualizer.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: three photos as a 4-D tensor, transposed and then reshaped" loading="lazy"></iframe>
-    <p class="hero-caption">Real photos, one cube per byte. Transpose keeps the picture; reshape breaks it. <a href="interactive/tensor-visualizer.html?lang=en">Open the full widget →</a></p>
+    <p class="hero-caption">Real photos, one cube per byte. Transpose keeps the picture; reshape breaks it.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
     <iframe class="hero-embed" src="interactive/broadcasting-simulator.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: two shapes aligned from the right and stretched" loading="lazy"></iframe>
-    <p class="hero-caption">Two shapes lined up from the right; every axis of size 1 stretches, and nothing is copied. <a href="interactive/broadcasting-simulator.html?lang=en">Open the full widget →</a></p>
+    <p class="hero-caption">Two shapes lined up from the right; every axis of size 1 stretches, and nothing is copied.</p>
   </div>
   <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Two of the moves, live.</p>
 </div>

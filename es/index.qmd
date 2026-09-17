@@ -44,11 +44,11 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
     <iframe class="hero-embed" src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape" loading="lazy"></iframe>
-    <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe. <a href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a></p>
+    <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
     <iframe class="hero-embed" src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas" loading="lazy"></iframe>
-    <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia. <a href="../interactive/broadcasting-simulator.html?lang=es">Abrir la herramienta completa →</a></p>
+    <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
   <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Dos de los movimientos, en vivo.</p>
 </div>

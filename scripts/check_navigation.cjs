@@ -108,8 +108,8 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
       // Chromium gives us WebGL is not something to hang CI on, and the
       // isometric canvas is a designed fallback, not a failure.
       const widgets = [
-        {file: 'tensor-visualizer', en: 'Tensor layout and strides',
-         es: 'Disposición en memoria y strides', three: true},
+        {file: 'tensor-visualizer', en: 'Reshape, transpose and strides',
+         es: 'Reshape, transpose y strides', three: true},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
          es: 'Broadcasting, paso a paso', three: false}
       ];
@@ -151,6 +151,55 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
               `${where}: reshape comparison did not add its row`);
             assert(await page.locator('#imgstrip .strip-row.wrong').count() === 1,
               `${where}: reshape of a transposed view should be marked wrong`);
+            await page.locator('#reshape').uncheck();
+
+            // The stage carries the shape, the strides and a signature of the
+            // buffer, so the three operations can be checked for what they
+            // promise rather than for how they look. `bufsig` hashes which
+            // source element sits at each memory offset: a view must never
+            // change it, and a copy must.
+            const data = key => page.locator('#stage').evaluate((e, k) => e.dataset[k], key);
+            const preset = text => page.locator('#shape-presets button')
+              .filter({hasText: text}).first();
+            await page.locator('#order-NHWC').click();
+            const viewSig = await data('bufsig');
+            assert.equal(await data('shape'), '3,16,16,3', `${where}: NHWC did not come back`);
+            await preset('(2304,)').click();
+            assert.equal(await data('shape'), '2304',
+              `${where}: reshape preset did not take`);
+            assert.equal(await data('bufsig'), viewSig,
+              `${where}: a reshape of a contiguous view must not move a byte`);
+            await preset('(3, 16, 16, 3)').click();
+            await page.locator('#order-NCHW').click();
+            assert.equal(await data('bufsig'), viewSig,
+              `${where}: a transpose must not move a byte`);
+            await page.locator('#contig').click();
+            assert.notEqual(await data('bufsig'), viewSig,
+              `${where}: .contiguous() must rewrite the buffer`);
+            assert.equal(await data('shape'), '3,3,16,16',
+              `${where}: .contiguous() must leave the shape alone`);
+            assert.equal(await data('strides'), '768,256,16,1',
+              `${where}: .contiguous() must leave C-contiguous strides`);
+
+            // Face on, the gaps close and -- in photo mode -- the channel
+            // planes composite back into the photograph.
+            await page.locator('#snap').click();
+            await page.waitForFunction(() =>
+              document.querySelector('#stage').dataset.snapped === '1',
+              null, {timeout: 5000})
+              .catch(() => assert.fail(`${where}: Snap to 2-D did not engage`));
+
+            // Counting numbers are a tensor of any rank: every factorisation
+            // of 24 is a reshape, and none of them touches the buffer.
+            await page.locator('label[for="data-numbers"]').click();
+            assert.equal(await data('shape'), '2,3,4', `${where}: np.arange(24) shape`);
+            const numbersSig = await data('bufsig');
+            for (const [label, shape] of [['(24,)', '24'], ['(4, 6)', '4,6'], ['(3, 2, 4)', '3,2,4']]) {
+              await preset(label).click();
+              assert.equal(await data('shape'), shape, `${where}: reshape to ${label}`);
+              assert.equal(await data('bufsig'), numbersSig,
+                `${where}: reshape to ${label} must not move a byte`);
+            }
           } else {
             await page.waitForSelector('#draw .cell');
           }

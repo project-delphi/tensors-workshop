@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Tensor layout and strides</title>
+<title>Reshape, transpose and strides</title>
 <style>
   :root {
     --bg: #f7f5ef;
@@ -68,6 +68,9 @@
   .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 24rem); gap: 1.25rem; align-items: start; }
   @media (max-width: 56rem) { .grid { grid-template-columns: 1fr; } }
+  /* The furniture sits over the picture but outside it: `#stage` is
+     role="img", and a role="img" element's children are presentational. */
+  .stagewrap { position: relative; }
   #stage {
     position: relative;
     height: min(62vh, 32rem);
@@ -100,8 +103,60 @@
     position: absolute; transform: translate(-50%, -50%);
     font: 700 11px/1 var(--mono); color: var(--ink);
     background: var(--bg); border: 1px solid var(--ink); border-radius: 4px;
-    padding: 2px 5px;
+    padding: 2px 5px; white-space: nowrap;
   }
+  /* The click-a-cube inspector: index, the stride sum, the offset. Anchored to
+     the cube, so it is `position: absolute` inside the same overlay layer. */
+  #overlays .peek {
+    position: absolute; transform: translate(-50%, calc(-100% - 0.6rem));
+    background: var(--panel); border: 1px solid var(--ink); border-radius: 6px;
+    padding: 0.3rem 0.5rem; max-width: 15rem;
+    font: 600 10.5px/1.5 var(--mono); color: var(--ink);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.18);
+  }
+  #overlays .peek b { color: var(--accent); }
+  #overlays .peek .sum { display: block; color: var(--ink-mute); font-weight: 500; overflow-wrap: anywhere; }
+
+  /* The viewport furniture: the controls legend bottom left, the orientation
+     gizmo bottom right, the snap button above it. `#overlays` is
+     pointer-events: none, so each interactive piece turns them back on. */
+  #legend {
+    position: absolute; left: 0.7rem; bottom: 0.7rem; z-index: 2;
+    background: color-mix(in srgb, var(--panel) 95%, transparent);
+    border: 1px solid var(--line); border-radius: 8px;
+    font: 500 0.7rem/1.5 var(--sans); color: var(--ink-mute);
+    max-width: min(17rem, calc(100% - 1.4rem));
+  }
+  #legend summary {
+    list-style: none; cursor: pointer; padding: 0.3rem 0.55rem;
+    font: 700 0.66rem/1.4 var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
+    color: var(--ink); border-radius: 7px;
+  }
+  #legend summary::-webkit-details-marker { display: none; }
+  #legend summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  #legend ul { margin: 0; padding: 0 0.55rem 0.4rem; list-style: none; }
+  #legend li { display: flex; gap: 0.4rem; align-items: baseline; }
+  #legend li span:first-child { flex: none; width: 1.1rem; text-align: center; }
+  #legend kbd {
+    font: 600 0.92em var(--mono); background: var(--sunk); color: var(--ink);
+    border: 1px solid var(--line); border-radius: 3px; padding: 0 0.2em;
+  }
+  #snap {
+    position: absolute; right: 0.7rem; bottom: 5.6rem; z-index: 2;
+    font: 600 0.72rem/1.3 var(--sans); padding: 0.3rem 0.6rem; cursor: pointer;
+    color: var(--ink); background: var(--panel);
+    border: 1px solid var(--line); border-radius: 999px;
+  }
+  #snap[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  #snap:hover { border-color: var(--accent); }
+  #snap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #gizmo { position: absolute; right: 0.5rem; bottom: 0.5rem; width: 5rem; height: 5rem; z-index: 2; }
+  #gizmo .arm { cursor: pointer; pointer-events: auto; }
+  #gizmo .arm:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  #gizmo text { font: 700 9px var(--mono); }
+  html.embed #legend, html.embed #snap, html.embed #gizmo { display: none; }
+  @media (max-width: 34rem) { #legend { display: none; } }
+
   #axis-legend {
     display: flex; flex-wrap: wrap; gap: 0.45rem 1rem; margin: 0.65rem 0 0;
     font: 500 0.8rem/1.3 var(--sans); color: var(--ink-mute);
@@ -128,11 +183,27 @@
   #ribbon-order { font: 600 0.8rem/1.4 var(--mono); }
 
   aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; min-width: 0; }
-  aside h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.95rem 0 0.45rem; color: var(--ink-mute); }
-  aside h2:first-child { margin-top: 0; }
+  /* The three panels the sidebar is now divided into: data, operations, and
+     the memory inspector. The number is drawn by CSS so the copy tables carry
+     only the words. */
+  aside .panel { border-top: 1px solid var(--line); margin-top: 1.1rem; padding-top: 0.5rem; }
+  aside .panel:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
+  aside .panel > h2 {
+    display: flex; align-items: baseline; gap: 0.45rem;
+    font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em;
+    margin: 0 0 0.5rem; color: var(--ink);
+  }
+  aside .panel > h2::before {
+    counter-increment: panel; content: counter(panel);
+    font: 700 0.68rem/1.35rem var(--mono); color: var(--on-accent);
+    background: var(--accent); border-radius: 50%; width: 1.35rem; text-align: center; flex: none;
+  }
+  aside { counter-reset: panel; }
+  aside h3 { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.85rem 0 0.35rem; color: var(--ink-mute); }
+  aside .panel > :first-child + h3 { margin-top: 0.2rem; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
-  /* `hidden` must win over the display rules above and below: the numbers-mode
-     size sliders are hidden in photo mode, and a grid rule was un-hiding them. */
+  /* `hidden` must win over the display rules above and below: several blocks
+     are shown for one data source only, and a grid rule was un-hiding them. */
   [hidden] { display: none !important; }
   .field { min-width: 0; }
   .field .k { display: flex; justify-content: space-between; font: 600 0.75rem/1.2 var(--mono); }
@@ -165,7 +236,13 @@
   .chips button[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; }
   .chips button:hover, .presets button:hover, .tools button:hover { border-color: var(--accent); }
   .chips button:focus-visible, .presets button:focus-visible, .tools button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .chips button:disabled, .presets button:disabled { opacity: 0.4; cursor: not-allowed; }
   .presets { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.45rem; }
+  /* The reshape presets: every factorisation of N, each saying whether taking
+     it is a view or a copy. `aria-pressed` marks the shape in force. */
+  .presets.shapes button { font-family: var(--mono); font-weight: 650; border-radius: 7px; }
+  .presets.shapes button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .presets.shapes button .kind { font: 500 0.82em var(--sans); opacity: 0.75; margin-left: 0.3em; }
   .checks { display: grid; gap: 0.25rem; }
   .checks label { display: flex; gap: 0.45rem; align-items: center; font-size: 0.82rem; }
   .checks input, .toggle input { accent-color: var(--accent); width: 1rem; height: 1rem; }
@@ -173,10 +250,12 @@
   .toggle input { margin-top: 0.2rem; flex: none; }
   .readout { font: 700 0.9rem/1.5 var(--mono); margin: 0.35rem 0 0; overflow-wrap: anywhere; }
   .readout .dim { color: var(--ink-mute); font-weight: 500; }
+  .readout .pos { display: block; font: 500 0.7rem/1.4 var(--sans); color: var(--ink-mute); margin-top: 0.15rem; }
   table { width: 100%; border-collapse: collapse; font: 0.8rem/1.35 var(--mono); }
   th { text-align: left; font: 600 0.7rem/1.2 var(--sans); color: var(--ink-mute); padding: 0.15rem 0.3rem 0.25rem 0; }
   td { padding: 0.2rem 0.3rem 0.2rem 0; border-top: 1px solid var(--line); }
   td .dot { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; margin-right: 0.35rem; vertical-align: -0.05rem; }
+  td .pos { font: 500 0.7rem var(--sans); color: var(--ink-mute); margin-left: 0.3rem; }
   tr.fast td { font-weight: 700; }
   .mark { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; margin-left: 0.25rem; }
   .formula { font: 0.75rem/1.45 var(--mono); background: var(--sunk); border-radius: 8px; padding: 0.55rem 0.7rem; overflow-x: auto; max-width: 100%; overflow-wrap: anywhere; margin: 0.5rem 0 0; }
@@ -189,9 +268,13 @@
     max-width: 100%; max-height: 26rem;
   }
   pre .cm { color: var(--ink-mute); }
-  .tools { display: flex; gap: 0.4rem; margin-top: 0.45rem; }
+  .tools { display: flex; gap: 0.4rem; margin-top: 0.45rem; flex-wrap: wrap; }
   .note { font-size: 0.72rem; line-height: 1.4; color: var(--ink-mute); margin: 0.4rem 0 0; }
   .note code { font: 0.95em var(--mono); color: var(--ink); }
+  .note button.inline {
+    font: 600 0.95em var(--sans); color: var(--accent); background: none;
+    border: 0; border-bottom: 1px solid currentColor; padding: 0; cursor: pointer;
+  }
   .fallback { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
   .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
@@ -227,16 +310,24 @@
   <div class="wrap">
     <header>
       <div class="eyebrow" id="eyebrow">Section 04 · reshape and transpose</div>
-      <h1 id="title">Tensor layout and strides</h1>
+      <h1 id="title">Reshape, transpose and strides</h1>
       <p id="lead"></p>
       <p><a id="back" href="../notebooks.html">← Notebooks</a></p>
     </header>
     <div class="grid">
       <div>
-        <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp" data-photos="0">
-          <p id="stagenote"></p>
-          <div id="overlays" aria-hidden="true"></div>
-          <canvas id="view"></canvas>
+        <div class="stagewrap">
+          <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp" data-photos="0" data-snapped="0">
+            <p id="stagenote"></p>
+            <div id="overlays" aria-hidden="true"></div>
+            <canvas id="view"></canvas>
+          </div>
+          <details id="legend" open>
+            <summary id="legend-title"></summary>
+            <ul id="legend-list"></ul>
+          </details>
+          <button type="button" id="snap" aria-pressed="false"></button>
+          <svg id="gizmo" viewBox="-50 -50 100 100" role="group"></svg>
         </div>
         <p id="embedcap"></p>
         <div id="axis-legend"></div>
@@ -246,55 +337,74 @@
           <div id="strip-rows"></div>
           <p id="strip-note"></p>
         </section>
-        <section class="under" aria-labelledby="h-ribbon">
+        <section class="under" id="bufstrip" aria-labelledby="h-ribbon">
           <h2 id="h-ribbon"></h2>
           <canvas id="ribbon" width="800" height="44"></canvas>
           <p id="ribbon-note"></p>
         </section>
       </div>
       <aside>
-        <h2 id="h-data">Data</h2>
-        <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
-        <p class="note" id="data-note"></p>
-        <label class="toggle"><input type="checkbox" id="values" checked><span id="values-label"></span></label>
-        <p class="note" id="values-note"></p>
-        <h2 id="h-size">Shape</h2>
-        <div id="shape-photo">
-          <div class="checks" id="photo-checks"></div>
-          <div class="seg" id="res" role="radiogroup" aria-labelledby="h-size" style="margin-top:0.45rem"></div>
-        </div>
-        <div class="row" id="sizes" hidden></div>
-        <p class="readout" id="shape-readout"></p>
-        <h2 id="h-order"></h2>
-        <div class="presets" id="order-presets" role="group" aria-labelledby="h-order"></div>
-        <div class="chips" id="chips" role="group" aria-labelledby="h-order"></div>
-        <p class="note" id="order-note"></p>
-        <h2 id="h-arrange"></h2>
-        <div class="seg stack" id="arranges" role="radiogroup" aria-labelledby="h-arrange"></div>
-        <p class="note" id="arrange-note"></p>
-        <h2 id="h-layout">Memory layout</h2>
-        <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="h-layout"></div>
-        <p class="note" id="layout-note"></p>
-        <label class="toggle"><input type="checkbox" id="reshape"><span id="reshape-label"></span></label>
-        <p class="note" id="reshape-note"></p>
-        <h2 id="h-idx">Selected element</h2>
-        <div class="row" id="indices"></div>
-        <h2 id="h-slice">Highlight a slice</h2>
-        <div class="seg axes" id="slices" role="radiogroup" aria-labelledby="h-slice"></div>
-        <h2 id="h-stride">Strides</h2>
-        <table>
-          <thead><tr><th id="th-ax">Axis</th><th id="th-np">NumPy (bytes)</th><th id="th-pt">PyTorch</th></tr></thead>
-          <tbody id="stride-body"></tbody>
-        </table>
-        <p class="note" id="stride-note"></p>
-        <p class="formula" id="formula"></p>
-        <h2 id="h-code"></h2>
-        <pre><code id="code"></code></pre>
-        <div class="tools">
-          <button type="button" id="copy"></button>
-          <button type="button" id="reset"></button>
-        </div>
-        <p class="fallback" id="glnote" hidden></p>
+        <section class="panel" aria-labelledby="h-data">
+          <h2 id="h-data">Data</h2>
+          <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
+          <p class="note" id="data-note"></p>
+          <div id="shape-photo">
+            <h3 id="h-size">Shape</h3>
+            <div class="checks" id="photo-checks"></div>
+            <div class="seg" id="res" role="radiogroup" aria-labelledby="h-size" style="margin-top:0.45rem"></div>
+          </div>
+          <div id="shape-numbers" hidden>
+            <h3 id="h-n"></h3>
+            <div class="seg" id="ns" role="radiogroup" aria-labelledby="h-n"></div>
+            <p class="note" id="n-note"></p>
+          </div>
+          <label class="toggle"><input type="checkbox" id="values" checked><span id="values-label"></span></label>
+          <p class="note" id="values-note"></p>
+          <p class="readout" id="shape-readout"></p>
+        </section>
+
+        <section class="panel" aria-labelledby="h-ops">
+          <h2 id="h-ops">Operations</h2>
+          <h3 id="h-reshape"></h3>
+          <div class="presets shapes" id="shape-presets" role="group" aria-labelledby="h-reshape"></div>
+          <p class="note" id="shape-note"></p>
+          <h3 id="h-order"></h3>
+          <div class="presets" id="order-presets" role="group" aria-labelledby="h-order"></div>
+          <div class="chips" id="chips" role="group" aria-labelledby="h-order"></div>
+          <p class="note" id="order-note"></p>
+          <h3 id="h-layout">Memory layout</h3>
+          <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="h-layout"></div>
+          <div class="tools"><button type="button" id="contig"></button></div>
+          <p class="note" id="layout-note"></p>
+          <label class="toggle"><input type="checkbox" id="reshape"><span id="reshape-label"></span></label>
+          <p class="note" id="reshape-note"></p>
+          <h3 id="h-arrange"></h3>
+          <div class="seg stack" id="arranges" role="radiogroup" aria-labelledby="h-arrange"></div>
+          <p class="note" id="arrange-note"></p>
+        </section>
+
+        <section class="panel" aria-labelledby="h-mem">
+          <h2 id="h-mem">Memory &amp; strides</h2>
+          <h3 id="h-idx">Selected element</h3>
+          <div class="row" id="indices"></div>
+          <p class="formula" id="formula"></p>
+          <h3 id="h-slice">Highlight a slice</h3>
+          <div class="seg axes" id="slices" role="radiogroup" aria-labelledby="h-slice"></div>
+          <h3 id="h-stride">Strides</h3>
+          <table>
+            <thead><tr><th id="th-ax">Axis</th><th id="th-np">NumPy (bytes)</th><th id="th-pt">PyTorch</th></tr></thead>
+            <tbody id="stride-body"></tbody>
+          </table>
+          <p class="note" id="stride-note"></p>
+          <p class="note" id="buffer-note"></p>
+          <h3 id="h-code"></h3>
+          <pre><code id="code"></code></pre>
+          <div class="tools">
+            <button type="button" id="copy"></button>
+            <button type="button" id="reset"></button>
+          </div>
+          <p class="fallback" id="glnote" hidden></p>
+        </section>
       </aside>
     </div>
     <p class="sr" aria-live="polite" id="status"></p>
@@ -306,65 +416,99 @@
 (function () {
   "use strict";
 
-  // Axis *identity*, fixed for the life of the page: 0 = B, 1 = C, 2 = H,
-  // 3 = W. Every colour, letter and slider belongs to an identity. The
-  // *logical order* -- which identity sits at which position of the shape --
-  // is `state.perm`, and that is what transpose changes. The *memory order*
-  // -- which identity the buffer runs fastest along -- is `state.mem`, and
-  // that is what a layout copy changes. Keeping the three apart is the whole
-  // lesson of section 04, so the code keeps them apart too.
+  // ─── the model in one paragraph ───────────────────────────────────────────
+  //
+  // A tensor here is what NumPy says it is: a flat buffer, a shape, and a
+  // stride per axis. `BUF[k]` is the value at memory offset k and `BUFSRC[k]`
+  // is which element of the array as it was *built* lives there. Everything
+  // the page can do is one of three operations on that triple:
+  //
+  //   transpose   permute `shape` and `stride` together; the buffer is untouched
+  //   reshape     recompute `stride` from a new shape; the buffer is untouched
+  //               (and when the view is not C-contiguous NumPy must copy first,
+  //               which is the interesting case and is labelled as such)
+  //   contiguous  rewrite the buffer in the order the view reads it
+  //
+  // Keeping the buffer separate from the shape is the whole lesson of section
+  // 04, so the code keeps them separate too: no operation but `contiguous`
+  // ever assigns to BUF.
+  //
+  // An axis also has an *identity* where one is meaningful -- the photos are
+  // built as B, C, H, W -- carried in `state.axisId` so a colour and a letter
+  // follow an axis through a transpose. A reshape that splits or merges axes
+  // destroys identity, `axisId` goes null there, and the axis is known by its
+  // position alone from then on.
+
   const LETTER = ["B", "C", "H", "W"];
   const AXVAR = ["--ax0", "--ax1", "--ax2", "--ax3"];
   const CHANVAR = ["--chan0", "--chan1", "--chan2"];
+  const NEUTRAL_AX = "--ink-mute";   // an axis a reshape left with no identity
   const ITEMSIZE = 1;            // uint8: one byte per element, as the photos are
-  const GAP = 1.5;               // between batch items, along x
-  const ZGAP = 0.55;             // between channel planes, along z
+  const BASE_GAP = 1.5;          // between the outermost slots, along x
+  const BASE_ZGAP = 0.55;        // between planes, along z
   const FIT = 1.55;
-  const MAX_SIDE = 8;
   const MAX_RES = 32;            // the largest photo side photos.json carries
-  const MAX_CELLS = Math.max(MAX_SIDE ** 4, 3 * 3 * MAX_RES * MAX_RES);
+  const MAX_CELLS = 3 * 3 * MAX_RES * MAX_RES;
   const VALUE_MIN_PX = 20;       // narrower than this, a cube cannot carry a legible number
   const VALUE_MAX_LABELS = 1024;
+  const N_CHOICES = [12, 24, 48, 120];   // every one of them fits in a uint8
+  const TWEEN_MS = 650;
+  const SNAP_MS = 320;
+  const SNAP_EL = 0.075;         // how level the camera must be before it snaps
+  const SNAP_YAW = 0.10;
 
-  // Memory layouts, by *position* in the logical shape: which position runs
-  // slowest first. That is how NumPy and PyTorch define them -- channels_last
-  // is "position 1 fastest, then 3, then 2, then 0", not "the C axis" -- so
-  // it is spelt positionally here and mapped to identities when applied.
+  // Memory layouts, by *position* in the shape: which position runs slowest
+  // first. That is how NumPy and PyTorch define them -- channels_last is
+  // "position 1 fastest, then 3, then 2, then 0", not "the C axis".
   const POS_ORDERS = { C: [0, 1, 2, 3], F: [3, 2, 1, 0], CL: [0, 2, 3, 1] };
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
 
   const EN = {
-    title: "Tensor layout and strides",
+    title: "Reshape, transpose and strides",
     eyebrow: "Section 04 · reshape and transpose",
-    lead: "Three real photographs as one 4-D tensor, one cube per byte. Drag to rotate. Transpose changes the shape and the strides and leaves every cube where it is; a memory layout rewrites the buffer and leaves the shape alone; reshape rereads the buffer and breaks the picture.",
+    lead: "Three real photographs as one 4-D tensor, one cube per byte. Drag to rotate. Reshape pours the same buffer into another shape; transpose permutes the shape and the strides and moves no byte at all; .contiguous() is the one operation that rewrites memory.",
     back: "← Notebooks",
-    data: "Data",
+    data: "Data & shape",
     datas: { photos: "Photos", numbers: "Counting numbers" },
     dataNotePhotos: "The histology slide, the astronaut and the coffee cup notebook 04 stacks -- shipped with scikit-image, downsampled here.",
-    dataNoteNumbers: "np.arange, so every value is its own position in the original buffer and T[b, c, h, w] can be checked by eye.",
+    dataNoteNumbers: "np.arange, so every value is its own position in the buffer as it was built and the offset arithmetic can be checked by eye.",
     dataNoteFailed: "The photos did not load, so the cubes count instead.",
     values: "Values in the cubes",
     valuesNote: "Drawn when a cube is wide enough to read: 4×4, fewer photos, or zoom in.",
-    size: "Shape",
+    size: "Photos and size",
     resLabel: (r) => `${r}×${r}`,
+    nHead: "How many elements",
+    nNote: (n) => `x = np.arange(${n}). Every factorisation of ${n} is a reshape you can take below.`,
     shapeOf: "shape",
-    order: "Axis order · transpose",
+    ops: "Operations",
+    reshapeHead: "Reshape",
+    kindView: "view",
+    kindCopy: "copy",
+    shapeNoteView: (n) => `Every shape whose sizes multiply to ${n}. The buffer is not touched: the bytes keep the order they are already in, and only the strides change. That is what makes a reshape free.`,
+    shapeNoteCopy: (n) => `Every shape whose sizes multiply to ${n}. This view is not C-contiguous, so only the shapes its strides can still express are free: each button says whether taking it is a view or a copy.`,
+    shapeSwitch: "watch the cubes rearrange",
+    order: "Transpose · permute",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H↔W", reverse: "reverse (.T)" },
-    orderNote: "Click two letters to swap them. Same buffer, new shape, new strides -- a view, no copy.",
-    arrange: "Arrange the cubes",
-    arranges: { meaning: "by meaning: B, C, H, W stay put", position: "by position: follow the shape" },
-    arrangeNoteMeaning: "A transpose changes the shape and the strides, and no cube moves: each byte keeps its place. Switch to “by position” to watch the rearrangement instead.",
-    arrangeNotePosition: "The cubes follow the shape: position 0 runs across in batch slots, 1 in depth, 2 down, 3 across. A transpose rearranges them, the way the notebook’s animations draw it; the bytes underneath are the same.",
-    stageArranged: (a, d, z, b) => `Arranged by position: ${a} runs across, ${d} down, ${z} in depth, ${b} across the batch slots.`,
+    orderNote: "Click two axes to swap them. Same buffer, new shape, new strides -- a view, no copy.",
+    orderNoteLost: "Click two axes to swap them. The named presets need B, C, H and W, and a reshape has merged or split them away.",
+    orderNoteNumbers: "Click two axes to swap them. np.arange has no named axes -- nothing here is a batch or a channel -- so the presets that name them are off.",
     layout: "Memory layout",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
+    contig: ".contiguous()",
+    contigNote: "Rewrites the buffer in the order this view reads it. The shape does not move; every byte does. Watch the strip below.",
     layoutNoteC: "The last axis of the shape is contiguous. NumPy's default.",
     layoutNoteF: "The first axis of the shape is contiguous. Fortran, some SciPy.",
     layoutNoteCL: "PyTorch memory_format for NCHW: position 1 of the shape runs fastest.",
-    layoutNoteView: "None of these: x is a non-contiguous view. The buffer was written in another order and transpose only changed how it is read. Pick one to copy it into that order.",
+    layoutNoteView: "None of these: x is a non-contiguous view. The buffer was written in another order and transpose only changed how it is read. Copy it into one of these to make it contiguous again.",
     layoutCopy: "Same shape. The buffer is rewritten -- a copy.",
     reshape: "Compare with reshape",
     reshapeNote: "y = the same bytes, reread in memory order and poured into this shape. Identical when the buffer is already in this order; scrambled otherwise. The cubes show y while this is on.",
+    arrange: "Arrange the cubes",
+    arranges: { meaning: "by meaning: every byte stays put", position: "by position: follow the shape" },
+    arrangeNoteMeaning: "Neither a transpose nor a reshape moves a byte, so no cube moves either: each one flashes in place while the shape and the strides change around it. Switch to “by position” to watch the rearrangement instead.",
+    arrangeNotePosition: "The cubes follow the shape: the last axis runs across, the one before it down, then in depth, then across the slots. A transpose or a reshape rearranges them, the way the notebook’s animations draw it; the bytes underneath are the same.",
+    stageArranged: (a, d, z, b) => `Arranged by position: ${a} runs across, ${d} down, ${z} in depth, ${b} across the slots.`,
+    mem: "Memory & strides",
     idx: "Selected element",
     slice: "Highlight a slice",
     stride: "Strides",
@@ -373,6 +517,7 @@
     pt: "elements",
     offset: "Offset (elements)",
     axName: ["batch", "channel", "height", "width"],
+    posName: (p) => `axis ${p}`,
     none: "none",
     fastest: "fastest",
     strip: "As images",
@@ -381,11 +526,13 @@
     stripImshow: (s) => `plt.imshow(x[0])  # x[0] is ${s}, height × width × 3`,
     stripTranspose: (s, t) => `x[0] is ${s}; matplotlib wants (H, W, 3), so plt.imshow(x[0].transpose(${t})) -- the picture is drawn by axis meaning here, not by position.`,
     stripNotBatch: (s, ax) => `x[0] is ${s} -- one slab along the ${ax} axis, not a photo, because B is not first. The pictures here are drawn by axis meaning, not by position; put B first to index a photo.`,
-    stripNumbers: (c) => `x[b, C=${c}] as a heatmap, pale to deep. Colour is value.`,
+    stripNumbers: "The last two axes of the shape as a heatmap, pale to deep. Colour is value.",
+    stripNoImage: "A reshape has merged or split the height, width and channel axes, so there is no picture left to draw. Reshape back to a 4-D photo shape to get one.",
     stripWrong: "same shape, wrong picture",
     stripSame: "identical: the buffer was already in this order",
     ribbon: "The buffer",
     ribbonNote: (order, n) => `${n} bytes in memory, one bar each, in the order they are stored: ${order} (slowest → fastest). Ticks mark the slowest stride. The outlined bar is the selected element.`,
+    bufferNote: "The 1-D buffer is the strip under the stage: it holds still through a reshape or a transpose, and only .contiguous() moves a bar.",
     code: "In code",
     copy: "Copy",
     reset: "Reset log",
@@ -393,10 +540,9 @@
     glNoWebgl: "This browser has no WebGL — showing the isometric canvas instead. Everything on the panel is the same.",
     glNoScript: "The 3-D renderer did not load — showing the isometric canvas instead. Everything on the panel is the same.",
     status: (o, i, s) => `Offset ${o} at x[${i.join(", ")}]${s ? `, ${s}` : ""}`,
-    stageLabel: "A 4-D tensor drawn as cubes, one per element.",
-    stageHelp: "Drag, or use the arrow keys, to rotate. Pinch, hold Ctrl and scroll, or press plus and minus to zoom. Home resets the view. Click a cube, or use the index sliders, to select an element.",
-    sliderSize: (ax) => `Size of the ${ax} axis`,
-    sliderIdx: (ax) => `Index along the ${ax} axis`,
+    stageLabel: "A tensor drawn as cubes, one per element.",
+    stageHelp: "Drag, or use the arrow keys, to rotate. Hold Shift and drag, or use the right button, to pan. Pinch, hold Ctrl and scroll, or press plus and minus to zoom. Press F to look at the tensor face on, and Home to reset the view. Click a cube, or use the index sliders, to select an element.",
+    sliderIdx: (ax) => `Index along ${ax}`,
     sameBuf: "same buffer",
     strideNote: "NumPy reports strides in bytes; PyTorch reports them in elements. uint8, so the two agree here.",
     sliceOf: (ax) => `slice along ${ax}`,
@@ -404,8 +550,32 @@
     stageNumbers: (ax) => `Fill is the value, pale to deep, in the colour of the fastest axis (${ax}).`,
     stageReshape: "Showing y = reshape: the same bytes reread in memory order.",
     lit: (ax) => `The slice along ${ax} is lit; everything else is dimmed.`,
-    drag: "Drag to rotate. Pinch, or hold Ctrl (⌘ on a Mac) and scroll, to zoom.",
+    drag: "Drag to rotate, Shift-drag to pan. Pinch, or hold Ctrl (⌘ on a Mac) and scroll, to zoom.",
     swapped: (a, b) => `Swapped ${a} and ${b}.`,
+    saidReshape: (s, kind) => `Reshaped to ${s} — a ${kind}.`,
+    saidContig: (k) => `Copied into ${k} order. Same shape, new buffer.`,
+    saidAlready: (k) => `Already ${k}. NumPy hands back the same array -- nothing is copied.`,
+    gizmoArm: (ax) => `Look down the ${ax} axis`,
+    gizmoLabel: "Axis orientation",
+    legendTitle: "Controls",
+    legend: [
+      ["🖱️", "<b>Drag</b> — rotate"],
+      ["✥", "<kbd>Shift</kbd> + drag, or right-drag — pan"],
+      ["📜", "<kbd>Ctrl</kbd> / <kbd>⌘</kbd> + scroll — zoom"],
+      ["👆", "<b>Click a cube</b> — index, stride sum, offset"],
+      ["⌖", "<kbd>F</kbd> — look face on · <kbd>Home</kbd> — reset"]
+    ],
+    legendTouch: [
+      ["👆", "<b>One finger sideways</b> — rotate"],
+      ["✌️", "<b>Two fingers</b> — zoom and tilt"],
+      ["👆", "<b>Tap a cube</b> — index, stride sum, offset"]
+    ],
+    snapIn: "Snap to 2-D",
+    snapOut: "Back to 3-D",
+    snapNote: "Looking face on: the gaps are closed and the cubes meet.",
+    revealNote: "Looking face on: the gaps close, the three channel planes composite, and the photograph comes back.",
+    revealNo: "No RGB axis is facing you, so the cubes stay cubes. Put an axis of 3 in depth to see the photograph.",
+    peek: (idx, sum, off) => `x[${idx}]<span class="sum">${sum} = <b>${off}</b></span>`,
     embedOpen: "Open the full widget →",
     embedSteps: [
       "Three photos as one (3, 16, 16, 3) tensor, NHWC. One cube per byte.",
@@ -415,41 +585,56 @@
     logBuild: "# 16 px thumbnails of the three photos notebook 04 uses, stacked as a batch",
     logView: "a view, no copy",
     logCopy: "copy: the buffer is rewritten",
+    logReshapeCopy: "not contiguous, so reshape copies",
     logReshape: "the same bytes, reread in memory order",
     logSelected: (o, v) => `offset ${o}, value ${v}`
   };
   const ES = {
-    title: "Disposición en memoria y strides",
+    title: "Reshape, transpose y strides",
     eyebrow: "Sección 04 · reshape y transpose",
-    lead: "Tres fotografías reales como un solo tensor 4-D, un cubo por byte. Arrastra para rotar. transpose cambia la forma y los strides y deja cada cubo donde está; una disposición en memoria reescribe el búfer y deja la forma igual; reshape relee el búfer y rompe la imagen.",
+    lead: "Tres fotografías reales como un solo tensor 4-D, un cubo por byte. Arrastra para rotar. reshape vierte el mismo búfer en otra forma; transpose permuta la forma y los strides sin mover un solo byte; .contiguous() es la única operación que reescribe la memoria.",
     back: "← Cuadernos",
-    data: "Datos",
+    data: "Datos y forma",
     datas: { photos: "Fotos", numbers: "Números que cuentan" },
     dataNotePhotos: "El corte histológico, la astronauta y la taza de café que apila el cuaderno 04: vienen con scikit-image, aquí reducidas.",
-    dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer original y T[b, c, h, w] se comprueba a ojo.",
+    dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer tal como se construyó y la aritmética de offsets se comprueba a ojo.",
     dataNoteFailed: "Las fotos no se cargaron, así que los cubos cuentan.",
     values: "Valores en los cubos",
     valuesNote: "Se dibujan cuando un cubo es lo bastante ancho para leerse: 4×4, menos fotos, o acerca el zoom.",
-    size: "Forma",
+    size: "Fotos y tamaño",
     resLabel: (r) => `${r}×${r}`,
+    nHead: "Cuántos elementos",
+    nNote: (n) => `x = np.arange(${n}). Cada factorización de ${n} es un reshape que puedes tomar abajo.`,
     shapeOf: "forma",
-    order: "Orden de los ejes · transpose",
+    ops: "Operaciones",
+    reshapeHead: "Reshape",
+    kindView: "vista",
+    kindCopy: "copia",
+    shapeNoteView: (n) => `Todas las formas cuyos tamaños multiplican ${n}. El búfer no se toca: los bytes conservan el orden que ya tenían y solo cambian los strides. Por eso un reshape es gratis.`,
+    shapeNoteCopy: (n) => `Todas las formas cuyos tamaños multiplican ${n}. Esta vista no es contigua en C, así que solo son gratis las formas que sus strides todavía pueden expresar: cada botón dice si es una vista o una copia.`,
+    shapeSwitch: "ver cómo se reorganizan los cubos",
+    order: "Transpose · permute",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H↔W", reverse: "invertir (.T)" },
-    orderNote: "Haz clic en dos letras para intercambiarlas. El mismo búfer, nueva forma, nuevos strides: una vista, sin copia.",
-    arrange: "Disponer los cubos",
-    arranges: { meaning: "por significado: B, C, H, W no se mueven", position: "por posición: siguen la forma" },
-    arrangeNoteMeaning: "Un transpose cambia la forma y los strides, y ningún cubo se mueve: cada byte conserva su sitio. Cambia a «por posición» para ver la reorganización.",
-    arrangeNotePosition: "Los cubos siguen la forma: la posición 0 corre en horizontal por lotes, la 1 en profundidad, la 2 hacia abajo y la 3 en horizontal. Un transpose los reorganiza, como lo dibujan las animaciones del cuaderno; los bytes debajo son los mismos.",
-    stageArranged: (a, d, z, b) => `Dispuesto por posición: ${a} corre en horizontal, ${d} hacia abajo, ${z} en profundidad y ${b} por los lotes.`,
+    orderNote: "Haz clic en dos ejes para intercambiarlos. El mismo búfer, nueva forma, nuevos strides: una vista, sin copia.",
+    orderNoteLost: "Haz clic en dos ejes para intercambiarlos. Los presets con nombre necesitan B, C, H y W, y un reshape los ha fundido o partido.",
+    orderNoteNumbers: "Haz clic en dos ejes para intercambiarlos. np.arange no tiene ejes con nombre (aquí nada es un lote ni un canal), así que los presets que los nombran están desactivados.",
     layout: "Disposición en memoria",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
+    contig: ".contiguous()",
+    contigNote: "Reescribe el búfer en el orden en que esta vista lo lee. La forma no se mueve; todos los bytes sí. Míralo en la tira de abajo.",
     layoutNoteC: "El último eje de la forma es contiguo. Lo que NumPy hace por defecto.",
     layoutNoteF: "El primer eje de la forma es contiguo. Fortran, parte de SciPy.",
     layoutNoteCL: "memory_format de PyTorch para NCHW: la posición 1 de la forma es la más rápida.",
-    layoutNoteView: "Ninguna de estas: x es una vista no contigua. El búfer se escribió en otro orden y transpose solo cambió cómo se lee. Elige una para copiarlo en ese orden.",
+    layoutNoteView: "Ninguna de estas: x es una vista no contigua. El búfer se escribió en otro orden y transpose solo cambió cómo se lee. Cópialo a una de ellas para volver a hacerlo contiguo.",
     layoutCopy: "La misma forma. El búfer se reescribe: una copia.",
     reshape: "Comparar con reshape",
     reshapeNote: "y = los mismos bytes, releídos en orden de memoria y vertidos en esta forma. Idéntico cuando el búfer ya está en este orden; revuelto si no. Los cubos muestran y mientras esto esté activo.",
+    arrange: "Disponer los cubos",
+    arranges: { meaning: "por significado: cada byte se queda", position: "por posición: siguen la forma" },
+    arrangeNoteMeaning: "Ni transpose ni reshape mueven un byte, así que ningún cubo se mueve: cada uno destella en su sitio mientras la forma y los strides cambian a su alrededor. Cambia a «por posición» para ver la reorganización.",
+    arrangeNotePosition: "Los cubos siguen la forma: el último eje corre en horizontal, el anterior hacia abajo, después en profundidad y después por los lotes. Un transpose o un reshape los reorganiza, como lo dibujan las animaciones del cuaderno; los bytes debajo son los mismos.",
+    stageArranged: (a, d, z, b) => `Dispuesto por posición: ${a} corre en horizontal, ${d} hacia abajo, ${z} en profundidad y ${b} por los lotes.`,
+    mem: "Memoria y strides",
     idx: "Elemento seleccionado",
     slice: "Resaltar un corte",
     stride: "Strides",
@@ -458,6 +643,7 @@
     pt: "elementos",
     offset: "Offset (elementos)",
     axName: ["lote", "canal", "altura", "ancho"],
+    posName: (p) => `eje ${p}`,
     none: "ninguno",
     fastest: "más rápido",
     strip: "Como imágenes",
@@ -466,11 +652,13 @@
     stripImshow: (s) => `plt.imshow(x[0])  # x[0] es ${s}, alto × ancho × 3`,
     stripTranspose: (s, t) => `x[0] es ${s}; matplotlib quiere (H, W, 3), así que plt.imshow(x[0].transpose(${t})). Aquí la imagen se dibuja por el significado de cada eje, no por su posición.`,
     stripNotBatch: (s, ax) => `x[0] es ${s}: una lámina a lo largo del eje ${ax}, no una foto, porque B no va primero. Aquí las imágenes se dibujan por el significado de cada eje, no por su posición; pon B primero para indexar una foto.`,
-    stripNumbers: (c) => `x[b, C=${c}] como mapa de calor, de pálido a oscuro. El color es el valor.`,
+    stripNumbers: "Los dos últimos ejes de la forma como mapa de calor, de pálido a oscuro. El color es el valor.",
+    stripNoImage: "Un reshape ha fundido o partido los ejes de alto, ancho y canal, así que ya no queda imagen que dibujar. Vuelve con reshape a una forma 4-D de foto para recuperarla.",
     stripWrong: "misma forma, imagen equivocada",
     stripSame: "idéntico: el búfer ya estaba en este orden",
     ribbon: "El búfer",
     ribbonNote: (order, n) => `${n} bytes en memoria, una barra cada uno, en el orden en que se guardan: ${order} (del más lento al más rápido). Las marcas señalan el stride más lento. La barra con borde es el elemento seleccionado.`,
+    bufferNote: "El búfer 1-D es la tira bajo el escenario: no se mueve con un reshape ni con un transpose, y solo .contiguous() cambia una barra de sitio.",
     code: "En código",
     copy: "Copiar",
     reset: "Reiniciar registro",
@@ -478,10 +666,9 @@
     glNoWebgl: "Este navegador no tiene WebGL: se muestra el canvas isométrico. Todo lo del panel es igual.",
     glNoScript: "El renderizador 3-D no se cargó: se muestra el canvas isométrico. Todo lo del panel es igual.",
     status: (o, i, s) => `Offset ${o} en x[${i.join(", ")}]${s ? `, ${s}` : ""}`,
-    stageLabel: "Un tensor 4-D dibujado como cubos, uno por elemento.",
-    stageHelp: "Arrastra, o usa las flechas del teclado, para rotar. Pellizca, mantén Ctrl y usa la rueda, o pulsa más y menos para hacer zoom. Inicio restablece la vista. Haz clic en un cubo, o usa los deslizadores de índice, para seleccionar un elemento.",
-    sliderSize: (ax) => `Tamaño del eje ${ax}`,
-    sliderIdx: (ax) => `Índice sobre el eje ${ax}`,
+    stageLabel: "Un tensor dibujado como cubos, uno por elemento.",
+    stageHelp: "Arrastra, o usa las flechas del teclado, para rotar. Mantén Mayús y arrastra, o usa el botón derecho, para desplazar. Pellizca, mantén Ctrl y usa la rueda, o pulsa más y menos para hacer zoom. Pulsa F para mirar el tensor de frente e Inicio para restablecer la vista. Haz clic en un cubo, o usa los deslizadores de índice, para seleccionar un elemento.",
+    sliderIdx: (ax) => `Índice sobre ${ax}`,
     sameBuf: "el mismo búfer",
     strideNote: "NumPy da los strides en bytes; PyTorch los da en elementos. uint8, así que aquí coinciden.",
     sliceOf: (ax) => `corte sobre ${ax}`,
@@ -489,8 +676,32 @@
     stageNumbers: (ax) => `El relleno es el valor, de pálido a oscuro, en el color del eje más rápido (${ax}).`,
     stageReshape: "Se muestra y = reshape: los mismos bytes releídos en orden de memoria.",
     lit: (ax) => `El corte sobre ${ax} está iluminado; el resto se atenúa.`,
-    drag: "Arrastra para rotar. Pellizca, o mantén Ctrl (⌘ en Mac) y usa la rueda, para hacer zoom.",
+    drag: "Arrastra para rotar, Mayús+arrastrar para desplazar. Pellizca, o mantén Ctrl (⌘ en Mac) y usa la rueda, para hacer zoom.",
     swapped: (a, b) => `${a} y ${b} intercambiados.`,
+    saidReshape: (s, kind) => `Reshape a ${s}: una ${kind}.`,
+    saidContig: (k) => `Copiado al orden ${k}. Misma forma, búfer nuevo.`,
+    saidAlready: (k) => `Ya es ${k}. NumPy devuelve el mismo array: no se copia nada.`,
+    gizmoArm: (ax) => `Mirar a lo largo del eje ${ax}`,
+    gizmoLabel: "Orientación de los ejes",
+    legendTitle: "Controles",
+    legend: [
+      ["🖱️", "<b>Arrastrar</b> — rotar"],
+      ["✥", "<kbd>Mayús</kbd> + arrastrar, o botón derecho — desplazar"],
+      ["📜", "<kbd>Ctrl</kbd> / <kbd>⌘</kbd> + rueda — zoom"],
+      ["👆", "<b>Clic en un cubo</b> — índice, suma de strides, offset"],
+      ["⌖", "<kbd>F</kbd> — mirar de frente · <kbd>Inicio</kbd> — restablecer"]
+    ],
+    legendTouch: [
+      ["👆", "<b>Un dedo en horizontal</b> — rotar"],
+      ["✌️", "<b>Dos dedos</b> — zoom e inclinación"],
+      ["👆", "<b>Toca un cubo</b> — índice, suma de strides, offset"]
+    ],
+    snapIn: "Ver en 2-D",
+    snapOut: "Volver al 3-D",
+    snapNote: "De frente: los huecos se cierran y los cubos se tocan.",
+    revealNote: "De frente: los huecos se cierran, los tres planos de canal se componen y vuelve la fotografía.",
+    revealNo: "No tienes de frente ningún eje RGB, así que los cubos siguen siendo cubos. Pon un eje de 3 en profundidad para ver la fotografía.",
+    peek: (idx, sum, off) => `x[${idx}]<span class="sum">${sum} = <b>${off}</b></span>`,
     embedOpen: "Abrir la herramienta completa →",
     embedSteps: [
       "Tres fotos como un tensor (3, 16, 16, 3), NHWC. Un cubo por byte.",
@@ -500,6 +711,7 @@
     logBuild: "# miniaturas de 16 px de las tres fotos del cuaderno 04, apiladas como lote",
     logView: "una vista, sin copia",
     logCopy: "copia: el búfer se reescribe",
+    logReshapeCopy: "no es contiguo, así que reshape copia",
     logReshape: "los mismos bytes, releídos en orden de memoria",
     logSelected: (o, v) => `offset ${o}, valor ${v}`
   };
@@ -514,38 +726,61 @@
   if (embed) document.documentElement.classList.add("embed");
   if (theme === "navy") document.documentElement.dataset.theme = "navy";
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const coarse = matchMedia("(pointer: coarse)").matches;
 
   const state = {
     data: "photos",
     photos: [true, true, true],   // which of the three are in the batch
     res: 16,
-    size: [2, 3, 4, 5],           // numbers mode, by identity
-    perm: ORDER_PRESETS.NHWC.slice(),   // logical order: identity at each position
-    mem: ORDER_PRESETS.NHWC.slice(),    // memory order: identities, slowest first
-    reshape: false,
-    arrange: "meaning",           // where a cube sits: by identity, or by shape position
+    n: 24,                        // numbers mode: how many elements
+    shape: [],                    // the view's shape
+    stride: [],                   // elements, parallel to shape
+    axisId: [],                   // the source axis each position carries, or null
+    compare: false,               // show y = ravel(order="K").reshape(shape)
+    arrange: "meaning",           // where a cube sits: by source place, or by shape position
     values: true,                 // print each value on its cube when there is room
-    idx: [0, 0, 0, 0],            // by identity
-    slice: -1                     // identity, or -1
+    idx: [],                      // the selected element, logical
+    slice: -1                     // a position, or -1
   };
-  // Yaw is negative so the batch axis runs across the screen rather than
+  // Yaw is negative so the outermost axis runs across the screen rather than
   // down its diagonal: at +0.55 the isometric projection laid the three
   // photos over one another and the embed read as one pile.
-  const HOME = { yaw: -0.6, el: 0.55, scale: 1 };
+  const HOME = { yaw: -0.6, el: 0.55, scale: 1, panX: 0, panY: 0 };
   const view = { ...HOME };
   let PHOTOS = null;
-  let VOX = [];
-  let BUF = [];
+  let SRC = null;                 // the array as it was built
+  let BUF = [];                   // the value at each memory offset
+  let BUFSRC = [];                // which source element lives at each memory offset
+  let VOX = [];                   // the cubes, at their resting places
   let mode = "flat";
   const GL = { ready: false };
   const history = [];
   let controlsKey = "";
+  let presetsKey = "";
 
   const $ = (id) => document.getElementById(id);
+  const sum = (a) => a.reduce((x, y) => x + y, 0);
+  const prod = (a) => a.reduce((x, y) => x * y, 1);
+  const range = (k) => [...Array(k).keys()];
 
+  // Resolved once per frame rather than twice per cube. Colouring 9216 cubes
+  // called getComputedStyle tens of thousands of times per glide, which made
+  // the snap animation drop to about three frames -- so the one thing it
+  // exists to show, the gaps closing, did not happen.
+  const cssCache = new Map();
   function css(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    let value = cssCache.get(name);
+    if (value === undefined) {
+      value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      cssCache.set(name, value);
+    }
+    return value;
   }
+  const flushCss = () => cssCache.clear();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    flushCss();
+    render();
+  });
   function parseRgb(c) {
     if (c.startsWith("#")) {
       return [c.slice(1, 3), c.slice(3, 5), c.slice(5, 7)].map((x) => parseInt(x, 16));
@@ -557,116 +792,367 @@
     const m = pa.map((v, i) => Math.round(v + (pb[i] - v) * t));
     return `rgb(${m.join(",")})`;
   }
-  function axSpan(i, text) {
-    return `<span style="color:var(${AXVAR[i]})">${text}</span>`;
+  function shapeText(dims) {
+    return dims.length === 1 ? `(${dims[0]},)` : `(${dims.join(", ")})`;
   }
-  function axisFill(i, t) {
-    const hue = css(AXVAR[i]);
+  const same = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+  const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const lex = (a, b) => {
+    for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) return a[i] - b[i];
+    return a.length - b.length;
+  };
+
+  // ─── the source array ─────────────────────────────────────────────────────
+
+  const photosOn = () => state.photos.map((on, i) => on ? i : -1).filter((i) => i >= 0);
+  const isPhotos = () => state.data === "photos" && PHOTOS;
+  // The natural shape np.arange(n) is poured into. Every one is rank 3 or 4,
+  // so the counting-numbers tensor starts out looking like a tensor and a
+  // reshape down to (n,) is something the reader does, not the default.
+  const BASE_SHAPES = { 12: [2, 2, 3], 24: [2, 3, 4], 48: [2, 4, 6], 120: [2, 3, 4, 5] };
+
+  function unravel(k, dims) {
+    const out = new Array(dims.length);
+    for (let i = dims.length - 1; i >= 0; i--) {
+      out[i] = k % dims[i];
+      k = (k - out[i]) / dims[i];
+    }
+    return out;
+  }
+
+  // The array as `np.stack` or `np.arange` leaves it: a shape, one identity per
+  // axis, and the value at each C-ordered position. Photos are stacked NHWC,
+  // which is what skimage hands you and what the notebook builds.
+  function makeSource() {
+    if (isPhotos()) {
+      const on = photosOn();
+      const r = state.res;
+      const dims = [on.length, r, r, 3];
+      return {
+        kind: "photos",
+        dims,
+        letters: LETTER,
+        ids: [0, 2, 3, 1],        // B, H, W, C
+        n: prod(dims),
+        valueOf: (k) => {
+          const [b, h, w, c] = unravel(k, dims);
+          return PHOTOS.photos[on[b]].px[String(r)][(h * r + w) * 3 + c];
+        }
+      };
+    }
+    const dims = (BASE_SHAPES[state.n] || [state.n]).slice();
+    return { kind: "numbers", dims, letters: null, ids: range(dims.length), n: prod(dims), valueOf: (k) => k };
+  }
+
+  function rebuildSource() {
+    SRC = makeSource();
+    state.shape = SRC.dims.slice();
+    state.stride = cstrides(state.shape);
+    state.axisId = SRC.ids.slice();
+    BUF = new Array(SRC.n);
+    BUFSRC = new Array(SRC.n);
+    for (let k = 0; k < SRC.n; k++) { BUF[k] = SRC.valueOf(k); BUFSRC[k] = k; }
+    state.idx = state.shape.map(() => 0);
+    state.slice = -1;
+    state.compare = false;
+    history.length = 0;
+  }
+
+  // ─── shape, strides, buffer ───────────────────────────────────────────────
+
+  function cstrides(dims) {
+    const s = new Array(dims.length);
+    let run = 1;
+    for (let k = dims.length - 1; k >= 0; k--) { s[k] = run; run *= dims[k]; }
+    return s;
+  }
+  const rank = () => state.shape.length;
+  const numel = () => prod(state.shape);
+  const offsetOf = (L) => sum(L.map((v, i) => v * state.stride[i]));
+  // An axis of size 1 is never indexed by anything but 0, so its stride is
+  // never read and NumPy ignores it when it reports contiguity. Comparing the
+  // stride arrays outright called a one-photo batch non-contiguous.
+  function contiguousInOrder(order) {
+    let run = 1;
+    for (let k = order.length - 1; k >= 0; k--) {
+      const p = order[k];
+      if (state.shape[p] === 1) continue;
+      if (state.stride[p] !== run) return false;
+      run *= state.shape[p];
+    }
+    return true;
+  }
+  const isCContig = () => contiguousInOrder(range(rank()));
+  // True while every byte is still where `np.stack` or `np.arange` put it.
+  const isPristine = () => BUFSRC.every((v, i) => v === i);
+
+  // A memory layout as a *position* order, slowest first. C and F exist at any
+  // rank; channels_last is defined on NCHW and so exists only at rank 4.
+  function posOrder(kind) {
+    const R = rank();
+    if (kind === "C") return range(R);
+    if (kind === "F") return range(R).reverse();
+    return R === 4 ? POS_ORDERS.CL.slice() : null;
+  }
+  function stridesFor(order) {
+    const s = new Array(order.length);
+    let run = 1;
+    for (let k = order.length - 1; k >= 0; k--) { s[order[k]] = run; run *= state.shape[order[k]]; }
+    return s;
+  }
+  function isContiguousAs(kind) {
+    const order = posOrder(kind);
+    return !!order && contiguousInOrder(order);
+  }
+  const currentLayout = () => ["C", "F", "CL"].find(isContiguousAs) || null;
+  // Positions slowest to fastest. Ties (an axis of size 1) cannot matter: its
+  // stride is never multiplied by anything but zero.
+  const memOrder = () => range(rank()).sort((a, b) => state.stride[b] - state.stride[a]);
+  const fastestPos = () => memOrder()[rank() - 1];
+
+  // transpose: the shape, the strides, the identities and the selection all
+  // permute together. Not one byte is read.
+  function applyTranspose(perm) {
+    state.shape = perm.map((p) => state.shape[p]);
+    state.stride = perm.map((p) => state.stride[p]);
+    state.axisId = perm.map((p) => state.axisId[p]);
+    state.idx = perm.map((p) => state.idx[p]);
+    state.slice = state.slice < 0 ? -1 : perm.indexOf(state.slice);
+  }
+
+  // Which identity survives a reshape: an axis that is carried through whole,
+  // matched from both ends. An axis that was split or merged has none, and is
+  // known by its position from then on.
+  function carryIds(oldShape, oldIds, next, nextStride) {
+    // Flattened and poured back into the shape it was built with, over a
+    // buffer nothing has rewritten *and* read the way it was written, this
+    // *is* the array again -- so B, C, H and W come back with it. The strides
+    // are the half that matters: reshape to (3, 16, 48), reverse it and
+    // reshape back and you land on the right shape over the right bytes in
+    // the wrong order, and calling that slab a photograph is the one lie this
+    // page must not tell. Any other route through a merge loses the letters,
+    // because after a flatten NumPy has nothing left that says which axis a
+    // stretch of bytes used to be.
+    if (same(next, SRC.dims) && isPristine() && same(nextStride, cstrides(SRC.dims))) {
+      return SRC.ids.slice();
+    }
+    const ids = next.map(() => null);
+    let i = oldShape.length - 1, j = next.length - 1;
+    while (i >= 0 && j >= 0 && oldShape[i] === next[j]) { ids[j] = oldIds[i]; i--; j--; }
+    let a = 0, b = 0;
+    while (a <= i && b <= j && oldShape[a] === next[b]) { ids[b] = oldIds[a]; a++; b++; }
+    return ids;
+  }
+
+  // Can this shape be reached without touching a byte? NumPy's own rule, and
+  // it is not "the view is C-contiguous": axes are matched into groups whose
+  // sizes multiply to the same thing on both sides, and a group is expressible
+  // in strides as long as its old axes are contiguous *with respect to each
+  // other*. Transposing to NCHW and merging the two 16s back together is the
+  // case that matters -- 48 == 3 * 16, so it is a view, and calling it a copy
+  // taught the opposite of the lesson.
+  function reshapeStrides(shape, stride, next) {
+    const old = [];
+    for (let i = 0; i < shape.length; i++) if (shape[i] !== 1) old.push([shape[i], stride[i]]);
+    const out = next.map(() => 0);
+    let i = 0, j = 0;
+    while (j < next.length) {
+      if (next[j] === 1) { j++; continue; }
+      if (i >= old.length) return null;
+      const from = i, at = j;
+      let have = old[i][0], want = next[j];
+      i++;
+      j++;
+      while (have !== want) {
+        if (have < want) {
+          if (i >= old.length) return null;
+          have *= old[i][0];
+          i++;
+        } else {
+          if (j >= next.length) return null;
+          want *= next[j];
+          j++;
+        }
+      }
+      for (let k = from; k < i - 1; k++) {
+        if (old[k][1] !== old[k + 1][1] * old[k + 1][0]) return null;
+      }
+      let run = old[i - 1][1];
+      for (let k = j - 1; k >= at; k--) { out[k] = run; run *= next[k]; }
+    }
+    if (i < old.length) return null;
+    // A size-1 axis's stride is never read; give it the neighbouring one so the
+    // table shows a number rather than a zero.
+    for (let k = next.length - 1; k >= 0; k--) {
+      if (next[k] === 1) out[k] = k + 1 < next.length ? out[k + 1] * next[k + 1] : 1;
+    }
+    return out;
+  }
+  const reshapeIsView = (next) => !!reshapeStrides(state.shape, state.stride, next);
+
+  // reshape. When the strides can express the new shape this touches no byte,
+  // which is the zero-copy view the section is about. Only when they cannot
+  // does NumPy copy into reading order first, and that is what is reported.
+  function applyReshape(next) {
+    const strides = reshapeStrides(state.shape, state.stride, next);
+    const copied = !strides;
+    if (copied) applyContiguous("C");
+    const nextStride = strides || cstrides(next);
+    state.axisId = carryIds(state.shape, state.axisId, next, nextStride);
+    state.shape = next.slice();
+    state.stride = nextStride;
+    state.idx = next.map(() => 0);
+    state.slice = -1;
+    return copied;
+  }
+
+  // .contiguous(): the one operation that writes to the buffer. Every byte is
+  // moved to where the chosen order wants it, and the strides follow.
+  function applyContiguous(kind) {
+    const order = posOrder(kind);
+    if (!order) return false;
+    const ns = stridesFor(order);
+    const n = numel();
+    const buf = new Array(n), src = new Array(n);
+    for (let k = 0; k < n; k++) {
+      const L = unravel(k, state.shape);
+      const from = offsetOf(L);
+      const to = sum(L.map((v, i) => v * ns[i]));
+      buf[to] = BUF[from];
+      src[to] = BUFSRC[from];
+    }
+    BUF = buf;
+    BUFSRC = src;
+    state.stride = ns;
+    return true;
+  }
+
+  // Every shape this buffer can be reshaped into, as buttons. For the photos
+  // that is the adjacent merges of the shape in hand and of the shape it was
+  // built with -- splitting a 16 into 4 and 4 teaches nothing an image does
+  // not already say. For the counting numbers it is every factorisation of n,
+  // which is the point of that mode, capped per rank so the panel stays a
+  // panel.
+  function partitionsOf(dims) {
+    const out = [];
+    const walk = (i, acc) => {
+      if (i === dims.length) { if (acc.length <= 4) out.push(acc.slice()); return; }
+      for (let j = i; j < dims.length; j++) {
+        acc.push(prod(dims.slice(i, j + 1)));
+        walk(j + 1, acc);
+        acc.pop();
+      }
+    };
+    walk(0, []);
+    return out;
+  }
+  function factorisations(n, perRank) {
+    const byRank = [[], [], [], []];
+    const walk = (left, acc) => {
+      if (acc.length && left === 1) { byRank[acc.length - 1].push(acc.slice()); return; }
+      if (acc.length === 4) return;
+      for (let f = 2; f <= left; f++) {
+        if (left % f) continue;
+        acc.push(f);
+        walk(left / f, acc);
+        acc.pop();
+      }
+    };
+    walk(n, []);
+    return byRank.flatMap((list) => list.sort(lex).slice(0, perRank));
+  }
+  function reshapeChoices() {
+    const n = numel();
+    const out = [];
+    const seen = new Set();
+    const add = (s) => {
+      if (!s || s.length > 4 || prod(s) !== n) return;
+      const k = s.join(",");
+      if (seen.has(k)) return;
+      seen.add(k);
+      out.push(s.slice());
+    };
+    if (isPhotos()) {
+      partitionsOf(state.shape).forEach(add);
+      partitionsOf(SRC.dims).forEach(add);
+      add([n]);
+    } else {
+      add(state.shape);
+      add(SRC.dims);
+      factorisations(n, 6).forEach(add);
+    }
+    return out.sort((a, b) => a.length - b.length || lex(a, b));
+  }
+
+  // ─── the elements ─────────────────────────────────────────────────────────
+
+  // One entry per element of the view, in C order over the shape: where it
+  // sits logically, where it sits in memory, which source element it is, and
+  // what it shows. `src` is the stable key: it survives every operation, so it
+  // is what the animation interpolates from and what the buffer strip tracks.
+  function elements() {
+    const n = numel();
+    const sh = state.shape;
+    const out = new Array(n);
+    for (let k = 0; k < n; k++) {
+      const L = unravel(k, sh);
+      const off = offsetOf(L);
+      // `value` is what the cubes show -- y's bytes while the comparison is
+      // on. `raw` is what is actually in memory at this offset, which is the
+      // only thing the buffer strip may ever draw.
+      out[k] = { L, off, src: BUFSRC[off], value: state.compare ? BUF[k] : BUF[off], raw: BUF[off] };
+    }
+    return out;
+  }
+
+  function axisHues() {
+    const used = new Set();
+    const hues = state.shape.map(() => null);
+    state.axisId.forEach((id, p) => {
+      if (id != null && !used.has(id)) { hues[p] = AXVAR[id]; used.add(id); }
+    });
+    // By meaning the stage still draws every source axis in its own hue, so
+    // those hues are spoken for even where a reshape has merged the axis out
+    // of the view. Handing one of them to the merged axis put the panel's
+    // swatch and the stage's arrow in the same colour for two different
+    // things, on a page whose whole point is that colour says which axis.
+    const reserved = new Set(used);
+    if (!byPos() && SRC) SRC.ids.forEach((id) => reserved.add(id));
+    const free = AXVAR.filter((_, i) => !reserved.has(i));
+    // Nothing left: an axis with no identity is grey rather than a lie.
+    return hues.map((h) => h || free.shift() || NEUTRAL_AX);
+  }
+  const axLetter = (p) => (SRC && SRC.letters && state.axisId[p] != null) ? SRC.letters[state.axisId[p]] : null;
+  const axTag = (p) => axLetter(p) || String(p);
+  function axName(p) {
+    const letter = axLetter(p);
+    return letter ? `${letter} — ${T.axName[state.axisId[p]]} (${T.posName(p)})` : T.posName(p);
+  }
+  function axSpan(p, text) {
+    return `<span style="color:var(${axisHues()[p]})">${text}</span>`;
+  }
+  // Which position, if any, carries each identity. A named preset needs all four.
+  const posOfId = (id) => state.axisId.indexOf(id);
+  const hasAllIds = () => !!(SRC && SRC.letters) && [0, 1, 2, 3].every((id) => posOfId(id) >= 0);
+
+  function axisFill(p, t) {
+    const hue = css(axisHues()[p]);
     return mix(mix(hue, "#ffffff", 0.84), hue, t);
   }
   function chanFill(c, v) {
     return mix(css("--pale"), css(CHANVAR[c]), 0.12 + 0.88 * (v / 255));
   }
-  function shapeText(dims) {
-    return `(${dims.join(", ")})`;
-  }
-
-  // ─── the array ────────────────────────────────────────────────────────────
-
-  const photosOn = () => state.photos.map((on, i) => on ? i : -1).filter((i) => i >= 0);
-  const isPhotos = () => state.data === "photos" && PHOTOS;
-
-  function dims() {
-    if (isPhotos()) return [photosOn().length, 3, state.res, state.res];
-    return state.size.slice();
-  }
-  function shape() {
-    const d = dims();
-    return state.perm.map((ax) => d[ax]);
-  }
-  function numel() {
-    return dims().reduce((a, b) => a * b, 1);
-  }
-  function strides() {
-    const d = dims();
-    const st = [0, 0, 0, 0];
-    let run = 1;
-    for (let k = 3; k >= 0; k--) {
-      st[state.mem[k]] = run;
-      run *= d[state.mem[k]];
-    }
-    return st;
-  }
-  function offsetOf(id) {
-    const st = strides();
-    return id.reduce((s, v, i) => s + v * st[i], 0);
-  }
-  function fastestAxis() {
-    return state.mem[3];
-  }
-  const logicalOf = (id) => state.perm.map((ax) => id[ax]);
-  function identityOf(L) {
-    const id = [0, 0, 0, 0];
-    state.perm.forEach((ax, p) => { id[ax] = L[p]; });
-    return id;
-  }
-  function cOffsetLogical(L) {
-    const sh = shape();
-    let off = 0;
-    for (let p = 0; p < 4; p++) off = off * sh[p] + L[p];
-    return off;
-  }
-  // The value stored at an identity index. Photos: the byte. Numbers: the
-  // position in the original C-ordered (B, C, H, W) buffer, np.arange style.
-  function valueAt(id) {
-    const [b, c, h, w] = id;
+  // The colour of an element: its channel when the cubes are photo bytes,
+  // otherwise its value along the fastest axis.
+  function colourOf(el, value = el.value) {
     if (isPhotos()) {
-      const photo = PHOTOS.photos[photosOn()[b]];
-      return photo.px[String(state.res)][(h * state.res + w) * 3 + c];
+      const cp = posOfId(1);
+      const c = cp >= 0 ? el.L[cp] % 3 : unravel(el.src, SRC.dims)[3] % 3;
+      return chanFill(c, value);
     }
-    const [, C, H, W] = state.size;
-    return ((b * C + c) * H + h) * W + w;
+    const n = numel();
+    return axisFill(fastestPos(), n > 1 ? value / (n - 1) : 0.5);
   }
-  function buildBuffer() {
-    const d = dims();
-    const st = strides();
-    const buf = new Array(numel());
-    for (let b = 0; b < d[0]; b++)
-      for (let c = 0; c < d[1]; c++)
-        for (let h = 0; h < d[2]; h++)
-          for (let w = 0; w < d[3]; w++) {
-            const id = [b, c, h, w];
-            buf[id.reduce((s, v, i) => s + v * st[i], 0)] = valueAt(id);
-          }
-    return buf;
-  }
-  // What `x.ravel(order="K").reshape(x.shape)` puts at a logical position:
-  // the buffer read straight through, poured into the shape row-major.
-  const yValueAt = (id) => BUF[cOffsetLogical(logicalOf(id))];
-  const shownValueAt = (id) => state.reshape ? yValueAt(id) : valueAt(id);
-  function isContiguousAs(kind) {
-    const want = POS_ORDERS[kind].map((p) => state.perm[p]);
-    return want.every((ax, k) => ax === state.mem[k]);
-  }
-  function currentLayout() {
-    return ["C", "F", "CL"].find(isContiguousAs) || null;
-  }
-  function colourAt(id, v) {
-    if (isPhotos()) return chanFill(id[1], v);
-    return axisFill(fastestAxis(), numel() > 1 ? v / (numel() - 1) : 0.5);
-  }
-
-  // Where a cube sits on the stage. By meaning, the four identities keep
-  // fixed directions -- W across, H down, C in depth, B in slots -- so a
-  // transpose moves nothing. By position the *shape* decides: position 3
-  // runs across, 2 down, 1 in depth, 0 in slots, so a transpose rearranges
-  // the cubes the way notebook 04's animations draw it. Same bytes either way;
-  // the embed on the front door keeps the by-meaning picture.
-  const byPos = () => state.arrange === "position" && !embed;
-  const gdims = () => byPos() ? shape() : dims();
-  const gindex = (id) => byPos() ? logicalOf(id) : id;
-  const gaxes = () => byPos() ? state.perm : [0, 1, 2, 3];   // the identity in each stage role
-  const showValues = () => state.values && !embed;
   function inkOn(fill) {
     const [r, g, b] = parseRgb(fill);
     return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? css("--ink") : "#ffffff";
@@ -686,14 +1172,18 @@
     $("back").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("h-data").textContent = T.data;
     $("h-size").textContent = T.size;
+    $("h-n").textContent = T.nHead;
+    $("h-ops").textContent = T.ops;
+    $("h-reshape").textContent = T.reshapeHead;
     $("h-order").textContent = T.order;
-    $("order-note").textContent = T.orderNote;
     $("h-arrange").textContent = T.arrange;
     $("values-label").textContent = T.values;
     $("values-note").textContent = T.valuesNote;
     $("h-layout").textContent = T.layout;
+    $("contig").textContent = T.contig;
     $("reshape-label").textContent = T.reshape;
     $("reshape-note").textContent = T.reshapeNote;
+    $("h-mem").textContent = T.mem;
     $("h-idx").textContent = T.idx;
     $("h-slice").textContent = T.slice;
     $("h-stride").textContent = T.stride;
@@ -705,9 +1195,15 @@
     $("stage").setAttribute("aria-label", T.stageLabel);
     $("stagehelp").textContent = T.stageHelp;
     $("stride-note").textContent = T.strideNote;
+    $("buffer-note").textContent = T.bufferNote;
     $("th-ax").textContent = T.ax;
     $("th-np").textContent = T.np;
     $("th-pt").textContent = T.pt;
+    $("legend-title").textContent = T.legendTitle;
+    $("gizmo").setAttribute("aria-label", T.gizmoLabel);
+    $("legend-list").innerHTML = (coarse ? T.legendTouch : T.legend)
+      .map(([icon, text]) => `<li><span>${icon}</span><span>${text}</span></li>`).join("");
+    if (coarse) $("legend").open = false;
   }
 
   function radio(name, value, label, checked, color) {
@@ -720,38 +1216,40 @@
   // ─── the code log ─────────────────────────────────────────────────────────
 
   // The array as it was built, before anything in the history happened to
-  // it -- so the shape here is the *starting* order, not the current one.
+  // it -- so the shape here is the *starting* shape, not the current one.
   function buildLines() {
-    const d = dims();
     if (isPhotos()) {
-      const sh = shapeText(ORDER_PRESETS.NHWC.map((ax) => d[ax]));
       const names = photosOn().map((i) => PHOTOS.photos[i].id).join(", ");
       return [
         "import numpy as np",
         "import torch",
         "from skimage import data",
         T.logBuild,
-        `x = np.stack([${names}])      # ${sh} — NHWC, uint8`,
+        `x = np.stack([${names}])      # ${shapeText(SRC.dims)} — NHWC, uint8`,
         "t = torch.from_numpy(x)"
       ];
     }
-    const sh = shapeText(ORDER_PRESETS.NCHW.map((ax) => d[ax]));
     return [
       "import numpy as np",
       "import torch",
-      `x = np.arange(${numel()}, dtype=np.uint8).reshape${sh}   # NCHW`,
+      `x = np.arange(${SRC.n}, dtype=np.uint8).reshape${shapeText(SRC.dims)}`,
       "t = torch.from_numpy(x)"
     ];
   }
   function pushHistory(lines) {
     history.push(lines.join("\n"));
   }
-  function transposeLines(from, to) {
-    const axes = to.map((ax) => from.indexOf(ax));
-    const sh = shapeText(to.map((ax) => dims()[ax]));
+  function transposeLines(perm, nextShape) {
     return [
-      `x = x.transpose(${axes.join(", ")})   # ${sh} — ${T.logView}`,
-      `t = t.permute(${axes.join(", ")})`
+      `x = x.transpose(${perm.join(", ")})   # ${shapeText(nextShape)} — ${T.logView}`,
+      `t = t.permute(${perm.join(", ")})`
+    ];
+  }
+  function reshapeLines(next, copied) {
+    const args = next.length === 1 ? String(next[0]) : next.join(", ");
+    return [
+      `x = x.reshape(${args})   # ${copied ? T.logReshapeCopy : T.logView}`,
+      `t = t.reshape(${args})`
     ];
   }
   function layoutLines(kind) {
@@ -762,67 +1260,118 @@
            `x = t.numpy()   # ${T.sameBuf}`]
     }[kind];
   }
-  function currentLines(st, off) {
-    const L = logicalOf(state.idx);
-    const sh = shape();
-    const bytes = state.perm.map((ax) => st[ax] * ITEMSIZE).join(", ");
-    const elems = state.perm.map((ax) => st[ax]).join(", ");
+  function currentLines(off) {
+    const bytes = state.stride.map((s) => s * ITEMSIZE).join(", ");
+    const elems = state.stride.join(", ");
+    const el = { L: state.idx, off, value: shownValue(state.idx) };
     const lines = [
-      `x.shape      # ${shapeText(sh)}`,
+      `x.shape      # ${shapeText(state.shape)}`,
       `x.strides    # (${bytes})  ${T.np}`,
       `t.stride()   # (${elems})  ${T.pt}`,
-      `x.flags["C_CONTIGUOUS"]   # ${currentLayout() === "C" ? "True" : "False"}`,
-      `x[${L.join(", ")}]   # ${T.logSelected(off, shownValueAt(state.idx))}`
+      `x.flags["C_CONTIGUOUS"]   # ${isCContig() ? "True" : "False"}`,
+      `x[${state.idx.join(", ")}]   # ${T.logSelected(off, el.value)}`
     ];
     if (state.slice >= 0) {
-      const sel = sh.map((_, p) => state.perm[p] === state.slice ? String(L[p]) : ":");
-      lines.push(`x[${sel.join(", ")}]   # ${shapeText(sh.filter((_, p) => state.perm[p] !== state.slice))}`);
+      const sel = state.shape.map((_, p) => p === state.slice ? String(state.idx[p]) : ":");
+      lines.push(`x[${sel.join(", ")}]   # ${shapeText(state.shape.filter((_, p) => p !== state.slice))}`);
     }
-    if (state.reshape) {
-      const same = currentLayout() === "C";
+    if (state.compare) {
       lines.push(`y = x.ravel(order="K").reshape(x.shape)   # ${T.logReshape}`);
-      lines.push(`np.array_equal(x, y)   # ${same ? "True" : "False"}`);
+      lines.push(`np.array_equal(x, y)   # ${isCContig() ? "True" : "False"}`);
     }
     return lines;
   }
-  function renderCode(st, off) {
-    const text = [buildLines().join("\n"), ...history, currentLines(st, off).join("\n")].join("\n\n");
+  function renderCode(off) {
+    const text = [buildLines().join("\n"), ...history, currentLines(off).join("\n")].join("\n\n");
     $("code").textContent = text;
     $("code").scrollTop = $("code").scrollHeight;
-    return text;
+  }
+
+  const shownValue = (L) => state.compare
+    ? BUF[sum(L.map((v, i) => v * cstrides(state.shape)[i]))]
+    : BUF[offsetOf(L)];
+
+  // ─── the operations, as the reader triggers them ──────────────────────────
+
+  function doTranspose(perm) {
+    if (perm.every((p, i) => p === i)) return;
+    peeking = false;
+    const next = perm.map((p) => state.shape[p]);
+    pushHistory(transposeLines(perm, next));
+    beginTween();
+    applyTranspose(perm);
+    render();
+  }
+  function doReshape(next) {
+    if (same(next, state.shape)) return;
+    peeking = false;
+    beginTween();
+    const copied = applyReshape(next);
+    pushHistory(reshapeLines(next, copied));
+    $("status").textContent = T.saidReshape(shapeText(next), copied ? T.kindCopy : T.kindView);
+    render();
+  }
+  function doContiguous(kind) {
+    if (!posOrder(kind)) return;
+    // Already in that order: NumPy hands back the same array. Saying "the
+    // buffer is rewritten" here would teach the opposite of the point.
+    if (isContiguousAs(kind)) {
+      $("status").textContent = T.saidAlready(T.layouts[kind]);
+      syncControls();
+      return;
+    }
+    peeking = false;
+    beginTween();
+    applyContiguous(kind);
+    pushHistory(layoutLines(kind));
+    $("status").textContent = T.saidContig(T.layouts[kind]);
+    render();
+  }
+
+  // A new array: a different data source, batch, resolution or element count
+  // is a fresh `np.stack` / `np.arange`, so the log starts over from its build
+  // line and the array is contiguous in its natural order. Keeping the old
+  // transposes would print a log whose first line already has the wrong shape.
+  function restart() {
+    // A different array has different cubes; a tween still in flight would
+    // interpolate them from positions that belonged to the old one.
+    anim = null;
+    pending = null;
+    peeking = false;
+    rebuildSource();
+    view.panX = 0;
+    view.panY = 0;
+    render();
   }
 
   // ─── controls ─────────────────────────────────────────────────────────────
 
-  function sliders(host, key, maxFor) {
+  function indexSliders(host) {
     host.innerHTML = "";
-    state.perm.forEach((ax) => {
-      const L = LETTER[ax];
+    const hues = axisHues();
+    state.shape.forEach((sizeOf, p) => {
       const wrap = document.createElement("div");
       wrap.className = "field";
       const lab = document.createElement("div");
       lab.className = "k";
-      lab.style.color = `var(${AXVAR[ax]})`;
+      lab.style.color = `var(${hues[p]})`;
       const name = document.createElement("span");
-      name.textContent = L;
+      name.textContent = axTag(p);
       const val = document.createElement("span");
       val.className = "val";
-      val.textContent = String(state[key][ax]);
+      val.textContent = String(state.idx[p]);
       lab.append(name, val);
       const input = document.createElement("input");
       input.type = "range";
-      input.min = key === "size" ? "1" : "0";
-      input.max = String(maxFor(ax));
-      input.value = String(state[key][ax]);
-      input.dataset.ax = String(ax);
-      input.setAttribute("aria-label",
-        (key === "size" ? T.sliderSize : T.sliderIdx)(`${L} — ${T.axName[ax]}`));
-      input.style.accentColor = `var(${AXVAR[ax]})`;
+      input.min = "0";
+      input.max = String(sizeOf - 1);
+      input.value = String(state.idx[p]);
+      input.dataset.pos = String(p);
+      input.setAttribute("aria-label", T.sliderIdx(axName(p)));
+      input.style.accentColor = `var(${hues[p]})`;
       input.addEventListener("input", () => {
-        state[key][ax] = Number(input.value);
-        if (key === "size") {
-          state.idx[ax] = Math.min(state.idx[ax], state.size[ax] - 1);
-        }
+        state.idx[p] = Number(input.value);
+        peeking = false;
         render();
       });
       wrap.append(lab, input);
@@ -861,58 +1410,69 @@
       state.res = Number(e.target.value);
       restart();
     });
+
+    // How many counting numbers.
+    $("ns").innerHTML = N_CHOICES.map((n) =>
+      radio("n", String(n), String(n), state.n === n)).join("");
+    $("ns").addEventListener("change", (e) => {
+      state.n = Number(e.target.value);
+      restart();
+    });
+
     $("values").addEventListener("change", (e) => {
       state.values = e.target.checked;
       render();
     });
 
-    // Axis order.
+    // Reshape: one button per shape the buffer can be poured into.
+    $("shape-presets").addEventListener("click", (e) => {
+      const button = e.target.closest("button");
+      if (button) doReshape(button.dataset.shape.split(",").map(Number));
+    });
+
+    // Transpose.
     $("order-presets").innerHTML = "";
-    [["NHWC", () => ORDER_PRESETS.NHWC.slice()],
-     ["NCHW", () => ORDER_PRESETS.NCHW.slice()],
-     ["swapHW", () => state.perm.map((ax) => ax === 2 ? 3 : ax === 3 ? 2 : ax)],
-     ["reverse", () => state.perm.slice().reverse()]].forEach(([key, next]) => {
+    [["NHWC", () => ORDER_PRESETS.NHWC.map(posOfId)],
+     ["NCHW", () => ORDER_PRESETS.NCHW.map(posOfId)],
+     ["swapHW", () => swapPerm(posOfId(2), posOfId(3))],
+     ["reverse", () => range(rank()).reverse()]].forEach(([key, next]) => {
       const button = document.createElement("button");
       button.type = "button";
       button.id = `order-${key}`;
       button.textContent = T.presets[key];
-      button.addEventListener("click", () => setPerm(next()));
+      button.addEventListener("click", () => doTranspose(next()));
       $("order-presets").appendChild(button);
     });
     $("chips").addEventListener("click", (e) => {
       const button = e.target.closest("button");
       if (!button) return;
-      const ax = Number(button.dataset.ax);
+      const p = Number(button.dataset.pos);
       const armed = $("chips").querySelector('[aria-pressed="true"]');
       if (!armed) { button.setAttribute("aria-pressed", "true"); return; }
-      const other = Number(armed.dataset.ax);
+      const other = Number(armed.dataset.pos);
       armed.setAttribute("aria-pressed", "false");
-      if (other === ax) return;
-      const next = state.perm.map((a) => a === ax ? other : a === other ? ax : a);
-      $("status").textContent = T.swapped(LETTER[other], LETTER[ax]);
-      setPerm(next);
+      if (other === p) return;
+      $("status").textContent = T.swapped(axTag(other), axTag(p));
+      doTranspose(swapPerm(other, p));
     });
 
     // Arrangement.
     $("arranges").innerHTML = ["meaning", "position"].map((k) =>
       radio("arrange", k, T.arranges[k], state.arrange === k)).join("");
     $("arranges").addEventListener("change", (e) => {
+      beginTween();
       state.arrange = e.target.value;
       render();
     });
 
-    // Memory layout.
+    // Memory layout, and the copy that puts the buffer in it.
     $("layouts").innerHTML = ["C", "F", "CL"].map((k) =>
       radio("layout", k, T.layouts[k], false)).join("");
-    $("layouts").addEventListener("change", (e) => {
-      const kind = e.target.value;
-      state.mem = POS_ORDERS[kind].map((p) => state.perm[p]);
-      pushHistory(layoutLines(kind));
-      render();
-    });
+    $("layouts").addEventListener("change", (e) => doContiguous(e.target.value));
+    $("contig").addEventListener("click", () => doContiguous("C"));
 
     $("reshape").addEventListener("change", (e) => {
-      state.reshape = e.target.checked;
+      state.compare = e.target.checked;
       render();
     });
 
@@ -932,60 +1492,69 @@
     });
   }
 
-  // A new array: a different data source, batch or resolution is a fresh
-  // `np.stack` / `np.arange`, so the log starts over from its build line and
-  // the array is contiguous in its natural order -- the notebook's batch is
-  // NHWC, np.arange(...).reshape(B, C, H, W) is NCHW. Keeping the old
-  // transposes would print a log whose first line already has the wrong shape.
-  function restart() {
-    state.perm = (isPhotos() ? ORDER_PRESETS.NHWC : ORDER_PRESETS.NCHW).slice();
-    state.mem = state.perm.slice();
-    state.reshape = false;
-    state.idx = [0, 0, 0, 0];
-    history.length = 0;
-    render();
+  function swapPerm(a, b) {
+    const perm = range(rank());
+    if (a < 0 || b < 0) return perm;
+    perm[a] = b;
+    perm[b] = a;
+    return perm;
   }
 
-  function setPerm(next) {
-    if (next.every((ax, p) => ax === state.perm[p])) return;
-    pushHistory(transposeLines(state.perm, next));
-    state.perm = next;
-    render();
-  }
-
-  // Rebuilt only when the logical order or the data changes, because a
-  // slider being dragged must not be replaced under the pointer -- so the
-  // sizes are deliberately not in this key: in numbers mode every tick of a
-  // size slider changes them, and the index sliders' `max` is refreshed
-  // below without a rebuild.
+  // Rebuilt only when the shape, the identities or the data change, because a
+  // slider being dragged must not be replaced under the pointer.
   function syncControls() {
-    const key = `${state.data}|${state.perm.join("")}|${PHOTOS ? 1 : 0}`;
+    const key = `${state.data}|${state.shape.join("x")}|${state.axisId.join(",")}|${PHOTOS ? 1 : 0}`;
+    const hues = axisHues();
     if (key !== controlsKey) {
       controlsKey = key;
-      sliders($("sizes"), "size", () => MAX_SIDE);
-      sliders($("indices"), "idx", (ax) => dims()[ax] - 1);
-      $("chips").innerHTML = state.perm.map((ax) =>
-        `<button type="button" data-ax="${ax}" aria-pressed="false" style="border-color:var(${AXVAR[ax]});color:var(${AXVAR[ax]})" aria-label="${LETTER[ax]} — ${T.axName[ax]}">${LETTER[ax]}</button>`
+      indexSliders($("indices"));
+      $("chips").innerHTML = state.shape.map((_, p) =>
+        `<button type="button" data-pos="${p}" aria-pressed="false" style="border-color:var(${hues[p]});color:var(${hues[p]})" aria-label="${axName(p)}">${axTag(p)}</button>`
       ).join("");
-      $("slices").innerHTML = [-1, ...state.perm].map((ax) => {
-        const label = ax < 0 ? T.none : LETTER[ax];
-        const color = ax < 0 ? "" : css(AXVAR[ax]);
-        return radio("slice", String(ax), label, state.slice === ax, color);
+      $("slices").innerHTML = [-1, ...range(rank())].map((p) => {
+        const label = p < 0 ? T.none : axTag(p);
+        const color = p < 0 ? "" : css(hues[p]);
+        return radio("slice", String(p), label, state.slice === p, color);
       }).join("");
     }
+    // The reshape presets change with the shape in hand, and each says whether
+    // taking it is free.
+    const copies = !isCContig();
+    const presetKey = `${key}|${state.stride.join(",")}`;
+    if (presetKey !== presetsKey) {
+      presetsKey = presetKey;
+      // Asked per shape, not once for the array: from a transposed view some
+      // of these are views and some are copies, and the button says which.
+      $("shape-presets").innerHTML = reshapeChoices().map((s) => {
+        const here = same(s, state.shape);
+        const kind = here ? "" : `<span class="kind">${reshapeIsView(s) ? T.kindView : T.kindCopy}</span>`;
+        return `<button type="button" data-shape="${s.join(",")}" aria-pressed="${here}">${shapeText(s)}${kind}</button>`;
+      }).join("");
+    }
+    $("shape-note").innerHTML = (copies ? T.shapeNoteCopy : T.shapeNoteView)(numel()) +
+      (state.arrange === "meaning" ? ` <button type="button" class="inline" id="to-position">${T.shapeSwitch}</button>` : "");
+    const toPosition = $("to-position");
+    if (toPosition) toPosition.addEventListener("click", () => {
+      beginTween();
+      state.arrange = "position";
+      render();
+    });
+
+    const named = hasAllIds();
+    const hasLetters = !!(SRC && SRC.letters);
+    ["NHWC", "NCHW"].forEach((k) => { $(`order-${k}`).disabled = !named; });
+    $("order-swapHW").disabled = !(hasLetters && posOfId(2) >= 0 && posOfId(3) >= 0);
+    $("order-note").textContent = named ? T.orderNote
+      : (hasLetters ? T.orderNoteLost : T.orderNoteNumbers);
+
     const photoMode = !!isPhotos();
     $("shape-photo").hidden = !photoMode;
-    $("sizes").hidden = photoMode;
+    $("shape-numbers").hidden = photoMode;
+    $("n-note").textContent = T.nNote(state.n);
     document.querySelectorAll("#indices input").forEach((el) => {
-      const ax = Number(el.dataset.ax);
-      el.max = String(dims()[ax] - 1);
-      el.value = String(state.idx[ax]);
-      el.parentElement.querySelector(".val").textContent = String(state.idx[ax]);
-    });
-    document.querySelectorAll("#sizes input").forEach((el) => {
-      const ax = Number(el.dataset.ax);
-      el.value = String(state.size[ax]);
-      el.parentElement.querySelector(".val").textContent = String(state.size[ax]);
+      const p = Number(el.dataset.pos);
+      el.value = String(state.idx[p]);
+      el.parentElement.querySelector(".val").textContent = String(state.idx[p]);
     });
     document.querySelectorAll("#datas input").forEach((el) => {
       el.checked = el.value === state.data;
@@ -994,20 +1563,210 @@
     $("data-note").textContent = !PHOTOS ? T.dataNoteFailed
       : (photoMode ? T.dataNotePhotos : T.dataNoteNumbers);
     document.querySelectorAll("#res input").forEach((el) => { el.checked = Number(el.value) === state.res; });
+    document.querySelectorAll("#ns input").forEach((el) => { el.checked = Number(el.value) === state.n; });
     $("values").checked = state.values;
     document.querySelectorAll("#arranges input").forEach((el) => { el.checked = el.value === state.arrange; });
     $("arrange-note").textContent = state.arrange === "position" ? T.arrangeNotePosition : T.arrangeNoteMeaning;
     const layout = currentLayout();
-    document.querySelectorAll("#layouts input").forEach((el) => { el.checked = el.value === layout; });
-    $("layout-note").textContent = layout
+    document.querySelectorAll("#layouts input").forEach((el) => {
+      el.checked = el.value === layout;
+      el.disabled = !posOrder(el.value);
+    });
+    $("layout-note").textContent = (layout
       ? `${{ C: T.layoutNoteC, F: T.layoutNoteF, CL: T.layoutNoteCL }[layout]} ${T.layoutCopy}`
-      : T.layoutNoteView;
-    $("reshape").checked = state.reshape;
+      : T.layoutNoteView) + ` ${T.contigNote}`;
+    $("reshape").checked = state.compare;
     document.querySelectorAll("#slices input").forEach((el) => { el.checked = Number(el.value) === state.slice; });
-    const d = dims();
+    // The letters are worth naming only when they mean something. After a
+    // reshape has merged them away an axis is its position, and the line
+    // below already says so.
+    const anyLetter = state.shape.some((_, p) => axLetter(p));
+    const letters = state.shape.map((_, p) => axSpan(p, axTag(p))).join(", ");
     $("shape-readout").innerHTML =
-      `<span class="dim">${T.shapeOf} (${state.perm.map((ax) => axSpan(ax, LETTER[ax])).join(", ")}) = </span>` +
-      `(${state.perm.map((ax) => axSpan(ax, d[ax])).join(", ")})`;
+      `<span class="dim">${T.shapeOf}${anyLetter ? ` (${letters})` : ""} = </span>` +
+      (rank() === 1
+        ? `(${axSpan(0, state.shape[0])},)`
+        : `(${state.shape.map((v, p) => axSpan(p, v)).join(", ")})`) +
+      `<span class="pos">${state.shape.map((_, p) => T.posName(p)).join(" · ")}</span>`;
+  }
+
+  // ─── where a cube sits ────────────────────────────────────────────────────
+
+  // Four stage roles, outermost first: batch slots across, planes in depth,
+  // rows down, columns across. A shape of rank less than four is padded on the
+  // left with axes of one, so every helper below stays the rank-4 arithmetic
+  // it always was.
+  //
+  // By *meaning* the roles are the identities of the array as it was built, so
+  // neither a transpose nor a reshape moves a byte on screen -- each one
+  // flashes where it is. By *position* the roles are the positions of the
+  // shape in hand, so both operations visibly rearrange the cubes. Same bytes
+  // either way; the embed on the front door keeps the by-meaning picture.
+  const byPos = () => state.arrange === "position" && !embed;
+  const pad4 = (a) => [...new Array(Math.max(0, 4 - a.length)).fill(1), ...a.slice(-4)];
+  const padIdx = (a) => [...new Array(Math.max(0, 4 - a.length)).fill(0), ...a.slice(-4)];
+
+  // Sizes and indices of the source array, reindexed by identity: for the
+  // photos that is (B, C, H, W) however they were stacked.
+  function srcIdDims() {
+    const d = new Array(SRC.dims.length);
+    SRC.ids.forEach((id, i) => { d[id] = SRC.dims[i]; });
+    return d;
+  }
+  function srcIdIndex(k) {
+    const u = unravel(k, SRC.dims);
+    const out = new Array(u.length);
+    SRC.ids.forEach((id, i) => { out[id] = u[i]; });
+    return out;
+  }
+  const gdims = () => pad4(byPos() ? state.shape : srcIdDims());
+  const gindex = (el) => padIdx(byPos() ? el.L : srcIdIndex(el.src));
+
+  // What each role is called and coloured, whichever arrangement is on. By
+  // meaning this survives a reshape that has merged the axis away, because the
+  // *source* still has it -- which is exactly what "by meaning" means.
+  function roleAxis(r) {
+    if (byPos()) {
+      const p = rank() - 4 + r;
+      return p >= 0 ? { label: axTag(p), hue: axisHues()[p], pos: p } : null;
+    }
+    const nId = SRC.dims.length;
+    const id = nId - 4 + r;
+    if (id < 0) return null;
+    return { label: SRC.letters ? SRC.letters[id] : String(id), hue: AXVAR[id], pos: posOfId(id), id };
+  }
+
+  // ─── the snap ─────────────────────────────────────────────────────────────
+
+  // How far the view has closed up: 0 is the isometric pile with gaps, 1 is
+  // flat on, gaps shut, cubes meeting edge to edge.
+  const snap = { on: false, t: 0 };
+  // The cubes' positions bake in GAP(), ZGAP() and whether the channel planes
+  // are composited, all of which read snap.t. Moving it and only repainting
+  // left the tensor collapsed and composited while the camera rotated away,
+  // so every write to snap.t goes through here.
+  function setSnapT(t) {
+    if (snap.t === t) return;
+    snap.t = t;
+    VOX = buildVoxels();
+  }
+  const glide = { active: false, t0: 0, from: null, to: null };
+  const GAP = () => BASE_GAP * (1 - 0.78 * snap.t);
+  const ZGAP = () => BASE_ZGAP * (1 - snap.t);
+  const cubeSide = () => 0.86 + 0.14 * snap.t;
+
+  // Face on means level, and square on to one of the four sides. The reveal
+  // needs more than that: an axis of exactly three, in depth, that really is
+  // the colour channel -- otherwise the front plane is one channel of a photo
+  // and compositing it would be a lie.
+  function nearestYaw() {
+    return Math.round(view.yaw / (Math.PI / 2)) * (Math.PI / 2);
+  }
+  function isFaceOn() {
+    return Math.abs(view.el) < SNAP_EL && Math.abs(view.yaw - nearestYaw()) < SNAP_YAW;
+  }
+  function canReveal() {
+    if (!isPhotos() || snap.t < 0.99) return false;
+    if (Math.abs(nearestYaw() % (2 * Math.PI)) > 1e-6) return false;   // only the front face
+    if (gdims()[1] !== 3) return false;
+    const role = roleAxis(1);
+    return !!role && (byPos() ? state.axisId[role.pos] === 1 : role.id === 1);
+  }
+
+  function setSnap(on) {
+    snap.on = on;
+    if (on) {
+      glideTo(nearestYaw(), 0);
+    } else {
+      glideTo(view.yaw, Math.max(view.el, 0.45));
+    }
+    $("snap").setAttribute("aria-pressed", String(on));
+    $("snap").textContent = on ? T.snapOut : T.snapIn;
+    $("stage").dataset.snapped = on ? "1" : "0";
+    tick();
+  }
+  function glideTo(yaw, el) {
+    if (reduceMotion) {
+      view.yaw = yaw;
+      view.el = el;
+      snap.t = snap.on ? 1 : 0;
+      render();
+      return;
+    }
+    glide.active = true;
+    glide.t0 = performance.now();
+    glide.from = { yaw: view.yaw, el: view.el, t: snap.t };
+    glide.to = { yaw, el, t: snap.on ? 1 : 0 };
+  }
+
+  // ─── the tween ────────────────────────────────────────────────────────────
+
+  // Each cube is keyed by the source element it holds, which survives every
+  // operation -- so a cube can be followed from where it was to where the new
+  // shape puts it. When nothing moves, the operation still happened, and the
+  // cubes say so by swelling once in place.
+  let pending = null;
+  let anim = null;
+  let raf = 0;
+
+  function beginTween() {
+    if (reduceMotion || embed) return;
+    pending = new Map(VOX.map((v) => [v.src, { x: v.x, y: v.y, z: v.z, color: v.color, off: v.off }]));
+  }
+  function settleTween() {
+    if (!pending) return;
+    const from = pending;
+    pending = null;
+    const moved = VOX.some((v) => {
+      const was = from.get(v.src);
+      return was && (Math.abs(was.x - v.x) + Math.abs(was.y - v.y) + Math.abs(was.z - v.z)) > 1e-6;
+    });
+    anim = { t0: performance.now(), dur: TWEEN_MS, from, pulse: !moved };
+    tick();
+  }
+
+  // The cubes as they are this frame: at rest, or partway from where they were.
+  function drawList() {
+    if (!anim) return VOX;
+    const k = Math.min(1, (performance.now() - anim.t0) / anim.dur);
+    const t = easeInOut(k);
+    // One swell and back, for the operation that moves nothing.
+    const swell = anim.pulse ? 1 + 0.16 * Math.sin(Math.PI * k) : 1;
+    return VOX.map((v) => {
+      const was = anim.from.get(v.src);
+      if (!was) return swell === 1 ? v : { ...v, scale: swell };
+      return {
+        ...v,
+        x: was.x + (v.x - was.x) * t,
+        y: was.y + (v.y - was.y) * t,
+        z: was.z + (v.z - was.z) * t,
+        color: was.color === v.color ? v.color : mix(was.color, v.color, t),
+        scale: swell
+      };
+    });
+  }
+
+  function tick() {
+    if (raf) return;
+    const step = (now) => {
+      raf = 0;
+      let busy = false;
+      if (glide.active) {
+        const k = Math.min(1, (now - glide.t0) / SNAP_MS);
+        const t = easeInOut(k);
+        view.yaw = glide.from.yaw + (glide.to.yaw - glide.from.yaw) * t;
+        view.el = glide.from.el + (glide.to.el - glide.from.el) * t;
+        setSnapT(glide.from.t + (glide.to.t - glide.from.t) * t);
+        if (k >= 1) { glide.active = false; render(); } else busy = true;
+      }
+      if (anim) {
+        if (now - anim.t0 >= anim.dur) anim = null;
+        else busy = true;
+      }
+      repaint();
+      if (busy) raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
   }
 
   // ─── geometry ─────────────────────────────────────────────────────────────
@@ -1015,41 +1774,45 @@
   function centre() {
     const [B, C, H, W] = gdims();
     return {
-      cx: ((B - 1) * (W + GAP) + W - 1) / 2,
+      cx: ((B - 1) * (W + GAP()) + W - 1) / 2,
       cy: -(H - 1) / 2,
-      cz: -(C - 1) * (1 + ZGAP) / 2
+      cz: -(C - 1) * (1 + ZGAP()) / 2
     };
   }
   function axisHandles() {
     const [B, C, H, W] = gdims();
-    const ax = gaxes();
     const { cx, cy, cz } = centre();
     const x0 = -cx - 0.55;
     const yTop = -cy + 0.55;
     const yBot = -(H - 1) - cy - 0.55;
     const zFront = -cz + 0.55;
     const bHandle = B > 1
-      ? { i: ax[0], o: { x: W - cx + 0.1, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(GAP - 0.35, 0.9) }
-      : { i: ax[0], o: { x: x0, y: yBot - 1.05, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(W, 1.1) };
+      ? { r: 0, o: { x: W - cx + 0.1, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(GAP() - 0.35, 0.9) }
+      : { r: 0, o: { x: x0, y: yBot - 1.05, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(W, 1.1) };
     return [
-      { i: ax[3], o: { x: x0, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: W },
-      { i: ax[2], o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: -1, z: 0 }, len: H },
-      { i: ax[1], o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: 0, z: -1 }, len: C * (1 + ZGAP) - ZGAP },
+      { r: 3, o: { x: x0, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: W },
+      { r: 2, o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: -1, z: 0 }, len: H },
+      { r: 1, o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: 0, z: -1 }, len: Math.max(C * (1 + ZGAP()) - ZGAP(), 0.9) },
       bHandle
-    ];
+    ].filter((a) => a.r === 3 || (roleAxis(a.r) && gdims()[a.r] > 1));
   }
   function cellScale(w, h) {
     const [B, C, H, W] = gdims();
-    const extent = Math.max((B - 1) * (W + GAP) + W, H, C * (1 + ZGAP), 2);
+    const extent = Math.max((B - 1) * (W + GAP()) + W, H, C * (1 + ZGAP()), 2);
     return Math.min(w, h) / (extent * FIT) * view.scale;
   }
+  // The isometric projection the flat renderer and every overlay share. As the
+  // view snaps flat the skew is taken out of it, so the cubes end up on a
+  // square grid with square pixels rather than a compressed one.
   function canvasTo(x, y, z, w, h) {
     const s = cellScale(w, h);
     const ca = Math.cos(view.yaw), sa = Math.sin(view.yaw);
     const rx = x * ca - z * sa, rz = x * sa + z * ca;
+    const flat = snap.t;
+    const kx = 0.866 + 0.134 * flat;
     return [
-      w / 2 + (rx - rz) * 0.866 * s,
-      h / 2 - 12 + ((rx + rz) * 0.5 * view.el - y) * s
+      w / 2 + (rx - rz * (1 - flat)) * kx * s + view.panX,
+      h / 2 - 12 * (1 - flat) + ((rx + rz) * 0.5 * view.el - y) * s + view.panY
     ];
   }
   function glTo(x, y, z, w, h) {
@@ -1057,19 +1820,83 @@
     const v = new THREE.Vector3(x, y, z);
     GL.group.updateMatrixWorld(true);
     v.applyMatrix4(GL.group.matrixWorld);
-    v.project(GL.camera);
+    v.project(glCamera());
     return [(v.x * 0.5 + 0.5) * w, (-v.y * 0.5 + 0.5) * h];
   }
+  const project = (x, y, z, w, h) => (mode === "gl" && GL.ready)
+    ? glTo(x, y, z, w, h) : canvasTo(x, y, z, w, h);
 
-  function placeOverlays(w, h) {
+  // ─── the cubes ────────────────────────────────────────────────────────────
+
+  function buildVoxels() {
+    const GW = gdims()[3];
+    const { cx, cy, cz } = centre();
+    const gap = GAP(), zgap = ZGAP();
+    const out = [];
+    const reveal = canReveal();
+    const rgb = reveal ? new Map() : null;
+    ELS.forEach((el) => {
+      const [gb, gc, gh, gw] = gindex(el);
+      const lit = state.slice < 0 || el.L[state.slice] === state.idx[state.slice];
+      if (reveal) {
+        // Face on, the three planes along the depth role are one pixel. Keep
+        // the front plane's cube and give it the colour all three make.
+        const key = `${gb},${gh},${gw}`;
+        let cell = rgb.get(key);
+        if (!cell) {
+          cell = { b: gb, h: gh, w: gw, v: [0, 0, 0], el, lit: false };
+          rgb.set(key, cell);
+        }
+        // One cube now carries all three channels, so it is lit when any of
+        // them is in the slice -- taking channel 0's answer for all three
+        // dimmed the whole photograph the moment C was the sliced axis.
+        cell.lit = cell.lit || lit;
+        cell.v[gc] = el.value;
+        if (el.off === offsetOf(state.idx)) cell.el = el;
+        return;
+      }
+      out.push({
+        x: gb * (GW + gap) + gw - cx,
+        y: -gh - cy,
+        z: -gc * (1 + zgap) - cz,
+        color: colourOf(el),
+        alpha: lit ? 1 : 0.15,
+        sel: same(el.L, state.idx),
+        off: el.off, src: el.src, L: el.L, lit, value: el.value
+      });
+    });
+    if (reveal) {
+      const selOff = offsetOf(state.idx);
+      rgb.forEach((cell) => {
+        out.push({
+          x: cell.b * (GW + gap) + cell.w - cx,
+          y: -cell.h - cy,
+          z: -cz,
+          color: `rgb(${cell.v.join(",")})`,
+          alpha: cell.lit ? 1 : 0.15,
+          sel: cell.el.off === selOff,
+          off: cell.el.off, src: cell.el.src, L: cell.el.L, lit: cell.lit, value: cell.el.value
+        });
+      });
+    }
+    return out;
+  }
+
+  // ─── the overlays ─────────────────────────────────────────────────────────
+
+  let peeking = false;
+
+  function placeOverlays(w, h, draw) {
     const host = $("overlays");
     host.innerHTML = "";
-    const to = (x, y, z) => (mode === "gl" && GL.ready) ? glTo(x, y, z, w, h) : canvasTo(x, y, z, w, h);
+    const to = (x, y, z) => project(x, y, z, w, h);
     axisHandles().forEach((a) => {
+      const role = snap.t > 0.995 ? null : roleAxis(a.r);
+      if (!role) return;
       const el = document.createElement("span");
       el.className = "lab";
-      el.style.color = css(AXVAR[a.i]);
-      el.textContent = LETTER[a.i];
+      el.style.color = css(role.hue);
+      el.textContent = role.label;
       const [px, py] = to(
         a.o.x + a.d.x * (a.len + 0.75),
         a.o.y + a.d.y * (a.len + 0.75),
@@ -1079,47 +1906,84 @@
       el.style.top = `${py}px`;
       host.appendChild(el);
     });
-    const sel = VOX.find((v) => v.sel);
+    const sel = draw.find((v) => v.sel);
     if (sel && !embed) {
       const el = document.createElement("span");
-      el.className = "off";
-      el.textContent = String(sel.off);
       const [px, py] = to(sel.x, sel.y, sel.z);
+      if (peeking) {
+        // What the click is for: the index, the sum the strides make of it,
+        // and the offset that sum lands on.
+        el.className = "peek";
+        const terms = state.idx.map((v, p) => `${v}·${state.stride[p]}`).join(" + ");
+        el.innerHTML = T.peek(state.idx.join(", "), terms, sel.off);
+      } else {
+        el.className = "off";
+        el.textContent = String(sel.off);
+      }
       el.style.left = `${px}px`;
       el.style.top = `${py}px`;
       host.appendChild(el);
     }
+    drawGizmo();
   }
 
-  function buildVoxels() {
-    const [B, C, H, W] = dims();
-    const GW = gdims()[3];
-    const st = strides();
-    const { cx, cy, cz } = centre();
-    const out = [];
-    for (let b = 0; b < B; b++) {
-      for (let c = 0; c < C; c++) {
-        for (let h = 0; h < H; h++) {
-          for (let w = 0; w < W; w++) {
-            const id = [b, c, h, w];
-            const off = id.reduce((s, v, i) => s + v * st[i], 0);
-            const sel = id.every((v, i) => v === state.idx[i]);
-            const lit = state.slice < 0 || id[state.slice] === state.idx[state.slice];
-            const value = shownValueAt(id);
-            const [gb, gc, gh, gw] = gindex(id);
-            out.push({
-              x: gb * (GW + GAP) + gw - cx,
-              y: -gh - cy,
-              z: -gc * (1 + ZGAP) - cz,
-              color: colourAt(id, value),
-              alpha: lit ? 1 : 0.15,
-              sel, off, id, lit, value
-            });
-          }
-        }
-      }
+  // The orientation gizmo. It is drawn from the same yaw, elevation and snap
+  // the stage uses, so it works under either renderer, and each arm is a
+  // shortcut to looking down that axis.
+  const GIZMO_ARMS = [
+    { r: 3, d: [1, 0, 0], yaw: Math.PI / 2, el: 0 },
+    { r: 2, d: [0, -1, 0], yaw: 0, el: 1.2 },
+    { r: 1, d: [0, 0, -1], yaw: 0, el: 0 }
+  ];
+  function drawGizmo() {
+    const svg = $("gizmo");
+    if (embed) return;
+    const ca = Math.cos(view.yaw), sa = Math.sin(view.yaw);
+    const flat = snap.t;
+    const kx = 0.866 + 0.134 * flat;
+    const at = ([x, y, z]) => {
+      const rx = x * ca - z * sa, rz = x * sa + z * ca;
+      return [(rx - rz * (1 - flat)) * kx * 30, ((rx + rz) * 0.5 * view.el - y) * 30];
+    };
+    const arms = GIZMO_ARMS.map((arm) => ({ arm, role: roleAxis(arm.r), p: at(arm.d) }))
+      .filter((a) => a.role);
+    // Built once and then only moved. Rewriting the markup every frame would
+    // drop keyboard focus in the middle of a drag.
+    if (svg.dataset.arms !== arms.map((a) => a.arm.r).join(",")) {
+      svg.dataset.arms = arms.map((a) => a.arm.r).join(",");
+      svg.innerHTML = arms.map(({ arm }) =>
+        `<g class="arm" data-arm="${arm.r}" role="button" tabindex="0">` +
+        `<line x1="0" y1="0" stroke-width="3" stroke-linecap="round"></line>` +
+        `<circle r="9"></circle><text text-anchor="middle"></text></g>`).join("");
     }
-    return out;
+    arms.sort((a, b) => a.p[1] - b.p[1]);
+    // Re-inserting an element is a remove and an insert, which blurs it. The
+    // order really does change as the view turns -- activating an arm starts a
+    // glide that reorders them -- so the restack is kept and the focus is put
+    // back afterwards, rather than leaving the reader on <body>.
+    const order = arms.map((a) => a.arm.r).join(",");
+    const restack = svg.dataset.order !== order;
+    const focused = restack && svg.contains(document.activeElement) ? document.activeElement : null;
+    if (restack) svg.dataset.order = order;
+    arms.forEach(({ arm, role, p }) => {
+      const g = svg.querySelector(`[data-arm="${arm.r}"]`);
+      const hue = css(role.hue);
+      g.setAttribute("aria-label", T.gizmoArm(role.label));
+      g.querySelector("line").setAttribute("x2", p[0].toFixed(1));
+      g.querySelector("line").setAttribute("y2", p[1].toFixed(1));
+      g.querySelector("line").setAttribute("stroke", hue);
+      const circle = g.querySelector("circle");
+      circle.setAttribute("cx", p[0].toFixed(1));
+      circle.setAttribute("cy", p[1].toFixed(1));
+      circle.setAttribute("fill", hue);
+      const text = g.querySelector("text");
+      text.setAttribute("x", p[0].toFixed(1));
+      text.setAttribute("y", (p[1] + 3.2).toFixed(1));
+      text.setAttribute("fill", inkOn(hue));
+      text.textContent = role.label;
+      if (restack) svg.appendChild(g);   // paint order: nearest last
+    });
+    if (focused) focused.focus({ preventScroll: true });
   }
 
   // ─── the flat renderer ────────────────────────────────────────────────────
@@ -1158,58 +2022,79 @@
     const sorted = voxels.slice().sort((a, b) =>
       ((a.x * sa + a.z * ca) + a.y * 0.2) - ((b.x * sa + b.z * ca) + b.y * 0.2));
     const s = cellScale(w, h);
-    const half = 0.42 * s;
     const ink = css("--ink");
-    const labels = showValues() && s >= VALUE_MIN_PX;
+    const labels = showValues() && s >= VALUE_MIN_PX && !canReveal();
+    // Face on the cubes are squares that meet: a hexagon drawn at a quarter
+    // turn is a cube seen from nowhere, and the photograph would show its seams.
+    const square = snap.t > 0.5;
     if (labels) { ctx.textAlign = "center"; ctx.textBaseline = "middle"; }
 
     sorted.forEach((v) => {
       const [px, py] = to(v.x, v.y, v.z);
+      const half = s * (0.42 + 0.08 * snap.t) * (v.scale || 1);
       ctx.globalAlpha = v.alpha;
       ctx.fillStyle = v.color;
       ctx.strokeStyle = v.sel ? ink : mix(v.color, ink, 0.25);
       ctx.lineWidth = v.sel ? 2 : 1;
       ctx.beginPath();
-      ctx.moveTo(px, py - half);
-      ctx.lineTo(px + half, py - half * 0.4);
-      ctx.lineTo(px + half, py + half * 0.7);
-      ctx.lineTo(px, py + half * 1.15);
-      ctx.lineTo(px - half, py + half * 0.7);
-      ctx.lineTo(px - half, py - half * 0.4);
-      ctx.closePath();
+      if (square) {
+        ctx.rect(px - half, py - half, half * 2, half * 2);
+      } else {
+        ctx.moveTo(px, py - half);
+        ctx.lineTo(px + half, py - half * 0.4);
+        ctx.lineTo(px + half, py + half * 0.7);
+        ctx.lineTo(px, py + half * 1.15);
+        ctx.lineTo(px - half, py + half * 0.7);
+        ctx.lineTo(px - half, py - half * 0.4);
+        ctx.closePath();
+      }
       ctx.fill();
-      if (half >= 2) ctx.stroke();
+      // Seams would show as a grid over the photograph, so the outline goes
+      // once the gaps have closed -- except on the one selected cube.
+      if (half >= 2 && (!square || v.sel || snap.t < 0.995 || !canReveal())) ctx.stroke();
       if (labels) {
         const text = String(v.value);
         ctx.fillStyle = inkOn(v.color);
         ctx.font = labelFont(text, half);
-        ctx.fillText(text, px, py + half * 0.22);
+        ctx.fillText(text, px, py + half * (square ? 0 : 0.22));
       }
     });
     ctx.globalAlpha = 1;
-    axisHandles().forEach((a) => {
-      const color = css(AXVAR[a.i]);
-      const [x0, y0] = to(a.o.x, a.o.y, a.o.z);
-      const [x1, y1] = to(a.o.x + a.d.x * a.len, a.o.y + a.d.y * a.len, a.o.z + a.d.z * a.len);
-      drawArrow(ctx, x0, y0, x1, y1, color);
-    });
-    placeOverlays(w, h);
+    if (snap.t < 0.995) {
+      axisHandles().forEach((a) => {
+        const role = roleAxis(a.r);
+        if (!role) return;
+        const [x0, y0] = to(a.o.x, a.o.y, a.o.z);
+        const [x1, y1] = to(a.o.x + a.d.x * a.len, a.o.y + a.d.y * a.len, a.o.z + a.d.z * a.len);
+        drawArrow(ctx, x0, y0, x1, y1, css(role.hue));
+      });
+    }
+    placeOverlays(w, h, voxels);
   }
 
   // ─── the GL renderer ──────────────────────────────────────────────────────
 
+  const glCamera = () => (snap.t > 0.98 && GL.ortho) ? GL.ortho : GL.camera;
+
   function syncGL(voxels) {
     const THREE = GL.THREE;
     const m = new THREE.Matrix4();
+    const q = new THREE.Quaternion();
+    const pos = new THREE.Vector3();
+    const scl = new THREE.Vector3();
     const c = new THREE.Color();
     // Two meshes: a cell is either in the slice or dimmed, and instance colour
     // carries no alpha. Both materials stay constant, so nothing is allocated
     // per cell per frame.
     let nLit = 0, nDim = 0;
+    const side = cubeSide() / 0.86;
     voxels.forEach((v) => {
       const mesh = v.alpha < 1 ? GL.dim : GL.lit;
       const i = v.alpha < 1 ? nDim++ : nLit++;
-      m.makeTranslation(v.x, v.y, v.z);
+      const k = side * (v.scale || 1);
+      pos.set(v.x, v.y, v.z);
+      scl.set(k, k, k);
+      m.compose(pos, q, scl);
       mesh.setMatrixAt(i, m);
       mesh.setColorAt(i, c.set(v.color));
     });
@@ -1224,16 +2109,21 @@
     GL.outline.visible = !!sel;
     if (sel) {
       GL.outline.position.set(sel.x, sel.y, sel.z);
+      GL.outline.scale.setScalar(side * (sel.scale || 1));
       GL.outline.material.color.set(css("--ink"));
     }
     // Repointed, never rebuilt: an ArrowHelper keeps its materials on its
     // `.line` and `.cone` children, and rebuilding leaked two per axis per render.
-    axisHandles().forEach((a, i) => {
-      const arrow = GL.arrows[i];
+    const handles = axisHandles();
+    GL.arrows.forEach((arrow, i) => {
+      const a = handles[i];
+      const role = a && roleAxis(a.r);
+      arrow.visible = !!role && snap.t < 0.995;
+      if (!role) return;
       arrow.position.set(a.o.x, a.o.y, a.o.z);
       arrow.setDirection(new THREE.Vector3(a.d.x, a.d.y, a.d.z).normalize());
       arrow.setLength(a.len, 0.38, 0.22);
-      arrow.setColor(new THREE.Color(css(AXVAR[a.i])));
+      arrow.setColor(new THREE.Color(css(role.hue)));
     });
   }
 
@@ -1248,13 +2138,17 @@
     const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 80);
     camera.position.set(8, 6, 10);
     camera.lookAt(0, 0, 0);
+    // Face on, the perspective camera would splay the outer cubes and leave a
+    // seam down every column of the photograph. The orthographic one is matched
+    // to it at the plane the cubes sit on, so taking over is not a jump.
+    const ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.1, 80);
     scene.add(new THREE.AmbientLight(0xffffff, 0.7));
     const key = new THREE.DirectionalLight(0xffffff, 0.65);
     key.position.set(4, 8, 6);
     scene.add(key);
     const group = new THREE.Group();
     scene.add(group);
-    $("stage").appendChild(canvas);
+    $("stage").insertBefore(canvas, $("overlays"));
 
     const box = new THREE.BoxGeometry(0.86, 0.86, 0.86);
     const instanced = (opacity) => {
@@ -1277,13 +2171,13 @@
     );
     outline.visible = false;
     group.add(outline);
-    const arrows = axisHandles().map(() => {
+    const arrows = [0, 1, 2, 3].map(() => {
       const a = new THREE.ArrowHelper(
         new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 1, 0xffffff, 0.38, 0.22);
       group.add(a);
       return a;
     });
-    Object.assign(GL, { ready: true, THREE, renderer, scene, camera, group, box, lit, dim, outline, arrows,
+    Object.assign(GL, { ready: true, THREE, renderer, scene, camera, ortho, group, box, lit, dim, outline, arrows,
                         labels: [], texCache: new Map() });
     return true;
   }
@@ -1320,7 +2214,7 @@
   function syncLabels(voxels) {
     const THREE = GL.THREE;
     let n = 0;
-    if (showValues() && voxels.length) {
+    if (showValues() && voxels.length && !canReveal()) {
       const stage = $("stage");
       const v0 = voxels[0];
       const [ax, ay] = glTo(v0.x, v0.y, v0.z, stage.clientWidth, stage.clientHeight);
@@ -1328,10 +2222,10 @@
       if (Math.hypot(bx - ax, by - ay) >= VALUE_MIN_PX) {
         // 0.78 clears the cube's corner (0.43 * sqrt 3) along any view direction
         // and stays short of the neighbour in front.
-        const toward = GL.camera.position.clone().normalize().multiplyScalar(0.78);
+        const cam = glCamera().position;
+        const toward = cam.clone().normalize().multiplyScalar(0.78);
         // Nearest the camera first, so if the cap is hit it is the back of the
         // pile that goes unlabelled, as in the flat renderer's paint order.
-        const cam = GL.camera.position;
         const near = voxels.filter((v) => v.alpha >= 1);
         if (near.length > VALUE_MAX_LABELS) {
           const d2 = (v) => (v.x - cam.x) ** 2 + (v.y - cam.y) ** 2 + (v.z - cam.z) ** 2;
@@ -1374,8 +2268,8 @@
   // Frame the bounding extents against whichever field of view is tighter.
   function glDistance(pitch) {
     const [B, C, H, W] = gdims();
-    const spanX = (B - 1) * (W + GAP) + W;
-    const rXZ = 0.5 * Math.hypot(spanX, C * (1 + ZGAP)) + 1.1;
+    const spanX = (B - 1) * (W + GAP()) + W;
+    const rXZ = 0.5 * Math.hypot(spanX, C * (1 + ZGAP())) + 1.1;
     const rY = 0.5 * H + 1.1;
     const vfov = GL.camera.fov * Math.PI / 180;
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * Math.max(GL.camera.aspect, 0.2));
@@ -1385,6 +2279,10 @@
   }
 
   function repaint() {
+    if (!SRC) return;
+    const draw = drawList();
+    // The buffer strip is part of the same animation: a copy slides its bars.
+    if (anim && !embed) renderRibbon();
     if (mode === "gl" && GL.ready) {
       const pitch = Math.atan(view.el * 0.6);
       const dist = glDistance(pitch);
@@ -1393,89 +2291,138 @@
         GL.camera.far = far;
         GL.camera.updateProjectionMatrix();
       }
-      GL.camera.position.set(
+      const at = [
         Math.sin(view.yaw) * dist * Math.cos(pitch),
         Math.sin(pitch) * dist,
         Math.cos(view.yaw) * dist * Math.cos(pitch)
-      );
-      GL.camera.lookAt(0, 0, 0);
-      syncLabels(VOX);
-      GL.renderer.render(GL.scene, GL.camera);
+      ];
+      // The pan is a translation of the whole group, so `glTo` -- and with it
+      // picking, the labels and the overlays -- follows without being told.
+      GL.group.position.set(view.panX / 60, -view.panY / 60, 0);
+      [GL.camera, GL.ortho].forEach((cam) => { cam.position.set(...at); cam.lookAt(0, 0, 0); });
+      const height = 2 * dist * Math.tan(GL.camera.fov * Math.PI / 360);
+      const width = height * GL.camera.aspect;
+      Object.assign(GL.ortho, { left: -width / 2, right: width / 2, top: height / 2, bottom: -height / 2, far });
+      GL.ortho.updateProjectionMatrix();
+      syncGL(draw);
+      syncLabels(draw);
+      GL.renderer.render(GL.scene, glCamera());
       const stage = $("stage");
-      placeOverlays(stage.clientWidth, stage.clientHeight);
+      placeOverlays(stage.clientWidth, stage.clientHeight, draw);
     } else {
-      drawFlat(VOX);
+      drawFlat(draw);
     }
   }
 
   // ─── the pictures under the stage ─────────────────────────────────────────
 
-  function stripRow(kind, valueFn) {
-    const [B, , H, W] = dims();
+  const showValues = () => state.values && !embed;
+
+  // Which position carries each of the four photo axes, when all four are
+  // still there. A reshape that merges height into width leaves no picture to
+  // draw, and this returns null to say so.
+  function imageAxes() {
+    if (!isPhotos()) return null;
+    const b = posOfId(0), c = posOfId(1), h = posOfId(2), w = posOfId(3);
+    return (b >= 0 && c >= 0 && h >= 0 && w >= 0 && state.shape[c] === 3) ? { b, c, h, w } : null;
+  }
+  // x reads through the strides; y reads the buffer straight through and pours
+  // it into the same shape, which is what a reshape of a non-contiguous view
+  // would give you.
+  const readX = (L) => BUF[offsetOf(L)];
+  const readY = (L) => BUF[sum(L.map((v, i) => v * cstrides(state.shape)[i]))];
+
+  function stripRow(kind, read) {
     const row = document.createElement("div");
     row.className = "strip-row";
     const tag = document.createElement("div");
     tag.className = "tag";
     tag.textContent = kind === "x" ? T.stripX : T.stripY;
     row.appendChild(tag);
-    for (let b = 0; b < B; b++) {
+    const ax = imageAxes();
+    const L = state.idx.slice();
+    const paint = (W, H, fill, label) => {
       const canvas = document.createElement("canvas");
       canvas.width = W;
       canvas.height = H;
       const ctx = canvas.getContext("2d");
       const img = ctx.createImageData(W, H);
       for (let h = 0; h < H; h++) {
-        for (let w = 0; w < W; w++) {
-          const o = (h * W + w) * 4;
-          if (isPhotos()) {
-            for (let c = 0; c < 3; c++) img.data[o + c] = valueFn([b, c, h, w]);
-          } else {
-            const v = valueFn([b, state.idx[1], h, w]);
-            const rgb = parseRgb(axisFill(fastestAxis(), numel() > 1 ? v / (numel() - 1) : 0.5));
-            img.data[o] = rgb[0]; img.data[o + 1] = rgb[1]; img.data[o + 2] = rgb[2];
-          }
-          img.data[o + 3] = 255;
-        }
+        for (let w = 0; w < W; w++) fill(img.data, (h * W + w) * 4, h, w);
       }
       ctx.putImageData(img, 0, 0);
       canvas.setAttribute("role", "img");
-      canvas.setAttribute("aria-label", `${kind}[${b}]`);
+      canvas.setAttribute("aria-label", label);
       row.appendChild(canvas);
+    };
+    if (ax) {
+      const B = state.shape[ax.b], H = state.shape[ax.h], W = state.shape[ax.w];
+      for (let b = 0; b < B; b++) {
+        L[ax.b] = b;
+        paint(W, H, (data, o, h, w) => {
+          L[ax.h] = h;
+          L[ax.w] = w;
+          for (let c = 0; c < 3; c++) { L[ax.c] = c; data[o + c] = read(L); }
+          data[o + 3] = 255;
+        }, `${kind}[${b}]`);
+      }
+      return row;
     }
+    // No picture: the last two axes of the shape as a heatmap instead.
+    const R = rank();
+    const wp = R - 1, hp = R >= 2 ? R - 2 : R - 1;
+    const W = state.shape[wp], H = R >= 2 ? state.shape[hp] : 1;
+    const n = numel();
+    paint(W, H, (data, o, h, w) => {
+      L[wp] = w;
+      if (R >= 2) L[hp] = h;
+      // A photo byte is 0-255 whatever the element count; only np.arange runs
+      // to n - 1. Normalising both the same way washed the merged photo out.
+      const v = read(L);
+      const t = isPhotos() ? v / 255 : (n > 1 ? v / (n - 1) : 0.5);
+      const rgb = parseRgb(axisFill(fastestPos(), t));
+      data[o] = rgb[0]; data[o + 1] = rgb[1]; data[o + 2] = rgb[2];
+      data[o + 3] = 255;
+    }, kind);
     return row;
   }
 
   function renderStrip() {
     const host = $("strip-rows");
     host.innerHTML = "";
-    host.appendChild(stripRow("x", valueAt));
-    const same = currentLayout() === "C";
-    if (state.reshape) {
-      const row = stripRow("y", yValueAt);
-      if (!same) row.classList.add("wrong");
+    host.appendChild(stripRow("x", readX));
+    const contiguous = isCContig();
+    if (state.compare) {
+      const row = stripRow("y", readY);
+      if (!contiguous) row.classList.add("wrong");
       row.querySelector(".tag").insertAdjacentHTML("beforeend",
-        `<small>${same ? T.stripSame : T.stripWrong}</small>`);
+        `<small>${contiguous ? T.stripSame : T.stripWrong}</small>`);
       host.appendChild(row);
     }
-    const sh = shape();
-    const rest = state.perm.slice(1);
-    const x0 = shapeText(sh.slice(1));
+    const ax = imageAxes();
+    const x0 = shapeText(state.shape.slice(1));
     if (!isPhotos()) {
-      $("strip-note").textContent = T.stripNumbers(state.idx[1]);
-    } else if (state.perm[0] !== 0) {
+      $("strip-note").textContent = T.stripNumbers;
+    } else if (!ax) {
+      $("strip-note").textContent = T.stripNoImage;
+    } else if (ax.b !== 0) {
       // x[0] is not a photo at all: the batch axis is not first, so x[0] is
       // one slab of whatever axis is.
-      $("strip-note").textContent = T.stripNotBatch(x0, T.axName[state.perm[0]]);
-    } else if (rest.join("") === "231") {
+      $("strip-note").textContent = T.stripNotBatch(x0, axName(0));
+    } else if (ax.h === 1 && ax.w === 2 && ax.c === 3) {
       $("strip-note").textContent = T.stripImshow(x0);
     } else {
       // The transpose that brings x[0] to (H, W, C), whatever order it is in now.
-      const t = [2, 3, 1].map((ax) => rest.indexOf(ax)).join(", ");
+      const t = [ax.h, ax.w, ax.c].map((p) => p - 1).join(", ");
       $("strip-note").textContent = T.stripTranspose(x0, t);
     }
   }
 
-  function renderRibbon(st) {
+  // The buffer. A reshape and a transpose leave every bar exactly where it is
+  // -- that is the point of them -- so the only thing that ever animates here
+  // is a copy, and each bar slides from the offset it had to the offset it
+  // now has.
+  function renderRibbon() {
     const canvas = $("ribbon");
     const ctx = canvas.getContext("2d");
     const dpr = Math.min(devicePixelRatio || 1, 2);
@@ -1484,31 +2431,23 @@
     canvas.height = Math.round(h * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
-    const n = BUF.length;
+    const n = numel();
     const cw = w / n;
-    // Identity index of the element at each memory offset, for colour and slice.
-    const d = dims();
-    const idAt = new Array(n);
-    for (let b = 0; b < d[0]; b++)
-      for (let c = 0; c < d[1]; c++)
-        for (let hh = 0; hh < d[2]; hh++)
-          for (let ww = 0; ww < d[3]; ww++) {
-            const id = [b, c, hh, ww];
-            idAt[id.reduce((s, v, i) => s + v * st[i], 0)] = id;
-          }
-    for (let k = 0; k < n; k++) {
-      const id = idAt[k];
-      const lit = state.slice < 0 || id[state.slice] === state.idx[state.slice];
+    const t = anim ? easeInOut(Math.min(1, (performance.now() - anim.t0) / anim.dur)) : 1;
+    ELS.forEach((el) => {
+      const lit = state.slice < 0 || el.L[state.slice] === state.idx[state.slice];
+      const was = anim && anim.from.get(el.src);
+      const at = (was && was.off !== undefined) ? was.off + (el.off - was.off) * t : el.off;
       ctx.globalAlpha = lit ? 1 : 0.25;
-      ctx.fillStyle = colourAt(id, BUF[k]);
-      ctx.fillRect(k * cw, 10, Math.max(cw, 0.5), h - 18);
-    }
+      ctx.fillStyle = colourOf(el, el.raw);
+      ctx.fillRect(at * cw, 10, Math.max(cw, 0.5), h - 18);
+    });
     ctx.globalAlpha = 1;
     // Ticks at the slowest stride.
-    const slow = st[state.mem[0]];
+    const slow = Math.max(state.stride[memOrder()[0]], 1);
     ctx.strokeStyle = css("--ink-mute");
     ctx.lineWidth = 1;
-    for (let k = 0; k <= n; k += slow) {
+    for (let k = 0; n / slow <= 96 && k <= n; k += slow) {
       ctx.beginPath();
       ctx.moveTo(Math.min(k * cw, w - 0.5), 2);
       ctx.lineTo(Math.min(k * cw, w - 0.5), 9);
@@ -1526,67 +2465,99 @@
     ctx.lineTo(off * cw + cw / 2 + 4, h - 7);
     ctx.closePath();
     ctx.fill();
-    const order = state.mem.map((ax) => `<span style="color:var(${AXVAR[ax]})">${LETTER[ax]}</span>`).join(" → ");
+    const hues = axisHues();
+    const order = memOrder().map((p) => `<span style="color:var(${hues[p]})">${axTag(p)}</span>`).join(" → ");
     $("ribbon-note").innerHTML = T.ribbonNote(`<span id="ribbon-order">${order}</span>`, n);
     canvas.setAttribute("role", "img");
-    canvas.setAttribute("aria-label", `${T.ribbon}: ${state.mem.map((ax) => LETTER[ax]).join(" ")}`);
+    canvas.setAttribute("aria-label", `${T.ribbon}: ${memOrder().map(axTag).join(" ")}`);
   }
 
   function renderLegend() {
-    const fastest = fastestAxis();
-    $("axis-legend").innerHTML = LETTER.map((L, i) => {
-      const mark = i === fastest ? ` <em>${T.fastest}</em>` : "";
-      return `<span class="chip"><span class="swatch" style="background:var(${AXVAR[i]})"></span><b style="color:var(${AXVAR[i]})">${L}</b> ${T.axName[i]}${mark}</span>`;
+    const fastest = fastestPos();
+    const hues = axisHues();
+    $("axis-legend").innerHTML = state.shape.map((_, p) => {
+      const mark = p === fastest ? ` <em>${T.fastest}</em>` : "";
+      const letter = axLetter(p);
+      const name = letter ? `${T.axName[state.axisId[p]]} · ${T.posName(p)}` : "";
+      return `<span class="chip"><span class="swatch" style="background:var(${hues[p]})"></span><b style="color:var(${hues[p]})">${letter || T.posName(p)}</b> ${name}${mark}</span>`;
     }).join("");
   }
 
   // ─── render ───────────────────────────────────────────────────────────────
 
+  let ELS = [];
+
   function render() {
-    const st = strides();
-    BUF = buildBuffer();
+    // bindPointer() is installed before photos.json resolves, so a drag, a
+    // click or a resize can land in that window. Without an array there is
+    // nothing to draw and every geometry helper dereferences SRC.
+    if (!SRC) return;
+    flushCss();
+    ELS = elements();
     VOX = buildVoxels();
+    settleTween();
     const off = offsetOf(state.idx);
-    const fastest = fastestAxis();
+    const fastest = fastestPos();
+    const hues = axisHues();
     syncControls();
 
-    $("stride-body").innerHTML = state.perm.map((ax) => {
-      const fast = ax === fastest;
-      return `<tr class="${fast ? "fast" : ""}"><td><span class="dot" style="background:var(${AXVAR[ax]})"></span>${axSpan(ax, LETTER[ax])}${fast ? `<span class="mark">${T.fastest}</span>` : ""}</td><td>${st[ax] * ITEMSIZE}</td><td>${st[ax]}</td></tr>`;
+    $("stride-body").innerHTML = state.shape.map((_, p) => {
+      const fast = p === fastest;
+      const pos = axLetter(p) ? `<span class="pos">${T.posName(p)}</span>` : "";
+      return `<tr class="${fast ? "fast" : ""}"><td><span class="dot" style="background:var(${hues[p]})"></span>${axSpan(p, axTag(p))}${pos}${fast ? `<span class="mark">${T.fastest}</span>` : ""}</td><td>${state.stride[p] * ITEMSIZE}</td><td>${state.stride[p]}</td></tr>`;
     }).join("");
 
-    const terms = state.perm.map((ax) =>
-      `<span class="term">(${axSpan(ax, state.idx[ax])} · ${axSpan(ax, st[ax])})</span>`
+    const terms = state.shape.map((_, p) =>
+      `<span class="term">(${axSpan(p, state.idx[p])} · ${axSpan(p, state.stride[p])})</span>`
     ).join(" + ");
     $("formula").innerHTML =
-      `${T.offset} = ` + state.perm.map((ax) => `${axSpan(ax, LETTER[ax])}·${axSpan(ax, `S_${LETTER[ax]}`)}`).join(" + ") +
+      `${T.offset} = ` + state.shape.map((_, p) => `${axSpan(p, `i_${axTag(p)}`)}·${axSpan(p, `S_${axTag(p)}`)}`).join(" + ") +
       `<span class="eq"> = ${terms} = <b>${off}</b></span>`;
 
-    renderCode(st, off);
+    renderCode(off);
     renderLegend();
     renderStrip();
-    renderRibbon(st);
+    renderRibbon();
 
-    $("status").textContent = T.status(off, logicalOf(state.idx),
-      state.slice >= 0 ? T.sliceOf(`${LETTER[state.slice]} (${T.axName[state.slice]})`) : "");
-    const base = isPhotos() ? T.stagePhotos : T.stageNumbers(LETTER[fastest]);
-    const parts = [state.reshape ? T.stageReshape : base];
-    if (state.slice >= 0) parts.push(T.lit(LETTER[state.slice]));
+    // What a checker can read without a screenshot: the shape, the strides,
+    // whether the view is snapped flat, and a signature of the buffer that a
+    // view must never change.
+    const stage = $("stage");
+    stage.dataset.shape = state.shape.join(",");
+    stage.dataset.strides = state.stride.join(",");
+    stage.dataset.bufsig = bufferSignature();
+
+    $("status").textContent = T.status(off, state.idx,
+      state.slice >= 0 ? T.sliceOf(axName(state.slice)) : "");
+    const base = isPhotos() ? T.stagePhotos : T.stageNumbers(axTag(fastest));
+    const parts = [state.compare ? T.stageReshape : base];
+    if (snap.on) parts.push(canReveal() ? T.revealNote : (isPhotos() ? T.revealNo : T.snapNote));
+    if (state.slice >= 0) parts.push(T.lit(axTag(state.slice)));
     if (byPos()) {
-      const ax = gaxes();
-      parts.push(T.stageArranged(LETTER[ax[3]], LETTER[ax[2]], LETTER[ax[1]], LETTER[ax[0]]));
+      const labels = [3, 2, 1, 0].map((r) => { const role = roleAxis(r); return role ? role.label : "—"; });
+      parts.push(T.stageArranged(...labels));
     }
     parts.push(T.drag);
     $("stagenote").textContent = embed ? "" : parts.join(" ");
 
     if (mode === "gl" && GL.ready) {
-      syncGL(VOX);
-      const stage = $("stage");
-      GL.renderer.setSize(stage.clientWidth, stage.clientHeight, false);
-      GL.camera.aspect = stage.clientWidth / Math.max(stage.clientHeight, 1);
+      const box = $("stage");
+      GL.renderer.setSize(box.clientWidth, box.clientHeight, false);
+      GL.camera.aspect = box.clientWidth / Math.max(box.clientHeight, 1);
       GL.camera.updateProjectionMatrix();
     }
     repaint();
+  }
+
+  // Cheap and order-sensitive: two buffers agree only if every byte is in the
+  // same place. A reshape or a transpose must leave this alone.
+  function bufferSignature() {
+    let a = 2166136261;
+    for (let k = 0; k < BUFSRC.length; k++) {
+      a ^= BUFSRC[k] + 1;
+      a = Math.imul(a, 16777619);
+    }
+    return (a >>> 0).toString(36);
   }
 
   // ─── pointer, wheel, keyboard ─────────────────────────────────────────────
@@ -1595,17 +2566,16 @@
     const canvas = mode === "gl" && GL.ready ? GL.renderer.domElement : $("view");
     const rect = canvas.getBoundingClientRect();
     const px = clientX - rect.left, py = clientY - rect.top;
-    const to = (x, y, z) => (mode === "gl" && GL.ready)
-      ? glTo(x, y, z, rect.width, rect.height)
-      : canvasTo(x, y, z, rect.width, rect.height);
+    const draw = drawList();
     let best = null, bestD = 28;
-    VOX.forEach((v) => {
-      const [x, y] = to(v.x, v.y, v.z);
+    draw.forEach((v) => {
+      const [x, y] = project(v.x, v.y, v.z, rect.width, rect.height);
       const d = Math.hypot(x - px, y - py);
       if (d < bestD) { bestD = d; best = v; }
     });
     if (best) {
-      state.idx = best.id.slice();
+      state.idx = best.L.slice();
+      peeking = true;
       render();
     }
   }
@@ -1613,10 +2583,35 @@
     view.scale = Math.min(2.4, Math.max(0.5, view.scale * factor));
     repaint();
   }
-  function orbitBy(dx, dy) {
-    view.yaw += dx;
-    view.el = Math.min(1.2, Math.max(0.2, view.el + dy));
+  function panBy(dx, dy) {
+    peeking = false;
+    view.panX += dx;
+    view.panY += dy;
     repaint();
+  }
+  // Rotating away from face on lets the cubes go back to being cubes.
+  function orbitBy(dx, dy) {
+    const left = (dx || dy) && snap.on;
+    if (left) {
+      snap.on = false;
+      glide.active = false;
+      $("snap").setAttribute("aria-pressed", "false");
+      $("snap").textContent = T.snapIn;
+      $("stage").dataset.snapped = "0";
+    }
+    if (dx || dy) peeking = false;
+    view.yaw += dx;
+    view.el = Math.min(1.2, Math.max(0, view.el + dy));
+    if (!snap.on) setSnapT(0);
+    // Leaving face on changes the stage note and the arrows as well as the
+    // cubes, so the one frame that leaves it is a full render, not a repaint.
+    if (left) render(); else repaint();
+  }
+  // The magnet: let go near enough to face on and the view closes the rest of
+  // the way itself. Tested on release, never mid-drag, so a drag past the
+  // angle is not caught by it.
+  function maybeSnap() {
+    if (!snap.on && !embed && isFaceOn()) setSnap(true);
   }
 
   function bindPointer() {
@@ -1628,9 +2623,14 @@
       const [a, b] = points();
       return Math.hypot(a.x - b.x, a.y - b.y);
     };
+    el.addEventListener("contextmenu", (e) => { if (!embed) e.preventDefault(); });
     el.addEventListener("pointerdown", (e) => {
+      if (e.target.closest("#legend, #snap, #gizmo")) return;
       try { el.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
-      live.set(e.pointerId, { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false });
+      live.set(e.pointerId, {
+        x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false,
+        pan: e.shiftKey || e.button === 2
+      });
       if (live.size === 2) pinch = spread();
     });
     el.addEventListener("pointermove", (e) => {
@@ -1647,7 +2647,8 @@
         orbitBy(0, -dy * 0.004);
         return;
       }
-      orbitBy(dx * 0.01, dy * 0.006);
+      if (me.pan) panBy(dx, dy);
+      else orbitBy(dx * 0.01, dy * 0.006);
     });
     const release = (e, tap) => {
       const me = live.get(e.pointerId);
@@ -1655,10 +2656,13 @@
       live.delete(e.pointerId);
       if (live.size < 2) pinch = 0;
       if (tap && !me.moved && !embed) pick(e.clientX, e.clientY);
+      else if (!me.pan) maybeSnap();
     };
     el.addEventListener("pointerup", (e) => release(e, true));
     el.addEventListener("pointercancel", (e) => release(e, false));
     el.addEventListener("wheel", (e) => {
+      // Ctrl or Command only: this box owns most of a phone screen and the
+      // page has to stay scrollable through it.
       if (!e.ctrlKey && !e.metaKey) return;
       e.preventDefault();
       zoomBy(e.deltaY > 0 ? 0.92 : 1.08);
@@ -1666,19 +2670,58 @@
     el.addEventListener("keydown", (e) => {
       const step = e.shiftKey ? 0.25 : 0.08;
       const moves = {
-        ArrowLeft:  () => orbitBy(-step, 0),
-        ArrowRight: () => orbitBy(step, 0),
-        ArrowUp:    () => orbitBy(0, -step),
-        ArrowDown:  () => orbitBy(0, step),
+        ArrowLeft:  () => e.shiftKey ? panBy(-16, 0) : orbitBy(-step, 0),
+        ArrowRight: () => e.shiftKey ? panBy(16, 0) : orbitBy(step, 0),
+        ArrowUp:    () => e.shiftKey ? panBy(0, -16) : orbitBy(0, -step),
+        ArrowDown:  () => e.shiftKey ? panBy(0, 16) : orbitBy(0, step),
         "+":        () => zoomBy(1.12),
         "=":        () => zoomBy(1.12),
         "-":        () => zoomBy(0.89),
-        Home:       () => { Object.assign(view, HOME); repaint(); }
+        f:          () => setSnap(!snap.on),
+        F:          () => setSnap(!snap.on),
+        Escape:     () => { if (snap.on) setSnap(false); },
+        Home:       () => {
+          Object.assign(view, HOME);
+          snap.on = false;
+          glide.active = false;
+          setSnapT(0);
+          $("stage").dataset.snapped = "0";
+          $("snap").setAttribute("aria-pressed", "false");
+          $("snap").textContent = T.snapIn;
+          render();
+        }
       };
       const move = moves[e.key];
       if (!move) return;
       e.preventDefault();
       move();
+    });
+    $("snap").addEventListener("click", () => setSnap(!snap.on));
+    const gizmoGo = (arm) => {
+      const spec = GIZMO_ARMS.find((a) => a.r === Number(arm.dataset.arm));
+      if (!spec) return;
+      if (spec.el === 0) {
+        view.yaw = spec.yaw;
+        setSnap(true);
+      } else {
+        snap.on = false;
+        $("stage").dataset.snapped = "0";
+        $("snap").setAttribute("aria-pressed", "false");
+        $("snap").textContent = T.snapIn;
+        glideTo(spec.yaw, spec.el);
+        tick();
+      }
+    };
+    $("gizmo").addEventListener("click", (e) => {
+      const arm = e.target.closest("[data-arm]");
+      if (arm) gizmoGo(arm);
+    });
+    $("gizmo").addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const arm = e.target.closest("[data-arm]");
+      if (!arm) return;
+      e.preventDefault();
+      gizmoGo(arm);
     });
   }
 
@@ -1695,9 +2738,15 @@
     view.scale = 1.3;
     let step = 0;
     const apply = () => {
-      state.perm = (step === 0 ? ORDER_PRESETS.NHWC : ORDER_PRESETS.NCHW).slice();
-      state.reshape = step === 2;
-      text.innerHTML = `<b>${T.embedSteps[step]}</b>`;
+      rebuildSource();
+      // Without the photos there is no NHWC to permute: the fallback array is
+      // a rank-3 np.arange, so `posOfId(3)` is -1 and a permutation built from
+      // it would hand the shape an undefined axis and a NaN element count.
+      // Both later steps are about the photos anyway, so the fallback holds.
+      const at = hasAllIds() ? step : 0;
+      if (at >= 1) applyTranspose(ORDER_PRESETS.NCHW.map(posOfId));
+      state.compare = at === 2;
+      text.innerHTML = `<b>${T.embedSteps[at]}</b>`;
       render();
     };
     apply();
@@ -1763,21 +2812,24 @@
       // The instanced mesh is sized for MAX_RES; a larger side added to
       // WIDGET_RES in gen_figures.py would overflow it silently, so drop it.
       json.res = json.res.filter((r) => r <= MAX_RES);
+      if (!json.res.length) throw new Error("res");
       if (!json.res.includes(state.res)) state.res = Math.max(...json.res);
       PHOTOS = json;
       $("stage").dataset.photos = String(json.photos.length);
     } catch (_) {
       PHOTOS = null;
       state.data = "numbers";
-      state.perm = ORDER_PRESETS.NCHW.slice();
-      state.mem = state.perm.slice();
       $("stage").dataset.photos = "0";
     }
   }
 
   applyCopy();
-  bindPointer();
+  $("snap").textContent = T.snapIn;
   loadPhotos().then(() => {
+    rebuildSource();
+    // Only now: a drag, a click or a snap before there is an array reaches
+    // the geometry helpers, and every one of them dereferences SRC.
+    bindPointer();
     buildControls();
     if (embed) {
       // The front door: the isometric canvas only, no three.js to fetch.
