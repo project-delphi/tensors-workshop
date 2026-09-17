@@ -33,6 +33,17 @@ prose and its code) -- is a teaching body cell, edited directly in the
 `.ipynb` file, including in Colab with Gemini, and the notebook normalizer
 preserves them.
 
+What the normalizer *does* own, across every cell rather than just the two it
+writes, is the **key order inside each cell**. It sorts them, which is
+nbformat's own order, so a round-trip through Jupyter, Colab or nbformat
+converges rather than fights. Nothing reads a notebook by key order; the reason
+is the diff. Each editor writes its own order, so a notebook picked up by a
+different tool came back with every cell rewritten -- notebook 04 once carried
+245 lines of moved keys around a single real edit, which is how a genuine
+change gets missed in review. No new check guards this: the byte-exact
+regenerate gate already does, because a scrambled order is something
+`gen_notebooks.py` rewrites and CI then sees as a dirty tree.
+
 Change `_variables.yml` for shared facts, objectives and the bilingual header
 text, then run the appropriate generator:
 

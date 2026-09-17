@@ -487,6 +487,20 @@ def _normalize_cell(cell: dict) -> dict:
         cell.pop("execution_count", None)
         cell.pop("outputs", None)
 
+    # Sort the cell's own keys. Assignment above appends when the key was
+    # absent, so without this a cell keeps whatever order the last writer to
+    # touch it happened to use -- and every editor uses a different one. The
+    # result was a notebook whose diff was 245 lines of moved keys around one
+    # real edit, which is how a genuine change gets missed in review.
+    #
+    # Sorted is nbformat's own order (cell_type, execution_count, id,
+    # metadata, outputs, source), so a round-trip through Jupyter, Colab or
+    # nbformat converges here rather than fighting it. Nothing reads a
+    # notebook by key order; this is purely so the diff means something.
+    ordered = {key: cell[key] for key in sorted(cell)}
+    cell.clear()
+    cell.update(ordered)
+
     return cell
 
 
