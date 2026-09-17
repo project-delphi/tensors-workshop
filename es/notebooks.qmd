@@ -48,6 +48,9 @@ se ajusta a mano y después se cambia qué significa «ajustar».
 El 16 conecta las vistas matriciales de PCA con clasificación de cobertura terrestre,
 agrupamiento y PCA tensorial, con la caverna de Platón y tres animaciones.
 
+La sección 04 también tiene un <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de disposición</a>
+que muestra cómo cuatro índices se convierten en un desplazamiento dentro de un búfer plano.
+
 {{< include ../_includes/notebooks-extra-es.md >}}
 
 ## Ejecutarlos fuera de Colab

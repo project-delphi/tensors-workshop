@@ -159,8 +159,9 @@ What each one draws, and from where:
   reader arriving at the cell met a parked frame 0 — a still, indistinguishable
   from a broken image, which is exactly how it was reported. No finite loop
   count survives that; it is a race against how fast somebody scrolls. The
-  other two GIFs in the repo (`gen_figures.gif_video_stack` and the hero band)
-  still carry `loop=3` and have the same flaw waiting in them.
+  video-stack GIF and notebook 16's PCA GIFs use `loop=0` for the same
+  reason. The hero band is a still PNG: an earlier GIF build parked on
+  empty frame 0, so the reveal moved to CSS.
 
   Two things about a scene are not decidable by reading its code, so
   `_check_layout` measures them after a draw and refuses the frame: the `sub`
@@ -582,8 +583,10 @@ uv run --group execute python scripts/test_notebooks.py --offline
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
-uv run --group figures python scripts/gen_cube_gifs.py        # notebooks covered by this generator
+uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–15
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
+uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
+uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 

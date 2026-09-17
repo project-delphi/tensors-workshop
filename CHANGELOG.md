@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-16
+
+- Published a bilingual layout visualizer for section 04: a 4D tensor you can rotate, with live strides in NumPy bytes and PyTorch elements, C-contiguous / F-contiguous / channels-last, and a canvas fallback when WebGL is unavailable. Cell fill is the fastest-varying axis (Okabe–Ito, same hue on the arrows, sliders and formula); lightness runs along that axis so a layout change recolors the direction the numbers run.
+- Aligned Kahoot 3's coverage note and the cutting-order copy with extra 13 (Appendix F), and corrected the Kahoot README's duration from 195 to 210 minutes.
+- The handbook video-stack GIF and notebook 16's PCA animations now loop continuously, matching the cube GIFs.
+
 ## 2026-09-15
 
 - Added take-home labs 17 and 18 for 4D multi-head attention and SVD feature compression, with NumPy/PyTorch checks, synthetic data, inline tests, rank comparisons, pausable widgets and local GIF exports.

@@ -378,6 +378,8 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **`reshape` solo reinterpreta los números en el orden en que están en memoria. `transpose` los mueve según el significado de los ejes.** Los dos dan la forma `(3, 512, 512)`; solo uno es la imagen. Y el TODO 4 va más al fondo: en cuanto dos ejes comparten tamaño, la forma no puede decirte cuál es cuál. Solo tu propio seguimiento puede.
 
+Un tensor 4D que puedes girar está en el <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de disposición</a>. Pasa de C-contiguo a channels-last y observa en qué eje corren los números.
+
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 
 <span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>

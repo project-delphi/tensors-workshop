@@ -104,6 +104,11 @@ NB_REF_RE = re.compile(
 # check here.
 NB_IMG_RE = re.compile(
     rf"{re.escape(REPO['site'])}/images/([A-Za-z0-9._-]+)")
+# Standalone widgets a notebook links, same absolute-URL reason as the
+# images. Check 3 never sees these: a notebook is copied, not rendered,
+# and the URL is https.
+NB_VIZ_RE = re.compile(
+    rf"{re.escape(REPO['site'])}/(interactive/[A-Za-z0-9._-]+\.html)")
 IMG_TAG_RE = re.compile(r"<img\b[^>]*>")
 ALT_RE = re.compile(r'alt="([^"]*)"')
 
@@ -187,6 +192,17 @@ def check_links() -> None:
         # prevent — on the one run where docs/ is empty.
         step("Colab URLs")
         return
+
+    # Only when this is the real docs/: unit tests point DOCS at a temp tree
+    # that has no reason to carry the visualizer. The file is a resource, not
+    # a render target, so dropping `interactive/**` from `_quarto.yml` would
+    # otherwise 404 every handbook and notebook link with no other symptom.
+    viz = REPO.get("visualizer")
+    if viz and DOCS.resolve() == (ROOT / "docs").resolve():
+        if not (ROOT / viz).exists():
+            fail(f"{viz} is missing")
+        elif not (DOCS / viz).exists():
+            fail(f"docs/{viz} is missing — add interactive/** to resources:")
 
     harvested = {p: harvest(p) for p in pages}
     ids_by_page = {p: h.ids for p, h in harvested.items()}
@@ -384,6 +400,9 @@ def check_notebooks() -> None:
         for alt in IMG_TAG_RE.findall(body):
             if not ALT_RE.search(alt) or not ALT_RE.search(alt).group(1).strip():
                 fail(f"{name}: an <img> has no alt text")
+        for target in sorted(set(NB_VIZ_RE.findall(body))):
+            if not (ROOT / target).exists():
+                fail(f"{name}: links {target}, which does not exist")
         n_maths += check_notebook_maths(nb, name)
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}

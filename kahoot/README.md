@@ -15,7 +15,7 @@ so it reinforces rather than interrupts.
 |---|---|---|---|---|
 | **1 — Tensor Vocabulary & Shapes** | [`kahoot_quiz_1_vocabulary_shapes.xlsx`](kahoot_quiz_1_vocabulary_shapes.xlsx) | Section 04, before the first break | 01, 03, 04 | 6 |
 | **2 — Einsum, Distance & the Pseudoinverse** | [`kahoot_quiz_2_distance_pseudoinverse.xlsx`](kahoot_quiz_2_distance_pseudoinverse.xlsx) | Section 07, before the recursion demo | 06, 07 | 6 |
-| **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, immediately before the wrap-up | 09, 10 | 6 |
+| **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, immediately before the wrap-up | 10, plus leftover convolution from extra 13 | 6 |
 
 Sections **00, 02, 05, 08 and 11** have no quiz. That is deliberate: the
 quizzes are checkpoints after exercise stretches, so the setup, the two group
@@ -50,7 +50,7 @@ at that one file, so three edits cover everything.
 - **Budget 5 minutes each, including the podium.** Groups want to see the
   leaderboard, and that is fine — it is the payoff.
 - Students join at **kahoot.it** with the PIN on your screen.
-- The three quizzes add 15 minutes, taking the workshop from 180 to **195**.
+- The three quizzes add 15 minutes, and three 5-minute breaks another 15, taking the workshop from 180 to **210**.
 
 ## Two things to watch
 
@@ -70,7 +70,7 @@ The handbook's cutting order, in order:
 
 1. **Quiz 2** — the least novel of the three; the pseudoinverse and distance get
    re-covered narratively in the wrap-up.
-2. TODO 4 of section 09 (true deconvolution — the most technically demanding).
+2. TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home).
 3. The RNN snippet in section 08.
 4. Question 5 of either group block.
 5. **Quiz 1.**

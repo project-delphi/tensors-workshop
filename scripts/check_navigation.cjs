@@ -99,6 +99,25 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
         }
       }
 
+      // The stride visualizer is a resource, not a Quarto page, so it has no
+      // navbar. Three.js is on a CDN and this check aborts off-origin
+      // requests, which is the designed fallback: the isometric canvas.
+      console.log('Checking tensor visualizer');
+      for (const lang of ['en', 'es']) {
+        await page.goto(`${origin}${prefix}interactive/tensor-visualizer.html?lang=${lang}`);
+        assert.equal(await page.locator('html').getAttribute('lang'), lang);
+        await page.waitForSelector('#stage canvas');
+        const expected = lang === 'en' ? 'Tensor layout and strides'
+          : 'Disposición en memoria y strides';
+        assert.equal(await page.locator('#title').innerText(), expected);
+        for (const width of [1440, 390]) {
+          await page.setViewportSize({width, height: 1000});
+          const fits = await page.evaluate(() =>
+            document.documentElement.scrollWidth <= innerWidth + 1);
+          assert(fits, `visualizer ${lang}: horizontal overflow at ${width}`);
+        }
+      }
+
       // Keyboard activation on desktop and through the collapsed mobile menu.
       for (const width of [1440, 390]) {
         console.log(`Checking keyboard controls at ${width}px`);
@@ -247,7 +266,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
     }
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links and fallbacks.`);
+      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and the tensor visualizer.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

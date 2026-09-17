@@ -361,6 +361,8 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning.** Both give shape `(3, 512, 512)`; only one is the image. And TODO 4 makes the deeper point: once two axes share a size, the shape cannot tell you which is which. Only your own tracking can.
 
+A 4D tensor you can rotate is on the [layout visualizer](interactive/tensor-visualizer.html?lang=en). Switch C-contiguous to channels-last and watch which axis the numbers run along.
+
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 
 <span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>

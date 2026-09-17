@@ -20,6 +20,12 @@ repo:
   url: https://github.com/project-delphi/tensors-workshop
   colab_base: https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks
   site: https://project-delphi.github.io/tensors-workshop
+  # Standalone widgets, copied into docs/ via `resources: interactive/**`.
+  # Not a render target: the visualizer is its own page, with `?lang=` for
+  # EN/ES, rather than a Quarto wrapper. Root pages link it relatively;
+  # Spanish pages use a raw <a href="../interactive/..."> so Quarto cannot
+  # rewrite the path out of docs/. Notebooks use the absolute site URL.
+  visualizer: interactive/tensor-visualizer.html
 
 workshop:
   authors:

@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tensor layout and strides</title>
+<style>
+  :root {
+    --bg: #f7f5ef;
+    --ink: #1c1917;
+    --ink-mute: #57534e;
+    --panel: #fffcf7;
+    --sunk: #ebe6dc;
+    --line: #d6d0c4;
+    --accent: #059669;
+    --ax0: #0072b2;
+    --ax1: #e69f00;
+    --ax2: #009e73;
+    --ax3: #cc79a7;
+    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917;
+      --ink: #f5f0e8;
+      --ink-mute: #a8a29e;
+      --panel: #292524;
+      --sunk: #1c1917;
+      --line: #44403c;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
+  a { color: var(--accent); }
+  .wrap { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+  header p { max-width: 40rem; color: var(--ink-mute); }
+  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; }
+  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) 22rem; gap: 1.25rem; align-items: start; }
+  @media (max-width: 52rem) { .grid { grid-template-columns: 1fr; } }
+  #stage {
+    position: relative;
+    height: min(70vh, 36rem);
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    overflow: hidden;
+    touch-action: none;
+    cursor: grab;
+  }
+  #stage:active { cursor: grabbing; }
+  #stage canvas { display: block; width: 100%; height: 100%; }
+  #stagenote {
+    position: absolute; left: 0.8rem; right: 0.8rem; top: 0.7rem; margin: 0;
+    font: 500 0.82rem/1.35 var(--sans); color: var(--ink-mute); pointer-events: none;
+  }
+  #overlays { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  #overlays .lab {
+    position: absolute; transform: translate(-50%, -120%);
+    font: 700 13px/1 var(--sans); letter-spacing: 0.04em;
+    text-shadow: 0 0 5px var(--bg), 0 0 5px var(--bg);
+  }
+  #overlays .off {
+    position: absolute; transform: translate(-50%, -50%);
+    font: 700 11px/1 var(--mono); color: var(--ink);
+    background: var(--bg); border: 1px solid var(--ink); border-radius: 4px;
+    padding: 2px 5px;
+  }
+  #axis-legend {
+    display: flex; flex-wrap: wrap; gap: 0.45rem 1rem; margin: 0.65rem 0 0;
+    font: 500 0.8rem/1.3 var(--sans); color: var(--ink-mute);
+  }
+  #axis-legend .chip { display: inline-flex; align-items: center; gap: 0.4rem; }
+  #axis-legend .swatch { width: 0.65rem; height: 0.65rem; border-radius: 2px; flex: none; }
+  #axis-legend b { font-family: var(--mono); font-size: 0.85rem; }
+  #axis-legend em { font-style: normal; font-weight: 700; color: var(--ink); }
+  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; }
+  aside h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.85rem 0 0.45rem; color: var(--ink-mute); }
+  aside h2:first-child { margin-top: 0; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
+  .field { min-width: 0; }
+  .seg.stack { flex-direction: column; }
+  .seg.stack label { text-align: left; padding: 0.4rem 0.7rem; white-space: nowrap; }
+  .field .k { display: flex; justify-content: space-between; font: 600 0.75rem/1.2 var(--mono); }
+  .field input[type=range] { width: 100%; accent-color: var(--accent); }
+  .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  .seg label {
+    flex: 1; text-align: center; padding: 0.35rem 0.4rem; font-size: 0.8rem; cursor: pointer;
+    background: var(--sunk);
+  }
+  .seg input { position: absolute; opacity: 0; pointer-events: none; }
+  .seg input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
+  .seg input:checked + label { background: var(--accent); color: #fff; font-weight: 650; }
+  .seg.axes label { font-family: var(--mono); font-weight: 700; background: var(--panel); color: var(--ink); }
+  .seg.axes input:checked + label { color: #fff; }
+  .seg.axes input#slice-0:checked + label { background: var(--ax0); }
+  .seg.axes input#slice-1:checked + label { background: var(--ax1); }
+  .seg.axes input#slice-2:checked + label { background: var(--ax2); }
+  .seg.axes input#slice-3:checked + label { background: var(--ax3); }
+  table { width: 100%; border-collapse: collapse; font: 0.8rem/1.35 var(--mono); }
+  th { text-align: left; font: 600 0.7rem/1.2 var(--sans); color: var(--ink-mute); padding: 0.15rem 0.3rem 0.25rem 0; }
+  td { padding: 0.2rem 0.3rem 0.2rem 0; border-top: 1px solid var(--line); }
+  td .dot { display: inline-block; width: 0.55rem; height: 0.55rem; border-radius: 50%; margin-right: 0.35rem; vertical-align: -0.05rem; }
+  tr.fast td { font-weight: 700; }
+  .mark { font-family: var(--sans); font-size: 0.68rem; font-weight: 700; margin-left: 0.25rem; }
+  .formula { font: 0.75rem/1.45 var(--mono); background: var(--sunk); border-radius: 8px; padding: 0.55rem 0.7rem; overflow-x: auto; }
+  .formula .eq { display: block; margin-top: 0.35rem; color: var(--ink-mute); }
+  .formula .term { white-space: nowrap; }
+  .formula b { color: var(--accent); font-weight: 700; }
+  pre {
+    margin: 0.5rem 0 0; padding: 0.55rem 0.7rem; background: var(--sunk);
+    border-radius: 8px; font: 0.78rem/1.4 var(--mono); overflow-x: auto;
+  }
+  .fallback { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="eyebrow" id="eyebrow">Section 04 · reshape and transpose</div>
+      <h1 id="title">Tensor layout and strides</h1>
+      <p id="lead">
+        A 4-D tensor as four nested axes. Drag to rotate. The fill colour is the
+        fastest-varying axis; pale is index 0 on that axis. Same hue on the arrow,
+        the slider, and the formula — colour names the axis, the letter confirms it.
+      </p>
+      <p><a id="back" href="../notebooks.html">← Notebooks</a></p>
+    </header>
+    <div class="grid">
+      <div>
+        <div id="stage" aria-label="Rotatable tensor">
+          <p id="stagenote"></p>
+          <div id="overlays" aria-hidden="true"></div>
+          <canvas id="view"></canvas>
+        </div>
+        <div id="axis-legend"></div>
+      </div>
+      <aside>
+        <h2 id="h-layout">Layout</h2>
+        <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="h-layout"></div>
+        <h2 id="h-size">Shape</h2>
+        <div class="row" id="sizes"></div>
+        <h2 id="h-idx">Selected element</h2>
+        <div class="row" id="indices"></div>
+        <h2 id="h-slice">Highlight a slice</h2>
+        <div class="seg axes" id="slices" role="radiogroup" aria-labelledby="h-slice"></div>
+        <h2 id="h-stride">Strides</h2>
+        <table>
+          <thead><tr><th id="th-ax">Axis</th><th id="th-np">NumPy (bytes)</th><th id="th-pt">PyTorch</th></tr></thead>
+          <tbody id="stride-body"></tbody>
+        </table>
+        <p class="formula" id="formula"></p>
+        <pre><code id="code"></code></pre>
+        <p class="fallback" id="glnote" hidden></p>
+      </aside>
+    </div>
+    <p class="sr" aria-live="polite" id="status"></p>
+  </div>
+<script>
+(function () {
+  "use strict";
+
+  const LETTER = ["B", "C", "H", "W"];
+  const AXVAR = ["--ax0", "--ax1", "--ax2", "--ax3"];
+  const ITEMSIZE = 4;
+  const GAP = 1.5;
+  const FIT = 1.55;
+  const THREE_URL = "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.min.js";
+
+  const ORDERS = {
+    C:    [0, 1, 2, 3],
+    F:    [3, 2, 1, 0],
+    NHWC: [0, 2, 3, 1]
+  };
+
+  const EN = {
+    title: "Tensor layout and strides",
+    eyebrow: "Section 04 · reshape and transpose",
+    lead: "A 4-D tensor as four nested axes. Drag to rotate. The fill colour is the fastest-varying axis; pale is index 0 on that axis. Same hue on the arrow, the slider, and the formula — colour names the axis, the letter confirms it.",
+    back: "← Notebooks",
+    layout: "Layout",
+    size: "Shape",
+    idx: "Selected element",
+    slice: "Highlight a slice",
+    stride: "Strides",
+    ax: "Axis",
+    np: "NumPy (bytes)",
+    pt: "PyTorch",
+    offset: "Offset",
+    layouts: { C: "C-contiguous", F: "F-contiguous", NHWC: "channels-last" },
+    axName: ["batch", "channel", "height", "width"],
+    none: "none",
+    fastest: "fastest",
+    cNote: "NumPy default; last axis is contiguous",
+    fNote: "Fortran / some SciPy; first axis is contiguous",
+    nhwcNote: "PyTorch memory_format=channels_last",
+    glNote: "WebGL unavailable — isometric canvas.",
+    status: (o, i) => `Offset ${o} at [${i.join(", ")}]`,
+    ramp: (ax) => `Fill is ${ax}: pale is ${ax}=0, deep is the far end of that axis. Arrows name each axis.`,
+    lit: (ax) => `Slice along ${ax} is lit in that axis colour; everything else is dimmed.`,
+    drag: "Drag to rotate. Scroll or pinch to zoom."
+  };
+  const ES = {
+    title: "Disposición en memoria y strides",
+    eyebrow: "Sección 04 · reshape y transpose",
+    lead: "Un tensor 4-D como cuatro ejes anidados. Arrastra para rotar. El relleno es el eje más rápido; el tono pálido es el índice 0 de ese eje. El mismo color en la flecha, el deslizador y la fórmula: el color nombra el eje y la letra lo confirma.",
+    back: "← Cuadernos",
+    layout: "Disposición",
+    size: "Forma",
+    idx: "Elemento seleccionado",
+    slice: "Resaltar un corte",
+    stride: "Strides",
+    ax: "Eje",
+    np: "NumPy (bytes)",
+    pt: "PyTorch",
+    offset: "Offset",
+    layouts: { C: "C-contiguous", F: "F-contiguous", NHWC: "channels-last" },
+    axName: ["lote", "canal", "altura", "ancho"],
+    none: "ninguno",
+    fastest: "más rápido",
+    cNote: "NumPy por defecto; el último eje es contiguo",
+    fNote: "Fortran / algo de SciPy; el primer eje es contiguo",
+    nhwcNote: "PyTorch memory_format=channels_last",
+    glNote: "WebGL no disponible — canvas isométrico.",
+    status: (o, i) => `Offset ${o} en [${i.join(", ")}]`,
+    ramp: (ax) => `El relleno es ${ax}: pálido es ${ax}=0, oscuro es el extremo de ese eje. Las flechas nombran cada eje.`,
+    lit: (ax) => `El corte sobre ${ax} se ilumina con el color de ese eje; el resto se atenúa.`,
+    drag: "Arrastra para rotar. Rueda o pellizca para zoom."
+  };
+
+  const params = new URLSearchParams(location.search);
+  const lang = params.get("lang") === "es" ? "es" : "en";
+  const T = lang === "es" ? ES : EN;
+  document.documentElement.lang = lang;
+  document.title = T.title;
+
+  const state = {
+    size: [2, 3, 4, 5],
+    idx: [0, 0, 0, 0],
+    layout: "C",
+    slice: -1
+  };
+  const view = { yaw: 0.55, el: 0.55, scale: 1 };
+  let mode = "flat";
+  const GL = { ready: false };
+
+  const $ = (id) => document.getElementById(id);
+
+  function css(name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  }
+  function parseRgb(c) {
+    if (c.startsWith("#")) {
+      return [c.slice(1, 3), c.slice(3, 5), c.slice(5, 7)].map((x) => parseInt(x, 16));
+    }
+    return (c.match(/\d+/g) || [0, 0, 0]).slice(0, 3).map(Number);
+  }
+  function mix(a, b, t) {
+    const pa = parseRgb(a), pb = parseRgb(b);
+    const m = pa.map((v, i) => Math.round(v + (pb[i] - v) * t));
+    return `rgb(${m.join(",")})`;
+  }
+  function hexInt(c) {
+    const p = parseRgb(c);
+    return (p[0] << 16) | (p[1] << 8) | p[2];
+  }
+  function axSpan(i, text) {
+    return `<span style="color:var(${AXVAR[i]})">${text}</span>`;
+  }
+  function fastestAxis() {
+    return ORDERS[state.layout][3];
+  }
+  function axisFill(i, t) {
+    const hue = css(AXVAR[i]);
+    const pale = mix(hue, "#ffffff", 0.84);
+    return mix(pale, hue, t);
+  }
+
+  function strides() {
+    const order = ORDERS[state.layout];
+    const st = [0, 0, 0, 0];
+    let run = 1;
+    for (let k = 3; k >= 0; k--) {
+      const ax = order[k];
+      st[ax] = run;
+      run *= state.size[ax];
+    }
+    return st;
+  }
+  function offsetOf(idx) {
+    const st = strides();
+    return idx.reduce((s, v, i) => s + v * st[i], 0);
+  }
+  function numel() {
+    return state.size.reduce((a, b) => a * b, 1);
+  }
+
+  function applyCopy() {
+    $("title").textContent = T.title;
+    $("eyebrow").textContent = T.eyebrow;
+    $("lead").textContent = T.lead;
+    $("back").textContent = T.back;
+    $("back").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
+    $("h-layout").textContent = T.layout;
+    $("h-size").textContent = T.size;
+    $("h-idx").textContent = T.idx;
+    $("h-slice").textContent = T.slice;
+    $("h-stride").textContent = T.stride;
+    $("th-ax").textContent = T.ax;
+    $("th-np").textContent = T.np;
+    $("th-pt").textContent = T.pt;
+    $("glnote").textContent = T.glNote;
+  }
+
+  function radio(name, value, label, checked, color) {
+    const id = `${name}-${value}`;
+    const inp = `<input type="radio" name="${name}" id="${id}" value="${value}"${checked ? " checked" : ""}>`;
+    const tint = color ? ` style="border-left:3px solid ${color}"` : "";
+    return `${inp}<label for="${id}"${tint}>${label}</label>`;
+  }
+
+  function buildControls() {
+    $("layouts").innerHTML = ["C", "F", "NHWC"].map((k) =>
+      radio("layout", k, T.layouts[k], state.layout === k)
+    ).join("");
+    $("layouts").addEventListener("change", (e) => {
+      state.layout = e.target.value;
+      render();
+    });
+
+    function sliders(host, key, maxFor) {
+      host.innerHTML = "";
+      LETTER.forEach((L, i) => {
+        const wrap = document.createElement("div");
+        wrap.className = "field";
+        const lab = document.createElement("div");
+        lab.className = "k";
+        lab.style.color = `var(${AXVAR[i]})`;
+        const name = document.createElement("span");
+        name.textContent = L;
+        const val = document.createElement("span");
+        val.className = "val";
+        val.textContent = String(state[key][i]);
+        lab.append(name, val);
+        const input = document.createElement("input");
+        input.type = "range";
+        input.min = "0";
+        input.max = String(maxFor(i));
+        input.value = String(state[key][i]);
+        input.setAttribute("aria-label", `${L} ${key}`);
+        input.style.accentColor = `var(${AXVAR[i]})`;
+        input.addEventListener("input", () => {
+          state[key][i] = Number(input.value);
+          if (key === "size") {
+            state.idx[i] = Math.min(state.idx[i], state.size[i] - 1);
+          }
+          render();
+        });
+        wrap.append(lab, input);
+        host.appendChild(wrap);
+      });
+    }
+    sliders($("sizes"), "size", () => 8);
+    sliders($("indices"), "idx", (i) => state.size[i] - 1);
+
+    const sliceOpts = [-1, 0, 1, 2, 3].map((v) => {
+      const label = v < 0 ? T.none : LETTER[v];
+      const color = v < 0 ? "" : css(AXVAR[v]);
+      return radio("slice", String(v), label, state.slice === v, color);
+    });
+    $("slices").innerHTML = sliceOpts.join("");
+    $("slices").addEventListener("change", (e) => {
+      state.slice = Number(e.target.value);
+      render();
+    });
+  }
+
+  function axisHandles() {
+    const [B, C, H, W] = state.size;
+    const cx = ((B - 1) * (W + GAP) + W - 1) / 2;
+    const cy = -(H - 1) / 2;
+    const cz = -(C - 1) / 2;
+    const x0 = -cx - 0.55;
+    const yTop = -cy + 0.55;
+    const yBot = -(H - 1) - cy - 0.55;
+    const zFront = -cz + 0.55;
+    const bHandle = B > 1
+      ? { i: 0, letter: "B", o: { x: W - cx + 0.1, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(GAP - 0.35, 0.9) }
+      : { i: 0, letter: "B", o: { x: x0, y: yBot - 1.05, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: Math.max(W, 1.1) };
+    return [
+      { i: 3, letter: "W", o: { x: x0, y: yTop, z: zFront }, d: { x: 1, y: 0, z: 0 }, len: W },
+      { i: 2, letter: "H", o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: -1, z: 0 }, len: H },
+      { i: 1, letter: "C", o: { x: x0, y: yTop, z: zFront }, d: { x: 0, y: 0, z: -1 }, len: C },
+      bHandle
+    ];
+  }
+
+  function cellScale(w, h) {
+    const [B, C, H, W] = state.size;
+    const extent = Math.max((B - 1) * (W + GAP) + W, H, C, 2);
+    return Math.min(w, h) / (extent * FIT) * view.scale;
+  }
+
+  function canvasTo(x, y, z, w, h) {
+    const s = cellScale(w, h);
+    const ca = Math.cos(view.yaw), sa = Math.sin(view.yaw);
+    const rx = x * ca - z * sa, rz = x * sa + z * ca;
+    return [
+      w / 2 + (rx - rz) * 0.866 * s,
+      h / 2 - 12 + ((rx + rz) * 0.5 * view.el - y) * s
+    ];
+  }
+  function glTo(x, y, z, w, h) {
+    const THREE = GL.THREE;
+    const v = new THREE.Vector3(x, y, z);
+    GL.group.updateMatrixWorld(true);
+    v.applyMatrix4(GL.group.matrixWorld);
+    v.project(GL.camera);
+    return [(v.x * 0.5 + 0.5) * w, (-v.y * 0.5 + 0.5) * h];
+  }
+
+  function placeOverlays(w, h) {
+    const host = $("overlays");
+    host.innerHTML = "";
+    const to = (x, y, z) => (mode === "gl" && GL.ready) ? glTo(x, y, z, w, h) : canvasTo(x, y, z, w, h);
+    axisHandles().forEach((a) => {
+      const el = document.createElement("span");
+      el.className = "lab";
+      el.style.color = css(AXVAR[a.i]);
+      el.textContent = a.letter;
+      const [px, py] = to(
+        a.o.x + a.d.x * (a.len + 0.75),
+        a.o.y + a.d.y * (a.len + 0.75),
+        a.o.z + a.d.z * (a.len + 0.75)
+      );
+      el.style.left = `${px}px`;
+      el.style.top = `${py}px`;
+      host.appendChild(el);
+    });
+    const voxels = buildVoxels();
+    const sel = voxels.find((v) => v.sel);
+    if (sel) {
+      const el = document.createElement("span");
+      el.className = "off";
+      el.textContent = String(sel.off);
+      const [px, py] = to(sel.x, sel.y, sel.z);
+      el.style.left = `${px}px`;
+      el.style.top = `${py}px`;
+      host.appendChild(el);
+    }
+  }
+
+  function buildVoxels() {
+    const [B, C, H, W] = state.size;
+    const st = strides();
+    const fastest = fastestAxis();
+    const along = (axis, idx) => {
+      const n = state.size[axis];
+      return n > 1 ? idx[axis] / (n - 1) : 0.5;
+    };
+    const cx = ((B - 1) * (W + GAP) + W - 1) / 2;
+    const cy = -(H - 1) / 2;
+    const cz = -(C - 1) / 2;
+    const out = [];
+    for (let b = 0; b < B; b++) {
+      for (let c = 0; c < C; c++) {
+        for (let h = 0; h < H; h++) {
+          for (let w = 0; w < W; w++) {
+            const idx = [b, c, h, w];
+            const off = idx.reduce((s, v, i) => s + v * st[i], 0);
+            const sel = idx.every((v, i) => v === state.idx[i]);
+            const lit = state.slice < 0 || idx[state.slice] === state.idx[state.slice];
+            const color = state.slice < 0
+              ? axisFill(fastest, along(fastest, idx))
+              : (lit ? axisFill(state.slice, 0.58) : axisFill(fastest, along(fastest, idx)));
+            out.push({
+              x: b * (W + GAP) + w - cx,
+              y: -h - cy,
+              z: -c - cz,
+              color,
+              alpha: lit ? 1 : 0.15,
+              sel, off, idx, lit
+            });
+          }
+        }
+      }
+    }
+    return out;
+  }
+
+  function drawArrow(ctx, x0, y0, x1, y1, color) {
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+    ctx.lineWidth = 2.2;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x0, y0);
+    ctx.lineTo(x1, y1);
+    ctx.stroke();
+    const ang = Math.atan2(y1 - y0, x1 - x0);
+    const ah = 9;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x1 - ah * Math.cos(ang - 0.45), y1 - ah * Math.sin(ang - 0.45));
+    ctx.lineTo(x1 - ah * Math.cos(ang + 0.45), y1 - ah * Math.sin(ang + 0.45));
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  function drawFlat(voxels) {
+    const canvas = $("view");
+    const ctx = canvas.getContext("2d");
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const w = canvas.clientWidth, h = canvas.clientHeight;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    const to = (x, y, z) => canvasTo(x, y, z, w, h);
+    const sorted = voxels.slice().sort((a, b) => {
+      const ca = Math.cos(view.yaw), sa = Math.sin(view.yaw);
+      const da = (a.x * sa + a.z * ca) + a.y * 0.2;
+      const db = (b.x * sa + b.z * ca) + b.y * 0.2;
+      return da - db;
+    });
+    const s = cellScale(w, h);
+    const half = 0.42 * s;
+
+    sorted.forEach((v) => {
+      const [px, py] = to(v.x, v.y, v.z);
+      ctx.globalAlpha = v.alpha;
+      ctx.fillStyle = v.color;
+      ctx.strokeStyle = v.sel ? css("--ink") : mix(v.color, css("--ink"), 0.25);
+      ctx.lineWidth = v.sel ? 2 : 1;
+      ctx.beginPath();
+      ctx.moveTo(px, py - half);
+      ctx.lineTo(px + half, py - half * 0.4);
+      ctx.lineTo(px + half, py + half * 0.7);
+      ctx.lineTo(px, py + half * 1.15);
+      ctx.lineTo(px - half, py + half * 0.7);
+      ctx.lineTo(px - half, py - half * 0.4);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    });
+    ctx.globalAlpha = 1;
+    axisHandles().forEach((a) => {
+      const color = css(AXVAR[a.i]);
+      const [x0, y0] = to(a.o.x, a.o.y, a.o.z);
+      const [x1, y1] = to(a.o.x + a.d.x * a.len, a.o.y + a.d.y * a.len, a.o.z + a.d.z * a.len);
+      drawArrow(ctx, x0, y0, x1, y1, color);
+    });
+    placeOverlays(w, h);
+  }
+
+  function syncGL(voxels) {
+    const THREE = GL.THREE;
+    const geo = GL.box;
+    while (GL.group.children.length) {
+      const ch = GL.group.children[0];
+      GL.group.remove(ch);
+      if (ch.geometry && ch.geometry !== geo) ch.geometry.dispose();
+      if (ch.material) {
+        const mats = Array.isArray(ch.material) ? ch.material : [ch.material];
+        mats.forEach((m) => { if (m.map) m.map.dispose(); m.dispose(); });
+      }
+    }
+    voxels.forEach((v) => {
+      const mat = new THREE.MeshLambertMaterial({
+        color: v.color,
+        transparent: v.alpha < 1,
+        opacity: v.alpha,
+        emissive: v.sel ? css("--ink") : "#000000",
+        emissiveIntensity: v.sel ? 0.18 : 0
+      });
+      const mesh = new THREE.Mesh(geo, mat);
+      mesh.position.set(v.x, v.y, v.z);
+      mesh.userData.off = v.off;
+      GL.group.add(mesh);
+      if (v.sel) {
+        const edge = new THREE.LineSegments(
+          new THREE.EdgesGeometry(geo),
+          new THREE.LineBasicMaterial({ color: css("--ink") })
+        );
+        edge.position.copy(mesh.position);
+        GL.group.add(edge);
+      }
+    });
+    axisHandles().forEach((a) => {
+      const dir = new THREE.Vector3(a.d.x, a.d.y, a.d.z).normalize();
+      const origin = new THREE.Vector3(a.o.x, a.o.y, a.o.z);
+      const arrow = new THREE.ArrowHelper(dir, origin, a.len, hexInt(css(AXVAR[a.i])), 0.38, 0.22);
+      GL.group.add(arrow);
+    });
+  }
+
+  function initGL() {
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
+    if (!gl) return false;
+    const THREE = window.THREE;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(32, 1, 0.1, 80);
+    camera.position.set(8, 6, 10);
+    camera.lookAt(0, 0, 0);
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const key = new THREE.DirectionalLight(0xffffff, 0.65);
+    key.position.set(4, 8, 6);
+    scene.add(key);
+    const group = new THREE.Group();
+    scene.add(group);
+    $("stage").appendChild(canvas);
+    Object.assign(GL, {
+      ready: true, THREE, renderer, scene, camera, group,
+      box: new THREE.BoxGeometry(0.86, 0.86, 0.86)
+    });
+    return true;
+  }
+
+  function setMode(next) {
+    mode = next;
+    $("view").style.display = next === "flat" ? "block" : "none";
+    if (GL.renderer) GL.renderer.domElement.style.display = next === "gl" ? "block" : "none";
+    $("glnote").hidden = next === "gl";
+  }
+
+  function renderLegend() {
+    const fastest = fastestAxis();
+    $("axis-legend").innerHTML = LETTER.map((L, i) => {
+      const mark = i === fastest ? ` <em>${T.fastest}</em>` : "";
+      return `<span class="chip"><span class="swatch" style="background:var(${AXVAR[i]})"></span><b style="color:var(${AXVAR[i]})">${L}</b> ${T.axName[i]}${mark}</span>`;
+    }).join("");
+  }
+
+  function render() {
+    const st = strides();
+    const off = offsetOf(state.idx);
+    const fastest = fastestAxis();
+    document.querySelectorAll("#sizes input").forEach((el, i) => {
+      el.max = "8";
+      el.value = String(state.size[i]);
+      el.parentElement.querySelector(".val").textContent = String(state.size[i]);
+    });
+    document.querySelectorAll("#indices input").forEach((el, i) => {
+      el.max = String(state.size[i] - 1);
+      el.value = String(state.idx[i]);
+      el.parentElement.querySelector(".val").textContent = String(state.idx[i]);
+    });
+
+    $("stride-body").innerHTML = LETTER.map((L, i) => {
+      const fast = i === fastest;
+      return `<tr class="${fast ? "fast" : ""}"><td><span class="dot" style="background:var(${AXVAR[i]})"></span>${axSpan(i, L)}${fast ? `<span class="mark">${T.fastest}</span>` : ""}</td><td>${st[i] * ITEMSIZE}</td><td>${st[i]}</td></tr>`;
+    }).join("");
+
+    const terms = LETTER.map((_, i) =>
+      `<span class="term">(${axSpan(i, state.idx[i])} · ${axSpan(i, st[i])})</span>`
+    ).join(" + ");
+    $("formula").innerHTML =
+      `${T.offset} = ${axSpan(0, "B")}·${axSpan(0, "S_B")} + ${axSpan(1, "C")}·${axSpan(1, "S_C")} + ${axSpan(2, "H")}·${axSpan(2, "S_H")} + ${axSpan(3, "W")}·${axSpan(3, "S_W")}` +
+      `<span class="eq"> = ${terms} = <b>${off}</b></span>`;
+
+    const note = { C: T.cNote, F: T.fNote, NHWC: T.nhwcNote }[state.layout];
+    $("code").innerHTML =
+      `x[${state.idx.map((v, i) => axSpan(i, v)).join(", ")}]\n` +
+      `# ${note}\n` +
+      `offset = ${off}   # 0 … ${numel() - 1}`;
+
+    $("status").textContent = T.status(off, state.idx);
+    const hueLetter = LETTER[state.slice >= 0 ? state.slice : fastest];
+    $("stagenote").textContent = `${state.slice >= 0 ? T.lit(hueLetter) : T.ramp(hueLetter)} ${T.drag}`;
+    renderLegend();
+
+    const voxels = buildVoxels();
+    if (mode === "gl" && GL.ready) {
+      syncGL(voxels);
+      const stage = $("stage");
+      GL.renderer.setSize(stage.clientWidth, stage.clientHeight, false);
+      GL.camera.aspect = stage.clientWidth / Math.max(stage.clientHeight, 1);
+      GL.camera.updateProjectionMatrix();
+    }
+    repaint();
+  }
+
+  function repaint() {
+    const voxels = buildVoxels();
+    if (mode === "gl" && GL.ready) {
+      const dist = 14 / view.scale;
+      GL.camera.position.set(
+        Math.sin(view.yaw) * dist,
+        6 * view.el + 2,
+        Math.cos(view.yaw) * dist
+      );
+      GL.camera.lookAt(0, 0, 0);
+      GL.group.rotation.y = 0;
+      GL.renderer.render(GL.scene, GL.camera);
+      const stage = $("stage");
+      placeOverlays(stage.clientWidth, stage.clientHeight);
+    } else {
+      drawFlat(voxels);
+    }
+  }
+
+  function pick(clientX, clientY) {
+    const canvas = mode === "gl" && GL.ready ? GL.renderer.domElement : $("view");
+    const rect = canvas.getBoundingClientRect();
+    const px = clientX - rect.left, py = clientY - rect.top;
+    const to = (x, y, z) => (mode === "gl" && GL.ready)
+      ? glTo(x, y, z, rect.width, rect.height)
+      : canvasTo(x, y, z, rect.width, rect.height);
+    const voxels = buildVoxels();
+    let best = null, bestD = 28;
+    voxels.forEach((v) => {
+      const [x, y] = to(v.x, v.y, v.z);
+      const d = Math.hypot(x - px, y - py);
+      if (d < bestD) { bestD = d; best = v; }
+    });
+    if (best) {
+      state.idx = best.idx.slice();
+      render();
+    }
+  }
+
+  function bindPointer() {
+    const el = $("stage");
+    let drag = null;
+    el.addEventListener("pointerdown", (e) => {
+      el.setPointerCapture(e.pointerId);
+      drag = { x: e.clientX, y: e.clientY, moved: false };
+    });
+    el.addEventListener("pointermove", (e) => {
+      if (!drag) return;
+      const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (Math.hypot(dx, dy) > 3) drag.moved = true;
+      view.yaw += dx * 0.01;
+      view.el = Math.min(1.2, Math.max(0.2, view.el + dy * 0.006));
+      drag.x = e.clientX;
+      drag.y = e.clientY;
+      repaint();
+    });
+    el.addEventListener("pointerup", (e) => {
+      if (drag && !drag.moved) pick(e.clientX, e.clientY);
+      drag = null;
+    });
+    el.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      view.scale = Math.min(2.4, Math.max(0.5, view.scale * (e.deltaY > 0 ? 0.92 : 1.08)));
+      render();
+    }, { passive: false });
+  }
+
+  function loadScript(src) {
+    return new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = src;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  applyCopy();
+  buildControls();
+  bindPointer();
+  window.addEventListener("resize", render);
+
+  loadScript(THREE_URL).then(() => {
+    if (initGL()) setMode("gl");
+    render();
+  }).catch(() => {
+    setMode("flat");
+    render();
+  });
+  setTimeout(() => {
+    if (!GL.ready) {
+      setMode("flat");
+      render();
+    }
+  }, 2500);
+})();
+</script>
+</body>
+</html>

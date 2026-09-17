@@ -76,7 +76,7 @@ the last two questions land cold.
 |  |  |
 |---|---|
 | **Runs after** | Section 10 — Tucker decomposition, immediately before the wrap-up |
-| **Covers** | Sections 09, 10 |
+| **Covers** | Section 10, plus leftover convolution questions from extra 13 |
 | **Length** | {{< var kahoot.q3.questions >}} questions, ~5 min |
 | **Import file** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
 | **Join link** | [{{< var kahoot.q3.url >}}]({{< var kahoot.q3.url >}}) |
@@ -106,7 +106,7 @@ The handbook's cutting order, in order:
 
 1. **Quiz 2** — the least novel of the three; the pseudoinverse and distance get
    re-covered narratively in the wrap-up.
-2. TODO 4 of section 09 (true deconvolution — the most technically demanding).
+2. TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home).
 3. The RNN snippet in section 08.
 4. Question 5 of either group block.
 5. **Quiz 1.**
