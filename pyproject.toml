@@ -62,6 +62,12 @@ test = [
   "scipy>=1.11",
 ]
 
+# The linter and formatter. `uvx ruff` works too; the group is so CI and a
+# contributor resolve the same floor.
+lint = [
+  "ruff>=0.16",
+]
+
 # The image generators. Network and a scientific stack, which is why CI does
 # not run them (see AGENTS.md) and why they are not in `site`.
 # scripts/gen_slide_art.py is not here: it needs Chrome, not Python packages.
@@ -94,3 +100,19 @@ execute = [
   "ipykernel>=6.29",
   "pip>=24",
 ]
+
+# The linter and the formatter, run by CI's `render` job (`ruff check` and
+# `ruff format --check`) and by hand with `uvx ruff check` / `uvx ruff format`.
+# The rule set is the small one: errors, unused names, import order, the
+# bugbear traps and outdated syntax. Line length is the formatter's job, so
+# E501 is off -- a long comment or a long string is not a defect -- and so is
+# B905: `zip(strict=)` is a runtime change, not a spelling, and every zip here
+# pairs sequences the same code built.
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = ["docs", "node_modules", "_freeze", "pca_data"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+ignore = ["E501", "B905"]

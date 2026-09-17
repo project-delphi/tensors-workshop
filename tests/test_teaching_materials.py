@@ -1,12 +1,21 @@
 """Regression checks for routes, relative links and runnable teaching examples."""
+
 import copy
 import json
-from pathlib import Path
 import re
 import tempfile
 import unittest
+from pathlib import Path
 
-from scripts.check_teaching_materials import ROOT, anchors, check_links, check_route, check_tasks, support_of, check_sequence
+from scripts.check_teaching_materials import (
+    ROOT,
+    anchors,
+    check_links,
+    check_route,
+    check_sequence,
+    check_tasks,
+    support_of,
+)
 
 
 class Links(unittest.TestCase):
@@ -25,24 +34,38 @@ class Links(unittest.TestCase):
                     check_links(page, root)
 
     def test_duplicate_headings_and_code(self):
-        found = anchors('# Hello\n\n# Hello\n\n```python\n# Not a heading\n```\n')
+        found = anchors("# Hello\n\n# Hello\n\n```python\n# Not a heading\n```\n")
         self.assertEqual(found, {"hello", "hello-1"})
 
 
 class Routes(unittest.TestCase):
     def setUp(self):
-        self.notebook = json.loads(next((ROOT / "notebooks").glob("01-*.ipynb")).read_text())
+        self.notebook = json.loads(
+            next((ROOT / "notebooks").glob("01-*.ipynb")).read_text()
+        )
 
     def test_valid(self):
         check_route(self.notebook, "fixture")
 
     def test_live_core_cannot_be_split_by_optional_material(self):
-        for mode in ("interleaved", "missing", "checkpoint-before-attempt", "no-boundary"):
+        for mode in (
+            "interleaved",
+            "missing",
+            "checkpoint-before-attempt",
+            "no-boundary",
+        ):
             nb = copy.deepcopy(self.notebook)
             route = nb["cells"][1]["metadata"]["workshop"]
             if mode == "interleaved":
-                nb["cells"].insert(4, {"id": "optional", "cell_type": "markdown",
-                                      "source": ["Optional explorer"], "metadata": {}})
+                nb["cells"].insert(
+                    4,
+                    {
+                        "id": "optional",
+                        "cell_type": "markdown",
+                        "source": ["Optional explorer"],
+                        "metadata": {},
+                    },
+                )
             elif mode == "missing":
                 route["sequence"].remove(route["activity"])
             elif mode == "checkpoint-before-attempt":
@@ -59,9 +82,18 @@ class Routes(unittest.TestCase):
                 self.assertTrue(check_sequence(json.loads(path.read_text()), path.name))
 
     def test_broken_routes(self):
-        for mode in ("missing", "duplicate", "solution", "order", "label", "translation"):
+        for mode in (
+            "missing",
+            "duplicate",
+            "solution",
+            "order",
+            "label",
+            "translation",
+        ):
             nb = copy.deepcopy(self.notebook)
-            scaffold = next(c for c in nb["cells"] if "workshop" in c.get("metadata", {}))
+            scaffold = next(
+                c for c in nb["cells"] if "workshop" in c.get("metadata", {})
+            )
             route = scaffold["metadata"]["workshop"]
             activity = next(c for c in nb["cells"] if c["id"] == route["activity"])
             if mode == "missing":
@@ -74,31 +106,62 @@ class Routes(unittest.TestCase):
                 nb["cells"].remove(activity)
                 nb["cells"].insert(0, activity)
             elif mode == "label":
-                prep_at = next(i for i, c in enumerate(nb["cells"]) if c["id"] == route["prep"][0])
-                nb["cells"][prep_at-1]["source"] = []
+                prep_at = next(
+                    i for i, c in enumerate(nb["cells"]) if c["id"] == route["prep"][0]
+                )
+                nb["cells"][prep_at - 1]["source"] = []
             else:
                 for c in nb["cells"]:
-                    c["source"] = [s.replace("Predice → Ejecuta → Explica → Comprueba", "") for s in c["source"]]
+                    c["source"] = [
+                        s.replace("Predice → Ejecuta → Explica → Comprueba", "")
+                        for s in c["source"]
+                    ]
             with self.subTest(mode=mode), self.assertRaises(ValueError):
                 check_route(nb, "fixture")
 
 
 class FeedbackRoutes(unittest.TestCase):
     def fixture(self):
-        return {"cells": [
-            {"id": "route", "cell_type": "markdown", "source": "<!-- CORE-PATH -->",
-             "metadata": {"workshop": {"prep": [], "activity": "act", "support": ["feedback"]}}},
-            {"id": "feedback", "cell_type": "code", "source": "def check_answer(x): pass",
-             "metadata": {"tags": ["workshop-support"]}},
-            {"id": "act", "cell_type": "code", "source": "# TODO", "metadata": {}},
-        ]}
+        return {
+            "cells": [
+                {
+                    "id": "route",
+                    "cell_type": "markdown",
+                    "source": "<!-- CORE-PATH -->",
+                    "metadata": {
+                        "workshop": {
+                            "prep": [],
+                            "activity": "act",
+                            "support": ["feedback"],
+                        }
+                    },
+                },
+                {
+                    "id": "feedback",
+                    "cell_type": "code",
+                    "source": "def check_answer(x): pass",
+                    "metadata": {"tags": ["workshop-support"]},
+                },
+                {"id": "act", "cell_type": "code", "source": "# TODO", "metadata": {}},
+            ]
+        }
 
     def test_valid_feedback(self):
         self.assertEqual(support_of(self.fixture(), "fixture"), ["feedback"])
 
     def test_invalid_feedback_declarations(self):
-        for mode in ("missing", "duplicate", "not-list", "not-id", "solution", "markdown",
-                     "untagged", "undeclared", "after", "overlap"):
+        for mode in (
+            "missing",
+            "duplicate",
+            "not-list",
+            "not-id",
+            "solution",
+            "markdown",
+            "untagged",
+            "undeclared",
+            "after",
+            "overlap",
+        ):
             nb = self.fixture()
             route = nb["cells"][0]["metadata"]["workshop"]
             feedback = nb["cells"][1]
@@ -130,10 +193,13 @@ class Tasks(unittest.TestCase):
     def test_wrong_notebook_and_missing_deliverable(self):
         with tempfile.TemporaryDirectory() as folder:
             page = Path(folder) / "group-tasks.md"
-            text = '## 00 · Task\n\n**Time:** 6 minutes.\n[Notebook](notebooks/00-example.ipynb)\n**Share:** a check\n'
+            text = "## 00 · Task\n\n**Time:** 6 minutes.\n[Notebook](notebooks/00-example.ipynb)\n**Share:** a check\n"
             page.write_text(text)
             self.assertEqual(check_tasks(page, {"00": "00-example.ipynb"}), [("00", 6)])
-            for broken in (text.replace("00-example.ipynb", "01-other.ipynb"), text.replace("**Share:**", "Result:")):
+            for broken in (
+                text.replace("00-example.ipynb", "01-other.ipynb"),
+                text.replace("**Share:**", "Result:"),
+            ):
                 page.write_text(broken)
                 with self.assertRaises(ValueError):
                     check_tasks(page, {"00": "00-example.ipynb"})
@@ -158,8 +224,9 @@ class WorkedExamples(unittest.TestCase):
         for path in (ROOT / "worked-mistakes.md", ROOT / "es/worked-mistakes.md"):
             text = path.read_text()
             with self.subTest(path=path):
-                self.assertEqual(re.findall(r"^## (\d{2}) · ", text, re.MULTILINE),
-                                 expected)
+                self.assertEqual(
+                    re.findall(r"^## (\d{2}) · ", text, re.MULTILINE), expected
+                )
             code = re.findall(r"```python\n(.*?)\n```", text, re.DOTALL)
             self.assertEqual(len(code), len(expected))
             blocks.append(code)
@@ -208,6 +275,7 @@ class WorkedExamples(unittest.TestCase):
 
     def test_assessment_shapes(self):
         import numpy as np
+
         self.assertEqual(np.empty((20, 8, 8))[:, 3, 4].shape, (20,))
         x = np.zeros((6, 4, 3, 8, 8))
         self.assertEqual(x[:, -1, 1].shape, (6, 8, 8))

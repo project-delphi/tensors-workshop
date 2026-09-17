@@ -9,6 +9,7 @@ the walk lives here and both import it.
 Everything comes off three keys — `sections`, `kahoot` and `schedule`. Nothing
 in this module knows a clock time; it only adds `minutes` up in run order.
 """
+
 from __future__ import annotations
 
 import pathlib
@@ -87,12 +88,14 @@ def agenda_rows(lang: str) -> list[dict]:
     rows, minute = [], 0
     for row in V["agenda"]:
         duration = sum(lengths[i] for i in row["items"])
-        rows.append({
-            "start": clock(minute),
-            "minutes": duration,
-            "part": _part(row["items"]),
-            "label": row[f"label_{lang}"],
-        })
+        rows.append(
+            {
+                "start": clock(minute),
+                "minutes": duration,
+                "part": _part(row["items"]),
+                "label": row[f"label_{lang}"],
+            }
+        )
         minute += duration
     return rows
 
@@ -109,8 +112,10 @@ def _validate(row: dict) -> None:
         raise ScheduleError("_variables.yml `agenda`: a row lists no `items`")
     for key in ("label_en", "label_es"):
         if not row.get(key):
-            raise ScheduleError(f"_variables.yml `agenda`: the row for "
-                                f"{', '.join(row['items'])} has no `{key}`")
+            raise ScheduleError(
+                f"_variables.yml `agenda`: the row for "
+                f"{', '.join(row['items'])} has no `{key}`"
+            )
 
 
 def _part(items: list[str]) -> str:
@@ -160,11 +165,14 @@ def _mismatch(declared: list[str], expected: list[str]) -> str:
     if unknown := [i for i in surplus if i not in known]:
         detail.append(f"not in the schedule at all: {', '.join(unknown)}")
     if not detail:
-        i = next((i for i, (d, e) in enumerate(zip(declared, expected))
-                  if d != e), None)
+        i = next(
+            (i for i, (d, e) in enumerate(zip(declared, expected)) if d != e), None
+        )
         detail.append(
-            f"item {i + 1} is {declared[i]!r}, the clock reaches "
-            f"{expected[i]!r} there" if i is not None else
-            f"{len(declared)} items listed, the clock has {len(expected)}")
-    return ("_variables.yml `agenda` does not match the running clock — "
-            + "; ".join(detail))
+            f"item {i + 1} is {declared[i]!r}, the clock reaches {expected[i]!r} there"
+            if i is not None
+            else f"{len(declared)} items listed, the clock has {len(expected)}"
+        )
+    return "_variables.yml `agenda` does not match the running clock — " + "; ".join(
+        detail
+    )

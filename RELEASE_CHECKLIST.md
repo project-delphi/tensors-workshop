@@ -19,6 +19,8 @@ Start with the [editing ownership guide](CONTRIBUTING.md#where-to-edit).
 ```bash
 uv run --group site python scripts/gen_tables.py
 uv run --group site python scripts/gen_notebooks.py
+uv run --group lint ruff check scripts tests
+uv run --group lint ruff format scripts tests
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests -v
 quarto render

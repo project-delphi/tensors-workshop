@@ -51,13 +51,20 @@ runtime and browser checks, and PR process. Use the Quarto version pinned in
 the workflow. Run the generators twice to check that the second run changes
 nothing. Include regenerated notebooks and site files in the PR.
 
+Python under `scripts/` and `tests/` is linted and formatted by
+[ruff](https://docs.astral.sh/ruff/), configured in `pyproject.toml`; CI runs
+`ruff check` and `ruff format --check`, so run `uv run --group lint ruff format
+scripts tests` before you push.
+
 The [notebook guide](notebooks/README.md#colab-to-github-workflow) describes
 editing through Colab. [AGENTS.md](AGENTS.md) documents the site internals and
 asset generators.
 
-If you work with Claude Code, `.claude/agents/` holds four project subagents —
-a pedagogy reviewer, a Python scripter, a Quarto designer and a code reviewer —
-each carrying the conventions above for its own part of the repo.
+If you work with Claude Code, `.claude/agents/` holds seven project subagents
+— a pedagogy reviewer, a Python scripter, a Quarto designer, a code reviewer, a
+notebook author, a Spanish translator and a figure smith — each carrying the
+conventions above for its own part of the repo. `/validate` runs the release
+checklist and reports which of its boxes the run earns.
 
 The browser regression check runs in CI on every pull request, against the
 fresh render. To run it yourself after rendering:
@@ -95,6 +102,8 @@ Sigue la [lista de publicación](RELEASE_CHECKLIST.md) para regenerar, comprobar
 y enviar los cambios. Incluye los archivos generados en el PR; `docs/` no, que
 lo construye y lo publica Actions.
 
-Si usas Claude Code, `.claude/agents/` define cuatro subagentes del proyecto
-—revisión pedagógica, scripts de Python, diseño en Quarto y revisión de
-código— y cada uno lleva las convenciones anteriores de su parte del repo.
+Si usas Claude Code, `.claude/agents/` define siete subagentes del proyecto
+—revisión pedagógica, scripts de Python, diseño en Quarto, revisión de código,
+autoría de cuadernos, traducción al español y figuras— y cada uno lleva las
+convenciones anteriores de su parte del repo. `/validate` ejecuta la lista de
+publicación e informa de qué casillas se han ganado.

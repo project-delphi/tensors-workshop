@@ -14,12 +14,13 @@ with nothing to point at. That is not hypothetical: sorting inside
 and assigning `cell["id"]` appends the key on a cell that had none -- as an
 nbformat 4.0-4.4 writer emits.
 """
+
 from __future__ import annotations
 
-from pathlib import Path
 import copy
 import sys
 import unittest
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -51,8 +52,14 @@ class CellKeyOrder(unittest.TestCase):
         cells = [
             {"cell_type": "markdown", "metadata": {}, "source": ["hi\n"], "id": "a"},
             {"source": ["x = 1\n"], "cell_type": "code", "metadata": {}, "id": "b"},
-            {"cell_type": "code", "id": "c", "metadata": {},
-             "outputs": [], "execution_count": 3, "source": ["y = 2\n"]},
+            {
+                "cell_type": "code",
+                "id": "c",
+                "metadata": {},
+                "outputs": [],
+                "execution_count": 3,
+                "source": ["y = 2\n"],
+            },
         ]
         self.assertSorted(normalize(cells), "sorted input")
 
@@ -77,19 +84,32 @@ class CellKeyOrder(unittest.TestCase):
         cells = [
             {"cell_type": "markdown", "metadata": {}, "source": ["hi\n"]},
             {"source": ["x = 1\n"], "cell_type": "code", "metadata": {}},
-            {"cell_type": "code", "metadata": {"tags": ["solution", "hide-input"]},
-             "source": ["z = 3\n"], "outputs": [], "execution_count": 7},
+            {
+                "cell_type": "code",
+                "metadata": {"tags": ["solution", "hide-input"]},
+                "source": ["z = 3\n"],
+                "outputs": [],
+                "execution_count": 7,
+            },
         ]
         once = normalize(cells)
         twice = normalize(once)
         self.assertEqual(once, twice, "the normalizer is not idempotent")
-        self.assertEqual([list(c) for c in once], [list(c) for c in twice],
-                         "key order moved on the second pass")
+        self.assertEqual(
+            [list(c) for c in once],
+            [list(c) for c in twice],
+            "key order moved on the second pass",
+        )
 
     def test_folded_metadata_survives_the_sort(self):
         """Sorting rewrites the cell dict, so the folding contract must hold."""
-        cells = [{"cell_type": "code", "metadata": {"tags": ["solution", "hide-input"]},
-                  "source": ["ans = 1\n"]}]
+        cells = [
+            {
+                "cell_type": "code",
+                "metadata": {"tags": ["solution", "hide-input"]},
+                "source": ["ans = 1\n"],
+            }
+        ]
         cell = normalize(cells)[0]
         self.assertEqual(cell["metadata"]["cellView"], "form")
         self.assertTrue(cell["metadata"]["jupyter"]["source_hidden"])

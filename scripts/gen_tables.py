@@ -35,6 +35,7 @@ Outputs (all overwritten, none hand-edited):
     _includes/brainstorm-en.md    _includes/brainstorm-es.md
     _includes/references-en.md    _includes/references-es.md
 """
+
 from __future__ import annotations
 
 import html
@@ -66,14 +67,17 @@ class StrictLoader(yaml.SafeLoader):
             key = self.construct_object(key_node, deep=deep)
             if key in seen:
                 mark = key_node.start_mark
-                sys.exit(f"_variables.yml line {mark.line + 1}: duplicate key "
-                         f"{key!r}; YAML would keep only the last one")
+                sys.exit(
+                    f"_variables.yml line {mark.line + 1}: duplicate key "
+                    f"{key!r}; YAML would keep only the last one"
+                )
             seen.add(key)
         return super().construct_mapping(node, deep)
 
 
-V = yaml.load((ROOT / "_variables.yml").read_text(encoding="utf-8"),
-              Loader=StrictLoader)
+V = yaml.load(
+    (ROOT / "_variables.yml").read_text(encoding="utf-8"), Loader=StrictLoader
+)
 
 SECTIONS = [V["sections"][k] for k in sorted(V["sections"])]
 EXTRAS = [V["extras"][k] for k in sorted(V.get("extras", {}))]
@@ -128,12 +132,15 @@ def notebooks_table(lang: str) -> str:
     title_key, sum_key = f"title_{lang}", f"summary_{lang}"
     rows = ["| " + " | ".join(t["nb_head"]) + " |", "|---|---|---|---|"]
     for s in SECTIONS:
-        badge = (f"[![Open In Colab](https://colab.research.google.com/assets/"
-                 f"colab-badge.svg)]({colab_url(s)})")
+        badge = (
+            f"[![Open In Colab](https://colab.research.google.com/assets/"
+            f"colab-badge.svg)]({colab_url(s)})"
+        )
         rows.append(
             f"| {s['n']} | [`{notebook_name(s)}`]"
             f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)}) "
-            f"| {s[title_key]} — {s[sum_key]} | {badge} |")
+            f"| {s[title_key]} — {s[sum_key]} | {badge} |"
+        )
     return "\n".join(rows) + "\n"
 
 
@@ -145,12 +152,15 @@ def extras_notebooks_table(lang: str) -> str:
     title_key, sum_key = f"title_{lang}", f"summary_{lang}"
     rows = ["| " + " | ".join(t["extra_head"]) + " |", "|---|---|---|"]
     for s in EXTRAS:
-        badge = (f"[![Open In Colab](https://colab.research.google.com/assets/"
-                 f"colab-badge.svg)]({colab_url(s)})")
+        badge = (
+            f"[![Open In Colab](https://colab.research.google.com/assets/"
+            f"colab-badge.svg)]({colab_url(s)})"
+        )
         rows.append(
             f"| {s['n']} | [`{notebook_name(s)}`]"
             f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)}) "
-            f"— {s[title_key]} — {s[sum_key]} | {badge} |")
+            f"— {s[title_key]} — {s[sum_key]} | {badge} |"
+        )
     return "\n".join(rows) + "\n"
 
 
@@ -161,8 +171,7 @@ def extras_readme_table(lang: str) -> str:
     title_key = f"title_{lang}"
     rows = ["| " + " | ".join(t["extra_head"]) + " |", "|---|---|---|"]
     for s in EXTRAS:
-        rows.append(f"| {s['n']} | {s[title_key]} "
-                    f"| [Colab]({colab_url(s)}) |")
+        rows.append(f"| {s['n']} | {s[title_key]} | [Colab]({colab_url(s)}) |")
     return "\n".join(rows) + "\n"
 
 
@@ -178,12 +187,20 @@ def extras_readme_table(lang: str) -> str:
 # "how likely you are to already have it", which is the order the table has
 # always used and the order that reads best. Anything not named here is
 # appended alphabetically rather than dropped.
-DEP_ORDER = ["matplotlib", "ipywidgets", "pandas", "scikit-learn",
-             "scikit-image", "scipy", "pillow", "tensorly", "imageio"]
+DEP_ORDER = [
+    "matplotlib",
+    "ipywidgets",
+    "pandas",
+    "scikit-learn",
+    "scikit-image",
+    "scipy",
+    "pillow",
+    "tensorly",
+    "imageio",
+]
 
 # Import name -> the name a reader would install it under.
-DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn",
-            "PIL": "pillow"}
+DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn", "PIL": "pillow"}
 
 # Lower bounds for the `notebooks` dependency group in pyproject.toml. Floors,
 # never exact pins: the point of running locally is to match what Colab has,
@@ -192,9 +209,16 @@ DEP_NAME = {"skimage": "scikit-image", "sklearn": "scikit-learn",
 # A dependency missing from this table is emitted unpinned rather than dropped,
 # the way DEP_ORDER appends what it does not rank.
 DEP_FLOOR = {
-    "numpy": "1.26", "matplotlib": "3.8", "ipywidgets": "8.1",
-    "pandas": "2.1", "scikit-learn": "1.4", "scikit-image": "0.22",
-    "scipy": "1.11", "jupyterlab": "4.1", "pillow": "10.2", "torch": "2.2",
+    "numpy": "1.26",
+    "matplotlib": "3.8",
+    "ipywidgets": "8.1",
+    "pandas": "2.1",
+    "scikit-learn": "1.4",
+    "scikit-image": "0.22",
+    "scipy": "1.11",
+    "jupyterlab": "4.1",
+    "pillow": "10.2",
+    "torch": "2.2",
 }
 
 # NumPy is in every notebook and DEP_SKIP drops it from the table (whose column
@@ -207,16 +231,42 @@ DEP_BASE, DEP_RUNNER = ["numpy"], ["jupyterlab"]
 # library, NumPy (the column is "beyond NumPy"), and the three that only ever
 # appear inside Colab-specific plumbing.
 DEP_SKIP = {
-    "numpy", "urllib", "zipfile", "io", "os", "sys", "json", "pathlib", "time", "hashlib",
-    "warnings", "math", "textwrap", "collections", "functools", "itertools",
-    "tempfile", "shutil", "subprocess", "contextlib", "dataclasses", "typing",
-    "random", "csv", "re", "logging", "IPython", "google", "imageio_ffmpeg",
+    "numpy",
+    "urllib",
+    "zipfile",
+    "io",
+    "os",
+    "sys",
+    "json",
+    "pathlib",
+    "time",
+    "hashlib",
+    "warnings",
+    "math",
+    "textwrap",
+    "collections",
+    "functools",
+    "itertools",
+    "tempfile",
+    "shutil",
+    "subprocess",
+    "contextlib",
+    "dataclasses",
+    "typing",
+    "random",
+    "csv",
+    "re",
+    "logging",
+    "IPython",
+    "google",
+    "imageio_ffmpeg",
     # `html` is standard library, and there is also an abandoned `html` on
     # PyPI. Leaving it out of this set did not produce a wrong table -- it
     # produced a `notebooks` group that no longer installs, which is how it
     # was found. Any stdlib name that a squatted distribution shares is worth
     # more care than the rest of this list.
-    "html", "__future__",
+    "html",
+    "__future__",
 }
 
 IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+(\w+)", re.M)
@@ -229,9 +279,23 @@ REQ_END_RE = re.compile(r"[\[<>=!~;@\s]")
 # values are paths and URLs, not distributions, and reading one as a package
 # name would report something as self-installed that nothing installs.
 PIP_VALUE_FLAGS = {
-    "-i", "--index-url", "--extra-index-url", "-f", "--find-links",
-    "-r", "--requirement", "-c", "--constraint", "-t", "--target",
-    "-e", "--editable", "--prefix", "--root", "--proxy", "--timeout",
+    "-i",
+    "--index-url",
+    "--extra-index-url",
+    "-f",
+    "--find-links",
+    "-r",
+    "--requirement",
+    "-c",
+    "--constraint",
+    "-t",
+    "--target",
+    "-e",
+    "--editable",
+    "--prefix",
+    "--root",
+    "--proxy",
+    "--timeout",
 }
 URL_RE = re.compile(r"https?://[^\s\"')]+")
 # The contents of a double-quoted Python string, which is where every URL a
@@ -247,7 +311,8 @@ STRING_RE = re.compile(r'"([^"\n]*)"')
 # thing it needs to exclude today is the User-Agent string notebook 11 sends.
 NOT_A_DOWNLOAD = re.compile(
     r"colab\.research\.google\.com|github\.com/project-delphi/"
-    r"|project-delphi\.github\.io|tensorly\.org|deeplearningbook|kahoot\.it")
+    r"|project-delphi\.github\.io|tensorly\.org|deeplearningbook|kahoot\.it"
+)
 
 
 def pip_installed(code: str) -> set[str]:
@@ -276,7 +341,7 @@ def pip_installed(code: str) -> set[str]:
         tokens = args.split("#", 1)[0].split()
         skip = False
         for token in tokens:
-            if skip:                      # the value of the flag before it
+            if skip:  # the value of the flag before it
                 skip = False
                 continue
             if token.startswith("-"):
@@ -303,12 +368,15 @@ def notebook_code(path: pathlib.Path) -> str:
         # a normal order of work, and this is the first thing in gen_tables.py
         # that hard-depends on the files. Say which one, the way
         # gen_notebooks.py does, rather than surfacing a raw traceback.
-        sys.exit(f"cannot read a missing notebook: "
-                 f"{path.relative_to(ROOT)} is declared in _variables.yml "
-                 f"but is not on disk")
+        sys.exit(
+            f"cannot read a missing notebook: "
+            f"{path.relative_to(ROOT)} is declared in _variables.yml "
+            f"but is not on disk"
+        )
     nb = json.loads(path.read_text(encoding="utf-8"))
-    return "\n".join("".join(c.get("source", []))
-                     for c in nb["cells"] if c["cell_type"] == "code")
+    return "\n".join(
+        "".join(c.get("source", [])) for c in nb["cells"] if c["cell_type"] == "code"
+    )
 
 
 def notebook_deps_table(lang: str) -> str:
@@ -329,8 +397,9 @@ def notebook_deps_table(lang: str) -> str:
         pip = pip_installed(code)
         mods = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
         mods |= {d for d in ("imageio", "tensorly") if d in pip}
-        ranked = ([m for m in DEP_ORDER if m in mods]
-                  + sorted(m for m in mods if m not in DEP_ORDER))
+        ranked = [m for m in DEP_ORDER if m in mods] + sorted(
+            m for m in mods if m not in DEP_ORDER
+        )
         deps = ", ".join(f"`{m}`" + ("†" if m in pip else "") for m in ranked)
 
         # Python's implicit string concatenation, undone: several notebooks
@@ -344,19 +413,24 @@ def notebook_deps_table(lang: str) -> str:
         # than stripping comment lines also handles a trailing comment, which
         # line-wise stripping would miss -- and a stray citation hard-exiting
         # the build is a poor reward for attributing a source.
-        urls = [u for lit in STRING_RE.findall(glued)
-                for u in URL_RE.findall(lit)
-                if not NOT_A_DOWNLOAD.search(u)]
+        urls = [
+            u
+            for lit in STRING_RE.findall(glued)
+            for u in URL_RE.findall(lit)
+            if not NOT_A_DOWNLOAD.search(u)
+        ]
         # A note qualifies one file, not the row. Notebook 00 downloads three
         # CSVs in full and only probes the storm clip, so hanging "only a 1 KB
         # probe" off the end of the whole list would quietly disown the CSVs.
         note, note_for = s.get(f"network_note_{lang}"), s.get("network_note_for")
         if note and not note_for:
-            sys.exit(f"sections.{s['n']}: network_note_{lang} is set but "
-                     f"network_note_for does not say which dataset it "
-                     f"qualifies")
+            sys.exit(
+                f"sections.{s['n']}: network_note_{lang} is set but "
+                f"network_note_for does not say which dataset it "
+                f"qualifies"
+            )
         labels, seen = [], set()
-        for d in DATASETS:                       # registry order, not discovery
+        for d in DATASETS:  # registry order, not discovery
             if any(d["match"] in u for u in urls):
                 label = d[f"label_{lang}"]
                 if note and d["match"] == note_for:
@@ -364,17 +438,20 @@ def notebook_deps_table(lang: str) -> str:
                 labels.append(label)
                 seen.update(u for u in urls if d["match"] in u)
         if stray := sorted(set(urls) - seen):
-            sys.exit(f"notebooks/{notebook_name(s)} downloads {stray[0]}, "
-                     f"which matches no entry in `datasets:` in "
-                     f"_variables.yml; add it there so the notebooks page can "
-                     f"name it")
+            sys.exit(
+                f"notebooks/{notebook_name(s)} downloads {stray[0]}, "
+                f"which matches no entry in `datasets:` in "
+                f"_variables.yml; add it there so the notebooks page can "
+                f"name it"
+            )
         if note_for and note_for not in {d["match"] for d in DATASETS}:
-            sys.exit(f"sections.{s['n']}: network_note_for is {note_for!r}, "
-                     f"which is not a `match` in `datasets:`")
-        net = (L[lang]["deps_yes"] + ", ".join(labels) if labels
-               else L[lang]["deps_no"])
+            sys.exit(
+                f"sections.{s['n']}: network_note_for is {note_for!r}, "
+                f"which is not a `match` in `datasets:`"
+            )
+        net = L[lang]["deps_yes"] + ", ".join(labels) if labels else L[lang]["deps_no"]
         out.append(f"| {s['n']} | {deps} | {net} |")
-    out += ["", f": {L[lang]['deps_caption']} {{tbl-colwidths=\"[12,58,30]\"}}"]
+    out += ["", f': {L[lang]["deps_caption"]} {{tbl-colwidths="[12,58,30]"}}']
     return "\n".join(out) + "\n"
 
 
@@ -402,16 +479,18 @@ def notebook_requirements() -> list[str]:
         pip = pip_installed(code)
         found = {DEP_NAME.get(m, m) for m in IMPORT_RE.findall(code)} - DEP_SKIP
         mods |= found - pip
-    ranked = ([m for m in DEP_ORDER if m in mods]
-              + sorted(m for m in mods if m not in DEP_ORDER))
+    ranked = [m for m in DEP_ORDER if m in mods] + sorted(
+        m for m in mods if m not in DEP_ORDER
+    )
     return DEP_BASE + ranked + DEP_RUNNER
 
 
 def pyproject_group() -> str:
     """The `notebooks` dependency group, as TOML lines."""
-    return "".join(f'  "{d}>={DEP_FLOOR[d]}",\n' if d in DEP_FLOOR
-                   else f'  "{d}",\n'
-                   for d in notebook_requirements())
+    return "".join(
+        f'  "{d}>={DEP_FLOOR[d]}",\n' if d in DEP_FLOOR else f'  "{d}",\n'
+        for d in notebook_requirements()
+    )
 
 
 def agenda_table(lang: str) -> str:
@@ -429,8 +508,7 @@ def agenda_table(lang: str) -> str:
     t = L[lang]
     rows = ["| " + " | ".join(t["agenda_head"]) + " |", "|---|---|---|---|"]
     for r in agenda_rows(lang):
-        rows.append(f"| {r['start']} | {r['minutes']} | {r['part']} "
-                    f"| {r['label']} |")
+        rows.append(f"| {r['start']} | {r['minutes']} | {r['part']} | {r['label']} |")
     return "\n".join(rows) + "\n"
 
 
@@ -459,7 +537,8 @@ def handbook_schedule_table(lang: str = "en") -> str:
             raise ScheduleError(
                 f"_variables.yml `sections`: section {s['n']} has no `block` — "
                 'every section needs one, "—" if it is not one of the six '
-                "exercise blocks")
+                "exercise blocks"
+            )
     by_n = {s["n"]: s for s in SECTIONS}
     by_q = {f"q{q['n']}": q for q in QUIZZES}
     title_key, fmt_key = f"title_{lang}", f"format_{lang}"
@@ -468,15 +547,18 @@ def handbook_schedule_table(lang: str = "en") -> str:
     minute = 0
     for name, length in atoms():
         if s := by_n.get(name):
-            cells = (f"**{s['n']}**", s["part"], s["block"],
-                     f"[{s[title_key]}]({colab_url(s)})", s[fmt_key])
+            cells = (
+                f"**{s['n']}**",
+                s["part"],
+                s["block"],
+                f"[{s[title_key]}]({colab_url(s)})",
+                s[fmt_key],
+            )
         elif q := by_q.get(name):
-            cells = ("—", "🎯", "—",
-                     f"**Kahoot {q['n']} — {q[title_key]}**", "quiz")
+            cells = ("—", "🎯", "—", f"**Kahoot {q['n']} — {q[title_key]}**", "quiz")
         else:
             cells = ("—", "—", "—", HANDBOOK_BREAK[lang], "—")
-        rows.append("| " + " | ".join(cells)
-                    + f" | {length} | {clock(minute)} |")
+        rows.append("| " + " | ".join(cells) + f" | {length} | {clock(minute)} |")
         minute += length
     return "\n".join(rows) + "\n"
 
@@ -493,20 +575,22 @@ def readme_table(lang: str) -> str:
     these outside the site."""
     site = REPO["site"]
     title_key = f"title_{lang}"
-    head = (("#", "Section", "Slides EN", "Slides ES", "Notebook", "Quiz")
-            if lang == "en" else
-            ("#", "Sección", "Diapos EN", "Diapos ES", "Cuaderno", "Quiz"))
+    head = (
+        ("#", "Section", "Slides EN", "Slides ES", "Notebook", "Quiz")
+        if lang == "en"
+        else ("#", "Sección", "Diapos EN", "Diapos ES", "Cuaderno", "Quiz")
+    )
     rows = ["| " + " | ".join(head) + " |", "|---|---|---|---|---|---|"]
     for s in SECTIONS:
         anchor = f"sec-{s['n']}-{s['slug']}"
         q = quiz_for(s["n"])
-        kahoot = (f"{site}/kahoot.html" if lang == "en"
-                  else f"{site}/es/kahoot.html")
+        kahoot = f"{site}/kahoot.html" if lang == "en" else f"{site}/es/kahoot.html"
         qc = f"[Q{q['n']}]({kahoot}#quiz-{q['n']})" if q else "—"
         rows.append(
             f"| {s['n']} | {s[title_key]} "
             f"| [EN]({site}/slides/en/#{anchor}) | [ES]({site}/slides/es/#{anchor}) "
-            f"| [Colab]({colab_url(s)}) | {qc} |")
+            f"| [Colab]({colab_url(s)}) | {qc} |"
+        )
     return "\n".join(rows) + "\n"
 
 
@@ -526,7 +610,7 @@ def poster(prefix: str, thumb: str, alt: str, url: str, where: str) -> str:
     in it would end the `{fig-alt="…"}` attribute early and truncate itself,
     silently, the same trap infographics_gallery() guards.
     """
-    return f'[{image(prefix, thumb, alt, where)}]({url})'
+    return f"[{image(prefix, thumb, alt, where)}]({url})"
 
 
 def image(prefix: str, thumb: str, alt: str, where: str, cls: str = "") -> str:
@@ -538,10 +622,11 @@ def image(prefix: str, thumb: str, alt: str, where: str, cls: str = "") -> str:
     is a second message to keep in step with the first.
     """
     if '"' in alt:
-        sys.exit(f"companion.{where}: thumb_alt contains a double quote; "
-                 f"use typographic quotes")
+        sys.exit(
+            f"companion.{where}: thumb_alt contains a double quote; "
+            f"use typographic quotes"
+        )
     return f'![]({prefix}{thumb}){{{cls + " " if cls else ""}fig-alt="{alt}"}}'
-
 
 
 def video_block(lang: str, prefix: str) -> str:
@@ -574,17 +659,26 @@ def video_block(lang: str, prefix: str) -> str:
             head = ""
             if thumb:
                 alt = v.get(f"thumb_alt_{lang}") or title
-                head = ("::: {.poster-frame}\n"
-                        + poster(prefix, thumb, alt, url, "video")
-                        + "\n:::\n\n")
-            return head + {
-                "en": (f"**[{title}]({url})** — "
-                       + (f"{mins} minutes. " if mins else "")
-                       + "Watch in NotebookLM.\n"),
-                "es": (f"**[{title}]({url})** — "
-                       + (f"{mins} minutos. " if mins else "")
-                       + "Ver en NotebookLM.\n"),
-            }[lang]
+                head = (
+                    "::: {.poster-frame}\n"
+                    + poster(prefix, thumb, alt, url, "video")
+                    + "\n:::\n\n"
+                )
+            return (
+                head
+                + {
+                    "en": (
+                        f"**[{title}]({url})** — "
+                        + (f"{mins} minutes. " if mins else "")
+                        + "Watch in NotebookLM.\n"
+                    ),
+                    "es": (
+                        f"**[{title}]({url})** — "
+                        + (f"{mins} minutos. " if mins else "")
+                        + "Ver en NotebookLM.\n"
+                    ),
+                }[lang]
+            )
         return {
             "en": "*Video coming soon.*\n",
             "es": "*Vídeo próximamente.*\n",
@@ -604,7 +698,8 @@ def video_block(lang: str, prefix: str) -> str:
         f'        referrerpolicy="strict-origin-when-cross-origin"></iframe>\n'
         f"</div>\n"
         f"{FENCE}\n\n"
-        f"{line}[{watch}](https://www.youtube.com/watch?v={vid})\n")
+        f"{line}[{watch}](https://www.youtube.com/watch?v={vid})\n"
+    )
 
 
 def audio_block(lang: str, prefix: str) -> str:
@@ -625,32 +720,48 @@ def audio_block(lang: str, prefix: str) -> str:
         url = a.get(f"url_{lang}") or ""
         if url:
             # The artifact plays in NotebookLM; the cover is served locally.
-            head = ("::: {.poster-frame}\n"
+            head = (
+                (
+                    "::: {.poster-frame}\n"
                     + poster(prefix, thumb, alt, url, "audio")
-                    + "\n:::\n\n") if thumb else ""
-            return head + {
-                "en": (f"**[{title}]({url})** — "
-                       + (f"{mins} minutes. " if mins else "")
-                       + "Listen in NotebookLM.\n"),
-                "es": (f"**[{title}]({url})** — "
-                       + (f"{mins} minutos. " if mins else "")
-                       + "Escuchar en NotebookLM.\n"),
-            }[lang]
+                    + "\n:::\n\n"
+                )
+                if thumb
+                else ""
+            )
+            return (
+                head
+                + {
+                    "en": (
+                        f"**[{title}]({url})** — "
+                        + (f"{mins} minutes. " if mins else "")
+                        + "Listen in NotebookLM.\n"
+                    ),
+                    "es": (
+                        f"**[{title}]({url})** — "
+                        + (f"{mins} minutos. " if mins else "")
+                        + "Escuchar en NotebookLM.\n"
+                    ),
+                }[lang]
+            )
         return {
             "en": "*Audio coming soon.*\n",
             "es": "*Audio próximamente.*\n",
         }[lang]
-    meta = ({"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
-            if mins else "")
+    meta = (
+        {"en": f"\n\n{mins} minutes.\n", "es": f"\n\n{mins} minutos.\n"}[lang]
+        if mins
+        else ""
+    )
     # With the file committed there is nothing left to link to, so the cover
     # art is a plain image: the player below it is the thing to click.
-    cover = (image(prefix, thumb, alt, "audio", ".audio-cover") + "\n\n"
-             if thumb else "")
+    cover = image(prefix, thumb, alt, "audio", ".audio-cover") + "\n\n" if thumb else ""
     return cover + (
         f"{FENCE}{{=html}}\n"
         f'<audio class="companion-audio" controls preload="none"\n'
         f'       src="{prefix}{f}"></audio>\n'
-        f"{FENCE}\n{meta}")
+        f"{FENCE}\n{meta}"
+    )
 
 
 # Said under every screenshot of an artifact that cannot be exported. The
@@ -710,18 +821,24 @@ def shorts_list(lang: str, prefix: str) -> str:
     """
     items = COMPANION.get("shorts") or []
     if not items:
-        return {"en": "*None generated yet.*\n",
-                "es": "*Todavía no se ha generado ninguno.*\n"}[lang]
-    lead = {"en": "About a minute per idea. Opens in NotebookLM.",
-            "es": "Un minuto por idea, aproximadamente. Se abren en NotebookLM."}[lang]
+        return {
+            "en": "*None generated yet.*\n",
+            "es": "*Todavía no se ha generado ninguno.*\n",
+        }[lang]
+    lead = {
+        "en": "About a minute per idea. Opens in NotebookLM.",
+        "es": "Un minuto por idea, aproximadamente. Se abren en NotebookLM.",
+    }[lang]
     out = [lead, "", "::: {.info-strip}"]
     for i in items:
         meta = [i["length"], SHORT_SECTION[lang].format(n=i["covers"])]
         note = OTHER_LANG.get((lang, i["lang"]), "")
-        out += ["::: {.info-card}",
-                f'**[{i[f"title_{lang}"]}]({i["url"]})**<br>{" · ".join(meta)}',
-                *([f"<br>[{note}]{{.shot-note}}"] if note else []),
-                ":::"]
+        out += [
+            "::: {.info-card}",
+            f"**[{i[f'title_{lang}']}]({i['url']})**<br>{' · '.join(meta)}",
+            *([f"<br>[{note}]{{.shot-note}}"] if note else []),
+            ":::",
+        ]
     out.append(":::")
     return "\n".join(out) + "\n"
 
@@ -764,9 +881,11 @@ def infographics_gallery(lang: str, prefix: str) -> str:
             required += ("file", alt_key)
         missing = [k for k in required if not i.get(k)]
         if missing:
-            sys.exit(f"companion.infographics[{n}] "
-                     f"({i.get('file') or i.get(title_key) or 'no file'}): "
-                     f"missing {', '.join(missing)}")
+            sys.exit(
+                f"companion.infographics[{n}] "
+                f"({i.get('file') or i.get(title_key) or 'no file'}): "
+                f"missing {', '.join(missing)}"
+            )
     exported = [i for i in items if i.get("file")]
     linked = [i for i in items if not i.get("file")]
 
@@ -776,16 +895,23 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     # that says otherwise is the small lie that makes the big warning at the
     # top of it less believable.
     if exported:
-        out += [{"en": "Click an image to enlarge it.",
-                 "es": "Haz clic en una imagen para ampliarla."}[lang],
-                "", "::: {.info-strip}"]
+        out += [
+            {
+                "en": "Click an image to enlarge it.",
+                "es": "Haz clic en una imagen para ampliarla.",
+            }[lang],
+            "",
+            "::: {.info-strip}",
+        ]
         for i in exported:
             alt = i[alt_key]
             if '"' in alt:
                 # The alt lands inside a `{fig-alt="…"}` attribute, where a
                 # bare double quote ends it early and silently truncates it.
-                sys.exit(f"companion.infographics: {alt_key} for {i['file']} "
-                         f"contains a double quote; use typographic quotes")
+                sys.exit(
+                    f"companion.infographics: {alt_key} for {i['file']} "
+                    f"contains a double quote; use typographic quotes"
+                )
             out += [
                 "::: {.info-card}",
                 f"![]({prefix}{i['file']})"
@@ -798,13 +924,13 @@ def infographics_gallery(lang: str, prefix: str) -> str:
     if linked:
         if exported:
             out.append("")
-        out += [{"en": "View in NotebookLM:",
-                 "es": "Ver en NotebookLM:"}[lang],
-                "", "::: {.info-strip}"]
+        out += [
+            {"en": "View in NotebookLM:", "es": "Ver en NotebookLM:"}[lang],
+            "",
+            "::: {.info-strip}",
+        ]
         for i in linked:
-            out += ["::: {.info-card}",
-                    f"**[{i[title_key]}]({i['url']})**",
-                    ":::"]
+            out += ["::: {.info-card}", f"**[{i[title_key]}]({i['url']})**", ":::"]
         out.append(":::")
     return "\n".join(out) + "\n"
 
@@ -825,14 +951,27 @@ LINK_COPY = {
         "es": ("26 preguntas de opción múltiple.", "Descubre qué repasar."),
     },
     "flashcards": {
-        "en": ("60 cards on linear algebra and tensors.", "Practice recalling key ideas."),
-        "es": ("60 tarjetas de álgebra lineal y tensores.", "Practica las ideas clave."),
+        "en": (
+            "60 cards on linear algebra and tensors.",
+            "Practice recalling key ideas.",
+        ),
+        "es": (
+            "60 tarjetas de álgebra lineal y tensores.",
+            "Practica las ideas clave.",
+        ),
     },
     "mindmap": {
-        "en": ("Five branches connect the workshop's ideas.", "Expand a branch to explore."),
-        "es": ("Cinco ramas conectan las ideas del taller.", "Abre una rama para explorar."),
+        "en": (
+            "Five branches connect the workshop's ideas.",
+            "Expand a branch to explore.",
+        ),
+        "es": (
+            "Cinco ramas conectan las ideas del taller.",
+            "Abre una rama para explorar.",
+        ),
     },
 }
+
 
 def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
     """The quiz, the flashcards and the mind map, as `.info-card`s.
@@ -863,14 +1002,13 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
         note = DESTINATION_NOTE[lang]
         if url == COMPANION["default_url"]:
             note += " " + PLACEHOLDER_NOTE[lang]
-        out += [f"**[{title}]({url})**<br>{what}<br>*{when}*",
-                f"<br>[{note}"
-                + (f" {SHOT_NOTE[lang]}" if thumb else "")
-                + "]{.shot-note}"]
+        out += [
+            f"**[{title}]({url})**<br>{what}<br>*{when}*",
+            f"<br>[{note}" + (f" {SHOT_NOTE[lang]}" if thumb else "") + "]{.shot-note}",
+        ]
         out.append(":::")
     out.append(":::")
     return "\n".join(out) + "\n"
-
 
 
 # ── the brainstorm diagram ───────────────────────────────────────────────────
@@ -903,8 +1041,8 @@ def link_cards(lang: str, prefix: str, names: tuple[str, ...]) -> str:
 # here: the diagram is drawn from the site's own SCSS variables, and a palette
 # copied into this file is one that goes stale the first time the theme moves.
 # What stays here is geometry, in user units of the viewBox.
-BS_PAD = 10             # margin inside the viewBox
-BS_GAP = 20             # between the two columns and between the rows
+BS_PAD = 10  # margin inside the viewBox
+BS_GAP = 20  # between the two columns and between the rows
 
 # (viewBox width, columns) for the two variants. The narrow one is not a
 # shrunken copy: it is the same layout re-run at one column, so its type ends
@@ -929,7 +1067,7 @@ def wrap(text: str, budget: int, limit: int = 2) -> list[str]:
             lines.append(cur)
             cur = word
             if len(lines) == limit - 1 and limit > 1:
-                budget = 10_000       # the last line takes whatever is left
+                budget = 10_000  # the last line takes whatever is left
         else:
             cur = trial
     if cur:
@@ -937,21 +1075,29 @@ def wrap(text: str, budget: int, limit: int = 2) -> list[str]:
     return lines or [""]
 
 
-def bs_text(x: float, y: float, cls: str, content: str,
-            anchor: str = "") -> str:
+def bs_text(x: float, y: float, cls: str, content: str, anchor: str = "") -> str:
     a = f' text-anchor="{anchor}"' if anchor else ""
-    return (f'<text x="{x:g}" y="{y:g}" class="{cls}"{a}>'
-            f"{html.escape(content)}</text>")
+    return f'<text x="{x:g}" y="{y:g}" class="{cls}"{a}>{html.escape(content)}</text>'
 
 
-def brainstorm_card(hub: dict, lang: str, x: float, y: float, w: float,
-                    h: float, rows: list, gloss: list[str]) -> list[str]:
+def brainstorm_card(
+    hub: dict,
+    lang: str,
+    x: float,
+    y: float,
+    w: float,
+    h: float,
+    rows: list,
+    gloss: list[str],
+) -> list[str]:
     """One idea card: glyph, heading, the gloss, then the sections under it."""
-    out = [f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" '
-           f'rx="8" class="bs-card"/>',
-           f'<circle cx="{x + 34:g}" cy="{y + 34:g}" r="17" class="bs-disc"/>',
-           bs_text(x + 34, y + 40, "bs-glyph", hub["glyph"], "middle"),
-           bs_text(x + 64, y + 32, "bs-hub", hub[f"title_{lang}"])]
+    out = [
+        f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{h:g}" '
+        f'rx="8" class="bs-card"/>',
+        f'<circle cx="{x + 34:g}" cy="{y + 34:g}" r="17" class="bs-disc"/>',
+        bs_text(x + 34, y + 40, "bs-glyph", hub["glyph"], "middle"),
+        bs_text(x + 64, y + 32, "bs-hub", hub[f"title_{lang}"]),
+    ]
     ty = y + 50
     for line in gloss:
         out.append(bs_text(x + 64, ty, "bs-gloss", line))
@@ -965,8 +1111,9 @@ def brainstorm_card(hub: dict, lang: str, x: float, y: float, w: float,
     return out
 
 
-def brainstorm_body(b: dict, lang: str, titles: dict, width: int,
-                    cols: int) -> tuple[list[str], float]:
+def brainstorm_body(
+    b: dict, lang: str, titles: dict, width: int, cols: int
+) -> tuple[list[str], float]:
     """Lay the four cards out in `cols` columns and return (elements, height).
 
     A row is as tall as its tallest card, so the columns keep one baseline
@@ -984,42 +1131,53 @@ def brainstorm_body(b: dict, lang: str, titles: dict, width: int,
     for hub in b["hubs"]:
         rows = [(n, wrap(titles[n], sect_budget)) for n in hub["sections"]]
         gloss = wrap(hub[f"gloss_{lang}"], gloss_budget, limit=3)
-        body = sum(17 * len(l) + 9 for _, l in rows)
+        body = sum(17 * len(lines) + 9 for _, lines in rows)
         cards.append((hub, rows, gloss, 50 + 16 * len(gloss) + 12 + body + 8))
 
     # Row heights, then the y of each row, so a card knows both.
-    rows_h = [max(c[3] for c in cards[i:i + cols])
-              for i in range(0, len(cards), cols)]
+    rows_h = [
+        max(c[3] for c in cards[i : i + cols]) for i in range(0, len(cards), cols)
+    ]
     head = 76
     row_y, y = [], head
     for h in rows_h:
         row_y.append(y)
         y += h + BS_GAP
 
-    thread = wrap(b[f"thread_{lang}"], max(int((width - 60) / 7.4), 28),
-                  limit=4)
+    thread = wrap(b[f"thread_{lang}"], max(int((width - 60) / 7.4), 28), limit=4)
     ribbon_h = 30 + 19 * len(thread) + 24
-    closing = wrap(b[f"closing_{lang}"], max(int((width - 40) / 6.4), 26),
-                   limit=2)
+    closing = wrap(b[f"closing_{lang}"], max(int((width - 40) / 6.4), 26), limit=2)
     total = y + ribbon_h + 14 + 17 * len(closing)
 
-    out = [bs_text(BS_PAD + 4, 34, "bs-title", b[f"title_{lang}"]),
-           bs_text(BS_PAD + 4, 58, "bs-lead", b[f"lead_{lang}"])]
+    out = [
+        bs_text(BS_PAD + 4, 34, "bs-title", b[f"title_{lang}"]),
+        bs_text(BS_PAD + 4, 58, "bs-lead", b[f"lead_{lang}"]),
+    ]
     for i, (hub, rows, gloss, _) in enumerate(cards):
         x = BS_PAD + (i % cols) * (card_w + BS_GAP)
-        out += brainstorm_card(hub, lang, x, row_y[i // cols], card_w,
-                               rows_h[i // cols], rows, gloss)
+        out += brainstorm_card(
+            hub, lang, x, row_y[i // cols], card_w, rows_h[i // cols], rows, gloss
+        )
 
-    out.append(f'<rect x="{BS_PAD}" y="{y:g}" width="{width - 2 * BS_PAD}" '
-               f'height="{ribbon_h:g}" rx="8" class="bs-ribbon"/>')
+    out.append(
+        f'<rect x="{BS_PAD}" y="{y:g}" width="{width - 2 * BS_PAD}" '
+        f'height="{ribbon_h:g}" rx="8" class="bs-ribbon"/>'
+    )
     ty = y + 30
     for line in thread:
         out.append(bs_text(width / 2, ty, "bs-thread", line, "middle"))
         ty += 19
     nums = b["thread_sections"]
     joined = f"{', '.join(nums[:-1])} {BS_AND[lang]} {nums[-1]}"
-    out.append(bs_text(width / 2, ty + 5, "bs-where",
-                       f"{b[f'thread_lead_{lang}']} {joined}.", "middle"))
+    out.append(
+        bs_text(
+            width / 2,
+            ty + 5,
+            "bs-where",
+            f"{b[f'thread_lead_{lang}']} {joined}.",
+            "middle",
+        )
+    )
     cy = y + ribbon_h + 26
     for line in closing:
         out.append(bs_text(width / 2, cy, "bs-closing", line, "middle"))
@@ -1043,8 +1201,7 @@ def brainstorm_svg(lang: str) -> str:
     for hub in b["hubs"]:
         for key in ("glyph", f"title_{lang}", f"gloss_{lang}", "sections"):
             if not hub.get(key):
-                sys.exit(f"brainstorm.hubs ({hub.get('title_en', '?')}): "
-                         f"missing {key}")
+                sys.exit(f"brainstorm.hubs ({hub.get('title_en', '?')}): missing {key}")
         for n in hub["sections"]:
             placed[n] = placed.get(n, 0) + 1
     for n in b["closing_sections"]:
@@ -1053,15 +1210,19 @@ def brainstorm_svg(lang: str) -> str:
         sys.exit(f"brainstorm: {n!r} is not a section or an extra")
     for n in sorted(titles):
         if placed.get(n, 0) != 1:
-            sys.exit(f"brainstorm: section {n} ({titles[n]}) is placed "
-                     f"{placed.get(n, 0)} times; every section belongs under "
-                     f"exactly one idea, or in closing_sections")
+            sys.exit(
+                f"brainstorm: section {n} ({titles[n]}) is placed "
+                f"{placed.get(n, 0)} times; every section belongs under "
+                f"exactly one idea, or in closing_sections"
+            )
     # At least two: the ribbon reads "sections 07, 10 and 13", and the join
     # below indexes the last element. An empty list would crash the generator
     # that gates CI with a bare IndexError instead of a named cause.
     if len(b["thread_sections"]) < 2:
-        sys.exit("brainstorm.thread_sections: needs at least two sections; "
-                 f"got {b['thread_sections']!r}")
+        sys.exit(
+            "brainstorm.thread_sections: needs at least two sections; "
+            f"got {b['thread_sections']!r}"
+        )
     for n in b["thread_sections"]:
         if n not in titles:
             sys.exit(f"brainstorm.thread_sections: {n!r} is not a section")
@@ -1072,9 +1233,11 @@ def brainstorm_svg(lang: str) -> str:
     hubs_said = "; ".join(
         f"{hub[f'title_{lang}']} — "
         + ", ".join(f"{n} {titles[n]}" for n in hub["sections"])
-        for hub in b["hubs"])
-    desc = (f"{b[f'lead_{lang}']} {hubs_said}. "
-            f"{b[f'thread_{lang}']} {b[f'closing_{lang}']}")
+        for hub in b["hubs"]
+    )
+    desc = (
+        f"{b[f'lead_{lang}']} {hubs_said}. {b[f'thread_{lang}']} {b[f'closing_{lang}']}"
+    )
 
     out = ["::: {.brainstorm}"]
     for cls, width, cols in BS_VARIANTS:
@@ -1083,14 +1246,15 @@ def brainstorm_svg(lang: str) -> str:
         # whichever variant this screen is not using: only one is ever in the
         # accessibility tree, so the labelled ids cannot be ambiguous either.
         ids = f"{cls}-t {cls}-d"
-        out += [f'<svg xmlns="http://www.w3.org/2000/svg" class="{cls}" '
-                f'viewBox="0 0 {width} {total:g}" role="img" '
-                f'aria-labelledby="{ids}">',
-                f'<title id="{cls}-t">'
-                f"{html.escape(b[f'title_{lang}'])}</title>",
-                f'<desc id="{cls}-d">{html.escape(desc)}</desc>',
-                *body,
-                "</svg>"]
+        out += [
+            f'<svg xmlns="http://www.w3.org/2000/svg" class="{cls}" '
+            f'viewBox="0 0 {width} {total:g}" role="img" '
+            f'aria-labelledby="{ids}">',
+            f'<title id="{cls}-t">{html.escape(b[f"title_{lang}"])}</title>',
+            f'<desc id="{cls}-d">{html.escape(desc)}</desc>',
+            *body,
+            "</svg>",
+        ]
     out += [":::"]
     return "\n".join(out) + "\n"
 
@@ -1149,12 +1313,15 @@ def references_list(lang: str) -> str:
     # otherwise have it silently rewritten into the deeplearningbook link.
     # check_references() could not catch that — it happens in both
     # languages identically, so the parity comparison still passes.
-    out = [spine[f"note_{lang}"].strip().replace("{{URL}}",
-                                                 spine["chapter_url"]), ""]
+    out = [spine[f"note_{lang}"].strip().replace("{{URL}}", spine["chapter_url"]), ""]
 
     for g in REFERENCES["groups"]:
-        out += [f"## {g[f'title_{lang}']} {{#{g['anchor']}}}", "",
-                g[f"note_{lang}"].strip(), ""]
+        out += [
+            f"## {g[f'title_{lang}']} {{#{g['anchor']}}}",
+            "",
+            g[f"note_{lang}"].strip(),
+            "",
+        ]
         if items := g.get("items"):
             out += [reference_item(i, lang) for i in items]
         else:
@@ -1163,8 +1330,10 @@ def references_list(lang: str) -> str:
             # repo and check_links.py's "every ml-blog URL is declared" rule
             # has nothing to make an exception for here.
             home = READING["home"]
-            out += [t["blog_home"].format(title=home[f"title_{lang}"],
-                                          url=home["url"]), ""]
+            out += [
+                t["blog_home"].format(title=home[f"title_{lang}"], url=home["url"]),
+                "",
+            ]
             for key in g["reading"]:
                 r = READING[key]
                 out.append(f"- [{r[f'title_{lang}']}]({r['url']})")
@@ -1173,12 +1342,18 @@ def references_list(lang: str) -> str:
     return "\n".join(out).rstrip() + "\n"
 
 
-BANNER = ("<!-- GENERATED by scripts/gen_tables.py from _variables.yml. "
-          "Do not edit by hand. -->\n")
+BANNER = (
+    "<!-- GENERATED by scripts/gen_tables.py from _variables.yml. "
+    "Do not edit by hand. -->\n"
+)
 
 
-def inject(path: pathlib.Path, marker: str, body: str,
-           comment: tuple[str, str] = ("<!-- ", " -->")) -> None:
+def inject(
+    path: pathlib.Path,
+    marker: str,
+    body: str,
+    comment: tuple[str, str] = ("<!-- ", " -->"),
+) -> None:
     """Replace the text between <!-- BEGIN marker --> and <!-- END marker -->.
 
     The READMEs are rendered by GitHub, not Quarto, so they cannot use
@@ -1222,20 +1397,16 @@ def main() -> int:
             "companion-video-es.md": BANNER + video_block("es", "../"),
             "companion-audio-en.md": BANNER + audio_block("en", ""),
             "companion-audio-es.md": BANNER + audio_block("es", "../"),
-            "companion-infographics-en.md":
-                BANNER + infographics_gallery("en", ""),
-            "companion-infographics-es.md":
-                BANNER + infographics_gallery("es", "../"),
+            "companion-infographics-en.md": BANNER + infographics_gallery("en", ""),
+            "companion-infographics-es.md": BANNER + infographics_gallery("es", "../"),
             "companion-shorts-en.md": BANNER + shorts_list("en", ""),
             "companion-shorts-es.md": BANNER + shorts_list("es", "../"),
-            "companion-selfcheck-en.md":
-                BANNER + link_cards("en", "", ("quiz", "flashcards")),
-            "companion-selfcheck-es.md":
-                BANNER + link_cards("es", "../", ("quiz", "flashcards")),
-            "companion-map-en.md":
-                BANNER + link_cards("en", "", ("mindmap",)),
-            "companion-map-es.md":
-                BANNER + link_cards("es", "../", ("mindmap",)),
+            "companion-selfcheck-en.md": BANNER
+            + link_cards("en", "", ("quiz", "flashcards")),
+            "companion-selfcheck-es.md": BANNER
+            + link_cards("es", "../", ("quiz", "flashcards")),
+            "companion-map-en.md": BANNER + link_cards("en", "", ("mindmap",)),
+            "companion-map-es.md": BANNER + link_cards("es", "../", ("mindmap",)),
             "notebook-deps-en.md": BANNER + notebook_deps_table("en"),
             "notebook-deps-es.md": BANNER + notebook_deps_table("es"),
             "brainstorm-en.md": BANNER + brainstorm_svg("en"),
@@ -1243,8 +1414,7 @@ def main() -> int:
             "references-en.md": BANNER + references_list("en"),
             "references-es.md": BANNER + references_list("es"),
         }
-        handbook_schedule = {la: handbook_schedule_table(la)
-                             for la in ("en", "es")}
+        handbook_schedule = {la: handbook_schedule_table(la) for la in ("en", "es")}
     except ScheduleError as e:
         # Nothing is written on the way out: half-regenerated includes would
         # leave the two decks disagreeing, which is the failure this whole
@@ -1253,8 +1423,10 @@ def main() -> int:
     for name, body in written.items():
         (INCLUDES / name).write_text(body, encoding="utf-8")
         print(f"  wrote _includes/{name}")
-    for la, rel in (("en", "tensors_workshop_plan_with_quizzes.md"),
-                    ("es", "es/tensors_workshop_plan_with_quizzes.md")):
+    for la, rel in (
+        ("en", "tensors_workshop_plan_with_quizzes.md"),
+        ("es", "es/tensors_workshop_plan_with_quizzes.md"),
+    ):
         handbook = ROOT / rel
         if handbook.exists():
             inject(handbook, "handbook-schedule", handbook_schedule[la])
@@ -1271,9 +1443,11 @@ def main() -> int:
         inject(pyproject, "notebooks-group", pyproject_group(), ("# ", ""))
 
     taught = sum(s["minutes"] for s in SECTIONS)
-    print(f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, "
-          f"{taught} taught + {total_minutes() - taught} quiz and break "
-          f"= {total_minutes()} min")
+    print(
+        f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, "
+        f"{taught} taught + {total_minutes() - taught} quiz and break "
+        f"= {total_minutes()} min"
+    )
     print(f"{len(EXTRAS)} extras, off the clock")
     return 0
 

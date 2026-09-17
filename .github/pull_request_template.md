@@ -26,6 +26,7 @@ run is the only wrong answer here.
 - [ ] `quarto render` at the pinned Quarto version (1.6.40) — the checks below
       read the site from `docs/`, which is gitignored and never committed
 - [ ] `uv run --group site python scripts/check_links.py` — all fourteen checks pass
+- [ ] `uv run --group lint ruff check scripts tests` and `ruff format --check` pass
 - [ ] `uv run --group test python -m unittest discover -s tests` passes
 - [ ] `uv run --group test python scripts/check_teaching_materials.py` passes
 - [ ] `npm run check:navigation` — **navigation, layout or slide changes only**

@@ -33,6 +33,7 @@ receive stable content-derived ids.
 
 Running the normalizer twice must be an exact no-op.
 """
+
 from __future__ import annotations
 
 import hashlib
@@ -96,9 +97,23 @@ MONO = "ui-monospace,SFMono-Regular,Menlo,Consolas,monospace"
 # reordering it is not -- every existing number is below the old length, so
 # none of them moves.
 ACCENTS = [
-    "#0ea5e9", "#6366f1", "#0891b2", "#7c3aed", "#059669", "#d97706",
-    "#db2777", "#0d9488", "#2563eb", "#c2410c", "#9333ea", "#16a34a",
-    "#e11d48", "#0284c7", "#65a30d", "#b91c1c", "#0f766e",
+    "#0ea5e9",
+    "#6366f1",
+    "#0891b2",
+    "#7c3aed",
+    "#059669",
+    "#d97706",
+    "#db2777",
+    "#0d9488",
+    "#2563eb",
+    "#c2410c",
+    "#9333ea",
+    "#16a34a",
+    "#e11d48",
+    "#0284c7",
+    "#65a30d",
+    "#b91c1c",
+    "#0f766e",
 ]
 
 
@@ -107,22 +122,26 @@ def accent(s: dict) -> str:
 
 
 def rgba(hex_colour: str, alpha: float) -> str:
-    r, g, b = (int(hex_colour[i:i + 2], 16) for i in (1, 3, 5))
+    r, g, b = (int(hex_colour[i : i + 2], 16) for i in (1, 3, 5))
     return f"rgba({r},{g},{b},{alpha:g})"
 
 
 def rule(colour: str) -> str:
     """The accent rule that opens a notebook: solid at the left, gone by the
     right margin."""
-    return ('<div style="height:3px;border-radius:2px;margin:1.4em 0 1.6em;'
-            f'background:linear-gradient(90deg,{colour},{rgba(colour, 0)})">'
-            '</div>')
+    return (
+        '<div style="height:3px;border-radius:2px;margin:1.4em 0 1.6em;'
+        f'background:linear-gradient(90deg,{colour},{rgba(colour, 0)})">'
+        "</div>"
+    )
 
 
 def eyebrow(text: str, colour: str) -> str:
     """Small caps, letter-spaced, in the accent: the format-and-length line."""
-    return (f'<span style="font:700 11px/1.6 {MONO};letter-spacing:.18em;'
-            f'color:{colour}">{text}</span>')
+    return (
+        f'<span style="font:700 11px/1.6 {MONO};letter-spacing:.18em;'
+        f'color:{colour}">{text}</span>'
+    )
 
 
 _CODE_RE = re.compile(r"`([^`]+)`")
@@ -142,8 +161,7 @@ def inline_html(text: str) -> str:
     # styles the tag itself.
     text = _CODE_RE.sub(lambda m: f"<code>{m.group(1)}</code>", text)
     text = _BOLD_RE.sub(lambda m: f"<b>{m.group(1)}</b>", text)
-    return _LINK_RE.sub(lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>',
-                        text)
+    return _LINK_RE.sub(lambda m: f'<a href="{m.group(2)}">{m.group(1)}</a>', text)
 
 
 def es_box(body_html: str) -> str:
@@ -155,7 +173,7 @@ def es_box(body_html: str) -> str:
     """
     return (
         '<div style="border-left:4px solid rgba(130,130,150,.5);'
-        'background:rgba(130,130,150,.09);border-radius:0 8px 8px 0;'
+        "background:rgba(130,130,150,.09);border-radius:0 8px 8px 0;"
         f'padding:12px 16px;margin:1.2em 0 1.8em;font:400 14.5px/1.7 {SANS}">'
         f'<div style="font:700 10.5px/1 {MONO};letter-spacing:.18em;'
         'opacity:.62;margin-bottom:10px">🇪🇸 ESPAÑOL</div>'
@@ -172,26 +190,31 @@ def es_prose(text: str) -> str:
     lines = [re.sub(r"^>\s?", "", ln) for ln in text.strip().splitlines()]
     stripped = "\n".join(lines).strip()
     stripped = re.sub(r"^🇪🇸\s*", "", stripped)
-    paragraphs = [p.strip().replace("\n", " ")
-                  for p in re.split(r"\n\s*\n", stripped) if p.strip()]
+    paragraphs = [
+        p.strip().replace("\n", " ")
+        for p in re.split(r"\n\s*\n", stripped)
+        if p.strip()
+    ]
     last = len(paragraphs) - 1
     body = "".join(
-        f'<div style="margin:0 0 {"0" if i == last else ".7em"}">'
-        f"{inline_html(p)}</div>"
-        for i, p in enumerate(paragraphs))
+        f'<div style="margin:0 0 {"0" if i == last else ".7em"}">{inline_html(p)}</div>'
+        for i, p in enumerate(paragraphs)
+    )
     return es_box(body)
 
 
 def es_list(items: list[str]) -> str:
     """A Spanish objectives list, as a Spanish box."""
-    body = ('<ul style="margin:0;padding-left:1.2em">'
-            + "".join(f'<li style="margin:.35em 0">{inline_html(i)}</li>'
-                      for i in items)
-            + "</ul>")
+    body = (
+        '<ul style="margin:0;padding-left:1.2em">'
+        + "".join(f'<li style="margin:.35em 0">{inline_html(i)}</li>' for i in items)
+        + "</ul>"
+    )
     return es_box(body)
 
 
 # ── scaffolding ──────────────────────────────────────────────────────────────
+
 
 def notebook_name(s: dict) -> str:
     return f"{s['n']}-{s['slug']}.ipynb"
@@ -223,8 +246,10 @@ def next_notebook(s: dict) -> dict | None:
 
 
 def header_cell(s: dict) -> dict:
-    badge = ("[![Open In Colab](https://colab.research.google.com/assets/"
-             f"colab-badge.svg)]({colab_url(s)})")
+    badge = (
+        "[![Open In Colab](https://colab.research.google.com/assets/"
+        f"colab-badge.svg)]({colab_url(s)})"
+    )
     if s.get("format_line_en") and s.get("format_line_es"):
         fmt_line = f"{s['format_line_en']} / {s['format_line_es']}"
     elif s.get("format_line_en"):
@@ -242,7 +267,7 @@ def header_cell(s: dict) -> dict:
     if not is_extra(s):
         # The shared live outcomes also appear in the decks and handbook.
         # Broad reference objectives must not read as a promise for one slot.
-        return md(f"""# {s['n']} · {s['title_en']} / {s['title_es']}
+        return md(f"""# {s["n"]} · {s["title_en"]} / {s["title_es"]}
 
 {badge}
 
@@ -252,15 +277,15 @@ def header_cell(s: dict) -> dict:
 
 ## Practise today / Practica hoy
 
-{s['practice_en']}
+{s["practice_en"]}
 
-{es_prose(s['practice_es'])}
+{es_prose(s["practice_es"])}
 
 ## Explore later / Explora después
 
-{s['explore_en']}
+{s["explore_en"]}
 
-{es_prose(s['explore_es'])}
+{es_prose(s["explore_es"])}
 
 Follow the core block immediately below. / Sigue el bloque esencial de abajo.
 """)
@@ -270,7 +295,7 @@ Follow the core block immediately below. / Sigue el bloque esencial de abajo.
     if s.get("intro_en"):
         # Sections 01-11 and the extras: merged bilingual header. Intro
         # prose is authored in _variables.yml (intro_en / intro_es).
-        return md(f"""# {s['n']} · {s['title_en']} / {s['title_es']}
+        return md(f"""# {s["n"]} · {s["title_en"]} / {s["title_es"]}
 
 {badge}
 
@@ -278,19 +303,19 @@ Follow the core block immediately below. / Sigue el bloque esencial de abajo.
 
 {eyebrow(fmt_line.upper(), a)}
 
-{s['intro_en'].rstrip(chr(10))}
+{s["intro_en"].rstrip(chr(10))}
 
-{es_prose(s['intro_es'])}
+{es_prose(s["intro_es"])}
 
 ## What you will be able to do / Lo que podrás hacer
 
 {objs_en}
 
-{es_list(s['objectives_es'])}
+{es_list(s["objectives_es"])}
 """)
 
     # Section 00: single-language header with an ES summary callout.
-    return md(f"""# {s['n']} · {s['title_en']}
+    return md(f"""# {s["n"]} · {s["title_en"]}
 
 {badge}
 
@@ -298,7 +323,7 @@ Follow the core block immediately below. / Sigue el bloque esencial de abajo.
 
 {eyebrow(fmt_line.upper(), a)}
 
-{s['summary_en']}
+{s["summary_en"]}
 
 {es_prose(f"**{s['title_es']}** — {s['summary_es']}")}
 
@@ -306,7 +331,7 @@ Follow the core block immediately below. / Sigue el bloque esencial de abajo.
 
 {objs_en}
 
-{es_list(s['objectives_es'])}
+{es_list(s["objectives_es"])}
 """)
 
 
@@ -325,43 +350,52 @@ def footer_cell(s: dict) -> dict:
 
 ## Time for Kahoot 🎯
 
-**Kahoot {q['n']} — {q['title_en']}** · {q['questions']} questions, about 5 minutes.
+**Kahoot {q["n"]} — {q["title_en"]}** · {q["questions"]} questions, about 5 minutes.
 
 {es_prose(f"**{q['title_es']}** — {q['questions']} preguntas, unos 5 minutos.")}
 
-Join at **{V['kahoot']['join']}** with the PIN on the facilitator's screen.
+Join at **{V["kahoot"]["join"]}** with the PIN on the facilitator's screen.
 
-- [Quiz details and facilitator notes]({site}/kahoot.html#quiz-{q['n']})
-- [Import file (`.xlsx`)]({REPO['url']}/blob/{REPO['branch']}/{q['xlsx']})
+- [Quiz details and facilitator notes]({site}/kahoot.html#quiz-{q["n"]})
+- [Import file (`.xlsx`)]({REPO["url"]}/blob/{REPO["branch"]}/{q["xlsx"]})
 """
     else:
-        body = (f"{rule(colour)}\n\n## Done with this section\n\n"
-                f"{es_prose('**Fin de esta sección.**')}\n")
+        body = (
+            f"{rule(colour)}\n\n## Done with this section\n\n"
+            f"{es_prose('**Fin de esta sección.**')}\n"
+        )
     if nxt:
-        body += (f"\nNext up: **{nxt['n']} · {nxt['title_en']}** — "
-                 f"[open in Colab]({colab_url(nxt)}).\n")
+        body += (
+            f"\nNext up: **{nxt['n']} · {nxt['title_en']}** — "
+            f"[open in Colab]({colab_url(nxt)}).\n"
+        )
     else:
         body += "\nThat is the whole workshop. Thank you for coming.\n"
-    body += (f"\n[← Back to the workshop site]({site}/) · "
-             f"[All notebooks]({site}/notebooks.html) · "
-             f"[Handbook]({site}/tensors_workshop_plan_with_quizzes.html)\n")
+    body += (
+        f"\n[← Back to the workshop site]({site}/) · "
+        f"[All notebooks]({site}/notebooks.html) · "
+        f"[Handbook]({site}/tensors_workshop_plan_with_quizzes.html)\n"
+    )
     return md(body)
 
 
-def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
-                      colour: str, extra: bool = False) -> dict:
+def _footer_bilingual(
+    q: dict | None, nxt: dict | None, site: str, colour: str, extra: bool = False
+) -> dict:
     """Merged bilingual footer for sections 01-11 and for the extras.
 
     An extra never gets a Kahoot block — `q` is always None for one — and the
     last extra closes on a link back to the site rather than on the workshop's
     closing words, which belong to section 11 and are said once.
     """
-    nav = ("[← Workshop site / Sitio del taller]"
-           f"({site}/) · "
-           "[All notebooks / Todos los notebooks]"
-           f"({site}/notebooks.html) · "
-           "[Handbook / Manual]"
-           f"({site}/tensors_workshop_plan_with_quizzes.html)")
+    nav = (
+        "[← Workshop site / Sitio del taller]"
+        f"({site}/) · "
+        "[All notebooks / Todos los notebooks]"
+        f"({site}/notebooks.html) · "
+        "[Handbook / Manual]"
+        f"({site}/tensors_workshop_plan_with_quizzes.html)"
+    )
 
     parts = [rule(colour), ""]
     if q:
@@ -375,18 +409,18 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
             f"Join at **{V['kahoot']['join']}** with the PIN on the "
             "facilitator's screen.",
             "",
-            es_prose(f"Entra a **{V['kahoot']['join']}** con el PIN que "
-                     "aparece en la pantalla del facilitador."),
+            es_prose(
+                f"Entra a **{V['kahoot']['join']}** con el PIN que "
+                "aparece en la pantalla del facilitador."
+            ),
             "",
-            "- [Quiz details and facilitator notes]"
-            f"({site}/kahoot.html#quiz-{q['n']})",
+            f"- [Quiz details and facilitator notes]({site}/kahoot.html#quiz-{q['n']})",
             "- [Import file (`.xlsx`)]"
             f"({REPO['url']}/blob/{REPO['branch']}/{q['xlsx']})",
             "",
         ]
     elif extra:
-        parts += ["## Done with this deep dive / Fin de este estudio a fondo",
-                  ""]
+        parts += ["## Done with this deep dive / Fin de este estudio a fondo", ""]
     elif nxt:
         parts += ["## Done with this section / Fin de esta sección", ""]
     else:
@@ -410,8 +444,10 @@ def _footer_bilingual(q: dict | None, nxt: dict | None, site: str,
             f"That is the last deep dive. The rest is back on "
             f"[the workshop site]({site}/).",
             "",
-            es_prose("Ese es el último estudio a fondo. El resto está en "
-                     f"[el sitio del taller]({site}/)."),
+            es_prose(
+                "Ese es el último estudio a fondo. El resto está en "
+                f"[el sitio del taller]({site}/)."
+            ),
             "",
         ]
     else:
@@ -559,9 +595,7 @@ def normalize_notebook(s: dict, path: pathlib.Path) -> dict:
     old_cells = nb.get("cells")
 
     if not isinstance(old_cells, list):
-        raise ValueError(
-            f"{path.relative_to(ROOT)} has no valid cells list"
-        )
+        raise ValueError(f"{path.relative_to(ROOT)} has no valid cells list")
 
     if len(old_cells) < 2:
         raise ValueError(
@@ -604,13 +638,15 @@ def main() -> int:
             nb = normalize_notebook(s, path)
         except (FileNotFoundError, ValueError) as exc:
             sys.exit(str(exc))
-        path.write_text(json.dumps(nb, indent=1, ensure_ascii=False) + "\n",
-                        encoding="utf-8")
+        path.write_text(
+            json.dumps(nb, indent=1, ensure_ascii=False) + "\n", encoding="utf-8"
+        )
         n_code = sum(c["cell_type"] == "code" for c in nb["cells"])
-        n_sol = sum("solution" in c["metadata"].get("tags", [])
-                    for c in nb["cells"])
-        print(f"  {path.relative_to(ROOT)}  "
-              f"{len(nb['cells'])} cells ({n_code} code, {n_sol} solutions)")
+        n_sol = sum("solution" in c["metadata"].get("tags", []) for c in nb["cells"])
+        print(
+            f"  {path.relative_to(ROOT)}  "
+            f"{len(nb['cells'])} cells ({n_code} code, {n_sol} solutions)"
+        )
 
     try:
         import nbformat
@@ -619,8 +655,10 @@ def main() -> int:
         return 0
     for s in NOTEBOOKS:
         nbformat.validate(nbformat.read(NBDIR / notebook_name(s), as_version=4))
-    print(f"\nnbformat.validate: {len(NOTEBOOKS)}/{len(NOTEBOOKS)} valid "
-          f"({len(SECTIONS)} sections, {len(EXTRAS)} extras)")
+    print(
+        f"\nnbformat.validate: {len(NOTEBOOKS)}/{len(NOTEBOOKS)} valid "
+        f"({len(SECTIONS)} sections, {len(EXTRAS)} extras)"
+    )
     return 0
 
 

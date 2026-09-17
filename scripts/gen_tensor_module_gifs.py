@@ -4,6 +4,7 @@
 Run with the figures environment. Only NumPy, Matplotlib and Pillow are needed;
 no notebook kernel, PyTorch, network or system encoder is used by this exporter.
 """
+
 from __future__ import annotations
 
 import json
@@ -13,8 +14,8 @@ import matplotlib
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation, PillowWriter
 import numpy as np
+from matplotlib.animation import FuncAnimation, PillowWriter
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -28,7 +29,9 @@ def export_module(number: str, slug: str, kinds: tuple[str, ...]) -> None:
     for cell_id in selected:
         source = "".join(cells[cell_id]["source"])
         exec(compile(source, f"{path.name}:{cell_id}", "exec"), namespace)
-    function = "make_attention_animation" if number == "17" else "make_compression_animation"
+    function = (
+        "make_attention_animation" if number == "17" else "make_compression_animation"
+    )
     for kind in kinds:
         animation = namespace[function](kind)
         destination = ROOT / "images" / f"cube-{number}-{kind}.gif"
