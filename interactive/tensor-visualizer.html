@@ -149,6 +149,7 @@
   #snap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   #gizmo { position: absolute; right: 0.5rem; bottom: 0.5rem; width: 5rem; height: 5rem; z-index: 2; }
   #gizmo .arm { cursor: pointer; pointer-events: auto; }
+  #gizmo .arm:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   #gizmo text { font: 700 9px var(--mono); }
   html.embed #legend, html.embed #snap, html.embed #gizmo { display: none; }
   @media (max-width: 34rem) { #legend { display: none; } }
@@ -321,7 +322,7 @@
             <ul id="legend-list"></ul>
           </details>
           <button type="button" id="snap" aria-pressed="false"></button>
-          <svg id="gizmo" viewBox="-50 -50 100 100" aria-hidden="true"></svg>
+          <svg id="gizmo" viewBox="-50 -50 100 100" role="group" aria-labelledby="gizmo-title"><title id="gizmo-title">Axis orientation</title></svg>
         </div>
         <p id="embedcap"></p>
         <div id="axis-legend"></div>
@@ -547,6 +548,8 @@
     swapped: (a, b) => `Swapped ${a} and ${b}.`,
     saidReshape: (s, kind) => `Reshaped to ${s} — a ${kind}.`,
     saidContig: (k) => `Copied into ${k} order. Same shape, new buffer.`,
+    saidAlready: (k) => `Already ${k}. NumPy hands back the same array -- nothing is copied.`,
+    gizmoArm: (ax) => `Look down the ${ax} axis`,
     legendTitle: "Controls",
     legend: [
       ["🖱️", "<b>Drag</b> — rotate"],
@@ -670,6 +673,8 @@
     swapped: (a, b) => `${a} y ${b} intercambiados.`,
     saidReshape: (s, kind) => `Reshape a ${s}: una ${kind}.`,
     saidContig: (k) => `Copiado al orden ${k}. Misma forma, búfer nuevo.`,
+    saidAlready: (k) => `Ya es ${k}. NumPy devuelve el mismo array: no se copia nada.`,
+    gizmoArm: (ax) => `Mirar a lo largo del eje ${ax}`,
     legendTitle: "Controles",
     legend: [
       ["🖱️", "<b>Arrastrar</b> — rotar"],
@@ -1003,7 +1008,10 @@
     for (let k = 0; k < n; k++) {
       const L = unravel(k, sh);
       const off = offsetOf(L);
-      out[k] = { L, off, src: BUFSRC[off], value: state.compare ? BUF[k] : BUF[off] };
+      // `value` is what the cubes show -- y's bytes while the comparison is
+      // on. `raw` is what is actually in memory at this offset, which is the
+      // only thing the buffer strip may ever draw.
+      out[k] = { L, off, src: BUFSRC[off], value: state.compare ? BUF[k] : BUF[off], raw: BUF[off] };
     }
     return out;
   }
@@ -1039,14 +1047,14 @@
   }
   // The colour of an element: its channel when the cubes are photo bytes,
   // otherwise its value along the fastest axis.
-  function colourOf(el) {
+  function colourOf(el, value = el.value) {
     if (isPhotos()) {
       const cp = posOfId(1);
       const c = cp >= 0 ? el.L[cp] % 3 : unravel(el.src, SRC.dims)[3] % 3;
-      return chanFill(c, el.value);
+      return chanFill(c, value);
     }
     const n = numel();
-    return axisFill(fastestPos(), n > 1 ? el.value / (n - 1) : 0.5);
+    return axisFill(fastestPos(), n > 1 ? value / (n - 1) : 0.5);
   }
   function inkOn(fill) {
     const [r, g, b] = parseRgb(fill);
@@ -1189,6 +1197,7 @@
 
   function doTranspose(perm) {
     if (perm.every((p, i) => p === i)) return;
+    peeking = false;
     const next = perm.map((p) => state.shape[p]);
     pushHistory(transposeLines(perm, next));
     beginTween();
@@ -1197,6 +1206,7 @@
   }
   function doReshape(next) {
     if (same(next, state.shape)) return;
+    peeking = false;
     beginTween();
     const copied = applyReshape(next);
     pushHistory(reshapeLines(next, copied));
@@ -1205,6 +1215,14 @@
   }
   function doContiguous(kind) {
     if (!posOrder(kind)) return;
+    // Already in that order: NumPy hands back the same array. Saying "the
+    // buffer is rewritten" here would teach the opposite of the point.
+    if (isContiguousAs(kind)) {
+      $("status").textContent = T.saidAlready(T.layouts[kind]);
+      syncControls();
+      return;
+    }
+    peeking = false;
     beginTween();
     applyContiguous(kind);
     pushHistory(layoutLines(kind));
@@ -1217,6 +1235,11 @@
   // line and the array is contiguous in its natural order. Keeping the old
   // transposes would print a log whose first line already has the wrong shape.
   function restart() {
+    // A different array has different cubes; a tween still in flight would
+    // interpolate them from positions that belonged to the old one.
+    anim = null;
+    pending = null;
+    peeking = false;
     rebuildSource();
     view.panX = 0;
     view.panY = 0;
@@ -1250,6 +1273,7 @@
       input.style.accentColor = `var(${hues[p]})`;
       input.addEventListener("input", () => {
         state.idx[p] = Number(input.value);
+        peeking = false;
         render();
       });
       wrap.append(lab, input);
@@ -1517,6 +1541,15 @@
   // How far the view has closed up: 0 is the isometric pile with gaps, 1 is
   // flat on, gaps shut, cubes meeting edge to edge.
   const snap = { on: false, t: 0 };
+  // The cubes' positions bake in GAP(), ZGAP() and whether the channel planes
+  // are composited, all of which read snap.t. Moving it and only repainting
+  // left the tensor collapsed and composited while the camera rotated away,
+  // so every write to snap.t goes through here.
+  function setSnapT(t) {
+    if (snap.t === t) return;
+    snap.t = t;
+    VOX = buildVoxels();
+  }
   const glide = { active: false, t0: 0, from: null, to: null };
   const GAP = () => BASE_GAP * (1 - 0.78 * snap.t);
   const ZGAP = () => BASE_ZGAP * (1 - snap.t);
@@ -1623,7 +1656,7 @@
         const t = easeInOut(k);
         view.yaw = glide.from.yaw + (glide.to.yaw - glide.from.yaw) * t;
         view.el = glide.from.el + (glide.to.el - glide.from.el) * t;
-        snap.t = glide.from.t + (glide.to.t - glide.from.t) * t;
+        setSnapT(glide.from.t + (glide.to.t - glide.from.t) * t);
         if (k >= 1) { glide.active = false; render(); } else busy = true;
       }
       if (anim) {
@@ -1702,7 +1735,7 @@
     const out = [];
     const reveal = canReveal();
     const rgb = reveal ? new Map() : null;
-    elements().forEach((el) => {
+    ELS.forEach((el) => {
       const [gb, gc, gh, gw] = gindex(el);
       const lit = state.slice < 0 || el.L[state.slice] === state.idx[state.slice];
       if (reveal) {
@@ -1809,16 +1842,34 @@
       return [(rx - rz * (1 - flat)) * kx * 30, ((rx + rz) * 0.5 * view.el - y) * 30];
     };
     const arms = GIZMO_ARMS.map((arm) => ({ arm, role: roleAxis(arm.r), p: at(arm.d) }))
-      .filter((a) => a.role)
-      .sort((a, b) => a.p[1] - b.p[1]);
-    svg.innerHTML = arms.map(({ arm, role, p }) => {
+      .filter((a) => a.role);
+    // Built once and then only moved. Rewriting the markup every frame would
+    // drop keyboard focus in the middle of a drag.
+    if (svg.dataset.arms !== arms.map((a) => a.arm.r).join(",")) {
+      svg.dataset.arms = arms.map((a) => a.arm.r).join(",");
+      svg.innerHTML = arms.map(({ arm }) =>
+        `<g class="arm" data-arm="${arm.r}" role="button" tabindex="0">` +
+        `<line x1="0" y1="0" stroke-width="3" stroke-linecap="round"></line>` +
+        `<circle r="9"></circle><text text-anchor="middle"></text></g>`).join("");
+    }
+    arms.sort((a, b) => a.p[1] - b.p[1]).forEach(({ arm, role, p }) => {
+      const g = svg.querySelector(`[data-arm="${arm.r}"]`);
       const hue = css(role.hue);
-      return `<g class="arm" data-arm="${arm.r}" role="button" tabindex="-1">` +
-        `<line x1="0" y1="0" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="${hue}" stroke-width="3" stroke-linecap="round"></line>` +
-        `<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="9" fill="${hue}"></circle>` +
-        `<text x="${p[0].toFixed(1)}" y="${(p[1] + 3.2).toFixed(1)}" text-anchor="middle" fill="${inkOn(hue)}">${role.label}</text>` +
-        `</g>`;
-    }).join("");
+      g.setAttribute("aria-label", T.gizmoArm(role.label));
+      g.querySelector("line").setAttribute("x2", p[0].toFixed(1));
+      g.querySelector("line").setAttribute("y2", p[1].toFixed(1));
+      g.querySelector("line").setAttribute("stroke", hue);
+      const circle = g.querySelector("circle");
+      circle.setAttribute("cx", p[0].toFixed(1));
+      circle.setAttribute("cy", p[1].toFixed(1));
+      circle.setAttribute("fill", hue);
+      const text = g.querySelector("text");
+      text.setAttribute("x", p[0].toFixed(1));
+      text.setAttribute("y", (p[1] + 3.2).toFixed(1));
+      text.setAttribute("fill", inkOn(hue));
+      text.textContent = role.label;
+      svg.appendChild(g);   // paint order: nearest last
+    });
   }
 
   // ─── the flat renderer ────────────────────────────────────────────────────
@@ -1858,7 +1909,7 @@
       ((a.x * sa + a.z * ca) + a.y * 0.2) - ((b.x * sa + b.z * ca) + b.y * 0.2));
     const s = cellScale(w, h);
     const ink = css("--ink");
-    const labels = showValues() && s >= VALUE_MIN_PX;
+    const labels = showValues() && s >= VALUE_MIN_PX && !canReveal();
     // Face on the cubes are squares that meet: a hexagon drawn at a quarter
     // turn is a cube seen from nowhere, and the photograph would show its seams.
     const square = snap.t > 0.5;
@@ -2273,7 +2324,7 @@
       const was = anim && anim.from.get(el.src);
       const at = (was && was.off !== undefined) ? was.off + (el.off - was.off) * t : el.off;
       ctx.globalAlpha = lit ? 1 : 0.25;
-      ctx.fillStyle = colourOf(el);
+      ctx.fillStyle = colourOf(el, el.raw);
       ctx.fillRect(at * cw, 10, Math.max(cw, 0.5), h - 18);
     });
     ctx.globalAlpha = 1;
@@ -2413,23 +2464,28 @@
     repaint();
   }
   function panBy(dx, dy) {
+    peeking = false;
     view.panX += dx;
     view.panY += dy;
     repaint();
   }
   // Rotating away from face on lets the cubes go back to being cubes.
   function orbitBy(dx, dy) {
-    if ((dx || dy) && snap.on) {
+    const left = (dx || dy) && snap.on;
+    if (left) {
       snap.on = false;
       glide.active = false;
       $("snap").setAttribute("aria-pressed", "false");
       $("snap").textContent = T.snapIn;
       $("stage").dataset.snapped = "0";
     }
+    if (dx || dy) peeking = false;
     view.yaw += dx;
     view.el = Math.min(1.2, Math.max(0, view.el + dy));
-    if (!snap.on) snap.t = 0;
-    repaint();
+    if (!snap.on) setSnapT(0);
+    // Leaving face on changes the stage note and the arrows as well as the
+    // cubes, so the one frame that leaves it is a full render, not a repaint.
+    if (left) render(); else repaint();
   }
   // The magnet: let go near enough to face on and the view closes the rest of
   // the way itself. Tested on release, never mid-drag, so a drag past the
@@ -2504,7 +2560,16 @@
         f:          () => setSnap(!snap.on),
         F:          () => setSnap(!snap.on),
         Escape:     () => { if (snap.on) setSnap(false); },
-        Home:       () => { Object.assign(view, HOME); snap.on = false; snap.t = 0; $("stage").dataset.snapped = "0"; $("snap").setAttribute("aria-pressed", "false"); $("snap").textContent = T.snapIn; repaint(); }
+        Home:       () => {
+          Object.assign(view, HOME);
+          snap.on = false;
+          glide.active = false;
+          setSnapT(0);
+          $("stage").dataset.snapped = "0";
+          $("snap").setAttribute("aria-pressed", "false");
+          $("snap").textContent = T.snapIn;
+          render();
+        }
       };
       const move = moves[e.key];
       if (!move) return;
@@ -2512,9 +2577,7 @@
       move();
     });
     $("snap").addEventListener("click", () => setSnap(!snap.on));
-    $("gizmo").addEventListener("click", (e) => {
-      const arm = e.target.closest("[data-arm]");
-      if (!arm) return;
+    const gizmoGo = (arm) => {
       const spec = GIZMO_ARMS.find((a) => a.r === Number(arm.dataset.arm));
       if (!spec) return;
       if (spec.el === 0) {
@@ -2528,6 +2591,17 @@
         glideTo(spec.yaw, spec.el);
         tick();
       }
+    };
+    $("gizmo").addEventListener("click", (e) => {
+      const arm = e.target.closest("[data-arm]");
+      if (arm) gizmoGo(arm);
+    });
+    $("gizmo").addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const arm = e.target.closest("[data-arm]");
+      if (!arm) return;
+      e.preventDefault();
+      gizmoGo(arm);
     });
   }
 
