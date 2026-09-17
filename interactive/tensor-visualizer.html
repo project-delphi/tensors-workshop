@@ -68,6 +68,9 @@
   .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 24rem); gap: 1.25rem; align-items: start; }
   @media (max-width: 56rem) { .grid { grid-template-columns: 1fr; } }
+  /* The furniture sits over the picture but outside it: `#stage` is
+     role="img", and a role="img" element's children are presentational. */
+  .stagewrap { position: relative; }
   #stage {
     position: relative;
     height: min(62vh, 32rem);
@@ -313,16 +316,18 @@
     </header>
     <div class="grid">
       <div>
-        <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp" data-photos="0" data-snapped="0">
-          <p id="stagenote"></p>
-          <div id="overlays" aria-hidden="true"></div>
-          <canvas id="view"></canvas>
+        <div class="stagewrap">
+          <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp" data-photos="0" data-snapped="0">
+            <p id="stagenote"></p>
+            <div id="overlays" aria-hidden="true"></div>
+            <canvas id="view"></canvas>
+          </div>
           <details id="legend" open>
             <summary id="legend-title"></summary>
             <ul id="legend-list"></ul>
           </details>
           <button type="button" id="snap" aria-pressed="false"></button>
-          <svg id="gizmo" viewBox="-50 -50 100 100" role="group" aria-labelledby="gizmo-title"><title id="gizmo-title">Axis orientation</title></svg>
+          <svg id="gizmo" viewBox="-50 -50 100 100" role="group"></svg>
         </div>
         <p id="embedcap"></p>
         <div id="axis-legend"></div>
@@ -479,7 +484,7 @@
     kindView: "view",
     kindCopy: "copy",
     shapeNoteView: (n) => `Every shape whose sizes multiply to ${n}. The buffer is not touched: the bytes keep the order they are already in, and only the strides change. That is what makes a reshape free.`,
-    shapeNoteCopy: (n) => `Every shape whose sizes multiply to ${n}. This view is not C-contiguous, so NumPy has to copy the buffer into reading order before it can reshape -- the presets say “copy” for that reason.`,
+    shapeNoteCopy: (n) => `Every shape whose sizes multiply to ${n}. This view is not C-contiguous, so only the shapes its strides can still express are free: each button says whether taking it is a view or a copy.`,
     shapeSwitch: "watch the cubes rearrange",
     order: "Transpose · permute",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H↔W", reverse: "reverse (.T)" },
@@ -550,6 +555,7 @@
     saidContig: (k) => `Copied into ${k} order. Same shape, new buffer.`,
     saidAlready: (k) => `Already ${k}. NumPy hands back the same array -- nothing is copied.`,
     gizmoArm: (ax) => `Look down the ${ax} axis`,
+    gizmoLabel: "Axis orientation",
     legendTitle: "Controls",
     legend: [
       ["🖱️", "<b>Drag</b> — rotate"],
@@ -604,7 +610,7 @@
     kindView: "vista",
     kindCopy: "copia",
     shapeNoteView: (n) => `Todas las formas cuyos tamaños multiplican ${n}. El búfer no se toca: los bytes conservan el orden que ya tenían y solo cambian los strides. Por eso un reshape es gratis.`,
-    shapeNoteCopy: (n) => `Todas las formas cuyos tamaños multiplican ${n}. Esta vista no es contigua en C, así que NumPy tiene que copiar el búfer al orden de lectura antes de poder hacer el reshape: por eso los botones dicen «copia».`,
+    shapeNoteCopy: (n) => `Todas las formas cuyos tamaños multiplican ${n}. Esta vista no es contigua en C, así que solo son gratis las formas que sus strides todavía pueden expresar: cada botón dice si es una vista o una copia.`,
     shapeSwitch: "ver cómo se reorganizan los cubos",
     order: "Transpose · permute",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H↔W", reverse: "invertir (.T)" },
@@ -675,6 +681,7 @@
     saidContig: (k) => `Copiado al orden ${k}. Misma forma, búfer nuevo.`,
     saidAlready: (k) => `Ya es ${k}. NumPy devuelve el mismo array: no se copia nada.`,
     gizmoArm: (ax) => `Mirar a lo largo del eje ${ax}`,
+    gizmoLabel: "Orientación de los ejes",
     legendTitle: "Controles",
     legend: [
       ["🖱️", "<b>Arrastrar</b> — rotar"],
@@ -846,7 +853,20 @@
   const rank = () => state.shape.length;
   const numel = () => prod(state.shape);
   const offsetOf = (L) => sum(L.map((v, i) => v * state.stride[i]));
-  const isCContig = () => same(cstrides(state.shape), state.stride);
+  // An axis of size 1 is never indexed by anything but 0, so its stride is
+  // never read and NumPy ignores it when it reports contiguity. Comparing the
+  // stride arrays outright called a one-photo batch non-contiguous.
+  function contiguousInOrder(order) {
+    let run = 1;
+    for (let k = order.length - 1; k >= 0; k--) {
+      const p = order[k];
+      if (state.shape[p] === 1) continue;
+      if (state.stride[p] !== run) return false;
+      run *= state.shape[p];
+    }
+    return true;
+  }
+  const isCContig = () => contiguousInOrder(range(rank()));
   // True while every byte is still where `np.stack` or `np.arange` put it.
   const isPristine = () => BUFSRC.every((v, i) => v === i);
 
@@ -866,7 +886,7 @@
   }
   function isContiguousAs(kind) {
     const order = posOrder(kind);
-    return !!order && same(stridesFor(order), state.stride);
+    return !!order && contiguousInOrder(order);
   }
   const currentLayout = () => ["C", "F", "CL"].find(isContiguousAs) || null;
   // Positions slowest to fastest. Ties (an axis of size 1) cannot matter: its
@@ -902,16 +922,62 @@
     return ids;
   }
 
-  // reshape. When the view is C-contiguous this only recomputes the strides --
-  // the buffer keeps every byte where it was, which is the zero-copy view the
-  // section is about. When it is not, NumPy has no choice but to copy into
-  // reading order first, and that is what is reported.
+  // Can this shape be reached without touching a byte? NumPy's own rule, and
+  // it is not "the view is C-contiguous": axes are matched into groups whose
+  // sizes multiply to the same thing on both sides, and a group is expressible
+  // in strides as long as its old axes are contiguous *with respect to each
+  // other*. Transposing to NCHW and merging the two 16s back together is the
+  // case that matters -- 48 == 3 * 16, so it is a view, and calling it a copy
+  // taught the opposite of the lesson.
+  function reshapeStrides(shape, stride, next) {
+    const old = [];
+    for (let i = 0; i < shape.length; i++) if (shape[i] !== 1) old.push([shape[i], stride[i]]);
+    const out = next.map(() => 0);
+    let i = 0, j = 0;
+    while (j < next.length) {
+      if (next[j] === 1) { j++; continue; }
+      if (i >= old.length) return null;
+      const from = i, at = j;
+      let have = old[i][0], want = next[j];
+      i++;
+      j++;
+      while (have !== want) {
+        if (have < want) {
+          if (i >= old.length) return null;
+          have *= old[i][0];
+          i++;
+        } else {
+          if (j >= next.length) return null;
+          want *= next[j];
+          j++;
+        }
+      }
+      for (let k = from; k < i - 1; k++) {
+        if (old[k][1] !== old[k + 1][1] * old[k + 1][0]) return null;
+      }
+      let run = old[i - 1][1];
+      for (let k = j - 1; k >= at; k--) { out[k] = run; run *= next[k]; }
+    }
+    if (i < old.length) return null;
+    // A size-1 axis's stride is never read; give it the neighbouring one so the
+    // table shows a number rather than a zero.
+    for (let k = next.length - 1; k >= 0; k--) {
+      if (next[k] === 1) out[k] = k + 1 < next.length ? out[k + 1] * next[k + 1] : 1;
+    }
+    return out;
+  }
+  const reshapeIsView = (next) => !!reshapeStrides(state.shape, state.stride, next);
+
+  // reshape. When the strides can express the new shape this touches no byte,
+  // which is the zero-copy view the section is about. Only when they cannot
+  // does NumPy copy into reading order first, and that is what is reported.
   function applyReshape(next) {
-    const copied = !isCContig();
+    const strides = reshapeStrides(state.shape, state.stride, next);
+    const copied = !strides;
     if (copied) applyContiguous("C");
     state.axisId = carryIds(state.shape, state.axisId, next);
     state.shape = next.slice();
-    state.stride = cstrides(next);
+    state.stride = strides || cstrides(next);
     state.idx = next.map(() => 0);
     state.slice = -1;
     return copied;
@@ -1103,6 +1169,7 @@
     $("th-np").textContent = T.np;
     $("th-pt").textContent = T.pt;
     $("legend-title").textContent = T.legendTitle;
+    $("gizmo").setAttribute("aria-label", T.gizmoLabel);
     $("legend-list").innerHTML = (coarse ? T.legendTouch : T.legend)
       .map(([icon, text]) => `<li><span>${icon}</span><span>${text}</span></li>`).join("");
     if (coarse) $("legend").open = false;
@@ -1422,12 +1489,14 @@
     // The reshape presets change with the shape in hand, and each says whether
     // taking it is free.
     const copies = !isCContig();
-    const presetKey = `${key}|${copies}`;
+    const presetKey = `${key}|${state.stride.join(",")}`;
     if (presetKey !== presetsKey) {
       presetsKey = presetKey;
+      // Asked per shape, not once for the array: from a transposed view some
+      // of these are views and some are copies, and the button says which.
       $("shape-presets").innerHTML = reshapeChoices().map((s) => {
         const here = same(s, state.shape);
-        const kind = here ? "" : `<span class="kind">${copies ? T.kindCopy : T.kindView}</span>`;
+        const kind = here ? "" : `<span class="kind">${reshapeIsView(s) ? T.kindView : T.kindCopy}</span>`;
         return `<button type="button" data-shape="${s.join(",")}" aria-pressed="${here}">${shapeText(s)}${kind}</button>`;
       }).join("");
     }
