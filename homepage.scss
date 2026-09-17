@@ -207,6 +207,16 @@ body { overflow-x: clip; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
+/* The two interactive widgets, two across rather than the toolkit's three.
+   They are the only live things on the page -- everything in .resource-grid
+   is a document -- and trailing them as cards seven and eight would both read
+   as more of the same and leave a ragged row. They reuse .resource-card, so
+   there is no second card style to keep in step. */
+.widget-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
 .resource-card {
   display: flex;
   flex-direction: column;
@@ -339,7 +349,7 @@ body { overflow-x: clip; }
   .curriculum-track h3 { grid-column: 3; margin-bottom: .25rem; }
   .curriculum-track p { grid-column: 3; }
   .stage-extra { grid-column: 3; justify-self: start; }
-  .audience-grid, .resource-grid, .workshop-pipeline { grid-template-columns: minmax(0, 1fr); }
+  .audience-grid, .resource-grid, .widget-grid, .workshop-pipeline { grid-template-columns: minmax(0, 1fr); }
   .workshop-pipeline { gap: 1.8rem; }
   .workshop-pipeline li + li::before {
     content: "↓";

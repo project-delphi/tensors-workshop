@@ -2,6 +2,8 @@
 
 ## 2026-09-17
 
+- Both interactive widgets are now on the homepage, in both languages, under *Try one in the browser* — until now the only way to find them was a sentence partway down the notebooks page or the handbook.
+
 - The notebook normalizer now sorts the keys inside every cell, so a notebook edited in a different tool no longer comes back with all 51 cells rewritten around one real change.
 
 - Added a bilingual broadcasting simulator for section 03: two shapes lined up from the right, the padding NumPy adds made visible, and every axis of size 1 stretched out in dashed cells that say what they are — repeats in the picture, one copy in the buffer. Presets are the workshop's own cases, including the `(4,)` against `(4, 1)` trap from the section 03 checkpoint. Every verdict and result shape was checked against `np.broadcast_shapes`.
