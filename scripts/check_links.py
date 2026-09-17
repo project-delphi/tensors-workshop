@@ -50,7 +50,7 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
   - The companion's artifact links and exports. Also a reminder, NOT a
     failure — see check_companion.
   - The two handbooks still have the same shape: heading counts, table rows,
-    and the notebooks each links. `CLAUDE.md` requires them to change in the
+    and the notebooks each links. `AGENTS.md` requires them to change in the
     same commit and nothing else verifies it. Structure only — it cannot see
     wording, which is the half that actually drifts.
   - Both Kahoot pages carry the three quiz anchors. Adding a quiz heading to
@@ -104,6 +104,11 @@ NB_REF_RE = re.compile(
 # check here.
 NB_IMG_RE = re.compile(
     rf"{re.escape(REPO['site'])}/images/([A-Za-z0-9._-]+)")
+# Standalone widgets a notebook links, same absolute-URL reason as the
+# images. Check 3 never sees these: a notebook is copied, not rendered,
+# and the URL is https.
+NB_VIZ_RE = re.compile(
+    rf"{re.escape(REPO['site'])}/(interactive/[A-Za-z0-9._-]+\.html)")
 IMG_TAG_RE = re.compile(r"<img\b[^>]*>")
 ALT_RE = re.compile(r'alt="([^"]*)"')
 
@@ -187,6 +192,20 @@ def check_links() -> None:
         # prevent — on the one run where docs/ is empty.
         step("Colab URLs")
         return
+
+    # Only when this is the real docs/: unit tests point DOCS at a temp tree
+    # that has no reason to carry the widgets. They are resources, not render
+    # targets, so dropping `interactive/**` from `_quarto.yml` would otherwise
+    # 404 every handbook and notebook link with no other symptom. The vendored
+    # three.js is in the list for a reason no other check covers: the
+    # visualizer imports it from inside a module script, so it is not a `src`
+    # anywhere for the link harvest below to find.
+    if DOCS.resolve() == (ROOT / "docs").resolve():
+        for widget in REPO.get("widgets", []):
+            if not (ROOT / widget).exists():
+                fail(f"{widget} is missing")
+            elif not (DOCS / widget).exists():
+                fail(f"docs/{widget} is missing — add interactive/** to resources:")
 
     harvested = {p: harvest(p) for p in pages}
     ids_by_page = {p: h.ids for p, h in harvested.items()}
@@ -384,6 +403,9 @@ def check_notebooks() -> None:
         for alt in IMG_TAG_RE.findall(body):
             if not ALT_RE.search(alt) or not ALT_RE.search(alt).group(1).strip():
                 fail(f"{name}: an <img> has no alt text")
+        for target in sorted(set(NB_VIZ_RE.findall(body))):
+            if not (ROOT / target).exists():
+                fail(f"{name}: links {target}, which does not exist")
         n_maths += check_notebook_maths(nb, name)
     unknown = {p.name for p in NBDIR.glob("*.ipynb")} - {
         f"{s['n']}-{s['slug']}.ipynb" for s in NOTEBOOKS}
@@ -841,7 +863,7 @@ def check_companion() -> None:
 def check_handbooks() -> None:
     """The EN and ES handbooks still have the same shape.
 
-    `CLAUDE.md` requires both to change in the same commit -- nothing
+    `AGENTS.md` requires both to change in the same commit -- nothing
     generates the Spanish one from the English -- and until now nothing
     verified it. What can be compared without a translation dictionary is
     structure: how many sections, how many tables, and which notebooks each
@@ -855,7 +877,7 @@ def check_handbooks() -> None:
     added to one side only, and nothing else.
 
     It is numbered 13 because the numbers are a contract --
-    `CLAUDE.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
+    `AGENTS.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
     inserting this one where it reads best would silently renumber three of
     them. Check 14 (Kahoot page parity) was added after it, not inserted
     before.

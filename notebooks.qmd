@@ -48,6 +48,12 @@ by hand and then change what "fit" means.
 16 connects PCA’s matrix views to satellite land-cover classification, clustering,
 and tensor PCA, with Plato’s cave and three animations.
 
+Two sections have a widget beside them. Section 03 has a
+[broadcasting simulator](interactive/broadcasting-simulator.html?lang=en) that
+lines two shapes up from the right and steps through the stretch, and section 04
+has a [layout visualizer](interactive/tensor-visualizer.html?lang=en) that shows
+how four indices become one offset in a flat buffer.
+
 {{< include _includes/notebooks-extra-en.md >}}
 
 ## Running them somewhere other than Colab

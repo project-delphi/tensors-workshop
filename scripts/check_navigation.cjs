@@ -99,6 +99,49 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
         }
       }
 
+      // The two widgets are resources, not Quarto pages, so neither has a
+      // navbar and neither is reachable by clicking. Three.js is vendored, so
+      // it is same-origin and this check -- which aborts every off-origin
+      // request -- can finally load it. That is what `window.THREE` asserts.
+      // The render mode is deliberately not asserted: whether headless
+      // Chromium gives us WebGL is not something to hang CI on, and the
+      // isometric canvas is a designed fallback, not a failure.
+      const widgets = [
+        {file: 'tensor-visualizer', en: 'Tensor layout and strides',
+         es: 'Disposición en memoria y strides', three: true},
+        {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
+         es: 'Broadcasting, paso a paso', three: false}
+      ];
+      for (const widget of widgets) {
+        console.log(`Checking ${widget.file}`);
+        for (const lang of ['en', 'es']) {
+          const where = `${widget.file} ${lang}`;
+          await page.goto(
+            `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
+          assert.equal(await page.locator('html').getAttribute('lang'), lang);
+          assert.equal(await page.locator('#title').innerText(), widget[lang]);
+          if (widget.three) {
+            // `attached`, not `visible`: once three.js loads, the isometric
+            // fallback canvas is the one that gets display:none, and it is
+            // also the first match.
+            await page.waitForSelector('#stage canvas', {state: 'attached'});
+            await page.waitForFunction(() => window.THREE !== undefined,
+              null, {timeout: 10000});
+            assert.equal(await page.evaluate(() => window.THREE.REVISION), '169',
+              `${where}: vendored three.js did not load`);
+          } else {
+            await page.waitForSelector('#draw .cell');
+          }
+          for (const width of [1440, 390]) {
+            await page.setViewportSize({width, height: 1000});
+            const fits = await page.evaluate(() =>
+              document.documentElement.scrollWidth <= innerWidth + 1);
+            assert(fits, `${where}: horizontal overflow at ${width}`);
+          }
+          await page.setViewportSize({width: 1440, height: 1000});
+        }
+      }
+
       // Keyboard activation on desktop and through the collapsed mobile menu.
       for (const width of [1440, 390]) {
         console.log(`Checking keyboard controls at ${width}px`);
@@ -247,7 +290,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
     }
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links and fallbacks.`);
+      `Passed: 26 pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and both interactive widgets.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

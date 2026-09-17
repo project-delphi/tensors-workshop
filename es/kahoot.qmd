@@ -83,7 +83,7 @@ caen en frío.
 |  |  |
 |---|---|
 | **Se lanza después de** | Sección 10 — Descomposición de Tucker, justo antes del cierre |
-| **Cubre** | Secciones 09, 10 |
+| **Cubre** | Sección 10, más las preguntas de convolución que quedan del extra 13 |
 | **Duración** | {{< var kahoot.q3.questions >}} preguntas, ~5 min |
 | **Archivo para importar** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
 | **Enlace de entrada** | [{{< var kahoot.q3.url >}}]({{< var kahoot.q3.url >}}) |
@@ -114,8 +114,8 @@ El orden de recorte del manual, en este orden:
 
 1. **Cuestionario 2** — el menos novedoso de los tres; la pseudoinversa y la
    distancia se vuelven a cubrir narrativamente en el cierre.
-2. El TODO 4 de la sección 09 (deconvolución verdadera: lo más exigente
-   técnicamente).
+2. El TODO 4 del apéndice F (deconvolución verdadera: lo más exigente
+   técnicamente, y ya de por sí para casa).
 3. El fragmento de RNN de la sección 08.
 4. La pregunta 5 de cualquiera de los bloques de grupo.
 5. **Cuestionario 1.**

@@ -342,6 +342,8 @@ Z = (D - mean) / np.where(std == 0, 1.0, std)
 
 Dos resultados reales. **Los tumores malignos sí tienen un radio medio mayor**: 17,5 frente a 12,1. Y **tres píxeles están siempre oscuros en las 1797 imágenes de dígitos**: están en esquinas donde nadie escribe. Su desviación típica es exactamente cero, así que dividir produce NaN. Con datos aleatorios nunca habrías visto esto.
 
+La regla de formas tiene su propia página: el <a href="../interactive/broadcasting-simulator.html?lang=es">simulador de broadcasting</a> alinea dos formas desde la derecha y recorre el estiramiento paso a paso. Prueba `(4, 5)` contra `(4,)`, y después contra `(4, 1)`.
+
 ## 04 · Reshape y transposición de imágenes reales (Bloque 2, 15 min)
 
 **Practica hoy:** {{< var sections.s04.practice_es >}}
@@ -377,6 +379,8 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 ```
 
 **`reshape` solo reinterpreta los números en el orden en que están en memoria. `transpose` los mueve según el significado de los ejes.** Los dos dan la forma `(3, 512, 512)`; solo uno es la imagen. Y el TODO 4 va más al fondo: en cuanto dos ejes comparten tamaño, la forma no puede decirte cuál es cuál. Solo tu propio seguimiento puede.
+
+Un tensor 4D que puedes girar está en el <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de disposición</a>. Pasa de C-contiguo a channels-last y observa en qué eje corren los números.
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 

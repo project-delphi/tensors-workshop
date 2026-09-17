@@ -20,6 +20,22 @@ repo:
   url: https://github.com/project-delphi/tensors-workshop
   colab_base: https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks
   site: https://project-delphi.github.io/tensors-workshop
+  # Standalone widgets, copied into docs/ via `resources: interactive/**`.
+  # Not render targets: each is its own page, with `?lang=` for EN/ES, rather
+  # than a Quarto wrapper. Root pages link them relatively; Spanish pages use a
+  # raw <a href="../interactive/..."> so Quarto cannot rewrite the path out of
+  # docs/. Notebooks use the absolute site URL.
+  #
+  # check_links.py fails the build if any of these is missing from the repo or
+  # from docs/, which is what would happen if `interactive/**` fell out of
+  # `resources:`. The vendored three.js is here for the same reason and cannot
+  # be caught any other way: the visualizer imports it from inside a module
+  # script, so there is no `src` attribute for check 3 to harvest.
+  widgets:
+    - interactive/tensor-visualizer.html
+    - interactive/broadcasting-simulator.html
+    - interactive/vendor/three-boot.js
+    - interactive/vendor/three-0.169.0.module.min.js
 
 workshop:
   authors:

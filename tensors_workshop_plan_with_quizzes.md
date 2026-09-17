@@ -325,6 +325,8 @@ Z = (D - mean) / np.where(std == 0, 1.0, std)
 
 Two real results. **Malignant tumours really do have a larger mean radius** — 17.5 against 12.1. And **three pixels are always dark in all 1797 digit images**: they sit in corners where nobody writes. Their standard deviation is exactly zero, so dividing produces NaN. Random data would never have shown you this.
 
+The shape rule has its own page: the [broadcasting simulator](interactive/broadcasting-simulator.html?lang=en) lines two shapes up from the right and steps through the stretch. Try `(4, 5)` against `(4,)`, then against `(4, 1)`.
+
 ## 04 · Reshape and Transpose Real Images (Block 2, 15 min)
 
 **Practise today:** {{< var sections.s04.practice_en >}}
@@ -360,6 +362,8 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 ```
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning.** Both give shape `(3, 512, 512)`; only one is the image. And TODO 4 makes the deeper point: once two axes share a size, the shape cannot tell you which is which. Only your own tracking can.
+
+A 4D tensor you can rotate is on the [layout visualizer](interactive/tensor-visualizer.html?lang=en). Switch C-contiguous to channels-last and watch which axis the numbers run along.
 
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 

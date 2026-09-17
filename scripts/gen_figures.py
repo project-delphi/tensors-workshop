@@ -737,7 +737,7 @@ def gif_video_stack(arrays) -> Path:
         plt.close(fig)
 
     out = write_gif(out_frames, IMAGES / "fig-video-stack.gif",
-                    duration=260, loop=3, colors=96)
+                    duration=260, loop=0, colors=96)
     report(out, f"{len(out_frames)} frames, "
                 f"{out_frames[0].size[0]}x{out_frames[0].size[1]}")
     return out
