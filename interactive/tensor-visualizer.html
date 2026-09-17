@@ -155,7 +155,6 @@
   #gizmo .arm:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   #gizmo text { font: 700 9px var(--mono); }
   html.embed #legend, html.embed #snap, html.embed #gizmo { display: none; }
-  @media (max-width: 34rem) { #legend { display: none; } }
 
   #axis-legend {
     display: flex; flex-wrap: wrap; gap: 0.45rem 1rem; margin: 0.65rem 0 0;
@@ -565,11 +564,6 @@
       ["👆", "<b>Click a cube</b> — index, stride sum, offset"],
       ["⌖", "<kbd>F</kbd> — look face on · <kbd>Home</kbd> — reset"]
     ],
-    legendTouch: [
-      ["👆", "<b>One finger sideways</b> — rotate"],
-      ["✌️", "<b>Two fingers</b> — zoom and tilt"],
-      ["👆", "<b>Tap a cube</b> — index, stride sum, offset"]
-    ],
     snapIn: "Snap to 2-D",
     snapOut: "Back to 3-D",
     snapNote: "Looking face on: the gaps are closed and the cubes meet.",
@@ -691,11 +685,6 @@
       ["👆", "<b>Clic en un cubo</b> — índice, suma de strides, offset"],
       ["⌖", "<kbd>F</kbd> — mirar de frente · <kbd>Inicio</kbd> — restablecer"]
     ],
-    legendTouch: [
-      ["👆", "<b>Un dedo en horizontal</b> — rotar"],
-      ["✌️", "<b>Dos dedos</b> — zoom e inclinación"],
-      ["👆", "<b>Toca un cubo</b> — índice, suma de strides, offset"]
-    ],
     snapIn: "Ver en 2-D",
     snapOut: "Volver al 3-D",
     snapNote: "De frente: los huecos se cierran y los cubos se tocan.",
@@ -726,7 +715,6 @@
   if (embed) document.documentElement.classList.add("embed");
   if (theme === "navy") document.documentElement.dataset.theme = "navy";
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const coarse = matchMedia("(pointer: coarse)").matches;
 
   const state = {
     data: "photos",
@@ -1201,9 +1189,8 @@
     $("th-pt").textContent = T.pt;
     $("legend-title").textContent = T.legendTitle;
     $("gizmo").setAttribute("aria-label", T.gizmoLabel);
-    $("legend-list").innerHTML = (coarse ? T.legendTouch : T.legend)
+    $("legend-list").innerHTML = T.legend
       .map(([icon, text]) => `<li><span>${icon}</span><span>${text}</span></li>`).join("");
-    if (coarse) $("legend").open = false;
   }
 
   function radio(name, value, label, checked, color) {
