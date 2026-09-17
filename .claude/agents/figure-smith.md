@@ -1,6 +1,6 @@
 ---
 name: figure-smith
-description: "Runs and maintains the four image generators — dataset cards, handbook figures, cube GIFs and slide art. Use when an image input changed, a new animation is needed, or a rerun left `git status` dirty and it has to be decided whether that is a real change or matplotlib drift. Knows the scene constraints CI cannot check."
+description: "Runs and maintains the six image generators — dataset cards, handbook figures, cube GIFs, notebook 16's PCA animations, the 17/18 tensor-module animations, and slide art. Use when an image input changed, a new animation is needed, or a rerun left `git status` dirty and it has to be decided whether that is a real change or matplotlib drift. Knows the scene constraints CI cannot check."
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 ---
@@ -22,7 +22,7 @@ uv run python scripts/gen_slide_art.py                        # Chrome, not Pyth
 
 ## Triage before you commit anything
 
-A dirty `git status` after a rerun is **usually not a change**. All four
+A dirty `git status` after a rerun is **usually not a change**. All six
 generators are deterministic only *for a given stack*: `figures` carries floors
 rather than pins and `uv.lock` is gitignored, so every run resolves whatever
 matplotlib and Pillow are newest that day, and matplotlib decides glyph
@@ -77,11 +77,13 @@ PR is the failure this agent exists to prevent.
 - **`loop=0`.** A finite loop is a race against how fast somebody scrolls: at
   `loop=3` a browser played the animation out to an empty room and a reader
   arriving later met a parked frame 0, indistinguishable from a broken image.
-  `gen_cube_gifs.py` has this. **Two other GIFs on `main` still do not** —
-  `gen_pca_gifs.py` writes `loop=2` (its docstring says three, which is stale
-  either way) and `gen_figures.gif_video_stack` writes `loop=3`, and both have
-  the same flaw waiting in them. The pca fix exists unmerged on the
-  `visualizer-and-honesty` branch. Check the value before you assume it.
+  Every generator writes it now, and since #122 `write_gif`'s own default is
+  `0` rather than `3` — so a new call that omits `loop=` gets the right
+  behaviour instead of silently reintroducing the bug. Do not add a finite
+  loop count back. (This bullet previously said `gen_pca_gifs.py` and the
+  video-stack GIF still wrote finite loops; #122 fixed both, and it is worth
+  checking the value rather than trusting any description of it, including
+  this one.)
 - **Every frame is a complete picture**, for the same reason — no build-from-
   empty, whose emptiest frame is the one Chrome parks on.
 - `duration=4050`, one global value in `render`. It has been raised by watching,

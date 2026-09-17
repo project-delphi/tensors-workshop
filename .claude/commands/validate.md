@@ -29,11 +29,18 @@ Then prove the generators are idempotent, which the release checklist requires:
 ```bash
 uv run --group site python scripts/gen_tables.py
 uv run --group site python scripts/gen_notebooks.py
-git status --porcelain
+git status --porcelain -- notebooks _includes README.md pyproject.toml \
+    tensors_workshop_plan_with_quizzes.md es/tensors_workshop_plan_with_quizzes.md
 ```
 
-A second run that changes anything is a determinism bug in the generator, not a
-content problem. Say so explicitly if it happens.
+Scoped to the same paths as the gate above, deliberately. A bare
+`git status --porcelain` here reports every unrelated edit in the working tree
+-- a half-written page, a scratch file, an image someone reran -- and the next
+sentence would then blame the generator for it. This command is meant to run on
+a dirty tree.
+
+A second run that changes anything *within those paths* is a determinism bug in
+the generator, not a content problem. Say so explicitly if it happens.
 
 Then:
 
@@ -42,8 +49,16 @@ uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests
 quarto render
 uv run --group site python scripts/check_links.py
+npm run check:navigation
 git diff --check
 ```
+
+`npm run check:navigation` needs `npm ci` once and drives a real browser over
+`docs/`, so it runs after the render too. It is in CI's `render` job and it has
+a box on the PR template, which is why it is here rather than in *Not covered*:
+a box that is never run and never declared is the omission the template's own
+preamble calls the one wrong answer. If Playwright is not installed, say the box
+is unchecked rather than dropping it.
 
 `quarto render` must be Quarto **1.6.40** — the version CI pins. Check with
 `quarto --version` and say in the report if it differs, because what you

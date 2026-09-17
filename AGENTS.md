@@ -500,7 +500,7 @@ cell folded:
 | Tag | Hides | Check 10 |
 |---|---|---|
 | `solution` | an answer the reader should not see yet | **applies** — no visible cell may depend on a name only a solution binds, because a reader may never open one |
-| `plumbing` | widget and plotting scaffolding whose output is the lesson and whose source is noise | does not apply — the cell is meant to be run, and folding hides its source, not its execution |
+| `plumbing` | widget and plotting scaffolding whose output is the lesson and whose source is noise | **does not quarantine it** — `check_solution_independence()` keys on the `solution` tag alone, so a plumbing cell counts as visible on both sides: its bindings are not hidden from later cells, and it may not itself depend on a name only a solution binds |
 
 **The predict-first cells are the one place a `<style>` block is allowed.** The
 markdown rule above exists because Colab strips `<style>` from a markdown cell;
