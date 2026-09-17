@@ -762,9 +762,24 @@
   const prod = (a) => a.reduce((x, y) => x * y, 1);
   const range = (k) => [...Array(k).keys()];
 
+  // Resolved once per frame rather than twice per cube. Colouring 9216 cubes
+  // called getComputedStyle tens of thousands of times per glide, which made
+  // the snap animation drop to about three frames -- so the one thing it
+  // exists to show, the gaps closing, did not happen.
+  const cssCache = new Map();
   function css(name) {
-    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    let value = cssCache.get(name);
+    if (value === undefined) {
+      value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+      cssCache.set(name, value);
+    }
+    return value;
   }
+  const flushCss = () => cssCache.clear();
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    flushCss();
+    render();
+  });
   function parseRgb(c) {
     if (c.startsWith("#")) {
       return [c.slice(1, 3), c.slice(3, 5), c.slice(5, 7)].map((x) => parseInt(x, 16));
@@ -907,13 +922,19 @@
   // Which identity survives a reshape: an axis that is carried through whole,
   // matched from both ends. An axis that was split or merged has none, and is
   // known by its position from then on.
-  function carryIds(oldShape, oldIds, next) {
+  function carryIds(oldShape, oldIds, next, nextStride) {
     // Flattened and poured back into the shape it was built with, over a
-    // buffer nothing has rewritten, this *is* the array again -- so B, C, H
-    // and W come back with it. Any other route through a merge loses them,
+    // buffer nothing has rewritten *and* read the way it was written, this
+    // *is* the array again -- so B, C, H and W come back with it. The strides
+    // are the half that matters: reshape to (3, 16, 48), reverse it and
+    // reshape back and you land on the right shape over the right bytes in
+    // the wrong order, and calling that slab a photograph is the one lie this
+    // page must not tell. Any other route through a merge loses the letters,
     // because after a flatten NumPy has nothing left that says which axis a
     // stretch of bytes used to be.
-    if (same(next, SRC.dims) && isPristine()) return SRC.ids.slice();
+    if (same(next, SRC.dims) && isPristine() && same(nextStride, cstrides(SRC.dims))) {
+      return SRC.ids.slice();
+    }
     const ids = next.map(() => null);
     let i = oldShape.length - 1, j = next.length - 1;
     while (i >= 0 && j >= 0 && oldShape[i] === next[j]) { ids[j] = oldIds[i]; i--; j--; }
@@ -975,9 +996,10 @@
     const strides = reshapeStrides(state.shape, state.stride, next);
     const copied = !strides;
     if (copied) applyContiguous("C");
-    state.axisId = carryIds(state.shape, state.axisId, next);
+    const nextStride = strides || cstrides(next);
+    state.axisId = carryIds(state.shape, state.axisId, next, nextStride);
     state.shape = next.slice();
-    state.stride = strides || cstrides(next);
+    state.stride = nextStride;
     state.idx = next.map(() => 0);
     state.slice = -1;
     return copied;
@@ -1813,9 +1835,13 @@
         const key = `${gb},${gh},${gw}`;
         let cell = rgb.get(key);
         if (!cell) {
-          cell = { b: gb, h: gh, w: gw, v: [0, 0, 0], el, lit };
+          cell = { b: gb, h: gh, w: gw, v: [0, 0, 0], el, lit: false };
           rgb.set(key, cell);
         }
+        // One cube now carries all three channels, so it is lit when any of
+        // them is in the slice -- taking channel 0's answer for all three
+        // dimmed the whole photograph the moment C was the sliced axis.
+        cell.lit = cell.lit || lit;
         cell.v[gc] = el.value;
         if (el.off === offsetOf(state.idx)) cell.el = el;
         return;
@@ -2442,6 +2468,7 @@
   let ELS = [];
 
   function render() {
+    flushCss();
     ELS = elements();
     VOX = buildVoxels();
     settleTween();
