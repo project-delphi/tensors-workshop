@@ -28,8 +28,12 @@ rather than pins and `uv.lock` is gitignored, so every run resolves whatever
 matplotlib and Pillow are newest that day, and matplotlib decides glyph
 positions, hairline placement and downsampling.
 
-Each generator prints a `Stack:` line naming the versions that drew the files.
-That line is the test:
+`gen_thumbnails.py`, `gen_figures.py` and `gen_cube_gifs.py` print a `Stack:`
+line naming the versions that drew the files. That line is the test:
+
+`gen_pca_gifs.py`, `gen_tensor_module_gifs.py` and `gen_slide_art.py` print no
+such line. For those the test below does not exist, and the honest move is to
+say so and check the inputs by hand rather than guess.
 
 - **Same versions, changed image** — an input moved. Find it.
 - **Different versions, changed image** — almost certainly rasterization. A mask

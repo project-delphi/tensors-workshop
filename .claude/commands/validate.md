@@ -21,26 +21,50 @@ git status --porcelain -- notebooks _includes README.md pyproject.toml \
     tensors_workshop_plan_with_quizzes.md es/tensors_workshop_plan_with_quizzes.md
 ```
 
-That third command is CI's gate, verbatim. Non-empty output means a generated
-file was hand-edited — name the files.
+That third command is CI's gate, verbatim. On a clean checkout, non-empty
+output means a generated file was hand-edited — name the files.
 
-Then prove the generators are idempotent, which the release checklist requires:
+On a dirty one it does not, and this command is meant for a dirty one. Those
+paths hold hand-edited content too: every teaching body cell lives under
+`notebooks/`, and most of both handbooks is outside the marker region. So
+separate the two before reporting. `git stash list` and `git diff` will tell
+you whether a listed file was already modified before you ran anything; if it
+was, say which files you could not attribute rather than calling them
+scaffolding.
+
+Then prove the generators are idempotent, which the release checklist requires.
+The question is whether a *second* run moves anything the first did not, so
+compare against the tree as the first run left it, not against HEAD:
 
 ```bash
+before=$(git status --porcelain -- notebooks _includes README.md pyproject.toml \
+    tensors_workshop_plan_with_quizzes.md es/tensors_workshop_plan_with_quizzes.md)
 uv run --group site python scripts/gen_tables.py
 uv run --group site python scripts/gen_notebooks.py
-git status --porcelain -- notebooks _includes README.md pyproject.toml \
-    tensors_workshop_plan_with_quizzes.md es/tensors_workshop_plan_with_quizzes.md
+after=$(git status --porcelain -- notebooks _includes README.md pyproject.toml \
+    tensors_workshop_plan_with_quizzes.md es/tensors_workshop_plan_with_quizzes.md)
+[ "$before" = "$after" ] && echo "idempotent" || { echo "SECOND RUN MOVED:"; \
+    diff <(echo "$before") <(echo "$after"); }
 ```
 
-Scoped to the same paths as the gate above, deliberately. A bare
-`git status --porcelain` here reports every unrelated edit in the working tree
--- a half-written page, a scratch file, an image someone reran -- and the next
-sentence would then blame the generator for it. This command is meant to run on
-a dirty tree.
+That matters twice over. Scoped to the gate's own paths, because a bare
+`git status --porcelain` reports every unrelated edit in the working tree -- a
+half-written page, a scratch file, an image someone reran. And compared against
+the snapshot rather than HEAD, because a file the first gate already flagged as
+hand-edited is still dirty afterwards, and diffing against HEAD would report it
+again here.
 
-A second run that changes anything *within those paths* is a determinism bug in
-the generator, not a content problem. Say so explicitly if it happens.
+Two things about that snippet are deliberate, and both were found by running it
+rather than by reading it. The paths are repeated instead of held in a variable:
+unquoted `$paths` word-splits in bash but **not** in zsh, where it becomes one
+pathspec matching nothing -- the check then passes on everything, silently. And
+the two states are compared as strings rather than diffed directly: `$(...)`
+strips trailing newlines, so a clean tree gives `""` on both sides and matches,
+where piping an empty `before` through `printf`/`diff` reports a phantom blank
+line and fails the commonest case of all.
+
+`idempotent` is the pass. Anything else is a determinism bug in the generator,
+not a content problem. Say so explicitly if it happens.
 
 Then:
 
