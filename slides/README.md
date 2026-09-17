@@ -117,7 +117,7 @@ PNG. What is *not* in the image and must stay in the qmd:
 - `<h1 class="sr-only">` on the sixteen divider slides — the section name the
   breadcrumb in `deck-pace.html` reads.
 - `::: {.sec-part}` — the part number, for the same breadcrumb. It cannot be a
-  `data-` attribute on the heading; see CLAUDE.md.
+  `data-` attribute on the heading; see AGENTS.md.
 - `.colab-tab` links — the canonical notebook URLs `check_links.py` validates,
   which `deck-pace.html` promotes into the on-screen panel and which stay
   visible as the fallback if that script fails.

@@ -381,7 +381,7 @@ def notebook_deps_table(lang: str) -> str:
 # ── the environment those notebooks need ─────────────────────────────────────
 # The same read, spent on pyproject.toml instead of a table. The install list
 # used to be written out in full in six places -- README.md twice, both
-# notebooks pages, notebooks/README.md and CLAUDE.md -- with nothing comparing
+# notebooks pages, notebooks/README.md and AGENTS.md -- with nothing comparing
 # them either to each other or to the notebooks. Now they all say
 # `uv run --group notebooks jupyter lab` and the list itself is derived here,
 # so a notebook that starts importing something new updates the environment

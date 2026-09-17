@@ -50,7 +50,7 @@ below; `--notebooks-only` runs the two marked [nb] and numbers those 1 and 2.
   - The companion's artifact links and exports. Also a reminder, NOT a
     failure — see check_companion.
   - The two handbooks still have the same shape: heading counts, table rows,
-    and the notebooks each links. `CLAUDE.md` requires them to change in the
+    and the notebooks each links. `AGENTS.md` requires them to change in the
     same commit and nothing else verifies it. Structure only — it cannot see
     wording, which is the half that actually drifts.
   - Both Kahoot pages carry the three quiz anchors. Adding a quiz heading to
@@ -860,7 +860,7 @@ def check_companion() -> None:
 def check_handbooks() -> None:
     """The EN and ES handbooks still have the same shape.
 
-    `CLAUDE.md` requires both to change in the same commit -- nothing
+    `AGENTS.md` requires both to change in the same commit -- nothing
     generates the Spanish one from the English -- and until now nothing
     verified it. What can be compared without a translation dictionary is
     structure: how many sections, how many tables, and which notebooks each
@@ -874,7 +874,7 @@ def check_handbooks() -> None:
     added to one side only, and nothing else.
 
     It is numbered 13 because the numbers are a contract --
-    `CLAUDE.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
+    `AGENTS.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
     inserting this one where it reads best would silently renumber three of
     them. Check 14 (Kahoot page parity) was added after it, not inserted
     before.
