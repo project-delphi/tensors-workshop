@@ -126,9 +126,13 @@
     border: 1px solid var(--line); border-radius: 8px;
     font: 500 0.7rem/1.5 var(--sans); color: var(--ink-mute);
     max-width: min(17rem, calc(100% - 1.4rem));
+    /* It sits over the bottom-left of the stage, and it is a sibling of it, so
+       without this the cubes underneath cannot be clicked or dragged. Only the
+       summary is interactive; the list is text. */
+    pointer-events: none;
   }
   #legend summary {
-    list-style: none; cursor: pointer; padding: 0.3rem 0.55rem;
+    list-style: none; cursor: pointer; padding: 0.3rem 0.55rem; pointer-events: auto;
     font: 700 0.66rem/1.4 var(--sans); letter-spacing: 0.06em; text-transform: uppercase;
     color: var(--ink); border-radius: 7px;
   }
