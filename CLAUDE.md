@@ -41,6 +41,8 @@ text, then run the appropriate generator:
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `images/cube-*.gif` (at least three per notebook) | `scripts/gen_cube_gifs.py` |
+| `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
+| `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -56,13 +58,13 @@ fails nowhere and ships: the regenerate step has already rewritten the source
 by the time `quarto render` runs, and nothing downstream compares the render
 against anything. Add the path when you add the file.
 
-**The four image generators are not in that gate**, deliberately: they need
+**The six image generators are not in that gate**, deliberately: they need
 the network, and a scientific stack or a browser the workflow does not install.
 So nothing will tell you an image is stale — rerun them by hand when their
-inputs change. All four record where every pixel came from, which is the
+inputs change. All six record where every pixel came from, which is the
 actual point.
 
-All four are deterministic **for a given stack**, and that is the whole of the
+All six are deterministic **for a given stack**, and that is the whole of the
 guarantee — weaker than it reads, and now confirmed rather than theoretical.
 `figures` carries floors rather than pins and `uv.lock` is gitignored, both
 deliberately, so every `uv run --group figures` resolves whatever matplotlib
@@ -500,7 +502,9 @@ or `workshop.minutes`. An extra also gets no `#sec-NN` slide anchor and no
 Kahoot.
 
 Everywhere a **notebook** is handled, extras are included — `gen_notebooks.py`
-normalizes them, and checks 1, 3 and 8 in `check_links.py` cover them.
+normalizes them, and the four checks in `check_links.py` that read `NOTEBOOKS`
+cover them: 1 (notebooks valid), 2 (`docs/notebooks` byte-compare), 4 (Colab
+URLs) and 10 (solution independence).
 Everywhere a **section** is handled, they are not: checks 5 (deck anchors), 6
 (notebooks-page parity) and 8 (the clock) stay on `SECTIONS` alone, and adding
 an extra to any of them would be the bug. Their tables are separate and narrower
@@ -584,6 +588,8 @@ uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
 uv run --group figures python scripts/gen_cube_gifs.py        # notebooks covered by this generator
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
+uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
+uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17-18
 uv run python scripts/gen_slide_art.py     # needs Chrome and the network
 ```
 

@@ -1,4 +1,19 @@
 {
+  "permissions": {
+    "allow": [
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git branch:*)",
+      "Bash(git show:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run list:*)",
+      "Bash(uv run --group site python scripts/check_links.py:*)",
+      "Bash(uv run --group test python scripts/check_teaching_materials.py:*)",
+      "Bash(uv run --group test python -m unittest:*)"
+    ]
+  },
   "hooks": {
     "PreToolUse": [
       {

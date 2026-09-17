@@ -77,10 +77,8 @@ Everywhere a *notebook* is handled it is included — `gen_notebooks.py`, and
 the four checks that read `NOTEBOOKS` (= `SECTIONS + EXTRAS`): check 1
 (notebooks valid), check 2 (`docs/notebooks` byte-compare), check 4 (Colab
 URLs) and check 10 (solution independence). Those are the ones that catch a
-missing or unreferenced extra. Note that `CLAUDE.md` says "checks 1, 3 and 8"
-here; that is wrong — check 3 is the internal-link sweep and never reads the
-notebook list, and check 8 is the clock, which the next sentence correctly puts
-on `SECTIONS` alone. Everywhere a *section* is handled it is not: checks 5 (deck
+missing or unreferenced extra. Check 3 is the internal-link sweep and never
+reads the notebook list; check 8 is the clock, which stays on `SECTIONS`. Everywhere a *section* is handled it is not: checks 5 (deck
 anchors), 6 (notebooks-page parity) and the clock walk in `timeline.py` stay on
 `SECTIONS` alone, and an extra given a `#sec-NN` anchor, a Kahoot, a slide or a
 row in the notebooks page's section table is the bug. Its tables are separate
