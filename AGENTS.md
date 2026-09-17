@@ -55,7 +55,9 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` — every cell between the header and footer, including the Setup section | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
-| `images/cube-*.gif` (at least three per notebook) | `scripts/gen_cube_gifs.py` |
+| `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
+| `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
+| `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.png` (art added since #45) | `scripts/gen_slide_art.py` |
 | `docs/` (build output, gitignored — never committed) | `quarto render` |
 
@@ -71,13 +73,15 @@ fails nowhere and ships: the regenerate step has already rewritten the source
 by the time `quarto render` runs, and nothing downstream compares the render
 against anything. Add the path when you add the file.
 
-**The four image generators are not in that gate**, deliberately: they need
+**The six image generators are not in that gate**, deliberately: they need
 the network, and a scientific stack or a browser the workflow does not install.
 So nothing will tell you an image is stale — rerun them by hand when their
-inputs change. All four record where every pixel came from, which is the
-actual point.
+inputs change. Three of them record where every pixel came from, which is the
+actual point -- and the other three are the gap, not the rule: `gen_pca_gifs.py`,
+`gen_tensor_module_gifs.py` and `gen_slide_art.py` print no `Stack:` line, so
+for those the triage below has nothing to read.
 
-All four are deterministic **for a given stack**, and that is the whole of the
+All six are deterministic **for a given stack**, and that is the whole of the
 guarantee — weaker than it reads, and now confirmed rather than theoretical.
 `figures` carries floors rather than pins and `uv.lock` is gitignored, both
 deliberately, so every `uv run --group figures` resolves whatever matplotlib
@@ -95,9 +99,11 @@ Matplotlib is the one that drifts.
 
 So a dirty `git status` on these after a rerun is the expected consequence of a
 matplotlib release, not evidence that an input changed — and the two are worth
-telling apart before you either commit or panic. Each generator prints a
-`Stack:` line naming the versions that drew the files, which is what tells them
-apart: compare it against the line in the commit that last drew the image. Same
+telling apart before you either commit or panic. `gen_thumbnails.py`,
+`gen_figures.py` and `gen_cube_gifs.py` print a `Stack:` line naming the
+versions that drew the files, which is what tells them apart: compare it
+against the line in the commit that last drew the image. The other three print
+nothing, so there the only honest answer is to check the inputs by hand. Same
 versions and a changed image means an input moved; different versions and the
 diff is almost certainly rasterization, which a mask of the changed pixels will
 confirm in a minute.
@@ -498,7 +504,7 @@ cell folded:
 | Tag | Hides | Check 10 |
 |---|---|---|
 | `solution` | an answer the reader should not see yet | **applies** — no visible cell may depend on a name only a solution binds, because a reader may never open one |
-| `plumbing` | widget and plotting scaffolding whose output is the lesson and whose source is noise | does not apply — the cell is meant to be run, and folding hides its source, not its execution |
+| `plumbing` | widget and plotting scaffolding whose output is the lesson and whose source is noise | **does not quarantine it** — `check_solution_independence()` keys on the `solution` tag alone, so a plumbing cell counts as visible on both sides: its bindings are not hidden from later cells, and it may not itself depend on a name only a solution binds |
 
 **The predict-first cells are the one place a `<style>` block is allowed.** The
 markdown rule above exists because Colab strips `<style>` from a markdown cell;
@@ -539,7 +545,9 @@ or `workshop.minutes`. An extra also gets no `#sec-NN` slide anchor and no
 Kahoot.
 
 Everywhere a **notebook** is handled, extras are included — `gen_notebooks.py`
-normalizes them, and checks 1, 3 and 8 in `check_links.py` cover them.
+normalizes them, and the four checks in `check_links.py` that read `NOTEBOOKS`
+cover them: 1 (notebooks valid), 2 (`docs/notebooks` byte-compare), 4 (Colab
+URLs) and 10 (solution independence).
 Everywhere a **section** is handled, they are not: checks 5 (deck anchors), 6
 (notebooks-page parity) and 8 (the clock) stay on `SECTIONS` alone, and adding
 an extra to any of them would be the bug. Their tables are separate and narrower
