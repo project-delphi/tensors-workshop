@@ -18,6 +18,22 @@ code — the deliverables are the rendered site, Colab notebooks for the worksho
 sections and take-home extras, two revealjs decks, two standalone interactive
 widgets and three Kahoot spreadsheets.
 
+**Desktops and laptops are the target, and phones are not.** The session is
+delivered on them and the site is read on them, so anything here may assume a
+mouse, a hover state, a keyboard and a wide viewport; a touch affordance is
+not worth building or maintaining for its own sake. Two things that look like
+mobile support are kept anyway, for reasons that are not phones:
+
+- `check_navigation.cjs` asserts no horizontal overflow at **390px** on every
+  page. Keep it. An element that overflows at 390 is usually one with no width
+  constraint at all, which is a bug at any size — the check is a canary, not a
+  promise that a phone is supported.
+- `homepage.scss` swaps the hero's live widgets for the static diagram under
+  `@media (prefers-reduced-motion: reduce), (max-width: 540px)`. The two halves
+  share one rule: dropping the width half is fine, dropping the reduced-motion
+  half is not, and `check_navigation.cjs` asserts the diagram is still in the
+  document.
+
 ## Generated files: the one rule that matters
 
 [CONTRIBUTING.md](CONTRIBUTING.md#where-to-edit) owns the contributor-facing
