@@ -490,6 +490,33 @@ def _normalize_cell(cell: dict) -> dict:
     return cell
 
 
+def _sort_cell_keys(cell: dict) -> None:
+    """Put a cell's own keys in sorted order, in place.
+
+    Assignment appends when a key was absent, so without this a cell keeps
+    whatever order the last writer to touch it happened to use -- and every
+    editor uses a different one. The result was a notebook whose diff was 245
+    lines of moved keys around one real edit, which is how a genuine change
+    gets missed in review.
+
+    Sorted is nbformat's own order (cell_type, execution_count, id, metadata,
+    outputs, source), so a round-trip through Jupyter, Colab or nbformat
+    converges here rather than fighting it. Nothing reads a notebook by key
+    order; this is purely so the diff means something.
+
+    It runs *last*, after the ids are rewritten. `_rewrite_cell_ids` assigns
+    `cell["id"]`, which on a cell that had no id -- an nbformat 4.0-4.4 writer
+    emits none -- appends it, and that is the very failure this function
+    exists to undo. Sorting inside `_normalize_cell` instead left the
+    generator not a fixed point in a single run: the first pass wrote the key
+    last, a second pass moved it, and the byte-exact gate would have failed a
+    legitimate PR until someone ran the generator twice.
+    """
+    ordered = {key: cell[key] for key in sorted(cell)}
+    cell.clear()
+    cell.update(ordered)
+
+
 def _rewrite_cell_ids(s: dict, cells: list[dict]) -> None:
     """Preserve good ids and deterministically repair only unusable ones."""
     used: set[str] = set()
@@ -555,6 +582,10 @@ def normalize_notebook(s: dict, path: pathlib.Path) -> dict:
         _normalize_cell(cell)
 
     _rewrite_cell_ids(s, cells)
+
+    # Last, because _rewrite_cell_ids may have appended an id.
+    for cell in cells:
+        _sort_cell_keys(cell)
 
     # Drop stale widget state left at the notebook level by prior executions;
     # kernelspec, language_info, colab and other metadata are kept.

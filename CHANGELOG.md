@@ -2,6 +2,8 @@
 
 ## 2026-09-17
 
+- The notebook normalizer now sorts the keys inside every cell, so a notebook edited in a different tool no longer comes back with all 51 cells rewritten around one real change.
+
 - Added a bilingual broadcasting simulator for section 03: two shapes lined up from the right, the padding NumPy adds made visible, and every axis of size 1 stretched out in dashed cells that say what they are — repeats in the picture, one copy in the buffer. Presets are the workshop's own cases, including the `(4,)` against `(4, 1)` trap from the section 03 checkpoint. Every verdict and result shape was checked against `np.broadcast_shapes`.
 - The layout visualizer's 3-D renderer now runs. It never had: it asked for a three.js UMD build deleted at r160, so the request 404'd and every reader got the isometric canvas under a message blaming their WebGL. three.js is vendored in the repo now, and the browser check asserts it loaded. Fixing it exposed three bugs in code nobody had executed — a camera that clipped any shape past the default and rendered an 8×8×8×8 tensor as nothing at all, a material allocated per element per frame, and four leaked arrow materials per render.
 - The visualizer's stage takes the keyboard, a phone can scroll past it, pinch-to-zoom works where the caption had always promised it, and the panel prints NumPy and PyTorch you can run instead of pseudo-code — which also settles which of its stride columns is bytes and which is elements.
