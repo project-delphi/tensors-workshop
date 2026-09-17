@@ -52,7 +52,7 @@ the workflow. Run the generators twice to check that the second run changes
 nothing. Include regenerated notebooks and site files in the PR.
 
 The [notebook guide](notebooks/README.md#colab-to-github-workflow) describes
-editing through Colab. [CLAUDE.md](CLAUDE.md) documents the site internals and
+editing through Colab. [AGENTS.md](AGENTS.md) documents the site internals and
 asset generators.
 
 If you work with Claude Code, `.claude/agents/` holds four project subagents —

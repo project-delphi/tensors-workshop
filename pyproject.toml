@@ -63,7 +63,7 @@ test = [
 ]
 
 # The image generators. Network and a scientific stack, which is why CI does
-# not run them (see CLAUDE.md) and why they are not in `site`.
+# not run them (see AGENTS.md) and why they are not in `site`.
 # scripts/gen_slide_art.py is not here: it needs Chrome, not Python packages.
 figures = [
   "numpy>=1.26",

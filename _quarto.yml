@@ -48,6 +48,9 @@ project:
     # The companion's Audio Overview. Copied verbatim, like the notebooks --
     # nothing renders it, so it must be a resource or it never reaches docs/.
     - media/**
+    # Standalone widgets. Copied verbatim, like the notebooks — nothing
+    # renders them, so without this line they never reach docs/.
+    - interactive/**
 
 website:
   # Optional instructor diagnostics use draft: true for unlisted, direct-link access.

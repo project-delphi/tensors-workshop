@@ -188,7 +188,7 @@ def canvas_to_pil(fig):
         fig.canvas.buffer_rgba(), "raw", "RGBA", 0, 1).convert("RGB")
 
 
-def write_gif(frames, out: Path, *, duration: int, loop: int = 3,
+def write_gif(frames, out: Path, *, duration: int, loop: int = 0,
               colors: int = 96, max_kb: int | None = None,
               palette_from: str = "first") -> Path:
     """Frames to an animated GIF, on one shared palette.

@@ -85,7 +85,7 @@ If you are on `main`, say so and ask for a branch rather than bypassing.
 
 - Changing the shape of `_variables.yml` (a new key, a renamed key).
 - Adding or renumbering a check in `check_links.py`. The numbers are a contract
-  `CLAUDE.md` refers to by number; inserting one in the middle renumbers others.
+  `AGENTS.md` refers to by number; inserting one in the middle renumbers others.
 - Touching `.github/workflows/publish.yml` beyond adding a path to the gate list.
 - Anything that would make a generator non-deterministic or give it a network
   dependency.

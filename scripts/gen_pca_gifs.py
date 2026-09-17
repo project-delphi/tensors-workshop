@@ -4,8 +4,10 @@
 uv run --group figures python scripts/gen_pca_gifs.py
 Optional --archive points at the same UCI archive cached by the notebook.
 All satellite panels use real training data; the cave cloud and shape diagram
-are explicitly illustrative. No model is fitted to test data. GIFs loop three
-times, and the notebook supplies a frame stepper for accessible inspection.
+are explicitly illustrative. No model is fitted to test data. GIFs loop
+forever (`loop=0`), for the same reason the cube animations do: a finite
+loop parks on frame 0 after it ends. The notebook supplies a frame stepper
+for accessible inspection.
 """
 from pathlib import Path
 import argparse
@@ -41,7 +43,7 @@ def capture(fig):
 def save(name, frames, duration):
     path = OUT / f"cube-16-{name}.gif"
     frames[0].save(path, save_all=True, append_images=frames[1:],
-                   duration=duration, loop=2, optimize=False, disposal=2)
+                   duration=duration, loop=0, optimize=False, disposal=2)
     print(f"{path.name}: {len(frames)} frames, {path.stat().st_size // 1024} KB")
 
 
