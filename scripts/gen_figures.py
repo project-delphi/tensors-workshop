@@ -39,8 +39,17 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-from gen_thumbnails import (ACCENT, INK, IMAGES, VIDEO_SHA256, VIDEO_URL,
-                            canvas_to_pil, get, stack, write_gif)
+from gen_thumbnails import (
+    ACCENT,
+    IMAGES,
+    INK,
+    VIDEO_SHA256,
+    VIDEO_URL,
+    canvas_to_pil,
+    get,
+    stack,
+    write_gif,
+)
 
 # Seaborn's "deep" red, which is what the bars in the existing
 # `nyc-taxi-pickups-by-hour.png` are drawn in. Reusing it exactly keeps the new
@@ -54,19 +63,22 @@ TAXIS_URL = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis
 def mpl():
     """matplotlib with the Agg backend and the house defaults."""
     import matplotlib
+
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
 
-    plt.rcParams.update({
-        "font.family": "sans-serif",
-        "text.color": INK,
-        "axes.edgecolor": INK,
-        "axes.labelcolor": INK,
-        "xtick.color": INK,
-        "ytick.color": INK,
-        "savefig.facecolor": PAPER,
-        "figure.facecolor": PAPER,
-    })
+    plt.rcParams.update(
+        {
+            "font.family": "sans-serif",
+            "text.color": INK,
+            "axes.edgecolor": INK,
+            "axes.labelcolor": INK,
+            "xtick.color": INK,
+            "ytick.color": INK,
+            "savefig.facecolor": PAPER,
+            "figure.facecolor": PAPER,
+        }
+    )
     return plt
 
 
@@ -77,10 +89,12 @@ def report(path: Path, note: str = "") -> None:
 
 # ─── the arrays, all real ───────────────────────────────────────────────────
 
+
 def scalar_pixel() -> int:
     """One pixel of the camera photograph. `camera()[0, 0]` is 200 — a bright
     patch of sky in the top-left corner, and `shape=()` incarnate."""
     from skimage import data
+
     return int(data.camera()[0, 0])
 
 
@@ -88,6 +102,7 @@ def vector_row():
     """Row 256 of the same photograph: 512 grey values straight through the
     cameraman's head, spanning 4 to 226. A vector you can point at."""
     from skimage import data
+
     return data.camera()[256].copy()
 
 
@@ -102,6 +117,7 @@ def matrix_digit():
     also leaves the middle empty, so the pixel lattice stays visible through it.
     """
     from sklearn.datasets import load_digits
+
     return 1.0 - load_digits().images[0] / 16.0
 
 
@@ -124,7 +140,8 @@ def storm_frames(n_frames: int = 16, stride: int = 45):
     raw = get(VIDEO_URL, VIDEO_SHA256)
     frames = []
     for i, frame in enumerate(
-            iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")):
+        iio.imiter(io.BytesIO(raw), plugin="FFMPEG", extension=".webm")
+    ):
         if i % stride == 0:
             frames.append(np.asarray(frame))
             if len(frames) == n_frames:
@@ -145,8 +162,9 @@ def taxi_tensor():
     db = sorted(sub["dropoff_borough"].unique())
 
     T = np.zeros((len(pb), len(db), 24))
-    for (p, d, h), v in sub.groupby(
-            ["pickup_borough", "dropoff_borough", "hour"]).size().items():
+    for (p, d, h), v in (
+        sub.groupby(["pickup_borough", "dropoff_borough", "hour"]).size().items()
+    ):
         T[pb.index(p), db.index(d), h] = v
     return T, pb, db
 
@@ -160,8 +178,10 @@ def tucker(T, rank=(2, 2, 3)):
     def unfold(A, axis):
         return np.moveaxis(A, axis, 0).reshape(A.shape[axis], -1)
 
-    Us = [np.linalg.svd(unfold(T, ax), full_matrices=False)[0][:, :rank[ax]]
-          for ax in range(3)]
+    Us = [
+        np.linalg.svd(unfold(T, ax), full_matrices=False)[0][:, : rank[ax]]
+        for ax in range(3)
+    ]
     core = np.einsum("ijk,ia,jb,kc->abc", T, *Us)
     recon = np.einsum("abc,ia,jb,kc->ijk", core, *Us)
     error = float(np.linalg.norm(T - recon) / np.linalg.norm(T))
@@ -209,10 +229,20 @@ def _mid(ax):
 def _plane(ax, arr, x, y, w, h, *, cmap=None, z=0, edge=INK, lw=0.7):
     """One image plane with a hairline edge, in panel units."""
     from matplotlib.patches import Rectangle
-    ax.imshow(arr, cmap=cmap, zorder=z, aspect="auto",
-              extent=(x, x + w, y, y + h), interpolation="nearest")
-    ax.add_patch(Rectangle((x, y), w, h, fill=False, edgecolor=edge,
-                           linewidth=lw, zorder=z + 0.1))
+
+    ax.imshow(
+        arr,
+        cmap=cmap,
+        zorder=z,
+        aspect="auto",
+        extent=(x, x + w, y, y + h),
+        interpolation="nearest",
+    )
+    ax.add_patch(
+        Rectangle(
+            (x, y), w, h, fill=False, edgecolor=edge, linewidth=lw, zorder=z + 0.1
+        )
+    )
 
 
 def _stack(ax, planes, *, w, h, span, draw=None):
@@ -228,22 +258,31 @@ def _stack(ax, planes, *, w, h, span, draw=None):
     x0 = (1 - (w + span[0])) / 2
     y0 = _mid(ax) - (h + span[1]) / 2
     for k, plane in enumerate(planes):
-        (draw or _plane)(ax, plane, x0 + k * dx, y0 + (n - 1 - k) * dy, w, h,
-                         z=n - k)
+        (draw or _plane)(ax, plane, x0 + k * dx, y0 + (n - 1 - k) * dy, w, h, z=n - k)
 
 
 def rung_scalar(ax, value: int, *, annotate=True):
     """`shape=()` — one square, filled with the grey the pixel actually holds,
     and the number under it. 200 out of 255: a corner of the sky."""
     from matplotlib.patches import Rectangle
+
     g = value / 255.0
     side = 0.30
     x, y = 0.5 - side / 2, _mid(ax) - side / 2
-    ax.add_patch(Rectangle((x, y), side, side, facecolor=(g, g, g),
-                           edgecolor=INK, linewidth=0.9))
+    ax.add_patch(
+        Rectangle((x, y), side, side, facecolor=(g, g, g), edgecolor=INK, linewidth=0.9)
+    )
     if annotate:
-        ax.text(0.5, y - 0.06, str(value), ha="center", va="top",
-                family="monospace", fontsize=12, color="#7b8794")
+        ax.text(
+            0.5,
+            y - 0.06,
+            str(value),
+            ha="center",
+            va="top",
+            family="monospace",
+            fontsize=12,
+            color="#7b8794",
+        )
 
 
 def rung_vector(ax, row, *, annotate=True):
@@ -275,9 +314,9 @@ def rung_photo(ax, photo, *, annotate=True):
     planes = [photo[:, :, k] / 255.0 for k in range(3)]
 
     def draw(ax, arr, x, y, w, h, *, z):
-        _plane(ax, arr, x, y, w, h, cmap="gray", z=z,
-               edge=CHANNELS[draw.k], lw=1.8)
+        _plane(ax, arr, x, y, w, h, cmap="gray", z=z, edge=CHANNELS[draw.k], lw=1.8)
         draw.k += 1
+
     draw.k = 0
     _stack(ax, planes, w=0.40, h=0.40, span=(0.24, 0.24), draw=draw)
 
@@ -315,6 +354,7 @@ def ladder_panels(fig, rungs, *, top=0.0, height=1.0):
 def load_ladder():
     """Every array the ladder needs, fetched once."""
     from skimage import data
+
     return {
         "scalar": scalar_pixel(),
         "vector": vector_row(),
@@ -357,14 +397,40 @@ def fig_ladder(arrays) -> Path:
     axes = ladder_panels(fig, rungs_for(arrays), top=0.36, height=0.62)
 
     for ax, (expr, shape, ndim, size) in zip(axes, LADDER_LABELS):
-        ax.text(0.5, -0.05, expr, transform=ax.transAxes, ha="center",
-                va="top", family="monospace", fontsize=13, color=INK)
-        ax.text(0.5, -0.21, f"shape {shape}", transform=ax.transAxes,
-                ha="center", va="top", family="monospace", fontsize=13.5,
-                color=ACCENT, fontweight="bold")
-        ax.text(0.5, -0.37, f"ndim {ndim}   size {size}", transform=ax.transAxes,
-                ha="center", va="top", family="monospace", fontsize=11.5,
-                color="#7b8794")
+        ax.text(
+            0.5,
+            -0.05,
+            expr,
+            transform=ax.transAxes,
+            ha="center",
+            va="top",
+            family="monospace",
+            fontsize=13,
+            color=INK,
+        )
+        ax.text(
+            0.5,
+            -0.21,
+            f"shape {shape}",
+            transform=ax.transAxes,
+            ha="center",
+            va="top",
+            family="monospace",
+            fontsize=13.5,
+            color=ACCENT,
+            fontweight="bold",
+        )
+        ax.text(
+            0.5,
+            -0.37,
+            f"ndim {ndim}   size {size}",
+            transform=ax.transAxes,
+            ha="center",
+            va="top",
+            family="monospace",
+            fontsize=11.5,
+            color="#7b8794",
+        )
 
     out = IMAGES / "fig-ladder.png"
     fig.savefig(out, dpi=100, facecolor=PAPER)
@@ -401,15 +467,19 @@ def hero_frame(arrays, rungs_shown: int = 5, partial: float = 1.0):
     fig = plt.figure(figsize=(HERO[0] / 100, HERO[1] / 100), dpi=100)
     draws = rungs_for(arrays, annotate=False)
     for k, (ax, draw) in enumerate(
-            zip(ladder_panels(fig, [], top=0.06, height=0.88), draws)):
+        zip(ladder_panels(fig, [], top=0.06, height=0.88), draws)
+    ):
         if k > rungs_shown - 1:
             continue
         draw(ax)
         if k == rungs_shown - 1 and partial < 1.0:
             # Fade the newest rung in by veiling it, rather than by setting
             # alpha on every artist a rung might have created.
-            ax.add_patch(plt.Rectangle((0, 0), 1, 1, facecolor=PAPER,
-                                       alpha=1.0 - partial, zorder=99))
+            ax.add_patch(
+                plt.Rectangle(
+                    (0, 0), 1, 1, facecolor=PAPER, alpha=1.0 - partial, zorder=99
+                )
+            )
 
     img = canvas_to_pil(fig)
     plt.close(fig)
@@ -439,33 +509,62 @@ def fig_hero(arrays) -> Path:
 
 # ─── the map of factorizations ──────────────────────────────────────────────
 
+
 def _diverging():
     """Blue for negative, white for zero, red for positive — the site's own two
     accents rather than a stock colormap, so a factor matrix sitting next to a
     photograph still looks like it belongs to the same page."""
     from matplotlib.colors import LinearSegmentedColormap
+
     return LinearSegmentedColormap.from_list("tw", [ACCENT, PAPER, MARK])
 
 
 def _block(ax, arr, x, y, cell, *, cmap, label, sub=None, vlim=None):
     """One factor drawn at its true shape: `cell` units per matrix entry, so a
     tall thin factor looks tall and thin. Returns the width it consumed."""
-    from matplotlib.patches import Rectangle
     import numpy as np
+    from matplotlib.patches import Rectangle
 
     rows, cols = arr.shape
     w, h = cols * cell, rows * cell
     v = vlim if vlim is not None else np.abs(arr).max() or 1.0
-    ax.imshow(arr, cmap=cmap, vmin=-v, vmax=v, aspect="auto", zorder=2,
-              extent=(x, x + w, y - h / 2, y + h / 2), interpolation="nearest")
-    ax.add_patch(Rectangle((x, y - h / 2), w, h, fill=False, edgecolor=INK,
-                           linewidth=0.8, zorder=3))
-    ax.text(x + w / 2, y + h / 2 + 0.020, label, ha="center", va="bottom",
-            fontsize=12.5, color=INK, family="monospace")
+    ax.imshow(
+        arr,
+        cmap=cmap,
+        vmin=-v,
+        vmax=v,
+        aspect="auto",
+        zorder=2,
+        extent=(x, x + w, y - h / 2, y + h / 2),
+        interpolation="nearest",
+    )
+    ax.add_patch(
+        Rectangle(
+            (x, y - h / 2), w, h, fill=False, edgecolor=INK, linewidth=0.8, zorder=3
+        )
+    )
+    ax.text(
+        x + w / 2,
+        y + h / 2 + 0.020,
+        label,
+        ha="center",
+        va="bottom",
+        fontsize=12.5,
+        color=INK,
+        family="monospace",
+    )
     if sub:
-        ax.text(x + w / 2, y - h / 2 - 0.018, sub, ha="center", va="top",
-                fontsize=10, color="#7b8794", family="monospace",
-                linespacing=1.5)
+        ax.text(
+            x + w / 2,
+            y - h / 2 - 0.018,
+            sub,
+            ha="center",
+            va="top",
+            fontsize=10,
+            color="#7b8794",
+            family="monospace",
+            linespacing=1.5,
+        )
     return w
 
 
@@ -473,8 +572,20 @@ def _op(ax, x, y, glyph):
     ax.text(x, y, glyph, ha="center", va="center", fontsize=17, color="#7b8794")
 
 
-def _cube(ax, slices, x, y, cell, *, cmap, label, sub=None, offset,
-          label_above=False, signed=False):
+def _cube(
+    ax,
+    slices,
+    x,
+    y,
+    cell,
+    *,
+    cmap,
+    label,
+    sub=None,
+    offset,
+    label_above=False,
+    signed=False,
+):
     """A tensor as the pile of matrices it is — every slice along the last
     axis, drawn back to front. Real counts, not a wireframe.
 
@@ -505,30 +616,81 @@ def _cube(ax, slices, x, y, cell, *, cmap, label, sub=None, offset,
         v = 1.0
     lo = None if signed else 0.0
     for k in range(n - 1, -1, -1):
-        _block_raw(ax, slices[:, :, k], x + k * dx,
-                   y - dy * (n - 1) / 2 + k * dy, w, h, cmap=cmap, v=v,
-                   z=2 + (n - k), lo=lo)
+        _block_raw(
+            ax,
+            slices[:, :, k],
+            x + k * dx,
+            y - dy * (n - 1) / 2 + k * dy,
+            w,
+            h,
+            cmap=cmap,
+            v=v,
+            z=2 + (n - k),
+            lo=lo,
+        )
     cx = x + (w + dx * (n - 1)) / 2
     half = h / 2 + dy * (n - 1) / 2
     if label_above:
-        ax.text(cx, y + half + 0.016, label, ha="center", va="bottom",
-                fontsize=12.5, color=INK, family="monospace")
+        ax.text(
+            cx,
+            y + half + 0.016,
+            label,
+            ha="center",
+            va="bottom",
+            fontsize=12.5,
+            color=INK,
+            family="monospace",
+        )
     else:
-        ax.text(x - 0.022, y, label, ha="right", va="center", fontsize=12.5,
-                color=MARK, family="monospace")
+        ax.text(
+            x - 0.022,
+            y,
+            label,
+            ha="right",
+            va="center",
+            fontsize=12.5,
+            color=MARK,
+            family="monospace",
+        )
     if sub:
-        ax.text(cx, y - half - 0.014, sub, ha="center", va="top", fontsize=10,
-                color="#7b8794", family="monospace", linespacing=1.5)
+        ax.text(
+            cx,
+            y - half - 0.014,
+            sub,
+            ha="center",
+            va="top",
+            fontsize=10,
+            color="#7b8794",
+            family="monospace",
+            linespacing=1.5,
+        )
     return w + dx * (n - 1)
 
 
 def _block_raw(ax, arr, x, y, w, h, *, cmap, v, z=2, lo=None):
     from matplotlib.patches import Rectangle
-    ax.imshow(arr, cmap=cmap, vmin=-v if lo is None else lo, vmax=v,
-              aspect="auto", zorder=z,
-              extent=(x, x + w, y - h / 2, y + h / 2), interpolation="nearest")
-    ax.add_patch(Rectangle((x, y - h / 2), w, h, fill=False, edgecolor=INK,
-                           linewidth=0.8, zorder=z + 0.1))
+
+    ax.imshow(
+        arr,
+        cmap=cmap,
+        vmin=-v if lo is None else lo,
+        vmax=v,
+        aspect="auto",
+        zorder=z,
+        extent=(x, x + w, y - h / 2, y + h / 2),
+        interpolation="nearest",
+    )
+    ax.add_patch(
+        Rectangle(
+            (x, y - h / 2),
+            w,
+            h,
+            fill=False,
+            edgecolor=INK,
+            linewidth=0.8,
+            zorder=z + 0.1,
+        )
+    )
 
 
 def fig_factorization_map(arrays) -> Path:
@@ -549,7 +711,7 @@ def fig_factorization_map(arrays) -> Path:
 
     plt = mpl()
     cmap = _diverging()
-    A = 1.0 - arrays["matrix"]                      # ink as positive values
+    A = 1.0 - arrays["matrix"]  # ink as positive values
     P, L, U = lu(A)
     Q, R = np.linalg.qr(A)
     Uu, S, Vt = np.linalg.svd(A)
@@ -562,48 +724,101 @@ def fig_factorization_map(arrays) -> Path:
     cell, gap = 0.018, 0.030
 
     rows = [
-        (0.760, "A = P L U",
-         [(A, "A", "the digit, 8x8"), (P, "P", "row swaps"),
-          (L, "L", "lower triangular"), (U, "U", "upper triangular")]),
-        (0.540, "A = Q R",
-         [(A, "A", None), (Q, "Q", "orthonormal"),
-          (R, "R", "upper triangular")]),
-        (0.320, "A = U Σ Vᵀ",
-         [(A, "A", None), (Uu, "U", None),
-          (np.diag(S), "Σ", "only the diagonal"), (Vt, "Vᵀ", None)]),
+        (
+            0.760,
+            "A = P L U",
+            [
+                (A, "A", "the digit, 8x8"),
+                (P, "P", "row swaps"),
+                (L, "L", "lower triangular"),
+                (U, "U", "upper triangular"),
+            ],
+        ),
+        (
+            0.540,
+            "A = Q R",
+            [(A, "A", None), (Q, "Q", "orthonormal"), (R, "R", "upper triangular")],
+        ),
+        (
+            0.320,
+            "A = U Σ Vᵀ",
+            [
+                (A, "A", None),
+                (Uu, "U", None),
+                (np.diag(S), "Σ", "only the diagonal"),
+                (Vt, "Vᵀ", None),
+            ],
+        ),
     ]
     for y, name, blocks in rows:
         x = 0.150
         for k, (arr, label, sub) in enumerate(blocks):
             _op(ax, x - gap / 2, y, "=" if k == 1 else ("·" if k > 1 else ""))
-            x += _block(ax, arr, x, y, cell, cmap=cmap, label=label,
-                        sub=sub) + gap
-        ax.text(0.035, y, name, ha="left", va="center", fontsize=14,
-                color=INK, family="monospace")
+            x += _block(ax, arr, x, y, cell, cmap=cmap, label=label, sub=sub) + gap
+        ax.text(
+            0.035,
+            y,
+            name,
+            ha="left",
+            va="center",
+            fontsize=14,
+            color=INK,
+            family="monospace",
+        )
 
     # The line section 1.4 is really about.
     yline = 0.200
     ax.plot([0.03, 0.97], [yline, yline], color="#dfe3e8", lw=1.4)
-    ax.text(0.035, yline + 0.014,
-            "two axes — every factorization above needs a matrix",
-            ha="left", va="bottom", fontsize=11.5, color="#7b8794")
+    ax.text(
+        0.035,
+        yline + 0.014,
+        "two axes — every factorization above needs a matrix",
+        ha="left",
+        va="bottom",
+        fontsize=11.5,
+        color="#7b8794",
+    )
 
     # And the object that does not fit above it: 24 hourly slices of the real
     # taxi tensor, stacked. No factorization drawn — that is Block 6's.
     T = arrays["taxi"][0]
-    ax.text(0.035, yline - 0.022, "any number of axes", ha="left", va="top",
-            fontsize=12, color=MARK)
+    ax.text(
+        0.035,
+        yline - 0.022,
+        "any number of axes",
+        ha="left",
+        va="top",
+        fontsize=12,
+        color=MARK,
+    )
     from matplotlib.colors import LinearSegmentedColormap
+
     counts = LinearSegmentedColormap.from_list("tw-counts", [PAPER, MARK])
     # Sliced along the pickup axis, so each slice is a dense dropoff-by-hour
     # heatmap with the day's rhythm visible in it. Sliced the other way — 24
     # hourly 4x5 frames — the pile is 24 deep, each one almost empty, and it
     # reads as a stack of blank paper.
-    w = _cube(ax, np.moveaxis(T, 0, 2), 0.33, 0.105, 0.011, cmap=counts,
-              offset=(0.030, 0.022), label="T",
-              sub="(4, 5, 24) — one slice per pickup borough, dropoff x hour")
-    ax.text(0.33 + w + 0.06, 0.105, "→  Block 6", ha="left", va="center",
-            fontsize=13, color=MARK, family="monospace")
+    w = _cube(
+        ax,
+        np.moveaxis(T, 0, 2),
+        0.33,
+        0.105,
+        0.011,
+        cmap=counts,
+        offset=(0.030, 0.022),
+        label="T",
+        sub="(4, 5, 24) — one slice per pickup borough, dropoff x hour",
+    )
+    ax.text(
+        0.33 + w + 0.06,
+        0.105,
+        "→  Block 6",
+        ha="left",
+        va="center",
+        fontsize=13,
+        color=MARK,
+        family="monospace",
+    )
 
     out = IMAGES / "fig-factorization-map.png"
     fig.savefig(out, dpi=100, facecolor=PAPER)
@@ -624,8 +839,8 @@ def fig_factorization_map(arrays) -> Path:
 # `T.sum()` is identical, every summary statistic over the other three axes is
 # identical. Only the meaning is gone.
 
-SHUFFLE_SEED = 7        # fixed, so the figure is the same on every machine
-STRIP = 8               # clip[:8] — enough frames to see the swell move
+SHUFFLE_SEED = 7  # fixed, so the figure is the same on every machine
+STRIP = 8  # clip[:8] — enough frames to see the swell move
 
 
 def _shuffled(n: int):
@@ -635,6 +850,7 @@ def _shuffled(n: int):
     and a reader who spots one reasonably concludes the shuffle is partial.
     """
     import numpy as np
+
     rng = np.random.default_rng(SHUFFLE_SEED)
     while True:
         perm = rng.permutation(n)
@@ -665,10 +881,27 @@ def _filmstrip(fig, frames, rect, *, label, sub, tint):
             spine.set_linewidth(1.4)
     cap = fig.add_axes([x0, y0 + h, w, 0.001])
     cap.axis("off")
-    cap.text(0, 0.008, label, transform=cap.transAxes, ha="left", va="bottom",
-             fontsize=14, color=tint, family="monospace")
-    cap.text(1, 0.008, sub, transform=cap.transAxes, ha="right", va="bottom",
-             fontsize=11.5, color="#7b8794")
+    cap.text(
+        0,
+        0.008,
+        label,
+        transform=cap.transAxes,
+        ha="left",
+        va="bottom",
+        fontsize=14,
+        color=tint,
+        family="monospace",
+    )
+    cap.text(
+        1,
+        0.008,
+        sub,
+        transform=cap.transAxes,
+        ha="right",
+        va="bottom",
+        fontsize=11.5,
+        color="#7b8794",
+    )
 
 
 def fig_video_stack(arrays) -> Path:
@@ -684,22 +917,42 @@ def fig_video_stack(arrays) -> Path:
 
     plt = mpl()
     fig = plt.figure(figsize=(18, 4.0), dpi=100)
-    _filmstrip(fig, frames, (0.03, 0.560, 0.94),
-               label="clip[:8]", sub="axis 0 in order — the swell builds",
-               tint=ACCENT)
-    _filmstrip(fig, [frames[i] for i in perm], (0.03, 0.160, 0.94),
-               label="clip[perm]",
-               sub="the same eight frames, axis 0 permuted", tint=MARK)
-    fig.text(0.5, 0.035, "same shape (8, 540, 960, 3), same sum, "
-                         "nothing left along axis 0",
-             ha="center", va="bottom", fontsize=13, color=MARK,
-             family="monospace")
+    _filmstrip(
+        fig,
+        frames,
+        (0.03, 0.560, 0.94),
+        label="clip[:8]",
+        sub="axis 0 in order — the swell builds",
+        tint=ACCENT,
+    )
+    _filmstrip(
+        fig,
+        [frames[i] for i in perm],
+        (0.03, 0.160, 0.94),
+        label="clip[perm]",
+        sub="the same eight frames, axis 0 permuted",
+        tint=MARK,
+    )
+    fig.text(
+        0.5,
+        0.035,
+        "same shape (8, 540, 960, 3), same sum, nothing left along axis 0",
+        ha="center",
+        va="bottom",
+        fontsize=13,
+        color=MARK,
+        family="monospace",
+    )
 
     # JPEG, for the reason `gen_thumbnails.save` gives: this is sixteen
     # photographs and two lines of text, and as a PNG it is 939 KB against 130.
     out = IMAGES / "fig-video-stack.jpg"
-    fig.savefig(out, dpi=100, facecolor=PAPER, pil_kwargs={
-        "quality": 88, "optimize": True, "progressive": True})
+    fig.savefig(
+        out,
+        dpi=100,
+        facecolor=PAPER,
+        pil_kwargs={"quality": 88, "optimize": True, "progressive": True},
+    )
     plt.close(fig)
     report(out, "in order against permuted")
     return out
@@ -712,18 +965,17 @@ def gif_video_stack(arrays) -> Path:
     permuted copy. Side by side rather than one after the other, so telling
     them apart costs no memory.
     """
-    import numpy as np
 
-    frames = [f[::3, ::3] for f in arrays["clip"][:STRIP]]     # 180x320
+    frames = [f[::3, ::3] for f in arrays["clip"][:STRIP]]  # 180x320
     perm = _shuffled(STRIP)
     plt = mpl()
 
     out_frames = []
     for k in range(STRIP):
         fig = plt.figure(figsize=(7.6, 2.5), dpi=100)
-        for col, (img, label, tint) in enumerate((
-                (frames[k], "clip", ACCENT),
-                (frames[perm[k]], "clip[perm]", MARK))):
+        for col, (img, label, tint) in enumerate(
+            ((frames[k], "clip", ACCENT), (frames[perm[k]], "clip[perm]", MARK))
+        ):
             ax = fig.add_axes([0.02 + col * 0.495, 0.04, 0.465, 0.80])
             ax.imshow(img, aspect="auto", interpolation="bilinear")
             ax.set_xticks([])
@@ -731,19 +983,22 @@ def gif_video_stack(arrays) -> Path:
             for spine in ax.spines.values():
                 spine.set_edgecolor(tint)
                 spine.set_linewidth(1.6)
-            ax.set_title(label, fontsize=13, color=tint, family="monospace",
-                         pad=7)
+            ax.set_title(label, fontsize=13, color=tint, family="monospace", pad=7)
         out_frames.append(canvas_to_pil(fig))
         plt.close(fig)
 
-    out = write_gif(out_frames, IMAGES / "fig-video-stack.gif",
-                    duration=260, loop=0, colors=96)
-    report(out, f"{len(out_frames)} frames, "
-                f"{out_frames[0].size[0]}x{out_frames[0].size[1]}")
+    out = write_gif(
+        out_frames, IMAGES / "fig-video-stack.gif", duration=260, loop=0, colors=96
+    )
+    report(
+        out,
+        f"{len(out_frames)} frames, {out_frames[0].size[0]}x{out_frames[0].size[1]}",
+    )
     return out
 
 
 # ─── Tucker, on the taxi tensor ─────────────────────────────────────────────
+
 
 def fig_tucker_taxi(arrays) -> Path:
     """Block 6, and its TODO 6.
@@ -782,28 +1037,64 @@ def fig_tucker_taxi(arrays) -> Path:
     y, cell, gap = 0.215, 0.010, 0.075
 
     x = 0.075
-    x += _cube(ax, np.moveaxis(T, 0, 2), x, y, cell, cmap=counts,
-               offset=(0.022, 0.016), label="T", label_above=True,
-               sub="(4, 5, 24)\n480 numbers") + gap
+    x += (
+        _cube(
+            ax,
+            np.moveaxis(T, 0, 2),
+            x,
+            y,
+            cell,
+            cmap=counts,
+            offset=(0.022, 0.016),
+            label="T",
+            label_above=True,
+            sub="(4, 5, 24)\n480 numbers",
+        )
+        + gap
+    )
     _op(ax, x - gap / 2, y, "=")
-    x += _cube(ax, core, x, y, cell, cmap=cmap, offset=(0.014, 0.010),
-               label="G", label_above=True, sub="(2, 2, 3)\ncore",
-               signed=True) + gap
-    for U, name, sub in ((Us[0], "A", "(4, 2)\npickup"),
-                         (Us[1], "B", "(5, 2)\ndropoff"),
-                         (Us[2], "C", "(24, 3)\nhour")):
+    x += (
+        _cube(
+            ax,
+            core,
+            x,
+            y,
+            cell,
+            cmap=cmap,
+            offset=(0.014, 0.010),
+            label="G",
+            label_above=True,
+            sub="(2, 2, 3)\ncore",
+            signed=True,
+        )
+        + gap
+    )
+    for U, name, sub in (
+        (Us[0], "A", "(4, 2)\npickup"),
+        (Us[1], "B", "(5, 2)\ndropoff"),
+        (Us[2], "C", "(24, 3)\nhour"),
+    ):
         _op(ax, x - gap / 2, y, "·")
         x += _block(ax, U, x, y, cell, cmap=cmap, label=name, sub=sub) + gap
 
-    ax.text(0.5, 0.030, f"102 numbers instead of 480 — {ratio:.1f}× fewer, "
-                        f"{err * 100:.1f}% error",
-            ha="center", va="bottom", fontsize=13.5, color=INK,
-            family="monospace")
+    ax.text(
+        0.5,
+        0.030,
+        f"102 numbers instead of 480 — {ratio:.1f}× fewer, {err * 100:.1f}% error",
+        ha="center",
+        va="bottom",
+        fontsize=13.5,
+        color=INK,
+        family="monospace",
+    )
 
     # The two charts that answer TODO 6.
-    for col, (values, title, ylabel) in enumerate((
+    for col, (values, title, ylabel) in enumerate(
+        (
             (raw, "the raw counts", "pickups"),
-            (hour_factor, "the first column of the hour factor", "weight"))):
+            (hour_factor, "the first column of the hour factor", "weight"),
+        )
+    ):
         a = fig.add_axes([0.085 + col * 0.500, 0.085, 0.375, 0.205])
         colors = [MARK if h == peak else "#4c72b0" for h in hours]
         a.bar(hours, values, color=colors, width=0.82)
@@ -815,9 +1106,15 @@ def fig_tucker_taxi(arrays) -> Path:
         a.spines["right"].set_visible(False)
         a.axhline(0, color=INK, lw=0.8)
 
-    fig.text(0.5, 0.012, f"both peak at hour {peak}. "
-                         "Nobody told it what an hour is.",
-             ha="center", va="bottom", fontsize=13.5, color=MARK)
+    fig.text(
+        0.5,
+        0.012,
+        f"both peak at hour {peak}. Nobody told it what an hour is.",
+        ha="center",
+        va="bottom",
+        fontsize=13.5,
+        color=MARK,
+    )
 
     out = IMAGES / "fig-tucker-taxi.png"
     fig.savefig(out, dpi=100, facecolor=PAPER)
@@ -833,8 +1130,10 @@ def fig_tucker_taxi(arrays) -> Path:
 # in the widget and in the notebook. The widget cannot import scikit-image, so
 # this writes them out once, tiny, as JSON it fetches same-origin -- not from
 # the network, which check_navigation.cjs aborts, and not inlined into the
-# HTML, which stays hand-written. Three resolutions, because 16 px is what a
-# cube per pixel can afford and 4 px is what a stride table can be read from.
+# HTML, which stays hand-written. Four resolutions: 4 px is what a stride table
+# can be read from and what a value printed on each cube fits, 16 px is where a
+# photo first reads as one, and 32 px is the ceiling -- 9216 cubes, the most
+# the widget's instanced mesh is sized for.
 #
 #     uv run --group figures python scripts/gen_figures.py widget
 #
@@ -842,17 +1141,26 @@ def fig_tucker_taxi(arrays) -> Path:
 # bytes do not depend on which matplotlib is installed.
 
 INTERACTIVE = IMAGES.parent / "interactive"
-WIDGET_RES = (4, 8, 16)
+WIDGET_RES = (4, 8, 16, 32)
 WIDGET_PHOTOS = (
     # id, name_en, name_es, loader, call, credit -- credits are the ones the
     # scikit-image docstrings give.
-    ("ihc", "histology slide", "corte histológico", "immunohistochemistry",
-     "Center for Microscopy And Molecular Imaging (CMMI); "
-     "no known copyright restrictions"),
-    ("astronaut", "the astronaut", "la astronauta", "astronaut",
-     "NASA Great Images; public domain"),
-    ("coffee", "a cup of coffee", "una taza de café", "coffee",
-     "Rachel Michetti; CC0"),
+    (
+        "ihc",
+        "histology slide",
+        "corte histológico",
+        "immunohistochemistry",
+        "Center for Microscopy And Molecular Imaging (CMMI); "
+        "no known copyright restrictions",
+    ),
+    (
+        "astronaut",
+        "the astronaut",
+        "la astronauta",
+        "astronaut",
+        "NASA Great Images; public domain",
+    ),
+    ("coffee", "a cup of coffee", "una taza de café", "coffee", "Rachel Michetti; CC0"),
 )
 
 
@@ -868,18 +1176,22 @@ def widget_photos() -> Path:
         h, w = arr.shape[:2]
         side = min(h, w)
         top, left = (h - side) // 2, (w - side) // 2
-        img = Image.fromarray(arr[top:top + side, left:left + side])
-        px = {str(r): list(img.resize((r, r), Image.BOX).tobytes())
-              for r in WIDGET_RES}
-        out["photos"].append({
-            "id": pid, "name_en": name_en, "name_es": name_es,
-            "source": f"skimage.data.{call}()", "credit": credit,
-            "shape": list(arr.shape), "px": px,
-        })
+        img = Image.fromarray(arr[top : top + side, left : left + side])
+        px = {str(r): list(img.resize((r, r), Image.BOX).tobytes()) for r in WIDGET_RES}
+        out["photos"].append(
+            {
+                "id": pid,
+                "name_en": name_en,
+                "name_es": name_es,
+                "source": f"skimage.data.{call}()",
+                "credit": credit,
+                "shape": list(arr.shape),
+                "px": px,
+            }
+        )
     path = INTERACTIVE / "data" / "photos.json"
     path.parent.mkdir(exist_ok=True)
-    path.write_text(json.dumps(out, separators=(",", ":")) + "\n",
-                    encoding="utf-8")
+    path.write_text(json.dumps(out, separators=(",", ":")) + "\n", encoding="utf-8")
     report(path, f"{len(out['photos'])} photos at {WIDGET_RES} px, HWC uint8")
     return path
 
