@@ -826,8 +826,70 @@ def fig_tucker_taxi(arrays) -> Path:
     return out
 
 
+# ─── the layout visualizer's photos ─────────────────────────────────────────
+# `interactive/tensor-visualizer.html` colours its cubes with real pixels: the
+# same three scikit-image photographs notebook 04 stacks into its
+# (3, 256, 256, 3) batch, so a reader meets the same slide, astronaut and cup
+# in the widget and in the notebook. The widget cannot import scikit-image, so
+# this writes them out once, tiny, as JSON it fetches same-origin -- not from
+# the network, which check_navigation.cjs aborts, and not inlined into the
+# HTML, which stays hand-written. Three resolutions, because 16 px is what a
+# cube per pixel can afford and 4 px is what a stride table can be read from.
+#
+#     uv run --group figures python scripts/gen_figures.py widget
+#
+# Centre-crop to a square, then Pillow's BOX filter: integer averaging, so the
+# bytes do not depend on which matplotlib is installed.
+
+INTERACTIVE = IMAGES.parent / "interactive"
+WIDGET_RES = (4, 8, 16)
+WIDGET_PHOTOS = (
+    # id, name_en, name_es, loader, call, credit -- credits are the ones the
+    # scikit-image docstrings give.
+    ("ihc", "histology slide", "corte histológico", "immunohistochemistry",
+     "Center for Microscopy And Molecular Imaging (CMMI); "
+     "no known copyright restrictions"),
+    ("astronaut", "the astronaut", "la astronauta", "astronaut",
+     "NASA Great Images; public domain"),
+    ("coffee", "a cup of coffee", "una taza de café", "coffee",
+     "Rachel Michetti; CC0"),
+)
+
+
+def widget_photos() -> Path:
+    import json
+
+    from PIL import Image
+    from skimage import data
+
+    out = {"res": list(WIDGET_RES), "photos": []}
+    for pid, name_en, name_es, call, credit in WIDGET_PHOTOS:
+        arr = getattr(data, call)()
+        h, w = arr.shape[:2]
+        side = min(h, w)
+        top, left = (h - side) // 2, (w - side) // 2
+        img = Image.fromarray(arr[top:top + side, left:left + side])
+        px = {str(r): list(img.resize((r, r), Image.BOX).tobytes())
+              for r in WIDGET_RES}
+        out["photos"].append({
+            "id": pid, "name_en": name_en, "name_es": name_es,
+            "source": f"skimage.data.{call}()", "credit": credit,
+            "shape": list(arr.shape), "px": px,
+        })
+    path = INTERACTIVE / "data" / "photos.json"
+    path.parent.mkdir(exist_ok=True)
+    path.write_text(json.dumps(out, separators=(",", ":")) + "\n",
+                    encoding="utf-8")
+    report(path, f"{len(out['photos'])} photos at {WIDGET_RES} px, HWC uint8")
+    return path
+
+
 if __name__ == "__main__":
     stack()
+    if sys.argv[1:] == ["widget"]:
+        print("The visualizer's photos (no network: shipped with scikit-image)")
+        widget_photos()
+        sys.exit(0)
     print("Loading the arrays (network: the pinned clip and the taxi CSV)")
     arrays = load_ladder()
     print("Figures")
@@ -837,3 +899,5 @@ if __name__ == "__main__":
     fig_video_stack(arrays)
     gif_video_stack(arrays)
     fig_tucker_taxi(arrays)
+    print("The visualizer's photos")
+    widget_photos()

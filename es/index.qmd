@@ -37,6 +37,22 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
 
 ::: {.hero-visual}
 ```{=html}
+<div class="hero-demos" data-hero-demos>
+  <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
+    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Disposición y strides</button>
+    <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
+  </div>
+  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
+    <iframe class="hero-embed" src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape" loading="lazy"></iframe>
+    <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe. <a href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a></p>
+  </div>
+  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
+    <iframe class="hero-embed" src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas" loading="lazy"></iframe>
+    <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia. <a href="../interactive/broadcasting-simulator.html?lang=es">Abrir la herramienta completa →</a></p>
+  </div>
+  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Dos de los movimientos, en vivo.</p>
+</div>
+<div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-es tensor-desc-es" xmlns="http://www.w3.org/2000/svg">
   <title id="tensor-title-es">De un número a una operación de red neuronal</title>
   <desc id="tensor-desc-es">Un escalar pasa a vector, luego a matriz y a tensor tridimensional, cada uno con su forma de NumPy. El tensor alimenta una capa de red neuronal que transforma entradas en salidas.</desc>
@@ -80,6 +96,35 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
     <g class="d-io" fill="#9db3cd" font-size="10.5" text-anchor="middle"><text x="298" y="346">entrada</text><text x="434" y="346">salida</text></g>
   </g>
 </svg>
+</div>
+<script>
+(function () {
+  var wrap = document.querySelector("[data-hero-demos]");
+  if (!wrap) return;
+  var tabs = wrap.querySelectorAll("[role=tab]");
+  var panels = wrap.querySelectorAll("[role=tabpanel]");
+  function show(i) {
+    tabs.forEach(function (tab, j) {
+      var on = i === j;
+      tab.setAttribute("aria-selected", on ? "true" : "false");
+      tab.tabIndex = on ? 0 : -1;
+      panels[j].hidden = !on;
+    });
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener("click", function () { show(i); });
+    tab.addEventListener("keydown", function (e) {
+      var k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!k) return;
+      e.preventDefault();
+      var n = (i + k + tabs.length) % tabs.length;
+      show(n);
+      tabs[n].focus();
+    });
+  });
+  wrap.parentElement.classList.add("has-js");
+})();
+</script>
 ```
 :::
 ::::
@@ -241,9 +286,11 @@ corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Secci
 
 <span data-language-key="layout-visualizer"></span>
 
-Gira un tensor 4-D y observa cómo cuatro índices se convierten en un
-desplazamiento dentro de un búfer plano. C-contiguo, orden Fortran o
-channels-last. Sección 04.
+Tres fotos reales como un solo tensor 4-D, un cubo por byte. Transpónlo y
+observa cómo la forma y los strides se permutan mientras la imagen no cambia;
+hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
+o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
+NumPy y el PyTorch que lo hace. Sección 04.
 
 <a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Probar disposiciones</a>
 :::

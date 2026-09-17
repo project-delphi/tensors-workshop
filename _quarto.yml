@@ -157,11 +157,18 @@ format:
     toc: true
     toc-depth: 3
     anchor-sections: true
-    # Opt-in, not `auto`: `auto` lightboxes every image on the site, which
-    # rewrites the handbook's figures and the dataset cards too. Only the
-    # companion's infographics carry `.lightbox`, because only they are worth
-    # reading at full size.
-    lightbox: true
+    # Opt-in, not `auto`. A bare `lightbox: true` *is* auto: it wrapped every
+    # image on the site in an `<a class="lightbox">`, which is how the
+    # handbook's four figures ended up 766px wide and hugging the left margin
+    # -- the anchor sat between the `<p>` and the `<img>`, so custom.scss's
+    # figure rules stopped matching and the paragraph fell back to the prose
+    # measure. Written as a mapping *without* `match: auto`, the filter only
+    # wraps an image that carries `.lightbox` -- and only the companion's
+    # infographics do, because only they are worth reading at full size.
+    # Quarto's schema has no `match: manual`, so naming the effect (its
+    # default) is what spells "opt-in" here.
+    lightbox:
+      effect: zoom
     code-copy: true
     code-overflow: wrap
     link-external-newwindow: true

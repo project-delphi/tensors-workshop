@@ -189,15 +189,26 @@ body .quarto-title-block .quarto-title-banner {
 // paragraphs that hold nothing but an image are let out; a paragraph with an
 // inline image in it stays at the reading width.
 main img { max-width: 100%; height: auto; }
-main p:has(> img:only-child) {
-  max-width: none;
-  margin: 1.8rem 0 .6rem;
+// Both spellings, because a lightboxed image is `p > a > img` and the anchor
+// once defeated this rule site-wide (see `lightbox:` in _quarto.yml). The
+// `{.column-page}` on each figure turns its paragraph into a page-wide grid,
+// so the paragraph itself must be free of the prose measure or "page width"
+// is computed inside a 46rem box. The cap keeps the tallest figure -- the
+// 1300x1160 factorization map -- from becoming a wall on a wide monitor.
+main p:has(> img:only-child),
+main p:has(> a:only-child > img:only-child) {
+  max-width: min(100%, 68rem);
+  margin: 1.8rem auto .6rem;
   text-align: center;
+  // Quarto makes this paragraph a grid, and `text-align` does not centre a
+  // grid item -- the 760px video figure sat at the left of its column.
+  justify-items: center;
 }
 
 // The line under a figure. Quarto leaves it a plain paragraph, which is what we
 // want — it is a caption by position, and `em` is enough to mark it.
-main p:has(> img:only-child) + p > em:only-child {
+main p:has(> img:only-child) + p > em:only-child,
+main p:has(> a:only-child > img:only-child) + p > em:only-child {
   display: block;
   max-width: 46rem;
   color: #52606d;

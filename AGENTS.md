@@ -240,6 +240,20 @@ theme so it clears 4.5:1. They are **not** render targets: `interactive/**` is i
 `resources:`, so Quarto copies them verbatim the way it copies the notebooks, and
 `_quarto.yml`'s `render:` list deliberately leaves them out.
 
+The one generated input among them is `interactive/data/photos.json`: the
+three scikit-image photographs notebook 04 batches, centre-cropped and
+box-downsampled to 4, 8 and 16 px by `widget_photos()` in `gen_figures.py`
+(`uv run --group figures python scripts/gen_figures.py widget`, no network).
+The visualizer fetches it same-origin and colours its cubes with the bytes; if
+the fetch fails it falls back to counting numbers and says so, which is a
+designed fallback for a reader and a regression for CI, so
+`check_navigation.cjs` asserts the photos loaded. The HTML itself stays
+hand-written. Both widgets also take `?embed=1&theme=navy`: stage and caption
+only, on the homepage hero's own colours, and the visualizer then never fetches
+three.js — the front door gets the isometric canvas. `index.qmd` embeds them
+that way behind two tabs, with the old static diagram kept as the fallback for
+scripting off, reduced motion and phones.
+
 Two things watch them. `repo.widgets` in `_variables.yml` lists every file that
 has to reach `docs/`, and `check_links.py` fails the build on any one missing —
 which is what would happen if `interactive/**` fell out of `resources:`, with no
@@ -629,6 +643,7 @@ uv run --group execute python scripts/test_notebooks.py --offline
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
+uv run --group figures python scripts/gen_figures.py widget   # just the visualizer's photos.json; no network
 uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–15
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
