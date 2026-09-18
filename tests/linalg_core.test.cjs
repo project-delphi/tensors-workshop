@@ -245,6 +245,18 @@ test('alignedWith finds a right singular vector and only a right singular vector
   assert.equal(core.alignedWith(A, [0, 0]), -1);
 });
 
+test('alignedWithAxes answers the same question from axes already in hand', () => {
+  // The render loop uses this one so it is not running an SVD per frame; it
+  // has to agree with the convenience form exactly.
+  const A = [[3, 1.2], [0.4, 1]];
+  const e = core.ellipse(A);
+  for (let deg = 0; deg < 360; deg += 3) {
+    const t = (deg * Math.PI) / 180;
+    const x = [Math.cos(t), Math.sin(t)];
+    assert.equal(core.alignedWithAxes(e.axes, x), core.alignedWith(A, x), `${deg} deg`);
+  }
+});
+
 test('an interrupted tween takes its origin from where it is, not where it began', () => {
   // The bug this exists to stop: retargeting from `from` makes the stage jump
   // backwards before it catches up, and no end-state assertion sees it.

@@ -331,7 +331,12 @@
   // say "x is on v1, so A x is exactly sigma_1 u1" while the drawn arrow
   // pointed the other way.
   function alignedWith(A, x, tolCos) {
-    const {axes} = ellipse(A);
+    return alignedWithAxes(ellipse(A).axes, x, tolCos);
+  }
+
+  // The same question against axes already in hand. A caller inside a render
+  // loop has them; making it pass A instead meant an SVD per frame.
+  function alignedWithAxes(axes, x, tolCos) {
     const nx = norm(x);
     if (nx === 0) return -1;
     const cut = tolCos === undefined ? 0.9995 : tolCos;
@@ -408,7 +413,7 @@
     svd, rank, rankTol, cond, pinv,
     qr, backSolve, solve, lstsqQR, lstsqNormal, project, ridge,
     digitsLost, perturbationBound,
-    ellipse, alignedWith,
+    ellipse, alignedWith, alignedWithAxes,
     easeInOutCubic, tweenStart, tweenAt, retarget,
     pickActive
   };

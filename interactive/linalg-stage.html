@@ -735,7 +735,7 @@
     flat.appendChild(el("polyline", {points: pts.join(" "),
       fill: "none", stroke: css("--stage-mute"), "stroke-width": "2"}));
 
-    const hit = LC.alignedWith(A, [Math.cos(state.theta), Math.sin(state.theta)]);
+    const hit = LC.alignedWithAxes(ELL.axes, [Math.cos(state.theta), Math.sin(state.theta)]);
     const labels = [];
     ELL.axes.forEach((ax, j) => {
       const on = hit === j;
@@ -1072,9 +1072,16 @@
       $("stage").dataset.gl = "composer";
     } else {
       const p = GL.portal;
+      // UnrealBloomPass inherits Pass.enabled = true, and this branch does not
+      // go through the composer at all -- so without clearing it here the
+      // frame-budget sampler below counts direct renders and spends its window
+      // measuring a pass that never ran.
+      GL.bloom.enabled = false;
       const x = [Math.cos(state.theta), Math.sin(state.theta)];
       const ax = LC.mulVec(A, x);
-      const hit = LC.alignedWith(A, x);
+      // ELL already holds this decomposition; recomputing it per frame is the
+      // cost the comment above loop() claims was taken out of the loop.
+      const hit = LC.alignedWithAxes(ELL.axes, x);
       setArrow(p.arrows.x, x, 1);
       setArrow(p.arrows.ax, ax, LC.norm(ax));
       p.labels.x.position.copy(vec(x));
@@ -1112,6 +1119,7 @@
           state.glow = false;
           $("glnote").textContent = T.glSlow;
           $("glnote").hidden = false;
+          GL.note = "glSlow";
         }
       }
     }
@@ -1151,7 +1159,7 @@
     } else {
       const x = [Math.cos(state.theta), Math.sin(state.theta)];
       const ax = LC.mulVec(A, x);
-      const hit = LC.alignedWith(A, x);
+      const hit = LC.alignedWithAxes(ELL.axes, x);
       $("read-8").innerHTML = T.read8(state.theta, ax, hit, ELL.S);
       $("stagenote").textContent = T.note8(hit);
       // Data attributes so the browser check can assert A v = sigma u through
@@ -1225,7 +1233,11 @@
     $("gl").hidden = mode !== "gl";
     $("flat").style.display = mode === "gl" ? "none" : "block";
     const note = $("glnote");
-    if (why) { note.textContent = T[why]; note.hidden = false; } else { note.hidden = true; }
+    if (why) { note.textContent = T[why]; note.hidden = false; GL.note = why; }
+    else { note.hidden = true; GL.note = null; }
+    // Glow is a property of the composer, so in flat mode the control has
+    // nothing to act on.
+    $("glow").disabled = mode !== "gl";
     if (mode === "gl") resize();
     draw();
   }
@@ -1266,7 +1278,14 @@
     // Turning it back on has to mean something. The automatic downgrade gets
     // another measurement rather than standing for the rest of the session --
     // otherwise the box reads "on" and nothing glows.
-    if (state.glow) { GL.budget = true; GL.frames = []; $("glnote").hidden = true; }
+    if (state.glow) {
+      GL.budget = true;
+      GL.frames = [];
+      // Only ever clears its own message. The same element also carries the
+      // "no WebGL" and "script did not load" notes, and hiding one of those
+      // leaves a reader on the flat renderer with nothing saying why.
+      if (GL.note === "glSlow") { $("glnote").hidden = true; GL.note = null; }
+    }
   });
   $("prev").addEventListener("click", () => setStep(state.step - 1, true));
   $("next").addEventListener("click", () => setStep(state.step + 1, true));
