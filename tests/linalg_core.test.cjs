@@ -233,8 +233,12 @@ test('alignedWith finds a right singular vector and only a right singular vector
   const {V} = core.svd(A);
   assert.equal(core.alignedWith(A, core.col(V, 0)), 0);
   assert.equal(core.alignedWith(A, core.col(V, 1)), 1);
-  assert.equal(core.alignedWith(A, core.scale(core.col(V, 0), -2.5)), 0,
-    'sign and length should not matter');
+  assert.equal(core.alignedWith(A, core.scale(core.col(V, 0), 2.5)), 0,
+    'length should not matter');
+  // Sign *does* matter: A(-v1) = -sigma_1 u1, which is a different statement
+  // from the one the widget prints when it reports an alignment.
+  assert.equal(core.alignedWith(A, core.scale(core.col(V, 0), -2.5)), -1,
+    'the antipode is not the same claim');
   // Halfway between the two axes is aligned with neither.
   const mid = core.add(core.col(V, 0), core.col(V, 1));
   assert.equal(core.alignedWith(A, mid), -1);
@@ -257,6 +261,12 @@ test('an interrupted tween takes its origin from where it is, not where it began
   near(r.from, half, 1e-12, 'retarget origin');
   near(core.tweenAt(r, 1200).value, half, 1e-12, 'no jump at the moment of retarget');
   near(core.tweenAt(r, 1600).value, -4, 1e-12, 'reaches the new target');
+});
+
+test('retargeting from nothing is a plain start, not a crash', () => {
+  const r = core.retarget(null, 5, 100);
+  near(core.tweenAt(r, 100).value, 5, 1e-12);
+  assert.equal(core.tweenAt(r, 100).done, true);
 });
 
 test('a tween past its end, and a zero-length tween, both just sit on the target', () => {

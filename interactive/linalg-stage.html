@@ -389,6 +389,7 @@
     about2: "It accompanies section 07 (inverses and the pseudoinverse) and section 09 (matrix factorizations).",
     glNoScript: "Three-dimensional view unavailable, so the stage is drawing flat diagrams instead. Every number and every relationship is the same.",
     glNoWebgl: "This browser reports no WebGL, so the stage is drawing flat diagrams instead. Every number and every relationship is the same.",
+    glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
     embedCap: "Right singular vectors in, left singular vectors out.",
     embedOpen: "Open the full page →",
 
@@ -397,11 +398,11 @@
     b1: "<p>Three housing districts, two predictors. <b>X</b> is 3 × 2 — three equations, two unknowns — so the vectors it can produce fill a <b>plane</b> in three-dimensional space: its column space. The target <b>y</b> is a point in that space, and it is almost certainly not on the plane. There is no exact solution.</p><p>Least squares does not give up. It returns the point on the plane <b>closest</b> to y — the perpendicular projection ŷ — and the gap between them is the residual <b>r</b>. That right angle is not decoration: it <i>is</i> the definition, and it is what Xᵀr = 0 says in symbols.</p>",
     mat1Title: "X, a 3 by 2 matrix of two predictors for three districts",
     tiltLabel: "Slide y off the plane, and back onto it. Watch β not move.",
-    read1: (b, rn, k, real) =>
+    read1: (b, rn, k, real, xtr) =>
       `β  = [${b[0].toFixed(3)}, ${b[1].toFixed(3)}]   ← unmoved by the slider\n` +
       `‖r‖ = <b>${rn.toFixed(4)}</b>` +
       (Math.abs(k - 1) < 1e-9 ? "   ← the real fit" : `   (the real fit: ${real.toFixed(4)})`) +
-      `\nXᵀr = [0.000, 0.000]  ← the right angle`,
+      `\nXᵀr = [${xtr[0].toFixed(3)}, ${xtr[1].toFixed(3)}]  ← the right angle`,
     note1: (rn) => rn < 1e-6
       ? "y now lies in the plane. The system has an exact solution."
       : "y is off the plane. ŷ is the closest point on it.",
@@ -447,6 +448,7 @@
     about2: "Acompaña a la sección 07 (inversas y pseudoinversa) y a la sección 09 (factorizaciones matriciales).",
     glNoScript: "La vista tridimensional no está disponible, así que el escenario dibuja diagramas planos. Todos los números y todas las relaciones son los mismos.",
     glNoWebgl: "Este navegador no reporta WebGL, así que el escenario dibuja diagramas planos. Todos los números y todas las relaciones son los mismos.",
+    glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
     embedCap: "Entran vectores singulares derechos, salen izquierdos.",
     embedOpen: "Abrir la página completa →",
 
@@ -455,11 +457,11 @@
     b1: "<p>Tres distritos de vivienda, dos predictores. <b>X</b> es 3 × 2 —tres ecuaciones, dos incógnitas—, así que los vectores que puede producir llenan un <b>plano</b> en el espacio tridimensional: su espacio columna. El objetivo <b>y</b> es un punto de ese espacio, y casi con seguridad no está en el plano. No hay solución exacta.</p><p>Los mínimos cuadrados no se rinden. Devuelven el punto del plano <b>más cercano</b> a y —la proyección perpendicular ŷ— y la distancia entre ambos es el residuo <b>r</b>. Ese ángulo recto no es decoración: <i>es</i> la definición, y es lo que dice Xᵀr = 0 en símbolos.</p>",
     mat1Title: "X, una matriz de 3 por 2 con dos predictores para tres distritos",
     tiltLabel: "Desliza y fuera del plano, y de vuelta sobre él. Observa que β no se mueve.",
-    read1: (b, rn, k, real) =>
+    read1: (b, rn, k, real, xtr) =>
       `β  = [${b[0].toFixed(3)}, ${b[1].toFixed(3)}]   ← el deslizador no lo mueve\n` +
       `‖r‖ = <b>${rn.toFixed(4)}</b>` +
       (Math.abs(k - 1) < 1e-9 ? "   ← el ajuste real" : `   (el ajuste real: ${real.toFixed(4)})`) +
-      `\nXᵀr = [0.000, 0.000]  ← el ángulo recto`,
+      `\nXᵀr = [${xtr[0].toFixed(3)}, ${xtr[1].toFixed(3)}]  ← el ángulo recto`,
     note1: (rn) => rn < 1e-6
       ? "Ahora y está en el plano. El sistema tiene solución exacta."
       : "y está fuera del plano. ŷ es el punto más cercano sobre él.",
@@ -709,7 +711,7 @@
     const S = 52;                       // one scale for both panes: the point
     const L = [200, 280], R = [600, 280];   // is that the ellipse is bigger
 
-    const pane = (c, label) => {
+    const pane = (c) => {
       flat.appendChild(el("line", {x1: c[0] - 170, y1: c[1], x2: c[0] + 170, y2: c[1],
         stroke: css("--stage-mute"), "stroke-opacity": "0.3", "stroke-width": "1"}));
       flat.appendChild(el("line", {x1: c[0], y1: c[1] - 170, x2: c[0], y2: c[1] + 170,
@@ -1096,12 +1098,21 @@
     }
 
     // Bloom's cost is a property of the device, not a preference. Measure the
-    // first stretch of frames and stand down if they are not making budget.
-    if (GL.frames.length < 60) {
+    // first stretch of frames and stand down if they are not making budget --
+    // but only frames that actually ran the bloom pass. Timing the portal,
+    // which renders direct, said nothing about the pass it would disable, and
+    // opening on #step-8 is exactly what the handbook links to.
+    if (GL.bloom.enabled && GL.frames.length < 60) {
       GL.frames.push(performance.now() - t0);
       if (GL.frames.length === 60) {
         const med = GL.frames.slice().sort((a, b) => a - b)[30];
-        if (med > 24) { GL.budget = false; $("glow").checked = false; state.glow = false; }
+        if (med > 24) {
+          GL.budget = false;
+          $("glow").checked = false;
+          state.glow = false;
+          $("glnote").textContent = T.glSlow;
+          $("glnote").hidden = false;
+        }
       }
     }
   }
@@ -1129,8 +1140,13 @@
     const step = STEPS[state.step];
     const stage = $("stage");
     if (step.scene === "projection") {
-      const rn = LC.norm(FIT.residual) * state.k;
-      $("read-1").innerHTML = T.read1(FIT.beta, rn, state.k, FIT.rnorm);
+      const r = LC.scale(FIT.residual, state.k);
+      const rn = LC.norm(r);
+      // Computed, not printed: this is the orthogonality the picture claims,
+      // and it is the one line that could otherwise keep saying zero after the
+      // arithmetic under it had broken.
+      const xtr = LC.mulVec(LC.transpose(X), r);
+      $("read-1").innerHTML = T.read1(FIT.beta, rn, state.k, FIT.rnorm, xtr);
       $("stagenote").textContent = T.note1(rn);
     } else {
       const x = [Math.cos(state.theta), Math.sin(state.theta)];
@@ -1224,8 +1240,13 @@
     }).catch(() => flatly("glNoScript"));
   }
 
+  // The render loop redraws the scene and nothing else. readouts() is driven
+  // by the things that can actually change it -- a slider, a step change, a
+  // language -- because rewriting the readout 60 times a second destroys any
+  // selection a reader makes in it, and recomputes an SVD twice a frame for a
+  // picture that is not moving.
   function loop() {
-    if (state.mode === "gl") draw();
+    if (state.mode === "gl" && GL.ready) renderGL();
     requestAnimationFrame(loop);
   }
 
@@ -1240,7 +1261,13 @@
     state.theta = Number(e.target.value) * Math.PI / 180;
     if (state.mode !== "gl") draw(); else readouts();
   });
-  $("glow").addEventListener("change", (e) => { state.glow = e.target.checked; });
+  $("glow").addEventListener("change", (e) => {
+    state.glow = e.target.checked;
+    // Turning it back on has to mean something. The automatic downgrade gets
+    // another measurement rather than standing for the rest of the session --
+    // otherwise the box reads "on" and nothing glows.
+    if (state.glow) { GL.budget = true; GL.frames = []; $("glnote").hidden = true; }
+  });
   $("prev").addEventListener("click", () => setStep(state.step - 1, true));
   $("next").addEventListener("click", () => setStep(state.step + 1, true));
   addEventListener("resize", () => { if (state.mode === "gl") resize(); else draw(); });

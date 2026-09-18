@@ -653,9 +653,9 @@ Three consequences are worth stating outright, because each one is a mistake tha
 
 1. **Factor once, solve many.** Cholesky costs `n³/3` once; each later solve is two triangular substitutions at `O(n²)`. So `m` right-hand sides cost `O(n³ + mn²)`, **not** `O(mn³)`. `np.linalg.inv(A) @ B` is both slower and less accurate than factoring, and is never the right call.
 2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
-The same page carries the other half of this: its [SVD portal](interactive/linalg-stage.html?lang=en#step-8) puts the unit circle and its image side by side, so `A vᵢ = σᵢ uᵢ` is something you scrub to rather than something you are told, and `σ₁/σ₂` is a shape on the screen rather than a ratio.
-
 3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))`. That gap is why large-scale recommenders are feasible at all.
+
+The same page carries the other half of this: its [SVD portal](interactive/linalg-stage.html?lang=en#step-8) puts the unit circle and its image side by side, so `A vᵢ = σᵢ uᵢ` is something you scrub to rather than something you are told, and `σ₁/σ₂` is a shape on the screen rather than a ratio.
 
 ```python
 # TODO 1: Fit a degree-10 polynomial to the real airline series two ways.

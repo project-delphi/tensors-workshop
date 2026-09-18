@@ -79,11 +79,15 @@ jobs:
         # the whitespace half of `git diff --check`, over the whole tree rather
         # than a diff, because on a push to main there is no diff to check.
         # Notebooks are excluded: they are JSON, and their Markdown cells end
-        # lines with two spaces on purpose.
+        # lines with two spaces on purpose. `interactive/vendor/` is excluded
+        # because it is not ours to tidy: the README states a SHA-256 for every
+        # file there, and two of the r169 addons ship with trailing whitespace,
+        # so stripping it would make those hashes describe something other than
+        # what upstream ships. This is a check on code we write.
         run: |
           uv run --group lint ruff check scripts tests
           uv run --group lint ruff format --check scripts tests
-          if git grep -n -I -E '[[:space:]]+$' -- ':!*.ipynb'; then
+          if git grep -n -I -E '[[:space:]]+$' -- ':!*.ipynb' ':!interactive/vendor'; then
             echo "::error::Trailing whitespace (see above)."
             exit 1
           fi

@@ -671,9 +671,9 @@ Tres consecuencias merecen decirse en voz alta, porque cada una es un error que 
 
 1. **Factoriza una vez, resuelve muchas.** Cholesky cuesta `n³/3` una vez; cada resolución posterior son dos sustituciones triangulares a `O(n²)`. Así que `m` términos independientes cuestan `O(n³ + mn²)`, **no** `O(mn³)`. `np.linalg.inv(A) @ B` es a la vez más lento y menos preciso que factorizar, y nunca es la decisión correcta.
 2. **Las ecuaciones normales elevan al cuadrado el número de condición**, porque `κ(XᵀX) = κ(X)²`. El error de QR escala con `κ(X)·ε`; el de las ecuaciones normales, con `κ(X)²·ε`. Los mismos datos, el mismo objetivo, el error al cuadrado.
-La misma página lleva la otra mitad de esto: su <a href="../interactive/linalg-stage.html?lang=es#step-8">portal de la SVD</a> pone la circunferencia unidad y su imagen una al lado de la otra, así que `A vᵢ = σᵢ uᵢ` es algo a lo que llegas desplazando y no algo que te cuentan, y `σ₁/σ₂` es una forma en la pantalla y no un cociente.
-
 3. **No calcules lo que vas a tirar.** Una SVD completa es `O(mn·min(m,n))`. Si quieres 20 componentes de 1682, la SVD aleatorizada es `O(mnk)` y Lanczos es `O(k·nnz(A))`. Esa distancia es la razón de que los recomendadores a gran escala sean viables.
+
+La misma página lleva la otra mitad de esto: su <a href="../interactive/linalg-stage.html?lang=es#step-8">portal de la SVD</a> pone la circunferencia unidad y su imagen una al lado de la otra, así que `A vᵢ = σᵢ uᵢ` es algo a lo que llegas desplazando y no algo que te cuentan, y `σ₁/σ₂` es una forma en la pantalla y no un cociente.
 
 ```python
 # TODO 1: Fit a degree-10 polynomial to the real airline series two ways.

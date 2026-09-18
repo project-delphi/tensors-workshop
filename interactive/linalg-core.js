@@ -321,16 +321,22 @@
     return {axes: axes, S: S, U: U, V: V, apply: (x) => mulVec(A, x)};
   }
 
-  // Which right singular vector, if any, x is aligned with. Returns the index
-  // or -1. The widget's snap keys on this, so the alignment is measured in the
+  // Which right singular vector, if any, x points along. Returns the index or
+  // -1. The widget's snap keys on this, so the alignment is measured in the
   // same place the arrows are drawn from.
+  //
+  // The comparison is signed, deliberately. The claim on screen is
+  // `A v = sigma u`, and `A(-v) = -sigma u` -- so the antipode is *not* the
+  // same statement, even though the length is. Taking |cos| here let the page
+  // say "x is on v1, so A x is exactly sigma_1 u1" while the drawn arrow
+  // pointed the other way.
   function alignedWith(A, x, tolCos) {
     const {axes} = ellipse(A);
     const nx = norm(x);
     if (nx === 0) return -1;
     const cut = tolCos === undefined ? 0.9995 : tolCos;
     for (let j = 0; j < axes.length; j++) {
-      if (Math.abs(dot(axes[j].v, x)) / nx >= cut) return j;
+      if (dot(axes[j].v, x) / nx >= cut) return j;
     }
     return -1;
   }
@@ -357,10 +363,13 @@
     return {value: s.from + (s.to - s.from) * k, done: t >= 1};
   }
 
-  // A new destination mid-flight. The origin is wherever it is *now*.
+  // A new destination mid-flight. The origin is wherever it is *now*. Takes a
+  // null state the way tweenAt does, so a first retarget before anything has
+  // started is a plain start rather than a crash.
   function retarget(s, to, now, ms) {
-    const here = tweenAt(s, now).value;
-    return tweenStart(here, to, now, ms === undefined ? s.ms : ms);
+    const here = s ? tweenAt(s, now).value : to;
+    const span = ms === undefined ? (s ? s.ms : 0) : ms;
+    return tweenStart(here, to, now, span);
   }
 
   // ─── which step is active ─────────────────────────────────────────────────
