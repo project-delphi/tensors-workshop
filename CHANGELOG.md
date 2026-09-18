@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-09-18
+
+- Check 13 now requires every fenced code block in the two handbooks to be byte-identical, since code stays English on both sides; eight images nothing referenced are gone from `images/`; the repo carries a `CITATION.cff`, and Dependabot watches the pinned GitHub actions and Playwright.
+
 ## 2026-09-17
 
 - The visualizer gives the tensor the room: the page runs to 110rem, the stage is about twice as wide and grows to 72vh, and the image strip and the buffer share a row beneath it. The sidebar's operations are four tabs -- *Reshape*, *Transpose*, *Slice*, *Memory* -- over one shared buffer, with the strides and the code log always in view; `#transpose` (or any tab's id) in the URL opens the page on that tab. Counting numbers now open arranged *by position*, so a reshape visibly re-lays the cubes: by meaning, `(24,)` kept drawing as the 2×3×4 block it came from while the readout said otherwise. The arrangement switch moved onto the stage, next to *Snap to 2-D*. The site calls it the reshape & transpose visualizer now, on the hero tab, the resource card and every link -- "layout" was the framing #129 replaced.

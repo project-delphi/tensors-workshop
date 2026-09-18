@@ -1,0 +1,19 @@
+# Watches the two things this repo pins: the GitHub actions in publish.yml
+# and the npm devDependencies (Playwright, which the browser check is pinned
+# to so CI and a contributor drive the same Chromium).
+#
+# No `pip` entry, deliberately. The Python groups in pyproject.toml carry
+# floors, not pins, and uv.lock is gitignored (both say why), so there is no
+# pinned Python version for Dependabot to bump. Quarto is pinned in the
+# workflow by a version string Dependabot does not read; bump it by hand,
+# together with a re-render, as the comment there says.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: monthly

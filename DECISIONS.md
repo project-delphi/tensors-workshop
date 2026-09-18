@@ -270,7 +270,10 @@ requires them to change together and nothing else verifies it. It is numbered
 13 because the numbers are a contract AGENTS.md refers to, and inserting it
 where it reads best would renumber three others. It catches a heading added to
 one side only; it cannot catch wording, which is the half that actually
-drifts, and its docstring says so.
+drifts, and its docstring says so. Since 2026-09-18 it also compares the
+fenced code blocks byte for byte: code and identifiers stay English on both
+sides by rule, the 44 blocks were already identical, and nothing had been
+checking it.
 
 **Check 4 looks at notebook-to-notebook links and embedded images** because a
 notebook reaches `docs/` as a verbatim copy rather than a rendered page, so
