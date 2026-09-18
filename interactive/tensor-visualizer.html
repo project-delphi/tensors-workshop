@@ -794,6 +794,7 @@
   const view = { ...HOME };
   let PHOTOS = null;
   let SRC = null;                 // the array as it was built
+  let sourceKind = null;          // "photos" or "numbers": which kind SRC last was
   let BUF = [];                   // the value at each memory offset
   let BUFSRC = [];                // which source element lives at each memory offset
   let VOX = [];                   // the cubes, at their resting places
@@ -903,7 +904,12 @@
     // Photos open by meaning, so the picture survives a transpose; counting
     // numbers open by position, so a reshape visibly lays the cubes out again
     // -- by meaning the (24,) row kept drawing as the 2x3x4 block it came from.
-    state.arrange = isPhotos() ? "meaning" : "position";
+    // Only when the *kind* of source changes: a new resolution or element
+    // count is also a restart, and must not undo a choice the reader made.
+    if (SRC.kind !== sourceKind) {
+      sourceKind = SRC.kind;
+      state.arrange = SRC.kind === "photos" ? "meaning" : "position";
+    }
     history.length = 0;
   }
 
