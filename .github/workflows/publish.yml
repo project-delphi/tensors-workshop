@@ -183,7 +183,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # Starts a real kernel per notebook and runs the core route each one
   # declares, through to the solution that answers it. This is the gate
