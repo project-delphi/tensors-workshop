@@ -1657,11 +1657,13 @@
     VOX = buildVoxels();
   }
   const glide = { active: false, t0: 0, from: null, to: null };
-  // yaw0 and scale0 are where the current stretch of drift began, recaptured on
-  // every resume: a reader who turned the tensor and walked away gets the sway
-  // around their angle, not a jump back to HOME.
-  const drift = { on: false, t0: 0, last: 0, yaw0: 0, scale0: 1,
-                  hover: false, focus: false, timer: 0 };
+  // yaw0 and scale0 are where the current stretch of drift began: a reader who
+  // turned the tensor and walked away gets the sway around their angle, not a
+  // jump back to HOME. They are seeded from the reader's pose and not from a
+  // pose the drift itself produced -- see setDrift(). `phase` is how far into
+  // the sway the last pause caught it.
+  const drift = { on: false, t0: 0, last: 0, yaw0: 0, scale0: 1, phase: 0,
+                  seeded: false, hover: false, focus: false, timer: 0 };
   const GAP = () => BASE_GAP * (1 - 0.78 * snap.t);
   const ZGAP = () => BASE_ZGAP * (1 - snap.t);
   const cubeSide = () => 0.86 + 0.14 * snap.t;
@@ -1770,6 +1772,10 @@
         setSnapT(glide.from.t + (glide.to.t - glide.from.t) * t);
         if (k >= 1) { glide.active = false; render(); } else busy = true;
       }
+      // Read before the tween can clear itself: the frame that ends a tween is
+      // the one that puts the cubes at their exact destination, and the drift's
+      // throttle must not be what decides whether it is painted.
+      const tweening = !!anim;
       if (anim) {
         if (now - anim.t0 >= anim.dur) anim = null;
         else busy = true;
@@ -1777,7 +1783,7 @@
       // A third source of motion on the one frame loop the page owns.
       let drifted = false;
       if (drift.on) {
-        if (!driftWanted()) drift.on = false;
+        if (!driftWanted()) setDrift(false);
         else {
           busy = true;
           if (now - drift.last >= DRIFT_FPS_MS) {
@@ -1799,7 +1805,7 @@
       // the one source that holds its value between updates, and repainting
       // 9216 cubes to draw them where they already are is the whole cost of
       // the idle animation -- so those frames are skipped, not painted.
-      if (!drift.on || glide.active || anim || drifted) repaint();
+      if (!drift.on || glide.active || tweening || drifted) repaint();
       if (busy) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -2668,17 +2674,32 @@
     clearTimeout(drift.timer);
     if (on === drift.on) return;
     drift.on = on;
-    if (!on) return;
-    drift.yaw0 = view.yaw;
-    drift.scale0 = view.scale;
-    drift.t0 = drift.last = performance.now();
+    // A pause keeps the phase, so the sway picks up where it stopped instead
+    // of stepping back to the origin the moment the pointer leaves.
+    if (!on) { drift.phase = performance.now() - drift.t0; return; }
+    // Seeded once per stretch of reader-owned view, never re-read from a pose
+    // the drift itself produced. Re-seeding on resume would ratchet: the
+    // breath only ever pulls the scale down, so each pause would leave a
+    // smaller origin than the last until the tensor sat on zoomBy()'s floor,
+    // and the yaw would random-walk out of DRIFT_YAW's bound into the angles
+    // that bound exists to keep it out of.
+    if (!drift.seeded) {
+      drift.yaw0 = view.yaw;
+      drift.scale0 = view.scale;
+      drift.phase = 0;
+      drift.seeded = true;
+    }
+    drift.last = performance.now();
+    drift.t0 = drift.last - drift.phase;
     tick();
   }
   const refreshDrift = () => setDrift(driftWanted());
   // Taking hold of the view stops the drift on the same frame, rather than
   // waiting for the pointer to cross into the stage: a wheel, a key or a
-  // gizmo click is a reader taking over just as much as a drag is.
-  const dropDrift = () => setDrift(false);
+  // gizmo click is a reader taking over just as much as a drag is. It also
+  // drops the seed -- the reader has just chosen a new pose, and that pose is
+  // what the next stretch of drift belongs around.
+  const dropDrift = () => { setDrift(false); drift.seeded = false; };
 
   function bindPointer() {
     const el = $("stage");
@@ -2888,15 +2909,23 @@
     setInterval(() => { step = (step + 1) % 3; apply(); }, 6000);
     // A slow sway rather than a full spin: a full turn passes through the
     // angles where the three photos stack up behind one another.
-    let last = 0;
+    let last = 0, held = false, swayYaw = 0;
+    const swayAt = (now) => HOME.yaw + 0.35 * Math.sin(now / 2600);
     const sway = (now) => {
       // Held still while a pointer is over it: the hero is draggable, and the
       // sway used to fight the drag. drift.hover is maintained in embed mode
       // too, by the listeners bindPointer() installs.
-      if (!drift.hover && now - last > 40) {
-        last = now;
-        view.yaw = HOME.yaw + 0.35 * Math.sin(now / 2600);
-        repaint();
+      if (drift.hover) held = true;
+      else {
+        // The sway is a function of the clock, so picking it straight back up
+        // would throw the drag away in one jump the frame the pointer leaves.
+        // The offset carries the reader's angle forward instead.
+        if (held) { held = false; swayYaw = view.yaw - swayAt(now); }
+        if (now - last > 40) {
+          last = now;
+          view.yaw = swayYaw + swayAt(now);
+          repaint();
+        }
       }
       requestAnimationFrame(sway);
     };

@@ -266,6 +266,14 @@ async function audit(page, where) {
               await page.waitForFunction(() =>
                 document.querySelector('#stage').dataset.photos === '3',
                 null, {timeout: 10000});
+              // The flat canvas is what boots; three.js arrives after it, and
+              // the swap rewrites every overlay -- which would read as camera
+              // motion and pass this check with the drift switched off.
+              // setMode() gives #view an inline display whichever way it
+              // settles, so that is the swap being over.
+              await page.waitForFunction(() =>
+                document.getElementById('view').style.display !== '',
+                null, {timeout: 10000});
               // Where the HTML overlays sit is a function of the camera, so
               // their positions changing is the camera moving.
               const where_ = where;

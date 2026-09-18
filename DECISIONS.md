@@ -211,6 +211,18 @@ off by `:focus-visible` rather than `:focus`: a click focuses the stage too,
 and keying off plain focus meant that clicking once killed the drift for the
 rest of the visit -- which the Playwright run caught before this shipped.
 
+Stopping and starting again must not move the tensor, which is why the sway's
+origin is seeded once and its phase is carried across the pause. Both bounds
+above are bounds on *one* cycle around an origin; re-reading that origin from
+the view on every resume would have made them bounds on nothing. The breath
+only ever pulls the scale down, so each pause would have left a smaller origin
+than the last until a reader who crossed the widget a few times found it sitting
+on `zoomBy()`'s floor, and the yaw would have random-walked out past the 0.35
+that was rejected in the first place. The origin therefore only ever comes from
+a pose the reader left: `dropDrift()` drops the seed because a drag, a wheel or
+a gizmo click is the reader choosing a new one, while a pointer merely crossing
+the stage is not.
+
 It rides `tick()`, the one `requestAnimationFrame` loop the page owns, as a
 third source of motion beside the snap glide and the reshape tween, rather
 than the second loop `startEmbed()` runs. A glide or a tween still paints
