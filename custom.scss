@@ -41,6 +41,30 @@ table { font-size: .93rem; }
 table th { font-weight: 600; white-space: nowrap; }
 table td:first-child { font-variant-numeric: tabular-nums; color: #64748b; }
 
+// The notebooks table leads with the Colab badge, because opening the notebook
+// is what a reader came to do. The GitHub link beside it is for the rarer
+// errand of wanting the file itself: keep it reachable, stop it competing with
+// the badge for the first glance. Scoped to a table so the same URL in prose is
+// untouched, and matched on host plus extension rather than the branch, which
+// `_variables.yml` owns and a stylesheet cannot read. The Colab links cannot
+// match it -- they are on colab.research.google.com -- and nor can the Kahoot
+// `.xlsx` blob links.
+.table-responsive a[href^="https://github.com"][href$=".ipynb"] {
+  font-size: .82em;
+  color: #64748b;
+  text-decoration-thickness: from-font;
+}
+// A file name is an identifier, so it breaks in one place: nowhere. `code-overflow:
+// wrap` gives inline code `pre-wrap` and `break-word`, which was splitting
+// `13-convolution-and-deconvolution.ipynb` across three lines once the badge
+// column took the width this one used to have. The wrapper scrolls on a narrow
+// viewport, which is what it is for.
+.table-responsive a[href^="https://github.com"][href$=".ipynb"] code {
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
 // The three Kahoot checkpoints, called out inline on kahoot.qmd.
 .kahoot-note {
   border-left: 4px solid $kahoot-accent;

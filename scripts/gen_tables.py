@@ -96,6 +96,8 @@ L = {
     "en": dict(
         nb_head=("#", "Notebook", "Covers", "Colab"),
         extra_head=("#", "Deep dive", "Colab"),
+        nb_head_open=("#", "Open", "Notebook", "Covers"),
+        extra_head_open=("#", "Open", "Deep dive"),
         agenda_head=("Start Time", "Duration (min)", "Part", "Segment Name"),
         deps_head=("Notebook", "Beyond NumPy", "Network"),
         deps_yes="yes — ",
@@ -105,6 +107,8 @@ L = {
     "es": dict(
         nb_head=("#", "Cuaderno", "Contenido", "Colab"),
         extra_head=("#", "Estudio a fondo", "Colab"),
+        nb_head_open=("#", "Abrir", "Cuaderno", "Contenido"),
+        extra_head_open=("#", "Abrir", "Estudio a fondo"),
         agenda_head=("Hora de inicio", "Duración (min)", "Parte", "Segmento"),
         deps_head=("Cuaderno", "Además de NumPy", "Red"),
         deps_yes="sí — ",
@@ -127,40 +131,54 @@ def quiz_for(n: str) -> dict | None:
     return next((q for q in QUIZZES if n in q["covers"]), None)
 
 
-def notebooks_table(lang: str) -> str:
+def notebooks_table(lang: str, colab_first: bool = False) -> str:
+    """The thirteen sections, for the notebooks page and `notebooks/README.md`.
+
+    `colab_first` reorders the badge into column two, under an **Open** header,
+    and is passed only for the site includes. The READMEs keep the original
+    order: on GitHub the reader is already looking at the repository, so the
+    link to the file is the useful one and Colab is the aside. On the site it
+    is the other way round, and `custom.scss` mutes the GitHub link to match.
+    """
     t = L[lang]
     title_key, sum_key = f"title_{lang}", f"summary_{lang}"
-    rows = ["| " + " | ".join(t["nb_head"]) + " |", "|---|---|---|---|"]
+    head = t["nb_head_open"] if colab_first else t["nb_head"]
+    rows = ["| " + " | ".join(head) + " |", "|---|---|---|---|"]
     for s in SECTIONS:
         badge = (
             f"[![Open In Colab](https://colab.research.google.com/assets/"
             f"colab-badge.svg)]({colab_url(s)})"
         )
-        rows.append(
-            f"| {s['n']} | [`{notebook_name(s)}`]"
-            f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)}) "
-            f"| {s[title_key]} — {s[sum_key]} | {badge} |"
+        link = (
+            f"[`{notebook_name(s)}`]"
+            f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)})"
         )
+        covers = f"{s[title_key]} — {s[sum_key]}"
+        cells = [badge, link, covers] if colab_first else [link, covers, badge]
+        rows.append(f"| {s['n']} | " + " | ".join(cells) + " |")
     return "\n".join(rows) + "\n"
 
 
-def extras_notebooks_table(lang: str) -> str:
+def extras_notebooks_table(lang: str, colab_first: bool = False) -> str:
     """The extras, for the notebooks page — same shape as `notebooks_table`
     with the Covers column folded into the Deep dive one, since three columns
-    is all an extra has to say."""
+    is all an extra has to say. `colab_first` moves the badge the same way."""
     t = L[lang]
     title_key, sum_key = f"title_{lang}", f"summary_{lang}"
-    rows = ["| " + " | ".join(t["extra_head"]) + " |", "|---|---|---|"]
+    head = t["extra_head_open"] if colab_first else t["extra_head"]
+    rows = ["| " + " | ".join(head) + " |", "|---|---|---|"]
     for s in EXTRAS:
         badge = (
             f"[![Open In Colab](https://colab.research.google.com/assets/"
             f"colab-badge.svg)]({colab_url(s)})"
         )
-        rows.append(
-            f"| {s['n']} | [`{notebook_name(s)}`]"
-            f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)}) "
-            f"— {s[title_key]} — {s[sum_key]} | {badge} |"
+        dive = (
+            f"[`{notebook_name(s)}`]"
+            f"({REPO['url']}/blob/{REPO['branch']}/notebooks/{notebook_name(s)})"
+            f" — {s[title_key]} — {s[sum_key]}"
         )
+        cells = [badge, dive] if colab_first else [dive, badge]
+        rows.append(f"| {s['n']} | " + " | ".join(cells) + " |")
     return "\n".join(rows) + "\n"
 
 
@@ -1383,10 +1401,14 @@ def main() -> int:
     INCLUDES.mkdir(exist_ok=True)
     try:
         written = {
-            "notebooks-en.md": BANNER + notebooks_table("en"),
-            "notebooks-es.md": BANNER + notebooks_table("es"),
-            "notebooks-extra-en.md": BANNER + extras_notebooks_table("en"),
-            "notebooks-extra-es.md": BANNER + extras_notebooks_table("es"),
+            # Colab first on the site only; the READMEs below keep the
+            # original order, which is why these four pass the flag.
+            "notebooks-en.md": BANNER + notebooks_table("en", colab_first=True),
+            "notebooks-es.md": BANNER + notebooks_table("es", colab_first=True),
+            "notebooks-extra-en.md": BANNER
+            + extras_notebooks_table("en", colab_first=True),
+            "notebooks-extra-es.md": BANNER
+            + extras_notebooks_table("es", colab_first=True),
             "agenda-en.md": BANNER + "\n" + agenda_table("en"),
             "agenda-es.md": BANNER + "\n" + agenda_table("es"),
             "readme-sections.md": BANNER + readme_table("en"),
