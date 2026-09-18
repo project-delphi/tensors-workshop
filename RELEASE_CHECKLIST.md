@@ -26,6 +26,7 @@ uv run --group test python -m unittest discover -s tests -v
 quarto render
 uv run --group site python scripts/check_links.py
 uv run --group execute python scripts/test_notebooks.py
+npm test
 git diff --check
 ```
 

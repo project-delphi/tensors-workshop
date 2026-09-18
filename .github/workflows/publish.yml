@@ -136,6 +136,13 @@ jobs:
           npm ci
           npx playwright install --with-deps chromium
 
+      - name: Test the visualizer's arithmetic
+        # tests/tensor_core.test.cjs pins interactive/tensor-core.js -- the
+        # strides, contiguity and view-or-copy rule under the reshape &
+        # transpose visualizer -- under Node alone. No browser and no render,
+        # so it could run anywhere; it sits here because this is where Node is.
+        run: npm test
+
       - name: Check navigation in a browser
         run: npm run check:navigation
 
