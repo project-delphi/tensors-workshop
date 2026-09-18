@@ -279,7 +279,11 @@
     border: 0; border-bottom: 1px solid currentColor; padding: 0; cursor: pointer;
   }
   .fallback { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  /* `top`/`left`/`margin` are load-bearing, not tidying: without them the box
+     sits at its static position, which in embed mode is below the frame, and a
+     1px live region plus a `p` margin was adding 17px to the scroll height --
+     a scrollbar in the hero over something nobody can see. */
+  .sr { position: absolute; top: 0; left: 0; margin: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
   /* Embed mode: the stage, a caption, and nothing else. The hero on the
      homepage is what shows this; the caption's link is how a reader gets to
@@ -288,8 +292,17 @@
   html.embed .wrap { max-width: none; padding: 0; }
   html.embed header, html.embed aside, html.embed #axis-legend, html.embed .under, html.embed #glnote { display: none; }
   html.embed .grid { display: block; }
-  html.embed #stage { height: calc(100vh - 3.4rem); border-radius: 0; border: 0; background: transparent; cursor: default; }
+  /* The frame is exactly 100vh: the caption takes what it needs and the stage
+     takes the rest. It used to be `height: calc(100vh - 3.4rem)` against a
+     3.4rem caption, which only holds while the caption is two lines -- at the
+     hero's width it wraps to three, and the frame scrolled by the difference.
+     The caption text changes with every step and is longer in Spanish, so no
+     fixed reservation can be right; letting the stage absorb the remainder is. */
+  html.embed .grid > div { display: flex; flex-direction: column; height: 100vh; }
+  html.embed .stagewrap { flex: 1 1 auto; min-height: 0; }
+  html.embed #stage { height: 100%; border-radius: 0; border: 0; background: transparent; cursor: default; }
   html.embed #embedcap {
+    flex: 0 0 auto;
     display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline;
     min-height: 3.4rem; padding: 0.55rem 0.9rem; margin: 0;
     font: 500 0.8rem/1.35 var(--sans); color: var(--ink-mute);
