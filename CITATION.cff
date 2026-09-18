@@ -1,0 +1,31 @@
+# Citation metadata for the workshop. GitHub reads this file for the
+# "Cite this repository" button; nothing in the site or the generators does.
+# The authors and URLs mirror `workshop.authors` and `repo` in _variables.yml.
+# There are no tags or releases, so no `version`: cite by the commit.
+cff-version: 1.2.0
+message: "If you use this workshop, please cite it as below."
+title: "Tensors for Machine Learning"
+abstract: >-
+  A 210-minute workshop on tensors for machine learning, including quizzes
+  and breaks, in English and Spanish: a handbook, nineteen Colab notebooks,
+  two slide decks, two interactive widgets and three Kahoot quizzes.
+authors:
+  - family-names: Kalia
+    given-names: Ravi
+  - family-names: Laverde Chunza
+    given-names: Sebastian
+repository-code: "https://github.com/project-delphi/tensors-workshop"
+url: "https://project-delphi.github.io/tensors-workshop"
+# LICENSE splits the repository the way The Carpentries do: code is MIT,
+# teaching text is CC BY 4.0.
+license:
+  - MIT
+  - CC-BY-4.0
+date-released: 2026-09-18
+keywords:
+  - tensors
+  - numpy
+  - linear-algebra
+  - workshop
+  - teaching
+  - bilingual

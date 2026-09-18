@@ -835,10 +835,31 @@ class Handbooks(unittest.TestCase):
         with tree() as (root, _nb, _docs):
             with self.handbooks(
                 root,
-                "## One\n\n```\n| not | a | table |\n```\n",
-                "## Uno\n\n```\n# not a heading\n```\n",
+                "## One\n\n```\n| not | a | table |\n# not a heading\n```\n",
+                "## Uno\n\n```\n| not | a | table |\n# not a heading\n```\n",
             ) as f:
                 self.assertEqual(f, [])
+
+    def test_code_block_differing_between_sides_fails(self):
+        # Code stays English on both sides, so a solution edited in one
+        # handbook and not the other is the drift a byte comparison can catch.
+        with tree() as (root, _nb, _docs):
+            with self.handbooks(
+                root,
+                "## One\n\n```python\nx = A @ B\n```\n",
+                "## Uno\n\n```python\nx = A @ C\n```\n",
+            ) as f:
+                self.assertTrue(any("code block 1 of 1" in x for x in f), f)
+                self.assertTrue(any("x = A @ B" in x for x in f), f)
+
+    def test_code_block_count_differing_fails(self):
+        with tree() as (root, _nb, _docs):
+            with self.handbooks(
+                root,
+                "## One\n\n```\na\n```\n\n```\nb\n```\n",
+                "## Uno\n\n```\na\n```\n",
+            ) as f:
+                self.assertTrue(any("fenced code blocks" in x for x in f), f)
 
     def test_wording_drift_is_not_caught_and_the_docstring_says_so(self):
         # Pinning the documented limit, not an aspiration. If this ever starts
