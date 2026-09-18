@@ -16,8 +16,9 @@ edit a file.
 need are below. Open a section of either only when a rule here surprises you.
 
 `Bash` can write. It is here for `git`, `grep`, `nb_cells.py` and the two
-checkers named below — nothing else. Never `sed -i`, redirect into a file, or
-run a generator: the caller is trusting that reviewing changed nothing.
+checkers named below — nothing else. Never write inside the checkout — no
+`sed -i`, no redirect into a tracked path, no generator: the caller is trusting
+that reviewing changed nothing. A file in the scratchpad is fine.
 
 Read a notebook by cell, not by file — a notebook is 80–130 KB of JSON:
 

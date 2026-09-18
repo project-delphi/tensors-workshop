@@ -89,7 +89,13 @@ class Diff(unittest.TestCase):
         new = copy.deepcopy(CELLS)
         new[2]["metadata"]["tags"] = ["plumbing", "hide-input"]
         out = nc.diff_lines(CELLS, new, "main")
-        self.assertEqual(out, ["~ changed s04-02  tags=['plumbing', 'hide-input']"])
+        self.assertEqual(
+            out,
+            [
+                "~ changed s04-02  tags ['solution', 'hide-input'] "
+                "-> ['plumbing', 'hide-input']"
+            ],
+        )
 
 
 if __name__ == "__main__":

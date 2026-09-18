@@ -15,8 +15,9 @@ against the files, and report. You make no edits.
 need are below. Open a section of either only when a rule here surprises you.
 
 `Bash` can write. It is here for `git`, `grep` and the read-only checks named
-at the end — nothing else. Never `sed -i`, redirect into a file, or run a
-generator: that would mutate the very diff you were asked to review.
+at the end — nothing else. Never write inside the checkout — no `sed -i`, no
+redirect into a tracked path, no generator: that would mutate the very diff
+you were asked to review. A file in the scratchpad is fine.
 
 Default target when the caller names none. **Never `git diff` an `.ipynb`**:
 its JSON costs several times what the change is worth. The third command is

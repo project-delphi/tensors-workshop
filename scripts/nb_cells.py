@@ -103,9 +103,13 @@ def diff_lines(old: list[dict], new: list[dict], label: str) -> list[str]:
         if cid not in old_by:
             continue
         a, b = source(old_by[cid]), source(cell)
-        if a == b and tags(old_by[cid]) == tags(cell):
+        old_tags, new_tags = tags(old_by[cid]), tags(cell)
+        if a == b and old_tags == new_tags:
             continue
-        out.append(f"~ changed {cid}  tags={tags(cell) or '-'}")
+        tag_note = f"tags={new_tags or '-'}"
+        if old_tags != new_tags:
+            tag_note = f"tags {old_tags or '-'} -> {new_tags or '-'}"
+        out.append(f"~ changed {cid}  {tag_note}")
         out.extend(
             line.rstrip("\n")
             for line in difflib.unified_diff(
@@ -120,27 +124,31 @@ def diff_lines(old: list[dict], new: list[dict], label: str) -> list[str]:
 
 
 def git(*args: str) -> str:
-    return subprocess.run(
-        ["git", *args], cwd=ROOT, check=True, capture_output=True, text=True
-    ).stdout
+    run = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+    if run.returncode:
+        sys.exit(f"nb_cells: git {' '.join(args)}: {run.stderr.strip()}")
+    return run.stdout
 
 
-def changed_notebooks(ref: str) -> list[str]:
-    tracked = git("diff", "--name-only", f"{ref}...HEAD", "--", "notebooks/*.ipynb")
-    working = git("diff", "--name-only", "HEAD", "--", "notebooks/*.ipynb")
-    return sorted({p for p in (tracked + working).split() if p})
+def changed_notebooks(base: str) -> list[str]:
+    """Notebooks that differ between BASE and the working tree, new ones included."""
+    spec = ("--", "notebooks/*.ipynb")
+    committed = git("diff", "--name-only", base, "HEAD", *spec)
+    working = git("diff", "--name-only", "HEAD", *spec)
+    untracked = git("ls-files", "--others", "--exclude-standard", *spec)
+    return sorted({p for p in (committed + working + untracked).split() if p})
 
 
 def cmd_diff(ref: str) -> int:
-    paths = changed_notebooks(ref)
+    base = git("merge-base", ref, "HEAD").strip()  # what `git diff REF...HEAD` sees
+    paths = changed_notebooks(base)
     if not paths:
         print(f"no notebook differs from {ref}")
         return 0
     for rel in paths:
-        try:
-            old = json.loads(git("show", f"{ref}:{rel}"))["cells"]
-        except subprocess.CalledProcessError:
-            old = []
+        old = []
+        if git("ls-tree", "--name-only", base, "--", rel).strip():
+            old = json.loads(git("show", f"{base}:{rel}"))["cells"]
         new = load(ROOT / rel) if (ROOT / rel).exists() else []
         print(f"=== {rel}")
         lines = diff_lines(old, new, ref)
