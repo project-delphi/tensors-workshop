@@ -1123,7 +1123,7 @@ def fig_tucker_taxi(arrays) -> Path:
     return out
 
 
-# ─── the layout visualizer's photos ─────────────────────────────────────────
+# ─── the reshape & transpose visualizer's photos ─────────────────────────────────────────
 # `interactive/tensor-visualizer.html` colours its cubes with real pixels: the
 # same three scikit-image photographs notebook 04 stacks into its
 # (3, 256, 256, 3) batch, so a reader meets the same slide, astronaut and cup

@@ -51,7 +51,7 @@ and tensor PCA, with Plato’s cave and three animations.
 Two sections have a widget beside them. Section 03 has a
 [broadcasting simulator](interactive/broadcasting-simulator.html?lang=en) that
 lines two shapes up from the right and steps through the stretch, and section 04
-has a [layout visualizer](interactive/tensor-visualizer.html?lang=en) that turns
+has a [reshape and transpose visualizer](interactive/tensor-visualizer.html?lang=en) that turns
 its three photographs into cubes, one per byte, and shows what transpose, reshape
 and a memory layout each do to the shape, the strides, the buffer and the picture.
 

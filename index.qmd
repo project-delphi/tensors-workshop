@@ -39,7 +39,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
 ```{=html}
 <div class="hero-demos" data-hero-demos>
   <div class="hero-tabs" role="tablist" aria-label="Live demos">
-    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Layout &amp; strides</button>
+    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
     <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
@@ -282,7 +282,7 @@ stretch every axis of size 1 — or refuse, and say which axis. Section 03.
 :::
 
 ::: {.resource-card}
-### 🧊 Layout visualizer
+### 🧊 Reshape & transpose visualizer
 
 <span data-language-key="layout-visualizer"></span>
 
@@ -292,7 +292,7 @@ the picture break; rewrite the buffer C, Fortran or channels_last and watch
 only the memory move. Every click prints the NumPy and PyTorch that does it.
 Section 04.
 
-[Try layouts](interactive/tensor-visualizer.html?lang=en){.resource-button}
+[Try reshape & transpose](interactive/tensor-visualizer.html?lang=en){.resource-button}
 :::
 ::::
 

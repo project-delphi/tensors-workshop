@@ -139,19 +139,24 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
               null, {timeout: 10000})
               .catch(() => assert.fail(`${where}: photos.json did not load`));
             const readout = () => page.locator('#shape-readout').innerText();
+            // The controls live in tabs, and Playwright clicks only what is
+            // visible, so each group of clicks opens its tab first.
+            const tab = name => page.locator(`#tab-${name}`).click();
             assert((await readout()).includes('(3, 16, 16, 3)'),
               `${where}: photo batch is not NHWC 16px by default`);
             // Transpose permutes the shape; the reshape comparison adds a row.
+            await tab('transpose');
             await page.locator('#order-NCHW').click();
             assert((await readout()).includes('(3, 3, 16, 16)'),
               `${where}: NCHW preset did not permute the shape`);
             assert.equal(await page.locator('#imgstrip .strip-row').count(), 1);
-            await page.locator('#reshape').check();
+            await tab('reshape');
+            await page.locator('#compare').check();
             assert.equal(await page.locator('#imgstrip .strip-row').count(), 2,
               `${where}: reshape comparison did not add its row`);
             assert(await page.locator('#imgstrip .strip-row.wrong').count() === 1,
               `${where}: reshape of a transposed view should be marked wrong`);
-            await page.locator('#reshape').uncheck();
+            await page.locator('#compare').uncheck();
 
             // The stage carries the shape, the strides and a signature of the
             // buffer, so the three operations can be checked for what they
@@ -161,18 +166,22 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
             const data = key => page.locator('#stage').evaluate((e, k) => e.dataset[k], key);
             const preset = text => page.locator('#shape-presets button')
               .filter({hasText: text}).first();
+            await tab('transpose');
             await page.locator('#order-NHWC').click();
             const viewSig = await data('bufsig');
             assert.equal(await data('shape'), '3,16,16,3', `${where}: NHWC did not come back`);
+            await tab('reshape');
             await preset('(2304,)').click();
             assert.equal(await data('shape'), '2304',
               `${where}: reshape preset did not take`);
             assert.equal(await data('bufsig'), viewSig,
               `${where}: a reshape of a contiguous view must not move a byte`);
             await preset('(3, 16, 16, 3)').click();
+            await tab('transpose');
             await page.locator('#order-NCHW').click();
             assert.equal(await data('bufsig'), viewSig,
               `${where}: a transpose must not move a byte`);
+            await tab('memory');
             await page.locator('#contig').click();
             assert.notEqual(await data('bufsig'), viewSig,
               `${where}: .contiguous() must rewrite the buffer`);
@@ -190,16 +199,30 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
               .catch(() => assert.fail(`${where}: Snap to 2-D did not engage`));
 
             // Counting numbers are a tensor of any rank: every factorisation
-            // of 24 is a reshape, and none of them touches the buffer.
+            // of 24 is a reshape, and none of them touches the buffer. They
+            // open arranged by position, so each reshape visibly re-lays the
+            // cubes -- by meaning, (24,) kept drawing as the 2x3x4 it came from.
             await page.locator('label[for="data-numbers"]').click();
             assert.equal(await data('shape'), '2,3,4', `${where}: np.arange(24) shape`);
+            assert.equal(await data('arrange'), 'position',
+              `${where}: counting numbers should follow the shape`);
             const numbersSig = await data('bufsig');
+            await tab('reshape');
             for (const [label, shape] of [['(24,)', '24'], ['(4, 6)', '4,6'], ['(3, 2, 4)', '3,2,4']]) {
               await preset(label).click();
               assert.equal(await data('shape'), shape, `${where}: reshape to ${label}`);
               assert.equal(await data('bufsig'), numbersSig,
                 `${where}: reshape to ${label} must not move a byte`);
             }
+
+            // `#transpose` in the URL opens the page on that tab.
+            await page.goto(
+              `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}#transpose`);
+            await page.waitForSelector('#tab-transpose');
+            assert(await page.locator('#transpose').isVisible(),
+              `${where}: #transpose in the URL did not open its tab`);
+            assert(await page.locator('#reshape').isHidden(),
+              `${where}: the reshape tab stayed open beside #transpose`);
           } else {
             await page.waitForSelector('#draw .cell');
           }

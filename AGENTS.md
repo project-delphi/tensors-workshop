@@ -131,7 +131,7 @@ What each generator draws, and the rules each one keeps:
 
 **`interactive/` is hand-written**, and the one asset class with neither a
 generator nor a byte-exact gate. Two self-contained HTML widgets -- the section
-04 layout visualizer and the section 03 broadcasting simulator -- each with its
+04 reshape & transpose visualizer and the section 03 broadcasting simulator -- each with its
 own `:root` palette, EN/ES copy tables, `?lang=`, and its section's accent
 adjusted per theme to clear 4.5:1. They are resources, not render targets:
 `interactive/**` is in `resources:` and deliberately absent from `render:`.
