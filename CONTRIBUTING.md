@@ -80,7 +80,7 @@ than resolving a new one, so the check behaves the same for you as in CI. The
 checker serves `docs/` locally, checks both languages and mobile/desktop
 widths, and tests section links, keyboard activation and fallback navigation.
 It also runs [axe](https://github.com/dequelabs/axe-core) over every page and
-both widgets: a serious or critical WCAG A/AA violation fails it. The short
+all three widgets: a serious or critical WCAG A/AA violation fails it. The short
 allowlist at the top of `scripts/check_navigation.cjs` names the element and
 the reason for each entry; a finding on a page or widget of ours is fixed,
 not listed.

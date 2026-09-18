@@ -266,7 +266,7 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-Sin instalar nada y sin cuenta. Dos herramientas vivas que responden una
+Sin instalar nada y sin cuenta. Tres herramientas vivas que responden una
 pregunta que las páginas solo pueden describir.
 
 :::: {.widget-grid}
@@ -293,6 +293,20 @@ o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
 NumPy y el PyTorch que lo hace. Sección 04.
 
 <a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Probar reshape y transpose</a>
+:::
+
+::: {.resource-card}
+### 📐 Escenario de proyección y SVD
+
+<span data-language-key="projection-svd-stage"></span>
+
+Los mínimos cuadrados son una proyección: desplázate y observa cómo la sombra
+de un vector objetivo aterriza en el plano que generan sus predictores, con el
+residuo encontrándolo en ángulo recto. Después recorre el portal de la SVD,
+donde una circunferencia unidad se vuelve una elipse y A v = σ u deja de ser
+notación. Secciones 07 y 09.
+
+<a href="../interactive/linalg-stage.html?lang=es" class="resource-button">Probar proyección y SVD</a>
 :::
 ::::
 

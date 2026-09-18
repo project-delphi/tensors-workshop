@@ -15,7 +15,7 @@ When a rule here surprises you, look it up there before changing it.
 
 A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
 code — the deliverables are the rendered site, Colab notebooks for the workshop
-sections and take-home extras, two revealjs decks, two standalone interactive
+sections and take-home extras, two revealjs decks, three standalone interactive
 widgets and three Kahoot spreadsheets.
 
 **Desktops and laptops are the target, and phones are not.** The session is
@@ -130,32 +130,52 @@ What each generator draws, and the rules each one keeps:
   `SLIDES` table.
 
 **`interactive/` is hand-written**, and the one asset class with neither a
-generator nor a byte-exact gate. Two self-contained HTML widgets -- the section
-04 reshape & transpose visualizer and the section 03 broadcasting simulator -- each with its
-own `:root` palette, EN/ES copy tables, `?lang=`, and its section's accent
-adjusted per theme to clear 4.5:1. They are resources, not render targets:
+generator nor a byte-exact gate. Three self-contained HTML widgets -- the
+section 03 broadcasting simulator, the section 04 reshape & transpose
+visualizer, and the sections 07/09 projection & SVD stage -- each with its own
+`:root` palette, EN/ES copy tables, `?lang=`, and its section's accent adjusted
+per theme to clear 4.5:1. They are resources, not render targets:
 `interactive/**` is in `resources:` and deliberately absent from `render:`.
-The visualizer's arithmetic -- strides, contiguity, the memory orders and
-NumPy's view-or-copy rule for a reshape -- is `interactive/tensor-core.js`,
-a plain script the page loads first; `tests/tensor_core.test.cjs` pins it
-under `npm test`, the one part of a widget with a unit test. The idle drift's
-state machine is there too, and is the exception that says what the rule is
-for: what a stretch of drift takes its origin from is invisible in a
-screenshot and survives an end-state assertion, so it is written as a state in
-and a state out and pinned like the arithmetic. Everything else that touches
-the widget's state -- anything a screenshot or `check_navigation.cjs` would
-catch -- stays in the HTML.
-`photos.json` is their one generated input; if it fails to load the visualizer
-counts instead, which `check_navigation.cjs` treats as a regression. Both take
-`?embed=1&theme=navy` for the homepage hero, where the visualizer never fetches
-three.js. three.js is **vendored** at `interactive/vendor/` with its URL,
-SHA-256 and date in a README; upgrading means replacing both files and updating
-that README, `three-boot.js` and `repo.widgets` in `_variables.yml`.
+
+**Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
+strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
+reshape -- is `interactive/tensor-core.js`; the stage's -- least squares two
+ways, a one-sided-Jacobi SVD, the condition number, the pseudoinverse -- is
+`interactive/linalg-core.js`. Both are plain scripts the page loads first, and
+`tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`. Two state
+machines live there too, and they are the exception that says what the rule is
+for: where a stretch of idle drift takes its origin, and where an *interrupted*
+tween takes its origin, are both invisible in a screenshot and survive an
+end-state assertion, so each is written as a state in and a state out and
+pinned like the arithmetic. Everything else that touches a widget's state --
+anything a screenshot or `check_navigation.cjs` would catch -- stays in the
+HTML.
+
+`photos.json` is the visualizer's one generated input; if it fails to load the
+widget counts instead, which `check_navigation.cjs` treats as a regression. The
+two hero widgets take `?embed=1&theme=navy`, where the visualizer never fetches
+three.js; the stage has no embed mode, because the hero is two tabs and the
+check pins that at two.
+
+three.js is **vendored** at `interactive/vendor/`, core build and eleven
+`examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their
+transitive imports), each with its URL, SHA-256 and date in a README. The
+addons say `from 'three'`, and a **static import map** in the stage's `<head>`
+resolves that -- rewriting the specifier in eleven files would make the README's
+hashes describe something other than what upstream ships. The map is inert
+until a module import resolves, so the lazy `bootGL()` still holds. Upgrading
+means both builds, both hash tables, both boot modules, the import map, and
+every `repo.widgets` line.
+
 `check_links.py` fails the build if any file in `repo.widgets` is missing from
-`docs/`; `check_navigation.cjs` drives both widgets in both languages and runs
-axe over them. Every colour a widget puts on text clears 4.5:1 per theme --
-the four axis hues have `--axN-ink` text variants for that -- so a contrast
-finding in a widget is real, never something to allowlist.
+`docs/` -- for the addons that is the *only* guard, since an import map is
+element content and the link harvest reads attributes. `check_navigation.cjs`
+drives all three widgets in both languages, from a per-widget `drive` callback
+rather than a flag, and runs axe over them. Every colour a widget puts on text
+clears 4.5:1 per theme -- the four axis hues have `--axN-ink` text variants,
+and the stage's dark-in-every-theme canvas has one `--stage*` set measured
+against the label chip -- so a contrast finding in a widget is real, never
+something to allowlist.
 
 **The companion's assets have no generator.** The infographic PNGs and the
 Audio Overview under `media/` are exported by hand from NotebookLM; the

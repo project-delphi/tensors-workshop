@@ -144,6 +144,37 @@ message blaming their WebGL; and because `check_navigation.cjs` aborts every
 off-origin request, that check could never have caught it. Same-origin, it
 loads, and the check asserts `THREE.REVISION`.
 
+**The three.js addons are vendored unmodified, and a static import map
+resolves `three`.** The projection & SVD stage needs the post-processing
+composer, the bloom pass and the CSS2D label renderer, which are
+`examples/jsm` modules rather than part of the core build -- eleven files once
+their own imports are followed, `MaskPass` and `RenderPass` among them because
+`EffectComposer` imports them whether or not the widget asks. Every one says
+`import ... from 'three'`, and a browser resolves a bare specifier with an
+import map, a bundler or nothing. Rewriting the specifier in eleven files was
+the alternative, and it would have made the README's SHA-256 column describe
+files that are no longer what upstream ships -- which is the only thing that
+column is for. A boot module re-exporting the core build is not a substitute:
+a bare specifier stays bare however the file beside it is named. So the map is
+static and in `<head>` (one per document, and it must precede the first module
+resolution), and it fetches nothing until an import resolves, which is what
+lets `bootGL()` stay lazy and keeps three.js off the homepage hero. The map is
+element content rather than an attribute, so `check_links.py`'s harvest cannot
+see it, and `repo.widgets` is the only thing that would notice an addon
+missing from `docs/` -- which is why `check_navigation.cjs` now asserts
+`#stage.dataset.gl`, not just that the page rendered.
+
+**Bloom and `setViewport` cannot share a chain, so the SVD portal renders
+direct.** `EffectComposer` runs every pass as a full-screen quad over its own
+render target and `Pass` has no scissor, and `setRenderTarget()` resets the
+viewport to the target's full size -- so the portal's two viewports and the
+bloom pass are mutually exclusive through one composer. Two composers with two
+targets and a manual blit would buy glow on a frame whose content is a circle
+and an ellipse. Bloom was already gated per step, for reduced motion and for a
+frame budget, so this is one more gate: steps that are one camera render
+through the composer, the portal renders direct, and its arrows carry emissive
+colour instead.
+
 **The companion's artifacts have `/artifact/<uuid>` URLs, and no exports.**
 The Studio row's ⋮ menu hides *Copy link* for the quiz, flashcards and Audio
 Overview, which is what made them look unshareable; every artifact has a link.

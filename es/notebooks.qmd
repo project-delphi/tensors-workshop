@@ -48,12 +48,16 @@ se ajusta a mano y después se cambia qué significa «ajustar».
 El 16 conecta las vistas matriciales de PCA con clasificación de cobertura terrestre,
 agrupamiento y PCA tensorial, con la caverna de Platón y tres animaciones.
 
-Dos secciones tienen una herramienta al lado. La sección 03 tiene un
+Tres secciones tienen una herramienta al lado. La sección 03 tiene un
 <a href="../interactive/broadcasting-simulator.html?lang=es">simulador de broadcasting</a>
 que alinea dos formas desde la derecha y recorre el estiramiento paso a paso, y la
 sección 04 tiene un <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de reshape y transpose</a>
 que convierte sus tres fotografías en cubos, uno por byte, y muestra qué hacen transpose,
 reshape y una disposición en memoria con la forma, los strides, el búfer y la imagen.
+Las secciones 07 y 09 comparten un
+<a href="../interactive/linalg-stage.html?lang=es">escenario de proyección y SVD</a>
+que dibuja los mínimos cuadrados como una proyección sobre un espacio columna, y
+la SVD como una circunferencia que se convierte en una elipse.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 
