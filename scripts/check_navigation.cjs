@@ -257,8 +257,10 @@ async function audit(page, where) {
             // has no copy in it. Polled rather than slept on, so a slow runner
             // makes this take longer and not fail.
             if (lang === 'en') {
-              // On a fresh load, so that no reshape tween from the steps above
-              // is still settling and reads as camera motion.
+              // At a stated width, not whatever the loop above left behind,
+              // and on a fresh load, so that no reshape tween from the steps
+              // above is still settling and reads as camera motion.
+              await page.setViewportSize({width: 1440, height: 1000});
               await page.goto(
                 `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
               await page.waitForFunction(() =>
