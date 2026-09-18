@@ -532,6 +532,28 @@
   const SNAP_MS = 320;
   const SNAP_EL = 0.075;         // how level the camera must be before it snaps
   const SNAP_YAW = 0.10;
+  // The idle drift: what the stage does while nobody is pointing at it. A sway
+  // rather than a spin, for the reason startEmbed() gives -- a full turn passes
+  // through the angles where the three photos stack up behind one another.
+  const DRIFT_FPS_MS = 40;       // ~25 fps: the sway needs no more, and every
+                                 // frame re-uploads an instance matrix per cube
+  const DRIFT_YAW = 0.26;        // radians either side of where the drift began.
+                                 // Wider and the swing reaches the angles where
+                                 // the row of three photographs runs into the
+                                 // screen: perspective blows the near one up
+                                 // and the bottom row of cubes leaves the stage.
+  const DRIFT_YAW_MS = 16000;    // one full left-right-left swing
+  const DRIFT_ZOOM = 0.14;       // how far out the breath pulls, as a fraction
+                                 // of the base scale. Out and back rather than
+                                 // in and out: glDistance() frames the tensor
+                                 // to the stage with 12% to spare, so a scale
+                                 // above the reader's own crops the bottom row
+                                 // of cubes -- which the idle animation must
+                                 // never do to a view the reader chose.
+  const DRIFT_ZOOM_MS = 8000;    // half the swing, so the camera is furthest
+                                 // out at each end of the sway -- which is
+                                 // where the tensor needs the room
+  const DRIFT_RESUME_MS = 1500;  // after the pointer leaves the stage
 
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
 
@@ -1635,6 +1657,11 @@
     VOX = buildVoxels();
   }
   const glide = { active: false, t0: 0, from: null, to: null };
+  // yaw0 and scale0 are where the current stretch of drift began, recaptured on
+  // every resume: a reader who turned the tensor and walked away gets the sway
+  // around their angle, not a jump back to HOME.
+  const drift = { on: false, t0: 0, last: 0, yaw0: 0, scale0: 1,
+                  hover: false, focus: false, timer: 0 };
   const GAP = () => BASE_GAP * (1 - 0.78 * snap.t);
   const ZGAP = () => BASE_ZGAP * (1 - snap.t);
   const cubeSide = () => 0.86 + 0.14 * snap.t;
@@ -1747,7 +1774,32 @@
         if (now - anim.t0 >= anim.dur) anim = null;
         else busy = true;
       }
-      repaint();
+      // A third source of motion on the one frame loop the page owns.
+      let drifted = false;
+      if (drift.on) {
+        if (!driftWanted()) drift.on = false;
+        else {
+          busy = true;
+          if (now - drift.last >= DRIFT_FPS_MS) {
+            drift.last = now;
+            drifted = true;
+            const e = now - drift.t0;
+            view.yaw = drift.yaw0 + DRIFT_YAW * Math.sin(2 * Math.PI * e / DRIFT_YAW_MS);
+            // Clamped to zoomBy()'s own bounds, so a reader already at either
+            // limit sees the breath flatten against it instead of lurching.
+            // A raised cosine: starts at the reader's scale, pulls out to
+            // DRIFT_ZOOM below it, and comes back. Never above.
+            const breath = (1 - Math.cos(2 * Math.PI * e / DRIFT_ZOOM_MS)) / 2;
+            view.scale = Math.min(2.4, Math.max(0.5,
+              drift.scale0 * (1 - DRIFT_ZOOM * breath)));
+          }
+        }
+      }
+      // A glide or a tween paints every frame, as it always did. The drift is
+      // the one source that holds its value between updates, and repainting
+      // 9216 cubes to draw them where they already are is the whole cost of
+      // the idle animation -- so those frames are skipped, not painted.
+      if (!drift.on || glide.active || anim || drifted) repaint();
       if (busy) raf = requestAnimationFrame(step);
     };
     raf = requestAnimationFrame(step);
@@ -2565,10 +2617,12 @@
     }
   }
   function zoomBy(factor) {
+    dropDrift();
     view.scale = Math.min(2.4, Math.max(0.5, view.scale * factor));
     repaint();
   }
   function panBy(dx, dy) {
+    dropDrift();
     peeking = false;
     view.panX += dx;
     view.panY += dy;
@@ -2576,6 +2630,7 @@
   }
   // Rotating away from face on lets the cubes go back to being cubes.
   function orbitBy(dx, dy) {
+    dropDrift();
     const left = (dx || dy) && snap.on;
     if (left) {
       snap.on = false;
@@ -2599,6 +2654,32 @@
     if (!snap.on && !embed && isFaceOn()) setSnap(true);
   }
 
+  // ─── the idle drift ───────────────────────────────────────────────────────
+
+  // A still isometric pile does not say "this turns", so the stage sways and
+  // breathes until a reader arrives, and then it is theirs. The drift yields
+  // to everything: a pointer over the stage, the keyboard on it, the snap and
+  // its glide, a hidden tab, and a reader who asked not to be moved.
+  function driftWanted() {
+    return !reduceMotion && !embed && !document.hidden &&
+           !drift.hover && !drift.focus && !snap.on && !glide.active && !!SRC;
+  }
+  function setDrift(on) {
+    clearTimeout(drift.timer);
+    if (on === drift.on) return;
+    drift.on = on;
+    if (!on) return;
+    drift.yaw0 = view.yaw;
+    drift.scale0 = view.scale;
+    drift.t0 = drift.last = performance.now();
+    tick();
+  }
+  const refreshDrift = () => setDrift(driftWanted());
+  // Taking hold of the view stops the drift on the same frame, rather than
+  // waiting for the pointer to cross into the stage: a wheel, a key or a
+  // gizmo click is a reader taking over just as much as a drag is.
+  const dropDrift = () => setDrift(false);
+
   function bindPointer() {
     const el = $("stage");
     const live = new Map();
@@ -2608,6 +2689,33 @@
       const [a, b] = points();
       return Math.hypot(a.x - b.x, a.y - b.y);
     };
+    // pointerenter and pointerleave do not fire when the pointer crosses into
+    // the legend, the snap button or the gizmo -- they are children of #stage,
+    // and being over them is still being on the stage.
+    el.addEventListener("pointerenter", () => {
+      drift.hover = true;
+      setDrift(false);
+    });
+    el.addEventListener("pointerleave", () => {
+      drift.hover = false;
+      clearTimeout(drift.timer);
+      drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
+    });
+    // The stage is tabindex="0" and takes the arrow keys, so a keyboard reader
+    // must not have the view moving under them either. :focus-visible is the
+    // browser's own answer to "did they arrive here by keyboard": a click
+    // focuses the stage too, and that must not hold the drift off for the rest
+    // of the visit once the pointer has moved away again.
+    el.addEventListener("focusin", () => {
+      drift.focus = el.matches(":focus-visible");
+      setDrift(false);
+    });
+    el.addEventListener("focusout", () => {
+      drift.focus = false;
+      clearTimeout(drift.timer);
+      drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
+    });
+    document.addEventListener("visibilitychange", refreshDrift);
     el.addEventListener("contextmenu", (e) => { if (!embed) e.preventDefault(); });
     el.addEventListener("pointerdown", (e) => {
       if (e.target.closest("#legend, #snap, #gizmo")) return;
@@ -2679,12 +2787,16 @@
       const move = moves[e.key];
       if (!move) return;
       e.preventDefault();
+      // Driving the view from the keyboard is the same claim on it as a drag,
+      // however the focus arrived: hold the drift until the stage is left.
+      drift.focus = true;
       move();
     });
-    $("snap").addEventListener("click", () => setSnap(!snap.on));
+    $("snap").addEventListener("click", () => { dropDrift(); setSnap(!snap.on); });
     const gizmoGo = (arm) => {
       const spec = GIZMO_ARMS.find((a) => a.r === Number(arm.dataset.arm));
       if (!spec) return;
+      dropDrift();
       if (spec.el === 0) {
         view.yaw = spec.yaw;
         setSnap(true);
@@ -2778,7 +2890,10 @@
     // angles where the three photos stack up behind one another.
     let last = 0;
     const sway = (now) => {
-      if (now - last > 40) {
+      // Held still while a pointer is over it: the hero is draggable, and the
+      // sway used to fight the drag. drift.hover is maintained in embed mode
+      // too, by the listeners bindPointer() installs.
+      if (!drift.hover && now - last > 40) {
         last = now;
         view.yaw = HOME.yaw + 0.35 * Math.sin(now / 2600);
         repaint();
@@ -2861,6 +2976,7 @@
     } else {
       render();
       bootGL();
+      refreshDrift();
     }
   });
 

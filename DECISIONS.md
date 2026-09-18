@@ -182,6 +182,44 @@ the URL is the "transpose page" and a link to it resolves for check 3, which
 looks a fragment up by id. That is also why the *Compare with reshape* checkbox
 is `#compare`: it held `#reshape` first.
 
+**The stage drifts while idle, and the pointer is the switch.** A reader
+arriving at the visualizer saw a still isometric pile with no sign it was a
+3-D view; the stage note said *drag to rotate*, which is a caption doing a
+demonstration's job. So the camera sways and breathes until someone points at
+it. Three things about how it is built are deliberate.
+
+It is a sway, not a spin, for the reason `startEmbed()` already gave: a full
+turn passes through the angles where the three photographs stack up behind one
+another, and the pile is the one thing this widget exists to take apart. Both
+the swing and the zoom are bounded by what stays in frame, which took two
+tries to get right. `glDistance()` frames the tensor as a cylinder, which is
+rotation-invariant, but the camera is a 32-degree perspective one and the row
+of three photographs is 51 units long: swing far enough that the row runs into
+the screen and the near photograph blows up past the bottom of the stage. So
+the swing is 0.26 radians either side, not the 0.35 first tried, and the zoom
+only ever pulls *out* from where the reader had it -- the framing already
+leaves 12% to spare and anything tighter crops. The zoom runs at half the
+sway's period so that the camera is at its furthest out exactly at each end of
+the swing, which is where the tensor needs the room.
+
+The pointer is the only switch a reader has to find, and they find it by
+accident. `pointerenter` on `#stage` stops the drift; `pointerleave` schedules
+its return 1.5 seconds later. The legend, the snap button and the gizmo are
+children of `#stage`, so crossing into them is still being on the stage, which
+is what `pointerenter` and `pointerleave` already mean. The keyboard is held
+off by `:focus-visible` rather than `:focus`: a click focuses the stage too,
+and keying off plain focus meant that clicking once killed the drift for the
+rest of the visit -- which the Playwright run caught before this shipped.
+
+It rides `tick()`, the one `requestAnimationFrame` loop the page owns, as a
+third source of motion beside the snap glide and the reshape tween, rather
+than the second loop `startEmbed()` runs. A glide or a tween still paints
+every frame; the drift is throttled to 40ms and skips the frames it did not
+move on, because repainting 9216 cubes to draw them where they already are is
+the whole cost of an animation nobody asked for. It yields to a hidden tab,
+to `prefers-reduced-motion`, and to `snap.on` -- drifting away from face on
+would undo the one view the reader asked for by name.
+
 ## Which document owns what
 
 **Seven documents, one home per fact.** They drifted once -- five copies of the
