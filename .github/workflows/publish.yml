@@ -123,7 +123,7 @@ jobs:
             "require('./package-lock.json').packages['node_modules/playwright'].version")" \
             >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
