@@ -197,6 +197,18 @@ rather than by a kernel. The blanket fallback is now the path nothing takes;
 it is kept so a new notebook with no route executes something sensible rather
 than nothing.
 
+**Notebooks 16, 17 and 18 name their CI cells too.** They gained predict-first
+cells, and a predict cell is a live `RadioButtons` and `Checkbox` -- the exact
+pair that made the sweep stall for the whole `PROBE_CELL_TIMEOUT` on two runs
+in three in notebook 00. All three took the blanket fallback before this, so
+the new widgets would have landed in the sweep. Their `ci_cells` name the code
+cells the fallback already picked, minus the predict cell, which leaves the
+counterexample gated by `tests/test_teaching_materials.py` rather than by a
+kernel -- where the other sixteen already sit. Notebook 16 holds one more cell
+out: `p16-stepper` is a frame stepper, and the rule everywhere else is that no
+route runs one. The fallback had been running it, network and all, which is
+the bug this fixes rather than a cost it pays.
+
 **The widget sweep silences the display publisher.** `widgets.interactive_output`
 runs its callback inside an `Output` widget, whose `__exit__` hands the
 traceback to the frontend and returns `True`, so a broken callback leaves a

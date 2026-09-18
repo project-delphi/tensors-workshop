@@ -60,9 +60,13 @@
   #embedcap { display: none; }
   html.embed .wrap { max-width: none; padding: 0; }
   html.embed header, html.embed aside { display: none; }
-  html.embed .grid { display: block; }
-  html.embed #stage { min-height: 0; height: calc(100vh - 3.4rem); border: 0; border-radius: 0; background: transparent; overflow: auto; }
+  /* Same 100vh split as the layout visualizer, and for the same reason: a
+     fixed 3.4rem reservation for the caption is wrong as soon as it wraps to a
+     third line. Here #stage and #embedcap are the grid's own children. */
+  html.embed .grid { display: flex; flex-direction: column; height: 100vh; }
+  html.embed #stage { flex: 1 1 auto; min-height: 0; height: auto; border: 0; border-radius: 0; background: transparent; overflow: auto; }
   html.embed #embedcap {
+    flex: 0 0 auto;
     display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline;
     min-height: 3.4rem; padding: 0.55rem 0.9rem; margin: 0;
     font: 500 0.8rem/1.35 var(--sans); color: var(--ink-mute);
@@ -177,7 +181,11 @@
   }
   .note { font-size: 0.72rem; line-height: 1.4; color: var(--ink-mute); margin: 0.4rem 0 0; }
   .err { color: var(--bad); font: 500 0.75rem/1.4 var(--sans); margin: 0.3rem 0 0; }
-  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+  /* `top`/`left`/`margin` are load-bearing, not tidying: without them the box
+     sits at its static position, which in embed mode is below the frame, and a
+     1px live region plus a `p` margin was adding 17px to the scroll height --
+     a scrollbar in the hero over something nobody can see. */
+  .sr { position: absolute; top: 0; left: 0; margin: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   @media (prefers-reduced-motion: reduce) { .cell { transition: none; } }
 </style>
 </head>

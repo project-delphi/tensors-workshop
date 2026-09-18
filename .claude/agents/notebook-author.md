@@ -70,10 +70,13 @@ folded solutions included — and `checkpoint` names its final learning check.
 Keep the extension boundary immediately after that sequence.
 
 `ci_cells` on the same cell names what CI executes when the route itself has no
-executable code. Two notebooks declare one: 00, whose predict cell holds live
-widgets that stall the sweep, and 12, whose route is a written exit answer and
-whose audio explorer ships a base64 WAV big enough to stall the kernel. Do not
-widen either to include an explorer. `run_set()` refuses an entry that is not a
+executable code. Five notebooks declare one: 00, whose predict cell holds live
+widgets that stall the sweep; 12, whose route is a written exit answer and
+whose audio explorer ships a base64 WAV big enough to stall the kernel; and
+16, 17 and 18, whose predict cells are the same live RadioButtons/Checkbox
+pair as 00's. Each names the code cells the fallback would have picked, minus
+the predict cell -- and 16 also minus its frame stepper. Do not widen one to
+include an explorer. `run_set()` refuses an entry that is not a
 unique code cell, and check 2's `EXPECTED` guard refuses one that drops an
 asserted cell.
 
