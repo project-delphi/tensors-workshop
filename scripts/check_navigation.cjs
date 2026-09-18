@@ -15,7 +15,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 
-// The accessibility pass. axe runs over every page and both widgets, and a
+// The accessibility pass. axe runs over every page and all three widgets, and a
 // `serious` or `critical` WCAG 2.x A/AA violation fails the check unless the
 // rule *and the element* are listed here with the reason. Entries are by
 // element, not by rule, so a listed rule still fires on any other node. The
@@ -136,18 +136,258 @@ async function audit(page, where) {
         }
       }
 
-      // The two widgets are resources, not Quarto pages, so neither has a
-      // navbar and neither is reachable by clicking. Three.js is vendored, so
-      // it is same-origin and this check -- which aborts every off-origin
-      // request -- can finally load it. That is what `window.THREE` asserts.
-      // The render mode is deliberately not asserted: whether headless
-      // Chromium gives us WebGL is not something to hang CI on, and the
-      // isometric canvas is a designed fallback, not a failure.
+      // The three widgets are resources, not Quarto pages, so none has a
+      // navbar and none is reachable by clicking. Three.js is vendored, so it
+      // is same-origin and this check -- which aborts every off-origin request
+      // -- can finally load it. That is what `window.THREE` asserts.
+      //
+      // For the visualizer the render *mode* is deliberately not asserted:
+      // whether headless Chromium gives us WebGL is not something to hang CI
+      // on, and the isometric canvas is a designed fallback, not a failure.
+      // The projection & SVD stage does assert which path it took, because
+      // there the addons are the thing at risk: one of them missing from
+      // docs/ drops the reader into the flat renderer silently, and nothing
+      // else would notice.
+      // Each widget drives differently, so each one carries its own driver
+      // rather than the loop branching on a flag. `three` said which widget
+      // this was as much as it said what it loaded, and a third widget with
+      // three.js in it had nowhere to go.
+      async function driveVisualizer(page, where, lang) {
+    // `attached`, not `visible`: once three.js loads, the isometric
+    // fallback canvas is the one that gets display:none, and it is
+    // also the first match.
+    await page.waitForSelector('#stage canvas', {state: 'attached'});
+    await page.waitForFunction(() => window.THREE !== undefined,
+      null, {timeout: 10000});
+    assert.equal(await page.evaluate(() => window.THREE.REVISION), '169',
+      `${where}: vendored three.js did not load`);
+    // The photos are a generated JSON fetched same-origin
+    // (interactive/data/photos.json, from gen_figures.py). Without
+    // them the widget silently falls back to counting numbers, which
+    // is a designed fallback for a reader and a regression for CI.
+    await page.waitForFunction(() =>
+      document.querySelector('#stage').dataset.photos === '3',
+      null, {timeout: 10000})
+      .catch(() => assert.fail(`${where}: photos.json did not load`));
+    const readout = () => page.locator('#shape-readout').innerText();
+    // The controls live in tabs, and Playwright clicks only what is
+    // visible, so each group of clicks opens its tab first.
+    const tab = name => page.locator(`#tab-${name}`).click();
+    assert((await readout()).includes('(3, 16, 16, 3)'),
+      `${where}: photo batch is not NHWC 16px by default`);
+    // Transpose permutes the shape; the reshape comparison adds a row.
+    await tab('transpose');
+    await page.locator('#order-NCHW').click();
+    assert((await readout()).includes('(3, 3, 16, 16)'),
+      `${where}: NCHW preset did not permute the shape`);
+    assert.equal(await page.locator('#imgstrip .strip-row').count(), 1);
+    await tab('reshape');
+    await page.locator('#compare').check();
+    assert.equal(await page.locator('#imgstrip .strip-row').count(), 2,
+      `${where}: reshape comparison did not add its row`);
+    assert(await page.locator('#imgstrip .strip-row.wrong').count() === 1,
+      `${where}: reshape of a transposed view should be marked wrong`);
+    await page.locator('#compare').uncheck();
+
+    // The stage carries the shape, the strides and a signature of the
+    // buffer, so the three operations can be checked for what they
+    // promise rather than for how they look. `bufsig` hashes which
+    // source element sits at each memory offset: a view must never
+    // change it, and a copy must.
+    const data = key => page.locator('#stage').evaluate((e, k) => e.dataset[k], key);
+    const preset = text => page.locator('#shape-presets button')
+      .filter({hasText: text}).first();
+    await tab('transpose');
+    await page.locator('#order-NHWC').click();
+    const viewSig = await data('bufsig');
+    assert.equal(await data('shape'), '3,16,16,3', `${where}: NHWC did not come back`);
+    await tab('reshape');
+    await preset('(2304,)').click();
+    assert.equal(await data('shape'), '2304',
+      `${where}: reshape preset did not take`);
+    assert.equal(await data('bufsig'), viewSig,
+      `${where}: a reshape of a contiguous view must not move a byte`);
+    await preset('(3, 16, 16, 3)').click();
+    await tab('transpose');
+    await page.locator('#order-NCHW').click();
+    assert.equal(await data('bufsig'), viewSig,
+      `${where}: a transpose must not move a byte`);
+    await tab('memory');
+    await page.locator('#contig').click();
+    assert.notEqual(await data('bufsig'), viewSig,
+      `${where}: .contiguous() must rewrite the buffer`);
+    assert.equal(await data('shape'), '3,3,16,16',
+      `${where}: .contiguous() must leave the shape alone`);
+    assert.equal(await data('strides'), '768,256,16,1',
+      `${where}: .contiguous() must leave C-contiguous strides`);
+
+    // Face on, the gaps close and -- in photo mode -- the channel
+    // planes composite back into the photograph.
+    await page.locator('#snap').click();
+    await page.waitForFunction(() =>
+      document.querySelector('#stage').dataset.snapped === '1',
+      null, {timeout: 5000})
+      .catch(() => assert.fail(`${where}: Snap to 2-D did not engage`));
+
+    // Counting numbers are a tensor of any rank: every factorisation
+    // of 24 is a reshape, and none of them touches the buffer. They
+    // open arranged by position, so each reshape visibly re-lays the
+    // cubes -- by meaning, (24,) kept drawing as the 2x3x4 it came from.
+    await page.locator('label[for="data-numbers"]').click();
+    assert.equal(await data('shape'), '2,3,4', `${where}: np.arange(24) shape`);
+    assert.equal(await data('arrange'), 'position',
+      `${where}: counting numbers should follow the shape`);
+    const numbersSig = await data('bufsig');
+    await tab('reshape');
+    for (const [label, shape] of [['(24,)', '24'], ['(4, 6)', '4,6'], ['(3, 2, 4)', '3,2,4']]) {
+      await preset(label).click();
+      assert.equal(await data('shape'), shape, `${where}: reshape to ${label}`);
+      assert.equal(await data('bufsig'), numbersSig,
+        `${where}: reshape to ${label} must not move a byte`);
+    }
+
+    // The idle drift: the stage sways and breathes while nobody is
+    // pointing at it, and is the reader's the moment they are. Checked
+    // in one language only -- it costs real seconds, and the behaviour
+    // has no copy in it. Polled rather than slept on, so a slow runner
+    // makes this take longer and not fail.
+    if (lang === 'en') {
+      // At a stated width, not whatever the loop above left behind,
+      // and on a fresh load, so that no reshape tween from the steps
+      // above is still settling and reads as camera motion.
+      await page.setViewportSize({width: 1440, height: 1000});
+      await page.goto(
+        `${origin}${prefix}interactive/tensor-visualizer.html?lang=${lang}`);
+      await page.waitForFunction(() =>
+        document.querySelector('#stage').dataset.photos === '3',
+        null, {timeout: 10000});
+      // The flat canvas is what boots; three.js arrives after it, and
+      // the swap rewrites every overlay -- which would read as camera
+      // motion and pass this check with the drift switched off.
+      // setMode() gives #view an inline display whichever way it
+      // settles, so that is the swap being over.
+      await page.waitForFunction(() =>
+        document.getElementById('view').style.display !== '',
+        null, {timeout: 10000});
+      // Where the HTML overlays sit is a function of the camera, so
+      // their positions changing is the camera moving.
+      const where_ = where;
+      const pose = () => page.evaluate(() =>
+        [...document.getElementById('overlays').children]
+          .map(e => e.getAttribute('style')).join('|'));
+      const moves = async (ms) => {
+        const first = await pose();
+        const until = Date.now() + ms;
+        while (Date.now() < until) {
+          await page.waitForTimeout(80);
+          if (await pose() !== first) return true;
+        }
+        return false;
+      };
+      await page.mouse.move(2, 2);
+      assert(await moves(4000), `${where_}: the stage should drift while idle`);
+      const stageBox = await page.locator('#stage').boundingBox();
+      await page.mouse.move(stageBox.x + stageBox.width / 2,
+                            stageBox.y + stageBox.height / 2);
+      await page.waitForTimeout(200);
+      assert(!await moves(900),
+        `${where_}: the drift must stop under the pointer`);
+      await page.mouse.move(2, 2);
+      assert(await moves(6000),
+        `${where_}: the drift should come back once the pointer leaves`);
+    }
+
+    // `#transpose` in the URL opens the page on that tab.
+    await page.goto(
+      `${origin}${prefix}interactive/tensor-visualizer.html?lang=${lang}#transpose`);
+    await page.waitForSelector('#tab-transpose');
+    assert(await page.locator('#transpose').isVisible(),
+      `${where}: #transpose in the URL did not open its tab`);
+    assert(await page.locator('#reshape').isHidden(),
+      `${where}: the reshape tab stayed open beside #transpose`);
+      }
+
+      async function driveBroadcasting(page) {
+        await page.waitForSelector('#draw .cell');
+      }
+
+      // The projection & SVD stage. Two things here that the other two cannot
+      // check: that the vendored *addons* arrived -- a bloom pass that never
+      // reached docs/ would drop the reader into the flat renderer and let
+      // this check pass, which is the eleven-day 404 all over again -- and
+      // that A v = sigma u holds through the real render path, read off the
+      // stage as numbers rather than looked for in pixels.
+      async function drivePortal(page, where, lang) {
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.gl !== 'none',
+          null, {timeout: 12000})
+          .catch(() => assert.fail(`${where}: the stage never started drawing`));
+        assert.equal(await page.evaluate(() => window.THREE.REVISION), '169',
+          `${where}: vendored three.js did not load`);
+        assert.equal(await page.evaluate(() =>
+          window.THREE_ADDONS && typeof window.THREE_ADDONS.EffectComposer),
+          'function', `${where}: the vendored three.js addons did not load`);
+        assert.equal(await page.evaluate(() =>
+          document.querySelector('#stage').dataset.gl), 'composer',
+          `${where}: step 1 should render through the bloom composer`);
+
+        // Step 1: sliding y off the plane moves the residual and leaves beta
+        // alone, which is the step's whole claim.
+        const read1 = () => page.locator('#read-1').innerText();
+        const beta = async () => (await read1()).split('\n')[0];
+        const before = await beta();
+        await page.locator('#tilt').fill('0');
+        assert((await read1()).includes('0.0000'),
+          `${where}: y on the plane should leave no residual`);
+        await page.locator('#tilt').fill('400');
+        assert(!(await read1()).includes('\u2016r\u2016 = 0.0000'),
+          `${where}: sliding y off the plane should give it a residual`);
+        assert.equal(await beta(), before,
+          `${where}: beta must not move when y slides along the residual`);
+
+        // The step machine, by button and by scroll.
+        await page.locator('#next').click();
+        await page.locator('#next').click();
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.step === '8',
+          null, {timeout: 5000})
+          .catch(() => assert.fail(`${where}: Next did not reach the last step`));
+        assert.equal(await page.evaluate(() =>
+          document.querySelector('#stage').dataset.gl), 'direct',
+          `${where}: the SVD portal renders two viewports, so not through the composer`);
+
+        // A v = sigma u. Scrub x onto the first right singular vector and the
+        // length of A x must be sigma_1 exactly.
+        const deg = await page.evaluate(() => {
+          const V = window.LinalgCore.svd([[3, 1.2], [0.4, 1]]).V;
+          return Math.round(Math.atan2(V[1][0], V[0][0]) * 180 / Math.PI + 360) % 360;
+        });
+        await page.locator('#scrub').fill(String(deg));
+        await page.waitForTimeout(150);
+        const d = await page.evaluate(() => ({...document.querySelector('#stage').dataset}));
+        assert.equal(d.aligned, '0', `${where}: x on v1 should register as aligned`);
+        assert.equal(d.av, d.sigma.split(',')[0],
+          `${where}: |A v1| is ${d.av}, sigma_1 is ${d.sigma.split(',')[0]}`);
+
+        // #step-8 in the URL opens on that step.
+        await page.goto(
+          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}#step-8`);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.step === '8',
+          null, {timeout: 8000})
+          .catch(() => assert.fail(`${where}: #step-8 did not open on that step`));
+      }
+
       const widgets = [
         {file: 'tensor-visualizer', en: 'Reshape, transpose and strides',
-         es: 'Reshape, transpose y strides', three: true},
+         es: 'Reshape, transpose y strides', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
-         es: 'Broadcasting, paso a paso', three: false}
+         es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
+        // No embed mode: the hero is two tabs of live widgets, which
+        // `assert.equal(frames.count(), 2)` below pins, and a sticky two-pane
+        // scroller is not a hero.
+        {file: 'linalg-stage', en: 'Projection and the SVD',
+         es: 'Proyecci\u00f3n y la SVD', embed: false, drive: drivePortal}
       ];
       for (const widget of widgets) {
         console.log(`Checking ${widget.file}`);
@@ -157,162 +397,8 @@ async function audit(page, where) {
             `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
           assert.equal(await page.locator('html').getAttribute('lang'), lang);
           assert.equal(await page.locator('#title').innerText(), widget[lang]);
-          if (widget.three) {
-            // `attached`, not `visible`: once three.js loads, the isometric
-            // fallback canvas is the one that gets display:none, and it is
-            // also the first match.
-            await page.waitForSelector('#stage canvas', {state: 'attached'});
-            await page.waitForFunction(() => window.THREE !== undefined,
-              null, {timeout: 10000});
-            assert.equal(await page.evaluate(() => window.THREE.REVISION), '169',
-              `${where}: vendored three.js did not load`);
-            // The photos are a generated JSON fetched same-origin
-            // (interactive/data/photos.json, from gen_figures.py). Without
-            // them the widget silently falls back to counting numbers, which
-            // is a designed fallback for a reader and a regression for CI.
-            await page.waitForFunction(() =>
-              document.querySelector('#stage').dataset.photos === '3',
-              null, {timeout: 10000})
-              .catch(() => assert.fail(`${where}: photos.json did not load`));
-            const readout = () => page.locator('#shape-readout').innerText();
-            // The controls live in tabs, and Playwright clicks only what is
-            // visible, so each group of clicks opens its tab first.
-            const tab = name => page.locator(`#tab-${name}`).click();
-            assert((await readout()).includes('(3, 16, 16, 3)'),
-              `${where}: photo batch is not NHWC 16px by default`);
-            // Transpose permutes the shape; the reshape comparison adds a row.
-            await tab('transpose');
-            await page.locator('#order-NCHW').click();
-            assert((await readout()).includes('(3, 3, 16, 16)'),
-              `${where}: NCHW preset did not permute the shape`);
-            assert.equal(await page.locator('#imgstrip .strip-row').count(), 1);
-            await tab('reshape');
-            await page.locator('#compare').check();
-            assert.equal(await page.locator('#imgstrip .strip-row').count(), 2,
-              `${where}: reshape comparison did not add its row`);
-            assert(await page.locator('#imgstrip .strip-row.wrong').count() === 1,
-              `${where}: reshape of a transposed view should be marked wrong`);
-            await page.locator('#compare').uncheck();
+          await widget.drive(page, where, lang);
 
-            // The stage carries the shape, the strides and a signature of the
-            // buffer, so the three operations can be checked for what they
-            // promise rather than for how they look. `bufsig` hashes which
-            // source element sits at each memory offset: a view must never
-            // change it, and a copy must.
-            const data = key => page.locator('#stage').evaluate((e, k) => e.dataset[k], key);
-            const preset = text => page.locator('#shape-presets button')
-              .filter({hasText: text}).first();
-            await tab('transpose');
-            await page.locator('#order-NHWC').click();
-            const viewSig = await data('bufsig');
-            assert.equal(await data('shape'), '3,16,16,3', `${where}: NHWC did not come back`);
-            await tab('reshape');
-            await preset('(2304,)').click();
-            assert.equal(await data('shape'), '2304',
-              `${where}: reshape preset did not take`);
-            assert.equal(await data('bufsig'), viewSig,
-              `${where}: a reshape of a contiguous view must not move a byte`);
-            await preset('(3, 16, 16, 3)').click();
-            await tab('transpose');
-            await page.locator('#order-NCHW').click();
-            assert.equal(await data('bufsig'), viewSig,
-              `${where}: a transpose must not move a byte`);
-            await tab('memory');
-            await page.locator('#contig').click();
-            assert.notEqual(await data('bufsig'), viewSig,
-              `${where}: .contiguous() must rewrite the buffer`);
-            assert.equal(await data('shape'), '3,3,16,16',
-              `${where}: .contiguous() must leave the shape alone`);
-            assert.equal(await data('strides'), '768,256,16,1',
-              `${where}: .contiguous() must leave C-contiguous strides`);
-
-            // Face on, the gaps close and -- in photo mode -- the channel
-            // planes composite back into the photograph.
-            await page.locator('#snap').click();
-            await page.waitForFunction(() =>
-              document.querySelector('#stage').dataset.snapped === '1',
-              null, {timeout: 5000})
-              .catch(() => assert.fail(`${where}: Snap to 2-D did not engage`));
-
-            // Counting numbers are a tensor of any rank: every factorisation
-            // of 24 is a reshape, and none of them touches the buffer. They
-            // open arranged by position, so each reshape visibly re-lays the
-            // cubes -- by meaning, (24,) kept drawing as the 2x3x4 it came from.
-            await page.locator('label[for="data-numbers"]').click();
-            assert.equal(await data('shape'), '2,3,4', `${where}: np.arange(24) shape`);
-            assert.equal(await data('arrange'), 'position',
-              `${where}: counting numbers should follow the shape`);
-            const numbersSig = await data('bufsig');
-            await tab('reshape');
-            for (const [label, shape] of [['(24,)', '24'], ['(4, 6)', '4,6'], ['(3, 2, 4)', '3,2,4']]) {
-              await preset(label).click();
-              assert.equal(await data('shape'), shape, `${where}: reshape to ${label}`);
-              assert.equal(await data('bufsig'), numbersSig,
-                `${where}: reshape to ${label} must not move a byte`);
-            }
-
-            // The idle drift: the stage sways and breathes while nobody is
-            // pointing at it, and is the reader's the moment they are. Checked
-            // in one language only -- it costs real seconds, and the behaviour
-            // has no copy in it. Polled rather than slept on, so a slow runner
-            // makes this take longer and not fail.
-            if (lang === 'en') {
-              // At a stated width, not whatever the loop above left behind,
-              // and on a fresh load, so that no reshape tween from the steps
-              // above is still settling and reads as camera motion.
-              await page.setViewportSize({width: 1440, height: 1000});
-              await page.goto(
-                `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
-              await page.waitForFunction(() =>
-                document.querySelector('#stage').dataset.photos === '3',
-                null, {timeout: 10000});
-              // The flat canvas is what boots; three.js arrives after it, and
-              // the swap rewrites every overlay -- which would read as camera
-              // motion and pass this check with the drift switched off.
-              // setMode() gives #view an inline display whichever way it
-              // settles, so that is the swap being over.
-              await page.waitForFunction(() =>
-                document.getElementById('view').style.display !== '',
-                null, {timeout: 10000});
-              // Where the HTML overlays sit is a function of the camera, so
-              // their positions changing is the camera moving.
-              const where_ = where;
-              const pose = () => page.evaluate(() =>
-                [...document.getElementById('overlays').children]
-                  .map(e => e.getAttribute('style')).join('|'));
-              const moves = async (ms) => {
-                const first = await pose();
-                const until = Date.now() + ms;
-                while (Date.now() < until) {
-                  await page.waitForTimeout(80);
-                  if (await pose() !== first) return true;
-                }
-                return false;
-              };
-              await page.mouse.move(2, 2);
-              assert(await moves(4000), `${where_}: the stage should drift while idle`);
-              const stageBox = await page.locator('#stage').boundingBox();
-              await page.mouse.move(stageBox.x + stageBox.width / 2,
-                                    stageBox.y + stageBox.height / 2);
-              await page.waitForTimeout(200);
-              assert(!await moves(900),
-                `${where_}: the drift must stop under the pointer`);
-              await page.mouse.move(2, 2);
-              assert(await moves(6000),
-                `${where_}: the drift should come back once the pointer leaves`);
-            }
-
-            // `#transpose` in the URL opens the page on that tab.
-            await page.goto(
-              `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}#transpose`);
-            await page.waitForSelector('#tab-transpose');
-            assert(await page.locator('#transpose').isVisible(),
-              `${where}: #transpose in the URL did not open its tab`);
-            assert(await page.locator('#reshape').isHidden(),
-              `${where}: the reshape tab stayed open beside #transpose`);
-          } else {
-            await page.waitForSelector('#draw .cell');
-          }
           for (const width of [1440, 390]) {
             await page.setViewportSize({width, height: 1000});
             const fits = await page.evaluate(() =>
@@ -322,14 +408,16 @@ async function audit(page, where) {
           await audit(page, where);
 
           // Embed mode is what the homepage hero shows: stage and caption
-          // only, no three.js, on the band's navy.
+          // only, no three.js, on the band's navy. Only for the widgets the
+          // hero actually carries.
+          if (!widget.embed) continue;
           await page.goto(
             `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}&embed=1&theme=navy`);
           await page.waitForSelector('#embedcap a');
           assert(await page.locator('aside').isHidden(), `${where} embed: panel shown`);
           assert(await page.locator('header').isHidden(), `${where} embed: header shown`);
           assert.equal(await page.locator('html').getAttribute('data-theme'), 'navy');
-          if (widget.three) {
+          if (widget.file === 'tensor-visualizer') {
             await page.waitForFunction(() =>
               document.querySelector('#stage').dataset.photos === '3', null, {timeout: 10000});
             assert.equal(await page.evaluate(() => window.THREE), undefined,
@@ -347,7 +435,7 @@ async function audit(page, where) {
         }
       }
 
-      // The hero carries both widgets live, behind two tabs, in the page's
+      // The hero carries two of the three widgets live, behind two tabs, in the page's
       // own language. The static diagram is the fallback and must still be
       // in the document for reduced motion and phones.
       for (const lang of ['en', 'es']) {
@@ -522,7 +610,7 @@ async function audit(page, where) {
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     assert.deepEqual(a11y, [], 'Accessibility violations (axe, serious or critical)');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, both interactive widgets, the visualizer's idle drift, and axe on every page and widget.`);
+      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, all three interactive widgets, the visualizer's idle drift, the SVD portal's A v = sigma u, and axe on every page and widget.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

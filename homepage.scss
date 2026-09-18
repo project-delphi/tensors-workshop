@@ -253,7 +253,11 @@ body { overflow-x: clip; }
    there is no second card style to keep in step. */
 .widget-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  // auto-fit rather than a fixed count: with three cards a `repeat(2, ...)`
+  // left the third alone on its own row, and the card is readable down to
+  // about 18rem, which is also what keeps check_navigation.cjs's 390px
+  // no-overflow assertion true without a second breakpoint.
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
   gap: 1rem;
 }
 .resource-card {

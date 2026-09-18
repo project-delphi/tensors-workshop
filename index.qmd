@@ -266,8 +266,8 @@ Core papers, textbook chapters, and repository source code.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-No install and no account. Two live tools that answer a question the pages can
-only describe.
+No install and no account. Three live tools that answer a question the pages
+can only describe.
 
 :::: {.widget-grid}
 ::: {.resource-card}
@@ -293,6 +293,19 @@ only the memory move. Every click prints the NumPy and PyTorch that does it.
 Section 04.
 
 [Try reshape & transpose](interactive/tensor-visualizer.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 📐 Projection & SVD stage
+
+<span data-language-key="projection-svd-stage"></span>
+
+Least squares is a projection: scroll, and watch a target vector's shadow land
+on the plane its predictors span, with the residual meeting it at a right
+angle. Then step through the SVD portal, where a unit circle becomes an
+ellipse and A v = σ u stops being notation. Sections 07 and 09.
+
+[Try projection & SVD](interactive/linalg-stage.html?lang=en){.resource-button}
 :::
 ::::
 

@@ -552,6 +552,8 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 `X` is 20433 × 7 — very tall, so `np.linalg.inv` cannot even be called. There is **no exact solution**: no straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead. `lstsq` agrees with it exactly, because it solves the same problem. The largest coefficient belongs to `median_income` (about 47,700 per unit), which is the sensible result — income predicts house prices.
 
+That geometry has its own page: the [projection and SVD stage](interactive/linalg-stage.html?lang=en) takes three of these districts and two predictors, so the column space is a plane you can see, and draws `ŷ` as the closest point on it with the residual meeting it at a right angle. Slide `y` off the plane and watch `β` refuse to move — least squares cannot see the direction it is throwing away.
+
 ## Kahoot Quiz 2 — Einsum, Distance & the Pseudoinverse (5 min)
 
 <span data-language-key="kahoot-quiz-2-einsum-distance-the-pseudoinverse-5-min"></span>
@@ -651,6 +653,8 @@ Three consequences are worth stating outright, because each one is a mistake tha
 
 1. **Factor once, solve many.** Cholesky costs `n³/3` once; each later solve is two triangular substitutions at `O(n²)`. So `m` right-hand sides cost `O(n³ + mn²)`, **not** `O(mn³)`. `np.linalg.inv(A) @ B` is both slower and less accurate than factoring, and is never the right call.
 2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
+The same page carries the other half of this: its [SVD portal](interactive/linalg-stage.html?lang=en#step-8) puts the unit circle and its image side by side, so `A vᵢ = σᵢ uᵢ` is something you scrub to rather than something you are told, and `σ₁/σ₂` is a shape on the screen rather than a ratio.
+
 3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))`. That gap is why large-scale recommenders are feasible at all.
 
 ```python

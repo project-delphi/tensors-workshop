@@ -38,6 +38,25 @@ repo:
     - interactive/broadcasting-simulator.html
     - interactive/vendor/three-boot.js
     - interactive/vendor/three-0.169.0.module.min.js
+    - interactive/linalg-stage.html
+    - interactive/linalg-core.js
+    # The post-processing addons and the CSS2D label renderer, resolved from
+    # the bare specifier `three` by an import map in linalg-stage.html. A map
+    # is element content rather than an attribute, so the link harvest cannot
+    # see it either -- these lines are the only thing that would notice one of
+    # them failing to reach docs/.
+    - interactive/vendor/linalg-boot.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/EffectComposer.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/MaskPass.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/OutputPass.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/Pass.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/RenderPass.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/ShaderPass.js
+    - interactive/vendor/three-0.169.0/examples/jsm/postprocessing/UnrealBloomPass.js
+    - interactive/vendor/three-0.169.0/examples/jsm/renderers/CSS2DRenderer.js
+    - interactive/vendor/three-0.169.0/examples/jsm/shaders/CopyShader.js
+    - interactive/vendor/three-0.169.0/examples/jsm/shaders/LuminosityHighPassShader.js
+    - interactive/vendor/three-0.169.0/examples/jsm/shaders/OutputShader.js
 
 workshop:
   authors:
