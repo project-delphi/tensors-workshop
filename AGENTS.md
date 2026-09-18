@@ -330,6 +330,7 @@ uv run --group site python scripts/gen_tables.py
 uv run --group site python scripts/gen_notebooks.py
 uv run --group site python scripts/check_links.py     # verifies docs/
 uv run --group site python scripts/check_links.py --notebooks-only
+uv run --group site python scripts/nb_cells.py index 09   # a cell index, `show 09 ID`, or `diff main`: read a notebook by cell, not by file
 
 uv run --group lint ruff check scripts tests            # CI runs both of these
 uv run --group lint ruff format scripts tests           # (format --check in CI)
