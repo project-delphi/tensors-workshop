@@ -38,7 +38,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
         # No cache key: uv's default keys on **/uv.lock, which is deliberately
         # not committed (see .gitignore), so caching here would key on nothing
         # and claim to do more than it does. The two groups CI resolves are
@@ -107,7 +107,7 @@ jobs:
       # mobile menu, the scrollable handbook tables, and the two decks -- and
       # axe over every page and both widgets. None of that is visible to a
       # parser, and it was landed without a gate.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
@@ -123,7 +123,7 @@ jobs:
             "require('./package-lock.json').packages['node_modules/playwright'].version")" \
             >> "$GITHUB_OUTPUT"
 
-      - uses: actions/cache@v4
+      - uses: actions/cache@v6
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
@@ -183,7 +183,7 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
 
   # Starts a real kernel per notebook and runs the core route each one
   # declares, through to the solution that answers it. This is the gate
@@ -210,7 +210,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
         with:
           enable-cache: false
 
