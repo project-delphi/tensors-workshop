@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-09-18
+
+- The reshape & transpose visualizer's arithmetic -- strides, contiguity, the memory orders and the rule for when a reshape is a view -- now lives in its own small file, `interactive/tensor-core.js`, with a unit test that CI runs without a browser. Nothing changes on screen.
+
 ## 2026-09-17
 
 - The visualizer gives the tensor the room: the page runs to 110rem, the stage is about twice as wide and grows to 72vh, and the image strip and the buffer share a row beneath it. The sidebar's operations are four tabs -- *Reshape*, *Transpose*, *Slice*, *Memory* -- over one shared buffer, with the strides and the code log always in view; `#transpose` (or any tab's id) in the URL opens the page on that tab. Counting numbers now open arranged *by position*, so a reshape visibly re-lays the cubes: by meaning, `(24,)` kept drawing as the 2×3×4 block it came from while the readout said otherwise. The arrangement switch moved onto the stage, next to *Snap to 2-D*. The site calls it the reshape & transpose visualizer now, on the hero tab, the resource card and every link -- "layout" was the framing #129 replaced.

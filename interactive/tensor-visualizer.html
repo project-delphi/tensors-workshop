@@ -470,6 +470,7 @@
 <!-- The vendored three.js (vendor/three-boot.js) is injected by bootGL()
      below rather than written here, so that embed mode -- the homepage hero
      -- never fetches it: the front door gets the isometric canvas only. -->
+<script src="tensor-core.js"></script>
 <script>
 (function () {
   "use strict";
@@ -515,10 +516,6 @@
   const SNAP_EL = 0.075;         // how level the camera must be before it snaps
   const SNAP_YAW = 0.10;
 
-  // Memory layouts, by *position* in the shape: which position runs slowest
-  // first. That is how NumPy and PyTorch define them -- channels_last is
-  // "position 1 fastest, then 3, then 2, then 0", not "the C axis".
-  const POS_ORDERS = { C: [0, 1, 2, 3], F: [3, 2, 1, 0], CL: [0, 2, 3, 1] };
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
 
   const EN = {
@@ -805,9 +802,11 @@
   let presetsKey = "";
 
   const $ = (id) => document.getElementById(id);
-  const sum = (a) => a.reduce((x, y) => x + y, 0);
-  const prod = (a) => a.reduce((x, y) => x * y, 1);
-  const range = (k) => [...Array(k).keys()];
+  // The stride and reshape arithmetic is tensor-core.js, loaded just before
+  // this script, so `npm test` can pin it without a browser. The wrappers
+  // below hand it `state`; nothing in it knows the widget exists.
+  const Core = window.TensorCore;
+  const { sum, prod, range, same, unravel, cstrides, reshapeStrides, POS_ORDERS } = Core;
 
   // Resolved once per frame rather than twice per cube. Colouring 9216 cubes
   // called getComputedStyle tens of thousands of times per glide, which made
@@ -841,7 +840,6 @@
   function shapeText(dims) {
     return dims.length === 1 ? `(${dims[0]},)` : `(${dims.join(", ")})`;
   }
-  const same = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
   const easeInOut = (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
   const lex = (a, b) => {
     for (let i = 0; i < Math.min(a.length, b.length); i++) if (a[i] !== b[i]) return a[i] - b[i];
@@ -856,15 +854,6 @@
   // so the counting-numbers tensor starts out looking like a tensor and a
   // reshape down to (n,) is something the reader does, not the default.
   const BASE_SHAPES = { 12: [2, 2, 3], 24: [2, 3, 4], 48: [2, 4, 6], 120: [2, 3, 4, 5] };
-
-  function unravel(k, dims) {
-    const out = new Array(dims.length);
-    for (let i = dims.length - 1; i >= 0; i--) {
-      out[i] = k % dims[i];
-      k = (k - out[i]) / dims[i];
-    }
-    return out;
-  }
 
   // The array as `np.stack` or `np.arange` leaves it: a shape, one identity per
   // axis, and the value at each C-ordered position. Photos are stacked NHWC,
@@ -915,46 +904,18 @@
 
   // ─── shape, strides, buffer ───────────────────────────────────────────────
 
-  function cstrides(dims) {
-    const s = new Array(dims.length);
-    let run = 1;
-    for (let k = dims.length - 1; k >= 0; k--) { s[k] = run; run *= dims[k]; }
-    return s;
-  }
   const rank = () => state.shape.length;
   const numel = () => prod(state.shape);
   const offsetOf = (L) => sum(L.map((v, i) => v * state.stride[i]));
-  // An axis of size 1 is never indexed by anything but 0, so its stride is
-  // never read and NumPy ignores it when it reports contiguity. Comparing the
-  // stride arrays outright called a one-photo batch non-contiguous.
-  function contiguousInOrder(order) {
-    let run = 1;
-    for (let k = order.length - 1; k >= 0; k--) {
-      const p = order[k];
-      if (state.shape[p] === 1) continue;
-      if (state.stride[p] !== run) return false;
-      run *= state.shape[p];
-    }
-    return true;
-  }
+  const contiguousInOrder = (order) => Core.contiguousInOrder(state.shape, state.stride, order);
   const isCContig = () => contiguousInOrder(range(rank()));
   // True while every byte is still where `np.stack` or `np.arange` put it.
   const isPristine = () => BUFSRC.every((v, i) => v === i);
 
-  // A memory layout as a *position* order, slowest first. C and F exist at any
-  // rank; channels_last is defined on NCHW and so exists only at rank 4.
-  function posOrder(kind) {
-    const R = rank();
-    if (kind === "C") return range(R);
-    if (kind === "F") return range(R).reverse();
-    return R === 4 ? POS_ORDERS.CL.slice() : null;
-  }
-  function stridesFor(order) {
-    const s = new Array(order.length);
-    let run = 1;
-    for (let k = order.length - 1; k >= 0; k--) { s[order[k]] = run; run *= state.shape[order[k]]; }
-    return s;
-  }
+  // A memory layout as a *position* order, slowest first; null where the
+  // layout is not defined at this rank (channels_last needs rank 4).
+  const posOrder = (kind) => Core.posOrder(rank(), kind);
+  const stridesFor = (order) => Core.stridesFor(state.shape, order);
   function isContiguousAs(kind) {
     const order = posOrder(kind);
     return !!order && contiguousInOrder(order);
@@ -975,74 +936,24 @@
     state.slice = state.slice < 0 ? -1 : perm.indexOf(state.slice);
   }
 
-  // Which identity survives a reshape: an axis that is carried through whole,
-  // matched from both ends. An axis that was split or merged has none, and is
-  // known by its position from then on.
+  // Which identity survives a reshape is tensor-core.js's `carryIds`, matched
+  // from both ends. One case is decided here, because it needs the buffer:
+  // flattened and poured back into the shape it was built with, over a
+  // buffer nothing has rewritten *and* read the way it was written, this
+  // *is* the array again -- so B, C, H and W come back with it. The strides
+  // are the half that matters: reshape to (3, 16, 48), reverse it and
+  // reshape back and you land on the right shape over the right bytes in
+  // the wrong order, and calling that slab a photograph is the one lie this
+  // page must not tell. Any other route through a merge loses the letters,
+  // because after a flatten NumPy has nothing left that says which axis a
+  // stretch of bytes used to be.
   function carryIds(oldShape, oldIds, next, nextStride) {
-    // Flattened and poured back into the shape it was built with, over a
-    // buffer nothing has rewritten *and* read the way it was written, this
-    // *is* the array again -- so B, C, H and W come back with it. The strides
-    // are the half that matters: reshape to (3, 16, 48), reverse it and
-    // reshape back and you land on the right shape over the right bytes in
-    // the wrong order, and calling that slab a photograph is the one lie this
-    // page must not tell. Any other route through a merge loses the letters,
-    // because after a flatten NumPy has nothing left that says which axis a
-    // stretch of bytes used to be.
     if (same(next, SRC.dims) && isPristine() && same(nextStride, cstrides(SRC.dims))) {
       return SRC.ids.slice();
     }
-    const ids = next.map(() => null);
-    let i = oldShape.length - 1, j = next.length - 1;
-    while (i >= 0 && j >= 0 && oldShape[i] === next[j]) { ids[j] = oldIds[i]; i--; j--; }
-    let a = 0, b = 0;
-    while (a <= i && b <= j && oldShape[a] === next[b]) { ids[b] = oldIds[a]; a++; b++; }
-    return ids;
+    return Core.carryIds(oldShape, oldIds, next);
   }
 
-  // Can this shape be reached without touching a byte? NumPy's own rule, and
-  // it is not "the view is C-contiguous": axes are matched into groups whose
-  // sizes multiply to the same thing on both sides, and a group is expressible
-  // in strides as long as its old axes are contiguous *with respect to each
-  // other*. Transposing to NCHW and merging the two 16s back together is the
-  // case that matters -- 48 == 3 * 16, so it is a view, and calling it a copy
-  // taught the opposite of the lesson.
-  function reshapeStrides(shape, stride, next) {
-    const old = [];
-    for (let i = 0; i < shape.length; i++) if (shape[i] !== 1) old.push([shape[i], stride[i]]);
-    const out = next.map(() => 0);
-    let i = 0, j = 0;
-    while (j < next.length) {
-      if (next[j] === 1) { j++; continue; }
-      if (i >= old.length) return null;
-      const from = i, at = j;
-      let have = old[i][0], want = next[j];
-      i++;
-      j++;
-      while (have !== want) {
-        if (have < want) {
-          if (i >= old.length) return null;
-          have *= old[i][0];
-          i++;
-        } else {
-          if (j >= next.length) return null;
-          want *= next[j];
-          j++;
-        }
-      }
-      for (let k = from; k < i - 1; k++) {
-        if (old[k][1] !== old[k + 1][1] * old[k + 1][0]) return null;
-      }
-      let run = old[i - 1][1];
-      for (let k = j - 1; k >= at; k--) { out[k] = run; run *= next[k]; }
-    }
-    if (i < old.length) return null;
-    // A size-1 axis's stride is never read; give it the neighbouring one so the
-    // table shows a number rather than a zero.
-    for (let k = next.length - 1; k >= 0; k--) {
-      if (next[k] === 1) out[k] = k + 1 < next.length ? out[k + 1] * next[k + 1] : 1;
-    }
-    return out;
-  }
   const reshapeIsView = (next) => !!reshapeStrides(state.shape, state.stride, next);
 
   // reshape. When the strides can express the new shape this touches no byte,

@@ -135,6 +135,11 @@ generator nor a byte-exact gate. Two self-contained HTML widgets -- the section
 own `:root` palette, EN/ES copy tables, `?lang=`, and its section's accent
 adjusted per theme to clear 4.5:1. They are resources, not render targets:
 `interactive/**` is in `resources:` and deliberately absent from `render:`.
+The visualizer's arithmetic -- strides, contiguity, the memory orders and
+NumPy's view-or-copy rule for a reshape -- is `interactive/tensor-core.js`,
+a plain script the page loads first; `tests/tensor_core.test.cjs` pins it
+under `npm test`, the one part of a widget with a unit test. Everything that
+touches the widget's state stays in the HTML.
 `photos.json` is their one generated input; if it fails to load the visualizer
 counts instead, which `check_navigation.cjs` treats as a regression. Both take
 `?embed=1&theme=navy` for the homepage hero, where the visualizer never fetches
@@ -337,6 +342,7 @@ uv run --group lint ruff format scripts tests           # (format --check in CI)
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests -v
 npm run check:navigation                                # the browser check, after a render
+npm test                                                # the visualizer's arithmetic, no browser
 
 # Runs the notebooks. A kernel per notebook, the network, and the scientific
 # stack — so it is its own CI job, not part of the render gate.

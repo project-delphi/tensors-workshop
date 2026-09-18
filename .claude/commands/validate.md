@@ -76,6 +76,7 @@ uv run --group test python -m unittest discover -s tests
 quarto render
 uv run --group site python scripts/check_links.py
 npm run check:navigation
+npm test
 git diff --check
 ```
 
