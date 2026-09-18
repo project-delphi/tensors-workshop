@@ -169,6 +169,19 @@ the generator writes. An SVG with a fixed `viewBox` does not reflow, so the
 layout is emitted twice and `custom.scss` picks one at 44rem; the diagram
 draws itself from the site's own SCSS variables.
 
+**The visualizer is one page with tabs, not one page per operation.** When
+its sidebar outgrew the stage (2026-09-17) the obvious split was a reshape page,
+a transpose page and a memory page. It was not taken because section 04's
+lesson is the composition: transpose to NCHW, then reshape, then
+`.contiguous()`, watching one buffer through all three, and "a reshape after a
+transpose copies" cannot be shown on a page that has only reshape. Separate
+pages would also each need the hero embed's sequence and the browser check's
+chain. So the operations are tabs over one state, and the tab panels carry
+plain ids (`reshape`, `transpose`, `slice`, `memory`) so that `#transpose` in
+the URL is the "transpose page" and a link to it resolves for check 3, which
+looks a fragment up by id. That is also why the *Compare with reshape* checkbox
+is `#compare`: it held `#reshape` first.
+
 ## Which document owns what
 
 **Seven documents, one home per fact.** They drifted once -- five copies of the

@@ -39,7 +39,7 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
 ```{=html}
 <div class="hero-demos" data-hero-demos>
   <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
-    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Disposición y strides</button>
+    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
     <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
@@ -282,7 +282,7 @@ corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Secci
 :::
 
 ::: {.resource-card}
-### 🧊 Visualizador de disposición
+### 🧊 Visualizador de reshape y transpose
 
 <span data-language-key="layout-visualizer"></span>
 
@@ -292,7 +292,7 @@ hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
 o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
 NumPy y el PyTorch que lo hace. Sección 04.
 
-<a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Probar disposiciones</a>
+<a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Probar reshape y transpose</a>
 :::
 ::::
 

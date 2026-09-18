@@ -62,18 +62,22 @@
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
   a { color: var(--accent); }
-  .wrap { max-width: 76rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+  .wrap { max-width: 110rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
   header p { max-width: 42rem; color: var(--ink-mute); overflow-wrap: break-word; }
   h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
   .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 24rem); gap: 1.25rem; align-items: start; }
+  .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 23rem); gap: 1.25rem; align-items: start; }
   @media (max-width: 56rem) { .grid { grid-template-columns: 1fr; } }
+  /* The two pictures under the stage share a row on a wide screen; the buffer
+     ribbon takes the wide cell because it draws one bar per byte. */
+  .under-row { display: grid; grid-template-columns: minmax(0, 24rem) minmax(0, 1fr); gap: 1rem; }
+  @media (max-width: 80rem) { .under-row { grid-template-columns: 1fr; } }
   /* The furniture sits over the picture but outside it: `#stage` is
      role="img", and a role="img" element's children are presentational. */
   .stagewrap { position: relative; }
   #stage {
     position: relative;
-    height: min(62vh, 32rem);
+    height: clamp(24rem, 72vh, 46rem);
     background: var(--panel);
     border: 1px solid var(--line);
     border-radius: 10px;
@@ -154,11 +158,27 @@
   #snap[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   #snap:hover { border-color: var(--accent); }
   #snap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* How the cubes are laid out: by the axes the array was built with, so no
+     cube moves under a transpose or a reshape, or by the shape in hand, so
+     both visibly rearrange them. It sits over the stage because that is where
+     its effect is. */
+  #arrange {
+    position: absolute; right: 0.7rem; bottom: 7.9rem; z-index: 2;
+    display: flex; overflow: hidden; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--panel);
+  }
+  #arrange button {
+    font: 600 0.72rem/1.3 var(--sans); padding: 0.3rem 0.6rem; cursor: pointer;
+    color: var(--ink); background: transparent; border: 0;
+  }
+  #arrange button + button { border-left: 1px solid var(--line); }
+  #arrange button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+  #arrange button:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
   #gizmo { position: absolute; right: 0.5rem; bottom: 0.5rem; width: 5rem; height: 5rem; z-index: 2; }
   #gizmo .arm { cursor: pointer; pointer-events: auto; }
   #gizmo .arm:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   #gizmo text { font: 700 9px var(--mono); }
-  html.embed #legend, html.embed #snap, html.embed #gizmo { display: none; }
+  html.embed #legend, html.embed #snap, html.embed #arrange, html.embed #gizmo { display: none; }
 
   #axis-legend {
     display: flex; flex-wrap: wrap; gap: 0.45rem 1rem; margin: 0.65rem 0 0;
@@ -186,22 +206,27 @@
   #ribbon-order { font: 600 0.8rem/1.4 var(--mono); }
 
   aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; min-width: 0; }
-  /* The three panels the sidebar is now divided into: data, operations, and
-     the memory inspector. The number is drawn by CSS so the copy tables carry
-     only the words. */
+  /* The sidebar: the data on top, one tab per operation, and under the tabs
+     the strides and the code log, which every tab changes. */
   aside .panel { border-top: 1px solid var(--line); margin-top: 1.1rem; padding-top: 0.5rem; }
   aside .panel:first-of-type { border-top: 0; margin-top: 0; padding-top: 0; }
   aside .panel > h2 {
-    display: flex; align-items: baseline; gap: 0.45rem;
     font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.06em;
     margin: 0 0 0.5rem; color: var(--ink);
   }
-  aside .panel > h2::before {
-    counter-increment: panel; content: counter(panel);
-    font: 700 0.68rem/1.35rem var(--mono); color: var(--on-accent);
-    background: var(--accent); border-radius: 50%; width: 1.35rem; text-align: center; flex: none;
+  .tabs {
+    display: flex; flex-wrap: wrap; gap: 0.3rem;
+    margin: 1.1rem 0 0.7rem; padding-top: 0.9rem; border-top: 1px solid var(--line);
   }
-  aside { counter-reset: panel; }
+  .tabs button {
+    font: 650 0.78rem/1.3 var(--sans); padding: 0.35rem 0.7rem; cursor: pointer;
+    color: var(--ink); background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 999px;
+  }
+  .tabs button:hover { border-color: var(--accent); }
+  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .tabpanel > h3:first-child { margin-top: 0.2rem; }
   aside h3 { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.85rem 0 0.35rem; color: var(--ink-mute); }
   aside .panel > :first-child + h3 { margin-top: 0.2rem; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
@@ -343,21 +368,27 @@
             <ul id="legend-list"></ul>
           </details>
           <button type="button" id="snap" aria-pressed="false"></button>
+          <div id="arrange" role="group">
+            <button type="button" data-arrange="meaning" aria-pressed="false"></button>
+            <button type="button" data-arrange="position" aria-pressed="false"></button>
+          </div>
           <svg id="gizmo" viewBox="-50 -50 100 100" role="group"></svg>
         </div>
         <p id="embedcap"></p>
         <div id="axis-legend"></div>
         <p class="sr" id="stagehelp"></p>
-        <section class="under" id="imgstrip" aria-labelledby="h-strip">
-          <h2 id="h-strip"></h2>
-          <div id="strip-rows"></div>
-          <p id="strip-note"></p>
-        </section>
-        <section class="under" id="bufstrip" aria-labelledby="h-ribbon">
-          <h2 id="h-ribbon"></h2>
-          <canvas id="ribbon" width="800" height="44"></canvas>
-          <p id="ribbon-note"></p>
-        </section>
+        <div class="under-row">
+          <section class="under" id="imgstrip" aria-labelledby="h-strip">
+            <h2 id="h-strip"></h2>
+            <div id="strip-rows"></div>
+            <p id="strip-note"></p>
+          </section>
+          <section class="under" id="bufstrip" aria-labelledby="h-ribbon">
+            <h2 id="h-ribbon"></h2>
+            <canvas id="ribbon" width="800" height="44"></canvas>
+            <p id="ribbon-note"></p>
+          </section>
+        </div>
       </div>
       <aside>
         <section class="panel" aria-labelledby="h-data">
@@ -379,41 +410,52 @@
           <p class="readout" id="shape-readout"></p>
         </section>
 
-        <section class="panel" aria-labelledby="h-ops">
-          <h2 id="h-ops">Operations</h2>
-          <h3 id="h-reshape"></h3>
-          <div class="presets shapes" id="shape-presets" role="group" aria-labelledby="h-reshape"></div>
+        <!-- One tab per operation. The panel ids are plain words on purpose:
+             `#transpose` in the URL opens the page on that tab, and a link to
+             it resolves for check 3, which looks a fragment up by id. -->
+        <div class="tabs" id="tabs" role="tablist" aria-labelledby="h-ops">
+          <span class="sr" id="h-ops">Operations</span>
+          <button type="button" role="tab" id="tab-reshape" aria-controls="reshape" aria-selected="true"></button>
+          <button type="button" role="tab" id="tab-transpose" aria-controls="transpose" aria-selected="false" tabindex="-1"></button>
+          <button type="button" role="tab" id="tab-slice" aria-controls="slice" aria-selected="false" tabindex="-1"></button>
+          <button type="button" role="tab" id="tab-memory" aria-controls="memory" aria-selected="false" tabindex="-1"></button>
+        </div>
+        <div class="tabpanel" id="reshape" role="tabpanel" aria-labelledby="tab-reshape">
+          <div class="presets shapes" id="shape-presets" role="group" aria-labelledby="tab-reshape"></div>
           <p class="note" id="shape-note"></p>
-          <h3 id="h-order"></h3>
-          <div class="presets" id="order-presets" role="group" aria-labelledby="h-order"></div>
-          <div class="chips" id="chips" role="group" aria-labelledby="h-order"></div>
+          <label class="toggle"><input type="checkbox" id="compare"><span id="compare-label"></span></label>
+          <p class="note" id="compare-note"></p>
+        </div>
+        <div class="tabpanel" id="transpose" role="tabpanel" aria-labelledby="tab-transpose" hidden>
+          <div class="presets" id="order-presets" role="group" aria-labelledby="tab-transpose"></div>
+          <div class="chips" id="chips" role="group" aria-labelledby="tab-transpose"></div>
           <p class="note" id="order-note"></p>
-          <h3 id="h-layout">Memory layout</h3>
-          <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="h-layout"></div>
-          <div class="tools"><button type="button" id="contig"></button></div>
-          <p class="note" id="layout-note"></p>
-          <label class="toggle"><input type="checkbox" id="reshape"><span id="reshape-label"></span></label>
-          <p class="note" id="reshape-note"></p>
-          <h3 id="h-arrange"></h3>
-          <div class="seg stack" id="arranges" role="radiogroup" aria-labelledby="h-arrange"></div>
-          <p class="note" id="arrange-note"></p>
-        </section>
-
-        <section class="panel" aria-labelledby="h-mem">
-          <h2 id="h-mem">Memory &amp; strides</h2>
+        </div>
+        <div class="tabpanel" id="slice" role="tabpanel" aria-labelledby="tab-slice" hidden>
           <h3 id="h-idx">Selected element</h3>
           <div class="row" id="indices"></div>
-          <p class="formula" id="formula"></p>
           <h3 id="h-slice">Highlight a slice</h3>
           <div class="seg axes" id="slices" role="radiogroup" aria-labelledby="h-slice"></div>
-          <h3 id="h-stride">Strides</h3>
+        </div>
+        <div class="tabpanel" id="memory" role="tabpanel" aria-labelledby="tab-memory" hidden>
+          <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="tab-memory"></div>
+          <div class="tools"><button type="button" id="contig"></button></div>
+          <p class="note" id="layout-note"></p>
+          <p class="note" id="buffer-note"></p>
+        </div>
+
+        <section class="panel" aria-labelledby="h-mem">
+          <h2 id="h-mem">Strides</h2>
+          <p class="formula" id="formula"></p>
           <table>
             <thead><tr><th id="th-ax">Axis</th><th id="th-np">NumPy (bytes)</th><th id="th-pt">PyTorch</th></tr></thead>
             <tbody id="stride-body"></tbody>
           </table>
           <p class="note" id="stride-note"></p>
-          <p class="note" id="buffer-note"></p>
-          <h3 id="h-code"></h3>
+        </section>
+
+        <section class="panel" aria-labelledby="h-code">
+          <h2 id="h-code"></h2>
           <pre><code id="code"></code></pre>
           <div class="tools">
             <button type="button" id="copy"></button>
@@ -487,7 +529,7 @@
     data: "Data & shape",
     datas: { photos: "Photos", numbers: "Counting numbers" },
     dataNotePhotos: "The histology slide, the astronaut and the coffee cup notebook 04 stacks -- shipped with scikit-image, downsampled here.",
-    dataNoteNumbers: "np.arange, so every value is its own position in the buffer as it was built and the offset arithmetic can be checked by eye.",
+    dataNoteNumbers: "np.arange, so every value is its own position in the buffer as it was built and the offset arithmetic can be checked by eye. The cubes follow the shape here, so every reshape lays them out again.",
     dataNoteFailed: "The photos did not load, so the cubes count instead.",
     values: "Values in the cubes",
     valuesNote: "Drawn when a cube is wide enough to read: 4×4, fewer photos, or zoom in.",
@@ -497,18 +539,16 @@
     nNote: (n) => `x = np.arange(${n}). Every factorisation of ${n} is a reshape you can take below.`,
     shapeOf: "shape",
     ops: "Operations",
-    reshapeHead: "Reshape",
+    tabs: { reshape: "Reshape", transpose: "Transpose", slice: "Slice", memory: "Memory" },
     kindView: "view",
     kindCopy: "copy",
     shapeNoteView: (n) => `Every shape whose sizes multiply to ${n}. The buffer is not touched: the bytes keep the order they are already in, and only the strides change. That is what makes a reshape free.`,
     shapeNoteCopy: (n) => `Every shape whose sizes multiply to ${n}. This view is not C-contiguous, so only the shapes its strides can still express are free: each button says whether taking it is a view or a copy.`,
     shapeSwitch: "watch the cubes rearrange",
-    order: "Transpose · permute",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H↔W", reverse: "reverse (.T)" },
     orderNote: "Click two axes to swap them. Same buffer, new shape, new strides -- a view, no copy.",
     orderNoteLost: "Click two axes to swap them. The named presets need B, C, H and W, and a reshape has merged or split them away.",
     orderNoteNumbers: "Click two axes to swap them. np.arange has no named axes -- nothing here is a batch or a channel -- so the presets that name them are off.",
-    layout: "Memory layout",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     contig: ".contiguous()",
     contigNote: "Rewrites the buffer in the order this view reads it. The shape does not move; every byte does. Watch the strip below.",
@@ -520,11 +560,12 @@
     reshape: "Compare with reshape",
     reshapeNote: "y = the same bytes, reread in memory order and poured into this shape. Identical when the buffer is already in this order; scrambled otherwise. The cubes show y while this is on.",
     arrange: "Arrange the cubes",
-    arranges: { meaning: "by meaning: every byte stays put", position: "by position: follow the shape" },
-    arrangeNoteMeaning: "Neither a transpose nor a reshape moves a byte, so no cube moves either: each one flashes in place while the shape and the strides change around it. Switch to “by position” to watch the rearrangement instead.",
-    arrangeNotePosition: "The cubes follow the shape: the last axis runs across, the one before it down, then in depth, then across the slots. A transpose or a reshape rearranges them, the way the notebook’s animations draw it; the bytes underneath are the same.",
+    arranges: { meaning: "Bytes stay put", position: "Follow the shape" },
+    arrangeTitles: {
+      meaning: "By meaning: the cubes sit by the axes the array was built with, so neither a transpose nor a reshape moves one -- each flashes in place while the shape and the strides change around it.",
+      position: "By position: the cubes follow the shape in hand -- the last axis across, the one before it down, then in depth, then across the slots -- so a transpose or a reshape rearranges them the way the notebook’s animations draw it. The bytes underneath are the same."
+    },
     stageArranged: (a, d, z, b) => `Arranged by position: ${a} runs across, ${d} down, ${z} in depth, ${b} across the slots.`,
-    mem: "Memory & strides",
     idx: "Selected element",
     slice: "Highlight a slice",
     stride: "Strides",
@@ -608,7 +649,7 @@
     data: "Datos y forma",
     datas: { photos: "Fotos", numbers: "Números que cuentan" },
     dataNotePhotos: "El corte histológico, la astronauta y la taza de café que apila el cuaderno 04: vienen con scikit-image, aquí reducidas.",
-    dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer tal como se construyó y la aritmética de offsets se comprueba a ojo.",
+    dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer tal como se construyó y la aritmética de offsets se comprueba a ojo. Aquí los cubos siguen la forma, así que cada reshape los vuelve a disponer.",
     dataNoteFailed: "Las fotos no se cargaron, así que los cubos cuentan.",
     values: "Valores en los cubos",
     valuesNote: "Se dibujan cuando un cubo es lo bastante ancho para leerse: 4×4, menos fotos, o acerca el zoom.",
@@ -618,18 +659,16 @@
     nNote: (n) => `x = np.arange(${n}). Cada factorización de ${n} es un reshape que puedes tomar abajo.`,
     shapeOf: "forma",
     ops: "Operaciones",
-    reshapeHead: "Reshape",
+    tabs: { reshape: "Reshape", transpose: "Transpose", slice: "Corte", memory: "Memoria" },
     kindView: "vista",
     kindCopy: "copia",
     shapeNoteView: (n) => `Todas las formas cuyos tamaños multiplican ${n}. El búfer no se toca: los bytes conservan el orden que ya tenían y solo cambian los strides. Por eso un reshape es gratis.`,
     shapeNoteCopy: (n) => `Todas las formas cuyos tamaños multiplican ${n}. Esta vista no es contigua en C, así que solo son gratis las formas que sus strides todavía pueden expresar: cada botón dice si es una vista o una copia.`,
     shapeSwitch: "ver cómo se reorganizan los cubos",
-    order: "Transpose · permute",
     presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H↔W", reverse: "invertir (.T)" },
     orderNote: "Haz clic en dos ejes para intercambiarlos. El mismo búfer, nueva forma, nuevos strides: una vista, sin copia.",
     orderNoteLost: "Haz clic en dos ejes para intercambiarlos. Los presets con nombre necesitan B, C, H y W, y un reshape los ha fundido o partido.",
     orderNoteNumbers: "Haz clic en dos ejes para intercambiarlos. np.arange no tiene ejes con nombre (aquí nada es un lote ni un canal), así que los presets que los nombran están desactivados.",
-    layout: "Disposición en memoria",
     layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     contig: ".contiguous()",
     contigNote: "Reescribe el búfer en el orden en que esta vista lo lee. La forma no se mueve; todos los bytes sí. Míralo en la tira de abajo.",
@@ -641,11 +680,12 @@
     reshape: "Comparar con reshape",
     reshapeNote: "y = los mismos bytes, releídos en orden de memoria y vertidos en esta forma. Idéntico cuando el búfer ya está en este orden; revuelto si no. Los cubos muestran y mientras esto esté activo.",
     arrange: "Disponer los cubos",
-    arranges: { meaning: "por significado: cada byte se queda", position: "por posición: siguen la forma" },
-    arrangeNoteMeaning: "Ni transpose ni reshape mueven un byte, así que ningún cubo se mueve: cada uno destella en su sitio mientras la forma y los strides cambian a su alrededor. Cambia a «por posición» para ver la reorganización.",
-    arrangeNotePosition: "Los cubos siguen la forma: el último eje corre en horizontal, el anterior hacia abajo, después en profundidad y después por los lotes. Un transpose o un reshape los reorganiza, como lo dibujan las animaciones del cuaderno; los bytes debajo son los mismos.",
+    arranges: { meaning: "Los bytes se quedan", position: "Seguir la forma" },
+    arrangeTitles: {
+      meaning: "Por significado: los cubos se colocan según los ejes con que se construyó el array, así que ni transpose ni reshape mueve ninguno: cada uno destella en su sitio mientras la forma y los strides cambian a su alrededor.",
+      position: "Por posición: los cubos siguen la forma actual (el último eje en horizontal, el anterior hacia abajo, después en profundidad y después por los lotes), así que un transpose o un reshape los reorganiza como lo dibujan las animaciones del cuaderno. Los bytes debajo son los mismos."
+    },
     stageArranged: (a, d, z, b) => `Dispuesto por posición: ${a} corre en horizontal, ${d} hacia abajo, ${z} en profundidad y ${b} por los lotes.`,
-    mem: "Memoria y strides",
     idx: "Elemento seleccionado",
     slice: "Resaltar un corte",
     stride: "Strides",
@@ -742,7 +782,7 @@
     stride: [],                   // elements, parallel to shape
     axisId: [],                   // the source axis each position carries, or null
     compare: false,               // show y = ravel(order="K").reshape(shape)
-    arrange: "meaning",           // where a cube sits: by source place, or by shape position
+    arrange: "meaning",           // where a cube sits: by source place, or by shape position; set per source in rebuildSource()
     values: true,                 // print each value on its cube when there is room
     idx: [],                      // the selected element, logical
     slice: -1                     // a position, or -1
@@ -754,6 +794,7 @@
   const view = { ...HOME };
   let PHOTOS = null;
   let SRC = null;                 // the array as it was built
+  let sourceKind = null;          // "photos" or "numbers": which kind SRC last was
   let BUF = [];                   // the value at each memory offset
   let BUFSRC = [];                // which source element lives at each memory offset
   let VOX = [];                   // the cubes, at their resting places
@@ -860,6 +901,15 @@
     state.idx = state.shape.map(() => 0);
     state.slice = -1;
     state.compare = false;
+    // Photos open by meaning, so the picture survives a transpose; counting
+    // numbers open by position, so a reshape visibly lays the cubes out again
+    // -- by meaning the (24,) row kept drawing as the 2x3x4 block it came from.
+    // Only when the *kind* of source changes: a new resolution or element
+    // count is also a restart, and must not undo a choice the reader made.
+    if (SRC.kind !== sourceKind) {
+      sourceKind = SRC.kind;
+      state.arrange = SRC.kind === "photos" ? "meaning" : "position";
+    }
     history.length = 0;
   }
 
@@ -1179,19 +1229,20 @@
     $("h-size").textContent = T.size;
     $("h-n").textContent = T.nHead;
     $("h-ops").textContent = T.ops;
-    $("h-reshape").textContent = T.reshapeHead;
-    $("h-order").textContent = T.order;
-    $("h-arrange").textContent = T.arrange;
+    ["reshape", "transpose", "slice", "memory"].forEach((k) => { $(`tab-${k}`).textContent = T.tabs[k]; });
+    $("arrange").setAttribute("aria-label", T.arrange);
+    document.querySelectorAll("#arrange button").forEach((b) => {
+      b.textContent = T.arranges[b.dataset.arrange];
+      b.title = T.arrangeTitles[b.dataset.arrange];
+    });
     $("values-label").textContent = T.values;
     $("values-note").textContent = T.valuesNote;
-    $("h-layout").textContent = T.layout;
     $("contig").textContent = T.contig;
-    $("reshape-label").textContent = T.reshape;
-    $("reshape-note").textContent = T.reshapeNote;
-    $("h-mem").textContent = T.mem;
+    $("compare-label").textContent = T.reshape;
+    $("compare-note").textContent = T.reshapeNote;
+    $("h-mem").textContent = T.stride;
     $("h-idx").textContent = T.idx;
     $("h-slice").textContent = T.slice;
-    $("h-stride").textContent = T.stride;
     $("h-strip").textContent = T.strip;
     $("h-ribbon").textContent = T.ribbon;
     $("h-code").textContent = T.code;
@@ -1460,12 +1511,12 @@
       doTranspose(swapPerm(other, p));
     });
 
-    // Arrangement.
-    $("arranges").innerHTML = ["meaning", "position"].map((k) =>
-      radio("arrange", k, T.arranges[k], state.arrange === k)).join("");
-    $("arranges").addEventListener("change", (e) => {
+    // Arrangement: on the stage, where its effect is.
+    $("arrange").addEventListener("click", (e) => {
+      const button = e.target.closest("button");
+      if (!button || button.dataset.arrange === state.arrange) return;
       beginTween();
-      state.arrange = e.target.value;
+      state.arrange = button.dataset.arrange;
       render();
     });
 
@@ -1475,7 +1526,7 @@
     $("layouts").addEventListener("change", (e) => doContiguous(e.target.value));
     $("contig").addEventListener("click", () => doContiguous("C"));
 
-    $("reshape").addEventListener("change", (e) => {
+    $("compare").addEventListener("change", (e) => {
       state.compare = e.target.checked;
       render();
     });
@@ -1569,8 +1620,9 @@
     document.querySelectorAll("#res input").forEach((el) => { el.checked = Number(el.value) === state.res; });
     document.querySelectorAll("#ns input").forEach((el) => { el.checked = Number(el.value) === state.n; });
     $("values").checked = state.values;
-    document.querySelectorAll("#arranges input").forEach((el) => { el.checked = el.value === state.arrange; });
-    $("arrange-note").textContent = state.arrange === "position" ? T.arrangeNotePosition : T.arrangeNoteMeaning;
+    document.querySelectorAll("#arrange button").forEach((b) => {
+      b.setAttribute("aria-pressed", String(b.dataset.arrange === state.arrange));
+    });
     const layout = currentLayout();
     document.querySelectorAll("#layouts input").forEach((el) => {
       el.checked = el.value === layout;
@@ -1579,7 +1631,7 @@
     $("layout-note").textContent = (layout
       ? `${{ C: T.layoutNoteC, F: T.layoutNoteF, CL: T.layoutNoteCL }[layout]} ${T.layoutCopy}`
       : T.layoutNoteView) + ` ${T.contigNote}`;
-    $("reshape").checked = state.compare;
+    $("compare").checked = state.compare;
     document.querySelectorAll("#slices input").forEach((el) => { el.checked = Number(el.value) === state.slice; });
     // The letters are worth naming only when they mean something. After a
     // reshape has merged them away an axis is its position, and the line
@@ -2530,6 +2582,7 @@
     stage.dataset.shape = state.shape.join(",");
     stage.dataset.strides = state.stride.join(",");
     stage.dataset.bufsig = bufferSignature();
+    stage.dataset.arrange = byPos() ? "position" : "meaning";
 
     $("status").textContent = T.status(off, state.idx,
       state.slice >= 0 ? T.sliceOf(axName(state.slice)) : "");
@@ -2729,6 +2782,43 @@
     });
   }
 
+  // ─── the tabs ─────────────────────────────────────────────────────────────
+
+  // One tab per operation, the homepage hero's pattern: arrow keys move between
+  // them, and the panel ids are plain words so that `#transpose` in the URL
+  // opens the page on that tab and a link to it resolves.
+  function bindTabs() {
+    const tabs = [...document.querySelectorAll("#tabs [role=tab]")];
+    const panels = tabs.map((tab) => $(tab.getAttribute("aria-controls")));
+    const show = (i, push) => {
+      tabs.forEach((tab, j) => {
+        const on = i === j;
+        tab.setAttribute("aria-selected", String(on));
+        tab.tabIndex = on ? 0 : -1;
+        panels[j].hidden = !on;
+      });
+      // `window.`: the code log above is a `const history`, and shadows it.
+      if (push) window.history.replaceState(null, "", `#${panels[i].id}`);
+    };
+    const fromHash = () => {
+      const i = panels.findIndex((p) => p.id === location.hash.slice(1));
+      if (i >= 0) show(i, false);
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => show(i, true));
+      tab.addEventListener("keydown", (e) => {
+        const k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+        if (!k) return;
+        e.preventDefault();
+        const n = (i + k + tabs.length) % tabs.length;
+        show(n, true);
+        tabs[n].focus();
+      });
+    });
+    window.addEventListener("hashchange", fromHash);
+    fromHash();
+  }
+
   // ─── embed mode ───────────────────────────────────────────────────────────
 
   function startEmbed() {
@@ -2828,6 +2918,7 @@
   }
 
   applyCopy();
+  bindTabs();
   $("snap").textContent = T.snapIn;
   loadPhotos().then(() => {
     rebuildSource();
