@@ -107,7 +107,7 @@ jobs:
       # mobile menu, the scrollable handbook tables, and the two decks -- and
       # axe over every page and both widgets. None of that is visible to a
       # parser, and it was landed without a gate.
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
