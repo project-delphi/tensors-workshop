@@ -466,7 +466,7 @@ brainstorm:
   #   * Where the idea is **stated** — sections 07, 09 and 10. That is the
   #     handbook's wrap-up, and notebook 13's header repeats it.
   #   * Where you **watch it happen** — 07, 10 and take-home 13. That is this
-  #     list, and it is what `slide-30.png` draws: the pseudoinverse, Tucker
+  #     list, and it is what `slide-30.webp` draws: the pseudoinverse, Tucker
   #     and Richardson-Lucy deconvolution side by side. That slide is one of
   #     the thirty-one with no source, so it cannot be redrawn to match a
   #     different three — which is why the split is the resolution rather

@@ -187,8 +187,9 @@ exactly one home; before adding a paragraph, find whose job it is:
 
 **The Spanish handbook is machine-translated** from the English one, which is
 the source of truth, and says so in a callout. Code, identifiers and `# TODO`
-comments stay in English. Nothing generates or checks the Spanish text beyond
-check 13's shape comparison: change both handbooks in the same commit.
+comments stay in English. Nothing generates or checks the Spanish prose beyond
+check 13, which compares the two handbooks' shape and requires their fenced
+code to be byte-identical: change both handbooks in the same commit.
 
 **One canonical identifier.** A segment is a **section, `00`–`12`**,
 everywhere. Part I–IV and Block 1–7 are the handbook's secondary labels, live in
@@ -385,7 +386,8 @@ new check is appended, never inserted. Twelve can fail the build:
 11. Kahoot join URLs -- **prints a TODO, never fails**: pasted in after the page exists.
 12. Companion artifact links and exports -- the same.
 13. The two handbooks have the same shape (heading counts, table rows, notebooks
-    linked). It cannot catch wording, which is the half that drifts.
+    linked) and byte-identical fenced code. It cannot catch wording, which is
+    the half that drifts.
 14. Both Kahoot pages carry `#quiz-1`, `#quiz-2` and `#quiz-3`.
 
 `--notebooks-only` runs checks 1, 2, 4 and 10 alone; run it after any content

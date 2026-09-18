@@ -981,6 +981,13 @@ def check_handbooks() -> None:
     worse than none, so: this catches a heading, a table or a notebook link
     added to one side only, and nothing else.
 
+    **What it can compare byte for byte is code.** Code, identifiers and
+    `# TODO` comments stay English on both sides by rule, so every fenced
+    block, info string included, must be identical and in the same order. A
+    solution edited on the English side and not the Spanish one -- the likelier
+    slip, since the Spanish handbook is a translation nobody regenerates -- is
+    caught here; the prose around it still is not.
+
     It is numbered 13 because the numbers are a contract --
     `AGENTS.md`'s prose refers to checks 1, 3, 5, 6, 8 and 12 by number, and
     inserting this one where it reads best would silently renumber three of
@@ -993,8 +1000,30 @@ def check_handbooks() -> None:
         print("      one or both handbooks missing — nothing to compare")
         return
 
+    fence = re.compile(r"```.*?```", re.S)
+    en_code = fence.findall(en.read_text(encoding="utf-8"))
+    es_code = fence.findall(es.read_text(encoding="utf-8"))
+    if len(en_code) != len(es_code):
+        fail(
+            f"handbooks disagree on fenced code blocks: EN has {len(en_code)}, "
+            f"ES has {len(es_code)} — code stays English on both sides"
+        )
+    else:
+        for n, (x, y) in enumerate(zip(en_code, es_code), 1):
+            if x == y:
+                continue
+            where = next(
+                (a for a, b in zip(x.splitlines(), y.splitlines()) if a != b),
+                "(one block is longer)",
+            )
+            fail(
+                f"handbooks disagree on code block {n} of {len(en_code)}: "
+                f"code stays English on both sides; EN reads {where.strip()!r}"
+            )
+            break
+
     def shape(path: pathlib.Path) -> dict:
-        t = re.sub(r"```.*?```", "", path.read_text(encoding="utf-8"), flags=re.S)
+        t = fence.sub("", path.read_text(encoding="utf-8"))
         return {
             "## headings": len(re.findall(r"^## ", t, re.M)),
             "### headings": len(re.findall(r"^### ", t, re.M)),
@@ -1011,11 +1040,11 @@ def check_handbooks() -> None:
                 f"handbooks disagree on {k}: EN has {a[k]}, ES has {b[k]} — "
                 f"the two must change in the same commit"
             )
-    if a == b:
+    if a == b and en_code == es_code:
         print(
             "      "
             + ", ".join(f"{v} {k}" for k, v in a.items())
-            + " — identical in both"
+            + f", {len(en_code)} code blocks — identical in both"
         )
 
 

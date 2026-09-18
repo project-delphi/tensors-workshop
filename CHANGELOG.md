@@ -2,7 +2,7 @@
 
 ## 2026-09-18
 
-- The reshape & transpose visualizer's arithmetic -- strides, contiguity, the memory orders and the rule for when a reshape is a view -- now lives in its own small file, `interactive/tensor-core.js`, with a unit test that CI runs without a browser. Nothing changes on screen.
+- Check 13 now requires every fenced code block in the two handbooks to be byte-identical, since code stays English on both sides; eight images nothing referenced are gone from `images/`; the repo carries a `CITATION.cff`, and Dependabot watches the pinned GitHub actions and Playwright.
 
 ## 2026-09-17
 
