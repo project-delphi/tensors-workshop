@@ -1,10 +1,15 @@
 """Regression checks for routes, relative links and runnable teaching examples."""
 
+import contextlib
 import copy
+import io
 import json
 import re
+import sys
 import tempfile
+import types
 import unittest
+import unittest.mock
 from pathlib import Path
 
 from scripts.check_teaching_materials import (
@@ -272,6 +277,113 @@ class WorkedExamples(unittest.TestCase):
         )
         for name, cells in sorted(found.items()):
             self.assertEqual(len(cells), 1, f"{name} has {len(cells)}: {cells}")
+
+    def test_predict_cells_execute(self):
+        """The predict-first widgets run, and the reveal branches both print.
+
+        `ci_cells` in notebooks 00, 12, 16, 17 and 18 keeps these cells out of
+        the kernel sweep on purpose: their live `RadioButtons` and `Checkbox`
+        are what stalled it. That leaves the widget half of every predict cell
+        -- `pred_panel`, `pred_render` and `check_prediction` -- executed by
+        nothing else, so a typo there would reach Colab silently. The sibling
+        test above runs only the delimited counterexample.
+
+        Fifteen of the cells import ipywidgets and IPython themselves, so
+        stubbing the names in the namespace is not enough and the modules are
+        stubbed in `sys.modules` instead. That is also what keeps the test off
+        the `notebooks` dependency group: neither package is in `test`.
+
+        `pred_panel` is called directly because `pred_render` hands its result
+        to a stubbed `display`, so nothing downstream would notice if the panel
+        raised. The expected answer is read off `if choice == "..."` rather
+        than restated here.
+        """
+
+        class Stub:
+            """Absorbs any attribute access or call a cell makes."""
+
+            def __getattr__(self, name):
+                return Stub()
+
+            def __call__(self, *args, **kwargs):
+                return Stub()
+
+        def stub_module(name, **attributes):
+            module = types.ModuleType(name)
+            for key, value in attributes.items():
+                setattr(module, key, value)
+            module.__getattr__ = lambda attribute: Stub()
+            return module
+
+        pyplot = stub_module("matplotlib.pyplot")
+        pyplot.subplots = lambda *args, **kwargs: (Stub(), Stub())
+        ipython = stub_module("IPython")
+        ipython.display = stub_module(
+            "IPython.display", display=lambda *args, **kwargs: None
+        )
+        modules = {
+            "ipywidgets": stub_module("ipywidgets"),
+            "IPython": ipython,
+            "IPython.display": ipython.display,
+        }
+
+        begin = "# --- counterexample / contraejemplo"
+        checked = []
+        for path in sorted((ROOT / "notebooks").glob("*.ipynb")):
+            for cell in json.loads(path.read_text(encoding="utf-8"))["cells"]:
+                source = "".join(cell.get("source", []))
+                if cell.get("cell_type") != "code" or begin not in source:
+                    continue
+                body = "\n".join(
+                    line
+                    for line in source.split("\n")
+                    if not line.startswith(("#@title", "%", "!"))
+                )
+                namespace = {
+                    "widgets": Stub(),
+                    "plt": pyplot,
+                    "display": lambda *args, **kwargs: None,
+                }
+                label = f"{path.name}:{cell['id']}"
+                with self.subTest(notebook=path.name, cell=cell.get("id")):
+                    with unittest.mock.patch.dict(sys.modules, modules):
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            exec(compile(body, label, "exec"), namespace)
+
+                        answer = re.search(r'if choice == "([^"]+)"', body).group(1)
+                        for choice, reveal, expected in (
+                            (None, False, "Choose an answer first"),
+                            (answer, False, "Answer saved"),
+                            (answer, True, "You were right"),
+                            ("__not_an_option__", True, "You were wrong"),
+                        ):
+                            printed = io.StringIO()
+                            with contextlib.redirect_stdout(printed):
+                                namespace["check_prediction"](choice, reveal)
+                            self.assertIn(expected, printed.getvalue())
+
+                        # Every branch of the layout: a heading, a reading, a
+                        # blank, and the two tagged explanation lines.
+                        panel = namespace["pred_panel"](
+                            "A heading\nShapes: (2, 3)\n\nEN: in English\nES: en espanol"
+                        )
+                        for fragment in (
+                            "<div",
+                            "A heading",
+                            "(2, 3)",
+                            "in English",
+                            "en espanol",
+                            "</div>",
+                        ):
+                            self.assertIn(fragment, panel)
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            namespace["pred_render"](answer, True)
+                checked.append(path.name)
+
+        self.assertEqual(
+            sorted(checked),
+            sorted(p.name for p in (ROOT / "notebooks").glob("*.ipynb")),
+        )
 
     def test_assessment_shapes(self):
         import numpy as np

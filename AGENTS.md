@@ -215,8 +215,8 @@ checker and the tiny worked examples.
 executes the declared route and then the **paired solution**, the
 `solution`-tagged cell immediately after the activity, because many activity
 cells are the student's blank `# TODO` block. A route with no executable code
-(notebooks 00 and 12) names what CI executes in `ci_cells` on the same
-scaffold cell; `run_set()` refuses an entry that is not a unique code cell, and
+(notebooks 00, 12, 16, 17 and 18) names what CI executes in `ci_cells` on the
+same scaffold cell; `run_set()` refuses an entry that is not a unique code cell, and
 check 2's `EXPECTED` guard refuses one that drops an asserted cell. Keep the
 blanket fallback for a notebook with no route. The runner asserts that a blank
 activity stayed blank, that each route prints its `EXPECTED` numbers, and that
