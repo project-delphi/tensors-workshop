@@ -534,25 +534,11 @@
   const SNAP_YAW = 0.10;
   // The idle drift: what the stage does while nobody is pointing at it. A sway
   // rather than a spin, for the reason startEmbed() gives -- a full turn passes
-  // through the angles where the three photos stack up behind one another.
+  // through the angles where the three photos stack up behind one another. The
+  // pose and its bounds are Core.DRIFT; these two are the widget's own, being
+  // about the frame loop and the pointer rather than the camera.
   const DRIFT_FPS_MS = 40;       // ~25 fps: the sway needs no more, and every
                                  // frame re-uploads an instance matrix per cube
-  const DRIFT_YAW = 0.26;        // radians either side of where the drift began.
-                                 // Wider and the swing reaches the angles where
-                                 // the row of three photographs runs into the
-                                 // screen: perspective blows the near one up
-                                 // and the bottom row of cubes leaves the stage.
-  const DRIFT_YAW_MS = 16000;    // one full left-right-left swing
-  const DRIFT_ZOOM = 0.14;       // how far out the breath pulls, as a fraction
-                                 // of the base scale. Out and back rather than
-                                 // in and out: glDistance() frames the tensor
-                                 // to the stage with 12% to spare, so a scale
-                                 // above the reader's own crops the bottom row
-                                 // of cubes -- which the idle animation must
-                                 // never do to a view the reader chose.
-  const DRIFT_ZOOM_MS = 8000;    // half the swing, so the camera is furthest
-                                 // out at each end of the sway -- which is
-                                 // where the tensor needs the room
   const DRIFT_RESUME_MS = 1500;  // after the pointer leaves the stage
 
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
@@ -846,6 +832,7 @@
   // below hand it `state`; nothing in it knows the widget exists.
   const Core = window.TensorCore;
   const { sum, prod, range, same, unravel, cstrides, reshapeStrides, POS_ORDERS } = Core;
+  const { driftIdle, driftPose, driftStart, driftPause, driftRelease } = Core;
 
   // Resolved once per frame rather than twice per cube. Colouring 9216 cubes
   // called getComputedStyle tens of thousands of times per glide, which made
@@ -1657,13 +1644,13 @@
     VOX = buildVoxels();
   }
   const glide = { active: false, t0: 0, from: null, to: null };
-  // yaw0 and scale0 are where the current stretch of drift began: a reader who
-  // turned the tensor and walked away gets the sway around their angle, not a
-  // jump back to HOME. They are seeded from the reader's pose and not from a
-  // pose the drift itself produced -- see setDrift(). `phase` is how far into
-  // the sway the last pause caught it.
-  const drift = { on: false, t0: 0, last: 0, yaw0: 0, scale0: 1, phase: 0,
-                  seeded: false, hover: false, focus: false, timer: 0 };
+  // The stretch of drift the stage is in, or was last in: tensor-core owns the
+  // shape of it (driftIdle) and the transitions between them, because what an
+  // origin is seeded from was wrong once in a way no screenshot shows. What is
+  // added here is the widget's own -- the frame throttle and the two things
+  // that hold the drift off.
+  const drift = Object.assign(driftIdle(),
+                              { last: 0, hover: false, focus: false, timer: 0 });
   const GAP = () => BASE_GAP * (1 - 0.78 * snap.t);
   const ZGAP = () => BASE_ZGAP * (1 - snap.t);
   const cubeSide = () => 0.86 + 0.14 * snap.t;
@@ -1789,15 +1776,9 @@
           if (now - drift.last >= DRIFT_FPS_MS) {
             drift.last = now;
             drifted = true;
-            const e = now - drift.t0;
-            view.yaw = drift.yaw0 + DRIFT_YAW * Math.sin(2 * Math.PI * e / DRIFT_YAW_MS);
-            // Clamped to zoomBy()'s own bounds, so a reader already at either
-            // limit sees the breath flatten against it instead of lurching.
-            // A raised cosine: starts at the reader's scale, pulls out to
-            // DRIFT_ZOOM below it, and comes back. Never above.
-            const breath = (1 - Math.cos(2 * Math.PI * e / DRIFT_ZOOM_MS)) / 2;
-            view.scale = Math.min(2.4, Math.max(0.5,
-              drift.scale0 * (1 - DRIFT_ZOOM * breath)));
+            const pose = driftPose(drift, now - drift.t0);
+            view.yaw = pose.yaw;
+            view.scale = pose.scale;
           }
         }
       }
@@ -2673,33 +2654,21 @@
   function setDrift(on) {
     clearTimeout(drift.timer);
     if (on === drift.on) return;
-    drift.on = on;
-    // A pause keeps the phase, so the sway picks up where it stopped instead
-    // of stepping back to the origin the moment the pointer leaves.
-    if (!on) { drift.phase = performance.now() - drift.t0; return; }
-    // Seeded once per stretch of reader-owned view, never re-read from a pose
-    // the drift itself produced. Re-seeding on resume would ratchet: the
-    // breath only ever pulls the scale down, so each pause would leave a
-    // smaller origin than the last until the tensor sat on zoomBy()'s floor,
-    // and the yaw would random-walk out of DRIFT_YAW's bound into the angles
-    // that bound exists to keep it out of.
-    if (!drift.seeded) {
-      drift.yaw0 = view.yaw;
-      drift.scale0 = view.scale;
-      drift.phase = 0;
-      drift.seeded = true;
-    }
-    drift.last = performance.now();
-    drift.t0 = drift.last - drift.phase;
-    tick();
+    const now = performance.now();
+    Object.assign(drift, on ? driftStart(drift, view.yaw, view.scale, now)
+                            : driftPause(drift, now));
+    if (on) { drift.last = now; tick(); }
   }
   const refreshDrift = () => setDrift(driftWanted());
   // Taking hold of the view stops the drift on the same frame, rather than
   // waiting for the pointer to cross into the stage: a wheel, a key or a
-  // gizmo click is a reader taking over just as much as a drag is. It also
-  // drops the seed -- the reader has just chosen a new pose, and that pose is
-  // what the next stretch of drift belongs around.
-  const dropDrift = () => { setDrift(false); drift.seeded = false; };
+  // gizmo click is a reader taking over just as much as a drag is. It is a
+  // release rather than a pause, so the next stretch is seeded from the pose
+  // they leave behind.
+  const dropDrift = () => {
+    clearTimeout(drift.timer);
+    Object.assign(drift, driftRelease(drift, performance.now()));
+  };
 
   function bindPointer() {
     const el = $("stage");

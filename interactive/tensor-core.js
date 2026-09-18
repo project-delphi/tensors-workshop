@@ -6,6 +6,12 @@
 // or the widget's state -- every function takes a shape and strides and
 // returns a new array.
 //
+// The idle drift's state machine is here for the same reason and no other: it
+// was wrong once too, in a way no screenshot shows and no end-state assertion
+// catches. It is the one thing here that is about the camera rather than the
+// tensor, and it is written the same way -- a state goes in, a new state comes
+// out, and the widget owns the clock and the DOM.
+//
 // A plain script, not a module: the widget loads it with a <script src> so it
 // works from file:// and inside the homepage's embed, and Node picks it up
 // through module.exports.
@@ -128,9 +134,71 @@
     return ids;
   }
 
+  // ─── the idle drift ───────────────────────────────────────────────────────
+  //
+  // The stage sways and breathes until a reader reaches for it. Why these
+  // numbers and not others is in DECISIONS.md; what is here is the part that
+  // cannot be seen by looking at the widget for a second.
+  //
+  // The pose is a bounded excursion *around an origin*, so the origin has to
+  // be a pose the reader left. Re-reading it from the live view on every
+  // resume made each pause the origin of the next stretch, and then neither
+  // bound bounded anything: the breath only ever pulls the scale down, so
+  // every crossing of the stage left a smaller origin than the last, and the
+  // yaw random-walked out of `yaw` below. Hence `seeded`. Hence `phase` too,
+  // which carries the sway across a pause so that it resumes where it
+  // stopped rather than stepping back to the origin.
+  const DRIFT = {
+    yaw: 0.26,      // radians either side of the origin
+    yawMs: 16000,   // one full left-right-left swing
+    zoom: 0.14,     // how far out the breath pulls, as a fraction of origin
+    zoomMs: 8000,   // half the swing, so the camera is furthest out at each
+                    // end of it -- which is where the tensor needs the room
+    minScale: 0.5,  // zoomBy()'s own bounds. A reader already at either limit
+    maxScale: 2.4   // sees the breath flatten against it instead of lurching.
+  };
+
+  const driftIdle = () =>
+    ({on: false, seeded: false, yaw0: 0, scale0: 1, phase: 0, t0: 0});
+
+  // The pose `phase` ms into a stretch that began at (yaw0, scale0).
+  function driftPose(s, phase) {
+    const turn = 2 * Math.PI * phase;
+    // A raised cosine: starts at the reader's scale, pulls out to `zoom`
+    // below it, and comes back. Never above -- the widget frames the tensor
+    // with 12% to spare, so a scale above the reader's own crops the bottom
+    // row of cubes, which an animation nobody asked for must never do.
+    const breath = (1 - Math.cos(turn / DRIFT.zoomMs)) / 2;
+    return {
+      yaw: s.yaw0 + DRIFT.yaw * Math.sin(turn / DRIFT.yawMs),
+      scale: Math.min(DRIFT.maxScale, Math.max(DRIFT.minScale,
+        s.scale0 * (1 - DRIFT.zoom * breath)))
+    };
+  }
+
+  // Starting. Seeds the origin from the view the first time only, and puts
+  // the clock back by whatever phase the last pause banked.
+  function driftStart(s, yaw, scale, now) {
+    const seeded = s.seeded ? s
+      : Object.assign({}, s, {yaw0: yaw, scale0: scale, phase: 0, seeded: true});
+    return Object.assign({}, seeded, {on: true, t0: now - seeded.phase});
+  }
+
+  // Pausing: a pointer crossing the stage. Keeps the origin, banks the phase.
+  function driftPause(s, now) {
+    return s.on ? Object.assign({}, s, {on: false, phase: now - s.t0}) : s;
+  }
+
+  // The reader took the view -- a drag, a wheel, a gizmo click. The next
+  // stretch belongs around wherever they leave it, so the seed goes with it.
+  function driftRelease(s, now) {
+    return Object.assign({}, driftPause(s, now), {seeded: false, phase: 0});
+  }
+
   const TensorCore = {
     sum, prod, range, same, unravel, POS_ORDERS,
-    cstrides, stridesFor, contiguousInOrder, posOrder, reshapeStrides, carryIds
+    cstrides, stridesFor, contiguousInOrder, posOrder, reshapeStrides, carryIds,
+    DRIFT, driftIdle, driftPose, driftStart, driftPause, driftRelease
   };
   if (typeof module !== "undefined" && module.exports) module.exports = TensorCore;
   else root.TensorCore = TensorCore;

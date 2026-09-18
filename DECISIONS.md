@@ -221,7 +221,13 @@ on `zoomBy()`'s floor, and the yaw would have random-walked out past the 0.35
 that was rejected in the first place. The origin therefore only ever comes from
 a pose the reader left: `dropDrift()` drops the seed because a drag, a wheel or
 a gizmo click is the reader choosing a new one, while a pointer merely crossing
-the stage is not.
+the stage is not. That is why the drift's state machine sits in
+`tensor-core.js` beside the stride arithmetic rather than in the HTML with the
+rest of the widget's state: the browser check watches the stage move, stop and
+move again, and every one of those still happened while the tensor was
+shrinking a little on each pass. A state in and a state out is a thing
+`tests/tensor_core.test.cjs` can pin, and it pins the ratchet directly -- forty
+crossings, origin unmoved.
 
 It rides `tick()`, the one `requestAnimationFrame` loop the page owns, as a
 third source of motion beside the snap glide and the reshape tween, rather
