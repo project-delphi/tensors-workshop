@@ -251,6 +251,57 @@ async function audit(page, where) {
                 `${where}: reshape to ${label} must not move a byte`);
             }
 
+            // The idle drift: the stage sways and breathes while nobody is
+            // pointing at it, and is the reader's the moment they are. Checked
+            // in one language only -- it costs real seconds, and the behaviour
+            // has no copy in it. Polled rather than slept on, so a slow runner
+            // makes this take longer and not fail.
+            if (lang === 'en') {
+              // At a stated width, not whatever the loop above left behind,
+              // and on a fresh load, so that no reshape tween from the steps
+              // above is still settling and reads as camera motion.
+              await page.setViewportSize({width: 1440, height: 1000});
+              await page.goto(
+                `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
+              await page.waitForFunction(() =>
+                document.querySelector('#stage').dataset.photos === '3',
+                null, {timeout: 10000});
+              // The flat canvas is what boots; three.js arrives after it, and
+              // the swap rewrites every overlay -- which would read as camera
+              // motion and pass this check with the drift switched off.
+              // setMode() gives #view an inline display whichever way it
+              // settles, so that is the swap being over.
+              await page.waitForFunction(() =>
+                document.getElementById('view').style.display !== '',
+                null, {timeout: 10000});
+              // Where the HTML overlays sit is a function of the camera, so
+              // their positions changing is the camera moving.
+              const where_ = where;
+              const pose = () => page.evaluate(() =>
+                [...document.getElementById('overlays').children]
+                  .map(e => e.getAttribute('style')).join('|'));
+              const moves = async (ms) => {
+                const first = await pose();
+                const until = Date.now() + ms;
+                while (Date.now() < until) {
+                  await page.waitForTimeout(80);
+                  if (await pose() !== first) return true;
+                }
+                return false;
+              };
+              await page.mouse.move(2, 2);
+              assert(await moves(4000), `${where_}: the stage should drift while idle`);
+              const stageBox = await page.locator('#stage').boundingBox();
+              await page.mouse.move(stageBox.x + stageBox.width / 2,
+                                    stageBox.y + stageBox.height / 2);
+              await page.waitForTimeout(200);
+              assert(!await moves(900),
+                `${where_}: the drift must stop under the pointer`);
+              await page.mouse.move(2, 2);
+              assert(await moves(6000),
+                `${where_}: the drift should come back once the pointer leaves`);
+            }
+
             // `#transpose` in the URL opens the page on that tab.
             await page.goto(
               `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}#transpose`);
@@ -471,7 +522,7 @@ async function audit(page, where) {
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     assert.deepEqual(a11y, [], 'Accessibility violations (axe, serious or critical)');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, both interactive widgets, and axe on every page and widget.`);
+      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, both interactive widgets, the visualizer's idle drift, and axe on every page and widget.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

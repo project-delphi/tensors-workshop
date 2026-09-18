@@ -138,8 +138,13 @@ adjusted per theme to clear 4.5:1. They are resources, not render targets:
 The visualizer's arithmetic -- strides, contiguity, the memory orders and
 NumPy's view-or-copy rule for a reshape -- is `interactive/tensor-core.js`,
 a plain script the page loads first; `tests/tensor_core.test.cjs` pins it
-under `npm test`, the one part of a widget with a unit test. Everything that
-touches the widget's state stays in the HTML.
+under `npm test`, the one part of a widget with a unit test. The idle drift's
+state machine is there too, and is the exception that says what the rule is
+for: what a stretch of drift takes its origin from is invisible in a
+screenshot and survives an end-state assertion, so it is written as a state in
+and a state out and pinned like the arithmetic. Everything else that touches
+the widget's state -- anything a screenshot or `check_navigation.cjs` would
+catch -- stays in the HTML.
 `photos.json` is their one generated input; if it fails to load the visualizer
 counts instead, which `check_navigation.cjs` treats as a regression. Both take
 `?embed=1&theme=navy` for the homepage hero, where the visualizer never fetches
