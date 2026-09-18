@@ -8,6 +8,7 @@
     "check:slides": "node scripts/check_navigation.cjs --slides-only"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "playwright": "1.63.0"
   }
 }

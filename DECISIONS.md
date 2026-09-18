@@ -295,6 +295,21 @@ outdated syntax. E501 is off because the formatter sets the code width and a
 long comment is not a defect; B905 is off because `zip(strict=)` is a runtime
 change, not a spelling.
 
+## Commands and checks: the browser check
+
+**axe audits the pages and the widgets, not the decks, and allowlists by
+element.** The first run (2026-09-18) found four rules over 120 nodes. Two
+were ours and are fixed: the Okabe–Ito axis hues as 12–14px text in the
+visualizer ran from 4.2:1 down to 1.8:1 (orange), so text now takes a
+`--axN-ink` shade per theme while cubes keep the hue; and the notebook table's
+grey file names sat at 4.47:1 inside `<code>`. Two are Quarto's search box,
+which quarto-search.js renders after load with an unnamed button and combobox;
+patching that DOM from an include would have to be re-checked on every Quarto
+bump, so those two elements are allowlisted by selector, not by rule -- a
+listed rule still fires on any other node. The decks are out because Reveal's
+hidden-slide DOM is its own; the pass is for our pages, and adding the decks
+would mean deciding what of Reveal's to ignore before seeing anything of ours.
+
 ## Publishing
 
 **`docs/` was committed, once.** While it was, CI had to prove the committed

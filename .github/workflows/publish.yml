@@ -104,8 +104,9 @@ jobs:
       # Chromium, so it runs last, against the fresh render above. check_links
       # reads the HTML; this drives it — the language switch carrying the
       # matching section across languages, keyboard activation, the collapsed
-      # mobile menu, the scrollable handbook tables, and the two decks. None of
-      # that is visible to a parser, and it was landed without a gate.
+      # mobile menu, the scrollable handbook tables, and the two decks -- and
+      # axe over every page and both widgets. None of that is visible to a
+      # parser, and it was landed without a gate.
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
