@@ -3,6 +3,7 @@
 ## 2026-09-18
 
 - Check 13 now requires every fenced code block in the two handbooks to be byte-identical, since code stays English on both sides; eight images nothing referenced are gone from `images/`; the repo carries a `CITATION.cff`, and Dependabot watches the pinned GitHub actions and Playwright.
+- The browser check now runs an accessibility audit (axe) over every page and both widgets. Two things it found are fixed: axis letters and formula indices in the reshape & transpose visualizer, and the operand labels in the broadcasting simulator, are drawn in darker shades that read at small sizes, and the file names in the notebooks table are a step darker. The visualizer's code log can be reached with the keyboard.
 
 ## 2026-09-17
 

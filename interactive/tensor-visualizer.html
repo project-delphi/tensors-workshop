@@ -23,6 +23,15 @@
     --ax1: #e69f00;
     --ax2: #009e73;
     --ax3: #cc79a7;
+    /* The same four hues as text. The Okabe-Ito set is chosen for cubes and
+       swatches, and as 12-14px type on this page's backgrounds only the blue
+       clears 4.5:1 (orange is 1.8:1); so a letter, a shape number or a formula
+       index takes the nearest shade that does, per theme, and the cube keeps
+       the hue. The dot or swatch beside the text is the identity's carrier. */
+    --ax0-ink: #00609a;
+    --ax1-ink: #8a5a00;
+    --ax2-ink: #00745a;
+    --ax3-ink: #9a4a7a;
     /* The three colour channels, when the cubes are photo pixels. Not the
        axis hues above: an axis colour says *which axis*, a channel colour says
        *which plane of the C axis*, and the two must not be confused. */
@@ -44,6 +53,10 @@
       --accent: #34d399;
       --on-accent: #1c1917;
       --pale: #e8e6e1;
+      --ax0-ink: #56b4e9;
+      --ax1-ink: #e69f00;
+      --ax2-ink: #22c795;
+      --ax3-ink: #dd8fc0;
     }
   }
   /* The homepage hero embeds this page on its navy band; these are the band's
@@ -58,6 +71,10 @@
     --accent: #6fe0c6;
     --on-accent: #06202f;
     --pale: #e8eef4;
+    --ax0-ink: #56b4e9;
+    --ax1-ink: #e69f00;
+    --ax2-ink: #22c795;
+    --ax3-ink: #dd8fc0;
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
@@ -456,7 +473,7 @@
 
         <section class="panel" aria-labelledby="h-code">
           <h2 id="h-code"></h2>
-          <pre><code id="code"></code></pre>
+          <pre tabindex="0" role="region" aria-labelledby="h-code"><code id="code"></code></pre>
           <div class="tools">
             <button type="button" id="copy"></button>
             <button type="button" id="reset"></button>
@@ -1095,7 +1112,7 @@
     return letter ? `${letter} — ${T.axName[state.axisId[p]]} (${T.posName(p)})` : T.posName(p);
   }
   function axSpan(p, text) {
-    return `<span style="color:var(${axisHues()[p]})">${text}</span>`;
+    return `<span style="color:var(${axisHues()[p]}-ink)">${text}</span>`;
   }
   // Which position, if any, carries each identity. A named preset needs all four.
   const posOfId = (id) => state.axisId.indexOf(id);
@@ -1320,7 +1337,7 @@
       wrap.className = "field";
       const lab = document.createElement("div");
       lab.className = "k";
-      lab.style.color = `var(${hues[p]})`;
+      lab.style.color = `var(${hues[p]}-ink)`;
       const name = document.createElement("span");
       name.textContent = axTag(p);
       const val = document.createElement("span");
@@ -1475,7 +1492,7 @@
       controlsKey = key;
       indexSliders($("indices"));
       $("chips").innerHTML = state.shape.map((_, p) =>
-        `<button type="button" data-pos="${p}" aria-pressed="false" style="border-color:var(${hues[p]});color:var(${hues[p]})" aria-label="${axName(p)}">${axTag(p)}</button>`
+        `<button type="button" data-pos="${p}" aria-pressed="false" style="border-color:var(${hues[p]});color:var(${hues[p]}-ink)" aria-label="${axName(p)}">${axTag(p)}</button>`
       ).join("");
       $("slices").innerHTML = [-1, ...range(rank())].map((p) => {
         const label = p < 0 ? T.none : axTag(p);
@@ -1862,7 +1879,7 @@
       if (!role) return;
       const el = document.createElement("span");
       el.className = "lab";
-      el.style.color = css(role.hue);
+      el.style.color = css(role.hue + "-ink");
       el.textContent = role.label;
       const [px, py] = to(
         a.o.x + a.d.x * (a.len + 0.75),
@@ -2433,7 +2450,7 @@
     ctx.closePath();
     ctx.fill();
     const hues = axisHues();
-    const order = memOrder().map((p) => `<span style="color:var(${hues[p]})">${axTag(p)}</span>`).join(" → ");
+    const order = memOrder().map((p) => `<span style="color:var(${hues[p]}-ink)">${axTag(p)}</span>`).join(" → ");
     $("ribbon-note").innerHTML = T.ribbonNote(`<span id="ribbon-order">${order}</span>`, n);
     canvas.setAttribute("role", "img");
     canvas.setAttribute("aria-label", `${T.ribbon}: ${memOrder().map(axTag).join(" ")}`);
@@ -2446,7 +2463,7 @@
       const mark = p === fastest ? ` <em>${T.fastest}</em>` : "";
       const letter = axLetter(p);
       const name = letter ? `${T.axName[state.axisId[p]]} · ${T.posName(p)}` : "";
-      return `<span class="chip"><span class="swatch" style="background:var(${hues[p]})"></span><b style="color:var(${hues[p]})">${letter || T.posName(p)}</b> ${name}${mark}</span>`;
+      return `<span class="chip"><span class="swatch" style="background:var(${hues[p]})"></span><b style="color:var(${hues[p]}-ink)">${letter || T.posName(p)}</b> ${name}${mark}</span>`;
     }).join("");
   }
 

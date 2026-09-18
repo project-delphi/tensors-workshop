@@ -147,7 +147,10 @@ three.js. three.js is **vendored** at `interactive/vendor/` with its URL,
 SHA-256 and date in a README; upgrading means replacing both files and updating
 that README, `three-boot.js` and `repo.widgets` in `_variables.yml`.
 `check_links.py` fails the build if any file in `repo.widgets` is missing from
-`docs/`; `check_navigation.cjs` drives both widgets in both languages.
+`docs/`; `check_navigation.cjs` drives both widgets in both languages and runs
+axe over them. Every colour a widget puts on text clears 4.5:1 per theme --
+the four axis hues have `--axN-ink` text variants for that -- so a contrast
+finding in a widget is real, never something to allowlist.
 
 **The companion's assets have no generator.** The infographic PNGs and the
 Audio Overview under `media/` are exported by hand from NotebookLM; the
@@ -342,7 +345,7 @@ uv run --group lint ruff check scripts tests            # CI runs both of these
 uv run --group lint ruff format scripts tests           # (format --check in CI)
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests -v
-npm run check:navigation                                # the browser check, after a render
+npm run check:navigation                                # the browser check and the axe pass, after a render
 npm test                                                # the visualizer's arithmetic, no browser
 
 # Runs the notebooks. A kernel per notebook, the network, and the scientific

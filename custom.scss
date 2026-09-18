@@ -51,7 +51,9 @@ table td:first-child { font-variant-numeric: tabular-nums; color: #64748b; }
 // `.xlsx` blob links.
 .table-responsive a[href^="https://github.com"][href$=".ipynb"] {
   font-size: .82em;
-  color: #64748b;
+  // A step darker than the #64748b used elsewhere: at .82em inside `<code>`,
+  // on the code background, that grey is 4.47:1, a hair under WCAG AA.
+  color: #586779;
   text-decoration-thickness: from-font;
 }
 // A file name is an identifier, so it breaks in one place: nowhere. `code-overflow:

@@ -1,6 +1,7 @@
 // Render first. Requires Playwright and its Chromium browser (see CONTRIBUTING).
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
 const assert = require('node:assert/strict');
+const {AxeBuilder} = require('@axe-core/playwright');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const http = require('node:http');
@@ -13,6 +14,40 @@ const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
 const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach',
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
+
+// The accessibility pass. axe runs over every page and both widgets, and a
+// `serious` or `critical` WCAG 2.x A/AA violation fails the check unless the
+// rule *and the element* are listed here with the reason. Entries are by
+// element, not by rule, so a listed rule still fires on any other node. The
+// list is for markup Quarto generates that no source file here can reach;
+// never for something on our own pages, and never `color-contrast` -- the
+// widgets tune every colour they put on text per theme to clear 4.5:1, so a
+// contrast finding there is a real one. The decks are not audited: Reveal's
+// hidden-slide DOM is its own, and the pass exists for our pages.
+const A11Y_KNOWN = [
+  // Quarto's search box (Algolia autocomplete, rendered by quarto-search.js
+  // after load): the button has an icon and no text, and the combobox no
+  // name. Fixing either means patching Quarto's DOM from an include and
+  // re-checking it on every Quarto bump; see whether 1.7+ names them.
+  {rule: 'button-name', target: '.aa-DetachedSearchButton'},
+  {rule: 'aria-input-field-name', target: '.aa-Autocomplete'},
+];
+const known = (rule, node) => A11Y_KNOWN.some(k => k.rule === rule && node.target.join(' ') === k.target);
+const a11y = [];
+async function audit(page, where) {
+  await page.setViewportSize({width: 1440, height: 1000});
+  const {violations} = await new AxeBuilder({page})
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa']).analyze();
+  for (const v of violations) {
+    if (!['serious', 'critical'].includes(v.impact)) continue;
+    v.nodes = v.nodes.filter(n => !known(v.id, n));
+    if (!v.nodes.length) continue;
+    const targets = v.nodes.slice(0, 3).map(n => n.target.join(' ')).join(', ');
+    const line = `${where}: ${v.id} (${v.impact}) — ${v.help}; ${v.nodes.length} node(s): ${targets}`;
+    console.error(line);
+    a11y.push(line);
+  }
+}
 
 (async () => {
   const server = http.createServer(async (request, response) => {
@@ -88,6 +123,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
           await page.evaluate(() => {location.hash = 'no-such-section';});
           await page.waitForFunction(selector => !new URL(document.querySelector(selector).href).hash,
             `nav a[rel="lang-switch-${other}"]`);
+          await audit(page, `${lang}/${name}`);
           for (const width of [1440, 390]) {
             await page.setViewportSize({width, height: 1000});
             const fits = await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth);
@@ -232,7 +268,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
               document.documentElement.scrollWidth <= innerWidth + 1);
             assert(fits, `${where}: horizontal overflow at ${width}`);
           }
-          await page.setViewportSize({width: 1440, height: 1000});
+          await audit(page, where);
 
           // Embed mode is what the homepage hero shows: stage and caption
           // only, no three.js, on the band's navy.
@@ -349,6 +385,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
             await page.goto(`${base}${name}.html`);
             assert.equal(await page.locator('nav.navbar').count(), 0);
             assert((await page.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
+            if (width === 1440) await audit(page, `${lang}/${name}`);
             assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
               `${lang}/${name}: horizontal overflow at ${width}`);
             if (name === 'readiness-check') {
@@ -432,8 +469,9 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
         && Reveal.getCurrentSlide().id === 'sec-07-inverses-and-pseudoinverse');
     }
     assert.deepEqual(errors, [], 'Uncaught browser errors');
+    assert.deepEqual(a11y, [], 'Accessibility violations (axe, serious or critical)');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks and both interactive widgets.`);
+      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, both interactive widgets, and axe on every page and widget.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
