@@ -584,12 +584,24 @@ steppers do; everything below it would `NameError`.
 The line is a *transport* failure versus an answer. 404, 403 and 410 are
 answers -- the host is up and says the resource is not there, is not ours, or
 is gone -- and a dead dataset URL is the single thing this script's docstring
-names as its reason to exist, so those still fail. A 5xx, a 429, a refused
+names as its reason to exist, so those still fail. So does a 500, which is far
+more often the host answering about the *request* -- a renamed column or
+malformed SoQL -- than a host that is down. A 502, 503 or 504, a 429, a refused
 connection, a DNS miss, a timeout or a body that dies partway are not answers,
 and there is nothing in the notebook to fix. `UNREACHABLE` matches the
 exception *text* rather than the type because the fetch cells wrap the cause in
 `raise RuntimeError(...) from error`, which leaves the 503 alive only in the
 middle of the chained traceback.
+
+Every alternative is anchored to the shape of an exception *summary* line, and
+a review of this change is why. An IPython traceback echoes the source of every
+frame it passes through, so a bare `\bURLError\b` matched a cell hardened to
+`except urllib.error.URLError` -- and a real 404 through that cell was read as
+a transport failure and shipped green, which is the exact thing the gate is
+for. The probe is excluded from the scan for a related reason: it raises one
+`AssertionError` holding every swallowed widget error joined together, so a
+transport failure in one explorer could have carried a real bug in another out
+of the report with it.
 
 A skipped route returns early rather than warning and continuing, because
 `allow_errors=False` already halted the kernel at that cell: every cell after

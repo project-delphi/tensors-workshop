@@ -292,13 +292,16 @@ mocked: `%pip install` runs verbatim and datasets are fetched for real, because
 Colab is the runtime this defends. `check_colab_parity()` guards guarded
 `google.colab` imports, no absolute paths, quiet `%pip`, no hardcoded device.
 
-**A route whose remote could not be reached is skipped, not failed.** A 5xx, a
-429, a refused connection, a DNS miss or a timeout says nothing about the
-notebook, and Chicago's portal answers 503 for minutes at a time. A 404, 403 or
-410 still fails: the host answered, and a dead dataset URL is what this gate
-exists to catch. `UNREACHABLE` in `test_notebooks.py` draws that line, and a
-skipped route is named in the summary with a warning that it went unchecked --
-so a run that reports less than usual never reads like a clean one.
+**A route whose remote could not be reached is skipped, not failed.** A 502,
+503 or 504, a 429, a refused connection, a DNS miss or a timeout says nothing
+about the notebook, and Chicago's portal answers 503 for minutes at a time. A
+404, 403, 410 or 500 still fails: the host answered -- a 500 is usually a bad
+query, which is a notebook bug -- and a dead dataset URL is what this gate
+exists to catch. `UNREACHABLE` in `test_notebooks.py` draws that line, matching
+the shape of an exception *summary* line so that a token echoed from a frame's
+source cannot pass for a cause. A skipped route is named in the summary under
+`UNCHECKED:`, so a run that reports less than usual never reads like a clean
+one.
 
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages

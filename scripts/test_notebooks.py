@@ -43,9 +43,9 @@ as the notebooks change.
 
 Fetching for real means someone else's server can fail the run, so a route
 whose remote could not be reached is reported as skipped rather than failed --
-a 5xx, a 429, a refused connection, a DNS miss or a timeout. A 404, a 403 or a
-410 still fails: the host answered, and a dead dataset URL is the exact thing
-this script exists to catch. See UNREACHABLE.
+a 502/503/504, a 429, a refused connection, a DNS miss or a timeout. A 404, a
+403, a 410 or a 500 still fails: the host answered, and a dead dataset URL is
+the exact thing this script exists to catch. See UNREACHABLE.
 
 The executed notebook is never written back. notebooks/ sits inside the
 byte-exact regenerate gate in .github/workflows/publish.yml, so a stray output
@@ -105,14 +105,30 @@ NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16
 # exception text rather than the type is deliberate: the fetch cells wrap the
 # original in `raise RuntimeError(...) from error`, so the cause survives only
 # in the traceback.
+#
+# Every alternative is anchored to the shape of an exception SUMMARY line --
+# start of line, an optional dotted module prefix, the name, a colon -- and not
+# to a bare token. An IPython traceback echoes the *source* of every frame it
+# passes through, so a cell hardened to `except urllib.error.URLError` would
+# put that token in the traceback of a 404 and a dead dataset URL would ship
+# green, which is the one thing this script exists to stop.
+#
+# 500 is not here. 502, 503 and 504 mean the host is unwell or unreachable
+# through something in front of it; a 500 is very often the host answering
+# about the *request* -- a renamed column or malformed SoQL in CHICAGO_QUERY --
+# which is a notebook bug and should stay red.
 UNREACHABLE = re.compile(
     r"""
-      HTTP\ Error\ (?:429|5\d\d)\b
-    | \bURLError\b                    # DNS, refused, no route, TLS, connect timeout
-    | \bIncompleteRead\b              # the body died partway
-    | \bRemoteDisconnected\b
-    | \bConnection(?:Reset|Aborted|Refused)Error\b
-    | \b(?:socket\.timeout|TimeoutError):\ [^\n]*\btimed\ out\b
+    ^\s*                            # a summary line, never an echoed source line
+    (?:[\w.]+\.)?                   # urllib.error.HTTPError, or a bare name
+    (?:
+        HTTPError:\ HTTP\ Error\ (?:429|50[234])\b
+      | URLError:                    # DNS, refused, no route, TLS, connect timeout
+      | IncompleteRead:              # the body died partway
+      | RemoteDisconnected:
+      | Connection(?:Reset|Aborted|Refused)Error:
+      | (?:timeout|TimeoutError):\ [^\n]*\btimed\ out\b
+    )
     """,
     re.VERBOSE,
 )
@@ -778,6 +794,12 @@ def execute(path: Path, number: str, show_output: bool) -> str | None:
     # than a warning. The staleness check above runs first because it is
     # static: it must keep holding on the days the portal is down.
     for cell in trimmed["cells"]:
+        # Teaching cells only. The probe raises ONE AssertionError holding every
+        # swallowed widget-callback error joined together, so a transport
+        # failure in one explorer would carry a real bug in another out of the
+        # report with it. A probe failure is a widget question either way.
+        if cell.get("id") in ("workshop-prologue", "workshop-probe"):
+            continue
         why = unreachable_in(cell)
         if why:
             print(f"      skipped — {cell.get('id')} could not reach its remote")
@@ -921,10 +943,10 @@ def main(argv: list[str] | None = None) -> int:
         # normally does, so it should never be something a reader has to infer
         # from a run that otherwise looks clean.
         print(
-            f"Skipped {len(unreachable)} route(s) whose remote was unreachable: "
-            f"{', '.join(unreachable)}"
+            f"UNCHECKED: {len(unreachable)} route(s) whose remote was "
+            f"unreachable: {', '.join(unreachable)}"
         )
-        print("  Those notebooks were NOT checked. Rerun when the host is back.")
+        print("  Those notebooks did not run. Rerun when the host is back.")
     if failures:
         print(f"{len(failures)} FAILURE(S)")
         return 1

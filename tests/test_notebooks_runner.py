@@ -527,6 +527,54 @@ class Unreachable(unittest.TestCase):
         )
         self.assertIsNone(tn.unreachable_in(dead))
 
+    def test_an_echoed_source_line_is_not_a_cause(self):
+        """The regression that matters: a 404 must not hide behind a token.
+
+        An IPython traceback echoes the source of every frame it passes
+        through, not just exception summaries. A fetch cell hardened to
+        `except urllib.error.URLError` therefore puts that name in the
+        traceback of a *404* -- and a bare-token match read it as a transport
+        failure, so a dead dataset URL shipped green. That is precisely the
+        failure this gate exists to stop, so both halves are pinned here.
+        """
+        frames = (
+            "Cell In[3], line 12",
+            "     11     try:",
+            "---> 12         with urllib.request.urlopen(url, timeout=70) as r:",
+            "     14     except (urllib.error.HTTPError, urllib.error.URLError) as e:",
+        )
+        dead = self.errored(
+            "RuntimeError",
+            "EN: could not download the tensor.",
+            *frames,
+            "urllib.error.HTTPError: HTTP Error 404: Not Found",
+            "RuntimeError: EN: could not download the tensor.",
+        )
+        self.assertIsNone(tn.unreachable_in(dead))
+
+        # Same frames, same echoed token, but the host really was unwell.
+        unwell = self.errored(
+            "RuntimeError",
+            "EN: could not reach the Chicago data portal.",
+            *frames,
+            "urllib.error.HTTPError: HTTP Error 503: Service Temporarily Unavailable",
+            "RuntimeError: EN: could not reach the Chicago data portal.",
+        )
+        self.assertIn("503", tn.unreachable_in(unwell) or "")
+
+    def test_500_is_the_host_answering_about_the_request(self):
+        """502/503/504 are the host unwell; 500 is usually a bad query."""
+        for code, skipped in (
+            ("500", False),
+            ("502", True),
+            ("503", True),
+            ("504", True),
+        ):
+            with self.subTest(code=code):
+                evalue = f"HTTP Error {code}: something"
+                cell = self.errored("HTTPError", evalue, f"HTTPError: {evalue}")
+                self.assertEqual(bool(tn.unreachable_in(cell)), skipped)
+
     def test_an_ordinary_broken_cell_is_not_a_skip(self):
         for ename, evalue in (
             ("NameError", "name 'T' is not defined"),
