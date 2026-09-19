@@ -759,7 +759,10 @@
 
   function flatProjection() {
     flat.innerHTML = "";
-    const S = 52, CX = 400, CY = 285;
+    // The dolly is a multiplier on the camera's distance, which for an
+    // orthographic projection is a divisor on the scale. Without this the
+    // flat path stamps a camera that moved and draws one that did not.
+    const S = 52 / (shownView("projection").dolly || 1), CX = 400, CY = 285;
     const B = viewBasis("projection");
     const P = (p) => iso(p, S, CX, CY, B);
 
@@ -827,8 +830,20 @@
 
   function flatPortal() {
     flat.innerHTML = "";
-    const S = 52;                       // one scale for both panes: the point
-    const L = [200, 280], R = [600, 280];   // is that the ellipse is bigger
+    // The GL path scissors each viewport, so its floor stops at the divider.
+    // The SVG has no scissor and the outer ring reaches 208px from a centre
+    // 200px from the edge, so it needs one: without this the left pane's grid
+    // runs off-canvas and into the right pane, and the two paths disagree.
+    const clip = el("defs", {});
+    [["clip-in", 0], ["clip-out", 400]].forEach(([id, x]) => {
+      const cp = el("clipPath", {id: id});
+      cp.appendChild(el("rect", {x: x, y: 0, width: 400, height: 560}));
+      clip.appendChild(cp);
+    });
+    flat.appendChild(clip);
+    const S = 52 / (shownView("portal").dolly || 1);   // one scale for both
+    const L = [200, 280], R = [600, 280];   // panes: the point is that the
+                                            // ellipse is the bigger of the two
     const B = viewBasis("portal");
     // Both panes are the same plane seen from the same place, so one basis
     // serves them both and the two spaces turn together -- which is what keeps
@@ -847,9 +862,10 @@
 
     // The floor of each space: rings and spokes rather than squares, because a
     // square grid fights a circle. The GL path lays the same one down.
-    const pane = (to) => {
+    const pane = (to, clipId) => {
       const g = el("g", {stroke: css("--stage-mute"), "stroke-opacity": "0.22",
-                         "stroke-width": "1", fill: "none"});
+                         "stroke-width": "1", fill: "none",
+                         "clip-path": "url(#" + clipId + ")"});
       for (let r = 1; r <= 4; r++) {
         g.appendChild(el("polyline", {points: ring(to, r).join(" ")}));
       }
@@ -860,7 +876,7 @@
       }
       flat.appendChild(g);
     };
-    pane(toL); pane(toR);
+    pane(toL, "clip-in"); pane(toR, "clip-out");
     flat.appendChild(el("line", {x1: 400, y1: 60, x2: 400, y2: 500,
       stroke: css("--stage-mute"), "stroke-opacity": "0.25", "stroke-width": "1"}));
 
@@ -956,21 +972,26 @@
     Object.assign(drift, LC.driftRelease(drift, performance.now()));
   };
 
+  // Taking hold of the stage ends whatever was easing it -- otherwise the
+  // camera keeps turning under a reader who has just reached for it -- and the
+  // delta is applied to the pose they can *see*. state.views holds the glide's
+  // target, so measuring from there would jump the camera the rest of the
+  // glide's way before it started following the hand.
+  function takeView(scene) {
+    const from = shownView(scene);
+    glide.active = false;
+    return {az: from.az, el: from.el, dolly: from.dolly};
+  }
   function orbitBy(dAz, dEl) {
     const scene = STEPS[state.step].scene;
     dropDrift();
-    glide.active = false;
-    state.views[scene] = LC.orbitBy(state.views[scene], dAz, dEl, POSE[scene].limits);
+    state.views[scene] = LC.orbitBy(takeView(scene), dAz, dEl, POSE[scene].limits);
     afterView(scene);
   }
   function dollyBy(factor) {
     const scene = STEPS[state.step].scene;
     dropDrift();
-    // As in orbitBy: taking hold of the stage ends whatever was easing it, or
-    // the camera keeps turning for the rest of the glide under a reader who
-    // has just reached for it.
-    glide.active = false;
-    state.views[scene] = LC.orbitDolly(state.views[scene], factor, POSE[scene].limits);
+    state.views[scene] = LC.orbitDolly(takeView(scene), factor, POSE[scene].limits);
     afterView(scene);
   }
   function homeView() {
@@ -1046,6 +1067,11 @@
     // focused, and the framing is fitted to the content anyway.
 
     stage.addEventListener("keydown", (e) => {
+      // Ctrl, command and alt belong to the browser -- ctrl-Home scrolls the
+      // document, command-arrow jumps it -- and this widget has just argued
+      // that it should not take the wheel for the same reason. Shift is ours:
+      // it is the coarse step.
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
       const step = e.shiftKey ? 0.3 : 0.1;
       const moves = {
         ArrowLeft: () => orbitBy(step, 0),
@@ -1596,8 +1622,13 @@
       const scene = STEPS[n].scene;
       const v = state.views[scene];
       Object.assign(drift, LC.driftRelease(drift, performance.now()));
-      glideTo(scene, v.az - 0.34,
-        Math.max(POSE[scene].limits.elMin, v.el - 0.1), v.az, v.el, 900);
+      // Through the same clamp the reader's own drags go through: the portal
+      // bounds azimuth because past it the panes are mirrored and every label
+      // reads backwards, and a scene turning into place must not play that
+      // view for 900ms on the way in.
+      const from = LC.orbitClamp(
+        {az: v.az - 0.34, el: v.el - 0.1, dolly: v.dolly}, POSE[scene].limits);
+      glideTo(scene, from.az, from.el, v.az, v.el, 900);
     }
     STEPS.forEach((s, j) => $(s.el).classList.toggle("is-active", j === n));
     $("prev").disabled = n === 0;
