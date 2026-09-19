@@ -737,11 +737,10 @@ async function audit(page, where) {
          es: 'Reshape, transpose y strides', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
          es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
-        // No embed mode: the hero is two tabs of live widgets, which
-        // `assert.equal(frames.count(), 2)` below pins, and a sticky two-pane
-        // scroller is not a hero.
+        // Its embed mode is the portal's still frame -- no scroller, no
+        // three.js -- which is the third hero tab below.
         {file: 'linalg-stage', en: 'Projection and the SVD',
-         es: 'Proyecci\u00f3n y la SVD', embed: false, drive: driveStage}
+         es: 'Proyecci\u00f3n y la SVD', embed: true, drive: driveStage}
       ];
       for (const widget of widgets) {
         console.log(`Checking ${widget.file}`);
@@ -809,6 +808,16 @@ async function audit(page, where) {
               document.querySelector('#stage').dataset.photos === '3', null, {timeout: 10000});
             assert.equal(await page.evaluate(() => window.THREE), undefined,
               `${where} embed: three.js must not be fetched on the front door`);
+          } else if (widget.file === 'linalg-stage') {
+            // The portal, drawn flat: the scroller and its steps are gone,
+            // and three.js is never fetched for a hero tab either.
+            await page.waitForFunction(() => document.querySelector('#flat').childElementCount > 0);
+            assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
+            assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'portal',
+              `${where} embed: the hero gets the SVD portal`);
+            assert(await page.locator('.steps').isHidden(), `${where} embed: scroller shown`);
+            assert.equal(await page.evaluate(() => window.THREE), undefined,
+              `${where} embed: three.js must not be fetched on the front door`);
           } else {
             await page.waitForSelector('#draw .cell');
           }
@@ -822,28 +831,54 @@ async function audit(page, where) {
         }
       }
 
-      // The hero carries two of the three widgets live, behind two tabs, in the page's
+      // The hero carries all three widgets live, behind three tabs, in the page's
       // own language. The static diagram is the fallback and must still be
       // in the document for reduced motion and phones.
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 2, `${lang}/index: two hero embeds`);
-        for (const src of await frames.evaluateAll(els => els.map(e => e.getAttribute('src')))) {
-          assert(src.includes(`lang=${lang}`) && src.includes('embed=1') && src.includes('theme=navy'),
-            `${lang}/index: hero embed src ${src}`);
+        assert.equal(await frames.count(), 3, `${lang}/index: three hero embeds`);
+        // Only the open tab's widget is fetched. A hidden iframe is not
+        // lazy-loaded whatever `loading` says, so the other two hold their URL
+        // in data-src until the tab script hands it over.
+        const urls = await frames.evaluateAll(els =>
+          els.map(e => [e.getAttribute('src'), e.getAttribute('data-src')]));
+        for (const [src, deferred] of urls) {
+          const url = src || deferred;
+          assert(url && url.includes(`lang=${lang}`) && url.includes('embed=1') && url.includes('theme=navy'),
+            `${lang}/index: hero embed src ${url}`);
         }
+        assert.equal(urls.filter(([src]) => src).length, 1,
+          `${lang}/index: only the open tab's widget is loaded`);
         assert(await page.locator('.hero-visual.has-js').count() === 1, `${lang}/index: tab script did not run`);
         assert(await page.locator('#hero-panel-layout').isVisible());
         assert(await page.locator('#hero-panel-broadcast').isHidden());
+        assert(await page.locator('#hero-panel-linalg').isHidden());
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
+        assert(await page.locator('#hero-panel-broadcast iframe').getAttribute('src'),
+          `${lang}/index: broadcasting embed not loaded on opening its tab`);
+        await page.locator('#hero-tab-linalg').click();
+        assert(await page.locator('#hero-panel-linalg').isVisible(), `${lang}/index: linear algebra tab`);
+        assert(await page.locator('#hero-panel-broadcast').isHidden());
+        const stageFrame = page.locator('#hero-panel-linalg iframe');
+        assert(await stageFrame.getAttribute('src'),
+          `${lang}/index: stage embed not loaded on opening its tab`);
+        // data-src is spent, which is what stops a second visit to the tab
+        // reassigning src and reloading the widget from scratch.
+        assert.equal(await stageFrame.getAttribute('data-src'), null,
+          `${lang}/index: reopening a tab would reload its widget`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
         assert(await page.locator('.hero-demos').isHidden(), `${lang}/index: embeds hidden on a phone`);
+        // Loaded on a phone, where the diagram replaces the demos outright:
+        // no widget is fetched at all, since a display:none iframe would be.
+        await page.reload();
+        assert.equal(await frames.evaluateAll(els => els.filter(e => e.getAttribute('src')).length), 0,
+          `${lang}/index: a widget was fetched behind the diagram fallback`);
         await page.setViewportSize({width: 1440, height: 1000});
       }
 

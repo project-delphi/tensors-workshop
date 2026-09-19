@@ -352,6 +352,10 @@
   html.embed .wrap { max-width: none; padding: 0; }
   html.embed header, html.embed aside, html.embed .steps,
   html.embed .stagebar, html.embed #glnote { display: none; }
+  /* The running note sits top right of a stage that is normally twice this
+     wide; in a hero card it wraps back across the input pane's y axis. The
+     caption under the frame says the same thing, so the note goes. */
+  html.embed #stagenote { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { position: static; display: flex; flex-direction: column; height: 100vh; }
   html.embed #stage { flex: 1 1 auto; min-height: 0; height: auto; border: 0; border-radius: 0; }
@@ -1250,6 +1254,11 @@
     for (const k of dataKeys) stage.dataset[k] = r.data[k];
     stage.setAttribute("aria-label", step.aria());
     stage.dataset.step = step.id;
+    // The scene's own name beside its number, because the number is the one
+    // that moves: the eight have been reordered twice, and a check that says
+    // "expected portal, got collapse" is a different sentence from
+    // "expected 4, got 3".
+    stage.dataset.scene = s.id;
   }
 
   const arrived = new Set();
@@ -1429,7 +1438,10 @@
   const at = stepOf(hash);
   // A hash that changes on a page already open -- a link followed from the
   // notebook in the same tab, or an edited address bar -- is the same request.
-  addEventListener("hashchange", () => {
+  // Not in embed mode: a hero card has no scroller, no step bar and no Next,
+  // so a hash arriving there would strand it on a scene with nothing to say
+  // and no way back to the one its caption describes.
+  if (!embed) addEventListener("hashchange", () => {
     const n = stepOf((location.hash || "").replace("#", ""));
     if (n >= 0) setStep(n, true);
   });

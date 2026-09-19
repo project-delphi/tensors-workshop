@@ -41,16 +41,21 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
     <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
     <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
+    <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
-    <iframe class="hero-embed" src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape"></iframe>
     <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
-    <iframe class="hero-embed" src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas"></iframe>
     <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
-  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Dos de los movimientos, en vivo.</p>
+  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
+    <iframe class="hero-embed" data-src="../interactive/linalg-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"></iframe>
+    <p class="hero-caption">Una matriz lleva el círculo unitario a una elipse: <code>A v = σ u</code>, un vector a la vez.</p>
+  </div>
+  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Tres de los movimientos, en vivo.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-es tensor-desc-es" xmlns="http://www.w3.org/2000/svg">
@@ -103,12 +108,28 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   if (!wrap) return;
   var tabs = wrap.querySelectorAll("[role=tab]");
   var panels = wrap.querySelectorAll("[role=tabpanel]");
+  // A hidden iframe is not lazy-loaded: a browser treats one as a tracking
+  // pixel and fetches it anyway, whatever `loading` says. So every panel
+  // carries its URL in data-src and is handed it only when it is really on
+  // screen -- the open tab, and not at all where homepage.scss replaces the
+  // whole row with the static diagram, which is the reader least able to
+  // spare three widgets.
+  var diagram = matchMedia("(prefers-reduced-motion: reduce), (max-width: 540px)");
+  function load(panel) {
+    var frame = panel && panel.querySelector("iframe[data-src]");
+    if (!frame || diagram.matches) return;
+    // Once: assigning src again on a later visit to the tab would reload the
+    // widget and throw away what the reader had set up in it.
+    frame.src = frame.getAttribute("data-src");
+    frame.removeAttribute("data-src");
+  }
   function show(i) {
     tabs.forEach(function (tab, j) {
       var on = i === j;
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
+      if (on) load(panels[j]);
     });
   }
   tabs.forEach(function (tab, i) {
@@ -122,6 +143,12 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       tabs[n].focus();
     });
   });
+  // The open tab: now, or whenever a resize or a changed motion preference
+  // first puts the demos on screen.
+  diagram.addEventListener("change", function () {
+    load(wrap.querySelector("[role=tabpanel]:not([hidden])"));
+  });
+  load(panels[0]);
   wrap.parentElement.classList.add("has-js");
 })();
 </script>

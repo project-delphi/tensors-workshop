@@ -174,7 +174,11 @@ class Harvester(html.parser.HTMLParser):
             self.ids.add(a["id"])
         if "name" in a and tag == "a":
             self.ids.add(a["name"])
-        for key in ("href", "src"):
+        # data-src is a src the page has not spent yet: the homepage hero
+        # holds its closed tabs' widgets there, because a hidden iframe is
+        # loaded eagerly whatever `loading` says. A URL that is going to be
+        # fetched on a click is still a link to check.
+        for key in ("href", "src", "data-src"):
             if key in a and a[key]:
                 self.links.append(a[key])
 
