@@ -269,6 +269,83 @@ the whole cost of an animation nobody asked for. It yields to a hidden tab,
 to `prefers-reduced-motion`, and to `snap.on` -- drifting away from face on
 would undo the one view the reader asked for by name.
 
+**The projection & SVD stage turns too, and its two panes turn together.** It
+rendered two scenes through three.js and pinned both to a fixed camera: step 1
+built a glass plane, a residual and a right angle in three dimensions and then
+showed one unmovable view of them, and step 8 drew a circle and an ellipse
+through two orthographic cameras aimed straight down, which is a diagram drawn
+with a GPU. So the stage took the visualizer's bargain -- it sways until a
+reader reaches for it, and is theirs the moment they do -- with the same
+gates (`prefers-reduced-motion`, a hidden tab, `pointerenter`, `:focus-visible`,
+`pointerleave` and 1.5 seconds) so that a reader who has met one widget has met
+both. Four things here are this stage's own.
+
+*One frame, and no roll.* Azimuth turns about world +Y, elevation lifts above
+the horizon, and the camera's own up stays +Y, for both scenes. The portal was
+built first with up along the plane its circle lies in, which is the natural
+frame for a turntable and the wrong one for a picture: a drag rolled both panes
+in their own plane, the labels leaned, and the tilt that was supposed to give
+the step depth was the one thing the gesture could not reach. Under one frame
+the portal is a card being tipped instead, which is why it is also the scene
+that clamps *azimuth* -- past a quarter turn a reader is reading two planes
+from behind, where the picture is mirrored and every label on it is backwards.
+
+*The drift lifts, it does not breathe.* The visualizer's second axis of motion
+is a zoom that only ever pulls out, bounded by what stays in frame. Here the
+framing is fitted to sigma_1 and a breath that pulled *in* would crop the
+ellipse the step exists to show, so the second axis is a small rise in
+elevation, which can only ever flatten against `elMax`. Everything else about
+the machine is the one in `tensor-core.js`, constants aside, down to seeding the
+origin once and banking the phase across a pause: the ratchet that walked the
+visualizer's tensor smaller on every crossing would have walked this camera
+upwards instead, and `tests/linalg_core.test.cjs` pins forty crossings the same
+way.
+
+*The wheel is left alone entirely.* The visualizer dollies on ctrl- or
+command-wheel because it owns most of a phone screen. The same gesture here
+would cost twice what it buys. The step a reader is on **is** the scroll
+position, read by `pickActive` through an IntersectionObserver, so a stage that
+swallowed the wheel would swallow the page's own navigation -- and ctrl-wheel
+is also the browser's own page zoom, which a low-vision reader would lose for
+as long as the pointer sat on a stage that fills half the window, on a site
+that runs axe over every widget. So the dolly is on `+` and `-` with the stage
+focused, the framing is fitted to the content anyway, and
+`check_navigation.cjs` asserts that scrolling over the stage still scrolls the
+page.
+
+*Both render paths take the camera from `orbitEye`.* The flat SVG fallback
+already derived its screen basis from the GL camera rather than building an
+isometric one -- isometric looks down (1, 1, 1), which is very nearly the
+direction this housing data lies along, and the figure collapsed into a few
+pixels. Now that the camera moves, that derivation is what keeps the promise:
+the fallback turns under the same drag and shows the same view, so `#stage`
+carries `dataset.cam` and the browser check asserts rotation as numbers in
+whichever renderer the runner gives it.
+
+**The stage cleared to a colour it was never asked for, and one value cannot
+fix it.** `setClearColor` was handed `new THREE.Color(css("--stage"))` once at
+init, and this widget clears in two different places:
+`getUnlitUniformColorSpace()` clears a bound render target in the working
+(linear) space and the canvas in the output (sRGB) one, so step 1 through the
+composer and the portal rendering direct need *different* values. With
+`--stage` at #101826, measured off the drawing buffer: the composer cleared to
+#47566c unconverted and #101826 converted; rendering direct it is #101826
+unconverted and #010205 converted. So step 1 shipped a washed-out lavender, on
+the one widget whose CSS says in as many words that the stage is dark *because
+glow needs a dark ground*, and the first attempt at a fix -- one converted
+colour for both -- simply moved the error onto the portal, where a code review
+caught it.
+
+Two things are worth keeping from that. The bug survived as long as it did
+because there is nothing on screen to compare the canvas against: it covers the
+element whose background it is supposed to match. Putting a `var(--stage)`
+swatch on top of the canvas shows it immediately, and reading the pixel back
+out of the drawing buffer settles it in numbers. And the reasoning about which
+space three.js converts in runs both ways depending on where you stop reading
+the renderer -- the pixels do not, which is why `STAGE` carries both colours
+with the four measurements written beside them, and `renderGL()` sets the one
+that belongs to the path it is about to take.
+
 ## Which document owns what
 
 **Seven documents, one home per fact.** They drifted once -- five copies of the

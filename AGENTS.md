@@ -142,14 +142,17 @@ strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
 reshape -- is `interactive/tensor-core.js`; the stage's -- least squares two
 ways, a one-sided-Jacobi SVD, the condition number, the pseudoinverse -- is
 `interactive/linalg-core.js`. Both are plain scripts the page loads first, and
-`tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`. Two state
-machines live there too, and they are the exception that says what the rule is
-for: where a stretch of idle drift takes its origin, and where an *interrupted*
-tween takes its origin, are both invisible in a screenshot and survive an
-end-state assertion, so each is written as a state in and a state out and
-pinned like the arithmetic. Everything else that touches a widget's state --
-anything a screenshot or `check_navigation.cjs` would catch -- stays in the
-HTML.
+`tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`. Three kinds of
+state machine live there too, and they are the exception that says what the rule
+is for: where a stretch of idle drift takes its origin, where an *interrupted*
+tween takes its origin, and where an orbit's clamps sit, are all invisible in a
+screenshot and survive an end-state assertion, so each is written as a state in
+and a state out and pinned like the arithmetic. Both widgets drift while idle
+and hand the view over the moment a reader reaches for it; the stage orbits
+from one frame -- azimuth about world +Y, up always +Y, so nothing it draws ever
+rolls -- and both its scenes and both its render paths take the camera from
+`orbitEye`. Everything else that touches a widget's state -- anything a
+screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the
 widget counts instead, which `check_navigation.cjs` treats as a regression. The
