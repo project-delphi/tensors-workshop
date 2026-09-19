@@ -119,3 +119,35 @@ Three properties of that map are load-bearing:
 Upgrading three.js now means both builds: the core file, these eleven, both
 hash tables, `three-boot.js`, `linalg-boot.js`, the import map in
 `linalg-stage.html`, and all fourteen `repo.widgets` lines.
+
+# Vendored CMU Serif
+
+`cmu-serif/` holds two faces of Computer Modern Unicode Serif as woff2, and
+the SIL Open Font License 1.1 they are under, copied unmodified from the npm
+package `computer-modern@0.1.3` as jsdelivr serves it. The projection & SVD
+stage (`../linalg-stage.html`) uses them for the labels on its stage and
+nothing else: the look that stage takes is a Manim frame, and Computer Modern
+is most of that look.
+
+```
+source  https://cdn.jsdelivr.net/npm/computer-modern@0.1.3/<path>
+fetched 2026-09-19
+```
+
+| path | vendored as | bytes | sha256 |
+|---|---|---|---|
+| `fonts/cmu-serif-500-roman.woff2` | `cmu-serif/cmu-serif-500-roman.woff2` | 222840 | `1b875e541dc5c517cd11d244710d8639addbe91a0bb1ba55e7c4593225c7a970` |
+| `fonts/cmu-serif-500-italic.woff2` | `cmu-serif/cmu-serif-500-italic.woff2` | 170068 | `dff13cb212b960c65ba36d0085863a2f2fb056aae7f859e37f07abeb82a71c25` |
+| `OFL.txt` | `cmu-serif/OFL.txt` | 4820 | `73273dffdefe2e5f1e138084d4a4b65b1c50df2ab0179f78484f31beefe30d84` |
+
+Verify with:
+
+```bash
+cd interactive/vendor/cmu-serif && shasum -a 256 *
+```
+
+**Why vendored and not a CDN stylesheet.** The same reason three.js is:
+`check_navigation.cjs` aborts every off-origin request, so a font from a CDN
+would load on a reader's machine and test as Times on the runner, and nothing
+would say so. The two woff2 files are in `repo.widgets` because a `@font-face`
+`url()` is CSS content, which the link harvest does not read.

@@ -2,7 +2,7 @@
 name: figure-smith
 description: "Runs and maintains the six image generators — dataset cards, handbook figures, cube GIFs, notebook 16's PCA animations, the 17/18 tensor-module animations, and slide art. Use when an image input changed, a new animation is needed, or a rerun left `git status` dirty and it has to be decided whether that is a real change or matplotlib drift. Knows the scene constraints CI cannot check."
 tools: Read, Grep, Glob, Edit, Write, Bash
-model: haiku
+model: sonnet
 effort: low
 maxTurns: 60
 omitClaudeMd: true

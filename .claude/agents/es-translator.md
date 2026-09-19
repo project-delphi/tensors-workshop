@@ -2,7 +2,7 @@
 name: es-translator
 description: "Keeps the Spanish side in step with the English one — the 16 files under `es/`, the Spanish handbook, the hand-maintained Markdown pairs and the `es_box()` text inside notebooks. Use when an English page, handbook section or notebook box has changed and its Spanish twin has not, or when a new bilingual page needs its Spanish half."
 tools: Read, Grep, Glob, Edit, Write, NotebookEdit, Bash
-model: haiku
+model: sonnet
 effort: low
 maxTurns: 80
 omitClaudeMd: true

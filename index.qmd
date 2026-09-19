@@ -302,8 +302,10 @@ Section 04.
 
 Least squares is a projection: scroll, and watch a target vector's shadow land
 on the plane its predictors span, with the residual meeting it at a right
-angle. Then step through the SVD portal, where a unit circle becomes an
-ellipse and A v = σ u stops being notation. Sections 07 and 09.
+angle. Then the SVD portal, where a unit circle becomes an ellipse and
+A v = σ u stops being notation, and on to the eigenvectors, two nearly
+collinear columns and float32 dividing by exactly zero. Eight pictures of one
+problem, sections 07, 08 and 09.
 
 [Try projection & SVD](interactive/linalg-stage.html?lang=en){.resource-button}
 :::

@@ -137,11 +137,34 @@ visualizer, and the sections 07/09 projection & SVD stage -- each with its own
 per theme to clear 4.5:1. They are resources, not render targets:
 `interactive/**` is in `resources:` and deliberately absent from `render:`.
 
+The stage is eight steps, one file each under `interactive/linalg-scenes/`,
+registered in load order through `LinalgScenes.register()`; the page
+(`linalg-stage.html`) is the frame -- layout, step machine, camera, boot --
+and `linalg-kit.js` is the drawing every scene shares, once for three.js and
+once for the flat SVG. The order is projection, wide, collapse, portal,
+ellipsoid, eigen, collinear, precision -- sections 07, 07, 07, 09, 09, 08,
+09, 09 -- and the portal sits before every step that says "singular value"
+because it is where the word is defined. A new step is one scene file, one
+`<section>`, one `<script src>` line and one `repo.widgets` line; the contract
+a scene keeps is `linalg-scenes/README.md`. **Link to a step by its scene
+name** (`#portal`, `#eigen`), never `#step-N`: the number moves on a reorder,
+the name does not, and the notebooks and both handbooks use the names. Every
+step opens with a predict-first line and a claim on the stage's title card,
+every slider is bound through `ctx.bindSlider` (tinted with the token of what
+it moves, value in the label, the object lit while dragging) and eases its
+geometry, and each step plays an entrance once (`arrive()`, never under
+reduced motion). The stage is black in every theme and its labels are the
+vendored CMU Serif (`interactive/vendor/cmu-serif/`), because the look it
+takes is a Manim frame; the label chip stays opaque, and black, so axe has two
+colours to measure.
+
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
 reshape -- is `interactive/tensor-core.js`; the stage's -- least squares two
 ways, a one-sided-Jacobi SVD, the condition number, the pseudoinverse -- is
-`interactive/linalg-core.js`. Both are plain scripts the page loads first, and
+`interactive/linalg-core.js` -- with the null space, a 3 x 3 eigen-solver,
+float32 rounding and an unguarded Cramer solve for the steps that need them.
+Both are plain scripts the page loads first, and
 `tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`. Three kinds of
 state machine live there too, and they are the exception that says what the rule
 is for: where a stretch of idle drift takes its origin, where an *interrupted*
@@ -174,7 +197,8 @@ every `repo.widgets` line.
 `docs/` -- for the addons that is the *only* guard, since an import map is
 element content and the link harvest reads attributes. `check_navigation.cjs`
 drives all three widgets in both languages, from a per-widget `drive` callback
-rather than a flag, and runs axe over them. Every colour a widget puts on text
+rather than a flag, and runs axe over them. The stage's callback opens every one
+of its eight steps and asserts each step's claim off `data-*`. Every colour a widget puts on text
 clears 4.5:1 per theme -- the four axis hues have `--axN-ink` text variants,
 and the stage's dark-in-every-theme canvas has one `--stage*` set measured
 against the label chip -- so a contrast finding in a widget is real, never
