@@ -966,6 +966,10 @@
   function dollyBy(factor) {
     const scene = STEPS[state.step].scene;
     dropDrift();
+    // As in orbitBy: taking hold of the stage ends whatever was easing it, or
+    // the camera keeps turning for the rest of the glide under a reader who
+    // has just reached for it.
+    glide.active = false;
     state.views[scene] = LC.orbitDolly(state.views[scene], factor, POSE[scene].limits);
     afterView(scene);
   }
@@ -1033,14 +1037,13 @@
     stage.addEventListener("pointerup", release);
     stage.addEventListener("pointercancel", release);
 
-    // Ctrl or Command only. The step a reader is on *is* the scroll position
-    // here, so a stage that swallowed the wheel would swallow the page's own
-    // navigation with it.
-    stage.addEventListener("wheel", (e) => {
-      if (!e.ctrlKey && !e.metaKey) return;
-      e.preventDefault();
-      dollyBy(e.deltaY > 0 ? 1.08 : 0.93);
-    }, {passive: false});
+    // No wheel handler at all, deliberately. The reshape visualizer dollies on
+    // ctrl- or command-wheel, and the same gesture here would cost more than it
+    // buys twice over: the step a reader is on *is* the scroll position on this
+    // page, and ctrl-wheel is also the browser's own page zoom, which a
+    // low-vision reader would lose for as long as the pointer sat on a stage
+    // that fills half the window. The dolly is on + and - with the stage
+    // focused, and the framing is fitted to the content anyway.
 
     stage.addEventListener("keydown", (e) => {
       const step = e.shiftKey ? 0.3 : 0.1;
@@ -1070,15 +1073,27 @@
 
   function vec(p) { return new THREE.Vector3(p[0], p[1], p[2] || 0); }
 
-  // The stage's own dark, in the space the renderer clears in. Without the
-  // conversion the composer wrote the CSS colour straight into a linear buffer
-  // and OutputPass then encoded it a second time, so #0a0a1a cleared to
-  // #38385c: a washed-out lavender in every theme, measurably lighter than the
-  // page said the stage was, on the one widget whose comments say the stage is
-  // dark *because glow needs a dark ground*. Both the clear colour and the fog
-  // take it from here so they cannot drift apart.
-  const STAGE_COLOUR = () =>
-    new THREE.Color(css("--stage")).convertSRGBToLinear();
+  // The stage's own dark, in each of the two spaces this widget clears in.
+  // Which one is correct depends on where the frame is going --
+  // getUnlitUniformColorSpace() clears a bound render target in the working
+  // (linear) space and the canvas in the output (sRGB) one -- and this widget
+  // uses both: the composer for step 1, a direct two-viewport render for the
+  // portal. So the clear colour is set per path rather than once at init.
+  //
+  // These four numbers were measured off the drawing buffer, not reasoned
+  // about, because the reasoning goes both ways and the pixels do not. With
+  // --stage at #101826: through the composer, the unconverted colour cleared to
+  // #47566c -- a washed-out lavender, on the one widget whose CSS says the
+  // stage is dark *because glow needs a dark ground* -- and the converted one
+  // to #101826. Rendering direct it is the other way round: #101826
+  // unconverted, #010205 converted. The bug was invisible for as long as it
+  // was, and half of it survived the first fix, because the canvas covers the
+  // element whose background it is supposed to match; put a var(--stage) swatch
+  // on top of it and the two colours are plainly different.
+  // Filled by initGL(): this script is classic and runs long before the
+  // vendored module has put THREE on the window, so a Color built here would
+  // throw before the widget had drawn anything at all.
+  const STAGE = {target: null, canvas: null};
 
   // Shaft plus head along +Y, then turned to face `dir`. Emissive, so the
   // bloom pass has something above its threshold to find.
@@ -1128,7 +1143,9 @@
     // of ending on a hard line, which is most of what tells a reader the grid
     // is lying down rather than standing up. The renderer clears to the same
     // colour, so there is nothing for it to disagree with.
-    scene.fog = new THREE.FogExp2(STAGE_COLOUR().getHex(), 0.024);
+    // The scene this fog is in only ever renders through the composer, so it
+    // takes that path's colour and the horizon dissolves into the clear.
+    scene.fog = new THREE.FogExp2(STAGE.target, 0.024);
     scene.add(new THREE.AmbientLight(0xffffff, 0.7));
     const key = new THREE.DirectionalLight(0xffffff, 1.4);
     key.position.set(8, 10, 6);
@@ -1318,8 +1335,11 @@
     } catch (e) { return false; }
     if (!renderer || !renderer.getContext()) return false;
 
+    STAGE.canvas = new THREE.Color(css("--stage"));
+    STAGE.target = STAGE.canvas.clone().convertSRGBToLinear();
+
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
-    renderer.setClearColor(STAGE_COLOUR(), 1);
+    renderer.setClearColor(STAGE.canvas, 1);   // reset per path in renderGL()
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     GL.renderer = renderer;
 
@@ -1451,6 +1471,7 @@
       p.labels.r.position.copy(vec(LC.add(FIT.yhat, LC.scale(FIT.residual, state.k / 2))));
       p.labels.r.visible = state.k > 0.08;
       GL.bloom.enabled = state.glow && !reduceMotion && GL.budget;
+      r.setClearColor(STAGE.target, 1);
       r.setScissorTest(false);
       r.setViewport(0, 0, w, h);
       GL.composer.render();
@@ -1463,6 +1484,7 @@
       // frame-budget sampler below counts direct renders and spends its window
       // measuring a pass that never ran.
       GL.bloom.enabled = false;
+      r.setClearColor(STAGE.canvas, 1);
       const x = [Math.cos(state.theta), Math.sin(state.theta)];
       const ax = LC.mulVec(A, x);
       // ELL already holds this decomposition; recomputing it per frame is the

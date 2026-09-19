@@ -301,12 +301,17 @@ visualizer's tensor smaller on every crossing would have walked this camera
 upwards instead, and `tests/linalg_core.test.cjs` pins forty crossings the same
 way.
 
-*The wheel needs a modifier.* The visualizer takes ctrl or command on the wheel
-because it owns most of a phone screen. This page has a second reason that is
-not about size at all: the step a reader is on **is** the scroll position, read
-by `pickActive` through an IntersectionObserver, so a stage that swallowed the
-wheel would swallow the page's own navigation. `check_navigation.cjs` asserts
-that scrolling over the stage still scrolls the page.
+*The wheel is left alone entirely.* The visualizer dollies on ctrl- or
+command-wheel because it owns most of a phone screen. The same gesture here
+would cost twice what it buys. The step a reader is on **is** the scroll
+position, read by `pickActive` through an IntersectionObserver, so a stage that
+swallowed the wheel would swallow the page's own navigation -- and ctrl-wheel
+is also the browser's own page zoom, which a low-vision reader would lose for
+as long as the pointer sat on a stage that fills half the window, on a site
+that runs axe over every widget. So the dolly is on `+` and `-` with the stage
+focused, the framing is fitted to the content anyway, and
+`check_navigation.cjs` asserts that scrolling over the stage still scrolls the
+page.
 
 *Both render paths take the camera from `orbitEye`.* The flat SVG fallback
 already derived its screen basis from the GL camera rather than building an
@@ -317,16 +322,29 @@ the fallback turns under the same drag and shows the same view, so `#stage`
 carries `dataset.cam` and the browser check asserts rotation as numbers in
 whichever renderer the runner gives it.
 
-**The stage cleared to a colour it was never asked for.** `setClearColor` was
-handed `new THREE.Color(css("--stage"))`, whose value the composer wrote
-straight into a linear buffer for `OutputPass` to encode a second time: #0a0a1a
-arrived on screen as #38385c, a washed-out lavender in every theme, on the one
-widget whose CSS says in as many words that the stage is dark *because glow
-needs a dark ground*. It was invisible as a bug because there was nothing to
-compare it against -- the canvas covers the element whose background it is
-supposed to match -- and it was measured by putting a `var(--stage)` swatch on
-top of the canvas and seeing two different colours. `STAGE_COLOUR()` converts
-once, and the fog takes the same value so the two cannot drift apart.
+**The stage cleared to a colour it was never asked for, and one value cannot
+fix it.** `setClearColor` was handed `new THREE.Color(css("--stage"))` once at
+init, and this widget clears in two different places:
+`getUnlitUniformColorSpace()` clears a bound render target in the working
+(linear) space and the canvas in the output (sRGB) one, so step 1 through the
+composer and the portal rendering direct need *different* values. With
+`--stage` at #101826, measured off the drawing buffer: the composer cleared to
+#47566c unconverted and #101826 converted; rendering direct it is #101826
+unconverted and #010205 converted. So step 1 shipped a washed-out lavender, on
+the one widget whose CSS says in as many words that the stage is dark *because
+glow needs a dark ground*, and the first attempt at a fix -- one converted
+colour for both -- simply moved the error onto the portal, where a code review
+caught it.
+
+Two things are worth keeping from that. The bug survived as long as it did
+because there is nothing on screen to compare the canvas against: it covers the
+element whose background it is supposed to match. Putting a `var(--stage)`
+swatch on top of the canvas shows it immediately, and reading the pixel back
+out of the drawing buffer settles it in numbers. And the reasoning about which
+space three.js converts in runs both ways depending on where you stop reading
+the renderer -- the pixels do not, which is why `STAGE` carries both colours
+with the four measurements written beside them, and `renderGL()` sets the one
+that belongs to the path it is about to take.
 
 ## Which document owns what
 
