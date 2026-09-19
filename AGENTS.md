@@ -183,8 +183,9 @@ three hero widgets take `?embed=1&theme=navy`, and neither the visualizer nor
 the stage fetches three.js there: the stage's embed is the portal's still
 frame, drawn flat, with the scroller and its steps gone. The hero is three
 tabs and the check pins that at three. Only the open tab's widget is
-fetched -- a hidden iframe is never lazy-loaded, so the closed panels keep
-their URL in `data-src` until the tab script hands it over, once.
+fetched, and none at all where the static diagram replaces the demos -- a
+hidden iframe is never lazy-loaded, so every panel keeps its URL in
+`data-src` until the tab script hands it over, once.
 
 three.js is **vendored** at `interactive/vendor/`, core build and eleven
 `examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their

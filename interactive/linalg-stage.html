@@ -1254,6 +1254,11 @@
     for (const k of dataKeys) stage.dataset[k] = r.data[k];
     stage.setAttribute("aria-label", step.aria());
     stage.dataset.step = step.id;
+    // The scene's own name beside its number, because the number is the one
+    // that moves: the eight have been reordered twice, and a check that says
+    // "expected portal, got collapse" is a different sentence from
+    // "expected 4, got 3".
+    stage.dataset.scene = s.id;
   }
 
   const arrived = new Set();

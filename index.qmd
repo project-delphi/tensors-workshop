@@ -44,7 +44,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
     <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
-    <iframe class="hero-embed" src="interactive/tensor-visualizer.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: three photos as a 4-D tensor, transposed and then reshaped" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="interactive/tensor-visualizer.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: three photos as a 4-D tensor, transposed and then reshaped"></iframe>
     <p class="hero-caption">Real photos, one cube per byte. Transpose keeps the picture; reshape breaks it.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
@@ -108,22 +108,28 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   if (!wrap) return;
   var tabs = wrap.querySelectorAll("[role=tab]");
   var panels = wrap.querySelectorAll("[role=tabpanel]");
+  // A hidden iframe is not lazy-loaded: a browser treats one as a tracking
+  // pixel and fetches it anyway, whatever `loading` says. So every panel
+  // carries its URL in data-src and is handed it only when it is really on
+  // screen -- the open tab, and not at all where homepage.scss replaces the
+  // whole row with the static diagram, which is the reader least able to
+  // spare three widgets.
+  var diagram = matchMedia("(prefers-reduced-motion: reduce), (max-width: 540px)");
+  function load(panel) {
+    var frame = panel && panel.querySelector("iframe[data-src]");
+    if (!frame || diagram.matches) return;
+    // Once: assigning src again on a later visit to the tab would reload the
+    // widget and throw away what the reader had set up in it.
+    frame.src = frame.getAttribute("data-src");
+    frame.removeAttribute("data-src");
+  }
   function show(i) {
     tabs.forEach(function (tab, j) {
       var on = i === j;
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
-      // A hidden iframe is not lazy-loaded: a browser treats one as a
-      // tracking pixel and fetches it anyway, whatever `loading` says. So a
-      // panel that has not been opened yet carries its URL in data-src and
-      // is handed it here, once -- assigning src again would reload the
-      // widget every time the reader came back to its tab.
-      var frame = on && panels[j].querySelector("iframe[data-src]");
-      if (frame) {
-        frame.src = frame.getAttribute("data-src");
-        frame.removeAttribute("data-src");
-      }
+      if (on) load(panels[j]);
     });
   }
   tabs.forEach(function (tab, i) {
@@ -137,6 +143,12 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
       tabs[n].focus();
     });
   });
+  // The open tab: now, or whenever a resize or a changed motion preference
+  // first puts the demos on screen.
+  diagram.addEventListener("change", function () {
+    load(wrap.querySelector("[role=tabpanel]:not([hidden])"));
+  });
+  load(panels[0]);
   wrap.parentElement.classList.add("has-js");
 })();
 </script>

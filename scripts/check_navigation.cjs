@@ -813,7 +813,8 @@ async function audit(page, where) {
             // and three.js is never fetched for a hero tab either.
             await page.waitForFunction(() => document.querySelector('#flat').childElementCount > 0);
             assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
-            assert.equal(await page.locator('#stage').getAttribute('data-step'), '4');
+            assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'portal',
+              `${where} embed: the hero gets the SVD portal`);
             assert(await page.locator('.steps').isHidden(), `${where} embed: scroller shown`);
             assert.equal(await page.evaluate(() => window.THREE), undefined,
               `${where} embed: three.js must not be fetched on the front door`);
@@ -873,6 +874,11 @@ async function audit(page, where) {
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
         assert(await page.locator('.hero-demos').isHidden(), `${lang}/index: embeds hidden on a phone`);
+        // Loaded on a phone, where the diagram replaces the demos outright:
+        // no widget is fetched at all, since a display:none iframe would be.
+        await page.reload();
+        assert.equal(await frames.evaluateAll(els => els.filter(e => e.getAttribute('src')).length), 0,
+          `${lang}/index: a widget was fetched behind the diagram fallback`);
         await page.setViewportSize({width: 1440, height: 1000});
       }
 
