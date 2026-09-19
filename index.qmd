@@ -48,11 +48,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
     <p class="hero-caption">Real photos, one cube per byte. Transpose keeps the picture; reshape breaks it.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
-    <iframe class="hero-embed" src="interactive/broadcasting-simulator.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: two shapes aligned from the right and stretched" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="interactive/broadcasting-simulator.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: two shapes aligned from the right and stretched"></iframe>
     <p class="hero-caption">Two shapes lined up from the right; every axis of size 1 stretches, and nothing is copied.</p>
   </div>
   <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
-    <iframe class="hero-embed" src="interactive/linalg-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: the unit circle a matrix sends to an ellipse, with its singular vectors" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="interactive/linalg-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: the unit circle a matrix sends to an ellipse, with its singular vectors"></iframe>
     <p class="hero-caption">A matrix takes the unit circle to an ellipse: <code>A v = σ u</code>, one vector at a time.</p>
   </div>
   <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Three of the moves, live.</p>
@@ -114,6 +114,16 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
+      // A hidden iframe is not lazy-loaded: a browser treats one as a
+      // tracking pixel and fetches it anyway, whatever `loading` says. So a
+      // panel that has not been opened yet carries its URL in data-src and
+      // is handed it here, once -- assigning src again would reload the
+      // widget every time the reader came back to its tab.
+      var frame = on && panels[j].querySelector("iframe[data-src]");
+      if (frame) {
+        frame.src = frame.getAttribute("data-src");
+        frame.removeAttribute("data-src");
+      }
     });
   }
   tabs.forEach(function (tab, i) {

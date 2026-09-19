@@ -48,11 +48,11 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
     <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
-    <iframe class="hero-embed" src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas"></iframe>
     <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
   <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
-    <iframe class="hero-embed" src="../interactive/linalg-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares" loading="lazy"></iframe>
+    <iframe class="hero-embed" data-src="../interactive/linalg-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"></iframe>
     <p class="hero-caption">Una matriz lleva el círculo unitario a una elipse: <code>A v = σ u</code>, un vector a la vez.</p>
   </div>
   <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Tres de los movimientos, en vivo.</p>
@@ -114,6 +114,16 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
+      // A hidden iframe is not lazy-loaded: a browser treats one as a
+      // tracking pixel and fetches it anyway, whatever `loading` says. So a
+      // panel that has not been opened yet carries its URL in data-src and
+      // is handed it here, once -- assigning src again would reload the
+      // widget every time the reader came back to its tab.
+      var frame = on && panels[j].querySelector("iframe[data-src]");
+      if (frame) {
+        frame.src = frame.getAttribute("data-src");
+        frame.removeAttribute("data-src");
+      }
     });
   }
   tabs.forEach(function (tab, i) {

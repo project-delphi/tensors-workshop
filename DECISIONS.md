@@ -164,6 +164,19 @@ see it, and `repo.widgets` is the only thing that would notice an addon
 missing from `docs/` -- which is why `check_navigation.cjs` now asserts
 `#stage.dataset.gl`, not just that the page rendered.
 
+**The hero's unopened tabs hold their URL in `data-src`, because
+`loading="lazy"` is a no-op on a hidden iframe.** A browser does not defer an
+iframe it cannot see -- `display: none` is what a tracking pixel looks like,
+so it loads eagerly whatever `loading` says. With three tabs that meant every
+visitor paid for all three widgets, the stage included: its page, its two
+plain scripts and all eight scene files, then every scene's `init()`. So the
+two closed panels carry `data-src` and the tab script assigns `src` the first
+time a panel is shown, which is also the only place it can be assigned --
+assigning it again on a second visit to the tab would reload the widget and
+throw away whatever the reader had set up in it, so the attribute is removed
+once spent. `check_navigation.cjs` reads `src || data-src` for the URL check
+and pins that exactly one frame has a `src` at rest.
+
 **Bloom and `setViewport` cannot share a chain, so the SVD portal renders
 direct.** `EffectComposer` runs every pass as a full-screen quad over its own
 render target and `Pass` has no scissor, and `setRenderTarget()` resets the

@@ -1433,7 +1433,10 @@
   const at = stepOf(hash);
   // A hash that changes on a page already open -- a link followed from the
   // notebook in the same tab, or an edited address bar -- is the same request.
-  addEventListener("hashchange", () => {
+  // Not in embed mode: a hero card has no scroller, no step bar and no Next,
+  // so a hash arriving there would strand it on a scene with nothing to say
+  // and no way back to the one its caption describes.
+  if (!embed) addEventListener("hashchange", () => {
     const n = stepOf((location.hash || "").replace("#", ""));
     if (n >= 0) setStep(n, true);
   });

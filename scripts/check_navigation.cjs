@@ -838,10 +838,18 @@ async function audit(page, where) {
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
         assert.equal(await frames.count(), 3, `${lang}/index: three hero embeds`);
-        for (const src of await frames.evaluateAll(els => els.map(e => e.getAttribute('src')))) {
-          assert(src.includes(`lang=${lang}`) && src.includes('embed=1') && src.includes('theme=navy'),
-            `${lang}/index: hero embed src ${src}`);
+        // Only the open tab's widget is fetched. A hidden iframe is not
+        // lazy-loaded whatever `loading` says, so the other two hold their URL
+        // in data-src until the tab script hands it over.
+        const urls = await frames.evaluateAll(els =>
+          els.map(e => [e.getAttribute('src'), e.getAttribute('data-src')]));
+        for (const [src, deferred] of urls) {
+          const url = src || deferred;
+          assert(url && url.includes(`lang=${lang}`) && url.includes('embed=1') && url.includes('theme=navy'),
+            `${lang}/index: hero embed src ${url}`);
         }
+        assert.equal(urls.filter(([src]) => src).length, 1,
+          `${lang}/index: only the open tab's widget is loaded`);
         assert(await page.locator('.hero-visual.has-js').count() === 1, `${lang}/index: tab script did not run`);
         assert(await page.locator('#hero-panel-layout').isVisible());
         assert(await page.locator('#hero-panel-broadcast').isHidden());
@@ -849,9 +857,18 @@ async function audit(page, where) {
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
+        assert(await page.locator('#hero-panel-broadcast iframe').getAttribute('src'),
+          `${lang}/index: broadcasting embed not loaded on opening its tab`);
         await page.locator('#hero-tab-linalg').click();
         assert(await page.locator('#hero-panel-linalg').isVisible(), `${lang}/index: linear algebra tab`);
         assert(await page.locator('#hero-panel-broadcast').isHidden());
+        const stageFrame = page.locator('#hero-panel-linalg iframe');
+        assert(await stageFrame.getAttribute('src'),
+          `${lang}/index: stage embed not loaded on opening its tab`);
+        // data-src is spent, which is what stops a second visit to the tab
+        // reassigning src and reloading the widget from scratch.
+        assert.equal(await stageFrame.getAttribute('data-src'), null,
+          `${lang}/index: reopening a tab would reload its widget`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
