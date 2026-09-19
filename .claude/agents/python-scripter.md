@@ -2,7 +2,7 @@
 name: python-scripter
 description: "Hands-on Python for this repo's scripts — the generators in scripts/gen_*.py, the checkers, scripts/timeline.py, scripts/test_notebooks.py and tests/*.py. Use for a targeted scripting change, a new check, a small refactor, or making an existing script handle a new case. Makes the edit, runs the checks, and reports exactly what it ran."
 tools: Read, Grep, Glob, Edit, Write, Bash
-model: haiku
+model: sonnet
 effort: low
 maxTurns: 80
 omitClaudeMd: true

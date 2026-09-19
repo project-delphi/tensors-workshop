@@ -54,10 +54,12 @@ lines two shapes up from the right and steps through the stretch, and section 04
 has a [reshape and transpose visualizer](interactive/tensor-visualizer.html?lang=en) that turns
 its three photographs into cubes, one per byte, and shows what transpose, reshape
 and a memory layout each do to the shape, the strides, the buffer and the picture.
-Sections 07 and 09 share a
-[projection and SVD stage](interactive/linalg-stage.html?lang=en) that draws
-least squares as a projection onto a column space, and the SVD as a circle
-turning into an ellipse.
+Sections 07, 08 and 09 share a
+[projection and SVD stage](interactive/linalg-stage.html?lang=en), eight
+pictures of one problem: least squares as a projection onto a column space,
+a wide matrix's line of solutions, a determinant reaching zero, the SVD as a
+circle turning into an ellipse and a sphere into an ellipsoid, the
+eigenvectors of a field of arrows, and the two ways the arithmetic fails.
 
 {{< include _includes/notebooks-extra-en.md >}}
 

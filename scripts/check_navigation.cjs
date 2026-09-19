@@ -317,7 +317,7 @@ async function audit(page, where) {
       // this check pass, which is the eleven-day 404 all over again -- and
       // that A v = sigma u holds through the real render path, read off the
       // stage as numbers rather than looked for in pixels.
-      async function drivePortal(page, where, lang) {
+      async function driveStage(page, where, lang) {
         // Wait on the *modules*, not on a context. Whether a headless runner
         // gives us WebGL is not something to hang CI on -- that is the same
         // call the visualizer makes -- and the modules landing is the thing
@@ -345,22 +345,30 @@ async function audit(page, where) {
         if (mode1 === 'none') console.log(`  (${where}: no WebGL here, exercising the flat renderer)`);
 
         // Step 1: sliding y off the plane moves the residual and leaves beta
-        // alone, which is the step's whole claim.
-        const read1 = () => page.locator('#read-1').innerText();
-        const beta = async () => (await read1()).split('\n')[0];
-        const before = await beta();
+        // alone, which is the step's whole claim. Read off data-*, which the
+        // readout writes from the slider's target rather than from the eased
+        // picture, so the assertion does not wait on a tween.
+        const data1 = () => page.evaluate(() => ({...document.querySelector('#stage').dataset}));
+        const before = (await data1()).beta;
+        assert(before && before.split(',').length === 2, `${where}: step 1 should stamp beta`);
         await page.locator('#tilt').fill('0');
-        assert((await read1()).includes('0.0000'),
+        assert.equal((await data1()).rnorm, '0.0000',
           `${where}: y on the plane should leave no residual`);
         await page.locator('#tilt').fill('400');
-        assert(!(await read1()).includes('\u2016r\u2016 = 0.0000'),
+        assert.notEqual((await data1()).rnorm, '0.0000',
           `${where}: sliding y off the plane should give it a residual`);
-        assert.equal(await beta(), before,
+        assert.equal((await data1()).beta, before,
           `${where}: beta must not move when y slides along the residual`);
 
-        // The step machine, by button and by scroll.
-        await page.locator('#next').click();
-        await page.locator('#next').click();
+        // The step machine, by button and by scroll. Eight steps, so Next is
+        // pressed until the stage says 8: each press scrolls a section into
+        // view and the machine follows the scroll, so a press mid-glide can
+        // land on the section the viewport is crossing rather than the next.
+        for (let i = 0; i < 14; i++) {
+          if (await page.evaluate(() => document.querySelector('#stage').dataset.step) === '8') break;
+          await page.locator('#next').click();
+          await page.waitForTimeout(350);
+        }
         await page.waitForFunction(() =>
           document.querySelector('#stage').dataset.step === '8',
           null, {timeout: 5000})
@@ -373,10 +381,34 @@ async function audit(page, where) {
         assert.equal(await page.evaluate(() =>
           document.querySelector('#stage').dataset.step), '8',
           `${where}: the stage did not settle on step 8`);
-        const mode8 = await page.evaluate(() =>
+        // #step-8 in the URL opens on that step.
+        await page.goto(
+          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}#step-8`);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.step === '8',
+          null, {timeout: 8000})
+          .catch(() => assert.fail(`${where}: #step-8 did not open on that step`));
+
+        // The scene's own name opens it too: that is what the notebooks link
+        // to, because it survives a reorder and a number does not.
+        await page.goto(
+          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}#portal`);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.step === '4',
+          null, {timeout: 8000})
+          .catch(() => assert.fail(`${where}: #portal did not open the SVD portal`));
+        // The name is followed by a smooth scroll to the section, and the
+        // step machine follows the scroll: on the way it may cross a step
+        // that renders through the composer. Let it land before reading.
+        await page.waitForTimeout(900);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.step === '4',
+          null, {timeout: 5000})
+          .catch(() => assert.fail(`${where}: the stage did not settle on the portal`));
+        const mode4 = await page.evaluate(() =>
           document.querySelector('#stage').dataset.gl);
-        assert(mode8 === 'direct' || mode8 === 'none',
-          `${where}: the SVD portal renders two viewports, so it must not go through the composer; got '${mode8}'`);
+        assert(mode4 === 'direct' || mode4 === 'none',
+          `${where}: the SVD portal renders two viewports, so it must not go through the composer; got '${mode4}'`);
 
         // A v = sigma u. Scrub x onto the first right singular vector and the
         // length of A x must be sigma_1 exactly.
@@ -388,6 +420,7 @@ async function audit(page, where) {
         await page.waitForTimeout(150);
         const d = await page.evaluate(() => ({...document.querySelector('#stage').dataset}));
         assert.equal(d.aligned, '0', `${where}: x on v1 should register as aligned`);
+        assert.equal(d.step, '4', `${where}: the portal is step 4`);
         // Compared with a tolerance rather than as strings: the scrub angle is
         // rounded to whole degrees, so |A x| lands near sigma_1 but not on it,
         // and string equality would flake for any matrix whose sigma_1 sat
@@ -396,13 +429,125 @@ async function audit(page, where) {
         assert(gap < 5e-3,
           `${where}: |A v1| is ${d.av}, sigma_1 is ${d.sigma.split(',')[0]} (gap ${gap})`);
 
-        // #step-8 in the URL opens on that step.
-        await page.goto(
-          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}#step-8`);
+        // The remaining steps, each driven through its own controls and read off the
+        // stage as numbers -- computed in-page through LinalgCore where a
+        // reference value is needed, so the assertion is independent of the
+        // page's own state. Every one of these is a claim the step makes in
+        // prose; a wrong number here is a wrong claim on screen.
+        const open = async (n) => {
+          await page.goto(
+            `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}#step-${n}`);
+          await page.waitForFunction((n) =>
+            document.querySelector('#stage').dataset.step === String(n), n, {timeout: 8000})
+            .catch(() => assert.fail(`${where}: #step-${n} did not open on that step`));
+          await page.waitForTimeout(150);
+        };
+        const data = () => page.evaluate(() => ({...document.querySelector('#stage').dataset}));
+        const settle = () => page.waitForTimeout(150);
+        assert.equal(await page.locator('section.step').count(), 8, `${where}: eight steps`);
+        assert.equal(await page.locator('#step-road').count(), 0,
+          `${where}: the roadmap card should be gone now the steps exist`);
+        // The bar shows one mark per step, and a mark is a way to jump.
+        assert.equal(await page.locator('#dots .dot').count(), 8, `${where}: eight step marks`);
+        await page.locator('#dots .dot').nth(3).click();
         await page.waitForFunction(() =>
-          document.querySelector('#stage').dataset.step === '8',
-          null, {timeout: 8000})
-          .catch(() => assert.fail(`${where}: #step-8 did not open on that step`));
+          document.querySelector('#stage').dataset.step === '4', null, {timeout: 5000})
+          .catch(() => assert.fail(`${where}: the fourth mark should open step 4`));
+        assert.equal(await page.locator('#dots .dot[aria-current="step"]').count(), 1,
+          `${where}: exactly one mark is current`);
+
+        // Step 2: the sphere grazes the line at exactly the pseudoinverse's
+        // norm, and ridge's answer is shorter than that.
+        await open(2);
+        const minnorm = await page.evaluate(() => {
+          const LC = window.LinalgCore;
+          return LC.norm(LC.mulVec(LC.pinv([[1, 2, 1], [2, -1, 1]]), [3, 1]));
+        });
+        await page.locator('#sphere').fill(String(Math.round(minnorm * 100)));
+        await settle();
+        let sd = await data();
+        assert.equal(sd.grazing, '1', `${where}: the sphere at |x+| = ${minnorm} should graze the line`);
+        assert(Math.abs(Number(sd.minnorm) - minnorm) < 2e-3, `${where}: |x+| is ${sd.minnorm}, expected ${minnorm}`);
+        await page.locator('#lam').fill('70');
+        await settle();
+        sd = await data();
+        assert(Number(sd.ridgenorm) < Number(sd.minnorm),
+          `${where}: ridge (${sd.ridgenorm}) should be shorter than the min-norm solution (${sd.minnorm})`);
+        assert(Number(sd.resid) > 0, `${where}: and no longer exact`);
+
+        // Step 5: kappa is read off the assembled matrix and equals the
+        // slider ratio; the third slider at its floor pushes it past 100.
+        await open(5);
+        await page.locator('#s3').fill('1');
+        await settle();
+        sd = await data();
+        const sig = sd.sigma.split(',').map(Number);
+        assert(Math.abs(Number(sd.kappa) - sig[0] / sig[2]) < 1e-2 * Number(sd.kappa),
+          `${where}: kappa ${sd.kappa} should be sigma_1 / sigma_3 = ${sig[0] / sig[2]}`);
+        assert(Number(sd.kappa) > 100, `${where}: kappa ${sd.kappa} should pass 100 at the floor`);
+
+        // Step 3: the determinant reaches exactly zero and the rank drops.
+        await open(3);
+        sd = await data();
+        assert.equal(sd.rank, '3', `${where}: the house starts full rank`);
+        await page.locator('#flatten').fill('100');
+        await settle();
+        sd = await data();
+        assert.equal(sd.det, '0.000', `${where}: det should reach zero, got ${sd.det}`);
+        assert.equal(sd.rank, '2', `${where}: rank should drop to 2, got ${sd.rank}`);
+
+        // Step 6: aim the test vector along the first eigenvector, computed
+        // in-page, and the stage must report it aligned with x and M x
+        // nearly parallel. Whole-degree sliders, so a few degrees of slack.
+        await open(6);
+        const aim = await page.evaluate(() => {
+          const v = window.LinalgCore.eig3([[2.0, 1.0, 0.3], [0.2, 0.6, 0.2], [0.4, 0.3, 1.3]])[0].v;
+          return [Math.round((Math.atan2(v[2], v[0]) * 180 / Math.PI + 360) % 360),
+                  Math.round(Math.asin(v[1]) * 180 / Math.PI)];
+        });
+        await page.locator('#taz').fill(String(aim[0]));
+        await page.locator('#tel').fill(String(aim[1]));
+        await settle();
+        sd = await data();
+        assert.equal(sd.aligned, '0', `${where}: x on the first eigenvector should register as aligned`);
+        assert(Number(sd.angle) < 4, `${where}: x and M x should be nearly parallel there, got ${sd.angle} degrees`);
+        assert.equal(sd.eigen.split(',').length, 3, `${where}: three eigenvalues`);
+
+        // Step 7: orthogonal columns are perfectly conditioned; half a degree
+        // apart, kappa passes 100 and beta swings out and back.
+        await open(7);
+        sd = await data();
+        assert(Math.abs(Number(sd.kappa) - 1) < 1e-2, `${where}: at 90 degrees kappa should be 1, got ${sd.kappa}`);
+        await page.locator('#angle').fill('100');
+        await settle();
+        sd = await data();
+        assert(Number(sd.kappa) > 100, `${where}: at half a degree kappa should pass 100, got ${sd.kappa}`);
+        await page.locator('#noise').click();
+        await settle();
+        sd = await data();
+        assert.equal(sd.perturbation, '0.02', `${where}: the nudge must be exactly 2%`);
+        assert(Number(sd.betaChange) > 100, `${where}: nearly parallel columns amplify a 2% target change`);
+        const b6 = sd.beta.split(',').map(Number);
+        assert(Math.abs(b6[0]) > 1 && b6[0] * b6[1] < 0,
+          `${where}: beta should be large with opposite signs, got ${sd.beta}`);
+
+        // Step 8: at 10⁻⁵ degrees apart the float32 columns are distinct and
+        // kappa is finite; at a millionth they round to one vector, kappa is
+        // Infinity, and the fault overlay is up. Back at 10⁻⁵ degrees it is down.
+        await open(8);
+        sd = await data();
+        assert.equal(sd.f32, 'distinct', `${where}: 10⁻⁵ degrees apart is two float32 columns`);
+        assert(isFinite(Number(sd.kappa)), `${where}: and a finite kappa, got ${sd.kappa}`);
+        assert(await page.locator('#fault').isHidden(), `${where}: no fault yet`);
+        await page.locator('#angle7').fill('100');
+        await settle();
+        sd = await data();
+        assert.equal(sd.f32, 'collapsed', `${where}: a millionth of a degree should round both columns together`);
+        assert.equal(sd.kappa, 'Infinity', `${where}: kappa should be Infinity, got ${sd.kappa}`);
+        assert(await page.locator('#fault').isVisible(), `${where}: the fault overlay should show`);
+        await page.locator('#angle7').fill('0');
+        await settle();
+        assert(await page.locator('#fault').isHidden(), `${where}: and go when the columns part`);
 
         // The camera. Read off the stage as numbers rather than looked for in
         // pixels -- the same trade dataset.sigma makes for the singular values
@@ -424,7 +569,7 @@ async function audit(page, where) {
         // has taken it. Same trade as the matrix below: the numbers are typed
         // here so the assertion is independent of the page's own state.
         const homeCam = await page.evaluate(() => {
-          const h = window.LinalgCore.orbitFrom([2.25, 2.09, 2.08], [13.57, 5.51, -4.64]);
+          const h = window.LinalgScenes.list()[0].pose.home;
           return `${h.az.toFixed(2)},${h.el.toFixed(2)},1.00`;
         });
         // Under the pointer the drift stands down, so what moves from here on
@@ -445,15 +590,82 @@ async function audit(page, where) {
         await page.keyboard.press('Home');
         assert.equal(await cam(), homeCam,
           `${where}: Home should put the camera back where it started`);
+        // The zoom buttons drive the same dolly the + and - keys do, and
+        // the dolly is the third number in the stamp. Clicked from the page
+        // rather than by the pointer: a pointer click would scroll the bar
+        // into view, and the step a reader is on *is* the scroll position,
+        // so the buttons would act on whichever step the scroll landed on.
+        const dollyOf = c => Number(c.split(',')[2]);
+        const press = id => page.evaluate(id => document.getElementById(id).click(), id);
+        await press('zoom-in');
+        assert(dollyOf(await cam()) < 1,
+          `${where}: Zoom in should bring the camera closer (${await cam()})`);
+        await press('zoom-out');
+        await press('zoom-out');
+        assert(dollyOf(await cam()) > 1,
+          `${where}: Zoom out should move the camera away (${await cam()})`);
+        await press('home');
+        assert.equal(await cam(), homeCam,
+          `${where}: the Home button should also reset the zoom`);
 
-        // The step a reader is on *is* the scroll position here, so a stage
-        // that took the wheel would take the page's own navigation with it.
-        const scrolledFrom = await page.evaluate(() => scrollY);
+        // Under reduced motion there is no entrance to play, no glide into a
+        // step and no drift: the camera holds still from the first frame.
+        await page.emulateMedia({reducedMotion: 'reduce'});
+        await page.goto(
+          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}#step-4`);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.cam !== undefined,
+          null, {timeout: 8000});
+        const stillCam = await cam();
+        await page.waitForTimeout(400);
+        assert.equal(await cam(), stillCam,
+          `${where}: under reduced motion the camera must not move on its own`);
+        await page.emulateMedia({reducedMotion: 'no-preference'});
+        await page.goto(
+          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}`);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.cam !== undefined,
+          null, {timeout: 8000});
+
+        // Plain wheel zoom belongs to the frame; the page still scrolls
+        // beside it, and modified wheel remains the browser's own zoom.
         await page.mouse.move(midX, midY);
+        const scrolledFrom = await page.evaluate(() => scrollY);
+        const beforeWheel = dollyOf(await cam());
+        await page.mouse.wheel(0, 240);
+        await page.waitForTimeout(150);
+        assert(dollyOf(await cam()) > beforeWheel, `${where}: wheel out must zoom out`);
+        assert.equal(await page.evaluate(() => scrollY), scrolledFrom,
+          `${where}: wheel zoom must hold the current step`);
+        await page.mouse.move(15, 100);
         await page.mouse.wheel(0, 400);
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(200);
         assert(await page.evaluate(() => scrollY) > scrolledFrom,
-          `${where}: the wheel over the stage must still scroll the page`);
+          `${where}: scrolling beside the stage must navigate the page`);
+
+        // Every frame keeps a user dolly, and reset restores both example
+        // controls and framing. Presets must leave their sliders in sync.
+        for (let n = 1; n <= 8; n++) {
+          await open(n);
+          await press('home');
+          await press('zoom-in');
+          assert(dollyOf(await cam()) < 1, `${where}: step ${n} zooms in`);
+          await press('zoom-out'); await press('zoom-out');
+          assert(dollyOf(await cam()) > 1, `${where}: step ${n} zooms out`);
+          const input = page.locator(`#step-${n} input[type=range]`).first();
+          await input.fill(await input.getAttribute('max'));
+          await press('reset');
+          assert.equal(dollyOf(await cam()), 1, `${where}: step ${n} reset restores framing`);
+          assert(await input.evaluate(e => e.value === e.defaultValue),
+            `${where}: step ${n} reset restores the experiment`);
+          if (n <= 6) {
+            const presets = page.locator(`#step-${n} .presets button`);
+            for (let j = 0; j < await presets.count(); j++) {
+              await presets.nth(j).evaluate(e => e.click());
+              assert(await page.locator(`#read-${n}`).innerText(), `${where}: preset has a readout`);
+            }
+          }
+        }
 
         // The idle drift: the stage turns while nobody is pointing at it, and
         // is the reader's the moment they are. One language only -- it costs
@@ -488,6 +700,30 @@ async function audit(page, where) {
             await page.mouse.move(2, 2);
             assert(await moves(6000),
               `${where}: the drift should come back once the pointer leaves`);
+            // Freeze a geometry tween too, not only the camera. The CSS2D
+            // vector labels follow the rendered arrow tips in this scene.
+            await page.locator('#tilt').fill('0');
+            await page.waitForTimeout(500);
+            await page.locator('#tilt').fill('600');
+            await page.waitForTimeout(50);
+            await page.mouse.move(midX, midY);
+            await page.waitForTimeout(50);
+            const geometry = () => stage.locator('.mat-lab').evaluateAll(nodes =>
+              nodes.map(e => [e.textContent, e.style.transform]));
+            const held = await geometry();
+            assert.equal(held.length, 2, `${where}: both vector labels must be present`);
+            await page.waitForTimeout(350);
+            assert.deepEqual(await geometry(), held, `${where}: hover must freeze geometry as well as drift`);
+            await page.mouse.move(2, 2);
+            await page.waitForTimeout(550);
+            assert.notDeepEqual(await geometry(), held, `${where}: geometry resumes on pointer leave`);
+            await press('motion');
+            await page.waitForTimeout(50);
+            const paused = await geometry();
+            await page.waitForTimeout(250);
+            assert.deepEqual(await geometry(), paused, `${where}: manual pause holds the view`);
+            await press('motion');
+
           }
         }
       }
@@ -501,7 +737,7 @@ async function audit(page, where) {
         // `assert.equal(frames.count(), 2)` below pins, and a sticky two-pane
         // scroller is not a hero.
         {file: 'linalg-stage', en: 'Projection and the SVD',
-         es: 'Proyecci\u00f3n y la SVD', embed: false, drive: drivePortal}
+         es: 'Proyecci\u00f3n y la SVD', embed: false, drive: driveStage}
       ];
       for (const widget of widgets) {
         console.log(`Checking ${widget.file}`);
@@ -520,6 +756,39 @@ async function audit(page, where) {
             assert(fits, `${where}: horizontal overflow at ${width}`);
           }
           await audit(page, where);
+
+          if (widget.file === 'linalg-stage') {
+            // Deliberately lose the GL module: all eight flat scenes must
+            // retain their controls, finite geometry, zoom and teaching data.
+            await page.route('**/vendor/linalg-boot.js', route => route.abort());
+            await page.emulateMedia({reducedMotion: 'reduce'});
+            for (let n = 1; n <= 8; n++) {
+              await page.goto(`${origin}${prefix}interactive/linalg-stage.html?lang=${lang}&fallback-check=1#step-${n}`);
+              await page.waitForFunction(n => document.querySelector('#stage').dataset.step === String(n), n);
+              await page.waitForFunction(() => !document.querySelector('#glnote').hidden);
+              assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
+              const svg = page.locator('#flat');
+              const beforeZoom = await svg.innerHTML();
+              assert(!/NaN|Infinity/.test(beforeZoom), `${where}: flat step ${n} has finite geometry`);
+              await page.locator('#zoom-in').evaluate(e => e.click());
+              assert.notEqual(await svg.innerHTML(), beforeZoom, `${where}: flat step ${n} actually zooms`);
+              await page.locator('#reset').evaluate(e => e.click());
+              if (n === 1) assert((await page.locator('#labels').innerText()).includes('O (0, 0, 0)'));
+              if (n === 2 || n === 3) assert(await svg.locator('line').count() > 30, `${where}: step ${n} has grid rulings`);
+              if (n === 7) {
+                await page.locator('#noise').evaluate(e => e.click());
+                await page.locator('#parallel').evaluate(e => e.click());
+                assert(Number(await page.locator('#stage').getAttribute('data-beta-change')) > 100);
+              }
+              if (n === 8) {
+                await page.locator('#merged').evaluate(e => e.click());
+                assert.equal(await page.locator('#stage').getAttribute('data-f32'), 'collapsed');
+              }
+              if ([1, 7, 8].includes(n)) await audit(page, `${where} flat step ${n}`);
+            }
+            await page.unroute('**/vendor/linalg-boot.js');
+            await page.emulateMedia({reducedMotion: 'no-preference'});
+          }
 
           // Embed mode is what the homepage hero shows: stage and caption
           // only, no three.js, on the band's navy. Only for the widgets the

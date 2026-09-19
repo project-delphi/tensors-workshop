@@ -54,10 +54,13 @@ que alinea dos formas desde la derecha y recorre el estiramiento paso a paso, y 
 sección 04 tiene un <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de reshape y transpose</a>
 que convierte sus tres fotografías en cubos, uno por byte, y muestra qué hacen transpose,
 reshape y una disposición en memoria con la forma, los strides, el búfer y la imagen.
-Las secciones 07 y 09 comparten un
-<a href="../interactive/linalg-stage.html?lang=es">escenario de proyección y SVD</a>
-que dibuja los mínimos cuadrados como una proyección sobre un espacio columna, y
-la SVD como una circunferencia que se convierte en una elipse.
+Las secciones 07, 08 y 09 comparten un
+<a href="../interactive/linalg-stage.html?lang=es">escenario de proyección y SVD</a>,
+ocho imágenes de un mismo problema: los mínimos cuadrados como una proyección
+sobre un espacio columna, la recta de soluciones de una matriz ancha, un
+determinante que llega a cero, la SVD como una circunferencia que se convierte
+en una elipse y una esfera en un elipsoide, los autovectores de un campo de
+flechas, y las dos maneras en que falla la aritmética.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 

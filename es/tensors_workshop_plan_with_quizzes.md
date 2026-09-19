@@ -570,7 +570,7 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 `X` es de 20 433 × 7 —muy alta—, así que `np.linalg.inv` ni siquiera se puede llamar. **No hay solución exacta**: ninguna recta pasa por 20 433 puntos. La pseudoinversa da en su lugar la mejor respuesta posible. `lstsq` coincide con ella exactamente, porque resuelve el mismo problema. El coeficiente más grande es el de `median_income` (unos 47 700 por unidad), que es el resultado sensato: la renta predice el precio de la vivienda.
 
-Esa geometría tiene su propia página: el <a href="../interactive/linalg-stage.html?lang=es">escenario de proyección y SVD</a> toma tres de estos distritos y dos predictores, de modo que el espacio columna es un plano que se puede ver, y dibuja `ŷ` como el punto más cercano sobre él, con el residuo encontrándolo en ángulo recto. Desliza `y` fuera del plano y observa cómo `β` se niega a moverse: los mínimos cuadrados no pueden ver la dirección que están descartando.
+Esa geometría tiene su propia página: el <a href="../interactive/linalg-stage.html?lang=es#projection">escenario de proyección y SVD</a> toma tres de estos distritos y dos predictores, de modo que el espacio columna es un plano que se puede ver, y dibuja `ŷ` como el punto más cercano sobre él, con el residuo encontrándolo en ángulo recto. Desliza `y` fuera del plano y observa cómo `β` se niega a moverse: los mínimos cuadrados no pueden ver la dirección que están descartando.
 
 ## Kahoot 2 — Einsum, distancia y la pseudoinversa (5 min)
 
@@ -613,7 +613,7 @@ print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical
 ```
 
-Así es como PageRank ordena páginas web. Y por eso los vectores propios importan mucho más allá del capítulo 2: **la aplicación repetida de una matriz converge a su vector propio dominante.**
+Así es como PageRank ordena páginas web. Y por eso los vectores propios importan mucho más allá del capítulo 2: **la aplicación repetida de una matriz converge a su vector propio dominante.** El <a href="../interactive/linalg-stage.html?lang=es#eigen">paso de autovectores</a> del escenario de proyección y SVD dibuja la prueba misma: un campo de flechas bajo `A`, con las que conservaron su dirección iluminadas.
 
 **3. Recursión sobre datos reales: pronóstico del tráfico aéreo.** Esto combina la recursión con la pseudoinversa de la sección 07. Ajustamos un modelo que predice cada mes a partir de los 12 anteriores y luego lo aplicamos *a su propia salida* para pronosticar hacia adelante:
 
@@ -673,7 +673,7 @@ Tres consecuencias merecen decirse en voz alta, porque cada una es un error que 
 2. **Las ecuaciones normales elevan al cuadrado el número de condición**, porque `κ(XᵀX) = κ(X)²`. El error de QR escala con `κ(X)·ε`; el de las ecuaciones normales, con `κ(X)²·ε`. Los mismos datos, el mismo objetivo, el error al cuadrado.
 3. **No calcules lo que vas a tirar.** Una SVD completa es `O(mn·min(m,n))`. Si quieres 20 componentes de 1682, la SVD aleatorizada es `O(mnk)` y Lanczos es `O(k·nnz(A))`. Esa distancia es la razón de que los recomendadores a gran escala sean viables.
 
-La misma página lleva la otra mitad de esto: su <a href="../interactive/linalg-stage.html?lang=es#step-8">portal de la SVD</a> pone la circunferencia unidad y su imagen una al lado de la otra, así que `A vᵢ = σᵢ uᵢ` es algo a lo que llegas desplazando y no algo que te cuentan, y `σ₁/σ₂` es una forma en la pantalla y no un cociente.
+La misma página lleva la otra mitad de esto: su <a href="../interactive/linalg-stage.html?lang=es#portal">portal de la SVD</a> pone la circunferencia unidad y su imagen una al lado de la otra, así que `A vᵢ = σᵢ uᵢ` es algo a lo que llegas desplazando y no algo que te cuentan, y `σ₁/σ₂` es una forma en la pantalla y no un cociente. El <a href="../interactive/linalg-stage.html?lang=es#ellipsoid">elipsoide</a> que viene después es la misma imagen una dimensión más arriba, y los dos pasos siguientes, <a href="../interactive/linalg-stage.html?lang=es#collinear">colineal</a> y <a href="../interactive/linalg-stage.html?lang=es#precision">float32</a>, son las dos consecuencias de arriba dibujadas: `β` yendo y volviendo mientras dos columnas se cierran una sobre otra, y las ecuaciones normales dividiendo exactamente por cero cuando un formato numérico ya no las distingue.
 
 ```python
 # TODO 1: Fit a degree-10 polynomial to the real airline series two ways.
