@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-19
+
+- The projection & SVD stage turns. Step 1's plane, vectors and right angle now stand on a grid floor that recedes into the dark, and the whole scene sways gently until you reach for it: drag to orbit, arrow keys if you would rather, ctrl or command with the wheel to move closer, `Home` to put it back. Scrolling over the stage still scrolls the page. The SVD portal is tipped in space too, both panes on a polar floor and turning together so `A v = σ u` still lines up, with the unit disc and the ellipse filled in -- the ratio of those two areas is `|det A| = σ₁σ₂`, which the readout could only ever state as numbers. The flat fallback and the hero's still frame turn with the same drag and show the same view.
+- The stage was also clearing to the wrong colour: `#0a0a1a` reached the screen as a washed-out `#38385c`, because the CSS colour was encoded twice on its way through the post-processing chain. It is the dark the page says it is now, which is what the glow was designed for.
+
 ## 2026-09-18
 
 - A third interactive widget: the **projection & SVD stage**, for sections 07 and 09. Least squares is drawn as what it is -- a target vector, the plane its predictors span, and the closest point on that plane with the residual meeting it at a right angle -- on three real California districts, and sliding `y` off the plane shows `β` refusing to move. The SVD portal puts the unit circle and the ellipse it maps to side by side, and scrubbing `x` onto a right singular vector lands `A x` exactly on `σ u`. Every number is computed in the browser from the matrices shown: the arithmetic is `interactive/linalg-core.js`, pinned by `tests/linalg_core.test.cjs` under `npm test`. Both steps also draw flat, which is what embed mode and a reader without WebGL get.

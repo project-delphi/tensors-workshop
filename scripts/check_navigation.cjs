@@ -365,6 +365,14 @@ async function audit(page, where) {
           document.querySelector('#stage').dataset.step === '8',
           null, {timeout: 5000})
           .catch(() => assert.fail(`${where}: Next did not reach the last step`));
+        // Next scrolls the step into view, and the step machine follows the
+        // scroll: for as long as that animation runs the stage is whatever
+        // section the viewport's middle is crossing, which is a projection
+        // step on the way past. Let it land before reading the mode off it.
+        await page.waitForTimeout(600);
+        assert.equal(await page.evaluate(() =>
+          document.querySelector('#stage').dataset.step), '8',
+          `${where}: the stage did not settle on step 8`);
         const mode8 = await page.evaluate(() =>
           document.querySelector('#stage').dataset.gl);
         assert(mode8 === 'direct' || mode8 === 'none',
@@ -395,6 +403,93 @@ async function audit(page, where) {
           document.querySelector('#stage').dataset.step === '8',
           null, {timeout: 8000})
           .catch(() => assert.fail(`${where}: #step-8 did not open on that step`));
+
+        // The camera. Read off the stage as numbers rather than looked for in
+        // pixels -- the same trade dataset.sigma makes for the singular values
+        // -- and asserted whichever renderer is live, because the flat path
+        // takes its screen basis from the same two angles the GL camera does.
+        const stage = page.locator('#stage');
+        const cam = () => stage.evaluate(e => e.dataset.cam);
+        await page.goto(
+          `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}`);
+        await page.waitForFunction(() =>
+          document.querySelector('#stage').dataset.cam !== undefined,
+          null, {timeout: 8000});
+        const stageBox = await page.locator('#stage').boundingBox();
+        const midX = stageBox.x + stageBox.width / 2;
+        const midY = stageBox.y + stageBox.height / 2;
+        // The pose Home has to restore, worked out the way the widget works it
+        // out -- from step 1's camera through linalg-core -- rather than
+        // sampled off the stage, which by now may be anywhere the idle drift
+        // has taken it. Same trade as the matrix below: the numbers are typed
+        // here so the assertion is independent of the page's own state.
+        const homeCam = await page.evaluate(() => {
+          const h = window.LinalgCore.orbitFrom([2.25, 2.09, 2.08], [13.57, 5.51, -4.64]);
+          return `${h.az.toFixed(2)},${h.el.toFixed(2)},1.00`;
+        });
+        // Under the pointer the drift stands down, so what moves from here on
+        // is the reader moving it.
+        await page.mouse.move(midX, midY);
+        await page.waitForTimeout(250);
+        const restingCam = await cam();
+        await page.mouse.down();
+        await page.mouse.move(midX + 120, midY + 40, {steps: 8});
+        await page.mouse.up();
+        const draggedCam = await cam();
+        assert(draggedCam !== restingCam,
+          `${where}: a drag should turn the stage (${restingCam} -> ${draggedCam})`);
+        await page.locator('#stage').click({position: {x: 24, y: 24}});
+        await page.keyboard.press('ArrowLeft');
+        assert(await cam() !== draggedCam,
+          `${where}: the arrow keys should turn the stage`);
+        await page.keyboard.press('Home');
+        assert.equal(await cam(), homeCam,
+          `${where}: Home should put the camera back where it started`);
+
+        // The step a reader is on *is* the scroll position here, so a stage
+        // that took the wheel would take the page's own navigation with it.
+        const scrolledFrom = await page.evaluate(() => scrollY);
+        await page.mouse.move(midX, midY);
+        await page.mouse.wheel(0, 400);
+        await page.waitForTimeout(300);
+        assert(await page.evaluate(() => scrollY) > scrolledFrom,
+          `${where}: the wheel over the stage must still scroll the page`);
+
+        // The idle drift: the stage turns while nobody is pointing at it, and
+        // is the reader's the moment they are. One language only -- it costs
+        // real seconds and there is no copy in it -- and only where there is a
+        // context to drift in, since the flat fallback draws when it is told
+        // to rather than every frame. Polled rather than slept on, so a slow
+        // runner makes this take longer and not fail.
+        if (lang === 'en') {
+          await page.goto(
+            `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}`);
+          await page.waitForFunction(() =>
+            document.querySelector('#stage').dataset.gl !== undefined,
+            null, {timeout: 8000});
+          await page.waitForTimeout(500);
+          if (await stage.evaluate(e => e.dataset.gl) === 'none') {
+            console.log(`  (${where}: no WebGL here, so there is nothing to drift)`);
+          } else {
+            const moves = async (ms) => {
+              const first = await cam();
+              const until = Date.now() + ms;
+              while (Date.now() < until) {
+                await page.waitForTimeout(80);
+                if (await cam() !== first) return true;
+              }
+              return false;
+            };
+            await page.mouse.move(2, 2);
+            assert(await moves(5000), `${where}: the stage should drift while idle`);
+            await page.mouse.move(midX, midY);
+            await page.waitForTimeout(200);
+            assert(!await moves(900), `${where}: the drift must stop under the pointer`);
+            await page.mouse.move(2, 2);
+            assert(await moves(6000),
+              `${where}: the drift should come back once the pointer leaves`);
+          }
+        }
       }
 
       const widgets = [
@@ -629,7 +724,7 @@ async function audit(page, where) {
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     assert.deepEqual(a11y, [], 'Accessibility violations (axe, serious or critical)');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, all three interactive widgets, the visualizer's idle drift, the SVD portal's A v = sigma u, and axe on every page and widget.`);
+      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, all three interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

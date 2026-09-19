@@ -130,7 +130,11 @@
     border-radius: 10px;
     overflow: hidden;
     touch-action: pan-y;
+    cursor: grab;
   }
+  #stage[data-grab] { cursor: grabbing; }
+  /* The hero is a still frame, and bindStage() is never called there. */
+  html.embed #stage { cursor: default; }
   #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   #stage canvas, #stage svg { display: block; width: 100%; height: 100%; }
   #flat { position: absolute; inset: 0; }
@@ -433,6 +437,10 @@
       ? `x is on v${hit + 1}, so A x is exactly σ${hit + 1} u${hit + 1}.`
       : "Input space on the left, output space on the right.",
     aria8: "Two panes. On the left a unit circle with two singular vectors; on the right the ellipse it maps to, with its semi-axes.",
+    // Appended to whichever scene is on the stage, and only where the stage can
+    // actually be taken hold of: the hero embeds this page as a still frame and
+    // binds nothing, so a label promising a drag there would be a lie.
+    turn: "The view turns: drag the stage, or use the arrow keys.",
     labIn: "input space", labOut: "output space"
   };
 
@@ -492,6 +500,7 @@
       ? `x está sobre v${hit + 1}, así que A x es exactamente σ${hit + 1} u${hit + 1}.`
       : "Espacio de entrada a la izquierda, espacio de salida a la derecha.",
     aria8: "Dos paneles. A la izquierda una circunferencia unidad con dos vectores singulares; a la derecha la elipse a la que se transforma, con sus semiejes.",
+    turn: "La vista gira: arrastra el escenario o usa las teclas de flecha.",
     labIn: "espacio de entrada", labOut: "espacio de salida"
   };
 
@@ -514,10 +523,11 @@
   // six steps still to come are a translated list, not six empty scenes: an
   // untranslated placeholder card would ship English prose into the Spanish
   // page, which axe audits and a reader reads.
+  const turnable = (text) => (embed ? text : text + " " + T.turn);
   const STEPS = [
-    {id: "1", el: "step-1", scene: "projection", aria: () => T.aria1},
-    {id: "road", el: "step-road", scene: "projection", aria: () => T.aria1},
-    {id: "8", el: "step-8", scene: "portal", aria: () => T.aria8}
+    {id: "1", el: "step-1", scene: "projection", aria: () => turnable(T.aria1)},
+    {id: "road", el: "step-road", scene: "projection", aria: () => turnable(T.aria1)},
+    {id: "8", el: "step-8", scene: "portal", aria: () => turnable(T.aria8)}
   ];
 
   const state = {
@@ -525,7 +535,12 @@
     k: 1,            // how far y sits off the plane: 0 puts it on
     theta: 20 * Math.PI / 180,
     glow: true,
-    mode: "flat"     // "flat" (svg) or "gl"
+    mode: "flat",    // "flat" (svg) or "gl"
+    // Where each scene is being looked at from. One pair of angles per scene,
+    // kept while the reader is away from it, and the truth about the camera:
+    // the drift seeds itself from here and the browser check reads it off the
+    // stage. What is *drawn* may be an eased version of it -- see shownView().
+    views: null
   };
 
   // ─── text ─────────────────────────────────────────────────────────────────
@@ -618,18 +633,104 @@
                            a[0] * b[1] - a[1] * b[0]];
   const unit = (a) => LC.scale(a, 1 / (LC.norm(a) || 1));
 
-  // An orthonormal screen basis looking from CAM.pos at CAM.at, with world +Y
-  // up. Orthographic rather than perspective: at a fixed camera the figure
-  // loses the orbit and the foreshortening, and nothing else.
-  const VIEW = (function () {
-    const fwd = unit(LC.sub(CAM.pos, CAM.at));
-    const right = unit(cross([0, 1, 0], fwd));
-    return {right: right, up: cross(fwd, right)};
-  })();
+  // ─── where each scene is looked at from ───────────────────────────────────
+  //
+  // Both scenes orbit from the same two angles about the same world up, so
+  // nothing on the stage ever rolls. What differs is how far each may be
+  // turned. Step 1 is a solid scene and may be walked all the way round; CAM
+  // above is the origin of that orbit rather than the whole of it, read back as
+  // angles by orbitFrom() so the frame the widget shipped with is still the
+  // frame it opens on and nobody had to type a spherical coordinate for it.
+  //
+  // The portal is two planes, so it is a card to be tipped rather than a globe
+  // to be spun: both angles are clamped to a quarter turn or so, because the
+  // far side of a plane is the same picture mirrored with every label on it
+  // backwards.
+  const HOME1 = LC.orbitFrom(CAM.at, CAM.pos);
 
-  function iso(p, s, cx, cy) {
-    const d = LC.sub(p, CAM.at);
-    return [cx + LC.dot(d, VIEW.right) * s, cy - LC.dot(d, VIEW.up) * s];
+  // The floor under step 1, in world units, shared by both render paths so they
+  // stand on the same ground. It is *not* aligned to the column space, which is
+  // the point: the plane cuts it at an angle, and that is a fact about the
+  // geometry rather than a decoration.
+  const FLOOR = {at: [CAM.at[0], 0, CAM.at[2]], size: 26, lines: 10};
+
+  const POSE = {
+    projection: {
+      target: CAM.at, content: 4.5, fov: 45,
+      home: LC.orbitView(HOME1.az, HOME1.el),
+      radius: HOME1.radius,
+      // Down to the floor and no further: from under it the grid is a lid and
+      // the glass plane is edge-on.
+      limits: {elMin: -0.04, elMax: 1.15}
+    },
+    portal: {
+      target: [0, 0, 0], content: ELL.S[0] * 1.35, fov: 35,
+      // Tipped a little off the plan view this step shipped with -- around its
+      // vertical axis and again around its horizontal one -- so the floor
+      // recedes and the arrows have somewhere to stand. Small angles, because
+      // the foreshortening they cost is about 4% and the unit circle has to
+      // keep reading as a circle in a step whose whole subject is an ellipse.
+      home: LC.orbitView(-0.3, 0.26),
+      radius: ELL.S[0] * 4,        // refitted to the pane in resize()
+      limits: {azMin: -0.75, azMax: 0.75, elMin: -0.5, elMax: 0.7}
+    }
+  };
+  state.views = {
+    projection: LC.orbitView(POSE.projection.home.az, POSE.projection.home.el),
+    portal: LC.orbitView(POSE.portal.home.az, POSE.portal.home.el)
+  };
+
+  // A scene turning into place after a step change, and a reader pressing Home.
+  // The tween is linalg-core's, retargeted rather than restarted, so scrolling
+  // quickly through both steps does not make the stage jump backwards.
+  const glide = {active: false, scene: null, az: null, el: null};
+
+  function glideTo(scene, fromAz, fromEl, toAz, toEl, ms) {
+    // Nothing eases in the flat path: it draws when it is told to rather than
+    // every frame, so a tween there would stop wherever the last draw left it.
+    if (reduceMotion || state.mode !== "gl") { glide.active = false; return; }
+    const now = performance.now();
+    if (glide.active && glide.scene === scene) {
+      glide.az = LC.retarget(glide.az, toAz, now, ms);
+      glide.el = LC.retarget(glide.el, toEl, now, ms);
+    } else {
+      glide.az = LC.tweenStart(fromAz, toAz, now, ms);
+      glide.el = LC.tweenStart(fromEl, toEl, now, ms);
+    }
+    glide.scene = scene;
+    glide.active = true;
+  }
+
+  // The camera the stage is showing: the stored view, or the eased one while a
+  // scene is turning into place.
+  function shownView(scene) {
+    const v = state.views[scene];
+    if (!glide.active || glide.scene !== scene) return v;
+    const now = performance.now();
+    const a = LC.tweenAt(glide.az, now), e = LC.tweenAt(glide.el, now);
+    // The glide holds the drift off while it runs, so the frame it ends on is
+    // the frame that has to offer the drift back. Nothing else would: a scene
+    // reached by scrolling gets no pointer event afterwards, and the stage
+    // would sit still until someone crossed it.
+    if (a.done && e.done) { glide.active = false; refreshDrift(); return v; }
+    return {az: a.value, el: e.value, dolly: v.dolly};
+  }
+
+  // An orthonormal screen basis for the flat path, derived from the same view
+  // the GL camera takes. Orthographic rather than perspective: what the
+  // fallback loses is the foreshortening, not the orbit.
+  function viewBasis(scene) {
+    const P = POSE[scene];
+    const fwd = LC.orbitDir(shownView(scene));
+    let right = cross(LC.UP, fwd);
+    if (LC.norm(right) < 1e-6) right = [1, 0, 0];
+    right = unit(right);
+    return {right: right, up: cross(fwd, right), target: P.target};
+  }
+
+  function iso(p, s, cx, cy, B) {
+    const d = LC.sub(p, B.target);
+    return [cx + LC.dot(d, B.right) * s, cy - LC.dot(d, B.up) * s];
   }
 
   function arrow2(from, to, colour, width, dashed) {
@@ -659,7 +760,25 @@
   function flatProjection() {
     flat.innerHTML = "";
     const S = 52, CX = 400, CY = 285;
-    const P = (p) => iso(p, S, CX, CY);
+    const B = viewBasis("projection");
+    const P = (p) => iso(p, S, CX, CY, B);
+
+    // The floor first, so everything else stands on it. Same grid the GL path
+    // lays down, same size and spacing, so a reader who loses WebGL loses the
+    // shading and keeps the ground.
+    const half = FLOOR.size / 2, gap = FLOOR.size / FLOOR.lines;
+    const floor = el("g", {stroke: css("--stage-mute"), "stroke-opacity": "0.2",
+                           "stroke-width": "1"});
+    for (let i = 0; i <= FLOOR.lines; i++) {
+      const t = -half + i * gap;
+      const row = [[t, 0, -half], [t, 0, half]];
+      const colm = [[-half, 0, t], [half, 0, t]];
+      for (const [a, b] of [row, colm]) {
+        const p1 = P(LC.add(FLOOR.at, a)), p2 = P(LC.add(FLOOR.at, b));
+        floor.appendChild(el("line", {x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1]}));
+      }
+    }
+    flat.appendChild(floor);
 
     const x1 = LC.col(X, 0), x2 = LC.col(X, 1);
     const yhat = FIT.yhat;
@@ -710,30 +829,56 @@
     flat.innerHTML = "";
     const S = 52;                       // one scale for both panes: the point
     const L = [200, 280], R = [600, 280];   // is that the ellipse is bigger
+    const B = viewBasis("portal");
+    // Both panes are the same plane seen from the same place, so one basis
+    // serves them both and the two spaces turn together -- which is what keeps
+    // A v = sigma u readable while the stage is being turned.
+    const toL = (v) => iso([v[0], v[1], v[2] || 0], S, L[0], L[1], B);
+    const toR = (v) => iso([v[0], v[1], v[2] || 0], S, R[0], R[1], B);
 
-    const pane = (c) => {
-      flat.appendChild(el("line", {x1: c[0] - 170, y1: c[1], x2: c[0] + 170, y2: c[1],
-        stroke: css("--stage-mute"), "stroke-opacity": "0.3", "stroke-width": "1"}));
-      flat.appendChild(el("line", {x1: c[0], y1: c[1] - 170, x2: c[0], y2: c[1] + 170,
-        stroke: css("--stage-mute"), "stroke-opacity": "0.3", "stroke-width": "1"}));
+    const ring = (to, r) => {
+      const pts = [];
+      for (let i = 0; i <= 64; i++) {
+        const t = (i / 64) * Math.PI * 2;
+        pts.push(to([Math.cos(t) * r, Math.sin(t) * r]).join(","));
+      }
+      return pts;
     };
-    pane(L); pane(R);
+
+    // The floor of each space: rings and spokes rather than squares, because a
+    // square grid fights a circle. The GL path lays the same one down.
+    const pane = (to) => {
+      const g = el("g", {stroke: css("--stage-mute"), "stroke-opacity": "0.22",
+                         "stroke-width": "1", fill: "none"});
+      for (let r = 1; r <= 4; r++) {
+        g.appendChild(el("polyline", {points: ring(to, r).join(" ")}));
+      }
+      for (let k = 0; k < 8; k++) {
+        const t = (k / 8) * Math.PI * 2;
+        const a = to([0, 0]), b = to([Math.cos(t) * 4, Math.sin(t) * 4]);
+        g.appendChild(el("line", {x1: a[0], y1: a[1], x2: b[0], y2: b[1]}));
+      }
+      flat.appendChild(g);
+    };
+    pane(toL); pane(toR);
     flat.appendChild(el("line", {x1: 400, y1: 60, x2: 400, y2: 500,
       stroke: css("--stage-mute"), "stroke-opacity": "0.25", "stroke-width": "1"}));
 
-    const toL = (v) => [L[0] + v[0] * S, L[1] - v[1] * S];
-    const toR = (v) => [R[0] + v[0] * S, R[1] - v[1] * S];
-
-    // The unit circle, and its image.
-    flat.appendChild(el("circle", {cx: L[0], cy: L[1], r: S,
-      fill: "none", stroke: css("--stage-mute"), "stroke-width": "2"}));
+    // The unit disc, and its image. Filled, and filled the same colour: the
+    // ratio of the two areas is |det A| = sigma_1 sigma_2, which the readout
+    // only ever states as a pair of numbers.
+    const disc = ring(toL, 1);
+    flat.appendChild(el("polygon", {points: disc.join(" "),
+      fill: css("--stage-mute"), "fill-opacity": "0.12",
+      stroke: css("--stage-mute"), "stroke-width": "2"}));
     const pts = [];
     for (let i = 0; i <= 120; i++) {
       const t = (i / 120) * Math.PI * 2;
       pts.push(toR(LC.mulVec(A, [Math.cos(t), Math.sin(t)])).join(","));
     }
-    flat.appendChild(el("polyline", {points: pts.join(" "),
-      fill: "none", stroke: css("--stage-mute"), "stroke-width": "2"}));
+    flat.appendChild(el("polygon", {points: pts.join(" "),
+      fill: css("--stage-mute"), "fill-opacity": "0.12",
+      stroke: css("--stage-mute"), "stroke-width": "2"}));
 
     const hit = LC.alignedWithAxes(ELL.axes, [Math.cos(state.theta), Math.sin(state.theta)]);
     const labels = [];
@@ -778,11 +923,162 @@
     }
   }
 
+  // ─── the reader's hand on the stage ───────────────────────────────────────
+  //
+  // The stage sways until someone reaches for it, and is theirs the moment they
+  // do -- the same bargain the reshape visualizer strikes, gated the same way,
+  // because a reader who has met one widget has met both. linalg-core owns the
+  // shape of a stretch of drift and the transitions between them; everything
+  // here is the clock, the pointer and the flags that hold it off.
+  const DRIFT_RESUME_MS = 1500;
+  const drift = Object.assign(LC.driftIdle(), {hover: false, focus: false, timer: 0});
+
+  function driftWanted() {
+    return !reduceMotion && !embed && !document.hidden &&
+           !drift.hover && !drift.focus && !glide.active &&
+           state.mode === "gl" && GL.ready;
+  }
+  function setDrift(on) {
+    clearTimeout(drift.timer);
+    if (on === drift.on) return;
+    const now = performance.now();
+    Object.assign(drift, on
+      ? LC.driftStart(drift, state.views[STEPS[state.step].scene], now)
+      : LC.driftPause(drift, now));
+  }
+  const refreshDrift = () => setDrift(driftWanted());
+  // Taking hold of the view stops the drift on the same frame rather than
+  // waiting for the pointer to cross the stage, and it is a release rather than
+  // a pause: a drag, a key or a dolly is the reader choosing the origin the next
+  // stretch belongs around. A pointer merely crossing the stage is not.
+  const dropDrift = () => {
+    clearTimeout(drift.timer);
+    Object.assign(drift, LC.driftRelease(drift, performance.now()));
+  };
+
+  function orbitBy(dAz, dEl) {
+    const scene = STEPS[state.step].scene;
+    dropDrift();
+    glide.active = false;
+    state.views[scene] = LC.orbitBy(state.views[scene], dAz, dEl, POSE[scene].limits);
+    afterView(scene);
+  }
+  function dollyBy(factor) {
+    const scene = STEPS[state.step].scene;
+    dropDrift();
+    state.views[scene] = LC.orbitDolly(state.views[scene], factor, POSE[scene].limits);
+    afterView(scene);
+  }
+  function homeView() {
+    const scene = STEPS[state.step].scene;
+    dropDrift();
+    const from = shownView(scene);
+    const home = POSE[scene].home;
+    state.views[scene] = LC.orbitView(home.az, home.el);
+    glideTo(scene, from.az, from.el, home.az, home.el, 600);
+    afterView(scene);
+  }
+  // The GL path repaints every frame on its own; the flat one draws when it is
+  // told to, and stamps the pose for the browser check either way.
+  function afterView(scene) {
+    if (state.mode === "gl" && GL.ready) stampCam(scene); else draw();
+  }
+
+  function bindStage() {
+    const stage = $("stage");
+    let live = null;
+    // pointerenter and pointerleave, not over/out: the label chips and the
+    // CSS2D layers are children of #stage, and being over one of them is still
+    // being on the stage.
+    stage.addEventListener("pointerenter", () => { drift.hover = true; setDrift(false); });
+    stage.addEventListener("pointerleave", () => {
+      drift.hover = false;
+      clearTimeout(drift.timer);
+      drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
+    });
+    // :focus-visible rather than :focus, for the reason the visualizer gives:
+    // a click focuses the stage too, and keying off plain focus would kill the
+    // drift for the rest of the visit the first time anyone clicked it.
+    stage.addEventListener("focusin", () => {
+      drift.focus = stage.matches(":focus-visible");
+      setDrift(false);
+    });
+    stage.addEventListener("focusout", () => {
+      drift.focus = false;
+      clearTimeout(drift.timer);
+      drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
+    });
+    document.addEventListener("visibilitychange", refreshDrift);
+
+    stage.addEventListener("pointerdown", (e) => {
+      try { stage.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
+      live = {id: e.pointerId, x: e.clientX, y: e.clientY};
+      stage.dataset.grab = "1";
+    });
+    stage.addEventListener("pointermove", (e) => {
+      if (!live || e.pointerId !== live.id) return;
+      const dx = e.clientX - live.x, dy = e.clientY - live.y;
+      live.x = e.clientX;
+      live.y = e.clientY;
+      // The scene follows the hand: drag right and it turns right. Dragging
+      // down lifts the camera over the top, which is what every orbit control
+      // a reader has used already does.
+      orbitBy(-dx * 0.008, dy * 0.005);
+    });
+    const release = (e) => {
+      if (!live || e.pointerId !== live.id) return;
+      live = null;
+      delete stage.dataset.grab;
+    };
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", release);
+
+    // Ctrl or Command only. The step a reader is on *is* the scroll position
+    // here, so a stage that swallowed the wheel would swallow the page's own
+    // navigation with it.
+    stage.addEventListener("wheel", (e) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      dollyBy(e.deltaY > 0 ? 1.08 : 0.93);
+    }, {passive: false});
+
+    stage.addEventListener("keydown", (e) => {
+      const step = e.shiftKey ? 0.3 : 0.1;
+      const moves = {
+        ArrowLeft: () => orbitBy(step, 0),
+        ArrowRight: () => orbitBy(-step, 0),
+        ArrowUp: () => orbitBy(0, -step),
+        ArrowDown: () => orbitBy(0, step),
+        "+": () => dollyBy(0.9),
+        "=": () => dollyBy(0.9),
+        "-": () => dollyBy(1.11),
+        Home: () => homeView()
+      };
+      const move = moves[e.key];
+      if (!move) return;
+      e.preventDefault();
+      // Driving the view from the keyboard is the same claim on it as a drag,
+      // however the focus arrived: hold the drift until the stage is left.
+      drift.focus = true;
+      move();
+    });
+  }
+
   // ─── the three.js stage ───────────────────────────────────────────────────
 
   const GL = {ready: false, composer: null, bloom: null, frames: [], budget: true};
 
   function vec(p) { return new THREE.Vector3(p[0], p[1], p[2] || 0); }
+
+  // The stage's own dark, in the space the renderer clears in. Without the
+  // conversion the composer wrote the CSS colour straight into a linear buffer
+  // and OutputPass then encoded it a second time, so #0a0a1a cleared to
+  // #38385c: a washed-out lavender in every theme, measurably lighter than the
+  // page said the stage was, on the one widget whose comments say the stage is
+  // dark *because glow needs a dark ground*. Both the clear colour and the fog
+  // take it from here so they cannot drift apart.
+  const STAGE_COLOUR = () =>
+    new THREE.Color(css("--stage")).convertSRGBToLinear();
 
   // Shaft plus head along +Y, then turned to face `dir`. Emissive, so the
   // bloom pass has something above its threshold to find.
@@ -828,6 +1124,11 @@
 
   function buildProjection() {
     const scene = new THREE.Scene();
+    // The far corner of the floor recedes into the stage's own colour instead
+    // of ending on a hard line, which is most of what tells a reader the grid
+    // is lying down rather than standing up. The renderer clears to the same
+    // colour, so there is nothing for it to disagree with.
+    scene.fog = new THREE.FogExp2(STAGE_COLOUR().getHex(), 0.024);
     scene.add(new THREE.AmbientLight(0xffffff, 0.7));
     const key = new THREE.DirectionalLight(0xffffff, 1.4);
     key.position.set(8, 10, 6);
@@ -865,6 +1166,18 @@
       new THREE.BufferGeometry().setFromPoints(lines.map(vec)),
       new THREE.LineBasicMaterial({color: 0x22c795, transparent: true, opacity: 0.35})));
 
+    // The ground the picture stands on, at y = 0 and deliberately *not* aligned
+    // to the column space: the plane cuts it at an angle, which is a fact about
+    // the geometry rather than a decoration, and it is what makes the orbit
+    // read as an orbit rather than as the figure itself deforming.
+    const floor = new THREE.GridHelper(FLOOR.size, FLOOR.lines,
+      css("--stage-mute"), css("--stage-mute"));
+    floor.position.set(FLOOR.at[0], FLOOR.at[1], FLOOR.at[2]);
+    floor.material.transparent = true;
+    floor.material.opacity = 0.2;
+    floor.material.depthWrite = false;
+    scene.add(floor);
+
     const arrows = {
       x1: makeArrow(x1, 5.5, 0x22c795, 0.055),
       x2: makeArrow(x2, 5.5, 0x22c795, 0.055),
@@ -899,10 +1212,9 @@
     // draw -- the origin, both basis arrows, y-hat, and y pushed all the way
     // out at the slider's end -- sits inside a radius of 4.5 about the point
     // the camera looks at, and 13.6 at 45 degrees leaves a quarter of that as
-    // margin.
-    const cam = new THREE.PerspectiveCamera(45, 1.4, 0.1, 300);
-    cam.position.set(CAM.pos[0], CAM.pos[1], CAM.pos[2]);
-    cam.lookAt(CAM.at[0], CAM.at[1], CAM.at[2]);
+    // margin. Where it *points* from is now POSE.projection, and applyCamera()
+    // puts it there every frame.
+    const cam = new THREE.PerspectiveCamera(POSE.projection.fov, 1.4, 0.1, 300);
     return {scene, cam, arrows, res, labels, composer: true};
   }
 
@@ -917,8 +1229,32 @@
     };
     const inp = mk(), out = mk();
 
+    // The floor of each space. Rings and spokes rather than squares, because a
+    // square grid fights a circle, and it is the thing that makes the tilt
+    // read: the unit circle is foreshortened by only a few per cent at the pose
+    // this step opens on, which on its own is a circle drawn slightly wrong.
+    const floor = (sc) => {
+      const g = new THREE.PolarGridHelper(4, 8, 4, 64,
+        css("--stage-mute"), css("--stage-mute"));
+      g.rotation.x = Math.PI / 2;      // the helper lies in x-z; this space is x-y
+      g.material.transparent = true;
+      g.material.opacity = 0.22;
+      g.material.depthWrite = false;
+      sc.add(g);
+    };
+    floor(inp); floor(out);
+
     const ringMat = () => new THREE.MeshBasicMaterial({color: 0xa3bdd4, side: THREE.DoubleSide});
     inp.add(new THREE.Mesh(new THREE.RingGeometry(0.985, 1.015, 128), ringMat()));
+
+    // Filled, and filled the same colour on both sides: the ratio of the two
+    // areas is |det A| = sigma_1 sigma_2, which the readout states as a pair of
+    // numbers and the picture has never shown.
+    const fillMat = () => new THREE.MeshBasicMaterial({
+      color: 0xa3bdd4, transparent: true, opacity: 0.12,
+      side: THREE.DoubleSide, depthWrite: false
+    });
+    inp.add(new THREE.Mesh(new THREE.CircleGeometry(1, 128), fillMat()));
 
     // The image of the unit circle: every point mapped by A, in the same
     // units as the circle beside it. Same scale on both sides is the point --
@@ -930,6 +1266,10 @@
     }
     out.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
       new THREE.LineBasicMaterial({color: 0xa3bdd4})));
+    out.add(new THREE.Mesh(
+      new THREE.ShapeGeometry(new THREE.Shape(
+        pts.slice(0, -1).map((v) => new THREE.Vector2(v.x, v.y)))),
+      fillMat()));
 
     const axis = (s, p) => s.add(new THREE.LineSegments(
       new THREE.BufferGeometry().setFromPoints([
@@ -959,12 +1299,14 @@
     labels.u1.position.copy(vec(ELL.axes[0].axis));
     labels.u2.position.copy(vec(ELL.axes[1].axis));
 
-    // Orthographic, and the frustum is fitted in resize(): the ellipse reaches
-    // 3.32 in its longest direction, and a frustum sized from the stage's
-    // aspect rather than from the content clipped it clean off.
-    const camIn = new THREE.OrthographicCamera(-1, 1, 1, -1, -20, 20);
-    const camOut = new THREE.OrthographicCamera(-1, 1, 1, -1, -20, 20);
-    camIn.position.z = 6; camOut.position.z = 6;
+    // Perspective now, and both cameras take the same pose: the two panes are
+    // one plane seen from one place, which is what lets a reader turn the
+    // portal without A v = sigma u coming apart. The distance is fitted to the
+    // content in resize() -- the ellipse reaches 3.32 in its longest direction,
+    // and a framing sized from the stage's aspect rather than from the content
+    // clipped it clean off.
+    const camIn = new THREE.PerspectiveCamera(POSE.portal.fov, 1, 0.1, 200);
+    const camOut = new THREE.PerspectiveCamera(POSE.portal.fov, 1, 0.1, 200);
     return {inp, out, camIn, camOut, arrows, labels, composer: false};
   }
 
@@ -977,7 +1319,7 @@
     if (!renderer || !renderer.getContext()) return false;
 
     renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
-    renderer.setClearColor(new THREE.Color(css("--stage")), 1);
+    renderer.setClearColor(STAGE_COLOUR(), 1);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     GL.renderer = renderer;
 
@@ -1020,13 +1362,25 @@
     GL.projection.cam.aspect = w / h;
     GL.projection.cam.updateProjectionMatrix();
 
-    // Fit the portal's frustum to its content, not to the stage: half the
-    // stage is a tall narrow pane, and the longest semi-axis is sigma_1.
+    // How far back each scene has to sit for its content to fit the viewport it
+    // is drawn into. Both cameras are perspective now, so this is a distance
+    // rather than a frustum, and the same two lines answer it for either one:
+    // the vertical fit, and the horizontal fit through the aspect.
+    const fit = (P, aspect) => {
+      const t = Math.tan(P.fov * Math.PI / 360);
+      return Math.max(P.content / t, P.content / (t * aspect));
+    };
+    // Step 1 keeps the distance it shipped with wherever that is generous
+    // enough -- it is fitted to the content with a quarter left as margin --
+    // and pulls back on a stage too narrow to hold that.
+    POSE.projection.radius = Math.max(HOME1.radius, fit(POSE.projection, w / h));
+
+    // Half the stage is a tall narrow pane, and the longest semi-axis is
+    // sigma_1: fit the portal to its content, never to the stage.
     const half = Math.max(1, w / 2);
-    const HALF_X = ELL.S[0] * 1.35;
-    const HALF_Y = HALF_X * (h / half);
+    POSE.portal.radius = fit(POSE.portal, half / h);
     for (const c of [GL.portal.camIn, GL.portal.camOut]) {
-      c.left = -HALF_X; c.right = HALF_X; c.top = HALF_Y; c.bottom = -HALF_Y;
+      c.aspect = half / h;
       c.updateProjectionMatrix();
     }
     const step = STEPS[state.step];
@@ -1043,8 +1397,40 @@
     }
   }
 
+  // One place moves the camera, whichever thing is moving it: the idle drift
+  // while nobody is holding the stage, the glide while a scene turns into
+  // place, and a drag or a key the rest of the time. The stored view is the
+  // truth; applyCamera() only ever reads it.
+  function applyCamera(scene) {
+    const P = POSE[scene];
+    if (drift.on && !glide.active) {
+      const pose = LC.driftPose(drift, performance.now() - drift.t0, P.limits);
+      Object.assign(state.views[scene], pose);
+    }
+    const eye = LC.orbitEye(P.target, P.radius, shownView(scene));
+    const cams = scene === "projection"
+      ? [GL.projection.cam] : [GL.portal.camIn, GL.portal.camOut];
+    for (const c of cams) {
+      c.up.set(LC.UP[0], LC.UP[1], LC.UP[2]);
+      c.position.set(eye[0], eye[1], eye[2]);
+      c.lookAt(P.target[0], P.target[1], P.target[2]);
+    }
+    stampCam(scene);
+  }
+
+  // The pose, on the stage, as numbers. The browser check reads rotation off
+  // this rather than out of the pixels -- the same trade dataset.sigma already
+  // makes for the singular values. Written only when it changes, because it is
+  // touched sixty times a second.
+  function stampCam(scene) {
+    const v = state.views[scene];
+    const at = v.az.toFixed(2) + "," + v.el.toFixed(2) + "," + v.dolly.toFixed(2);
+    if (GL.stamp !== at) { GL.stamp = at; $("stage").dataset.cam = at; }
+  }
+
   function renderGL() {
     const step = STEPS[state.step];
+    applyCamera(step.scene);
     if (GL.labScene !== step.scene) {
       GL.labScene = step.scene;
       for (const l of GL.lab) l.domElement.replaceChildren();
@@ -1140,6 +1526,7 @@
     } else {
       if (step.scene === "projection") flatProjection(); else flatPortal();
       $("stage").dataset.gl = "none";
+      stampCam(step.scene);
     }
     readouts();
   }
@@ -1177,13 +1564,26 @@
   function setStep(i, scroll) {
     const n = Math.max(0, Math.min(STEPS.length - 1, i));
     const changed = n !== state.step;
+    const was = STEPS[state.step].scene;
     state.step = n;
+    // A scene arriving turns the last third of a turn into place rather than
+    // cutting to it, and the drift starts again from the pose the reader is
+    // now looking at -- its origin belongs to the scene on the stage, and the
+    // two scenes do not share one.
+    if (changed && STEPS[n].scene !== was) {
+      const scene = STEPS[n].scene;
+      const v = state.views[scene];
+      Object.assign(drift, LC.driftRelease(drift, performance.now()));
+      glideTo(scene, v.az - 0.34,
+        Math.max(POSE[scene].limits.elMin, v.el - 0.1), v.az, v.el, 900);
+    }
     STEPS.forEach((s, j) => $(s.el).classList.toggle("is-active", j === n));
     $("prev").disabled = n === 0;
     $("next").disabled = n === STEPS.length - 1;
     $("stepnum").textContent = T.stepOf(n + 1, STEPS.length);
     if (changed) $("status").textContent = $("h-" + STEPS[n].id).textContent;
     if (state.mode === "gl" && GL.ready) resize();
+    refreshDrift();
     if (scroll) {
       $(STEPS[n].el).scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
     }
@@ -1240,6 +1640,7 @@
     $("glow").disabled = mode !== "gl";
     if (mode === "gl") resize();
     draw();
+    refreshDrift();
   }
 
   function bootGL() {
@@ -1309,6 +1710,7 @@
     setMode("flat");
     addEventListener("resize", draw);
   } else {
+    bindStage();
     watchSteps();
     bootGL();
     if (at >= 0) $(STEPS[at].el).scrollIntoView({block: "center"});

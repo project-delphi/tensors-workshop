@@ -5,13 +5,14 @@
 // tensor-core.js exists: this is the lesson the widget is there to show, and
 // a wrong number here is a wrong claim on screen rather than a broken page.
 //
-// Two state machines are here for the *other* reason tensor-core.js gives --
+// Three state machines are here for the *other* reason tensor-core.js gives --
 // they are invisible in a screenshot and survive an end-state assertion. An
-// interrupted tween that takes its origin from the wrong place, and a step
-// that flickers when two sections share the activation band, are both bugs
-// you can only see while they happen. So they are written the same way the
-// idle drift is: a state goes in, a new state comes out, and the widget owns
-// the clock and the DOM.
+// interrupted tween that takes its origin from the wrong place, a step that
+// flickers when two sections share the activation band, and a camera whose
+// idle drift creeps a little further from its origin on every pause, are all
+// bugs you can only see while they happen. So they are written the same way
+// the visualizer's drift is: a state goes in, a new state comes out, and the
+// widget owns the clock and the DOM.
 //
 // A plain script, not a module: the widget loads it with a <script src> so it
 // works from file:// and Node picks it up through module.exports.
@@ -406,6 +407,151 @@
     return rects.reduce((best, r, i) => (near(r) < near(rects[best]) ? i : best), 0);
   }
 
+  // ─── the camera ───────────────────────────────────────────────────────────
+  //
+  // Where the stage looks from, as two angles and a dolly. It is here rather
+  // than in the page for the reason the tween above is: an orbit whose clamp is
+  // wrong at one end, and an idle drift whose origin creeps a little on every
+  // pause, are both invisible in a screenshot and survive an end-state
+  // assertion. A state goes in, a new state comes out; the page owns the
+  // clock, the pointer and three.js, and nothing here knows any of them exist.
+  //
+  // Both render paths take the camera from `orbitEye`, which is what keeps the
+  // promise `CAM` makes in the widget: the flat SVG fallback derives its screen
+  // basis from the GL camera, so the two paths show the same view rather than
+  // two views that happen to have been aimed the same way once.
+
+  const CAMERA = {
+    elMin: -0.12,     // radians above the horizon. Barely below it: the grid
+    elMax: 1.25,      // floor is opaque from underneath and says nothing there
+    dollyMin: 0.55,   // a multiplier on the scene's fitted radius, so a step that
+    dollyMax: 1.9,    // refits its framing keeps whatever zoom the reader chose
+    sway: 0.24,       // radians of azimuth either side of the origin
+    swayMs: 19000,    // one full there-and-back
+    bob: 0.10,        // radians of elevation, and only ever *up*: the drift must
+    bobMs: 9500       // never dip under a floor, and runs at half the sway so the
+                      // camera is highest at each end of the swing
+  };
+
+  // One convention for both scenes: azimuth turns about world +Y, elevation
+  // lifts above the x-z plane, and the camera's own up stays +Y -- so nothing
+  // the stage draws ever rolls. A scene that is flat, like the SVD portal's two
+  // planes, is then a card being tipped rather than a plate being spun, and it
+  // says so by clamping azimuth as well as elevation.
+  const UP = [0, 1, 0];
+  const RIGHT = [1, 0, 0];
+  const FRONT = [0, 0, 1];
+
+  const orbitView = (az, el, dolly) =>
+    ({az: az || 0, el: el || 0, dolly: dolly === undefined ? 1 : dolly});
+
+  // Elevation is always clamped: past either end the scene is being read from
+  // somewhere it draws nothing. Azimuth is free unless the caller says
+  // otherwise -- a solid scene may be turned all the way round and come back,
+  // and a flat one may not, because the far side of a plane is the same picture
+  // mirrored and every label on it is backwards.
+  function orbitClamp(view, lim) {
+    const l = lim || {};
+    const elMin = l.elMin === undefined ? CAMERA.elMin : l.elMin;
+    const elMax = l.elMax === undefined ? CAMERA.elMax : l.elMax;
+    const dMin = l.dollyMin === undefined ? CAMERA.dollyMin : l.dollyMin;
+    const dMax = l.dollyMax === undefined ? CAMERA.dollyMax : l.dollyMax;
+    const dolly = view.dolly === undefined ? 1 : view.dolly;
+    let az = view.az;
+    if (l.azMin !== undefined) az = Math.max(l.azMin, az);
+    if (l.azMax !== undefined) az = Math.min(l.azMax, az);
+    return {
+      az: az,
+      el: Math.min(elMax, Math.max(elMin, view.el)),
+      dolly: Math.min(dMax, Math.max(dMin, dolly))
+    };
+  }
+
+  const orbitBy = (view, dAz, dEl, lim) =>
+    orbitClamp({az: view.az + dAz, el: view.el + dEl, dolly: view.dolly}, lim);
+
+  const orbitDolly = (view, factor, lim) =>
+    orbitClamp({az: view.az, el: view.el,
+                dolly: (view.dolly === undefined ? 1 : view.dolly) * factor}, lim);
+
+  // The unit vector from the target to the camera.
+  function orbitDir(view) {
+    const ce = Math.cos(view.el), se = Math.sin(view.el);
+    return [ce * Math.sin(view.az), se, ce * Math.cos(view.az)];
+  }
+
+  const orbitEye = (target, radius, view) =>
+    add(target, scale(orbitDir(view),
+                      radius * (view.dolly === undefined ? 1 : view.dolly)));
+
+  // The inverse. A pose written as a camera position -- which is how step 1's
+  // fixed camera was written, and it is framed on data, not on a round number
+  // -- becomes the orbit's origin without anyone typing an angle for it.
+  function orbitFrom(target, eye) {
+    const d = sub(eye, target);
+    const r = norm(d) || 1;
+    const u = scale(d, 1 / r);
+    return {
+      az: Math.atan2(dot(u, RIGHT), dot(u, FRONT)),
+      el: Math.asin(Math.max(-1, Math.min(1, dot(u, UP)))),
+      dolly: 1,
+      radius: r
+    };
+  }
+
+  // ─── the idle drift ───────────────────────────────────────────────────────
+  //
+  // The same machine tensor-core.js runs for the reshape visualizer, with this
+  // stage's own constants and one difference: there is no breath on the dolly.
+  // The portal's framing is fitted to sigma_1 and a breath that pulled the
+  // camera *in* would crop the ellipse it exists to show, so the second axis of
+  // motion is a small lift in elevation instead -- which can only ever flatten
+  // against `elMax`, never crop anything.
+  //
+  // `seeded` and `phase` carry the same weight they carry there. The excursion
+  // is bounded *around an origin*, so re-reading the origin from the live view
+  // on every resume would make each pause the origin of the next stretch, the
+  // lift would ratchet the camera upwards a little every time a reader crossed
+  // the stage, and neither bound would bound anything.
+
+  const driftIdle = () =>
+    ({on: false, seeded: false, az0: 0, el0: 0, dolly0: 1, phase: 0, t0: 0});
+
+  // The pose `phase` ms into a stretch that began at (az0, el0).
+  function driftPose(s, phase, lim) {
+    const turn = 2 * Math.PI * phase;
+    // A raised cosine: starts at the reader's elevation, lifts by `bob`, comes
+    // back. Never below -- see above.
+    const lift = (1 - Math.cos(turn / CAMERA.bobMs)) / 2;
+    return orbitClamp({
+      az: s.az0 + CAMERA.sway * Math.sin(turn / CAMERA.swayMs),
+      el: s.el0 + CAMERA.bob * lift,
+      dolly: s.dolly0
+    }, lim);
+  }
+
+  // Starting. Seeds the origin from the view the first time only, and puts the
+  // clock back by whatever phase the last pause banked.
+  function driftStart(s, view, now) {
+    const seeded = s.seeded ? s : Object.assign({}, s, {
+      az0: view.az, el0: view.el,
+      dolly0: view.dolly === undefined ? 1 : view.dolly,
+      phase: 0, seeded: true
+    });
+    return Object.assign({}, seeded, {on: true, t0: now - seeded.phase});
+  }
+
+  // Pausing: a pointer crossing the stage. Keeps the origin, banks the phase.
+  function driftPause(s, now) {
+    return s.on ? Object.assign({}, s, {on: false, phase: now - s.t0}) : s;
+  }
+
+  // The reader took the view -- a drag, a key, a dolly. The next stretch belongs
+  // around wherever they leave it, so the seed goes with it.
+  function driftRelease(s, now) {
+    return Object.assign({}, driftPause(s, now), {seeded: false, phase: 0});
+  }
+
   const LinalgCore = {
     EPS,
     rows, cols, copy, zeros, eye, transpose, dot, norm, add, sub, scale,
@@ -415,7 +561,10 @@
     digitsLost, perturbationBound,
     ellipse, alignedWith, alignedWithAxes,
     easeInOutCubic, tweenStart, tweenAt, retarget,
-    pickActive
+    pickActive,
+    CAMERA, UP, orbitView, orbitClamp, orbitBy, orbitDolly,
+    orbitDir, orbitEye, orbitFrom,
+    driftIdle, driftPose, driftStart, driftPause, driftRelease
   };
   if (typeof module !== "undefined" && module.exports) module.exports = LinalgCore;
   else root.LinalgCore = LinalgCore;

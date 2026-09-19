@@ -320,3 +320,124 @@ test('pickActive: with no previous step it falls back to the nearest', () => {
     'centres -250 and 950 against a band centred on 400: 550 beats 650');
   assert.equal(core.pickActive([], 350, 450, undefined), -1);
 });
+
+// ─── the camera ─────────────────────────────────────────────────────────────
+//
+// The stage turns, in both render paths, from one pair of angles. These pin
+// the parts of that a screenshot cannot show: that the shipped framing of step
+// 1 survives being expressed as an orbit, that neither clamp lets a reader get
+// under the floor, and that crossing the stage a few dozen times does not walk
+// the camera away from where they left it.
+
+// Step 1's camera as the widget has always written it: framed on the tip of
+// y-hat, at a distance fitted to the content rather than guessed.
+const EYE = [13.57, 5.51, -4.64];
+const AT = [2.25, 2.09, 2.08];
+
+test('a camera written as a position round-trips through the orbit unchanged', () => {
+  const home = core.orbitFrom(AT, EYE);
+  near(home.radius, 13.6014, 1e-3, 'the fitted distance');
+  nearVec(core.orbitEye(AT, home.radius, home), EYE, 1e-9, 'step 1 home pose');
+  // And the dolly is a multiplier on that distance, not a replacement for it.
+  const closer = core.orbitDolly(home, 0.8);
+  near(core.norm(core.sub(core.orbitEye(AT, home.radius, closer), AT)),
+    home.radius * 0.8, 1e-9, 'dollied in');
+});
+
+test('a solid scene turns all the way round; a flat one is clamped both ways', () => {
+  const v = core.orbitView(0, 0.3);
+  near(core.orbitBy(v, 2 * Math.PI, 0).az, 2 * Math.PI, 1e-12,
+    'a full turn is allowed to keep going');
+  assert.equal(core.orbitBy(v, 0, 9).el, core.CAMERA.elMax, 'up is clamped');
+  assert.equal(core.orbitBy(v, 0, -9).el, core.CAMERA.elMin, 'down is clamped');
+  // The portal is two planes: past a quarter turn a reader is reading them
+  // from behind, where the picture is mirrored and every label is backwards.
+  const lim = {azMin: -0.75, azMax: 0.75, elMin: -0.55, elMax: 0.65};
+  assert.equal(core.orbitBy(v, 9, 0, lim).az, 0.75);
+  assert.equal(core.orbitBy(v, -9, 0, lim).az, -0.75);
+  assert.equal(core.orbitBy(v, 0, -9, lim).el, -0.55);
+  assert.equal(core.orbitBy(v, 0, 9, lim).el, 0.65);
+  assert.equal(core.orbitDolly(v, 100).dolly, core.CAMERA.dollyMax);
+  assert.equal(core.orbitDolly(v, 0.001).dolly, core.CAMERA.dollyMin);
+});
+
+test('the orbit stays on the unit sphere, and nothing it draws ever rolls', () => {
+  for (let az = -3; az <= 3; az += 0.37) {
+    for (let el = -0.5; el <= 1.2; el += 0.31) {
+      near(core.norm(core.orbitDir({az, el, dolly: 1})), 1, 1e-12);
+    }
+  }
+  // Straight ahead is +Z, straight up is +Y: one convention, and it is the
+  // camera's own up as well, which is what keeps the horizon level.
+  nearVec(core.orbitDir({az: 0, el: 0, dolly: 1}), [0, 0, 1], 1e-12, 'front');
+  nearVec(core.orbitDir({az: 0, el: Math.PI / 2, dolly: 1}), core.UP, 1e-12, 'overhead');
+  nearVec(core.orbitDir({az: Math.PI / 2, el: 0, dolly: 1}), [1, 0, 0], 1e-12, 'side');
+});
+
+// ─── the idle drift ─────────────────────────────────────────────────────────
+
+const HOME = core.orbitView(2.1, 0.25);
+const started = (now = 0, view = HOME) =>
+  core.driftStart(core.driftIdle(), view, now);
+
+test('a stretch of drift begins exactly where the reader left the view', () => {
+  assert.deepEqual(core.driftPose(started(), 0), HOME);
+});
+
+test('the sway stays within CAMERA.sway of its origin, and the lift only lifts', () => {
+  const s = started();
+  for (let phase = 0; phase <= 2 * core.CAMERA.swayMs; phase += 50) {
+    const {az, el} = core.driftPose(s, phase);
+    assert.ok(Math.abs(az - HOME.az) <= core.CAMERA.sway + 1e-9,
+      `the sway left its bound at ${phase}ms`);
+    // Up and back, never down: under the floor there is nothing drawn.
+    assert.ok(el >= HOME.el - 1e-9 && el <= HOME.el + core.CAMERA.bob + 1e-9,
+      `the lift left its bound at ${phase}ms`);
+  }
+});
+
+test('the camera is highest at each end of the sway', () => {
+  const s = started();
+  for (const end of [core.CAMERA.swayMs / 4, 3 * core.CAMERA.swayMs / 4]) {
+    near(core.driftPose(s, end).el, HOME.el + core.CAMERA.bob, 1e-9);
+  }
+});
+
+test('a pause banks the phase, and the resumed sway picks it up where it stopped', () => {
+  const paused = core.driftPause(started(0), 3000);
+  assert.equal(paused.on, false);
+  assert.equal(paused.phase, 3000);
+  const back = core.driftStart(paused, core.orbitView(99, 99), 93000);
+  assert.deepEqual(core.driftPose(back, 93000 - back.t0),
+    core.driftPose(started(), 3000));
+});
+
+test('pausing and resuming never re-seeds the origin — the camera would climb', () => {
+  // The same ratchet tensor-core.js pins for the visualizer, one axis over:
+  // the lift only ever raises the camera, so seeding the next stretch from the
+  // live view would leave every crossing of the stage a little higher than the
+  // last, until the reader is looking straight down at a scene drawn to be
+  // seen from the side.
+  let s = started(0);
+  let clock = 0;
+  for (let crossing = 0; crossing < 40; crossing++) {
+    clock += 2600;                                  // the pointer arrives mid-lift
+    const at = core.driftPose(s, clock - s.t0);
+    s = core.driftPause(s, clock);
+    assert.ok(at.el > HOME.el, 'the pointer should arrive somewhere above the origin');
+    clock += 900;
+    s = core.driftStart(s, at, clock);              // the live view, as it was read
+  }
+  assert.equal(core.driftPose(s, 0).el, HOME.el, 'the origin moved');
+  assert.equal(core.driftPose(s, 0).az, HOME.az, 'the origin moved');
+});
+
+test('taking the view hands the next stretch a new origin', () => {
+  const moved = core.orbitView(HOME.az + 1.4, HOME.el + 0.3);
+  const released = core.driftRelease(started(0), 2000);
+  assert.deepEqual(core.driftPose(core.driftStart(released, moved, 9000), 0), moved,
+    'a drag re-seeds');
+  const paused = core.driftStart(core.driftPause(started(0), 2000), moved, 9000);
+  assert.deepEqual(core.driftPose(paused, 0), HOME,
+    'merely crossing the stage does not');
+});
