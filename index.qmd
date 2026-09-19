@@ -41,6 +41,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   <div class="hero-tabs" role="tablist" aria-label="Live demos">
     <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
     <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
+    <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
     <iframe class="hero-embed" src="interactive/tensor-visualizer.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: three photos as a 4-D tensor, transposed and then reshaped" loading="lazy"></iframe>
@@ -50,7 +51,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
     <iframe class="hero-embed" src="interactive/broadcasting-simulator.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: two shapes aligned from the right and stretched" loading="lazy"></iframe>
     <p class="hero-caption">Two shapes lined up from the right; every axis of size 1 stretches, and nothing is copied.</p>
   </div>
-  <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Two of the moves, live.</p>
+  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
+    <iframe class="hero-embed" src="interactive/linalg-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: the unit circle a matrix sends to an ellipse, with its singular vectors" loading="lazy"></iframe>
+    <p class="hero-caption">A matrix takes the unit circle to an ellipse: <code>A v = σ u</code>, one vector at a time.</p>
+  </div>
+  <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Three of the moves, live.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-en tensor-desc-en" xmlns="http://www.w3.org/2000/svg">

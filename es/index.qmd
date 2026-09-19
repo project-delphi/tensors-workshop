@@ -41,6 +41,7 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
     <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
     <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
+    <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
     <iframe class="hero-embed" src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape" loading="lazy"></iframe>
@@ -50,7 +51,11 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
     <iframe class="hero-embed" src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas" loading="lazy"></iframe>
     <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
-  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Dos de los movimientos, en vivo.</p>
+  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
+    <iframe class="hero-embed" src="../interactive/linalg-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares" loading="lazy"></iframe>
+    <p class="hero-caption">Una matriz lleva el círculo unitario a una elipse: <code>A v = σ u</code>, un vector a la vez.</p>
+  </div>
+  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Tres de los movimientos, en vivo.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-es tensor-desc-es" xmlns="http://www.w3.org/2000/svg">

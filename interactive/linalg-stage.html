@@ -352,6 +352,10 @@
   html.embed .wrap { max-width: none; padding: 0; }
   html.embed header, html.embed aside, html.embed .steps,
   html.embed .stagebar, html.embed #glnote { display: none; }
+  /* The running note sits top right of a stage that is normally twice this
+     wide; in a hero card it wraps back across the input pane's y axis. The
+     caption under the frame says the same thing, so the note goes. */
+  html.embed #stagenote { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { position: static; display: flex; flex-direction: column; height: 100vh; }
   html.embed #stage { flex: 1 1 auto; min-height: 0; height: auto; border: 0; border-radius: 0; }

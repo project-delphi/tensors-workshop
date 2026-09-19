@@ -178,10 +178,11 @@ rolls -- and both its scenes and both its render paths take the camera from
 screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the
-widget counts instead, which `check_navigation.cjs` treats as a regression. The
-two hero widgets take `?embed=1&theme=navy`, where the visualizer never fetches
-three.js; the stage has no embed mode, because the hero is two tabs and the
-check pins that at two.
+widget counts instead, which `check_navigation.cjs` treats as a regression. All
+three hero widgets take `?embed=1&theme=navy`, and neither the visualizer nor
+the stage fetches three.js there: the stage's embed is the portal's still
+frame, drawn flat, with the scroller and its steps gone. The hero is three
+tabs and the check pins that at three.
 
 three.js is **vendored** at `interactive/vendor/`, core build and eleven
 `examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their
