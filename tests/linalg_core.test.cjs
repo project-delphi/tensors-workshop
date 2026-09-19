@@ -441,3 +441,170 @@ test('taking the view hands the next stretch a new origin', () => {
   assert.deepEqual(core.driftPose(paused, 0), HOME,
     'merely crossing the stage does not');
 });
+
+// ─── the null space: step 2 ─────────────────────────────────────────────────
+
+test('nullspace: every vector is unit, orthogonal to the rest, and A n = 0', () => {
+  const A = [[1, 2, 1], [2, -1, 1]];
+  const N = core.nullspace(A);
+  assert.equal(N.length, 1, 'a 2x3 of rank 2 has a one-dimensional null space');
+  near(core.norm(N[0]), 1, 1e-12, '|n|');
+  nearVec(core.mulVec(A, N[0]), [0, 0], 1e-12, 'A n');
+  const S = core.nullspace(SINGULAR);
+  assert.equal(S.length, 2, 'rank 1 in R^3 leaves two directions');
+  near(core.dot(S[0], S[1]), 0, 1e-12, 'orthogonal');
+  S.forEach((n) => nearVec(core.mulVec(SINGULAR, n), [0, 0, 0], 1e-10, 'A n'));
+  assert.equal(core.nullspace(WELL).length, 0, 'full column rank has none');
+});
+
+// ─── eigenvectors: step 5 ───────────────────────────────────────────────────
+
+// Step 5's matrix: three real, distinct eigenvalues, none of whose
+// eigenvectors lies on an axis, and off-diagonals large enough that the
+// field visibly shears before it settles.
+const SHEAR = [[2.0, 1.0, 0.3], [0.2, 0.6, 0.2], [0.4, 0.3, 1.3]];
+
+test('eig3: A v = lambda v for each pair, sorted descending -- step 5\'s whole claim', () => {
+  const E = core.eig3(SHEAR);
+  assert.equal(E.length, 3);
+  const L = E.map((e) => e.lambda);
+  assert.ok(L[0] > L[1] && L[1] > L[2], `descending: ${L}`);
+  // Invariants rather than typed roots: the sum is the trace, the product
+  // the determinant, so a wrong root cannot pass by being the one written here.
+  near(L[0] + L[1] + L[2], SHEAR[0][0] + SHEAR[1][1] + SHEAR[2][2], 1e-10, 'trace');
+  near(L[0] * L[1] * L[2], core.det3(SHEAR), 1e-10, 'det');
+  for (const {lambda, v} of E) {
+    near(core.norm(v), 1, 1e-12, '|v|');
+    nearVec(core.mulVec(SHEAR, v), core.scale(v, lambda), 1e-9, `A v = ${lambda} v`);
+  }
+});
+
+test('eig3: a symmetric matrix agrees with its own SVD, up to the sign of a line', () => {
+  const A = [[2, 1, 0], [1, 2, 0], [0, 0, 4]];
+  const E = core.eig3(A);
+  const {S, V} = core.svd(A);
+  nearVec(E.map((e) => e.lambda), S, 1e-10, 'eigenvalues are singular values here');
+  E.forEach((e, j) => near(Math.abs(core.dot(e.v, core.col(V, j))), 1, 1e-9, `direction ${j}`));
+});
+
+test('eig3 refuses a rotation (complex pair) and a repeated root, rather than drawing a wrong arrow', () => {
+  const c = Math.cos(0.7), s = Math.sin(0.7);
+  assert.deepEqual(core.eig3([[c, -s, 0], [s, c, 0], [0, 0, 1]]), [], 'rotation');
+  assert.deepEqual(core.eig3([[1, 1, 0], [0, 1, 0], [0, 0, 2]]), [], 'shear: 1 repeated');
+  assert.deepEqual(core.eig3([[2, 0, 0], [0, 2, 0], [0, 0, 2]]), [], 'the identity, scaled');
+});
+
+test('alignedEigen is unsigned: -v is the same eigenvector', () => {
+  const E = core.eig3(SHEAR);
+  assert.equal(core.alignedEigen(E, E[1].v), 1);
+  assert.equal(core.alignedEigen(E, core.scale(E[1].v, -3)), 1, 'the antipode, any length');
+  for (const axis of [[1, 0, 0], [0, 1, 0], [0, 0, 1]]) {
+    assert.equal(core.alignedEigen(E, axis), -1, `the ${axis} axis is not an eigenvector here`);
+  }
+  assert.equal(core.alignedEigen(E, [0, 0, 0]), -1, 'nothing points nowhere');
+});
+
+// ─── near-collinear predictors: steps 6 and 7 ───────────────────────────────
+
+test('basisAtAngle: two unit columns in the floor, theta apart', () => {
+  const {x1, x2, X} = core.basisAtAngle(0.3);
+  near(core.norm(x1), 1); near(core.norm(x2), 1);
+  assert.equal(x1[1], 0); assert.equal(x2[1], 0);
+  near(Math.acos(core.dot(x1, x2)), 0.3, 1e-12, 'the angle');
+  assert.deepEqual(core.col(X, 0), x1); assert.deepEqual(core.col(X, 1), x2);
+});
+
+test('as the angle closes, kappa grows like 2/theta and beta swings apart -- the teeter-totter', () => {
+  const y = [0.9, 0.8, 1.3];
+  const wide = core.project(core.basisAtAngle(Math.PI / 2).X, y);
+  near(core.cond(core.basisAtAngle(Math.PI / 2).X), 1, 1e-12, 'orthogonal columns');
+  const theta = 0.5 * Math.PI / 180;
+  const X = core.basisAtAngle(theta).X;
+  const narrow = core.project(X, y);
+  assert.ok(core.cond(X) > 100, `kappa ${core.cond(X)}`);
+  near(core.cond(X), 2 / theta, 2 / theta * 0.01, 'kappa ~ 2/theta');
+  assert.ok(Math.abs(narrow.beta[0]) > 10 && Math.abs(narrow.beta[1]) > 10, `beta ${narrow.beta}`);
+  assert.ok(narrow.beta[0] * narrow.beta[1] < 0, 'opposite signs');
+  // The projection itself did not move: the plane is the floor either way.
+  nearVec(narrow.yhat, wide.yhat, 1e-9, 'y-hat');
+});
+
+test('ulp32 is the float32 spacing: 2^-23 at 1, halved below it, and never zero', () => {
+  near(core.ulp32(1), Math.pow(2, -23), 0);
+  near(core.ulp32(0.7071), Math.pow(2, -24), 0);
+  near(core.ulp32(3), Math.pow(2, -22), 0);
+  near(core.ulp32(-3), Math.pow(2, -22), 0, 'sign-blind');
+  assert.ok(core.ulp32(0) > 0);
+  assert.equal(Math.fround(1 + core.ulp32(1)) - 1, core.ulp32(1), 'one ulp is representable');
+  assert.equal(Math.fround(1 + core.ulp32(1) / 4), 1, 'a quarter of one is not');
+});
+
+test('f32: below one ulp apart, two columns round to the same vector, and only the naive formula says NaN', () => {
+  const y = [0.9, 0.8, 1.3];
+  const collapsed = 1e-6 * Math.PI / 180, apart = 1e-4 * Math.PI / 180;
+  const at = (theta) => {
+    const {x1, x2} = core.basisAtAngle(theta);
+    const r1 = core.f32(x1), r2 = core.f32(x2);
+    const X = r1.map((v, i) => [v, r2[i]]);
+    const Xt = core.transpose(X);
+    return {same: r1.every((v, i) => v === r2[i]), X: X,
+            beta: core.cramer2(core.mul(Xt, X), core.mulVec(Xt, y))};
+  };
+  const a = at(apart);
+  assert.equal(a.same, false, 'a ten-thousandth of a degree is still two columns');
+  assert.ok(isFinite(core.cond(a.X)) && core.cond(a.X) > 1e3, `finite but large: ${core.cond(a.X)}`);
+  assert.ok(a.beta.every(isFinite), 'and a finite answer');
+
+  const c = at(collapsed);
+  assert.equal(c.same, true, 'a millionth of a degree rounds both columns to one float32 vector');
+  assert.equal(core.cond(c.X), Infinity, 'sigma_2 is exactly zero');
+  assert.equal(core.rank(c.X), 1);
+  assert.ok(c.beta.every((b) => Number.isNaN(b)), `0/0: ${c.beta}`);
+  // The library paths guard the zero pivot and return a finite -- and
+  // different -- answer; that is the contrast step 7 prints beside it.
+  assert.ok(core.lstsqQR(c.X, y).every(isFinite), 'QR still answers');
+  // The same angle in double precision is nowhere near collapse.
+  const d = core.basisAtAngle(collapsed);
+  assert.ok(isFinite(core.cond(d.X)), `double: kappa ${core.cond(d.X)}`);
+});
+
+// ─── the tween, for a vector ────────────────────────────────────────────────
+
+test('tweenVec eases every component together and retargets from where it is', () => {
+  const s = core.tweenVec([0, 0, 0], [2, 4, 6], 1000, 400);
+  nearVec(core.tweenVecAt(s, 1000).value, [0, 0, 0]);
+  const mid = core.tweenVecAt(s, 1200);
+  nearVec(mid.value, [1, 2, 3], 1e-12, 'halfway is halfway');
+  assert.equal(mid.done, false);
+  const end = core.tweenVecAt(s, 5000);
+  nearVec(end.value, [2, 4, 6]); assert.equal(end.done, true);
+  const r = core.retargetVec(s, [0, 0, 0], 1200, 400);
+  nearVec(r.from, [1, 2, 3], 1e-12, 'the origin is the interpolated point');
+  nearVec(core.retargetVec(null, [1, 1, 1], 0, 100).from, [1, 1, 1], 0, 'from nothing: a plain start');
+  assert.deepEqual(core.tweenVecAt(core.tweenVec([1, 2], [3, 4], 0, 0), 0), {value: [3, 4], done: true});
+});
+
+// ─── step 5: the unit sphere through a 3 x 3 ────────────────────────────────
+
+test('ellipse() serves a 3 x 3 too: the ellipsoid axes are sigma_i u_i, reached from v_i', () => {
+  const U = core.qr([[1, 0.3, 0.2], [0.2, 1, 0.4], [0.1, 0.5, 1]]).Q;
+  const V = core.qr([[1, -0.2, 0.4], [0.3, 1, 0.1], [-0.2, 0.3, 1]]).Q;
+  const sig = [2.0, 1.2, 0.6];
+  const A = core.mul(U.map((r) => r.map((v, j) => v * sig[j])), core.transpose(V));
+  const E = core.ellipse(A);
+  assert.equal(E.axes.length, 3);
+  nearVec(E.S, sig, 1e-9, 'the singular values are the stretches');
+  E.axes.forEach((ax, j) => {
+    nearVec(core.mulVec(A, ax.v), ax.axis, 1e-9, `A v_${j} = sigma_${j} u_${j}`);
+    near(core.norm(ax.axis), sig[j], 1e-9, `|axis ${j}|`);
+  });
+  // No point of the unit sphere lands outside the longest axis or inside the
+  // shortest: the ellipsoid is exactly the image of the sphere.
+  for (let k = 0; k < 200; k++) {
+    const y = 1 - (2 * k + 1) / 200, r = Math.sqrt(1 - y * y), phi = k * 2.399963;
+    const p = core.mulVec(A, [r * Math.cos(phi), y, r * Math.sin(phi)]);
+    const n = core.norm(p);
+    assert.ok(n <= sig[0] + 1e-9 && n >= sig[2] - 1e-9, `|A p| = ${n}`);
+  }
+  near(core.cond(A), sig[0] / sig[2], 1e-9, 'kappa is the longest over the shortest');
+});

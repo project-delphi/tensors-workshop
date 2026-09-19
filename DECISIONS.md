@@ -301,17 +301,15 @@ visualizer's tensor smaller on every crossing would have walked this camera
 upwards instead, and `tests/linalg_core.test.cjs` pins forty crossings the same
 way.
 
-*The wheel is left alone entirely.* The visualizer dollies on ctrl- or
-command-wheel because it owns most of a phone screen. The same gesture here
-would cost twice what it buys. The step a reader is on **is** the scroll
-position, read by `pickActive` through an IntersectionObserver, so a stage that
-swallowed the wheel would swallow the page's own navigation -- and ctrl-wheel
-is also the browser's own page zoom, which a low-vision reader would lose for
-as long as the pointer sat on a stage that fills half the window, on a site
-that runs axe over every widget. So the dolly is on `+` and `-` with the stage
-focused, the framing is fitted to the content anyway, and
-`check_navigation.cjs` asserts that scrolling over the stage still scrolls the
-page.
+**The stage owns plain wheel zoom.** This reverses the entry above: with the
+zoom buttons in the bar, the wheel over the frame now changes its camera
+distance, and scrolling beside it still navigates the steps. Ctrl/command-wheel remains the browser's
+page zoom. Visible instructions explain that boundary, and buttons and `+`/`-`
+provide alternatives. `check_navigation.cjs` checks both frame zoom and page
+scrolling outside it. Hover pauses a shared scene clock as well as camera
+drift, so entrances and transitions resume from the frame the reader left.
+Each step also exposes presets for its own mathematical experiment; Reset
+example restores its controls, while Home view only restores the camera.
 
 *Both render paths take the camera from `orbitEye`.* The flat SVG fallback
 already derived its screen basis from the GL camera rather than building an
@@ -353,6 +351,113 @@ prerequisites, three different local-run commands, two incompatible
 vocabularies -- which is why the ownership table exists and why the local-run
 command, still written in six places, no longer carries a package list that can
 drift: the list is the generated `notebooks` group.
+
+**The stage's scenes are one file each, under a registry.** `linalg-stage.html`
+shipped with two steps and a card listing the six still to come, and the two
+steps already ran it to 1,774 lines with every scene's GL build, per-frame
+render, SVG fallback, readout and both languages' copy interleaved through one
+script. Six more in the same file would have been a 6,000-line page in which a
+change to the cube meant reading past the portal. So the page keeps only what
+is the page's -- layout, the step machine, the camera, boot -- and each scene
+keeps what is the scene's, in `linalg-scenes/<name>.js`, calling
+`LinalgScenes.register()` with a pose, its EN/ES copy, `build`/`render`,
+`flat` and `readout`. `linalg-kit.js` holds the drawing every scene shares,
+arrows, labels, the bracketed column vectors and the axes, once for three.js
+and once for the SVG, so the two render paths take their furniture from one
+place. Plain scripts, not modules: they work from `file://`, and the page's
+lazy `bootGL()` still decides whether three.js is fetched at all. Each file is
+in `repo.widgets` because a scene missing from `docs/` is not a broken link
+the harvest would see; it is a page that throws at boot.
+
+**The stage is black in every theme, and its labels are Computer Modern.** The
+stage was dark-per-theme -- `#101826`, `#0a0a1a`, navy -- with sans-serif label
+chips, and it looked like page furniture. The look the stage now takes is a
+Manim frame, which is black with thin tick-marked axes and Computer Modern
+labels, and a frame is a picture: it does not change colour with the page around
+it, so one black serves all three themes, and one set of stage colours measured
+against it serves all three. The chip under every label is still opaque, for
+the reason it always was -- axe cannot resolve contrast over a `<canvas>` and
+reports "incomplete" -- but it is the stage's own black, so it is measured and
+not seen. The font is vendored (`interactive/vendor/cmu-serif/`, SIL OFL) for
+the reason three.js is: `check_navigation.cjs` aborts off-origin requests, so a
+CDN font would test as Times on the runner and nothing would say so.
+
+**The SVD portal is step 4, and the eigenvectors are section 08's.** The
+stage shipped with the portal last, as the destination, and the condition
+number, the collinear walk and the float32 collapse all said "singular value"
+and "κ" from step 3 on -- a reader working in order met the vocabulary five
+steps before the picture that defines it. The determinant step, a section 07
+idea, sat between two section 09 steps, and the eigenvector step was badged
+09 though it is section 08's power iteration that teaches it. So the order is
+now the story the page's own lead tells: what least squares draws (07, 07,
+07), what the SVD says (the portal, the ellipsoid, the eigenvectors), then the
+two failures. Steps are linked by scene name (`#portal`) rather than number
+so the next reorder does not break a notebook.
+
+**The pictures are not numbered steps.** The stage shipped saying "Step 5 of
+8" in the bar and "Step 5 · section 09" over every heading, and the bodies
+referred to each other by number ("step 3's collapse"). Eight numbered things
+read as one procedure, and a reader looked for what step 5 did with step 4's
+result; but projection, the pseudoinverse, the determinant, the SVD, the
+condition number, eigenvectors, collinearity and rounding are separate ideas
+that meet in one problem, in three groups. So the kicker names the concept and
+its section, the bar counts "5 of 8" with no noun, the sidebar heads the three
+groups (what least squares draws, what the SVD says, where the arithmetic
+fails) through a `part` a scene registers, and a body names another picture
+by its concept or as the previous one. Section ids, `data-step` and the
+`#step-N` hashes are unchanged: nothing a reader sees says them, and the
+notebooks link by name. The same review found the four later bodies opened on
+the formula (κ = σ₁ ⁄ σ₃, (1 − t) I + t A) before saying what it meant, so
+each now leads with the concrete failure and a number -- an error of 0.001 in
+b along a direction A shrank to 0.01 comes out as 0.1 in x -- and its predict
+question asks for that number, which the readout then computes.
+
+**Step 1 opens with the gap at four times its length.** On the real housing
+rows the residual is 8% of `|ŷ|`. Drawn true, `y` sat on top of `ŷ`, the
+dashed residual was a smudge, the right-angle mark existed only in the flat
+fallback, and the copy called that angle "the definition". The picture could
+not show its own claim. The slider already scaled the residual, so the step
+opens at ×4 with the label saying so and the readout keeping the real `‖r‖`;
+sliding to ×1 shows the fit as it is, and to 0 puts `y` in the plane.
+Nothing about `β` depends on the scale, which is the claim. The plane is
+ruled on an orthonormal basis of itself rather than along the two columns,
+because those columns are 21° apart and the parallelogram they span is a
+needle from every angle.
+
+**The condition-number step is a sphere, not a cube.** The cube's three
+`σᵢuᵢ` arrows were indistinguishable inside a green blob, and a
+parallelepiped has no obvious "proportion". A unit sphere through `A` is an
+ellipsoid whose semi-axes *are* `σᵢuᵢ`, `κ` is visibly its longest axis over
+its shortest, and it is the portal's circle-into-ellipse one dimension up,
+so the reader has just seen it. The ghost sphere stays behind it as what went
+in. Volume × `det A` still holds, and the readout says so.
+
+**Every step asks before it tells.** The notebooks are built on predict-first
+cells; the stage explained first and then said "watch", and its readouts were
+`key = value ← comment` lines that read as a debugger's. Each step now opens
+with one question the reader commits to before touching the slider, the
+stage carries the claim as a line of maths on a title card, and the readout
+answers the question in a sentence with the numbers in it. Sliders take the
+colour of the thing they move, show their value, and brighten it while
+dragging; nothing a slider moves snaps; and a step plays its entrance once --
+`y` rising off the plane, the circle inflating into the ellipse -- so the
+picture arrives as a change, which is what a picture of a change should do.
+
+**Step 8 fails in float32 for real, not on a threshold.** The step's claim is
+that a number format can make two different columns the same, and the first
+draft made the point with a "glitch" once the angle fell under a chosen cutoff.
+That would have broken the page's own rule -- every number computed, nothing
+drawn to a stored answer -- on the one step where the honest version is also
+the better picture. So the columns go through `Math.fround`, which is IEEE
+round-to-nearest, the SVD of the rounded pair genuinely returns σ₂ = 0, `cond`
+genuinely returns `Infinity`, and an unguarded 2 x 2 Cramer solve genuinely
+divides by the zero determinant and hands back `NaN` -- which is what the
+overlay prints. Two things had to be true for that to happen on a slider. The
+basis pair sits at 45° in the floor, because float32 keeps *relative*
+precision: two columns split only in a component near zero would never round
+together. And the scene is drawn in ulp units, one world unit per float32
+spacing, because drawing it at true scale would put the GPU's own float32
+through the same failure and the picture would shake.
 
 ## How a notebook looks
 

@@ -302,9 +302,10 @@ NumPy y el PyTorch que lo hace. Sección 04.
 
 Los mínimos cuadrados son una proyección: desplázate y observa cómo la sombra
 de un vector objetivo aterriza en el plano que generan sus predictores, con el
-residuo encontrándolo en ángulo recto. Después recorre el portal de la SVD,
-donde una circunferencia unidad se vuelve una elipse y A v = σ u deja de ser
-notación. Secciones 07 y 09.
+residuo encontrándolo en ángulo recto. Después el portal de la SVD, donde una
+circunferencia unidad se vuelve una elipse y A v = σ u deja de ser notación, y
+de ahí a los autovectores, dos columnas casi colineales y float32 dividiendo
+exactamente por cero. Ocho imágenes de un mismo problema, secciones 07, 08 y 09.
 
 <a href="../interactive/linalg-stage.html?lang=es" class="resource-button">Probar proyección y SVD</a>
 :::

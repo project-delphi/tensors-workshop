@@ -552,7 +552,7 @@ rmse = np.sqrt(((X @ w - y) ** 2).mean())                 # ≈ 75,980
 
 `X` is 20433 × 7 — very tall, so `np.linalg.inv` cannot even be called. There is **no exact solution**: no straight line passes through 20,433 points. The pseudoinverse gives the best possible answer instead. `lstsq` agrees with it exactly, because it solves the same problem. The largest coefficient belongs to `median_income` (about 47,700 per unit), which is the sensible result — income predicts house prices.
 
-That geometry has its own page: the [projection and SVD stage](interactive/linalg-stage.html?lang=en) takes three of these districts and two predictors, so the column space is a plane you can see, and draws `ŷ` as the closest point on it with the residual meeting it at a right angle. Slide `y` off the plane and watch `β` refuse to move — least squares cannot see the direction it is throwing away.
+That geometry has its own page: the [projection and SVD stage](interactive/linalg-stage.html?lang=en#projection) takes three of these districts and two predictors, so the column space is a plane you can see, and draws `ŷ` as the closest point on it with the residual meeting it at a right angle. Slide `y` off the plane and watch `β` refuse to move — least squares cannot see the direction it is throwing away.
 
 ## Kahoot Quiz 2 — Einsum, Distance & the Pseudoinverse (5 min)
 
@@ -595,7 +595,7 @@ print(x @ A @ x)                    # 5.000000
 print(np.linalg.eig(A)[0].max())    # 5.000000 — identical
 ```
 
-This is how PageRank ranks web pages. It is also why eigenvectors matter far beyond Chapter 2: **repeated application of a matrix converges to its dominant eigenvector.**
+This is how PageRank ranks web pages. It is also why eigenvectors matter far beyond Chapter 2: **repeated application of a matrix converges to its dominant eigenvector.** The [eigenvector step](interactive/linalg-stage.html?lang=en#eigen) of the projection and SVD stage draws the test itself: a field of arrows under `A`, with the ones that kept their direction lit.
 
 **3. Recursion on real data — forecasting airline traffic.** This combines recursion with the pseudoinverse from section 07. We fit a model that predicts each month from the previous 12, then apply it *to its own output* to forecast forward:
 
@@ -655,7 +655,7 @@ Three consequences are worth stating outright, because each one is a mistake tha
 2. **The normal equations square the condition number**, because `κ(XᵀX) = κ(X)²`. QR's error scales with `κ(X)·ε`; the normal equations' with `κ(X)²·ε`. Same data, same objective, error squared.
 3. **Do not compute what you will throw away.** A full SVD is `O(mn·min(m,n))`. If you want 20 components out of 1682, randomized SVD is `O(mnk)` and Lanczos is `O(k·nnz(A))`. That gap is why large-scale recommenders are feasible at all.
 
-The same page carries the other half of this: its [SVD portal](interactive/linalg-stage.html?lang=en#step-8) puts the unit circle and its image side by side, so `A vᵢ = σᵢ uᵢ` is something you scrub to rather than something you are told, and `σ₁/σ₂` is a shape on the screen rather than a ratio.
+The same page carries the other half of this: its [SVD portal](interactive/linalg-stage.html?lang=en#portal) puts the unit circle and its image side by side, so `A vᵢ = σᵢ uᵢ` is something you scrub to rather than something you are told, and `σ₁/σ₂` is a shape on the screen rather than a ratio. The [ellipsoid](interactive/linalg-stage.html?lang=en#ellipsoid) after it is the same picture one dimension up, and the two steps after that, [collinear](interactive/linalg-stage.html?lang=en#collinear) and [float32](interactive/linalg-stage.html?lang=en#precision), are the two consequences above drawn: `β` swinging out and back as two columns close on each other, and the normal equations dividing by exactly zero once a number format can no longer tell them apart.
 
 ```python
 # TODO 1: Fit a degree-10 polynomial to the real airline series two ways.

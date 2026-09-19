@@ -40,6 +40,23 @@ repo:
     - interactive/vendor/three-0.169.0.module.min.js
     - interactive/linalg-stage.html
     - interactive/linalg-core.js
+    # The stage's drawing kit and its eight scenes, one per step, loaded
+    # by plain <script src> lines the link harvest does see -- but listed
+    # here anyway, because a scene that fails to reach docs/ is a step the
+    # page throws on at boot, not a broken link.
+    - interactive/linalg-kit.js
+    - interactive/linalg-scenes/projection.js
+    - interactive/linalg-scenes/wide.js
+    - interactive/linalg-scenes/collapse.js
+    - interactive/linalg-scenes/portal.js
+    - interactive/linalg-scenes/ellipsoid.js
+    - interactive/linalg-scenes/eigen.js
+    - interactive/linalg-scenes/collinear.js
+    - interactive/linalg-scenes/precision.js
+    # The stage's serif, vendored (interactive/vendor/README.md). A
+    # @font-face url is CSS content, which the harvest cannot see.
+    - interactive/vendor/cmu-serif/cmu-serif-500-roman.woff2
+    - interactive/vendor/cmu-serif/cmu-serif-500-italic.woff2
     # The post-processing addons and the CSS2D label renderer, resolved from
     # the bare specifier `three` by an import map in linalg-stage.html. A map
     # is element content rather than an attribute, so the link harvest cannot

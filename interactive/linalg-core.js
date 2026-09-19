@@ -1,6 +1,6 @@
 // The arithmetic under the projection & SVD stage: least squares, the
-// pseudoinverse, the condition number, and the SVD everything else is built
-// on. It is kept apart from the widget's HTML so `npm test` can pin it
+// pseudoinverse, the condition number, the null space, the eigenvectors of a
+// 3 x 3, float32 rounding, and the SVD everything else is built on. It is kept apart from the widget's HTML so `npm test` can pin it
 // without a browser (tests/linalg_core.test.cjs), for the reason
 // tensor-core.js exists: this is the lesson the widget is there to show, and
 // a wrong number here is a wrong claim on screen rather than a broken page.
@@ -552,6 +552,160 @@
     return Object.assign({}, driftPause(s, now), {seeded: false, phase: 0});
   }
 
+  // ─── the null space: step 2 ───────────────────────────────────────────────
+  //
+  // An orthonormal basis of {x : A x = 0}. The wide-matrix step draws the
+  // solution set as a line, x+ plus every multiple of this, and the SVD above
+  // only returns rank-many right singular vectors for a wide A -- the null
+  // direction is exactly the one it has no column for. So it is completed
+  // here, against everything the SVD did return, the same way a zero sigma's
+  // left vector is.
+  function nullspace(A, tol) {
+    const n = cols(A);
+    const {S, V} = svd(A);
+    const cut = tol === undefined ? rankTol(A, S) : tol;
+    const range = [], out = [];
+    for (let j = 0; j < S.length; j++) {
+      (S[j] > cut ? range : out).push(col(V, j));
+    }
+    while (range.length + out.length < n) out.push(completeColumn(range.concat(out), n));
+    return out;
+  }
+
+  // ─── eigenvectors of a 3 x 3: step 5 ──────────────────────────────────────
+  //
+  // The characteristic cubic, solved by the trigonometric formula, and each
+  // eigenvector as the null vector of A - lambda I. Real, distinct eigenvalues
+  // only: the step's whole claim is "these three directions are only scaled",
+  // and a complex pair or a repeated root is a different picture (a rotation,
+  // or a plane of them) that this page does not draw. Both return [] rather
+  // than a wrong arrow, and the widget says so.
+  function eig3(A) {
+    const tr = A[0][0] + A[1][1] + A[2][2];
+    // The sum of the principal 2 x 2 minors.
+    const c2 = (A[0][0] * A[1][1] - A[0][1] * A[1][0]) +
+               (A[0][0] * A[2][2] - A[0][2] * A[2][0]) +
+               (A[1][1] * A[2][2] - A[1][2] * A[2][1]);
+    const d = det3(A);
+    // lambda^3 - tr lambda^2 + c2 lambda - d = 0, depressed by lambda = t + tr/3.
+    const p = c2 - tr * tr / 3;
+    const q = (-2 * tr * tr * tr + 9 * tr * c2 - 27 * d) / 27;
+    const disc = -(4 * p * p * p + 27 * q * q);
+    // The scale the discriminant is measured against, or a matrix with
+    // eigenvalues near 1e-3 reads as "repeated" through an absolute epsilon.
+    const mag = Math.max(1, Math.abs(tr), Math.abs(c2), Math.abs(d));
+    if (!(disc > 1e-9 * Math.pow(mag, 6)) || p >= 0) return [];
+    const r = 2 * Math.sqrt(-p / 3);
+    const phi = Math.acos(Math.max(-1, Math.min(1, (3 * q / (2 * p)) * Math.sqrt(-3 / p))));
+    const lambdas = [0, 1, 2].map((k) => r * Math.cos(phi / 3 - 2 * Math.PI * k / 3) + tr / 3);
+
+    const out = [];
+    for (const lambda of lambdas) {
+      const B = A.map((row, i) => row.map((v, j) => (i === j ? v - lambda : v)));
+      // Any two rows of B span its row space when B has rank 2; their cross
+      // product is normal to both, which is the null vector. Take the longest.
+      let best = null, bestLen = 0;
+      const pairs = [[0, 1], [0, 2], [1, 2]];
+      for (const [i, j] of pairs) {
+        const v = cross3(B[i], B[j]);
+        const len = norm(v);
+        if (len > bestLen) { best = v; bestLen = len; }
+      }
+      if (!best || bestLen < 1e-12 * mag * mag) return [];
+      let v = scale(best, 1 / bestLen);
+      // The same sign rule the SVD keeps, and for the same reason: an
+      // eigenvector is a line, and a slider must not flip the arrow drawn on it.
+      let at = 0;
+      for (let i = 1; i < 3; i++) if (Math.abs(v[i]) > Math.abs(v[at])) at = i;
+      if (v[at] < 0) v = scale(v, -1);
+      out.push({lambda: lambda, v: v});
+    }
+    return out.sort((a, b) => b.lambda - a.lambda);
+  }
+
+  const cross3 = (a, b) => [a[1] * b[2] - a[2] * b[1],
+                            a[2] * b[0] - a[0] * b[2],
+                            a[0] * b[1] - a[1] * b[0]];
+
+  // Which eigen-direction x lies along, or -1. Unlike alignedWithAxes this is
+  // unsigned: -v is the same eigenvector with the same lambda, and the claim
+  // on screen is "M x is a multiple of x", which the antipode satisfies too.
+  function alignedEigen(eig, x, tolCos) {
+    const nx = norm(x);
+    if (nx === 0) return -1;
+    const cut = tolCos === undefined ? 0.9999 : tolCos;
+    for (let j = 0; j < eig.length; j++) {
+      if (Math.abs(dot(eig[j].v, x)) / nx >= cut) return j;
+    }
+    return -1;
+  }
+
+  // ─── near-collinear predictors: steps 6 and 7 ─────────────────────────────
+  //
+  // Two unit columns in the floor plane (y = 0), theta radians apart, the pair
+  // turned phi0 off the x-axis. The turn is not decoration: float32 keeps
+  // *relative* precision, so a difference that lives in a component near zero
+  // is representable however small it is, and two columns split only there
+  // would never round together. At phi0 = pi/4 the difference sits in
+  // components near 0.7, where the spacing is 2^-24, and step 7's collapse is
+  // a fact about the format rather than a threshold in the page.
+  function basisAtAngle(theta, phi0) {
+    const a = phi0 === undefined ? Math.PI / 4 : phi0;
+    const x1 = [Math.cos(a), 0, Math.sin(a)];
+    const x2 = [Math.cos(a + theta), 0, Math.sin(a + theta)];
+    return {x1: x1, x2: x2, X: x1.map((v, i) => [v, x2[i]])};
+  }
+
+  // ─── float32: step 7 ──────────────────────────────────────────────────────
+
+  // Every entry rounded to the nearest single-precision float, which is what a
+  // float32 tensor holds. Math.fround is IEEE round-to-nearest-even, so this
+  // is the real rounding and not a model of it.
+  const f32 = (v) => v.map((x) => Math.fround(x));
+
+  // The spacing between adjacent float32 values at x: 23 fraction bits, so one
+  // unit in the last place is 2^(exponent - 23). At zero, the smallest
+  // subnormal, so a caller that scales by it never divides by nothing.
+  function ulp32(x) {
+    const a = Math.abs(x);
+    if (a === 0 || !isFinite(a)) return Math.pow(2, -149);
+    return Math.pow(2, Math.max(-149, Math.floor(Math.log2(a)) - 23));
+  }
+
+  // Cramer's rule on a 2 x 2, with no guard on the determinant -- and that is
+  // the point. solve() above pivots around a zero and backSolve() writes 0 for
+  // it; both are what a library does. This is what the textbook formula
+  // beta = (X'X)^-1 X'y does when X'X is singular: divides by zero and hands
+  // back NaN. Step 7 prints that answer because it is the true one.
+  function cramer2(G, c) {
+    const det = G[0][0] * G[1][1] - G[0][1] * G[1][0];
+    return [(c[0] * G[1][1] - c[1] * G[0][1]) / det,
+            (G[0][0] * c[1] - G[1][0] * c[0]) / det];
+  }
+
+  // ─── the tween, for a vector ──────────────────────────────────────────────
+  //
+  // The cube's corners and the house's points ease from wherever they are to
+  // A v, and the reason the scalar tween lives here applies to each of them:
+  // a slider dragged mid-flight must retarget from the interpolated position,
+  // never from the last endpoint, or the shape jumps back before it catches
+  // up. One state per vector, the same easing, the same retarget rule.
+  const tweenVec = (from, to, now, ms) =>
+    ({from: from.slice(), to: to.slice(), t0: now, ms: ms});
+
+  function tweenVecAt(s, now) {
+    if (!s || s.ms <= 0) return {value: s ? s.to.slice() : [], done: true};
+    const t = Math.min(1, Math.max(0, (now - s.t0) / s.ms));
+    const k = easeInOutCubic(t);
+    return {value: s.from.map((f, i) => f + (s.to[i] - f) * k), done: t >= 1};
+  }
+
+  function retargetVec(s, to, now, ms) {
+    const here = s ? tweenVecAt(s, now).value : to.slice();
+    const span = ms === undefined ? (s ? s.ms : 0) : ms;
+    return tweenVec(here, to, now, span);
+  }
+
   const LinalgCore = {
     EPS,
     rows, cols, copy, zeros, eye, transpose, dot, norm, add, sub, scale,
@@ -560,7 +714,9 @@
     qr, backSolve, solve, lstsqQR, lstsqNormal, project, ridge,
     digitsLost, perturbationBound,
     ellipse, alignedWith, alignedWithAxes,
+    nullspace, eig3, alignedEigen, basisAtAngle, f32, ulp32, cramer2,
     easeInOutCubic, tweenStart, tweenAt, retarget,
+    tweenVec, tweenVecAt, retargetVec,
     pickActive,
     CAMERA, UP, orbitView, orbitClamp, orbitBy, orbitDolly,
     orbitDir, orbitEye, orbitFrom,

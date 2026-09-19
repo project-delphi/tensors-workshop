@@ -21,6 +21,21 @@
 </script>
 
 <style>
+  /* Computer Modern, vendored (vendor/README.md), for the stage's labels
+     only: the look this stage takes is a Manim frame, and its type is most
+     of the look. Never from a CDN -- the browser check aborts every
+     off-origin request, so a CDN font would silently test as Times. */
+  @font-face {
+    font-family: "CMU Serif";
+    src: url("vendor/cmu-serif/cmu-serif-500-roman.woff2") format("woff2");
+    font-weight: 500; font-style: normal; font-display: swap;
+  }
+  @font-face {
+    font-family: "CMU Serif";
+    src: url("vendor/cmu-serif/cmu-serif-500-italic.woff2") format("woff2");
+    font-weight: 500; font-style: italic; font-display: swap;
+  }
+
   :root {
     --bg: #f7f5ef;
     --ink: #1c1917;
@@ -40,15 +55,19 @@
        it) to a shade that clears 5.1 there and 5.8 on the page. */
     --accent: #0e6b63;
     --on-accent: #ffffff;
+    --fault: #b3261e;
 
-    /* The stage is dark in every theme, because glow needs a dark ground and
-       a rendered scene is a picture rather than page furniture. What changes
-       per theme is *which* dark belongs beside the page around it. */
-    --stage: #101826;
-    --stage-chip: #1b2740;
+    /* The stage is black in every theme. It was dark-per-theme; it is black
+       now because the look it takes is a Manim frame, and a frame is a picture
+       rather than page furniture -- it does not change colour with the page
+       around it. The chip under a label is the same black: opaque, so axe has
+       two colours to measure, and invisible, which is the chipless look. */
+    --stage: #000000;
+    --stage-chip: #000000;
 
     --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
     --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+    --stage-serif: "CMU Serif", "Latin Modern Roman", "Times New Roman", Times, serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="navy"]) {
@@ -60,8 +79,7 @@
       --line: #44403c;
       --accent: #2dd4bf;
       --on-accent: #1c1917;
-      --stage: #0a0a1a;
-      --stage-chip: #171732;
+      --fault: #ff8a80;
     }
   }
   /* The homepage hero's navy band, so an embed reads as part of it. */
@@ -74,25 +92,23 @@
     --line: #2a4d68;
     --accent: #5eead4;
     --on-accent: #06202f;
-    --stage: #0b2236;
-    --stage-chip: #16374f;
+    --fault: #ff8a80;
   }
 
-  /* Ink *on the stage*. Defined once, outside the theme blocks, and that is
-     the point: because the stage is dark in all three themes, one set serves
-     all three. The surface to measure against is the label chip rather than
-     the stage, because the chip is the lighter of the two and is what text
-     actually sits on: the weakest pairing in the set is --v-res on the navy
-     chip at 5.2:1, and the rest run from 5.4 to 17. Every one clears 4.5:1 in
-     every theme, so a contrast finding here is real and never something to
-     allowlist. */
+  /* Ink *on the stage*. One set for all three themes, because the stage is
+     black in all three. Measured against the chip, which is the stage's own
+     black: the weakest pairing is --stage-mute at 6.0:1, the rest run from
+     10 to 18, so a contrast finding here is real and never something to
+     allowlist. The hues are Manim's, one role each: yellow is the vector the
+     reader holds, purple is where the matrix sends it. */
   :root {
-    --stage-ink: #e7f0f8;
-    --stage-mute: #a3bdd4;
-    --v-y: #e69f00;      /* y, the vector off the plane */
-    --v-yhat: #56b4e9;   /* y-hat, its shadow on the plane */
-    --v-res: #dd8fc0;    /* the residual */
-    --v-basis: #22c795;  /* the columns of X, and the singular vectors */
+    --stage-ink: #e8e8e8;
+    --stage-mute: #8a8a8a;
+    --v-y: #ffd84d;      /* the input: y, x, the reader's vector */
+    --v-out: #c39bd3;    /* the output: A x, M x */
+    --v-yhat: #58c4dd;   /* the projection, the left singular vectors */
+    --v-res: #fc6c85;    /* the residual, and anything that has gone wrong */
+    --v-basis: #83c167;  /* the columns of X, the right singular vectors, eigenvectors */
   }
 
   * { box-sizing: border-box; }
@@ -108,7 +124,7 @@
      which is the quietest way a two-pane scrolling layout fails. */
   .two-pane {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
     gap: 1.75rem;
     align-items: start;
     margin-top: 1.5rem;
@@ -124,7 +140,7 @@
 
   #stage {
     position: relative;
-    height: min(76vh, 44rem);
+    height: min(68vh, 44rem);
     background: var(--stage);
     border: 1px solid var(--line);
     border-radius: 10px;
@@ -142,13 +158,27 @@
   /* An opaque chip, not a translucent one: axe cannot resolve contrast against
      a see-through background over a <canvas> and reports "incomplete", which
      is neither a pass nor a check. Opaque gives it two colours to compare --
-     and keeps the label readable when a bright arrow passes under it. */
+     and on a black stage the black chip is not there to see. */
   .lab {
     position: absolute; transform: translate(-50%, -50%);
-    font: 700 13px/1 var(--sans); letter-spacing: 0.03em;
+    font: italic 500 17px/1 var(--stage-serif); letter-spacing: 0.01em;
     color: var(--stage-ink); background: var(--stage-chip);
-    padding: 2px 6px; border-radius: 4px; white-space: nowrap;
+    padding: 2px 5px; border-radius: 3px; white-space: nowrap;
   }
+  /* A column vector between brackets, the way the frame this look comes from
+     writes "Input" and "Output" beside its arrows. The brackets are borders
+     with corner ticks rather than glyphs, which no two fonts draw at one
+     height. Numbers upright; the caption upright and small. */
+  .mat-lab { display: inline-flex; flex-direction: column; align-items: center; gap: 3px; padding: 3px 6px; }
+  .mat-cap { font-style: normal; font-size: 14px; }
+  .mat-box { position: relative; display: inline-block; padding: 3px 9px; }
+  .mat-box::before, .mat-box::after {
+    content: ""; position: absolute; top: 0; bottom: 0; width: 5px;
+    border: 1.5px solid currentColor;
+  }
+  .mat-box::before { left: 0; border-right: 0; }
+  .mat-box::after { right: 0; border-left: 0; }
+  .mat-col { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; font-style: normal; font-size: 15px; line-height: 1.15; }
   /* The two viewports the SVD portal renders into, named. The flat path draws
      the same furniture inside its SVG. */
   #panes { position: absolute; inset: 0; pointer-events: none; }
@@ -158,31 +188,83 @@
   }
   .pane-cap {
     position: absolute; bottom: 5%; transform: translateX(-50%);
-    font: 600 0.78rem/1 var(--sans); color: var(--stage-mute);
-    letter-spacing: 0.04em;
+    font: italic 500 0.95rem/1 var(--stage-serif); color: var(--stage-mute);
   }
   #cap-in { left: 25%; }
   #cap-out { left: 75%; }
 
+  /* The title card: the step's claim, as a line of maths in the frame's own
+     serif, top left. The note is the running commentary, top right, small. */
+  #stagetitle {
+    position: absolute; left: 1rem; top: 0.75rem; margin: 0; max-width: 58%;
+    font: italic 500 1.35rem/1.25 var(--stage-serif); color: var(--stage-ink);
+    letter-spacing: 0.01em; pointer-events: none; overflow-wrap: break-word;
+  }
   #stagenote {
-    position: absolute; left: 0.8rem; right: 0.8rem; top: 0.7rem; margin: 0;
-    font: 500 0.82rem/1.35 var(--sans); color: var(--stage-mute);
+    position: absolute; right: 0.9rem; top: 0.85rem; margin: 0; max-width: 38%;
+    text-align: right;
+    font: 500 0.8rem/1.35 var(--sans); color: var(--stage-mute);
     pointer-events: none; overflow-wrap: break-word;
   }
+  @media (prefers-reduced-motion: no-preference) {
+    #stagetitle { animation: title-in 500ms ease-out; }
+    @keyframes title-in { from { opacity: 0; transform: translateY(-4px); } }
+  }
+
+  /* Step 7's failure, on the stage. It is written by the arithmetic -- the
+     values in it are the ones the readout computed -- and shown only while
+     data-f32 says the two columns rounded together. */
+  #fault {
+    position: absolute; left: 50%; bottom: 25%; transform: translateX(-50%);
+    margin: 0; padding: 0.55rem 0.9rem; border: 1px solid var(--v-res);
+    border-radius: 6px; background: var(--stage-chip); color: var(--v-res);
+    font: 600 0.9rem/1.5 var(--mono); white-space: pre; pointer-events: none;
+    max-width: 92%; overflow: hidden; text-overflow: ellipsis;
+  }
+  #fault[hidden] { display: none; }
+  @media (prefers-reduced-motion: no-preference) {
+    #fault { animation: fault-in 240ms ease-out; }
+    @keyframes fault-in { from { opacity: 0; transform: translate(-50%, 6px); } }
+  }
+
+  #comparison {
+    position: absolute; left: 1rem; right: 1rem; bottom: 0.8rem;
+    padding: 0.6rem 0.8rem; background: var(--stage-chip);
+    border: 1px solid var(--stage-mute); border-radius: 6px;
+    color: var(--stage-ink); font: 500 0.85rem/1.5 var(--sans);
+    pointer-events: none;
+  }
+  #comparison[hidden] { display: none; }
+  .coefficient { display: grid; grid-template-columns: 3rem 1fr 5rem; gap: 0.5rem; align-items: center; }
+  .coefficient-track { position: relative; height: 0.65rem; background: #202020; }
+  .coefficient-track::after { content: ""; position: absolute; left: 50%; height: 100%; border-left: 1px solid var(--stage-ink); }
+  .coefficient-bar { position: absolute; height: 100%; }
+  #gesture-hint { max-width: 48rem; }
+  html.embed #gesture-hint { display: none; }
 
   .stagebar {
     display: flex; align-items: center; gap: 0.6rem;
     margin-top: 0.6rem; flex-wrap: wrap;
   }
-  .stagebar button {
+  .stagebar button, .ctl button {
     font: 600 0.85rem/1 var(--sans); color: var(--ink);
     background: var(--panel); border: 1px solid var(--line);
     border-radius: 7px; padding: 0.45rem 0.8rem; cursor: pointer;
   }
-  .stagebar button:hover:not(:disabled) { border-color: var(--accent); }
+  .stagebar button:hover:not(:disabled), .ctl button:hover { border-color: var(--accent); }
   .stagebar button:disabled { opacity: 0.45; cursor: default; }
-  .stagebar button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .stagebar button:focus-visible, .ctl button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   #stepnum { font: 600 0.85rem/1 var(--sans); color: var(--ink-mute); }
+  /* Eight marks, one per step: the structure of the page at a glance, and a
+     way to jump. The live one is filled; the rest are rings. */
+  #dots { display: inline-flex; gap: 0.35rem; align-items: center; }
+  .stagebar .dot {
+    width: 0.8rem; height: 0.8rem; padding: 0; border-radius: 50%;
+    border: 2px solid var(--ink-mute); background: transparent; cursor: pointer;
+  }
+  .stagebar .dot:hover { border-color: var(--accent); }
+  .stagebar .dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
+  .stagebar .dot:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .grow { flex: 1 1 auto; }
   .toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--ink-mute); }
 
@@ -191,36 +273,64 @@
     display: flex; flex-direction: column; justify-content: center;
     padding: 1rem 0;
   }
+  .step .anchor { display: block; height: 0; }
   .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
+  /* The heading of the group a scene opens (what least squares draws, what
+     the SVD says, where the arithmetic fails): the page's structure is three
+     ideas meeting, not eight numbered steps. */
+  .step .part { font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem; }
   .step .kicker { font: 700 0.7rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
-  .step p { max-width: 38rem; overflow-wrap: break-word; }
+  .step p { max-width: 36rem; overflow-wrap: break-word; }
+  /* The concept the step teaches, stated the way a textbook states it and
+     cited to the chapter the pre-work names, before the picture is
+     described. The label is written by fillText() in the page's language. */
+  .step .concept {
+    margin: 0.4rem 0 0.9rem; padding: 0.6rem 0.85rem;
+    background: var(--sunk); border: 1px solid var(--line); border-radius: 8px;
+    font-size: 0.95rem; line-height: 1.55;
+  }
+  .step .concept::before {
+    content: attr(data-label); display: block;
+    font: 700 0.65rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--ink-mute); margin-bottom: 0.35rem;
+  }
+  .step .concept .cite { color: var(--ink-mute); font-size: 0.85em; white-space: nowrap; }
+  /* The question the reader answers before touching the slider; it sits
+     directly above the control it asks about. */
+  .step .predict {
+    font-style: italic; font-weight: 600; color: var(--accent);
+    border-left: 3px solid var(--accent); padding-left: 0.7rem; margin: 0.6rem 0 0.8rem;
+  }
+  .ctl label .live {
+    float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute);
+  }
   .step.is-active h2 { color: var(--accent); }
 
   .ctl { margin: 1rem 0 0.4rem; max-width: 34rem; }
+  .ctl.presets { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .ctl + .ctl { margin-top: 0.5rem; }
   .ctl label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 0.3rem; }
   .ctl input[type=range] { width: 100%; accent-color: var(--accent); }
+  /* Three sliders in a row, for the three singular values. */
+  .ctl.row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.6rem; }
+  .ctl.row label { font-family: var(--mono); font-weight: 500; }
   .readout {
     margin: 0.7rem 0 0; padding: 0.7rem 0.85rem;
     background: var(--sunk); border: 1px solid var(--line); border-radius: 8px;
-    font: 500 0.85rem/1.7 var(--mono); color: var(--ink);
-    /* The readout is written as lines. Without this it renders as one long
-       line and the three facts run together. */
+    font: 500 0.9rem/1.6 var(--sans); color: var(--ink);
     white-space: pre-wrap;
     overflow-x: auto;
   }
-  .readout b { color: var(--accent); }
+  /* A sentence with numbers in it: the numbers are set in the mono, and the
+     one the slider changed is the accent. */
+  .readout code { font: 500 0.85em/1 var(--mono); }
+  .readout b { color: var(--accent); font-family: var(--mono); font-size: 0.85em; }
+  .readout i { color: var(--fault); font-style: normal; font-weight: 600; }
 
-  /* Matrices as inline SVG rather than a table: a 3x2 with brackets scales to
-     a 330px card instead of forcing the page wider, the numbers stay real
-     text so axe measures their contrast honestly, and a <title> carries the
-     matrix to a screen reader in whichever language the page is in. */
-  .mat { display: block; width: 100%; max-width: 13rem; margin: 0.8rem 0; }
+  /* Matrices as inline SVG rather than a table: see LinalgKit.drawMatrixSvg. */
+  .mat { display: block; width: 100%; max-width: 15rem; margin: 0.8rem 0; }
   .mat text { font: 500 13px var(--mono); fill: var(--ink); }
   .mat path { stroke: var(--ink-mute); stroke-width: 1.4; fill: none; }
-
-  .roadmap { border-left: 3px solid var(--line); padding-left: 1rem; margin: 1rem 0; }
-  .roadmap ol { margin: 0.4rem 0 0; padding-left: 1.1rem; color: var(--ink-mute); font-size: 0.92rem; }
-  .roadmap li { margin-bottom: 0.3rem; }
 
   aside {
     margin-top: 2rem; padding: 1rem 1.15rem;
@@ -262,50 +372,158 @@
 <div class="wrap">
 
   <header>
-    <p class="eyebrow" id="eyebrow">Sections 07 and 09 · projection and the SVD</p>
+    <p class="eyebrow" id="eyebrow">Sections 07, 08 and 09 · projection and the SVD</p>
     <h1 id="title">Projection and the SVD</h1>
     <p id="lead"></p>
   </header>
 
   <div class="two-pane">
 
+    <!-- One section per scene, in step order. Each carries its own controls;
+         the copy is written into it by fillText() from the scene's own
+         EN/ES tables (linalg-scenes/*.js). -->
     <div class="steps" id="steps">
 
       <section class="step" id="step-1" aria-labelledby="h-1">
+        <span class="anchor" id="projection"></span>
         <p class="kicker" id="k-1"></p>
         <h2 id="h-1"></h2>
+        <p class="concept" id="con-1"></p>
         <div id="body-1"></div>
-
         <svg class="mat" id="mat-1" viewBox="0 0 200 84" role="img" aria-labelledby="mat-1-t">
           <title id="mat-1-t"></title>
         </svg>
-
+        <p class="predict" id="pr-1"></p>
         <div class="ctl">
           <label for="tilt" id="tilt-label"></label>
-          <input type="range" id="tilt" min="0" max="600" value="100" step="5">
+          <input type="range" autocomplete="off" id="tilt" min="0" max="600" value="400" step="5">
         </div>
         <p class="readout" id="read-1"></p>
       </section>
 
-      <section class="step" id="step-road" aria-labelledby="h-road">
-        <p class="kicker" id="k-road"></p>
-        <h2 id="h-road"></h2>
-        <div id="body-road"></div>
-        <div class="roadmap">
-          <p id="road-lead"></p>
-          <ol id="road-list"></ol>
+      <section class="step" id="step-2" aria-labelledby="h-2">
+        <span class="anchor" id="wide"></span>
+        <p class="kicker" id="k-2"></p>
+        <h2 id="h-2"></h2>
+        <p class="concept" id="con-2"></p>
+        <div id="body-2"></div>
+        <svg class="mat" id="mat-2" viewBox="0 0 200 84" role="img" aria-labelledby="mat-2-t">
+          <title id="mat-2-t"></title>
+        </svg>
+        <p class="predict" id="pr-2"></p>
+        <div class="ctl">
+          <label for="sphere" id="sphere-label"></label>
+          <input type="range" autocomplete="off" id="sphere" min="0" max="200" value="60" step="1">
         </div>
+        <div class="ctl">
+          <label for="lam" id="lam-label"></label>
+          <input type="range" autocomplete="off" id="lam" min="0" max="100" value="0" step="any">
+        </div>
+        <p class="readout" id="read-2"></p>
+      </section>
+
+      <section class="step" id="step-3" aria-labelledby="h-3">
+        <span class="anchor" id="collapse"></span>
+        <p class="kicker" id="k-3"></p>
+        <h2 id="h-3"></h2>
+        <p class="concept" id="con-3"></p>
+        <div id="body-3"></div>
+        <p class="predict" id="pr-3"></p>
+        <div class="ctl">
+          <label for="flatten" id="flatten-label"></label>
+          <input type="range" autocomplete="off" id="flatten" min="0" max="100" value="0" step="1">
+        </div>
+        <p class="readout" id="read-3"></p>
+      </section>
+
+      <section class="step" id="step-4" aria-labelledby="h-4">
+        <span class="anchor" id="portal"></span>
+        <p class="kicker" id="k-4"></p>
+        <h2 id="h-4"></h2>
+        <p class="concept" id="con-4"></p>
+        <div id="body-4"></div>
+        <svg class="mat" id="mat-4" viewBox="0 0 200 84" role="img" aria-labelledby="mat-4-t">
+          <title id="mat-4-t"></title>
+        </svg>
+        <p class="predict" id="pr-4"></p>
+        <div class="ctl">
+          <label for="scrub" id="scrub-label"></label>
+          <input type="range" autocomplete="off" id="scrub" min="0" max="360" value="20" step="any">
+        </div>
+        <p class="readout" id="read-4"></p>
+      </section>
+
+      <section class="step" id="step-5" aria-labelledby="h-5">
+        <span class="anchor" id="ellipsoid"></span>
+        <p class="kicker" id="k-5"></p>
+        <h2 id="h-5"></h2>
+        <p class="concept" id="con-5"></p>
+        <div id="body-5"></div>
+        <p class="predict" id="pr-5"></p>
+        <div class="ctl row">
+          <div><label for="s1" id="s1-label"></label><input type="range" autocomplete="off" id="s1" min="1" max="300" value="200" step="1"></div>
+          <div><label for="s2" id="s2-label"></label><input type="range" autocomplete="off" id="s2" min="1" max="300" value="120" step="1"></div>
+          <div><label for="s3" id="s3-label"></label><input type="range" autocomplete="off" id="s3" min="1" max="300" value="60" step="1"></div>
+        </div>
+        <p class="readout" id="read-5"></p>
+      </section>
+
+      <section class="step" id="step-6" aria-labelledby="h-6">
+        <span class="anchor" id="eigen"></span>
+        <p class="kicker" id="k-6"></p>
+        <h2 id="h-6"></h2>
+        <p class="concept" id="con-6"></p>
+        <div id="body-6"></div>
+        <svg class="mat" id="mat-6" viewBox="0 0 200 84" role="img" aria-labelledby="mat-6-t">
+          <title id="mat-6-t"></title>
+        </svg>
+        <p class="predict" id="pr-6"></p>
+        <div class="ctl">
+          <label for="blend" id="blend-label"></label>
+          <input type="range" autocomplete="off" id="blend" min="0" max="100" value="100" step="1">
+        </div>
+        <div class="ctl">
+          <label for="taz" id="taz-label"></label>
+          <input type="range" autocomplete="off" id="taz" min="0" max="360" value="40" step="any">
+        </div>
+        <div class="ctl">
+          <label for="tel" id="tel-label"></label>
+          <input type="range" autocomplete="off" id="tel" min="-90" max="90" value="20" step="any">
+        </div>
+        <p class="readout" id="read-6"></p>
+      </section>
+
+      <section class="step" id="step-7" aria-labelledby="h-7">
+        <span class="anchor" id="collinear"></span>
+        <p class="kicker" id="k-7"></p>
+        <h2 id="h-7"></h2>
+        <p class="concept" id="con-7"></p>
+        <div id="body-7"></div>
+        <p class="predict" id="pr-7"></p>
+        <div class="ctl">
+          <label for="angle" id="angle-label"></label>
+          <input type="range" autocomplete="off" id="angle" min="0" max="100" value="0" step="1">
+        </div>
+        <div class="ctl">
+          <button type="button" id="noise" aria-pressed="false"></button>
+          <button type="button" id="orthogonal"></button>
+          <button type="button" id="parallel"></button>
+        </div>
+        <p class="readout" id="read-7"></p>
       </section>
 
       <section class="step" id="step-8" aria-labelledby="h-8">
+        <span class="anchor" id="precision"></span>
         <p class="kicker" id="k-8"></p>
         <h2 id="h-8"></h2>
+        <p class="concept" id="con-8"></p>
         <div id="body-8"></div>
-
+        <p class="predict" id="pr-8"></p>
         <div class="ctl">
-          <label for="scrub" id="scrub-label"></label>
-          <input type="range" id="scrub" min="0" max="360" value="20" step="1">
+          <label for="angle7" id="angle7-label"></label>
+          <input type="range" autocomplete="off" id="angle7" min="0" max="100" value="0" step="1">
         </div>
+        <div class="ctl"><button type="button" id="distinct"></button> <button type="button" id="merged"></button></div>
         <p class="readout" id="read-8"></p>
       </section>
 
@@ -326,16 +544,26 @@
           <span class="pane-cap" id="cap-in"></span>
           <span class="pane-cap" id="cap-out"></span>
         </div>
+        <p id="stagetitle"></p>
         <p id="stagenote"></p>
+        <p id="fault" hidden></p>
+        <div id="comparison" hidden></div>
       </div>
 
       <div class="stagebar">
         <button type="button" id="prev"></button>
+        <span id="dots" role="group" aria-labelledby="stepnum"></span>
         <span id="stepnum"></span>
         <button type="button" id="next"></button>
         <span class="grow"></span>
+        <button type="button" id="zoom-out"></button>
+        <button type="button" id="zoom-in"></button>
+        <button type="button" id="home"></button>
+        <button type="button" id="reset"></button>
+        <button type="button" id="motion" aria-pressed="false"></button>
         <label class="toggle"><input type="checkbox" id="glow" checked> <span id="glow-label"></span></label>
       </div>
+      <p class="fallback" id="gesture-hint"></p>
       <p id="embedcap"></p>
       <p class="sr" id="status" aria-live="polite"></p>
     </div>
@@ -351,157 +579,80 @@
 
 </div>
 
-<!-- The arithmetic: least squares, the SVD, the condition number, the tween
-     and the step machine. Loaded before the page script, as a plain script,
-     so it works from file:// and Node can pin it under `npm test`. -->
+<!-- The arithmetic, the drawing kit, then one file per scene in step order.
+     All plain scripts, so the page works from file:// and Node can pin the
+     core under `npm test`. The vendored three.js and its addons
+     (vendor/linalg-boot.js) are injected by bootGL() below rather than
+     written here, so embed mode -- the hero -- never fetches them. -->
 <script src="linalg-core.js"></script>
-<!-- The vendored three.js and its addons (vendor/linalg-boot.js) are injected
-     by bootGL() below rather than written here, so embed mode -- the hero --
-     never fetches them. The import map in <head> is inert until then. -->
+<script src="linalg-kit.js"></script>
+<script src="linalg-scenes/projection.js"></script>
+<script src="linalg-scenes/wide.js"></script>
+<script src="linalg-scenes/collapse.js"></script>
+<script src="linalg-scenes/portal.js"></script>
+<script src="linalg-scenes/ellipsoid.js"></script>
+<script src="linalg-scenes/eigen.js"></script>
+<script src="linalg-scenes/collinear.js"></script>
+<script src="linalg-scenes/precision.js"></script>
 <script>
 (function () {
   "use strict";
 
   const LC = window.LinalgCore;
-
-  // ─── the data is the workshop's data ──────────────────────────────────────
-  //
-  // The first three California Housing districts, two predictors, exactly the
-  // problem section 07 fits at 20433 x 7. Each column is scaled to unit length
-  // so the picture is drawable; that changes the numbers beta is expressed in
-  // and nothing about the geometry, which is the whole subject here.
-  const X = [[0.6026, 0.5902], [0.6008, 0.3023], [0.5253, 0.7485]];
-  const Y = [4.526, 3.585, 3.521];
-  const FIT = LC.project(X, Y);            // beta, yhat, residual -- computed, never typed
-
-  // Step 8's matrix. Its singular values are 3.32 and 0.76, far enough apart
-  // that the image of the circle is unmistakably an ellipse.
-  const A = [[3, 1.2], [0.4, 1]];
-  const ELL = LC.ellipse(A);
+  const K = window.LinalgKit;
 
   // ─── copy ─────────────────────────────────────────────────────────────────
+  //
+  // The page's own. Each step's is in its scene file, beside the picture it
+  // describes, in both languages.
 
   const EN = {
     title: "Projection and the SVD",
-    eyebrow: "Sections 07 and 09 · projection and the SVD",
-    lead: "Least squares is a projection, and the SVD says which directions a matrix stretches and by how much. Both are geometric facts that the handbook can only state. Scroll, and watch them happen.",
+    eyebrow: "Sections 07, 08 and 09 · projection and the SVD",
+    lead: "This page is eight pictures of one problem: solving A x = b, or fitting y ≈ X β, when the matrix is not a well-behaved square. They are separate ideas that meet in that problem, in three groups. First, what least squares draws: a tall matrix cannot reach every target, a wide one reaches it in too many ways, and a square one can flatten a dimension on the way, which is where projection, the pseudoinverse and the determinant come from. Then, what the SVD says: what any matrix does to a circle and a sphere, and the directions a square matrix leaves alone. Last, where the arithmetic fails: predictors that nearly agree, and a number format that cannot tell them apart. Each picture says what is on the stage, then asks you to predict before you touch a control; the box under the controls is the answer, with the numbers in it.",
     prev: "◀ Back", next: "Next ▶",
-    stepOf: (i, n) => `Step ${i} of ${n}`,
-    glow: "Glow",
+    stepOf: (i, n) => `${i} of ${n}`,
+    stepName: (i, n, h) => `${i} of ${n}: ${h}`,
+    reset: "Reset example", pause: "Pause motion", resume: "Resume motion",
+    hint: "Drag to rotate · scroll to zoom · + / − keys · hover to pause. Scroll beside the frame to move between pictures.",
+    home: "Home view", glow: "Glow",
+    zoomIn: "Zoom in", zoomOut: "Zoom out",
     aboutH: "About this page",
-    about1: "Every number on this page is computed in the browser from the matrices shown — the projection, the singular values, the condition number. Nothing is drawn to a stored answer.",
-    about2: "It accompanies section 07 (inverses and the pseudoinverse) and section 09 (matrix factorizations).",
+    about1: "Every number on this page is computed in the browser from the matrices shown — the projection, the singular values, the condition number, the eigenvectors, the float32 rounding. Nothing is drawn to a stored answer, and nothing lights up because it was listed.",
+    about2: "It accompanies section 07 (inverses and the pseudoinverse), section 08 (eigenvectors, by power iteration) and section 09 (matrix factorizations). Each picture has its own address — #projection, #wide, #collapse, #portal, #ellipsoid, #eigen, #collinear, #precision — and the notebooks link to the one they are teaching. The concept line under each heading states the definition the way chapter 2 of Goodfellow, Bengio and Courville's <a href='https://www.deeplearningbook.org/contents/linear_algebra.html'>Deep Learning</a> does, with its section number (§4.1 and §4.2 for the two failure pictures), so the stage and the workshop's pre-work can be read together.",
+    concept: "Concept",
     glNoScript: "Three-dimensional view unavailable, so the stage is drawing flat diagrams instead. Every number and every relationship is the same.",
     glNoWebgl: "This browser reports no WebGL, so the stage is drawing flat diagrams instead. Every number and every relationship is the same.",
     glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
     embedCap: "Right singular vectors in, left singular vectors out.",
     embedOpen: "Open the full page →",
-
-    k1: "Step 1 · section 07",
-    h1: "A tall matrix cannot reach every target",
-    b1: "<p>Three housing districts, two predictors. <b>X</b> is 3 × 2 — three equations, two unknowns — so the vectors it can produce fill a <b>plane</b> in three-dimensional space: its column space. The target <b>y</b> is a point in that space, and it is almost certainly not on the plane. There is no exact solution.</p><p>Least squares does not give up. It returns the point on the plane <b>closest</b> to y — the perpendicular projection ŷ — and the gap between them is the residual <b>r</b>. That right angle is not decoration: it <i>is</i> the definition, and it is what Xᵀr = 0 says in symbols.</p>",
-    mat1Title: "X, a 3 by 2 matrix of two predictors for three districts",
-    tiltLabel: "Slide y off the plane, and back onto it. Watch β not move.",
-    read1: (b, rn, k, real, xtr) =>
-      `β  = [${b[0].toFixed(3)}, ${b[1].toFixed(3)}]   ← unmoved by the slider\n` +
-      `‖r‖ = <b>${rn.toFixed(4)}</b>` +
-      (Math.abs(k - 1) < 1e-9 ? "   ← the real fit" : `   (the real fit: ${real.toFixed(4)})`) +
-      `\nXᵀr = [${xtr[0].toFixed(3)}, ${xtr[1].toFixed(3)}]  ← the right angle`,
-    note1: (rn) => rn < 1e-6
-      ? "y now lies in the plane. The system has an exact solution."
-      : "y is off the plane. ŷ is the closest point on it.",
-    aria1: "A glass plane through the origin, with the vector y above it, its projection y-hat on it, and a dashed residual joining them at a right angle.",
-
-    kRoad: "What comes next",
-    hRoad: "Six more steps, and then the portal",
-    bRoad: "<p>The projection above and the portal below are the two ends of one idea: a matrix maps one space into another, and the SVD is the complete account of how. Between them sit the steps that explain why the arithmetic goes wrong in practice.</p>",
-    roadLead: "Still to be built:",
-    road: [
-      "Wide matrices: too many answers, and how ridge picks one.",
-      "The condition number, as a cube stretched by three singular values.",
-      "A determinant reaching zero, and a dimension lost for good.",
-      "Near-collinear predictors, and coefficients that swing wildly.",
-      "What a condition number of 10ᵏ costs you in digits.",
-      "Eigenvectors: the directions a matrix only scales."
-    ],
-
-    k8: "Step 8 · section 09",
-    h8: "The SVD portal: A v = σ u",
-    b8: "<p>On the left, the input space: the unit circle, and the two <b>right singular vectors</b> v₁ and v₂. On the right, the output: A turns that circle into an <b>ellipse</b>, whose semi-axes point along the <b>left singular vectors</b> u₁ and u₂ and have lengths σ₁ and σ₂.</p><p>Scrub x around the circle and watch A x travel the ellipse. It moves fastest where the ellipse is longest. When x reaches v₁ or v₂, A x lands exactly on σ u — that single equation, A vᵢ = σᵢ uᵢ, is the entire SVD.</p><p>The ratio σ₁ ⁄ σ₂ is the <b>condition number</b>: how much more this matrix stretches its best direction than its worst.</p>",
-    scrubLabel: "Scrub x around the unit circle",
-    read8: (th, ax, hit, s) =>
-      `x   = [${Math.cos(th).toFixed(3)}, ${Math.sin(th).toFixed(3)}]\nA x = [${ax[0].toFixed(3)}, ${ax[1].toFixed(3)}]\n‖A x‖ = <b>${LC.norm(ax).toFixed(4)}</b>` +
-      (hit >= 0 ? `   ← aligned: this is σ${hit + 1} = ${s[hit].toFixed(4)}` : "") +
-      `\nσ = [${s[0].toFixed(3)}, ${s[1].toFixed(3)}]   κ = ${(s[0] / s[1]).toFixed(3)}`,
-    note8: (hit) => hit >= 0
-      ? `x is on v${hit + 1}, so A x is exactly σ${hit + 1} u${hit + 1}.`
-      : "Input space on the left, output space on the right.",
-    aria8: "Two panes. On the left a unit circle with two singular vectors; on the right the ellipse it maps to, with its semi-axes.",
     // Appended to whichever scene is on the stage, and only where the stage can
     // actually be taken hold of: the hero embeds this page as a still frame and
     // binds nothing, so a label promising a drag there would be a lie.
-    turn: "The view turns: drag the stage, or use the arrow keys.",
-    labIn: "input space", labOut: "output space"
+    turn: "Drag or use arrow keys to rotate; scroll or use plus and minus to zoom. Hover pauses motion."
   };
 
   const ES = {
     title: "Proyección y la SVD",
-    eyebrow: "Secciones 07 y 09 · proyección y la SVD",
-    lead: "Los mínimos cuadrados son una proyección, y la SVD dice qué direcciones estira una matriz y cuánto. Ambos son hechos geométricos que el manual solo puede enunciar. Desplázate y míralos ocurrir.",
+    eyebrow: "Secciones 07, 08 y 09 · proyección y la SVD",
+    lead: "Esta página son ocho imágenes de un mismo problema: resolver A x = b, o ajustar y ≈ X β, cuando la matriz no es un cuadrado bien portado. Son ideas distintas que se encuentran en ese problema, en tres grupos. Primero, lo que dibujan los mínimos cuadrados: una matriz alta no alcanza cualquier objetivo, una ancha lo alcanza de demasiadas maneras, y una cuadrada puede aplastar una dimensión por el camino, que es de donde salen la proyección, la pseudoinversa y el determinante. Después, lo que dice la SVD: qué le hace cualquier matriz a una circunferencia y a una esfera, y qué direcciones deja en paz una matriz cuadrada. Por último, dónde falla la aritmética: predictores que casi coinciden y un formato numérico que no los distingue. Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar un control; la caja bajo los controles es la respuesta, con los números dentro.",
     prev: "◀ Atrás", next: "Siguiente ▶",
-    stepOf: (i, n) => `Paso ${i} de ${n}`,
-    glow: "Brillo",
+    stepOf: (i, n) => `${i} de ${n}`,
+    stepName: (i, n, h) => `${i} de ${n}: ${h}`,
+    reset: "Reiniciar ejemplo", pause: "Pausar movimiento", resume: "Reanudar movimiento",
+    hint: "Arrastra para girar · rueda para acercar · teclas + / − · pasa el cursor para pausar. Desplázate junto al marco para cambiar de imagen.",
+    home: "Vista inicial", glow: "Brillo",
+    zoomIn: "Acercar", zoomOut: "Alejar",
     aboutH: "Sobre esta página",
-    about1: "Cada número de esta página se calcula en el navegador a partir de las matrices que se muestran: la proyección, los valores singulares, el número de condición. Nada se dibuja sobre una respuesta guardada.",
-    about2: "Acompaña a la sección 07 (inversas y pseudoinversa) y a la sección 09 (factorizaciones matriciales).",
+    about1: "Cada número de esta página se calcula en el navegador a partir de las matrices que se muestran: la proyección, los valores singulares, el número de condición, los autovectores, el redondeo a float32. Nada se dibuja sobre una respuesta guardada, y nada se ilumina por estar en una lista.",
+    about2: "Acompaña a la sección 07 (inversas y pseudoinversa), a la 08 (autovectores, por iteración de potencias) y a la 09 (factorizaciones matriciales). Cada imagen tiene su propia dirección (#projection, #wide, #collapse, #portal, #ellipsoid, #eigen, #collinear, #precision) y los cuadernos enlazan al que están enseñando. La línea de concepto bajo cada título enuncia la definición como lo hace el capítulo 2 de <a href='https://www.deeplearningbook.org/contents/linear_algebra.html'>Deep Learning</a>, de Goodfellow, Bengio y Courville, con su número de sección (§4.1 y §4.2 para las dos imágenes de fallo), para que el escenario y el trabajo previo del taller se lean juntos.",
+    concept: "Concepto",
     glNoScript: "La vista tridimensional no está disponible, así que el escenario dibuja diagramas planos. Todos los números y todas las relaciones son los mismos.",
     glNoWebgl: "Este navegador no reporta WebGL, así que el escenario dibuja diagramas planos. Todos los números y todas las relaciones son los mismos.",
     glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
     embedCap: "Entran vectores singulares derechos, salen izquierdos.",
     embedOpen: "Abrir la página completa →",
-
-    k1: "Paso 1 · sección 07",
-    h1: "Una matriz alta no alcanza cualquier objetivo",
-    b1: "<p>Tres distritos de vivienda, dos predictores. <b>X</b> es 3 × 2 —tres ecuaciones, dos incógnitas—, así que los vectores que puede producir llenan un <b>plano</b> en el espacio tridimensional: su espacio columna. El objetivo <b>y</b> es un punto de ese espacio, y casi con seguridad no está en el plano. No hay solución exacta.</p><p>Los mínimos cuadrados no se rinden. Devuelven el punto del plano <b>más cercano</b> a y —la proyección perpendicular ŷ— y la distancia entre ambos es el residuo <b>r</b>. Ese ángulo recto no es decoración: <i>es</i> la definición, y es lo que dice Xᵀr = 0 en símbolos.</p>",
-    mat1Title: "X, una matriz de 3 por 2 con dos predictores para tres distritos",
-    tiltLabel: "Desliza y fuera del plano, y de vuelta sobre él. Observa que β no se mueve.",
-    read1: (b, rn, k, real, xtr) =>
-      `β  = [${b[0].toFixed(3)}, ${b[1].toFixed(3)}]   ← el deslizador no lo mueve\n` +
-      `‖r‖ = <b>${rn.toFixed(4)}</b>` +
-      (Math.abs(k - 1) < 1e-9 ? "   ← el ajuste real" : `   (el ajuste real: ${real.toFixed(4)})`) +
-      `\nXᵀr = [${xtr[0].toFixed(3)}, ${xtr[1].toFixed(3)}]  ← el ángulo recto`,
-    note1: (rn) => rn < 1e-6
-      ? "Ahora y está en el plano. El sistema tiene solución exacta."
-      : "y está fuera del plano. ŷ es el punto más cercano sobre él.",
-    aria1: "Un plano de vidrio que pasa por el origen, con el vector y encima, su proyección ŷ sobre él, y un residuo discontinuo que los une en ángulo recto.",
-
-    kRoad: "Lo que viene",
-    hRoad: "Seis pasos más, y después el portal",
-    bRoad: "<p>La proyección de arriba y el portal de abajo son los dos extremos de una misma idea: una matriz lleva un espacio a otro, y la SVD es el relato completo de cómo. Entre ambos están los pasos que explican por qué la aritmética falla en la práctica.</p>",
-    roadLead: "Todavía por construir:",
-    road: [
-      "Matrices anchas: demasiadas respuestas, y cómo ridge elige una.",
-      "El número de condición, como un cubo estirado por tres valores singulares.",
-      "Un determinante que llega a cero, y una dimensión perdida para siempre.",
-      "Predictores casi colineales, y coeficientes que oscilan sin control.",
-      "Lo que un número de condición de 10ᵏ te cuesta en dígitos.",
-      "Autovectores: las direcciones que una matriz solo escala."
-    ],
-
-    k8: "Paso 8 · sección 09",
-    h8: "El portal de la SVD: A v = σ u",
-    b8: "<p>A la izquierda, el espacio de entrada: la circunferencia unidad y los dos <b>vectores singulares derechos</b> v₁ y v₂. A la derecha, la salida: A convierte esa circunferencia en una <b>elipse</b>, cuyos semiejes apuntan según los <b>vectores singulares izquierdos</b> u₁ y u₂ y miden σ₁ y σ₂.</p><p>Recorre x por la circunferencia y observa cómo A x viaja por la elipse. Va más rápido donde la elipse es más larga. Cuando x llega a v₁ o v₂, A x cae exactamente sobre σ u: esa única ecuación, A vᵢ = σᵢ uᵢ, es toda la SVD.</p><p>El cociente σ₁ ⁄ σ₂ es el <b>número de condición</b>: cuánto más estira esta matriz su mejor dirección que la peor.</p>",
-    scrubLabel: "Recorre x por la circunferencia unidad",
-    read8: (th, ax, hit, s) =>
-      `x   = [${Math.cos(th).toFixed(3)}, ${Math.sin(th).toFixed(3)}]\nA x = [${ax[0].toFixed(3)}, ${ax[1].toFixed(3)}]\n‖A x‖ = <b>${LC.norm(ax).toFixed(4)}</b>` +
-      (hit >= 0 ? `   ← alineado: esto es σ${hit + 1} = ${s[hit].toFixed(4)}` : "") +
-      `\nσ = [${s[0].toFixed(3)}, ${s[1].toFixed(3)}]   κ = ${(s[0] / s[1]).toFixed(3)}`,
-    note8: (hit) => hit >= 0
-      ? `x está sobre v${hit + 1}, así que A x es exactamente σ${hit + 1} u${hit + 1}.`
-      : "Espacio de entrada a la izquierda, espacio de salida a la derecha.",
-    aria8: "Dos paneles. A la izquierda una circunferencia unidad con dos vectores singulares; a la derecha la elipse a la que se transforma, con sus semiejes.",
-    turn: "La vista gira: arrastra el escenario o usa las teclas de flecha.",
-    labIn: "espacio de entrada", labOut: "espacio de salida"
+    turn: "Arrastra o usa las flechas para girar; usa la rueda o más y menos para acercar. El cursor pausa el movimiento."
   };
 
   const params = new URLSearchParams(location.search);
@@ -516,32 +667,78 @@
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const $ = (id) => document.getElementById(id);
+  const css = K.css;
 
   // ─── the steps ────────────────────────────────────────────────────────────
   //
-  // Only the two built steps and the roadmap between them are in the DOM. The
-  // six steps still to come are a translated list, not six empty scenes: an
-  // untranslated placeholder card would ship English prose into the Spanish
-  // page, which axe audits and a reader reads.
+  // One per registered scene, in registration order, which is the order of
+  // the <script src> lines above. A scene's step number, section and camera
+  // pose all come from the scene; the page adds nothing a scene did not say.
+  const SCENES = window.LinalgScenes.list();
+  const BY_ID = {};
+  SCENES.forEach((s) => { BY_ID[s.id] = s; });
   const turnable = (text) => (embed ? text : text + " " + T.turn);
-  const STEPS = [
-    {id: "1", el: "step-1", scene: "projection", aria: () => turnable(T.aria1)},
-    {id: "road", el: "step-road", scene: "projection", aria: () => turnable(T.aria1)},
-    {id: "8", el: "step-8", scene: "portal", aria: () => turnable(T.aria8)}
-  ];
+  const STEPS = SCENES.map((s) => ({id: s.step, el: s.section, scene: s.id,
+                                    aria: () => turnable(s.copy[lang].aria)}));
+  const POSE = {};
+  SCENES.forEach((s) => { POSE[s.id] = s.pose; });
 
   const state = {
     step: 0,
-    k: 1,            // how far y sits off the plane: 0 puts it on
-    theta: 20 * Math.PI / 180,
     glow: true,
     mode: "flat",    // "flat" (svg) or "gl"
     // Where each scene is being looked at from. One pair of angles per scene,
     // kept while the reader is away from it, and the truth about the camera:
     // the drift seeds itself from here and the browser check reads it off the
     // stage. What is *drawn* may be an eased version of it -- see shownView().
-    views: null
+    views: {}
   };
+  SCENES.forEach((s) => { state.views[s.id] = LC.orbitView(s.pose.home.az, s.pose.home.el); });
+
+  // A shared animation clock freezes entrances, tweens and camera glides
+  // together. Resume continues from the held frame, without a wall-time jump.
+  const motion = {held: false, manual: false, offset: 0, since: 0};
+  const sceneNow = () => (motion.held ? motion.since : performance.now()) - motion.offset;
+  function refreshMotion() {
+    const hold = motion.manual || drift.hover || drift.focus || document.hidden;
+    const now = performance.now();
+    if (hold && !motion.held) motion.since = now;
+    if (!hold && motion.held) motion.offset += now - motion.since;
+    motion.held = hold;
+    $("stage").dataset.paused = String(hold);
+    refreshDrift();
+  }
+
+  // What a scene is handed, once, and keeps. The page owns the clock, the
+  // DOM, the composer and the CSS2D layers; a scene owns its objects.
+  const CTX = {};
+  SCENES.forEach((s) => {
+    CTX[s.id] = {
+      LC, K, $, css, lang, reduceMotion, embed,
+      now: sceneNow,
+      get instant() { return reduceMotion || motion.held || state.mode !== "gl"; },
+      T: s.copy[lang],
+      state: {},
+      flat: $("flat"), stage: $("stage"),
+      get THREE() { return window.THREE; },
+      get AD() { return window.THREE_ADDONS; },
+      stageColour: () => STAGE.target,
+      shownView: () => shownView(s.id),
+      viewBasis: () => viewBasis(s.id),
+      place: (list) => K.placeLabels(list, $("stage"), $("flat"), $("labels")),
+      setControls: (values) => {
+        for (const [id, value] of Object.entries(values)) {
+          $(id).value = String(value);
+          $(id).dispatchEvent(new Event("input", {bubbles: true}));
+        }
+      },
+      // A control moved. The GL path repaints on its own; the flat one draws
+      // when it is told to; the readout is rewritten either way.
+      changed: () => { if (state.mode !== "gl") draw(); else readouts(); }
+    };
+    // A control tied to what it moves: see LinalgKit.bindSlider.
+    CTX[s.id].bindSlider = (id, opts) => K.bindSlider(CTX[s.id], id, opts);
+  });
 
   // ─── text ─────────────────────────────────────────────────────────────────
 
@@ -552,144 +749,77 @@
     $("prev").textContent = T.prev;
     $("next").textContent = T.next;
     $("glow-label").textContent = T.glow;
+    $("home").textContent = T.home;
+    $("reset").textContent = T.reset;
+    $("motion").textContent = T.pause;
+    $("gesture-hint").textContent = T.hint;
+    $("zoom-in").textContent = T.zoomIn;
+    $("zoom-out").textContent = T.zoomOut;
     $("h-about").textContent = T.aboutH;
     $("about-1").textContent = T.about1;
-    $("about-2").textContent = T.about2;
+    $("about-2").innerHTML = T.about2;
 
-    $("k-1").textContent = T.k1;
-    $("h-1").textContent = T.h1;
-    $("body-1").innerHTML = T.b1;
-    $("tilt-label").textContent = T.tiltLabel;
-    $("mat-1-t").textContent = T.mat1Title;
-
-    $("k-road").textContent = T.kRoad;
-    $("h-road").textContent = T.hRoad;
-    $("body-road").innerHTML = T.bRoad;
-    $("road-lead").textContent = T.roadLead;
-    $("road-list").innerHTML = T.road.map((s) => `<li>${s}</li>`).join("");
-
-    $("k-8").textContent = T.k8;
-    $("h-8").textContent = T.h8;
-    $("body-8").innerHTML = T.b8;
-    $("scrub-label").textContent = T.scrubLabel;
-
-    drawMatrix();
+    for (const s of SCENES) {
+      const c = s.copy[lang];
+      $("k-" + s.step).textContent = c.k;
+      if (s.part) {
+        // The scene opens one of the three groups: its heading goes above the kicker.
+        const part = document.createElement("p");
+        part.className = "part";
+        part.textContent = s.part[lang];
+        $("k-" + s.step).before(part);
+      }
+      $("h-" + s.step).textContent = c.h;
+      $("con-" + s.step).innerHTML = c.concept || "";
+      $("con-" + s.step).dataset.label = T.concept;
+      $("body-" + s.step).innerHTML = c.b;
+      $("pr-" + s.step).textContent = c.predict || "";
+      for (const id in (c.controls || {})) $(id + "-label").textContent = c.controls[id];
+      for (const id in (c.buttons || {})) $(id).textContent = c.buttons[id];
+      if (s.presets) {
+        const group = document.createElement("div");
+        group.className = "ctl presets";
+        for (const preset of s.presets) {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = preset[lang];
+          button.addEventListener("click", () => CTX[s.id].setControls(preset.values()));
+          group.appendChild(button);
+        }
+        $("read-" + s.step).before(group);
+      }
+      const mt = $("mat-" + s.step + "-t");
+      if (mt && c.matTitle) mt.textContent = c.matTitle;
+    }
+    // One mark per step, in the bar.
+    const dots = $("dots");
+    dots.replaceChildren();
+    SCENES.forEach((s, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "dot";
+      b.setAttribute("aria-label", T.stepName(i + 1, SCENES.length, s.copy[lang].h));
+      b.addEventListener("click", () => setStep(i, true));
+      dots.appendChild(b);
+    });
   }
-
-  // X as inline SVG: brackets as two paths, entries as real <text>, so it
-  // scales into a 330px card instead of forcing the page wider, and axe reads
-  // the numbers' contrast honestly.
-  function drawMatrix() {
-    const svg = $("mat-1");
-    const keep = $("mat-1-t");
-    svg.innerHTML = "";
-    svg.appendChild(keep);
-    const ns = "http://www.w3.org/2000/svg";
-    const put = (tag, attrs, text) => {
-      const e = document.createElementNS(ns, tag);
-      for (const k in attrs) e.setAttribute(k, attrs[k]);
-      if (text !== undefined) e.textContent = text;
-      svg.appendChild(e);
-      return e;
-    };
-    put("path", {d: "M 12 8 L 6 8 L 6 76 L 12 76"});
-    put("path", {d: "M 118 8 L 124 8 L 124 76 L 118 76"});
-    X.forEach((row, i) => row.forEach((v, j) => {
-      put("text", {x: 20 + j * 54, y: 27 + i * 22}, v.toFixed(4));
-    }));
-    put("text", {x: 136, y: 46, "font-style": "italic"}, "3 × 2");
-  }
-
-  // ─── the flat renderer ────────────────────────────────────────────────────
-  //
-  // Not an apology for a missing WebGL context. It is the primary drawing in
-  // embed mode, and for a reader without WebGL it is the whole page -- so
-  // every number and every relationship it shows is the same one the GL path
-  // shows, computed from the same core module.
-  const NS = "http://www.w3.org/2000/svg";
-  const flat = $("flat");
-  // Both render paths name the same arrows, so they spell them the same way.
-  const SUB = ["\u2081", "\u2082", "\u2083"];
-
-  function el(tag, attrs, text) {
-    const e = document.createElementNS(NS, tag);
-    for (const k in attrs) e.setAttribute(k, attrs[k]);
-    if (text !== undefined) e.textContent = text;
-    return e;
-  }
-  const css = (name) =>
-    getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-
-  // The step-1 camera, shared by both renderers. The flat path used to build
-  // its own isometric view, and isometric looks down (1, 1, 1) -- which is
-  // very nearly the direction this housing data lies along, so every vector
-  // projected onto almost the same point and the figure collapsed into a few
-  // pixels. Deriving the flat basis from the GL camera fixes that and makes
-  // the two paths show the same view, which is what the fallback promises.
-  const CAM = {pos: [13.57, 5.51, -4.64], at: [2.25, 2.09, 2.08]};
-
-  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1],
-                           a[2] * b[0] - a[0] * b[2],
-                           a[0] * b[1] - a[1] * b[0]];
-  const unit = (a) => LC.scale(a, 1 / (LC.norm(a) || 1));
 
   // ─── where each scene is looked at from ───────────────────────────────────
   //
-  // Both scenes orbit from the same two angles about the same world up, so
+  // Every scene orbits from the same two angles about the same world up, so
   // nothing on the stage ever rolls. What differs is how far each may be
-  // turned. Step 1 is a solid scene and may be walked all the way round; CAM
-  // above is the origin of that orbit rather than the whole of it, read back as
-  // angles by orbitFrom() so the frame the widget shipped with is still the
-  // frame it opens on and nobody had to type a spherical coordinate for it.
-  //
-  // The portal is two planes, so it is a card to be tipped rather than a globe
-  // to be spun: both angles are clamped to a quarter turn or so, because the
-  // far side of a plane is the same picture mirrored with every label on it
-  // backwards.
-  const HOME1 = LC.orbitFrom(CAM.at, CAM.pos);
-
-  // The floor under step 1, in world units, shared by both render paths so they
-  // stand on the same ground. It is *not* aligned to the column space, which is
-  // the point: the plane cuts it at an angle, and that is a fact about the
-  // geometry rather than a decoration.
-  const FLOOR = {at: [CAM.at[0], 0, CAM.at[2]], size: 26, lines: 10};
-
-  const POSE = {
-    projection: {
-      target: CAM.at, content: 4.5, fov: 45,
-      home: LC.orbitView(HOME1.az, HOME1.el),
-      radius: HOME1.radius,
-      // Down to the floor and no further: from under it the grid is a lid and
-      // the glass plane is edge-on.
-      limits: {elMin: -0.04, elMax: 1.15}
-    },
-    portal: {
-      target: [0, 0, 0], content: ELL.S[0] * 1.35, fov: 35,
-      // Tipped a little off the plan view this step shipped with -- around its
-      // vertical axis and again around its horizontal one -- so the floor
-      // recedes and the arrows have somewhere to stand. Small angles, because
-      // the foreshortening they cost is about 4% and the unit circle has to
-      // keep reading as a circle in a step whose whole subject is an ellipse.
-      home: LC.orbitView(-0.3, 0.26),
-      radius: ELL.S[0] * 4,        // refitted to the pane in resize()
-      limits: {azMin: -0.75, azMax: 0.75, elMin: -0.5, elMax: 0.7}
-    }
-  };
-  state.views = {
-    projection: LC.orbitView(POSE.projection.home.az, POSE.projection.home.el),
-    portal: LC.orbitView(POSE.portal.home.az, POSE.portal.home.el)
-  };
+  // turned, which its pose's limits say.
 
   // A scene turning into place after a step change, and a reader pressing Home.
   // The tween is linalg-core's, retargeted rather than restarted, so scrolling
-  // quickly through both steps does not make the stage jump backwards.
+  // quickly through the steps does not make the stage jump backwards.
   const glide = {active: false, scene: null, az: null, el: null};
 
   function glideTo(scene, fromAz, fromEl, toAz, toEl, ms) {
     // Nothing eases in the flat path: it draws when it is told to rather than
     // every frame, so a tween there would stop wherever the last draw left it.
-    if (reduceMotion || state.mode !== "gl") { glide.active = false; return; }
-    const now = performance.now();
+    if (reduceMotion || motion.held || state.mode !== "gl") { glide.active = false; return; }
+    const now = sceneNow();
     if (glide.active && glide.scene === scene) {
       glide.az = LC.retarget(glide.az, toAz, now, ms);
       glide.el = LC.retarget(glide.el, toEl, now, ms);
@@ -706,15 +836,18 @@
   function shownView(scene) {
     const v = state.views[scene];
     if (!glide.active || glide.scene !== scene) return v;
-    const now = performance.now();
+    const now = sceneNow();
     const a = LC.tweenAt(glide.az, now), e = LC.tweenAt(glide.el, now);
     // The glide holds the drift off while it runs, so the frame it ends on is
-    // the frame that has to offer the drift back. Nothing else would: a scene
-    // reached by scrolling gets no pointer event afterwards, and the stage
-    // would sit still until someone crossed it.
+    // the frame that has to offer the drift back.
     if (a.done && e.done) { glide.active = false; refreshDrift(); return v; }
     return {az: a.value, el: e.value, dolly: v.dolly};
   }
+
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1],
+                           a[2] * b[0] - a[0] * b[2],
+                           a[0] * b[1] - a[1] * b[0]];
+  const unit = (a) => LC.scale(a, 1 / (LC.norm(a) || 1));
 
   // An orthonormal screen basis for the flat path, derived from the same view
   // the GL camera takes. Orthographic rather than perspective: what the
@@ -728,230 +861,18 @@
     return {right: right, up: cross(fwd, right), target: P.target};
   }
 
-  function iso(p, s, cx, cy, B) {
-    const d = LC.sub(p, B.target);
-    return [cx + LC.dot(d, B.right) * s, cy - LC.dot(d, B.up) * s];
-  }
-
-  function arrow2(from, to, colour, width, dashed) {
-    const g = el("g", {});
-    const dx = to[0] - from[0], dy = to[1] - from[1];
-    const len = Math.hypot(dx, dy) || 1;
-    const ux = dx / len, uy = dy / len;
-    const head = Math.min(13, len * 0.3);
-    const base = [to[0] - ux * head, to[1] - uy * head];
-    const line = el("line", {
-      x1: from[0], y1: from[1], x2: base[0], y2: base[1],
-      stroke: colour, "stroke-width": width, "stroke-linecap": "round"
-    });
-    if (dashed) line.setAttribute("stroke-dasharray", "7 6");
-    g.appendChild(line);
-    g.appendChild(el("polygon", {
-      points: [
-        `${to[0]},${to[1]}`,
-        `${base[0] - uy * head * 0.42},${base[1] + ux * head * 0.42}`,
-        `${base[0] + uy * head * 0.42},${base[1] - ux * head * 0.42}`
-      ].join(" "),
-      fill: colour
-    }));
-    return g;
-  }
-
-  function flatProjection() {
-    flat.innerHTML = "";
-    // The dolly is a multiplier on the camera's distance, which for an
-    // orthographic projection is a divisor on the scale. Without this the
-    // flat path stamps a camera that moved and draws one that did not.
-    const S = 52 / (shownView("projection").dolly || 1), CX = 400, CY = 285;
-    const B = viewBasis("projection");
-    const P = (p) => iso(p, S, CX, CY, B);
-
-    // The floor first, so everything else stands on it. Same grid the GL path
-    // lays down, same size and spacing, so a reader who loses WebGL loses the
-    // shading and keeps the ground.
-    const half = FLOOR.size / 2, gap = FLOOR.size / FLOOR.lines;
-    const floor = el("g", {stroke: css("--stage-mute"), "stroke-opacity": "0.2",
-                           "stroke-width": "1"});
-    for (let i = 0; i <= FLOOR.lines; i++) {
-      const t = -half + i * gap;
-      const row = [[t, 0, -half], [t, 0, half]];
-      const colm = [[-half, 0, t], [half, 0, t]];
-      for (const [a, b] of [row, colm]) {
-        const p1 = P(LC.add(FLOOR.at, a)), p2 = P(LC.add(FLOOR.at, b));
-        floor.appendChild(el("line", {x1: p1[0], y1: p1[1], x2: p2[0], y2: p2[1]}));
-      }
-    }
-    flat.appendChild(floor);
-
-    const x1 = LC.col(X, 0), x2 = LC.col(X, 1);
-    const yhat = FIT.yhat;
-    const y = LC.add(yhat, LC.scale(FIT.residual, state.k));
-
-    // The column space, as a quad spanned by the two columns.
-    const corner = (a, b) => LC.add(LC.scale(x1, a), LC.scale(x2, b));
-    const quad = [corner(-2, -2), corner(9, -2), corner(9, 4), corner(-2, 4)].map(P);
-    flat.appendChild(el("polygon", {
-      points: quad.map((q) => q.join(",")).join(" "),
-      fill: css("--v-basis"), "fill-opacity": "0.13",
-      stroke: css("--v-basis"), "stroke-opacity": "0.55", "stroke-width": "1.5"
-    }));
-
-    const O = P([0, 0, 0]);
-    // The two columns of X, which span the plane.
-    flat.appendChild(arrow2(O, P(LC.scale(x1, 6)), css("--v-basis"), 2.5));
-    flat.appendChild(arrow2(O, P(LC.scale(x2, 6)), css("--v-basis"), 2.5));
-    // y-hat, on the plane; y, off it; the residual between them.
-    flat.appendChild(arrow2(O, P(yhat), css("--v-yhat"), 3.5));
-    flat.appendChild(arrow2(O, P(y), css("--v-y"), 3.5));
-    if (state.k > 1e-6) {
-      flat.appendChild(arrow2(P(yhat), P(y), css("--v-res"), 2.5, true));
-      // The right angle, drawn in the plane at y-hat.
-      const n = LC.scale(FIT.residual, 1 / LC.norm(FIT.residual));
-      const t = LC.scale(x1, 1 / LC.norm(x1));
-      const m = 0.9;
-      flat.appendChild(el("polyline", {
-        points: [
-          P(LC.add(yhat, LC.scale(t, m))),
-          P(LC.add(yhat, LC.add(LC.scale(t, m), LC.scale(n, m)))),
-          P(LC.add(yhat, LC.scale(n, m)))
-        ].map((q) => q.join(",")).join(" "),
-        fill: "none", stroke: css("--v-res"), "stroke-width": "1.6"
-      }));
-    }
-
-    placeLabels([
-      {at: P(LC.scale(x1, 6)), text: "x" + SUB[0], colour: "--v-basis"},
-      {at: P(LC.scale(x2, 6)), text: "x" + SUB[1], colour: "--v-basis"},
-      {at: P(yhat), text: "ŷ", colour: "--v-yhat"},
-      {at: P(y), text: "y", colour: "--v-y"},
-      {at: P(LC.add(yhat, LC.scale(FIT.residual, state.k / 2))), text: "r", colour: "--v-res"}
-    ]);
-  }
-
-  function flatPortal() {
-    flat.innerHTML = "";
-    // The GL path scissors each viewport, so its floor stops at the divider.
-    // The SVG has no scissor and the outer ring reaches 208px from a centre
-    // 200px from the edge, so it needs one: without this the left pane's grid
-    // runs off-canvas and into the right pane, and the two paths disagree.
-    const clip = el("defs", {});
-    [["clip-in", 0], ["clip-out", 400]].forEach(([id, x]) => {
-      const cp = el("clipPath", {id: id});
-      cp.appendChild(el("rect", {x: x, y: 0, width: 400, height: 560}));
-      clip.appendChild(cp);
-    });
-    flat.appendChild(clip);
-    const S = 52 / (shownView("portal").dolly || 1);   // one scale for both
-    const L = [200, 280], R = [600, 280];   // panes: the point is that the
-                                            // ellipse is the bigger of the two
-    const B = viewBasis("portal");
-    // Both panes are the same plane seen from the same place, so one basis
-    // serves them both and the two spaces turn together -- which is what keeps
-    // A v = sigma u readable while the stage is being turned.
-    const toL = (v) => iso([v[0], v[1], v[2] || 0], S, L[0], L[1], B);
-    const toR = (v) => iso([v[0], v[1], v[2] || 0], S, R[0], R[1], B);
-
-    const ring = (to, r) => {
-      const pts = [];
-      for (let i = 0; i <= 64; i++) {
-        const t = (i / 64) * Math.PI * 2;
-        pts.push(to([Math.cos(t) * r, Math.sin(t) * r]).join(","));
-      }
-      return pts;
-    };
-
-    // The floor of each space: rings and spokes rather than squares, because a
-    // square grid fights a circle. The GL path lays the same one down.
-    const pane = (to, clipId) => {
-      const g = el("g", {stroke: css("--stage-mute"), "stroke-opacity": "0.22",
-                         "stroke-width": "1", fill: "none",
-                         "clip-path": "url(#" + clipId + ")"});
-      for (let r = 1; r <= 4; r++) {
-        g.appendChild(el("polyline", {points: ring(to, r).join(" ")}));
-      }
-      for (let k = 0; k < 8; k++) {
-        const t = (k / 8) * Math.PI * 2;
-        const a = to([0, 0]), b = to([Math.cos(t) * 4, Math.sin(t) * 4]);
-        g.appendChild(el("line", {x1: a[0], y1: a[1], x2: b[0], y2: b[1]}));
-      }
-      flat.appendChild(g);
-    };
-    pane(toL, "clip-in"); pane(toR, "clip-out");
-    flat.appendChild(el("line", {x1: 400, y1: 60, x2: 400, y2: 500,
-      stroke: css("--stage-mute"), "stroke-opacity": "0.25", "stroke-width": "1"}));
-
-    // The unit disc, and its image. Filled, and filled the same colour: the
-    // ratio of the two areas is |det A| = sigma_1 sigma_2, which the readout
-    // only ever states as a pair of numbers.
-    const disc = ring(toL, 1);
-    flat.appendChild(el("polygon", {points: disc.join(" "),
-      fill: css("--stage-mute"), "fill-opacity": "0.12",
-      stroke: css("--stage-mute"), "stroke-width": "2"}));
-    const pts = [];
-    for (let i = 0; i <= 120; i++) {
-      const t = (i / 120) * Math.PI * 2;
-      pts.push(toR(LC.mulVec(A, [Math.cos(t), Math.sin(t)])).join(","));
-    }
-    flat.appendChild(el("polygon", {points: pts.join(" "),
-      fill: css("--stage-mute"), "fill-opacity": "0.12",
-      stroke: css("--stage-mute"), "stroke-width": "2"}));
-
-    const hit = LC.alignedWithAxes(ELL.axes, [Math.cos(state.theta), Math.sin(state.theta)]);
-    const labels = [];
-    ELL.axes.forEach((ax, j) => {
-      const on = hit === j;
-      const w = on ? 4 : 2.5;
-      flat.appendChild(arrow2(toL([0, 0]), toL(ax.v), css("--v-basis"), w));
-      flat.appendChild(arrow2(toR([0, 0]), toR(ax.axis), css("--v-yhat"), w));
-      labels.push({at: toL(ax.v), text: "v" + SUB[j], colour: "--v-basis"});
-      labels.push({at: toR(ax.axis), text: "\u03c3" + SUB[j] + "u" + SUB[j], colour: "--v-yhat"});
-    });
-
-    const x = [Math.cos(state.theta), Math.sin(state.theta)];
-    const ax = LC.mulVec(A, x);
-    flat.appendChild(arrow2(toL([0, 0]), toL(x), css("--v-y"), 3.5));
-    flat.appendChild(arrow2(toR([0, 0]), toR(ax), css("--v-y"), 3.5));
-    labels.push({at: toL(x), text: "x", colour: "--v-y"});
-    labels.push({at: toR(ax), text: "A x", colour: "--v-y"});
-    labels.push({at: [L[0], 470], text: T.labIn, colour: "--stage-mute"});
-    labels.push({at: [R[0], 470], text: T.labOut, colour: "--stage-mute"});
-    placeLabels(labels);
-  }
-
-  // The labels are DOM over the stage, in both render paths, so they are one
-  // set of rules rather than two.
-  function placeLabels(list) {
-    const box = $("stage").getBoundingClientRect();
-    const vb = flat.viewBox.baseVal;
-    // The SVG is xMidYMid meet, so work out the letterboxing to place DOM on it.
-    const s = Math.min(box.width / vb.width, box.height / vb.height);
-    const ox = (box.width - vb.width * s) / 2;
-    const oy = (box.height - vb.height * s) / 2;
-    $("labels").innerHTML = "";
-    for (const l of list) {
-      const d = document.createElement("span");
-      d.className = "lab";
-      d.textContent = l.text;
-      d.style.color = css(l.colour);
-      d.style.left = (ox + l.at[0] * s) + "px";
-      d.style.top = (oy + l.at[1] * s) + "px";
-      $("labels").appendChild(d);
-    }
-  }
-
   // ─── the reader's hand on the stage ───────────────────────────────────────
   //
   // The stage sways until someone reaches for it, and is theirs the moment they
-  // do -- the same bargain the reshape visualizer strikes, gated the same way,
-  // because a reader who has met one widget has met both. linalg-core owns the
-  // shape of a stretch of drift and the transitions between them; everything
-  // here is the clock, the pointer and the flags that hold it off.
-  const DRIFT_RESUME_MS = 1500;
+  // do -- the same bargain the reshape visualizer strikes, gated the same way.
+  // linalg-core owns the shape of a stretch of drift and the transitions
+  // between them; everything here is the clock, the pointer and the flags
+  // that hold it off.
   const drift = Object.assign(LC.driftIdle(), {hover: false, focus: false, timer: 0});
 
   function driftWanted() {
     return !reduceMotion && !embed && !document.hidden &&
-           !drift.hover && !drift.focus && !glide.active &&
+           !motion.held && !drift.hover && !drift.focus && !glide.active &&
            state.mode === "gl" && GL.ready;
   }
   function setDrift(on) {
@@ -963,20 +884,16 @@
       : LC.driftPause(drift, now));
   }
   const refreshDrift = () => setDrift(driftWanted());
-  // Taking hold of the view stops the drift on the same frame rather than
-  // waiting for the pointer to cross the stage, and it is a release rather than
-  // a pause: a drag, a key or a dolly is the reader choosing the origin the next
-  // stretch belongs around. A pointer merely crossing the stage is not.
+  // Taking hold of the view is a release rather than a pause: a drag, a key
+  // or a dolly is the reader choosing the origin the next stretch belongs
+  // around. A pointer merely crossing the stage is not.
   const dropDrift = () => {
     clearTimeout(drift.timer);
     Object.assign(drift, LC.driftRelease(drift, performance.now()));
   };
 
-  // Taking hold of the stage ends whatever was easing it -- otherwise the
-  // camera keeps turning under a reader who has just reached for it -- and the
-  // delta is applied to the pose they can *see*. state.views holds the glide's
-  // target, so measuring from there would jump the camera the rest of the
-  // glide's way before it started following the hand.
+  // Taking hold of the stage ends whatever was easing it, and the delta is
+  // applied to the pose the reader can *see*.
   function takeView(scene) {
     const from = shownView(scene);
     glide.active = false;
@@ -1015,25 +932,23 @@
     // pointerenter and pointerleave, not over/out: the label chips and the
     // CSS2D layers are children of #stage, and being over one of them is still
     // being on the stage.
-    stage.addEventListener("pointerenter", () => { drift.hover = true; setDrift(false); });
+    stage.addEventListener("pointerenter", () => { drift.hover = true; refreshMotion(); });
     stage.addEventListener("pointerleave", () => {
       drift.hover = false;
-      clearTimeout(drift.timer);
-      drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
+      refreshMotion();
     });
-    // :focus-visible rather than :focus, for the reason the visualizer gives:
-    // a click focuses the stage too, and keying off plain focus would kill the
-    // drift for the rest of the visit the first time anyone clicked it.
+    // :focus-visible rather than :focus: a click focuses the stage too, and
+    // keying off plain focus would kill the drift for the rest of the visit
+    // the first time anyone clicked it.
     stage.addEventListener("focusin", () => {
       drift.focus = stage.matches(":focus-visible");
-      setDrift(false);
+      refreshMotion();
     });
     stage.addEventListener("focusout", () => {
       drift.focus = false;
-      clearTimeout(drift.timer);
-      drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
+      refreshMotion();
     });
-    document.addEventListener("visibilitychange", refreshDrift);
+    document.addEventListener("visibilitychange", refreshMotion);
 
     stage.addEventListener("pointerdown", (e) => {
       try { stage.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
@@ -1045,9 +960,7 @@
       const dx = e.clientX - live.x, dy = e.clientY - live.y;
       live.x = e.clientX;
       live.y = e.clientY;
-      // The scene follows the hand: drag right and it turns right. Dragging
-      // down lifts the camera over the top, which is what every orbit control
-      // a reader has used already does.
+      // The scene follows the hand: drag right and it turns right.
       orbitBy(-dx * 0.008, dy * 0.005);
     });
     const release = (e) => {
@@ -1058,19 +971,17 @@
     stage.addEventListener("pointerup", release);
     stage.addEventListener("pointercancel", release);
 
-    // No wheel handler at all, deliberately. The reshape visualizer dollies on
-    // ctrl- or command-wheel, and the same gesture here would cost more than it
-    // buys twice over: the step a reader is on *is* the scroll position on this
-    // page, and ctrl-wheel is also the browser's own page zoom, which a
-    // low-vision reader would lose for as long as the pointer sat on a stage
-    // that fills half the window. The dolly is on + and - with the stage
-    // focused, and the framing is fitted to the content anyway.
+    // The frame owns plain wheel zoom; modifiers retain browser page zoom.
+    stage.addEventListener("wheel", (e) => {
+      if (e.ctrlKey || e.metaKey || e.altKey) return;
+      e.preventDefault();
+      const pixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? stage.clientHeight : 1);
+      dollyBy(Math.exp(Math.max(-0.35, Math.min(0.35, pixels * 0.0015))));
+    }, {passive: false});
 
     stage.addEventListener("keydown", (e) => {
-      // Ctrl, command and alt belong to the browser -- ctrl-Home scrolls the
-      // document, command-arrow jumps it -- and this widget has just argued
-      // that it should not take the wheel for the same reason. Shift is ours:
-      // it is the coarse step.
+      // Ctrl, command and alt belong to the browser. Shift is ours: the
+      // coarse step.
       if (e.ctrlKey || e.metaKey || e.altKey) return;
       const step = e.shiftKey ? 0.3 : 0.1;
       const moves = {
@@ -1089,269 +1000,23 @@
       // Driving the view from the keyboard is the same claim on it as a drag,
       // however the focus arrived: hold the drift until the stage is left.
       drift.focus = true;
+      refreshMotion();
       move();
     });
   }
 
   // ─── the three.js stage ───────────────────────────────────────────────────
 
-  const GL = {ready: false, composer: null, bloom: null, frames: [], budget: true};
+  const GL = {ready: false, composer: null, bloom: null, frames: [], budget: true, built: {}};
 
-  function vec(p) { return new THREE.Vector3(p[0], p[1], p[2] || 0); }
-
-  // The stage's own dark, in each of the two spaces this widget clears in.
-  // Which one is correct depends on where the frame is going --
+  // The stage's own black, in each of the two spaces this widget clears in:
   // getUnlitUniformColorSpace() clears a bound render target in the working
-  // (linear) space and the canvas in the output (sRGB) one -- and this widget
-  // uses both: the composer for step 1, a direct two-viewport render for the
-  // portal. So the clear colour is set per path rather than once at init.
-  //
-  // These four numbers were measured off the drawing buffer, not reasoned
-  // about, because the reasoning goes both ways and the pixels do not. With
-  // --stage at #101826: through the composer, the unconverted colour cleared to
-  // #47566c -- a washed-out lavender, on the one widget whose CSS says the
-  // stage is dark *because glow needs a dark ground* -- and the converted one
-  // to #101826. Rendering direct it is the other way round: #101826
-  // unconverted, #010205 converted. The bug was invisible for as long as it
-  // was, and half of it survived the first fix, because the canvas covers the
-  // element whose background it is supposed to match; put a var(--stage) swatch
-  // on top of it and the two colours are plainly different.
-  // Filled by initGL(): this script is classic and runs long before the
-  // vendored module has put THREE on the window, so a Color built here would
-  // throw before the widget had drawn anything at all.
+  // (linear) space and the canvas in the output (sRGB) one, and this widget
+  // uses both -- the composer for the solid scenes, a direct two-viewport
+  // render for the portal. So the clear colour is set per path. Filled by
+  // initGL(): this script is classic and runs before the vendored module has
+  // put THREE on the window.
   const STAGE = {target: null, canvas: null};
-
-  // Shaft plus head along +Y, then turned to face `dir`. Emissive, so the
-  // bloom pass has something above its threshold to find.
-  function makeArrow(dir, len, colour, radius) {
-    const g = new THREE.Group();
-    const r = radius || 0.07;
-    const mat = new THREE.MeshStandardMaterial({
-      color: colour, emissive: colour, emissiveIntensity: 0.9, roughness: 0.35
-    });
-    const shaft = new THREE.Mesh(new THREE.CylinderGeometry(r, r, 1, 16), mat);
-    const head = new THREE.Mesh(new THREE.ConeGeometry(r * 2.6, 1, 20), mat);
-    g.add(shaft, head);
-    g.userData = {mat: mat, r: r};
-    setArrow(g, dir, len);
-    return g;
-  }
-
-  // One place decides how long the head is and where the shaft stops, so an
-  // arrow that changes length cannot drift apart.
-  function setArrow(group, dir, len) {
-    const d = vec(dir);
-    if (d.lengthSq() === 0 || len <= 1e-9) { group.visible = false; return; }
-    group.visible = true;
-    group.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), d.clone().normalize());
-    const head = Math.min(0.5, len * 0.28);
-    const shaft = group.children[0], tip = group.children[1];
-    shaft.scale.y = Math.max(1e-4, len - head);
-    shaft.position.y = (len - head) / 2;
-    tip.scale.y = head;
-    tip.position.y = len - head / 2;
-  }
-
-  // Labels that track a 3-D point, which is what CSS2DRenderer is for. They
-  // are DOM, so axe sees them and they take the same .lab chip the flat path
-  // uses -- one set of contrast rules rather than two.
-  function makeLabel(text, colour) {
-    const d = document.createElement("span");
-    d.className = "lab";
-    d.textContent = text;
-    d.style.color = css(colour);
-    return new window.THREE_ADDONS.CSS2DObject(d);
-  }
-
-  function buildProjection() {
-    const scene = new THREE.Scene();
-    // The far corner of the floor recedes into the stage's own colour instead
-    // of ending on a hard line, which is most of what tells a reader the grid
-    // is lying down rather than standing up. The renderer clears to the same
-    // colour, so there is nothing for it to disagree with.
-    // The scene this fog is in only ever renders through the composer, so it
-    // takes that path's colour and the horizon dissolves into the clear.
-    scene.fog = new THREE.FogExp2(STAGE.target, 0.024);
-    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
-    const key = new THREE.DirectionalLight(0xffffff, 1.4);
-    key.position.set(8, 10, 6);
-    scene.add(key);
-    const fill = new THREE.DirectionalLight(0xffffff, 0.5);
-    fill.position.set(-6, 2, -5);
-    scene.add(fill);
-
-    const x1 = LC.col(X, 0), x2 = LC.col(X, 1);
-    const at = (a, b) => LC.add(LC.scale(x1, a), LC.scale(x2, b));
-    const A0 = -2.5, A1 = 9.5, B0 = -2.5, B1 = 5.5;
-
-    // The column space. Frosted rather than fully transmissive: at
-    // transmission 1 with no environment to refract there is nothing on the
-    // far side of the glass, and the plane renders as very nearly nothing --
-    // which is what it did. This keeps the glass reading and still lets
-    // y-hat and the residual through.
-    const quad = [at(A0, B0), at(A1, B0), at(A1, B1), at(A0, B1)];
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute("position", new THREE.Float32BufferAttribute(
-      [].concat(quad[0], quad[1], quad[2], quad[0], quad[2], quad[3]), 3));
-    geo.computeVertexNormals();
-    scene.add(new THREE.Mesh(geo, new THREE.MeshPhysicalMaterial({
-      color: 0x2aa882, transmission: 0.45, roughness: 0.18, thickness: 0.4,
-      transparent: true, opacity: 0.42, side: THREE.DoubleSide,
-      metalness: 0, ior: 1.3
-    })));
-
-    // A grid ruled along the two columns, so the surface reads as a plane
-    // spanned by them rather than as a wall.
-    const lines = [];
-    for (let a = A0; a <= A1 + 1e-9; a += 2) lines.push(at(a, B0), at(a, B1));
-    for (let b = B0; b <= B1 + 1e-9; b += 2) lines.push(at(A0, b), at(A1, b));
-    scene.add(new THREE.LineSegments(
-      new THREE.BufferGeometry().setFromPoints(lines.map(vec)),
-      new THREE.LineBasicMaterial({color: 0x22c795, transparent: true, opacity: 0.35})));
-
-    // The ground the picture stands on, at y = 0 and deliberately *not* aligned
-    // to the column space: the plane cuts it at an angle, which is a fact about
-    // the geometry rather than a decoration, and it is what makes the orbit
-    // read as an orbit rather than as the figure itself deforming.
-    const floor = new THREE.GridHelper(FLOOR.size, FLOOR.lines,
-      css("--stage-mute"), css("--stage-mute"));
-    floor.position.set(FLOOR.at[0], FLOOR.at[1], FLOOR.at[2]);
-    floor.material.transparent = true;
-    floor.material.opacity = 0.2;
-    floor.material.depthWrite = false;
-    scene.add(floor);
-
-    const arrows = {
-      x1: makeArrow(x1, 5.5, 0x22c795, 0.055),
-      x2: makeArrow(x2, 5.5, 0x22c795, 0.055),
-      yhat: makeArrow(FIT.yhat, LC.norm(FIT.yhat), 0x56b4e9, 0.1),
-      y: makeArrow(Y, LC.norm(Y), 0xe69f00, 0.1)
-    };
-    for (const k in arrows) scene.add(arrows[k]);
-
-    const res = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints([vec(FIT.yhat), vec(Y)]),
-      new THREE.LineDashedMaterial({color: 0xdd8fc0, dashSize: 0.22, gapSize: 0.16, linewidth: 2}));
-    res.computeLineDistances();
-    scene.add(res);
-
-    const labels = {
-      x1: makeLabel("x₁", "--v-basis"),
-      x2: makeLabel("x₂", "--v-basis"),
-      yhat: makeLabel("ŷ", "--v-yhat"),
-      y: makeLabel("y", "--v-y"),
-      r: makeLabel("r", "--v-res")
-    };
-    for (const k in labels) scene.add(labels[k]);
-    labels.x1.position.copy(vec(LC.scale(x1, 5.5)));
-    labels.x2.position.copy(vec(LC.scale(x2, 5.5)));
-    labels.yhat.position.copy(vec(FIT.yhat));
-
-    // Framed on the tip of y-hat rather than on the origin: the residual is
-    // about 8% of |y-hat| on real housing data -- median income genuinely
-    // does predict house value -- so the right angle is the small, important
-    // part of the picture and the camera belongs near it.
-    // Distance is fitted to the content, not guessed: everything the step can
-    // draw -- the origin, both basis arrows, y-hat, and y pushed all the way
-    // out at the slider's end -- sits inside a radius of 4.5 about the point
-    // the camera looks at, and 13.6 at 45 degrees leaves a quarter of that as
-    // margin. Where it *points* from is now POSE.projection, and applyCamera()
-    // puts it there every frame.
-    const cam = new THREE.PerspectiveCamera(POSE.projection.fov, 1.4, 0.1, 300);
-    return {scene, cam, arrows, res, labels, composer: true};
-  }
-
-  function buildPortal() {
-    const mk = () => {
-      const s = new THREE.Scene();
-      s.add(new THREE.AmbientLight(0xffffff, 0.9));
-      const d = new THREE.DirectionalLight(0xffffff, 1.1);
-      d.position.set(2, 4, 6);
-      s.add(d);
-      return s;
-    };
-    const inp = mk(), out = mk();
-
-    // The floor of each space. Rings and spokes rather than squares, because a
-    // square grid fights a circle, and it is the thing that makes the tilt
-    // read: the unit circle is foreshortened by only a few per cent at the pose
-    // this step opens on, which on its own is a circle drawn slightly wrong.
-    const floor = (sc) => {
-      const g = new THREE.PolarGridHelper(4, 8, 4, 64,
-        css("--stage-mute"), css("--stage-mute"));
-      g.rotation.x = Math.PI / 2;      // the helper lies in x-z; this space is x-y
-      g.material.transparent = true;
-      g.material.opacity = 0.22;
-      g.material.depthWrite = false;
-      sc.add(g);
-    };
-    floor(inp); floor(out);
-
-    const ringMat = () => new THREE.MeshBasicMaterial({color: 0xa3bdd4, side: THREE.DoubleSide});
-    inp.add(new THREE.Mesh(new THREE.RingGeometry(0.985, 1.015, 128), ringMat()));
-
-    // Filled, and filled the same colour on both sides: the ratio of the two
-    // areas is |det A| = sigma_1 sigma_2, which the readout states as a pair of
-    // numbers and the picture has never shown.
-    const fillMat = () => new THREE.MeshBasicMaterial({
-      color: 0xa3bdd4, transparent: true, opacity: 0.12,
-      side: THREE.DoubleSide, depthWrite: false
-    });
-    inp.add(new THREE.Mesh(new THREE.CircleGeometry(1, 128), fillMat()));
-
-    // The image of the unit circle: every point mapped by A, in the same
-    // units as the circle beside it. Same scale on both sides is the point --
-    // it is what makes the stretching visible rather than asserted.
-    const pts = [];
-    for (let i = 0; i <= 200; i++) {
-      const t = (i / 200) * Math.PI * 2;
-      pts.push(vec(LC.mulVec(A, [Math.cos(t), Math.sin(t)])));
-    }
-    out.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
-      new THREE.LineBasicMaterial({color: 0xa3bdd4})));
-    out.add(new THREE.Mesh(
-      new THREE.ShapeGeometry(new THREE.Shape(
-        pts.slice(0, -1).map((v) => new THREE.Vector2(v.x, v.y)))),
-      fillMat()));
-
-    const axis = (s, p) => s.add(new THREE.LineSegments(
-      new THREE.BufferGeometry().setFromPoints([
-        vec([-p, 0, 0]), vec([p, 0, 0]), vec([0, -p, 0]), vec([0, p, 0])]),
-      new THREE.LineBasicMaterial({color: 0xa3bdd4, transparent: true, opacity: 0.3})));
-    axis(inp, 4.2); axis(out, 4.2);
-
-    const arrows = {
-      v1: makeArrow(LC.col(ELL.V, 0), 1, 0x22c795, 0.03),
-      v2: makeArrow(LC.col(ELL.V, 1), 1, 0x22c795, 0.03),
-      u1: makeArrow(ELL.axes[0].axis, ELL.S[0], 0x56b4e9, 0.03),
-      u2: makeArrow(ELL.axes[1].axis, ELL.S[1], 0x56b4e9, 0.03),
-      x: makeArrow([1, 0, 0], 1, 0xe69f00, 0.042),
-      ax: makeArrow([1, 0, 0], 1, 0xe69f00, 0.042)
-    };
-    const side = {v1: inp, v2: inp, x: inp, u1: out, u2: out, ax: out};
-    for (const k in arrows) side[k].add(arrows[k]);
-
-    const labels = {
-      v1: makeLabel("v₁", "--v-basis"), v2: makeLabel("v₂", "--v-basis"),
-      u1: makeLabel("σ₁u₁", "--v-yhat"), u2: makeLabel("σ₂u₂", "--v-yhat"),
-      x: makeLabel("x", "--v-y"), ax: makeLabel("A x", "--v-y")
-    };
-    for (const k in labels) side[k].add(labels[k]);
-    labels.v1.position.copy(vec(LC.col(ELL.V, 0)));
-    labels.v2.position.copy(vec(LC.col(ELL.V, 1)));
-    labels.u1.position.copy(vec(ELL.axes[0].axis));
-    labels.u2.position.copy(vec(ELL.axes[1].axis));
-
-    // Perspective now, and both cameras take the same pose: the two panes are
-    // one plane seen from one place, which is what lets a reader turn the
-    // portal without A v = sigma u coming apart. The distance is fitted to the
-    // content in resize() -- the ellipse reaches 3.32 in its longest direction,
-    // and a framing sized from the stage's aspect rather than from the content
-    // clipped it clean off.
-    const camIn = new THREE.PerspectiveCamera(POSE.portal.fov, 1, 0.1, 200);
-    const camOut = new THREE.PerspectiveCamera(POSE.portal.fov, 1, 0.1, 200);
-    return {inp, out, camIn, camOut, arrows, labels, composer: false};
-  }
 
   function initGL() {
     const canvas = $("gl");
@@ -1381,12 +1046,18 @@
       $("stage").appendChild(l.domElement);
     }
 
-    GL.projection = buildProjection();
-    GL.portal = buildPortal();
+    for (const s of SCENES) GL.built[s.id] = s.build(CTX[s.id]);
 
+    // One composer, one render pass, re-pointed at whichever scene is on the
+    // stage: RenderPass keeps `scene` and `camera` as plain fields for
+    // exactly this.
+    const first = SCENES.find((s) => GL.built[s.id].composer);
     const composer = new AD.EffectComposer(renderer);
-    composer.addPass(new AD.RenderPass(GL.projection.scene, GL.projection.cam));
-    GL.bloom = new AD.UnrealBloomPass(new THREE.Vector2(1, 1), 0.55, 0.35, 0.82);
+    GL.pass = new AD.RenderPass(GL.built[first.id].scene, GL.built[first.id].cam);
+    composer.addPass(GL.pass);
+    // Strength a touch under what it was on navy: on black the halo reads
+    // brighter for the same number.
+    GL.bloom = new AD.UnrealBloomPass(new THREE.Vector2(1, 1), 0.45, 0.35, 0.82);
     composer.addPass(GL.bloom);
     // Last, always: without it the composer bypasses outputColorSpace and the
     // GL path renders darker than the flat one with nothing to explain it.
@@ -1397,6 +1068,13 @@
     return true;
   }
 
+  // How far back a scene has to sit for its content to fit the viewport it is
+  // drawn into: the vertical fit, and the horizontal fit through the aspect.
+  const fit = (P, aspect) => {
+    const t = Math.tan(P.fov * Math.PI / 360);
+    return Math.max(P.content / t, P.content / (t * aspect));
+  };
+
   function resize() {
     if (!GL.ready) return;
     const box = $("stage").getBoundingClientRect();
@@ -1405,43 +1083,31 @@
     GL.renderer.setSize(w, h, false);
     GL.composer.setSize(w, h);
     GL.bloom.setSize(w, h);
-    GL.projection.cam.aspect = w / h;
-    GL.projection.cam.updateProjectionMatrix();
 
-    // How far back each scene has to sit for its content to fit the viewport it
-    // is drawn into. Both cameras are perspective now, so this is a distance
-    // rather than a frustum, and the same two lines answer it for either one:
-    // the vertical fit, and the horizontal fit through the aspect.
-    const fit = (P, aspect) => {
-      const t = Math.tan(P.fov * Math.PI / 360);
-      return Math.max(P.content / t, P.content / (t * aspect));
-    };
-    // Step 1 keeps the distance it shipped with wherever that is generous
-    // enough -- it is fitted to the content with a quarter left as margin --
-    // and pulls back on a stage too narrow to hold that.
-    POSE.projection.radius = Math.max(HOME1.radius, fit(POSE.projection, w / h));
-
-    // Half the stage is a tall narrow pane, and the longest semi-axis is
-    // sigma_1: fit the portal to its content, never to the stage.
-    const half = Math.max(1, w / 2);
-    POSE.portal.radius = fit(POSE.portal, half / h);
-    for (const c of [GL.portal.camIn, GL.portal.camOut]) {
-      c.aspect = half / h;
-      c.updateProjectionMatrix();
+    for (const s of SCENES) {
+      const g = GL.built[s.id];
+      const n = s.panes || 1;
+      const pw = Math.max(1, w / n);
+      // A scene may keep a distance it shipped with wherever that is generous
+      // enough (minRadius) and pull back on a stage too narrow to hold it.
+      s.pose.radius = Math.max(s.pose.minRadius || 0, fit(s.pose, pw / h));
+      for (const c of camsOf(g)) { c.aspect = pw / h; c.updateProjectionMatrix(); }
     }
     const step = STEPS[state.step];
-    if (step.scene === "portal") {
-      GL.lab[0].setSize(half, h);
-      GL.lab[1].setSize(half, h);
-      GL.lab[0].domElement.style.left = "0px";
-      GL.lab[1].domElement.style.left = half + "px";
-      GL.lab[1].domElement.style.display = "";
-    } else {
-      GL.lab[0].setSize(w, h);
-      GL.lab[0].domElement.style.left = "0px";
-      GL.lab[1].domElement.style.display = "none";
-    }
+    const n = BY_ID[step.scene].panes || 1;
+    const pw = Math.max(1, w / n);
+    GL.lab.forEach((l, i) => {
+      if (i < n) {
+        l.setSize(pw, h);
+        l.domElement.style.left = (i * pw) + "px";
+        l.domElement.style.display = "";
+      } else {
+        l.domElement.style.display = "none";
+      }
+    });
   }
+
+  const camsOf = (g) => (g.panes ? g.panes.map((p) => p.cam) : [g.cam]);
 
   // One place moves the camera, whichever thing is moving it: the idle drift
   // while nobody is holding the stage, the glide while a scene turns into
@@ -1449,14 +1115,14 @@
   // truth; applyCamera() only ever reads it.
   function applyCamera(scene) {
     const P = POSE[scene];
+    const s = BY_ID[scene];
     if (drift.on && !glide.active) {
       const pose = LC.driftPose(drift, performance.now() - drift.t0, P.limits);
       Object.assign(state.views[scene], pose);
     }
-    const eye = LC.orbitEye(P.target, P.radius, shownView(scene));
-    const cams = scene === "projection"
-      ? [GL.projection.cam] : [GL.portal.camIn, GL.portal.camOut];
-    for (const c of cams) {
+    const zoom = s.zoom ? s.zoom(CTX[scene]) : 1;
+    const eye = LC.orbitEye(P.target, P.radius * zoom, shownView(scene));
+    for (const c of camsOf(GL.built[scene])) {
       c.up.set(LC.UP[0], LC.UP[1], LC.UP[2]);
       c.position.set(eye[0], eye[1], eye[2]);
       c.lookAt(P.target[0], P.target[1], P.target[2]);
@@ -1465,20 +1131,23 @@
   }
 
   // The pose, on the stage, as numbers. The browser check reads rotation off
-  // this rather than out of the pixels -- the same trade dataset.sigma already
-  // makes for the singular values. Written only when it changes, because it is
-  // touched sixty times a second.
+  // this rather than out of the pixels. Written only when it changes, because
+  // it is touched sixty times a second.
   function stampCam(scene) {
     const v = state.views[scene];
     const at = v.az.toFixed(2) + "," + v.el.toFixed(2) + "," + v.dolly.toFixed(2);
+    $("zoom-in").disabled = v.dolly <= (POSE[scene].limits.dollyMin || LC.CAMERA.dollyMin) + 1e-6;
+    $("zoom-out").disabled = v.dolly >= (POSE[scene].limits.dollyMax || LC.CAMERA.dollyMax) - 1e-6;
     if (GL.stamp !== at) { GL.stamp = at; $("stage").dataset.cam = at; }
   }
 
   function renderGL() {
     const step = STEPS[state.step];
-    applyCamera(step.scene);
-    if (GL.labScene !== step.scene) {
-      GL.labScene = step.scene;
+    const s = BY_ID[step.scene];
+    const g = GL.built[s.id];
+    applyCamera(s.id);
+    if (GL.labScene !== s.id) {
+      GL.labScene = s.id;
       for (const l of GL.lab) l.domElement.replaceChildren();
     }
     const t0 = performance.now();
@@ -1486,63 +1155,39 @@
     const w = r.domElement.width / r.getPixelRatio();
     const h = r.domElement.height / r.getPixelRatio();
 
-    if (step.scene === "projection") {
-      const p = GL.projection;
-      const y = LC.add(FIT.yhat, LC.scale(FIT.residual, state.k));
-      setArrow(p.arrows.y, y, LC.norm(y));
-      p.res.geometry.setFromPoints([vec(FIT.yhat), vec(y)]);
-      p.res.computeLineDistances();
-      p.res.visible = state.k > 1e-6;
-      p.labels.y.position.copy(vec(y));
-      p.labels.r.position.copy(vec(LC.add(FIT.yhat, LC.scale(FIT.residual, state.k / 2))));
-      p.labels.r.visible = state.k > 0.08;
+    s.render(CTX[s.id], g);
+
+    if (g.composer) {
+      GL.pass.scene = g.scene;
+      GL.pass.camera = g.cam;
       GL.bloom.enabled = state.glow && !reduceMotion && GL.budget;
       r.setClearColor(STAGE.target, 1);
       r.setScissorTest(false);
       r.setViewport(0, 0, w, h);
       GL.composer.render();
-      GL.lab[0].render(p.scene, p.cam);
+      GL.lab[0].render(g.scene, g.cam);
       $("stage").dataset.gl = "composer";
     } else {
-      const p = GL.portal;
-      // UnrealBloomPass inherits Pass.enabled = true, and this branch does not
-      // go through the composer at all -- so without clearing it here the
-      // frame-budget sampler below counts direct renders and spends its window
-      // measuring a pass that never ran.
+      // Direct, one viewport per pane. UnrealBloomPass inherits enabled = true
+      // and this branch never runs it, so clear the flag or the budget sampler
+      // below counts direct renders as bloomed ones.
       GL.bloom.enabled = false;
       r.setClearColor(STAGE.canvas, 1);
-      const x = [Math.cos(state.theta), Math.sin(state.theta)];
-      const ax = LC.mulVec(A, x);
-      // ELL already holds this decomposition; recomputing it per frame is the
-      // cost the comment above loop() claims was taken out of the loop.
-      const hit = LC.alignedWithAxes(ELL.axes, x);
-      setArrow(p.arrows.x, x, 1);
-      setArrow(p.arrows.ax, ax, LC.norm(ax));
-      p.labels.x.position.copy(vec(x));
-      p.labels.ax.position.copy(vec(ax));
-      // Aligned: thicken the pair the reader has found, so the identity is
-      // pointed at rather than left to be noticed.
-      [0, 1].forEach((j) => {
-        const on = hit === j;
-        p.arrows["v" + (j + 1)].userData.mat.emissiveIntensity = on ? 2.2 : 0.9;
-        p.arrows["u" + (j + 1)].userData.mat.emissiveIntensity = on ? 2.2 : 0.9;
-      });
+      const n = g.panes.length;
+      const pw = w / n;
       r.setScissorTest(true);
-      r.setViewport(0, 0, w / 2, h); r.setScissor(0, 0, w / 2, h);
-      r.render(p.inp, p.camIn);
-      r.setViewport(w / 2, 0, w / 2, h); r.setScissor(w / 2, 0, w / 2, h);
-      r.render(p.out, p.camOut);
+      g.panes.forEach((p, i) => {
+        r.setViewport(i * pw, 0, pw, h); r.setScissor(i * pw, 0, pw, h);
+        r.render(p.scene, p.cam);
+      });
       r.setScissorTest(false);
-      GL.lab[0].render(p.inp, p.camIn);
-      GL.lab[1].render(p.out, p.camOut);
+      g.panes.forEach((p, i) => GL.lab[i].render(p.scene, p.cam));
       $("stage").dataset.gl = "direct";
     }
 
     // Bloom's cost is a property of the device, not a preference. Measure the
-    // first stretch of frames and stand down if they are not making budget --
-    // but only frames that actually ran the bloom pass. Timing the portal,
-    // which renders direct, said nothing about the pass it would disable, and
-    // opening on #step-8 is exactly what the handbook links to.
+    // first stretch of frames that actually ran the bloom pass and stand down
+    // if they are not making budget.
     if (GL.bloom.enabled && GL.frames.length < 60) {
       GL.frames.push(performance.now() - t0);
       if (GL.frames.length === 60) {
@@ -1563,48 +1208,55 @@
 
   function draw() {
     const step = STEPS[state.step];
+    const s = BY_ID[step.scene];
     // The GL path draws the divider and captions as page furniture; the flat
     // path draws its own inside the SVG, so they must not both appear.
-    const showPanes = step.scene === "portal" && state.mode === "gl";
+    const showPanes = (s.panes || 1) > 1 && state.mode === "gl";
     $("panes").hidden = !showPanes;
-    if (showPanes) { $("cap-in").textContent = T.labIn; $("cap-out").textContent = T.labOut; }
+    if (showPanes) { $("cap-in").textContent = s.copy[lang].labIn; $("cap-out").textContent = s.copy[lang].labOut; }
     if (state.mode === "gl" && GL.ready) {
       renderGL();
       $("labels").innerHTML = "";
     } else {
-      if (step.scene === "projection") flatProjection(); else flatPortal();
+      $("flat").innerHTML = "";
+      s.flat(CTX[s.id]);
       $("stage").dataset.gl = "none";
-      stampCam(step.scene);
+      stampCam(s.id);
     }
     readouts();
   }
 
+  // The readout, the note on the stage, the aria label and the data-* the
+  // browser check reads. Driven by the things that can change it -- a slider,
+  // a step, a language -- never by the render loop: rewriting it sixty times
+  // a second destroys any selection a reader makes in it.
+  let dataKeys = [];
   function readouts() {
     const step = STEPS[state.step];
+    const s = BY_ID[step.scene];
     const stage = $("stage");
-    if (step.scene === "projection") {
-      const r = LC.scale(FIT.residual, state.k);
-      const rn = LC.norm(r);
-      // Computed, not printed: this is the orthogonality the picture claims,
-      // and it is the one line that could otherwise keep saying zero after the
-      // arithmetic under it had broken.
-      const xtr = LC.mulVec(LC.transpose(X), r);
-      $("read-1").innerHTML = T.read1(FIT.beta, rn, state.k, FIT.rnorm, xtr);
-      $("stagenote").textContent = T.note1(rn);
-    } else {
-      const x = [Math.cos(state.theta), Math.sin(state.theta)];
-      const ax = LC.mulVec(A, x);
-      const hit = LC.alignedWithAxes(ELL.axes, x);
-      $("read-8").innerHTML = T.read8(state.theta, ax, hit, ELL.S);
-      $("stagenote").textContent = T.note8(hit);
-      // Data attributes so the browser check can assert A v = sigma u through
-      // the real render path, as numbers rather than as pixels.
-      stage.dataset.sigma = ELL.S.map((s) => s.toFixed(3)).join(",");
-      stage.dataset.av = LC.norm(ax).toFixed(3);
-      stage.dataset.aligned = String(hit);
-    }
+    const r = s.readout(CTX[s.id]);
+    $("comparison").hidden = !r.comparison;
+    $("comparison").innerHTML = r.comparison || "";
+    $("read-" + s.step).innerHTML = r.html;
+    const title = $("stagetitle");
+    const claim = s.copy[lang].claim || "";
+    if (title.textContent !== claim) title.textContent = claim;
+    $("stagenote").textContent = r.note || "";
+    const fault = $("fault");
+    if (r.fault) { fault.textContent = r.fault; fault.hidden = false; } else fault.hidden = true;
+    for (const k of dataKeys) delete stage.dataset[k];
+    dataKeys = Object.keys(r.data || {});
+    for (const k of dataKeys) stage.dataset[k] = r.data[k];
     stage.setAttribute("aria-label", step.aria());
     stage.dataset.step = step.id;
+  }
+
+  const arrived = new Set();
+  function arriveOnce(sc) {
+    if (arrived.has(sc.id) || CTX[sc.id].instant || !sc.arrive) return;
+    arrived.add(sc.id);
+    sc.arrive(CTX[sc.id]);
   }
 
   // ─── the step machine ─────────────────────────────────────────────────────
@@ -1616,21 +1268,27 @@
     state.step = n;
     // A scene arriving turns the last third of a turn into place rather than
     // cutting to it, and the drift starts again from the pose the reader is
-    // now looking at -- its origin belongs to the scene on the stage, and the
-    // two scenes do not share one.
+    // now looking at -- its origin belongs to the scene on the stage.
     if (changed && STEPS[n].scene !== was) {
       const scene = STEPS[n].scene;
       const v = state.views[scene];
       Object.assign(drift, LC.driftRelease(drift, performance.now()));
-      // Through the same clamp the reader's own drags go through: the portal
-      // bounds azimuth because past it the panes are mirrored and every label
-      // reads backwards, and a scene turning into place must not play that
-      // view for 900ms on the way in.
+      // Through the same clamp the reader's own drags go through: a flat scene
+      // bounds azimuth because past it every label reads backwards, and a
+      // scene turning into place must not play that view on the way in.
       const from = LC.orbitClamp(
         {az: v.az - 0.34, el: v.el - 0.1, dolly: v.dolly}, POSE[scene].limits);
       glideTo(scene, from.az, from.el, v.az, v.el, 900);
+      // The scene's own entrance -- y dropping onto the plane, the circle
+      // inflating into the ellipse -- plays once, from here, and hands over to
+      // the slider. Under reduced motion there is no entrance to play.
+      const sc = BY_ID[scene];
+      arriveOnce(sc);
     }
     STEPS.forEach((s, j) => $(s.el).classList.toggle("is-active", j === n));
+    Array.from($("dots").children).forEach((d, j) => {
+      if (j === n) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
+    });
     $("prev").disabled = n === 0;
     $("next").disabled = n === STEPS.length - 1;
     $("stepnum").textContent = T.stepOf(n + 1, STEPS.length);
@@ -1645,8 +1303,7 @@
 
   // Which step the reader is looking at: whichever section crosses a thin band
   // through the middle of the viewport. pickActive() owns the two cases that
-  // flicker -- nothing in the band, and two things in it -- because neither is
-  // visible in a screenshot.
+  // flicker -- nothing in the band, and two things in it.
   function watchSteps() {
     let queued = false;
     const settle = () => {
@@ -1702,15 +1359,18 @@
     whenThree(6000).then(() => {
       if (settled) return;
       settled = true;
-      if (initGL()) { setMode("gl"); loop(); } else setMode("flat", "glNoWebgl");
+      if (initGL()) {
+        setMode("gl");
+        loop();
+        // The step the page opened on gets its entrance too; setStep() only
+        // plays one on a change of scene.
+        const sc = BY_ID[STEPS[state.step].scene];
+        arriveOnce(sc);
+      } else setMode("flat", "glNoWebgl");
     }).catch(() => flatly("glNoScript"));
   }
 
-  // The render loop redraws the scene and nothing else. readouts() is driven
-  // by the things that can actually change it -- a slider, a step change, a
-  // language -- because rewriting the readout 60 times a second destroys any
-  // selection a reader makes in it, and recomputes an SVD twice a frame for a
-  // picture that is not moving.
+  // The render loop redraws the scene and nothing else; see readouts().
   function loop() {
     if (state.mode === "gl" && GL.ready) renderGL();
     requestAnimationFrame(loop);
@@ -1719,40 +1379,65 @@
   // ─── wiring ───────────────────────────────────────────────────────────────
 
   fillText();
-  $("tilt").addEventListener("input", (e) => {
-    state.k = Number(e.target.value) / 100;
-    if (state.mode !== "gl") draw(); else readouts();
-  });
-  $("scrub").addEventListener("input", (e) => {
-    state.theta = Number(e.target.value) * Math.PI / 180;
-    if (state.mode !== "gl") draw(); else readouts();
-  });
+  for (const s of SCENES) if (s.init) s.init(CTX[s.id]);
+
   $("glow").addEventListener("change", (e) => {
     state.glow = e.target.checked;
-    // Turning it back on has to mean something. The automatic downgrade gets
-    // another measurement rather than standing for the rest of the session --
-    // otherwise the box reads "on" and nothing glows.
+    // Turning it back on has to mean something: the automatic downgrade gets
+    // another measurement rather than standing for the rest of the session.
     if (state.glow) {
       GL.budget = true;
       GL.frames = [];
-      // Only ever clears its own message. The same element also carries the
-      // "no WebGL" and "script did not load" notes, and hiding one of those
-      // leaves a reader on the flat renderer with nothing saying why.
+      // Only ever clears its own message; the same element carries the "no
+      // WebGL" notes, and hiding one of those leaves a reader on the flat
+      // renderer with nothing saying why.
       if (GL.note === "glSlow") { $("glnote").hidden = true; GL.note = null; }
     }
   });
   $("prev").addEventListener("click", () => setStep(state.step - 1, true));
   $("next").addEventListener("click", () => setStep(state.step + 1, true));
+  $("home").addEventListener("click", () => homeView());
+  $("reset").addEventListener("click", () => {
+    const sc = BY_ID[STEPS[state.step].scene];
+    if (sc.reset) sc.reset(CTX[sc.id]);
+    for (const input of $(sc.section).querySelectorAll('input[type="range"]')) {
+      input.value = input.defaultValue;
+      input.dispatchEvent(new Event("input", {bubbles: true}));
+    }
+    homeView();
+    draw();
+  });
+  $("motion").addEventListener("click", () => {
+    motion.manual = !motion.manual;
+    $("motion").setAttribute("aria-pressed", String(motion.manual));
+    $("motion").textContent = motion.manual ? T.resume : T.pause;
+    refreshMotion();
+  });
+  // The same dolly the + and - keys drive, for a reader who never focuses
+  // the stage; the clamps in linalg-core decide how close is close enough.
+  $("zoom-in").addEventListener("click", () => dollyBy(0.9));
+  $("zoom-out").addEventListener("click", () => dollyBy(1.11));
   addEventListener("resize", () => { if (state.mode === "gl") resize(); else draw(); });
 
-  // #step-8 in the URL opens on that step.
+  // #step-N in the URL opens on that step, and so does the scene's own name
+  // (#portal, #eigen): the name is what the notebooks link to, because it
+  // survives the steps being reordered and a number does not. Each name is
+  // also an empty element at the top of its section, so a link checker finds
+  // the anchor and a browser has something to scroll to.
+  const stepOf = (hash) => STEPS.findIndex((s) => s.el === hash || s.id === hash || s.scene === hash);
   const hash = (location.hash || "").replace("#", "");
-  const at = STEPS.findIndex((s) => s.el === hash || s.id === hash);
+  const at = stepOf(hash);
+  // A hash that changes on a page already open -- a link followed from the
+  // notebook in the same tab, or an edited address bar -- is the same request.
+  addEventListener("hashchange", () => {
+    const n = stepOf((location.hash || "").replace("#", ""));
+    if (n >= 0) setStep(n, true);
+  });
   setStep(at >= 0 ? at : 0, false);
 
   if (embed) {
     // The hero gets the portal's still frame and no three.js at all.
-    state.step = STEPS.length - 1;
+    state.step = STEPS.findIndex((s) => s.scene === "portal");
     const text = document.createElement("span");
     text.innerHTML = "<b>" + T.embedCap + "</b> ";
     const open = document.createElement("a");
