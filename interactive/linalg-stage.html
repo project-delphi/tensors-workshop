@@ -1437,7 +1437,7 @@
 
   if (embed) {
     // The hero gets the portal's still frame and no three.js at all.
-    state.step = STEPS.length - 1;
+    state.step = STEPS.findIndex((s) => s.scene === "portal");
     const text = document.createElement("span");
     text.innerHTML = "<b>" + T.embedCap + "</b> ";
     const open = document.createElement("a");

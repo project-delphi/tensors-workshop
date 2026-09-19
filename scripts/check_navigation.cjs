@@ -633,15 +633,19 @@ async function audit(page, where) {
         const scrolledFrom = await page.evaluate(() => scrollY);
         const beforeWheel = dollyOf(await cam());
         await page.mouse.wheel(0, 240);
-        await page.waitForTimeout(150);
-        assert(dollyOf(await cam()) > beforeWheel, `${where}: wheel out must zoom out`);
+        // Chrome on Linux animates a wheel scroll and eases the dolly over
+        // frames the runner draws slowly, so poll for each outcome rather
+        // than sleeping a fixed time and reading once.
+        await page.waitForFunction(before =>
+          Number(document.querySelector('#stage').dataset.cam.split(',')[2]) > before,
+          beforeWheel, {timeout: 5000})
+          .catch(() => assert.fail(`${where}: wheel out must zoom out`));
         assert.equal(await page.evaluate(() => scrollY), scrolledFrom,
           `${where}: wheel zoom must hold the current step`);
         await page.mouse.move(15, 100);
         await page.mouse.wheel(0, 400);
-        await page.waitForTimeout(200);
-        assert(await page.evaluate(() => scrollY) > scrolledFrom,
-          `${where}: scrolling beside the stage must navigate the page`);
+        await page.waitForFunction(from => scrollY > from, scrolledFrom, {timeout: 5000})
+          .catch(() => assert.fail(`${where}: scrolling beside the stage must navigate the page`));
 
         // Every frame keeps a user dolly, and reset restores both example
         // controls and framing. Presets must leave their sliders in sync.
