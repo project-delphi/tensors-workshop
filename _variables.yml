@@ -53,6 +53,14 @@ repo:
     - interactive/linalg-scenes/eigen.js
     - interactive/linalg-scenes/collinear.js
     - interactive/linalg-scenes/precision.js
+    # The voice tensor stage: its page, its drawing kit and one file per
+    # scene, loaded by plain <script src> lines the link harvest does see --
+    # listed anyway, because a scene that fails to reach docs/ is a tab the
+    # page throws on at boot, not a broken link.
+    - interactive/voice-stage.html
+    - interactive/voice-kit.js
+    - interactive/voice-scenes/window.js
+    - interactive/voice-scenes/scramble.js
     # The arithmetic under the voice tensor stage, and the recording it
     # factors (interactive/vendor/README.md). The recording is fetched by
     # audio-core.js rather than named in any href, so the harvest cannot see

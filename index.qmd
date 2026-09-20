@@ -42,6 +42,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
     <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
     <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
     <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
+    <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voice</button>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
     <iframe class="hero-embed" data-src="interactive/tensor-visualizer.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: three photos as a 4-D tensor, transposed and then reshaped"></iframe>
@@ -55,7 +56,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
     <iframe class="hero-embed" data-src="interactive/linalg-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: the unit circle a matrix sends to an ellipse, with its singular vectors"></iframe>
     <p class="hero-caption">A matrix takes the unit circle to an ellipse: <code>A v = σ u</code>, one vector at a time.</p>
   </div>
-  <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Three of the moves, live.</p>
+  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" hidden>
+    <iframe class="hero-embed" data-src="interactive/voice-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: a voice cut into windows, becoming a frequency-by-time matrix"></iframe>
+    <p class="hero-caption">A voice becomes a matrix — <code>513 × 465</code> — and you can hear what a transpose does to it.</p>
+  </div>
+  <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Four of the moves, live.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-en tensor-desc-en" xmlns="http://www.w3.org/2000/svg">

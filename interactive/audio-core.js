@@ -537,6 +537,59 @@
     return s / total;
   };
 
+  // -------------------------------------------------------------- layouts
+  // Reorderings of a spectrogram, for the scene that plays one. Both are
+  // permutations: every number that went in comes out, exactly once. That is
+  // the claim the stage puts on screen next to the picture -- "the same
+  // 263,169 numbers, in a different order" -- so it is pinned by a test
+  // rather than left to the eye, which cannot count.
+
+  function transposeC(Z, F, T) {
+    const out = cplx(F * T);
+    for (let f = 0; f < F; f++) {
+      for (let t = 0; t < T; t++) {
+        out.re[t * F + f] = Z.re[f * T + t];
+        out.im[t * F + f] = Z.im[f * T + t];
+      }
+    }
+    return out;
+  }
+
+  // Cut into `patch` by `patch` blocks and transpose the grid of blocks,
+  // leaving what is inside each block alone -- what a patchifier does when its
+  // two axes are read in the wrong order.
+  //
+  // Transposing a grid needs a square grid, so this needs a square matrix, and
+  // the patch size must divide it. Neither condition is decoration: a size
+  // that left a margin would never copy it, and a matrix taller than it is
+  // wide sends half its blocks past the end of the destination, where a typed
+  // array drops them without a word. Either way the result is a matrix with
+  // holes in it while the readout still claims every number is present, which
+  // is the one thing this function exists to guarantee.
+  function patchShuffle(Z, F, T, patch) {
+    if (F !== T) {
+      throw new Error(`patchShuffle: needs a square matrix, got ${F} by ${T}`);
+    }
+    if (F % patch !== 0) {
+      throw new Error(`patchShuffle: ${patch} does not divide ${F} by ${T}`);
+    }
+    const out = cplx(F * T);
+    const rows = F / patch, colsP = T / patch;
+    for (let pi = 0; pi < rows; pi++) {
+      for (let pj = 0; pj < colsP; pj++) {
+        for (let i = 0; i < patch; i++) {
+          for (let j = 0; j < patch; j++) {
+            const sf = pi * patch + i, st = pj * patch + j;
+            const df = pj * patch + i, dt = pi * patch + j;
+            out.re[df * T + dt] = Z.re[sf * T + st];
+            out.im[df * T + dt] = Z.im[sf * T + st];
+          }
+        }
+      }
+    }
+    return out;
+  }
+
   // ------------------------------------------------------------------- nmf
   // Multiplicative updates on the magnitude spectrogram, which is non-negative
   // by construction. Lee and Seung's rule, minimising the same Frobenius norm
@@ -674,6 +727,7 @@
     fft, WINDOWS, windowOf, stft, istft,
     snrDb, rng, gaussians, noiseAtSnr,
     SKETCH, POWER, leftSubspace, leftSubspaceSteps, projectRank, retained,
+    transposeC, patchShuffle,
     magnitude, nmfInit, nmfStep, nmfError,
     decodeWav
   };

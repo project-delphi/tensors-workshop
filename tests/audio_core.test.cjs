@@ -215,6 +215,42 @@ test('noise against silence is refused rather than scaled to nothing', () => {
   assert.throws(() => core.noiseAtSnr(new Float64Array(64), 5, 1), /no energy/);
 });
 
+test('a transpose and a patch shuffle are permutations: every number survives', () => {
+  // The voice stage prints "the same 263,169 numbers, in a different order"
+  // beside the picture. That claim is this test.
+  const F = 54, T = 54, Z = core.cplx(F * T), g = core.gaussians(2 * F * T, 23);
+  for (let i = 0; i < F * T; i++) { Z.re[i] = g[2 * i]; Z.im[i] = g[2 * i + 1]; }
+  const bag = (M) => Array.from(M.re).map((v, i) => v + 'i' + M.im[i]).sort();
+  const want = bag(Z);
+  for (const M of [core.transposeC(Z, F, T), core.patchShuffle(Z, F, T, 27)]) {
+    assert.equal(M.re.length, F * T);
+    assert.deepEqual(bag(M), want);
+  }
+  // Transposing twice is the identity; the shuffle moves something.
+  const back = core.transposeC(core.transposeC(Z, F, T), T, F);
+  assert.equal(maxAbs(back.re, Z.re), 0);
+  assert.ok(maxAbs(core.patchShuffle(Z, F, T, 27).re, Z.re) > 0);
+});
+
+test('a patch shuffle that would drop numbers is refused, not truncated', () => {
+  // 513 = 27 x 19, so 27 tiles it and 8 does not.
+  const Z = core.cplx(54 * 54);
+  assert.throws(() => core.patchShuffle(Z, 54, 54, 8), /does not divide/);
+  assert.equal(513 % 27, 0);
+  // A non-square matrix sends half its blocks past the end of the
+  // destination, where a typed array drops them silently: with F=4, T=8 and
+  // patch 2 the result held half the energy that went in, and both of the
+  // tests above passed because they were square. Refused now.
+  const R = core.cplx(4 * 8);
+  for (let i = 0; i < 32; i++) { R.re[i] = i + 1; R.im[i] = 0; }
+  assert.throws(() => core.patchShuffle(R, 4, 8, 2), /square/);
+  const sum = (M) => M.re.reduce((a, b) => a + b, 0);
+  const sq = core.cplx(6 * 6);
+  for (let i = 0; i < 36; i++) { sq.re[i] = i + 1; sq.im[i] = 0; }
+  assert.equal(sum(core.patchShuffle(sq, 6, 6, 2)), sum(sq), 'a square shuffle keeps every number');
+  assert.equal(sum(core.transposeC(R, 4, 8)), sum(R), 'a transpose works on any shape');
+});
+
 test('the recording decodes as the mono 48 kHz the handbook describes', () => {
   const wav = core.decodeWav(fs.readFileSync(WAV));
   assert.equal(wav.rate, 48000);

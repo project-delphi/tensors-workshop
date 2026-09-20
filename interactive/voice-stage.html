@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The voice tensor</title>
+
+<style>
+  :root {
+    --bg: #f7f5ef;
+    --ink: #1c1917;
+    --ink-mute: #57534e;
+    --panel: #fffcf7;
+    --sunk: #ebe6dc;
+    --line: #d6d0c4;
+    /* Sections 04 and 09 share this widget, and Appendix E is where they
+       meet. The accent is 09's (gen_notebooks.ACCENTS[9] = #c2410c), because
+       the factorisation scenes are its centre of gravity -- but that hex is
+       4.2:1 on --sunk, under AA, which is the same trap the projection stage
+       hit with #0f766e. Each theme takes the nearest shade that clears 4.5:1
+       against --sunk, the darkest of the three surfaces and the one the
+       readout sits on: 4.8 there and 5.5 on the page. */
+    --accent: #b23a0a;
+    --on-accent: #ffffff;
+    --fault: #b3261e;
+
+    /* The stage is black in every theme, for the reason the projection
+       stage's is: it is a picture rather than page furniture. A spectrogram
+       also wants a dark ground -- the colour ramp below starts at the stage's
+       own black, so silence is the background rather than a shade near it. */
+    --stage: #000000;
+    --stage-chip: #000000;
+
+    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
+    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="navy"]) {
+      --bg: #1c1917; --ink: #f5f0e8; --ink-mute: #a8a29e;
+      --panel: #292524; --sunk: #1c1917; --line: #44403c;
+      --accent: #fb923c; --on-accent: #1c1917; --fault: #ff8a80;
+    }
+  }
+  /* The homepage hero's navy band, so an embed reads as part of it. */
+  :root[data-theme="navy"] {
+    --bg: #0f2740; --ink: #e7f0f8; --ink-mute: #a3bdd4;
+    --panel: #12324a; --sunk: #0b2236; --line: #2a4d68;
+    --accent: #fb923c; --on-accent: #06202f; --fault: #ff8a80;
+  }
+
+  /* Ink on the stage. One set for all three themes, because the stage is
+     black in all three, and measured against that black: --stage-mute is the
+     weakest at 6.0:1. The roles follow the projection stage's, so a reader
+     who has met one widget has met both: yellow is what the reader holds,
+     purple is what comes back out, pink is where it has gone wrong. */
+  :root {
+    --stage-ink: #e8e8e8;
+    --stage-mute: #8a8a8a;
+    --v-sig: #ffd84d;    /* the waveform, the window the reader moves */
+    --v-out: #c39bd3;    /* what the transform produced */
+    --v-res: #fc6c85;    /* anything scrambled, lossy or wrong */
+    --v-axis: #58c4dd;   /* the axis being named */
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+  a { color: var(--accent); }
+  .wrap { max-width: 96rem; margin: 0 auto; padding: 1.25rem 1.25rem 4rem; }
+  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
+  header p { max-width: 44rem; color: var(--ink-mute); overflow-wrap: break-word; }
+
+  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.1rem 0 0.8rem; padding: 0; }
+  .tabs button {
+    font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer;
+    padding: 0.36rem 0.85rem; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  }
+  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .tabs button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  .two-pane { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
+  @media (max-width: 62rem) { .two-pane { grid-template-columns: minmax(0, 1fr); } }
+
+  .stagewrap { min-width: 0; }
+  #stage {
+    position: relative; background: var(--stage); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 10;
+  }
+  #draw { display: block; width: 100%; height: 100%; }
+  #claim {
+    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0;
+    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  #glnote { position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; font-size: 0.78rem;
+            color: var(--stage-mute); background: var(--stage-chip); padding: 0.15rem 0.4rem; border-radius: 4px; }
+
+  .stagebar { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
+  .stagebar button, .transport button {
+    font: inherit; font-size: 0.83rem; cursor: pointer; padding: 0.3rem 0.7rem;
+    border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
+  }
+  .stagebar button:focus-visible, .transport button:focus-visible,
+  .controls input:focus-visible, .controls select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .stagebar button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .stagebar .grow { flex: 1 1 auto; }
+
+  .readout {
+    margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem; min-height: 3.2rem;
+  }
+  .readout b { color: var(--accent); }
+  .readout .fault { color: var(--fault); font-weight: 650; }
+  .shape { font-family: var(--mono); font-size: 0.86rem; }
+
+  aside { min-width: 0; }
+  aside h2 { font-size: 1.05rem; margin: 0 0 0.35rem; }
+  .kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
+  .concept {
+    margin: 0.5rem 0 0.9rem; padding: 0.6rem 0.75rem; background: var(--panel);
+    border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px;
+    font-size: 0.92rem; color: var(--ink);
+  }
+  .predict { margin: 0.9rem 0 0.5rem; font-weight: 600; font-size: 0.93rem; }
+  aside p.body { color: var(--ink-mute); font-size: 0.93rem; }
+
+  .controls { display: grid; gap: 0.7rem; margin-top: 0.9rem; }
+  .controls label { display: block; font-size: 0.85rem; font-weight: 600; }
+  .controls .val { font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
+  .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .controls select { font: inherit; font-size: 0.88rem; padding: 0.25rem 0.4rem; width: 100%;
+                     border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); }
+
+  .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.9rem; }
+  .transport button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
+  .transport .state { font-size: 0.82rem; color: var(--ink-mute); }
+
+  .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+        clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  /* Embed mode: the homepage hero. No chrome, no sound, no fetch. */
+  #embedcap { display: none; }
+  html.embed .wrap { max-width: none; padding: 0; }
+  html.embed header, html.embed aside, html.embed .stagebar, html.embed .tabs, html.embed .readout { display: none; }
+  html.embed .two-pane { display: block; margin: 0; }
+  html.embed .stagewrap { height: 100vh; display: flex; flex-direction: column; }
+  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; aspect-ratio: auto; min-height: 0; }
+  html.embed #embedcap {
+    display: block; margin: 0; padding: 0.5rem 0.75rem; font-size: 0.82rem; color: var(--ink-mute);
+  }
+  html.embed #embedcap b { color: var(--ink); font-weight: 650; }
+  html.embed #embedcap a { white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <p id="intro"></p>
+  </header>
+
+  <div class="tabs" role="tablist" id="tabs" aria-label="Scenes"></div>
+
+  <div class="two-pane">
+    <div class="stagewrap">
+      <div id="stage" role="img" aria-label="">
+        <canvas id="draw"></canvas>
+        <p id="claim"></p>
+        <p id="glnote" hidden></p>
+      </div>
+      <div class="stagebar">
+        <button type="button" id="reset"></button>
+        <span class="grow"></span>
+        <button type="button" id="motion" aria-pressed="false"></button>
+      </div>
+      <p class="readout" id="read"></p>
+      <p id="embedcap"></p>
+      <p class="sr" id="status" aria-live="polite"></p>
+    </div>
+
+    <aside aria-labelledby="h-scene">
+      <p class="kicker" id="kicker"></p>
+      <h2 id="h-scene"></h2>
+      <p class="concept" id="concept"></p>
+      <p class="body" id="body"></p>
+      <p class="predict" id="predict"></p>
+      <div class="controls" id="controls"></div>
+      <div class="transport" id="transport">
+        <button type="button" class="primary" id="play"></button>
+        <button type="button" id="stop"></button>
+        <span class="state" id="playstate"></span>
+      </div>
+    </aside>
+  </div>
+
+</div>
+
+<!-- The arithmetic, then one file per scene in order. All plain scripts, so
+     the page works from file:// and Node can pin the core under `npm test`.
+     There is no three.js here and no import map: a spectrogram is an image,
+     and this stage draws into a 2-D canvas. -->
+<script src="audio-core.js"></script>
+<script src="voice-kit.js"></script>
+<script src="voice-scenes/window.js"></script>
+<script src="voice-scenes/scramble.js"></script>
+
+<script>
+(function () {
+  "use strict";
+  const AC = window.AudioCore, K = window.VoiceKit;
+  const $ = (id) => document.getElementById(id);
+
+  const params = new URLSearchParams(location.search);
+  const lang = params.get("lang") === "es" ? "es" : "en";
+  const embed = params.get("embed") === "1";
+  const theme = params.get("theme");
+  document.documentElement.lang = lang;
+  if (embed) document.documentElement.classList.add("embed");
+  if (theme === "navy") document.documentElement.dataset.theme = "navy";
+
+  const RATE = 48000, SAMPLES = 237568;   // the recording, and what embed stands in for
+
+  const T = {
+    en: {
+      eyebrow: "Sections 04 and 09 · Appendix E",
+      title: "The voice tensor",
+      intro: "A voice is a list of numbers. Cut it into short overlapping windows and ask which " +
+             "frequencies are in each one, and it becomes a matrix — then the same reshapes, " +
+             "transposes and factorisations as every other tensor here, except that this one you " +
+             "can listen to.",
+      reset: "Reset this scene", motion: "Pause motion", motionOn: "Resume motion",
+      play: "Play", stop: "Stop", idle: "nothing playing", loading: "loading the recording…",
+      playing: (what) => "playing " + what,
+      failed: "The recording could not be loaded, so every picture and every sound here is a " +
+              "synthesised test signal instead.",
+      embedCap: "A voice becomes a frequency-by-time matrix.",
+      embedOpen: "Open the full page →",
+      shape: "Shape"
+    },
+    es: {
+      eyebrow: "Secciones 04 y 09 · Apéndice E",
+      title: "El tensor de voz",
+      intro: "Una voz es una lista de números. Córtala en ventanas cortas superpuestas y pregunta " +
+             "qué frecuencias hay en cada una, y se convierte en una matriz: entonces admite los " +
+             "mismos cambios de forma, transposiciones y factorizaciones que cualquier otro tensor " +
+             "de aquí, salvo que a este puedes escucharlo.",
+      reset: "Reiniciar esta escena", motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
+      play: "Reproducir", stop: "Detener", idle: "nada en reproducción",
+      loading: "cargando la grabación…",
+      playing: (what) => "reproduciendo " + what,
+      failed: "No se pudo cargar la grabación, así que cada imagen y cada sonido de aquí son una " +
+              "señal de prueba sintetizada.",
+      embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
+      embedOpen: "Abrir la página completa →",
+      shape: "Forma"
+    }
+  }[lang];
+
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // ------------------------------------------------------------ the audio
+  // One AudioContext, built on the first press of a transport button and
+  // never before: a context created at load starts suspended under every
+  // browser's autoplay policy, and the hero embed must not create one at all.
+  let actx = null, playing = null;
+  const audio = {
+    get ready() { return actx !== null; },
+    resume() {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      return actx;
+    },
+    play(samples, what) {
+      if (embed || !signal.loaded) return;
+      const c = this.resume();
+      this.stop();
+      // The recording is 48 kHz and the arithmetic runs at 48 kHz. The buffer
+      // is built at that rate and Web Audio resamples it on the way out if the
+      // device runs at another; decoding through decodeAudioData instead would
+      // resample first and change the matrix's shape.
+      const buf = c.createBuffer(1, samples.length, RATE);
+      const ch = buf.getChannelData(0);
+      for (let i = 0; i < samples.length; i++) ch[i] = Math.max(-1, Math.min(1, samples[i]));
+      const src = c.createBufferSource();
+      src.buffer = buf;
+      src.connect(c.destination);
+      // Ending on its own is the common case -- these clips are five seconds --
+      // and it has to put the transport back the way the stop button does.
+      // Repainting alone left "playing ..." on the panel and data-playing at 1
+      // until the reader happened to touch a control.
+      src.onended = () => {
+        if (playing !== src) return;
+        playing = null;
+        $("playstate").textContent = T.idle;
+        changed();
+      };
+      src.start();
+      playing = src;
+      changed();
+    },
+    stop() {
+      if (playing) { try { playing.stop(); } catch (e) { /* already ended */ } playing = null; }
+    }
+  };
+
+  // ---------------------------------------------------------- the signal
+  // The page fetches the recording once. The hero embed never does: it is a
+  // still picture on a landing page, and half a megabyte is not what that is
+  // worth. It draws the same scene from a stand-in of exactly the recording's
+  // length and rate, so every shape on screen is the shape the full page
+  // shows -- the picture is honest about the arithmetic, and says in its
+  // caption that it is a picture.
+  const signal = {samples: null, loaded: false, failed: false, stand_in: false};
+
+  function loadSignal() {
+    if (embed) {
+      signal.samples = K.demoSignal(SAMPLES, RATE);
+      signal.loaded = true; signal.stand_in = true;
+      return Promise.resolve();
+    }
+    return fetch("vendor/voice.wav")
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then((b) => {
+        const wav = AC.decodeWav(new Uint8Array(b));
+        signal.samples = wav.samples;
+        signal.loaded = true;
+      })
+      .catch(() => {
+        // A reader with no recording still gets every lesson but the sound,
+        // which is better than an empty stage that blames their browser.
+        signal.samples = K.demoSignal(SAMPLES, RATE);
+        signal.loaded = true; signal.stand_in = true; signal.failed = true;
+      });
+  }
+
+  // ---------------------------------------------------------- the scenes
+  const scenes = window.VoiceScenes.list();
+  if (!scenes.length) throw new Error("voice-stage: no scenes registered");
+  let active = scenes[0], ctxFor = new Map();
+
+  const canvas = $("draw"), stage = $("stage");
+  const g = canvas.getContext("2d");
+
+  // The pausable clock. Wall time would jump on resume, so every scene that
+  // moves takes its time from here.
+  let held = reduceMotion, heldAt = performance.now(), offset = 0;
+  const now = () => (held ? heldAt : performance.now()) - offset;
+
+  function contextFor(scene) {
+    if (ctxFor.has(scene.id)) return ctxFor.get(scene.id);
+    const c = {
+      AC, K, lang, embed, reduceMotion,
+      rate: RATE,
+      state: {},
+      cache: {},
+      stage, canvas,
+      get g() { return g; },
+      get W() { return canvas.width / dpr; },
+      get H() { return canvas.height / dpr; },
+      get copy() { return scene.copy[lang]; },
+      get signal() { return signal.samples; },
+      get standIn() { return signal.stand_in; },
+      colour: (token) => K.css(token),
+      now, get instant() { return held || reduceMotion; },
+      play: (s, what) => audio.play(s, what),
+      stop: () => audio.stop(),
+      changed,
+      setControls
+    };
+    ctxFor.set(scene.id, c);
+    return c;
+  }
+
+  // ------------------------------------------------------- the controls
+  // Scenes declare controls; the frame builds them, labels them from the
+  // scene's own copy in the page's language, and hands back plain values.
+  // Nothing here knows what a control means.
+  function buildControls(scene) {
+    const host = $("controls");
+    host.textContent = "";
+    const ctx = contextFor(scene);
+    const copy = scene.copy[lang];
+    (scene.controls || []).forEach((spec) => {
+      const wrap = document.createElement("label");
+      const name = document.createElement("span");
+      name.textContent = (copy.controls && copy.controls[spec.id]) || spec.id;
+      wrap.appendChild(name);
+      const val = document.createElement("span");
+      val.className = "val";
+      wrap.appendChild(document.createTextNode(" "));
+      wrap.appendChild(val);
+
+      let input;
+      if (spec.type === "select") {
+        input = document.createElement("select");
+        spec.options.forEach((o) => {
+          const opt = document.createElement("option");
+          opt.value = o;
+          opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
+          input.appendChild(opt);
+        });
+        input.value = String(ctx.state[spec.id]);
+      } else {
+        input = document.createElement("input");
+        input.type = "range";
+        input.min = spec.min; input.max = spec.max; input.step = spec.step || 1;
+        input.value = String(ctx.state[spec.id]);
+      }
+      input.id = "c-" + spec.id;
+      // One control can change what another one's label says -- the hop
+      // decides how many seconds a window position is -- so every label is
+      // re-formatted from `changed()`, after the scene has derived from the
+      // new value, rather than only the control that fired.
+      input.addEventListener("input", () => {
+        ctx.state[spec.id] = spec.type === "select" ? input.value : Number(input.value);
+        changed();
+      });
+      val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
+      wrap.appendChild(input);
+      host.appendChild(wrap);
+    });
+  }
+
+  function rebuildLabels(scene) {
+    const ctx = contextFor(scene), copy = scene.copy[lang];
+    (scene.controls || []).forEach((spec) => {
+      const input = $("c-" + spec.id);
+      if (!input) return;
+      const val = input.parentNode.querySelector(".val");
+      if (val) val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
+    });
+  }
+
+  function setControls(vals) {
+    const ctx = contextFor(active);
+    Object.keys(vals).forEach((k) => {
+      ctx.state[k] = vals[k];
+      const input = $("c-" + k);
+      if (input) input.value = String(vals[k]);
+    });
+    rebuildLabels(active);
+    changed();
+  }
+
+  // -------------------------------------------------------- the readout
+  // Written from the controls' values, never from anything eased, and only
+  // when something changed -- rewriting it every frame destroys a reader's
+  // selection and makes the browser check race the animation.
+  const written = new Set();
+
+  function changed() {
+    const ctx = contextFor(active);
+    // Whatever the control changed, the scene derives from it before anything
+    // is written down. Without this the readout and the data-* attributes are
+    // written from the state the last frame left behind: changing the hop
+    // reported the old hop until the next repaint, so the browser check and
+    // the reader both read a number that was already wrong.
+    if (active.sync) active.sync(ctx);
+    const r = active.readout(ctx) || {};
+    $("read").innerHTML = r.html || "";
+    stage.setAttribute("aria-label", ctx.copy.aria(ctx) || "");
+
+    const data = Object.assign({scene: active.id}, r.data || {});
+    data.playing = playing ? "1" : "0";
+    data.standin = signal.stand_in ? "1" : "0";
+    // Only the keys a readout wrote last time are pruned. Clearing the whole
+    // dataset took `data-ready` and `data-paused` with it -- they are the
+    // frame's, not the scene's, and the first control a reader touched made
+    // the stage stop saying whether it was ready or paused.
+    written.forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
+    written.clear();
+    Object.keys(data).forEach((k) => {
+      stage.dataset[k] = String(data[k]);
+      written.add(k);
+    });
+    rebuildLabels(active);
+    paint();
+  }
+
+  // ------------------------------------------------------------ painting
+  let dpr = 1;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const r = stage.getBoundingClientRect();
+    canvas.width = Math.max(1, Math.round(r.width * dpr));
+    canvas.height = Math.max(1, Math.round(r.height * dpr));
+    paint();
+  }
+
+  function paint() {
+    const ctx = contextFor(active);
+    if (signal.loaded && active.sync) active.sync(ctx);
+    g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g.fillStyle = K.css("--stage");
+    g.fillRect(0, 0, ctx.W, ctx.H);
+    if (!signal.loaded) {
+      K.label(g, T.loading, 14, 14, K.css("--stage-mute"));
+      return;
+    }
+    active.draw(ctx);
+  }
+
+  function frame() {
+    if (active.animates && active.animates(contextFor(active)) && !held) paint();
+    requestAnimationFrame(frame);
+  }
+
+  // -------------------------------------------------------------- scenes
+  function show(scene) {
+    audio.stop();
+    active = scene;
+    const copy = scene.copy[lang];
+    $("kicker").textContent = copy.k;
+    $("h-scene").textContent = copy.h;
+    $("concept").textContent = copy.concept;
+    $("body").textContent = copy.b;
+    $("predict").textContent = copy.predict;
+    $("claim").textContent = copy.claim;
+    document.querySelectorAll("#tabs button").forEach((b) => {
+      b.setAttribute("aria-selected", String(b.dataset.scene === scene.id));
+    });
+    const ctx = contextFor(scene);
+    if (!ctx.state.__init) { scene.init(ctx); ctx.state.__init = true; }
+    buildControls(scene);
+    $("transport").hidden = !!embed || !scene.audio;
+    changed();
+  }
+
+  function buildTabs() {
+    const host = $("tabs");
+    scenes.forEach((s) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.setAttribute("role", "tab");
+      b.dataset.scene = s.id;
+      b.id = "tab-" + s.id;
+      b.textContent = s.copy[lang].tab;
+      b.addEventListener("click", () => {
+        if (location.hash !== "#" + s.id) history.replaceState(null, "", "#" + s.id);
+        show(s);
+      });
+      host.appendChild(b);
+    });
+  }
+
+  const byId = (id) => scenes.find((s) => s.id === id);
+
+  // ----------------------------------------------------------- the chrome
+  $("eyebrow").textContent = T.eyebrow;
+  $("title").textContent = T.title;
+  $("intro").textContent = T.intro;
+  $("reset").textContent = T.reset;
+  $("motion").textContent = reduceMotion ? T.motionOn : T.motion;
+  $("motion").setAttribute("aria-pressed", String(reduceMotion));
+  $("play").textContent = T.play;
+  $("stop").textContent = T.stop;
+  $("playstate").textContent = T.idle;
+  document.title = T.title;
+
+  if (embed) {
+    const cap = $("embedcap");
+    const b = document.createElement("b");
+    b.textContent = T.embedCap;
+    cap.appendChild(b);
+    cap.appendChild(document.createTextNode(" "));
+    const a = document.createElement("a");
+    a.href = "voice-stage.html?lang=" + lang;
+    a.target = "_top";
+    a.textContent = T.embedOpen;
+    cap.appendChild(a);
+  }
+
+  $("reset").addEventListener("click", () => {
+    const ctx = contextFor(active);
+    audio.stop();
+    if (active.reset) active.reset(ctx);
+    rebuildLabels(active);
+    buildControls(active);
+    changed();
+  });
+
+  $("motion").addEventListener("click", () => {
+    if (held) { offset += performance.now() - heldAt; held = false; }
+    else { heldAt = performance.now(); held = true; }
+    $("motion").setAttribute("aria-pressed", String(held));
+    $("motion").textContent = held ? T.motionOn : T.motion;
+    stage.dataset.paused = held ? "1" : "0";
+  });
+
+  $("play").addEventListener("click", () => {
+    const ctx = contextFor(active);
+    if (!active.audio) return;
+    const out = active.audio(ctx);
+    if (!out) return;
+    audio.play(out.samples, out.what);
+    $("playstate").textContent = T.playing(out.what);
+    $("status").textContent = T.playing(out.what);
+    changed();
+  });
+
+  $("stop").addEventListener("click", () => {
+    audio.stop();
+    $("playstate").textContent = T.idle;
+    changed();
+  });
+
+  window.addEventListener("resize", resize);
+  window.addEventListener("hashchange", () => {
+    const s = byId(location.hash.replace("#", ""));
+    if (s && s !== active) show(s);
+  });
+
+  buildTabs();
+  resize();
+  stage.dataset.scene = scenes[0].id;
+  loadSignal().then(() => {
+    if (signal.failed) $("playstate").textContent = T.failed;
+    const wanted = byId(location.hash.replace("#", ""));
+    show(wanted || scenes[0]);
+    stage.dataset.ready = "1";
+    requestAnimationFrame(frame);
+  });
+})();
+</script>
+
+</body>
+</html>
