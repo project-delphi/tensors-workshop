@@ -570,6 +570,49 @@ animations, because a count stopped being the useful question the moment a
 notebook carried two, and because the likeliest mistake by far is a cube cell
 copied between notebooks with the number left alone.
 
+**A remote that cannot be reached skips the route instead of failing it**
+(2026-09-19). Twelve of the nineteen notebooks fetch a real dataset, unmocked,
+because Colab is the runtime that gate defends. The cost had been that someone
+else's bad day turned the job red. Chicago's portal is the worst of them: it
+answers 503 for minutes at a time -- it was doing exactly that when this was
+written -- and rate-limits anonymous requests outright, which is why notebook
+15's `fetch_crime` already retries three times and then apologizes in two
+languages. That apology was the whole remedy, and it was not one: `s15-03`
+binds `T`, so the cell could not simply catch and carry on the way the GIF
+steppers do; everything below it would `NameError`.
+
+The line is a *transport* failure versus an answer. 404, 403 and 410 are
+answers -- the host is up and says the resource is not there, is not ours, or
+is gone -- and a dead dataset URL is the single thing this script's docstring
+names as its reason to exist, so those still fail. So does a 500, which is far
+more often the host answering about the *request* -- a renamed column or
+malformed SoQL -- than a host that is down. A 502, 503 or 504, a 429, a refused
+connection, a DNS miss, a timeout or a body that dies partway are not answers,
+and there is nothing in the notebook to fix. `UNREACHABLE` matches the
+exception *text* rather than the type because the fetch cells wrap the cause in
+`raise RuntimeError(...) from error`, which leaves the 503 alive only in the
+middle of the chained traceback.
+
+Every alternative is anchored to the shape of an exception *summary* line, and
+a review of this change is why. An IPython traceback echoes the source of every
+frame it passes through, so a bare `\bURLError\b` matched a cell hardened to
+`except urllib.error.URLError` -- and a real 404 through that cell was read as
+a transport failure and shipped green, which is the exact thing the gate is
+for. The probe is excluded from the scan for a related reason: it raises one
+`AssertionError` holding every swallowed widget error joined together, so a
+transport failure in one explorer could have carried a real bug in another out
+of the report with it.
+
+A skipped route returns early rather than warning and continuing, because
+`allow_errors=False` already halted the kernel at that cell: every cell after
+it has no output, and its `EXPECTED` lines would assert against an empty
+string. The `EXPECTED`-staleness check moved above that return so it keeps
+holding on the days the portal is down -- it is static and needs no kernel.
+The summary names every skipped route, says in as many words that it went
+unchecked, and stops claiming "All notebook routes executed cleanly", so the
+one way this gate reports less than usual is never something a reader has to
+infer.
+
 **Checks 11 and 12 only print a TODO.** Both cover material that is pasted in
 after the page exists -- Kahoot join URLs, companion exports -- and CI must not
 go red in between.

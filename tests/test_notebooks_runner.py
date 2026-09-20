@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -436,6 +437,195 @@ class Outputs(unittest.TestCase):
             for cid in wanted:
                 with self.subTest(notebook=number, cell=cid):
                     self.assertIn(cid, ids)
+
+
+class Unreachable(unittest.TestCase):
+    """A remote nobody could reach is a skip; a remote that answered is not.
+
+    The whole value of the distinction is that it holds in both directions, so
+    every case here is paired: the same wrapper, once over a 503 and once over
+    a 404. Get it wrong in the lenient direction and a dead dataset URL ships
+    green, which is the failure this gate was written to stop.
+    """
+
+    @staticmethod
+    def errored(ename, evalue, *traceback):
+        return {
+            "outputs": [
+                {
+                    "output_type": "error",
+                    "ename": ename,
+                    "evalue": evalue,
+                    "traceback": list(traceback),
+                }
+            ]
+        }
+
+    def test_transport_failures_are_skipped(self):
+        for evalue in (
+            "HTTP Error 503: Service Temporarily Unavailable",
+            "HTTP Error 502: Bad Gateway",
+            "HTTP Error 429: Too Many Requests",
+        ):
+            with self.subTest(evalue=evalue):
+                cell = self.errored("HTTPError", evalue, f"HTTPError: {evalue}")
+                self.assertIsNotNone(tn.unreachable_in(cell))
+
+        for ename, evalue in (
+            ("URLError", "<urlopen error [Errno 8] nodename nor servname provided>"),
+            ("URLError", "<urlopen error [Errno 61] Connection refused>"),
+            ("URLError", "<urlopen error timed out>"),
+            ("TimeoutError", "The read operation timed out"),
+            ("IncompleteRead", "IncompleteRead(8192 bytes read)"),
+        ):
+            with self.subTest(ename=ename):
+                cell = self.errored(ename, evalue, f"{ename}: {evalue}")
+                self.assertIsNotNone(tn.unreachable_in(cell))
+
+    def test_a_host_that_answered_still_fails(self):
+        """404, 403 and 410 are answers. A dead dataset URL must stay red."""
+        for evalue in (
+            "HTTP Error 404: Not Found",
+            "HTTP Error 403: FORBIDDEN",
+            "HTTP Error 410: Gone",
+            "HTTP Error 400: Bad Request",
+        ):
+            with self.subTest(evalue=evalue):
+                cell = self.errored("HTTPError", evalue, f"HTTPError: {evalue}")
+                self.assertIsNone(tn.unreachable_in(cell))
+
+    def test_a_wrapped_cause_is_found_mid_traceback(self):
+        """The fetch cells `raise RuntimeError(...) from error`.
+
+        That leaves the cause alive only in the middle of a chained traceback:
+        the ename is RuntimeError and the evalue is the bilingual apology, so
+        anything reading just the head and tail sees no 503 at all. This is the
+        shape notebook 15 actually produces.
+        """
+        apology = "EN: could not reach the Chicago data portal. / ES: no se pudo"
+        chained = self.errored(
+            "RuntimeError",
+            apology,
+            "\x1b[0;31mHTTPError\x1b[0m   Traceback (most recent call last)",
+            "urllib.error.HTTPError: HTTP Error 503: Service Temporarily Unavailable",
+            "The above exception was the direct cause of the following exception:",
+            f"\x1b[0;31mRuntimeError\x1b[0m: {apology}",
+        )
+        found = tn.unreachable_in(chained)
+        self.assertIsNotNone(found)
+        self.assertIn("503", found)
+        self.assertNotIn("\x1b", found)
+
+        # Same wrapper, dead URL: notebook 14's monkey tensor moving or being
+        # deleted must not be absorbed by the same branch.
+        dead = self.errored(
+            "RuntimeError",
+            "EN: could not download the monkey BMI tensor.",
+            "urllib.error.HTTPError: HTTP Error 404: Not Found",
+            "The above exception was the direct cause of the following exception:",
+            "RuntimeError: EN: could not download the monkey BMI tensor.",
+        )
+        self.assertIsNone(tn.unreachable_in(dead))
+
+    def test_an_echoed_source_line_is_not_a_cause(self):
+        """The regression that matters: a 404 must not hide behind a token.
+
+        An IPython traceback echoes the source of every frame it passes
+        through, not just exception summaries. A fetch cell hardened to
+        `except urllib.error.URLError` therefore puts that name in the
+        traceback of a *404* -- and a bare-token match read it as a transport
+        failure, so a dead dataset URL shipped green. That is precisely the
+        failure this gate exists to stop, so both halves are pinned here.
+        """
+        frames = (
+            "Cell In[3], line 12",
+            "     11     try:",
+            "---> 12         with urllib.request.urlopen(url, timeout=70) as r:",
+            "     14     except (urllib.error.HTTPError, urllib.error.URLError) as e:",
+        )
+        dead = self.errored(
+            "RuntimeError",
+            "EN: could not download the tensor.",
+            *frames,
+            "urllib.error.HTTPError: HTTP Error 404: Not Found",
+            "RuntimeError: EN: could not download the tensor.",
+        )
+        self.assertIsNone(tn.unreachable_in(dead))
+
+        # Same frames, same echoed token, but the host really was unwell.
+        unwell = self.errored(
+            "RuntimeError",
+            "EN: could not reach the Chicago data portal.",
+            *frames,
+            "urllib.error.HTTPError: HTTP Error 503: Service Temporarily Unavailable",
+            "RuntimeError: EN: could not reach the Chicago data portal.",
+        )
+        self.assertIn("503", tn.unreachable_in(unwell) or "")
+
+    def test_500_is_the_host_answering_about_the_request(self):
+        """502/503/504 are the host unwell; 500 is usually a bad query."""
+        for code, skipped in (
+            ("500", False),
+            ("502", True),
+            ("503", True),
+            ("504", True),
+        ):
+            with self.subTest(code=code):
+                evalue = f"HTTP Error {code}: something"
+                cell = self.errored("HTTPError", evalue, f"HTTPError: {evalue}")
+                self.assertEqual(bool(tn.unreachable_in(cell)), skipped)
+
+    def test_an_ordinary_broken_cell_is_not_a_skip(self):
+        for ename, evalue in (
+            ("NameError", "name 'T' is not defined"),
+            ("ModuleNotFoundError", "No module named 'pyttb'"),
+            ("KeyError", "'community_area'"),
+            # s15-03's own guard: the query came back truncated, so the tensor
+            # would be built from part of the year. A data bug, not a bad day.
+            ("RuntimeError", "EN: the query came back at the 200000-row limit"),
+        ):
+            with self.subTest(ename=ename):
+                cell = self.errored(ename, evalue, f"{ename}: {evalue}")
+                self.assertIsNone(tn.unreachable_in(cell))
+
+    def test_a_cell_with_no_error_is_not_a_skip(self):
+        self.assertIsNone(
+            tn.unreachable_in(
+                {
+                    "outputs": [
+                        {"output_type": "stream", "text": "Tensor: (7, 24, 78, 10)"}
+                    ]
+                }
+            )
+        )
+        self.assertIsNone(tn.unreachable_in({}))
+
+    def test_every_run_set_that_fetches_is_listed_as_network(self):
+        """NETWORK is what --offline skips, and it must not miss a fetcher.
+
+        One direction only. A number in NETWORK whose run set fetches nothing
+        is harmless -- 07 is exactly that, since its route drops the cell
+        holding the URL -- but a run set that fetches and is absent from
+        NETWORK makes `--offline` reach the network and fail there.
+
+        The heuristic is a fetch call plus a URL literal anywhere in the run
+        set, because the URL is usually a name defined a few lines up rather
+        than an argument. It reaches eleven of the twelve; it is a net, not a
+        proof, so a new fetch spelled some other way still needs the manual
+        edit.
+        """
+        import nbformat
+
+        call = re.compile(
+            r"\b(?:urlopen|urlretrieve|read_csv|read_json|imread|loadmat)\s*\("
+        )
+        for path in sorted((ROOT / "notebooks").glob("[0-9][0-9]-*.ipynb")):
+            nb = nbformat.read(path, as_version=4)
+            chosen, _, _ = tn.run_set(nb, path.name)
+            src = "".join(tn.source(nb["cells"][i]) for i in chosen)
+            if call.search(src) and "http" in src:
+                with self.subTest(notebook=path.name):
+                    self.assertIn(path.name[:2], tn.NETWORK)
 
 
 class InjectedCells(unittest.TestCase):
