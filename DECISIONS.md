@@ -280,7 +280,7 @@ the swing, which is where the tensor needs the room.
 
 The pointer is the only switch a reader has to find, and they find it by
 accident. `pointerenter` on `#stage` stops the drift; `pointerleave` schedules
-its return 1.5 seconds later. The legend, the snap button and the gizmo are
+its return 0.3 seconds later. The legend, the snap button and the gizmo are
 children of `#stage`, so crossing into them is still being on the stage, which
 is what `pointerenter` and `pointerleave` already mean. The keyboard is held
 off by `:focus-visible` rather than `:focus`: a click focuses the stage too,
@@ -329,9 +329,10 @@ showed one unmovable view of them, and step 8 drew a circle and an ellipse
 through two orthographic cameras aimed straight down, which is a diagram drawn
 with a GPU. So the stage took the visualizer's bargain -- it sways until a
 reader reaches for it, and is theirs the moment they do -- with the same
-gates (`prefers-reduced-motion`, a hidden tab, `pointerenter`, `:focus-visible`,
-`pointerleave` and 0.3 seconds) so that a reader who has met one widget has met
-both. Four things here are this stage's own.
+gates (`prefers-reduced-motion`, a hidden tab, `pointerenter`, `:focus-visible`
+and `pointerleave`) so that a reader who has met one widget has met both.
+The visualizer's pause before the sway returns is its own; this stage picks up
+the moment the pointer leaves. Four things here are this stage's own.
 
 *One frame, and no roll.* Azimuth turns about world +Y, elevation lifts above
 the horizon, and the camera's own up stays +Y, for both scenes. The portal was
