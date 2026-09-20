@@ -41,6 +41,12 @@ scikit-learn, scikit-image, matplotlib and ipywidgets, with no accelerator
 code anywhere. check_colab_parity() below is what keeps both statements true
 as the notebooks change.
 
+Fetching for real means someone else's server can fail the run, so a route
+whose remote could not be reached is reported as skipped rather than failed --
+a 502/503/504, a 429, a refused connection, a DNS miss or a timeout. A 404, a
+403, a 410 or a 500 still fails: the host answered, and a dead dataset URL is
+the exact thing this script exists to catch. See UNREACHABLE.
+
 The executed notebook is never written back. notebooks/ sits inside the
 byte-exact regenerate gate in .github/workflows/publish.yml, so a stray output
 or execution count would fail CI and check 1.
@@ -80,6 +86,52 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 # Routes that fetch remote data or run %pip. --offline skips exactly these.
 # 12 is here for the voice.wav it fetches inside its fallback run.
 NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16"}
+
+# A remote that cannot be reached is not a broken notebook.
+#
+# Twelve of the routes above fetch a real dataset, unmocked, because Colab is
+# the runtime this defends. The cost is that someone else's server having a bad
+# day turns this job red while saying nothing about the notebook. Chicago's
+# portal is the worst of them: it answers 503 for minutes at a time and
+# rate-limits anonymous requests outright, which is why notebook 15's own fetch
+# cell already retries three times and then says so in two languages.
+#
+# So a *transport* failure is a skip, and every other failure still fails. The
+# line is drawn where this script's purpose draws it: it exists because a dead
+# dataset URL would otherwise ship green, and a dead URL is an ANSWER -- the
+# host is up and reports 404, 403 or 410. Those keep failing. A 5xx, a 429, a
+# refused connection, a DNS miss, a timeout or a body that dies partway are not
+# answers at all, and there is nothing in the notebook to fix. Matching the
+# exception text rather than the type is deliberate: the fetch cells wrap the
+# original in `raise RuntimeError(...) from error`, so the cause survives only
+# in the traceback.
+#
+# Every alternative is anchored to the shape of an exception SUMMARY line --
+# start of line, an optional dotted module prefix, the name, a colon -- and not
+# to a bare token. An IPython traceback echoes the *source* of every frame it
+# passes through, so a cell hardened to `except urllib.error.URLError` would
+# put that token in the traceback of a 404 and a dead dataset URL would ship
+# green, which is the one thing this script exists to stop.
+#
+# 500 is not here. 502, 503 and 504 mean the host is unwell or unreachable
+# through something in front of it; a 500 is very often the host answering
+# about the *request* -- a renamed column or malformed SoQL in CHICAGO_QUERY --
+# which is a notebook bug and should stay red.
+UNREACHABLE = re.compile(
+    r"""
+    ^\s*                            # a summary line, never an echoed source line
+    (?:[\w.]+\.)?                   # urllib.error.HTTPError, or a bare name
+    (?:
+        HTTPError:\ HTTP\ Error\ (?:429|50[234])\b
+      | URLError:                    # DNS, refused, no route, TLS, connect timeout
+      | IncompleteRead:              # the body died partway
+      | RemoteDisconnected:
+      | Connection(?:Reset|Aborted|Refused)Error:
+      | (?:timeout|TimeoutError):\ [^\n]*\btimed\ out\b
+    )
+    """,
+    re.VERBOSE,
+)
 
 # Bigger than any cell's own retry budget, so a slow-but-alive remote fails
 # with the bilingual sentence the fetch cells were written to print rather than
@@ -620,7 +672,33 @@ def errors_in(cell: dict) -> list[str]:
     return found
 
 
-def execute(path: Path, number: str, show_output: bool) -> None:
+def unreachable_in(cell: dict) -> str | None:
+    """The line naming a transport failure in this cell, if that is why it died.
+
+    `errors_in` keeps only the head and the last traceback line, and neither
+    carries the cause of a wrapped fetch: notebook 15's cell raises a
+    `RuntimeError` whose message is the bilingual apology, and the 503 under it
+    lives in the middle of the chained traceback. So this walks the whole thing.
+    """
+    for item in cell.get("outputs", ()) or ():
+        if item.get("output_type") != "error":
+            continue
+        text = ANSI.sub(
+            "",
+            f"{item.get('ename')}: {item.get('evalue')}\n"
+            + "\n".join(item.get("traceback") or []),
+        )
+        hits = [line.strip() for line in text.splitlines() if UNREACHABLE.search(line)]
+        if hits:
+            # A traceback names the cause more than once -- at the raise site
+            # inside urllib and again on the summary line. The last is the
+            # summary, which is the one worth printing.
+            return hits[-1][:160]
+    return None
+
+
+def execute(path: Path, number: str, show_output: bool) -> str | None:
+    """Run one notebook's set. Returns a reason string if it had to be skipped."""
     import nbformat
     from nbclient import NotebookClient
     from nbclient.exceptions import CellExecutionError, CellTimeoutError
@@ -693,6 +771,41 @@ def execute(path: Path, number: str, show_output: bool) -> None:
             fail(f"{label}: kernel error — {type(exc).__name__}: {exc}")
 
     expected = EXPECTED.get(number, {})
+
+    # Not `set(ids)`: a cell can still exist and yet have dropped out of the
+    # run set, and then its EXPECTED line asserts nothing while CI stays green.
+    # Compare against what actually ran.
+    ran = {ids[i] for i in chosen}
+    for cid in sorted(set(expected) - ran):
+        gone = cid not in ids
+        fail(
+            f"{label}: EXPECTED names cell {cid}, which "
+            + (
+                "no longer exists"
+                if gone
+                else "exists but is not in the run set, so it asserts nothing"
+            )
+        )
+
+    # A remote nobody could reach is not a broken notebook, and there is
+    # nothing in the notebook to fix. `allow_errors=False` halted the kernel at
+    # that cell, so every cell after it has no output at all and its EXPECTED
+    # lines would assert against an empty string -- hence the return rather
+    # than a warning. The staleness check above runs first because it is
+    # static: it must keep holding on the days the portal is down.
+    for cell in trimmed["cells"]:
+        # Teaching cells only. The probe raises ONE AssertionError holding every
+        # swallowed widget-callback error joined together, so a transport
+        # failure in one explorer would carry a real bug in another out of the
+        # report with it. A probe failure is a widget question either way.
+        if cell.get("id") in ("workshop-prologue", "workshop-probe"):
+            continue
+        why = unreachable_in(cell)
+        if why:
+            print(f"      skipped — {cell.get('id')} could not reach its remote")
+            print(f"              {why}")
+            return f"{number} ({cell.get('id')})"
+
     reported = False
     for cell in trimmed["cells"]:
         cid = cell.get("id")
@@ -733,20 +846,7 @@ def execute(path: Path, number: str, show_output: bool) -> None:
             f"died — {stopped}"
         )
 
-    # Not `set(ids)`: a cell can still exist and yet have dropped out of the
-    # run set, and then its EXPECTED line asserts nothing while CI stays green.
-    # Compare against what actually ran.
-    ran = {ids[i] for i in chosen}
-    for cid in sorted(set(expected) - ran):
-        gone = cid not in ids
-        fail(
-            f"{label}: EXPECTED names cell {cid}, which "
-            + (
-                "no longer exists"
-                if gone
-                else "exists but is not in the run set, so it asserts nothing"
-            )
-        )
+    return None
 
 
 # ── Entry point ──────────────────────────────────────────────────────────────
@@ -790,6 +890,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Executing {mode} for {len(paths)} notebook(s)")
 
     skipped = []
+    unreachable = []
     for index, path in enumerate(paths, 1):
         number = path.name[:2]
         print(f"\n[{index}] {path.name}")
@@ -828,19 +929,38 @@ def main(argv: list[str] | None = None) -> int:
             continue
 
         try:
-            execute(path, number, args.show_output)
+            why = execute(path, number, args.show_output)
+            if why:
+                unreachable.append(why)
         except (ValueError, KeyError) as exc:
             fail(f"{path.name}: {exc}")
 
     print()
     if skipped:
         print(f"Skipped {len(skipped)} network route(s): {', '.join(skipped)}")
+    if unreachable:
+        # Loud on purpose. This is the one way the gate reports less than it
+        # normally does, so it should never be something a reader has to infer
+        # from a run that otherwise looks clean.
+        print(
+            f"UNCHECKED: {len(unreachable)} route(s) whose remote was "
+            f"unreachable: {', '.join(unreachable)}"
+        )
+        print("  Those notebooks did not run. Rerun when the host is back.")
     if failures:
         print(f"{len(failures)} FAILURE(S)")
         return 1
-    print(
-        "Run sets resolved." if args.list else "All notebook routes executed cleanly."
-    )
+    if args.list:
+        print("Run sets resolved.")
+    elif unreachable:
+        # Not "cleanly": a run that skipped a route checked less than a full
+        # one, and the summary should not read the same either way.
+        print(
+            f"{len(paths) - len(skipped) - len(unreachable)} of {len(paths)} "
+            f"notebook route(s) executed cleanly."
+        )
+    else:
+        print("All notebook routes executed cleanly.")
     return 0
 
 
