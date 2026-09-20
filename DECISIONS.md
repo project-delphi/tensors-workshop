@@ -330,7 +330,7 @@ through two orthographic cameras aimed straight down, which is a diagram drawn
 with a GPU. So the stage took the visualizer's bargain -- it sways until a
 reader reaches for it, and is theirs the moment they do -- with the same
 gates (`prefers-reduced-motion`, a hidden tab, `pointerenter`, `:focus-visible`,
-`pointerleave` and 1.5 seconds) so that a reader who has met one widget has met
+`pointerleave` and 0.3 seconds) so that a reader who has met one widget has met
 both. Four things here are this stage's own.
 
 *One frame, and no roll.* Azimuth turns about world +Y, elevation lifts above
