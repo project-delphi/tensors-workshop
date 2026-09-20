@@ -131,11 +131,38 @@ original export. Baked page numbers in that art are not authoritative
 scikit-image, so `gen_figures.py widget` writes the three photographs out once,
 tiny, as JSON it fetches same-origin -- not from the network, which
 `check_navigation.cjs` aborts, and not inlined into the HTML, which stays
-hand-written. Four resolutions: 4 px is what a stride table can be read from and
+hand-written. Five resolutions: 4 px is what a stride table can be read from and
 what a value printed on each cube fits, 16 px is where a photo first reads as
-one, and 32 px is the ceiling the instanced mesh is sized for. Centre-crop to
-a square, then Pillow's BOX filter, so the bytes do not depend on which
-matplotlib is installed.
+one, and 64 px is the ceiling. Centre-crop to a square, then Pillow's BOX
+filter, so the bytes do not depend on which matplotlib is installed.
+
+32 px was the ceiling until the mesh stopped being the thing that decided it.
+The number that ends the list is the JSON's: 4 px through 64 px is 170 kB of
+decimal bytes and 128 px alone would be four times that again, which is more
+than the widget is worth on a phone. 64 px earns its place because it is where
+the reveal stops being a demonstration and becomes a photograph -- snap to
+2-D at 32 px and the astronaut is a shape, at 64 px she has a face -- and the
+whole argument the page makes is that the bytes under a shape are a real
+image.
+
+**The reader can add a photograph, and it is not an upload.** The batch takes
+a fourth slab from a file the reader picks, built into exactly the record
+`photos.json` ships -- an id, a name per language, one HWC uint8 array per
+resolution -- so `makeSource()`, the image strip, the channel colours and the
+code log go on treating the batch as a batch and none of them learns it is
+there. Nothing crosses the network: `<input type=file>` hands JavaScript the
+bytes, the decoding, centre-cropping and shrinking are canvas work on the
+reader's own machine, the photo lives in `PHOTOS` and closing the tab deletes
+it. It is decoded through an `<img>` rather than `createImageBitmap`, which
+is what applies the EXIF rotation -- a photo straight off a phone is on its
+side otherwise -- and shrunk by halving rather than in one `drawImage`,
+because the long jump is the case browsers resample worst and a 4000 px photo
+came back aliased, which at 8x8 is the whole picture.
+
+`data-photos` still says three. It is what `check_navigation.cjs` reads to
+know the fetch landed, and a fourth photo that was never in `photos.json`
+would make one attribute answer two questions and neither of them cleanly;
+the reader's photo is `data-uploaded`.
 
 **three.js is vendored.** The widget shipped pointing at
 `three@0.169.0/build/three.min.js`, a UMD build that has not existed since
@@ -282,8 +309,16 @@ It rides `tick()`, the one `requestAnimationFrame` loop the page owns, as a
 third source of motion beside the snap glide and the reshape tween, rather
 than the second loop `startEmbed()` runs. A glide or a tween still paints
 every frame; the drift is throttled to 40ms and skips the frames it did not
-move on, because repainting 9216 cubes to draw them where they already are is
-the whole cost of an animation nobody asked for. It yields to a hidden tab,
+move on, because repainting every cube to draw it where it already is is the
+whole cost of an animation nobody asked for. The frames it does paint stopped
+rewriting the instance buffers when 64 px arrived: a drift, a drag and a zoom
+all move the camera and not one cube, and re-composing 49152 matrices and
+re-parsing 49152 colour strings to report that nothing had moved was what a
+full batch at the new ceiling spent its time on. `syncGL` now holds the list
+it last uploaded and compares by identity, which is the right test rather than
+a cheap one -- `buildVoxels()` returns a fresh array whenever anything a cube
+shows changes, and `drawList()` returns a fresh one on every frame of a tween,
+which is exactly when the buffers do have to be rewritten. It yields to a hidden tab,
 to `prefers-reduced-motion`, and to `snap.on` -- drifting away from face on
 would undo the one view the reader asked for by name.
 
