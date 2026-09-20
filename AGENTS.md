@@ -15,7 +15,7 @@ When a rule here surprises you, look it up there before changing it.
 
 A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
 code — the deliverables are the rendered site, Colab notebooks for the workshop
-sections and take-home extras, two revealjs decks, three standalone interactive
+sections and take-home extras, two revealjs decks, four standalone interactive
 widgets and three Kahoot spreadsheets.
 
 **Desktops and laptops are the target, and phones are not.** The session is
@@ -130,12 +130,13 @@ What each generator draws, and the rules each one keeps:
   `SLIDES` table.
 
 **`interactive/` is hand-written**, and the one asset class with neither a
-generator nor a byte-exact gate. Three self-contained HTML widgets -- the
+generator nor a byte-exact gate. Four self-contained HTML widgets -- the
 section 03 broadcasting simulator, the section 04 reshape & transpose
-visualizer, and the sections 07/09 projection & SVD stage -- each with its own
-`:root` palette, EN/ES copy tables, `?lang=`, and its section's accent adjusted
-per theme to clear 4.5:1. They are resources, not render targets:
-`interactive/**` is in `resources:` and deliberately absent from `render:`.
+visualizer, the sections 07/09 projection & SVD stage, and the sections 04/09
+voice tensor stage -- each with its own `:root` palette, EN/ES copy tables,
+`?lang=`, and its section's accent adjusted per theme to clear 4.5:1. They are
+resources, not render targets: `interactive/**` is in `resources:` and
+deliberately absent from `render:`.
 
 The stage is eight steps, one file each under `interactive/linalg-scenes/`,
 registered in load order through `LinalgScenes.register()`; the page
@@ -157,6 +158,18 @@ reduced motion). The stage is black in every theme and its labels are the
 vendored CMU Serif (`interactive/vendor/cmu-serif/`), because the look it
 takes is a Manim frame; the label chip stays opaque, and black, so axe has two
 colours to measure.
+
+The voice stage (`voice-stage.html`) is the same registry shape one step
+simpler: scenes are **tabs over one recording**, not steps down a scroller,
+because a scene that plays sound needs a transport under the reader's hand
+rather than under their scroll position. `voice-kit.js` holds the registry and
+the drawing; `audio-core.js` holds the arithmetic and `npm test` pins it,
+including the reorderings, whose claim on screen is that they are permutations.
+There is no three.js here and no flat twin: a spectrogram is an image, so the
+stage draws into a 2-D canvas and there is one path rather than two. Its embed
+never fetches the recording -- it draws from a synthesised stand-in of the same
+length, and `data-standin` says which is on screen. Link by scene name
+(`#window`, `#scramble`); the contract is `voice-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
@@ -200,7 +213,7 @@ every `repo.widgets` line.
 `check_links.py` fails the build if any file in `repo.widgets` is missing from
 `docs/` -- for the addons that is the *only* guard, since an import map is
 element content and the link harvest reads attributes. `check_navigation.cjs`
-drives all three widgets in both languages, from a per-widget `drive` callback
+drives all four widgets in both languages, from a per-widget `drive` callback
 rather than a flag, and runs axe over them. The stage's callback opens every one
 of its eight steps and asserts each step's claim off `data-*`. Every colour a widget puts on text
 clears 4.5:1 per theme -- the four axis hues have `--axN-ink` text variants,

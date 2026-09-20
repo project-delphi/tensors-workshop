@@ -215,6 +215,31 @@ test('noise against silence is refused rather than scaled to nothing', () => {
   assert.throws(() => core.noiseAtSnr(new Float64Array(64), 5, 1), /no energy/);
 });
 
+test('a transpose and a patch shuffle are permutations: every number survives', () => {
+  // The voice stage prints "the same 263,169 numbers, in a different order"
+  // beside the picture. That claim is this test.
+  const F = 54, T = 54, Z = core.cplx(F * T), g = core.gaussians(2 * F * T, 23);
+  for (let i = 0; i < F * T; i++) { Z.re[i] = g[2 * i]; Z.im[i] = g[2 * i + 1]; }
+  const bag = (M) => Array.from(M.re).map((v, i) => v + 'i' + M.im[i]).sort();
+  const want = bag(Z);
+  for (const M of [core.transposeC(Z, F, T), core.patchShuffle(Z, F, T, 27)]) {
+    assert.equal(M.re.length, F * T);
+    assert.deepEqual(bag(M), want);
+  }
+  // Transposing twice is the identity; the shuffle moves something.
+  const back = core.transposeC(core.transposeC(Z, F, T), T, F);
+  assert.equal(maxAbs(back.re, Z.re), 0);
+  assert.ok(maxAbs(core.patchShuffle(Z, F, T, 27).re, Z.re) > 0);
+});
+
+test('a patch size that does not divide the matrix is refused, not truncated', () => {
+  // 513 = 27 x 19, so 27 tiles it and 8 does not. A patch size that left a
+  // margin would drop numbers the readout still claimed were present.
+  const F = 54, T = 54, Z = core.cplx(F * T);
+  assert.throws(() => core.patchShuffle(Z, F, T, 8), /does not divide/);
+  assert.equal(513 % 27, 0);
+});
+
 test('the recording decodes as the mono 48 kHz the handbook describes', () => {
   const wav = core.decodeWav(fs.readFileSync(WAV));
   assert.equal(wav.rate, 48000);

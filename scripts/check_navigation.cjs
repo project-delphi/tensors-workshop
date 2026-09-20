@@ -15,7 +15,7 @@ const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 
-// The accessibility pass. axe runs over every page and all three widgets, and a
+// The accessibility pass. axe runs over every page and all four widgets, and a
 // `serious` or `critical` WCAG 2.x A/AA violation fails the check unless the
 // rule *and the element* are listed here with the reason. Entries are by
 // element, not by rule, so a listed rule still fires on any other node. The
@@ -309,6 +309,71 @@ async function audit(page, where) {
 
       async function driveBroadcasting(page) {
         await page.waitForSelector('#draw .cell');
+      }
+
+      // The voice tensor stage. What only this one can check: that the
+      // recording actually arrived and decoded -- `data-standin` is the
+      // stage's own admission that it fell back to a synthesised signal, and
+      // a voice.wav that stopped reaching docs/ would otherwise draw a
+      // perfectly convincing picture of the wrong thing -- and that the three
+      // layouts really are the same matrix reordered, read off the stage as
+      // numbers rather than looked for in pixels.
+      async function driveVoice(page, where, lang) {
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
+          null, {timeout: 20000});
+        const stage = page.locator('#stage');
+        assert.equal(await stage.getAttribute('data-standin'), '0',
+          `${where}: fell back to the synthesised signal, so voice.wav did not load`);
+        assert.equal(await stage.getAttribute('data-scene'), 'window');
+        assert.equal(await stage.getAttribute('data-shape'), '513,465',
+          `${where}: the recording's default shape`);
+
+        // Halving the hop doubles the columns. This is the scene's predict
+        // question, so it is the one number worth pinning.
+        await page.selectOption('#c-overlap', 'quarter');
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.hop === '256', null, {timeout: 5000});
+        const wide = await stage.getAttribute('data-shape');
+        assert.equal(wide.split(',')[0], '513', `${where}: F should not move with the hop`);
+        assert(Number(wide.split(',')[1]) > 900, `${where}: a quarter hop should roughly double T, got ${wide}`);
+        await page.selectOption('#c-overlap', 'half');
+
+        // A tapered window that never overlaps leaves gaps the inverse cannot
+        // fill, and the readout says so in red. The fault text is a teaching
+        // claim, so its absence is a regression.
+        await page.selectOption('#c-overlap', 'none');
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.hop === '1024', null, {timeout: 5000});
+        assert.equal(await page.locator('#read .fault').count(), 1,
+          `${where}: no warning about a tapered window with no overlap`);
+        await page.selectOption('#c-win', 'rect');
+        await page.waitForFunction(() =>
+          document.querySelectorAll('#read .fault').length === 0, null, {timeout: 5000});
+        await page.selectOption('#c-overlap', 'half');
+        await page.selectOption('#c-win', 'hann');
+
+        // The reshape scene. Square on purpose -- a transposed spectrogram is
+        // only invertible back to sound when its axes are the same length --
+        // and every layout holds the identical count.
+        await page.locator('#tab-scramble').click();
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.scene === 'scramble', null, {timeout: 5000});
+        assert.equal(await stage.getAttribute('data-shape'), '513,513', `${where}: not square`);
+        assert.equal(await stage.getAttribute('data-square'), '1');
+        const cells = await stage.getAttribute('data-cells');
+        assert.equal(cells, '263169');
+        for (const layout of ['transpose', 'patches', 'none']) {
+          await page.selectOption('#c-layout', layout);
+          await page.waitForFunction(want =>
+            document.getElementById('stage').dataset.layout === want, layout, {timeout: 5000});
+          assert.equal(await stage.getAttribute('data-cells'), cells,
+            `${where}: ${layout} changed how many numbers there are`);
+        }
+
+        // Linking by scene name, never by an index that moves on a reorder.
+        await page.goto(`${origin}${prefix}interactive/voice-stage.html?lang=${lang}#scramble`);
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.scene === 'scramble', null, {timeout: 20000});
       }
 
       // The projection & SVD stage. Two things here that the other two cannot
@@ -740,7 +805,12 @@ async function audit(page, where) {
         // Its embed mode is the portal's still frame -- no scroller, no
         // three.js -- which is the third hero tab below.
         {file: 'linalg-stage', en: 'Projection and the SVD',
-         es: 'Proyecci\u00f3n y la SVD', embed: true, drive: driveStage}
+         es: 'Proyecci\u00f3n y la SVD', embed: true, drive: driveStage},
+        // Its embed mode draws the same scene from a synthesised stand-in
+        // rather than fetching half a megabyte of audio onto the homepage,
+        // which is the fourth hero tab below.
+        {file: 'voice-stage', en: 'The voice tensor',
+         es: 'El tensor de voz', embed: true, drive: driveVoice}
       ];
       for (const widget of widgets) {
         console.log(`Checking ${widget.file}`);
@@ -818,6 +888,21 @@ async function audit(page, where) {
             assert(await page.locator('.steps').isHidden(), `${where} embed: scroller shown`);
             assert.equal(await page.evaluate(() => window.THREE), undefined,
               `${where} embed: three.js must not be fetched on the front door`);
+          } else if (widget.file === 'voice-stage') {
+            // The hero draws this scene from a synthesised stand-in. Half a
+            // megabyte of audio is not what a landing page is worth, and an
+            // AudioContext built here would be a suspended one nobody asked
+            // for -- so both must be absent, and `data-standin` is the stage
+            // saying which signal it used.
+            await page.waitForFunction(() =>
+              document.querySelector('#stage').dataset.ready === '1', null, {timeout: 20000});
+            assert.equal(await page.locator('#stage').getAttribute('data-standin'), '1',
+              `${where} embed: the hero fetched the recording`);
+            const fetched = await page.evaluate(() =>
+              performance.getEntriesByType('resource').some(e => e.name.includes('voice.wav')));
+            assert.equal(fetched, false, `${where} embed: voice.wav requested on the front door`);
+            assert(await page.locator('.tabs').isHidden(), `${where} embed: scene tabs shown`);
+            assert.equal(await page.locator('#stage').getAttribute('data-playing'), '0');
           } else {
             await page.waitForSelector('#draw .cell');
           }
@@ -831,14 +916,14 @@ async function audit(page, where) {
         }
       }
 
-      // The hero carries all three widgets live, behind three tabs, in the page's
+      // The hero carries all four widgets live, behind four tabs, in the page's
       // own language. The static diagram is the fallback and must still be
       // in the document for reduced motion and phones.
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 3, `${lang}/index: three hero embeds`);
+        assert.equal(await frames.count(), 4, `${lang}/index: four hero embeds`);
         // Only the open tab's widget is fetched. A hidden iframe is not
         // lazy-loaded whatever `loading` says, so the other two hold their URL
         // in data-src until the tab script hands it over.
@@ -855,6 +940,7 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-layout').isVisible());
         assert(await page.locator('#hero-panel-broadcast').isHidden());
         assert(await page.locator('#hero-panel-linalg').isHidden());
+        assert(await page.locator('#hero-panel-voice').isHidden());
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
@@ -870,6 +956,11 @@ async function audit(page, where) {
         // reassigning src and reloading the widget from scratch.
         assert.equal(await stageFrame.getAttribute('data-src'), null,
           `${lang}/index: reopening a tab would reload its widget`);
+        await page.locator('#hero-tab-voice').click();
+        assert(await page.locator('#hero-panel-voice').isVisible(), `${lang}/index: voice tab`);
+        assert(await page.locator('#hero-panel-linalg').isHidden());
+        assert(await page.locator('#hero-panel-voice iframe').getAttribute('src'),
+          `${lang}/index: voice embed not loaded on opening its tab`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
@@ -1032,7 +1123,7 @@ async function audit(page, where) {
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     assert.deepEqual(a11y, [], 'Accessibility violations (axe, serious or critical)');
     console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, all three interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
+      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, all four interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));
