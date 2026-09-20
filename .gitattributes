@@ -14,6 +14,7 @@
 
 # Binary: never rewrite these bytes, never try to diff them.
 *.xlsx binary
+*.wav binary
 *.woff binary
 *.woff2 binary
 *.ttf binary
