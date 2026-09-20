@@ -59,6 +59,9 @@ repo:
     # page throws on at boot, not a broken link.
     - interactive/voice-stage.html
     - interactive/voice-kit.js
+    - interactive/voice-scenes/sample.js
+    - interactive/voice-scenes/quantize.js
+    - interactive/voice-scenes/array.js
     - interactive/voice-scenes/window.js
     - interactive/voice-scenes/scramble.js
     # The arithmetic under the voice tensor stage, and the recording it
@@ -67,6 +70,7 @@ repo:
     # it either, and Appendix E's numbers depend on these exact bytes.
     - interactive/audio-core.js
     - interactive/vendor/voice.wav
+    - interactive/vendor/beat.wav
     # The stage's serif, vendored (interactive/vendor/README.md). A
     # @font-face url is CSS content, which the harvest cannot see.
     - interactive/vendor/cmu-serif/cmu-serif-500-roman.woff2

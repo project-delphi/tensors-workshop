@@ -681,6 +681,80 @@
     return Math.sqrt(err);
   }
 
+  // ------------------------------------------------- sampling and rounding
+  // The three operations the stage's opening scenes draw: fewer measurements
+  // a second, each measurement rounded to one of 2^bits levels, and the
+  // interpolation the far view of the waveform is drawn through. Every number
+  // those scenes print -- the count in a millisecond, the step between
+  // levels, the signal-to-noise ratio the rounding costs -- comes from here.
+
+  // Every k-th sample: the signal measured at rate / k. No anti-alias filter,
+  // on purpose. What a lower rate throws away is the lesson, and a filter
+  // would hide the half of it you can hear.
+  function decimate(x, k) {
+    if (!(k >= 1) || k !== Math.floor(k)) throw new Error("decimate: k must be a whole number >= 1");
+    const n = Math.ceil(x.length / k);
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i++) out[i] = x[i * k];
+    return out;
+  }
+
+  // Zero-order hold: each sample repeated k times, back to `length` samples
+  // at the original rate. This is what a decimated signal sounds like without
+  // a reconstruction filter, and it is the staircase the sampling scene draws
+  // in the output colour -- the same k that thinned the beads.
+  function hold(y, k, length) {
+    if (!(k >= 1) || k !== Math.floor(k)) throw new Error("hold: k must be a whole number >= 1");
+    const n = length === undefined ? y.length * k : length;
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i++) out[i] = y[Math.min(y.length - 1, Math.floor(i / k))];
+    return out;
+  }
+
+  // Linear interpolation, k points per original interval, for the far view
+  // of the waveform: a curve threaded through the samples so that from a
+  // distance it reads as one continuous line. It is drawing, not signal
+  // processing -- nothing plays it -- and it is here so the twin canvas and
+  // the three.js tube read the same points.
+  function upsample(x, k) {
+    if (!(k >= 1) || k !== Math.floor(k)) throw new Error("upsample: k must be a whole number >= 1");
+    if (x.length === 0) return new Float64Array(0);
+    const n = (x.length - 1) * k + 1;
+    const out = new Float64Array(n);
+    for (let i = 0; i < x.length - 1; i++) {
+      const a = x[i], b = x[i + 1];
+      for (let j = 0; j < k; j++) out[i * k + j] = a + (b - a) * (j / k);
+    }
+    out[n - 1] = x[x.length - 1];
+    return out;
+  }
+
+  // Uniform mid-tread quantisation to `bits` bits: the integer code is the
+  // sample scaled by 2^(bits-1) and rounded, clamped to the signed range, and
+  // the quantised value is that code scaled back. At 16 bits this is exactly
+  // what a 16-bit PCM WAV stores, so quantize(x, 16) on the vendored
+  // recordings is the identity -- the test pins that, because it is the
+  // whole point of the scene: the recording was integers all along.
+  function quantize(x, bits) {
+    if (!(bits >= 1 && bits <= 24) || bits !== Math.floor(bits)) {
+      throw new Error("quantize: bits must be a whole number from 1 to 24");
+    }
+    const half = Math.pow(2, bits - 1);
+    const lo = -half, hi = half - 1;
+    const codes = new Int32Array(x.length);
+    const q = new Float64Array(x.length);
+    let maxErr = 0;
+    for (let i = 0; i < x.length; i++) {
+      let c = Math.round(x[i] * half);
+      if (c < lo) c = lo; else if (c > hi) c = hi;
+      codes[i] = c;
+      q[i] = c / half;
+      const e = Math.abs(q[i] - x[i]);
+      if (e > maxErr) maxErr = e;
+    }
+    return {q, codes, step: 1 / half, levels: 2 * half, maxErr};
+  }
+
   // ------------------------------------------------------------------- wav
   // Enough of RIFF to read the one recording this stage ships, and to fail
   // loudly on anything else rather than play noise. The browser could use
@@ -729,6 +803,7 @@
     SKETCH, POWER, leftSubspace, leftSubspaceSteps, projectRank, retained,
     transposeC, patchShuffle,
     magnitude, nmfInit, nmfStep, nmfError,
+    decimate, hold, upsample, quantize,
     decodeWav
   };
   if (typeof module !== "undefined" && module.exports) module.exports = AudioCore;

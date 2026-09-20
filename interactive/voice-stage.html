@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>The voice tensor</title>
 
+<!-- The vendored addons say `import ... from 'three'`, which only an import
+     map can resolve without a bundler. It must be static and in <head>, and
+     it fetches nothing until a module import resolves -- so the lazy boot
+     below holds, and a page opened on a canvas scene or as the hero embed
+     never pulls three.js at all. See vendor/README.md. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three-0.169.0.module.min.js",
+    "three/addons/": "./vendor/three-0.169.0/examples/jsm/"
+  }
+}
+</script>
+
 <style>
   :root {
     --bg: #f7f5ef;
@@ -56,10 +70,10 @@
   :root {
     --stage-ink: #e8e8e8;
     --stage-mute: #8a8a8a;
-    --v-sig: #ffd84d;    /* the waveform, the window the reader moves */
-    --v-out: #c39bd3;    /* what the transform produced */
-    --v-res: #fc6c85;    /* anything scrambled, lossy or wrong */
-    --v-axis: #58c4dd;   /* the axis being named */
+    --v-sig: #ffd84d;    /* the waveform, the window the reader moves, the samples */
+    --v-out: #c39bd3;    /* what the transform produced; what the play button plays */
+    --v-res: #fc6c85;    /* anything scrambled, lossy or wrong; the rounding error */
+    --v-axis: #58c4dd;   /* the axis being named; the ruler the samples snap to */
   }
 
   * { box-sizing: border-box; }
@@ -69,6 +83,27 @@
   .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
   header p { max-width: 44rem; color: var(--ink-mute); overflow-wrap: break-word; }
+
+  /* Which recording is on the stage: one of the two built in, or a file the
+     reader brought. The file is decoded in the page and goes nowhere. */
+  .source {
+    display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
+    margin: 1rem 0 0; font-size: 0.86rem;
+  }
+  .source label { font-weight: 600; }
+  .source select {
+    font: inherit; font-size: 0.86rem; padding: 0.25rem 0.4rem;
+    border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink);
+  }
+  .source select:focus-visible, .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .drop {
+    display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
+    padding: 0.3rem 0.7rem; border: 1px dashed var(--line); border-radius: 6px;
+    background: var(--panel); color: var(--ink); font-weight: 600;
+  }
+  .drop:hover, .drop[data-over="1"] { border-color: var(--accent); }
+  .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+  .source .sig { color: var(--ink-mute); font-family: var(--mono); font-size: 0.82rem; overflow-wrap: anywhere; }
 
   .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.1rem 0 0.8rem; padding: 0; }
   .tabs button {
@@ -87,13 +122,30 @@
     position: relative; background: var(--stage); border: 1px solid var(--line);
     border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 10;
   }
-  #draw { display: block; width: 100%; height: 100%; }
+  #stage[data-gl="composer"] { cursor: grab; touch-action: pan-y; }
+  #stage[data-grab] { cursor: grabbing; }
+  #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #draw, #gl { display: block; width: 100%; height: 100%; }
+  #gl { position: absolute; inset: 0; }
+  #gl[hidden] { display: none; }
+  /* A label over the three.js stage: the same opaque chip the canvas labels
+     sit on, for the same reason -- axe cannot measure contrast over a canvas. */
+  .lab {
+    font: 600 12px/1 var(--mono); color: var(--stage-ink); background: var(--stage-chip);
+    padding: 2px 5px; border-radius: 3px; white-space: nowrap; letter-spacing: 0.01em;
+  }
+  .lab.mute { color: var(--stage-mute); font-weight: 500; }
+  .lab.axis { color: var(--v-axis); }
+  .lab.sig { color: var(--v-sig); }
+  .lab.res { color: var(--v-res); }
+  .lab.out { color: var(--v-out); }
+  .lab.big { font-size: 14px; }
   #claim {
     position: absolute; left: 0.75rem; top: 0.6rem; margin: 0;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
   }
-  #glnote { position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; font-size: 0.78rem;
+  #glnote { position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; font-size: 0.78rem; max-width: 46%;
             color: var(--stage-mute); background: var(--stage-chip); padding: 0.15rem 0.4rem; border-radius: 4px; }
 
   .stagebar { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
@@ -104,7 +156,11 @@
   .stagebar button:focus-visible, .transport button:focus-visible,
   .controls input:focus-visible, .controls select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .stagebar button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .stagebar button[hidden], .stagebar .toggle[hidden] { display: none; }
   .stagebar .grow { flex: 1 1 auto; }
+  .toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--ink-mute); }
+  .hint { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
+  .hint[hidden] { display: none; }
 
   .readout {
     margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
@@ -136,13 +192,18 @@
   .transport button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
   .transport .state { font-size: 0.82rem; color: var(--ink-mute); }
 
+  .about { margin-top: 2rem; padding: 1rem 1.15rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
+  .about h2 { font-size: 0.95rem; margin: 0 0 0.5rem; }
+  .about p { margin: 0.35rem 0; font-size: 0.88rem; color: var(--ink-mute); }
+
   .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
         clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 
   /* Embed mode: the homepage hero. No chrome, no sound, no fetch. */
   #embedcap { display: none; }
   html.embed .wrap { max-width: none; padding: 0; }
-  html.embed header, html.embed aside, html.embed .stagebar, html.embed .tabs, html.embed .readout { display: none; }
+  html.embed header, html.embed aside, html.embed .stagebar, html.embed .tabs,
+  html.embed .readout, html.embed .source, html.embed .about, html.embed .hint { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { height: 100vh; display: flex; flex-direction: column; }
   html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; aspect-ratio: auto; min-height: 0; }
@@ -163,20 +224,52 @@
     <p id="intro"></p>
   </header>
 
+  <!-- One anchor per scene, written out rather than built with the tabs. The
+       tabs are created at runtime from the registry, and `check_links.py`
+       reads the static HTML: without these, every `#scramble` and `#quantize`
+       in the handbooks is a link to a fragment that does not resolve. Adding a
+       scene means adding a line here too. -->
+  <span class="sr" id="sample"></span>
+  <span class="sr" id="quantize"></span>
+  <span class="sr" id="array"></span>
+  <span class="sr" id="window"></span>
+  <span class="sr" id="scramble"></span>
+
+  <div class="source" id="source">
+    <label for="builtin" id="builtin-label"></label>
+    <select id="builtin" autocomplete="off">
+      <option value="voice"></option>
+      <option value="beat"></option>
+    </select>
+    <label class="drop" id="drop" for="file">
+      <span id="drop-text"></span>
+      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac">
+    </label>
+    <span class="sig" id="signame"></span>
+  </div>
+
   <div class="tabs" role="tablist" id="tabs" aria-label="Scenes"></div>
 
   <div class="two-pane">
     <div class="stagewrap">
-      <div id="stage" role="img" aria-label="">
+      <!-- role="img" with a label rewritten per scene. Its children are
+           presentational, so every fact the stage draws is also in the
+           readout. tabindex so the three.js scenes can be turned from the
+           keyboard; bindStage() is never called in embed mode. -->
+      <div id="stage" role="img" aria-label="" tabindex="0" data-gl="none">
         <canvas id="draw"></canvas>
+        <canvas id="gl" hidden></canvas>
         <p id="claim"></p>
         <p id="glnote" hidden></p>
       </div>
       <div class="stagebar">
         <button type="button" id="reset"></button>
+        <button type="button" id="home" hidden></button>
+        <label class="toggle" id="glow-wrap" hidden><input type="checkbox" id="glow" checked> <span id="glow-label"></span></label>
         <span class="grow"></span>
         <button type="button" id="motion" aria-pressed="false"></button>
       </div>
+      <p class="hint" id="hint" hidden></p>
       <p class="readout" id="read"></p>
       <p id="embedcap"></p>
       <p class="sr" id="status" aria-live="polite"></p>
@@ -197,21 +290,35 @@
     </aside>
   </div>
 
+  <div class="about" aria-labelledby="h-about">
+    <h2 id="h-about"></h2>
+    <p id="about-1"></p>
+    <p id="about-2"></p>
+  </div>
+
 </div>
 
-<!-- The arithmetic, then one file per scene in order. All plain scripts, so
-     the page works from file:// and Node can pin the core under `npm test`.
-     There is no three.js here and no import map: a spectrogram is an image,
-     and this stage draws into a 2-D canvas. -->
+<!-- The arithmetic, the projection stage's camera and tween machines (plain
+     scripts, pinned under `npm test`), the drawing kit, then one file per
+     scene in order. All plain scripts, so the page works from file://. The
+     three opening scenes draw in three.js, which vendor/linalg-boot.js hands
+     over through bootGL() below -- injected on the first three.js scene, so
+     a page opened on a spectrogram scene, or as the hero embed, never fetches
+     it. The spectrogram scenes draw into the 2-D canvas: a spectrogram is an
+     image. -->
 <script src="audio-core.js"></script>
+<script src="linalg-core.js"></script>
 <script src="voice-kit.js"></script>
+<script src="voice-scenes/sample.js"></script>
+<script src="voice-scenes/quantize.js"></script>
+<script src="voice-scenes/array.js"></script>
 <script src="voice-scenes/window.js"></script>
 <script src="voice-scenes/scramble.js"></script>
 
 <script>
 (function () {
   "use strict";
-  const AC = window.AudioCore, K = window.VoiceKit;
+  const AC = window.AudioCore, K = window.VoiceKit, LC = window.LinalgCore;
   const $ = (id) => document.getElementById(id);
 
   const params = new URLSearchParams(location.search);
@@ -222,41 +329,100 @@
   if (embed) document.documentElement.classList.add("embed");
   if (theme === "navy") document.documentElement.dataset.theme = "navy";
 
-  const RATE = 48000, SAMPLES = 237568;   // the recording, and what embed stands in for
+  // The two recordings that ship, and what the embed stands in for. Both are
+  // mono 48 kHz and exactly this long, so every shape on every scene is the
+  // same for either (vendor/README.md). A file the reader brings is decoded
+  // at this rate too, and capped at CAP seconds.
+  const RATE = 48000, SAMPLES = 237568, CAP = 8;
 
   const T = {
     en: {
-      eyebrow: "Sections 04 and 09 · Appendix E",
+      eyebrow: "Sections 00, 04 and 09 · Appendix E",
       title: "The voice tensor",
-      intro: "A voice is a list of numbers. Cut it into short overlapping windows and ask which " +
-             "frequencies are in each one, and it becomes a matrix — then the same reshapes, " +
-             "transposes and factorisations as every other tensor here, except that this one you " +
-             "can listen to.",
-      reset: "Reset this scene", motion: "Pause motion", motionOn: "Resume motion",
+      intro: "A voice is a list of numbers. A microphone measures the air pressure tens of " +
+             "thousands of times a second, each measurement is rounded to one of a fixed set of " +
+             "values, and those numbers in order are the tensor — a one-dimensional array you can " +
+             "listen to. Cut it into short overlapping windows and ask which frequencies are in " +
+             "each one, and it becomes a matrix; then the same reshapes, transposes and " +
+             "factorisations as every other tensor here apply, except that this one you can hear.",
+      builtin: "Built-in clip", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
+      drop: "Drop an audio file here, or choose one",
+      sigVoice: "voice.wav · 48 kHz · 4.949 s", sigBeat: "beat.wav · 48 kHz · 4.949 s",
+      sigFile: (name, secs, capped) => name + " · decoded at 48 kHz · " + secs.toFixed(2) + " s" +
+               (capped ? " (the first " + CAP + " s)" : "") + " · stays in this tab",
+      sigStandIn: "a synthesised stand-in",
+      decodeFailed: "That file could not be decoded as audio, so the recording stayed as it was.",
+      beatFailed: "The beat could not be loaded, so the recording stayed as it was.",
+      reset: "Reset this scene", home: "Home view", glow: "Glow",
+      motion: "Pause motion", motionOn: "Resume motion",
+      hint: "Drag to turn · scroll to move closer · + / − keys · hover pauses motion.",
       play: "Play", stop: "Stop", idle: "nothing playing", loading: "loading the recording…",
       playing: (what) => "playing " + what,
       failed: "The recording could not be loaded, so every picture and every sound here is a " +
               "synthesised test signal instead.",
+      glNoScript: "Three-dimensional view unavailable, so this scene is drawn flat. Every number is the same.",
+      glNoWebgl: "This browser reports no WebGL, so this scene is drawn flat. Every number is the same.",
+      glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "A voice becomes a frequency-by-time matrix.",
       embedOpen: "Open the full page →",
-      shape: "Shape"
+      shape: "Shape",
+      aboutH: "About this page",
+      about1: "Every number on this page is computed in the browser from the recording on the stage — " +
+              "the count of samples, the rounding error, the matrix's shape, the singular values. " +
+              "Nothing is drawn to a stored answer. A file you drop here is decoded in the page and " +
+              "goes nowhere: nothing is uploaded, and nothing outlives the tab.",
+      about2: "It accompanies section 00 (what a tensor is), section 04 (layout and reshape) and " +
+              "section 09 (factorisations), with Appendix E's take-home. Each scene has its own address " +
+              "— #sample, #quantize, #array, #window, #scramble — and the notebooks link to the one they " +
+              "are teaching. The voice is Bart Massey's CC0 sample; the beat is c0mp0s3r's CC0 " +
+              "<a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton groove</a> on Freesound.",
+      turn: "Drag or use arrow keys to turn; scroll or use plus and minus to move closer. Hover pauses motion."
     },
     es: {
-      eyebrow: "Secciones 04 y 09 · Apéndice E",
+      eyebrow: "Secciones 00, 04 y 09 · Apéndice E",
       title: "El tensor de voz",
-      intro: "Una voz es una lista de números. Córtala en ventanas cortas superpuestas y pregunta " +
-             "qué frecuencias hay en cada una, y se convierte en una matriz: entonces admite los " +
-             "mismos cambios de forma, transposiciones y factorizaciones que cualquier otro tensor " +
-             "de aquí, salvo que a este puedes escucharlo.",
-      reset: "Reiniciar esta escena", motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
+      intro: "Una voz es una lista de números. Un micrófono mide la presión del aire decenas de " +
+             "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
+             "valores, y esos números en orden son el tensor: un arreglo de una dimensión que " +
+             "puedes escuchar. Córtalo en ventanas cortas superpuestas y pregunta qué frecuencias " +
+             "hay en cada una, y se convierte en una matriz; entonces admite los mismos cambios de " +
+             "forma, transposiciones y factorizaciones que cualquier otro tensor de aquí, salvo que " +
+             "a este puedes oírlo.",
+      builtin: "Clip incluido", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
+      drop: "Suelta un archivo de audio aquí, o elige uno",
+      sigVoice: "voice.wav · 48 kHz · 4,949 s", sigBeat: "beat.wav · 48 kHz · 4,949 s",
+      sigFile: (name, secs, capped) => name + " · decodificado a 48 kHz · " + secs.toFixed(2).replace(".", ",") +
+               " s" + (capped ? " (los primeros " + CAP + " s)" : "") + " · se queda en esta pestaña",
+      sigStandIn: "una señal sintetizada",
+      decodeFailed: "Ese archivo no se pudo decodificar como audio, así que la grabación no cambió.",
+      beatFailed: "No se pudo cargar el ritmo, así que la grabación no cambió.",
+      reset: "Reiniciar esta escena", home: "Vista inicial", glow: "Brillo",
+      motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
+      hint: "Arrastra para girar · rueda para acercar · teclas + / − · el cursor pausa el movimiento.",
       play: "Reproducir", stop: "Detener", idle: "nada en reproducción",
       loading: "cargando la grabación…",
       playing: (what) => "reproduciendo " + what,
       failed: "No se pudo cargar la grabación, así que cada imagen y cada sonido de aquí son una " +
               "señal de prueba sintetizada.",
+      glNoScript: "La vista tridimensional no está disponible, así que esta escena se dibuja plana. Todos los números son los mismos.",
+      glNoWebgl: "Este navegador no reporta WebGL, así que esta escena se dibuja plana. Todos los números son los mismos.",
+      glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
       embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
       embedOpen: "Abrir la página completa →",
-      shape: "Forma"
+      shape: "Forma",
+      aboutH: "Sobre esta página",
+      about1: "Cada número de esta página se calcula en el navegador a partir de la grabación que hay " +
+              "en el escenario: el conteo de muestras, el error de redondeo, la forma de la matriz, los " +
+              "valores singulares. Nada se dibuja sobre una respuesta guardada. Un archivo que sueltes " +
+              "aquí se decodifica en la página y no va a ninguna parte: no se sube nada y nada sobrevive " +
+              "a la pestaña.",
+      about2: "Acompaña a la sección 00 (qué es un tensor), a la 04 (disposición y cambio de forma) y a " +
+              "la 09 (factorizaciones), con el trabajo para casa del Apéndice E. Cada escena tiene su " +
+              "propia dirección (#sample, #quantize, #array, #window, #scramble) y los cuadernos enlazan " +
+              "a la que están enseñando. La voz es la muestra CC0 de Bart Massey; el ritmo es el " +
+              "<a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton groove</a> CC0 " +
+              "de c0mp0s3r en Freesound.",
+      turn: "Arrastra o usa las flechas para girar; usa la rueda o más y menos para acercar. El cursor pausa el movimiento."
     }
   }[lang];
 
@@ -278,11 +444,11 @@
       if (embed || !signal.loaded) return;
       const c = this.resume();
       this.stop();
-      // The recording is 48 kHz and the arithmetic runs at 48 kHz. The buffer
-      // is built at that rate and Web Audio resamples it on the way out if the
-      // device runs at another; decoding through decodeAudioData instead would
-      // resample first and change the matrix's shape.
-      const buf = c.createBuffer(1, samples.length, RATE);
+      // The arithmetic runs at the recording's rate. The buffer is built at
+      // that rate and Web Audio resamples it on the way out if the device runs
+      // at another; decoding through the live context instead would resample
+      // first and change the matrix's shape.
+      const buf = c.createBuffer(1, samples.length, signal.rate);
       const ch = buf.getChannelData(0);
       for (let i = 0; i < samples.length; i++) ch[i] = Math.max(-1, Math.min(1, samples[i]));
       const src = c.createBufferSource();
@@ -290,8 +456,6 @@
       src.connect(c.destination);
       // Ending on its own is the common case -- these clips are five seconds --
       // and it has to put the transport back the way the stop button does.
-      // Repainting alone left "playing ..." on the panel and data-playing at 1
-      // until the reader happened to touch a control.
       src.onended = () => {
         if (playing !== src) return;
         playing = null;
@@ -300,76 +464,169 @@
       };
       src.start();
       playing = src;
+      playing.startedAt = c.currentTime;
       changed();
     },
     stop() {
       if (playing) { try { playing.stop(); } catch (e) { /* already ended */ } playing = null; }
-    }
+    },
+    // Seconds into the clip, for the playhead the three.js scenes draw. Not
+    // an AnalyserNode: that would hand back a snapshot of the output mix at
+    // the device rate, which is a different array from the one on the stage.
+    head() { return playing && actx ? actx.currentTime - playing.startedAt : -1; }
   };
 
   // ---------------------------------------------------------- the signal
-  // The page fetches the recording once. The hero embed never does: it is a
+  // The page fetches the voice once. The hero embed never does: it is a
   // still picture on a landing page, and half a megabyte is not what that is
   // worth. It draws the same scene from a stand-in of exactly the recording's
   // length and rate, so every shape on screen is the shape the full page
   // shows -- the picture is honest about the arithmetic, and says in its
-  // caption that it is a picture.
-  const signal = {samples: null, loaded: false, failed: false, stand_in: false};
+  // caption that it is a picture. The beat is fetched on first choice, never
+  // before, and a file the reader drops is decoded here and kept here.
+  const signal = {samples: null, rate: RATE, loaded: false, failed: false, stand_in: false,
+                  source: "voice", name: ""};
+
+  function useSignal(samples, rate, source, name) {
+    signal.samples = samples;
+    signal.rate = rate;
+    signal.loaded = true;
+    signal.source = source;
+    signal.name = name;
+    signal.stand_in = source === "standin";
+    $("signame").textContent =
+      source === "voice" ? T.sigVoice : source === "beat" ? T.sigBeat
+      : source === "standin" ? T.sigStandIn : name;
+  }
+
+  function fetchWav(which) {
+    return fetch("vendor/" + which + ".wav")
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then((b) => AC.decodeWav(new Uint8Array(b)));
+  }
 
   function loadSignal() {
     if (embed) {
-      signal.samples = K.demoSignal(SAMPLES, RATE);
-      signal.loaded = true; signal.stand_in = true;
+      useSignal(K.demoSignal(SAMPLES, RATE), RATE, "standin", "");
       return Promise.resolve();
     }
-    return fetch("vendor/voice.wav")
-      .then((r) => { if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
-      .then((b) => {
-        const wav = AC.decodeWav(new Uint8Array(b));
-        signal.samples = wav.samples;
-        signal.loaded = true;
-      })
+    return fetchWav("voice")
+      .then((wav) => useSignal(wav.samples, wav.rate, "voice", "voice.wav"))
       .catch(() => {
         // A reader with no recording still gets every lesson but the sound,
         // which is better than an empty stage that blames their browser.
-        signal.samples = K.demoSignal(SAMPLES, RATE);
-        signal.loaded = true; signal.stand_in = true; signal.failed = true;
+        useSignal(K.demoSignal(SAMPLES, RATE), RATE, "standin", "");
+        signal.failed = true;
       });
+  }
+
+  // Everything derived from the old recording is stale: every scene starts
+  // again from its opening state, and the three.js scenes rebuild their
+  // buffers on the next frame because their keys no longer match.
+  function resignal() {
+    audio.stop();
+    $("playstate").textContent = T.idle;
+    for (const s of scenes) {
+      const c = ctxFor.get(s.id);
+      if (!c) continue;
+      c.state = {};
+      c.cache = {};
+      if (c.gl && s.resignal) s.resignal(c);
+    }
+    show(active);
+  }
+
+  function loadBuiltin(which) {
+    if (which === signal.source) return;
+    $("playstate").textContent = T.loading;
+    fetchWav(which)
+      .then((wav) => { useSignal(wav.samples, wav.rate, which, which + ".wav"); resignal(); })
+      .catch(() => {
+        $("playstate").textContent = T.beatFailed;
+        $("builtin").value = signal.source === "beat" ? "beat" : "voice";
+      });
+  }
+
+  // A file the reader dropped, decoded in the page. Through an *offline*
+  // context at the recording's rate: no autoplay policy applies to one,
+  // nothing plays, the live context is still only ever built by the first
+  // press of Play, and every scene keeps one rate. A decoder resamples
+  // silently and does not say what the file's own rate was, so the label
+  // says "decoded at 48 kHz" rather than pretending to know.
+  function loadFile(file) {
+    if (!file) return;
+    $("playstate").textContent = T.loading;
+    file.arrayBuffer()
+      .then((buf) => new OfflineAudioContext(1, 1, RATE).decodeAudioData(buf))
+      .then((ab) => {
+        const n = Math.min(ab.length, CAP * RATE);
+        const out = new Float64Array(n);
+        for (let c = 0; c < ab.numberOfChannels; c++) {
+          const ch = ab.getChannelData(c);
+          for (let i = 0; i < n; i++) out[i] += ch[i] / ab.numberOfChannels;
+        }
+        if (n < 2048) throw new Error("too short");
+        useSignal(out, RATE, "file", T.sigFile(file.name, n / RATE, ab.length > n));
+        $("builtin").value = "";
+        resignal();
+      })
+      .catch(() => { $("playstate").textContent = T.decodeFailed; });
   }
 
   // ---------------------------------------------------------- the scenes
   const scenes = window.VoiceScenes.list();
   if (!scenes.length) throw new Error("voice-stage: no scenes registered");
-  let active = scenes[0], ctxFor = new Map();
+  let active = scenes[0];
+  const ctxFor = new Map();
 
   const canvas = $("draw"), stage = $("stage");
   const g = canvas.getContext("2d");
 
   // The pausable clock. Wall time would jump on resume, so every scene that
-  // moves takes its time from here.
-  let held = reduceMotion, heldAt = performance.now(), offset = 0;
-  const now = () => (held ? heldAt : performance.now()) - offset;
+  // moves takes its time from here. Held by the button, by a pointer over a
+  // three.js scene, by keyboard focus on it, and by a hidden tab.
+  const motion = {manual: reduceMotion, hover: false, focus: false, held: false, heldAt: 0, offset: 0};
+  const now = () => (motion.held ? motion.heldAt : performance.now()) - motion.offset;
+  function refreshMotion() {
+    const hold = motion.manual || motion.hover || motion.focus || document.hidden;
+    const t = performance.now();
+    if (hold && !motion.held) motion.heldAt = t;
+    if (!hold && motion.held) motion.offset += t - motion.heldAt;
+    motion.held = hold;
+    stage.dataset.paused = hold ? "1" : "0";
+    refreshDrift();
+  }
 
   function contextFor(scene) {
     if (ctxFor.has(scene.id)) return ctxFor.get(scene.id);
     const c = {
-      AC, K, lang, embed, reduceMotion,
-      rate: RATE,
+      AC, K, LC, lang, embed, reduceMotion,
+      get rate() { return signal.rate; },
       state: {},
       cache: {},
       stage, canvas,
       get g() { return g; },
       get W() { return canvas.width / dpr; },
       get H() { return canvas.height / dpr; },
+      get aspect() { return canvas.width / Math.max(1, canvas.height); },
       get copy() { return scene.copy[lang]; },
       get signal() { return signal.samples; },
       get standIn() { return signal.stand_in; },
+      get source() { return signal.source; },
       colour: (token) => K.css(token),
-      now, get instant() { return held || reduceMotion; },
+      now, get instant() { return motion.held || reduceMotion; },
       play: (s, what) => audio.play(s, what),
       stop: () => audio.stop(),
+      head: () => audio.head(),
       changed,
-      setControls
+      setControls,
+      // The three.js side, filled by bootGL(). `gl` is what build() returned.
+      get THREE() { return window.THREE; },
+      get AD() { return window.THREE_ADDONS; },
+      get glReady() { return GL.ready; },
+      gl: null,
+      shownView: () => shownView(scene.id),
+      label: (text, cls) => K.label2d(text, cls)
     };
     ctxFor.set(scene.id, c);
     return c;
@@ -397,7 +654,10 @@
       let input;
       if (spec.type === "select") {
         input = document.createElement("select");
-        spec.options.forEach((o) => {
+        // `available` lets a scene narrow the list to what is legal right now
+        // -- the components a rank actually has -- so an option that would
+        // blank the picture is never offered.
+        (spec.available ? spec.available(ctx) : spec.options).forEach((o) => {
           const opt = document.createElement("option");
           opt.value = o;
           opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
@@ -411,12 +671,16 @@
         input.value = String(ctx.state[spec.id]);
       }
       input.id = "c-" + spec.id;
+      input.autocomplete = "off";
       // One control can change what another one's label says -- the hop
       // decides how many seconds a window position is -- so every label is
       // re-formatted from `changed()`, after the scene has derived from the
       // new value, rather than only the control that fired.
       input.addEventListener("input", () => {
         ctx.state[spec.id] = spec.type === "select" ? input.value : Number(input.value);
+        // A control moved is the reader taking hold: the drift restarts from
+        // wherever the camera is once they let go.
+        dropDrift();
         changed();
       });
       val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
@@ -430,6 +694,20 @@
     (scene.controls || []).forEach((spec) => {
       const input = $("c-" + spec.id);
       if (!input) return;
+      if (spec.type === "select" && spec.available) {
+        const want = spec.available(ctx);
+        const have = Array.from(input.options).map((o) => o.value);
+        if (want.join(",") !== have.join(",")) {
+          input.textContent = "";
+          want.forEach((o) => {
+            const opt = document.createElement("option");
+            opt.value = o;
+            opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
+            input.appendChild(opt);
+          });
+          input.value = String(ctx.state[spec.id]);
+        }
+      }
       const val = input.parentNode.querySelector(".val");
       if (val) val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
     });
@@ -462,11 +740,13 @@
     if (active.sync) active.sync(ctx);
     const r = active.readout(ctx) || {};
     $("read").innerHTML = r.html || "";
-    stage.setAttribute("aria-label", ctx.copy.aria(ctx) || "");
+    const aria = ctx.copy.aria(ctx) || "";
+    stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
     const data = Object.assign({scene: active.id}, r.data || {});
     data.playing = playing ? "1" : "0";
     data.standin = signal.stand_in ? "1" : "0";
+    data.signal = signal.source;
     // Only the keys a readout wrote last time are pruned. Clearing the whole
     // dataset took `data-ready` and `data-paused` with it -- they are the
     // frame's, not the scene's, and the first control a reader touched made
@@ -488,12 +768,26 @@
     const r = stage.getBoundingClientRect();
     canvas.width = Math.max(1, Math.round(r.width * dpr));
     canvas.height = Math.max(1, Math.round(r.height * dpr));
+    resizeGL();
     paint();
   }
+
+  // Which surface is live: the three.js canvas for a three.js scene once the
+  // modules are in, the 2-D canvas otherwise -- including for a three.js
+  // scene's twin while the modules load, or forever if they never do.
+  const glLive = () => !!(active.gl && GL.ready && !embed);
 
   function paint() {
     const ctx = contextFor(active);
     if (signal.loaded && active.sync) active.sync(ctx);
+    const live = glLive();
+    $("gl").hidden = !live;
+    canvas.style.display = live ? "none" : "block";
+    if (live) {
+      renderGL();
+      return;
+    }
+    stage.dataset.gl = "none";
     g.setTransform(dpr, 0, 0, dpr, 0, 0);
     g.fillStyle = K.css("--stage");
     g.fillRect(0, 0, ctx.W, ctx.H);
@@ -504,14 +798,341 @@
     active.draw(ctx);
   }
 
+  // How often a scene doing its own work is allowed to rewrite the readout.
+  // Not every frame: rewriting it per frame destroys a reader's selection and
+  // makes the browser check race the picture, which is why control changes are
+  // the only other thing that writes it.
+  const PROGRESS_MS = 200;
+  let wasBusy = false, lastProgress = 0;
+
   function frame() {
-    if (active.animates && active.animates(contextFor(active)) && !held) paint();
+    const ctx = contextFor(active);
+    // `busy` is work that has to finish -- a factorisation running in bands --
+    // and it keeps going under reduced motion and under a paused clock,
+    // because pausing is about movement rather than about arithmetic. Only
+    // `animates` is gated on the motion switch.
+    const busy = active.busy ? active.busy(ctx) : false;
+    const moving = active.animates ? active.animates(ctx) && !motion.held : false;
+    const t = performance.now();
+    // A scene that advances itself has to be able to say so. `paint()` alone
+    // redraws the canvas and leaves the readout and every data-* attribute
+    // frozen at whatever the last control change wrote, so a factorisation
+    // would finish with the stage still reporting that it had not started.
+    const finished = wasBusy && !busy;
+    if (finished || (busy && t - lastProgress > PROGRESS_MS)) {
+      lastProgress = t;
+      changed();
+    } else if (glLive()) {
+      // The three.js path repaints every frame on its own: the camera drifts,
+      // the entrance plays, the beads ease onto the ruler.
+      renderGL();
+    } else if (busy || moving) {
+      paint();
+    }
+    wasBusy = busy;
     requestAnimationFrame(frame);
   }
 
+  // ------------------------------------------------- the three.js stage
+  // The frame owns one renderer, one composer (render pass, bloom, output)
+  // and one CSS2D label layer, re-pointed at whichever three.js scene is on
+  // the stage -- the shape linalg-stage.html keeps. Booted lazily, on the
+  // first three.js scene shown, so the spectrogram scenes and the hero embed
+  // never fetch the modules.
+  const GL = {ready: false, wanted: false, note: null, glow: true, budget: true, frames: [],
+              renderer: null, composer: null, pass: null, bloom: null, lab: null, stamp: ""};
+  const STAGE = {target: null, canvas: null};
+
+  function whenThree(ms) {
+    return new Promise((resolve, reject) => {
+      if (window.THREE && window.THREE_ADDONS) return resolve();
+      const timer = setTimeout(() => reject(new Error("timeout")), ms);
+      addEventListener("three-ready", () => { clearTimeout(timer); resolve(); }, {once: true});
+      const s = document.createElement("script");
+      s.type = "module";
+      s.src = "vendor/linalg-boot.js";
+      s.onerror = () => { clearTimeout(timer); reject(new Error("load")); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function glNote(why) {
+    const note = $("glnote");
+    GL.note = why;
+    if (why) { note.textContent = T[why]; note.hidden = false; }
+    else note.hidden = true;
+  }
+
+  function bootGL() {
+    if (GL.wanted || embed) return;
+    GL.wanted = true;
+    whenThree(6000).then(() => {
+      if (initGL()) {
+        glNote(null);
+        resize();
+        show(active);
+        refreshDrift();
+      } else glNote("glNoWebgl");
+    }).catch(() => glNote("glNoScript"));
+  }
+
+  function initGL() {
+    const THREE = window.THREE, AD = window.THREE_ADDONS;
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({canvas: $("gl"), antialias: true, alpha: false});
+    } catch (e) { return false; }
+    if (!renderer || !renderer.getContext()) return false;
+
+    // The stage's own black, in the working (linear) space the composer's
+    // render target clears in.
+    STAGE.canvas = new THREE.Color(K.css("--stage"));
+    STAGE.target = STAGE.canvas.clone().convertSRGBToLinear();
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
+    renderer.localClippingEnabled = true;
+    renderer.setClearColor(STAGE.target, 1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    GL.renderer = renderer;
+
+    GL.lab = new AD.CSS2DRenderer();
+    GL.lab.domElement.style.position = "absolute";
+    GL.lab.domElement.style.top = "0";
+    GL.lab.domElement.style.left = "0";
+    GL.lab.domElement.style.pointerEvents = "none";
+    GL.lab.domElement.style.overflow = "hidden";
+    stage.insertBefore(GL.lab.domElement, $("claim"));
+
+    const composer = new AD.EffectComposer(renderer);
+    GL.pass = new AD.RenderPass(new THREE.Scene(), new THREE.PerspectiveCamera());
+    composer.addPass(GL.pass);
+    // Strength a touch under the projection stage's: the beads are small
+    // and many, and a wide halo turns a row of them into a bar.
+    GL.bloom = new AD.UnrealBloomPass(new THREE.Vector2(1, 1), 0.4, 0.3, 0.82);
+    composer.addPass(GL.bloom);
+    // Last, always: without it the composer bypasses outputColorSpace.
+    composer.addPass(new AD.OutputPass());
+    GL.composer = composer;
+    GL.ready = true;
+    return true;
+  }
+
+  // How far back the camera sits for the scene's content to fit vertically.
+  const fit = (P) => P.content / Math.tan(P.fov * Math.PI / 360);
+
+  function resizeGL() {
+    if (!GL.ready) return;
+    const r = stage.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+    GL.renderer.setSize(w, h, false);
+    GL.composer.setSize(w, h);
+    GL.bloom.setSize(w, h);
+    GL.lab.setSize(w, h);
+    for (const s of scenes) {
+      const c = ctxFor.get(s.id);
+      if (!c || !c.gl) continue;
+      c.gl.cam.aspect = w / h;
+      c.gl.cam.updateProjectionMatrix();
+    }
+  }
+
+  // Where each three.js scene is looked at from: one pair of angles per
+  // scene, kept while the reader is on another tab, and the truth about the
+  // camera. What is drawn may be an eased version of it (shownView).
+  const views = {};
+  const viewOf = (id) => {
+    if (!views[id]) {
+      const s = scenes.find((x) => x.id === id);
+      views[id] = LC.orbitView(s.pose.home.az, s.pose.home.el);
+    }
+    return views[id];
+  };
+
+  // A scene turning into place on a tab change, and Home.
+  const glide = {active: false, scene: null, az: null, el: null};
+  function glideTo(id, fromAz, fromEl, toAz, toEl, ms) {
+    if (reduceMotion || motion.held) { glide.active = false; return; }
+    const t = now();
+    if (glide.active && glide.scene === id) {
+      glide.az = LC.retarget(glide.az, toAz, t, ms);
+      glide.el = LC.retarget(glide.el, toEl, t, ms);
+    } else {
+      glide.az = LC.tweenStart(fromAz, toAz, t, ms);
+      glide.el = LC.tweenStart(fromEl, toEl, t, ms);
+    }
+    glide.scene = id;
+    glide.active = true;
+  }
+  function shownView(id) {
+    const v = viewOf(id);
+    if (!glide.active || glide.scene !== id) return v;
+    const t = now();
+    const a = LC.tweenAt(glide.az, t), e = LC.tweenAt(glide.el, t);
+    if (a.done && e.done) { glide.active = false; refreshDrift(); return v; }
+    return {az: a.value, el: e.value, dolly: v.dolly};
+  }
+
+  // The idle drift: the stage sways until someone reaches for it. The shape
+  // of a stretch and the transitions between them are linalg-core's, pinned
+  // under npm test; this is the clock and the flags that hold it off.
+  const drift = Object.assign(LC.driftIdle(), {});
+  const driftWanted = () =>
+    !reduceMotion && !embed && !document.hidden && !motion.held && !glide.active && glLive();
+  function setDrift(on) {
+    if (on === drift.on) return;
+    const t = performance.now();
+    Object.assign(drift, on ? LC.driftStart(drift, viewOf(active.id), t) : LC.driftPause(drift, t));
+  }
+  const refreshDrift = () => setDrift(driftWanted());
+  const dropDrift = () => { Object.assign(drift, LC.driftRelease(drift, performance.now())); };
+
+  function takeView(id) {
+    const from = shownView(id);
+    glide.active = false;
+    return {az: from.az, el: from.el, dolly: from.dolly};
+  }
+  function orbitBy(dAz, dEl) {
+    if (!glLive()) return;
+    dropDrift();
+    views[active.id] = LC.orbitBy(takeView(active.id), dAz, dEl, active.pose.limits);
+    stampCam();
+  }
+  function dollyBy(factor) {
+    if (!glLive()) return;
+    dropDrift();
+    views[active.id] = LC.orbitDolly(takeView(active.id), factor, active.pose.limits);
+    stampCam();
+  }
+  function homeView() {
+    if (!glLive()) return;
+    dropDrift();
+    const from = shownView(active.id);
+    const home = active.pose.home;
+    views[active.id] = LC.orbitView(home.az, home.el);
+    glideTo(active.id, from.az, from.el, home.az, home.el, 600);
+    stampCam();
+  }
+
+  // The pose on the stage as numbers, for the browser check. Written only
+  // when it changes, because it is touched sixty times a second.
+  function stampCam() {
+    const v = viewOf(active.id);
+    const at = v.az.toFixed(2) + "," + v.el.toFixed(2) + "," + v.dolly.toFixed(2);
+    if (GL.stamp !== at) { GL.stamp = at; stage.dataset.cam = at; }
+  }
+
+  function applyCamera(ctx) {
+    const P = active.pose;
+    if (drift.on && !glide.active) {
+      Object.assign(viewOf(active.id), LC.driftPose(drift, performance.now() - drift.t0, P.limits));
+    }
+    const target = P.target || [0, 0, 0];
+    const eye = LC.orbitEye(target, fit(P), shownView(active.id));
+    const cam = ctx.gl.cam;
+    cam.up.set(0, 1, 0);
+    cam.position.set(eye[0], eye[1], eye[2]);
+    cam.lookAt(target[0], target[1], target[2]);
+    stampCam();
+  }
+
+  function renderGL() {
+    const ctx = contextFor(active);
+    if (!ctx.gl) {
+      ctx.gl = active.build(ctx);
+      resizeGL();
+    }
+    // The CSS2D layer keeps the last scene's elements until told otherwise:
+    // the array's value chips were still on the stage under the sampling
+    // scene until this cleared them.
+    if (GL.labScene !== active.id) {
+      GL.labScene = active.id;
+      GL.lab.domElement.replaceChildren();
+    }
+    const t0 = performance.now();
+    applyCamera(ctx);
+    active.render(ctx, ctx.gl);
+    GL.pass.scene = ctx.gl.scene;
+    GL.pass.camera = ctx.gl.cam;
+    GL.bloom.enabled = GL.glow && !reduceMotion && GL.budget;
+    GL.composer.render();
+    GL.lab.render(ctx.gl.scene, ctx.gl.cam);
+    stage.dataset.gl = "composer";
+
+    // Bloom's cost is a property of the device, not a preference. Measure the
+    // first stretch of frames that ran the bloom pass and stand down if they
+    // are not making budget.
+    if (GL.bloom.enabled && GL.frames.length < 60) {
+      GL.frames.push(performance.now() - t0);
+      if (GL.frames.length === 60) {
+        const med = GL.frames.slice().sort((a, b) => a - b)[30];
+        if (med > 24) {
+          GL.budget = false;
+          $("glow").checked = false;
+          GL.glow = false;
+          glNote("glSlow");
+        }
+      }
+    }
+  }
+
+  // The reader's hand on a three.js scene: drag to orbit, wheel and keys to
+  // dolly, hover and focus to hold the drift. Never bound in embed mode.
+  function bindStage() {
+    let live = null;
+    stage.addEventListener("pointerenter", () => { motion.hover = !!active.gl; refreshMotion(); });
+    stage.addEventListener("pointerleave", () => { motion.hover = false; refreshMotion(); });
+    stage.addEventListener("focusin", () => { motion.focus = stage.matches(":focus-visible") && !!active.gl; refreshMotion(); });
+    stage.addEventListener("focusout", () => { motion.focus = false; refreshMotion(); });
+    document.addEventListener("visibilitychange", refreshMotion);
+
+    stage.addEventListener("pointerdown", (e) => {
+      if (!glLive()) return;
+      try { stage.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
+      live = {id: e.pointerId, x: e.clientX, y: e.clientY};
+      stage.dataset.grab = "1";
+    });
+    stage.addEventListener("pointermove", (e) => {
+      if (!live || e.pointerId !== live.id) return;
+      const dx = e.clientX - live.x, dy = e.clientY - live.y;
+      live.x = e.clientX; live.y = e.clientY;
+      orbitBy(-dx * 0.008, dy * 0.005);
+    });
+    const release = (e) => {
+      if (!live || e.pointerId !== live.id) return;
+      live = null;
+      delete stage.dataset.grab;
+    };
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", release);
+    stage.addEventListener("wheel", (e) => {
+      if (!glLive() || e.ctrlKey || e.metaKey || e.altKey) return;
+      e.preventDefault();
+      const pixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? stage.clientHeight : 1);
+      dollyBy(Math.exp(Math.max(-0.35, Math.min(0.35, pixels * 0.0015))));
+    }, {passive: false});
+    stage.addEventListener("keydown", (e) => {
+      if (!glLive() || e.ctrlKey || e.metaKey || e.altKey) return;
+      const step = e.shiftKey ? 0.3 : 0.1;
+      const moves = {
+        ArrowLeft: () => orbitBy(step, 0), ArrowRight: () => orbitBy(-step, 0),
+        ArrowUp: () => orbitBy(0, -step), ArrowDown: () => orbitBy(0, step),
+        "+": () => dollyBy(0.9), "=": () => dollyBy(0.9), "-": () => dollyBy(1.11),
+        Home: () => homeView()
+      };
+      const move = moves[e.key];
+      if (!move) return;
+      e.preventDefault();
+      motion.focus = true;
+      refreshMotion();
+      move();
+    });
+  }
+
   // -------------------------------------------------------------- scenes
+  const arrived = new Set();
+
   function show(scene) {
     audio.stop();
+    const was = active;
     active = scene;
     const copy = scene.copy[lang];
     $("kicker").textContent = copy.k;
@@ -527,7 +1148,26 @@
     if (!ctx.state.__init) { scene.init(ctx); ctx.state.__init = true; }
     buildControls(scene);
     $("transport").hidden = !!embed || !scene.audio;
+    // The three.js chrome only where there is a three.js scene to act on.
+    const three = !!scene.gl && !embed;
+    $("home").hidden = !three;
+    $("glow-wrap").hidden = !three;
+    $("hint").hidden = !three;
+    $("glnote").hidden = !(three && GL.note);
+    if (three) bootGL();
+    if (three && GL.ready) {
+      // A scene turning into place, and its own entrance, once. The drift
+      // starts again from the pose the reader is now looking at.
+      if (was !== scene || !arrived.has(scene.id)) {
+        const v = viewOf(scene.id);
+        dropDrift();
+        const from = LC.orbitClamp({az: v.az - 0.3, el: v.el - 0.08, dolly: v.dolly}, scene.pose.limits);
+        glideTo(scene.id, from.az, from.el, v.az, v.el, 900);
+        if (!arrived.has(scene.id) && !ctx.instant && scene.arrive) { arrived.add(scene.id); scene.arrive(ctx); }
+      }
+    }
     changed();
+    refreshDrift();
   }
 
   function buildTabs() {
@@ -553,12 +1193,22 @@
   $("eyebrow").textContent = T.eyebrow;
   $("title").textContent = T.title;
   $("intro").textContent = T.intro;
+  $("builtin-label").textContent = T.builtin;
+  $("builtin").options[0].textContent = T.builtinVoice;
+  $("builtin").options[1].textContent = T.builtinBeat;
+  $("drop-text").textContent = T.drop;
   $("reset").textContent = T.reset;
+  $("home").textContent = T.home;
+  $("glow-label").textContent = T.glow;
+  $("hint").textContent = T.hint;
   $("motion").textContent = reduceMotion ? T.motionOn : T.motion;
   $("motion").setAttribute("aria-pressed", String(reduceMotion));
   $("play").textContent = T.play;
   $("stop").textContent = T.stop;
   $("playstate").textContent = T.idle;
+  $("h-about").textContent = T.aboutH;
+  $("about-1").textContent = T.about1;
+  $("about-2").innerHTML = T.about2;
   document.title = T.title;
 
   if (embed) {
@@ -580,15 +1230,24 @@
     if (active.reset) active.reset(ctx);
     rebuildLabels(active);
     buildControls(active);
+    homeView();
     changed();
+  });
+  $("home").addEventListener("click", () => homeView());
+  $("glow").addEventListener("change", (e) => {
+    GL.glow = e.target.checked;
+    if (GL.glow) {
+      GL.budget = true;
+      GL.frames = [];
+      if (GL.note === "glSlow") glNote(null);
+    }
   });
 
   $("motion").addEventListener("click", () => {
-    if (held) { offset += performance.now() - heldAt; held = false; }
-    else { heldAt = performance.now(); held = true; }
-    $("motion").setAttribute("aria-pressed", String(held));
-    $("motion").textContent = held ? T.motionOn : T.motion;
-    stage.dataset.paused = held ? "1" : "0";
+    motion.manual = !motion.manual;
+    $("motion").setAttribute("aria-pressed", String(motion.manual));
+    $("motion").textContent = motion.manual ? T.motionOn : T.motion;
+    refreshMotion();
   });
 
   $("play").addEventListener("click", () => {
@@ -608,6 +1267,25 @@
     changed();
   });
 
+  $("builtin").addEventListener("change", (e) => loadBuiltin(e.target.value));
+  $("file").addEventListener("change", (e) => { loadFile(e.target.files[0]); e.target.value = ""; });
+  // The stage takes a drop too, so the file can land on the picture it will
+  // become. Both drop targets say so while a file is over them.
+  for (const el of [$("drop"), stage]) {
+    el.addEventListener("dragover", (e) => {
+      if (embed) return;
+      e.preventDefault();
+      $("drop").dataset.over = "1";
+    });
+    el.addEventListener("dragleave", () => { delete $("drop").dataset.over; });
+    el.addEventListener("drop", (e) => {
+      if (embed) return;
+      e.preventDefault();
+      delete $("drop").dataset.over;
+      loadFile(e.dataTransfer.files && e.dataTransfer.files[0]);
+    });
+  }
+
   window.addEventListener("resize", resize);
   window.addEventListener("hashchange", () => {
     const s = byId(location.hash.replace("#", ""));
@@ -617,9 +1295,13 @@
   buildTabs();
   resize();
   stage.dataset.scene = scenes[0].id;
+  refreshMotion();
+  if (!embed) bindStage();
   loadSignal().then(() => {
     if (signal.failed) $("playstate").textContent = T.failed;
-    const wanted = byId(location.hash.replace("#", ""));
+    // The hero gets the spectrogram scene, drawn from the stand-in and with
+    // no three.js: its caption describes that picture.
+    const wanted = embed ? byId("window") : byId(location.hash.replace("#", ""));
     show(wanted || scenes[0]);
     stage.dataset.ready = "1";
     requestAnimationFrame(frame);

@@ -7,10 +7,12 @@ order and builds one tab per scene, so a new scene is: one file here, one
 `<script src>` line, and one `repo.widgets` line in `_variables.yml` (the only
 thing that notices the file failing to reach `docs/`).
 
-The order is a story: what a window does to a signal, then what a reshape does
-to the matrix it produced. The windowing scene comes first because it is where
-"column" and "frequency bin" are defined, and every scene after it says those
-words.
+The order is a story: how a pressure wave becomes a list of numbers (sampled,
+rounded, and written down with a shape), then what a window does to that
+list, then what a reshape does to the matrix it produced. The sampling scene
+comes first because it is where "sample" and "rate" are defined; the windowing
+scene is where "column" and "frequency bin" are, and every scene after it says
+those words.
 
 Scenes are tabs over one recording, not steps down a scroller — the projection
 stage's shape does not fit here, because a scene that plays sound needs a
@@ -24,6 +26,16 @@ VoiceScenes.register({
                         // -- link to that name, never to an index, which moves
                         // on a reorder
   section: "04",        // the workshop section this belongs to, for the kicker
+  gl: true,             // optional: draws in three.js. Then pose, build and
+                        // render are required, and draw() is the 2-D twin
+  pose: {content, fov, target, home: {az, el}, limits},   // gl only: how the
+                        // frame's orbit camera frames the scene (linalg-core)
+  build(ctx) -> gl,     // gl only, once: three.js objects, {scene, cam, ...};
+                        // the frame keeps it as ctx.gl
+  render(ctx, gl),      // gl only, per frame: move what the state says moves
+  arrive(ctx),          // optional: the scene's entrance, played once when it
+                        // is first shown in three.js (never under reduced motion)
+  resignal(ctx),        // optional: the recording changed under a built scene
   controls: [           // the frame builds these and labels them from copy
     {id: "layout", type: "select", options: ["none", "transpose", "patches"]},
     {id: "pos", type: "range", min: 0, max: 1000, step: 1, fmt: (v, ctx) => "..."}
@@ -42,10 +54,16 @@ VoiceScenes.register({
 ```
 
 `ctx` is built once per scene by the page:
-`{AC, K, lang, embed, reduceMotion, rate, state, cache, stage, canvas, g, W, H,
-copy, signal, standIn, colour(token), now(), instant, play(samples, what),
-stop(), changed(), setControls(vals)}`. `AC` is `audio-core.js` and `K` is
-`voice-kit.js`. Keep everything a control touches on `ctx.state`.
+`{AC, K, LC, lang, embed, reduceMotion, rate, state, cache, stage, canvas, g,
+W, H, aspect, copy, signal, standIn, source, colour(token), now(), instant,
+play(samples, what), stop(), head(), changed(), setControls(vals), THREE, AD,
+glReady, gl, shownView(), label(text, cls)}`. `AC` is `audio-core.js`, `K` is
+`voice-kit.js` and `LC` is `linalg-core.js` (the tweens and the orbit). Keep
+everything a control touches on `ctx.state`. `source` names the recording on
+the stage (`voice`, `beat`, `file` or `standin`); a scene that caches
+anything derived from the signal keys it on `source` too, and the frame
+empties `state` and `cache` when the recording changes. `head()` is seconds
+into the clip while it plays, or -1.
 
 ## The rules every scene keeps
 
@@ -53,7 +71,18 @@ stop(), changed(), setControls(vals)}`. `AC` is `audio-core.js` and `K` is
   is computed from the recording being shown, through `audio-core.js`, which
   `npm test` pins. A scene that needs new arithmetic adds it there, with a
   test — including reorderings like the transpose and the patch shuffle, whose
-  whole claim is that they are permutations.
+  whole claim is that they are permutations, and the rounding, whose claim is
+  that 16 bits changes nothing.
+- **Both paths, one truth.** A three.js scene's `draw()` is its twin: the same
+  facts, side-on, on the 2-D canvas, from the same slice its `sync()`
+  computed. The three opening scenes share that slice's shape (`v` in
+  `voice-kit.js`) and the kit draws it both ways, so a scene never has two
+  descriptions of one picture to keep in step. The readout and `data-*` are
+  written from the controls' targets, never from an eased frame.
+- **Never snap.** What a control moves eases there, from wherever it is now
+  (`LC.tweenStart` / `LC.retarget`); under `ctx.instant` the move is
+  immediate. `arrive()` is the one entrance, played once, and never changes a
+  target.
 - **Derive before you write.** Anything a control implies goes in `sync()`.
   `readout()` and `draw()` are both called after it, so the readout and the
   `data-*` attributes can never describe the state the last frame left behind.
@@ -74,7 +103,8 @@ stop(), changed(), setControls(vals)}`. `AC` is `audio-core.js` and `K` is
   fact the picture draws, because `#stage` is `role="img"`.
 - **Colours are tokens** (`--v-sig`, `--v-out`, `--v-res`, `--v-axis`,
   `--stage-ink`, `--stage-mute`) through `K.css`, never hex. Every label is
-  drawn on an opaque chip, because axe cannot resolve contrast over a canvas
+  drawn on an opaque chip -- `K.label` on the canvas, `K.label2d` (a CSS2D
+  `.lab`) over three.js -- because axe cannot resolve contrast over a canvas
   and reports "incomplete" instead.
 
 ## What the copy says

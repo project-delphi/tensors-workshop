@@ -331,3 +331,66 @@ test('Appendix E: the stage reproduces the handbook table from the same recordin
   assert.throws(() => core.retained(sigma, 465, total), /outside the 240 components/);
   assert.throws(() => core.projectRank(s.Z, U, s.F, s.T, l, 465), /outside the 240 components/);
 });
+
+// The opening scenes: fewer measurements a second, each rounded to one of
+// 2^bits levels. What they print is what these pin.
+test('decimation keeps every k-th sample and the hold puts the staircase back', () => {
+  const x = Float64Array.from({length: 23}, (_, i) => Math.sin(i * 0.4));
+  assert.equal(maxAbs(core.hold(core.decimate(x, 1), 1, x.length), x), 0);
+  const y = core.decimate(x, 4);
+  assert.equal(y.length, 6);                         // ceil(23 / 4)
+  assert.deepEqual(Array.from(y), [x[0], x[4], x[8], x[12], x[16], x[20]]);
+  const h = core.hold(y, 4, x.length);
+  assert.equal(h.length, x.length);
+  for (let i = 0; i < x.length; i++) assert.equal(h[i], x[4 * Math.floor(i / 4)]);
+  assert.throws(() => core.decimate(x, 0), /whole number/);
+  assert.throws(() => core.hold(y, 2.5), /whole number/);
+});
+
+test('the far-view curve passes through every sample and halves the gaps', () => {
+  const x = Float64Array.from([0, 1, -1, 0.5]);
+  const u = core.upsample(x, 4);
+  assert.equal(u.length, 13);                        // (4 - 1) * 4 + 1
+  for (let i = 0; i < x.length; i++) assert.equal(u[i * 4], x[i]);
+  assert.equal(u[2], 0.5);                           // halfway from 0 to 1
+  assert.equal(u[6], 0);                             // halfway from 1 to -1
+  assert.equal(core.upsample(new Float64Array(0), 3).length, 0);
+  assert.equal(core.upsample(Float64Array.from([7]), 3)[0], 7);
+});
+
+test('quantisation is mid-tread, clamped, and exact at the bits the WAV stores', () => {
+  const x = Float64Array.from([0, 0.5, -0.5, 0.26, 0.24, 1, -1, 1.5, -1.5]);
+  const q4 = core.quantize(x, 4);
+  assert.equal(q4.levels, 16);
+  assert.equal(q4.step, 1 / 8);
+  // 0.26 * 8 = 2.08 -> 2 -> 0.25; 0.24 * 8 = 1.92 -> 2 -> 0.25.
+  assert.equal(q4.q[3], 0.25);
+  assert.equal(q4.q[4], 0.25);
+  // +1 has no code at 4 bits: the range is -8 .. 7, so it clamps to 7/8.
+  assert.equal(q4.codes[5], 7);
+  assert.equal(q4.q[5], 0.875);
+  assert.equal(q4.codes[6], -8);
+  assert.equal(q4.codes[7], 7, 'out of range clamps rather than wrapping');
+  assert.equal(q4.codes[8], -8);
+  assert.ok(q4.maxErr >= 0.5 && q4.maxErr <= 0.625, `max error ${q4.maxErr}`);
+  assert.throws(() => core.quantize(x, 0), /1 to 24/);
+  assert.throws(() => core.quantize(x, 3.5), /1 to 24/);
+
+  // The recording was 16-bit integers all along: at 16 bits the rounding
+  // changes nothing, and at 4 bits it changes almost everything.
+  const wav = core.decodeWav(fs.readFileSync(WAV));
+  const q16 = core.quantize(wav.samples, 16);
+  assert.equal(maxAbs(q16.q, wav.samples), 0, 'quantize(x, 16) is the identity on a 16-bit WAV');
+  assert.equal(q16.maxErr, 0);
+  assert.ok(maxAbs(core.quantize(wav.samples, 4).q, wav.samples) > 0.01);
+
+  // Fewer bits, lower signal-to-noise ratio, monotonically -- roughly 6 dB a
+  // bit, which is the textbook's number and the readout's claim.
+  let prev = -Infinity;
+  for (const bits of [2, 4, 6, 8, 12]) {
+    const snr = core.snrDb(wav.samples, core.quantize(wav.samples, bits).q);
+    assert.ok(snr > prev, `${bits} bits: ${snr} should exceed ${prev}`);
+    prev = snr;
+  }
+  assert.equal(core.snrDb(wav.samples, q16.q), Infinity, 'no error means an infinite ratio');
+});

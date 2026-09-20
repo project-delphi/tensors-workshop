@@ -598,6 +598,39 @@ fenced code blocks byte for byte: code and identifiers stay English on both
 sides by rule, the 44 blocks were already identical, and nothing had been
 checking it.
 
+**The voice stage opens in three.js and keeps its spectrograms on a 2-D
+canvas.** The page's first sentence had been "a voice is a list of numbers",
+and nothing on it showed that: every scene began with `x[n]` already an
+array. The three scenes that now open it -- sampling, quantization, the array
+-- are the one picture in the workshop that needs depth, because the lesson
+is a wave that looks continuous from far away and turns out, close up, to be
+beads on a ruler with nothing between them; a flat waveform zoom shows the
+beads but not the dissolve. So those three draw in three.js, through the
+projection stage's vendored modules and its import map, booted lazily on the
+first of them shown, and each keeps a 2-D twin drawn from the same slice for a
+reader without WebGL and for the runner. The spectrogram scenes stay on the
+canvas: a (513, 465) matrix is an image, and three.js would make it a worse
+one. Tabs stay tabs -- a scene that plays sound still needs its transport
+under the hand rather than under the scroll. The camera is `linalg-core`'s
+orbit rather than a second one, for the reason that module exists: an orbit's
+clamps and a drift's origin are invisible in a screenshot, and one pinned
+machine is better than two.
+
+**The stage ships two recordings and takes a third from the reader.** The
+sampling and quantization scenes want transients -- a kick thinned to 3 kHz
+and crunched to 3 bits is the lesson you can hear -- and the voice has few.
+The second clip is a CC0 reggaeton loop from Freesound, cut to exactly the
+voice's 237 568 samples so that every shape on every scene is the same for
+either and the readouts never carry a second set of numbers. A commercial
+record was asked for and declined, however short the clip: this repository
+and its site are public, and a copyright question is not worth three seconds
+of any song. The drop zone is where such a file goes -- decoded in the page
+through an offline context at 48 kHz, so no autoplay policy applies and no
+live `AudioContext` exists until Play is pressed, capped at 8 s, and never
+committed or uploaded. A decoder resamples silently and does not report the
+file's own rate, so the label says "decoded at 48 kHz" rather than pretending
+to know.
+
 **Check 4 looks at notebook-to-notebook links and embedded images** because a
 notebook reaches `docs/` as a verbatim copy rather than a rendered page, so
 nothing else looks at those, which is how notebook 01 spent months linking two

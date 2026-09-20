@@ -322,11 +322,78 @@ async function audit(page, where) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 20000});
         const stage = page.locator('#stage');
+        const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
         assert.equal(await stage.getAttribute('data-standin'), '0',
           `${where}: fell back to the synthesised signal, so voice.wav did not load`);
-        assert.equal(await stage.getAttribute('data-scene'), 'window');
+
+        // The page opens on the sampling scene, which draws in three.js. As
+        // for the projection stage, wait on the *modules* rather than on a
+        // context: an addon missing from docs/ would drop the reader into the
+        // twin and nothing else would notice. The render mode is advisory --
+        // the composer where the runner has WebGL, the twin where it has not.
+        assert.equal(await stage.getAttribute('data-scene'), 'sample');
+        await page.waitForFunction(() => window.THREE_ADDONS !== undefined, null, {timeout: 12000})
+          .catch(() => assert.fail(`${where}: the vendored three.js modules never loaded for the voice stage`));
+        await page.waitForFunction(() => ['composer', 'none'].includes(
+          document.getElementById('stage').dataset.gl), null, {timeout: 5000});
+        const mode = (await data()).gl;
+        if (mode === 'none') console.log(`  (${where}: no WebGL here, exercising the voice stage's twin)`);
+
+        // Sampling: 48 numbers in a millisecond, and a lower rate keeps every
+        // k-th. Read off data-*, which the readout writes from the controls'
+        // targets rather than from the eased picture.
+        assert.equal((await data()).rate, '48000');
+        assert.equal((await data()).n, '237568', `${where}: the recording's length`);
+        await page.locator('#c-rate').fill('3');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.rate === '6000', null, {timeout: 5000});
+        assert.equal((await data()).factor, '8');
+        assert.equal((await data()).n, String(Math.ceil(237568 / 8)), `${where}: every 8th sample kept`);
+        await page.locator('#c-zoom').fill('100');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.span === '48', null, {timeout: 5000});
+        assert.equal((await data()).inview, '6', `${where}: 1 ms at 6 kHz is six beads`);
+        await page.locator('#c-rate').fill('0');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.inview === '48', null, {timeout: 5000});
+
+        // Quantization: 4 bits is 16 levels; fewer bits, a lower ratio; 16
+        // bits moves nothing, because the WAV stores 16-bit integers.
+        await page.locator('#tab-quantize').click();
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'quantize', null, {timeout: 5000});
+        assert.equal((await data()).levels, '16', `${where}: 4 bits is 16 levels`);
+        const snr4 = Number((await data()).snr);
+        await page.locator('#c-bits').fill('2');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.bits === '2', null, {timeout: 5000});
+        assert.equal((await data()).levels, '4');
+        assert(Number((await data()).snr) < snr4, `${where}: 2 bits should be noisier than 4`);
+        await page.locator('#c-bits').fill('16');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.bits === '16', null, {timeout: 5000});
+        assert.equal((await data()).snr, 'inf', `${where}: 16 bits must leave the recording exactly`);
+        assert.equal((await data()).maxerr, '0.000e+0');
+
+        // The array: its shape, and the bytes each dtype costs.
+        await page.locator('#tab-array').click();
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'array', null, {timeout: 5000});
+        assert.equal((await data()).shape, '237568');
+        assert.equal((await data()).bytes, String(237568 * 4), `${where}: float32 bytes`);
+        await page.selectOption('#c-dtype', 'int16');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.dtype === 'int16', null, {timeout: 5000});
+        assert.equal((await data()).bytes, String(237568 * 2), `${where}: int16 bytes`);
+
+        // The second built-in clip: same length, so the same shapes on every
+        // scene. A beat.wav that never reached docs/ leaves the recording as
+        // it was, which data-signal says.
+        await page.selectOption('#builtin', 'beat');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.signal === 'beat', null, {timeout: 20000});
+        assert.equal((await data()).standin, '0');
+        assert.equal((await data()).shape, '237568', `${where}: the beat is cut to the voice's length`);
+
+        // The spectrogram scenes, on the beat and then back on the voice.
+        await page.locator('#tab-window').click();
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'window', null, {timeout: 5000});
         assert.equal(await stage.getAttribute('data-shape'), '513,465',
           `${where}: the recording's default shape`);
+        await page.selectOption('#builtin', 'voice');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.signal === 'voice', null, {timeout: 20000});
+        assert.equal(await stage.getAttribute('data-shape'), '513,465');
 
         // Halving the hop doubles the columns. This is the scene's predict
         // question, so it is the one number worth pinning.
@@ -387,9 +454,15 @@ async function audit(page, where) {
         await page.locator('#motion').click();
 
         // Linking by scene name, never by an index that moves on a reorder.
-        await page.goto(`${origin}${prefix}interactive/voice-stage.html?lang=${lang}#scramble`);
+        // A page opened on a spectrogram scene must not fetch three.js: the
+        // import map is inert until a module resolves, and the boot only
+        // runs for a three.js scene. The query differs from the page already
+        // open, because a goto that changes only the hash does not reload.
+        await page.goto(`${origin}${prefix}interactive/voice-stage.html?lang=${lang}&fresh=1#scramble`);
         await page.waitForFunction(() =>
           document.getElementById('stage').dataset.scene === 'scramble', null, {timeout: 20000});
+        assert.equal(await page.evaluate(() => window.THREE), undefined,
+          `${where}: a spectrogram scene fetched three.js`);
       }
 
       // The projection & SVD stage. Two things here that the other two cannot
@@ -878,6 +951,33 @@ async function audit(page, where) {
             await page.unroute('**/vendor/linalg-boot.js');
             await page.emulateMedia({reducedMotion: 'no-preference'});
           }
+          if (widget.file === 'voice-stage') {
+            // Lose the GL module: the three opening scenes must draw their
+            // twin, keep their controls and their teaching numbers.
+            await page.route('**/vendor/linalg-boot.js', route => route.abort());
+            await page.emulateMedia({reducedMotion: 'reduce'});
+            for (const scene of ['sample', 'quantize', 'array']) {
+              await page.goto(`${origin}${prefix}interactive/voice-stage.html?lang=${lang}&fallback-check=1#${scene}`);
+              await page.waitForFunction(id => document.getElementById('stage').dataset.scene === id, scene);
+              await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1', null, {timeout: 20000});
+              await page.waitForFunction(() => !document.getElementById('glnote').hidden, null, {timeout: 10000});
+              assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
+              assert(await page.locator('#draw').isVisible(), `${where}: twin ${scene} is not on the stage`);
+              const readout = await page.locator('#read').innerText();
+              assert(!/NaN|Infinity|undefined/.test(readout), `${where}: twin ${scene} readout: ${readout}`);
+              if (scene === 'sample') {
+                await page.locator('#c-zoom').fill('100');
+                await page.waitForFunction(() => document.getElementById('stage').dataset.span === '48');
+              }
+              if (scene === 'quantize') {
+                await page.locator('#c-bits').fill('3');
+                await page.waitForFunction(() => document.getElementById('stage').dataset.levels === '8');
+              }
+              await audit(page, `${where} twin ${scene}`);
+            }
+            await page.unroute('**/vendor/linalg-boot.js');
+            await page.emulateMedia({reducedMotion: 'no-preference'});
+          }
 
           // Embed mode is what the homepage hero shows: stage and caption
           // only, no three.js, on the band's navy. Only for the widgets the
@@ -919,6 +1019,11 @@ async function audit(page, where) {
             assert.equal(fetched, false, `${where} embed: voice.wav requested on the front door`);
             assert(await page.locator('.tabs').isHidden(), `${where} embed: scene tabs shown`);
             assert.equal(await page.locator('#stage').getAttribute('data-playing'), '0');
+            assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'window',
+              `${where} embed: the hero gets the spectrogram scene`);
+            assert.equal(await page.evaluate(() => window.THREE), undefined,
+              `${where} embed: three.js must not be fetched on the front door`);
+            assert(await page.locator('.source').isHidden(), `${where} embed: the drop zone is shown`);
           } else {
             await page.waitForSelector('#draw .cell');
           }

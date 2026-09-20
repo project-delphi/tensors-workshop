@@ -164,12 +164,22 @@ simpler: scenes are **tabs over one recording**, not steps down a scroller,
 because a scene that plays sound needs a transport under the reader's hand
 rather than under their scroll position. `voice-kit.js` holds the registry and
 the drawing; `audio-core.js` holds the arithmetic and `npm test` pins it,
-including the reorderings, whose claim on screen is that they are permutations.
-There is no three.js here and no flat twin: a spectrogram is an image, so the
-stage draws into a 2-D canvas and there is one path rather than two. Its embed
-never fetches the recording -- it draws from a synthesised stand-in of the same
-length, and `data-standin` says which is on screen. Link by scene name
-(`#window`, `#scramble`); the contract is `voice-scenes/README.md`.
+including the reorderings, whose claim on screen is that they are permutations,
+and the rounding, whose claim is that 16 bits changes nothing. Two kinds of
+scene: the three that open the page (sampling, quantization, the array) draw
+in three.js -- a wave that dissolves into beads on a ruler needs depth -- and
+keep a 2-D twin (`draw`) for a reader without WebGL, both from one slice the
+scene computes; the spectrogram scenes draw only into the 2-D canvas, because a
+spectrogram is an image. three.js is booted lazily on the first three.js scene
+shown, through the projection stage's `vendor/linalg-boot.js` and the same
+import map, and its camera is `linalg-core`'s orbit. Two recordings ship, both
+mono 48 kHz and exactly 237 568 samples so every shape is the same for either
+(`vendor/README.md`), and a file the reader drops is decoded in the page at
+that rate, capped at 8 s, and never leaves the tab. The embed never fetches a
+recording -- it draws the spectrogram scene from a synthesised stand-in of the
+same length, and `data-standin` says which is on screen. Link by scene name
+(`#sample`, `#quantize`, `#array`, `#window`, `#scramble`); the contract is
+`voice-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
