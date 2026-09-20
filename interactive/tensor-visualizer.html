@@ -2898,14 +2898,19 @@
       const [a, b] = points();
       return Math.hypot(a.x - b.x, a.y - b.y);
     };
-    // pointerenter and pointerleave do not fire when the pointer crosses into
-    // the legend, the snap button or the gizmo -- they are children of #stage,
-    // and being over them is still being on the stage.
-    el.addEventListener("pointerenter", () => {
+    // Hover is tracked on the wrapper, not on #stage. The legend, the snap
+    // button, the arrange pair and the gizmo are siblings of #stage that sit
+    // absolutely over it, so on #stage the pointer crossing onto one of them
+    // is a pointerleave -- which armed the resume timer that the control's own
+    // dropDrift() then cleared, and the sway never came back. The wrapper is
+    // the same box as the stage (its only in-flow child), so this is the
+    // reader's idea of "on the widget" and nothing else changes.
+    const wrap = el.closest(".stagewrap") || el;
+    wrap.addEventListener("pointerenter", () => {
       drift.hover = true;
       setDrift(false);
     });
-    el.addEventListener("pointerleave", () => {
+    wrap.addEventListener("pointerleave", () => {
       drift.hover = false;
       clearTimeout(drift.timer);
       drift.timer = setTimeout(refreshDrift, DRIFT_RESUME_MS);
@@ -2927,7 +2932,6 @@
     document.addEventListener("visibilitychange", refreshDrift);
     el.addEventListener("contextmenu", (e) => { if (!embed) e.preventDefault(); });
     el.addEventListener("pointerdown", (e) => {
-      if (e.target.closest("#legend, #snap, #gizmo")) return;
       try { el.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
       live.set(e.pointerId, {
         x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, moved: false,
