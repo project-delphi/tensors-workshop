@@ -380,7 +380,7 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **`reshape` solo reinterpreta los números en el orden en que están en memoria. `transpose` los mueve según el significado de los ejes.** Los dos dan la forma `(3, 512, 512)`; solo uno es la imagen. Y el TODO 4 va más al fondo: en cuanto dos ejes comparten tamaño, la forma no puede decirte cuál es cuál. Solo tu propio seguimiento puede.
 
-Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de reshape y transpose</a>. Transpón NHWC a NCHW y observa cómo la forma y los strides se permutan mientras la imagen no se mueve; después compáralo con reshape y mira cómo se rompe.
+Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de reshape y transpose</a>. Transpón NHWC a NCHW y observa cómo la forma y los strides se permutan mientras la imagen no se mueve; después compáralo con reshape y mira cómo se rompe. El <a href="../interactive/voice-stage.html?lang=es#scramble">mismo movimiento sobre una voz</a> es el que se puede oír: transpón un espectrograma y todos los números siguen ahí, ninguno está donde estaba, y deja de ser habla.
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 
@@ -1124,7 +1124,7 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 
 <span data-language-key="appendix-e-take-home-audio-denoising-by-low-rank-stft"></span>
 
-La SVD truncada es la aproximación de rango bajo *óptima* (Eckart–Young, en las [referencias](references.qmd#ref-tensors)). Este apéndice es donde esa optimalidad deja de bastar. Corta una grabación de voz real en ventanas temporales cortas y solapadas, y pregunta qué frecuencias hay en cada una. Eso es la **transformada de Fourier de tiempo corto**, y su salida es una matriz, `frecuencia × tiempo`. Truncar la SVD de esa matriz conserva la estructura concentrada en las direcciones singulares principales y tira el resto. Si la voz está más concentrada ahí que el ruido, el resultado es más limpio. Si no lo está, has tirado la voz.
+La SVD truncada es la aproximación de rango bajo *óptima* (Eckart–Young, en las [referencias](references.qmd#ref-tensors)). Este apéndice es donde esa optimalidad deja de bastar. Corta una grabación de voz real en ventanas temporales cortas y solapadas, y pregunta qué frecuencias hay en cada una. Eso es la **transformada de Fourier de tiempo corto**, y su salida es una matriz, `frecuencia × tiempo`. El <a href="../interactive/voice-stage.html?lang=es#lowrank">escenario del tensor de voz</a> hace este apéndice en el navegador: factoriza esa matriz mientras esperas, después recorre el rango y reproduce el resultado, así que la curva de abajo es una que puedes oír además de leer. Truncar la SVD de esa matriz conserva la estructura concentrada en las direcciones singulares principales y tira el resto. Si la voz está más concentrada ahí que el ruido, el resultado es más limpio. Si no lo está, has tirado la voz.
 
 Ser óptimo en `‖A − B‖_F` no es lo mismo que ser óptimo en *lo que a ti te importa*, así que el criterio hay que medirlo, no suponerlo. Aquí el criterio es la relación señal-ruido frente a una referencia limpia conocida, y por eso el ruido se añade a propósito en lugar de encontrarse. La grabación es real y está fijada a un SHA-256; el ruido es sintético por diseño, porque solo una señal limpia conocida hace medible la SNR.
 

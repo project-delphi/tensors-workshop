@@ -15,6 +15,13 @@
   // one <script src> line, and one repo.widgets line.
   const scenes = [];
   const REQUIRED = ["id", "section", "copy", "init", "draw", "readout"];
+  // Every string the frame writes into the page, in both languages. This list
+  // used to be just `aria`, and a scene shipped without a Spanish `predict`:
+  // the frame assigned undefined to textContent, which writes the word
+  // "undefined" where the predict-first question should be. Nothing else
+  // noticed -- the browser check does not read the copy, and the teaching
+  // checker only pairs markers in .qmd and .md.
+  const REQUIRED_COPY = ["tab", "k", "h", "claim", "concept", "b", "predict", "aria"];
 
   const VoiceScenes = {
     register(scene) {
@@ -22,8 +29,21 @@
         if (!(k in scene)) throw new Error("scene " + (scene.id || "?") + " lacks " + k);
       }
       for (const lang of ["en", "es"]) {
-        if (!scene.copy[lang]) throw new Error("scene " + scene.id + " lacks " + lang + " copy");
-        if (!scene.copy[lang].aria) throw new Error("scene " + scene.id + " lacks " + lang + " aria");
+        const copy = scene.copy[lang];
+        if (!copy) throw new Error("scene " + scene.id + " lacks " + lang + " copy");
+        for (const k of REQUIRED_COPY) {
+          if (copy[k] === undefined) {
+            throw new Error("scene " + scene.id + " lacks " + lang + " copy." + k);
+          }
+        }
+      }
+      // Both languages carry the same keys, so a readout or an option label
+      // added to one and forgotten in the other fails at boot rather than
+      // rendering as a blank or a stray "undefined" for half the readers.
+      const en = Object.keys(scene.copy.en).sort().join(",");
+      const es = Object.keys(scene.copy.es).sort().join(",");
+      if (en !== es) {
+        throw new Error("scene " + scene.id + ": en and es copy keys differ");
       }
       scenes.push(scene);
     },

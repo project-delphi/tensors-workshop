@@ -143,6 +143,9 @@
         count: (n) => n + " numbers",
         names: {none: "the matrix as it was built", transpose: "the transposed matrix",
                 patches: "the patch-shuffled matrix"},
+        controls: {layout: "Layout"},
+        options: {layout: {none: "as the transform built it", transpose: "transposed — [T, F]",
+                           patches: "patches shuffled — 27 × 27"}},
         readout: (kind, F, T, n) => {
           const head = "All three layouts hold the same <b>" + n + "</b> numbers in a " +
                        "<span class=\"shape\">[" + F + ", " + T + "]</span> matrix. ";
@@ -185,6 +188,9 @@
         count: (n) => n + " números",
         names: {none: "la matriz tal como se construyó", transpose: "la matriz transpuesta",
                 patches: "la matriz con parches barajados"},
+        controls: {layout: "Disposición"},
+        options: {layout: {none: "como la construyó la transformada", transpose: "transpuesta — [T, F]",
+                           patches: "parches barajados — 27 × 27"}},
         readout: (kind, F, T, n) => {
           const head = "Las tres disposiciones contienen los mismos <b>" + n + "</b> números en una " +
                        "matriz <span class=\"shape\">[" + F + ", " + T + "]</span>. ";

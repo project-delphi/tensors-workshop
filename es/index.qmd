@@ -298,7 +298,7 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-Sin instalar nada y sin cuenta. Tres herramientas vivas que responden una
+Sin instalar nada y sin cuenta. Cuatro herramientas vivas que responden una
 pregunta que las páginas solo pueden describir.
 
 :::: {.widget-grid}
@@ -340,6 +340,22 @@ de ahí a los autovectores, dos columnas casi colineales y float32 dividiendo
 exactamente por cero. Ocho imágenes de un mismo problema, secciones 07, 08 y 09.
 
 <a href="../interactive/linalg-stage.html?lang=es" class="resource-button">Probar proyección y SVD</a>
+:::
+
+::: {.resource-card}
+### 🔊 Escenario del tensor de voz
+
+<span data-language-key="voice-tensor-stage"></span>
+
+El que se escucha. Una voz real se convierte en una matriz de 513 × 465 una
+ventana a la vez; transpón esa matriz y todos los números siguen ahí y ninguno
+está en su sitio, así que oyes lo que cuesta una disposición equivocada.
+Después, el apéndice E dibujado: la matriz se factoriza en tu navegador y el
+deslizador de rango recorre una curva que falla en ambos extremos, peor que el
+ruido del que partió con rango 2, y exactamente ese ruido otra vez cuando no se
+descarta nada. Secciones 04 y 09.
+
+<a href="../interactive/voice-stage.html?lang=es" class="resource-button">Probar el tensor de voz</a>
 :::
 ::::
 

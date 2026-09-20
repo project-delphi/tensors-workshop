@@ -401,6 +401,66 @@ the renderer -- the pixels do not, which is why `STAGE` carries both colours
 with the four measurements written beside them, and `renderGL()` sets the one
 that belongs to the path it is about to take.
 
+**The voice stage is tabs over one recording, and draws in a 2-D canvas.** Two
+departures from the projection & SVD stage, both forced by what this one is.
+Its scenes play sound, and a transport under the reader's scroll position is a
+transport they lose control of, so the scenes are tabs the way the reshape
+visualizer's operations are. And a spectrogram is an image: the (513, 465)
+matrix is 238,245 cells and the square one in the reshape scene is 263,169, so
+it is built as an `ImageData` and scaled once rather than drawn a cell at a
+time. That also settles the flat twin. The other stage draws everything twice,
+in three.js and in SVG, because a reader without WebGL must still get the
+lesson; here there is no WebGL to lose, so there is one path and no second
+truth to keep in step.
+
+**The hero embed draws a synthesised stand-in, not the recording.** The
+recording is 464 kB. The front door already learned once that it was fetching
+widgets nobody had opened, and a voice on a landing page is a picture rather
+than something anyone listens to -- an `AudioContext` there would be a
+suspended one no reader asked for. So `?embed=1` synthesises a signal of
+exactly the recording's length and rate, which means every shape on screen is
+the shape the full page shows, and `data-standin` says which signal is being
+drawn. `check_navigation.cjs` asserts it both ways round: the stand-in on the
+homepage, the recording on the page itself, since a `voice.wav` that stopped
+reaching `docs/` would otherwise draw a perfectly convincing picture of the
+wrong thing. The stand-in was first a stack of harmonics under a formant sweep,
+which drew a test card -- energy to the Nyquist limit and a row of identical
+blobs; it has fricatives and a steep spectral rolloff now, because the hero is
+the first picture of this widget anyone sees.
+
+**The reshape scene's matrix is square, and that is the lesson.** A transposed
+spectrogram is only something the inverse transform can turn back into sound if
+its two axes are the same length -- otherwise the row count implies a window
+size that is not a power of two, and there is nothing to invert. So the scene
+fixes the hop at 464 where every other scene uses 512, which makes the matrix
+(513, 513): 464 × 512 is exactly the recording's 237,568 samples. The
+constraint is stated on the stage rather than worked around quietly, because
+"you may only transpose this if it is square" is the same shape of fact as
+"you may only reshape this if the strides allow it", which is what section 04
+is about.
+
+**A scene that advances itself has to be able to say so.** `data-*` and the
+readout are written by one function, which controls call. A factorisation
+running in bands is not a control, and the first version of the low-rank scene
+finished with the stage still reporting that it had not started: the render
+loop repainted the canvas and never rewrote a word. The loop now rewrites the
+readout when work finishes and at most five times a second while it runs, which
+is often enough for a progress line and rare enough that it is not the
+per-frame rewrite the readout rule forbids. Pausing motion does not pause the
+work, because pausing is about movement and a factorisation still has to
+finish.
+
+**The low-rank scene factors on open, and the wait is the point.** Section 09
+asks what a factorisation costs, and this is the only place in the workshop
+where the reader pays. A (513, 465) complex SVD is about 8 GFlop by any dense
+method, so the scene runs a randomised sketch instead, in bands, and draws the
+singular values as they arrive and then each rung of the ladder as it is
+measured. Full rank is not on that ladder: nothing is discarded there, so the
+scene inverts the matrix itself and measures what comes back, which lands on
+the noisy input because it *is* the noisy input. The alternative was to quote
+Appendix E's table, and a stage that prints a stored answer is the one thing
+this widget cannot be.
+
 ## Which document owns what
 
 **Seven documents, one home per fact.** They drifted once -- five copies of the

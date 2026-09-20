@@ -408,6 +408,57 @@ async function audit(page, where) {
           `${where}: a control change cleared data-paused`);
         await page.locator('#motion').click();
 
+        // Appendix E, in a browser. The handbook publishes this curve; the
+        // stage recomputes it from the same recording, and these are the three
+        // points that carry the lesson -- worse than the input at rank 2, the
+        // peak at 40, and exactly the input again when nothing is discarded.
+        // The factorisation is real work, so the wait is generous.
+        await page.locator('#tab-lowrank').click();
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.phase === 'ready', null, {timeout: 120000});
+        const noisy = Number(await stage.getAttribute('data-noisy'));
+        assert.ok(Math.abs(noisy - 5) < 0.01, `${where}: the noisy input should be 5 dB, got ${noisy}`);
+        assert.equal(await stage.getAttribute('data-best'), '40',
+          `${where}: the curve should peak at rank 40`);
+        assert.equal(await stage.getAttribute('data-k'), '40');
+        const peak = Number(await stage.getAttribute('data-snr'));
+        assert.ok(Math.abs(peak - 9.08) < 0.05,
+          `${where}: rank 40 should measure about 9.08 dB, got ${peak}`);
+        assert.ok(Math.abs(Number(await stage.getAttribute('data-retained')) - 78.3) < 0.5);
+
+        await page.fill('#c-rung', '0');
+        await page.dispatchEvent('#c-rung', 'input');
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.k === '2', null, {timeout: 20000});
+        const worst = Number(await stage.getAttribute('data-snr'));
+        assert.ok(worst < noisy,
+          `${where}: rank 2 should be worse than the noise it started from, got ${worst}`);
+
+        await page.fill('#c-rung', '7');
+        await page.dispatchEvent('#c-rung', 'input');
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.retained === '100.0', null, {timeout: 20000});
+        assert.equal(await stage.getAttribute('data-snr'), noisy.toFixed(2),
+          `${where}: discarding nothing should return exactly the noisy input`);
+
+        // NMF gives up the best error on purpose, and cannot accidentally win:
+        // the readout says so with Eckart-Young behind it.
+        await page.locator('#tab-nmf').click();
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.phase === 'ready', null, {timeout: 120000});
+        const nmfErr = Number(await stage.getAttribute('data-nmferr'));
+        const svdErr = Number(await stage.getAttribute('data-svderr'));
+        assert.ok(nmfErr >= svdErr,
+          `${where}: NMF ${nmfErr}% came in under the truncated SVD's ${svdErr}%`);
+        assert.equal(await stage.getAttribute('data-k'), '3');
+        await page.fill('#c-k', '4');
+        await page.dispatchEvent('#c-k', 'input');
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.k === '4' &&
+          document.getElementById('stage').dataset.phase === 'ready', null, {timeout: 120000});
+        assert.ok(Number(await stage.getAttribute('data-nmferr')) < nmfErr,
+          `${where}: a fourth component should fit better than three`);
+
         // Linking by scene name, never by an index that moves on a reorder.
         await page.goto(`${origin}${prefix}interactive/voice-stage.html?lang=${lang}#scramble`);
         await page.waitForFunction(() =>

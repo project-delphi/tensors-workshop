@@ -251,6 +251,36 @@ test('a patch shuffle that would drop numbers is refused, not truncated', () => 
   assert.equal(sum(core.transposeC(R, 4, 8)), sum(R), 'a transpose works on any shape');
 });
 
+test('NMF never beats the truncated SVD at the same rank, and settles', () => {
+  // The voice stage prints both errors side by side and says the second
+  // cannot be beaten. Eckart-Young is why; this is the check that the code
+  // agrees, because a readout making a theorem's claim should not be the only
+  // place that claim is tested.
+  const F = 40, T = 32, V = new Float64Array(F * T);
+  const r = core.rng(31);
+  for (let f = 0; f < F; f++) {
+    for (let t = 0; t < T; t++) V[f * T + t] = Math.abs(Math.sin(f * 0.3) * Math.cos(t * 0.2)) + 0.05 * r();
+  }
+  let total = 0;
+  for (let i = 0; i < V.length; i++) total += V[i] * V[i];
+  const Vc = core.cplx(V.length);
+  Vc.re.set(V);
+  const {sigma} = core.leftSubspace(Vc, F, T, {sketch: 24, power: 4});
+  for (const k of [2, 3, 4]) {
+    let kept = 0;
+    for (let i = 0; i < k; i++) kept += sigma[i] * sigma[i];
+    const svd = Math.sqrt(Math.max(0, total - kept));
+    const s = core.nmfInit(V, F, T, k, 7);
+    core.nmfStep(V, s, 200);
+    const nmf = core.nmfError(V, s);
+    assert.ok(nmf >= svd - 1e-9,
+      `k=${k}: NMF ${nmf} came in under the best rank-${k} error ${svd}`);
+    // And it is converged enough that the stage is not showing a moving number.
+    core.nmfStep(V, s, 200);
+    assert.ok(Math.abs(core.nmfError(V, s) - nmf) / nmf < 0.02, `k=${k}: still moving at 200 iterations`);
+  }
+});
+
 test('the recording decodes as the mono 48 kHz the handbook describes', () => {
   const wav = core.decodeWav(fs.readFileSync(WAV));
   assert.equal(wav.rate, 48000);

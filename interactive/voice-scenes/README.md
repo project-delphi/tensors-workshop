@@ -4,8 +4,12 @@ One file per scene of `../voice-stage.html`, loaded in order by plain
 `<script src>` lines after `audio-core.js` and `voice-kit.js`. Each file calls
 `VoiceScenes.register({...})` once. The page reads the registry back in that
 order and builds one tab per scene, so a new scene is: one file here, one
-`<script src>` line, and one `repo.widgets` line in `_variables.yml` (the only
-thing that notices the file failing to reach `docs/`).
+`<script src>` line, one `repo.widgets` line in `_variables.yml` (the only
+thing that notices the file failing to reach `docs/`), and one `<span class="sr"
+id="...">` anchor in the page. The tabs are built at runtime and
+`check_links.py` reads the static HTML, so without that anchor every link to
+the scene by name is a fragment that does not resolve -- and linking by name is
+the rule.
 
 The order is a story: what a window does to a signal, then what a reshape does
 to the matrix it produced. The windowing scene comes first because it is where
