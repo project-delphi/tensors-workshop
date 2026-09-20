@@ -1130,10 +1130,12 @@ def fig_tucker_taxi(arrays) -> Path:
 # in the widget and in the notebook. The widget cannot import scikit-image, so
 # this writes them out once, tiny, as JSON it fetches same-origin -- not from
 # the network, which check_navigation.cjs aborts, and not inlined into the
-# HTML, which stays hand-written. Four resolutions: 4 px is what a stride table
+# HTML, which stays hand-written. Five resolutions: 4 px is what a stride table
 # can be read from and what a value printed on each cube fits, 16 px is where a
-# photo first reads as one, and 32 px is the ceiling -- 9216 cubes, the most
-# the widget's instanced mesh is sized for.
+# photo first reads as one, and 64 px is the ceiling -- one photo there is
+# 12288 cubes, and the widget's instanced mesh is sized for four of them.
+# Past 64 the JSON is the problem before the renderer is: 4 px through 64 px
+# is 170 kB of decimal bytes, and 128 px alone would be four times that again.
 #
 #     uv run --group figures python scripts/gen_figures.py widget
 #
@@ -1141,7 +1143,7 @@ def fig_tucker_taxi(arrays) -> Path:
 # bytes do not depend on which matplotlib is installed.
 
 INTERACTIVE = IMAGES.parent / "interactive"
-WIDGET_RES = (4, 8, 16, 32)
+WIDGET_RES = (4, 8, 16, 32, 64)
 WIDGET_PHOTOS = (
     # id, name_en, name_es, loader, call, credit -- credits are the ones the
     # scikit-image docstrings give.
