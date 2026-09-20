@@ -363,7 +363,7 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning.** Both give shape `(3, 512, 512)`; only one is the image. And TODO 4 makes the deeper point: once two axes share a size, the shape cannot tell you which is which. Only your own tracking can.
 
-The three photographs above are cubes, one per byte, on the [reshape and transpose visualizer](interactive/tensor-visualizer.html?lang=en). Transpose NHWC to NCHW and watch the shape and the strides permute while the picture stays put; then compare with reshape and watch it break.
+The three photographs above are cubes, one per byte, on the [reshape and transpose visualizer](interactive/tensor-visualizer.html?lang=en). Transpose NHWC to NCHW and watch the shape and the strides permute while the picture stays put; then compare with reshape and watch it break. The [same move on a voice](interactive/voice-stage.html?lang=en#scramble) is the one you can hear: transpose a spectrogram and every number is still there, none of them is where it was, and it stops being speech.
 
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 
@@ -1102,7 +1102,7 @@ terminal_independent = initial_value * np.prod(1 + portfolio_returns_independent
 
 <span data-language-key="appendix-e-take-home-audio-denoising-by-low-rank-stft"></span>
 
-The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the [references](references.qmd#ref-tensors)). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows, and ask which frequencies are present in each. That is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
+The truncated SVD is the *optimal* low-rank approximation (Eckart–Young, in the [references](references.qmd#ref-tensors)). This appendix is where that optimality stops being enough. Cut a real voice recording into short overlapping time windows, and ask which frequencies are present in each. That is the **short-time Fourier transform**, and its output is a matrix, `frequency × time`. The [voice tensor stage](interactive/voice-stage.html?lang=en#lowrank) does this appendix in the browser: it factors that matrix while you wait, then walks the rank and plays the result, so the curve below is one you can hear as well as read. Truncating that matrix's SVD keeps the structure concentrated in the leading singular directions and throws the rest away. If the voice is more concentrated there than the noise is, the result is cleaner. If it is not, you have thrown away the voice.
 
 Optimal on `‖A − B‖_F` is not the same as optimal on *the thing you care about*, so the criterion has to be measured, not assumed. Here the criterion is signal-to-noise ratio against a known clean reference — which is why the noise is added deliberately rather than found. The recording is real and pinned to a SHA-256; the noise is synthetic by design, because only a known clean signal makes SNR measurable at all.
 

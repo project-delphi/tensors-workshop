@@ -298,7 +298,7 @@ Core papers, textbook chapters, and repository source code.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-No install and no account. Three live tools that answer a question the pages
+No install and no account. Four live tools that answer a question the pages
 can only describe.
 
 :::: {.widget-grid}
@@ -340,6 +340,21 @@ collinear columns and float32 dividing by exactly zero. Eight pictures of one
 problem, sections 07, 08 and 09.
 
 [Try projection & SVD](interactive/linalg-stage.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 🔊 Voice tensor stage
+
+<span data-language-key="voice-tensor-stage"></span>
+
+The one you listen to. A real voice becomes a 513 × 465 matrix one window at a
+time; transpose that matrix and every number is still there and none of them is
+in the right place, so you hear what a wrong layout costs. Then Appendix E,
+drawn: the matrix is factored in your browser and the rank slider walks a curve
+that fails at both ends — worse than the noise it started from at rank 2, and
+exactly the noise again when nothing is discarded. Sections 04 and 09.
+
+[Try the voice tensor](interactive/voice-stage.html?lang=en){.resource-button}
 :::
 ::::
 

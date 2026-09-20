@@ -163,6 +163,16 @@
     <p id="intro"></p>
   </header>
 
+  <!-- One anchor per scene, written out rather than built with the tabs. The
+       tabs are created at runtime from the registry, and `check_links.py`
+       reads the static HTML: without these, every `#scramble` and `#lowrank`
+       in the handbooks is a link to a fragment that does not resolve. Adding a
+       scene means adding a line here too. -->
+  <span class="sr" id="window"></span>
+  <span class="sr" id="scramble"></span>
+  <span class="sr" id="lowrank"></span>
+  <span class="sr" id="nmf"></span>
+
   <div class="tabs" role="tablist" id="tabs" aria-label="Scenes"></div>
 
   <div class="two-pane">
@@ -207,6 +217,8 @@
 <script src="voice-kit.js"></script>
 <script src="voice-scenes/window.js"></script>
 <script src="voice-scenes/scramble.js"></script>
+<script src="voice-scenes/lowrank.js"></script>
+<script src="voice-scenes/nmf.js"></script>
 
 <script>
 (function () {
@@ -504,8 +516,34 @@
     active.draw(ctx);
   }
 
+  // How often a scene doing its own work is allowed to rewrite the readout.
+  // Not every frame: rewriting it per frame destroys a reader's selection and
+  // makes the browser check race the picture, which is why control changes are
+  // the only other thing that writes it.
+  const PROGRESS_MS = 200;
+  let wasBusy = false, lastProgress = 0;
+
   function frame() {
-    if (active.animates && active.animates(contextFor(active)) && !held) paint();
+    const ctx = contextFor(active);
+    // `busy` is work that has to finish -- a factorisation running in bands --
+    // and it keeps going under reduced motion and under a paused clock,
+    // because pausing is about movement rather than about arithmetic. Only
+    // `animates` is gated on the motion switch.
+    const busy = active.busy ? active.busy(ctx) : false;
+    const moving = active.animates ? active.animates(ctx) && !held : false;
+    const t = performance.now();
+    // A scene that advances itself has to be able to say so. `paint()` alone
+    // redraws the canvas and leaves the readout and every data-* attribute
+    // frozen at whatever the last control change wrote, so a factorisation
+    // would finish with the stage still reporting that it had not started.
+    const finished = wasBusy && !busy;
+    if (finished || (busy && t - lastProgress > PROGRESS_MS)) {
+      lastProgress = t;
+      changed();
+    } else if (busy || moving) {
+      paint();
+    }
+    wasBusy = busy;
     requestAnimationFrame(frame);
   }
 
