@@ -36,13 +36,24 @@
     s.phase = "svd";
     const Vc = AC.cplx(s.V.length);
     Vc.re.set(s.V);
-    const sub = yield* AC.leftSubspaceSteps(Vc, s.stft.F, s.stft.T, {sketch: 24, power: 4});
+    // Wider than the four components the scene ever shows. The singular values
+    // of a sketch are Rayleigh quotients and so come in low, which pushes the
+    // tail -- and therefore the SVD's error -- up; that is the direction that
+    // could make the printed gap read as zero or negative while the copy says
+    // it cannot be. At this width it agrees with a much wider sketch to the
+    // two decimals the readout shows.
+    const sub = yield* AC.leftSubspaceSteps(Vc, s.stft.F, s.stft.T, {sketch: 48, power: 6});
     s.sigma = sub.sigma;
     s.phase = "fitting";
     restart(ctx, s);
   }
 
   function restart(ctx, s) {
+    // A solo that names a component this rank does not have blanks both panels,
+    // makes the play button do nothing, and leaves the readout claiming the
+    // reader is hearing something that cannot be produced. Lowering k while
+    // soloing the top component landed in exactly that state.
+    if (s.solo !== "all" && Number(s.solo) > s.k) s.solo = String(s.k);
     s.nmf = ctx.AC.nmfInit(s.V, s.stft.F, s.stft.T, s.k, 7);
     s.err = null;
     s.masks = {};
@@ -90,7 +101,10 @@
 
     controls: [
       {id: "k", type: "range", min: 2, max: 4, step: 1, fmt: (v) => "k = " + v},
-      {id: "solo", type: "select", options: ["all", "1", "2", "3", "4"]}
+      {id: "solo", type: "select", options: ["all", "1", "2", "3", "4"],
+       // Only the components this rank actually has.
+       available: (ctx) => ["all"].concat(
+         Array.from({length: ctx.state.k}, (_, i) => String(i + 1)))}
     ],
 
     init(ctx) {
@@ -117,10 +131,15 @@
         return;
       }
       if (s.phase !== "fitting") return;
+      let moved = false;
       while (s.nmf.iter < ITERS && performance.now() < until) {
         ctx.AC.nmfStep(s.V, s.nmf, 2);
+        moved = true;
       }
-      s.err = ctx.AC.nmfError(s.V, s.nmf) / s.vnorm;
+      // Measuring the error is itself a full pass over F x T x k, and sync()
+      // runs twice on the frames that rewrite the readout. Paying for it when
+      // the fit did not advance roughly doubled the time to converge.
+      if (moved) s.err = ctx.AC.nmfError(s.V, s.nmf) / s.vnorm;
       if (s.nmf.iter >= ITERS) s.phase = "ready";
     },
 

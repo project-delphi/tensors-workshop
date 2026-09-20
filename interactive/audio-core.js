@@ -506,7 +506,7 @@
   // which the inverse transform turns into silence rather than an error. It
   // throws now. A caller that wants the no-truncation case does not want this
   // function at all -- nothing is discarded there, so it inverts Z itself.
-  function projectRank(Z, U, F, T, l, k) {
+  function* projectRankSteps(Z, U, F, T, l, k) {
     if (!(k >= 1 && k <= l)) {
       throw new Error(`projectRank: rank ${k} outside the ${l} components computed`);
     }
@@ -517,9 +517,10 @@
         Uk.im[r * k + c] = U.im[r * l + c];
       }
     }
-    const C = cmatmulH(Uk, Z, F, k, T);     // k*T
-    return cmatmul(Uk, C, F, k, T);         // F*T
+    const C = yield* mulHSteps(Uk, Z, F, k, T, "project");   // k*T
+    return yield* mulSteps(Uk, C, F, k, T, "rebuild");       // F*T
   }
+  const projectRank = (Z, U, F, T, l, k) => drain(projectRankSteps(Z, U, F, T, l, k));
 
   // Share of the spectrogram's energy the first k components keep. The
   // denominator is the Frobenius norm rather than the sum of every squared
@@ -726,7 +727,8 @@
     qrComplex, qrComplexSteps, hermitianEig, hermitianEigSteps,
     fft, WINDOWS, windowOf, stft, istft,
     snrDb, rng, gaussians, noiseAtSnr,
-    SKETCH, POWER, leftSubspace, leftSubspaceSteps, projectRank, retained,
+    SKETCH, POWER, leftSubspace, leftSubspaceSteps,
+    projectRank, projectRankSteps, retained,
     transposeC, patchShuffle,
     magnitude, nmfInit, nmfStep, nmfError,
     decodeWav

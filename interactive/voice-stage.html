@@ -409,7 +409,10 @@
       let input;
       if (spec.type === "select") {
         input = document.createElement("select");
-        spec.options.forEach((o) => {
+        // `available` lets a scene narrow the list to what is legal right now
+        // -- the components a rank actually has -- so an option that would
+        // blank the picture is never offered.
+        (spec.available ? spec.available(ctx) : spec.options).forEach((o) => {
           const opt = document.createElement("option");
           opt.value = o;
           opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
@@ -442,6 +445,20 @@
     (scene.controls || []).forEach((spec) => {
       const input = $("c-" + spec.id);
       if (!input) return;
+      if (spec.type === "select" && spec.available) {
+        const want = spec.available(ctx);
+        const have = Array.from(input.options).map((o) => o.value);
+        if (want.join(",") !== have.join(",")) {
+          input.textContent = "";
+          want.forEach((o) => {
+            const opt = document.createElement("option");
+            opt.value = o;
+            opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
+            input.appendChild(opt);
+          });
+          input.value = String(ctx.state[spec.id]);
+        }
+      }
       const val = input.parentNode.querySelector(".val");
       if (val) val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
     });

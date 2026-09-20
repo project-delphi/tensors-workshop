@@ -43,10 +43,18 @@
 
     s.phase = "measuring";
     for (const k of LADDER) {
-      const Zk = AC.projectRank(s.stft.Z, s.U, s.stft.F, s.stft.T, s.l, k);
+      // Through the generator, so one rung is many short steps rather than one
+      // blocking call: at k = 160 the projection alone is about 600 MFlop, and
+      // done in one go it holds the main thread long past the frame budget and
+      // stops the progress line ticking while it does.
+      const Zk = yield* AC.projectRankSteps(s.stft.Z, s.U, s.stft.F, s.stft.T, s.l, k);
       const rec = AC.istft(Zk, s.stft.F, s.stft.T, N, HOP, "hann", s.clean.length);
       s.snr[k] = AC.snrDb(s.clean, rec);
       s.kept[k] = AC.retained(s.sigma, k, s.total);
+      // Kept, not thrown away. The reader lands on one of these ranks the
+      // moment the scene is ready, and recomputing the projection and the
+      // inverse transform inside draw() froze the page for a second a rung.
+      s.recon[k] = {Z: Zk, audio: rec, mag: AC.magnitude(Zk, s.stft.F, s.stft.T)};
       s.curve.push(k);
       yield;
     }
@@ -56,6 +64,7 @@
     const full = AC.istft(s.stft.Z, s.stft.F, s.stft.T, N, HOP, "hann", s.clean.length);
     s.snr.full = AC.snrDb(s.clean, full);
     s.kept.full = 1;
+    s.recon.full = {Z: s.stft.Z, audio: full, mag: s.mag};
     s.curve.push("full");
     s.phase = "ready";
     s.best = LADDER.reduce((a, b) => (s.snr[b] > s.snr[a] ? b : a));
@@ -64,19 +73,9 @@
   const rungs = () => LADDER.concat(["full"]);
   const rungAt = (ctx) => rungs()[Math.min(rungs().length - 1, ctx.state.rung)];
 
-  function reconstruct(ctx) {
-    const s = ctx.state, k = rungAt(ctx);
-    if (s.recon[k]) return s.recon[k];
-    const Z = k === "full"
-      ? s.stft.Z
-      : ctx.AC.projectRank(s.stft.Z, s.U, s.stft.F, s.stft.T, s.l, k);
-    s.recon[k] = {
-      Z,
-      audio: ctx.AC.istft(Z, s.stft.F, s.stft.T, N, HOP, "hann", s.clean.length),
-      mag: ctx.AC.magnitude(Z, s.stft.F, s.stft.T)
-    };
-    return s.recon[k];
-  }
+  // A lookup, never a computation: every rung was built and kept while the
+  // curve was being measured, and draw() runs on the frame clock.
+  const reconstruct = (ctx) => ctx.state.recon[rungAt(ctx)];
 
   window.VoiceScenes.register({
     id: "lowrank",
@@ -129,8 +128,9 @@
 
       // Left: the spectrogram at this rank, or the noisy one until there is one.
       const ready = s.phase === "ready" || s.phase === "measuring";
-      const mag = ready && s.snr[rungAt(ctx)] !== undefined ? reconstruct(ctx).mag : s.mag;
-      const key = ready && s.snr[rungAt(ctx)] !== undefined ? String(rungAt(ctx)) : "noisy";
+      const built = ready ? reconstruct(ctx) : null;
+      const mag = built ? built.mag : s.mag;
+      const key = built ? String(rungAt(ctx)) : "noisy";
       if (!s.imgs) s.imgs = {};
       if (!s.imgs[key]) {
         s.imgs[key] = K.spectrogramImage(mag, s.stft.F, s.stft.T, {floorDb: -70});
@@ -203,15 +203,16 @@
       if (s.phase !== "ready") return null;
       if (s.hear === "clean") return {samples: s.clean, what: ctx.copy.hearNames.clean};
       if (s.hear === "noisy") return {samples: s.noisy, what: ctx.copy.hearNames.noisy};
-      const k = rungAt(ctx);
-      return {samples: reconstruct(ctx).audio, what: ctx.copy.hearNames.rank(k, ctx)};
+      const k = rungAt(ctx), built = reconstruct(ctx);
+      if (!built) return null;
+      return {samples: built.audio, what: ctx.copy.hearNames.rank(k, ctx)};
     },
 
     readout(ctx) {
       const s = ctx.state;
       if (s.phase !== "ready") {
         return {
-          html: ctx.copy.workingReadout(s.phase, s.curve.length, rungs().length),
+          html: ctx.copy.workingReadout(s.phase, s.curve.length, LADDER.length),
           data: {phase: s.phase, shape: s.stft ? s.stft.F + "," + s.stft.T : "", k: "", snr: ""}
         };
       }
@@ -320,6 +321,7 @@
            "factorizando en tu navegador ahora mismo: esa espera es el coste por el que la sección " +
            "09 no deja de preguntar. Después arrastra el rango y escucha. Observa qué pasa en los " +
            "dos extremos de la curva, y fíjate en que ninguno es un error.",
+        predict: "Antes de arrastrar: más componentes significa una aproximación más cercana. ¿Debería sonar siempre mejor cuantas más haya?",
         fullRank: "todas las componentes", fullShort: "todas",
         spectrum: "valores singulares",
         axisSnr: "señal-ruido frente al rango",
