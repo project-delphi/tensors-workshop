@@ -317,7 +317,11 @@
     max-width: 100%; max-height: 26rem;
   }
   pre .cm { color: var(--ink-mute); }
-  .tools { display: flex; gap: 0.4rem; margin-top: 0.45rem; flex-wrap: wrap; }
+  /* Positioned for the file input's sake: `.sr` is `position: absolute` at
+     the document origin, and the input is focusable, so without a positioned
+     ancestor tabbing onto it scrolls the page to the top -- away from the
+     label that is showing the focus ring. */
+  .tools { display: flex; gap: 0.4rem; margin-top: 0.45rem; flex-wrap: wrap; position: relative; }
   .note { font-size: 0.72rem; line-height: 1.4; color: var(--ink-mute); margin: 0.4rem 0 0; }
   .note code { font: 0.95em var(--mono); color: var(--ink); }
   .note button.inline {
@@ -582,6 +586,7 @@
     dropPhoto: "Remove",
     photoNote: "Your own photograph becomes one more slab of the batch: centre-cropped square, shrunk to the size above. It is decoded in this page — nothing is sent anywhere, and nothing outlives the tab.",
     photoFailed: "That file did not decode as an image, so the batch is unchanged.",
+    photoBroke: "The photo decoded but could not be prepared. It may be larger than this browser will hold in a canvas; the batch is unchanged.",
     yourPhoto: "your photo",
     nHead: "How many elements",
     nNote: (n) => `x = np.arange(${n}). Every factorisation of ${n} is a reshape you can take below.`,
@@ -710,6 +715,7 @@
     dropPhoto: "Quitar",
     photoNote: "Tu propia fotografía pasa a ser una lámina más del lote: recortada al cuadrado central y reducida al tamaño de arriba. Se descodifica en esta página: no se envía a ninguna parte y no sobrevive a la pestaña.",
     photoFailed: "Ese archivo no se pudo descodificar como imagen, así que el lote no cambia.",
+    photoBroke: "La foto se descodificó pero no se pudo preparar. Puede que sea más grande de lo que este navegador admite en un lienzo; el lote no cambia.",
     yourPhoto: "tu foto",
     nHead: "Cuántos elementos",
     nNote: (n) => `x = np.arange(${n}). Cada factorización de ${n} es un reshape que puedes tomar abajo.`,
@@ -994,14 +1000,21 @@
   // one long jump a single drawImage would take is the case browsers resample
   // worst -- a 4000 px photo comes back aliased, which at 8x8 is the whole
   // picture -- and halving with smoothing on is the box average the
-  // generator's Pillow BOX filter takes. The first canvas is capped at 1024
-  // so a 6000 px photo does not ask for a 144 MB one.
-  const SHRINK_FROM = 1024;
+  // generator's Pillow BOX filter takes.
+  //
+  // That applies to the first step as much as the rest, so the first canvas
+  // is half the crop and not a fixed size: at 1024 it was a 3x jump off a
+  // phone photo, which is the aliasing this loop exists to avoid, taken
+  // before the loop starts. MAX_CANVAS is the one concession -- a 6000 px
+  // photo would ask for a 144 MB canvas -- and only a photo past 4096 px
+  // takes a first step longer than a halving.
+  const MAX_CANVAS = 2048;
   function squareTo(img, side) {
     const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
     const crop = Math.min(iw, ih);
     if (!crop) throw new Error("empty");
-    let size = Math.max(side, Math.min(crop, SHRINK_FROM));
+    // Smaller than the target is the one case that scales up, in a single step.
+    let size = crop <= side ? side : Math.min(Math.max(side, Math.ceil(crop / 2)), MAX_CANVAS);
     let cv = document.createElement("canvas");
     cv.width = cv.height = size;
     const ctx = cv.getContext("2d");
@@ -1555,14 +1568,22 @@
       const file = picker.files && picker.files[0];
       // Cleared first, so picking the same file twice fires `change` twice.
       picker.value = "";
+      // Before the early return: a reader who opens the dialog again after a
+      // failure and then cancels was left reading why the last one failed,
+      // with nothing pending to explain it.
+      $("photo-note").textContent = T.photoNote;
       if (!file) return;
       try {
         await takePhoto(file);
-      } catch (_) {
-        $("photo-note").textContent = T.photoFailed;
+      } catch (err) {
+        // Which half gave up matters to the reader: a file that is not an
+        // image is theirs to fix, and a canvas the browser would not give us
+        // is not, and telling them the second was the first sends them
+        // looking at the wrong thing.
+        const decode = err && (err.message === "decode" || err.message === "empty");
+        $("photo-note").textContent = decode ? T.photoFailed : T.photoBroke;
         return;
       }
-      $("photo-note").textContent = T.photoNote;
       buildPhotoChecks();
       restart();
     });
@@ -2222,6 +2243,17 @@
       ((a.x * sa + a.z * ca) + a.y * 0.2) - ((b.x * sa + b.z * ca) + b.y * 0.2));
     const s = cellScale(w, h);
     const ink = css("--ink");
+    // One entry per distinct fill, not per cube. The seam colour is a mix of
+    // the fill with the ink, and mix() parses both strings -- which at the
+    // largest batch was 98304 parses per frame, on the one render path that
+    // has to redraw every cube whenever the camera moves. A photo's fills
+    // come from chanFill(), so there are at most 768 of them.
+    const seams = new Map();
+    const seam = (fill) => {
+      let c = seams.get(fill);
+      if (c === undefined) { c = mix(fill, ink, 0.25); seams.set(fill, c); }
+      return c;
+    };
     const labels = showValues() && s >= VALUE_MIN_PX && !canReveal();
     // Face on the cubes are squares that meet: a hexagon drawn at a quarter
     // turn is a cube seen from nowhere, and the photograph would show its seams.
@@ -2233,7 +2265,7 @@
       const half = s * (0.42 + 0.08 * snap.t) * (v.scale || 1);
       ctx.globalAlpha = v.alpha;
       ctx.fillStyle = v.color;
-      ctx.strokeStyle = v.sel ? ink : mix(v.color, ink, 0.25);
+      ctx.strokeStyle = v.sel ? ink : seam(v.color);
       ctx.lineWidth = v.sel ? 2 : 1;
       ctx.beginPath();
       if (square) {
