@@ -140,6 +140,7 @@
     for (let i = 0; i < n; i++) scale += a.re[i * n + i] * a.re[i * n + i];
     const tol = Math.sqrt(scale) * 1e-13 + 1e-300;
 
+    let converged = false;
     for (let sweep = 0; sweep < maxSweeps; sweep++) {
       let off = 0;
       for (let p = 0; p < n; p++) {
@@ -147,7 +148,7 @@
           off += a.re[p * n + q] * a.re[p * n + q] + a.im[p * n + q] * a.im[p * n + q];
         }
       }
-      if (Math.sqrt(off) < tol) break;
+      if (Math.sqrt(off) < tol) { converged = true; break; }
 
       for (let p = 0; p < n; p++) {
         // A whole sweep of a 240x240 matrix is about seventy milliseconds,
@@ -213,7 +214,10 @@
         vecs.im[i * n + j] = V.im[i * n + order[j]];
       }
     }
-    return {values: vals, vectors: vecs};
+    // Cyclic Jacobi settles in well under thirty sweeps at this size, so a
+    // false here is a matrix that was never diagonalised and eigenvalues that
+    // are not eigenvalues -- worth a caller being able to ask.
+    return {values: vals, vectors: vecs, converged};
   }
   const hermitianEig = (G, n, sweeps) => drain(hermitianEigSteps(G, n, sweeps));
 
@@ -258,7 +262,10 @@
   // 50% overlap sum to a constant and the inverse transform exact. scipy's
   // stft uses the periodic form for the same reason.
 
-  const WINDOWS = {
+  // No prototype: a window name arriving from a control or a URL must not be
+  // able to resolve `constructor` or `toString` into something callable, which
+  // returned a boxed Number and filled the spectrogram with NaN.
+  const WINDOWS = Object.assign(Object.create(null), {
     hann: (N) => {
       const w = new Float64Array(N);
       for (let i = 0; i < N; i++) w[i] = 0.5 - 0.5 * Math.cos(2 * Math.PI * i / N);
@@ -270,7 +277,7 @@
       return w;
     },
     rect: (N) => new Float64Array(N).fill(1)
-  };
+  });
   const windowOf = (kind, N) => (WINDOWS[kind] || WINDOWS.hann)(N);
 
   // ------------------------------------------------------------------- stft
@@ -386,6 +393,9 @@
     const noise = gaussians(clean.length, seed === undefined ? 42 : seed);
     let sig = 0, nz = 0;
     for (let i = 0; i < clean.length; i++) { sig += clean[i] * clean[i]; nz += noise[i] * noise[i]; }
+    // Signal-to-noise ratio is undefined against silence, and scaling by zero
+    // would hand back a clip with no noise in it and a NaN on the readout.
+    if (!(sig > 0)) throw new Error("noiseAtSnr: the reference signal carries no energy");
     const scale = Math.sqrt(sig / (nz * Math.pow(10, targetDb / 10)));
     for (let i = 0; i < noise.length; i++) noise[i] *= scale;
     return noise;
@@ -478,6 +488,9 @@
     }
 
     const eig = yield* hermitianEigSteps(G, l);
+    if (!eig.converged) {
+      throw new Error("leftSubspace: the sketch's Gram matrix did not diagonalise");
+    }
     const U = yield* mulSteps(Q, eig.vectors, F, l, l, "rotate");
     const sigma = new Float64Array(l);
     for (let i = 0; i < l; i++) sigma[i] = Math.sqrt(Math.max(eig.values[i], 0));
@@ -486,7 +499,17 @@
   const leftSubspace = (Z, F, T, opts) => drain(leftSubspaceSteps(Z, F, T, opts));
 
   // Z_k, as the projection of Z onto the first k columns of U.
+  //
+  // Only the first `l` components exist: the sketch is 240 columns wide and
+  // the spectrogram's full rank is 465, so there is no rank-400 answer to give
+  // here. Asking for one used to read past U and fill the result with NaN,
+  // which the inverse transform turns into silence rather than an error. It
+  // throws now. A caller that wants the no-truncation case does not want this
+  // function at all -- nothing is discarded there, so it inverts Z itself.
   function projectRank(Z, U, F, T, l, k) {
+    if (!(k >= 1 && k <= l)) {
+      throw new Error(`projectRank: rank ${k} outside the ${l} components computed`);
+    }
     const Uk = cplx(F * k);
     for (let r = 0; r < F; r++) {
       for (let c = 0; c < k; c++) {
@@ -502,8 +525,15 @@
   // denominator is the Frobenius norm rather than the sum of every squared
   // singular value, because the two are equal and only the first k are known.
   const retained = (sigma, k, total) => {
+    // Refused rather than clamped, for the reason projectRank refuses: a
+    // readout saying "98.9% retained" beside a rank the factorisation never
+    // reached is a confident wrong answer, and this widget's whole claim is
+    // that every number on screen was computed from what is on screen.
+    if (!(k >= 0 && k <= sigma.length)) {
+      throw new Error(`retained: rank ${k} outside the ${sigma.length} components computed`);
+    }
     let s = 0;
-    for (let i = 0; i < k && i < sigma.length; i++) s += sigma[i] * sigma[i];
+    for (let i = 0; i < k; i++) s += sigma[i] * sigma[i];
     return s / total;
   };
 
@@ -614,12 +644,20 @@
         fmt = {format: v.getUint16(off + 8, true), channels: v.getUint16(off + 10, true),
                rate: v.getUint32(off + 12, true), bits: v.getUint16(off + 22, true)};
       } else if (id === "data") {
-        data = {off: off + 8, size: Math.min(size, v.byteLength - off - 8)};
+        data = {off: off + 8, size: size, have: v.byteLength - off - 8};
       }
       off += 8 + size + (size & 1);
     }
     if (!fmt || !data) throw new Error("decodeWav: missing fmt or data chunk");
     if (fmt.format !== 1 || fmt.bits !== 16) throw new Error("decodeWav: expected 16-bit PCM");
+    // A streamed WAV writes 0 or 0xFFFFFFFF as its data size, and a truncated
+    // download declares more than it carries. Both used to come back as a
+    // valid-looking empty or short signal; the header above promises this
+    // fails loudly instead.
+    if (data.size === 0) throw new Error("decodeWav: data chunk is empty");
+    if (data.size > data.have) {
+      throw new Error(`decodeWav: data chunk declares ${data.size} bytes, file carries ${data.have}`);
+    }
     const frames = Math.floor(data.size / 2 / fmt.channels);
     const out = new Float64Array(frames);
     for (let i = 0; i < frames; i++) {

@@ -182,6 +182,39 @@ test('NMF drives its reconstruction error down and keeps both factors non-negati
   for (const a of [s.W, s.H]) for (let i = 0; i < a.length; i++) assert.ok(a[i] >= 0);
 });
 
+test('a rank beyond the components computed is refused, not answered with NaN', () => {
+  const F = 40, T = 30, Z = core.cplx(F * T), g = core.gaussians(2 * F * T, 17);
+  for (let i = 0; i < F * T; i++) { Z.re[i] = g[2 * i]; Z.im[i] = g[2 * i + 1]; }
+  const {U, sigma, l} = core.leftSubspace(Z, F, T, {sketch: 12, power: 2});
+  assert.equal(l, 12);
+  // Used to read past U, store undefined as NaN, and hand the inverse
+  // transform a spectrogram that plays as silence.
+  assert.throws(() => core.projectRank(Z, U, F, T, l, 20), /outside the 12 components/);
+  assert.throws(() => core.retained(sigma, 20, core.frobSq(Z)), /outside the 12 components/);
+  assert.ok(Number.isFinite(core.frobSq(core.projectRank(Z, U, F, T, l, l))));
+});
+
+test('a window name cannot reach through to Object.prototype', () => {
+  // WINDOWS['constructor'] was truthy and callable, so this returned a boxed
+  // Number and stft filled the spectrogram with NaN.
+  for (const kind of ['constructor', 'toString', 'valueOf', '__proto__', 'nope']) {
+    assert.ok(core.windowOf(kind, 8) instanceof Float64Array, kind);
+  }
+  assert.deepEqual(Array.from(core.windowOf('rect', 4)), [1, 1, 1, 1]);
+});
+
+test('a truncated or empty data chunk is refused, as the header promises', () => {
+  const wav = fs.readFileSync(WAV);
+  assert.throws(() => core.decodeWav(wav.subarray(0, 4096)), /declares .* carries/);
+  const empty = Buffer.from(wav.subarray(0, 44));
+  empty.writeUInt32LE(0, 40);            // a streamed WAV writes 0 here
+  assert.throws(() => core.decodeWav(empty), /empty/);
+});
+
+test('noise against silence is refused rather than scaled to nothing', () => {
+  assert.throws(() => core.noiseAtSnr(new Float64Array(64), 5, 1), /no energy/);
+});
+
 test('the recording decodes as the mono 48 kHz the handbook describes', () => {
   const wav = core.decodeWav(fs.readFileSync(WAV));
   assert.equal(wav.rate, 48000);
@@ -250,5 +283,15 @@ test('Appendix E: the stage reproduces the handbook table from the same recordin
   const full = core.istft(s.Z, s.F, s.T, 1024, 512, 'hann', clean.length);
   assert.equal(core.snrDb(clean, full).toFixed(2), '5.00',
     'at full rank the SNR returns to exactly the noisy input');
-  assert.equal((100 * core.retained(sigma, sigma.length, total) <= 100.0000001), true);
+
+  // The handbook's last row says 100% retained at rank 465. That row is the
+  // no-truncation case, which is the line above: it needs no factorisation,
+  // and this sketch does not reach it -- 240 components is 98.9% of the
+  // energy, not 100%. Pinned here so that the gap is a stated number rather
+  // than something a later reader has to rediscover, and so that a rank the
+  // sketch never computed is refused rather than silently answered for 240.
+  const top = 100 * core.retained(sigma, sigma.length, total);
+  assert.ok(Math.abs(top - 98.9) < 0.2, `the 240-column sketch retains ${top.toFixed(1)}%`);
+  assert.throws(() => core.retained(sigma, 465, total), /outside the 240 components/);
+  assert.throws(() => core.projectRank(s.Z, U, s.F, s.T, l, 465), /outside the 240 components/);
 });
