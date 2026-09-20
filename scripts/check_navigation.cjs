@@ -295,6 +295,28 @@ async function audit(page, where) {
       await page.mouse.move(2, 2);
       assert(await moves(6000),
         `${where_}: the drift should come back once the pointer leaves`);
+      // The same leave, with a control click in between. #snap and the
+      // gizmo are siblings of #stage laid over it, so reaching them is a
+      // pointerleave; the click's own dropDrift() used to clear the resume
+      // that leave had armed, and the sway was gone for the rest of the
+      // visit. Snapped in and straight back out, so the drift is wanted
+      // again by the end of it.
+      const snapBox = await page.locator('#snap').boundingBox();
+      const clickSnap = () => page.mouse.click(snapBox.x + snapBox.width / 2,
+                                               snapBox.y + snapBox.height / 2);
+      await clickSnap();
+      await page.waitForTimeout(400);
+      await clickSnap();
+      // Both clicks glide the camera. Wait that out under the pointer
+      // rather than sleeping a guessed length: once the glide is over,
+      // a pointer resting on the snap button must hold the stage still.
+      let quiet = false;
+      for (let i = 0; i < 12 && !quiet; i++) quiet = !await moves(900);
+      assert(quiet,
+        `${where_}: the drift must stop under a pointer on the snap button`);
+      await page.mouse.move(2, 2);
+      assert(await moves(6000),
+        `${where_}: the drift should come back after a snap click`);
     }
 
     // `#transpose` in the URL opens the page on that tab.

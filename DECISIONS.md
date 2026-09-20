@@ -279,10 +279,13 @@ sway's period so that the camera is at its furthest out exactly at each end of
 the swing, which is where the tensor needs the room.
 
 The pointer is the only switch a reader has to find, and they find it by
-accident. `pointerenter` on `#stage` stops the drift; `pointerleave` schedules
-its return 0.3 seconds later. The legend, the snap button and the gizmo are
-children of `#stage`, so crossing into them is still being on the stage, which
-is what `pointerenter` and `pointerleave` already mean. The keyboard is held
+accident. `pointerenter` stops the drift; `pointerleave` schedules its return
+0.3 seconds later. Both are bound to `.stagewrap`, not to `#stage`: the legend,
+the snap button, the arrange pair and the gizmo are *siblings* of `#stage` that
+sit absolutely over it, so on `#stage` the pointer crossing onto a control was
+already a leave -- it armed the resume timer, the control's own `dropDrift()`
+cleared it, and the sway never came back. The wrapper is the same box as the
+stage, and it is the reader's idea of being on the widget. The keyboard is held
 off by `:focus-visible` rather than `:focus`: a click focuses the stage too,
 and keying off plain focus meant that clicking once killed the drift for the
 rest of the visit -- which the Playwright run caught before this shipped.
