@@ -53,6 +53,12 @@ repo:
     - interactive/linalg-scenes/eigen.js
     - interactive/linalg-scenes/collinear.js
     - interactive/linalg-scenes/precision.js
+    # The arithmetic under the voice tensor stage, and the recording it
+    # factors (interactive/vendor/README.md). The recording is fetched by
+    # audio-core.js rather than named in any href, so the harvest cannot see
+    # it either, and Appendix E's numbers depend on these exact bytes.
+    - interactive/audio-core.js
+    - interactive/vendor/voice.wav
     # The stage's serif, vendored (interactive/vendor/README.md). A
     # @font-face url is CSS content, which the harvest cannot see.
     - interactive/vendor/cmu-serif/cmu-serif-500-roman.woff2

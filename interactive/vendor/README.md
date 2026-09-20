@@ -151,3 +151,55 @@ cd interactive/vendor/cmu-serif && shasum -a 256 *
 would load on a reader's machine and test as Times on the runner, and nothing
 would say so. The two woff2 files are in `repo.widgets` because a `@font-face`
 `url()` is CSS content, which the link harvest does not read.
+
+# The voice recording
+
+`voice.wav` is the recording the voice tensor stage factors, reproduced
+unmodified. It is CC0, "Short voice sample, by Bart Massey", from the sample
+set Portland State University's *Computers, Sound and Music* course uses; the
+upstream README licenses the set CC0 unless a file says otherwise, and this
+file does not.
+
+```
+source  https://raw.githubusercontent.com/pdx-cs-sound/wavs/
+        ed5ebcbbbc2d11f0adddc9b50b78d581c29f738c/voice.wav
+sha256  2c4b4d9d5f90715fdbf599869a465d521638f40ca978b186df96f1543a4d67dc
+bytes   475180
+format  PCM, mono, 48000 Hz, 16-bit, 237568 samples, 4.949 s
+fetched 2026-09-20
+```
+
+Verify with:
+
+```bash
+shasum -a 256 interactive/vendor/voice.wav
+```
+
+**Why this recording and not a shorter or lighter one.** It is the file
+Appendix E already uses. The handbook's take-home downloads it from the URL
+above and refuses it unless the SHA-256 matches, and publishes a table of
+signal-to-noise ratios computed from it; the stage recomputes that table in the
+browser. One recording with one hash means the notebook and the widget cannot
+drift into quoting different numbers for the same experiment, and
+`tests/audio_core.test.cjs` fails if they ever do. A shorter clip would be a
+smaller download and a different `(513, 465)`, so every number in the handbook
+would have to be re-executed to match it.
+
+**Why it is committed rather than fetched at run time.** The same reason
+three.js and the serif are: `check_navigation.cjs` aborts every off-origin
+request, so a recording pulled from GitHub would test as a silent failure on
+the runner. It is in `repo.widgets` because nothing else would notice it
+failing to reach `docs/`.
+
+**Why the noise is not shipped with it.** Appendix E adds the noise
+deliberately, because only a known clean reference makes SNR measurable at all.
+`audio-core.js` generates it from a seeded generator, so the widget's noise is
+reproducible without another half-megabyte in the repo. That generator is not
+numpy's, so the draw is not the notebook's draw; across seeds the peak of the
+curve moves by about 0.04 dB, which is why the stage reports it to one decimal
+and the test allows 0.05.
+
+**`*.wav binary` in `.gitattributes` is load-bearing.** The repo sets
+`* text=auto eol=lf` to keep CRLF out of the index. A WAV file that some clone
+decided was text would have its bytes rewritten, the SHA-256 above would stop
+matching, and the stage would play noise.
