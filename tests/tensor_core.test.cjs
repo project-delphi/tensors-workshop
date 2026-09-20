@@ -148,7 +148,7 @@ test('pausing and resuming never re-seeds the origin — the scale would ratchet
     const at = core.driftPose(s, clock - s.t0);
     s = core.driftPause(s, clock);
     if (at.scale < HOME.scale) caught++;
-    clock += 1500;                                   // DRIFT_RESUME_MS, and back
+    clock += 300;                                    // DRIFT_RESUME_MS, and back
     s = core.driftStart(s, at.yaw, at.scale, clock);  // the live view, as it was read
     assert.equal(s.yaw0, HOME.yaw);
     assert.equal(s.scale0, HOME.scale);
