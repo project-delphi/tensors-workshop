@@ -235,8 +235,8 @@
       reset: "Reset this scene", motion: "Pause motion", motionOn: "Resume motion",
       play: "Play", stop: "Stop", idle: "nothing playing", loading: "loading the recording…",
       playing: (what) => "playing " + what,
-      failed: "The recording could not be loaded, so the pictures are drawn from a test signal " +
-              "and nothing can be played.",
+      failed: "The recording could not be loaded, so every picture and every sound here is a " +
+              "synthesised test signal instead.",
       embedCap: "A voice becomes a frequency-by-time matrix.",
       embedOpen: "Open the full page →",
       shape: "Shape"
@@ -252,8 +252,8 @@
       play: "Reproducir", stop: "Detener", idle: "nada en reproducción",
       loading: "cargando la grabación…",
       playing: (what) => "reproduciendo " + what,
-      failed: "No se pudo cargar la grabación, así que las imágenes se dibujan a partir de una " +
-              "señal de prueba y no se puede reproducir nada.",
+      failed: "No se pudo cargar la grabación, así que cada imagen y cada sonido de aquí son una " +
+              "señal de prueba sintetizada.",
       embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
       embedOpen: "Abrir la página completa →",
       shape: "Forma"
@@ -266,7 +266,7 @@
   // One AudioContext, built on the first press of a transport button and
   // never before: a context created at load starts suspended under every
   // browser's autoplay policy, and the hero embed must not create one at all.
-  let actx = null, playing = null, playLabel = "";
+  let actx = null, playing = null;
   const audio = {
     get ready() { return actx !== null; },
     resume() {
@@ -288,13 +288,22 @@
       const src = c.createBufferSource();
       src.buffer = buf;
       src.connect(c.destination);
-      src.onended = () => { if (playing === src) { playing = null; playLabel = ""; paint(); } };
+      // Ending on its own is the common case -- these clips are five seconds --
+      // and it has to put the transport back the way the stop button does.
+      // Repainting alone left "playing ..." on the panel and data-playing at 1
+      // until the reader happened to touch a control.
+      src.onended = () => {
+        if (playing !== src) return;
+        playing = null;
+        $("playstate").textContent = T.idle;
+        changed();
+      };
       src.start();
-      playing = src; playLabel = what || "";
-      paint();
+      playing = src;
+      changed();
     },
     stop() {
-      if (playing) { try { playing.stop(); } catch (e) { /* already ended */ } playing = null; playLabel = ""; }
+      if (playing) { try { playing.stop(); } catch (e) { /* already ended */ } playing = null; }
     }
   };
 
@@ -402,16 +411,15 @@
         input.value = String(ctx.state[spec.id]);
       }
       input.id = "c-" + spec.id;
-      const show = () => {
-        val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
-      };
+      // One control can change what another one's label says -- the hop
+      // decides how many seconds a window position is -- so every label is
+      // re-formatted from `changed()`, after the scene has derived from the
+      // new value, rather than only the control that fired.
       input.addEventListener("input", () => {
         ctx.state[spec.id] = spec.type === "select" ? input.value : Number(input.value);
-        show();
-        if (spec.rebuild) rebuildLabels(scene);
         changed();
       });
-      show();
+      val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
       wrap.appendChild(input);
       host.appendChild(wrap);
     });
@@ -442,6 +450,8 @@
   // Written from the controls' values, never from anything eased, and only
   // when something changed -- rewriting it every frame destroys a reader's
   // selection and makes the browser check race the animation.
+  const written = new Set();
+
   function changed() {
     const ctx = contextFor(active);
     // Whatever the control changed, the scene derives from it before anything
@@ -455,10 +465,19 @@
     stage.setAttribute("aria-label", ctx.copy.aria(ctx) || "");
 
     const data = Object.assign({scene: active.id}, r.data || {});
-    Object.keys(stage.dataset).forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
-    Object.keys(data).forEach((k) => { stage.dataset[k] = String(data[k]); });
-    stage.dataset.playing = playing ? "1" : "0";
-    stage.dataset.standin = signal.stand_in ? "1" : "0";
+    data.playing = playing ? "1" : "0";
+    data.standin = signal.stand_in ? "1" : "0";
+    // Only the keys a readout wrote last time are pruned. Clearing the whole
+    // dataset took `data-ready` and `data-paused` with it -- they are the
+    // frame's, not the scene's, and the first control a reader touched made
+    // the stage stop saying whether it was ready or paused.
+    written.forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
+    written.clear();
+    Object.keys(data).forEach((k) => {
+      stage.dataset[k] = String(data[k]);
+      written.add(k);
+    });
+    rebuildLabels(active);
     paint();
   }
 

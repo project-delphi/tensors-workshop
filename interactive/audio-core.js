@@ -559,11 +559,18 @@
   // leaving what is inside each block alone -- what a patchifier does when its
   // two axes are read in the wrong order.
   //
-  // The patch size must divide both axes. A size that does not would leave a
-  // margin the shuffle never copies, and the result would be a matrix with
-  // holes in it while the readout still claimed every number was present.
+  // Transposing a grid needs a square grid, so this needs a square matrix, and
+  // the patch size must divide it. Neither condition is decoration: a size
+  // that left a margin would never copy it, and a matrix taller than it is
+  // wide sends half its blocks past the end of the destination, where a typed
+  // array drops them without a word. Either way the result is a matrix with
+  // holes in it while the readout still claims every number is present, which
+  // is the one thing this function exists to guarantee.
   function patchShuffle(Z, F, T, patch) {
-    if (F % patch !== 0 || T % patch !== 0) {
+    if (F !== T) {
+      throw new Error(`patchShuffle: needs a square matrix, got ${F} by ${T}`);
+    }
+    if (F % patch !== 0) {
       throw new Error(`patchShuffle: ${patch} does not divide ${F} by ${T}`);
     }
     const out = cplx(F * T);

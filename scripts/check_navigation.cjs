@@ -370,6 +370,22 @@ async function audit(page, where) {
             `${where}: ${layout} changed how many numbers there are`);
         }
 
+        // data-ready and data-paused belong to the frame, not to a scene, so a
+        // readout must not carry them off with it. Clearing the whole dataset
+        // did exactly that, and it went unseen because the only check was the
+        // one immediately after the goto above.
+        assert.equal(await stage.getAttribute('data-ready'), '1',
+          `${where}: a control change cleared data-ready`);
+        await page.locator('#motion').click();
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.paused === '1', null, {timeout: 5000});
+        await page.selectOption('#c-layout', 'transpose');
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.layout === 'transpose', null, {timeout: 5000});
+        assert.equal(await stage.getAttribute('data-paused'), '1',
+          `${where}: a control change cleared data-paused`);
+        await page.locator('#motion').click();
+
         // Linking by scene name, never by an index that moves on a reorder.
         await page.goto(`${origin}${prefix}interactive/voice-stage.html?lang=${lang}#scramble`);
         await page.waitForFunction(() =>

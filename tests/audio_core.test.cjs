@@ -232,12 +232,23 @@ test('a transpose and a patch shuffle are permutations: every number survives', 
   assert.ok(maxAbs(core.patchShuffle(Z, F, T, 27).re, Z.re) > 0);
 });
 
-test('a patch size that does not divide the matrix is refused, not truncated', () => {
-  // 513 = 27 x 19, so 27 tiles it and 8 does not. A patch size that left a
-  // margin would drop numbers the readout still claimed were present.
-  const F = 54, T = 54, Z = core.cplx(F * T);
-  assert.throws(() => core.patchShuffle(Z, F, T, 8), /does not divide/);
+test('a patch shuffle that would drop numbers is refused, not truncated', () => {
+  // 513 = 27 x 19, so 27 tiles it and 8 does not.
+  const Z = core.cplx(54 * 54);
+  assert.throws(() => core.patchShuffle(Z, 54, 54, 8), /does not divide/);
   assert.equal(513 % 27, 0);
+  // A non-square matrix sends half its blocks past the end of the
+  // destination, where a typed array drops them silently: with F=4, T=8 and
+  // patch 2 the result held half the energy that went in, and both of the
+  // tests above passed because they were square. Refused now.
+  const R = core.cplx(4 * 8);
+  for (let i = 0; i < 32; i++) { R.re[i] = i + 1; R.im[i] = 0; }
+  assert.throws(() => core.patchShuffle(R, 4, 8, 2), /square/);
+  const sum = (M) => M.re.reduce((a, b) => a + b, 0);
+  const sq = core.cplx(6 * 6);
+  for (let i = 0; i < 36; i++) { sq.re[i] = i + 1; sq.im[i] = 0; }
+  assert.equal(sum(core.patchShuffle(sq, 6, 6, 2)), sum(sq), 'a square shuffle keeps every number');
+  assert.equal(sum(core.transposeC(R, 4, 8)), sum(R), 'a transpose works on any shape');
 });
 
 test('the recording decodes as the mono 48 kHz the handbook describes', () => {
