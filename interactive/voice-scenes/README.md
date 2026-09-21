@@ -8,13 +8,16 @@ order, so a new scene is: one file here, one `<script src>` line, one
 line in `_variables.yml` (the only thing that notices the file failing to
 reach `docs/`). The page throws at boot if a registered scene has no section.
 
-The order is a story in three parts, and the part headings are on the scene
+The order is a story in four parts, and the part headings are on the scene
 that opens each one (`part: {en, es}`). **From air to numbers**: how a
 pressure wave becomes a list (sampled, rounded, written down with a shape and
 a dtype). **From numbers to a matrix**: one window cut out of that list, the
 transform that asks which frequencies are in it, then the window hopping along
 so that each stop is a column. **What a layout does to it**: the reshape you
-can hear go wrong. Each picture introduces exactly one word the next ones use
+can hear go wrong. **What factoring it costs**: the truncated SVD's denoising
+curve, measured rung by rung while the reader waits for the factorisation, and
+the NMF that gives up the best error to get parts you can name.
+Each picture introduces exactly one word the next ones use
 -- "sample" and "rate", then "bit depth", then "frame" and "window", then
 "bin", then "hop" and "column" -- and nothing says a word before the picture
 that defines it.

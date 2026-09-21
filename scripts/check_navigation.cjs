@@ -1123,7 +1123,7 @@ async function audit(page, where) {
               await page.waitForFunction(() => !document.getElementById('glnote').hidden, null, {timeout: 10000});
               assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
               assert(await page.locator('#draw').isVisible(), `${where}: twin ${scene} is not on the stage`);
-              // One readout per section: the scroller has seven of them.
+              // One readout per section: the scroller has nine of them.
               const readout = await page.locator(`#read-${scene}`).innerText();
               assert(!/NaN|Infinity|undefined/.test(readout), `${where}: twin ${scene} readout: ${readout}`);
               if (scene === 'sample') {
