@@ -27,13 +27,11 @@
   const FULL_LADDER = [2, 5, 10, 20, 40, 80, 160];
   const BUDGET_MS = 8;                     // work per frame, so the page stays alive
 
-  // Everything the cache keeps is drawn or played, never computed on again: a
-  // magnitude is quantized to 256 colours on its way to the screen, and a
-  // sample is clamped into a Float32 AudioBuffer channel on its way to the
-  // speakers. Float64 there is eight bytes buying nothing. Every number the
-  // scene prints -- the SNR of each rung, the energy retained -- is measured
-  // off the Float64 arrays first, above; only the copies that are kept are
-  // narrowed.
+  // A kept clip is clamped into a Float32 AudioBuffer channel on its way to
+  // the speakers, so Float64 here is eight bytes buying nothing. Every number
+  // the scene prints -- the SNR of each rung, the energy retained -- is
+  // measured off the Float64 array first, above; only the copy that is kept
+  // is narrowed.
   const f32 = (a) => Float32Array.from(a);
 
   // The ladder for one recording: FULL_LADDER cut down to the rungs `l`
@@ -64,7 +62,12 @@
     yield;
     s.stft = AC.stft(s.noisy, N, HOP, "hann");
     s.total = AC.frobSq(s.stft.Z);
-    s.mag = f32(AC.magnitude(s.stft.Z, s.stft.F, s.stft.T));
+    // Drawn now, not kept as numbers. A magnitude's only destination is
+    // `spectrogramImage`, which quantizes it to a 256-entry ramp, so the
+    // matrix of doubles behind the picture is 1.9 MB that can never be seen
+    // again once the picture exists.
+    s.noisyImg = ctx.K.spectrogramImage(
+      AC.magnitude(s.stft.Z, s.stft.F, s.stft.T), s.stft.F, s.stft.T, {floorDb: -70});
     yield;
 
     s.phase = "factorising";
@@ -84,10 +87,16 @@
       // Kept, not thrown away. The reader lands on one of these ranks the
       // moment the scene is ready, and recomputing the projection and the
       // inverse transform inside draw() froze the page for a moment a rung.
-      // Only what draw() and audio() actually read is kept: `Zk` itself is
-      // 3.8 MB a rung and nothing downstream wants it once the picture and
-      // the sound have been taken out of it.
-      s.recon[k] = {audio: f32(rec), mag: f32(AC.magnitude(Zk, s.stft.F, s.stft.T))};
+      // What is kept is the finished picture and the finished sound -- the
+      // rung is drawn here, on the frame that measured it, rather than on the
+      // first frame that shows it. Neither `Zk` nor its magnitude outlives
+      // this iteration: draw() reads an image and audio() reads samples, and
+      // nothing downstream can ask either of them a question again.
+      s.recon[k] = {
+        audio: f32(rec),
+        img: ctx.K.spectrogramImage(AC.magnitude(Zk, s.stft.F, s.stft.T),
+                                    s.stft.F, s.stft.T, {floorDb: -70})
+      };
       s.curve.push(k);
       yield;
     }
@@ -97,7 +106,10 @@
     const full = AC.istft(s.stft.Z, s.stft.F, s.stft.T, N, HOP, "hann", s.clean.length);
     s.snr.full = AC.snrDb(s.clean, full);
     s.kept.full = 1;
-    s.recon.full = {audio: f32(full), mag: s.mag};
+    // The same picture object, not a copy of it: full rank discards nothing,
+    // so its magnitude is the noisy magnitude, and drawing it twice would
+    // produce two identical 0.95 MB images. Both readers only ever blit it.
+    s.recon.full = {audio: f32(full), img: s.noisyImg};
     s.curve.push("full");
     s.phase = "ready";
     // A recording too short for even the smallest rung leaves the ladder
@@ -205,20 +217,19 @@
         return;
       }
 
-      // Left: the spectrogram at this rank, or the noisy one until there is one.
+      // Left: the spectrogram at this rank, or the noisy one until there is
+      // one. Both were drawn in work(), so this is a blit and nothing else --
+      // a rung the reader has never landed on before costs the same frame as
+      // one they are dragging back to. `built` is undefined for a rung the
+      // measuring loop has not reached yet, which is the noisy picture too.
       const ready = s.phase === "ready" || s.phase === "measuring";
       const built = ready ? reconstruct(ctx) : null;
-      const mag = built ? built.mag : s.mag;
-      const key = built ? String(rungAt(ctx)) : "noisy";
-      if (!s.imgs) s.imgs = {};
-      if (!s.imgs[key]) {
-        s.imgs[key] = K.spectrogramImage(mag, s.stft.F, s.stft.T, {floorDb: -70});
-      }
-      K.blit(g, s.imgs[key], ctx.cache, L, TOP, colW, plotH);
+      const img = built ? built.img : s.noisyImg;
+      if (img) K.blit(g, img, ctx.cache, L, TOP, colW, plotH);
       // Right-aligned, like every top-row label on this stage: the claim card
       // is an HTML element pinned to the stage's top left, and anything drawn
       // at the left margin lands underneath it.
-      K.label(g, key === "noisy" ? ctx.copy.noisyLabel : ctx.copy.rankLabel(rungAt(ctx), ctx),
+      K.label(g, built ? ctx.copy.rankLabel(rungAt(ctx), ctx) : ctx.copy.noisyLabel,
               L + colW, TOP - 18, ctx.colour("--v-out"), {size: 11, mono: true, right: true});
 
       // Right: the singular values while it factors, then the curve.
