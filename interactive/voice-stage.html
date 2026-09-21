@@ -66,10 +66,15 @@
   }
 
   /* Which recording is on the stage: one of the three built in, or a file the
-     reader brought. The file is decoded in the page and goes nowhere. */
+     reader brought. The file is decoded in the page and goes nowhere. It sits
+     in the transport, on the line under the buttons: `flex-basis: 100%` puts
+     it there deliberately, because the select and the drop zone together are
+     wider than whatever is left of the row after a play label that is a whole
+     sentence on some scenes -- and a cluster that shares the line at one
+     window width and wraps at the next moves under the reader's pointer. */
   .source {
     display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
-    margin: 1rem 0 0; font-size: 0.86rem;
+    flex-basis: 100%; margin: 0; font-size: 0.86rem;
   }
   .source label { font-weight: 600; }
   .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -100,9 +105,20 @@
      six can see. */
   @media (max-width: 62rem) {
     .two-pane { display: flex; flex-direction: column; gap: 1rem; }
-    .stagewrap { order: -1; top: 0; z-index: 2; padding-bottom: 0.5rem; background: var(--bg); }
-    #stage { height: 38vh; }
-    #timeline { height: 2.6rem; }
+    /* Capped at the viewport, with the stage taking whatever the rest of the
+       column leaves. Stuck to the top, anything past the fold cannot be
+       scrolled to -- and the bottom of this column is the stagebar, the only
+       way to the next picture. A fixed stage height was fine until the
+       transport grew a second line; making the stage the flexible one means
+       the bar stays reachable whatever the row above it costs, in either
+       language. */
+    .stagewrap {
+      order: -1; top: 0; z-index: 2; padding-bottom: 0.5rem; background: var(--bg);
+      display: flex; flex-direction: column;
+      max-height: 100vh; max-height: 100svh;
+    }
+    #stage { flex: 1 1 auto; height: auto; min-height: 11rem; }
+    #timeline { height: 2.6rem; flex: 0 0 auto; }
     .step { min-height: 0; padding: 1.4rem 0; }
   }
 
@@ -149,6 +165,7 @@
   #timecap { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--ink-mute); }
 
   .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
+  .tbuttons { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; }
   .transport button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
   .transport .state { font-size: 0.82rem; color: var(--ink-mute); }
 
@@ -223,24 +240,6 @@
     <h1 id="title"></h1>
     <p id="intro"></p>
   </header>
-
-  <div class="source" id="source">
-    <label for="builtin" id="builtin-label"></label>
-    <select id="builtin" autocomplete="off">
-      <option value="voice"></option>
-      <option value="beat"></option>
-      <option value="tone"></option>
-      <!-- Not in the list: it is what the select *shows* once a reader has
-           dropped a file, so the control names what is loaded rather than
-           going blank on a value that matches no option. -->
-      <option value="file" hidden></option>
-    </select>
-    <label class="drop" id="drop" for="file">
-      <span id="drop-text"></span>
-      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac">
-    </label>
-    <span class="sig" id="signame"></span>
-  </div>
 
   <div class="two-pane">
 
@@ -370,9 +369,37 @@
       <p id="timecap"></p>
 
       <div class="transport" id="transport">
-        <button type="button" class="primary" id="play"></button>
-        <button type="button" id="stop"></button>
-        <span class="state" id="playstate"></span>
+        <!-- The buttons are the scene's and hide with a scene that has no
+             sound; the picker under them is the frame's, and which recording
+             every picture is drawn from is a question worth asking on a
+             silent scene too. So they are hidden separately. -->
+        <div class="tbuttons" id="tbuttons">
+          <button type="button" class="primary" id="play"></button>
+          <button type="button" id="stop"></button>
+          <span class="state" id="playstate"></span>
+        </div>
+
+        <!-- Which recording, with the button that plays it. It was at the top
+             of the page, a screen and a half above the transport once a reader
+             had scrolled into the sections, so changing the recording meant
+             leaving the picture to do it. -->
+        <div class="source" id="source">
+          <label for="builtin" id="builtin-label"></label>
+          <select id="builtin" autocomplete="off">
+            <option value="voice"></option>
+            <option value="beat"></option>
+            <option value="tone"></option>
+            <!-- Not in the list: it is what the select *shows* once a reader
+                 has dropped a file, so the control names what is loaded
+                 rather than going blank on a value that matches no option. -->
+            <option value="file" hidden></option>
+          </select>
+          <label class="drop" id="drop" for="file">
+            <span id="drop-text"></span>
+            <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac">
+          </label>
+          <span class="sig" id="signame"></span>
+        </div>
       </div>
 
       <div class="stagebar">
@@ -981,7 +1008,9 @@
   // and runs only when the button is pressed or a swap is due.
   function labelPlay() {
     const ctx = contextFor(active);
-    $("transport").hidden = !!embed || !active.audio;
+    // The buttons, not the row: the row also holds the recording picker,
+    // which belongs to the frame and stays whatever the scene can play.
+    $("tbuttons").hidden = !!embed || !active.audio;
     if (!active.audio) return;
     const what = active.playLabel ? active.playLabel(ctx) : "";
     $("play").textContent = what ? T.playWhat(what) : T.play;
