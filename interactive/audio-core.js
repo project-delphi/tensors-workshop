@@ -755,6 +755,82 @@
     return {q, codes, step: 1 / half, levels: 2 * half, maxErr};
   }
 
+  // ------------------------------------------------------------- one frame
+  // The transform scenes, one frame at a time: N samples cut out of the array
+  // from i0, the window shape, and their product -- which is the thing the
+  // transform is actually given. Past either end of the array the frame is
+  // zero, the way stft() pads.
+  function frame(x, i0, N, kind) {
+    const w = windowOf(kind, N);
+    const raw = new Float64Array(N), tapered = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      const j = i0 + i;
+      raw[i] = j >= 0 && j < x.length ? x[j] : 0;
+      tapered[i] = raw[i] * w[i];
+    }
+    return {raw, w, tapered, i0, N};
+  }
+
+  // The transform of one frame, all N bins rather than the one-sided N/2 + 1,
+  // so a scene can draw the mirror half that stft() drops: a real frame's
+  // spectrum is Hermitian, X[N - f] is the conjugate of X[f], and |X| is the
+  // same on both sides. mag is |X[f]|.
+  function spectrum(tapered) {
+    const N = tapered.length;
+    if ((N & (N - 1)) !== 0 || N < 2) throw new Error("spectrum: N must be a power of two");
+    const re = Float64Array.from(tapered), im = new Float64Array(N);
+    fft(re, im, false);
+    const mag = new Float64Array(N);
+    for (let f = 0; f < N; f++) mag[f] = Math.hypot(re[f], im[f]);
+    return {re, im, mag, N};
+  }
+
+  // The frame rebuilt from its k strongest components: rank the one-sided
+  // bins by magnitude, keep the top k together with their mirror partners,
+  // zero the rest and invert. k >= N/2 + 1 keeps every bin and the frame comes
+  // back exactly, which is the claim the spectrum scene lets a reader hear.
+  function synthTopK(sp, k) {
+    const N = sp.N, F = (N >> 1) + 1;
+    const order = Array.from({length: F}, (_, f) => f).sort((a, b) => sp.mag[b] - sp.mag[a]);
+    const kept = order.slice(0, Math.max(0, Math.min(k, F)));
+    const re = new Float64Array(N), im = new Float64Array(N);
+    for (const f of kept) {
+      re[f] = sp.re[f]; im[f] = sp.im[f];
+      if (f > 0 && f < N - f) { re[N - f] = sp.re[N - f]; im[N - f] = sp.im[N - f]; }
+    }
+    fft(re, im, true);
+    return {samples: re, bins: kept};
+  }
+
+  // One frame tiled to `length` samples: what a frame sounds like on repeat.
+  // A frame cut with a rectangular window starts and ends mid-swing, so every
+  // repeat is a click at rate / N a second; a tapered one does not.
+  function loop(seg, length) {
+    if (seg.length === 0) throw new Error("loop: empty frame");
+    const out = new Float64Array(length);
+    for (let i = 0; i < length; i++) out[i] = seg[i % seg.length];
+    return out;
+  }
+
+  // A pure tone, for the built-in signal that makes every scene legible at a
+  // glance: one peak in the spectrum, one line in the spectrogram. Peak
+  // amplitude 0.5, starting at zero.
+  function tone(n, rate, hz, amp) {
+    const a = amp === undefined ? 0.5 : amp;
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i++) out[i] = a * Math.sin(2 * Math.PI * hz * i / rate);
+    return out;
+  }
+
+  // The matrix's shape from the three numbers that decide it, so a readout
+  // can say why there are 465 columns without computing the matrix: half a
+  // window of padding at each end, then one stop per hop while a whole window
+  // still fits. Agrees with stft() by construction, and the test pins it.
+  function stftShape(length, N, hop) {
+    const padded = length + 2 * (N >> 1);
+    return {F: (N >> 1) + 1, T: Math.floor((padded - N) / hop) + 1, padded};
+  }
+
   // ------------------------------------------------------------------- wav
   // Enough of RIFF to read the one recording this stage ships, and to fail
   // loudly on anything else rather than play noise. The browser could use
@@ -804,6 +880,7 @@
     transposeC, patchShuffle,
     magnitude, nmfInit, nmfStep, nmfError,
     decimate, hold, upsample, quantize,
+    frame, spectrum, synthTopK, loop, tone, stftShape,
     decodeWav
   };
   if (typeof module !== "undefined" && module.exports) module.exports = AudioCore;

@@ -132,8 +132,8 @@ What each generator draws, and the rules each one keeps:
 **`interactive/` is hand-written**, and the one asset class with neither a
 generator nor a byte-exact gate. Four HTML widgets -- the section 03
 broadcasting simulator, the section 04 reshape & transpose visualizer, the
-sections 07/09 projection & SVD stage, and the sections 04/09 voice tensor
-stage -- each with EN/ES copy tables, `?lang=`, and its section's accent
+sections 07/09 projection & SVD stage, and the sections 00/04/09 audio
+tensor stage -- each with EN/ES copy tables, `?lang=`, and its section's accent
 adjusted per theme to clear 4.5:1. **The frame is shared**:
 `interactive/widget-chrome.css`, linked first by every page, owns the
 surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the
@@ -169,27 +169,52 @@ vendored CMU Serif (`interactive/vendor/cmu-serif/`), because the look it
 takes is a Manim frame; the label chip stays opaque, and black, so axe has two
 colours to measure.
 
-The voice stage (`voice-stage.html`) is the same registry shape one step
-simpler: scenes are **tabs over one recording**, not steps down a scroller,
-because a scene that plays sound needs a transport under the reader's hand
-rather than under their scroll position. `voice-kit.js` holds the registry and
-the drawing; `audio-core.js` holds the arithmetic and `npm test` pins it,
-including the reorderings, whose claim on screen is that they are permutations,
-and the rounding, whose claim is that 16 bits changes nothing. Two kinds of
-scene: the three that open the page (sampling, quantization, the array) draw
+The audio stage (`voice-stage.html`, titled *The audio tensor*) is the same
+registry shape as the projection stage and now the same scroller: **seven
+sections down the left, a sticky stage on the right**, one `<section
+class="step">` per scene, grouped under three part headings -- from air to
+numbers (sampling, quantization, the array), from numbers to a matrix (one
+window, the transform of it, the hop), and what a layout does to it (the
+reshape you can hear go wrong). It was five tabs; the tabs hid the order the
+ideas have to be met in, and "window and hop" and the transform itself were
+words in control labels rather than pictures. `voice-kit.js` holds the
+registry and the drawing; `audio-core.js` holds the arithmetic and `npm test`
+pins it, including one frame and its window, the transform of all N bins, the
+rebuild from the k strongest components, the reorderings (whose claim on
+screen is that they are permutations) and the rounding (whose claim is that 16
+bits changes nothing). Two kinds of scene: the three that open the page draw
 in three.js -- a wave that dissolves into beads on a ruler needs depth -- and
 keep a 2-D twin (`draw`) for a reader without WebGL, both from one slice the
-scene computes; the spectrogram scenes draw only into the 2-D canvas, because a
-spectrogram is an image. three.js is booted lazily on the first three.js scene
-shown, through the projection stage's `vendor/linalg-boot.js` and the same
-import map, and its camera is `linalg-core`'s orbit. Two recordings ship, both
-mono 48 kHz and exactly 237 568 samples so every shape is the same for either
-(`vendor/README.md`), and a file the reader drops is decoded in the page at
-that rate, capped at 8 s, and never leaves the tab. The embed never fetches a
-recording -- it draws the spectrogram scene from a synthesised stand-in of the
-same length, and `data-standin` says which is on screen. Link by scene name
-(`#sample`, `#quantize`, `#array`, `#window`, `#scramble`); the contract is
-`voice-scenes/README.md`.
+scene computes; the four transform scenes draw only into the 2-D canvas,
+because a spectrum and a spectrogram are pictures. three.js is booted lazily
+on the first three.js scene shown, through the projection stage's
+`vendor/linalg-boot.js` and the same import map, and its camera is
+`linalg-core`'s orbit.
+
+**The frame owns the sound and the whole recording.** A transport sits in the
+sticky column, and a control moved while something is playing swaps the sound
+in place from the same moment in the clip -- debounced, generation-tagged, so
+a stale source ending cannot stop its own replacement -- which is what makes
+the sampling rate and the bit depth audible as you drag them. Under the stage
+is one timeline canvas the frame draws, not a scene: the whole recording as a
+waveform, a band for the samples the active picture is looking at
+(`region(ctx)`), and a playhead while the sound runs. Dragging it moves that
+scene's position control (`posControl`), mapped onto the control's own range.
+Because the strip carries the global view, a picture is free to zoom: the hop
+scene shows five windows' worth of samples, which is the only scale at which
+overlapping windows can be seen at all.
+
+Three recordings, all exactly 237 568 samples at 48 kHz so every shape on
+every scene is the same for any of them (`vendor/README.md`): the voice, the
+beat, and a 440 Hz tone synthesised in the page, which fetches nothing and
+makes one peak, one line and one stripe of every picture. A file the reader
+drops is decoded in the page at that rate, capped at 8 s, and never leaves the
+tab. The embed never fetches a recording -- it draws the spectrogram scene
+from a synthesised stand-in of the same length, and `data-standin` says which
+is on screen. Link by scene name (`#sample`, `#quantize`, `#array`, `#frame`,
+`#spectrum`, `#window`, `#scramble`); controls are `#c-<scene>-<control>` and
+readouts `#read-<scene>`, because the same control name now lives in seven
+sections. The contract is `voice-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a

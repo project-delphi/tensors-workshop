@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The voice tensor</title>
+<title>The audio tensor</title>
 
 <!-- The vendored addons say `import ... from 'three'`, which only an import
      map can resolve without a bundler. It must be static and in <head>, and
@@ -61,7 +61,7 @@
     --v-axis: #58c4dd;   /* the axis being named; the ruler the samples snap to */
   }
 
-  /* Which recording is on the stage: one of the two built in, or a file the
+  /* Which recording is on the stage: one of the three built in, or a file the
      reader brought. The file is decoded in the page and goes nowhere. */
   .source {
     display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
@@ -78,16 +78,34 @@
   .drop input { position: absolute; width: 1px; height: 1px; opacity: 0; }
   .source .sig { color: var(--ink-mute); font-family: var(--mono); font-size: 0.82rem; overflow-wrap: anywhere; }
 
-  .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.1rem 0 0.8rem; padding: 0; }
-  .tabs button { font-size: 0.86rem; padding: 0.36rem 0.85rem; border-radius: 999px; }
+  /* The scroller, the shape the projection stage keeps. align-items:start is
+     load-bearing: the grid default stretches the item to full height, and
+     position:sticky then has nothing left to stick to. */
+  .two-pane {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 1.75rem;
+    align-items: start;
+    margin-top: 1.25rem;
+  }
+  .steps { min-width: 0; }
+  .stagewrap { position: sticky; top: 1.5rem; min-width: 0; }
 
-  .two-pane { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
-  @media (max-width: 62rem) { .two-pane { grid-template-columns: minmax(0, 1fr); } }
+  /* Stacked, the stage goes *first*. The grid would put it after all seven
+     sections, where a sticky picture is a picture nobody reading the first
+     six can see. */
+  @media (max-width: 62rem) {
+    .two-pane { display: flex; flex-direction: column; gap: 1rem; }
+    .stagewrap { order: -1; top: 0; z-index: 2; padding-bottom: 0.5rem; background: var(--bg); }
+    #stage { height: 38vh; }
+    #timeline { height: 2.6rem; }
+    .step { min-height: 0; padding: 1.4rem 0; }
+  }
 
-  .stagewrap { min-width: 0; }
   #stage {
-    position: relative; background: var(--stage); border: 1px solid var(--line);
-    border-radius: 10px; overflow: hidden; aspect-ratio: 16 / 10;
+    position: relative; height: min(56vh, 30rem);
+    background: var(--stage); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden;
   }
   #stage[data-gl="composer"] { cursor: grab; touch-action: pan-y; }
   #stage[data-grab] { cursor: grabbing; }
@@ -115,35 +133,77 @@
   #glnote { position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; font-size: 0.78rem; max-width: 46%;
             color: var(--stage-mute); background: var(--stage-chip); padding: 0.15rem 0.4rem; border-radius: 4px; }
 
+  /* The whole recording, under the stage: where the scene is looking, and
+     where the sound has got to. It is the frame's, not a scene's -- every
+     scene is a window onto this one array, and this is the array. */
+  #timeline {
+    display: block; width: 100%; height: 3.5rem; margin-top: 0.5rem;
+    background: var(--stage); border: 1px solid var(--line); border-radius: 8px;
+    cursor: ew-resize; touch-action: pan-y;
+  }
+  #timeline:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #timecap { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--ink-mute); }
+
+  .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
+  .transport button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
+  .transport .state { font-size: 0.82rem; color: var(--ink-mute); }
+
+  /* Eight marks in the bar, one per picture: the structure of the page at a
+     glance, and a way to jump. */
+  #dots { display: inline-flex; gap: 0.35rem; align-items: center; }
+  .stagebar .dot {
+    width: 0.8rem; height: 0.8rem; padding: 0; border-radius: 50%;
+    border: 2px solid var(--ink-mute); background: transparent; cursor: pointer;
+  }
+  .stagebar .dot:hover { border-color: var(--accent); }
+  .stagebar .dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
+  #stepnum { font: 600 0.85rem/1 var(--sans); color: var(--ink-mute); }
+
+  .step {
+    min-height: 74vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1rem 0;
+  }
+  .step .anchor { display: block; height: 0; }
+  .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
+  /* The heading of the group a scene opens. The page's structure is three
+     ideas in order -- the input, the transform, the effect -- not seven
+     numbered steps. */
+  .step .part {
+    font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
+    border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
+  }
+  .step .kicker { margin-bottom: 0.5rem; }
+  .step p, .step .body { max-width: 36rem; overflow-wrap: break-word; }
+  .step.is-active h2 { color: var(--accent); }
+
+  .controls { display: grid; gap: 0.7rem; margin: 0.9rem 0 0; max-width: 34rem; }
+  .controls label { display: block; font-size: 0.85rem; font-weight: 600; }
+  .controls .val { float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
+  .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .controls select { width: 100%; max-width: 22rem; }
+
   .readout {
     margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
-    border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem; min-height: 3.2rem;
+    border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem;
+    min-height: 3.2rem; max-width: 36rem;
   }
   .readout b { color: var(--accent); }
   .readout .fault { color: var(--fault); font-weight: 650; }
   .shape { font-family: var(--mono); font-size: 0.86rem; }
 
-  aside { min-width: 0; }
-  aside h2 { font-size: 1.05rem; margin: 0 0 0.35rem; }
-  aside p.body { color: var(--ink-mute); font-size: 0.93rem; }
-
-  .controls { display: grid; gap: 0.7rem; margin-top: 0.9rem; }
-  .controls label { display: block; font-size: 0.85rem; font-weight: 600; }
-  .controls .val { font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
-  .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
-  .controls select { width: 100%; }
-
-  .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.9rem; }
-  .transport button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
-  .transport .state { font-size: 0.82rem; color: var(--ink-mute); }
-
   /* Embed mode: the homepage hero. No chrome, no sound, no fetch. The chrome
      that goes is in widget-chrome.css. */
-  html.embed .stagebar, html.embed .tabs, html.embed .readout,
-  html.embed .source, html.embed .hint { display: none; }
+  html.embed .steps, html.embed .stagebar, html.embed .transport,
+  html.embed #timeline, html.embed #timecap,
+  html.embed .readout, html.embed .source, html.embed .hint { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
-  html.embed .stagewrap { height: 100vh; display: flex; flex-direction: column; }
-  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; aspect-ratio: auto; min-height: 0; }
+  html.embed .stagewrap { position: static; height: 100vh; display: flex; flex-direction: column; }
+  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; height: auto; min-height: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
 </style>
 </head>
 <body>
@@ -160,22 +220,12 @@
     <p id="intro"></p>
   </header>
 
-  <!-- One anchor per scene, written out rather than built with the tabs. The
-       tabs are created at runtime from the registry, and `check_links.py`
-       reads the static HTML: without these, every `#scramble` and `#quantize`
-       in the handbooks is a link to a fragment that does not resolve. Adding a
-       scene means adding a line here too. -->
-  <span class="sr" id="sample"></span>
-  <span class="sr" id="quantize"></span>
-  <span class="sr" id="array"></span>
-  <span class="sr" id="window"></span>
-  <span class="sr" id="scramble"></span>
-
   <div class="source" id="source">
     <label for="builtin" id="builtin-label"></label>
     <select id="builtin" autocomplete="off">
       <option value="voice"></option>
       <option value="beat"></option>
+      <option value="tone"></option>
     </select>
     <label class="drop" id="drop" for="file">
       <span id="drop-text"></span>
@@ -184,9 +234,96 @@
     <span class="sig" id="signame"></span>
   </div>
 
-  <div class="tabs" role="tablist" id="tabs" aria-label="Scenes"></div>
-
   <div class="two-pane">
+
+    <!-- One section per scene, in reading order. Each carries its own
+         controls and its own readout; the copy is written into it at boot
+         from the scene's EN/ES tables (voice-scenes/*.js). The anchor spans
+         are static because `check_links.py` reads the static HTML: without
+         them every `#window` and `#scramble` in the handbooks is a link to a
+         fragment that does not resolve. Adding a scene means adding a
+         section here too. -->
+    <div class="steps" id="steps">
+
+      <section class="step" id="step-sample" aria-labelledby="h-sample">
+        <span class="anchor" id="sample"></span>
+        <p class="kicker" id="k-sample"></p>
+        <h2 id="h-sample"></h2>
+        <p class="concept" id="con-sample"></p>
+        <div class="body" id="body-sample"></div>
+        <p class="predict" id="pr-sample"></p>
+        <div class="controls" id="ctl-sample"></div>
+        <p class="readout" id="read-sample"></p>
+      </section>
+
+      <section class="step" id="step-quantize" aria-labelledby="h-quantize">
+        <span class="anchor" id="quantize"></span>
+        <p class="kicker" id="k-quantize"></p>
+        <h2 id="h-quantize"></h2>
+        <p class="concept" id="con-quantize"></p>
+        <div class="body" id="body-quantize"></div>
+        <p class="predict" id="pr-quantize"></p>
+        <div class="controls" id="ctl-quantize"></div>
+        <p class="readout" id="read-quantize"></p>
+      </section>
+
+      <section class="step" id="step-array" aria-labelledby="h-array">
+        <span class="anchor" id="array"></span>
+        <p class="kicker" id="k-array"></p>
+        <h2 id="h-array"></h2>
+        <p class="concept" id="con-array"></p>
+        <div class="body" id="body-array"></div>
+        <p class="predict" id="pr-array"></p>
+        <div class="controls" id="ctl-array"></div>
+        <p class="readout" id="read-array"></p>
+      </section>
+
+      <section class="step" id="step-frame" aria-labelledby="h-frame">
+        <span class="anchor" id="frame"></span>
+        <p class="kicker" id="k-frame"></p>
+        <h2 id="h-frame"></h2>
+        <p class="concept" id="con-frame"></p>
+        <div class="body" id="body-frame"></div>
+        <p class="predict" id="pr-frame"></p>
+        <div class="controls" id="ctl-frame"></div>
+        <p class="readout" id="read-frame"></p>
+      </section>
+
+      <section class="step" id="step-spectrum" aria-labelledby="h-spectrum">
+        <span class="anchor" id="spectrum"></span>
+        <p class="kicker" id="k-spectrum"></p>
+        <h2 id="h-spectrum"></h2>
+        <p class="concept" id="con-spectrum"></p>
+        <div class="body" id="body-spectrum"></div>
+        <p class="predict" id="pr-spectrum"></p>
+        <div class="controls" id="ctl-spectrum"></div>
+        <p class="readout" id="read-spectrum"></p>
+      </section>
+
+      <section class="step" id="step-window" aria-labelledby="h-window">
+        <span class="anchor" id="window"></span>
+        <p class="kicker" id="k-window"></p>
+        <h2 id="h-window"></h2>
+        <p class="concept" id="con-window"></p>
+        <div class="body" id="body-window"></div>
+        <p class="predict" id="pr-window"></p>
+        <div class="controls" id="ctl-window"></div>
+        <p class="readout" id="read-window"></p>
+      </section>
+
+      <section class="step" id="step-scramble" aria-labelledby="h-scramble">
+        <span class="anchor" id="scramble"></span>
+        <p class="kicker" id="k-scramble"></p>
+        <h2 id="h-scramble"></h2>
+        <p class="concept" id="con-scramble"></p>
+        <div class="body" id="body-scramble"></div>
+        <p class="predict" id="pr-scramble"></p>
+        <div class="controls" id="ctl-scramble"></div>
+        <p class="readout" id="read-scramble"></p>
+      </section>
+
+    </div>
+
     <div class="stagewrap">
       <!-- role="img" with a label rewritten per scene. Its children are
            presentational, so every fact the stage draws is also in the
@@ -198,32 +335,32 @@
         <p id="claim"></p>
         <p id="glnote" hidden></p>
       </div>
-      <div class="stagebar">
-        <button type="button" id="reset"></button>
-        <button type="button" id="home" hidden></button>
-        <label class="toggle" id="glow-wrap" hidden><input type="checkbox" id="glow" checked> <span id="glow-label"></span></label>
-        <span class="grow"></span>
-        <button type="button" id="motion" aria-pressed="false"></button>
-      </div>
-      <p class="hint" id="hint" hidden></p>
-      <p class="readout" id="read"></p>
-      <p id="embedcap"></p>
-      <p class="sr" id="status" aria-live="polite"></p>
-    </div>
 
-    <aside aria-labelledby="h-scene">
-      <p class="kicker" id="kicker"></p>
-      <h2 id="h-scene"></h2>
-      <p class="concept" id="concept"></p>
-      <p class="body" id="body"></p>
-      <p class="predict" id="predict"></p>
-      <div class="controls" id="controls"></div>
+      <canvas id="timeline" role="img" aria-label="" tabindex="0"></canvas>
+      <p id="timecap"></p>
+
       <div class="transport" id="transport">
         <button type="button" class="primary" id="play"></button>
         <button type="button" id="stop"></button>
         <span class="state" id="playstate"></span>
       </div>
-    </aside>
+
+      <div class="stagebar">
+        <button type="button" id="prev"></button>
+        <span id="dots" role="group" aria-labelledby="stepnum"></span>
+        <span id="stepnum"></span>
+        <button type="button" id="next"></button>
+        <span class="grow"></span>
+        <button type="button" id="reset"></button>
+        <button type="button" id="home" hidden></button>
+        <label class="toggle" id="glow-wrap" hidden><input type="checkbox" id="glow" checked> <span id="glow-label"></span></label>
+        <button type="button" id="motion" aria-pressed="false"></button>
+      </div>
+      <p class="hint" id="hint" hidden></p>
+      <p id="embedcap"></p>
+      <p class="sr" id="status" aria-live="polite"></p>
+    </div>
+
   </div>
 
   <div class="about" aria-labelledby="h-about">
@@ -236,18 +373,20 @@
 
 <!-- The arithmetic, the projection stage's camera and tween machines (plain
      scripts, pinned under `npm test`), the drawing kit, then one file per
-     scene in order. All plain scripts, so the page works from file://. The
-     three opening scenes draw in three.js, which vendor/linalg-boot.js hands
-     over through bootGL() below -- injected on the first three.js scene, so
-     a page opened on a spectrogram scene, or as the hero embed, never fetches
-     it. The spectrogram scenes draw into the 2-D canvas: a spectrogram is an
-     image. -->
+     scene in reading order. All plain scripts, so the page works from
+     file://. The three opening scenes draw in three.js, which
+     vendor/linalg-boot.js hands over through bootGL() below -- injected on
+     the first three.js scene, so a page opened on a spectrogram scene, or as
+     the hero embed, never fetches it. The transform scenes draw into the 2-D
+     canvas: a spectrum and a spectrogram are pictures. -->
 <script src="audio-core.js"></script>
 <script src="linalg-core.js"></script>
 <script src="voice-kit.js"></script>
 <script src="voice-scenes/sample.js"></script>
 <script src="voice-scenes/quantize.js"></script>
 <script src="voice-scenes/array.js"></script>
+<script src="voice-scenes/frame.js"></script>
+<script src="voice-scenes/spectrum.js"></script>
 <script src="voice-scenes/window.js"></script>
 <script src="voice-scenes/scramble.js"></script>
 
@@ -265,119 +404,160 @@
   if (embed) document.documentElement.classList.add("embed");
   if (theme === "navy") document.documentElement.dataset.theme = "navy";
 
-  // The two recordings that ship, and what the embed stands in for. Both are
-  // mono 48 kHz and exactly this long, so every shape on every scene is the
-  // same for either (vendor/README.md). A file the reader brings is decoded
-  // at this rate too, and capped at CAP seconds.
-  const RATE = 48000, SAMPLES = 237568, CAP = 8;
+  // The two recordings that ship, the tone synthesised beside them, and what
+  // the embed stands in for. All are mono 48 kHz and exactly this long, so
+  // every shape on every scene is the same for any of them
+  // (vendor/README.md). A file the reader brings is decoded at this rate too,
+  // and capped at CAP seconds.
+  const RATE = 48000, SAMPLES = 237568, CAP = 8, TONE_HZ = 440;
 
   const T = {
     en: {
       eyebrow: "Sections 00, 04 and 09 · Appendix E",
-      title: "The voice tensor",
+      title: "The audio tensor",
       navHome: "← Workshop home", navNotebooks: "Notebooks",
-      intro: "A voice is a list of numbers. A microphone measures the air pressure tens of " +
-             "thousands of times a second, each measurement is rounded to one of a fixed set of " +
-             "values, and those numbers in order are the tensor — a one-dimensional array you can " +
-             "listen to. Cut it into short overlapping windows and ask which frequencies are in " +
-             "each one, and it becomes a matrix; then the same reshapes, transposes and " +
-             "factorisations as every other tensor here apply, except that this one you can hear.",
-      builtin: "Built-in clip", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
+      intro: "A sound is a list of numbers. A microphone measures the air pressure tens of thousands " +
+             "of times a second, each measurement is rounded to one of a fixed set of values, and " +
+             "those numbers in order are the tensor — a one-dimensional array you can listen to. " +
+             "This page is seven pictures of that array, in three groups. First how air becomes " +
+             "numbers: the sampling, the rounding, and the shape and dtype they are stored in. Then " +
+             "how those numbers become a matrix: one window cut out of the array, the transform that " +
+             "asks which frequencies are in it, and the window sliding along to make a column each " +
+             "time. Last, what a layout does to it, which is the one you can hear go wrong. Each " +
+             "picture says what is on the stage, then asks you to predict before you touch a control; " +
+             "the box under the controls is the answer, with this recording's own numbers in it.",
+      builtin: "Recording", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
+      builtinTone: "a 440 Hz tone (4.9 s)",
       drop: "Drop an audio file here, or choose one",
       sigVoice: "voice.wav · 48 kHz · 4.949 s", sigBeat: "beat.wav · 48 kHz · 4.949 s",
+      sigTone: "a 440 Hz sine · synthesised here · 48 kHz · 4.949 s",
       sigFile: (name, secs, capped) => name + " · decoded at 48 kHz · " + secs.toFixed(2) + " s" +
                (capped ? " (the first " + CAP + " s)" : "") + " · stays in this tab",
       sigStandIn: "a synthesised stand-in",
       decodeFailed: "That file could not be decoded as audio, so the recording stayed as it was.",
-      beatFailed: "The beat could not be loaded, so the recording stayed as it was.",
-      reset: "Reset this scene", home: "Home view", glow: "Glow",
+      beatFailed: "The clip could not be loaded, so the recording stayed as it was.",
+      reset: "Reset this picture", home: "Home view", glow: "Glow",
       motion: "Pause motion", motionOn: "Resume motion",
+      prev: "◀ Back", next: "Next ▶",
+      stepOf: (i, n) => i + " of " + n,
+      stepName: (i, n, h) => i + " of " + n + ": " + h,
       hint: "Drag to turn · scroll to move closer · + / − keys · hover pauses motion.",
-      play: "Play", stop: "Stop", idle: "nothing playing", loading: "loading the recording…",
+      play: "Play", playWhat: (what) => "▶ Play " + what,
+      stop: "Stop", idle: "nothing playing", loading: "loading the recording…",
       playing: (what) => "playing " + what,
+      timecap: "The whole recording. The band is what the picture above is looking at; drag to move it.",
+      timeAria: (secs, from, to) => "The whole " + secs.toFixed(2) + " second recording as a waveform, " +
+                "with the part on the stage marked from " + from.toFixed(2) + " to " + to.toFixed(2) + " seconds.",
       failed: "The recording could not be loaded, so every picture and every sound here is a " +
               "synthesised test signal instead.",
-      glNoScript: "Three-dimensional view unavailable, so this scene is drawn flat. Every number is the same.",
-      glNoWebgl: "This browser reports no WebGL, so this scene is drawn flat. Every number is the same.",
+      glNoScript: "Three-dimensional view unavailable, so this picture is drawn flat. Every number is the same.",
+      glNoWebgl: "This browser reports no WebGL, so this picture is drawn flat. Every number is the same.",
       glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "A voice becomes a frequency-by-time matrix.",
-      shape: "Shape",
+      shape: "Shape", concept: "Concept",
       aboutH: "About this page",
       about1: "Every number on this page is computed in the browser from the recording on the stage — " +
-              "the count of samples, the rounding error, the matrix's shape, the singular values. " +
+              "the count of samples, the rounding error, the bin spacing, the matrix's shape. " +
               "Nothing is drawn to a stored answer. A file you drop here is decoded in the page and " +
               "goes nowhere: nothing is uploaded, and nothing outlives the tab.",
       about2: "It accompanies section 00 (what a tensor is), section 04 (layout and reshape) and " +
-              "section 09 (factorisations), with Appendix E's take-home. Each scene has its own address " +
-              "— #sample, #quantize, #array, #window, #scramble — and the notebooks link to the one they " +
-              "are teaching. The voice is Bart Massey's CC0 sample; the beat is c0mp0s3r's CC0 " +
-              "<a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton groove</a> on Freesound.",
+              "section 09 (factorisations), with Appendix E's take-home. Each picture has its own address " +
+              "— #sample, #quantize, #array, #frame, #spectrum, #window, #scramble — and the notebooks " +
+              "link to the one they are teaching. The voice is Bart Massey's CC0 sample; the beat is " +
+              "c0mp0s3r's CC0 <a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton " +
+              "groove</a> on Freesound; the tone is arithmetic.",
       turn: "Drag or use arrow keys to turn; scroll or use plus and minus to move closer. Hover pauses motion."
     },
     es: {
       eyebrow: "Secciones 00, 04 y 09 · Apéndice E",
-      title: "El tensor de voz",
+      title: "El tensor de audio",
       navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
-      intro: "Una voz es una lista de números. Un micrófono mide la presión del aire decenas de " +
+      intro: "Un sonido es una lista de números. Un micrófono mide la presión del aire decenas de " +
              "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
-             "valores, y esos números en orden son el tensor: un arreglo de una dimensión que " +
-             "puedes escuchar. Córtalo en ventanas cortas superpuestas y pregunta qué frecuencias " +
-             "hay en cada una, y se convierte en una matriz; entonces admite los mismos cambios de " +
-             "forma, transposiciones y factorizaciones que cualquier otro tensor de aquí, salvo que " +
-             "a este puedes oírlo.",
-      builtin: "Clip incluido", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
+             "valores, y esos números en orden son el tensor: un arreglo de una dimensión que puedes " +
+             "escuchar. Esta página son siete imágenes de ese arreglo, en tres grupos. Primero, cómo " +
+             "el aire se vuelve números: el muestreo, el redondeo, y la forma y el dtype con que se " +
+             "guardan. Después, cómo esos números se vuelven una matriz: una ventana recortada del " +
+             "arreglo, la transformada que pregunta qué frecuencias hay en ella, y la ventana " +
+             "avanzando para producir una columna en cada parada. Por último, qué le hace una " +
+             "disposición, que es la que puedes oír fallar. Cada imagen dice qué hay en el escenario " +
+             "y luego te pide una predicción antes de tocar un control; la caja bajo los controles es " +
+             "la respuesta, con los números de esta grabación.",
+      builtin: "Grabación", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
+      builtinTone: "un tono de 440 Hz (4,9 s)",
       drop: "Suelta un archivo de audio aquí, o elige uno",
       sigVoice: "voice.wav · 48 kHz · 4,949 s", sigBeat: "beat.wav · 48 kHz · 4,949 s",
+      sigTone: "un seno de 440 Hz · sintetizado aquí · 48 kHz · 4,949 s",
       sigFile: (name, secs, capped) => name + " · decodificado a 48 kHz · " + secs.toFixed(2).replace(".", ",") +
                " s" + (capped ? " (los primeros " + CAP + " s)" : "") + " · se queda en esta pestaña",
       sigStandIn: "una señal sintetizada",
       decodeFailed: "Ese archivo no se pudo decodificar como audio, así que la grabación no cambió.",
-      beatFailed: "No se pudo cargar el ritmo, así que la grabación no cambió.",
-      reset: "Reiniciar esta escena", home: "Vista inicial", glow: "Brillo",
+      beatFailed: "No se pudo cargar el clip, así que la grabación no cambió.",
+      reset: "Reiniciar esta imagen", home: "Vista inicial", glow: "Brillo",
       motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
+      prev: "◀ Atrás", next: "Siguiente ▶",
+      stepOf: (i, n) => i + " de " + n,
+      stepName: (i, n, h) => i + " de " + n + ": " + h,
       hint: "Arrastra para girar · rueda para acercar · teclas + / − · el cursor pausa el movimiento.",
-      play: "Reproducir", stop: "Detener", idle: "nada en reproducción",
+      play: "Reproducir", playWhat: (what) => "▶ Reproducir " + what,
+      stop: "Detener", idle: "nada en reproducción",
       loading: "cargando la grabación…",
       playing: (what) => "reproduciendo " + what,
+      timecap: "La grabación entera. La banda es lo que mira la imagen de arriba; arrastra para moverla.",
+      timeAria: (secs, from, to) => "La grabación entera de " + secs.toFixed(2).replace(".", ",") +
+                " segundos como forma de onda, con la parte del escenario marcada de " +
+                from.toFixed(2).replace(".", ",") + " a " + to.toFixed(2).replace(".", ",") + " segundos.",
       failed: "No se pudo cargar la grabación, así que cada imagen y cada sonido de aquí son una " +
               "señal de prueba sintetizada.",
-      glNoScript: "La vista tridimensional no está disponible, así que esta escena se dibuja plana. Todos los números son los mismos.",
-      glNoWebgl: "Este navegador no reporta WebGL, así que esta escena se dibuja plana. Todos los números son los mismos.",
+      glNoScript: "La vista tridimensional no está disponible, así que esta imagen se dibuja plana. Todos los números son los mismos.",
+      glNoWebgl: "Este navegador no reporta WebGL, así que esta imagen se dibuja plana. Todos los números son los mismos.",
       glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
       embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
-      shape: "Forma",
+      shape: "Forma", concept: "Concepto",
       aboutH: "Sobre esta página",
       about1: "Cada número de esta página se calcula en el navegador a partir de la grabación que hay " +
-              "en el escenario: el conteo de muestras, el error de redondeo, la forma de la matriz, los " +
-              "valores singulares. Nada se dibuja sobre una respuesta guardada. Un archivo que sueltes " +
-              "aquí se decodifica en la página y no va a ninguna parte: no se sube nada y nada sobrevive " +
-              "a la pestaña.",
+              "en el escenario: el conteo de muestras, el error de redondeo, la separación entre bins, " +
+              "la forma de la matriz. Nada se dibuja sobre una respuesta guardada. Un archivo que " +
+              "sueltes aquí se decodifica en la página y no va a ninguna parte: no se sube nada y nada " +
+              "sobrevive a la pestaña.",
       about2: "Acompaña a la sección 00 (qué es un tensor), a la 04 (disposición y cambio de forma) y a " +
-              "la 09 (factorizaciones), con el trabajo para casa del Apéndice E. Cada escena tiene su " +
-              "propia dirección (#sample, #quantize, #array, #window, #scramble) y los cuadernos enlazan " +
-              "a la que están enseñando. La voz es la muestra CC0 de Bart Massey; el ritmo es el " +
-              "<a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton groove</a> CC0 " +
-              "de c0mp0s3r en Freesound.",
+              "la 09 (factorizaciones), con el trabajo para casa del Apéndice E. Cada imagen tiene su " +
+              "propia dirección (#sample, #quantize, #array, #frame, #spectrum, #window, #scramble) y " +
+              "los cuadernos enlazan a la que están enseñando. La voz es la muestra CC0 de Bart Massey; " +
+              "el ritmo es el <a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton " +
+              "groove</a> CC0 de c0mp0s3r en Freesound; el tono es aritmética.",
       turn: "Arrastra o usa las flechas para girar; usa la rueda o más y menos para acercar. El cursor pausa el movimiento."
     }
   }[lang];
 
   const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const nf = (n) => n.toLocaleString(lang === "es" ? "es" : "en");
 
   // ------------------------------------------------------------ the audio
   // One AudioContext, built on the first press of a transport button and
   // never before: a context created at load starts suspended under every
   // browser's autoplay policy, and the hero embed must not create one at all.
-  let actx = null, playing = null;
+  //
+  // A control moved while something is playing swaps the sound in place --
+  // the same moment in the clip, with the new rate, bit depth or window --
+  // which is the whole reason this stage has a transport at all. Each source
+  // is generation-tagged, so a stale source ending after a swap cannot put
+  // the transport back while its replacement is still playing.
+  let actx = null, playing = null, generation = 0, swapTimer = 0;
+  const SWAP_MS = 120;
+
   const audio = {
     get ready() { return actx !== null; },
+    get on() { return playing !== null; },
     resume() {
       if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
       if (actx.state === "suspended") actx.resume();
       return actx;
     },
-    play(samples, what) {
-      if (embed || !signal.loaded) return;
+    // `offset` is seconds into the new buffer: 0 from the play button, and
+    // wherever the old one had got to when a control swapped it.
+    start(samples, what, offset) {
+      if (embed || !signal.loaded || !samples || !samples.length) return;
       const c = this.resume();
       this.stop();
       // The arithmetic runs at the recording's rate. The buffer is built at
@@ -390,27 +570,55 @@
       const src = c.createBufferSource();
       src.buffer = buf;
       src.connect(c.destination);
-      // Ending on its own is the common case -- these clips are five seconds --
-      // and it has to put the transport back the way the stop button does.
+      const mine = ++generation;
+      // Ending on its own is the common case -- these clips are five seconds
+      // -- and it has to put the transport back the way the stop button does.
       src.onended = () => {
-        if (playing !== src) return;
+        if (!playing || playing.gen !== mine) return;
         playing = null;
         $("playstate").textContent = T.idle;
         changed();
       };
-      src.start();
-      playing = src;
-      playing.startedAt = c.currentTime;
+      const at = Math.max(0, Math.min(offset || 0, buf.duration - 1e-3));
+      src.start(0, at);
+      // startedAt is back-dated by the offset, so head() stays continuous
+      // across a swap and the playhead does not jump.
+      playing = {src: src, gen: mine, what: what, startedAt: c.currentTime - at};
+      $("playstate").textContent = T.playing(what);
       changed();
     },
+    play(samples, what) { this.start(samples, what, 0); },
     stop() {
-      if (playing) { try { playing.stop(); } catch (e) { /* already ended */ } playing = null; }
+      clearTimeout(swapTimer);
+      if (playing) {
+        // Clear the handler first: a deliberate stop must not also run the
+        // "nothing playing" path a second time from the callback.
+        playing.src.onended = null;
+        try { playing.src.stop(); } catch (e) { /* already ended */ }
+        playing = null;
+      }
     },
-    // Seconds into the clip, for the playhead the three.js scenes draw. Not
-    // an AnalyserNode: that would hand back a snapshot of the output mix at
-    // the device rate, which is a different array from the one on the stage.
+    // Seconds into the clip, for the playhead every picture draws. Not an
+    // AnalyserNode: that would hand back a snapshot of the output mix at the
+    // device rate, which is a different array from the one on the stage.
     head() { return playing && actx ? actx.currentTime - playing.startedAt : -1; }
   };
+
+  // A control moved while the sound is on: re-render what this scene plays
+  // and pick it up where the last one had got to. Debounced, because
+  // rebuilding a spectrogram's inverse on every pixel of a drag would stall
+  // the drag itself.
+  function swapAudio(scene) {
+    if (!playing || !scene.audio) return;
+    clearTimeout(swapTimer);
+    swapTimer = setTimeout(() => {
+      if (!playing) return;
+      const at = audio.head();
+      const out = scene.audio(contextFor(scene));
+      if (!out) return;
+      audio.start(out.samples, out.what, at);
+    }, SWAP_MS);
+  }
 
   // ---------------------------------------------------------- the signal
   // The page fetches the voice once. The hero embed never does: it is a
@@ -419,7 +627,8 @@
   // length and rate, so every shape on screen is the shape the full page
   // shows -- the picture is honest about the arithmetic, and says in its
   // caption that it is a picture. The beat is fetched on first choice, never
-  // before, and a file the reader drops is decoded here and kept here.
+  // before; the tone is arithmetic and fetches nothing; and a file the reader
+  // drops is decoded here and kept here.
   const signal = {samples: null, rate: RATE, loaded: false, failed: false, stand_in: false,
                   source: "voice", name: ""};
 
@@ -432,6 +641,7 @@
     signal.stand_in = source === "standin";
     $("signame").textContent =
       source === "voice" ? T.sigVoice : source === "beat" ? T.sigBeat
+      : source === "tone" ? T.sigTone
       : source === "standin" ? T.sigStandIn : name;
   }
 
@@ -462,24 +672,32 @@
   function resignal() {
     audio.stop();
     $("playstate").textContent = T.idle;
+    strip.key = null;
     for (const s of scenes) {
       const c = ctxFor.get(s.id);
       if (!c) continue;
       c.state = {};
       c.cache = {};
+      s.init(c);
       if (c.gl && s.resignal) s.resignal(c);
+      buildControls(s);
     }
-    show(active);
+    changed();
   }
 
   function loadBuiltin(which) {
     if (which === signal.source) return;
+    if (which === "tone") {
+      useSignal(AC.tone(SAMPLES, RATE, TONE_HZ), RATE, "tone", "tone");
+      resignal();
+      return;
+    }
     $("playstate").textContent = T.loading;
     fetchWav(which)
       .then((wav) => { useSignal(wav.samples, wav.rate, which, which + ".wav"); resignal(); })
       .catch(() => {
         $("playstate").textContent = T.beatFailed;
-        $("builtin").value = signal.source === "beat" ? "beat" : "voice";
+        $("builtin").value = signal.source;
       });
   }
 
@@ -501,7 +719,7 @@
           const ch = ab.getChannelData(c);
           for (let i = 0; i < n; i++) out[i] += ch[i] / ab.numberOfChannels;
         }
-        if (n < 2048) throw new Error("too short");
+        if (n < 4096) throw new Error("too short");
         useSignal(out, RATE, "file", T.sigFile(file.name, n / RATE, ab.length > n));
         $("builtin").value = "";
         resignal();
@@ -512,8 +730,16 @@
   // ---------------------------------------------------------- the scenes
   const scenes = window.VoiceScenes.list();
   if (!scenes.length) throw new Error("voice-stage: no scenes registered");
+  for (const s of scenes) {
+    // A scene with no section would register, build its controls into
+    // nothing and never be reachable. Say so at boot rather than at the
+    // first scroll.
+    if (!$("step-" + s.id)) throw new Error("voice-stage: no section for scene " + s.id);
+  }
   let active = scenes[0];
+  let step = 0;
   const ctxFor = new Map();
+  const byId = (id) => scenes.find((s) => s.id === id);
 
   const canvas = $("draw"), stage = $("stage");
   const g = canvas.getContext("2d");
@@ -555,7 +781,11 @@
       stop: () => audio.stop(),
       head: () => audio.head(),
       changed,
-      setControls,
+      setControls: (vals) => setControls(scene, vals),
+      // A scene's own control element, by the id it declared: the frame
+      // prefixes them with the scene, because the same name lives in seven
+      // sections now.
+      control: (id) => $("c-" + scene.id + "-" + id),
       // The three.js side, filled by bootGL(). `gl` is what build() returned.
       get THREE() { return window.THREE; },
       get AD() { return window.THREE_ADDONS; },
@@ -569,23 +799,22 @@
   }
 
   // ------------------------------------------------------- the controls
-  // Scenes declare controls; the frame builds them, labels them from the
-  // scene's own copy in the page's language, and hands back plain values.
-  // Nothing here knows what a control means.
+  // Scenes declare controls; the frame builds them into that scene's own
+  // section, labels them from the scene's copy in the page's language, and
+  // hands back plain values. Nothing here knows what a control means.
   function buildControls(scene) {
-    const host = $("controls");
+    const host = $("ctl-" + scene.id);
     host.textContent = "";
     const ctx = contextFor(scene);
     const copy = scene.copy[lang];
     (scene.controls || []).forEach((spec) => {
       const wrap = document.createElement("label");
+      const val = document.createElement("span");
+      val.className = "val";
+      wrap.appendChild(val);
       const name = document.createElement("span");
       name.textContent = (copy.controls && copy.controls[spec.id]) || spec.id;
       wrap.appendChild(name);
-      const val = document.createElement("span");
-      val.className = "val";
-      wrap.appendChild(document.createTextNode(" "));
-      wrap.appendChild(val);
 
       let input;
       if (spec.type === "select") {
@@ -606,7 +835,7 @@
         input.min = spec.min; input.max = spec.max; input.step = spec.step || 1;
         input.value = String(ctx.state[spec.id]);
       }
-      input.id = "c-" + spec.id;
+      input.id = "c-" + scene.id + "-" + spec.id;
       input.autocomplete = "off";
       // One control can change what another one's label says -- the hop
       // decides how many seconds a window position is -- so every label is
@@ -617,7 +846,11 @@
         // A control moved is the reader taking hold: the drift restarts from
         // wherever the camera is once they let go.
         dropDrift();
+        // The scene this control belongs to is the one being read now, even
+        // if the scroll has not caught up.
+        if (active !== scene) showScene(scene, false);
         changed();
+        swapAudio(scene);
       });
       val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
       wrap.appendChild(input);
@@ -628,7 +861,7 @@
   function rebuildLabels(scene) {
     const ctx = contextFor(scene), copy = scene.copy[lang];
     (scene.controls || []).forEach((spec) => {
-      const input = $("c-" + spec.id);
+      const input = $("c-" + scene.id + "-" + spec.id);
       if (!input) return;
       if (spec.type === "select" && spec.available) {
         const want = spec.available(ctx);
@@ -649,15 +882,16 @@
     });
   }
 
-  function setControls(vals) {
-    const ctx = contextFor(active);
+  function setControls(scene, vals) {
+    const ctx = contextFor(scene);
     Object.keys(vals).forEach((k) => {
       ctx.state[k] = vals[k];
-      const input = $("c-" + k);
+      const input = $("c-" + scene.id + "-" + k);
       if (input) input.value = String(vals[k]);
     });
-    rebuildLabels(active);
+    rebuildLabels(scene);
     changed();
+    swapAudio(scene);
   }
 
   // -------------------------------------------------------- the readout
@@ -673,9 +907,9 @@
     // written from the state the last frame left behind: changing the hop
     // reported the old hop until the next repaint, so the browser check and
     // the reader both read a number that was already wrong.
-    if (active.sync) active.sync(ctx);
-    const r = active.readout(ctx) || {};
-    $("read").innerHTML = r.html || "";
+    if (signal.loaded && active.sync) active.sync(ctx);
+    const r = (signal.loaded ? active.readout(ctx) : null) || {};
+    $("read-" + active.id).innerHTML = r.html || "";
     const aria = ctx.copy.aria(ctx) || "";
     stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
@@ -694,7 +928,20 @@
       written.add(k);
     });
     rebuildLabels(active);
+    labelPlay();
+    strip.dirty = true;
     paint();
+  }
+
+  // What the play button will play, said before it is pressed. Cheap, because
+  // it is rewritten on every control change; `audio()` is the expensive one
+  // and runs only when the button is pressed or a swap is due.
+  function labelPlay() {
+    const ctx = contextFor(active);
+    $("transport").hidden = !!embed || !active.audio;
+    if (!active.audio) return;
+    const what = active.playLabel ? active.playLabel(ctx) : "";
+    $("play").textContent = what ? T.playWhat(what) : T.play;
   }
 
   // ------------------------------------------------------------ painting
@@ -704,6 +951,13 @@
     const r = stage.getBoundingClientRect();
     canvas.width = Math.max(1, Math.round(r.width * dpr));
     canvas.height = Math.max(1, Math.round(r.height * dpr));
+    const t = $("timeline");
+    const tr = t.getBoundingClientRect();
+    t.width = Math.max(1, Math.round(tr.width * dpr));
+    t.height = Math.max(1, Math.round(tr.height * dpr));
+    strip.dpr = dpr;
+    strip.key = null;
+    strip.dirty = true;
     resizeGL();
     paint();
   }
@@ -719,19 +973,94 @@
     const live = glLive();
     $("gl").hidden = !live;
     canvas.style.display = live ? "none" : "block";
+    // The CSS2D labels are HTML over the stage, not pixels in it, so a 2-D
+    // picture does not paint over them: the sampling scene's axis chips sat
+    // on top of the spectrum until this hid the layer with its canvas.
+    if (GL.lab) GL.lab.domElement.style.display = live ? "" : "none";
     if (live) {
       renderGL();
-      return;
+    } else {
+      stage.dataset.gl = "none";
+      g.setTransform(dpr, 0, 0, dpr, 0, 0);
+      g.fillStyle = K.css("--stage");
+      g.fillRect(0, 0, ctx.W, ctx.H);
+      if (!signal.loaded) {
+        K.label(g, T.loading, 14, 14, K.css("--stage-mute"));
+        return;
+      }
+      active.draw(ctx);
     }
-    stage.dataset.gl = "none";
-    g.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g.fillStyle = K.css("--stage");
-    g.fillRect(0, 0, ctx.W, ctx.H);
-    if (!signal.loaded) {
-      K.label(g, T.loading, 14, 14, K.css("--stage-mute"));
-      return;
-    }
-    active.draw(ctx);
+    if (strip.dirty) drawStrip();
+  }
+
+  // ----------------------------------------------------- the timeline
+  // The whole recording, under the stage, drawn by the frame rather than by
+  // a scene: every picture on this page is a window onto one array, and this
+  // is the array. The waveform is cached per signal and per size, because it
+  // is a min/max pass over 237,568 samples and the playhead moves sixty times
+  // a second over the top of it.
+  const strip = {canvas: null, key: null, dpr: 1, dirty: true, drag: false};
+
+  function drawStrip() {
+    if (embed || !signal.loaded) return;
+    const t = $("timeline");
+    const tg = t.getContext("2d");
+    const w = t.width / dpr, h = t.height / dpr;
+    tg.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const ctx = contextFor(active);
+    const region = active.region ? active.region(ctx) : null;
+    const head = audio.head();
+    K.timeline(tg, strip, signal.samples, signal.source + ":" + active.id,
+               {x: 0, y: 0, w: w, h: h}, region,
+               head >= 0 ? head * signal.rate : -1,
+               {bg: K.css("--stage"), wave: K.css("--v-sig"),
+                band: "rgba(88, 196, 221, 0.22)", bandLine: K.css("--v-axis"),
+                head: K.css("--v-out")});
+    const secs = signal.samples.length / signal.rate;
+    const r = region || {i0: 0, i1: signal.samples.length};
+    t.setAttribute("aria-label", T.timeAria(secs, r.i0 / signal.rate, r.i1 / signal.rate));
+    strip.dirty = false;
+  }
+
+  // Dragging the strip moves the scene's position control, where it has one.
+  function stripTo(clientX) {
+    if (!active.posControl || !signal.loaded) return;
+    const t = $("timeline");
+    const box = t.getBoundingClientRect();
+    const u = Math.max(0, Math.min(1, (clientX - box.left) / Math.max(1, box.width)));
+    // Onto whatever range the control declares: most scenes walk a position
+    // from 0 to 1000, the array walks an index into 237 568 numbers.
+    const input = $("c-" + active.id + "-" + active.posControl);
+    if (!input) return;
+    const lo = Number(input.min) || 0, hi = Number(input.max);
+    setControls(active, {[active.posControl]: Math.round(lo + u * (hi - lo))});
+  }
+
+  function bindStrip() {
+    const t = $("timeline");
+    t.addEventListener("pointerdown", (e) => {
+      if (!active.posControl) return;
+      try { t.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
+      strip.drag = true;
+      stripTo(e.clientX);
+    });
+    t.addEventListener("pointermove", (e) => { if (strip.drag) stripTo(e.clientX); });
+    const release = () => { strip.drag = false; };
+    t.addEventListener("pointerup", release);
+    t.addEventListener("pointercancel", release);
+    t.addEventListener("keydown", (e) => {
+      if (!active.posControl) return;
+      const ctx = contextFor(active);
+      const input = $("c-" + active.id + "-" + active.posControl);
+      if (!input) return;
+      const lo = Number(input.min) || 0, hi = Number(input.max);
+      const at = Number(ctx.state[active.posControl]) || 0;
+      const d = (hi - lo) * (e.shiftKey ? 0.1 : 0.02);
+      const moves = {ArrowLeft: -d, ArrowRight: d, Home: lo - at, End: hi - at};
+      if (!(e.key in moves)) return;
+      e.preventDefault();
+      setControls(active, {[active.posControl]: Math.round(Math.max(lo, Math.min(hi, at + moves[e.key])))});
+    });
   }
 
   // How often a scene doing its own work is allowed to rewrite the readout.
@@ -739,7 +1068,7 @@
   // makes the browser check race the picture, which is why control changes are
   // the only other thing that writes it.
   const PROGRESS_MS = 200;
-  let wasBusy = false, lastProgress = 0;
+  let wasBusy = false, lastProgress = 0, wasPlaying = false;
 
   function frame() {
     const ctx = contextFor(active);
@@ -749,6 +1078,7 @@
     // `animates` is gated on the motion switch.
     const busy = active.busy ? active.busy(ctx) : false;
     const moving = active.animates ? active.animates(ctx) && !motion.held : false;
+    const sounding = audio.head() >= 0;
     const t = performance.now();
     // A scene that advances itself has to be able to say so. `paint()` alone
     // redraws the canvas and leaves the readout and every data-* attribute
@@ -762,9 +1092,14 @@
       // The three.js path repaints every frame on its own: the camera drifts,
       // the entrance plays, the beads ease onto the ruler.
       renderGL();
-    } else if (busy || moving) {
+      if (sounding) strip.dirty = true;
+    } else if (busy || moving || sounding) {
       paint();
     }
+    // The playhead is on the strip whichever surface the picture is drawn on,
+    // and the strip has to go back to still once the sound stops.
+    if (sounding || wasPlaying !== sounding) { strip.dirty = true; drawStrip(); }
+    wasPlaying = sounding;
     wasBusy = busy;
     requestAnimationFrame(frame);
   }
@@ -806,7 +1141,7 @@
       if (initGL()) {
         glNote(null);
         resize();
-        show(active);
+        showScene(active, false);
         refreshDrift();
       } else glNote("glNoWebgl");
     }).catch(() => glNote("glNoScript"));
@@ -872,18 +1207,18 @@
   }
 
   // Where each three.js scene is looked at from: one pair of angles per
-  // scene, kept while the reader is on another tab, and the truth about the
-  // camera. What is drawn may be an eased version of it (shownView).
+  // scene, kept while the reader is on another picture, and the truth about
+  // the camera. What is drawn may be an eased version of it (shownView).
   const views = {};
   const viewOf = (id) => {
     if (!views[id]) {
-      const s = scenes.find((x) => x.id === id);
+      const s = byId(id);
       views[id] = LC.orbitView(s.pose.home.az, s.pose.home.el);
     }
     return views[id];
   };
 
-  // A scene turning into place on a tab change, and Home.
+  // A scene turning into place on a scene change, and Home.
   const glide = {active: false, scene: null, az: null, el: null};
   function glideTo(id, fromAz, fromEl, toAz, toEl, ms) {
     if (reduceMotion || motion.held) { glide.active = false; return; }
@@ -1047,10 +1382,10 @@
     }, {passive: false});
     stage.addEventListener("keydown", (e) => {
       if (!glLive() || e.ctrlKey || e.metaKey || e.altKey) return;
-      const step = e.shiftKey ? 0.3 : 0.1;
+      const d = e.shiftKey ? 0.3 : 0.1;
       const moves = {
-        ArrowLeft: () => orbitBy(step, 0), ArrowRight: () => orbitBy(-step, 0),
-        ArrowUp: () => orbitBy(0, -step), ArrowDown: () => orbitBy(0, step),
+        ArrowLeft: () => orbitBy(d, 0), ArrowRight: () => orbitBy(-d, 0),
+        ArrowUp: () => orbitBy(0, -d), ArrowDown: () => orbitBy(0, d),
         "+": () => dollyBy(0.9), "=": () => dollyBy(0.9), "-": () => dollyBy(1.11),
         Home: () => homeView()
       };
@@ -1064,27 +1399,70 @@
   }
 
   // -------------------------------------------------------------- scenes
+  // The copy is written once, at boot. Only the stage's own furniture -- the
+  // claim card, the chrome that belongs to a three.js picture -- changes when
+  // the reader moves from one picture to the next, because in a scroller that
+  // happens on every scroll settle.
+  function fillText() {
+    let group = null;
+    scenes.forEach((s) => {
+      const c = s.copy[lang];
+      $("k-" + s.id).textContent = c.k;
+      $("h-" + s.id).textContent = c.h;
+      $("con-" + s.id).innerHTML = c.concept || "";
+      $("con-" + s.id).dataset.label = T.concept;
+      $("body-" + s.id).innerHTML = c.b;
+      $("pr-" + s.id).textContent = c.predict || "";
+      // The heading of the group this scene opens, above its kicker.
+      if (s.part && s.part[lang] !== group) {
+        group = s.part[lang];
+        const part = document.createElement("p");
+        part.className = "part";
+        part.textContent = group;
+        $("k-" + s.id).before(part);
+      }
+    });
+    const dots = $("dots");
+    dots.replaceChildren();
+    scenes.forEach((s, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "dot";
+      b.setAttribute("aria-label", T.stepName(i + 1, scenes.length, s.copy[lang].h));
+      b.addEventListener("click", () => goTo(i, true));
+      dots.appendChild(b);
+    });
+  }
+
   const arrived = new Set();
 
-  function show(scene) {
-    audio.stop();
+  // The reader is now looking at this picture. Called by the scroll watcher,
+  // by the bar, by a hash and by a control in a section that is not the
+  // active one -- so everything expensive here is behind a change of scene.
+  function showScene(scene, scroll) {
     const was = active;
+    const isNew = was !== scene;
+    if (isNew) {
+      // Only a real change of picture stops the sound. In a scroller this
+      // runs on every scroll settle, and stopping there would cut the clip
+      // off whenever the page moved under the reader.
+      audio.stop();
+      $("playstate").textContent = T.idle;
+    }
     active = scene;
-    const copy = scene.copy[lang];
-    $("kicker").textContent = copy.k;
-    $("h-scene").textContent = copy.h;
-    $("concept").textContent = copy.concept;
-    $("body").textContent = copy.b;
-    $("predict").textContent = copy.predict;
-    $("claim").textContent = copy.claim;
-    document.querySelectorAll("#tabs button").forEach((b) => {
-      b.setAttribute("aria-selected", String(b.dataset.scene === scene.id));
+    step = scenes.indexOf(scene);
+    $("claim").textContent = scene.copy[lang].claim;
+    scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
+    Array.from($("dots").children).forEach((d, j) => {
+      if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
     });
+    $("prev").disabled = step === 0;
+    $("next").disabled = step === scenes.length - 1;
+    $("stepnum").textContent = T.stepOf(step + 1, scenes.length);
+    if (isNew) $("status").textContent = scene.copy[lang].h;
+
     const ctx = contextFor(scene);
-    if (!ctx.state.__init) { scene.init(ctx); ctx.state.__init = true; }
-    buildControls(scene);
-    $("transport").hidden = !!embed || !scene.audio;
-    // The three.js chrome only where there is a three.js scene to act on.
+    // The three.js chrome only where there is a three.js picture to act on.
     const three = !!scene.gl && !embed;
     $("home").hidden = !three;
     $("glow-wrap").hidden = !three;
@@ -1094,36 +1472,53 @@
     if (three && GL.ready) {
       // A scene turning into place, and its own entrance, once. The drift
       // starts again from the pose the reader is now looking at.
-      if (was !== scene || !arrived.has(scene.id)) {
+      if (isNew || !arrived.has(scene.id)) {
         const v = viewOf(scene.id);
         dropDrift();
         const from = LC.orbitClamp({az: v.az - 0.3, el: v.el - 0.08, dolly: v.dolly}, scene.pose.limits);
         glideTo(scene.id, from.az, from.el, v.az, v.el, 900);
-        if (!arrived.has(scene.id) && !ctx.instant && scene.arrive) { arrived.add(scene.id); scene.arrive(ctx); }
       }
     }
+    // A 2-D picture has an entrance too -- the spectrogram filling in column
+    // by column -- and it plays the first time the reader reaches it,
+    // whichever surface it is drawn on.
+    if (!arrived.has(scene.id) && !ctx.instant && scene.arrive && (!three || GL.ready)) {
+      arrived.add(scene.id);
+      scene.arrive(ctx);
+    }
+    strip.key = null;
+    strip.dirty = true;
     changed();
     refreshDrift();
+    if (scroll) {
+      $("step-" + scene.id).scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
+    }
   }
 
-  function buildTabs() {
-    const host = $("tabs");
-    scenes.forEach((s) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.setAttribute("role", "tab");
-      b.dataset.scene = s.id;
-      b.id = "tab-" + s.id;
-      b.textContent = s.copy[lang].tab;
-      b.addEventListener("click", () => {
-        if (location.hash !== "#" + s.id) history.replaceState(null, "", "#" + s.id);
-        show(s);
+  const goTo = (i, scroll) =>
+    showScene(scenes[Math.max(0, Math.min(scenes.length - 1, i))], scroll);
+
+  // Which picture the reader is looking at: whichever section crosses a thin
+  // band through the middle of the viewport. pickActive() owns the two cases
+  // that flicker -- nothing in the band, and two things in it.
+  function watchSteps() {
+    let queued = false;
+    const settle = () => {
+      queued = false;
+      const rects = scenes.map((s) => {
+        const r = $("step-" + s.id).getBoundingClientRect();
+        return {top: r.top, bottom: r.bottom};
       });
-      host.appendChild(b);
-    });
+      const band = innerHeight / 2;
+      const next = LC.pickActive(rects, band - 50, band + 50, step);
+      if (next >= 0 && next !== step) showScene(scenes[next], false);
+    };
+    const kick = () => { if (!queued) { queued = true; requestAnimationFrame(settle); } };
+    const io = new IntersectionObserver(kick, {threshold: [0, 0.25, 0.5, 0.75, 1]});
+    scenes.forEach((s) => io.observe($("step-" + s.id)));
+    addEventListener("scroll", kick, {passive: true});
+    kick();
   }
-
-  const byId = (id) => scenes.find((s) => s.id === id);
 
   // ----------------------------------------------------------- the chrome
   $("site-home").textContent = T.navHome;
@@ -1136,11 +1531,15 @@
   $("builtin-label").textContent = T.builtin;
   $("builtin").options[0].textContent = T.builtinVoice;
   $("builtin").options[1].textContent = T.builtinBeat;
+  $("builtin").options[2].textContent = T.builtinTone;
   $("drop-text").textContent = T.drop;
   $("reset").textContent = T.reset;
   $("home").textContent = T.home;
   $("glow-label").textContent = T.glow;
   $("hint").textContent = T.hint;
+  $("prev").textContent = T.prev;
+  $("next").textContent = T.next;
+  $("timecap").textContent = T.timecap;
   $("motion").textContent = reduceMotion ? T.motionOn : T.motion;
   $("motion").setAttribute("aria-pressed", String(reduceMotion));
   $("play").textContent = T.play;
@@ -1161,13 +1560,15 @@
   $("reset").addEventListener("click", () => {
     const ctx = contextFor(active);
     audio.stop();
+    $("playstate").textContent = T.idle;
     if (active.reset) active.reset(ctx);
-    rebuildLabels(active);
     buildControls(active);
     homeView();
     changed();
   });
   $("home").addEventListener("click", () => homeView());
+  $("prev").addEventListener("click", () => goTo(step - 1, true));
+  $("next").addEventListener("click", () => goTo(step + 1, true));
   $("glow").addEventListener("change", (e) => {
     GL.glow = e.target.checked;
     if (GL.glow) {
@@ -1190,9 +1591,7 @@
     const out = active.audio(ctx);
     if (!out) return;
     audio.play(out.samples, out.what);
-    $("playstate").textContent = T.playing(out.what);
     $("status").textContent = T.playing(out.what);
-    changed();
   });
 
   $("stop").addEventListener("click", () => {
@@ -1221,23 +1620,37 @@
   }
 
   window.addEventListener("resize", resize);
-  window.addEventListener("hashchange", () => {
-    const s = byId(location.hash.replace("#", ""));
-    if (s && s !== active) show(s);
+  // A hash that changes on a page already open -- a link followed from a
+  // notebook in the same tab, or an edited address bar -- is the same
+  // request as opening on it. Not in embed mode: a hero card has no
+  // scroller, and a hash arriving there would strand it on a picture its
+  // caption does not describe.
+  if (!embed) addEventListener("hashchange", () => {
+    const s = byId((location.hash || "").replace("#", ""));
+    if (s) showScene(s, true);
   });
 
-  buildTabs();
+  fillText();
   resize();
   stage.dataset.scene = scenes[0].id;
   refreshMotion();
-  if (!embed) bindStage();
+  if (!embed) { bindStage(); bindStrip(); }
   loadSignal().then(() => {
     if (signal.failed) $("playstate").textContent = T.failed;
-    // The hero gets the spectrogram scene, drawn from the stand-in and with
-    // no three.js: its caption describes that picture.
-    const wanted = embed ? byId("window") : byId(location.hash.replace("#", ""));
-    show(wanted || scenes[0]);
+    // Every scene seeds its state and builds its controls now: in a scroller
+    // all seven sections are on the page at once, and a section whose
+    // controls appeared only once it had been scrolled to would be a page
+    // that changes shape under the reader.
+    for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
+    // The hero gets the spectrogram picture, drawn from the stand-in and
+    // with no three.js: its caption describes that picture.
+    const wanted = embed ? byId("window") : byId((location.hash || "").replace("#", ""));
+    showScene(wanted || scenes[0], false);
     stage.dataset.ready = "1";
+    if (!embed) {
+      watchSteps();
+      if (wanted) $("step-" + wanted.id).scrollIntoView({block: "center"});
+    }
     requestAnimationFrame(frame);
   });
 })();

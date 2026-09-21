@@ -636,9 +636,98 @@
     }
   }
 
+  // ------------------------------------------------------------ the spectrum
+  // |X[f]| as bars in dB above a floor, the same floor the spectrogram uses so
+  // the two pictures agree. All N bins are drawn: the first `F` in the output
+  // colour, the mirror half above them in the muted one, and the bins in
+  // `kept` (a Set) brighter, for the scene that rebuilds the frame from its k
+  // strongest components. Returns the peak bin among the first F.
+  function bars(g, mag, F, rect, opts) {
+    const o = opts || {};
+    const floorDb = o.floorDb === undefined ? -70 : o.floorDb;
+    const {x, y, w, h} = rect;
+    const N = mag.length;
+    let peak = 1e-12, peakF = 0;
+    for (let f = 0; f < F; f++) if (mag[f] > peak) { peak = mag[f]; peakF = f; }
+    const bw = w / N;
+    for (let f = 0; f < N; f++) {
+      const db = 20 * Math.log10((mag[f] > 0 ? mag[f] : 1e-12) / peak);
+      const u = db <= floorDb ? 0 : db / -floorDb + 1;
+      if (u <= 0) continue;
+      const mirror = f >= F;
+      g.fillStyle = mirror ? o.mirrorColour : (o.kept && o.kept.has(f) ? o.keptColour : o.colour);
+      const bh = u * h;
+      g.fillRect(x + f * bw, y + h - bh, Math.max(bw - (bw > 3 ? 1 : 0), 0.5), bh);
+    }
+    return peakF;
+  }
+
+  // The window shapes of neighbouring frames along a waveform strip, so the
+  // overlap is a picture rather than a fraction: one hump per frame, its
+  // width N samples and its height the window's, the frame at `lit` brighter.
+  function humps(g, w, starts, lit, rect, pxPerSample, colour, litColour) {
+    const {x, y, h} = rect;
+    const N = w.length;
+    const stepN = Math.max(1, Math.floor(N / 64));
+    starts.forEach((s0, idx) => {
+      g.strokeStyle = idx === lit ? litColour : colour;
+      g.lineWidth = idx === lit ? 2 : 1;
+      g.beginPath();
+      for (let n = 0; n <= N; n += stepN) {
+        const px = x + (s0 + Math.min(n, N - 1)) * pxPerSample;
+        const py = y + h - w[Math.min(n, N - 1)] * h;
+        if (n === 0) g.moveTo(px, py); else g.lineTo(px, py);
+      }
+      g.stroke();
+    });
+  }
+
+  // The timeline strip under the stage: the whole recording as a min/max
+  // waveform, cached per signal in an offscreen canvas, then the region the
+  // scene is examining and the playhead. `cache` is the frame's, keyed here
+  // on the signal's identity and the strip's size.
+  function timeline(g, cache, signal, key, rect, region, headSample, colours) {
+    const {x, y, w, h} = rect;
+    const want = key + ":" + Math.round(w) + "x" + Math.round(h);
+    if (cache.key !== want) {
+      const c = cache.canvas || (cache.canvas = document.createElement("canvas"));
+      const dpr = cache.dpr || 1;
+      c.width = Math.max(1, Math.round(w * dpr)); c.height = Math.max(1, Math.round(h * dpr));
+      const cg = c.getContext("2d");
+      cg.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cg.fillStyle = colours.bg;
+      cg.fillRect(0, 0, w, h);
+      waveform(cg, signal, {x: 0, y: 2, w: w, h: h - 4}, colours.wave);
+      cache.key = want;
+    }
+    g.drawImage(cache.canvas, x, y, w, h);
+    if (region) {
+      const x0 = x + region.i0 / signal.length * w, x1 = x + region.i1 / signal.length * w;
+      g.fillStyle = colours.band;
+      g.fillRect(x0, y, Math.max(2, x1 - x0), h);
+      g.strokeStyle = colours.bandLine;
+      g.lineWidth = 1;
+      g.strokeRect(Math.round(x0) + 0.5, y + 0.5, Math.max(2, x1 - x0), h - 1);
+    }
+    if (headSample >= 0 && headSample <= signal.length) {
+      const hx = Math.round(x + headSample / signal.length * w) + 0.5;
+      g.strokeStyle = colours.head;
+      g.lineWidth = 2;
+      g.beginPath(); g.moveTo(hx, y); g.lineTo(hx, y + h); g.stroke();
+    }
+  }
+
+  // A playhead line on a scene's own picture, in the output colour.
+  function playhead(g, px, y0, y1, colour) {
+    g.strokeStyle = colour;
+    g.lineWidth = 2;
+    g.beginPath(); g.moveTo(px, y0); g.lineTo(px, y1); g.stroke();
+  }
+
   const VoiceKit = {
     VoiceScenes, css, ramp, spectrogramImage, blit, waveform, label, demoSignal,
-    smooth, label2d, waveBuild, waveRebuild, waveFrame, waveDraw, BEAD_R
+    smooth, label2d, waveBuild, waveRebuild, waveFrame, waveDraw, BEAD_R,
+    bars, humps, timeline, playhead
   };
   if (typeof module !== "undefined" && module.exports) module.exports = VoiceKit;
   else { root.VoiceKit = VoiceKit; root.VoiceScenes = VoiceScenes; }

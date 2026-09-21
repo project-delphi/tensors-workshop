@@ -46,12 +46,16 @@
   window.VoiceScenes.register({
     id: "scramble",
     section: "04",
+    part: {en: "What a layout does to it", es: "Qué le hace una disposición"},
 
     controls: [
       {id: "layout", type: "select", options: ["none", "transpose", "patches"]}
     ],
 
     sync(ctx) { compute(ctx); },
+    animates(ctx) { return ctx.head() >= 0; },
+    region(ctx) { return {i0: 0, i1: ctx.state.len || ctx.signal.length}; },
+    playLabel(ctx) { return ctx.copy.names[ctx.state.layout]; },
 
     init(ctx) {
       ctx.state.layout = "none";
@@ -134,11 +138,19 @@
         concept: "A transpose permutes the shape and the strides and reads nothing. The numbers do " +
                  "not move, and not one of them is lost. Whether that matters depends entirely on " +
                  "what reads the buffer next.",
-        b: "This matrix is square on purpose — 513 by 513 — because a transposed spectrogram is " +
-           "only something you can turn back into sound if its two axes are the same length. " +
-           "Choose a layout and press play. Every one of these holds the identical 263,169 " +
-           "numbers; the count above the picture never changes.",
+        b: "<p>Choose the transpose and press play. Every one of the 263,169 numbers is still " +
+           "there — the count above the picture does not move — and the voice is gone. Nothing was " +
+           "lost and nothing is recoverable by listening: what was a frequency is being read as a " +
+           "time, and that is the whole of the damage.</p>" +
+           "<p>The matrix is square on purpose, 513 by 513, because a transposed spectrogram is only " +
+           "something you can turn back into sound when its two axes are the same length. The patch " +
+           "shuffle is the milder version of the same mistake: inside each 27 by 27 block the sound " +
+           "survives, across them it does not, so you hear the voice arriving in the wrong order " +
+           "rather than as noise.</p>",
         predict: "Before you press play: the transpose loses nothing at all. Should it still sound like a voice?",
+        controls: {layout: "Layout"},
+        options: {layout: {none: "as the transform built it", transpose: "transposed",
+                           patches: "27 × 27 patches, shuffled"}},
         axFreq: "frequency", axTime: "time",
         count: (n) => n + " numbers",
         names: {none: "the matrix as it was built", transpose: "the transposed matrix",
@@ -176,11 +188,19 @@
         concept: "Una transposición permuta la forma y los pasos, y no lee nada. Los números no se " +
                  "mueven, y no se pierde ninguno. Que eso importe depende por completo de qué lea " +
                  "el búfer a continuación.",
-        b: "Esta matriz es cuadrada a propósito — 513 por 513 — porque un espectrograma transpuesto " +
-           "solo se puede volver a convertir en sonido si sus dos ejes miden lo mismo. Elige una " +
-           "disposición y pulsa reproducir. Todas contienen los mismos 263.169 números; el conteo " +
-           "sobre la imagen nunca cambia.",
+        b: "<p>Elige la transposición y pulsa reproducir. Los 263.169 números siguen todos ahí —el " +
+           "conteo sobre la imagen no se mueve— y la voz ha desaparecido. No se perdió nada y nada " +
+           "se recupera escuchando: lo que era una frecuencia se lee como un tiempo, y ese es todo " +
+           "el daño.</p>" +
+           "<p>La matriz es cuadrada a propósito, 513 por 513, porque un espectrograma transpuesto " +
+           "solo se puede volver a convertir en sonido cuando sus dos ejes miden lo mismo. El barajado " +
+           "en parches es la versión suave del mismo error: dentro de cada bloque de 27 por 27 el " +
+           "sonido sobrevive, entre ellos no, así que oyes la voz llegando en el orden equivocado y " +
+           "no como ruido.</p>",
         predict: "Antes de reproducir: la transposición no pierde nada. ¿Debería seguir sonando como una voz?",
+        controls: {layout: "Disposición"},
+        options: {layout: {none: "como la construyó la transformada", transpose: "transpuesta",
+                           patches: "parches de 27 × 27, barajados"}},
         axFreq: "frecuencia", axTime: "tiempo",
         count: (n) => n + " números",
         names: {none: "la matriz tal como se construyó", transpose: "la matriz transpuesta",

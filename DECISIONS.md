@@ -619,6 +619,51 @@ orbit rather than a second one, for the reason that module exists: an orbit's
 clamps and a drift's origin are invisible in a screenshot, and one pinned
 machine is better than two.
 
+**The audio stage became a scroller, and grew the two pictures between a
+waveform and a matrix** (2026-09-21). It had been five tabs, and the reader's
+verdict was that the page did not teach: the input, the transforms and the
+effect of each control were not separable, and "window and hop" and the
+transform itself were words in control labels rather than things on the
+stage. Tabs were chosen so a scene that plays sound could keep its transport
+under the reader's hand rather than under their scroll position; that
+constraint is real, and it is met by putting the transport in the sticky
+column beside the stage, which is where it should have been. So the page is
+now the projection stage's shape -- a section per picture, three part
+headings, predict-first over the controls -- and the two missing pictures are
+in it: one frame with its window, and the transform of that one frame. The
+second of those is where the page can finally say why a spectrogram has 513
+rows rather than 1 024, because it draws the mirror half and greys it out.
+
+**The sound swaps under a moving control rather than stopping.** A stage whose
+whole claim is that these numbers are audible cannot make a reader press Play
+again to hear what a slider did; the comparison they need is *this rate versus
+that rate at the same moment of the same word*. So a control moved mid-play
+re-renders what the scene plays and restarts it at the offset the old one had
+reached. Two things make that safe rather than glitchy: the swap is debounced,
+because the hop scene's `audio()` inverts a whole spectrogram, and every
+source is generation-tagged, because the outgoing source's `onended` fires
+after its replacement has already started and would otherwise report the
+transport idle while sound was coming out of it.
+
+**The timeline belongs to the frame, and it is what lets a picture zoom in.**
+Every scene on this page is a window onto one array, and none of them could
+show both the window and the array: the hop scene drew the whole recording,
+where one window is three pixels wide and the overlap -- the single thing that
+picture exists to teach -- was invisible. One strip under the stage, drawn by
+the frame, carries the global view for all seven: the waveform, a band for
+what the picture above is looking at, and the playhead. The hop scene then
+draws five windows' worth of samples, where the humps cross at half height and
+the overlap is simply there to see.
+
+**The third recording is synthesised rather than vendored.** The voice and the
+beat are both broadband, and on a first reading every picture on the page is a
+haze: 513 bins of speech is a wall, and a spectrogram of it is weather. A
+440 Hz tone makes each picture show exactly one of the thing it is about --
+one peak, one horizontal line, one stripe after a transpose -- and it costs
+nothing to ship, because it is six lines of arithmetic at exactly the voice's
+length and rate. A reader who has seen what one tone does to each picture can
+then read the voice.
+
 **The stage ships two recordings and takes a third from the reader.** The
 sampling and quantization scenes want transients -- a kick thinned to 3 kHz
 and crunched to 3 bits is the lesson you can hear -- and the voice has few.

@@ -43,7 +43,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
       <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
       <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
-      <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voice</button>
+      <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
     </div>
     <a class="hero-open" data-hero-open href="interactive/tensor-visualizer.html?lang=en">Open the full widget →</a>
   </div>
@@ -352,16 +352,17 @@ problem, sections 07, 08 and 09.
 :::
 
 ::: {.resource-card}
-### 🎙️ Voice tensor stage
+### 🎙️ Audio tensor stage
 
 <span data-language-key="voice-tensor-stage"></span>
 
-A recording becomes numbers: 48 000 a second, each rounded to 16 bits, written
-down as an array you can listen to. Then a window slides along it and the voice
-becomes a frequency-by-time matrix, 513 × 465, and you can hear what a transpose
-does to it. Sections 04 and 09.
+Seven pictures of one recording. Air becomes numbers: 48 000 a second, each
+rounded to 16 bits, written down as an array you can listen to. Then one window
+is cut out of it, the transform is asked which frequencies are in that window,
+and the window hops along to build a frequency-by-time matrix, 513 × 465 — and
+you can hear what a transpose does to it. Sections 00, 04 and 09.
 
-[Try the voice tensor](interactive/voice-stage.html?lang=en){.resource-button}
+[Try the audio tensor](interactive/voice-stage.html?lang=en){.resource-button}
 :::
 ::::
 

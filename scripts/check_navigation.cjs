@@ -340,6 +340,24 @@ async function audit(page, where) {
       // perfectly convincing picture of the wrong thing -- and that the three
       // layouts really are the same matrix reordered, read off the stage as
       // numbers rather than looked for in pixels.
+      // A picture is reached by its own name. Setting location.hash from
+      // inside the page fires hashchange, which is the same request as
+      // opening on it; a page.goto that differs only in the hash would not
+      // reload and would not fire anything.
+      async function voiceScene(page, id) {
+        await page.evaluate(name => { location.hash = '#' + name; }, id);
+        // The hash scrolls that section into view, and in a scroller the step
+        // machine follows the scroll -- so the stage passes through every
+        // picture on the way and is only telling the truth once the scrolling
+        // has stopped. Wait for that, then ask again.
+        await page.waitForFunction(() => new Promise(done => {
+          const was = window.scrollY;
+          setTimeout(() => done(window.scrollY === was), 250);
+        }), null, {timeout: 15000});
+        await page.waitForFunction(name =>
+          document.getElementById('stage').dataset.scene === name, id, {timeout: 8000});
+      }
+
       async function driveVoice(page, where, lang) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 20000});
@@ -366,37 +384,35 @@ async function audit(page, where) {
         // targets rather than from the eased picture.
         assert.equal((await data()).rate, '48000');
         assert.equal((await data()).n, '237568', `${where}: the recording's length`);
-        await page.locator('#c-rate').fill('3');
+        await page.locator('#c-sample-rate').fill('3');
         await page.waitForFunction(() => document.getElementById('stage').dataset.rate === '6000', null, {timeout: 5000});
         assert.equal((await data()).factor, '8');
         assert.equal((await data()).n, String(Math.ceil(237568 / 8)), `${where}: every 8th sample kept`);
-        await page.locator('#c-zoom').fill('100');
+        await page.locator('#c-sample-zoom').fill('100');
         await page.waitForFunction(() => document.getElementById('stage').dataset.span === '48', null, {timeout: 5000});
         assert.equal((await data()).inview, '6', `${where}: 1 ms at 6 kHz is six beads`);
-        await page.locator('#c-rate').fill('0');
+        await page.locator('#c-sample-rate').fill('0');
         await page.waitForFunction(() => document.getElementById('stage').dataset.inview === '48', null, {timeout: 5000});
 
         // Quantization: 4 bits is 16 levels; fewer bits, a lower ratio; 16
         // bits moves nothing, because the WAV stores 16-bit integers.
-        await page.locator('#tab-quantize').click();
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'quantize', null, {timeout: 5000});
+        await voiceScene(page, 'quantize');
         assert.equal((await data()).levels, '16', `${where}: 4 bits is 16 levels`);
         const snr4 = Number((await data()).snr);
-        await page.locator('#c-bits').fill('2');
+        await page.locator('#c-quantize-bits').fill('2');
         await page.waitForFunction(() => document.getElementById('stage').dataset.bits === '2', null, {timeout: 5000});
         assert.equal((await data()).levels, '4');
         assert(Number((await data()).snr) < snr4, `${where}: 2 bits should be noisier than 4`);
-        await page.locator('#c-bits').fill('16');
+        await page.locator('#c-quantize-bits').fill('16');
         await page.waitForFunction(() => document.getElementById('stage').dataset.bits === '16', null, {timeout: 5000});
         assert.equal((await data()).snr, 'inf', `${where}: 16 bits must leave the recording exactly`);
         assert.equal((await data()).maxerr, '0.000e+0');
 
         // The array: its shape, and the bytes each dtype costs.
-        await page.locator('#tab-array').click();
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'array', null, {timeout: 5000});
+        await voiceScene(page, 'array');
         assert.equal((await data()).shape, '237568');
         assert.equal((await data()).bytes, String(237568 * 4), `${where}: float32 bytes`);
-        await page.selectOption('#c-dtype', 'int16');
+        await page.selectOption('#c-array-dtype', 'int16');
         await page.waitForFunction(() => document.getElementById('stage').dataset.dtype === 'int16', null, {timeout: 5000});
         assert.equal((await data()).bytes, String(237568 * 2), `${where}: int16 bytes`);
 
@@ -408,51 +424,65 @@ async function audit(page, where) {
         assert.equal((await data()).standin, '0');
         assert.equal((await data()).shape, '237568', `${where}: the beat is cut to the voice's length`);
 
+        // The third clip is arithmetic rather than a file: same length, same
+        // shapes, and nothing fetched for it.
+        await page.selectOption('#builtin', 'tone');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.signal === 'tone',
+          null, {timeout: 10000});
+        assert.equal((await data()).shape, '237568', `${where}: the tone is the voice's length`);
+        assert.equal(await page.evaluate(() =>
+          performance.getEntriesByType('resource').some(r => /tone\.wav/.test(r.name))), false,
+          `${where}: the tone was fetched rather than synthesised`);
+        await page.selectOption('#builtin', 'voice');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.signal === 'voice',
+          null, {timeout: 20000});
+
         // The spectrogram scenes, on the beat and then back on the voice.
-        await page.locator('#tab-window').click();
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'window', null, {timeout: 5000});
+        await voiceScene(page, 'window');
         assert.equal(await stage.getAttribute('data-shape'), '513,465',
           `${where}: the recording's default shape`);
         await page.selectOption('#builtin', 'voice');
         await page.waitForFunction(() => document.getElementById('stage').dataset.signal === 'voice', null, {timeout: 20000});
         assert.equal(await stage.getAttribute('data-shape'), '513,465');
+        assert.equal(await stage.getAttribute('data-padded'), '238592',
+          `${where}: half a window of padding at each end`);
+        assert.equal(await stage.getAttribute('data-overlap'), '512',
+          `${where}: neighbouring windows share half of themselves`);
 
         // Halving the hop doubles the columns. This is the scene's predict
         // question, so it is the one number worth pinning.
-        await page.selectOption('#c-overlap', 'quarter');
+        await page.selectOption('#c-window-overlap', 'quarter');
         await page.waitForFunction(() =>
           document.getElementById('stage').dataset.hop === '256', null, {timeout: 5000});
         const wide = await stage.getAttribute('data-shape');
         assert.equal(wide.split(',')[0], '513', `${where}: F should not move with the hop`);
         assert(Number(wide.split(',')[1]) > 900, `${where}: a quarter hop should roughly double T, got ${wide}`);
-        await page.selectOption('#c-overlap', 'half');
+        await page.selectOption('#c-window-overlap', 'half');
 
         // A tapered window that never overlaps leaves gaps the inverse cannot
         // fill, and the readout says so in red. The fault text is a teaching
         // claim, so its absence is a regression.
-        await page.selectOption('#c-overlap', 'none');
+        await page.selectOption('#c-window-overlap', 'none');
         await page.waitForFunction(() =>
           document.getElementById('stage').dataset.hop === '1024', null, {timeout: 5000});
-        assert.equal(await page.locator('#read .fault').count(), 1,
+        assert.equal(await page.locator('#read-window .fault').count(), 1,
           `${where}: no warning about a tapered window with no overlap`);
-        await page.selectOption('#c-win', 'rect');
+        await page.selectOption('#c-window-win', 'rect');
         await page.waitForFunction(() =>
-          document.querySelectorAll('#read .fault').length === 0, null, {timeout: 5000});
-        await page.selectOption('#c-overlap', 'half');
-        await page.selectOption('#c-win', 'hann');
+          document.querySelectorAll('#read-window .fault').length === 0, null, {timeout: 5000});
+        await page.selectOption('#c-window-overlap', 'half');
+        await page.selectOption('#c-window-win', 'hann');
 
         // The reshape scene. Square on purpose -- a transposed spectrogram is
         // only invertible back to sound when its axes are the same length --
         // and every layout holds the identical count.
-        await page.locator('#tab-scramble').click();
-        await page.waitForFunction(() =>
-          document.getElementById('stage').dataset.scene === 'scramble', null, {timeout: 5000});
+        await voiceScene(page, 'scramble');
         assert.equal(await stage.getAttribute('data-shape'), '513,513', `${where}: not square`);
         assert.equal(await stage.getAttribute('data-square'), '1');
         const cells = await stage.getAttribute('data-cells');
         assert.equal(cells, '263169');
         for (const layout of ['transpose', 'patches', 'none']) {
-          await page.selectOption('#c-layout', layout);
+          await page.selectOption('#c-scramble-layout', layout);
           await page.waitForFunction(want =>
             document.getElementById('stage').dataset.layout === want, layout, {timeout: 5000});
           assert.equal(await stage.getAttribute('data-cells'), cells,
@@ -465,15 +495,55 @@ async function audit(page, where) {
         // one immediately after the goto above.
         assert.equal(await stage.getAttribute('data-ready'), '1',
           `${where}: a control change cleared data-ready`);
-        await page.locator('#motion').click();
+        // Fired from the page, never as a pointer click: the bar is below a
+        // sticky stage in a scroller, and a click that scrolls it into view
+        // moves the step machine onto another picture first.
+        const bar = (id) => page.evaluate(b => document.getElementById(b).click(), id);
+        await bar('motion');
         await page.waitForFunction(() =>
           document.getElementById('stage').dataset.paused === '1', null, {timeout: 5000});
-        await page.selectOption('#c-layout', 'transpose');
+        await page.selectOption('#c-scramble-layout', 'transpose');
         await page.waitForFunction(() =>
           document.getElementById('stage').dataset.layout === 'transpose', null, {timeout: 5000});
         assert.equal(await stage.getAttribute('data-paused'), '1',
           `${where}: a control change cleared data-paused`);
-        await page.locator('#motion').click();
+        await bar('motion');
+
+        // One window, and the transform of it: the two pictures that stand
+        // between a waveform and a matrix. What matters here is the
+        // arithmetic a reader is asked to check -- how long a frame is, how
+        // far apart the bins are, and that the mirror half is dropped.
+        await voiceScene(page, 'frame');
+        assert.equal((await data()).n, '1024');
+        assert.equal((await data()).ms, '21.3', `${where}: 1024 samples at 48 kHz`);
+        assert.equal((await data()).reps, '47', `${where}: a 1024-sample frame repeats 47 times a second`);
+        const tapered = Number((await data()).ends);
+        await page.selectOption('#c-frame-win', 'rect');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.win === 'rect',
+          null, {timeout: 5000});
+        assert(Number((await data()).ends) > tapered * 1000,
+          `${where}: a rectangular frame should not end near zero`);
+        await page.selectOption('#c-frame-win', 'hann');
+
+        await voiceScene(page, 'spectrum');
+        assert.equal((await data()).bins, '513', `${where}: N/2 + 1 bins are kept at N = 1024`);
+        assert.equal((await data()).binhz, '46.875', `${where}: 48000 / 1024 Hz a bin`);
+        await page.locator('#c-spectrum-size').fill('3');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.n === '2048',
+          null, {timeout: 5000});
+        assert.equal((await data()).bins, '1025', `${where}: twice the window, twice the bins`);
+        assert.equal((await data()).binhz, '23.438', `${where}: and half the spacing`);
+        await page.locator('#c-spectrum-size').fill('2');
+        // More components carry more of the frame's energy, by construction.
+        await page.locator('#c-spectrum-k').fill('1');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '1',
+          null, {timeout: 5000});
+        const one = Number((await data()).share);
+        await page.locator('#c-spectrum-k').fill('64');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '64',
+          null, {timeout: 5000});
+        assert(Number((await data()).share) > one,
+          `${where}: 64 components should carry more energy than 1`);
 
         // Linking by scene name, never by an index that moves on a reorder.
         // A page opened on a spectrogram scene must not fetch three.js: the
@@ -925,8 +995,8 @@ async function audit(page, where) {
         // Its embed mode draws the same scene from a synthesised stand-in
         // rather than fetching half a megabyte of audio onto the homepage,
         // which is the fourth hero tab below.
-        {file: 'voice-stage', en: 'The voice tensor',
-         es: 'El tensor de voz', embed: true, drive: driveVoice}
+        {file: 'voice-stage', en: 'The audio tensor',
+         es: 'El tensor de audio', embed: true, drive: driveVoice}
       ];
       for (const widget of widgets) {
         console.log(`Checking ${widget.file}`);
@@ -998,14 +1068,15 @@ async function audit(page, where) {
               await page.waitForFunction(() => !document.getElementById('glnote').hidden, null, {timeout: 10000});
               assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
               assert(await page.locator('#draw').isVisible(), `${where}: twin ${scene} is not on the stage`);
-              const readout = await page.locator('#read').innerText();
+              // One readout per section: the scroller has seven of them.
+              const readout = await page.locator(`#read-${scene}`).innerText();
               assert(!/NaN|Infinity|undefined/.test(readout), `${where}: twin ${scene} readout: ${readout}`);
               if (scene === 'sample') {
-                await page.locator('#c-zoom').fill('100');
+                await page.locator('#c-sample-zoom').fill('100');
                 await page.waitForFunction(() => document.getElementById('stage').dataset.span === '48');
               }
               if (scene === 'quantize') {
-                await page.locator('#c-bits').fill('3');
+                await page.locator('#c-quantize-bits').fill('3');
                 await page.waitForFunction(() => document.getElementById('stage').dataset.levels === '8');
               }
               await audit(page, `${where} twin ${scene}`);
@@ -1054,7 +1125,8 @@ async function audit(page, where) {
             const fetched = await page.evaluate(() =>
               performance.getEntriesByType('resource').some(e => e.name.includes('voice.wav')));
             assert.equal(fetched, false, `${where} embed: voice.wav requested on the front door`);
-            assert(await page.locator('.tabs').isHidden(), `${where} embed: scene tabs shown`);
+            assert(await page.locator('.steps').isHidden(), `${where} embed: the scroller is shown`);
+            assert(await page.locator('#timeline').isHidden(), `${where} embed: the timeline is shown`);
             assert.equal(await page.locator('#stage').getAttribute('data-playing'), '0');
             assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'window',
               `${where} embed: the hero gets the spectrogram scene`);

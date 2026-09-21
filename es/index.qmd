@@ -43,7 +43,7 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
       <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
-      <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voz</button>
+      <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
     </div>
     <a class="hero-open" data-hero-open href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a>
   </div>
@@ -352,16 +352,18 @@ exactamente por cero. Ocho imágenes de un mismo problema, secciones 07, 08 y 09
 :::
 
 ::: {.resource-card}
-### 🎙️ Escenario del tensor de voz
+### 🎙️ Escenario del tensor de audio
 
 <span data-language-key="voice-tensor-stage"></span>
 
-Una grabación se vuelve números: 48 000 por segundo, cada uno redondeado a 16
-bits, escritos en un array que puedes escuchar. Luego una ventana la recorre y
-la voz se convierte en una matriz de frecuencia por tiempo, 513 × 465, y puedes
-oír qué le hace una transposición. Secciones 04 y 09.
+Siete imágenes de una misma grabación. El aire se vuelve números: 48 000 por
+segundo, cada uno redondeado a 16 bits, escritos en un array que puedes
+escuchar. Luego se recorta una ventana, se le pregunta a la transformada qué
+frecuencias hay en ella, y la ventana avanza para construir una matriz de
+frecuencia por tiempo, 513 × 465, y puedes oír qué le hace una transposición.
+Secciones 00, 04 y 09.
 
-<a href="../interactive/voice-stage.html?lang=es" class="resource-button">Probar el tensor de voz</a>
+<a href="../interactive/voice-stage.html?lang=es" class="resource-button">Probar el tensor de audio</a>
 :::
 ::::
 

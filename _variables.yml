@@ -66,6 +66,8 @@ repo:
     - interactive/voice-scenes/sample.js
     - interactive/voice-scenes/quantize.js
     - interactive/voice-scenes/array.js
+    - interactive/voice-scenes/frame.js
+    - interactive/voice-scenes/spectrum.js
     - interactive/voice-scenes/window.js
     - interactive/voice-scenes/scramble.js
     # The arithmetic under the voice tensor stage, and the recording it

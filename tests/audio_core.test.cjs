@@ -394,3 +394,77 @@ test('quantisation is mid-tread, clamped, and exact at the bits the WAV stores',
   }
   assert.equal(core.snrDb(wav.samples, q16.q), Infinity, 'no error means an infinite ratio');
 });
+
+test('one frame is N samples from i0, zero past the ends, times the window', () => {
+  const x = Float64Array.from({length: 20}, (_, i) => i + 1);
+  const r = core.frame(x, 16, 8, 'rect');
+  assert.deepEqual(Array.from(r.raw), [17, 18, 19, 20, 0, 0, 0, 0]);
+  assert.deepEqual(Array.from(r.tapered), Array.from(r.raw), 'rectangular changes nothing');
+  const h = core.frame(x, -2, 8, 'hann');
+  assert.deepEqual(Array.from(h.raw), [0, 0, 1, 2, 3, 4, 5, 6]);
+  assert.equal(h.w[0], 0, 'Hann starts at zero');
+  assert.equal(h.tapered[0], 0);
+  assert.ok(Math.abs(h.tapered[4] - 3 * h.w[4]) < 1e-12);
+});
+
+test('the spectrum of a bin-aligned tone peaks at that bin and mirrors above N/2', () => {
+  const N = 64, rate = 6400, bin = 5;
+  const t = core.tone(N, rate, bin * rate / N, 0.5);
+  assert.equal(t.length, N);
+  assert.equal(t[0], 0);
+  const sp = core.spectrum(t);
+  let peak = 0;
+  for (let f = 1; f <= N / 2; f++) if (sp.mag[f] > sp.mag[peak]) peak = f;
+  assert.equal(peak, bin);
+  assert.ok(Math.abs(sp.mag[N - bin] - sp.mag[bin]) < 1e-9, 'the mirror half repeats the first');
+  assert.ok(sp.mag[bin] > 100 * sp.mag[bin + 2], 'a bin-aligned tone does not leak');
+  assert.throws(() => core.spectrum(new Float64Array(100)), /power of two/);
+});
+
+test('the k strongest sinusoids rebuild the frame; all of them rebuild it exactly', () => {
+  const N = 256, rate = 25600;
+  // Two bin-aligned sines, so each lives in exactly one bin.
+  const x = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    x[i] = 0.4 * Math.sin(2 * Math.PI * 7 * i / N) + 0.2 * Math.sin(2 * Math.PI * 30 * i / N + 0.3);
+  }
+  const sp = core.spectrum(x);
+  // With a third component that is not bin-aligned, and so leaks into every
+  // bin, keeping every bin is still the identity.
+  const leaky = Float64Array.from(x, (v, i) => v + 0.05 * Math.cos(i * 0.9));
+  const all = core.synthTopK(core.spectrum(leaky), N / 2 + 1);
+  assert.ok(maxAbs(all.samples, leaky) < 1e-9, 'every bin kept is the identity');
+  const one = core.synthTopK(sp, 1);
+  assert.equal(one.bins[0], 7, 'the strongest component is the 7-cycle sine');
+  const want = Float64Array.from({length: N}, (_, i) => 0.4 * Math.sin(2 * Math.PI * 7 * i / N));
+  assert.ok(maxAbs(one.samples, want) < 1e-9, 'one bin back is that sine alone');
+  assert.equal(core.synthTopK(sp, 2).bins[1], 30);
+  assert.equal(core.synthTopK(sp, 0).bins.length, 0);
+  assert.equal(rate, 25600);
+});
+
+test('a frame on repeat tiles to the length asked for', () => {
+  const seg = Float64Array.from([1, 2, 3]);
+  assert.deepEqual(Array.from(core.loop(seg, 8)), [1, 2, 3, 1, 2, 3, 1, 2]);
+  assert.throws(() => core.loop(new Float64Array(0), 4), /empty/);
+});
+
+test('the built-in tone is not 16-bit integers, so rounding it moves something', () => {
+  const t = core.tone(48000, 48000, 440);
+  let peak = 0;
+  for (let i = 0; i < t.length; i++) peak = Math.max(peak, Math.abs(t[i]));
+  assert.ok(peak <= 0.5 && peak > 0.499);
+  assert.ok(core.quantize(t, 16).maxErr > 0);
+});
+
+test('the shape formula agrees with the transform it describes', () => {
+  for (const [L, N, hop] of [[20000, 1024, 512], [237568, 1024, 512], [237568, 1024, 464], [4096, 256, 64]]) {
+    const st = core.stft(new Float64Array(L), N, hop, 'hann');
+    const sh = core.stftShape(L, N, hop);
+    assert.equal(sh.F, st.F);
+    assert.equal(sh.T, st.T, `L=${L} N=${N} hop=${hop}`);
+    assert.equal(sh.padded, L + N);
+  }
+  assert.equal(core.stftShape(237568, 1024, 512).T, 465, 'the handbook\'s 465 columns');
+  assert.equal(core.stftShape(237568, 1024, 464).T, 513, 'the square matrix');
+});

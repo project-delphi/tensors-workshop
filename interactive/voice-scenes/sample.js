@@ -50,7 +50,9 @@
   window.VoiceScenes.register({
     id: "sample",
     section: "00",
+    part: {en: "From air to numbers", es: "Del aire a los números"},
     gl: true,
+    posControl: "pos",
     pose: {
       content: 1.35, fov: 40, target: [0, 0, 0],
       home: {az: 0.18, el: 0.16},
@@ -64,7 +66,11 @@
          return (ms >= 10 ? ms.toFixed(0) : ms.toFixed(1)) + " ms";
        }},
       {id: "rate", type: "range", min: 0, max: 4, step: 1,
-       fmt: (v, ctx) => (ctx.rate / RATES[v]).toLocaleString(ctx.lang === "es" ? "es" : "en") + " Hz"},
+       // In kHz, because the readout and the play button are in kHz: a
+       // control that says 48,000 beside a box that says 48 is two numbers
+       // to reconcile before either means anything.
+       fmt: (v, ctx) => (ctx.rate / RATES[v] / 1000)
+         .toLocaleString(ctx.lang === "es" ? "es" : "en") + " kHz"},
       {id: "pos", type: "range", min: 0, max: 1000, step: 1,
        fmt: (v, ctx) => (v / 1000 * (ctx.signal.length - SLICE) / ctx.rate).toFixed(2) + " s"}
     ],
@@ -86,6 +92,17 @@
       s.zoomTween = ctx.LC.tweenStart(0, 93, ctx.now(), 3200);
       s.zoom = 93;
       ctx.setControls({zoom: 93});
+    },
+
+    // What part of the recording this picture is looking at, for the strip
+    // under the stage, and whether it needs a frame clock: it does while the
+    // sound is on, because the playhead is moving across it.
+    region(ctx) { const v = ctx.state.v; return {i0: v.i0, i1: v.i0 + v.L}; },
+    animates(ctx) { return ctx.head() >= 0; },
+
+    playLabel(ctx) {
+      return ctx.copy.playAt((ctx.rate / RATES[ctx.state.rate] / 1000)
+        .toLocaleString(ctx.lang === "es" ? "es" : "en"));
     },
 
     build(ctx) { return ctx.K.waveBuild(ctx); },
@@ -132,16 +149,25 @@
                  "that pressure measured at equal intervals, fₛ times a second, and nothing " +
                  "between the measurements is kept. The measurements, in order, are a one-dimensional " +
                  "array.",
-        b: "From far away the recording looks like a wave. Slide the zoom in and it comes apart into " +
-           "beads: one number every 1/48 000 of a second, with nothing between them. Then lower the " +
-           "rate. The beads thin out, the purple staircase is what that rate plays back, and pressing " +
-           "play lets you hear what fewer numbers a second sounds like.",
+        b: "<p>The yellow trace is air pressure against time. A loudspeaker or a voice pushes the air, " +
+           "then lets it fall back, so the trace swings above and below the line: what the microphone " +
+           "reports is the <em>difference</em> from still air, and a push is always paid for by a pull. " +
+           "That is why the picture looks roughly mirrored top to bottom, and why its average is zero. " +
+           "It is only roughly: on the beat, a kick is a sharp shove upward and a slow recovery, and you " +
+           "can see the two halves disagree.</p>" +
+           "<p>Slide the zoom in and the trace comes apart into beads: one number every 1/48 000 of a " +
+           "second, with nothing at all between them. Then lower the rate. The beads thin out, the " +
+           "purple staircase is what those fewer numbers hold on to, and play lets you hear it. " +
+           "(A real converter smooths that staircase back out; " +
+           "<a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery shows this on a " +
+           "bench full of equipment</a>, and it is worth 24 minutes.)</p>",
         predict: "Before you zoom: how many numbers is one millisecond of this recording?",
         held: (rate) => "the recording held at " + rate.toLocaleString("en") + " Hz",
+        playAt: (khz) => "at " + khz + " kHz",
         controls: {zoom: "Zoom (how much time fills the stage)", rate: "Sampling rate", pos: "Position"},
         readout: (rate, k, ms, inview, total, secs, khz) =>
-          "At <b>" + rate.toLocaleString("en") + " Hz</b> there are <b>" + khz + "</b> numbers in a " +
-          "millisecond, so the <b>" + (ms >= 10 ? ms.toFixed(0) : ms.toFixed(1)) + " ms</b> on the " +
+          "At <b>" + (rate / 1000).toLocaleString("en") + " kHz</b> there are <b>" + khz + "</b> numbers " +
+          "in a millisecond, so the <b>" + (ms >= 10 ? ms.toFixed(0) : ms.toFixed(1)) + " ms</b> on the " +
           "stage hold <b>" + inview.toLocaleString("en") + "</b> of them, and the whole " +
           secs.toFixed(2) + " s recording is <span class=\"shape\">(" + total.toLocaleString("en") +
           ",)</span> numbers long." +
@@ -163,15 +189,24 @@
                  "no: es esa presión medida a intervalos iguales, fₛ veces por segundo, y nada de " +
                  "lo que hay entre las medidas se conserva. Las medidas, en orden, son un arreglo de " +
                  "una dimensión.",
-        b: "De lejos la grabación parece una onda. Acerca el zoom y se deshace en cuentas: un número " +
-           "cada 1/48 000 de segundo, y nada entre ellas. Después baja la frecuencia de muestreo. Las " +
-           "cuentas se espacian, la escalera morada es lo que esa frecuencia reproduce, y al pulsar " +
-           "reproducir oyes cómo suenan menos números por segundo.",
+        b: "<p>El trazo amarillo es la presión del aire frente al tiempo. Un altavoz o una voz empuja " +
+           "el aire y luego lo deja volver, así que el trazo oscila por encima y por debajo de la línea: " +
+           "lo que informa el micrófono es la <em>diferencia</em> respecto al aire en reposo, y todo " +
+           "empujón se paga con un tirón. Por eso la imagen parece casi reflejada arriba y abajo, y por " +
+           "eso su promedio es cero. Solo casi: en el ritmo, un bombo es un empujón brusco hacia arriba " +
+           "y una recuperación lenta, y se ve que las dos mitades no coinciden.</p>" +
+           "<p>Acerca el zoom y el trazo se deshace en cuentas: un número cada 1/48 000 de segundo, y " +
+           "nada en absoluto entre ellas. Después baja la frecuencia de muestreo. Las cuentas se " +
+           "espacian, la escalera morada es lo que retienen esos números más escasos, y al reproducir " +
+           "lo oyes. (Un conversor real vuelve a suavizar esa escalera; " +
+           "<a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery lo demuestra con " +
+           "un banco lleno de instrumentos</a>, y vale los 24 minutos.)</p>",
         predict: "Antes de acercar: ¿cuántos números hay en un milisegundo de esta grabación?",
         held: (rate) => "la grabación retenida a " + rate.toLocaleString("es") + " Hz",
+        playAt: (khz) => "a " + khz + " kHz",
         controls: {zoom: "Zoom (cuánto tiempo llena el escenario)", rate: "Frecuencia de muestreo", pos: "Posición"},
         readout: (rate, k, ms, inview, total, secs, khz) =>
-          "A <b>" + rate.toLocaleString("es") + " Hz</b> hay <b>" + khz + "</b> números en un " +
+          "A <b>" + (rate / 1000).toLocaleString("es") + " kHz</b> hay <b>" + khz + "</b> números en un " +
           "milisegundo, así que los <b>" + (ms >= 10 ? ms.toFixed(0) : ms.toFixed(1).replace(".", ",")) +
           " ms</b> del escenario contienen <b>" + inview.toLocaleString("es") + "</b>, y la " +
           "grabación entera de " + secs.toFixed(2).replace(".", ",") + " s mide " +

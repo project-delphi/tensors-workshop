@@ -60,6 +60,7 @@
     id: "quantize",
     section: "00",
     gl: true,
+    posControl: "pos",
     pose: {
       content: 1.35, fov: 40, target: [0, 0, 0],
       home: {az: 0.16, el: 0.16},
@@ -95,6 +96,10 @@
       s.mixTween = ctx.LC.tweenStart(0, 1, ctx.now(), 1400);
     },
 
+    region(ctx) { const v = ctx.state.v; return {i0: v.i0, i1: v.i0 + v.L}; },
+    animates(ctx) { return ctx.head() >= 0; },
+    playLabel(ctx) { return ctx.copy.playBits(ctx.state.bits); },
+
     build(ctx) { return ctx.K.waveBuild(ctx); },
     render(ctx, gl) { ctx.K.waveFrame(ctx, gl, ctx.state.v); },
     draw(ctx) { ctx.K.waveDraw(ctx.g, ctx, ctx.state.v); },
@@ -108,6 +113,13 @@
       const s = ctx.state, v = s.v;
       const q = ctx.AC.quantize(ctx.signal, s.bits);
       const snr = ctx.AC.snrDb(ctx.signal, q.q);
+      // What one more bit is worth, measured rather than quoted. The
+      // textbook's "6 dB a bit" is only true once the levels are fine enough
+      // to stop clipping the peaks -- on this recording the step from 2 to 3
+      // bits is worth 2.2 dB, not 6 -- and a claim the stage contradicts is
+      // worse than no claim.
+      const more = s.bits < 16
+        ? ctx.AC.snrDb(ctx.signal, ctx.AC.quantize(ctx.signal, s.bits + 1).q) : Infinity;
       const inview = v.span;
       // The largest move among the beads on the stage, not in the recording.
       const half = v.L / 2;
@@ -116,10 +128,11 @@
         maxErr = Math.max(maxErr, Math.abs(v.by1[j] - v.raw[j]));
       }
       return {
-        html: ctx.copy.readout(s.bits, v.levels, v.step, snr, maxErr, inview),
+        html: ctx.copy.readout(s.bits, v.levels, v.step, snr, maxErr, inview, more),
         data: {
           bits: s.bits, levels: v.levels, step: v.step.toExponential(3),
           snr: Number.isFinite(snr) ? snr.toFixed(2) : "inf",
+          gain: Number.isFinite(more) && Number.isFinite(snr) ? (more - snr).toFixed(2) : "inf",
           maxerr: maxErr.toExponential(3), inview, span: v.span, zoom: s.zoom, i0: v.i0
         }
       };
@@ -135,22 +148,31 @@
                  "values a sample can take, equally spaced between −1 and +1, and every " +
                  "measurement is moved to the nearest. The move is the quantization error, and it " +
                  "is the only thing the stored array has lost.",
-        b: "The blue lines are the levels the bit depth allows, and every bead sits on one of them. " +
-           "The pink stalk under a bead is how far it was moved to get there. Slide the bits down " +
-           "and watch the lines thin out and the stalks grow; slide them up to 16 and the beads stop " +
-           "moving, because this recording was stored at 16 bits — the rounding is already in it. " +
-           "Press play at 2 or 3 bits to hear what the stalks sound like.",
+        b: "<p>Take the bits down to 3 and there is a hiss sitting under the voice that was not " +
+           "there before. It is on the stage in pink: every bead has been dragged to the nearest " +
+           "blue line, and the stalk under it is how far it had to go. Nothing else about the " +
+           "recording changed — the same 237 568 numbers, the same rate — and the stalks are what " +
+           "you are hearing.</p>" +
+           "<p>The blue lines are the values a sample is allowed to take, 2ᵇ of them. Slide the bits " +
+           "down and they thin out while the stalks grow; slide up to 16 and the beads stop moving " +
+           "altogether, because this recording was stored as 16-bit integers and the rounding is " +
+           "already in it.</p>",
         predict: "Before you slide: at 4 bits, how many different heights can a bead have?",
         rounded: (bits) => "the recording rounded to " + bits + " bits",
+        playBits: (bits) => "rounded to " + bits + " bits",
         levelsText: (n) => n.toLocaleString("en") + (n > 1024 ? " levels, closer than a pixel" : " levels"),
         controls: {bits: "Bit depth", zoom: "Zoom", pos: "Position"},
-        readout: (bits, levels, step, snr, maxErr, inview) =>
+        readout: (bits, levels, step, snr, maxErr, inview, more) =>
           "<b>" + bits + " bits</b> is <b>" + levels.toLocaleString("en") + "</b> levels, " +
           "<b>" + step.toPrecision(3) + "</b> apart. The largest move any of the " +
           inview.toLocaleString("en") + " beads on the stage made is " + maxErr.toPrecision(2) +
           ", and across the whole recording the rounding leaves a signal-to-noise ratio of " +
-          (Number.isFinite(snr) ? "<b>" + snr.toFixed(1) + " dB</b> — about 6 dB a bit."
-                                : "<b>exactly the recording</b>: no bead moved, because it was stored at 16 bits."),
+          (Number.isFinite(snr)
+            ? "<b>" + snr.toFixed(1) + " dB</b>. " +
+              (Number.isFinite(more)
+                ? "One more bit halves the step and takes it to " + more.toFixed(1) + " dB."
+                : "One more bit is 16, where the rounding stops moving anything at all.")
+            : "<b>exactly the recording</b>: no bead moved, because it was stored at 16 bits."),
         aria: (ctx) => {
           const v = ctx.state.v;
           return "Beads on a ruler of " + v.levels.toLocaleString("en") + " levels, " + v.span +
@@ -166,23 +188,32 @@
                  "valores que una muestra puede tomar, espaciados por igual entre −1 y +1, y " +
                  "cada medida se mueve al más cercano. Ese movimiento es el error de cuantización, " +
                  "y es lo único que el arreglo guardado ha perdido.",
-        b: "Las líneas azules son los niveles que permite la profundidad de bits, y cada cuenta " +
-           "descansa sobre uno. El tallo rosa bajo una cuenta es cuánto hubo que moverla. Baja los " +
-           "bits y mira cómo se espacian las líneas y crecen los tallos; súbelos a 16 y las cuentas " +
-           "dejan de moverse, porque esta grabación se guardó a 16 bits: el redondeo ya está en ella. " +
-           "Pulsa reproducir a 2 o 3 bits para oír cómo suenan los tallos.",
+        b: "<p>Baja los bits a 3 y aparece un siseo bajo la voz que antes no estaba. Está en el " +
+           "escenario en rosa: cada cuenta ha sido arrastrada a la línea azul más cercana, y el tallo " +
+           "que queda debajo es cuánto tuvo que moverse. Nada más cambió en la grabación \u2014 los " +
+           "mismos 237 568 números, la misma frecuencia \u2014 y lo que oyes son los tallos.</p>" +
+           "<p>Las líneas azules son los valores que una muestra puede tomar, 2\u1d47 de ellos. Baja " +
+           "los bits y se espacian mientras los tallos crecen; súbelos a 16 y las cuentas dejan de " +
+           "moverse del todo, porque esta grabación se guardó como enteros de 16 bits y el redondeo ya " +
+           "está en ella.</p>",
         predict: "Antes de deslizar: a 4 bits, ¿cuántas alturas distintas puede tener una cuenta?",
         rounded: (bits) => "la grabación redondeada a " + bits + " bits",
+        playBits: (bits) => "redondeada a " + bits + " bits",
         levelsText: (n) => n.toLocaleString("es") + (n > 1024 ? " niveles, más juntos que un píxel" : " niveles"),
         controls: {bits: "Profundidad de bits", zoom: "Zoom", pos: "Posición"},
-        readout: (bits, levels, step, snr, maxErr, inview) =>
+        readout: (bits, levels, step, snr, maxErr, inview, more) =>
           "<b>" + bits + " bits</b> son <b>" + levels.toLocaleString("es") + "</b> niveles, " +
           "separados <b>" + step.toPrecision(3).replace(".", ",") + "</b>. El mayor movimiento de " +
           "las " + inview.toLocaleString("es") + " cuentas del escenario es " +
           maxErr.toPrecision(2).replace(".", ",") + ", y en toda la grabación el redondeo deja una " +
           "relación señal a ruido de " +
-          (Number.isFinite(snr) ? "<b>" + snr.toFixed(1).replace(".", ",") + " dB</b>: unos 6 dB por bit."
-                                : "<b>exactamente la grabación</b>: ninguna cuenta se movió, porque se guardó a 16 bits."),
+          (Number.isFinite(snr)
+            ? "<b>" + snr.toFixed(1).replace(".", ",") + " dB</b>. " +
+              (Number.isFinite(more)
+                ? "Un bit más parte el paso por la mitad y la lleva a " +
+                  more.toFixed(1).replace(".", ",") + " dB."
+                : "Un bit más son 16, donde el redondeo deja de mover nada.")
+            : "<b>exactamente la grabación</b>: ninguna cuenta se movió, porque se guardó a 16 bits."),
         aria: (ctx) => {
           const v = ctx.state.v;
           return "Cuentas sobre una regla de " + v.levels.toLocaleString("es") + " niveles, " + v.span +

@@ -1,46 +1,65 @@
-// Scene 1: how a 1-D signal becomes a 2-D matrix.
+// Scene 6: the window hops along, and every stop is one column.
 //
-// The reader moves a window along the waveform and watches one column of the
-// matrix be the answer to "which frequencies are in this slice". The controls
-// are the three numbers that decide the matrix's shape -- window size, how far
-// it hops, and which taper -- so the shape tag moves while they drag, and the
-// claim on the stage is the shape itself.
+// By the time a reader reaches this picture they have seen one frame (the
+// frame scene) and the transform of it (the spectrum scene). This is the
+// only new idea left: do that at every hop and stand the answers side by
+// side. So the stage draws the hop -- the neighbouring windows as overlapping
+// humps on the waveform, which is what "50% overlap" means and what no
+// fraction in a control label ever conveyed -- and the column the current
+// window produces, beside the matrix it belongs to.
 //
-// Playing here rebuilds the signal from the matrix rather than playing the
-// recording, because the point of the scene is that nothing was lost: a
-// spectrogram is a change of basis, not a picture of one. Set the overlap to
-// none with a tapered window and the rebuild clicks, audibly, which is the
-// reason the overlap is there.
+// The entrance fills the matrix in column by column while the band walks the
+// recording, once, because that is the sentence the picture is making.
+//
+// Playing rebuilds the signal from the matrix rather than playing the
+// recording, because the point is that nothing was lost: a spectrogram is a
+// change of basis, not a picture of one. Set the overlap to none with a
+// tapered window and the rebuild clicks, audibly, which is the reason the
+// overlap is there.
 (function () {
   "use strict";
 
   const SIZES = [256, 512, 1024, 2048];
   const OVERLAPS = {none: 1, half: 2, quarter: 4};   // hop = N / this
+  const REVEAL_MS = 2600;
 
   function recompute(ctx) {
     const s = ctx.state;
     const N = SIZES[s.size];
     const hop = Math.max(1, Math.round(N / OVERLAPS[s.overlap]));
-    const key = N + ":" + hop + ":" + s.win;
+    const key = ctx.source + ":" + N + ":" + hop + ":" + s.win;
     if (s.key === key) return;
     const st = ctx.AC.stft(ctx.signal, N, hop, s.win);
     s.key = key;
     s.N = N; s.hop = hop;
     s.stft = st;
+    s.shape = ctx.AC.stftShape(ctx.signal.length, N, hop);
     s.mag = ctx.AC.magnitude(st.Z, st.F, st.T);
+    s.w = ctx.AC.windowOf(s.win, N);
     s.img = null;
   }
 
   const frameOf = (ctx) =>
     Math.min(ctx.state.stft.T - 1, Math.round(ctx.state.pos / 1000 * (ctx.state.stft.T - 1)));
 
+  // How many columns of the matrix are on the stage: all of them, unless the
+  // entrance is still running.
+  function shownCols(ctx) {
+    const s = ctx.state;
+    if (!s.reveal) return s.stft.T;
+    const t = ctx.LC.tweenAt(s.reveal, ctx.now());
+    if (t.done) { s.reveal = null; return s.stft.T; }
+    return Math.max(1, Math.round(t.value * s.stft.T));
+  }
+
   window.VoiceScenes.register({
     id: "window",
     section: "E",
+    posControl: "pos",
 
     controls: [
       {id: "size", type: "range", min: 0, max: 3, step: 1,
-       fmt: (v) => SIZES[v] + " samples"},
+       fmt: (v, ctx) => SIZES[v] + " (" + (SIZES[v] / ctx.rate * 1000).toFixed(1) + " ms)"},
       {id: "overlap", type: "select", options: ["none", "half", "quarter"]},
       {id: "win", type: "select", options: ["hann", "hamming", "rect"]},
       {id: "pos", type: "range", min: 0, max: 1000, step: 1,
@@ -54,40 +73,84 @@
     sync(ctx) { recompute(ctx); },
 
     init(ctx) {
-      Object.assign(ctx.state, {size: 2, overlap: "half", win: "hann", pos: 380});
-      recompute(ctx);
+      Object.assign(ctx.state, {size: 2, overlap: "half", win: "hann", pos: 380, key: null, reveal: null});
     },
 
     reset(ctx) {
-      Object.assign(ctx.state, {size: 2, overlap: "half", win: "hann", pos: 380, key: null});
-      recompute(ctx);
+      Object.assign(ctx.state, {size: 2, overlap: "half", win: "hann", pos: 380, key: null, reveal: null});
     },
+
+    // The matrix fills in, column by column, the first time the reader
+    // reaches this picture: a spectrogram is built one window at a time, and
+    // an image that is simply there does not say so.
+    arrive(ctx) {
+      recompute(ctx);
+      ctx.state.reveal = ctx.LC.tweenStart(0, 1, ctx.now(), REVEAL_MS);
+    },
+
+    animates(ctx) { return !!ctx.state.reveal || ctx.head() >= 0; },
+
+    region(ctx) {
+      const f = frameOf(ctx);
+      return {i0: f * ctx.state.hop, i1: f * ctx.state.hop + ctx.state.N};
+    },
+    playLabel(ctx) { return ctx.copy.rebuilt; },
 
     draw(ctx) {
       const g = ctx.g, K = ctx.K, W = ctx.W, H = ctx.H;
-      const st = ctx.state.stft, mag = ctx.state.mag;
-      const L = 52, R = 84, TOP = 14, BOT = 22;
-      const waveH = Math.max(36, H * 0.2);
-      const specY = TOP + waveH + 12;
+      const s = ctx.state, st = s.stft, mag = s.mag;
+      const L = 52, R = 84, TOP = 34, BOT = 22;
+      const waveH = Math.max(40, H * 0.22);
+      const specY = TOP + waveH + 14;
       const specH = Math.max(40, H - specY - BOT);
       const plotW = Math.max(10, W - L - R);
-      const f = frameOf(ctx);
+      // While the entrance runs the window walks with it, so the band and
+      // the columns are telling one story rather than two.
+      const cols = shownCols(ctx);
+      const f = s.reveal ? Math.max(0, cols - 1) : frameOf(ctx);
 
-      // The waveform, with the active window on it.
-      K.waveform(g, ctx.signal, {x: L, y: TOP, w: plotW, h: waveH}, ctx.colour("--v-sig"));
-      const winX = L + (f * ctx.state.hop / ctx.signal.length) * plotW;
-      const winW = Math.max(2, (ctx.state.N / ctx.signal.length) * plotW);
+      // The waveform *near the window*, not the whole recording: at 4.9
+      // seconds across, one window is three pixels wide and the overlap --
+      // the thing this picture exists to show -- cannot be seen at all. The
+      // whole recording is the strip under the stage, and the band on it
+      // says where this close-up is taken from.
+      const NEAR = 2;                                    // windows drawn either side
+      const span = s.N + 2 * NEAR * s.hop;
+      let a0 = f * s.hop - NEAR * s.hop;
+      a0 = Math.max(0, Math.min(Math.max(0, ctx.signal.length - span), a0));
+      const pxPerSample = plotW / span;
+      K.waveform(g, ctx.signal.subarray(a0, Math.min(ctx.signal.length, a0 + span)),
+                 {x: L, y: TOP, w: plotW, h: waveH}, ctx.colour("--v-sig"));
+
+      const winX = L + (f * s.hop - a0) * pxPerSample;
+      const winW = Math.max(2, s.N * pxPerSample);
       g.fillStyle = "rgba(255, 216, 77, 0.28)";
       g.fillRect(winX, TOP, winW, waveH);
-      g.strokeStyle = ctx.colour("--v-sig");
-      g.lineWidth = 1;
-      g.strokeRect(winX + 0.5, TOP + 0.5, winW, waveH - 1);
+
+      // The neighbouring windows, as the humps they are: where they cross is
+      // the overlap, and at hop = N they do not cross at all.
+      const near = [];
+      for (let d = -NEAR; d <= NEAR; d++) {
+        const idx = f + d;
+        if (idx >= 0 && idx < st.T) near.push({idx: idx, start: idx * s.hop - a0});
+      }
+      K.humps(g, s.w, near.map((n) => n.start), near.findIndex((n) => n.idx === f),
+              {x: L, y: TOP, h: waveH}, pxPerSample,
+              "rgba(88, 196, 221, 0.5)", ctx.colour("--v-axis"));
+      K.label(g, (a0 / ctx.rate).toFixed(2) + "–" + ((a0 + span) / ctx.rate).toFixed(2) + " s",
+              L + plotW, TOP + waveH - 13, ctx.colour("--stage-mute"), {size: 10, right: true});
 
       // The matrix.
       if (!ctx.state.img) {
         ctx.state.img = K.spectrogramImage(mag, st.F, st.T, {floorDb: -70});
       }
+      const shownW = plotW * (cols / st.T);
       K.blit(g, ctx.state.img, ctx.cache, L, specY, plotW, specH);
+      if (cols < st.T) {
+        // The columns that have not arrived yet are the stage's own black.
+        g.fillStyle = K.css("--stage");
+        g.fillRect(L + shownW, specY, plotW - shownW + 1, specH);
+      }
 
       // The column the window is over.
       const colX = L + (f + 0.5) / st.T * plotW;
@@ -95,7 +158,8 @@
       g.lineWidth = 2;
       g.beginPath(); g.moveTo(colX, specY); g.lineTo(colX, specY + specH); g.stroke();
 
-      // That column on its own, frequency upward, to the right of the matrix.
+      // That column on its own, frequency upward, to the right of the matrix:
+      // the picture the previous scene drew, stood on its end.
       const stripX = L + plotW + 10, stripW = R - 18;
       let peak = 1e-12, peakF = 0;
       for (let i = 0; i < st.F; i++) {
@@ -126,8 +190,21 @@
       }
       K.label(g, "[" + st.F + ", " + st.T + "]", L, specY + 6, ctx.colour("--v-axis"),
               {size: 12, mono: true});
-      K.label(g, (peakF * ctx.rate / ctx.state.N).toFixed(0) + " Hz",
+      K.label(g, (peakF * ctx.rate / s.N).toFixed(0) + " Hz",
               W - 6, specY + 6, ctx.colour("--v-out"), {size: 11, mono: true, right: true});
+
+      // Where the rebuilt signal has got to, on the waveform and across the
+      // matrix: the same instant in both pictures.
+      const h = ctx.head();
+      if (h >= 0) {
+        const hs = h * ctx.rate;
+        const px = L + (hs - a0) * pxPerSample;
+        if (px >= L && px <= L + plotW) K.playhead(g, px, TOP, TOP + waveH, ctx.colour("--v-out"));
+        // Across the matrix the playhead is at the same instant, on the
+        // whole-recording axis the spectrogram is drawn on.
+        K.playhead(g, L + (hs / ctx.signal.length) * plotW, specY, specY + specH,
+                   ctx.colour("--v-out"));
+      }
     },
 
     audio(ctx) {
@@ -138,25 +215,28 @@
     },
 
     readout(ctx) {
-      const st = ctx.state.stft, f = frameOf(ctx);
+      const s = ctx.state, st = s.stft, f = frameOf(ctx);
       let peak = 1e-12, peakF = 0;
       for (let i = 0; i < st.F; i++) {
-        const v = ctx.state.mag[i * st.T + f];
+        const v = s.mag[i * st.T + f];
         if (v > peak) { peak = v; peakF = i; }
       }
-      const hz = peakF * ctx.rate / ctx.state.N;
-      const secs = f * ctx.state.hop / ctx.rate;
+      const hz = peakF * ctx.rate / s.N;
+      const secs = f * s.hop / ctx.rate;
+      const overlap = Math.max(0, s.N - s.hop);
       // A tapered window that never overlaps leaves gaps the inverse cannot
       // fill. Worth saying, because it is what the rebuild sounds like.
-      const gapped = ctx.state.win !== "rect" && ctx.state.hop >= ctx.state.N;
+      const gapped = s.win !== "rect" && s.hop >= s.N;
       return {
-        html: ctx.copy.readout(st.F, st.T, ctx.state.N, ctx.state.hop, secs, hz, gapped),
+        html: ctx.copy.readout(st.F, st.T, s.N, s.hop, secs, hz, gapped, s.shape.padded, overlap),
         data: {
           shape: st.F + "," + st.T,
-          n: ctx.state.N,
-          hop: ctx.state.hop,
-          win: ctx.state.win,
+          n: s.N,
+          hop: s.hop,
+          win: s.win,
           frame: f,
+          padded: s.shape.padded,
+          overlap: overlap,
           peakhz: hz.toFixed(0)
         }
       };
@@ -164,29 +244,36 @@
 
     copy: {
       en: {
-        tab: "Window & hop",
-        k: "Short-time Fourier transform · Appendix E",
-        h: "A window slides, and each stop is one column",
+        tab: "Hop",
+        k: "Hop and the spectrogram · Appendix E",
+        h: "The window hops along, and every stop is one column",
         claim: "x[n] → X[f, t]",
-        concept: "Cut the signal into short overlapping windows and ask which frequencies are in " +
-                 "each one. The answers, stacked side by side, are a matrix: frequency down, time " +
-                 "across. Nothing is lost — the transform is invertible.",
-        b: "The yellow band is the window the transform is looking through right now, and the " +
-           "line in the matrix below is the column it produces. Drag the window along the " +
-           "recording and watch the column move with it. Then change the window size and the hop " +
-           "and watch the shape tag change: a shorter hop means more columns, for the same voice.",
+        concept: "Take the transform of one frame, move the window along by a fixed hop, and take " +
+                 "it again. The answers, stacked side by side, are a matrix: frequency down, time " +
+                 "across. Nothing is lost — with enough overlap the transform is invertible.",
+        b: "<p>The blue humps on the waveform are the windows either side of the one you are on. At " +
+           "a hop of half the window they cross halfway up, so every sample is covered twice and the " +
+           "taper that scaled it down in one frame scales it up in the next. Set the overlap to none " +
+           "and the humps separate: now the samples under each dip are scaled towards zero and " +
+           "nothing puts them back. Press play — that is the clicking.</p>" +
+           "<p>Each stop of the window is one column of the matrix, marked in blue, and the strip on " +
+           "the right is that column on its own: the bars of the previous picture, stood on end. " +
+           "Change the window size and the hop and watch the shape tag move — a shorter hop means " +
+           "more columns for the same voice, and the box below counts them.</p>",
         predict: "Before you drag: halve the hop. Does the matrix get taller, or wider?",
         rebuilt: "the signal rebuilt from the matrix",
         controls: {size: "Window size (N)", overlap: "Overlap", win: "Window shape",
-                   pos: "Window position"},
+                   pos: "Where the window is"},
         options: {
           overlap: {none: "none — hop = N", half: "half — hop = N/2", quarter: "three quarters — hop = N/4"},
           win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (none)"}
         },
-        readout: (F, T, N, hop, secs, hz, gapped) =>
-          "A window of <b>" + N + "</b> samples hopping <b>" + hop + "</b> gives a " +
-          "<span class=\"shape\">[" + F + ", " + T + "]</span> matrix — " + F +
-          " frequencies by " + T + " time steps. The window is at <b>" + secs.toFixed(2) +
+        readout: (F, T, N, hop, secs, hz, gapped, padded, overlap) =>
+          "Padded by half a window at each end, the array is " + padded.toLocaleString("en") +
+          " long; a window of <b>" + N + "</b> samples hopping <b>" + hop + "</b> stops <b>" + T +
+          "</b> times in it, and each stop answers with " + F + " frequencies — a " +
+          "<span class=\"shape\">[" + F + ", " + T + "]</span> matrix. Neighbouring windows share <b>" +
+          overlap.toLocaleString("en") + "</b> samples. The window is at <b>" + secs.toFixed(2) +
           " s</b>, and the loudest frequency in it is <b>" + hz.toFixed(0) + " Hz</b>." +
           (gapped
             ? " <span class=\"fault\">This window tapers to zero at both ends and never overlaps, " +
@@ -196,36 +283,45 @@
           const st = ctx.state.stft, f = frameOf(ctx);
           return "A waveform above a spectrogram. The window of " + ctx.state.N +
                  " samples is at " + (f * ctx.state.hop / ctx.rate).toFixed(2) +
-                 " seconds, producing column " + (f + 1) + " of a " + st.F + " by " + st.T +
-                 " matrix.";
+                 " seconds, overlapping its neighbours, and producing column " + (f + 1) +
+                 " of a " + st.F + " by " + st.T + " matrix.";
         }
       },
       es: {
-        tab: "Ventana y salto",
-        k: "Transformada de Fourier de tiempo corto · Apéndice E",
-        h: "Una ventana se desliza y cada parada es una columna",
+        tab: "Salto",
+        k: "El salto y el espectrograma · Apéndice E",
+        h: "La ventana avanza, y cada parada es una columna",
         claim: "x[n] → X[f, t]",
-        concept: "Corta la señal en ventanas cortas superpuestas y pregunta qué frecuencias hay en " +
-                 "cada una. Las respuestas, apiladas una junto a otra, son una matriz: frecuencia " +
-                 "hacia abajo, tiempo a lo ancho. No se pierde nada: la transformada es invertible.",
-        b: "La banda amarilla es la ventana por la que mira la transformada ahora mismo, y la " +
-           "línea en la matriz de abajo es la columna que produce. Arrastra la ventana por la " +
-           "grabación y observa cómo la columna la sigue. Después cambia el tamaño de la ventana y " +
-           "el salto, y mira cómo cambia la etiqueta de forma: un salto más corto significa más " +
-           "columnas, para la misma voz.",
+        concept: "Transforma un marco, mueve la ventana un salto fijo y transforma otra vez. Las " +
+                 "respuestas, apiladas una junto a otra, son una matriz: frecuencia hacia abajo, " +
+                 "tiempo a lo ancho. No se pierde nada: con suficiente superposición la " +
+                 "transformada es invertible.",
+        b: "<p>Las jorobas azules sobre la onda son las ventanas a un lado y otro de la que estás " +
+           "mirando. Con un salto de media ventana se cruzan a media altura, así que cada muestra " +
+           "queda cubierta dos veces y el perfil que la redujo en un marco la realza en el " +
+           "siguiente. Pon la superposición en ninguna y las jorobas se separan: ahora las muestras " +
+           "bajo cada valle se reducen hacia cero y nada las devuelve. Pulsa reproducir: eso es el " +
+           "chasquido.</p>" +
+           "<p>Cada parada de la ventana es una columna de la matriz, marcada en azul, y la tira de " +
+           "la derecha es esa columna sola: las barras de la imagen anterior, puestas de pie. Cambia " +
+           "el tamaño de la ventana y el salto y mira moverse la etiqueta de forma: un salto más " +
+           "corto significa más columnas para la misma voz, y la caja de abajo las cuenta.</p>",
         predict: "Antes de arrastrar: reduce el salto a la mitad. ¿La matriz se hace más alta o más ancha?",
         rebuilt: "la señal reconstruida a partir de la matriz",
         controls: {size: "Tamaño de ventana (N)", overlap: "Superposición", win: "Forma de ventana",
-                   pos: "Posición de la ventana"},
+                   pos: "Dónde está la ventana"},
         options: {
           overlap: {none: "ninguna — salto = N", half: "mitad — salto = N/2", quarter: "tres cuartos — salto = N/4"},
           win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (ninguna)"}
         },
-        readout: (F, T, N, hop, secs, hz, gapped) =>
-          "Una ventana de <b>" + N + "</b> muestras con salto <b>" + hop + "</b> da una matriz " +
-          "<span class=\"shape\">[" + F + ", " + T + "]</span>: " + F + " frecuencias por " + T +
-          " pasos de tiempo. La ventana está en <b>" + secs.toFixed(2) +
-          " s</b>, y la frecuencia más fuerte en ella es <b>" + hz.toFixed(0) + " Hz</b>." +
+        readout: (F, T, N, hop, secs, hz, gapped, padded, overlap) =>
+          "Rellenado con media ventana en cada extremo, el arreglo mide " + padded.toLocaleString("es") +
+          "; una ventana de <b>" + N + "</b> muestras con salto <b>" + hop + "</b> para <b>" + T +
+          "</b> veces dentro de él, y cada parada responde con " + F + " frecuencias: una matriz " +
+          "<span class=\"shape\">[" + F + ", " + T + "]</span>. Las ventanas vecinas comparten <b>" +
+          overlap.toLocaleString("es") + "</b> muestras. La ventana está en <b>" +
+          secs.toFixed(2).replace(".", ",") + " s</b>, y la frecuencia más fuerte en ella es <b>" +
+          hz.toFixed(0) + " Hz</b>." +
           (gapped
             ? " <span class=\"fault\">Esta ventana decae a cero en ambos extremos y nunca se " +
               "superpone, así que los huecos entre ventanas se han perdido: pulsa reproducir y los oirás.</span>"
@@ -233,9 +329,9 @@
         aria: (ctx) => {
           const st = ctx.state.stft, f = frameOf(ctx);
           return "Una forma de onda sobre un espectrograma. La ventana de " + ctx.state.N +
-                 " muestras está en " + (f * ctx.state.hop / ctx.rate).toFixed(2) +
-                 " segundos, y produce la columna " + (f + 1) + " de una matriz de " + st.F +
-                 " por " + st.T + ".";
+                 " muestras está en " + (f * ctx.state.hop / ctx.rate).toFixed(2).replace(".", ",") +
+                 " segundos, superpuesta con sus vecinas, y produce la columna " + (f + 1) +
+                 " de una matriz de " + st.F + " por " + st.T + ".";
         }
       }
     }

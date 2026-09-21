@@ -60,10 +60,15 @@
       Object.assign(ctx.state, {start: 90048, dtype: "float32", v: null});
       slice(ctx);
     },
+    posControl: "start",
+    region(ctx) { const v = ctx.state.v; return {i0: v.i0, i1: v.i0 + v.L}; },
+    animates(ctx) { return ctx.head() >= 0; },
+    playLabel(ctx) { return ctx.copy.whole; },
+
     sync(ctx) {
       // The slider's range is the array's: a shorter file the reader brought
       // has fewer places to stand.
-      const input = document.getElementById("c-start");
+      const input = ctx.control("start");
       const max = Math.max(0, ctx.signal.length - SHOW);
       if (input && Number(input.max) !== max) input.max = String(max);
       if (ctx.state.start > max) ctx.state.start = max;
@@ -100,10 +105,12 @@
         concept: "A one-dimensional tensor is a list of numbers with a length and a dtype: how many " +
                  "there are, and how many bytes each one takes. Nothing about a sound is left once " +
                  "those two facts and the numbers themselves are written down.",
-        b: "Twelve of the numbers, with their values under them, and a slider that walks along all " +
-           "237 568 of them. Switch the dtype to int16 and the same beads show the integers the file " +
-           "stores; float32 is what a library hands you after dividing by 32 768. Same bytes, read " +
-           "two ways — and the readout says what each way costs.",
+        b: "<p>Twelve of the numbers, with their values written under them, and a slider that walks " +
+           "along all 237 568. This is the whole of what a recording is by the time a library has " +
+           "it: a length, a dtype, and the numbers.</p>" +
+           "<p>Switch the dtype to int16 and the same beads show the integers the file actually " +
+           "stores; float32 is what you are handed after dividing by 32 768. Same sound, same beads, " +
+           "twice the bytes — which is the arithmetic in the box below.</p>",
         predict: "Before you switch: how many bytes is 4.95 s of int16?",
         whole: "the whole recording",
         controls: {start: "First index shown", dtype: "dtype"},
@@ -127,10 +134,13 @@
         concept: "Un tensor de una dimensión es una lista de números con una longitud y un dtype: " +
                  "cuántos hay, y cuántos bytes ocupa cada uno. De un sonido no queda nada más una vez " +
                  "escritos esos dos datos y los propios números.",
-        b: "Doce de los números, con sus valores debajo, y un deslizador que recorre los " +
-           "237 568. Cambia el dtype a int16 y las mismas cuentas muestran los enteros que guarda el " +
-           "archivo; float32 es lo que una biblioteca te entrega tras dividir entre 32 768. Los " +
-           "mismos bytes, leídos de dos maneras, y la lectura dice lo que cuesta cada una.",
+        b: "<p>Doce de los números, con sus valores escritos debajo, y un deslizador que recorre los " +
+           "237 568. Esto es todo lo que una grabación es cuando una biblioteca la tiene: una " +
+           "longitud, un dtype y los números.</p>" +
+           "<p>Cambia el dtype a int16 y las mismas cuentas muestran los enteros que el archivo " +
+           "guarda de verdad; float32 es lo que te entregan tras dividir entre 32 768. El mismo " +
+           "sonido, las mismas cuentas, el doble de bytes: esa es la aritmética de la caja de " +
+           "abajo.</p>",
         predict: "Antes de cambiar: ¿cuántos bytes son 4,95 s en int16?",
         whole: "la grabación entera",
         controls: {start: "Primer índice mostrado", dtype: "dtype"},
