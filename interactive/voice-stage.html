@@ -66,10 +66,15 @@
   }
 
   /* Which recording is on the stage: one of the three built in, or a file the
-     reader brought. The file is decoded in the page and goes nowhere. */
+     reader brought. The file is decoded in the page and goes nowhere. It sits
+     in the transport, on the line under the buttons: `flex-basis: 100%` puts
+     it there deliberately, because the select and the drop zone together are
+     wider than whatever is left of the row after a play label that is a whole
+     sentence on some scenes -- and a cluster that shares the line at one
+     window width and wraps at the next moves under the reader's pointer. */
   .source {
     display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center;
-    margin: 1rem 0 0; font-size: 0.86rem;
+    flex-basis: 100%; margin: 0; font-size: 0.86rem;
   }
   .source label { font-weight: 600; }
   .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
@@ -224,24 +229,6 @@
     <p id="intro"></p>
   </header>
 
-  <div class="source" id="source">
-    <label for="builtin" id="builtin-label"></label>
-    <select id="builtin" autocomplete="off">
-      <option value="voice"></option>
-      <option value="beat"></option>
-      <option value="tone"></option>
-      <!-- Not in the list: it is what the select *shows* once a reader has
-           dropped a file, so the control names what is loaded rather than
-           going blank on a value that matches no option. -->
-      <option value="file" hidden></option>
-    </select>
-    <label class="drop" id="drop" for="file">
-      <span id="drop-text"></span>
-      <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac">
-    </label>
-    <span class="sig" id="signame"></span>
-  </div>
-
   <div class="two-pane">
 
     <!-- One section per scene, in reading order. Each carries its own
@@ -373,6 +360,28 @@
         <button type="button" class="primary" id="play"></button>
         <button type="button" id="stop"></button>
         <span class="state" id="playstate"></span>
+
+        <!-- Which recording, with the button that plays it. It was at the top
+             of the page, a screen and a half above the transport once a reader
+             had scrolled into the sections, so changing the recording meant
+             leaving the picture to do it. -->
+        <div class="source" id="source">
+          <label for="builtin" id="builtin-label"></label>
+          <select id="builtin" autocomplete="off">
+            <option value="voice"></option>
+            <option value="beat"></option>
+            <option value="tone"></option>
+            <!-- Not in the list: it is what the select *shows* once a reader
+                 has dropped a file, so the control names what is loaded
+                 rather than going blank on a value that matches no option. -->
+            <option value="file" hidden></option>
+          </select>
+          <label class="drop" id="drop" for="file">
+            <span id="drop-text"></span>
+            <input type="file" id="file" accept="audio/*,.mp3,.wav,.m4a,.ogg,.flac">
+          </label>
+          <span class="sig" id="signame"></span>
+        </div>
       </div>
 
       <div class="stagebar">
