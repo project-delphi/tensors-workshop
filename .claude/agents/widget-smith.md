@@ -4,7 +4,7 @@ description: "Builds and maintains the four standalone widgets under `interactiv
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 effort: medium
-maxTurns: 80
+maxTurns: 200
 omitClaudeMd: true
 ---
 
@@ -169,6 +169,13 @@ uv run --group site python scripts/check_links.py
 `check_navigation.cjs` reads the **rendered** `docs/`, so render first; it needs
 `npm ci` and `npx playwright install chromium` once. `check_links.py` is what
 catches a `repo.widgets` file missing from `docs/`.
+
+**Commit before you start that loop.** `npm test` is seconds; the render and
+the browser check are minutes each, and a round of them plus the fixes they
+turn up is the most turn-expensive thing you do. Get the work committed while
+it is cheap to do so, then verify and commit again. Uncommitted work is
+stranded if you run out of turns, and a committed partial port that you
+describe honestly is worth far more than a full one nobody can see.
 
 Send each run to a file in the scratchpad and print its last 20 lines; read
 further only on failure. Expect `git status` to stay clean of `docs/` — it is
