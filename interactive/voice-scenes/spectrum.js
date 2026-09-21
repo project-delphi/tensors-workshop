@@ -32,11 +32,38 @@
       s.synthK = -1;
     }
     // The rebuild is only recomputed when k moves, not on every repaint.
-    const k = Math.min(s.k, (N >> 1) + 1);
+    // The slider reaches every bin the transform kept, because the scene's
+    // claim is that the frame comes back exactly -- and it only does at
+    // k = N/2 + 1. At 64 of 513 the rebuild carries 63% of the energy and
+    // never lands on the frame, which made the body copy a promise the
+    // control could not keep.
+    const F = (N >> 1) + 1;
+    const input = ctx.control("k");
+    if (input && Number(input.max) !== F) input.max = String(F);
+    if (s.k > F) s.k = F;
+    const k = Math.min(s.k, F);
     if (s.synthK !== k) {
       s.synth = ctx.AC.synthTopK(s.sp, k);
       s.synthK = k;
       s.kept = new Set(s.synth.bins);
+      // How far the rebuild still is from the frame, as a fraction of the
+      // frame's own peak: the number behind "until the line lies on the
+      // yellow one", and it reaches 0 only when every bin is kept.
+      let err = 0, pk = 1e-12;
+      for (let i = 0; i < N; i++) {
+        err = Math.max(err, Math.abs(s.synth.samples[i] - s.f.tapered[i]));
+        pk = Math.max(pk, Math.abs(s.f.tapered[i]));
+      }
+      s.err = err / pk;
+    }
+    // The loudest bin, skipping DC: a constant offset is not a frequency a
+    // reader is looking for, and the stage and the readout used to scan from
+    // different bins and could name two different peaks on one picture.
+    if (s.peakKey !== s.key) {
+      s.peakKey = s.key;
+      let peak = 0;
+      for (let f = 1; f < (N >> 1) + 1; f++) if (s.sp.mag[f] > s.sp.mag[peak]) peak = f;
+      s.peak = peak;
       // The mirror partner of every kept bin is kept too, and the picture
       // says so: it is the same number, on the other side.
       for (const f of s.synth.bins) if (f > 0 && f < N - f) s.kept.add(N - f);
@@ -51,8 +78,9 @@
     controls: [
       {id: "size", type: "range", min: 0, max: 3, step: 1,
        fmt: (v, ctx) => SIZES[v] + " → " + ((ctx.rate / SIZES[v]).toFixed(1)) + " Hz a bin"},
-      {id: "k", type: "range", min: 1, max: 64, step: 1,
-       fmt: (v, ctx) => ctx.copy.kOf(v)},
+      // max is re-set from the window size in build(): 513 bins at N = 1024.
+      {id: "k", type: "range", min: 1, max: 513, step: 1,
+       fmt: (v, ctx) => ctx.copy.kOf(Math.min(v, ((ctx.state.N || 1024) >> 1) + 1))},
       {id: "win", type: "select", options: ["hann", "hamming", "rect"]},
       {id: "pos", type: "range", min: 0, max: 1000, step: 1,
        fmt: (v, ctx) => ctx.state.i0 === undefined ? "" : (ctx.state.i0 / ctx.rate).toFixed(3) + " s"}
@@ -64,6 +92,9 @@
 
     region(ctx) { return {i0: ctx.state.i0, i1: ctx.state.i0 + ctx.state.N}; },
     animates(ctx) { return ctx.head() >= 0; },
+    // Play loops this one frame rather than the recording, so the strip
+    // under the stage must not draw a playhead running along the whole clip.
+    loopAudio: true,
     playLabel(ctx) { return ctx.copy.playK(ctx.state.synthK); },
 
     draw(ctx) {
@@ -99,13 +130,15 @@
 
       // All N bins. The first F are the answer; the rest are the same numbers
       // read backwards, and the transform drops them.
-      const peakF = K.bars(g, s.sp.mag, F, {x: L, y: specY, w: pw, h: specH}, {
+      K.bars(g, s.sp.mag, F, {x: L, y: specY, w: pw, h: specH}, {
         floorDb: -70,
         colour: K.css("--v-axis"),
         mirrorColour: K.css("--stage-mute"),
         keptColour: K.css("--v-out"),
         kept: s.kept
       });
+
+      const peakF = s.peak;
 
       // The fold: where the one-sided transform stops.
       const foldX = L + (F / N) * pw;
@@ -162,8 +195,7 @@
     readout(ctx) {
       const s = ctx.state, N = s.N, F = (N >> 1) + 1;
       const binHz = ctx.rate / N;
-      let peakF = 0;
-      for (let f = 1; f < F; f++) if (s.sp.mag[f] > s.sp.mag[peakF]) peakF = f;
+      const peakF = s.peak;
       // How much of the frame's energy the k kept components carry.
       let all = 0, kept = 0;
       for (let f = 0; f < F; f++) {
@@ -173,11 +205,11 @@
       }
       const share = all > 0 ? kept / all : 0;
       return {
-        html: ctx.copy.readout(N, F, binHz, peakF, peakF * binHz, s.synthK, share, ctx.rate / 2),
+        html: ctx.copy.readout(N, F, binHz, peakF, peakF * binHz, s.synthK, share, ctx.rate / 2, s.err),
         data: {
           n: N, bins: F, binhz: binHz.toFixed(3), peakbin: peakF,
           peakhz: (peakF * binHz).toFixed(1), k: s.synthK,
-          share: (share * 100).toFixed(1), win: s.win, i0: s.i0
+          share: (share * 100).toFixed(1), err: s.err.toFixed(3), win: s.win, i0: s.i0
         }
       };
     },
@@ -193,9 +225,10 @@
                  "the same N numbers go in and come out, in a different coordinate system.",
         b: "<p>Take k down to 1 and press play: one sinusoid, and you can hear which one — the bar " +
            "lit purple in the picture, and the frequency in the box below. Raise k and the others " +
-           "arrive one at a time until the purple line over the frame lies on the yellow one and the " +
-           "sound is the frame again. Nothing was approximated; the components were simply summed " +
-           "back up.</p>" +
+           "arrive one at a time. At 513 — every bin the transform kept — the purple line lies exactly " +
+           "on the yellow one and the sound is the frame again: nothing was approximated, the " +
+           "components were simply summed back up. The box below counts how far off the rebuild " +
+           "still is, and it reaches zero only there.</p>" +
            "<p>The grey half of the picture is the same answer twice. A recording is a list of real " +
            "numbers, and the transform of real numbers is mirror-symmetric: the bar at 20 kHz is the " +
            "bar at 4 kHz reflected, carrying no new information. So only the first half plus one is " +
@@ -210,13 +243,16 @@
         controls: {size: "Window size (N)", k: "Components to rebuild from (k)",
                    win: "Window shape", pos: "Where the frame is cut"},
         options: {win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (no taper)"}},
-        readout: (N, F, binHz, peakBin, peakHz, k, share, nyq) =>
+        readout: (N, F, binHz, peakBin, peakHz, k, share, nyq, err) =>
           "A frame of <b>" + N.toLocaleString("en") + "</b> samples gives <b>" + N.toLocaleString("en") +
           "</b> bins from 0 to " + (nyq * 2 / 1000).toFixed(0) + " kHz, one every <b>" +
           binHz.toFixed(1) + " Hz</b> — but the top half mirrors the bottom, so <b>" + F +
           "</b> are kept, up to " + (nyq / 1000).toFixed(0) + " kHz. The loudest is bin <b>" + peakBin +
-          "</b>, which is <b>" + peakHz.toFixed(0) + " Hz</b>. The <b>" + k + "</b> strongest carry " +
-          (share * 100).toFixed(1) + "% of this frame's energy.",
+          "</b>, which is <b>" + peakHz.toFixed(0) + " Hz</b>. The <b>" + k + "</b> strongest carry <b>" +
+          (share * 100).toFixed(1) + "%</b> of this frame's energy, and the rebuilt line is still " +
+          (err < 0.0005
+            ? "<b>exactly the frame</b>: every bin is kept, so nothing was approximated."
+            : "<b>" + (err * 100).toFixed(1) + "%</b> of the frame's own height away from it."),
         aria: (ctx) => {
           const s = ctx.state, F = (s.N >> 1) + 1;
           return "A frame of " + s.N + " samples above the magnitudes of its " + s.N +
@@ -234,9 +270,10 @@
                  "pierde nada: entran y salen los mismos N números, en otro sistema de coordenadas.",
         b: "<p>Baja k a 1 y pulsa reproducir: una sinusoide, y puedes oír cuál — la barra encendida " +
            "en morado en la imagen, y la frecuencia en la caja de abajo. Sube k y las demás van " +
-           "llegando de una en una hasta que la línea morada sobre el marco se apoya en la amarilla " +
-           "y el sonido vuelve a ser el marco. No se aproximó nada; simplemente se volvieron a sumar " +
-           "las componentes.</p>" +
+           "llegando de una en una. En 513 —todos los bins que guardó la transformada— la línea morada " +
+           "se apoya exactamente sobre la amarilla y el sonido vuelve a ser el marco: no se aproximó " +
+           "nada, simplemente se volvieron a sumar las componentes. La caja de abajo cuenta cuánto le " +
+           "falta a la reconstrucción, y solo llega a cero ahí.</p>" +
            "<p>La mitad gris de la imagen es la misma respuesta dos veces. Una grabación es una lista " +
            "de números reales, y la transformada de números reales es simétrica respecto al centro: " +
            "la barra de 20 kHz es la de 4 kHz reflejada, y no aporta nada nuevo. Por eso solo se " +
@@ -251,14 +288,17 @@
         controls: {size: "Tamaño de ventana (N)", k: "Componentes para reconstruir (k)",
                    win: "Forma de ventana", pos: "Dónde se corta el marco"},
         options: {win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (sin perfil)"}},
-        readout: (N, F, binHz, peakBin, peakHz, k, share, nyq) =>
+        readout: (N, F, binHz, peakBin, peakHz, k, share, nyq, err) =>
           "Un marco de <b>" + N.toLocaleString("es") + "</b> muestras da <b>" + N.toLocaleString("es") +
           "</b> bins de 0 a " + (nyq * 2 / 1000).toFixed(0) + " kHz, uno cada <b>" +
           binHz.toFixed(1).replace(".", ",") + " Hz</b>, pero la mitad de arriba refleja la de abajo, " +
           "así que se guardan <b>" + F + "</b>, hasta " + (nyq / 1000).toFixed(0) + " kHz. El más " +
           "fuerte es el bin <b>" + peakBin + "</b>, que son <b>" + peakHz.toFixed(0) + " Hz</b>. Las <b>" +
-          k + "</b> más fuertes llevan el " + (share * 100).toFixed(1).replace(".", ",") +
-          " % de la energía de este marco.",
+          k + "</b> más fuertes llevan el <b>" + (share * 100).toFixed(1).replace(".", ",") +
+          " %</b> de la energía de este marco, y la línea reconstruida todavía está " +
+          (err < 0.0005
+            ? "<b>exactamente sobre el marco</b>: se guardan todos los bins, así que no se aproximó nada."
+            : "a <b>" + (err * 100).toFixed(1).replace(".", ",") + " %</b> de la altura del propio marco."),
         aria: (ctx) => {
           const s = ctx.state, F = (s.N >> 1) + 1;
           return "Un marco de " + s.N + " muestras sobre las magnitudes de sus " + s.N +

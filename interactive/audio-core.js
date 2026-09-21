@@ -711,11 +711,13 @@
     return out;
   }
 
-  // Linear interpolation, k points per original interval, for the far view
-  // of the waveform: a curve threaded through the samples so that from a
-  // distance it reads as one continuous line. It is drawing, not signal
-  // processing -- nothing plays it -- and it is here so the twin canvas and
-  // the three.js tube read the same points.
+  // Linear interpolation, k points per original interval. It is drawing
+  // rather than signal processing -- nothing plays it. No scene threads its
+  // curve through this today: the three.js path builds a spline over the
+  // samples and the 2-D twin joins them directly, so both already agree
+  // without it. Kept, and pinned, because it is the one honest way to draw a
+  // sampled signal as a continuous line, and the next scene that needs one
+  // should not write a second copy.
   function upsample(x, k) {
     if (!(k >= 1) || k !== Math.floor(k)) throw new Error("upsample: k must be a whole number >= 1");
     if (x.length === 0) return new Float64Array(0);

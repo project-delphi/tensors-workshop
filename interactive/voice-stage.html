@@ -226,6 +226,10 @@
       <option value="voice"></option>
       <option value="beat"></option>
       <option value="tone"></option>
+      <!-- Not in the list: it is what the select *shows* once a reader has
+           dropped a file, so the control names what is loaded rather than
+           going blank on a value that matches no option. -->
+      <option value="file" hidden></option>
     </select>
     <label class="drop" id="drop" for="file">
       <span id="drop-text"></span>
@@ -427,7 +431,7 @@
              "picture says what is on the stage, then asks you to predict before you touch a control; " +
              "the box under the controls is the answer, with this recording's own numbers in it.",
       builtin: "Recording", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
-      builtinTone: "a 440 Hz tone (4.9 s)",
+      builtinTone: "a 440 Hz tone (4.9 s)", builtinFile: "your own file",
       drop: "Drop an audio file here, or choose one",
       sigVoice: "voice.wav · 48 kHz · 4.949 s", sigBeat: "beat.wav · 48 kHz · 4.949 s",
       sigTone: "a 440 Hz sine · synthesised here · 48 kHz · 4.949 s",
@@ -484,7 +488,7 @@
              "y luego te pide una predicción antes de tocar un control; la caja bajo los controles es " +
              "la respuesta, con los números de esta grabación.",
       builtin: "Grabación", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
-      builtinTone: "un tono de 440 Hz (4,9 s)",
+      builtinTone: "un tono de 440 Hz (4,9 s)", builtinFile: "tu propio archivo",
       drop: "Suelta un archivo de audio aquí, o elige uno",
       sigVoice: "voice.wav · 48 kHz · 4,949 s", sigBeat: "beat.wav · 48 kHz · 4,949 s",
       sigTone: "un seno de 440 Hz · sintetizado aquí · 48 kHz · 4,949 s",
@@ -721,7 +725,7 @@
         }
         if (n < 4096) throw new Error("too short");
         useSignal(out, RATE, "file", T.sigFile(file.name, n / RATE, ab.length > n));
-        $("builtin").value = "";
+        $("builtin").value = "file";
         resignal();
       })
       .catch(() => { $("playstate").textContent = T.decodeFailed; });
@@ -747,9 +751,14 @@
   // The pausable clock. Wall time would jump on resume, so every scene that
   // moves takes its time from here. Held by the button, by a pointer over a
   // three.js scene, by keyboard focus on it, and by a hidden tab.
-  const motion = {manual: reduceMotion, hover: false, focus: false, held: false, heldAt: 0, offset: 0};
+  const motion = {manual: reduceMotion, over: false, focus: false, held: false, heldAt: 0, offset: 0};
   const now = () => (motion.held ? motion.heldAt : performance.now()) - motion.offset;
   function refreshMotion() {
+    // Only a three.js picture is held by a resting pointer, and in a
+    // scroller the picture changes under one: derived here rather than
+    // latched at pointerenter, which left the clock held on a flat scene
+    // and skipped its entrance.
+    motion.hover = motion.over && !!active.gl;
     const hold = motion.manual || motion.hover || motion.focus || document.hidden;
     const t = performance.now();
     if (hold && !motion.held) motion.heldAt = t;
@@ -1009,7 +1018,10 @@
     tg.setTransform(dpr, 0, 0, dpr, 0, 0);
     const ctx = contextFor(active);
     const region = active.region ? active.region(ctx) : null;
-    const head = audio.head();
+    // A scene that loops one frame is not playing the recording, so a
+    // playhead sweeping this strip would point at seconds of audio nobody
+    // is hearing. Those scenes draw their own, across the frame.
+    const head = active.loopAudio ? -1 : audio.head();
     K.timeline(tg, strip, signal.samples, signal.source + ":" + active.id,
                {x: 0, y: 0, w: w, h: h}, region,
                head >= 0 ? head * signal.rate : -1,
@@ -1349,8 +1361,8 @@
   // dolly, hover and focus to hold the drift. Never bound in embed mode.
   function bindStage() {
     let live = null;
-    stage.addEventListener("pointerenter", () => { motion.hover = !!active.gl; refreshMotion(); });
-    stage.addEventListener("pointerleave", () => { motion.hover = false; refreshMotion(); });
+    stage.addEventListener("pointerenter", () => { motion.over = true; refreshMotion(); });
+    stage.addEventListener("pointerleave", () => { motion.over = false; refreshMotion(); });
     stage.addEventListener("focusin", () => { motion.focus = stage.matches(":focus-visible") && !!active.gl; refreshMotion(); });
     stage.addEventListener("focusout", () => { motion.focus = false; refreshMotion(); });
     document.addEventListener("visibilitychange", refreshMotion);
@@ -1489,7 +1501,7 @@
     strip.key = null;
     strip.dirty = true;
     changed();
-    refreshDrift();
+    refreshMotion();
     if (scroll) {
       $("step-" + scene.id).scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
     }
@@ -1532,6 +1544,7 @@
   $("builtin").options[0].textContent = T.builtinVoice;
   $("builtin").options[1].textContent = T.builtinBeat;
   $("builtin").options[2].textContent = T.builtinTone;
+  $("builtin").options[3].textContent = T.builtinFile;
   $("drop-text").textContent = T.drop;
   $("reset").textContent = T.reset;
   $("home").textContent = T.home;

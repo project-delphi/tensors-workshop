@@ -51,6 +51,9 @@
 
     region(ctx) { return {i0: ctx.state.i0, i1: ctx.state.i0 + ctx.state.N}; },
     animates(ctx) { return ctx.head() >= 0; },
+    // Play loops this one frame rather than the recording, so the strip
+    // under the stage must not draw a playhead running along the whole clip.
+    loopAudio: true,
     playLabel(ctx) { return ctx.copy.playFrame(ctx.copy.options.win[ctx.state.win]); },
 
     draw(ctx) {
