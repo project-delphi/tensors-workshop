@@ -457,6 +457,12 @@ async function audit(page, where) {
         const wide = await stage.getAttribute('data-shape');
         assert.equal(wide.split(',')[0], '513', `${where}: F should not move with the hop`);
         assert(Number(wide.split(',')[1]) > 900, `${where}: a quarter hop should roughly double T, got ${wide}`);
+        // The claim card says the same arrow in numbers, and it is the scene's
+        // to write: a card still reading (513, 465) here would contradict the
+        // readout directly under it.
+        assert.equal(await page.locator('#claim').textContent(),
+          `x[n] \u2192 X[f, t],  (237568,) \u2192 (${wide.replace(',', ', ')})`,
+          `${where}: the claim card did not follow the hop`);
         await page.selectOption('#c-window-overlap', 'half');
 
         // A tapered window that never overlaps leaves gaps the inverse cannot
@@ -515,6 +521,9 @@ async function audit(page, where) {
         // far apart the bins are, and that the mirror half is dropped.
         await voiceScene(page, 'frame');
         assert.equal((await data()).n, '1024');
+        assert.equal(await page.locator('#claim').textContent(),
+          'x\u209c[n] = x[t\u00b7H + n] \u00b7 w[n],  x\u209c.shape = (1024,)',
+          `${where}: the frame's claim card is not in numbers`);
         assert.equal((await data()).ms, '21.3', `${where}: 1024 samples at 48 kHz`);
         assert.equal((await data()).reps, '47', `${where}: a 1024-sample frame repeats 47 times a second`);
         const tapered = Number((await data()).ends);

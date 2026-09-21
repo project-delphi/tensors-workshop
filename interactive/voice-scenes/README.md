@@ -60,7 +60,9 @@ VoiceScenes.register({
   sync(ctx),            // optional: derive from the controls. Called before
                         // readout() and before draw(), so both see the same state
   draw(ctx),            // paint the 2-D canvas
-  readout(ctx),         // -> {html, data}; data becomes #stage data-* for the check
+  readout(ctx),         // -> {html, data, claim?}; data becomes #stage data-*
+                        // for the check, and claim replaces the copy's claim
+                        // on the title card when the scene can say it in numbers
   region(ctx),          // optional: -> {i0, i1}, the samples this picture is
                         // looking at, banded on the timeline strip
   audio(ctx),           // optional: -> {samples, what}; what the play button plays
@@ -112,6 +114,11 @@ into the clip while it plays, or -1.
 - **The readout is written from the controls, never from an animation.** It is
   rewritten when something changes, not per frame — per frame destroys a
   reader's selection and makes the browser check race the picture.
+- **A claim card in numbers is the readout's, not the copy's.** `copy.claim` is
+  the scene's formula and is what the card shows until the recording has
+  loaded. A scene whose shape is a control's to move — the frame's `(N,)`, the
+  hop scene's `(237568,) → (513, 465)` — returns a `claim` from `readout()`
+  instead, so the card cannot sit there contradicting the readout under it.
 - **Sound is never automatic, and never stale.** An `AudioContext` is built on
   the first press of a transport button and never before, which is both the
   autoplay policy and the reason the hero embed can exist at all. Nothing plays

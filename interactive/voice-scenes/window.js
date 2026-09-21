@@ -229,6 +229,9 @@
       const gapped = s.win !== "rect" && s.hop >= s.N;
       return {
         html: ctx.copy.readout(st.F, st.T, s.N, s.hop, secs, hz, gapped, s.shape.padded, overlap),
+        // The whole point of this picture, said in shapes: a control moves and
+        // the arrow moves with it, so the card cannot go stale under the hop.
+        claim: "x[n] → X[f, t],  (" + ctx.signal.length + ",) → (" + st.F + ", " + st.T + ")",
         data: {
           shape: st.F + "," + st.T,
           n: s.N,

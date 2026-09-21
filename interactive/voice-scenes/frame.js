@@ -159,6 +159,7 @@
       const ends = Math.abs(s.f.tapered[0]) + Math.abs(s.f.tapered[N - 1]);
       return {
         html: ctx.copy.readout(N, ms, s.i0, s.i0 / ctx.rate, s.win, dimmed, reps, ends),
+        claim: "xₜ[n] = x[t·H + n] · w[n],  xₜ.shape = (" + N + ",)",
         data: {
           n: N, win: s.win, i0: s.i0, ms: ms.toFixed(1),
           dimmed: dimmed, reps: reps, ends: ends.toExponential(2)
@@ -171,7 +172,7 @@
         tab: "One window",
         k: "The window · Appendix E",
         h: "One window is N numbers cut out of the array",
-        claim: "xₜ[n] = x[t·H + n] · w[n]",
+        claim: "xₜ[n] = x[t·H + n] · w[n],  xₜ.shape = (N,)",
         concept: "The transform is not given the recording. It is given a short run of consecutive " +
                  "samples — a frame — multiplied by a window: a taper that is zero at both ends and " +
                  "one in the middle. The frame is what everything after this point operates on.",
@@ -207,7 +208,7 @@
         tab: "Una ventana",
         k: "La ventana · Apéndice E",
         h: "Una ventana son N números recortados del arreglo",
-        claim: "xₜ[n] = x[t·H + n] · w[n]",
+        claim: "xₜ[n] = x[t·H + n] · w[n],  xₜ.shape = (N,)",
         concept: "A la transformada no se le da la grabación. Se le da una tirada corta de muestras " +
                  "consecutivas —un marco— multiplicada por una ventana: un perfil que vale cero en " +
                  "los dos extremos y uno en el centro. El marco es sobre lo que opera todo lo que " +
