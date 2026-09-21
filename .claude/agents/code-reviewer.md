@@ -98,8 +98,13 @@ check will catch for you:
   `<style>` instead of living in `widget-chrome.css`. Every colour on text
   clears 4.5:1 per theme; an axe finding in a widget is real, never something
   to allowlist.
-- **A step linked by number.** `#step-6` instead of `#portal` or `#eigen`, in a
-  widget, a notebook or either handbook. The number moves on a reorder.
+- **A step linked by number from outside the widget.** `#step-6` instead of
+  `#portal` or `#eigen` in a notebook, either handbook, a `.qmd` page or a
+  widget's own prose — the number moves on a reorder, the name does not. This
+  is about links a reader follows. *Inside* a widget the numbered ids are the
+  contract: `id="step-1".."step-8"`, `step: "6"` and `section: "step-6"` in a
+  scene's registration, `#read-1..8`, and `check_navigation.cjs` navigating to
+  `#step-4`. Those are correct — do not flag them.
 - **A new scene missing one of its four edits**: the scene file, the
   `<section>`, the `<script src>` in load order, and the `repo.widgets` line in
   `_variables.yml`. For the vendored addons `repo.widgets` is the *only* guard
@@ -107,9 +112,10 @@ check will catch for you:
 - **Arithmetic outside a core module**, or added to one with no test. The core
   modules are pinned by `npm test`; a number computed in the page is a number
   nothing checks. Same for a `data-*` written from an eased frame rather than
-  the slider's target, and for a `waitForTimeout` added to
+  the slider's target, and for a `waitForTimeout` **added or changed** in
   `check_navigation.cjs` where a `waitForFunction` belongs — that one passes on
-  a Mac and fails on the Linux runner.
+  a Mac and fails on the Linux runner. The twenty-odd fixed waits already in
+  that file are not a finding; a new one feeding an assertion is.
 
 **10. Ordinary correctness.** The bug that makes the code do the wrong thing for
 some real input. Generators must stay deterministic pure Python — the CI gate is

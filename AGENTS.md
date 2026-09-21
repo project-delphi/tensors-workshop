@@ -157,11 +157,11 @@ generator nor a byte-exact gate -- which is why it has a section of its own
 rather than a corner of the one above. Nothing regenerates these files, so
 nothing catches a mistake in them by comparing bytes; what guards them
 instead is `npm test` over the core modules and `check_navigation.cjs` over
-the rendered pages, both at the end of this section. Four HTML widgets -- the section 03
-broadcasting simulator, the section 04 reshape & transpose visualizer, the
-sections 07/09 projection & SVD stage, and the sections 00/04/09 audio
-tensor stage -- each with EN/ES copy tables, `?lang=`, and its section's accent
-adjusted per theme to clear 4.5:1. **The frame is shared**:
+the rendered pages, both under `## Commands`. Four HTML widgets -- the
+section 03 broadcasting simulator, the section 04 reshape & transpose
+visualizer, the sections 07/09 projection & SVD stage, and the sections
+00/04/09 audio tensor stage -- each with EN/ES copy tables, `?lang=`, and its
+section's accent adjusted per theme to clear 4.5:1. **The frame is shared**:
 `interactive/widget-chrome.css`, linked first by every page, owns the
 surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the
 site's own palette from `custom.scss`, on light, dark and the hero's navy),
@@ -309,11 +309,14 @@ long line is genuinely the picture.
 **Assert a browser state by polling it, never after a fixed wait.** A
 `waitForTimeout` long enough on this Mac is short on the GitHub Linux runner,
 where the whole check runs slower and a wheel or drag settles later; the
-assertion then reads the pre-gesture value and fails only in CI. Every
-assertion in `check_navigation.cjs` goes through `page.waitForFunction` on the
-`data-*` the widget publishes, with a timeout as the ceiling rather than the
-schedule. `waitForTimeout` is left only where the wait *is* the thing under
-test, such as the visualizer's 0.3 s drift resume.
+assertion then reads the pre-gesture value and fails only in CI. So a new or
+changed assertion in `check_navigation.cjs` goes through `page.waitForFunction`
+on the `data-*` the widget publishes, with a timeout as the ceiling rather than
+the schedule. This is a rule for what you write, not a description of the file:
+about twenty `waitForTimeout` calls are still in there, some of them feeding an
+assertion rather than being the thing under test. Leave a fixed wait only where
+the wait *is* the subject, such as the visualizer's 0.3 s drift resume or the
+reduced-motion check.
 
 ## Which document owns what
 

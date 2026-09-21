@@ -40,9 +40,19 @@ shape of a `register({...})` call, what each `copy` key is for, and the rules
 every scene keeps. They are current and they are detailed — read the one for
 the stage you are working on rather than pattern-matching off a sibling scene.
 
-A new step is four edits, and missing any one of them boots a broken page:
-one scene file, one `<section class="step">` in the page, one `<script src>`
-line in load order, and one `repo.widgets` line in `_variables.yml`.
+A new step is **five** edits:
+
+1. the scene file,
+2. a `<section class="step">` in the page,
+3. a `<script src>` line, in load order,
+4. an empty `<span class="anchor" id="<scene>"></span>` at the top of that
+   section,
+5. a `repo.widgets` line in `_variables.yml`.
+
+Miss 1, 2, 3 or 5 and the page boots broken, so you find out at once. Miss 4
+and it boots fine: `stepOf()` resolves `#portal` without the span, and the
+failure surfaces later as a `check_links.py` anchor failure the first time a
+notebook or handbook links the new name. Every existing step carries one.
 
 ## The split that decides where your code goes
 
@@ -91,10 +101,12 @@ to what the camera holds. `geometry.computeBoundingSphere()` or
 
 **Assert browser state by polling it, never after a fixed wait.** A
 `waitForTimeout` long enough on a Mac is short on the GitHub Linux runner, and
-the assertion then reads the pre-gesture value and fails only in CI. Every
-assertion in `check_navigation.cjs` goes through `page.waitForFunction` on the
-`data-*` the widget publishes, with a timeout as the ceiling rather than the
-schedule. Leave `waitForTimeout` only where the wait *is* the thing under test.
+the assertion then reads the pre-gesture value and fails only in CI. So an
+assertion you add or change in `check_navigation.cjs` goes through
+`page.waitForFunction` on the `data-*` the widget publishes, with a timeout as
+the ceiling rather than the schedule. That is a rule for what you write, not a
+description of the file: about twenty fixed waits are still in there, some of
+them feeding an assertion. Leave one only where the wait *is* the subject.
 
 **A slider seeds the scene, so its own default has to sit on its grid.** The
 scene is built from the control's value; a default that is not reachable from

@@ -14,7 +14,6 @@
       "Bash(uv run --group site python scripts/check_links.py:*)",
       "Bash(uv run --group test python scripts/check_teaching_materials.py:*)",
       "Bash(uv run --group test python -m unittest:*)",
-      "Bash(git diff --check:*)",
       "Bash(gh pr diff:*)",
       "Bash(gh pr list:*)",
       "Bash(gh run view:*)",
