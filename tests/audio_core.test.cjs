@@ -331,3 +331,140 @@ test('Appendix E: the stage reproduces the handbook table from the same recordin
   assert.throws(() => core.retained(sigma, 465, total), /outside the 240 components/);
   assert.throws(() => core.projectRank(s.Z, U, s.F, s.T, l, 465), /outside the 240 components/);
 });
+
+// The opening scenes: fewer measurements a second, each rounded to one of
+// 2^bits levels. What they print is what these pin.
+test('decimation keeps every k-th sample and the hold puts the staircase back', () => {
+  const x = Float64Array.from({length: 23}, (_, i) => Math.sin(i * 0.4));
+  assert.equal(maxAbs(core.hold(core.decimate(x, 1), 1, x.length), x), 0);
+  const y = core.decimate(x, 4);
+  assert.equal(y.length, 6);                         // ceil(23 / 4)
+  assert.deepEqual(Array.from(y), [x[0], x[4], x[8], x[12], x[16], x[20]]);
+  const h = core.hold(y, 4, x.length);
+  assert.equal(h.length, x.length);
+  for (let i = 0; i < x.length; i++) assert.equal(h[i], x[4 * Math.floor(i / 4)]);
+  assert.throws(() => core.decimate(x, 0), /whole number/);
+  assert.throws(() => core.hold(y, 2.5), /whole number/);
+});
+
+test('the far-view curve passes through every sample and halves the gaps', () => {
+  const x = Float64Array.from([0, 1, -1, 0.5]);
+  const u = core.upsample(x, 4);
+  assert.equal(u.length, 13);                        // (4 - 1) * 4 + 1
+  for (let i = 0; i < x.length; i++) assert.equal(u[i * 4], x[i]);
+  assert.equal(u[2], 0.5);                           // halfway from 0 to 1
+  assert.equal(u[6], 0);                             // halfway from 1 to -1
+  assert.equal(core.upsample(new Float64Array(0), 3).length, 0);
+  assert.equal(core.upsample(Float64Array.from([7]), 3)[0], 7);
+});
+
+test('quantisation is mid-tread, clamped, and exact at the bits the WAV stores', () => {
+  const x = Float64Array.from([0, 0.5, -0.5, 0.26, 0.24, 1, -1, 1.5, -1.5]);
+  const q4 = core.quantize(x, 4);
+  assert.equal(q4.levels, 16);
+  assert.equal(q4.step, 1 / 8);
+  // 0.26 * 8 = 2.08 -> 2 -> 0.25; 0.24 * 8 = 1.92 -> 2 -> 0.25.
+  assert.equal(q4.q[3], 0.25);
+  assert.equal(q4.q[4], 0.25);
+  // +1 has no code at 4 bits: the range is -8 .. 7, so it clamps to 7/8.
+  assert.equal(q4.codes[5], 7);
+  assert.equal(q4.q[5], 0.875);
+  assert.equal(q4.codes[6], -8);
+  assert.equal(q4.codes[7], 7, 'out of range clamps rather than wrapping');
+  assert.equal(q4.codes[8], -8);
+  assert.ok(q4.maxErr >= 0.5 && q4.maxErr <= 0.625, `max error ${q4.maxErr}`);
+  assert.throws(() => core.quantize(x, 0), /1 to 24/);
+  assert.throws(() => core.quantize(x, 3.5), /1 to 24/);
+
+  // The recording was 16-bit integers all along: at 16 bits the rounding
+  // changes nothing, and at 4 bits it changes almost everything.
+  const wav = core.decodeWav(fs.readFileSync(WAV));
+  const q16 = core.quantize(wav.samples, 16);
+  assert.equal(maxAbs(q16.q, wav.samples), 0, 'quantize(x, 16) is the identity on a 16-bit WAV');
+  assert.equal(q16.maxErr, 0);
+  assert.ok(maxAbs(core.quantize(wav.samples, 4).q, wav.samples) > 0.01);
+
+  // Fewer bits, lower signal-to-noise ratio, monotonically -- roughly 6 dB a
+  // bit, which is the textbook's number and the readout's claim.
+  let prev = -Infinity;
+  for (const bits of [2, 4, 6, 8, 12]) {
+    const snr = core.snrDb(wav.samples, core.quantize(wav.samples, bits).q);
+    assert.ok(snr > prev, `${bits} bits: ${snr} should exceed ${prev}`);
+    prev = snr;
+  }
+  assert.equal(core.snrDb(wav.samples, q16.q), Infinity, 'no error means an infinite ratio');
+});
+
+test('one frame is N samples from i0, zero past the ends, times the window', () => {
+  const x = Float64Array.from({length: 20}, (_, i) => i + 1);
+  const r = core.frame(x, 16, 8, 'rect');
+  assert.deepEqual(Array.from(r.raw), [17, 18, 19, 20, 0, 0, 0, 0]);
+  assert.deepEqual(Array.from(r.tapered), Array.from(r.raw), 'rectangular changes nothing');
+  const h = core.frame(x, -2, 8, 'hann');
+  assert.deepEqual(Array.from(h.raw), [0, 0, 1, 2, 3, 4, 5, 6]);
+  assert.equal(h.w[0], 0, 'Hann starts at zero');
+  assert.equal(h.tapered[0], 0);
+  assert.ok(Math.abs(h.tapered[4] - 3 * h.w[4]) < 1e-12);
+});
+
+test('the spectrum of a bin-aligned tone peaks at that bin and mirrors above N/2', () => {
+  const N = 64, rate = 6400, bin = 5;
+  const t = core.tone(N, rate, bin * rate / N, 0.5);
+  assert.equal(t.length, N);
+  assert.equal(t[0], 0);
+  const sp = core.spectrum(t);
+  let peak = 0;
+  for (let f = 1; f <= N / 2; f++) if (sp.mag[f] > sp.mag[peak]) peak = f;
+  assert.equal(peak, bin);
+  assert.ok(Math.abs(sp.mag[N - bin] - sp.mag[bin]) < 1e-9, 'the mirror half repeats the first');
+  assert.ok(sp.mag[bin] > 100 * sp.mag[bin + 2], 'a bin-aligned tone does not leak');
+  assert.throws(() => core.spectrum(new Float64Array(100)), /power of two/);
+});
+
+test('the k strongest sinusoids rebuild the frame; all of them rebuild it exactly', () => {
+  const N = 256, rate = 25600;
+  // Two bin-aligned sines, so each lives in exactly one bin.
+  const x = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    x[i] = 0.4 * Math.sin(2 * Math.PI * 7 * i / N) + 0.2 * Math.sin(2 * Math.PI * 30 * i / N + 0.3);
+  }
+  const sp = core.spectrum(x);
+  // With a third component that is not bin-aligned, and so leaks into every
+  // bin, keeping every bin is still the identity.
+  const leaky = Float64Array.from(x, (v, i) => v + 0.05 * Math.cos(i * 0.9));
+  const all = core.synthTopK(core.spectrum(leaky), N / 2 + 1);
+  assert.ok(maxAbs(all.samples, leaky) < 1e-9, 'every bin kept is the identity');
+  const one = core.synthTopK(sp, 1);
+  assert.equal(one.bins[0], 7, 'the strongest component is the 7-cycle sine');
+  const want = Float64Array.from({length: N}, (_, i) => 0.4 * Math.sin(2 * Math.PI * 7 * i / N));
+  assert.ok(maxAbs(one.samples, want) < 1e-9, 'one bin back is that sine alone');
+  assert.equal(core.synthTopK(sp, 2).bins[1], 30);
+  assert.equal(core.synthTopK(sp, 0).bins.length, 0);
+  assert.equal(rate, 25600);
+});
+
+test('a frame on repeat tiles to the length asked for', () => {
+  const seg = Float64Array.from([1, 2, 3]);
+  assert.deepEqual(Array.from(core.loop(seg, 8)), [1, 2, 3, 1, 2, 3, 1, 2]);
+  assert.throws(() => core.loop(new Float64Array(0), 4), /empty/);
+});
+
+test('the built-in tone is not 16-bit integers, so rounding it moves something', () => {
+  const t = core.tone(48000, 48000, 440);
+  let peak = 0;
+  for (let i = 0; i < t.length; i++) peak = Math.max(peak, Math.abs(t[i]));
+  assert.ok(peak <= 0.5 && peak > 0.499);
+  assert.ok(core.quantize(t, 16).maxErr > 0);
+});
+
+test('the shape formula agrees with the transform it describes', () => {
+  for (const [L, N, hop] of [[20000, 1024, 512], [237568, 1024, 512], [237568, 1024, 464], [4096, 256, 64]]) {
+    const st = core.stft(new Float64Array(L), N, hop, 'hann');
+    const sh = core.stftShape(L, N, hop);
+    assert.equal(sh.F, st.F);
+    assert.equal(sh.T, st.T, `L=${L} N=${N} hop=${hop}`);
+    assert.equal(sh.padded, L + N);
+  }
+  assert.equal(core.stftShape(237568, 1024, 512).T, 465, 'the handbook\'s 465 columns');
+  assert.equal(core.stftShape(237568, 1024, 464).T, 513, 'the square matrix');
+});

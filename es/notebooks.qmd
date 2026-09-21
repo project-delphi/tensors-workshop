@@ -48,7 +48,7 @@ se ajusta a mano y después se cambia qué significa «ajustar».
 El 16 conecta las vistas matriciales de PCA con clasificación de cobertura terrestre,
 agrupamiento y PCA tensorial, con la caverna de Platón y tres animaciones.
 
-Tres secciones tienen una herramienta al lado. La sección 03 tiene un
+Cuatro grupos de secciones tienen una herramienta al lado. La sección 03 tiene un
 <a href="../interactive/broadcasting-simulator.html?lang=es">simulador de broadcasting</a>
 que alinea dos formas desde la derecha y recorre el estiramiento paso a paso, y la
 sección 04 tiene un <a href="../interactive/tensor-visualizer.html?lang=es">visualizador de reshape y transpose</a>
@@ -61,6 +61,15 @@ sobre un espacio columna, la recta de soluciones de una matriz ancha, un
 determinante que llega a cero, la SVD como una circunferencia que se convierte
 en una elipse y una esfera en un elipsoide, los autovectores de un campo de
 flechas, y las dos maneras en que falla la aritmética.
+Las secciones 00, 04 y 09 y el apéndice E comparten un
+<a href="../interactive/voice-stage.html?lang=es">escenario del tensor de audio</a>,
+siete imágenes de una misma grabación: el aire medido 48 000 veces por segundo
+y redondeado a 16 bits, el arreglo que queda,
+<a href="../interactive/voice-stage.html?lang=es#frame">una ventana recortada de él</a>,
+<a href="../interactive/voice-stage.html?lang=es#spectrum">la transformada que le pregunta
+a esa ventana qué frecuencias hay en ella</a>, la ventana avanzando para construir
+una matriz de frecuencia por tiempo, y qué le hace una transposición a un sonido.
+Todas se pueden oír.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 

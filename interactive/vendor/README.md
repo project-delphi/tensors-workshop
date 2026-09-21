@@ -203,3 +203,65 @@ and the test allows 0.05.
 `* text=auto eol=lf` to keep CRLF out of the index. A WAV file that some clone
 decided was text would have its bytes rewritten, the SHA-256 above would stop
 matching, and the stage would play noise.
+
+# The reggaeton beat
+
+`beat.wav` is the second recording the voice tensor stage offers, so the
+sampling and quantization scenes have transients to thin out and crunch. It is
+c0mp0s3r's *Reggaeton groove (105 bpm - 4 bars).wav* on Freesound, licensed
+**Creative Commons 0**, cut to the voice's exact length and format.
+
+```
+page     https://freesound.org/people/c0mp0s3r/sounds/177422/
+author   c0mp0s3r (Freesound)
+licence  CC0 1.0 -- https://creativecommons.org/publicdomain/zero/1.0/
+source   https://cdn.freesound.org/previews/177/177422_2326737-hq.mp3
+         (Freesound's public HQ preview of the sound: MP3, 44.1 kHz, stereo,
+         9.143 s; the original 16-bit WAV is served only to a logged-in
+         account, and the preview is what could be fetched and hashed here)
+sha256   959c1cb3b0a1dc31170052c128e7e7725694134f40695d62b75f4f4b89102261  (the preview, as fetched)
+fetched  2026-09-20
+
+vendored as  beat.wav
+sha256       016a2855af17adee393d8bdb6c902d27ec9a742b60061662d638f055d3c6c5ad
+bytes        475180
+format       PCM, mono, 48000 Hz, 16-bit, 237568 samples, 4.949 s
+```
+
+Made from the preview with ffmpeg 8.1.2, once, by hand:
+
+```bash
+ffmpeg -i 177422_2326737-hq.mp3 \
+  -af "aformat=channel_layouts=mono,aresample=48000,atrim=end_sample=237568" \
+  -sample_fmt s16 -c:a pcm_s16le -fflags +bitexact -flags:a +bitexact -map_metadata -1 \
+  interactive/vendor/beat.wav
+```
+
+Verify with:
+
+```bash
+shasum -a 256 interactive/vendor/beat.wav
+```
+
+**Why exactly 237 568 samples.** That is `voice.wav`'s length, and the reshape
+scene's matrix is square only at that length (464 x 512 hops, see the scene).
+Cutting the beat to the same count means every shape on every scene -- the
+(513, 465) spectrogram, the (513, 513) square, the `(237568,)` array -- is the
+same whichever recording is on the stage, and the readouts never carry a second
+set of numbers. The trim is the first 4.949 s of the loop, a little over two of
+its four bars.
+
+**Why the preview and not the original.** Freesound serves the original file
+only to an account, and the vendoring rule here is that the source line names
+what was actually fetched and hashed. The preview is a 185 kbit/s MP3 of the
+same recording, and the stage rounds it to 16 bits and thins it to 3 kHz
+anyway -- the encoding is far below what either scene shows. Swapping in the
+original is welcome: download it, run the same ffmpeg line, and replace the
+`source`, `sha256` and `bytes` lines above with the new ones.
+
+**Why nothing commercial, however short.** A clip of a released record is a
+copyright question on a public repository and a public site, and it does not
+matter that a sampling lesson needs only three seconds of it. The stage's drop
+zone is where such a file goes: decoded in the page, kept in the tab, never
+committed. The `*.wav binary` line in `.gitattributes` covers this file as it
+covers `voice.wav`.

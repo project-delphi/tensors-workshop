@@ -146,7 +146,7 @@ body { overflow-x: clip; }
 .workshop-landing .workshop-hero a:focus-visible { outline: 3px solid #ffc27a; outline-offset: 4px; }
 .hero-visual { min-width: 0; }
 .hero-diagram { display: block; width: 100%; height: auto; }
-/* The right column holds all three widgets live, in their embed mode, behind a
+/* The right column holds all four widgets live, in their embed mode, behind a
    row of tabs. The static diagram stays underneath as the fallback: it is
    what shows with scripting off, under reduced motion, and on a phone, where
    an iframe this size would be too small to read. The tab script adds
@@ -158,7 +158,27 @@ body { overflow-x: clip; }
   .hero-visual.has-js .hero-demos { display: none; }
   .hero-visual.has-js .hero-fallback { display: block; }
 }
-.hero-tabs { display: flex; flex-wrap: wrap; gap: .4rem; margin: 0 0 .6rem; }
+/* The tab row, with the one way out to the full widget at its far end. The
+   link used to be inside each iframe's caption, so it sat wherever that
+   widget's caption put it; here it is one element in one place, and the tab
+   script points it at the open tab's page. */
+.hero-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: .4rem .8rem; margin: 0 0 .6rem; }
+.hero-tabs { display: flex; flex-wrap: wrap; gap: .4rem; }
+.hero-open {
+  display: inline-flex;
+  align-items: center;
+  margin-left: auto;
+  padding: .4rem .85rem;
+  border: 1px solid #93b6d359;
+  border-radius: 999px;
+  color: #d2e6f7;
+  font-size: .82rem;
+  font-weight: 600;
+  line-height: 1.3;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.hero-open:hover { border-color: #6fe0c6; color: #6fe0c6; }
 .hero-tabs button {
   padding: .4rem .85rem;
   border: 1px solid #93b6d359;
@@ -246,18 +266,18 @@ body { overflow-x: clip; }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1rem;
 }
-/* The two interactive widgets, two across rather than the toolkit's three.
+/* The four interactive widgets, in their own grid rather than the toolkit's.
    They are the only live things on the page -- everything in .resource-grid
-   is a document -- and trailing them as cards seven and eight would both read
-   as more of the same and leave a ragged row. They reuse .resource-card, so
-   there is no second card style to keep in step. */
+   is a document -- and trailing them as more toolkit cards would read as more
+   of the same. They reuse .resource-card, so there is no second card style
+   to keep in step. */
 .widget-grid {
   display: grid;
-  // auto-fit rather than a fixed count: with three cards a `repeat(2, ...)`
-  // left the third alone on its own row, and the card is readable down to
-  // about 18rem, which is also what keeps check_navigation.cjs's 390px
-  // no-overflow assertion true without a second breakpoint.
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  // auto-fit rather than a fixed count, with a minimum that gives four cards
+  // two rows of two on the landing's 1120px rather than three and a straggler.
+  // Under 540px the phone rule below takes it to one column, which is what
+  // keeps check_navigation.cjs's 390px no-overflow assertion true.
+  grid-template-columns: repeat(auto-fit, minmax(24rem, 1fr));
   gap: 1rem;
 }
 .resource-card {

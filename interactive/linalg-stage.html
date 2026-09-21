@@ -20,6 +20,7 @@
 }
 </script>
 
+<link rel="stylesheet" href="widget-chrome.css">
 <style>
   /* Computer Modern, vendored (vendor/README.md), for the stage's labels
      only: the look this stage takes is a Manim frame, and its type is most
@@ -36,13 +37,9 @@
     font-weight: 500; font-style: italic; font-display: swap;
   }
 
+  /* The surfaces, type and frame are widget-chrome.css; this page owns its
+     accent and everything on the stage. */
   :root {
-    --bg: #f7f5ef;
-    --ink: #1c1917;
-    --ink-mute: #57534e;
-    --panel: #fffcf7;
-    --sunk: #ebe6dc;
-    --line: #d6d0c4;
     /* Sections 07 and 09 share this widget. Its centre of gravity is
        conditioning and the SVD, which is 09, but 07 is where the projection
        is taught and comes first, so the accent is 07's teal
@@ -55,7 +52,6 @@
        it) to a shade that clears 5.1 there and 5.8 on the page. */
     --accent: #0e6b63;
     --on-accent: #ffffff;
-    --fault: #b3261e;
 
     /* The stage is black in every theme. It was dark-per-theme; it is black
        now because the look it takes is a Manim frame, and a frame is a picture
@@ -64,35 +60,18 @@
        two colours to measure, and invisible, which is the chipless look. */
     --stage: #000000;
     --stage-chip: #000000;
-
-    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
-    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
     --stage-serif: "CMU Serif", "Latin Modern Roman", "Times New Roman", Times, serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="navy"]) {
-      --bg: #1c1917;
-      --ink: #f5f0e8;
-      --ink-mute: #a8a29e;
-      --panel: #292524;
-      --sunk: #1c1917;
-      --line: #44403c;
       --accent: #2dd4bf;
       --on-accent: #1c1917;
-      --fault: #ff8a80;
     }
   }
-  /* The homepage hero's navy band, so an embed reads as part of it. */
+  /* On the homepage hero's navy band. */
   :root[data-theme="navy"] {
-    --bg: #0f2740;
-    --ink: #e7f0f8;
-    --ink-mute: #a3bdd4;
-    --panel: #12324a;
-    --sunk: #0b2236;
-    --line: #2a4d68;
     --accent: #5eead4;
     --on-accent: #06202f;
-    --fault: #ff8a80;
   }
 
   /* Ink *on the stage*. One set for all three themes, because the stage is
@@ -110,14 +89,6 @@
     --v-res: #fc6c85;    /* the residual, and anything that has gone wrong */
     --v-basis: #83c167;  /* the columns of X, the right singular vectors, eigenvectors */
   }
-
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
-  a { color: var(--accent); }
-  .wrap { max-width: 96rem; margin: 0 auto; padding: 1.25rem 1.25rem 4rem; }
-  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
-  header p { max-width: 44rem; color: var(--ink-mute); overflow-wrap: break-word; }
 
   /* align-items:start is load-bearing. The grid default stretches the item to
      full height, and position:sticky then has nothing left to stick to --
@@ -242,18 +213,6 @@
   #gesture-hint { max-width: 48rem; }
   html.embed #gesture-hint { display: none; }
 
-  .stagebar {
-    display: flex; align-items: center; gap: 0.6rem;
-    margin-top: 0.6rem; flex-wrap: wrap;
-  }
-  .stagebar button, .ctl button {
-    font: 600 0.85rem/1 var(--sans); color: var(--ink);
-    background: var(--panel); border: 1px solid var(--line);
-    border-radius: 7px; padding: 0.45rem 0.8rem; cursor: pointer;
-  }
-  .stagebar button:hover:not(:disabled), .ctl button:hover { border-color: var(--accent); }
-  .stagebar button:disabled { opacity: 0.45; cursor: default; }
-  .stagebar button:focus-visible, .ctl button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   #stepnum { font: 600 0.85rem/1 var(--sans); color: var(--ink-mute); }
   /* Eight marks, one per step: the structure of the page at a glance, and a
      way to jump. The live one is filled; the rest are rings. */
@@ -264,9 +223,6 @@
   }
   .stagebar .dot:hover { border-color: var(--accent); }
   .stagebar .dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
-  .stagebar .dot:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .grow { flex: 1 1 auto; }
-  .toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--ink-mute); }
 
   .step {
     min-height: 82vh;
@@ -279,28 +235,11 @@
      the SVD says, where the arithmetic fails): the page's structure is three
      ideas meeting, not eight numbered steps. */
   .step .part { font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute); border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem; }
-  .step .kicker { font: 700 0.7rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.5rem; }
+  .step .kicker { margin-bottom: 0.5rem; }
   .step p { max-width: 36rem; overflow-wrap: break-word; }
-  /* The concept the step teaches, stated the way a textbook states it and
-     cited to the chapter the pre-work names, before the picture is
-     described. The label is written by fillText() in the page's language. */
-  .step .concept {
-    margin: 0.4rem 0 0.9rem; padding: 0.6rem 0.85rem;
-    background: var(--sunk); border: 1px solid var(--line); border-radius: 8px;
-    font-size: 0.95rem; line-height: 1.55;
-  }
-  .step .concept::before {
-    content: attr(data-label); display: block;
-    font: 700 0.65rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase;
-    color: var(--ink-mute); margin-bottom: 0.35rem;
-  }
+  /* The concept box and the predict-first line are widget-chrome.css; the
+     concept's label is written by fillText() in the page's language. */
   .step .concept .cite { color: var(--ink-mute); font-size: 0.85em; white-space: nowrap; }
-  /* The question the reader answers before touching the slider; it sits
-     directly above the control it asks about. */
-  .step .predict {
-    font-style: italic; font-weight: 600; color: var(--accent);
-    border-left: 3px solid var(--accent); padding-left: 0.7rem; margin: 0.6rem 0 0.8rem;
-  }
   .ctl label .live {
     float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute);
   }
@@ -332,26 +271,10 @@
   .mat text { font: 500 13px var(--mono); fill: var(--ink); }
   .mat path { stroke: var(--ink-mute); stroke-width: 1.4; fill: none; }
 
-  aside {
-    margin-top: 2rem; padding: 1rem 1.15rem;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
-  }
-  aside h2 { font-size: 0.95rem; margin: 0 0 0.5rem; }
-  aside p { margin: 0.35rem 0; font-size: 0.88rem; color: var(--ink-mute); }
-  .fallback { font-size: 0.82rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
-
-  .sr {
-    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
-    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
-  }
-
   /* Embed mode: the stage alone on the hero's navy, no three.js, one caption.
      The SVD portal's still frame is an SVG, so the 330px card stays legible
-     and cannot overflow. */
-  #embedcap { display: none; }
-  html.embed .wrap { max-width: none; padding: 0; }
-  html.embed header, html.embed aside, html.embed .steps,
-  html.embed .stagebar, html.embed #glnote { display: none; }
+     and cannot overflow. The chrome that goes is in widget-chrome.css. */
+  html.embed .steps, html.embed .stagebar, html.embed #glnote { display: none; }
   /* The running note sits top right of a stage that is normally twice this
      wide; in a hero card it wraps back across the input pane's y axis. The
      caption under the frame says the same thing, so the note goes. */
@@ -359,13 +282,6 @@
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { position: static; display: flex; flex-direction: column; height: 100vh; }
   html.embed #stage { flex: 1 1 auto; min-height: 0; height: auto; border: 0; border-radius: 0; }
-  html.embed #embedcap {
-    display: block; margin: 0; padding: 0.5rem 0.7rem;
-    font: 500 0.8rem/1.4 var(--sans); color: var(--ink-mute);
-    overflow-wrap: break-word;
-  }
-  html.embed #embedcap b { color: var(--ink); font-weight: 650; }
-  html.embed #embedcap a { white-space: nowrap; }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -376,6 +292,10 @@
 <div class="wrap">
 
   <header>
+    <nav class="site-nav" aria-label="Site">
+      <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
+    </nav>
     <p class="eyebrow" id="eyebrow">Sections 07, 08 and 09 · projection and the SVD</p>
     <h1 id="title">Projection and the SVD</h1>
     <p id="lead"></p>
@@ -574,7 +494,7 @@
 
   </div>
 
-  <aside aria-labelledby="h-about">
+  <aside class="about" aria-labelledby="h-about">
     <h2 id="h-about"></h2>
     <p id="about-1"></p>
     <p id="about-2"></p>
@@ -612,6 +532,7 @@
 
   const EN = {
     title: "Projection and the SVD",
+    navHome: "← Workshop home", navNotebooks: "Notebooks",
     eyebrow: "Sections 07, 08 and 09 · projection and the SVD",
     lead: "This page is eight pictures of one problem: solving A x = b, or fitting y ≈ X β, when the matrix is not a well-behaved square. They are separate ideas that meet in that problem, in three groups. First, what least squares draws: a tall matrix cannot reach every target, a wide one reaches it in too many ways, and a square one can flatten a dimension on the way, which is where projection, the pseudoinverse and the determinant come from. Then, what the SVD says: what any matrix does to a circle and a sphere, and the directions a square matrix leaves alone. Last, where the arithmetic fails: predictors that nearly agree, and a number format that cannot tell them apart. Each picture says what is on the stage, then asks you to predict before you touch a control; the box under the controls is the answer, with the numbers in it.",
     prev: "◀ Back", next: "Next ▶",
@@ -629,7 +550,6 @@
     glNoWebgl: "This browser reports no WebGL, so the stage is drawing flat diagrams instead. Every number and every relationship is the same.",
     glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
     embedCap: "Right singular vectors in, left singular vectors out.",
-    embedOpen: "Open the full page →",
     // Appended to whichever scene is on the stage, and only where the stage can
     // actually be taken hold of: the hero embeds this page as a still frame and
     // binds nothing, so a label promising a drag there would be a lie.
@@ -638,6 +558,7 @@
 
   const ES = {
     title: "Proyección y la SVD",
+    navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
     eyebrow: "Secciones 07, 08 y 09 · proyección y la SVD",
     lead: "Esta página son ocho imágenes de un mismo problema: resolver A x = b, o ajustar y ≈ X β, cuando la matriz no es un cuadrado bien portado. Son ideas distintas que se encuentran en ese problema, en tres grupos. Primero, lo que dibujan los mínimos cuadrados: una matriz alta no alcanza cualquier objetivo, una ancha lo alcanza de demasiadas maneras, y una cuadrada puede aplastar una dimensión por el camino, que es de donde salen la proyección, la pseudoinversa y el determinante. Después, lo que dice la SVD: qué le hace cualquier matriz a una circunferencia y a una esfera, y qué direcciones deja en paz una matriz cuadrada. Por último, dónde falla la aritmética: predictores que casi coinciden y un formato numérico que no los distingue. Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar un control; la caja bajo los controles es la respuesta, con los números dentro.",
     prev: "◀ Atrás", next: "Siguiente ▶",
@@ -655,7 +576,6 @@
     glNoWebgl: "Este navegador no reporta WebGL, así que el escenario dibuja diagramas planos. Todos los números y todas las relaciones son los mismos.",
     glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
     embedCap: "Entran vectores singulares derechos, salen izquierdos.",
-    embedOpen: "Abrir la página completa →",
     turn: "Arrastra o usa las flechas para girar; usa la rueda o más y menos para acercar. El cursor pausa el movimiento."
   };
 
@@ -748,6 +668,10 @@
 
   function fillText() {
     $("title").textContent = T.title;
+    $("site-home").textContent = T.navHome;
+    $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+    $("site-notebooks").textContent = T.navNotebooks;
+    $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("eyebrow").textContent = T.eyebrow;
     $("lead").textContent = T.lead;
     $("prev").textContent = T.prev;
@@ -1451,12 +1375,8 @@
     // The hero gets the portal's still frame and no three.js at all.
     state.step = STEPS.findIndex((s) => s.scene === "portal");
     const text = document.createElement("span");
-    text.innerHTML = "<b>" + T.embedCap + "</b> ";
-    const open = document.createElement("a");
-    open.href = "linalg-stage.html?lang=" + lang;
-    open.target = "_top";
-    open.textContent = T.embedOpen;
-    $("embedcap").append(text, open);
+    text.innerHTML = "<b>" + T.embedCap + "</b>";
+    $("embedcap").append(text);
     setMode("flat");
     addEventListener("resize", draw);
   } else {

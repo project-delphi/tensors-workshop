@@ -32,6 +32,10 @@ repo:
   # be caught any other way: the visualizer imports it from inside a module
   # script, so there is no `src` attribute for check 3 to harvest.
   widgets:
+    # The frame all four pages share: palette, type, nav, the panel card and
+    # the embed chrome. Linked by <link href>, which the harvest does see;
+    # listed anyway because without it every widget renders unstyled.
+    - interactive/widget-chrome.css
     - interactive/tensor-visualizer.html
     - interactive/tensor-core.js
     - interactive/data/photos.json
@@ -59,6 +63,11 @@ repo:
     # page throws on at boot, not a broken link.
     - interactive/voice-stage.html
     - interactive/voice-kit.js
+    - interactive/voice-scenes/sample.js
+    - interactive/voice-scenes/quantize.js
+    - interactive/voice-scenes/array.js
+    - interactive/voice-scenes/frame.js
+    - interactive/voice-scenes/spectrum.js
     - interactive/voice-scenes/window.js
     - interactive/voice-scenes/scramble.js
     # The arithmetic under the voice tensor stage, and the recording it
@@ -67,6 +76,7 @@ repo:
     # it either, and Appendix E's numbers depend on these exact bytes.
     - interactive/audio-core.js
     - interactive/vendor/voice.wav
+    - interactive/vendor/beat.wav
     # The stage's serif, vendored (interactive/vendor/README.md). A
     # @font-face url is CSS content, which the harvest cannot see.
     - interactive/vendor/cmu-serif/cmu-serif-500-roman.woff2

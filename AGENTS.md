@@ -130,13 +130,23 @@ What each generator draws, and the rules each one keeps:
   `SLIDES` table.
 
 **`interactive/` is hand-written**, and the one asset class with neither a
-generator nor a byte-exact gate. Four self-contained HTML widgets -- the
-section 03 broadcasting simulator, the section 04 reshape & transpose
-visualizer, the sections 07/09 projection & SVD stage, and the sections 04/09
-voice tensor stage -- each with its own `:root` palette, EN/ES copy tables,
-`?lang=`, and its section's accent adjusted per theme to clear 4.5:1. They are
-resources, not render targets: `interactive/**` is in `resources:` and
-deliberately absent from `render:`.
+generator nor a byte-exact gate. Four HTML widgets -- the section 03
+broadcasting simulator, the section 04 reshape & transpose visualizer, the
+sections 07/09 projection & SVD stage, and the sections 00/04/09 audio
+tensor stage -- each with EN/ES copy tables, `?lang=`, and its section's accent
+adjusted per theme to clear 4.5:1. **The frame is shared**:
+`interactive/widget-chrome.css`, linked first by every page, owns the
+surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the
+site's own palette from `custom.scss`, on light, dark and the hero's navy),
+the two font stacks, `.wrap` (width from `--wrap`), the `.site-nav` home and
+notebooks links every page opens with, the header, the `.card` and `.about`
+panels, the default button, field, select and slider, `.concept`, `.predict`,
+`.sr`, `[hidden]` and the chrome embed mode strips. A page's own `<style>`
+comes second and owns its `--accent`, everything on its stage, and the shape
+it gives a shared control (a pill for a tab or a preset). A colour that goes
+on text in more than one widget belongs in the shared file; a page never
+redeclares a surface token. They are resources, not render targets:
+`interactive/**` is in `resources:` and deliberately absent from `render:`.
 
 The stage is eight steps, one file each under `interactive/linalg-scenes/`,
 registered in load order through `LinalgScenes.register()`; the page
@@ -159,17 +169,52 @@ vendored CMU Serif (`interactive/vendor/cmu-serif/`), because the look it
 takes is a Manim frame; the label chip stays opaque, and black, so axe has two
 colours to measure.
 
-The voice stage (`voice-stage.html`) is the same registry shape one step
-simpler: scenes are **tabs over one recording**, not steps down a scroller,
-because a scene that plays sound needs a transport under the reader's hand
-rather than under their scroll position. `voice-kit.js` holds the registry and
-the drawing; `audio-core.js` holds the arithmetic and `npm test` pins it,
-including the reorderings, whose claim on screen is that they are permutations.
-There is no three.js here and no flat twin: a spectrogram is an image, so the
-stage draws into a 2-D canvas and there is one path rather than two. Its embed
-never fetches the recording -- it draws from a synthesised stand-in of the same
-length, and `data-standin` says which is on screen. Link by scene name
-(`#window`, `#scramble`); the contract is `voice-scenes/README.md`.
+The audio stage (`voice-stage.html`, titled *The audio tensor*) is the same
+registry shape as the projection stage and now the same scroller: **seven
+sections down the left, a sticky stage on the right**, one `<section
+class="step">` per scene, grouped under three part headings -- from air to
+numbers (sampling, quantization, the array), from numbers to a matrix (one
+window, the transform of it, the hop), and what a layout does to it (the
+reshape you can hear go wrong). It was five tabs; the tabs hid the order the
+ideas have to be met in, and "window and hop" and the transform itself were
+words in control labels rather than pictures. `voice-kit.js` holds the
+registry and the drawing; `audio-core.js` holds the arithmetic and `npm test`
+pins it, including one frame and its window, the transform of all N bins, the
+rebuild from the k strongest components, the reorderings (whose claim on
+screen is that they are permutations) and the rounding (whose claim is that 16
+bits changes nothing). Two kinds of scene: the three that open the page draw
+in three.js -- a wave that dissolves into beads on a ruler needs depth -- and
+keep a 2-D twin (`draw`) for a reader without WebGL, both from one slice the
+scene computes; the four transform scenes draw only into the 2-D canvas,
+because a spectrum and a spectrogram are pictures. three.js is booted lazily
+on the first three.js scene shown, through the projection stage's
+`vendor/linalg-boot.js` and the same import map, and its camera is
+`linalg-core`'s orbit.
+
+**The frame owns the sound and the whole recording.** A transport sits in the
+sticky column, and a control moved while something is playing swaps the sound
+in place from the same moment in the clip -- debounced, generation-tagged, so
+a stale source ending cannot stop its own replacement -- which is what makes
+the sampling rate and the bit depth audible as you drag them. Under the stage
+is one timeline canvas the frame draws, not a scene: the whole recording as a
+waveform, a band for the samples the active picture is looking at
+(`region(ctx)`), and a playhead while the sound runs. Dragging it moves that
+scene's position control (`posControl`), mapped onto the control's own range.
+Because the strip carries the global view, a picture is free to zoom: the hop
+scene shows five windows' worth of samples, which is the only scale at which
+overlapping windows can be seen at all.
+
+Three recordings, all exactly 237 568 samples at 48 kHz so every shape on
+every scene is the same for any of them (`vendor/README.md`): the voice, the
+beat, and a 440 Hz tone synthesised in the page, which fetches nothing and
+makes one peak, one line and one stripe of every picture. A file the reader
+drops is decoded in the page at that rate, capped at 8 s, and never leaves the
+tab. The embed never fetches a recording -- it draws the spectrogram scene
+from a synthesised stand-in of the same length, and `data-standin` says which
+is on screen. Link by scene name (`#sample`, `#quantize`, `#array`, `#frame`,
+`#spectrum`, `#window`, `#scramble`); controls are `#c-<scene>-<control>` and
+readouts `#read-<scene>`, because the same control name now lives in seven
+sections. The contract is `voice-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
@@ -192,10 +237,13 @@ screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the
 widget counts instead, which `check_navigation.cjs` treats as a regression. All
-three hero widgets take `?embed=1&theme=navy`, and neither the visualizer nor
-the stage fetches three.js there: the stage's embed is the portal's still
-frame, drawn flat, with the scroller and its steps gone. The hero is three
-tabs and the check pins that at three. Only the open tab's widget is
+four hero widgets take `?embed=1&theme=navy`, and none of them fetches
+three.js there: the stage's embed is the portal's still frame, drawn flat,
+with the scroller and its steps gone. The hero is four tabs and the check pins
+that at four. **The way out of an embed is the hero's own `.hero-open`
+button**, one element beside the tab row whose `href` the tab script takes
+from the open panel's `data-open`; an embed's `#embedcap` carries a caption
+and never a link, and the check asserts both. Only the open tab's widget is
 fetched, and none at all where the static diagram replaces the demos -- a
 hidden iframe is never lazy-loaded, so every panel keeps its URL in
 `data-src` until the tab script hands it over, once.

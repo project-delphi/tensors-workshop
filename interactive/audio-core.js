@@ -681,6 +681,158 @@
     return Math.sqrt(err);
   }
 
+  // ------------------------------------------------- sampling and rounding
+  // The three operations the stage's opening scenes draw: fewer measurements
+  // a second, each measurement rounded to one of 2^bits levels, and the
+  // interpolation the far view of the waveform is drawn through. Every number
+  // those scenes print -- the count in a millisecond, the step between
+  // levels, the signal-to-noise ratio the rounding costs -- comes from here.
+
+  // Every k-th sample: the signal measured at rate / k. No anti-alias filter,
+  // on purpose. What a lower rate throws away is the lesson, and a filter
+  // would hide the half of it you can hear.
+  function decimate(x, k) {
+    if (!(k >= 1) || k !== Math.floor(k)) throw new Error("decimate: k must be a whole number >= 1");
+    const n = Math.ceil(x.length / k);
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i++) out[i] = x[i * k];
+    return out;
+  }
+
+  // Zero-order hold: each sample repeated k times, back to `length` samples
+  // at the original rate. This is what a decimated signal sounds like without
+  // a reconstruction filter, and it is the staircase the sampling scene draws
+  // in the output colour -- the same k that thinned the beads.
+  function hold(y, k, length) {
+    if (!(k >= 1) || k !== Math.floor(k)) throw new Error("hold: k must be a whole number >= 1");
+    const n = length === undefined ? y.length * k : length;
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i++) out[i] = y[Math.min(y.length - 1, Math.floor(i / k))];
+    return out;
+  }
+
+  // Linear interpolation, k points per original interval. It is drawing
+  // rather than signal processing -- nothing plays it. No scene threads its
+  // curve through this today: the three.js path builds a spline over the
+  // samples and the 2-D twin joins them directly, so both already agree
+  // without it. Kept, and pinned, because it is the one honest way to draw a
+  // sampled signal as a continuous line, and the next scene that needs one
+  // should not write a second copy.
+  function upsample(x, k) {
+    if (!(k >= 1) || k !== Math.floor(k)) throw new Error("upsample: k must be a whole number >= 1");
+    if (x.length === 0) return new Float64Array(0);
+    const n = (x.length - 1) * k + 1;
+    const out = new Float64Array(n);
+    for (let i = 0; i < x.length - 1; i++) {
+      const a = x[i], b = x[i + 1];
+      for (let j = 0; j < k; j++) out[i * k + j] = a + (b - a) * (j / k);
+    }
+    out[n - 1] = x[x.length - 1];
+    return out;
+  }
+
+  // Uniform mid-tread quantisation to `bits` bits: the integer code is the
+  // sample scaled by 2^(bits-1) and rounded, clamped to the signed range, and
+  // the quantised value is that code scaled back. At 16 bits this is exactly
+  // what a 16-bit PCM WAV stores, so quantize(x, 16) on the vendored
+  // recordings is the identity -- the test pins that, because it is the
+  // whole point of the scene: the recording was integers all along.
+  function quantize(x, bits) {
+    if (!(bits >= 1 && bits <= 24) || bits !== Math.floor(bits)) {
+      throw new Error("quantize: bits must be a whole number from 1 to 24");
+    }
+    const half = Math.pow(2, bits - 1);
+    const lo = -half, hi = half - 1;
+    const codes = new Int32Array(x.length);
+    const q = new Float64Array(x.length);
+    let maxErr = 0;
+    for (let i = 0; i < x.length; i++) {
+      let c = Math.round(x[i] * half);
+      if (c < lo) c = lo; else if (c > hi) c = hi;
+      codes[i] = c;
+      q[i] = c / half;
+      const e = Math.abs(q[i] - x[i]);
+      if (e > maxErr) maxErr = e;
+    }
+    return {q, codes, step: 1 / half, levels: 2 * half, maxErr};
+  }
+
+  // ------------------------------------------------------------- one frame
+  // The transform scenes, one frame at a time: N samples cut out of the array
+  // from i0, the window shape, and their product -- which is the thing the
+  // transform is actually given. Past either end of the array the frame is
+  // zero, the way stft() pads.
+  function frame(x, i0, N, kind) {
+    const w = windowOf(kind, N);
+    const raw = new Float64Array(N), tapered = new Float64Array(N);
+    for (let i = 0; i < N; i++) {
+      const j = i0 + i;
+      raw[i] = j >= 0 && j < x.length ? x[j] : 0;
+      tapered[i] = raw[i] * w[i];
+    }
+    return {raw, w, tapered, i0, N};
+  }
+
+  // The transform of one frame, all N bins rather than the one-sided N/2 + 1,
+  // so a scene can draw the mirror half that stft() drops: a real frame's
+  // spectrum is Hermitian, X[N - f] is the conjugate of X[f], and |X| is the
+  // same on both sides. mag is |X[f]|.
+  function spectrum(tapered) {
+    const N = tapered.length;
+    if ((N & (N - 1)) !== 0 || N < 2) throw new Error("spectrum: N must be a power of two");
+    const re = Float64Array.from(tapered), im = new Float64Array(N);
+    fft(re, im, false);
+    const mag = new Float64Array(N);
+    for (let f = 0; f < N; f++) mag[f] = Math.hypot(re[f], im[f]);
+    return {re, im, mag, N};
+  }
+
+  // The frame rebuilt from its k strongest components: rank the one-sided
+  // bins by magnitude, keep the top k together with their mirror partners,
+  // zero the rest and invert. k >= N/2 + 1 keeps every bin and the frame comes
+  // back exactly, which is the claim the spectrum scene lets a reader hear.
+  function synthTopK(sp, k) {
+    const N = sp.N, F = (N >> 1) + 1;
+    const order = Array.from({length: F}, (_, f) => f).sort((a, b) => sp.mag[b] - sp.mag[a]);
+    const kept = order.slice(0, Math.max(0, Math.min(k, F)));
+    const re = new Float64Array(N), im = new Float64Array(N);
+    for (const f of kept) {
+      re[f] = sp.re[f]; im[f] = sp.im[f];
+      if (f > 0 && f < N - f) { re[N - f] = sp.re[N - f]; im[N - f] = sp.im[N - f]; }
+    }
+    fft(re, im, true);
+    return {samples: re, bins: kept};
+  }
+
+  // One frame tiled to `length` samples: what a frame sounds like on repeat.
+  // A frame cut with a rectangular window starts and ends mid-swing, so every
+  // repeat is a click at rate / N a second; a tapered one does not.
+  function loop(seg, length) {
+    if (seg.length === 0) throw new Error("loop: empty frame");
+    const out = new Float64Array(length);
+    for (let i = 0; i < length; i++) out[i] = seg[i % seg.length];
+    return out;
+  }
+
+  // A pure tone, for the built-in signal that makes every scene legible at a
+  // glance: one peak in the spectrum, one line in the spectrogram. Peak
+  // amplitude 0.5, starting at zero.
+  function tone(n, rate, hz, amp) {
+    const a = amp === undefined ? 0.5 : amp;
+    const out = new Float64Array(n);
+    for (let i = 0; i < n; i++) out[i] = a * Math.sin(2 * Math.PI * hz * i / rate);
+    return out;
+  }
+
+  // The matrix's shape from the three numbers that decide it, so a readout
+  // can say why there are 465 columns without computing the matrix: half a
+  // window of padding at each end, then one stop per hop while a whole window
+  // still fits. Agrees with stft() by construction, and the test pins it.
+  function stftShape(length, N, hop) {
+    const padded = length + 2 * (N >> 1);
+    return {F: (N >> 1) + 1, T: Math.floor((padded - N) / hop) + 1, padded};
+  }
+
   // ------------------------------------------------------------------- wav
   // Enough of RIFF to read the one recording this stage ships, and to fail
   // loudly on anything else rather than play noise. The browser could use
@@ -729,6 +881,8 @@
     SKETCH, POWER, leftSubspace, leftSubspaceSteps, projectRank, retained,
     transposeC, patchShuffle,
     magnitude, nmfInit, nmfStep, nmfError,
+    decimate, hold, upsample, quantize,
+    frame, spectrum, synthTopK, loop, tone, stftShape,
     decodeWav
   };
   if (typeof module !== "undefined" && module.exports) module.exports = AudioCore;

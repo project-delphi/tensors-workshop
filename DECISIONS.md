@@ -601,6 +601,84 @@ fenced code blocks byte for byte: code and identifiers stay English on both
 sides by rule, the 44 blocks were already identical, and nothing had been
 checking it.
 
+**The voice stage opens in three.js and keeps its spectrograms on a 2-D
+canvas.** The page's first sentence had been "a voice is a list of numbers",
+and nothing on it showed that: every scene began with `x[n]` already an
+array. The three scenes that now open it -- sampling, quantization, the array
+-- are the one picture in the workshop that needs depth, because the lesson
+is a wave that looks continuous from far away and turns out, close up, to be
+beads on a ruler with nothing between them; a flat waveform zoom shows the
+beads but not the dissolve. So those three draw in three.js, through the
+projection stage's vendored modules and its import map, booted lazily on the
+first of them shown, and each keeps a 2-D twin drawn from the same slice for a
+reader without WebGL and for the runner. The spectrogram scenes stay on the
+canvas: a (513, 465) matrix is an image, and three.js would make it a worse
+one. Tabs stay tabs -- a scene that plays sound still needs its transport
+under the hand rather than under the scroll. The camera is `linalg-core`'s
+orbit rather than a second one, for the reason that module exists: an orbit's
+clamps and a drift's origin are invisible in a screenshot, and one pinned
+machine is better than two.
+
+**The audio stage became a scroller, and grew the two pictures between a
+waveform and a matrix** (2026-09-21). It had been five tabs, and the reader's
+verdict was that the page did not teach: the input, the transforms and the
+effect of each control were not separable, and "window and hop" and the
+transform itself were words in control labels rather than things on the
+stage. Tabs were chosen so a scene that plays sound could keep its transport
+under the reader's hand rather than under their scroll position; that
+constraint is real, and it is met by putting the transport in the sticky
+column beside the stage, which is where it should have been. So the page is
+now the projection stage's shape -- a section per picture, three part
+headings, predict-first over the controls -- and the two missing pictures are
+in it: one frame with its window, and the transform of that one frame. The
+second of those is where the page can finally say why a spectrogram has 513
+rows rather than 1 024, because it draws the mirror half and greys it out.
+
+**The sound swaps under a moving control rather than stopping.** A stage whose
+whole claim is that these numbers are audible cannot make a reader press Play
+again to hear what a slider did; the comparison they need is *this rate versus
+that rate at the same moment of the same word*. So a control moved mid-play
+re-renders what the scene plays and restarts it at the offset the old one had
+reached. Two things make that safe rather than glitchy: the swap is debounced,
+because the hop scene's `audio()` inverts a whole spectrogram, and every
+source is generation-tagged, because the outgoing source's `onended` fires
+after its replacement has already started and would otherwise report the
+transport idle while sound was coming out of it.
+
+**The timeline belongs to the frame, and it is what lets a picture zoom in.**
+Every scene on this page is a window onto one array, and none of them could
+show both the window and the array: the hop scene drew the whole recording,
+where one window is three pixels wide and the overlap -- the single thing that
+picture exists to teach -- was invisible. One strip under the stage, drawn by
+the frame, carries the global view for all seven: the waveform, a band for
+what the picture above is looking at, and the playhead. The hop scene then
+draws five windows' worth of samples, where the humps cross at half height and
+the overlap is simply there to see.
+
+**The third recording is synthesised rather than vendored.** The voice and the
+beat are both broadband, and on a first reading every picture on the page is a
+haze: 513 bins of speech is a wall, and a spectrogram of it is weather. A
+440 Hz tone makes each picture show exactly one of the thing it is about --
+one peak, one horizontal line, one stripe after a transpose -- and it costs
+nothing to ship, because it is six lines of arithmetic at exactly the voice's
+length and rate. A reader who has seen what one tone does to each picture can
+then read the voice.
+
+**The stage ships two recordings and takes a third from the reader.** The
+sampling and quantization scenes want transients -- a kick thinned to 3 kHz
+and crunched to 3 bits is the lesson you can hear -- and the voice has few.
+The second clip is a CC0 reggaeton loop from Freesound, cut to exactly the
+voice's 237 568 samples so that every shape on every scene is the same for
+either and the readouts never carry a second set of numbers. A commercial
+record was asked for and declined, however short the clip: this repository
+and its site are public, and a copyright question is not worth three seconds
+of any song. The drop zone is where such a file goes -- decoded in the page
+through an offline context at 48 kHz, so no autoplay policy applies and no
+live `AudioContext` exists until Play is pressed, capped at 8 s, and never
+committed or uploaded. A decoder resamples silently and does not report the
+file's own rate, so the label says "decoded at 48 kHz" rather than pretending
+to know.
+
 **Check 4 looks at notebook-to-notebook links and embedded images** because a
 notebook reaches `docs/` as a verbatim copy rather than a rendered page, so
 nothing else looks at those, which is how notebook 01 spent months linking two
@@ -665,6 +743,28 @@ long comment is not a defect; B905 is off because `zip(strict=)` is a runtime
 change, not a spelling.
 
 ## Commands and checks: the browser check
+
+**The widgets share one frame, and the way out of an embed is one button on
+the hero.** Each widget shipped as a self-contained page with its own `:root`
+palette, base rules, header, panel and button styles -- four copies that had
+already drifted: two pages linked back to the notebooks, two linked nowhere;
+the wrapper was 72, 110, 96 and 96rem; focus rings were 2px on two pages and
+3px on the others; the paper palette was the widgets' own and matched nothing
+else on the site. And the "Open the full widget" link lived inside each
+iframe's caption, so on the homepage it sat wherever that widget's caption
+put it, and moved with every chip. `interactive/widget-chrome.css` now owns
+the frame (2026-09-20): the site's palette from `custom.scss` on three
+themes, the type, a `.site-nav` with the home and notebooks links first on
+every page, the header, the panel card, the default control, and the chrome
+embed mode strips; each page links it first and keeps its accent and its
+stage. The homepage hero grew a single `.hero-open` button at the end of the
+tab row, retargeted by the tab script from the open panel's `data-open`, and
+the caption inside the frame lost its link. Every accent was re-measured
+against the new surfaces (the lightest light-theme surface is brighter than
+the paper it replaced, so every light accent gained contrast; the dark
+surfaces are within 0.4% luminance of the old ones), and the browser check
+now asserts the home link per language, the button per tab, and no link in
+any caption.
 
 **axe audits the pages and the widgets, not the decks, and allowlists by
 element.** The first run (2026-09-18) found four rules over 120 nodes. Two
