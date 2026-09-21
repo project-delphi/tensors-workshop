@@ -27,6 +27,15 @@
   const FULL_LADDER = [2, 5, 10, 20, 40, 80, 160];
   const BUDGET_MS = 8;                     // work per frame, so the page stays alive
 
+  // Everything the cache keeps is drawn or played, never computed on again: a
+  // magnitude is quantized to 256 colours on its way to the screen, and a
+  // sample is clamped into a Float32 AudioBuffer channel on its way to the
+  // speakers. Float64 there is eight bytes buying nothing. Every number the
+  // scene prints -- the SNR of each rung, the energy retained -- is measured
+  // off the Float64 arrays first, above; only the copies that are kept are
+  // narrowed.
+  const f32 = (a) => Float32Array.from(a);
+
   // The ladder for one recording: FULL_LADDER cut down to the rungs `l`
   // components actually reach. Computed from the shape alone (no transform
   // run yet) so init() can seed a legal default before work() ever starts.
@@ -46,14 +55,16 @@
     s.phase = "transform";
     yield;
     s.clean = ctx.signal;
-    s.noise = AC.noiseAtSnr(s.clean, TARGET_DB, SEED);
+    // A local: the noise is added once and never looked at again, and at this
+    // length keeping it would cost 1.9 MB for nothing.
+    const noise = AC.noiseAtSnr(s.clean, TARGET_DB, SEED);
     s.noisy = new Float64Array(s.clean.length);
-    for (let i = 0; i < s.clean.length; i++) s.noisy[i] = s.clean[i] + s.noise[i];
+    for (let i = 0; i < s.clean.length; i++) s.noisy[i] = s.clean[i] + noise[i];
     s.noisyDb = AC.snrDb(s.clean, s.noisy);
     yield;
     s.stft = AC.stft(s.noisy, N, HOP, "hann");
     s.total = AC.frobSq(s.stft.Z);
-    s.mag = AC.magnitude(s.stft.Z, s.stft.F, s.stft.T);
+    s.mag = f32(AC.magnitude(s.stft.Z, s.stft.F, s.stft.T));
     yield;
 
     s.phase = "factorising";
@@ -73,7 +84,10 @@
       // Kept, not thrown away. The reader lands on one of these ranks the
       // moment the scene is ready, and recomputing the projection and the
       // inverse transform inside draw() froze the page for a moment a rung.
-      s.recon[k] = {Z: Zk, audio: rec, mag: AC.magnitude(Zk, s.stft.F, s.stft.T)};
+      // Only what draw() and audio() actually read is kept: `Zk` itself is
+      // 3.8 MB a rung and nothing downstream wants it once the picture and
+      // the sound have been taken out of it.
+      s.recon[k] = {audio: f32(rec), mag: f32(AC.magnitude(Zk, s.stft.F, s.stft.T))};
       s.curve.push(k);
       yield;
     }
@@ -83,7 +97,7 @@
     const full = AC.istft(s.stft.Z, s.stft.F, s.stft.T, N, HOP, "hann", s.clean.length);
     s.snr.full = AC.snrDb(s.clean, full);
     s.kept.full = 1;
-    s.recon.full = {Z: s.stft.Z, audio: full, mag: s.mag};
+    s.recon.full = {audio: f32(full), mag: s.mag};
     s.curve.push("full");
     s.phase = "ready";
     // A recording too short for even the smallest rung leaves the ladder

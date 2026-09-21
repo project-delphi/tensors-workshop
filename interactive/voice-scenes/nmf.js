@@ -17,7 +17,13 @@
   const N = 1024, HOP = 512;
   const ITERS = 150;
   const BUDGET_MS = 8;
-  const TOKENS = ["--v-sig", "--v-out", "--v-axis", "--v-res"];
+  // One colour a component, and identity is all the colour carries here: the
+  // W curve and the H curve of the same component are the same hue. `--v-res`
+  // is not among them -- it means "wrong" everywhere else on this stage, and a
+  // fourth component is not a mistake -- so the fourth is `--v-comp`, which
+  // means nothing but "another one". The solo control is the non-colour way to
+  // the same identity.
+  const TOKENS = ["--v-sig", "--v-out", "--v-axis", "--v-comp"];
 
   function* work(ctx, s) {
     const AC = ctx.AC;

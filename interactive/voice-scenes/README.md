@@ -127,7 +127,9 @@ into the clip while it plays, or -1.
 - **Both languages** in `copy`, in the same commit, and `aria(ctx)` names every
   fact the picture draws, because `#stage` is `role="img"`.
 - **Colours are tokens** (`--v-sig`, `--v-out`, `--v-res`, `--v-axis`,
-  `--stage-ink`, `--stage-mute`) through `K.css`, never hex. Every label is
+  `--v-comp`, `--stage-ink`, `--stage-mute`) through `K.css`, never hex.
+  `--v-res` means the thing on screen has gone wrong; do not spend it on a
+  fourth of something being counted -- that is what `--v-comp` is for. Every label is
   drawn on an opaque chip -- `K.label` on the canvas, `K.label2d` (a CSS2D
   `.lab`) over three.js -- because axe cannot resolve contrast over a canvas
   and reports "incomplete" instead.
