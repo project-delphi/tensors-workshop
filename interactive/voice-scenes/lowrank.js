@@ -16,8 +16,25 @@
   "use strict";
 
   const N = 1024, HOP = 512, TARGET_DB = 5, SEED = 42;
-  const LADDER = [2, 5, 10, 20, 40, 80, 160];
+  // The ladder this scene would like to show. A recording short enough that
+  // the sketch's own width `l` (audio-core's `leftSubspaceSteps`) falls below
+  // a rung means that rung's rank does not exist -- `projectRank` and
+  // `retained` both throw above `l` -- so every place that reads the ladder
+  // reads it off `ctx.state.ladder`, filtered to what this recording's `l`
+  // actually has. A recording so short that even the smallest rung is out of
+  // reach leaves `ladder` empty: the picture still stands, showing only the
+  // full, undiscarded reconstruction.
+  const FULL_LADDER = [2, 5, 10, 20, 40, 80, 160];
   const BUDGET_MS = 8;                     // work per frame, so the page stays alive
+
+  // The ladder for one recording: FULL_LADDER cut down to the rungs `l`
+  // components actually reach. Computed from the shape alone (no transform
+  // run yet) so init() can seed a legal default before work() ever starts.
+  function ladderFor(ctx) {
+    const {T} = ctx.AC.stftShape(ctx.signal.length, N, HOP);
+    const l = Math.min(ctx.AC.SKETCH, T);
+    return {l, ladder: FULL_LADDER.filter((k) => k <= l)};
+  }
 
   // One generator for the whole job: build the noisy signal, factor it, then
   // measure every rung. `leftSubspaceSteps` hands back its own bands, so the
@@ -42,9 +59,13 @@
     s.phase = "factorising";
     const sub = yield* AC.leftSubspaceSteps(s.stft.Z, s.stft.F, s.stft.T);
     s.U = sub.U; s.sigma = sub.sigma; s.l = sub.l;
+    // Re-derived from the sketch that actually ran, not trusted from the
+    // shape-only estimate init() seeded the slider from: same formula, same
+    // T, so it agrees, but this is the one that measures below rests on.
+    s.ladder = FULL_LADDER.filter((k) => k <= s.l);
 
     s.phase = "measuring";
-    for (const k of LADDER) {
+    for (const k of s.ladder) {
       const Zk = AC.projectRank(s.stft.Z, s.U, s.stft.F, s.stft.T, s.l, k);
       const rec = AC.istft(Zk, s.stft.F, s.stft.T, N, HOP, "hann", s.clean.length);
       s.snr[k] = AC.snrDb(s.clean, rec);
@@ -65,11 +86,16 @@
     s.recon.full = {Z: s.stft.Z, audio: full, mag: s.mag};
     s.curve.push("full");
     s.phase = "ready";
-    s.best = LADDER.reduce((a, b) => (s.snr[b] > s.snr[a] ? b : a));
+    // A recording too short for even the smallest rung leaves the ladder
+    // empty: nothing was truncated, so there is no peak to name, and the
+    // scene shows the full reconstruction alone rather than guessing one.
+    s.best = s.ladder.length
+      ? s.ladder.reduce((a, b) => (s.snr[b] > s.snr[a] ? b : a))
+      : null;
   }
 
-  const rungs = () => LADDER.concat(["full"]);
-  const rungAt = (ctx) => rungs()[Math.min(rungs().length - 1, ctx.state.rung)];
+  const rungs = (ctx) => (ctx.state.ladder || []).concat(["full"]);
+  const rungAt = (ctx) => rungs(ctx)[Math.min(rungs(ctx).length - 1, ctx.state.rung)];
 
   // A lookup, never a computation: every rung was built and kept while the
   // curve was being measured, and draw() runs on the frame clock.
@@ -81,28 +107,38 @@
     part: {en: "What factoring it costs", es: "Lo que cuesta factorizarla"},
 
     controls: [
-      {id: "rung", type: "range", min: 0, max: LADDER.length, step: 1,
+      // max stays the full ladder's length: a slider position past this
+      // recording's own ladder clamps in rungAt() and in fmt() together, off
+      // the same array, so the label a reader drags to and the rung the
+      // scene actually shows never disagree -- never a slider that says
+      // "k = 40" over a picture built from a rung that does not exist.
+      {id: "rung", type: "range", min: 0, max: FULL_LADDER.length, step: 1,
        fmt: (v, ctx) => {
-         const k = rungs()[v];
+         const list = rungs(ctx);
+         const k = list[Math.min(list.length - 1, v)];
          return k === "full" ? ctx.copy.fullRank : "k = " + k;
        }},
       {id: "hear", type: "select", options: ["rank", "noisy", "clean"]}
     ],
 
     init(ctx) {
+      const {l, ladder} = ladderFor(ctx);
       Object.assign(ctx.state, {
-        rung: 4, hear: "rank", phase: "transform",
-        snr: {}, kept: {}, curve: [], recon: {}, best: null
+        // A default that sits past a short ladder's last index clamps in
+        // rungAt(), same as a drag past it would -- so this is always legal,
+        // never off the grid init() seeded it from.
+        rung: Math.min(4, ladder.length), hear: "rank", phase: "transform",
+        snr: {}, kept: {}, curve: [], recon: {}, best: null, l, ladder
       });
       ctx.state.job = work(ctx, ctx.state);
     },
 
     reset(ctx) {
-      ctx.state.rung = 4;
+      ctx.state.rung = Math.min(4, (ctx.state.ladder || []).length);
       ctx.state.hear = "rank";
     },
 
-    busy(ctx) { return ctx.state.phase !== "ready"; },
+    busy(ctx) { return ctx.state.phase !== "ready" && ctx.state.phase !== "failed"; },
     region(ctx) { return {i0: 0, i1: ctx.signal.length}; },
     animates(ctx) { return ctx.head() >= 0; },
 
@@ -116,11 +152,26 @@
 
     sync(ctx) {
       const s = ctx.state;
-      if (s.phase === "ready" || !s.job) return;
+      if (s.phase === "ready" || s.phase === "failed" || !s.job) return;
       const until = performance.now() + BUDGET_MS;
-      let step = s.job.next();
-      while (!step.done && performance.now() < until) step = s.job.next();
-      if (step.done) s.job = null;
+      // `sync()` runs inside the frame's own rAF loop (voice-stage.html's
+      // frame() calls it through changed() and paint(), and schedules the
+      // next frame after both) -- an exception out of this generator with no
+      // try here does not stop at this scene, it stops the page's whole
+      // clock, because nothing after the throw ever reaches the reschedule.
+      // `AC.noiseAtSnr` throws on digital silence (a dropped file that
+      // decodes to all zero) and `leftSubspaceSteps` throws if the sketch's
+      // Gram matrix fails to diagonalise, so this is caught at the loop, not
+      // at either call site.
+      try {
+        let step = s.job.next();
+        while (!step.done && performance.now() < until) step = s.job.next();
+        if (step.done) s.job = null;
+      } catch (err) {
+        s.job = null;
+        s.phase = "failed";
+        s.error = (err && err.message) || String(err);
+      }
     },
 
     draw(ctx) {
@@ -129,6 +180,11 @@
       const gap = 18;
       const colW = Math.max(60, (W - L - R - gap) / 2);
       const plotH = Math.max(50, H - TOP - BOT);
+
+      if (s.phase === "failed") {
+        K.label(g, ctx.copy.failedLabel, L, TOP, ctx.colour("--stage-mute"), {size: 12});
+        return;
+      }
 
       if (s.phase === "transform") {
         K.label(g, ctx.copy.working[s.phase], L, TOP, ctx.colour("--stage-mute"), {size: 12});
@@ -173,7 +229,7 @@
       const pts = s.curve.map((k, i) => ({k, i, db: s.snr[k]}));
       const all = pts.map((p) => p.db).concat([s.noisyDb]);
       const lo = Math.min.apply(null, all) - 0.6, hi = Math.max.apply(null, all) + 0.6;
-      const X = (i) => cx + (i / (rungs().length - 1)) * colW;
+      const X = (i) => cx + (i / (Math.max(1, rungs(ctx).length - 1))) * colW;
       const Y = (db) => TOP + plotH - ((db - lo) / (hi - lo)) * plotH;
 
       g.strokeStyle = ctx.colour("--v-res");
@@ -219,9 +275,16 @@
 
     readout(ctx) {
       const s = ctx.state;
+      if (s.phase === "failed") {
+        return {
+          html: ctx.copy.failed(s.error),
+          data: {phase: "failed", shape: s.stft ? s.stft.F + "," + s.stft.T : "", k: "", snr: ""}
+        };
+      }
       if (s.phase !== "ready") {
         return {
-          html: ctx.copy.workingReadout(s.phase, s.curve.length, LADDER.length),
+          html: ctx.copy.workingReadout(s.phase, s.curve.length, s.ladder.length,
+                                         s.stft ? s.stft.F : null, s.stft ? s.stft.T : null),
           data: {phase: s.phase, shape: s.stft ? s.stft.F + "," + s.stft.T : "", k: "", snr: ""}
         };
       }
@@ -264,11 +327,14 @@
         working: {transform: "adding noise and transforming…",
                   factorising: "factorising…", measuring: "measuring each rank…",
                   ready: ""},
-        workingReadout: (phase, done, total) => {
+        failedLabel: "the factorisation failed",
+        failed: (err) => "This recording could not be factored: <b>" + err +
+                 "</b>. Try a different recording — the rest of the stage still works.",
+        workingReadout: (phase, done, total, F, T) => {
           if (phase === "factorising") {
-            return "Factorising a <b>513 × 465</b> matrix, in the browser. This is the wait that " +
-                   "section 09's question is about — a factorisation is not free, and you are " +
-                   "paying for this one now.";
+            return "Factorising a <b>" + F + " × " + T + "</b> matrix, in the browser. This is the " +
+                   "wait that section 09's question is about — a factorisation is not free, and you " +
+                   "are paying for this one now.";
           }
           if (phase === "measuring") {
             return "Rebuilding and measuring each rank in turn — <b>" + done + "</b> of <b>" +
@@ -310,12 +376,14 @@
         },
         aria: (ctx) => {
           const s = ctx.state;
+          if (s.phase === "failed") return "The factorisation failed on this recording.";
           if (s.phase !== "ready") return "A spectrogram being factorised.";
           const k = rungAt(ctx);
+          const peak = s.best === null ? "" : ", and the curve peaks at rank " + s.best;
           return "A spectrogram rebuilt from " + (k === "full" ? "every component" : "rank " + k) +
                  ", beside a curve of signal-to-noise against rank. This rank measures " +
                  s.snr[k].toFixed(2) + " decibels against the noisy input's " +
-                 s.noisyDb.toFixed(2) + ", and the curve peaks at rank " + s.best + ".";
+                 s.noisyDb.toFixed(2) + peak + ".";
         }
       },
       es: {
@@ -340,11 +408,14 @@
         working: {transform: "añadiendo ruido y transformando…",
                   factorising: "factorizando…", measuring: "midiendo cada rango…",
                   ready: ""},
-        workingReadout: (phase, done, total) => {
+        failedLabel: "la factorización falló",
+        failed: (err) => "Esta grabación no se pudo factorizar: <b>" + err +
+                 "</b>. Prueba con otra grabación: el resto de la etapa sigue funcionando.",
+        workingReadout: (phase, done, total, F, T) => {
           if (phase === "factorising") {
-            return "Factorizando una matriz de <b>513 × 465</b>, en el navegador. Esta es la espera " +
-                   "de la que trata la pregunta de la sección 09: una factorización no es gratis, y " +
-                   "estás pagando esta ahora.";
+            return "Factorizando una matriz de <b>" + F + " × " + T + "</b>, en el navegador. Esta " +
+                   "es la espera de la que trata la pregunta de la sección 09: una factorización no " +
+                   "es gratis, y estás pagando esta ahora.";
           }
           if (phase === "measuring") {
             return "Reconstruyendo y midiendo cada rango por turno: <b>" + done + "</b> de <b>" +
@@ -385,13 +456,16 @@
         },
         aria: (ctx) => {
           const s = ctx.state;
+          if (s.phase === "failed") return "La factorización de esta grabación falló.";
           if (s.phase !== "ready") return "Un espectrograma factorizándose.";
           const k = rungAt(ctx);
+          const peak = s.best === null ? "" :
+            ", y la curva alcanza su máximo en el rango " + s.best;
           return "Un espectrograma reconstruido desde " +
                  (k === "full" ? "todas las componentes" : "el rango " + k) +
                  ", junto a una curva de señal-ruido frente al rango. Este rango mide " +
                  s.snr[k].toFixed(2) + " decibelios frente a los " + s.noisyDb.toFixed(2) +
-                 " de la entrada con ruido, y la curva alcanza su máximo en el rango " + s.best + ".";
+                 " de la entrada con ruido" + peak + ".";
         }
       }
     }

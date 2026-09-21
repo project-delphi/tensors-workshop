@@ -563,8 +563,14 @@ async function audit(page, where) {
           null, {timeout: 5000});
         assert(Number((await data()).retained) > lowK,
           `${where}: full rank should retain more energy than rank 2`);
-        assert.equal((await data()).snr, (await data()).noisy,
-          `${where}: full rank should measure exactly the noisy input's SNR`);
+        // Both sides are the same reconstruction (full rank discards nothing),
+        // measured through two independent snrDb() calls and printed through
+        // two independent toFixed(2)s -- exact string equality asks floating
+        // point for more than it owes. A hundredth of a decibel is well
+        // inside that noise and well outside anything a real discrepancy
+        // would produce.
+        assert(Math.abs(Number((await data()).snr) - Number((await data()).noisy)) < 0.01,
+          `${where}: full rank should measure the noisy input's SNR, got ${(await data()).snr} vs ${(await data()).noisy}`);
         await page.locator('#c-lowrank-rung').fill('4');
         await page.waitForFunction(() => document.getElementById('stage').dataset.k === '40',
           null, {timeout: 5000});

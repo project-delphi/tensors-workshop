@@ -288,10 +288,19 @@
                          3: "component 3", 4: "component 4"}},
         readout: (k, nmfErr, svdErr, solo, iter, total, ctx) => {
           const n = (x) => (x * 100).toFixed(1);
-          const gap = ((nmfErr - svdErr) * 100).toFixed(1);
+          const gapPts = (nmfErr - svdErr) * 100;
+          // The SVD's own side of this comparison is a sketch (see the note
+          // above `work()`), and a sketch's singular values come in low --
+          // which can push the measured gap to zero or, on a fine rank, just
+          // under it. Eckart–Young's guarantee is exact regardless, so the
+          // copy says so instead of printing "worse by −0.1 points".
+          const gapText = gapPts > 0.05
+            ? "worse by " + gapPts.toFixed(1) + " points, and it has to be"
+            : "measuring about the same here — the sketch on the SVD's side is an estimate, and " +
+              "Eckart–Young's guarantee holds exactly even where this reading does not show it";
           const base = "At <b>k = " + k + "</b>, NMF leaves <b>" + n(nmfErr) +
             "%</b> relative error where the truncated SVD leaves <b>" + n(svdErr) +
-            "%</b> — worse by " + gap + " points, and it has to be: " +
+            "%</b> — " + gapText + ": " +
             "Eckart–Young says nothing of rank " + k + " beats the SVD, and W, H ≥ 0 is a " +
             "constraint the SVD does not carry. That gap is the whole price, and it is a " +
             "fraction of a percentage point. ";
@@ -340,10 +349,14 @@
                          3: "componente 3", 4: "componente 4"}},
         readout: (k, nmfErr, svdErr, solo, iter, total, ctx) => {
           const n = (x) => (x * 100).toFixed(1);
-          const gap = ((nmfErr - svdErr) * 100).toFixed(1);
+          const gapPts = (nmfErr - svdErr) * 100;
+          const gapText = gapPts > 0.05
+            ? "peor por " + gapPts.toFixed(1) + " puntos, y tiene que serlo"
+            : "midiendo casi lo mismo aquí: el boceto del lado de la SVD es una estimación, y la " +
+              "garantía de Eckart–Young se cumple exactamente aunque esta lectura no lo muestre";
           const base = "Con <b>k = " + k + "</b>, NMF deja un <b>" + n(nmfErr) +
             "%</b> de error relativo donde la SVD truncada deja un <b>" + n(svdErr) +
-            "%</b>: peor por " + gap + " puntos, y tiene que serlo. Eckart–Young dice que nada de " +
+            "%</b>: " + gapText + ". Eckart–Young dice que nada de " +
             "rango " + k + " supera a la SVD, y W, H ≥ 0 es una restricción que la SVD no lleva. " +
             "Esa diferencia es todo el precio, y es una fracción de un punto porcentual. ";
           return base + (solo === "all"

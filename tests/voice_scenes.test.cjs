@@ -15,7 +15,37 @@ const SCENES = ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
 // voice-scenes/README.md).
 const REQUIRED_COPY = ['tab', 'k', 'h', 'claim', 'concept', 'b', 'predict', 'aria'];
 
+// A ctx good enough to run a scene's init() without a browser: a real signal
+// (a full-length tone, the shape every built-in recording actually has) and
+// stub implementations of everything init() might touch but never draws
+// with. No scene's init() reaches the canvas or three.js -- that is build()
+// and draw()'s job -- so this is enough to read back the state a slider
+// opens on.
+function makeCtx(scene) {
+  const AC = require('../interactive/audio-core.js');
+  const LC = require('../interactive/linalg-core.js');
+  const kit = require('../interactive/voice-kit.js');
+  const RATE = 48000, SAMPLES = 237568;
+  const state = {};
+  return {
+    AC, LC, K: kit, lang: 'en', embed: false, reduceMotion: false,
+    rate: RATE, state, cache: {}, stage: null, canvas: null, g: null,
+    W: 800, H: 400, aspect: 2,
+    get copy() { return scene.copy.en; },
+    signal: AC.tone(SAMPLES, RATE, 440), standIn: false, source: 'test',
+    colour: () => '#000000', now: () => 0, instant: true,
+    play() {}, stop() {}, head: () => -1, changed() {}, setControls() {},
+    control: () => null, THREE: null, AD: null, glReady: false, gl: null,
+    shownView: () => null, label: () => {}
+  };
+}
+
 function load() {
+  // voice-kit.js closes over its own `scenes` array; clearing only the scene
+  // files and not this one re-requires the same module instance, so
+  // register() keeps appending to the array that survived from the last
+  // call -- three calls in one process read back 9, then 18, then 27 ids.
+  delete require.cache[require.resolve('../interactive/voice-kit.js')];
   const kit = require('../interactive/voice-kit.js');
   global.window = {VoiceScenes: kit.VoiceScenes};
   for (const name of SCENES) {
@@ -65,13 +95,24 @@ test('every control a scene declares is labelled in both languages', () => {
 
 test('a slider opens on a value its own min/step grid contains', () => {
   // A range input snaps a value that is off the grid, which silently seeds the
-  // scene from a number nobody chose.
+  // scene from a number nobody chose. Checking the spec alone (min, max,
+  // step form a whole grid) never read the value init() actually seeds --
+  // this runs init() and checks the opening value sits on that grid too.
   for (const scene of load()) {
+    const ctx = makeCtx(scene);
+    scene.init(ctx);
     for (const spec of scene.controls || []) {
       if (spec.type === 'select') continue;
       const step = spec.step || 1;
       assert.equal((spec.max - spec.min) % step, 0,
         `${scene.id}: ${spec.id} range is not a whole number of steps`);
+      const initial = ctx.state[spec.id];
+      assert.notEqual(initial, undefined,
+        `${scene.id}: ${spec.id} has no opening value`);
+      assert.ok(initial >= spec.min && initial <= spec.max,
+        `${scene.id}: ${spec.id} opens at ${initial}, outside [${spec.min}, ${spec.max}]`);
+      assert.equal((initial - spec.min) % step, 0,
+        `${scene.id}: ${spec.id} opens on ${initial}, off its own min/step grid`);
     }
   }
 });

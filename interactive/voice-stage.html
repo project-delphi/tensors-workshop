@@ -447,13 +447,16 @@
       intro: "A sound is a list of numbers. A microphone measures the air pressure tens of thousands " +
              "of times a second, each measurement is rounded to one of a fixed set of values, and " +
              "those numbers in order are the tensor — a one-dimensional array you can listen to. " +
-             "This page is seven pictures of that array, in three groups. First how air becomes " +
+             "This page is nine pictures of that array, in four groups. First how air becomes " +
              "numbers: the sampling, the rounding, and the shape and dtype they are stored in. Then " +
              "how those numbers become a matrix: one window cut out of the array, the transform that " +
              "asks which frequencies are in it, and the window sliding along to make a column each " +
-             "time. Last, what a layout does to it, which is the one you can hear go wrong. Each " +
-             "picture says what is on the stage, then asks you to predict before you touch a control; " +
-             "the box under the controls is the answer, with this recording's own numbers in it.",
+             "time. Then what a layout does to it, which is the one you can hear go wrong. Last, " +
+             "what factoring that matrix costs: a truncated SVD that denoises best in the middle and " +
+             "fails at both ends, and an NMF that gives up the best error on purpose to get parts you " +
+             "can name. Each picture says what is on the stage, then asks you to predict before you " +
+             "touch a control; the box under the controls is the answer, with this recording's own " +
+             "numbers in it.",
       builtin: "Recording", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
       builtinTone: "a 440 Hz tone (4.9 s)", builtinFile: "your own file",
       drop: "Drop an audio file here, or choose one",
@@ -490,8 +493,8 @@
               "goes nowhere: nothing is uploaded, and nothing outlives the tab.",
       about2: "It accompanies section 00 (what a tensor is), section 04 (layout and reshape) and " +
               "section 09 (factorisations), with Appendix E's take-home. Each picture has its own address " +
-              "— #sample, #quantize, #array, #frame, #spectrum, #window, #scramble — and the notebooks " +
-              "link to the one they are teaching. The voice is Bart Massey's CC0 sample; the beat is " +
+              "— #sample, #quantize, #array, #frame, #spectrum, #window, #scramble, #lowrank, #nmf — " +
+              "and the notebooks link to the one they are teaching. The voice is Bart Massey's CC0 sample; the beat is " +
               "c0mp0s3r's CC0 <a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton " +
               "groove</a> on Freesound; the tone is arithmetic.",
       turn: "Drag or use arrow keys to turn; scroll or use plus and minus to move closer. Hover pauses motion."
@@ -503,14 +506,17 @@
       intro: "Un sonido es una lista de números. Un micrófono mide la presión del aire decenas de " +
              "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
              "valores, y esos números en orden son el tensor: un arreglo de una dimensión que puedes " +
-             "escuchar. Esta página son siete imágenes de ese arreglo, en tres grupos. Primero, cómo " +
+             "escuchar. Esta página son nueve imágenes de ese arreglo, en cuatro grupos. Primero, cómo " +
              "el aire se vuelve números: el muestreo, el redondeo, y la forma y el dtype con que se " +
              "guardan. Después, cómo esos números se vuelven una matriz: una ventana recortada del " +
              "arreglo, la transformada que pregunta qué frecuencias hay en ella, y la ventana " +
-             "avanzando para producir una columna en cada parada. Por último, qué le hace una " +
-             "disposición, que es la que puedes oír fallar. Cada imagen dice qué hay en el escenario " +
-             "y luego te pide una predicción antes de tocar un control; la caja bajo los controles es " +
-             "la respuesta, con los números de esta grabación.",
+             "avanzando para producir una columna en cada parada. Después, qué le hace una " +
+             "disposición, que es la que puedes oír fallar. Por último, lo que cuesta factorizar esa " +
+             "matriz: una SVD truncada que limpia mejor en el medio y falla en los dos extremos, y una " +
+             "NMF que renuncia al mejor error a propósito para conseguir partes que puedes nombrar. " +
+             "Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar " +
+             "un control; la caja bajo los controles es la respuesta, con los números de esta " +
+             "grabación.",
       builtin: "Grabación", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
       builtinTone: "un tono de 440 Hz (4,9 s)", builtinFile: "tu propio archivo",
       drop: "Suelta un archivo de audio aquí, o elige uno",
@@ -550,8 +556,8 @@
               "sobrevive a la pestaña.",
       about2: "Acompaña a la sección 00 (qué es un tensor), a la 04 (disposición y cambio de forma) y a " +
               "la 09 (factorizaciones), con el trabajo para casa del Apéndice E. Cada imagen tiene su " +
-              "propia dirección (#sample, #quantize, #array, #frame, #spectrum, #window, #scramble) y " +
-              "los cuadernos enlazan a la que están enseñando. La voz es la muestra CC0 de Bart Massey; " +
+              "propia dirección (#sample, #quantize, #array, #frame, #spectrum, #window, #scramble, " +
+              "#lowrank, #nmf) y los cuadernos enlazan a la que están enseñando. La voz es la muestra CC0 de Bart Massey; " +
               "el ritmo es el <a href='https://freesound.org/people/c0mp0s3r/sounds/177422/'>Reggaeton " +
               "groove</a> CC0 de c0mp0s3r en Freesound; el tono es aritmética.",
       turn: "Arrastra o usa las flechas para girar; usa la rueda o más y menos para acercar. El cursor pausa el movimiento."
