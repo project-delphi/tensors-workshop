@@ -25,7 +25,7 @@ rule here surprises you.
 | `broadcasting-simulator.html` | section 03 |
 | `tensor-visualizer.html` + `tensor-core.js` | section 04 — strides, contiguity, memory order, view-or-copy |
 | `linalg-stage.html` + `linalg-kit.js` + `linalg-core.js` + `linalg-scenes/*.js` | sections 07/09 — eight steps |
-| `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/04/09 — seven scrolling sections |
+| `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/04/09 — nine scrolling sections |
 | `widget-chrome.css` | the frame all four share |
 | `vendor/` | three.js core build and eleven `examples/jsm` addons |
 
@@ -85,7 +85,7 @@ stays in the HTML.
 `#portal`, `#eigen`, `#sample`, `#scramble`. The step number moves on a
 reorder; the scene name does not, and the notebooks and both handbooks link by
 name. Nothing a reader sees calls these steps. On the audio stage the same
-control name lives in seven sections, so ids are `#c-<scene>-<control>` and
+control name lives in nine sections, so ids are `#c-<scene>-<control>` and
 readouts `#read-<scene>`.
 
 ## The traps

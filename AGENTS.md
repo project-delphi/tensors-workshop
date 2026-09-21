@@ -197,23 +197,34 @@ takes is a Manim frame; the label chip stays opaque, and black, so axe has two
 colours to measure.
 
 The audio stage (`voice-stage.html`, titled *The audio tensor*) is the same
-registry shape as the projection stage and now the same scroller: **seven
+registry shape as the projection stage and now the same scroller: **nine
 sections down the left, a sticky stage on the right**, one `<section
-class="step">` per scene, grouped under three part headings -- from air to
-numbers (sampling, quantization, the array), from numbers to a matrix (one
-window, the transform of it, the hop), and what a layout does to it (the
-reshape you can hear go wrong). It was five tabs; the tabs hid the order the
-ideas have to be met in, and "window and hop" and the transform itself were
-words in control labels rather than pictures. `voice-kit.js` holds the
-registry and the drawing; `audio-core.js` holds the arithmetic and `npm test`
-pins it, including one frame and its window, the transform of all N bins, the
-rebuild from the k strongest components, the reorderings (whose claim on
-screen is that they are permutations) and the rounding (whose claim is that 16
-bits changes nothing). Two kinds of scene: the three that open the page draw
-in three.js -- a wave that dissolves into beads on a ruler needs depth -- and
-keep a 2-D twin (`draw`) for a reader without WebGL, both from one slice the
-scene computes; the four transform scenes draw only into the 2-D canvas,
-because a spectrum and a spectrogram are pictures. three.js is booted lazily
+class="step">` per scene, grouped under four part headings, each declared by
+the scene that opens it in its own `part:` -- from air to numbers (sampling,
+quantization, the array), from numbers to a matrix (one window, the transform
+of it, the hop), what a layout does to it (the reshape you can hear go wrong),
+and what factoring it costs (the best rank-k there is, and the parts you can
+name). It was five tabs; the tabs hid the order the ideas have to be met in,
+and "window and hop" and the transform itself were words in control labels
+rather than pictures. `voice-kit.js` holds the registry and the drawing;
+`audio-core.js` holds the arithmetic and `npm test` pins it, including one
+frame and its window, the transform of all N bins, the rebuild from the k
+strongest components, the reorderings (whose claim on screen is that they are
+permutations), the rounding (whose claim is that 16 bits changes nothing), and
+both factorizations -- the complex QR and the Hermitian eigendecomposition
+underneath them, that the chunked factorisation is the same arithmetic as the
+drained one, that rank k keeps k singular values, and that NMF drives its
+error down with both factors non-negative. That NMF never beats the truncated
+SVD at the same rank is asserted on the rendered page instead, by
+`check_navigation.cjs` off the two scenes' `data-*`.
+`tests/voice_scenes.test.cjs` pins the registry contract beside it: every
+scene registers, carries the same copy keys and control labels in both
+languages, and opens each slider on a value its own min/step grid contains.
+Two kinds of scene: the three that open the page draw in three.js -- a wave
+that dissolves into beads on a ruler needs depth -- and keep a 2-D twin
+(`draw`) for a reader without WebGL, both from one slice the scene computes;
+the other six draw only into the 2-D canvas, because a spectrum, a
+spectrogram and a pair of factors are pictures. three.js is booted lazily
 on the first three.js scene shown, through the projection stage's
 `vendor/linalg-boot.js` and the same import map, and its camera is
 `linalg-core`'s orbit.
@@ -239,9 +250,9 @@ drops is decoded in the page at that rate, capped at 8 s, and never leaves the
 tab. The embed never fetches a recording -- it draws the spectrogram scene
 from a synthesised stand-in of the same length, and `data-standin` says which
 is on screen. Link by scene name (`#sample`, `#quantize`, `#array`, `#frame`,
-`#spectrum`, `#window`, `#scramble`); controls are `#c-<scene>-<control>` and
-readouts `#read-<scene>`, because the same control name now lives in seven
-sections. The contract is `voice-scenes/README.md`.
+`#spectrum`, `#window`, `#scramble`, `#lowrank`, `#nmf`); controls are
+`#c-<scene>-<control>` and readouts `#read-<scene>`, because the same control
+name now lives in nine sections. The contract is `voice-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a

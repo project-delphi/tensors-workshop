@@ -80,7 +80,7 @@ THREE, AD, glReady, gl, shownView(), label(text, cls)}`. `AC` is `audio-core.js`
 `voice-kit.js` and `LC` is `linalg-core.js` (the tweens and the orbit). Keep
 everything a control touches on `ctx.state`. `control(id)` is this scene's own control element, because the frame prefixes
 every control with the scene it belongs to (`c-spectrum-size`): the same name
-lives in seven sections now. `source` names the recording on the stage
+lives in nine sections now. `source` names the recording on the stage
 (`voice`, `beat`, `tone`, `file` or `standin`); a scene that caches
 anything derived from the signal keys it on `source` too, and the frame
 empties `state` and `cache` when the recording changes. `head()` is seconds
