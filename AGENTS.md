@@ -1,10 +1,11 @@
 # AGENTS.md
 
 This file is the working guidance for any coding agent in this repository --
-Claude Code, Cursor, Codex, or whatever comes next. `CLAUDE.md` is a pointer to
-it, so there is one copy of these rules rather than one per tool. A human
-contributor wants [CONTRIBUTING.md](CONTRIBUTING.md) first; this file is the
-technical layer under it.
+Claude Code, Cursor, Codex, or whatever comes next. All three read this name,
+so there is one copy of these rules rather than one per tool, and no pointer
+file forwarding to it. A human contributor wants
+[CONTRIBUTING.md](CONTRIBUTING.md) first; this file is the technical layer
+under it.
 
 It holds rules and commands. The reasoning behind them -- what went wrong, when,
 and what the fix was -- lives in [DECISIONS.md](DECISIONS.md), one entry per
@@ -129,8 +130,34 @@ What each generator draws, and the rules each one keeps:
   have no source and are redrawn by hand. Copy for both languages lives in one
   `SLIDES` table.
 
+**The companion's assets have no generator.** The infographic PNGs and the
+Audio Overview under `media/` are exported by hand from NotebookLM; the
+`companion:` block in `_variables.yml` is their provenance -- notebook URL,
+each artifact's `/artifact/<uuid>` URL, and an `exported` date. Re-export an
+asset and update `exported`. `media/**` is in `resources:` so it reaches
+`docs/`. `companion.shorts:` lists the eight one-minute videos apart from
+`video:`, each with a hand-made `covers` (check 12 verifies the section exists,
+not the reading) and a `lang`. Every artifact has a `thumb:` screenshot with
+`thumb_alt_{en,es}`, and a caption on the three unexportable ones saying it is
+a still of something live; check 3 fails on a missing thumb file. Companion
+copy names the destination briefly ("Opens in NotebookLM") and omits login
+reminders.
+
+**The brainstorm diagram** is generated: `brainstorm:` in `_variables.yml`
+holds four ideas and the sections under each; `brainstorm_svg()` in
+`gen_tables.py` draws inline SVG into `_includes/brainstorm-{en,es}.md`,
+reading titles from `sections:`. The generator refuses a section under no idea
+or two. It is emitted twice (two columns and one) and `custom.scss` switches at
+44rem; colours and type live in `custom.scss` under `.brainstorm`.
+
+## The widgets
+
 **`interactive/` is hand-written**, and the one asset class with neither a
-generator nor a byte-exact gate. Four HTML widgets -- the section 03
+generator nor a byte-exact gate -- which is why it has a section of its own
+rather than a corner of the one above. Nothing regenerates these files, so
+nothing catches a mistake in them by comparing bytes; what guards them
+instead is `npm test` over the core modules and `check_navigation.cjs` over
+the rendered pages, both at the end of this section. Four HTML widgets -- the section 03
 broadcasting simulator, the section 04 reshape & transpose visualizer, the
 sections 07/09 projection & SVD stage, and the sections 00/04/09 audio
 tensor stage -- each with EN/ES copy tables, `?lang=`, and its section's accent
@@ -269,25 +296,24 @@ and the stage's dark-in-every-theme canvas has one `--stage*` set measured
 against the label chip -- so a contrast finding in a widget is real, never
 something to allowlist.
 
-**The companion's assets have no generator.** The infographic PNGs and the
-Audio Overview under `media/` are exported by hand from NotebookLM; the
-`companion:` block in `_variables.yml` is their provenance -- notebook URL,
-each artifact's `/artifact/<uuid>` URL, and an `exported` date. Re-export an
-asset and update `exported`. `media/**` is in `resources:` so it reaches
-`docs/`. `companion.shorts:` lists the eight one-minute videos apart from
-`video:`, each with a hand-made `covers` (check 12 verifies the section exists,
-not the reading) and a `lang`. Every artifact has a `thumb:` screenshot with
-`thumb_alt_{en,es}`, and a caption on the three unexportable ones saying it is
-a still of something live; check 3 fails on a missing thumb file. Companion
-copy names the destination briefly ("Opens in NotebookLM") and omits login
-reminders.
+**A long line does not get clipped, it disappears.** three.js frustum-culls a
+`Line` by its bounding sphere, as one object: a line whose ends run 100-odd
+world units past the frame has a sphere the camera never intersects, so the
+whole line is dropped rather than drawn to the edge and cut. Clipping planes
+do not help -- they cut what is already being drawn, and this is culled before
+that. Keep an axis, a grid or any other piece of frame furniture in world
+units close to what the camera actually holds; reach for
+`geometry.computeBoundingSphere()` or `line.frustumCulled = false` only when a
+long line is genuinely the picture.
 
-**The brainstorm diagram** is generated: `brainstorm:` in `_variables.yml`
-holds four ideas and the sections under each; `brainstorm_svg()` in
-`gen_tables.py` draws inline SVG into `_includes/brainstorm-{en,es}.md`,
-reading titles from `sections:`. The generator refuses a section under no idea
-or two. It is emitted twice (two columns and one) and `custom.scss` switches at
-44rem; colours and type live in `custom.scss` under `.brainstorm`.
+**Assert a browser state by polling it, never after a fixed wait.** A
+`waitForTimeout` long enough on this Mac is short on the GitHub Linux runner,
+where the whole check runs slower and a wheel or drag settles later; the
+assertion then reads the pre-gesture value and fails only in CI. Every
+assertion in `check_navigation.cjs` goes through `page.waitForFunction` on the
+`data-*` the widget publishes, with a timeout as the ceiling rather than the
+schedule. `waitForTimeout` is left only where the wait *is* the thing under
+test, such as the visualizer's 0.3 s drift resume.
 
 ## Which document owns what
 

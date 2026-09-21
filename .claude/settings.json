@@ -13,7 +13,20 @@
       "Bash(gh run list:*)",
       "Bash(uv run --group site python scripts/check_links.py:*)",
       "Bash(uv run --group test python scripts/check_teaching_materials.py:*)",
-      "Bash(uv run --group test python -m unittest:*)"
+      "Bash(uv run --group test python -m unittest:*)",
+      "Bash(git diff --check:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh run view:*)",
+      "Bash(quarto --version)",
+      "Bash(node --version)",
+      "Bash(npm test:*)",
+      "Bash(npm run check:navigation:*)",
+      "Bash(npm run check:slides:*)",
+      "Bash(uv run --group site python scripts/nb_cells.py:*)",
+      "Bash(uv run --group lint ruff check:*)",
+      "Bash(uv run --group lint ruff format --check:*)",
+      "Bash(uv run --group execute python scripts/test_notebooks.py --list:*)"
     ]
   },
   "hooks": {
