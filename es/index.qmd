@@ -38,25 +38,28 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
 ::: {.hero-visual}
 ```{=html}
 <div class="hero-demos" data-hero-demos>
-  <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
-    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
-    <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
-    <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
-    <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voz</button>
+  <div class="hero-bar">
+    <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
+      <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
+      <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
+      <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
+      <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voz</button>
+    </div>
+    <a class="hero-open" data-hero-open href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a>
   </div>
-  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
+  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout" data-open="../interactive/tensor-visualizer.html?lang=es">
     <iframe class="hero-embed" data-src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape"></iframe>
     <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
+  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" data-open="../interactive/broadcasting-simulator.html?lang=es" hidden>
     <iframe class="hero-embed" data-src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas"></iframe>
     <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
+  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" data-open="../interactive/linalg-stage.html?lang=es" hidden>
     <iframe class="hero-embed" data-src="../interactive/linalg-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"></iframe>
     <p class="hero-caption">Una matriz lleva el círculo unitario a una elipse: <code>A v = σ u</code>, un vector a la vez.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" hidden>
+  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" data-open="../interactive/voice-stage.html?lang=es" hidden>
     <iframe class="hero-embed" data-src="../interactive/voice-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: una voz cortada en ventanas, convertida en una matriz de frecuencia por tiempo"></iframe>
     <p class="hero-caption">Una voz se convierte en una matriz — <code>513 × 465</code> — y puedes oír qué le hace una transposición.</p>
   </div>
@@ -113,6 +116,9 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   if (!wrap) return;
   var tabs = wrap.querySelectorAll("[role=tab]");
   var panels = wrap.querySelectorAll("[role=tabpanel]");
+  // One way out to the full widget, outside the frames, so it sits in the
+  // same place whichever tab is open; it follows the tab.
+  var open = wrap.querySelector("[data-hero-open]");
   // A hidden iframe is not lazy-loaded: a browser treats one as a tracking
   // pixel and fetches it anyway, whatever `loading` says. So every panel
   // carries its URL in data-src and is handed it only when it is really on
@@ -134,7 +140,10 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
-      if (on) load(panels[j]);
+      if (on) {
+        load(panels[j]);
+        open.href = panels[j].getAttribute("data-open");
+      }
     });
   }
   tabs.forEach(function (tab, i) {
@@ -298,7 +307,7 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-Sin instalar nada y sin cuenta. Tres herramientas vivas que responden una
+Sin instalar nada y sin cuenta. Cuatro herramientas vivas que responden una
 pregunta que las páginas solo pueden describir.
 
 :::: {.widget-grid}
@@ -340,6 +349,19 @@ de ahí a los autovectores, dos columnas casi colineales y float32 dividiendo
 exactamente por cero. Ocho imágenes de un mismo problema, secciones 07, 08 y 09.
 
 <a href="../interactive/linalg-stage.html?lang=es" class="resource-button">Probar proyección y SVD</a>
+:::
+
+::: {.resource-card}
+### 🎙️ Escenario del tensor de voz
+
+<span data-language-key="voice-tensor-stage"></span>
+
+Una grabación se vuelve números: 48 000 por segundo, cada uno redondeado a 16
+bits, escritos en un array que puedes escuchar. Luego una ventana la recorre y
+la voz se convierte en una matriz de frecuencia por tiempo, 513 × 465, y puedes
+oír qué le hace una transposición. Secciones 04 y 09.
+
+<a href="../interactive/voice-stage.html?lang=es" class="resource-button">Probar el tensor de voz</a>
 :::
 ::::
 

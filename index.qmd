@@ -38,25 +38,28 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
 ::: {.hero-visual}
 ```{=html}
 <div class="hero-demos" data-hero-demos>
-  <div class="hero-tabs" role="tablist" aria-label="Live demos">
-    <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
-    <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
-    <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
-    <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voice</button>
+  <div class="hero-bar">
+    <div class="hero-tabs" role="tablist" aria-label="Live demos">
+      <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
+      <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
+      <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
+      <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Voice</button>
+    </div>
+    <a class="hero-open" data-hero-open href="interactive/tensor-visualizer.html?lang=en">Open the full widget →</a>
   </div>
-  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
+  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout" data-open="interactive/tensor-visualizer.html?lang=en">
     <iframe class="hero-embed" data-src="interactive/tensor-visualizer.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: three photos as a 4-D tensor, transposed and then reshaped"></iframe>
     <p class="hero-caption">Real photos, one cube per byte. Transpose keeps the picture; reshape breaks it.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
+  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" data-open="interactive/broadcasting-simulator.html?lang=en" hidden>
     <iframe class="hero-embed" data-src="interactive/broadcasting-simulator.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: two shapes aligned from the right and stretched"></iframe>
     <p class="hero-caption">Two shapes lined up from the right; every axis of size 1 stretches, and nothing is copied.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
+  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" data-open="interactive/linalg-stage.html?lang=en" hidden>
     <iframe class="hero-embed" data-src="interactive/linalg-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: the unit circle a matrix sends to an ellipse, with its singular vectors"></iframe>
     <p class="hero-caption">A matrix takes the unit circle to an ellipse: <code>A v = σ u</code>, one vector at a time.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" hidden>
+  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" data-open="interactive/voice-stage.html?lang=en" hidden>
     <iframe class="hero-embed" data-src="interactive/voice-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: a voice cut into windows, becoming a frequency-by-time matrix"></iframe>
     <p class="hero-caption">A voice becomes a matrix — <code>513 × 465</code> — and you can hear what a transpose does to it.</p>
   </div>
@@ -113,6 +116,9 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   if (!wrap) return;
   var tabs = wrap.querySelectorAll("[role=tab]");
   var panels = wrap.querySelectorAll("[role=tabpanel]");
+  // One way out to the full widget, outside the frames, so it sits in the
+  // same place whichever tab is open; it follows the tab.
+  var open = wrap.querySelector("[data-hero-open]");
   // A hidden iframe is not lazy-loaded: a browser treats one as a tracking
   // pixel and fetches it anyway, whatever `loading` says. So every panel
   // carries its URL in data-src and is handed it only when it is really on
@@ -134,7 +140,10 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
-      if (on) load(panels[j]);
+      if (on) {
+        load(panels[j]);
+        open.href = panels[j].getAttribute("data-open");
+      }
     });
   }
   tabs.forEach(function (tab, i) {
@@ -298,7 +307,7 @@ Core papers, textbook chapters, and repository source code.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-No install and no account. Three live tools that answer a question the pages
+No install and no account. Four live tools that answer a question the pages
 can only describe.
 
 :::: {.widget-grid}
@@ -340,6 +349,19 @@ collinear columns and float32 dividing by exactly zero. Eight pictures of one
 problem, sections 07, 08 and 09.
 
 [Try projection & SVD](interactive/linalg-stage.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 🎙️ Voice tensor stage
+
+<span data-language-key="voice-tensor-stage"></span>
+
+A recording becomes numbers: 48 000 a second, each rounded to 16 bits, written
+down as an array you can listen to. Then a window slides along it and the voice
+becomes a frequency-by-time matrix, 513 × 465, and you can hear what a transpose
+does to it. Sections 04 and 09.
+
+[Try the voice tensor](interactive/voice-stage.html?lang=en){.resource-button}
 :::
 ::::
 

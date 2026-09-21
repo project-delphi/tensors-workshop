@@ -1,0 +1,159 @@
+/* The frame every widget shares: the site's palette on three themes, its
+   type, the wrapper, the site nav and header, the panel card, the default
+   button and input, and the chrome that embed mode strips. Each page keeps
+   what is its own -- the section accent, tuned per theme to clear 4.5:1 on
+   these surfaces, and everything on and around its stage -- so a widget still
+   reads as one page, but four of them read as one site.
+
+   Order matters: a page links this first and its own <style> second, so a
+   rule of the same specificity in the page wins. That is how a page sets
+   `--accent`, `--wrap` and the pill radius on its tabs without this file
+   knowing which page it is on. */
+
+:root {
+  /* custom.scss: $body-bg, $body-color, $border-color, the two font stacks. */
+  --bg: #ffffff;
+  --ink: #1f2933;
+  --ink-mute: #56677a;
+  --panel: #f8fafc;
+  --sunk: #eef2f6;
+  --line: #dfe3e8;
+  --fault: #b3261e;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
+  --wrap: 96rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="navy"]) {
+    --bg: #171d24;
+    --ink: #eef2f6;
+    --ink-mute: #a2adb9;
+    --panel: #222a33;
+    --sunk: #171d24;
+    --line: #3a4551;
+    --fault: #ff8a80;
+  }
+}
+/* The homepage hero's navy band (homepage.scss), so an embed reads as part
+   of it. */
+:root[data-theme="navy"] {
+  --bg: #0f2740;
+  --ink: #e7f0f8;
+  --ink-mute: #a3bdd4;
+  --panel: #12324a;
+  --sunk: #0b2236;
+  --line: #2a4d68;
+  --fault: #ff8a80;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
+a { color: var(--accent); }
+/* `hidden` must win over any display rule a page gives the same element:
+   several blocks are shown for one data source or one scene only, and a
+   grid or flex rule was un-hiding them. */
+[hidden] { display: none !important; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 1.25rem 1.25rem 4rem; }
+
+/* The way back. Every widget is a page of the site with no navbar, so the
+   two links the site would have put there are here instead, first. The
+   page's script points them at its own language's home and notebooks page. */
+.site-nav {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem;
+  margin: 0 0 1.1rem; font-size: 0.82rem; font-weight: 600;
+}
+.site-nav a {
+  display: inline-flex; align-items: center; min-height: 2.1rem;
+  padding: 0.3rem 0.85rem; border: 1px solid var(--line); border-radius: 999px;
+  background: var(--panel); color: var(--ink); text-decoration: none;
+}
+.site-nav a:hover { border-color: var(--accent); color: var(--accent); }
+.site-nav a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+header { margin: 0 0 1.25rem; }
+header p { max-width: 44rem; color: var(--ink-mute); overflow-wrap: break-word; }
+h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
+.eyebrow, .kicker {
+  margin: 0; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--accent);
+}
+
+/* A panel beside or under the stage. */
+.card, .about {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+  padding: 1rem 1.15rem; min-width: 0;
+}
+.about { margin-top: 2rem; }
+.about h2 { font-size: 0.95rem; margin: 0 0 0.5rem; }
+.about p { margin: 0.35rem 0; font-size: 0.88rem; color: var(--ink-mute); }
+
+/* One button, one text field, one select, one slider. A page reshapes them
+   -- a pill for a tab or a preset, a ring for a step mark -- and keeps the
+   focus ring and the pressed state, which are the two things a reader
+   learns once. */
+.wrap button {
+  font: 600 0.82rem/1.3 var(--sans); color: var(--ink);
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 7px; padding: 0.35rem 0.7rem; cursor: pointer;
+}
+.wrap button:hover:not(:disabled) { border-color: var(--accent); }
+.wrap button[aria-pressed="true"], .wrap button[aria-selected="true"] {
+  background: var(--accent); color: var(--on-accent); border-color: var(--accent);
+}
+.wrap button:disabled { opacity: 0.45; cursor: not-allowed; }
+.wrap input[type="text"], .wrap select {
+  font: 0.88rem/1.3 var(--sans); color: var(--ink); background: var(--panel);
+  border: 1px solid var(--line); border-radius: 7px; padding: 0.35rem 0.5rem;
+}
+.wrap input[type="range"] { width: 100%; accent-color: var(--accent); }
+.wrap input[type="checkbox"], .wrap input[type="radio"] { accent-color: var(--accent); }
+.wrap button:focus-visible, .wrap input:focus-visible, .wrap select:focus-visible,
+.wrap summary:focus-visible, .wrap [tabindex]:focus-visible {
+  outline: 3px solid var(--accent); outline-offset: 2px;
+}
+.toggle { display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.85rem; color: var(--ink-mute); }
+.stagebar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
+.stagebar .grow { flex: 1 1 auto; }
+
+/* The scene's teaching copy, where a page has it: the concept the way the
+   pre-work states it, and the question to answer before touching a control. */
+.concept {
+  margin: 0.5rem 0 0.9rem; padding: 0.6rem 0.85rem;
+  background: var(--panel); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent); border-radius: 8px;
+  font-size: 0.95rem; line-height: 1.55; color: var(--ink);
+}
+.concept[data-label]::before {
+  content: attr(data-label); display: block;
+  font: 700 0.65rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-mute); margin-bottom: 0.35rem;
+}
+.predict {
+  font-style: italic; font-weight: 600; color: var(--accent);
+  border-left: 3px solid var(--accent); padding-left: 0.7rem; margin: 0.6rem 0 0.8rem;
+}
+
+.note, .hint, .fallback { font-size: 0.8rem; line-height: 1.45; color: var(--ink-mute); margin: 0.4rem 0 0; }
+pre {
+  margin: 0.5rem 0 0; padding: 0.55rem 0.7rem; background: var(--sunk);
+  border-radius: 8px; font: 0.76rem/1.45 var(--mono); overflow-x: auto; max-width: 100%;
+}
+/* `top`/`left`/`margin` are load-bearing, not tidying: without them the box
+   sits at its static position, which in embed mode is below the frame, and a
+   1px live region plus a `p` margin was adding 17px to the scroll height --
+   a scrollbar in the hero over something nobody can see. */
+.sr { position: absolute; top: 0; left: 0; margin: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
+
+/* Embed mode, the homepage hero: the stage, a caption, and nothing else. The
+   way out to the full page is the hero's own button, outside the frame, so
+   it sits in one place whichever tab is open. Each page adds the rules that
+   turn its own layout into a frame-tall column. */
+#embedcap { display: none; }
+html.embed .wrap { max-width: none; padding: 0; }
+html.embed header, html.embed aside, html.embed .about { display: none; }
+html.embed #embedcap {
+  display: block; flex: 0 0 auto; min-height: 3.4rem; margin: 0;
+  padding: 0.55rem 0.9rem; font: 500 0.8rem/1.4 var(--sans); color: var(--ink-mute);
+  overflow-wrap: break-word;
+}
+html.embed #embedcap b { color: var(--ink); font-weight: 650; }

@@ -19,14 +19,11 @@
 }
 </script>
 
+<link rel="stylesheet" href="widget-chrome.css">
 <style>
+  /* The surfaces, type and frame are widget-chrome.css; this page owns its
+     accent and everything on the stage. */
   :root {
-    --bg: #f7f5ef;
-    --ink: #1c1917;
-    --ink-mute: #57534e;
-    --panel: #fffcf7;
-    --sunk: #ebe6dc;
-    --line: #d6d0c4;
     /* Sections 04 and 09 share this widget, and Appendix E is where they
        meet. The accent is 09's (gen_notebooks.ACCENTS[9] = #c2410c), because
        the factorisation scenes are its centre of gravity -- but that hex is
@@ -36,7 +33,6 @@
        readout sits on: 4.8 there and 5.5 on the page. */
     --accent: #b23a0a;
     --on-accent: #ffffff;
-    --fault: #b3261e;
 
     /* The stage is black in every theme, for the reason the projection
        stage's is: it is a picture rather than page furniture. A spectrogram
@@ -44,23 +40,12 @@
        own black, so silence is the background rather than a shade near it. */
     --stage: #000000;
     --stage-chip: #000000;
-
-    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
-    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="navy"]) {
-      --bg: #1c1917; --ink: #f5f0e8; --ink-mute: #a8a29e;
-      --panel: #292524; --sunk: #1c1917; --line: #44403c;
-      --accent: #fb923c; --on-accent: #1c1917; --fault: #ff8a80;
-    }
+    :root:not([data-theme="navy"]) { --accent: #fb923c; --on-accent: #1c1917; }
   }
-  /* The homepage hero's navy band, so an embed reads as part of it. */
-  :root[data-theme="navy"] {
-    --bg: #0f2740; --ink: #e7f0f8; --ink-mute: #a3bdd4;
-    --panel: #12324a; --sunk: #0b2236; --line: #2a4d68;
-    --accent: #fb923c; --on-accent: #06202f; --fault: #ff8a80;
-  }
+  /* On the homepage hero's navy band. */
+  :root[data-theme="navy"] { --accent: #fb923c; --on-accent: #06202f; }
 
   /* Ink on the stage. One set for all three themes, because the stage is
      black in all three, and measured against that black: --stage-mute is the
@@ -76,14 +61,6 @@
     --v-axis: #58c4dd;   /* the axis being named; the ruler the samples snap to */
   }
 
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 var(--sans); }
-  a { color: var(--accent); }
-  .wrap { max-width: 96rem; margin: 0 auto; padding: 1.25rem 1.25rem 4rem; }
-  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
-  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
-  header p { max-width: 44rem; color: var(--ink-mute); overflow-wrap: break-word; }
-
   /* Which recording is on the stage: one of the two built in, or a file the
      reader brought. The file is decoded in the page and goes nowhere. */
   .source {
@@ -91,11 +68,7 @@
     margin: 1rem 0 0; font-size: 0.86rem;
   }
   .source label { font-weight: 600; }
-  .source select {
-    font: inherit; font-size: 0.86rem; padding: 0.25rem 0.4rem;
-    border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink);
-  }
-  .source select:focus-visible, .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .drop:focus-within { outline: 3px solid var(--accent); outline-offset: 2px; }
   .drop {
     display: inline-flex; align-items: center; gap: 0.4rem; cursor: pointer;
     padding: 0.3rem 0.7rem; border: 1px dashed var(--line); border-radius: 6px;
@@ -106,13 +79,7 @@
   .source .sig { color: var(--ink-mute); font-family: var(--mono); font-size: 0.82rem; overflow-wrap: anywhere; }
 
   .tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1.1rem 0 0.8rem; padding: 0; }
-  .tabs button {
-    font: inherit; font-size: 0.86rem; font-weight: 600; cursor: pointer;
-    padding: 0.36rem 0.85rem; border-radius: 999px;
-    border: 1px solid var(--line); background: var(--panel); color: var(--ink);
-  }
-  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-  .tabs button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tabs button { font-size: 0.86rem; padding: 0.36rem 0.85rem; border-radius: 999px; }
 
   .two-pane { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 1.25rem; align-items: start; }
   @media (max-width: 62rem) { .two-pane { grid-template-columns: minmax(0, 1fr); } }
@@ -148,20 +115,6 @@
   #glnote { position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; font-size: 0.78rem; max-width: 46%;
             color: var(--stage-mute); background: var(--stage-chip); padding: 0.15rem 0.4rem; border-radius: 4px; }
 
-  .stagebar { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
-  .stagebar button, .transport button {
-    font: inherit; font-size: 0.83rem; cursor: pointer; padding: 0.3rem 0.7rem;
-    border-radius: 6px; border: 1px solid var(--line); background: var(--panel); color: var(--ink);
-  }
-  .stagebar button:focus-visible, .transport button:focus-visible,
-  .controls input:focus-visible, .controls select:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  .stagebar button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-  .stagebar button[hidden], .stagebar .toggle[hidden] { display: none; }
-  .stagebar .grow { flex: 1 1 auto; }
-  .toggle { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.85rem; color: var(--ink-mute); }
-  .hint { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
-  .hint[hidden] { display: none; }
-
   .readout {
     margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
     border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem; min-height: 3.2rem;
@@ -172,46 +125,25 @@
 
   aside { min-width: 0; }
   aside h2 { font-size: 1.05rem; margin: 0 0 0.35rem; }
-  .kicker { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent); }
-  .concept {
-    margin: 0.5rem 0 0.9rem; padding: 0.6rem 0.75rem; background: var(--panel);
-    border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 6px;
-    font-size: 0.92rem; color: var(--ink);
-  }
-  .predict { margin: 0.9rem 0 0.5rem; font-weight: 600; font-size: 0.93rem; }
   aside p.body { color: var(--ink-mute); font-size: 0.93rem; }
 
   .controls { display: grid; gap: 0.7rem; margin-top: 0.9rem; }
   .controls label { display: block; font-size: 0.85rem; font-weight: 600; }
   .controls .val { font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
   .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
-  .controls select { font: inherit; font-size: 0.88rem; padding: 0.25rem 0.4rem; width: 100%;
-                     border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); }
+  .controls select { width: 100%; }
 
   .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.9rem; }
   .transport button.primary { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
   .transport .state { font-size: 0.82rem; color: var(--ink-mute); }
 
-  .about { margin-top: 2rem; padding: 1rem 1.15rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; }
-  .about h2 { font-size: 0.95rem; margin: 0 0 0.5rem; }
-  .about p { margin: 0.35rem 0; font-size: 0.88rem; color: var(--ink-mute); }
-
-  .sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
-        clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
-
-  /* Embed mode: the homepage hero. No chrome, no sound, no fetch. */
-  #embedcap { display: none; }
-  html.embed .wrap { max-width: none; padding: 0; }
-  html.embed header, html.embed aside, html.embed .stagebar, html.embed .tabs,
-  html.embed .readout, html.embed .source, html.embed .about, html.embed .hint { display: none; }
+  /* Embed mode: the homepage hero. No chrome, no sound, no fetch. The chrome
+     that goes is in widget-chrome.css. */
+  html.embed .stagebar, html.embed .tabs, html.embed .readout,
+  html.embed .source, html.embed .hint { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { height: 100vh; display: flex; flex-direction: column; }
   html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; aspect-ratio: auto; min-height: 0; }
-  html.embed #embedcap {
-    display: block; margin: 0; padding: 0.5rem 0.75rem; font-size: 0.82rem; color: var(--ink-mute);
-  }
-  html.embed #embedcap b { color: var(--ink); font-weight: 650; }
-  html.embed #embedcap a { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -219,6 +151,10 @@
 <div class="wrap">
 
   <header>
+    <nav class="site-nav" aria-label="Site">
+      <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
+    </nav>
     <p class="eyebrow" id="eyebrow"></p>
     <h1 id="title"></h1>
     <p id="intro"></p>
@@ -339,6 +275,7 @@
     en: {
       eyebrow: "Sections 00, 04 and 09 · Appendix E",
       title: "The voice tensor",
+      navHome: "← Workshop home", navNotebooks: "Notebooks",
       intro: "A voice is a list of numbers. A microphone measures the air pressure tens of " +
              "thousands of times a second, each measurement is rounded to one of a fixed set of " +
              "values, and those numbers in order are the tensor — a one-dimensional array you can " +
@@ -364,7 +301,6 @@
       glNoWebgl: "This browser reports no WebGL, so this scene is drawn flat. Every number is the same.",
       glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "A voice becomes a frequency-by-time matrix.",
-      embedOpen: "Open the full page →",
       shape: "Shape",
       aboutH: "About this page",
       about1: "Every number on this page is computed in the browser from the recording on the stage — " +
@@ -381,6 +317,7 @@
     es: {
       eyebrow: "Secciones 00, 04 y 09 · Apéndice E",
       title: "El tensor de voz",
+      navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
       intro: "Una voz es una lista de números. Un micrófono mide la presión del aire decenas de " +
              "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
              "valores, y esos números en orden son el tensor: un arreglo de una dimensión que " +
@@ -408,7 +345,6 @@
       glNoWebgl: "Este navegador no reporta WebGL, así que esta escena se dibuja plana. Todos los números son los mismos.",
       glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
       embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
-      embedOpen: "Abrir la página completa →",
       shape: "Forma",
       aboutH: "Sobre esta página",
       about1: "Cada número de esta página se calcula en el navegador a partir de la grabación que hay " +
@@ -1190,6 +1126,10 @@
   const byId = (id) => scenes.find((s) => s.id === id);
 
   // ----------------------------------------------------------- the chrome
+  $("site-home").textContent = T.navHome;
+  $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+  $("site-notebooks").textContent = T.navNotebooks;
+  $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
   $("eyebrow").textContent = T.eyebrow;
   $("title").textContent = T.title;
   $("intro").textContent = T.intro;
@@ -1216,12 +1156,6 @@
     const b = document.createElement("b");
     b.textContent = T.embedCap;
     cap.appendChild(b);
-    cap.appendChild(document.createTextNode(" "));
-    const a = document.createElement("a");
-    a.href = "voice-stage.html?lang=" + lang;
-    a.target = "_top";
-    a.textContent = T.embedOpen;
-    cap.appendChild(a);
   }
 
   $("reset").addEventListener("click", () => {

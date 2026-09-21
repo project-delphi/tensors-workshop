@@ -32,6 +32,10 @@ repo:
   # be caught any other way: the visualizer imports it from inside a module
   # script, so there is no `src` attribute for check 3 to harvest.
   widgets:
+    # The frame all four pages share: palette, type, nav, the panel card and
+    # the embed chrome. Linked by <link href>, which the harvest does see;
+    # listed anyway because without it every widget renders unstyled.
+    - interactive/widget-chrome.css
     - interactive/tensor-visualizer.html
     - interactive/tensor-core.js
     - interactive/data/photos.json

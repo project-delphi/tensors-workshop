@@ -699,6 +699,28 @@ change, not a spelling.
 
 ## Commands and checks: the browser check
 
+**The widgets share one frame, and the way out of an embed is one button on
+the hero.** Each widget shipped as a self-contained page with its own `:root`
+palette, base rules, header, panel and button styles -- four copies that had
+already drifted: two pages linked back to the notebooks, two linked nowhere;
+the wrapper was 72, 110, 96 and 96rem; focus rings were 2px on two pages and
+3px on the others; the paper palette was the widgets' own and matched nothing
+else on the site. And the "Open the full widget" link lived inside each
+iframe's caption, so on the homepage it sat wherever that widget's caption
+put it, and moved with every chip. `interactive/widget-chrome.css` now owns
+the frame (2026-09-20): the site's palette from `custom.scss` on three
+themes, the type, a `.site-nav` with the home and notebooks links first on
+every page, the header, the panel card, the default control, and the chrome
+embed mode strips; each page links it first and keeps its accent and its
+stage. The homepage hero grew a single `.hero-open` button at the end of the
+tab row, retargeted by the tab script from the open panel's `data-open`, and
+the caption inside the frame lost its link. Every accent was re-measured
+against the new surfaces (the lightest light-theme surface is brighter than
+the paper it replaced, so every light accent gained contrast; the dark
+surfaces are within 0.4% luminance of the old ones), and the browser check
+now asserts the home link per language, the button per tab, and no link in
+any caption.
+
 **axe audits the pages and the widgets, not the decks, and allowlists by
 element.** The first run (2026-09-18) found four rules over 120 nodes. Two
 were ours and are fixed: the Okabe–Ito axis hues as 12–14px text in the

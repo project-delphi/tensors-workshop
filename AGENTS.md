@@ -130,13 +130,23 @@ What each generator draws, and the rules each one keeps:
   `SLIDES` table.
 
 **`interactive/` is hand-written**, and the one asset class with neither a
-generator nor a byte-exact gate. Four self-contained HTML widgets -- the
-section 03 broadcasting simulator, the section 04 reshape & transpose
-visualizer, the sections 07/09 projection & SVD stage, and the sections 04/09
-voice tensor stage -- each with its own `:root` palette, EN/ES copy tables,
-`?lang=`, and its section's accent adjusted per theme to clear 4.5:1. They are
-resources, not render targets: `interactive/**` is in `resources:` and
-deliberately absent from `render:`.
+generator nor a byte-exact gate. Four HTML widgets -- the section 03
+broadcasting simulator, the section 04 reshape & transpose visualizer, the
+sections 07/09 projection & SVD stage, and the sections 04/09 voice tensor
+stage -- each with EN/ES copy tables, `?lang=`, and its section's accent
+adjusted per theme to clear 4.5:1. **The frame is shared**:
+`interactive/widget-chrome.css`, linked first by every page, owns the
+surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the
+site's own palette from `custom.scss`, on light, dark and the hero's navy),
+the two font stacks, `.wrap` (width from `--wrap`), the `.site-nav` home and
+notebooks links every page opens with, the header, the `.card` and `.about`
+panels, the default button, field, select and slider, `.concept`, `.predict`,
+`.sr`, `[hidden]` and the chrome embed mode strips. A page's own `<style>`
+comes second and owns its `--accent`, everything on its stage, and the shape
+it gives a shared control (a pill for a tab or a preset). A colour that goes
+on text in more than one widget belongs in the shared file; a page never
+redeclares a surface token. They are resources, not render targets:
+`interactive/**` is in `resources:` and deliberately absent from `render:`.
 
 The stage is eight steps, one file each under `interactive/linalg-scenes/`,
 registered in load order through `LinalgScenes.register()`; the page
@@ -202,10 +212,13 @@ screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the
 widget counts instead, which `check_navigation.cjs` treats as a regression. All
-three hero widgets take `?embed=1&theme=navy`, and neither the visualizer nor
-the stage fetches three.js there: the stage's embed is the portal's still
-frame, drawn flat, with the scroller and its steps gone. The hero is three
-tabs and the check pins that at three. Only the open tab's widget is
+four hero widgets take `?embed=1&theme=navy`, and none of them fetches
+three.js there: the stage's embed is the portal's still frame, drawn flat,
+with the scroller and its steps gone. The hero is four tabs and the check pins
+that at four. **The way out of an embed is the hero's own `.hero-open`
+button**, one element beside the tab row whose `href` the tab script takes
+from the open panel's `data-open`; an embed's `#embedcap` carries a caption
+and never a link, and the check asserts both. Only the open tab's widget is
 fetched, and none at all where the static diagram replaces the demos -- a
 hidden iframe is never lazy-loaded, so every panel keeps its URL in
 `data-src` until the tab script hands it over, once.

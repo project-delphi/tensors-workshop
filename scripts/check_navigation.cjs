@@ -886,7 +886,12 @@ async function audit(page, where) {
             await page.waitForTimeout(500);
             await page.locator('#tilt').fill('600');
             await page.waitForTimeout(50);
-            await page.mouse.move(midX, midY);
+            // Filling the slider scrolled it into view, and the stage is
+            // sticky, so it is no longer where it was measured at load: hover
+            // its centre as it is now, not `midY`, which the site nav above
+            // the header pushed to just under the stuck frame.
+            const stuck = await stage.boundingBox();
+            await page.mouse.move(stuck.x + stuck.width / 2, stuck.y + stuck.height / 2);
             await page.waitForTimeout(50);
             const geometry = () => stage.locator('.mat-lab').evaluateAll(nodes =>
               nodes.map(e => [e.textContent, e.style.transform]));
@@ -931,6 +936,14 @@ async function audit(page, where) {
             `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}`);
           assert.equal(await page.locator('html').getAttribute('lang'), lang);
           assert.equal(await page.locator('#title').innerText(), widget[lang]);
+          // The way back to the site, in the page's language, from the frame
+          // every widget shares (interactive/widget-chrome.css).
+          const home = page.locator('header .site-nav a.site-home');
+          assert.equal(await home.count(), 1, `${where}: one home link`);
+          assert.equal(await home.getAttribute('href'), lang === 'es' ? '../es/index.html' : '../index.html',
+            `${where}: home link points at the ${lang} homepage`);
+          assert.equal(await page.locator('header .site-nav a#site-notebooks').getAttribute('href'),
+            lang === 'es' ? '../es/notebooks.html' : '../notebooks.html', `${where}: notebooks link`);
           await widget.drive(page, where, lang);
 
           for (const width of [1440, 390]) {
@@ -1007,7 +1020,9 @@ async function audit(page, where) {
           if (!widget.embed) continue;
           await page.goto(
             `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}&embed=1&theme=navy`);
-          await page.waitForSelector('#embedcap a');
+          await page.waitForSelector('#embedcap b');
+          // The way out is the hero's own button, not a link in the caption.
+          assert.equal(await page.locator('#embedcap a').count(), 0, `${where} embed: link in the caption`);
           assert(await page.locator('aside').isHidden(), `${where} embed: panel shown`);
           assert(await page.locator('header').isHidden(), `${where} embed: header shown`);
           assert.equal(await page.locator('html').getAttribute('data-theme'), 'navy');
@@ -1080,6 +1095,14 @@ async function audit(page, where) {
         assert.equal(urls.filter(([src]) => src).length, 1,
           `${lang}/index: only the open tab's widget is loaded`);
         assert(await page.locator('.hero-visual.has-js').count() === 1, `${lang}/index: tab script did not run`);
+        // One way out to the full widget, outside the frames, in one place:
+        // it follows the open tab rather than moving with each widget's own
+        // caption.
+        const open = page.locator('.hero-open');
+        assert.equal(await open.count(), 1, `${lang}/index: one open-the-widget button`);
+        assert(await open.isVisible(), `${lang}/index: open-the-widget button hidden`);
+        assert((await open.getAttribute('href')).includes(`tensor-visualizer.html?lang=${lang}`),
+          `${lang}/index: open button starts on the first tab`);
         assert(await page.locator('#hero-panel-layout').isVisible());
         assert(await page.locator('#hero-panel-broadcast').isHidden());
         assert(await page.locator('#hero-panel-linalg').isHidden());
@@ -1089,6 +1112,8 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-layout').isHidden());
         assert(await page.locator('#hero-panel-broadcast iframe').getAttribute('src'),
           `${lang}/index: broadcasting embed not loaded on opening its tab`);
+        assert((await open.getAttribute('href')).includes(`broadcasting-simulator.html?lang=${lang}`),
+          `${lang}/index: open button did not follow the tab`);
         await page.locator('#hero-tab-linalg').click();
         assert(await page.locator('#hero-panel-linalg').isVisible(), `${lang}/index: linear algebra tab`);
         assert(await page.locator('#hero-panel-broadcast').isHidden());
@@ -1104,6 +1129,8 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-linalg').isHidden());
         assert(await page.locator('#hero-panel-voice iframe').getAttribute('src'),
           `${lang}/index: voice embed not loaded on opening its tab`);
+        assert((await open.getAttribute('href')).includes(`voice-stage.html?lang=${lang}`),
+          `${lang}/index: open button did not follow the voice tab`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);

@@ -4,14 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Broadcasting, step by step</title>
+<link rel="stylesheet" href="widget-chrome.css">
 <style>
+  /* The surfaces, type and frame are widget-chrome.css; this page owns its
+     accent and its two operand colours. */
   :root {
-    --bg: #f7f5ef;
-    --ink: #1c1917;
-    --ink-mute: #57534e;
-    --panel: #fffcf7;
-    --sunk: #ebe6dc;
-    --line: #d6d0c4;
+    --wrap: 72rem;
     /* Section 03's accent is #7c3aed (gen_notebooks.ACCENTS[3]); this is the
        nearest shade of it that clears 4.5:1 on this background, with the
        foreground that belongs on top of it. */
@@ -24,17 +22,9 @@
     --b: #a84800;          /* Okabe-Ito: operand B */
     --ok: #046c4e;
     --bad: #a4341c;
-    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
-    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="navy"]) {
-      --bg: #1c1917;
-      --ink: #f5f0e8;
-      --ink-mute: #a8a29e;
-      --panel: #292524;
-      --sunk: #1c1917;
-      --line: #44403c;
       --accent: #a78bfa;
       --on-accent: #1c1917;
       --a: #56b4e9;
@@ -43,15 +33,8 @@
       --bad: #f87171;
     }
   }
-  /* The homepage hero embeds this page on its navy band; these are the band's
-     own colours (homepage.scss), so the iframe reads as part of it. */
+  /* On the homepage hero's navy band. */
   :root[data-theme="navy"] {
-    --bg: #0f2740;
-    --ink: #e7f0f8;
-    --ink-mute: #a3bdd4;
-    --panel: #12324a;
-    --sunk: #0b2236;
-    --line: #2a4d68;
     --accent: #c4b5fd;
     --on-accent: #06202f;
     --a: #56b4e9;
@@ -59,30 +42,13 @@
     --ok: #6fe0c6;
     --bad: #f87171;
   }
-  /* Embed mode: the stage, a caption, and nothing else. */
-  #embedcap { display: none; }
-  html.embed .wrap { max-width: none; padding: 0; }
-  html.embed header, html.embed aside { display: none; }
-  /* Same 100vh split as the reshape & transpose visualizer, and for the same reason: a
+  /* Embed mode: the stage, a caption, and nothing else (the chrome that goes
+     is in widget-chrome.css). Same 100vh split as the reshape & transpose visualizer, and for the same reason: a
      fixed 3.4rem reservation for the caption is wrong as soon as it wraps to a
      third line. Here #stage and #embedcap are the grid's own children. */
   html.embed .grid { display: flex; flex-direction: column; height: 100vh; }
   html.embed #stage { flex: 1 1 auto; min-height: 0; height: auto; border: 0; border-radius: 0; background: transparent; overflow: auto; }
-  html.embed #embedcap {
-    flex: 0 0 auto;
-    display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline;
-    min-height: 3.4rem; padding: 0.55rem 0.9rem; margin: 0;
-    font: 500 0.8rem/1.35 var(--sans); color: var(--ink-mute);
-  }
-  html.embed #embedcap b { color: var(--ink); font-weight: 650; }
-  html.embed #embedcap a { white-space: nowrap; }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
-  a { color: var(--accent); }
-  .wrap { max-width: 72rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
-  header p { max-width: 40rem; color: var(--ink-mute); overflow-wrap: break-word; }
-  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
-  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
+
   .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 23rem); gap: 1.25rem; align-items: start; }
   @media (max-width: 54rem) { .grid { grid-template-columns: 1fr; } }
 
@@ -121,27 +87,15 @@
   .tile.r, .op-r .oplabel { color: var(--accent); }
   .ellipsis { align-self: center; font: 700 0.9rem/1 var(--mono); color: var(--ink-mute); padding: 0 0.15rem; }
 
-  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; min-width: 0; }
   aside h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.9rem 0 0.45rem; color: var(--ink-mute); }
   aside h2:first-child { margin-top: 0; }
   label.field { display: block; margin: 0 0 0.55rem; }
   label.field span { display: block; font: 700 0.75rem/1.6 var(--mono); }
   label.field.a span { color: var(--a); }
   label.field.b span { color: var(--b); }
-  input[type=text] {
-    width: 100%; padding: 0.4rem 0.55rem; font: 0.85rem/1.3 var(--mono);
-    color: var(--ink); background: var(--sunk);
-    border: 1px solid var(--line); border-radius: 7px;
-  }
-  input[type=text]:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  input[type=text] { width: 100%; font: 0.85rem/1.3 var(--mono); background: var(--sunk); }
   .presets { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-  .presets button {
-    font: 500 0.75rem/1.3 var(--sans); padding: 0.3rem 0.55rem; cursor: pointer;
-    color: var(--ink); background: var(--sunk);
-    border: 1px solid var(--line); border-radius: 999px;
-  }
-  .presets button:hover { border-color: var(--accent); }
-  .presets button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .presets button { font-weight: 500; font-size: 0.75rem; padding: 0.3rem 0.55rem; background: var(--sunk); border-radius: 999px; }
   .badge {
     display: flex; gap: 0.5rem; align-items: flex-start;
     border-radius: 8px; padding: 0.5rem 0.65rem; margin: 0.2rem 0 0;
@@ -172,23 +126,8 @@
   .steps input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: -2px; }
   .steps input:checked + label { background: var(--accent); color: var(--on-accent); font-weight: 650; }
   .steps input:disabled + label { opacity: 0.4; cursor: not-allowed; }
-  .replay {
-    margin: 0.45rem 0 0; font: 500 0.75rem/1.3 var(--sans); cursor: pointer;
-    color: var(--ink); background: var(--sunk);
-    border: 1px solid var(--line); border-radius: 7px; padding: 0.3rem 0.6rem;
-  }
-  .replay:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
-  pre {
-    margin: 0.5rem 0 0; padding: 0.55rem 0.7rem; background: var(--sunk);
-    border-radius: 8px; font: 0.76rem/1.45 var(--mono); overflow-x: auto; max-width: 100%;
-  }
-  .note { font-size: 0.72rem; line-height: 1.4; color: var(--ink-mute); margin: 0.4rem 0 0; }
+  .replay { margin: 0.45rem 0 0; font-weight: 500; font-size: 0.75rem; background: var(--sunk); }
   .err { color: var(--bad); font: 500 0.75rem/1.4 var(--sans); margin: 0.3rem 0 0; }
-  /* `top`/`left`/`margin` are load-bearing, not tidying: without them the box
-     sits at its static position, which in embed mode is below the frame, and a
-     1px live region plus a `p` margin was adding 17px to the scroll height --
-     a scrollbar in the hero over something nobody can see. */
-  .sr { position: absolute; top: 0; left: 0; margin: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
   @media (prefers-reduced-motion: reduce) { .cell { transition: none; } }
 </style>
 </head>
@@ -206,10 +145,13 @@
   </noscript>
   <div class="wrap">
     <header>
-      <div class="eyebrow" id="eyebrow">Section 03 · indexing and broadcasting</div>
+      <nav class="site-nav" aria-label="Site">
+        <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+        <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
+      </nav>
+      <p class="eyebrow" id="eyebrow">Section 03 · indexing and broadcasting</p>
       <h1 id="title">Broadcasting, step by step</h1>
       <p id="lead"></p>
-      <p><a id="back" href="../notebooks.html">← Notebooks</a></p>
     </header>
     <div class="grid">
       <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp">
@@ -217,7 +159,7 @@
         <div id="draw"></div>
       </div>
       <p id="embedcap"></p>
-      <aside>
+      <aside class="card">
         <h2 id="h-shapes">Shapes</h2>
         <label class="field a"><span id="l-a">Shape A</span>
           <input type="text" id="in-a" value="3, 1, 4" autocomplete="off" spellcheck="false"></label>
@@ -261,7 +203,8 @@
     title: "Broadcasting, step by step",
     eyebrow: "Section 03 · indexing and broadcasting",
     lead: "Two shapes, lined up from the right. NumPy stretches any axis of size 1 to match the other, and refuses anything else. A dashed cell is a copy that is never made: the picture shows the repeats, the buffer holds one.",
-    back: "← Notebooks",
+    navHome: "← Workshop home",
+    navNotebooks: "Notebooks",
     shapes: "Shapes",
     a: "Shape A",
     b: "Shape B",
@@ -301,14 +244,14 @@
     statusBad: (ax) => `Incompatible at axis ${ax}.`,
     stageHelp: "The two shapes are drawn as grids of cells. Use the step control to move through alignment, stretching and the result. A dashed cell is a repeat that is never stored.",
     scalarNote: "An empty box means a scalar: no axes at all, reused everywhere.",
-    raises: "raises ValueError",
-    embedOpen: "Open the full widget →"
+    raises: "raises ValueError"
   };
   const ES = {
     title: "Broadcasting, paso a paso",
     eyebrow: "Sección 03 · indexación y broadcasting",
     lead: "Dos formas, alineadas desde la derecha. NumPy estira cualquier eje de tamaño 1 para que coincida con el otro, y rechaza todo lo demás. Una celda discontinua es una copia que nunca se hace: la imagen muestra las repeticiones, el búfer guarda una.",
-    back: "← Cuadernos",
+    navHome: "← Inicio del taller",
+    navNotebooks: "Cuadernos",
     shapes: "Formas",
     a: "Forma A",
     b: "Forma B",
@@ -348,8 +291,7 @@
     statusBad: (ax) => `Incompatible en el eje ${ax}.`,
     stageHelp: "Las dos formas se dibujan como cuadrículas de celdas. Usa el control de pasos para recorrer la alineación, el estiramiento y el resultado. Una celda discontinua es una repetición que nunca se guarda.",
     scalarNote: "Una casilla vacía significa un escalar: sin ejes, reutilizado en todas partes.",
-    raises: "lanza ValueError",
-    embedOpen: "Abrir la herramienta completa →"
+    raises: "lanza ValueError"
   };
 
   // Chosen from this workshop's own material rather than invented. The second
@@ -539,8 +481,10 @@
     $("title").textContent = T.title;
     $("eyebrow").textContent = T.eyebrow;
     $("lead").textContent = T.lead;
-    $("back").textContent = T.back;
-    $("back").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
+    $("site-home").textContent = T.navHome;
+    $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+    $("site-notebooks").textContent = T.navNotebooks;
+    $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("h-shapes").textContent = T.shapes;
     $("l-a").textContent = T.a;
     $("l-b").textContent = T.b;
@@ -708,15 +652,12 @@
   render();
 
   // Embed mode, for the homepage hero: cycle the presets, one stretch every
-  // few seconds, with the preset's name and a way out to the controls. Under
-  // reduced motion the first preset is shown at its result and left alone.
+  // few seconds, with the preset's name in the caption. The way out to the
+  // controls is the hero's own button, outside the frame. Under reduced
+  // motion the first preset is shown at its result and left alone.
   if (embed) {
     const text = document.createElement("span");
-    const open = document.createElement("a");
-    open.href = location.pathname + `?lang=${lang}`;
-    open.target = "_top";
-    open.textContent = T.embedOpen;
-    $("embedcap").append(text, open);
+    $("embedcap").append(text);
     let i = PRESETS.length - 1;
     const show = (animate) => {
       i = (i + 1) % PRESETS.length;

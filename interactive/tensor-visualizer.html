@@ -4,14 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Reshape, transpose and strides</title>
+<link rel="stylesheet" href="widget-chrome.css">
 <style>
+  /* The surfaces, type and frame are widget-chrome.css; this page owns its
+     accent, the four axis hues and the three channel colours. */
   :root {
-    --bg: #f7f5ef;
-    --ink: #1c1917;
-    --ink-mute: #57534e;
-    --panel: #fffcf7;
-    --sunk: #ebe6dc;
-    --line: #d6d0c4;
     /* Section 04's accent is #059669 (gen_notebooks.ACCENTS[4]). Neither that
        green nor white on top of it clears 4.5:1, and it carries link text, the
        eyebrow, the bolded offset and the label of whichever control is
@@ -39,17 +36,9 @@
     --chan1: #1a9c3c;
     --chan2: #1f5fd0;
     --pale: #f6f6f4;
-    --sans: "Source Sans 3", "Source Sans Pro", "Segoe UI", sans-serif;
-    --mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="navy"]) {
-      --bg: #1c1917;
-      --ink: #f5f0e8;
-      --ink-mute: #a8a29e;
-      --panel: #292524;
-      --sunk: #1c1917;
-      --line: #44403c;
       --accent: #34d399;
       --on-accent: #1c1917;
       --pale: #e8e6e1;
@@ -59,15 +48,8 @@
       --ax3-ink: #dd8fc0;
     }
   }
-  /* The homepage hero embeds this page on its navy band; these are the band's
-     own colours (homepage.scss), so the iframe reads as part of it. */
+  /* On the homepage hero's navy band. */
   :root[data-theme="navy"] {
-    --bg: #0f2740;
-    --ink: #e7f0f8;
-    --ink-mute: #a3bdd4;
-    --panel: #12324a;
-    --sunk: #0b2236;
-    --line: #2a4d68;
     --accent: #6fe0c6;
     --on-accent: #06202f;
     --pale: #e8eef4;
@@ -76,13 +58,6 @@
     --ax2-ink: #22c795;
     --ax3-ink: #dd8fc0;
   }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.45 var(--sans); }
-  a { color: var(--accent); }
-  .wrap { max-width: 110rem; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
-  header p { max-width: 42rem; color: var(--ink-mute); overflow-wrap: break-word; }
-  h1 { font-size: 1.65rem; font-weight: 650; letter-spacing: -0.02em; margin: 0.35rem 0 0.5rem; overflow-wrap: break-word; }
-  .eyebrow { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); }
   .grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 23rem); gap: 1.25rem; align-items: start; }
   @media (max-width: 56rem) { .grid { grid-template-columns: 1fr; } }
   /* The two pictures under the stage share a row on a wide screen; the buffer
@@ -158,7 +133,6 @@
     color: var(--ink); border-radius: 7px;
   }
   #legend summary::-webkit-details-marker { display: none; }
-  #legend summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
   #legend ul { margin: 0; padding: 0 0.55rem 0.4rem; list-style: none; }
   #legend li { display: flex; gap: 0.4rem; align-items: baseline; }
   #legend li span:first-child { flex: none; width: 1.1rem; text-align: center; }
@@ -168,13 +142,8 @@
   }
   #snap {
     position: absolute; right: 0.7rem; bottom: 5.6rem; z-index: 2;
-    font: 600 0.72rem/1.3 var(--sans); padding: 0.3rem 0.6rem; cursor: pointer;
-    color: var(--ink); background: var(--panel);
-    border: 1px solid var(--line); border-radius: 999px;
+    font-size: 0.72rem; padding: 0.3rem 0.6rem; border-radius: 999px;
   }
-  #snap[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
-  #snap:hover { border-color: var(--accent); }
-  #snap:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   /* How the cubes are laid out: by the axes the array was built with, so no
      cube moves under a transpose or a reshape, or by the shape in hand, so
      both visibly rearrange them. It sits over the stage because that is where
@@ -208,7 +177,7 @@
 
   /* The two pictures under the stage: the tensor as the images it holds, and
      the buffer it lives in. */
-  .under { margin-top: 1rem; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.8rem 1rem 0.9rem; }
+  .under { margin-top: 1rem; }
   .under h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.45rem; color: var(--ink-mute); }
   .under p { margin: 0.45rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--ink-mute); overflow-wrap: break-word; }
   .under p code, .under h2 code { font: 0.9em var(--mono); color: var(--ink); }
@@ -222,7 +191,6 @@
   #ribbon { display: block; width: 100%; height: 44px; border-radius: 6px; background: var(--sunk); }
   #ribbon-order { font: 600 0.8rem/1.4 var(--mono); }
 
-  aside { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 0.9rem 1rem 1.1rem; min-width: 0; }
   /* The sidebar: the data on top, one tab per operation, and under the tabs
      the strides and the code log, which every tab changes. */
   aside .panel { border-top: 1px solid var(--line); margin-top: 1.1rem; padding-top: 0.5rem; }
@@ -235,24 +203,13 @@
     display: flex; flex-wrap: wrap; gap: 0.3rem;
     margin: 1.1rem 0 0.7rem; padding-top: 0.9rem; border-top: 1px solid var(--line);
   }
-  .tabs button {
-    font: 650 0.78rem/1.3 var(--sans); padding: 0.35rem 0.7rem; cursor: pointer;
-    color: var(--ink); background: var(--sunk);
-    border: 1px solid var(--line); border-radius: 999px;
-  }
-  .tabs button:hover { border-color: var(--accent); }
-  .tabs button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-  .tabs button[aria-selected="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+  .tabs button { font-weight: 650; font-size: 0.78rem; background: var(--sunk); border-radius: 999px; }
   .tabpanel > h3:first-child { margin-top: 0.2rem; }
   aside h3 { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.85rem 0 0.35rem; color: var(--ink-mute); }
   aside .panel > :first-child + h3 { margin-top: 0.2rem; }
   .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
-  /* `hidden` must win over the display rules above and below: several blocks
-     are shown for one data source only, and a grid rule was un-hiding them. */
-  [hidden] { display: none !important; }
   .field { min-width: 0; }
   .field .k { display: flex; justify-content: space-between; font: 600 0.75rem/1.2 var(--mono); }
-  .field input[type=range] { width: 100%; accent-color: var(--accent); }
   .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .seg.stack { flex-direction: column; }
   .seg.stack label { text-align: left; padding: 0.4rem 0.7rem; white-space: nowrap; }
@@ -279,18 +236,15 @@
   }
   .chips button { font: 700 0.85rem/1.3 var(--mono); border-radius: 7px; min-width: 2.3rem; border-width: 2px; }
   .chips button[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; }
-  .chips button:hover, .presets button:hover, .tools button:hover, .tools label:hover { border-color: var(--accent); }
-  .chips button:focus-visible, .presets button:focus-visible, .tools button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .tools label:hover { border-color: var(--accent); }
   /* The file input itself is off-screen -- every browser draws it differently
      and none of them like being restyled -- so the focus ring has to be put
      on the label the reader actually sees. */
   .tools input[type=file]:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .chips button:disabled, .presets button:disabled { opacity: 0.4; cursor: not-allowed; }
   .presets { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.45rem; }
   /* The reshape presets: every factorisation of N, each saying whether taking
      it is a view or a copy. `aria-pressed` marks the shape in force. */
   .presets.shapes button { font-family: var(--mono); font-weight: 650; border-radius: 7px; }
-  .presets.shapes button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .presets.shapes button .kind { font: 500 0.82em var(--sans); opacity: 0.75; margin-left: 0.3em; }
   .checks { display: grid; gap: 0.25rem; }
   .checks label { display: flex; gap: 0.45rem; align-items: center; font-size: 0.82rem; }
@@ -311,36 +265,23 @@
   .formula .eq { display: block; margin-top: 0.35rem; color: var(--ink-mute); }
   .formula .term { white-space: nowrap; }
   .formula b { color: var(--accent); font-weight: 700; }
-  pre {
-    margin: 0.5rem 0 0; padding: 0.55rem 0.7rem; background: var(--sunk);
-    border-radius: 8px; font: 0.76rem/1.45 var(--mono); overflow-x: auto;
-    max-width: 100%; max-height: 26rem;
-  }
+  pre { max-height: 26rem; }
   pre .cm { color: var(--ink-mute); }
   /* Positioned for the file input's sake: `.sr` is `position: absolute` at
      the document origin, and the input is focusable, so without a positioned
      ancestor tabbing onto it scrolls the page to the top -- away from the
      label that is showing the focus ring. */
   .tools { display: flex; gap: 0.4rem; margin-top: 0.45rem; flex-wrap: wrap; position: relative; }
-  .note { font-size: 0.72rem; line-height: 1.4; color: var(--ink-mute); margin: 0.4rem 0 0; }
   .note code { font: 0.95em var(--mono); color: var(--ink); }
   .note button.inline {
     font: 600 0.95em var(--sans); color: var(--accent); background: none;
     border: 0; border-bottom: 1px solid currentColor; padding: 0; cursor: pointer;
   }
-  .fallback { font-size: 0.8rem; color: var(--ink-mute); margin: 0.4rem 0 0; }
-  /* `top`/`left`/`margin` are load-bearing, not tidying: without them the box
-     sits at its static position, which in embed mode is below the frame, and a
-     1px live region plus a `p` margin was adding 17px to the scroll height --
-     a scrollbar in the hero over something nobody can see. */
-  .sr { position: absolute; top: 0; left: 0; margin: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
 
   /* Embed mode: the stage, a caption, and nothing else. The hero on the
-     homepage is what shows this; the caption's link is how a reader gets to
-     the controls. */
-  #embedcap { display: none; }
-  html.embed .wrap { max-width: none; padding: 0; }
-  html.embed header, html.embed aside, html.embed #axis-legend, html.embed .under, html.embed #glnote { display: none; }
+     homepage is what shows this, and its own button is the way out to the
+     controls; the chrome that goes is in widget-chrome.css. */
+  html.embed #axis-legend, html.embed .under, html.embed #glnote { display: none; }
   html.embed .grid { display: block; }
   /* The frame is exactly 100vh: the caption takes what it needs and the stage
      takes the rest. It used to be `height: calc(100vh - 3.4rem)` against a
@@ -351,14 +292,6 @@
   html.embed .grid > div { display: flex; flex-direction: column; height: 100vh; }
   html.embed .stagewrap { flex: 1 1 auto; min-height: 0; }
   html.embed #stage { height: 100%; border-radius: 0; border: 0; background: transparent; cursor: default; }
-  html.embed #embedcap {
-    flex: 0 0 auto;
-    display: flex; flex-wrap: wrap; gap: 0.2rem 0.8rem; align-items: baseline;
-    min-height: 3.4rem; padding: 0.55rem 0.9rem; margin: 0;
-    font: 500 0.8rem/1.35 var(--sans); color: var(--ink-mute);
-  }
-  html.embed #embedcap b { color: var(--ink); font-weight: 650; }
-  html.embed #embedcap a { white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -375,10 +308,13 @@
   </noscript>
   <div class="wrap">
     <header>
-      <div class="eyebrow" id="eyebrow">Section 04 · reshape and transpose</div>
+      <nav class="site-nav" aria-label="Site">
+        <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+        <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
+      </nav>
+      <p class="eyebrow" id="eyebrow">Section 04 · reshape and transpose</p>
       <h1 id="title">Reshape, transpose and strides</h1>
       <p id="lead"></p>
-      <p><a id="back" href="../notebooks.html">← Notebooks</a></p>
     </header>
     <div class="grid">
       <div>
@@ -403,19 +339,19 @@
         <div id="axis-legend"></div>
         <p class="sr" id="stagehelp"></p>
         <div class="under-row">
-          <section class="under" id="imgstrip" aria-labelledby="h-strip">
+          <section class="under card" id="imgstrip" aria-labelledby="h-strip">
             <h2 id="h-strip"></h2>
             <div id="strip-rows"></div>
             <p id="strip-note"></p>
           </section>
-          <section class="under" id="bufstrip" aria-labelledby="h-ribbon">
+          <section class="under card" id="bufstrip" aria-labelledby="h-ribbon">
             <h2 id="h-ribbon"></h2>
             <canvas id="ribbon" width="800" height="44"></canvas>
             <p id="ribbon-note"></p>
           </section>
         </div>
       </div>
-      <aside>
+      <aside class="card">
         <section class="panel" aria-labelledby="h-data">
           <h2 id="h-data">Data</h2>
           <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
@@ -571,7 +507,8 @@
     title: "Reshape, transpose and strides",
     eyebrow: "Section 04 · reshape and transpose",
     lead: "Three real photographs as one 4-D tensor, one cube per byte. Drag to rotate. Reshape pours the same buffer into another shape; transpose permutes the shape and the strides and moves no byte at all; .contiguous() is the one operation that rewrites memory.",
-    back: "← Notebooks",
+    navHome: "← Workshop home",
+    navNotebooks: "Notebooks",
     data: "Data & shape",
     datas: { photos: "Photos", numbers: "Counting numbers" },
     dataNotePhotos: "The histology slide, the astronaut and the coffee cup notebook 04 stacks -- shipped with scikit-image, downsampled here.",
@@ -681,7 +618,6 @@
     revealNote: "Looking face on: the gaps close, the three channel planes composite, and the photograph comes back.",
     revealNo: "No RGB axis is facing you, so the cubes stay cubes. Put an axis of 3 in depth to see the photograph.",
     peek: (idx, sum, off) => `x[${idx}]<span class="sum">${sum} = <b>${off}</b></span>`,
-    embedOpen: "Open the full widget →",
     embedSteps: [
       "Three photos as one (3, 16, 16, 3) tensor, NHWC. One cube per byte.",
       "Transposed to NCHW: the shape and the strides permute, the cubes do not move.",
@@ -700,7 +636,8 @@
     title: "Reshape, transpose y strides",
     eyebrow: "Sección 04 · reshape y transpose",
     lead: "Tres fotografías reales como un solo tensor 4-D, un cubo por byte. Arrastra para rotar. reshape vierte el mismo búfer en otra forma; transpose permuta la forma y los strides sin mover un solo byte; .contiguous() es la única operación que reescribe la memoria.",
-    back: "← Cuadernos",
+    navHome: "← Inicio del taller",
+    navNotebooks: "Cuadernos",
     data: "Datos y forma",
     datas: { photos: "Fotos", numbers: "Números que cuentan" },
     dataNotePhotos: "El corte histológico, la astronauta y la taza de café que apila el cuaderno 04: vienen con scikit-image, aquí reducidas.",
@@ -810,7 +747,6 @@
     revealNote: "De frente: los huecos se cierran, los tres planos de canal se componen y vuelve la fotografía.",
     revealNo: "No tienes de frente ningún eje RGB, así que los cubos siguen siendo cubos. Pon un eje de 3 en profundidad para ver la fotografía.",
     peek: (idx, sum, off) => `x[${idx}]<span class="sum">${sum} = <b>${off}</b></span>`,
-    embedOpen: "Abrir la herramienta completa →",
     embedSteps: [
       "Tres fotos como un tensor (3, 16, 16, 3), NHWC. Un cubo por byte.",
       "Transpuesto a NCHW: la forma y los strides se permutan, los cubos no se mueven.",
@@ -1314,8 +1250,10 @@
     $("title").textContent = T.title;
     $("eyebrow").textContent = T.eyebrow;
     $("lead").textContent = T.lead;
-    $("back").textContent = T.back;
-    $("back").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
+    $("site-home").textContent = T.navHome;
+    $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+    $("site-notebooks").textContent = T.navNotebooks;
+    $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("h-data").textContent = T.data;
     $("h-size").textContent = T.size;
     $("h-n").textContent = T.nHead;
@@ -3075,12 +3013,8 @@
   // ─── embed mode ───────────────────────────────────────────────────────────
 
   function startEmbed() {
-    const open = document.createElement("a");
-    open.href = location.pathname + `?lang=${lang}`;
-    open.target = "_top";
-    open.textContent = T.embedOpen;
     const text = document.createElement("span");
-    $("embedcap").append(text, open);
+    $("embedcap").append(text);
     // Fill the frame: there is no panel beside the stage to leave room for.
     view.scale = 1.3;
     let step = 0;
