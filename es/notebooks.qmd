@@ -63,13 +63,16 @@ en una elipse y una esfera en un elipsoide, los autovectores de un campo de
 flechas, y las dos maneras en que falla la aritmética.
 Las secciones 00, 04 y 09 y el apéndice E comparten un
 <a href="../interactive/voice-stage.html?lang=es">escenario del tensor de audio</a>,
-siete imágenes de una misma grabación: el aire medido 48 000 veces por segundo
+nueve imágenes de una misma grabación: el aire medido 48 000 veces por segundo
 y redondeado a 16 bits, el arreglo que queda,
 <a href="../interactive/voice-stage.html?lang=es#frame">una ventana recortada de él</a>,
 <a href="../interactive/voice-stage.html?lang=es#spectrum">la transformada que le pregunta
 a esa ventana qué frecuencias hay en ella</a>, la ventana avanzando para construir
-una matriz de frecuencia por tiempo, y qué le hace una transposición a un sonido.
-Todas se pueden oír.
+una matriz de frecuencia por tiempo, qué le hace una transposición a un sonido,
+y las dos maneras en que esa matriz se descompone:
+<a href="../interactive/voice-stage.html?lang=es#lowrank">la mejor aproximación de rango k
+que existe</a> y <a href="../interactive/voice-stage.html?lang=es#nmf">las partes que
+puedes nombrar</a>. Todas se pueden oír.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 
