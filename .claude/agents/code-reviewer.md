@@ -1,10 +1,10 @@
 ---
 name: code-reviewer
-description: "Reviews a diff in this repo — by default the branch against main — for correctness bugs and for the repo-specific mistakes that ship silently: a hand-edit to generated output, an EN change with no ES counterpart, docs/ in the diff, a visible cell depending on a folded solution, a generated path missing from the CI gate. It reports findings and makes no edits."
+description: "Reviews a diff in this repo — by default the branch against main — for correctness bugs and for the repo-specific mistakes that ship silently: a hand-edit to generated output, an EN change with no ES counterpart, docs/ in the diff, a visible cell depending on a folded solution, a generated path missing from the CI gate, a widget colour that is not a token or a step linked by number. It reports findings and makes no edits."
 tools: Read, Grep, Glob, Bash
 model: sonnet
 effort: medium
-maxTurns: 40
+maxTurns: 60
 omitClaudeMd: true
 ---
 
@@ -89,7 +89,35 @@ anchor, a Kahoot, a slide or a row in the notebooks page's section table is
 the bug. Its tables are `_includes/notebooks-extra-{en,es}.md` and
 `_includes/extras-{en,es}.md`, with no Slides and no Quiz column.
 
-**9. Ordinary correctness.** The bug that makes the code do the wrong thing for
+**9. The widgets.** `interactive/` has no generator and no byte-exact gate, so
+a mistake here reaches the site. Four things to look for, none of which any
+check will catch for you:
+
+- **A colour that is not a token.** A hex on a widget's text, or a surface
+  token (`--bg`, `--ink`, `--panel`, `--line`, …) redeclared in a page's own
+  `<style>` instead of living in `widget-chrome.css`. Every colour on text
+  clears 4.5:1 per theme; an axe finding in a widget is real, never something
+  to allowlist.
+- **A step linked by number from outside the widget.** `#step-6` instead of
+  `#portal` or `#eigen` in a notebook, either handbook, a `.qmd` page or a
+  widget's own prose — the number moves on a reorder, the name does not. This
+  is about links a reader follows. *Inside* a widget the numbered ids are the
+  contract: `id="step-1".."step-8"`, `step: "6"` and `section: "step-6"` in a
+  scene's registration, `#read-1..8`, and `check_navigation.cjs` navigating to
+  `#step-4`. Those are correct — do not flag them.
+- **A new scene missing one of its four edits**: the scene file, the
+  `<section>`, the `<script src>` in load order, and the `repo.widgets` line in
+  `_variables.yml`. For the vendored addons `repo.widgets` is the *only* guard
+  — an import map is element content and the link harvest reads attributes.
+- **Arithmetic outside a core module**, or added to one with no test. The core
+  modules are pinned by `npm test`; a number computed in the page is a number
+  nothing checks. Same for a `data-*` written from an eased frame rather than
+  the slider's target, and for a `waitForTimeout` **added or changed** in
+  `check_navigation.cjs` where a `waitForFunction` belongs — that one passes on
+  a Mac and fails on the Linux runner. The twenty-odd fixed waits already in
+  that file are not a finding; a new one feeding an assertion is.
+
+**10. Ordinary correctness.** The bug that makes the code do the wrong thing for
 some real input. Generators must stay deterministic pure Python — the CI gate is
 byte-exact, so anything order-dependent or time-dependent is a finding.
 
@@ -112,10 +140,12 @@ byte-exact, so anything order-dependent or time-dependent is a finding.
 uv run --group site python scripts/check_links.py --notebooks-only
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests
+npm test          # the widgets' core modules; no browser, no render, seconds
 ```
 
-The full `check_links.py` needs a rendered `docs/`; say so rather than rendering
-one yourself. Never run a generator — that would change the working tree you
+The full `check_links.py` and `npm run check:navigation` both need a rendered
+`docs/`; say so rather than rendering one yourself. `npm test` needs neither,
+so run it on any diff that touches `interactive/`. Never run a generator — that would change the working tree you
 are reviewing. Send a long run's output to a file in the scratchpad and print
 its last 20 lines; read further only on failure.
 

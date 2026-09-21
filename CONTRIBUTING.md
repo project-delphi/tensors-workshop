@@ -60,11 +60,12 @@ The [notebook guide](notebooks/README.md#colab-to-github-workflow) describes
 editing through Colab. [AGENTS.md](AGENTS.md) documents the site internals and
 asset generators.
 
-If you work with Claude Code, `.claude/agents/` holds seven project subagents
-— a pedagogy reviewer, a Python scripter, a Quarto designer, a code reviewer, a
-notebook author, a Spanish translator and a figure smith — each carrying the
-conventions above for its own part of the repo. `/validate` runs the release
-checklist and reports which of its boxes the run earns.
+If you work with Claude Code, `.claude/agents/` holds eight project
+subagents — a pedagogy reviewer, a Python scripter, a Quarto designer, a code
+reviewer, a notebook author, a Spanish translator, a figure smith and a widget
+smith — each carrying the conventions above for its own part of the repo.
+`/validate` runs the release checklist and reports which of its boxes the run
+earns.
 
 The browser regression check runs in CI on every pull request, against the
 fresh render. To run it yourself after rendering:
@@ -107,8 +108,9 @@ Sigue la [lista de publicación](RELEASE_CHECKLIST.md) para regenerar, comprobar
 y enviar los cambios. Incluye los archivos generados en el PR; `docs/` no, que
 lo construye y lo publica Actions.
 
-Si usas Claude Code, `.claude/agents/` define siete subagentes del proyecto
-—revisión pedagógica, scripts de Python, diseño en Quarto, revisión de código,
-autoría de cuadernos, traducción al español y figuras— y cada uno lleva las
-convenciones anteriores de su parte del repo. `/validate` ejecuta la lista de
-publicación e informa de qué casillas se han ganado.
+Si usas Claude Code, `.claude/agents/` define ocho subagentes del proyecto
+—revisión pedagógica, scripts de Python, diseño en Quarto, revisión de
+código, autoría de cuadernos, traducción al español, figuras y widgets
+interactivos— y cada uno lleva las convenciones anteriores de su parte del
+repo. `/validate` ejecuta la lista de publicación e informa de qué casillas
+se han ganado.

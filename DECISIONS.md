@@ -145,6 +145,33 @@ the reveal stops being a demonstration and becomes a photograph -- snap to
 whole argument the page makes is that the bytes under a shape are a real
 image.
 
+**The companion's artifacts have `/artifact/<uuid>` URLs, and no exports.**
+The Studio row's ⋮ menu hides *Copy link* for the quiz, flashcards and Audio
+Overview, which is what made them look unshareable; every artifact has a link.
+What none of them has is an export, so they only work while the notebook is
+shared as "anyone with the link" -- and only for a visitor with a Google
+account, which is why each carries a `thumb:` screenshot the site serves
+itself, with a caption on the three unexportable ones saying it is a still of
+something live. A page that lets a reader miss that has mis-sold the click.
+`covers` on each short is a hand-made reading of the title: nothing in
+NotebookLM knows this workshop has sections, so check 12 verifies the number
+names a section that exists and cannot catch a bad call.
+
+**The brainstorm diagram is generated, and inside the gate.** The
+idea-to-section mapping is a hand-made reading, the same kind of call `covers`
+is. The generator refuses a section under no idea or under two, which catches
+one added twice or forgotten and cannot catch one filed under the wrong idea;
+that check lives in the generator rather than `check_links.py` because the
+generator is what CI reruns, so a bad mapping fails at the point that names it.
+Being drawn by `gen_tables.py` puts the diagram inside the byte-exact
+regenerate gate, unlike every other picture on the site, and makes it the only
+one whose text is real text: selectable, scalable, read out from the `<desc>`
+the generator writes. An SVG with a fixed `viewBox` does not reflow, so the
+layout is emitted twice and `custom.scss` picks one at 44rem; the diagram
+draws itself from the site's own SCSS variables.
+
+## The widgets
+
 **The reader can add a photograph, and it is not an upload.** The batch takes
 a fourth slab from a file the reader picks, built into exactly the record
 `photos.json` ships -- an id, a name per language, one HWC uint8 array per
@@ -219,31 +246,6 @@ and an ellipse. Bloom was already gated per step, for reduced motion and for a
 frame budget, so this is one more gate: steps that are one camera render
 through the composer, the portal renders direct, and its arrows carry emissive
 colour instead.
-
-**The companion's artifacts have `/artifact/<uuid>` URLs, and no exports.**
-The Studio row's ⋮ menu hides *Copy link* for the quiz, flashcards and Audio
-Overview, which is what made them look unshareable; every artifact has a link.
-What none of them has is an export, so they only work while the notebook is
-shared as "anyone with the link" -- and only for a visitor with a Google
-account, which is why each carries a `thumb:` screenshot the site serves
-itself, with a caption on the three unexportable ones saying it is a still of
-something live. A page that lets a reader miss that has mis-sold the click.
-`covers` on each short is a hand-made reading of the title: nothing in
-NotebookLM knows this workshop has sections, so check 12 verifies the number
-names a section that exists and cannot catch a bad call.
-
-**The brainstorm diagram is generated, and inside the gate.** The
-idea-to-section mapping is a hand-made reading, the same kind of call `covers`
-is. The generator refuses a section under no idea or under two, which catches
-one added twice or forgotten and cannot catch one filed under the wrong idea;
-that check lives in the generator rather than `check_links.py` because the
-generator is what CI reruns, so a bad mapping fails at the point that names it.
-Being drawn by `gen_tables.py` puts the diagram inside the byte-exact
-regenerate gate, unlike every other picture on the site, and makes it the only
-one whose text is real text: selectable, scalable, read out from the `<desc>`
-the generator writes. An SVG with a fixed `viewBox` does not reflow, so the
-layout is emitted twice and `custom.scss` picks one at 44rem; the diagram
-draws itself from the site's own SCSS variables.
 
 **The visualizer is one page with tabs, not one page per operation.** When
 its sidebar outgrew the stage (2026-09-17) the obvious split was a reshape page,
@@ -400,6 +402,29 @@ space three.js converts in runs both ways depending on where you stop reading
 the renderer -- the pixels do not, which is why `STAGE` carries both colours
 with the four measurements written beside them, and `renderGL()` sets the one
 that belongs to the path it is about to take.
+
+**A long line disappeared rather than being clipped.** The frame furniture on a
+stage -- an axis drawn well past the visible range so it reads as infinite --
+vanished whole instead of running to the edge of the picture. It is not
+clipping and no clipping plane fixes it: three.js frustum-culls a `Line` by its
+bounding sphere, as one object, and a line whose ends sit 100-odd world units
+beyond the frame has a sphere the camera never intersects, so the draw call is
+skipped entirely. The fix is to keep frame furniture in world units close to
+what the camera holds, which is also the honest picture -- an axis that leaves
+the frame was never going to be seen. `frustumCulled = false` and a hand-set
+bounding sphere are the escape hatches, for a scene where a long line really is
+the subject.
+
+**The browser check polls, it does not wait.** Two assertions after
+`page.mouse.wheel` read the stage's `data-*` once, after a fixed
+`waitForTimeout` tuned on a Mac. They passed locally on every run and failed on
+the Linux runner, where the whole check runs slower and the zoom had not
+settled by the time the read happened -- so the assertion saw the pre-gesture
+value and the failure looked like a zoom bug rather than a timing one. Every
+assertion now goes through `page.waitForFunction` on the attribute, with the
+timeout as a ceiling rather than a schedule. `waitForTimeout` is left only
+where the wait is itself under test, such as the visualizer's 0.3 s drift
+resume.
 
 ## Which document owns what
 
