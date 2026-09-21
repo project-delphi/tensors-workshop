@@ -545,6 +545,67 @@ async function audit(page, where) {
         assert(Number((await data()).share) > one,
           `${where}: 64 components should carry more energy than 1`);
 
+        // Low rank: Appendix E, factored in the browser. The factorisation
+        // and then the measuring ladder both run behind `busy`, so wait for
+        // the phase the scene itself reports rather than a fixed pause.
+        await voiceScene(page, 'lowrank');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.phase === 'ready',
+          null, {timeout: 30000});
+        assert.equal((await data()).shape, '513,465', `${where}: the recording's STFT shape`);
+        assert(Math.abs(Number((await data()).noisy) - 5) < 0.1,
+          `${where}: the noise was added at a measured 5 dB, got ${(await data()).noisy}`);
+        await page.locator('#c-lowrank-rung').fill('0');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '2',
+          null, {timeout: 5000});
+        const lowK = Number((await data()).retained);
+        await page.locator('#c-lowrank-rung').fill('7');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '465',
+          null, {timeout: 5000});
+        assert(Number((await data()).retained) > lowK,
+          `${where}: full rank should retain more energy than rank 2`);
+        // Both sides are the same reconstruction (full rank discards nothing),
+        // measured through two independent snrDb() calls and printed through
+        // two independent toFixed(2)s -- exact string equality asks floating
+        // point for more than it owes. A hundredth of a decibel is well
+        // inside that noise and well outside anything a real discrepancy
+        // would produce.
+        assert(Math.abs(Number((await data()).snr) - Number((await data()).noisy)) < 0.01,
+          `${where}: full rank should measure the noisy input's SNR, got ${(await data()).snr} vs ${(await data()).noisy}`);
+        await page.locator('#c-lowrank-rung').fill('4');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '40',
+          null, {timeout: 5000});
+        await page.selectOption('#c-lowrank-hear', 'clean');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.phase === 'ready',
+          null, {timeout: 5000});
+
+        // Parts you can name: NMF fits behind `busy` too, then a constrained
+        // minimum cannot beat the unconstrained SVD at the same rank -- the
+        // whole claim, read off the two measured errors rather than assumed.
+        await voiceScene(page, 'nmf');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.phase === 'ready',
+          null, {timeout: 30000});
+        assert.equal((await data()).shape, '513,465', `${where}: the same STFT shape as low rank`);
+        assert(Number((await data()).nmferr) >= Number((await data()).svderr),
+          `${where}: NMF (${(await data()).nmferr}%) must not beat the truncated SVD (${(await data()).svderr}%)`);
+        await page.locator('#c-nmf-k').fill('4');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '4',
+          null, {timeout: 5000});
+        await page.waitForFunction(() => document.getElementById('stage').dataset.phase === 'ready',
+          null, {timeout: 30000});
+        await page.selectOption('#c-nmf-solo', '4');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.solo === '4',
+          null, {timeout: 5000});
+        // Lowering k below the soloed component (4) is the trap the scene's
+        // own restart() guards: the solo must fall back rather than name a
+        // component this rank no longer has.
+        await page.locator('#c-nmf-k').fill('2');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.k === '2',
+          null, {timeout: 5000});
+        await page.waitForFunction(() => document.getElementById('stage').dataset.phase === 'ready',
+          null, {timeout: 30000});
+        assert(Number((await data()).solo) <= 2,
+          `${where}: soloing component 4 at k = 2 should have fallen back, got solo=${(await data()).solo}`);
+
         // Linking by scene name, never by an index that moves on a reorder.
         // A page opened on a spectrogram scene must not fetch three.js: the
         // import map is inert until a module resolves, and the boot only
@@ -1068,7 +1129,7 @@ async function audit(page, where) {
               await page.waitForFunction(() => !document.getElementById('glnote').hidden, null, {timeout: 10000});
               assert.equal(await page.locator('#stage').getAttribute('data-gl'), 'none');
               assert(await page.locator('#draw').isVisible(), `${where}: twin ${scene} is not on the stage`);
-              // One readout per section: the scroller has seven of them.
+              // One readout per section: the scroller has nine of them.
               const readout = await page.locator(`#read-${scene}`).innerText();
               assert(!/NaN|Infinity|undefined/.test(readout), `${where}: twin ${scene} readout: ${readout}`);
               if (scene === 'sample') {

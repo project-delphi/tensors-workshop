@@ -70,6 +70,8 @@ repo:
     - interactive/voice-scenes/spectrum.js
     - interactive/voice-scenes/window.js
     - interactive/voice-scenes/scramble.js
+    - interactive/voice-scenes/lowrank.js
+    - interactive/voice-scenes/nmf.js
     # The arithmetic under the voice tensor stage, and the recording it
     # factors (interactive/vendor/README.md). The recording is fetched by
     # audio-core.js rather than named in any href, so the harvest cannot see
