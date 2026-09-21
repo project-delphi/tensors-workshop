@@ -100,9 +100,9 @@
   .steps { min-width: 0; }
   .stagewrap { position: sticky; top: 1.5rem; min-width: 0; }
 
-  /* Stacked, the stage goes *first*. The grid would put it after all seven
+  /* Stacked, the stage goes *first*. The grid would put it after all nine
      sections, where a sticky picture is a picture nobody reading the first
-     six can see. */
+     eight can see. */
   @media (max-width: 62rem) {
     .two-pane { display: flex; flex-direction: column; gap: 1rem; }
     /* Capped at the viewport, with the stage taking whatever the rest of the
@@ -187,9 +187,9 @@
   }
   .step .anchor { display: block; height: 0; }
   .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
-  /* The heading of the group a scene opens. The page's structure is three
-     ideas in order -- the input, the transform, the effect -- not seven
-     numbered steps. */
+  /* The heading of the group a scene opens. The page's structure is four
+     ideas in order -- the input, the transform, the effect, what factoring it
+     costs -- not nine numbered steps. */
   .step .part {
     font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
     border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
@@ -853,7 +853,7 @@
       changed,
       setControls: (vals) => setControls(scene, vals),
       // A scene's own control element, by the id it declared: the frame
-      // prefixes them with the scene, because the same name lives in seven
+      // prefixes them with the scene, because the same name lives in nine
       // sections now.
       control: (id) => $("c-" + scene.id + "-" + id),
       // The three.js side, filled by bootGL(). `gl` is what build() returned.
@@ -1714,7 +1714,7 @@
   loadSignal().then(() => {
     if (signal.failed) $("playstate").textContent = T.failed;
     // Every scene seeds its state and builds its controls now: in a scroller
-    // all seven sections are on the page at once, and a section whose
+    // all nine sections are on the page at once, and a section whose
     // controls appeared only once it had been scrolled to would be a page
     // that changes shape under the reader.
     for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
