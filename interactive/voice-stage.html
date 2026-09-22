@@ -34,12 +34,10 @@
     --accent: #b23a0a;
     --on-accent: #ffffff;
 
-    /* The stage is black in every theme, for the reason the projection
-       stage's is: it is a picture rather than page furniture. A spectrogram
-       also wants a dark ground -- the colour ramp below starts at the stage's
-       own black, so silence is the background rather than a shade near it. */
-    --stage: #000000;
-    --stage-chip: #000000;
+    /* --stage, --stage-chip, --stage-ink and --stage-mute are shared, in
+       widget-chrome.css. A spectrogram wants that black in particular: the
+       colour ramp starts at the stage's own ground, so silence is the
+       background rather than a shade near it. */
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="navy"]) { --accent: #fb923c; --on-accent: #1c1917; }
@@ -47,14 +45,11 @@
   /* On the homepage hero's navy band. */
   :root[data-theme="navy"] { --accent: #fb923c; --on-accent: #06202f; }
 
-  /* Ink on the stage. One set for all three themes, because the stage is
-     black in all three, and measured against that black: --stage-mute is the
-     weakest at 6.0:1. The roles follow the projection stage's, so a reader
-     who has met one widget has met both: yellow is what the reader holds,
-     purple is what comes back out, pink is where it has gone wrong. */
+  /* The roles this stage's pictures use, over the shared stage ink. They
+     follow the projection stage's, so a reader who has met one widget has met
+     both: yellow is what the reader holds, purple is what comes back out,
+     pink is where it has gone wrong. */
   :root {
-    --stage-ink: #e8e8e8;
-    --stage-mute: #8a8a8a;
     --v-sig: #ffd84d;    /* the waveform, the window the reader moves, the samples */
     --v-out: #c39bd3;    /* what the transform produced; what the play button plays */
     --v-res: #fc6c85;    /* anything scrambled, lossy or wrong; the rounding error */
