@@ -133,7 +133,7 @@
       : '"Source Sans 3", "Segoe UI", sans-serif');
     g.textBaseline = "top";
     const pad = 3, w = g.measureText(text).width;
-    const ax = o.right ? x - w - pad * 2 : x;
+    const ax = o.right ? x - w - pad * 2 : (o.center ? x - (w + pad * 2) / 2 : x);
     g.fillStyle = css("--stage-chip");
     g.fillRect(ax, y - pad, w + pad * 2, size + pad * 2);
     g.fillStyle = colour;
@@ -662,6 +662,33 @@
     return peakF;
   }
 
+  // A measured span: a rule between two ticks with its name over the middle.
+  // The three flat transform scenes draw one when a letter in the equation
+  // above is pointed at, so N, H and the bins each get the same picture --
+  // an extent of the stage, bracketed, named. Nothing else on the page
+  // measures anything, which is why the shape is worth sharing.
+  function span(g, x0, x1, y, colour, text, opts) {
+    const o = opts || {};
+    const tick = o.tick === undefined ? 5 : o.tick;
+    const yy = Math.round(y) + 0.5;
+    g.strokeStyle = colour;
+    g.lineWidth = 1.5;
+    g.beginPath();
+    g.moveTo(x0, yy); g.lineTo(x1, yy);
+    for (const x of [x0, x1]) {
+      g.moveTo(Math.round(x) + 0.5, yy - tick);
+      g.lineTo(Math.round(x) + 0.5, yy + tick);
+    }
+    g.stroke();
+    if (text) {
+      // Below the rule by default on these scenes: above it the name lands
+      // on the claim card, which is an HTML element pinned to the stage's
+      // top left and nothing on the canvas can see.
+      const ly = o.below ? yy + tick + 3 : yy - tick - 16;
+      label(g, text, (x0 + x1) / 2, ly, colour, {size: 11, mono: true, center: true});
+    }
+  }
+
   // The window shapes of neighbouring frames along a waveform strip, so the
   // overlap is a picture rather than a fraction: one hump per frame, its
   // width N samples and its height the window's, the frame at `lit` brighter.
@@ -727,7 +754,7 @@
   const VoiceKit = {
     VoiceScenes, css, ramp, spectrogramImage, blit, waveform, label, demoSignal,
     smooth, label2d, waveBuild, waveRebuild, waveFrame, waveDraw, BEAD_R,
-    bars, humps, timeline, playhead
+    bars, humps, span, timeline, playhead
   };
   if (typeof module !== "undefined" && module.exports) module.exports = VoiceKit;
   else { root.VoiceKit = VoiceKit; root.VoiceScenes = VoiceScenes; }

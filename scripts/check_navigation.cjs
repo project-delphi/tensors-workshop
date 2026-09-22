@@ -648,23 +648,59 @@ async function audit(page, where) {
         assert.equal(await stage.getAttribute('data-tensorshape'), '[513, 465]',
           `${where}: the hop scene's badge is the matrix it builds`);
 
+        // The spectrogram is one matrix product, and the page says so in
+        // MathML on three sections. The counts come from AC.stftCost, so a
+        // change to the transform cannot leave the arithmetic on the page
+        // saying what it used to.
+        await voiceScene(page, 'frame');
+        const fr = await data();
+        assert.equal(fr.frames, '465', `${where}: the frames matrix has 465 columns`);
+        assert.equal(fr.stride, '512', `${where}: column t starts 512 samples along`);
+        assert.equal(fr.reshape, '0', `${where}: at hop = N/2 the columns overlap, so it is a copy`);
+        assert.equal(fr.fshape, '1024,465', `${where}: the frames matrix's shape`);
+        await voiceScene(page, 'spectrum');
+        const sp = await data();
+        assert.equal(sp.dftrows, '513', `${where}: the rows of F the transform keeps`);
+        assert.equal(sp.dftcols, '1024', `${where}: one row of F is N samples long`);
+        assert.equal(sp.matmul, '244270080', `${where}: F N T multiply-adds by matrix product`);
+        assert.equal(sp.fftops, '4761600', `${where}: T N log2(N) by transform`);
+        await voiceScene(page, 'window');
+        const wi = await data();
+        assert.equal(wi.matmul, '244270080', `${where}: the two scenes must cost the same product`);
+        assert.equal(wi.fftops, '4761600');
+        assert.equal(wi.speedup, '51.3', `${where}: the ratio the hop scene prints`);
+        assert.equal(wi.contract, 'n', `${where}: n is the axis that disappears`);
+
         // Pointing at a letter in the equation bands the axis it names. The
         // hover is published as data-hl and must never disturb the readout,
         // which is written from the controls alone.
+        //
+        // Every selector here is scoped to its own section. `freq` and
+        // `samp` now appear in four sections between them, and a document-
+        // global `.first()` picked the topmost one, scrolled the step
+        // machine away from the scene under test, and left the readout
+        // assertion comparing a section nobody was looking at.
         const readBefore = await page.locator('#read-window').innerHTML();
         await page.locator('#eqcap-window').scrollIntoViewIfNeeded();
-        await page.locator('.eq [data-hl="freq"]').first().hover();
+        await page.locator('#step-window .eq [data-hl="freq"]').first().hover();
         await page.waitForFunction(() => document.getElementById('stage').dataset.hl === 'freq',
           null, {timeout: 5000});
         // Keyboard reaches it too: these are focusable for exactly that reason.
-        await page.locator('.eq [data-hl="time"]').first().focus();
+        await page.locator('#step-window .eq [data-hl="time"]').first().focus();
         await page.waitForFunction(() => document.getElementById('stage').dataset.hl === 'time',
           null, {timeout: 5000});
         assert.equal(await page.locator('#read-window').innerHTML(), readBefore,
           `${where}: a hover rewrote the readout, which is the controls' to write`);
-        await page.locator('.eq [data-hl="time"]').first().blur();
+        await page.locator('#step-window .eq [data-hl="time"]').first().blur();
         await page.waitForFunction(() => !document.getElementById('stage').dataset.hl,
           null, {timeout: 5000});
+        // And the new letters light on their own section, not on the one
+        // that happens to be first in the document.
+        await voiceScene(page, 'spectrum');
+        await page.locator('#step-spectrum .eq [data-hl="samp"]').first().hover();
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hl === 'samp',
+          null, {timeout: 5000});
+        await page.locator('#step-spectrum .eq [data-hl="samp"]').first().blur();
 
         // Linking by scene name, never by an index that moves on a reorder.
         // A page opened on a spectrogram scene must not fetch three.js: the

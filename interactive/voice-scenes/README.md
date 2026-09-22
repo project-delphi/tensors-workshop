@@ -168,23 +168,45 @@ into the clip while it plays, or -1.
   number a reader can check on the stage. The definition is `concept`'s job and
   the formula is `claim`'s; a body that starts with either is the version this
   page was rewritten to stop being.
-- `eqcap` is the sentence under a display equation, on the three scenes that
+- `eqcap` is the sentence under a display equation, on the five scenes that
   have one. It must carry the idea in words on its own: there is no polyfill
-  if a browser renders the MathML badly.
+  if a browser renders the MathML badly. Declare it **only** where the page
+  has an `#eqcap-<id>` element: `fillText()` writes a caption where it finds
+  one and says nothing where it does not, so `tests/voice_scenes.test.cjs`
+  pairs the two instead.
 
 ## The display equations
 
-Three sections carry one -- `array`, `window` and `batch`. The `<math>` is
-**hand-written MathML** and lives **statically in the section**, not in a copy
-table: it is the same in both languages, and `check_links.py` reads the static
-HTML. There is no MathJax and no KaTeX, because the claim cards are Unicode
-`textContent` that `check_navigation.cjs` compares byte-exact, and because
-everything here is vendored with a SHA-256.
+Five sections carry one -- `array`, `frame`, `spectrum`, `window` and `batch`.
+The `<math>` is **hand-written MathML** and lives **statically in the
+section**, not in a copy table: it is the same in both languages, and
+`check_links.py` reads the static HTML. There is no MathJax and no KaTeX,
+because the claim cards are Unicode `textContent` that `check_navigation.cjs`
+compares byte-exact, and because everything here is vendored with a SHA-256.
+
+Read in order, the five make one argument: a recording is an array, the frames
+of it stack into a matrix that computes nothing, the transform is a matrix
+too, the whole spectrogram is their product, and a batch of them is a rank-4
+tensor.
+
+    𝒳 ∈ ℝ^(N×T),   𝒳[n, t] = x[t·H + n]
+    Xₜ = ℱ xₜ,     ℱ ∈ ℂ^(N×N),   ℱ[f, n] = e^(−2πifn/N)
+    X = ℱ · diag(w) · 𝒳,   (513 × 1024)·(1024 × 465) → 513 × 465
+
+Nothing on the page computes a spectrogram that way -- `stft()` does, fifty
+times cheaper -- so the claim is pinned in `tests/audio_core.test.cjs`
+instead: `stftByMatmul` has to equal `stft`, and `stftCost` supplies every
+count the page prints. They are **multiply-adds, not milliseconds**: a timing
+would be the reader's machine rather than the claim.
 
 The letters are the page's own, and they have to agree with the claim cards:
-`f` is a frequency bin, `t` a frame, `H` the hop, `N` the window length, and
-`B`, `C`, `F`, `T` are the sizes. **`k` is the rank** on three other scenes and
-is never a bin.
+`f` is a frequency bin, `t` a frame, `n` a sample within one, `H` the hop, `N`
+the window length, and `B`, `C`, `F`, `T` are the sizes. The two matrices are
+script capitals like the batch scene's `𝒯` -- `𝒳` for the frames and `ℱ` for
+the transform, **never `F`**, which counts bins. **`k` is the rank** on three
+other scenes and is never a bin. The `data-hl` tokens are exactly
+`{freq, time, samp, hop, batch, chan}`, and a test pins that set: a seventh
+token is a dashed underline that does nothing when it is pointed at.
 
 An `<mi>`, or an `<mrow>` around one, that the reader can point at carries
 `data-hl="<token>"` and `tabindex="0"`. The frame binds hover and focus,
@@ -197,3 +219,7 @@ through one three.js rig they share, and a vector has no second axis to band.
 The shape badge on the stage takes a scene's `shape(ctx)` where it has one and
 its readout's `data.shape` otherwise, and the frame publishes it as
 `data-tensorshape`.
+
+**Every `readout().data` key is lowercase.** `stage.dataset.fN` writes
+`data-f-n`, so a camel-case key becomes a selector nobody will guess and the
+browser check will not find.

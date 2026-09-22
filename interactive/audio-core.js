@@ -833,6 +833,97 @@
     return {F: (N >> 1) + 1, T: Math.floor((padded - N) / hop) + 1, padded};
   }
 
+  // ------------------------------------------------- the transform as a matrix
+  // Everything above computes the spectrogram the way a library does: cut a
+  // frame, call the FFT, move along. These four write the same answer as one
+  // matrix product, because that is what it is -- and a reader who has met
+  // `A @ B` in section 06 has already met the short-time Fourier transform
+  // without being told.
+  //
+  //   X = F . diag(w) . Xf,   (F x N)(N x N)(N x T) -> (F x T)
+  //
+  // Nothing on the page computes a spectrogram this way: the FFT is fifty
+  // times cheaper and stft() stays the one that runs. These exist so the
+  // claim on the stage is checkable rather than asserted, which is what
+  // stftByMatmul and its test are for.
+
+  // The transform written out. Row f is one complex sinusoid sampled N times,
+  // so the matrix is Vandermonde in the Nth roots of unity and multiplying by
+  // it is the transform. `oneSided` keeps the first N/2 + 1 rows -- the F of
+  // stft(), the rest being the mirror a real frame's spectrum carries anyway.
+  function dftMatrix(N, oneSided) {
+    if ((N & (N - 1)) !== 0 || N < 2) throw new Error("dftMatrix: N must be a power of two");
+    const rows = oneSided ? (N >> 1) + 1 : N;
+    const re = new Float64Array(rows * N), im = new Float64Array(rows * N);
+    for (let f = 0; f < rows; f++) {
+      for (let n = 0; n < N; n++) {
+        const a = -2 * Math.PI * f * n / N;
+        re[f * N + n] = Math.cos(a);
+        im[f * N + n] = Math.sin(a);
+      }
+    }
+    return {re, im, rows, cols: N};
+  }
+
+  // Every frame at once, as one real N x T matrix in row-major order: column
+  // t is padded[t.hop ... t.hop + N). No window -- the taper is diag(w) in
+  // the product above, kept separate so the picture can point at it.
+  //
+  // Padded by N/2 at each end, the same boundary stft() uses, so T here is
+  // stftShape's T and the two matrices line up column for column. At hop = N
+  // the columns tile the padded signal without overlapping, which makes this
+  // a reshape and nothing else -- the test reads it back column-major and
+  // compares against the padded array exactly.
+  function framesMatrix(x, N, hop) {
+    if (!(hop >= 1)) throw new Error("framesMatrix: hop must be at least 1");
+    const pad = N >> 1;
+    const padded = new Float64Array(x.length + 2 * pad);
+    padded.set(x, pad);
+    const T = Math.floor((padded.length - N) / hop) + 1;
+    const X = new Float64Array(N * T);
+    for (let t = 0; t < T; t++) {
+      const off = t * hop;
+      for (let n = 0; n < N; n++) X[n * T + t] = padded[off + n];
+    }
+    return {X, N, T, padded, stride: hop};
+  }
+
+  // The spectrogram as the product, in the same {Z, F, T, ...} shape stft()
+  // returns so the two can be compared element by element. O(F N T): about
+  // 244 million multiply-adds for the recording this stage ships, against
+  // stft()'s 4.8 million, which is the ratio stftCost prints.
+  function stftByMatmul(x, N, hop, kind) {
+    const w = windowOf(kind, N);
+    const fm = framesMatrix(x, N, hop);
+    const D = dftMatrix(N, true);
+    const F = D.rows, T = fm.T;
+    const Z = cplx(F * T);
+    for (let f = 0; f < F; f++) {
+      for (let t = 0; t < T; t++) {
+        let sr = 0, si = 0;
+        for (let n = 0; n < N; n++) {
+          const v = fm.X[n * T + t] * w[n];
+          sr += D.re[f * N + n] * v;
+          si += D.im[f * N + n] * v;
+        }
+        Z.re[f * T + t] = sr;
+        Z.im[f * T + t] = si;
+      }
+    }
+    return {Z, F, T, N, hop, kind: kind || "hann", length: x.length};
+  }
+
+  // What each route costs, in complex multiply-adds rather than milliseconds:
+  // a timing would move with the machine, the browser and the load, and the
+  // number the stage prints has to be the same for every reader. F N T for
+  // the product, T N log2(N) for a radix-2 transform per frame.
+  function stftCost(N, hop, length) {
+    const s = stftShape(length, N, hop);
+    const matmul = s.F * N * s.T;
+    const fft = s.T * N * Math.log2(N);
+    return {F: s.F, T: s.T, matmul, fft, ratio: matmul / fft};
+  }
+
   // ------------------------------------------------------------------- wav
   // Enough of RIFF to read the one recording this stage ships, and to fail
   // loudly on anything else rather than play noise. The browser could use
@@ -883,6 +974,7 @@
     magnitude, nmfInit, nmfStep, nmfError,
     decimate, hold, upsample, quantize,
     frame, spectrum, synthTopK, loop, tone, stftShape,
+    dftMatrix, framesMatrix, stftByMatmul, stftCost,
     decodeWav
   };
   if (typeof module !== "undefined" && module.exports) module.exports = AudioCore;

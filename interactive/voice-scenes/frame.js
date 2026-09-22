@@ -28,6 +28,11 @@
     s.N = N;
     s.i0 = i0;
     s.key = key;
+    // The whole matrix this frame is one column of. There is no hop control
+    // here -- the hop is the next picture's -- so the numbers are quoted at
+    // the hop that picture opens on, which is what the caption says.
+    s.hop = N >> 1;
+    s.cost = ctx.AC.stftCost(N, s.hop, ctx.signal.length);
   }
 
   window.VoiceScenes.register({
@@ -133,6 +138,25 @@
       K.label(g, "n = " + (N - 1), L + pw, TOP + ph + 3, K.css("--stage-mute"),
               {size: 10, mono: true, right: true});
 
+      // Pointing at a letter in the equation above bands what it measures on
+      // this picture: n runs the width of the frame, H is the step to the
+      // next column of the matrix, and t is which column this one is.
+      if (ctx.hl === "samp" || ctx.hl === "hop" || ctx.hl === "time") {
+        const lit = ctx.colour("--v-comp");
+        if (ctx.hl === "samp") {
+          K.span(g, L, L + pw, TOP + 8, lit, "n = 0 … " + (N - 1), {below: true});
+        } else if (ctx.hl === "hop") {
+          K.span(g, L, X(Math.min(N - 1, s.hop)), TOP + 8, lit, "H = " + s.hop, {below: true});
+        } else {
+          const t = Math.round(s.i0 / s.hop);
+          g.strokeStyle = lit;
+          g.lineWidth = 2;
+          g.strokeRect(L - 0.5, TOP - 0.5, pw + 1, ph + 1);
+          K.label(g, "t = " + t + " of " + s.cost.T, L + pw / 2, TOP + 8, lit,
+                  {size: 11, mono: true, center: true});
+        }
+      }
+
       // The playhead, while the loop runs: it crosses this one frame over and
       // over, which is what the sound is doing.
       const h = ctx.head();
@@ -164,7 +188,12 @@
         claim: "xₜ[n] = x[t·H + n] · w[n],  xₜ.shape = (" + N + ",)",
         data: {
           n: N, win: s.win, i0: s.i0, ms: ms.toFixed(1),
-          dimmed: dimmed, reps: reps, ends: ends.toExponential(2)
+          dimmed: dimmed, reps: reps, ends: ends.toExponential(2),
+          // The matrix the equation above names. `reshape` is the one case
+          // where stacking the frames copies nothing: at hop = N the columns
+          // tile the padded signal instead of overlapping it.
+          frames: s.cost.T, stride: s.hop, reshape: s.hop === N ? "1" : "0",
+          fshape: N + "," + s.cost.T
         }
       };
     },
@@ -186,6 +215,12 @@
            "multiplied by it, and both ends are now zero — the frame begins and ends in silence, so " +
            "the repeats join without a seam. That is the entire reason for the taper, and the price " +
            "is on the next picture.</p>",
+        eqcap: "𝒳 is every frame at once, one column per frame, and building it computes " +
+               "nothing — 𝒳[n, t] is simply sample t·H + n of the recording, read at a " +
+               "stride. H is the hop, the step from one column to the next; at H = N the columns tile " +
+               "the padded signal without overlapping and the whole matrix is a plain reshape of it. " +
+               "Point at a letter to see the extent it measures. The counts are quoted at H = N/2, " +
+               "the hop the next picture opens on.",
         predict: "Before you press play: the rectangular window keeps every sample exactly as it is. Should it sound cleaner, then?",
         playFrame: (win) => "this frame on repeat (" + win + ")",
         controls: {size: "Window size (N)", win: "Window shape", pos: "Where the frame is cut"},
@@ -223,6 +258,12 @@
            "multiplicada por ella, y ahora los dos extremos valen cero: el marco empieza y acaba en " +
            "silencio, así que las repeticiones se unen sin costura. Esa es toda la razón del perfil, " +
            "y el precio está en la imagen siguiente.</p>",
+        eqcap: "𝒳 son todos los marcos a la vez, una columna por marco, y construirla no " +
+               "calcula nada: 𝒳[n, t] es sencillamente la muestra t·H + n de la grabación, " +
+               "leída a un paso fijo. H es el salto, el paso de una columna a la siguiente; con H = N " +
+               "las columnas embaldosan la señal rellenada sin superponerse y toda la matriz es un " +
+               "reshape sin más. Señala una letra para ver la extensión que mide. Las cuentas están " +
+               "dadas con H = N/2, el salto con el que abre la imagen siguiente.",
         predict: "Antes de reproducir: la ventana rectangular conserva cada muestra tal cual. ¿Debería sonar más limpia, entonces?",
         playFrame: (win) => "este marco en bucle (" + win + ")",
         controls: {size: "Tamaño de ventana (N)", win: "Forma de ventana", pos: "Dónde se corta el marco"},

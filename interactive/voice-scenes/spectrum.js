@@ -30,6 +30,11 @@
       s.key = key;
       s.synth = null;
       s.synthK = -1;
+      // The matrix 𝒳 this frame is a column of, and what the two routes
+      // cost over the whole recording. Quoted at the hop the next picture
+      // opens on, the way the frame scene quotes it.
+      s.hop = N >> 1;
+      s.cost = ctx.AC.stftCost(N, s.hop, ctx.signal.length);
     }
     // The rebuild is only recomputed when k moves, not on every repaint.
     // The slider reaches every bin the transform kept, because the scene's
@@ -179,6 +184,31 @@
       K.label(g, ctx.copy.axSynth(s.synthK), W - 6, TOP + waveH + 2, K.css("--v-out"),
               {size: 10, right: true});
 
+      // Pointing at a letter in the equation above bands what it measures.
+      // n runs along the frame on top -- the N numbers ℱ is given -- and f
+      // runs along the half of the bars the transform keeps, which is why
+      // ℱ has 513 rows and not 1024.
+      if (ctx.hl === "samp" || ctx.hl === "freq" || ctx.hl === "time") {
+        const lit = ctx.colour("--v-comp");
+        g.strokeStyle = lit;
+        g.lineWidth = 2;
+        if (ctx.hl === "freq") {
+          // Exactly the half of the bars ℱ keeps: the fold is where its
+          // rows stop, which is the 513 in the next picture's shapes.
+          g.strokeRect(L - 0.5, specY - 0.5, foldX - L + 1, specH + 1);
+          K.label(g, "f = 0 … " + (F - 1), L + (foldX - L) / 2, specY + specH - 20, lit,
+                  {size: 11, mono: true, center: true});
+        } else {
+          // The frame on top is both readings of the same extent: the N
+          // numbers ℱ is handed, and column t of the matrix they came from.
+          g.strokeRect(L - 0.5, TOP - 0.5, pw + 1, waveH + 1);
+          const t = Math.round(s.i0 / s.hop);
+          K.label(g, ctx.hl === "samp" ? "n = 0 … " + (N - 1)
+                                       : "t = " + t + " of " + s.cost.T,
+                  L + pw / 2, TOP + 6, lit, {size: 11, mono: true, center: true});
+        }
+      }
+
       const h = ctx.head();
       if (h >= 0) {
         const into = (h * ctx.rate) % N;
@@ -211,7 +241,12 @@
         data: {
           n: N, bins: F, binhz: binHz.toFixed(3), peakbin: peakF,
           peakhz: (peakF * binHz).toFixed(1), k: s.synthK,
-          share: (share * 100).toFixed(1), err: s.err.toFixed(3), win: s.win, i0: s.i0
+          share: (share * 100).toFixed(1), err: s.err.toFixed(3), win: s.win, i0: s.i0,
+          // ℱ once the mirror rows are dropped, and what the whole
+          // spectrogram costs each way. Multiply-adds, not milliseconds: a
+          // timing would be this machine's, and the page has to print the
+          // same number for every reader.
+          dftrows: F, dftcols: N, matmul: s.cost.matmul, fftops: s.cost.fft
         }
       };
     },
@@ -237,6 +272,12 @@
            "kept, which is where the matrix's 513 rows come from. " +
            "<a href='https://www.youtube.com/watch?v=spUNpyF58BY'>3Blue1Brown builds this transform " +
            "from a rotating vector</a> if you want the machinery.</p>",
+        eqcap: "ℱ is the transform written as a matrix — not F, which counts bins on the " +
+               "next picture. Row f of ℱ is one sinusoid sampled N times, so multiplying by ℱ " +
+               "measures the frame against every frequency at once, and the transform of frame t " +
+               "is the product ℱxₜ. The mirror half is redundant for a real frame, so only the " +
+               "first N/2 + 1 rows are kept. The FFT computes this same product in N log₂ N " +
+               "operations instead of N²: an algorithm, not a different transform.",
         predict: "Before you slide the window size: doubling N doubles the number of bars. Do they reach higher in frequency, or sit closer together?",
         kOf: (k) => k === 1 ? "the strongest 1" : "the strongest " + k,
         playK: (k) => k + (k === 1 ? " sinusoid" : " sinusoids"),
@@ -282,6 +323,13 @@
            "guarda la primera mitad más uno, que es de donde salen las 513 filas de la matriz. " +
            "<a href='https://www.youtube.com/watch?v=spUNpyF58BY'>3Blue1Brown construye esta " +
            "transformada a partir de un vector que gira</a> si quieres la maquinaria.</p>",
+        eqcap: "ℱ es la transformada escrita como matriz, no F, que en la imagen siguiente " +
+               "cuenta bins. La fila f de ℱ es una sinusoide muestreada N veces, así que " +
+               "multiplicar por ℱ mide el marco contra todas las frecuencias a la vez, y la " +
+               "transformada del marco t es el producto ℱxₜ. La mitad espejo es redundante para " +
+               "un marco real, así que solo se conservan las primeras N/2 + 1 filas. La FFT calcula " +
+               "ese mismo producto en N log₂ N operaciones en vez de N²: un algoritmo, no otra " +
+               "transformada.",
         predict: "Antes de mover el tamaño de ventana: duplicar N duplica el número de barras. ¿Llegan más alto en frecuencia, o se juntan más?",
         kOf: (k) => k === 1 ? "la más fuerte" : "las " + k + " más fuertes",
         playK: (k) => k + (k === 1 ? " sinusoide" : " sinusoides"),
