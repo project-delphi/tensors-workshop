@@ -1647,8 +1647,15 @@ async function audit(page, where) {
           assert.equal(await home.count(), 1, `${where}: one home link`);
           assert.equal(await home.getAttribute('href'), lang === 'es' ? '../es/index.html' : '../index.html',
             `${where}: home link points at the ${lang} homepage`);
+          assert.equal(await page.locator('header .site-nav a#site-interactive').getAttribute('href'),
+            lang === 'es' ? '../es/interactive.html' : '../interactive.html', `${where}: interactive link`);
           assert.equal(await page.locator('header .site-nav a#site-notebooks').getAttribute('href'),
             lang === 'es' ? '../es/notebooks.html' : '../notebooks.html', `${where}: notebooks link`);
+          // Wired from each page's own copy table -- the widgets share a
+          // stylesheet, not a script -- so an untranslated pill is a real
+          // possibility and the label is checked, not just the href.
+          assert.equal(await page.locator('header .site-nav a#site-interactive').innerText(),
+            lang === 'es' ? 'Interactivo' : 'Interactive', `${where}: interactive pill label`);
           await widget.drive(page, where, lang);
 
           for (const width of [1440, 390]) {
