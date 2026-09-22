@@ -334,6 +334,173 @@ async function audit(page, where) {
         await page.waitForSelector('#draw .cell');
       }
 
+      // The attention stage. Seven scenes, no three.js and no sound, so what
+      // only this one can check is the arithmetic behind each claim, read
+      // off #stage's data-* the way the projection stage's checks do --
+      // computed in-page through AttentionCore where a reference value is
+      // needed, so the assertion is independent of the page's own state.
+      async function driveAttention(page, where, lang) {
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
+          null, {timeout: 10000});
+        const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
+
+        // Nothing clips an SVG child and nothing complains about one. A grid
+        // laid out past the bottom of the 640 x 400 viewBox is simply not
+        // drawn, while its numbers stay in the readout and every data-*
+        // assertion below still passes -- which is exactly how the softmax
+        // scene shipped with the last row of A and its bar chart off the
+        // stage. So each scene is measured once, as the union of what it
+        // actually drew, mapped back into viewBox units through the CTM
+        // because a scene's own coordinates sit inside a translated group.
+        const fits = async (id) => {
+          const box = await page.evaluate(() => {
+            const svg = document.getElementById('picture');
+            const inv = svg.getScreenCTM() && svg.getScreenCTM().inverse();
+            if (!inv) return null;
+            let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+            for (const node of svg.querySelectorAll('*')) {
+              if (typeof node.getBBox !== 'function' || !node.getScreenCTM()) continue;
+              let b;
+              try { b = node.getBBox(); } catch (e) { continue; }
+              if (!b.width && !b.height) continue;
+              const m = inv.multiply(node.getScreenCTM());
+              for (const [px, py] of [[b.x, b.y], [b.x + b.width, b.y],
+                                      [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]]) {
+                const x = m.a * px + m.c * py + m.e, y = m.b * px + m.d * py + m.f;
+                x0 = Math.min(x0, x); y0 = Math.min(y0, y);
+                x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+              }
+            }
+            return {x0, y0, x1, y1};
+          });
+          assert(box, `${where}: #${id} drew nothing measurable`);
+          // A couple of units of slack: a <text> box is the font's, not the
+          // glyphs', and a chip's rounded corner rounds outward.
+          assert(box.x0 >= -3 && box.y0 >= -3 && box.x1 <= 643 && box.y1 <= 403,
+            `${where}: #${id} draws outside the 640x400 viewBox ` +
+            `(x ${box.x0.toFixed(0)}..${box.x1.toFixed(0)}, y ${box.y0.toFixed(0)}..${box.y1.toFixed(0)})`);
+        };
+
+        const open = async (id) => {
+          await page.evaluate((name) => { location.hash = '#' + name; }, id);
+          await page.waitForFunction((name) =>
+            document.getElementById('stage').dataset.scene === name, id, {timeout: 8000})
+            .catch(() => assert.fail(`${where}: #${id} did not open that scene`));
+          await fits(id);
+        };
+        const settle = () => page.waitForTimeout(80);
+
+        // tokens: the gather, byte-exact.
+        await open('tokens');
+        let d = await data();
+        assert.equal(d.s, '4'); assert.equal(d.d, '8');
+        assert.equal(d.shape, '4,8');
+        assert.equal(d.ids, '3,1,4,1');
+        assert.equal(await page.locator('#claim').textContent(), 'X = E[ids],  X.shape = (4, 8)',
+          `${where}: tokens claim is not byte-exact`);
+
+        // project: 192 parameters make Q, K and V, and every dot product is
+        // an integer -- the legibility contract the seed keeps.
+        await open('project');
+        d = await data();
+        assert.equal(d.wparams, '192');
+        assert.equal(d.integer, '1');
+
+        // heads: the honest reshape agrees with the token it should; the
+        // flat one does not, and says so with its own srcof.
+        await open('heads');
+        d = await data();
+        assert.equal(d.agree, '1'); assert.equal(d.mixed, '0');
+        await page.selectOption('#c-heads-order', 'flat');
+        await settle();
+        d = await data();
+        assert.equal(d.shape, '2,4,4'); assert.equal(d.sameshape, '1');
+        assert.equal(d.agree, '0'); assert.equal(d.mixed, '1');
+        const expectedSrc = await page.evaluate(() => {
+          const AC = window.AttentionCore;
+          const X = AC.gather(AC.embedding(), AC.IDS);
+          return AC.traceCell(X, 2, true, 0, 1, 0).from.s;
+        });
+        assert.equal(d.srcof, String(expectedSrc));
+
+        // scores: the contraction is over d, the legibility contract makes
+        // every unscaled score exactly double its scaled counterpart, and
+        // sqrt(D_k) = 2 always halves.
+        await open('scores');
+        d = await data();
+        assert.equal(d.contract, 'd');
+        assert.equal(d.halves, '1');
+        const lmaxScaled = Number(d.lmax);
+        await page.selectOption('#c-scores-scale', 'none');
+        await settle();
+        d = await data();
+        assert(Math.abs(Number(d.lmax) - lmaxScaled * 2) < 1e-9,
+          `${where}: unscaled lmax should be exactly double scaled (${d.lmax} vs ${lmaxScaled * 2})`);
+
+        // softmax: over the keys every row sums to 1.000; over the queries
+        // it need not; a causal mask gives exact zeros and masks six cells.
+        await open('softmax');
+        d = await data();
+        assert.equal(d.over, 't');
+        assert.equal(d.rowsum, '1.000');
+        await page.selectOption('#c-softmax-axis', 'queries');
+        await settle();
+        d = await data();
+        assert.notEqual(d.rowsum, '1.000',
+          `${where}: softmax over queries should not make every row over t sum to 1.000`);
+        await page.selectOption('#c-softmax-axis', 'keys');
+        await page.selectOption('#c-softmax-mask', 'causal');
+        await settle();
+        d = await data();
+        assert.equal(d.exactzero, '1');
+        assert.equal(d.masked, '6');
+        assert.equal(d.rowsum, '1.000');
+
+        // output: the contraction is over t, and O is a convex combination
+        // of V; merging heads gives back a (4, 8) row per token.
+        await open('output');
+        d = await data();
+        assert.equal(d.contract, 't');
+        assert.equal(d.convex, '1');
+        await page.selectOption('#c-output-merge', 'merged');
+        await settle();
+        d = await data();
+        assert.equal(d.merged, '4,8');
+
+        // batch: the two einsum strings are literal text, and moving B
+        // moves only B in the shape.
+        await open('batch');
+        d = await data();
+        assert.equal(d.shape, '2,2,4,4');
+        assert.equal(d.einsum1, 'bhsd,bhtd->bhst');
+        assert.equal(d.einsum2, 'bhst,bhtd->bhsd');
+        await page.locator('#c-batch-b').fill('4');
+        await settle();
+        d = await data();
+        assert.equal(d.shape, '4,2,4,4');
+        assert.equal(await page.locator('#stage').getAttribute('data-tensorshape'), '[4, 2, 4, 4]');
+        // The only scene whose picture is sized from its controls, so it is
+        // the only one where fitting at the opening values proves nothing.
+        // Both corners: every slider at its maximum, then at its minimum.
+        for (const [b, h, sq, dk] of [['4', '4', '16', '16'], ['1', '1', '2', '2']]) {
+          await page.locator('#c-batch-b').fill(b);
+          await page.locator('#c-batch-h').fill(h);
+          await page.locator('#c-batch-s').fill(sq);
+          await page.locator('#c-batch-dk').fill(dk);
+          await page.waitForFunction((want) =>
+            document.getElementById('stage').dataset.shape === want,
+          [b, h, sq, dk].join(','), {timeout: 8000});
+          await fits(`batch at (${b}, ${h}, ${sq}, ${dk})`);
+        }
+
+        // A scene's own name, with a hard reload, opens on it.
+        await page.goto(
+          `${origin}${prefix}interactive/attention-stage.html?lang=${lang}&fresh=1#softmax`);
+        await page.waitForFunction(() =>
+          document.getElementById('stage').dataset.scene === 'softmax', null, {timeout: 8000})
+          .catch(() => assert.fail(`${where}: #softmax did not open on that scene`));
+      }
+
       // The voice tensor stage. What only this one can check: that the
       // recording actually arrived and decoded -- `data-standin` is the
       // stage's own admission that it fell back to a synthesised signal, and
@@ -1149,6 +1316,10 @@ async function audit(page, where) {
          es: 'Reshape, transpose y strides', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
          es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
+        // Its embed mode is the softmax scene, flat and still: no scroller,
+        // and -- unlike every other widget here -- nothing to fetch at all.
+        {file: 'attention-stage', en: 'Attention as two contractions',
+         es: 'La atención como dos contracciones', embed: true, drive: driveAttention},
         // Its embed mode is the portal's still frame -- no scroller, no
         // three.js -- which is the third hero tab below.
         {file: 'linalg-stage', en: 'Projection and the SVD',
@@ -1262,6 +1433,25 @@ async function audit(page, where) {
           if (widget.file === 'tensor-visualizer') {
             await page.waitForFunction(() =>
               document.querySelector('#stage').dataset.photos === '3', null, {timeout: 10000});
+            assert.equal(await page.evaluate(() => window.THREE), undefined,
+              `${where} embed: three.js must not be fetched on the front door`);
+          } else if (widget.file === 'attention-stage') {
+            // No three.js and no sound anywhere on this stage, so its embed
+            // fetches nothing at all beyond the page's own scripts and CSS --
+            // stricter than every other widget here, which is what this
+            // asserts: zero resource entries that are not this page's own
+            // code or styling.
+            await page.waitForFunction(() =>
+              document.getElementById('stage').dataset.ready === '1', null, {timeout: 10000});
+            assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'softmax',
+              `${where} embed: the hero gets the softmax scene`);
+            assert(await page.locator('.steps').isHidden(), `${where} embed: scroller shown`);
+            const fetched = await page.evaluate(() =>
+              performance.getEntriesByType('resource')
+                .map(e => e.name)
+                .filter(n => !/\.(js|css)(\?|$)/.test(n)));
+            assert.equal(fetched.length, 0,
+              `${where} embed: fetched something that is not code or CSS: ${fetched.join(', ')}`);
             assert.equal(await page.evaluate(() => window.THREE), undefined,
               `${where} embed: three.js must not be fetched on the front door`);
           } else if (widget.file === 'linalg-stage') {

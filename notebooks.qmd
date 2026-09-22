@@ -59,6 +59,17 @@ Section 04 has a
 its three photographs into cubes, one per byte, and shows what transpose, reshape
 and a memory layout each do to the shape, the strides, the buffer and the picture.
 
+Sections 04 and 06 and Appendix B share an
+[attention stage](interactive/attention-stage.html?lang=en), seven pictures of
+one sequence: four ids gathered out of a table, that table projected three
+ways into Q, K and V, each split so [every head gets its own
+axis](interactive/attention-stage.html?lang=en#heads) — a reshape that has to
+be a transpose too, and the bug when it is not — the contraction that
+produces the scores, [softmax turning them into weights that sum to
+one](interactive/attention-stage.html?lang=en#softmax), with a causal mask as
+the take-home's own idea, the weighted average that is the output, and the
+rank-4 tensor a real model is actually handed.
+
 Sections 07, 08 and 09 share a
 [projection and SVD stage](interactive/linalg-stage.html?lang=en), eight
 pictures of one problem: least squares as a projection onto a column space,

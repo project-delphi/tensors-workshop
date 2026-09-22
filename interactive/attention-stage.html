@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Attention as two contractions</title>
+
+<link rel="stylesheet" href="widget-chrome.css">
+<style>
+  /* The surfaces, type and frame are widget-chrome.css; this page owns its
+     accent and everything on the stage. --stage, --stage-chip, --stage-ink
+     and --stage-mute are shared there too. */
+  :root {
+    --accent: #0369a1;
+    --on-accent: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="navy"]) { --accent: #38bdf8; --on-accent: #0b1a26; }
+  }
+  :root[data-theme="navy"] { --accent: #38bdf8; --on-accent: #0b1a26; }
+
+  /* The roles this stage's pictures use, over the shared stage ink: the
+     query in the reader's hand, the key it is compared with, the value it
+     draws from, one more of something being counted, and anything wrong. */
+  :root {
+    --at-q: #ffd84d;
+    --at-k: #58c4dd;
+    --at-v: #c39bd3;
+    --at-w: #7ee787;
+    --at-res: #fc6c85;
+  }
+
+  .two-pane {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 1.75rem;
+    align-items: start;
+    margin-top: 1.25rem;
+  }
+  .steps { min-width: 0; }
+  .stagewrap { position: sticky; top: 1.5rem; min-width: 0; }
+
+  @media (max-width: 62rem) {
+    .two-pane { display: flex; flex-direction: column; gap: 1rem; }
+    .stagewrap {
+      order: -1; top: 0; z-index: 2; padding-bottom: 0.5rem; background: var(--bg);
+      display: flex; flex-direction: column;
+    }
+    #stage { min-height: 14rem; }
+    .step { min-height: 0; padding: 1.4rem 0; }
+  }
+
+  #stage {
+    position: relative; height: min(56vh, 26rem);
+    background: var(--stage); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden;
+  }
+  #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #picture { display: block; width: 100%; height: 100%; }
+  #claim {
+    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
+    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  #shapebadge {
+    position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; max-width: 34%;
+    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  /* At the hero's small embed size the claim wraps to three lines at the
+     desktop font size and covers the picture under it. The chip's text
+     content stays byte-exact -- this only shrinks how it is drawn.
+
+     `html.embed` is in the selector as well as the width, because an embed
+     is small however wide its frame happens to be: at 520px this rule did
+     not apply, the softmax claim -- the longest of the seven, and the one
+     the embed always opens on -- wrapped to two lines, and the second line
+     sat exactly over the scene's own "L, head 0" title. The width half
+     still has to stay for the non-embedded page at 390px. */
+     The claim's max-width plus the badge's 34% has to stay under 100%, or
+     the two chips share the row and overlap: at 74% the claim's first line
+     ran under "Shape [2, 4, 4]". Wrapping to a third line is the cheaper
+     failure now that the viewBox makes room for however many there are. */
+  @media (max-width: 420px) {
+    #claim { font-size: 0.62rem; line-height: 1.25; max-width: 60%; padding: 0.1rem 0.3rem; top: 0.4rem; }
+    #shapebadge { font-size: 0.62rem; padding: 0.1rem 0.3rem; top: 0.4rem; }
+  }
+  html.embed #claim { font-size: 0.62rem; line-height: 1.25; max-width: 60%; padding: 0.1rem 0.3rem; top: 0.4rem; }
+  html.embed #shapebadge { font-size: 0.62rem; padding: 0.1rem 0.3rem; top: 0.4rem; }
+
+  #dots { display: inline-flex; gap: 0.35rem; align-items: center; }
+  .stagebar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin-top: 0.6rem; }
+  .stagebar .grow { flex: 1 1 auto; }
+  .stagebar .dot {
+    width: 0.8rem; height: 0.8rem; padding: 0; border-radius: 50%;
+    border: 2px solid var(--ink-mute); background: transparent; cursor: pointer;
+  }
+  .stagebar .dot:hover { border-color: var(--accent); }
+  .stagebar .dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
+  #stepnum { font: 600 0.85rem/1 var(--sans); color: var(--ink-mute); }
+
+  .step {
+    min-height: 74vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1rem 0;
+  }
+  .step .anchor { display: block; height: 0; }
+  .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
+  .step .part {
+    font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
+    border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
+  }
+  .step .kicker { margin-bottom: 0.5rem; }
+  .step p, .step .body { max-width: 36rem; overflow-wrap: break-word; }
+  .step.is-active h2 { color: var(--accent); }
+
+  .controls { display: grid; gap: 0.7rem; margin: 0.9rem 0 0; max-width: 34rem; }
+  .controls label { display: block; font-size: 0.85rem; font-weight: 600; }
+  .controls .val { float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
+  .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .controls select { width: 100%; max-width: 22rem; }
+
+  .readout {
+    margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem;
+    min-height: 3.2rem; max-width: 36rem;
+  }
+  .readout b { color: var(--accent); }
+  .shape { font-family: var(--mono); font-size: 0.86rem; }
+
+  /* Display notation, the same shape voice-stage.html keeps. Static and
+     language-neutral; only the caption under it is translated. */
+  .eq {
+    margin: 0.9rem 0 0; padding: 0.7rem 0.8rem; background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 8px; max-width: 36rem;
+  }
+  /* `contain: inline-size` (not `overflow-x: auto` alone) is what stops a
+     wide formula pushing the page sideways at 390px -- see widget-chrome.css
+     and the audio stage's own comment on this. */
+  .eqscroll { overflow-x: auto; contain: inline-size; }
+  .eq math { font-size: 1.05rem; color: var(--ink);
+             font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", serif; }
+  .eqcap { margin: 0.55rem 0 0; font-size: 0.82rem; color: var(--ink-mute); }
+  .eq [data-hl] { cursor: help; border-bottom: 1px dashed var(--ink-mute); border-radius: 2px; }
+  .eq [data-hl]:hover, .eq [data-hl].is-lit {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    border-bottom: 1px solid var(--accent);
+  }
+  .eq [data-hl]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  html.embed .steps, html.embed .stagebar, html.embed .readout, html.embed .hint { display: none; }
+  html.embed .two-pane { display: block; margin: 0; }
+  html.embed .stagewrap { position: static; height: 100vh; display: flex; flex-direction: column; }
+  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; height: auto; min-height: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <nav class="site-nav" aria-label="Site">
+      <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
+    </nav>
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <p id="intro"></p>
+  </header>
+
+  <div class="two-pane">
+
+    <div class="steps" id="steps">
+
+      <section class="step" id="step-tokens" aria-labelledby="h-tokens">
+        <span class="anchor" id="tokens"></span>
+        <p class="kicker" id="k-tokens"></p>
+        <h2 id="h-tokens"></h2>
+        <p class="concept" id="con-tokens"></p>
+        <div class="body" id="body-tokens"></div>
+        <p class="predict" id="pr-tokens"></p>
+        <div class="controls" id="ctl-tokens"></div>
+        <p class="readout" id="read-tokens"></p>
+      </section>
+
+      <section class="step" id="step-project" aria-labelledby="h-project">
+        <span class="anchor" id="project"></span>
+        <p class="kicker" id="k-project"></p>
+        <h2 id="h-project"></h2>
+        <p class="concept" id="con-project"></p>
+        <div class="body" id="body-project"></div>
+        <p class="predict" id="pr-project"></p>
+        <div class="controls" id="ctl-project"></div>
+        <p class="readout" id="read-project"></p>
+      </section>
+
+      <section class="step" id="step-heads" aria-labelledby="h-heads">
+        <span class="anchor" id="heads"></span>
+        <p class="kicker" id="k-heads"></p>
+        <h2 id="h-heads"></h2>
+        <p class="concept" id="con-heads"></p>
+        <div class="body" id="body-heads"></div>
+        <p class="predict" id="pr-heads"></p>
+        <div class="controls" id="ctl-heads"></div>
+        <p class="readout" id="read-heads"></p>
+      </section>
+
+      <section class="step" id="step-scores" aria-labelledby="h-scores">
+        <span class="anchor" id="scores"></span>
+        <p class="kicker" id="k-scores"></p>
+        <h2 id="h-scores"></h2>
+        <p class="concept" id="con-scores"></p>
+        <div class="body" id="body-scores"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-scores">
+            <math display="block">
+              <mrow>
+                <mi>L</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
+                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
+                <mo>=</mo>
+                <mfrac>
+                  <mrow>
+                    <mo stretchy="false">(</mo>
+                    <munder><mo>&#x2211;</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></munder>
+                    <mi>Q</mi><mo stretchy="false">[</mo>
+                    <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                    <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                    <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
+                    <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
+                    <mi>K</mi><mo stretchy="false">[</mo>
+                    <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                    <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                    <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo>
+                    <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
+                    <mo stretchy="false">)</mo>
+                  </mrow>
+                  <msqrt><msub><mi>D</mi><mi>k</mi></msub></msqrt>
+                </mfrac>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-scores"></p>
+        </div>
+        <p class="predict" id="pr-scores"></p>
+        <div class="controls" id="ctl-scores"></div>
+        <p class="readout" id="read-scores"></p>
+      </section>
+
+      <section class="step" id="step-softmax" aria-labelledby="h-softmax">
+        <span class="anchor" id="softmax"></span>
+        <p class="kicker" id="k-softmax"></p>
+        <h2 id="h-softmax"></h2>
+        <p class="concept" id="con-softmax"></p>
+        <div class="body" id="body-softmax"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-softmax">
+            <math display="block">
+              <mrow>
+                <mi>A</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
+                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
+                <mo>=</mo>
+                <msub><mi>softmax</mi><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow></msub>
+                <mo stretchy="false">(</mo>
+                <mi>L</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
+                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-softmax"></p>
+        </div>
+        <p class="predict" id="pr-softmax"></p>
+        <div class="controls" id="ctl-softmax"></div>
+        <p class="readout" id="read-softmax"></p>
+      </section>
+
+      <section class="step" id="step-output" aria-labelledby="h-output">
+        <span class="anchor" id="output"></span>
+        <p class="kicker" id="k-output"></p>
+        <h2 id="h-output"></h2>
+        <p class="concept" id="con-output"></p>
+        <div class="body" id="body-output"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-output">
+            <math display="block">
+              <mrow>
+                <mi>O</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
+                <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
+                <mo>=</mo>
+                <munder><mo>&#x2211;</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow></munder>
+                <mi>A</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
+                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
+                <mi>V</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
+                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
+                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo>
+                <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-output"></p>
+        </div>
+        <p class="predict" id="pr-output"></p>
+        <div class="controls" id="ctl-output"></div>
+        <p class="readout" id="read-output"></p>
+      </section>
+
+      <section class="step" id="step-batch" aria-labelledby="h-batch">
+        <span class="anchor" id="batch"></span>
+        <p class="kicker" id="k-batch"></p>
+        <h2 id="h-batch"></h2>
+        <p class="concept" id="con-batch"></p>
+        <div class="body" id="body-batch"></div>
+        <p class="predict" id="pr-batch"></p>
+        <div class="controls" id="ctl-batch"></div>
+        <p class="readout" id="read-batch"></p>
+      </section>
+
+    </div>
+
+    <div class="stagewrap">
+      <div id="stage" role="img" aria-label="" tabindex="0">
+        <svg id="picture" viewBox="0 0 640 400" preserveAspectRatio="xMidYMid meet"></svg>
+        <p id="claim"></p>
+        <p id="shapebadge" hidden></p>
+      </div>
+
+      <div class="stagebar">
+        <button type="button" id="prev"></button>
+        <span id="dots" role="group" aria-labelledby="stepnum"></span>
+        <span id="stepnum"></span>
+        <button type="button" id="next"></button>
+        <span class="grow"></span>
+        <button type="button" id="reset"></button>
+      </div>
+      <p id="embedcap"></p>
+      <p class="sr" id="status" aria-live="polite"></p>
+    </div>
+
+  </div>
+
+  <div class="about" aria-labelledby="h-about">
+    <h2 id="h-about"></h2>
+    <p id="about-1"></p>
+    <p id="about-2"></p>
+  </div>
+
+</div>
+
+<!-- The arithmetic (plain script, pinned under `npm test`), linalg-core.js
+     for the scroller's pickActive, the drawing kit and its registry, then
+     one file per scene in reading order. All plain scripts, so the page
+     works from file://. No three.js: every picture is SVG with real
+     <text>. -->
+<script src="attention-core.js"></script>
+<script src="linalg-core.js"></script>
+<script src="attention-kit.js"></script>
+<script src="attention-scenes/tokens.js"></script>
+<script src="attention-scenes/project.js"></script>
+<script src="attention-scenes/heads.js"></script>
+<script src="attention-scenes/scores.js"></script>
+<script src="attention-scenes/softmax.js"></script>
+<script src="attention-scenes/output.js"></script>
+<script src="attention-scenes/batch.js"></script>
+
+<script>
+(function () {
+  "use strict";
+  const AC = window.AttentionCore, K = window.AttentionKit, LC = window.LinalgCore;
+  const $ = (id) => document.getElementById(id);
+
+  const params = new URLSearchParams(location.search);
+  const lang = params.get("lang") === "es" ? "es" : "en";
+  const embed = params.get("embed") === "1";
+  const theme = params.get("theme");
+  document.documentElement.lang = lang;
+  if (embed) document.documentElement.classList.add("embed");
+  if (theme === "navy") document.documentElement.dataset.theme = "navy";
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const T = {
+    en: {
+      eyebrow: "Sections 04 and 06 · Appendix B",
+      title: "Attention as two contractions",
+      navHome: "← Workshop home", navNotebooks: "Notebooks",
+      intro: "Attention is built from ideas this workshop has already met: a gather, a projection, " +
+             "a reshape that has to be a transpose too, and two contractions. Seven pictures, in the " +
+             "order the arithmetic happens: four token ids gathered out of a table, that table " +
+             "projected three ways into Q, K and V, each split so every head gets its own axis, the " +
+             "scores that contraction produces, softmax turning them into weights that sum to one, " +
+             "the weighted average that is the output, and the rank-4 tensor a real model is actually " +
+             "handed. Every picture asks you to predict before you touch a control; the box under the " +
+             "controls is the answer, in this picture's own numbers.",
+      shape: "Shape", concept: "Concept",
+      reset: "Reset this picture",
+      prev: "◀ Back", next: "Next ▶",
+      stepOf: (i, n) => i + " of " + n,
+      stepName: (i, n, h) => i + " of " + n + ": " + h,
+      embedCap: "Two contractions: Q against K, then the weights against V.",
+      aboutH: "About this page",
+      about1: "Every number on this page is computed in the browser, from a fixed seed, through " +
+              "attention-core.js. Nothing is drawn to a stored answer; the four token words carry no " +
+              "meaning of their own.",
+      about2: "It accompanies section 04 (layout and reshape), section 06 (contraction with einsum) " +
+              "and Appendix B (attention is two contractions). Each picture has its own address — " +
+              "#tokens, #project, #heads, #scores, #softmax, #output, #batch — and the notebooks link " +
+              "to the one they are teaching."
+    },
+    es: {
+      eyebrow: "Secciones 04 y 06 · Apéndice B",
+      title: "La atención como dos contracciones",
+      navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
+      intro: "La atención está construida con ideas que este taller ya ha visto: una recolección, " +
+             "una proyección, un reshape que también tiene que ser un transpose, y dos contracciones. " +
+             "Siete imágenes, en el orden en que ocurre la aritmética: cuatro ids de token recogidos " +
+             "de una tabla, esa tabla proyectada de tres formas en Q, K y V, cada una dividida para " +
+             "que cada cabeza tenga su propio eje, las puntuaciones que produce esa contracción, " +
+             "softmax convirtiéndolas en pesos que suman uno, el promedio ponderado que es la salida, " +
+             "y el tensor de rango 4 que recibe de verdad un modelo real. Cada imagen te pide una " +
+             "predicción antes de tocar un control; la caja bajo los controles es la respuesta, con " +
+             "los números propios de esta imagen.",
+      shape: "Forma", concept: "Concepto",
+      reset: "Reiniciar esta imagen",
+      prev: "◀ Atrás", next: "Siguiente ▶",
+      stepOf: (i, n) => i + " de " + n,
+      stepName: (i, n, h) => i + " de " + n + ": " + h,
+      embedCap: "Dos contracciones: Q contra K, y después los pesos contra V.",
+      aboutH: "Sobre esta página",
+      about1: "Cada número de esta página se calcula en el navegador, a partir de una semilla fija, " +
+              "mediante attention-core.js. Nada se dibuja sobre una respuesta guardada; las cuatro " +
+              "palabras de token no tienen significado propio.",
+      about2: "Acompaña a la sección 04 (disposición y reshape), a la 06 (contracción con einsum) y " +
+              "al Apéndice B (la atención son dos contracciones). Cada imagen tiene su propia " +
+              "dirección (#tokens, #project, #heads, #scores, #softmax, #output, #batch) y los " +
+              "cuadernos enlazan a la que están enseñando."
+    }
+  }[lang];
+
+  // -------------------------------------------------------------- scenes
+  const scenes = window.AttentionScenes.list();
+  if (!scenes.length) throw new Error("attention-stage: no scenes registered");
+  for (const s of scenes) {
+    if (!$("step-" + s.id)) throw new Error("attention-stage: no section for scene " + s.id);
+  }
+  let active = scenes[0];
+  let step = 0;
+  let hl = null;
+  const ctxFor = new Map();
+  const byId = (id) => scenes.find((s) => s.id === id);
+
+  const stage = $("stage"), svg = $("picture");
+
+  function contextFor(scene) {
+    if (ctxFor.has(scene.id)) return ctxFor.get(scene.id);
+    const c = {
+      AC, K, LC, lang, embed, reduceMotion,
+      state: {}, cache: {},
+      stage, svg, W: 640, H: 400,
+      get copy() { return scene.copy[lang]; },
+      get hl() { return hl; },
+      colour: (token) => K.css(token),
+      changed,
+      setControls: (vals) => setControls(scene, vals),
+      control: (id) => $("c-" + scene.id + "-" + id)
+    };
+    ctxFor.set(scene.id, c);
+    return c;
+  }
+
+  // ------------------------------------------------------- the controls
+  function buildControls(scene) {
+    const host = $("ctl-" + scene.id);
+    host.textContent = "";
+    const ctx = contextFor(scene);
+    const copy = scene.copy[lang];
+    (scene.controls || []).forEach((spec) => {
+      const wrap = document.createElement("label");
+      const val = document.createElement("span");
+      val.className = "val";
+      wrap.appendChild(val);
+      const name = document.createElement("span");
+      name.textContent = (copy.controls && copy.controls[spec.id]) || spec.id;
+      wrap.appendChild(name);
+
+      let input;
+      if (spec.type === "select") {
+        input = document.createElement("select");
+        spec.options.forEach((o) => {
+          const opt = document.createElement("option");
+          opt.value = o;
+          opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
+          input.appendChild(opt);
+        });
+        input.value = String(ctx.state[spec.id]);
+      } else {
+        input = document.createElement("input");
+        input.type = "range";
+        input.min = spec.min; input.max = spec.max; input.step = spec.step || 1;
+        input.value = String(ctx.state[spec.id]);
+      }
+      input.id = "c-" + scene.id + "-" + spec.id;
+      input.autocomplete = "off";
+      input.addEventListener("input", () => {
+        ctx.state[spec.id] = spec.type === "select" ? input.value : Number(input.value);
+        if (active !== scene) showScene(scene, false);
+        changed();
+      });
+      val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
+      wrap.appendChild(input);
+      host.appendChild(wrap);
+    });
+  }
+
+  function rebuildLabels(scene) {
+    const ctx = contextFor(scene), copy = scene.copy[lang];
+    (scene.controls || []).forEach((spec) => {
+      const input = $("c-" + scene.id + "-" + spec.id);
+      if (!input) return;
+      const val = input.parentNode.querySelector(".val");
+      if (val) val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
+    });
+  }
+
+  function setControls(scene, vals) {
+    const ctx = contextFor(scene);
+    Object.keys(vals).forEach((k) => {
+      ctx.state[k] = vals[k];
+      const input = $("c-" + scene.id + "-" + k);
+      if (input) input.value = String(vals[k]);
+    });
+    rebuildLabels(scene);
+    changed();
+  }
+
+  // -------------------------------------------------------- the readout
+  const written = new Set();
+
+  function changed() {
+    const ctx = contextFor(active);
+    if (active.sync) active.sync(ctx);
+    const r = active.readout(ctx) || {};
+    $("read-" + active.id).innerHTML = r.html || "";
+    $("claim").textContent = r.claim || active.copy[lang].claim;
+    const sh = active.shape ? active.shape(ctx)
+      : (r.data && r.data.shape ? "[" + String(r.data.shape).split(",").join(", ") + "]" : "");
+    const badge = $("shapebadge");
+    badge.textContent = sh ? T.shape + " " + sh : "";
+    badge.hidden = !sh;
+    if (sh) stage.dataset.tensorshape = sh; else delete stage.dataset.tensorshape;
+    stage.setAttribute("aria-label", ctx.copy.aria(ctx) || "");
+
+    const data = Object.assign({scene: active.id}, r.data || {});
+    written.forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
+    written.clear();
+    Object.keys(data).forEach((k) => { stage.dataset[k] = String(data[k]); written.add(k); });
+
+    rebuildLabels(active);
+    active.draw(ctx);
+    fitClaim();
+  }
+
+  // Every scene starts its drawing 44 user units down, leaving the claim
+  // chip the top of the viewBox to itself. 44 is right at the page's own
+  // size and wrong at an embed's: the chip is sized in px, the picture in
+  // user units, so the smaller the stage the more of it one line of claim
+  // covers. The softmax claim is the longest of the seven and the one an
+  // embed opens on, and at 390px it wrapped to two lines and put the second
+  // one straight through that scene's own "L, head 0" title.
+  //
+  // So the reservation is measured rather than assumed: the viewBox grows
+  // upward by whatever the chip actually needs, which moves every scene
+  // down together without a scene knowing how tall the claim came out, and
+  // leaves the drawing's own coordinates -- and the browser check's
+  // viewBox assertion, which reads them through the CTM -- untouched.
+  function fitClaim() {
+    const svg = $("picture"), box = stage.getBoundingClientRect();
+    if (!box.width || !box.height) return;
+    const claimH = $("claim").getBoundingClientRect().height;
+    let extra = 0;
+    // Twice, because growing the viewBox shrinks the scale, which is what
+    // the requirement is measured in; the second pass settles it.
+    for (let i = 0; i < 2; i++) {
+      const scale = Math.min(box.width / 640, box.height / (400 + extra));
+      extra = Math.max(0, Math.ceil((claimH + 12) / scale - 44));
+    }
+    svg.setAttribute("viewBox", "0 " + -extra + " 640 " + (400 + extra));
+  }
+
+  // Pointing at a letter in an equation bands the axis it names on the
+  // stage. Never calls changed(): the readout is written from the controls,
+  // and a hover that rewrote it would move the text under the cursor.
+  function lightAxis(token, on) {
+    const next = on ? token : (hl === token ? null : hl);
+    if (next === hl) return;
+    hl = next;
+    if (hl) stage.dataset.hl = hl; else delete stage.dataset.hl;
+    document.querySelectorAll(".eq [data-hl]").forEach((el) => {
+      el.classList.toggle("is-lit", !!hl && el.dataset.hl === hl);
+    });
+    active.draw(contextFor(active));
+  }
+
+  function bindEquations() {
+    document.querySelectorAll(".eq [data-hl]").forEach((el) => {
+      const token = el.dataset.hl;
+      el.addEventListener("pointerenter", () => lightAxis(token, true));
+      el.addEventListener("pointerleave", () => lightAxis(token, false));
+      el.addEventListener("focus", () => lightAxis(token, true));
+      el.addEventListener("blur", () => lightAxis(token, false));
+    });
+  }
+
+  // -------------------------------------------------------------- text
+  function fillText() {
+    let group = null;
+    scenes.forEach((s) => {
+      const c = s.copy[lang];
+      $("k-" + s.id).textContent = c.k;
+      $("h-" + s.id).textContent = c.h;
+      $("con-" + s.id).innerHTML = c.concept || "";
+      $("con-" + s.id).dataset.label = T.concept;
+      $("body-" + s.id).innerHTML = c.b;
+      $("pr-" + s.id).textContent = c.predict || "";
+      const cap = document.getElementById("eqcap-" + s.id);
+      if (cap) cap.textContent = c.eqcap || "";
+    });
+    const dots = $("dots");
+    dots.replaceChildren();
+    scenes.forEach((s, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "dot";
+      b.setAttribute("aria-label", T.stepName(i + 1, scenes.length, s.copy[lang].h));
+      b.addEventListener("click", () => goTo(i, true));
+      dots.appendChild(b);
+    });
+  }
+
+  function showScene(scene, scroll) {
+    const isNew = active !== scene;
+    active = scene;
+    step = scenes.indexOf(scene);
+    scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
+    Array.from($("dots").children).forEach((d, j) => {
+      if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
+    });
+    $("prev").disabled = step === 0;
+    $("next").disabled = step === scenes.length - 1;
+    $("stepnum").textContent = T.stepOf(step + 1, scenes.length);
+    if (isNew) $("status").textContent = scene.copy[lang].h;
+    changed();
+    if (scroll) {
+      $("step-" + scene.id).scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
+    }
+  }
+
+  const goTo = (i, scroll) =>
+    showScene(scenes[Math.max(0, Math.min(scenes.length - 1, i))], scroll);
+
+  function watchSteps() {
+    let queued = false;
+    const settle = () => {
+      queued = false;
+      const rects = scenes.map((s) => {
+        const r = $("step-" + s.id).getBoundingClientRect();
+        return {top: r.top, bottom: r.bottom};
+      });
+      const band = innerHeight / 2;
+      const next = LC.pickActive(rects, band - 50, band + 50, step);
+      if (next >= 0 && next !== step) showScene(scenes[next], false);
+    };
+    const kick = () => { if (!queued) { queued = true; requestAnimationFrame(settle); } };
+    const io = new IntersectionObserver(kick, {threshold: [0, 0.25, 0.5, 0.75, 1]});
+    scenes.forEach((s) => io.observe($("step-" + s.id)));
+    addEventListener("scroll", kick, {passive: true});
+    kick();
+  }
+
+  // ----------------------------------------------------------- the chrome
+  $("site-home").textContent = T.navHome;
+  $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+  $("site-notebooks").textContent = T.navNotebooks;
+  $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
+  $("eyebrow").textContent = T.eyebrow;
+  $("title").textContent = T.title;
+  $("intro").textContent = T.intro;
+  $("reset").textContent = T.reset;
+  $("prev").textContent = T.prev;
+  $("next").textContent = T.next;
+  $("h-about").textContent = T.aboutH;
+  $("about-1").textContent = T.about1;
+  $("about-2").innerHTML = T.about2;
+  document.title = T.title;
+
+  if (embed) {
+    const cap = $("embedcap");
+    const b = document.createElement("b");
+    b.textContent = T.embedCap;
+    cap.appendChild(b);
+  }
+
+  $("reset").addEventListener("click", () => {
+    const ctx = contextFor(active);
+    if (active.reset) active.reset(ctx); else active.init(ctx);
+    buildControls(active);
+    changed();
+  });
+  $("prev").addEventListener("click", () => goTo(step - 1, true));
+  $("next").addEventListener("click", () => goTo(step + 1, true));
+
+  // The claim chip is sized in px and the picture in user units, so how
+  // much of the stage one line of claim covers changes with every resize.
+  window.addEventListener("resize", fitClaim);
+  if (!embed) addEventListener("hashchange", () => {
+    const s = byId((location.hash || "").replace("#", ""));
+    if (s) showScene(s, true);
+  });
+
+  fillText();
+  for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
+  if (!embed) bindEquations();
+  const wanted = embed ? byId("softmax") : byId((location.hash || "").replace("#", ""));
+  showScene(wanted || scenes[0], false);
+  stage.dataset.ready = "1";
+  if (!embed) {
+    watchSteps();
+    if (wanted) $("step-" + wanted.id).scrollIntoView({block: "center"});
+  }
+})();
+</script>
+
+</body>
+</html>

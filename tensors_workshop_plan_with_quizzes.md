@@ -444,7 +444,7 @@ np.einsum('ij->ji', A)         # transpose      == A.T
 np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 ```
 
-`c` appears in the inputs but not after the arrow, so it is **summed over** — that is the contraction. `n`, `h`, `w` appear after the arrow, so they are **kept**. Adding a batch axis costs exactly one letter. This is why `einsum` is worth learning. The same expression works for one image or for a million, and it reads like the mathematics in Chapter 2.
+`c` appears in the inputs but not after the arrow, so it is **summed over** — that is the contraction. `n`, `h`, `w` appear after the arrow, so they are **kept**. Adding a batch axis costs exactly one letter. This is why `einsum` is worth learning. The same expression works for one image or for a million, and it reads like the mathematics in Chapter 2. Attention is two more contractions of exactly this shape — `L = Q Kᵀ` sums over the feature axis, `O = A V` sums over the key axis — on the [attention stage's scores](interactive/attention-stage.html?lang=en#scores) and [output](interactive/attention-stage.html?lang=en#output) pictures.
 
 ## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
 
@@ -1017,6 +1017,10 @@ def softmax(x, axis=-1):
 #         set those scores to -np.inf BEFORE the softmax, and verify the padded
 #         positions receive exactly zero weight.
 ```
+
+Try it first on the [attention stage](interactive/attention-stage.html?lang=en): the same two contractions, with a sequence of four small enough to add up by hand, the [scores](interactive/attention-stage.html?lang=en#scores) drawn as a heatmap and softmax's causal mask giving exact zeros rather than small positive weights.
+
+> 🇪🇸 Pruébalo primero en el [escenario de atención](interactive/attention-stage.html?lang=es): las mismas dos contracciones, con una secuencia de cuatro lo bastante pequeña para sumar a mano, las [puntuaciones](interactive/attention-stage.html?lang=es#scores) dibujadas como un mapa de calor y la máscara causal de softmax dando ceros exactos en vez de pesos positivos pequeños.
 
 <details><summary>Solution</summary>
 

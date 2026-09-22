@@ -73,6 +73,21 @@ repo:
     - interactive/voice-scenes/lowrank.js
     - interactive/voice-scenes/nmf.js
     - interactive/voice-scenes/batch.js
+    # The attention stage: its page, its arithmetic, its drawing kit and one
+    # file per scene, loaded by plain <script src> lines the link harvest
+    # does see -- listed anyway, because a scene that fails to reach docs/ is
+    # a step the page throws on at boot, not a broken link. No three.js and
+    # no vendored asset: every picture on this stage is inline SVG.
+    - interactive/attention-stage.html
+    - interactive/attention-core.js
+    - interactive/attention-kit.js
+    - interactive/attention-scenes/tokens.js
+    - interactive/attention-scenes/project.js
+    - interactive/attention-scenes/heads.js
+    - interactive/attention-scenes/scores.js
+    - interactive/attention-scenes/softmax.js
+    - interactive/attention-scenes/output.js
+    - interactive/attention-scenes/batch.js
     # The arithmetic under the voice tensor stage, and the recording it
     # factors (interactive/vendor/README.md). The recording is fetched by
     # audio-core.js rather than named in any href, so the harvest cannot see
