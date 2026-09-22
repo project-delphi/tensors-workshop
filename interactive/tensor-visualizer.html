@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Reshape, transpose and strides</title>
+<title>The image tensor</title>
 <link rel="stylesheet" href="widget-chrome.css">
 <style>
   /* The surfaces, type and frame are widget-chrome.css; this page owns its
@@ -313,7 +313,7 @@
         <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
       </nav>
       <p class="eyebrow" id="eyebrow">Section 04 · reshape and transpose</p>
-      <h1 id="title">Reshape, transpose and strides</h1>
+      <h1 id="title">The image tensor</h1>
       <p id="lead"></p>
     </header>
     <div class="grid">
@@ -504,7 +504,7 @@
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
 
   const EN = {
-    title: "Reshape, transpose and strides",
+    title: "The image tensor",
     eyebrow: "Section 04 · reshape and transpose",
     lead: "Three real photographs as one 4-D tensor, one cube per byte. Drag to rotate. Reshape pours the same buffer into another shape; transpose permutes the shape and the strides and moves no byte at all; .contiguous() is the one operation that rewrites memory.",
     navHome: "← Workshop home",
@@ -633,7 +633,7 @@
     logSelected: (o, v) => `offset ${o}, value ${v}`
   };
   const ES = {
-    title: "Reshape, transpose y strides",
+    title: "El tensor de imagen",
     eyebrow: "Sección 04 · reshape y transpose",
     lead: "Tres fotografías reales como un solo tensor 4-D, un cubo por byte. Arrastra para rotar. reshape vierte el mismo búfer en otra forma; transpose permuta la forma y los strides sin mover un solo byte; .contiguous() es la única operación que reescribe la memoria.",
     navHome: "← Inicio del taller",

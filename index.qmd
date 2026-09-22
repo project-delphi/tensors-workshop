@@ -40,10 +40,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
 <div class="hero-demos" data-hero-demos>
   <div class="hero-bar">
     <div class="hero-tabs" role="tablist" aria-label="Live demos">
-      <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape &amp; transpose</button>
+      <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Image</button>
       <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
       <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
+      <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Attention</button>
     </div>
     <a class="hero-open" data-hero-open href="interactive/tensor-visualizer.html?lang=en">Open the full widget →</a>
   </div>
@@ -63,7 +64,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
     <iframe class="hero-embed" data-src="interactive/voice-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: a voice cut into windows, becoming a frequency-by-time matrix"></iframe>
     <p class="hero-caption">A voice becomes a matrix — <code>513 × 465</code> — and you can hear what a transpose does to it.</p>
   </div>
-  <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Four of the moves, live.</p>
+  <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" data-open="interactive/attention-stage.html?lang=en" hidden>
+    <iframe class="hero-embed" data-src="interactive/attention-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: attention scores turned into weights that sum to one"></iframe>
+    <p class="hero-caption">Softmax turns a row of scores into weights that sum to <code>1</code> — one query attending to four keys.</p>
+  </div>
+  <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. The moves, live.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-en tensor-desc-en" xmlns="http://www.w3.org/2000/svg">
@@ -307,65 +312,12 @@ Core papers, textbook chapters, and repository source code.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-No install and no account. Four live tools that answer a question the pages
-can only describe.
+No install and no account. Type two shapes and watch NumPy line them up; turn
+three photographs into cubes and break the picture with a reshape; scroll a
+sequence through attention one contraction at a time; watch a circle become an
+ellipse; or hear what a transpose does to a recording.
 
-:::: {.widget-grid}
-::: {.resource-card}
-### 🧮 Broadcasting simulator
-
-<span data-language-key="broadcasting-simulator"></span>
-
-Type two shapes. Watch NumPy line them up from the right, pad the short one, and
-stretch every axis of size 1 — or refuse, and say which axis. Section 03.
-
-[Try shapes](interactive/broadcasting-simulator.html?lang=en){.resource-button}
-:::
-
-::: {.resource-card}
-### 🧊 Reshape & transpose visualizer
-
-<span data-language-key="layout-visualizer"></span>
-
-Three real photos as one 4-D tensor, a cube per byte. Transpose it and watch
-the shape and strides permute while the picture stays; reshape it and watch
-the picture break; rewrite the buffer C, Fortran or channels_last and watch
-only the memory move. Every click prints the NumPy and PyTorch that does it.
-Section 04.
-
-[Try reshape & transpose](interactive/tensor-visualizer.html?lang=en){.resource-button}
-:::
-
-::: {.resource-card}
-### 📐 Projection & SVD stage
-
-<span data-language-key="projection-svd-stage"></span>
-
-Least squares is a projection: scroll, and watch a target vector's shadow land
-on the plane its predictors span, with the residual meeting it at a right
-angle. Then the SVD portal, where a unit circle becomes an ellipse and
-A v = σ u stops being notation, and on to the eigenvectors, two nearly
-collinear columns and float32 dividing by exactly zero. Eight pictures of one
-problem, sections 07, 08 and 09.
-
-[Try projection & SVD](interactive/linalg-stage.html?lang=en){.resource-button}
-:::
-
-::: {.resource-card}
-### 🎙️ Audio tensor stage
-
-<span data-language-key="voice-tensor-stage"></span>
-
-Seven pictures of one recording. Air becomes numbers: 48 000 a second, each
-rounded to 16 bits, written down as an array you can listen to. Then one window
-is cut out of it, the transform is asked which frequencies are in that window,
-and the window hops along to build a frequency-by-time matrix, 513 × 465 — and
-you can hear what a transpose does to it. It ends on the rank-4 batch a model
-is handed, three recordings stacked. Sections 00, 02, 04 and 09.
-
-[Try the audio tensor](interactive/voice-stage.html?lang=en){.resource-button}
-:::
-::::
+[See them all](interactive.qmd){.resource-button}
 
 ## Familiar with basic linear algebra? You're ready to go. {#prerequisites}
 

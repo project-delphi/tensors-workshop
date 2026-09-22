@@ -143,8 +143,8 @@ jobs:
 
       - name: Test the widgets' arithmetic
         # tests/tensor_core.test.cjs pins interactive/tensor-core.js -- the
-        # strides, contiguity and view-or-copy rule under the reshape &
-        # transpose visualizer -- and tests/linalg_core.test.cjs pins
+        # strides, contiguity and view-or-copy rule under the image tensor
+        # visualizer -- and tests/linalg_core.test.cjs pins
         # interactive/linalg-core.js -- the SVD, the condition number and the
         # two least-squares paths under the projection & SVD stage. Node alone:
         # no browser and no render, so they could run anywhere; they sit here

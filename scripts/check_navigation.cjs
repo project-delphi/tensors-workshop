@@ -11,7 +11,7 @@ const prefix = '/tensors-workshop/';
 const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
   '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif',
   '.webp':'image/webp', '.woff2':'font/woff2'};
-const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach',
+const pages = ['index', 'notebooks', 'interactive', 'kahoot', 'references', 'companion', 'teach',
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 
@@ -383,12 +383,39 @@ async function audit(page, where) {
 
         const open = async (id) => {
           await page.evaluate((name) => { location.hash = '#' + name; }, id);
+          // Wait for the scrolling to stop before believing anything the
+          // stage says. This is a scroller: the hash scrolls the section into
+          // view and the step machine follows the scroll, so the stage passes
+          // through pictures on the way and `data-scene` can read the
+          // destination for a frame while the rest of the dataset is still
+          // the scene it is leaving. On this Mac that window is too small to
+          // hit; on the Linux runner it read `data-shape` as `4,8` -- the
+          // tokens scene's shape -- inside the heads assertions. The audio
+          // stage's voiceScene() has waited like this from the start.
+          await page.waitForFunction(() => new Promise(done => {
+            const was = window.scrollY;
+            setTimeout(() => done(window.scrollY === was), 250);
+          }), null, {timeout: 15000});
           await page.waitForFunction((name) =>
             document.getElementById('stage').dataset.scene === name, id, {timeout: 8000})
             .catch(() => assert.fail(`${where}: #${id} did not open that scene`));
           await fits(id);
         };
-        const settle = () => page.waitForTimeout(80);
+        // Poll the attribute the control is expected to move, never a fixed
+        // wait: 80 ms was long enough on a Mac and short on the Linux runner,
+        // where this read `4,8` -- the shape before the split -- and failed
+        // only in CI. AGENTS.md states the rule; this is what it looks like.
+        const settled = (key, want) => page.waitForFunction(
+          ([k, v]) => document.getElementById('stage').dataset[k] === v,
+          [key, want], {timeout: 8000}).catch(() => assert.fail(
+            `${where}: data-${key} never reached ${want}`));
+        // Every call below polls the control's own readback -- `data-scale`,
+        // `data-order`, `data-merge` -- rather than the value under test.
+        // Three of the keys a reader would reach for first (`halves`,
+        // `merged`, `shape` on the middle scenes) are constants the scene
+        // prints to *state* an invariant, so waiting on one would return
+        // immediately and prove nothing.
+        const changedTo = (key, want) => settled(key, want);
 
         // tokens: the gather, byte-exact.
         await open('tokens');
@@ -412,7 +439,7 @@ async function audit(page, where) {
         d = await data();
         assert.equal(d.agree, '1'); assert.equal(d.mixed, '0');
         await page.selectOption('#c-heads-order', 'flat');
-        await settle();
+        await changedTo('order', 'flat');
         d = await data();
         assert.equal(d.shape, '2,4,4'); assert.equal(d.sameshape, '1');
         assert.equal(d.agree, '0'); assert.equal(d.mixed, '1');
@@ -432,7 +459,7 @@ async function audit(page, where) {
         assert.equal(d.halves, '1');
         const lmaxScaled = Number(d.lmax);
         await page.selectOption('#c-scores-scale', 'none');
-        await settle();
+        await changedTo('scale', 'none');
         d = await data();
         assert(Math.abs(Number(d.lmax) - lmaxScaled * 2) < 1e-9,
           `${where}: unscaled lmax should be exactly double scaled (${d.lmax} vs ${lmaxScaled * 2})`);
@@ -444,13 +471,13 @@ async function audit(page, where) {
         assert.equal(d.over, 't');
         assert.equal(d.rowsum, '1.000');
         await page.selectOption('#c-softmax-axis', 'queries');
-        await settle();
+        await changedTo('over', 's');
         d = await data();
         assert.notEqual(d.rowsum, '1.000',
           `${where}: softmax over queries should not make every row over t sum to 1.000`);
         await page.selectOption('#c-softmax-axis', 'keys');
         await page.selectOption('#c-softmax-mask', 'causal');
-        await settle();
+        await changedTo('masked', '6');
         d = await data();
         assert.equal(d.exactzero, '1');
         assert.equal(d.masked, '6');
@@ -463,7 +490,7 @@ async function audit(page, where) {
         assert.equal(d.contract, 't');
         assert.equal(d.convex, '1');
         await page.selectOption('#c-output-merge', 'merged');
-        await settle();
+        await changedTo('merge', 'merged');
         d = await data();
         assert.equal(d.merged, '4,8');
 
@@ -475,7 +502,7 @@ async function audit(page, where) {
         assert.equal(d.einsum1, 'bhsd,bhtd->bhst');
         assert.equal(d.einsum2, 'bhst,bhtd->bhsd');
         await page.locator('#c-batch-b').fill('4');
-        await settle();
+        await changedTo('shape', '4,2,4,4');
         d = await data();
         assert.equal(d.shape, '4,2,4,4');
         assert.equal(await page.locator('#stage').getAttribute('data-tensorshape'), '[4, 2, 4, 4]');
@@ -1150,6 +1177,45 @@ async function audit(page, where) {
         assert(Number((await data()).share) > one,
           `${where}: 64 components should carry more energy than 1`);
 
+        // The NumPy under the picture is built from the same state the readout
+        // is, so the one thing worth asserting is that it followed a control:
+        // a block still saying (513,) under a window slider moved to 2048 is
+        // the one thing on this page a reader could copy and be wrong about.
+        // Polled on the data-* the widget publishes, never after a fixed wait.
+        const npText = (id) => page.locator(`#np-${id}`).innerText();
+        assert.equal((await data()).n, '1024');
+        assert((await npText('spectrum')).includes('(513,)'),
+          `${where}: the spectrum block does not name the 513 bins beside it`);
+        await page.locator('#c-spectrum-size').fill('3');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.bins === '1025',
+          null, {timeout: 5000});
+        const npWide = await npText('spectrum');
+        assert(npWide.includes('(1025,)') && !npWide.includes('(513,)'),
+          `${where}: the spectrum block did not follow the window size`);
+        assert(npWide.includes('np.fft.rfft(xt)'),
+          `${where}: the spectrum block lost its rfft line`);
+        await page.locator('#c-spectrum-size').fill('2');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.bins === '513',
+          null, {timeout: 5000});
+
+        // And the widest block on the page, at both hops: the padded length
+        // and the frame count are the two numbers the equations turn on.
+        await voiceScene(page, 'window');
+        assert.equal((await data()).shape, '513,465');
+        const npHalf = await npText('window');
+        assert(npHalf.includes('(238592,)') && npHalf.includes('(465, 1024)') && npHalf.includes('(513, 465)'),
+          `${where}: the hop block does not name the shapes beside it`);
+        assert(npHalf.includes('sliding_window_view'), `${where}: the hop block lost its view line`);
+        await page.selectOption('#c-window-overlap', 'quarter');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hop === '256',
+          null, {timeout: 8000});
+        const npQuarter = await npText('window');
+        assert(npQuarter.includes('N, H = 1024, 256') && !npQuarter.includes('(465, 1024)'),
+          `${where}: the hop block did not follow the overlap`);
+        await page.selectOption('#c-window-overlap', 'half');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hop === '512',
+          null, {timeout: 8000});
+
         // Low rank: Appendix E, factored in the browser. The factorisation
         // and then the measuring ladder both run behind `busy`, so wait for
         // the phase the scene itself reports rather than a fixed pause.
@@ -1265,6 +1331,26 @@ async function audit(page, where) {
         assert.equal(wi.speedup, '51.3', `${where}: the ratio the hop scene prints`);
         assert.equal(wi.contract, 'n', `${where}: n is the axis that disappears`);
 
+        // Every NumPy block, in the state the reader actually finds it. This
+        // is not the same check `npm test` runs: there the three heavy scenes
+        // never finish their factorisation, so their block is the short form
+        // and its width is not the one that ships. Three blocks went out at
+        // 85, 86 and 94 characters under exactly that gap. By this point in
+        // the drive every scene has been reached and settled, so the widest
+        // line here is the widest line there is.
+        for (const id of ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
+                          'scramble', 'lowrank', 'nmf', 'batch']) {
+          await voiceScene(page, id);
+          const text = await page.locator(`#np-${id}`).innerText();
+          assert(text.trim().length > 0, `${where}: #np-${id} is empty`);
+          assert(!/undefined|NaN/.test(text), `${where}: #np-${id} reads "${text}"`);
+          const widest = Math.max(...text.split('\n').map(l => l.length));
+          assert(widest <= 82, `${where}: #np-${id} is ${widest} characters wide`);
+          // The label the frame writes over it, in the page's own language.
+          assert.equal(await page.locator(`#nplab-${id}`).innerText(),
+            lang === 'es' ? 'EN NUMPY' : 'IN NUMPY', `${where}: #nplab-${id}`);
+        }
+
         // Pointing at a letter in the equation bands the axis it names. The
         // hover is published as data-hl and must never disturb the readout,
         // which is written from the controls alone.
@@ -1312,8 +1398,8 @@ async function audit(page, where) {
       // in. Keep the two in step: with six of them a reader looking for one
       // callback has nothing else to go on.
       const widgets = [
-        {file: 'tensor-visualizer', en: 'Reshape, transpose and strides',
-         es: 'Reshape, transpose y strides', embed: true, drive: driveVisualizer},
+        {file: 'tensor-visualizer', en: 'The image tensor',
+         es: 'El tensor de imagen', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
          es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
         // Its embed mode is the softmax scene, flat and still: no scroller,
@@ -1502,16 +1588,19 @@ async function audit(page, where) {
         }
       }
 
-      // The hero carries all four widgets live, behind four tabs, in the page's
+      // The hero carries every widget live, behind one tab each, in the page's
       // own language. The static diagram is the fallback and must still be
-      // in the document for reduced motion and phones.
+      // in the document for reduced motion and phones. The count is pinned
+      // because a widget added to `repo.widgets` and not to the hero is the
+      // failure this catches -- the attention stage shipped invisible from
+      // the front door for exactly that reason.
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 4, `${lang}/index: four hero embeds`);
+        assert.equal(await frames.count(), 5, `${lang}/index: five hero embeds`);
         // Only the open tab's widget is fetched. A hidden iframe is not
-        // lazy-loaded whatever `loading` says, so the other two hold their URL
+        // lazy-loaded whatever `loading` says, so the others hold their URL
         // in data-src until the tab script hands it over.
         const urls = await frames.evaluateAll(els =>
           els.map(e => [e.getAttribute('src'), e.getAttribute('data-src')]));
@@ -1535,6 +1624,7 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-broadcast').isHidden());
         assert(await page.locator('#hero-panel-linalg').isHidden());
         assert(await page.locator('#hero-panel-voice').isHidden());
+        assert(await page.locator('#hero-panel-attention').isHidden());
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
@@ -1559,6 +1649,13 @@ async function audit(page, where) {
           `${lang}/index: voice embed not loaded on opening its tab`);
         assert((await open.getAttribute('href')).includes(`voice-stage.html?lang=${lang}`),
           `${lang}/index: open button did not follow the voice tab`);
+        await page.locator('#hero-tab-attention').click();
+        assert(await page.locator('#hero-panel-attention').isVisible(), `${lang}/index: attention tab`);
+        assert(await page.locator('#hero-panel-voice').isHidden());
+        assert(await page.locator('#hero-panel-attention iframe').getAttribute('src'),
+          `${lang}/index: attention embed not loaded on opening its tab`);
+        assert((await open.getAttribute('href')).includes(`attention-stage.html?lang=${lang}`),
+          `${lang}/index: open button did not follow the attention tab`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);

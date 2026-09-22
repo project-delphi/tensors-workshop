@@ -1,6 +1,6 @@
 ---
 name: widget-smith
-description: "Builds and maintains the standalone widgets under `interactive/` — the broadcasting simulator, the reshape & transpose visualizer, the projection & SVD stage, the audio tensor stage and the attention stage — with their scene files, drawing kits, core modules, shared chrome and vendored three.js. Use for a new scene or step, a control or camera change, a widget bug, an embed or contrast fix, or a three.js upgrade. Knows the registry contract and the traps neither the byte-exact gate nor a screenshot can catch."
+description: "Builds and maintains the standalone widgets under `interactive/` — the broadcasting simulator, the image tensor visualizer, the projection & SVD stage, the audio tensor stage and the attention stage — with their scene files, drawing kits, core modules, shared chrome and vendored three.js. Use for a new scene or step, a control or camera change, a widget bug, an embed or contrast fix, or a three.js upgrade. Knows the registry contract and the traps neither the byte-exact gate nor a screenshot can catch."
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 effort: medium

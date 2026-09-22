@@ -99,6 +99,29 @@
       };
     },
 
+    // Shape, dtype, itemsize and nbytes -- the four things this scene is
+    // about -- and the slice the stage is showing. `.astype(np.int16)` is
+    // where the file's own numbers come back: raw / 32768 made them floats,
+    // and this sends them home at half the memory.
+    code(ctx) {
+      const s = ctx.state, v = s.v, c = ctx.copy.np;
+      const N = ctx.signal.length, i0 = v.i0;
+      const int16 = s.dtype === "int16";
+      const rows = [
+        ["x.shape", "(" + N + ",)"],
+        ["x.dtype", "float32"],
+        ["x.itemsize, x.nbytes", "4, " + N * 4],
+        "",
+        ["x[" + i0 + ":" + (i0 + SHOW) + "]", c.slice(SHOW, v.x[0].toFixed(4))]
+      ];
+      if (int16) {
+        rows.push("");
+        rows.push(["c = (x * 32768).astype(np.int16)", c.codes(v.codes[0])]);
+        rows.push(["c.itemsize, c.nbytes", "2, " + N * 2]);
+      }
+      return ctx.K.code(rows);
+    },
+
     copy: {
       en: {
         tab: "The array",
@@ -119,6 +142,10 @@
                "because a vector in this workshop is a column.",
         predict: "Before you switch: how many bytes is 4.95 s of int16?",
         whole: "the whole recording",
+        np: {
+          slice: (n, x0) => "the " + n + " on the stage; x[0] = " + x0,
+          codes: (c0) => "the int the file stores: " + c0
+        },
         controls: {start: "First index shown", dtype: "dtype"},
         options: {dtype: {float32: "float32 (values in −1 … +1)", int16: "int16 (the codes the file stores)"}},
         readout: (N, dtype, itemsize, bytes, i0, first, secs) =>
@@ -152,6 +179,10 @@
                "porque en este taller un vector es una columna.",
         predict: "Antes de cambiar: ¿cuántos bytes son 4,95 s en int16?",
         whole: "la grabación entera",
+        np: {
+          slice: (n, x0) => "las " + n + " del escenario; x[0] = " + x0,
+          codes: (c0) => "el entero que guarda el archivo: " + c0
+        },
         controls: {start: "Primer índice mostrado", dtype: "dtype"},
         options: {dtype: {float32: "float32 (valores en −1 … +1)", int16: "int16 (los códigos que guarda el archivo)"}},
         readout: (N, dtype, itemsize, bytes, i0, first, secs) =>

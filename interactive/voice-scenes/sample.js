@@ -141,6 +141,25 @@
       };
     },
 
+    // The recording, and what the rate slider does to it. `x[::k]` is exactly
+    // what AC.decimate computes -- every k-th sample and no filter, which is
+    // the whole point of the scene: what a lower rate throws away is audible
+    // because nothing removed it first.
+    code(ctx) {
+      const v = ctx.state.v, c = ctx.copy.np, k = v.k;
+      const N = ctx.signal.length, n = Math.ceil(N / k), rate = ctx.rate / k;
+      const rows = [
+        "import numpy as np",
+        "from scipy.io import wavfile",
+        "",
+        ["sr, raw = wavfile.read(\"voice.wav\")", c.read(ctx.rate)],
+        ["x = (raw / 32768).astype(np.float32)", c.decode(N)],
+        ["x[" + v.i0 + ":" + (v.i0 + v.span) + "]", c.view(v.span, v.span / ctx.rate * 1000)]
+      ];
+      if (k > 1) rows.push(["y = x[::" + k + "]", c.keep(k, n, rate)]);
+      return ctx.K.code(rows);
+    },
+
     copy: {
       en: {
         tab: "Sampling",
@@ -166,6 +185,12 @@
         predict: "Before you zoom: how many numbers is one millisecond of this recording?",
         held: (rate) => "the recording held at " + rate.toLocaleString("en") + " Hz",
         playAt: (khz) => "at " + khz + " kHz",
+        np: {
+          read: (rate) => "sr = " + rate + ", 16-bit integers",
+          decode: (n) => "(" + n + ",) float32 in [-1, 1)",
+          view: (n, ms) => n + " samples = " + (ms >= 10 ? ms.toFixed(0) : ms.toFixed(1)) + " ms",
+          keep: (k, n, rate) => "every " + k + "th: (" + n + ",) at " + rate + " Hz"
+        },
         controls: {zoom: "Zoom (how much time fills the stage)", rate: "Sampling rate", pos: "Position"},
         readout: (rate, k, ms, inview, total, secs, khz) =>
           "At <b>" + (rate / 1000).toLocaleString("en") + " kHz</b> there are <b>" + khz + "</b> numbers " +
@@ -206,6 +231,12 @@
         predict: "Antes de acercar: ¿cuántos números hay en un milisegundo de esta grabación?",
         held: (rate) => "la grabación retenida a " + rate.toLocaleString("es") + " Hz",
         playAt: (khz) => "a " + khz + " kHz",
+        np: {
+          read: (rate) => "sr = " + rate + ", enteros de 16 bits",
+          decode: (n) => "(" + n + ",) float32 en [-1, 1)",
+          view: (n, ms) => n + " muestras = " + (ms >= 10 ? ms.toFixed(0) : ms.toFixed(1)).replace(".", ",") + " ms",
+          keep: (k, n, rate) => "una de cada " + k + ": (" + n + ",) a " + rate + " Hz"
+        },
         controls: {zoom: "Zoom (cuánto tiempo llena el escenario)", rate: "Frecuencia de muestreo", pos: "Posición"},
         readout: (rate, k, ms, inview, total, secs, khz) =>
           "A <b>" + (rate / 1000).toLocaleString("es") + " kHz</b> hay <b>" + khz + "</b> números en un " +

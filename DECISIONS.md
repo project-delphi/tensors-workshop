@@ -172,6 +172,89 @@ draws itself from the site's own SCSS variables.
 
 ## The widgets
 
+**The attention stage read the stage mid-scroll** (2026-09-22). `driveAttention`
+opened a scene by setting the hash and waiting for `data-scene`, then asserted
+off the dataset -- and on the GitHub runner it read `data-shape` as `4,8`, the
+*tokens* scene's shape, inside the heads assertions. The stage is a scroller:
+the hash scrolls the section into view and the step machine follows the
+scroll, so `data-scene` can name the destination for a frame while the rest of
+the dataset is still the scene being left. `voiceScene()` has waited for
+`scrollY` to stop since the audio stage shipped; `open()` never did. It does
+now.
+
+Under it were six `page.waitForTimeout(80)` calls feeding assertions, which is
+the thing AGENTS.md's polling rule names outright. They are polls now, and
+picking what to poll had its own trap: `halves`, `merged` and `shape` on the
+middle scenes are **constants** a scene prints to state an invariant, so
+waiting on one returns immediately and proves nothing. Every call waits on the
+control's own readback -- `data-scale`, `data-order`, `data-merge` -- which is
+the only value guaranteed to move when the control does.
+
+This failed in CI on a branch that changed nothing in that stage: the run had
+simply grown long enough -- one more page, one more hero tab, ten more code
+blocks -- to lose the race. A timing bug is only ever latent.
+
+**The audio stage's NumPy is generated, not written** (2026-09-22). The stage
+had ten pictures of array work and showed no array code. Adding it raised one
+question and the scene contract had already answered it: *nothing on screen is
+typed*. A static snippet is the smaller diff, and it is wrong by the second
+control a reader touches -- the window slider moves N from 1024 to 2048 and a
+block still saying `(513,)` is the one thing on the page someone could copy and
+be wrong about. So `code(ctx)` sits beside `readout(ctx)` and reads the same
+`ctx.state`; the two cannot drift, because there is nothing for them to drift
+from.
+
+The block goes **under the equation**, not at the foot of the section. That
+puts shapes above the predict-first line, which was the argument against it,
+so every one of the ten predict questions was re-read for one the code would
+answer: they ask about direction -- *higher, or closer together?* -- and the
+shapes do not give that away. Notation, then the line you would type, then the
+question, then the controls, is the order that reads.
+
+The code is one copy for both languages and only the `#` comments are
+translated, which is `tensor-visualizer.html`'s rule and the same reason the
+`<math>` is static: identifiers are English everywhere in this repo. A value
+Python would print stays raw on both sides -- `(237568,)` is not `(237.568,)`
+in Spanish, because that is a shape and not a number in prose.
+
+**The window is periodic and the pad is on both ends.** `np.hanning(N)` is the
+*symmetric* window and `AC.windowOf` builds the periodic one, so the printed
+line is `np.hanning(N + 1)[:-1]`; `AC.stft` pads by `N/2` at each end, which is
+where 465 columns rather than 464 comes from. Neither is a detail a reader
+would catch, and neither is something `npm test` could catch either -- it has
+no NumPy. `tests/test_audio_numpy.py` runs the lines for real and asserts the
+shapes, and it is the only thing standing between a plausible expression and a
+true one.
+
+**82 characters, and `npm test` cannot measure it.** The `<pre>` carries
+`contain: inline-size`, so a long line scrolls rather than taking the layout
+past 390px -- that part is the `.eqscroll` lesson, reapplied. The width limit
+is about reading, not layout. The trap is where it is measured: the offline
+harness never finishes the low-rank, NMF and batch factorisations, so it sees
+each of those blocks in its short, still-working form. Three blocks went out at
+85, 86 and 94 characters with that check green. `check_navigation.cjs` now
+walks all ten in the browser, after they have settled.
+
+**One page gathers the widgets** (2026-09-22). They had been spread across the
+homepage hero, a card grid under it, `notebooks.qmd` and both handbooks, and
+the attention stage reached the homepage not at all -- no card, no chip. The
+cards **moved** to `interactive.qmd` rather than being copied: the same five
+descriptions in two languages on two pages is four places for one fact.
+The homepage section keeps its heading and its `{#interactive}` anchor and
+carries a sentence and a link, because the hero is still the front door's
+demonstration and the section is what points past it. The new page earns its
+place by carrying what the homepage never had room for: the named scenes worth
+linking straight to, `#portal`, `#heads`, `#lowrank`.
+
+**The visualizer is the image tensor.** *Reshape, transpose and strides* named
+two operations and a data structure for a page that shows three photographs,
+and it broke the pair the chip row wants: *Image* and *Audio*. The file keeps
+its name. `notebooks/04-reshape-and-transpose.ipynb` carries two **absolute**
+`project-delphi.github.io` URLs, `check_links.py` never fetches an off-origin
+URL, and a rename would therefore 404 silently for a real reader while every
+check stayed green. Those two cells still said *layout visualizer* -- missed by
+the previous rename, for exactly that reason.
+
 **The reader can add a photograph, and it is not an upload.** The batch takes
 a fourth slab from a file the reader picks, built into exactly the record
 `photos.json` ships -- an id, a name per language, one HWC uint8 array per

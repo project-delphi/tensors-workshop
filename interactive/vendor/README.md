@@ -41,8 +41,8 @@ the import in `three-boot.js`, and the path in `_variables.yml`.
 The eleven modules under `three-0.169.0/examples/jsm/` are the unmodified
 `examples/jsm` files from the same r169 tag, MIT licensed under the same
 `three.LICENSE`. The projection & SVD stage
-(`../linalg-stage.html`) loads them through `linalg-boot.js`; the reshape
-& transpose visualizer does not touch them.
+(`../linalg-stage.html`) loads them through `linalg-boot.js`; the image
+tensor visualizer does not touch them.
 
 ```
 source  https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/<path>

@@ -744,6 +744,29 @@
     }
   }
 
+  // ------------------------------------------------------ the NumPy block
+  // Lay out a scene's code(), which is one row per line: a bare string, or
+  // [code, comment] where the comments line up on the longest line carrying
+  // one. The code is the same in both languages -- identifiers are English
+  // everywhere in this repo -- and only the comments come from the scene's
+  // `np` copy, which is why they are a separate column rather than glued on.
+  //
+  // Alignment is done here rather than ten times over because a block whose
+  // hashes do not line up reads as output rather than as source, and because
+  // the width has to be measured after the numbers are interpolated: the
+  // window slider moves `1024` to `2048` and the column with it.
+  function code(rows) {
+    let width = 0;
+    for (const r of rows) {
+      if (Array.isArray(r) && r[1]) width = Math.max(width, r[0].length);
+    }
+    return rows.map((r) => {
+      if (!Array.isArray(r)) return r;
+      if (!r[1]) return r[0];
+      return r[0] + " ".repeat(width - r[0].length + 2) + "# " + r[1];
+    });
+  }
+
   // A playhead line on a scene's own picture, in the output colour.
   function playhead(g, px, y0, y1, colour) {
     g.strokeStyle = colour;
@@ -754,7 +777,7 @@
   const VoiceKit = {
     VoiceScenes, css, ramp, spectrogramImage, blit, waveform, label, demoSignal,
     smooth, label2d, waveBuild, waveRebuild, waveFrame, waveDraw, BEAD_R,
-    bars, humps, span, timeline, playhead
+    bars, humps, span, timeline, playhead, code
   };
   if (typeof module !== "undefined" && module.exports) module.exports = VoiceKit;
   else { root.VoiceKit = VoiceKit; root.VoiceScenes = VoiceScenes; }

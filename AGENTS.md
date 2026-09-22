@@ -159,7 +159,7 @@ rather than a corner of the one above. Nothing regenerates these files, so
 nothing catches a mistake in them by comparing bytes; what guards them
 instead is `npm test` over the core modules and `check_navigation.cjs` over
 the rendered pages, both under `## Commands`. The HTML widgets -- the
-section 03 broadcasting simulator, the section 04 reshape & transpose
+section 03 broadcasting simulator, the section 04 image tensor
 visualizer, the sections 07/09 projection & SVD stage, the sections
 00/02/04/09 audio tensor stage, and the sections 04/06/Appendix B attention
 stage -- each carry EN/ES copy tables, `?lang=`, and
@@ -284,6 +284,25 @@ rig, and a vector has no second axis to band. **Every readout key is
 lowercase** -- `stage.dataset.fN` writes `data-f-n`, so a camel-case key is a
 selector nobody will guess. The shape badge on the stage takes a scene's `shape(ctx)` when it has
 one and its readout's `data.shape` otherwise, and publishes `data-tensorshape`.
+
+**And every section carries the NumPy for its picture**, in a static
+`<pre id="np-<scene>">` right under the equation -- the notation, then the line
+you would type. A scene supplies `code(ctx)`, beside `readout(ctx)` and built
+from the same `ctx.state`, so the shapes in the code cannot disagree with the
+shapes on the stage: drop an eight-second file and both follow it. The frame
+writes it in `changed()`, not `fillText()`, for that reason, and hides the
+block of a scene with no `code()`. The lines are **one copy for both
+languages**, like the `<math>`; only the trailing `#` comments are translated,
+through a `np` key in the copy table, and `K.code(rows)` lays them out from
+`[code, comment]` pairs with the hashes aligned. Three things a new block must
+keep: `contain: inline-size` on the `<pre>` (the `.eqscroll` lesson -- a long
+line otherwise takes the layout past 390px), `tabindex="0"` with
+`aria-labelledby` on it (axe requires a scrollable region to be reachable and
+named), and **82 characters**, which `check_navigation.cjs` measures live on
+every one of the ten. `npm test` measures it too, but only at the opening
+state: the three heavy scenes have not finished factorising there, so their
+short form is what it sees -- which is how three blocks once shipped at 85, 86
+and 94.
 
 The attention stage (`attention-stage.html`, titled *Attention as two
 contractions*) is the same scroller shape as the audio stage, minus the
@@ -411,8 +430,9 @@ exactly one home; before adding a paragraph, find whose job it is:
 | Document | Owns | Never contains |
 |---|---|---|
 | `_variables.yml` | Every shared fact: repo coordinates, section titles and minutes, the running clock, quiz metadata, prerequisite URLs. | — |
-| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, and how we work. | Teaching content or exercises. A section table, Colab instructions, or a tour of the datasets — the homepage is a front door, and all three were cut from it. |
+| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, and how we work. The hero carries one live tab per widget. | Teaching content or exercises. A section table, Colab instructions, or a tour of the datasets — the homepage is a front door, and all three were cut from it. A card per widget: that is `interactive.qmd`'s, and the homepage keeps one sentence and a link. |
 | The handbook (`tensors_workshop_plan_with_quizzes.md`, and `es/` beside it) | The session text: theory, exercises, worked solutions, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. The bibliography — it links to `references.qmd`, and its `## Further Reading` section is now only that pointer. |
+| `interactive.qmd` / `es/interactive.qmd` | One card per widget in `repo.widgets`: what it answers, which sections it belongs to, and the named scenes worth linking straight to. The only page that gathers them. | The workshop's content. A count of the widgets — say what they are, not how many. |
 | `notebooks.qmd` / `es/notebooks.qmd` | The list of every notebook, how they are built, what each one needs, and how to run them off Colab. The only page left that enumerates all thirteen sections in both languages, which is what check 6 watches. Its *What each notebook needs* table is generated — do not hand-edit it. | The workshop's content or its schedule. |
 | `kahoot.qmd` / `es/kahoot.qmd` | The three quizzes and how to run them. The live questions on kahoot.it stay in English; this page is the how-to. | — |
 | `references.qmd` / `es/references.qmd` | Every citation, with DOIs and author pages. | Prerequisites — it links to the homepage. Teaching content: it says what a work is *for*, never what it says. |

@@ -1,0 +1,116 @@
+---
+title: ""
+pagetitle: "Interactive · Tensors for Machine Learning"
+description: "Five browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, and the audio tensor."
+toc: false
+anchor-sections: false
+page-layout: full
+theme:
+  - cosmo
+  - custom.scss
+  - homepage.scss
+---
+
+::::: {.workshop-landing}
+
+# Interactive
+
+<span data-language-key="interactive"></span>
+
+No install and no account. Each of these runs in your browser, in English or
+Spanish, and answers a question the pages can only describe: move a control and
+the shapes, the strides and the numbers move with it. Every one is also linked
+from the section it belongs to, in the [handbook](./tensors_workshop_plan_with_quizzes.html)
+and on the [notebooks page](notebooks.qmd).
+
+:::: {.widget-grid}
+::: {.resource-card}
+### 🧮 Broadcasting simulator
+
+<span data-language-key="broadcasting-simulator"></span>
+
+Type two shapes. Watch NumPy line them up from the right, pad the short one, and
+stretch every axis of size 1 — or refuse, and say which axis. Section 03.
+
+[Try shapes](interactive/broadcasting-simulator.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 🧊 The image tensor
+
+<span data-language-key="layout-visualizer"></span>
+
+Three real photos as one 4-D tensor, a cube per byte. Transpose it and watch
+the shape and strides permute while the picture stays; reshape it and watch
+the picture break; rewrite the buffer C, Fortran or channels_last and watch
+only the memory move. Every click prints the NumPy and PyTorch that does it.
+Section 04.
+
+Straight to [transpose](interactive/tensor-visualizer.html?lang=en#transpose),
+[reshape](interactive/tensor-visualizer.html?lang=en#reshape) or
+[the memory layout](interactive/tensor-visualizer.html?lang=en#memory).
+
+[Open the image tensor](interactive/tensor-visualizer.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 👁️ Attention as two contractions
+
+<span data-language-key="attention-stage"></span>
+
+Seven pictures of one sequence, every number small enough to add up by hand:
+four ids gathered out of an embedding table, that table projected three ways
+into Q, K and V, each split so every head gets its own axis — a reshape that
+has to be a transpose too, and the bug when it is not — the contraction that
+makes the scores, softmax turning them into weights that sum to one, the
+weighted average that is the output, and the rank-4 tensor a real model is
+handed. Sections 04 and 06, and Appendix B.
+
+Straight to [every head gets its own axis](interactive/attention-stage.html?lang=en#heads),
+[the scores](interactive/attention-stage.html?lang=en#scores) or
+[softmax](interactive/attention-stage.html?lang=en#softmax).
+
+[Open the attention stage](interactive/attention-stage.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 📐 Projection & SVD stage
+
+<span data-language-key="projection-svd-stage"></span>
+
+Least squares is a projection: scroll, and watch a target vector's shadow land
+on the plane its predictors span, with the residual meeting it at a right
+angle. Then the SVD portal, where a unit circle becomes an ellipse and
+A v = σ u stops being notation, and on to the eigenvectors, two nearly
+collinear columns and float32 dividing by exactly zero. One problem, sections
+07, 08 and 09.
+
+Straight to [the SVD portal](interactive/linalg-stage.html?lang=en#portal),
+[the eigenvectors](interactive/linalg-stage.html?lang=en#eigen) or
+[float32 dividing by zero](interactive/linalg-stage.html?lang=en#precision).
+
+[Open the projection & SVD stage](interactive/linalg-stage.html?lang=en){.resource-button}
+:::
+
+::: {.resource-card}
+### 🎙️ The audio tensor
+
+<span data-language-key="voice-tensor-stage"></span>
+
+Air becomes numbers: 48 000 a second, each rounded to 16 bits, written down as
+an array you can listen to. Then one window is cut out of it, the transform is
+asked which frequencies are in that window, and the window hops along to build
+a frequency-by-time matrix, 513 × 465 — and you can hear what a transpose does
+to it. It ends on the rank-4 batch a model is handed, three recordings stacked.
+Sections 00, 02, 04 and 09, and Appendix E.
+
+Straight to [one window](interactive/voice-stage.html?lang=en#frame),
+[the transform](interactive/voice-stage.html?lang=en#spectrum),
+[the best rank-k there is](interactive/voice-stage.html?lang=en#lowrank) or
+[the batch](interactive/voice-stage.html?lang=en#batch).
+
+[Open the audio tensor](interactive/voice-stage.html?lang=en){.resource-button}
+:::
+::::
+
+:::::
