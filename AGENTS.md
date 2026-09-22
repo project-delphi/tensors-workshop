@@ -160,8 +160,9 @@ nothing catches a mistake in them by comparing bytes; what guards them
 instead is `npm test` over the core modules and `check_navigation.cjs` over
 the rendered pages, both under `## Commands`. The HTML widgets -- the
 section 03 broadcasting simulator, the section 04 reshape & transpose
-visualizer, the sections 07/09 projection & SVD stage, and the sections
-00/02/04/09 audio tensor stage -- each carry EN/ES copy tables, `?lang=`, and
+visualizer, the sections 07/09 projection & SVD stage, the sections
+00/02/04/09 audio tensor stage, and the sections 04/06/Appendix B attention
+stage -- each carry EN/ES copy tables, `?lang=`, and
 their section's accent adjusted per theme to clear 4.5:1. `repo.widgets` in
 `_variables.yml` is the list of them; prose here does not count them. **The frame is shared**:
 `interactive/widget-chrome.css`, linked first by every page, owns the
@@ -284,6 +285,42 @@ lowercase** -- `stage.dataset.fN` writes `data-f-n`, so a camel-case key is a
 selector nobody will guess. The shape badge on the stage takes a scene's `shape(ctx)` when it has
 one and its readout's `data.shape` otherwise, and publishes `data-tensorshape`.
 
+The attention stage (`attention-stage.html`, titled *Attention as two
+contractions*) is the same scroller shape as the audio stage, minus the
+transport and the timeline: seven sections down the left, a sticky stage on
+the right, one `<section class="step">` per scene, each opening with a
+predict-first line. **No three.js and no canvas anywhere on it**: every
+picture is inline SVG with real `<text>`, drawn by `attention-kit.js`'s
+`numGrid`, `bars` and `arrowRow` from arrays `attention-core.js` computed. A
+scene's `draw()` runs only on a control change or a scene switch, never on a
+per-frame clock, which is what makes "never re-tween `<text>`" trivially true
+here -- there is no frame loop to tween inside. `attention-core.js` seeds
+everything from `SEED = 17`: a six-row embedding table in `{0, 1}`, three
+projection matrices with at most three non-zero `{-1, 0, 1}` entries per
+column, and four fixed ids (`ids = [3, 1, 4, 1]`, repeating one on purpose) --
+so every Q, K and V entry a reader sees is an integer with `|value| <= 3`, a
+legibility contract `tests/attention_core.test.cjs` pins. Two scenes carry
+the same reshape bug the audio stage's `scramble` warns about in general: the
+`heads` scene's "flat" option is a *direct* reshape with no transpose, same
+shape as the honest one, wrong tokens in every row after the first, and
+`traceCell` says exactly which token a cell actually came from. Three scenes
+(`scores`, `softmax`, `output`) carry a display equation in notebook 17's own
+letters (`b`, `h`, `s`, `t`, `d`), with `data-hl` tokens exactly `{batch,
+head, query, key, feat}` -- never `k`, which is the rank on three of the
+projection stage's own scenes. Link a scene by its name (`#tokens`,
+`#heads`, `#scores`, `#softmax`, `#output`, `#batch`, `#project`), never a
+step number. Its embed is stricter than every other widget's: nothing on the
+stage fetches anything beyond its own scripts and CSS, so the check counts
+resource entries rather than checking `window.THREE` alone. **An SVG child
+laid out past the viewBox is not clipped and not reported -- it is simply
+not drawn**, while the readout goes on quoting its numbers, so the check
+measures every scene as it opens: the union of its children's boxes, through
+the CTM, against the `640 × 400`, and `batch` -- the one scene whose picture
+is sized from its sliders -- at both corners of them. A scene starts 44
+units down to clear the claim chip, and `fitClaim()` grows the viewBox
+upward when the chip measures taller than that, so no scene has to know how
+tall the claim came out. The contract is `attention-scenes/README.md`.
+
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
 reshape -- is `interactive/tensor-core.js`; the stage's -- least squares two
@@ -291,7 +328,13 @@ ways, a one-sided-Jacobi SVD, the condition number, the pseudoinverse -- is
 `interactive/linalg-core.js` -- with the null space, a 3 x 3 eigen-solver,
 float32 rounding and an unguarded Cramer solve for the steps that need them.
 Both are plain scripts the page loads first, and
-`tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`. Three kinds of
+`tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`; the attention
+stage's own arithmetic -- the gather, the three projections, splitting heads
+by reshape-then-transpose and the two contractions -- is
+`interactive/attention-core.js`, pinned the same way by
+`tests/attention_core.test.cjs`, and carries none of the three state machines
+below because the stage has no camera and no idle drift to keep one for.
+Three kinds of
 state machine live there too, and they are the exception that says what the rule
 is for: where a stretch of idle drift takes its origin, where an *interrupted*
 tween takes its origin, and where an orbit's clamps sit, are all invisible in a

@@ -426,6 +426,73 @@ timeout as a ceiling rather than a schedule. `waitForTimeout` is left only
 where the wait is itself under test, such as the visualizer's 0.3 s drift
 resume.
 
+**The attention stage draws every picture in SVG, never three.js.** The other
+scroller-shaped widgets exist because three of the audio stage's opening
+scenes and every step of the projection stage need depth or a camera the
+reader can turn; attention needs neither -- seven pictures are grids of small
+integers, a heatmap and a couple of bar charts, and every one of them is the
+sort of thing `<text>` already draws well. Three.js would have meant a second
+vendored build's worth of risk (the import map, the lazy boot, the addon
+hashes) for nothing the reader gains, and it would have put every number
+behind a canvas axe cannot resolve contrast over. So the stage has no `gl`
+scenes at all, and its embed mode is stricter than every other widget's: it
+fetches nothing beyond its own scripts and CSS, which `check_navigation.cjs`
+asserts by counting resource entries rather than checking `window.THREE` alone.
+
+**Attention is framed as tensor operations, not as language.** The four
+tokens on the stage are nonsense words -- `blorp`, `wug`, `fep`, `dax`,
+`glim`, `zop` -- and the concept line says outright that they carry no
+meaning. The workshop's claim about attention is two contractions and a
+reshape that has to be a transpose, not anything about what a model is
+attending *to*; a reader who already knows what "the" and "cat" mean would
+read semantic content into a row that the seed picked at random, which is a
+lesson this page is not teaching. `ids = [3, 1, 4, 1]` repeats on purpose, so
+the very first picture shows a gather copying one row twice before any
+control is touched.
+
+**The seed is chosen for legibility, not realism.** `SEED = 17` (notebook
+17's own number) drives an LCG that fills `E` with 0/1 and each of
+`W_Q, W_K, W_V` with at most three non-zero `{-1, 0, 1}` entries per column.
+That is not how a trained attention layer's weights look; it is what makes
+every `Q`, `K`, `V` entry an integer no larger than 3 and every unscaled
+score an integer, so a reader can add up eight terms by hand and check the
+stage's own claim rather than trusting it. `tests/attention_core.test.cjs`
+pins the bound as a property of the seed, not a magic number, so a future
+seed change that broke it would fail loudly rather than drifting into
+illegible numbers nobody notices.
+
+**The browser check measures the attention stage's pictures, because
+`data-*` can be right while the picture is wrong.** Every other assertion on
+this stage reads the readout: the shapes, the claims, the arithmetic behind
+them. All of it passed on a `softmax` scene that was laying the last row of
+`A` and its entire bar chart out past the bottom of the viewBox, where SVG
+neither clips a child nor complains about one -- it simply does not paint
+it. Three of the same kind were green beside it: `batch` drew its claim a
+second time inside the picture, `output` tinted a value row above a
+threshold of 0.35 that none of this stage's weights ever reaches, and three
+scenes opened on the one token whose head-0 vector is all zeros, so the
+first thing a reader met was a dot product of eight `0×0` terms and four
+identical bars. So the check now measures what was drawn -- the union of
+every SVG child's box, through the CTM, against the 640 x 400 -- and
+`batch`, the one scene whose picture is sized from its controls, is measured
+at both corners of its sliders as well. A screenshot would have caught all
+four; nothing in CI takes one, and a check that reads only the numbers a
+scene reports cannot catch a scene that reports them correctly and draws
+them where nobody can see.
+
+**The claim chip's headroom is measured, not assumed.** Scenes reserve 44
+user units at the top of the viewBox for it. The chip is sized in px and the
+picture in user units, so how much of the stage one line of claim covers
+depends on how large the stage is: at the page's own size 44 is right, and
+in an embed the longest claim -- `softmax`'s, which is the one an embed
+always opens on -- wrapped to two lines and put the second line through that
+scene's own title. Shrinking the text until it fit would have been a number
+tuned to whichever widths someone happened to try. `fitClaim()` grows the
+viewBox upward by what the chip actually measured instead, so every scene
+moves down together, no scene has to learn how tall the claim came out, and
+the check's viewBox assertion still reads the scenes' own coordinates
+unchanged.
+
 ## Which document owns what
 
 **Seven documents, one home per fact.** They drifted once -- five copies of the

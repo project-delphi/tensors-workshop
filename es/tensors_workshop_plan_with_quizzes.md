@@ -461,7 +461,7 @@ np.einsum('ij->ji', A)         # transpose      == A.T
 np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 ```
 
-`c` aparece en las entradas pero no después de la flecha, así que **se suma**: eso es la contracción. `n`, `h` y `w` aparecen después de la flecha, así que **se conservan**. Añadir un eje de lote cuesta exactamente una letra. Por eso merece la pena aprender `einsum`. La misma expresión sirve para una imagen o para un millón, y se lee como las matemáticas del capítulo 2.
+`c` aparece en las entradas pero no después de la flecha, así que **se suma**: eso es la contracción. `n`, `h` y `w` aparecen después de la flecha, así que **se conservan**. Añadir un eje de lote cuesta exactamente una letra. Por eso merece la pena aprender `einsum`. La misma expresión sirve para una imagen o para un millón, y se lee como las matemáticas del capítulo 2. La atención son dos contracciones más de esta misma forma —`L = Q Kᵀ` suma sobre el eje de características, `O = A V` suma sobre el eje de claves— en las imágenes de <a href="../interactive/attention-stage.html?lang=es#scores">puntuaciones</a> y <a href="../interactive/attention-stage.html?lang=es#output">salida</a> del escenario de atención.
 
 ## 07 · Inversas y la pseudoinversa (Bloque 4, 15 min)
 
@@ -1041,6 +1041,8 @@ def softmax(x, axis=-1):
 #         set those scores to -np.inf BEFORE the softmax, and verify the padded
 #         positions receive exactly zero weight.
 ```
+
+Pruébalo primero en el <a href="../interactive/attention-stage.html?lang=es">escenario de atención</a>: las mismas dos contracciones, con una secuencia de cuatro lo bastante pequeña para sumar a mano, las <a href="../interactive/attention-stage.html?lang=es#scores">puntuaciones</a> dibujadas como un mapa de calor y la máscara causal de softmax dando ceros exactos en vez de pesos positivos pequeños.
 
 <details><summary>Solución</summary>
 

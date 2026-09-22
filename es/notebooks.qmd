@@ -59,6 +59,18 @@ La sección 04 tiene un
 que convierte sus tres fotografías en cubos, uno por byte, y muestra qué hacen transpose,
 reshape y una disposición en memoria con la forma, los strides, el búfer y la imagen.
 
+Las secciones 04 y 06 y el apéndice B comparten un
+<a href="../interactive/attention-stage.html?lang=es">escenario de atención</a>,
+siete imágenes de una misma secuencia: cuatro ids recogidos de una tabla, esa
+tabla proyectada de tres formas en Q, K y V, cada una dividida para que
+<a href="../interactive/attention-stage.html?lang=es#heads">cada cabeza tenga su
+propio eje</a> —un reshape que también tiene que ser un transpose, y el error
+cuando no lo es—, la contracción que produce las puntuaciones,
+<a href="../interactive/attention-stage.html?lang=es#softmax">softmax
+convirtiéndolas en pesos que suman uno</a>, con una máscara causal como idea
+propia del trabajo para casa, el promedio ponderado que es la salida, y el
+tensor de rango 4 que recibe de verdad un modelo real.
+
 Las secciones 07, 08 y 09 comparten un
 <a href="../interactive/linalg-stage.html?lang=es">escenario de proyección y SVD</a>,
 ocho imágenes de un mismo problema: los mínimos cuadrados como una proyección

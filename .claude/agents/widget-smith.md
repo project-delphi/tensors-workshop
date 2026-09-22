@@ -1,6 +1,6 @@
 ---
 name: widget-smith
-description: "Builds and maintains the standalone widgets under `interactive/` — the broadcasting simulator, the reshape & transpose visualizer, the projection & SVD stage and the audio tensor stage — with their scene files, drawing kits, core modules, shared chrome and vendored three.js. Use for a new scene or step, a control or camera change, a widget bug, an embed or contrast fix, or a three.js upgrade. Knows the registry contract and the traps neither the byte-exact gate nor a screenshot can catch."
+description: "Builds and maintains the standalone widgets under `interactive/` — the broadcasting simulator, the reshape & transpose visualizer, the projection & SVD stage, the audio tensor stage and the attention stage — with their scene files, drawing kits, core modules, shared chrome and vendored three.js. Use for a new scene or step, a control or camera change, a widget bug, an embed or contrast fix, or a three.js upgrade. Knows the registry contract and the traps neither the byte-exact gate nor a screenshot can catch."
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 effort: medium
@@ -26,6 +26,7 @@ rule here surprises you.
 | `tensor-visualizer.html` + `tensor-core.js` | section 04 — strides, contiguity, memory order, view-or-copy |
 | `linalg-stage.html` + `linalg-kit.js` + `linalg-core.js` + `linalg-scenes/*.js` | sections 07/09 — eight steps |
 | `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/02/04/09 — ten scrolling sections, five of them carrying a static MathML equation (`array`, `frame`, `spectrum`, `window`, `batch`) |
+| `attention-stage.html` + `attention-kit.js` + `attention-core.js` + `attention-scenes/*.js` | sections 04/06/Appendix B — seven scenes, all inline SVG (no three.js), three carrying a static MathML equation (`scores`, `softmax`, `output`) |
 | `widget-chrome.css` | the frame every widget shares, including the stage ink tokens |
 | `vendor/` | three.js core build and eleven `examples/jsm` addons |
 
@@ -35,7 +36,8 @@ You do not touch `docs/`, `_includes/*.md`, or notebook cell 0 and final cells.
 
 ## Before you write a scene, read its contract
 
-`linalg-scenes/README.md` and `voice-scenes/README.md` are the specs: the exact
+`linalg-scenes/README.md`, `voice-scenes/README.md` and
+`attention-scenes/README.md` are the specs: the exact
 shape of a `register({...})` call, what each `copy` key is for, and the rules
 every scene keeps. They are current and they are detailed — read the one for
 the stage you are working on rather than pattern-matching off a sibling scene.
