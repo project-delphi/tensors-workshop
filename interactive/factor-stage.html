@@ -130,6 +130,7 @@
   <header>
     <nav class="site-nav" aria-label="Site">
       <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-interactive" href="../interactive.html">Interactive</a>
       <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
     </nav>
     <p class="eyebrow" id="eyebrow"></p>
@@ -289,7 +290,9 @@
     en: {
       eyebrow: "Sections 10 and 11 · Appendix C",
       title: "Tucker and CP",
-      navHome: "← Workshop home", navNotebooks: "Notebooks",
+      navHome: "← Workshop home",
+      navInteractive: "Interactive",
+      navNotebooks: "Notebooks",
       intro: "A tensor can be replaced by a small core plus one factor matrix per axis (Tucker), " +
              "or by a sum of a few rank-1 terms (CP). Both are on the same 4 x 5 x 24 tensor of real " +
              "New York taxi trips -- pickup borough by dropoff borough by hour of day -- so every " +
@@ -320,7 +323,9 @@
     es: {
       eyebrow: "Secciones 10 y 11 · Apéndice C",
       title: "Tucker y CP",
-      navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
+      navHome: "← Inicio del taller",
+      navInteractive: "Interactivo",
+      navNotebooks: "Cuadernos",
       intro: "Un tensor puede sustituirse por un núcleo pequeño más una matriz factor por eje (Tucker), " +
              "o por una suma de unos pocos términos de rango 1 (CP). Ambos se muestran sobre el mismo " +
              "tensor de 4 x 5 x 24 de viajes reales de taxis de Nueva York -- barrio de origen por " +
@@ -590,6 +595,8 @@
 
   $("site-home").textContent = T.navHome;
   $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+  $("site-interactive").textContent = T.navInteractive;
+  $("site-interactive").href = lang === "es" ? "../es/interactive.html" : "../interactive.html";
   $("site-notebooks").textContent = T.navNotebooks;
   $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
   $("eyebrow").textContent = T.eyebrow;

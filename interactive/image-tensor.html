@@ -310,6 +310,7 @@
     <header>
       <nav class="site-nav" aria-label="Site">
         <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+        <a id="site-interactive" href="../interactive.html">Interactive</a>
         <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
       </nav>
       <p class="eyebrow" id="eyebrow">Section 04 · reshape and transpose</p>
@@ -508,6 +509,7 @@
     eyebrow: "Section 04 · reshape and transpose",
     lead: "Three real photographs as one 4-D tensor, one cube per byte. Drag to rotate. Reshape pours the same buffer into another shape; transpose permutes the shape and the strides and moves no byte at all; .contiguous() is the one operation that rewrites memory.",
     navHome: "← Workshop home",
+    navInteractive: "Interactive",
     navNotebooks: "Notebooks",
     data: "Data & shape",
     datas: { photos: "Photos", numbers: "Counting numbers" },
@@ -637,6 +639,7 @@
     eyebrow: "Sección 04 · reshape y transpose",
     lead: "Tres fotografías reales como un solo tensor 4-D, un cubo por byte. Arrastra para rotar. reshape vierte el mismo búfer en otra forma; transpose permuta la forma y los strides sin mover un solo byte; .contiguous() es la única operación que reescribe la memoria.",
     navHome: "← Inicio del taller",
+    navInteractive: "Interactivo",
     navNotebooks: "Cuadernos",
     data: "Datos y forma",
     datas: { photos: "Fotos", numbers: "Números que cuentan" },
@@ -1252,6 +1255,8 @@
     $("lead").textContent = T.lead;
     $("site-home").textContent = T.navHome;
     $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+    $("site-interactive").textContent = T.navInteractive;
+    $("site-interactive").href = lang === "es" ? "../es/interactive.html" : "../interactive.html";
     $("site-notebooks").textContent = T.navNotebooks;
     $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("h-data").textContent = T.data;

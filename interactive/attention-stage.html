@@ -165,6 +165,7 @@
   <header>
     <nav class="site-nav" aria-label="Site">
       <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-interactive" href="../interactive.html">Interactive</a>
       <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
     </nav>
     <p class="eyebrow" id="eyebrow"></p>
@@ -401,7 +402,9 @@
     en: {
       eyebrow: "Sections 04 and 06 · Appendix B",
       title: "Attention as two contractions",
-      navHome: "← Workshop home", navNotebooks: "Notebooks",
+      navHome: "← Workshop home",
+      navInteractive: "Interactive",
+      navNotebooks: "Notebooks",
       intro: "Attention is built from ideas this workshop has already met: a gather, a projection, " +
              "a reshape that has to be a transpose too, and two contractions. Seven pictures, in the " +
              "order the arithmetic happens: four token ids gathered out of a table, that table " +
@@ -428,7 +431,9 @@
     es: {
       eyebrow: "Secciones 04 y 06 · Apéndice B",
       title: "La atención como dos contracciones",
-      navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
+      navHome: "← Inicio del taller",
+      navInteractive: "Interactivo",
+      navNotebooks: "Cuadernos",
       intro: "La atención está construida con ideas que este taller ya ha visto: una recolección, " +
              "una proyección, un reshape que también tiene que ser un transpose, y dos contracciones. " +
              "Siete imágenes, en el orden en que ocurre la aritmética: cuatro ids de token recogidos " +
@@ -698,6 +703,8 @@
   // ----------------------------------------------------------- the chrome
   $("site-home").textContent = T.navHome;
   $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+  $("site-interactive").textContent = T.navInteractive;
+  $("site-interactive").href = lang === "es" ? "../es/interactive.html" : "../interactive.html";
   $("site-notebooks").textContent = T.navNotebooks;
   $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
   $("eyebrow").textContent = T.eyebrow;
