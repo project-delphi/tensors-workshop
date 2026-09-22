@@ -172,6 +172,28 @@ draws itself from the site's own SCSS variables.
 
 ## The widgets
 
+**The attention stage read the stage mid-scroll** (2026-09-22). `driveAttention`
+opened a scene by setting the hash and waiting for `data-scene`, then asserted
+off the dataset -- and on the GitHub runner it read `data-shape` as `4,8`, the
+*tokens* scene's shape, inside the heads assertions. The stage is a scroller:
+the hash scrolls the section into view and the step machine follows the
+scroll, so `data-scene` can name the destination for a frame while the rest of
+the dataset is still the scene being left. `voiceScene()` has waited for
+`scrollY` to stop since the audio stage shipped; `open()` never did. It does
+now.
+
+Under it were six `page.waitForTimeout(80)` calls feeding assertions, which is
+the thing AGENTS.md's polling rule names outright. They are polls now, and
+picking what to poll had its own trap: `halves`, `merged` and `shape` on the
+middle scenes are **constants** a scene prints to state an invariant, so
+waiting on one returns immediately and proves nothing. Every call waits on the
+control's own readback -- `data-scale`, `data-order`, `data-merge` -- which is
+the only value guaranteed to move when the control does.
+
+This failed in CI on a branch that changed nothing in that stage: the run had
+simply grown long enough -- one more page, one more hero tab, ten more code
+blocks -- to lose the race. A timing bug is only ever latent.
+
 **The audio stage's NumPy is generated, not written** (2026-09-22). The stage
 had ten pictures of array work and showed no array code. Adding it raised one
 question and the scene contract had already answered it: *nothing on screen is

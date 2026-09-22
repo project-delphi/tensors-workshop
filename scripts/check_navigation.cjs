@@ -383,12 +383,39 @@ async function audit(page, where) {
 
         const open = async (id) => {
           await page.evaluate((name) => { location.hash = '#' + name; }, id);
+          // Wait for the scrolling to stop before believing anything the
+          // stage says. This is a scroller: the hash scrolls the section into
+          // view and the step machine follows the scroll, so the stage passes
+          // through pictures on the way and `data-scene` can read the
+          // destination for a frame while the rest of the dataset is still
+          // the scene it is leaving. On this Mac that window is too small to
+          // hit; on the Linux runner it read `data-shape` as `4,8` -- the
+          // tokens scene's shape -- inside the heads assertions. The audio
+          // stage's voiceScene() has waited like this from the start.
+          await page.waitForFunction(() => new Promise(done => {
+            const was = window.scrollY;
+            setTimeout(() => done(window.scrollY === was), 250);
+          }), null, {timeout: 15000});
           await page.waitForFunction((name) =>
             document.getElementById('stage').dataset.scene === name, id, {timeout: 8000})
             .catch(() => assert.fail(`${where}: #${id} did not open that scene`));
           await fits(id);
         };
-        const settle = () => page.waitForTimeout(80);
+        // Poll the attribute the control is expected to move, never a fixed
+        // wait: 80 ms was long enough on a Mac and short on the Linux runner,
+        // where this read `4,8` -- the shape before the split -- and failed
+        // only in CI. AGENTS.md states the rule; this is what it looks like.
+        const settled = (key, want) => page.waitForFunction(
+          ([k, v]) => document.getElementById('stage').dataset[k] === v,
+          [key, want], {timeout: 8000}).catch(() => assert.fail(
+            `${where}: data-${key} never reached ${want}`));
+        // Every call below polls the control's own readback -- `data-scale`,
+        // `data-order`, `data-merge` -- rather than the value under test.
+        // Three of the keys a reader would reach for first (`halves`,
+        // `merged`, `shape` on the middle scenes) are constants the scene
+        // prints to *state* an invariant, so waiting on one would return
+        // immediately and prove nothing.
+        const changedTo = (key, want) => settled(key, want);
 
         // tokens: the gather, byte-exact.
         await open('tokens');
@@ -412,7 +439,7 @@ async function audit(page, where) {
         d = await data();
         assert.equal(d.agree, '1'); assert.equal(d.mixed, '0');
         await page.selectOption('#c-heads-order', 'flat');
-        await settle();
+        await changedTo('order', 'flat');
         d = await data();
         assert.equal(d.shape, '2,4,4'); assert.equal(d.sameshape, '1');
         assert.equal(d.agree, '0'); assert.equal(d.mixed, '1');
@@ -432,7 +459,7 @@ async function audit(page, where) {
         assert.equal(d.halves, '1');
         const lmaxScaled = Number(d.lmax);
         await page.selectOption('#c-scores-scale', 'none');
-        await settle();
+        await changedTo('scale', 'none');
         d = await data();
         assert(Math.abs(Number(d.lmax) - lmaxScaled * 2) < 1e-9,
           `${where}: unscaled lmax should be exactly double scaled (${d.lmax} vs ${lmaxScaled * 2})`);
@@ -444,13 +471,13 @@ async function audit(page, where) {
         assert.equal(d.over, 't');
         assert.equal(d.rowsum, '1.000');
         await page.selectOption('#c-softmax-axis', 'queries');
-        await settle();
+        await changedTo('over', 's');
         d = await data();
         assert.notEqual(d.rowsum, '1.000',
           `${where}: softmax over queries should not make every row over t sum to 1.000`);
         await page.selectOption('#c-softmax-axis', 'keys');
         await page.selectOption('#c-softmax-mask', 'causal');
-        await settle();
+        await changedTo('masked', '6');
         d = await data();
         assert.equal(d.exactzero, '1');
         assert.equal(d.masked, '6');
@@ -463,7 +490,7 @@ async function audit(page, where) {
         assert.equal(d.contract, 't');
         assert.equal(d.convex, '1');
         await page.selectOption('#c-output-merge', 'merged');
-        await settle();
+        await changedTo('merge', 'merged');
         d = await data();
         assert.equal(d.merged, '4,8');
 
@@ -475,7 +502,7 @@ async function audit(page, where) {
         assert.equal(d.einsum1, 'bhsd,bhtd->bhst');
         assert.equal(d.einsum2, 'bhst,bhtd->bhsd');
         await page.locator('#c-batch-b').fill('4');
-        await settle();
+        await changedTo('shape', '4,2,4,4');
         d = await data();
         assert.equal(d.shape, '4,2,4,4');
         assert.equal(await page.locator('#stage').getAttribute('data-tensorshape'), '[4, 2, 4, 4]');
