@@ -34,6 +34,7 @@
     s.N = N; s.hop = hop;
     s.stft = st;
     s.shape = ctx.AC.stftShape(ctx.signal.length, N, hop);
+    s.cost = ctx.AC.stftCost(N, hop, ctx.signal.length);
     s.mag = ctx.AC.magnitude(st.Z, st.F, st.T);
     s.w = ctx.AC.windowOf(s.win, N);
     s.img = null;
@@ -212,6 +213,19 @@
       K.label(g, (peakF * ctx.rate / s.N).toFixed(0) + " Hz",
               W - 6, specY + 6, ctx.colour("--v-out"), {size: 11, mono: true, right: true});
 
+      // Pointing at N or H bands what those letters measure on the waveform:
+      // the width of one window, and the step to the next hump's start. The
+      // overlap is the difference between the two spans, which is the whole
+      // argument of this picture.
+      if (ctx.hl === "samp" || ctx.hl === "hop") {
+        const lit = ctx.colour("--v-comp");
+        if (ctx.hl === "samp") {
+          K.span(g, winX, winX + winW, TOP + 6, lit, "n = 0 … " + (s.N - 1), {below: true});
+        } else {
+          K.span(g, winX, winX + s.hop * pxPerSample, TOP + 6, lit, "H = " + s.hop, {below: true});
+        }
+      }
+
       // Pointing at f or t in the equation above bands the extent that letter
       // measures -- a row of the matrix for a frequency bin, a column for a
       // frame. This is what ties a letter to the pixels it stands for, and it
@@ -283,7 +297,12 @@
           frame: f,
           padded: s.shape.padded,
           overlap: overlap,
-          peakhz: hz.toFixed(0)
+          peakhz: hz.toFixed(0),
+          // The whole spectrogram as one product, costed both ways in
+          // complex multiply-adds. `contract` is the axis that disappears:
+          // n, the length of a frame, gone from both sides of the arrow.
+          matmul: s.cost.matmul, fftops: s.cost.fft,
+          speedup: s.cost.ratio.toFixed(1), contract: "n"
         }
       };
     },
@@ -306,10 +325,13 @@
            "the right is that column on its own: the bars of the previous picture, stood on end. " +
            "Change the window size and the hop and watch the shape tag move — a shorter hop means " +
            "more columns for the same voice, and the box below counts them.</p>",
-        eqcap: "f picks a frequency bin and t picks a frame, so X[f, t] is one cell of the " +
-               "matrix below — point at either letter to see which extent of the picture it " +
-               "measures. H is the hop and w is the window shape, both of them controls here. " +
-               "S is the magnitude of X, which is what the spectrogram actually draws.",
+        eqcap: "The whole spectrogram is one contraction: stack the frames as the columns of " +
+               "𝒳, taper them with diag(w), and multiply by ℱ. n — the length of one " +
+               "frame — is the axis that disappears, gone from both sides of the arrow, and the " +
+               "shapes are the ones this picture opens on. Then f picks a frequency bin and t " +
+               "picks a frame, so X[f, t] is one cell of the matrix below; point at any letter " +
+               "to see which extent of the picture it measures. S is the magnitude of X, which " +
+               "is what the spectrogram actually draws.",
         predict: "Before you drag: halve the hop. Does the matrix get taller, or wider?",
         rebuilt: "the signal rebuilt from the matrix",
         controls: {size: "Window size (N)", overlap: "Overlap", win: "Window shape",
@@ -356,10 +378,13 @@
            "la derecha es esa columna sola: las barras de la imagen anterior, puestas de pie. Cambia " +
            "el tamaño de la ventana y el salto y mira moverse la etiqueta de forma: un salto más " +
            "corto significa más columnas para la misma voz, y la caja de abajo las cuenta.</p>",
-        eqcap: "f elige un bin de frecuencia y t elige una trama, así que X[f, t] es una celda " +
-               "de la matriz de abajo; señala cualquiera de las dos letras para ver qué extensión " +
-               "de la imagen mide. H es el salto y w es la forma de la ventana, ambos controles " +
-               "aquí. S es la magnitud de X, que es lo que dibuja el espectrograma.",
+        eqcap: "Todo el espectrograma es una sola contracción: apila los marcos como columnas " +
+               "de 𝒳, perfílalos con diag(w) y multiplica por ℱ. n —la longitud de un " +
+               "marco— es el eje que desaparece, ausente a ambos lados de la flecha, y las formas " +
+               "son las que abre esta imagen. Luego f elige un bin de frecuencia y t elige una " +
+               "trama, así que X[f, t] es una celda de la matriz de abajo; señala cualquier letra " +
+               "para ver qué extensión de la imagen mide. S es la magnitud de X, que es lo que " +
+               "dibuja el espectrograma.",
         predict: "Antes de arrastrar: reduce el salto a la mitad. ¿La matriz se hace más alta o más ancha?",
         rebuilt: "la señal reconstruida a partir de la matriz",
         controls: {size: "Tamaño de ventana (N)", overlap: "Superposición", win: "Forma de ventana",

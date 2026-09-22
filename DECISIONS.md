@@ -767,6 +767,45 @@ outdated syntax. E501 is off because the formatter sets the code width and a
 long comment is not a defect; B905 is off because `zip(strict=)` is a runtime
 change, not a spelling.
 
+**The audio stage says the spectrogram is a matrix product, in script
+capitals, and costs it in multiply-adds** (2026-09-22). The page had taught
+every step of the short-time Fourier transform and never said what it *is*:
+one contraction, `X = ℱ · diag(w) · 𝒳`, which is the same `A @ B` a reader
+met in section 06. Three choices in that sentence:
+
+*Script capitals for the two new objects.* `F` already counts frequency bins
+on this page and `T` counts frames, so the transform-as-a-matrix cannot be
+`F` without meaning two things one line apart. `𝒳` and `ℱ` follow the batch
+scene's `𝒯`, which set the convention: an object gets a script capital, a
+count gets a roman one. `k` stays the rank -- it is the rank on three other
+scenes, and a bin index called `k` would collide with them.
+
+*The shapes block is static.* `(513 × 1024)·(1024 × 465) → 513 × 465` is true
+at the controls the picture opens on and nowhere else, and it is written into
+the MathML rather than rewritten as the sliders move. The `<math>` is static
+because it is the same in both languages and `check_links.py` reads the
+static HTML; making one line of it live would mean a renderer, which would
+break the byte-exact claim cards. The `eqcap` says "the shapes are the ones
+this picture opens on", and the readout under the stage carries the numbers
+that do move.
+
+*Cost in multiply-adds, not milliseconds.* `stftCost` returns `F·N·T` against
+`T·N·log₂N` -- 244 270 080 against 4 761 600, a factor of 51.3 for the
+recording this stage ships. A timing would be the reader's machine, their
+browser and whatever else it was doing; the count is the same number for
+everyone, and it is the number that explains why `stft()` and not
+`stftByMatmul` is what the page actually runs. `stftByMatmul` exists so the
+claim is checkable: `tests/audio_core.test.cjs` multiplies the matrices and
+requires the answer to be `stft`'s, to 1e-9.
+
+One bug fell out of it. `check_navigation.cjs` selected equation letters with
+a document-global `.eq [data-hl="freq"]`, which was unambiguous while one
+section carried `freq` and picked the wrong section the moment a second did
+-- hovering it scrolled the step machine away from the scene under test, so
+the "a hover must not rewrite the readout" assertion would have passed
+whatever the readout did. Every selector there is scoped to its `#step-<id>`
+now.
+
 ## Commands and checks: the browser check
 
 **The widgets share one frame, and the way out of an embed is one button on

@@ -25,7 +25,7 @@ rule here surprises you.
 | `broadcasting-simulator.html` | section 03 |
 | `tensor-visualizer.html` + `tensor-core.js` | section 04 — strides, contiguity, memory order, view-or-copy |
 | `linalg-stage.html` + `linalg-kit.js` + `linalg-core.js` + `linalg-scenes/*.js` | sections 07/09 — eight steps |
-| `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/02/04/09 — ten scrolling sections |
+| `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/02/04/09 — ten scrolling sections, five of them carrying a static MathML equation (`array`, `frame`, `spectrum`, `window`, `batch`) |
 | `widget-chrome.css` | the frame all four share |
 | `vendor/` | three.js core build and eleven `examples/jsm` addons |
 

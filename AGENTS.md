@@ -256,20 +256,30 @@ are `#c-<scene>-<control>` and readouts `#read-<scene>`, because the same
 control name now lives in ten sections. The contract is
 `voice-scenes/README.md`.
 
-**Three sections carry a display equation**, and it is hand-written **MathML**
-with no library: the claim cards are Unicode `textContent` that
-`check_navigation.cjs` compares byte-exact, so a renderer would break them,
-and this repo vendors every asset with a SHA-256 anyway. The `<math>` is
-static in the section because it is the same in both languages and
-`check_links.py` reads the static HTML; only the `eqcap` caption under it is
-translated. The indices are the page's own -- `f` for a frequency bin, `t` for
-a frame, `H` for the hop, `N` for the window -- and **never `k`, which is the
-rank** on three other scenes. An `<mi>` the reader can point at carries
-`data-hl`; the frame publishes it as `data-hl` on `#stage` and the scene bands
-that axis in `draw()`, without ever calling `changed()`, because a hover must
-not rewrite the readout. Only the 2-D scenes honour it: the three opening
-scenes draw through one shared three.js rig, and a vector has no second axis
-to band. The shape badge on the stage takes a scene's `shape(ctx)` when it has
+**Five sections carry a display equation** (`array`, `frame`, `spectrum`,
+`window`, `batch`), and it is hand-written **MathML** with no library: the
+claim cards are Unicode `textContent` that `check_navigation.cjs` compares
+byte-exact, so a renderer would break them, and this repo vendors every asset
+with a SHA-256 anyway. The `<math>` is static in the section because it is the
+same in both languages and `check_links.py` reads the static HTML; only the
+`eqcap` caption under it is translated, and `tests/voice_scenes.test.cjs`
+pairs the two -- a caption with no element, or an element with no caption, is
+silent in the page. Together the five say the spectrogram is one matrix
+product: `X = ℱ · diag(w) · 𝒳`, costed both ways in multiply-adds rather than
+in milliseconds, which would be the reader's machine rather than the claim.
+The indices are the page's own -- `f` for a frequency bin, `t` for a frame,
+`n` for a sample within one, `H` for the hop, `N` for the window -- and
+**never `k`, which is the rank** on three other scenes; the two new objects
+are script capitals, like the batch scene's `𝒯`: **`𝒳`** the frames matrix
+`ℝ^{N×T}` and **`ℱ`** the transform as a matrix, never `F`, which counts
+bins. An `<mi>` the reader can point at carries `data-hl`, one of
+`{freq, time, samp, hop, batch, chan}`; the frame publishes it as `data-hl`
+on `#stage` and the scene bands that axis in `draw()`, without ever calling
+`changed()`, because a hover must not rewrite the readout. Only the 2-D
+scenes honour it: the three opening scenes draw through one shared three.js
+rig, and a vector has no second axis to band. **Every readout key is
+lowercase** -- `stage.dataset.fN` writes `data-f-n`, so a camel-case key is a
+selector nobody will guess. The shape badge on the stage takes a scene's `shape(ctx)` when it has
 one and its readout's `data.shape` otherwise, and publishes `data-tensorshape`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --

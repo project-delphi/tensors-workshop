@@ -468,3 +468,101 @@ test('the shape formula agrees with the transform it describes', () => {
   assert.equal(core.stftShape(237568, 1024, 512).T, 465, 'the handbook\'s 465 columns');
   assert.equal(core.stftShape(237568, 1024, 464).T, 513, 'the square matrix');
 });
+
+// ------------------------------------------------- the transform as a matrix
+// The audio stage claims, in MathML, that the spectrogram is one matrix
+// product: X = F . diag(w) . Xf. These pin the claim rather than let the page
+// assert it -- the matrices are built here and multiplied by hand, and the
+// answer has to be the one stft() returns.
+
+test('the DFT matrix is the transform, written out', () => {
+  const N = 64;
+  const D = core.dftMatrix(N, false);
+  assert.equal(D.rows, N);
+  assert.equal(D.cols, N);
+  // Row 0 sums the frame: every entry is e^0.
+  for (let n = 0; n < N; n++) {
+    assert.ok(Math.abs(D.re[n] - 1) < 1e-12 && Math.abs(D.im[n]) < 1e-12, `row 0, column ${n}`);
+  }
+  // Row N/2 is the Nyquist row: alternating +1 and -1, real.
+  const half = N >> 1;
+  for (let n = 0; n < N; n++) {
+    assert.ok(Math.abs(D.re[half * N + n] - (n % 2 === 0 ? 1 : -1)) < 1e-12, `row N/2, column ${n}`);
+    assert.ok(Math.abs(D.im[half * N + n]) < 1e-12);
+  }
+  // And the product against one frame is what spectrum() returns.
+  const x = new Float64Array(N);
+  for (let i = 0; i < N; i++) x[i] = Math.sin(i * 0.7) + 0.3 * Math.cos(i * 2.1);
+  const sp = core.spectrum(x);
+  let err = 0;
+  for (let f = 0; f < N; f++) {
+    let sr = 0, si = 0;
+    for (let n = 0; n < N; n++) { sr += D.re[f * N + n] * x[n]; si += D.im[f * N + n] * x[n]; }
+    err = Math.max(err, Math.abs(sr - sp.re[f]), Math.abs(si - sp.im[f]));
+  }
+  assert.ok(err < 1e-12, `matrix times frame vs the FFT: ${err}`);
+  // One-sided is the same matrix with the mirror rows gone.
+  const one = core.dftMatrix(N, true);
+  assert.equal(one.rows, half + 1);
+  assert.equal(one.cols, N);
+  for (let i = 0; i < one.rows * N; i++) assert.equal(one.re[i], D.re[i]);
+  assert.throws(() => core.dftMatrix(48, false), /power of two/);
+});
+
+test('the frames matrix is the padded signal read at a stride', () => {
+  const x = Float64Array.from({length: 64}, (_, i) => i + 1);
+  const fm = core.framesMatrix(x, 8, 8);
+  assert.equal(fm.N, 8);
+  assert.equal(fm.stride, 8);
+  assert.equal(fm.padded.length, 72, 'four zeros at each end');
+  // At hop = N nothing overlaps, so reading the matrix column by column --
+  // t outer, n inner -- has to give the padded signal back, exactly. That is
+  // the sentence the frame scene's caption makes: a plain reshape.
+  assert.equal(fm.N * fm.T, fm.padded.length);
+  const flat = [];
+  for (let t = 0; t < fm.T; t++) for (let n = 0; n < fm.N; n++) flat.push(fm.X[n * fm.T + t]);
+  assert.deepEqual(flat, Array.from(fm.padded));
+  // At hop < N the columns overlap, and column t still starts at t.hop.
+  const ov = core.framesMatrix(x, 8, 2);
+  for (let t = 0; t < ov.T; t++) {
+    for (let n = 0; n < 8; n++) {
+      assert.equal(ov.X[n * ov.T + t], ov.padded[t * 2 + n], `column ${t}, row ${n}`);
+    }
+  }
+  assert.equal(ov.T, core.stftShape(64, 8, 2).T, 'the same T the transform has');
+});
+
+test('the spectrogram by matrix product is the spectrogram', () => {
+  const L = 2000;
+  const x = new Float64Array(L);
+  for (let i = 0; i < L; i++) x[i] = Math.sin(i * 0.31) + 0.4 * Math.sin(i * 0.07 + 1);
+  for (const [N, hop] of [[8, 4], [16, 8], [16, 16], [32, 8]]) {
+    const a = core.stft(x, N, hop, 'hann');
+    const b = core.stftByMatmul(x, N, hop, 'hann');
+    assert.equal(b.F, a.F, `N=${N} hop=${hop}: F`);
+    assert.equal(b.T, a.T, `N=${N} hop=${hop}: T`);
+    let err = 0;
+    for (let i = 0; i < a.F * a.T; i++) {
+      err = Math.max(err, Math.abs(a.Z.re[i] - b.Z.re[i]), Math.abs(a.Z.im[i] - b.Z.im[i]));
+    }
+    assert.ok(err < 1e-9, `N=${N} hop=${hop}: the two routes disagree by ${err}`);
+  }
+});
+
+test('the two routes cost what the stage says they cost', () => {
+  const c = core.stftCost(1024, 512, 237568);
+  assert.equal(c.F, 513);
+  assert.equal(c.T, 465);
+  assert.equal(c.matmul, 244270080, 'F N T multiply-adds for the product');
+  assert.equal(c.fft, 4761600, 'T N log2(N) for a transform per frame');
+  assert.equal(c.ratio.toFixed(1), '51.3', 'the number on the hop scene');
+  // The shape half comes from stftShape, so the two can never disagree.
+  const s = core.stftShape(237568, 1024, 512);
+  assert.equal(c.F, s.F);
+  assert.equal(c.T, s.T);
+  // Halving the hop doubles both routes and leaves the ratio alone: the
+  // saving is the transform's, not the overlap's.
+  const h = core.stftCost(1024, 256, 237568);
+  assert.equal(h.ratio.toFixed(1), '51.3');
+  assert.ok(h.matmul > c.matmul);
+});

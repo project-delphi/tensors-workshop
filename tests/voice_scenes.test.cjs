@@ -6,6 +6,11 @@
 // in CI said a word. This file is that word.
 const test = require('node:test');
 const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+
+const PAGE = fs.readFileSync(
+  path.join(__dirname, '..', 'interactive', 'voice-stage.html'), 'utf8');
 
 // In the order voice-stage.html loads them.
 const SCENES = ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
@@ -132,4 +137,42 @@ test('the registry refuses a scene missing its aria copy', () => {
     }
   };
   assert.throws(() => kit.VoiceScenes.register(base), /probe lacks es aria/);
+});
+
+// -------------------------------------------------- the display equations
+// The <math> is static in the page and the caption under it is the scene's,
+// so the two can drift apart in either direction and the page says nothing:
+// fillText()'s `if (cap)` writes a caption only where an element exists, and
+// an element with no copy is simply left empty. This is the pairing.
+
+test('a scene writes an eqcap caption exactly where the page has one', () => {
+  const withCopy = load().filter(s => s.copy.en.eqcap !== undefined).map(s => s.id);
+  const withElement = SCENES.filter(id => PAGE.includes(`id="eqcap-${id}"`));
+  assert.deepEqual(withCopy, withElement,
+    'a caption with no element in the page, or an element with no caption');
+  // Five of them, and both languages carry every one.
+  assert.deepEqual(withElement, ['array', 'frame', 'spectrum', 'window', 'batch']);
+  for (const scene of load()) {
+    if (scene.copy.en.eqcap === undefined) continue;
+    for (const lang of ['en', 'es']) {
+      assert.ok(typeof scene.copy[lang].eqcap === 'string' && scene.copy[lang].eqcap.length > 40,
+        `${scene.id}: ${lang} eqcap is missing or a stub`);
+    }
+  }
+  // Every caption sits inside an .eq block that names it, which is what
+  // makes the scroller a labelled region for a screen reader.
+  for (const id of withElement) {
+    assert.ok(PAGE.includes(`aria-labelledby="eqcap-${id}"`), `${id}: the scroller is unlabelled`);
+  }
+});
+
+test('the equations name six axes, and no more', () => {
+  // Every [data-hl] token is an axis a scene bands in draw(). A seventh that
+  // no scene answers to is a dashed underline that does nothing when it is
+  // pointed at, which is worse than no affordance at all.
+  const tokens = [...PAGE.matchAll(/data-hl="([a-z]+)"/g)].map(m => m[1]);
+  assert.deepEqual([...new Set(tokens)].sort(),
+    ['batch', 'chan', 'freq', 'hop', 'samp', 'time']);
+  // And k is the rank on three other scenes, so it is never an index here.
+  assert.ok(!tokens.includes('rank'));
 });
