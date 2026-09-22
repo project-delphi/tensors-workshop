@@ -83,11 +83,14 @@ jobs:
         # because it is not ours to tidy: the README states a SHA-256 for every
         # file there, and two of the r169 addons ship with trailing whitespace,
         # so stripping it would make those hashes describe something other than
-        # what upstream ships. This is a check on code we write.
+        # what upstream ships. `fonts/OFL-*.txt` is excluded for exactly that
+        # reason -- verbatim upstream licence text, hashed in `fonts/README.md`,
+        # and Inter's copy has a trailing space on line 21. This is a check on
+        # code we write.
         run: |
           uv run --group lint ruff check scripts tests
           uv run --group lint ruff format --check scripts tests
-          if git grep -n -I -E '[[:space:]]+$' -- ':!*.ipynb' ':!interactive/vendor'; then
+          if git grep -n -I -E '[[:space:]]+$' -- ':!*.ipynb' ':!interactive/vendor' ':!fonts/OFL-*.txt'; then
             echo "::error::Trailing whitespace (see above)."
             exit 1
           fi

@@ -152,6 +152,12 @@ Verify either file with:
 shasum -a 256 fonts/inter-latin.woff2 fonts/source-serif-4-latin.woff2 fonts/OFL-*.txt
 ```
 
+Both `OFL-*.txt` are verbatim upstream, hashed above, and so are excluded
+from the trailing-whitespace check in `publish.yml` the same way
+`interactive/vendor/` is -- Inter's copy has a trailing space on line 21,
+and stripping it would make the hash describe something upstream does not
+ship.
+
 **Why the two-pass subset.** `fontTools.subset` restricts glyphs and can trim
 `fvar` axis *ranges* with `--variations`, but pinning `opsz` to a single value
 so it stops being an axis at all is `varLib.instancer`'s job, not
