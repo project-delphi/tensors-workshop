@@ -23,7 +23,7 @@ rule here surprises you.
 | | |
 |---|---|
 | `broadcasting-simulator.html` | section 03 |
-| `tensor-visualizer.html` + `tensor-core.js` | section 04 — strides, contiguity, memory order, view-or-copy |
+| `image-tensor.html` + `tensor-core.js` | section 04 — strides, contiguity, memory order, view-or-copy |
 | `linalg-stage.html` + `linalg-kit.js` + `linalg-core.js` + `linalg-scenes/*.js` | sections 07/09 — eight steps |
 | `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/02/04/09 — ten scrolling sections, five of them carrying a static MathML equation (`array`, `frame`, `spectrum`, `window`, `batch`) |
 | `attention-stage.html` + `attention-kit.js` + `attention-core.js` + `attention-scenes/*.js` | sections 04/06/Appendix B — seven scenes, all inline SVG (no three.js), three carrying a static MathML equation (`scores`, `softmax`, `output`) |

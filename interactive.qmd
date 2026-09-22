@@ -38,7 +38,7 @@ stretch every axis of size 1 — or refuse, and say which axis. Section 03.
 ::: {.resource-card}
 ### 🧊 The image tensor
 
-<span data-language-key="layout-visualizer"></span>
+<span data-language-key="image-tensor"></span>
 
 Three real photos as one 4-D tensor, a cube per byte. Transpose it and watch
 the shape and strides permute while the picture stays; reshape it and watch
@@ -46,11 +46,11 @@ the picture break; rewrite the buffer C, Fortran or channels_last and watch
 only the memory move. Every click prints the NumPy and PyTorch that does it.
 Section 04.
 
-Straight to [transpose](interactive/tensor-visualizer.html?lang=en#transpose),
-[reshape](interactive/tensor-visualizer.html?lang=en#reshape) or
-[the memory layout](interactive/tensor-visualizer.html?lang=en#memory).
+Straight to [transpose](interactive/image-tensor.html?lang=en#transpose),
+[reshape](interactive/image-tensor.html?lang=en#reshape) or
+[the memory layout](interactive/image-tensor.html?lang=en#memory).
 
-[Open the image tensor](interactive/tensor-visualizer.html?lang=en){.resource-button}
+[Open the image tensor](interactive/image-tensor.html?lang=en){.resource-button}
 :::
 
 ::: {.resource-card}

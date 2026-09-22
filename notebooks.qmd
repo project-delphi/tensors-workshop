@@ -55,7 +55,7 @@ Section 03 has a
 lines two shapes up from the right and steps through the stretch.
 
 Section 04 has an
-[image tensor visualizer](interactive/tensor-visualizer.html?lang=en) that turns
+[image tensor visualizer](interactive/image-tensor.html?lang=en) that turns
 its three photographs into cubes, one per byte, and shows what transpose, reshape
 and a memory layout each do to the shape, the strides, the buffer and the picture.
 

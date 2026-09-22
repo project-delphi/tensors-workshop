@@ -40,7 +40,7 @@ corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Secci
 ::: {.resource-card}
 ### 🧊 El tensor de imagen
 
-<span data-language-key="layout-visualizer"></span>
+<span data-language-key="image-tensor"></span>
 
 Tres fotos reales como un solo tensor 4-D, un cubo por byte. Transpónlo y
 observa cómo la forma y los strides se permutan mientras la imagen no cambia;
@@ -48,11 +48,11 @@ hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
 o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
 NumPy y el PyTorch que lo hace. Sección 04.
 
-Directo a <a href="../interactive/tensor-visualizer.html?lang=es#transpose">transpose</a>,
-<a href="../interactive/tensor-visualizer.html?lang=es#reshape">reshape</a> o
-<a href="../interactive/tensor-visualizer.html?lang=es#memory">la disposición en memoria</a>.
+Directo a <a href="../interactive/image-tensor.html?lang=es#transpose">transpose</a>,
+<a href="../interactive/image-tensor.html?lang=es#reshape">reshape</a> o
+<a href="../interactive/image-tensor.html?lang=es#memory">la disposición en memoria</a>.
 
-<a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Abrir el tensor de imagen</a>
+<a href="../interactive/image-tensor.html?lang=es" class="resource-button">Abrir el tensor de imagen</a>
 :::
 
 ::: {.resource-card}

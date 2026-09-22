@@ -47,10 +47,10 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Atención</button>
       <button type="button" role="tab" id="hero-tab-factor" aria-selected="false" aria-controls="hero-panel-factor" tabindex="-1">Tucker y CP</button>
     </div>
-    <a class="hero-open" data-hero-open href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a>
+    <a class="hero-open" data-hero-open href="../interactive/image-tensor.html?lang=es">Abrir la herramienta completa →</a>
   </div>
-  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout" data-open="../interactive/tensor-visualizer.html?lang=es">
-    <iframe class="hero-embed" data-src="../interactive/tensor-visualizer.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape"></iframe>
+  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout" data-open="../interactive/image-tensor.html?lang=es">
+    <iframe class="hero-embed" data-src="../interactive/image-tensor.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape"></iframe>
     <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" data-open="../interactive/broadcasting-simulator.html?lang=es" hidden>

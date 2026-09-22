@@ -1124,7 +1124,7 @@ def fig_tucker_taxi(arrays) -> Path:
 
 
 # ─── the image tensor visualizer's photos ────────────────────────────────────────────────
-# `interactive/tensor-visualizer.html` colours its cubes with real pixels: the
+# `interactive/image-tensor.html` colours its cubes with real pixels: the
 # same three scikit-image photographs notebook 04 stacks into its
 # (3, 256, 256, 3) batch, so a reader meets the same slide, astronaut and cup
 # in the widget and in the notebook. The widget cannot import scikit-image, so
