@@ -65,6 +65,10 @@ VoiceScenes.register({
   readout(ctx),         // -> {html, data, claim?}; data becomes #stage data-*
                         // for the check, and claim replaces the copy's claim
                         // on the title card when the scene can say it in numbers
+  code(ctx),            // -> the NumPy for this picture, one row per line:
+                        // "line", or ["line", "comment"] through K.code(),
+                        // which aligns the hashes. Built from ctx.state, like
+                        // readout(), so the two can never disagree
   shape(ctx),           // optional: -> "[513, 465]", the badge on the stage.
                         // Without one the badge falls back to data.shape, so
                         // add it only where that is absent or means something
@@ -102,6 +106,20 @@ into the clip while it plays, or -1.
   test — including reorderings like the transpose and the patch shuffle, whose
   whole claim is that they are permutations, and the rounding, whose claim is
   that 16 bits changes nothing.
+- **The NumPy is not typed either.** Every section carries `code(ctx)` under
+  its equation, and every number in it comes from `ctx.state` -- the same place
+  the readout's do. A hard-coded `(513,)` is a lie the moment a reader drops an
+  eight-second file. Match `audio-core.js`'s own conventions, not the textbook
+  ones: the windows are **periodic** (`np.hanning(N + 1)[:-1]`, not
+  `np.hanning(N)`), `stft` pads by `N/2` at *each* end, which is where 465
+  rather than 464 columns comes from, and `quantize` clips as well as rounds.
+  `tests/test_audio_numpy.py` runs those lines in real NumPy and checks they
+  give what the block says they give -- `npm test` has no NumPy, so nothing
+  there would notice an expression that is merely plausible.
+- **A block is 82 characters wide, measured live.** The `<pre>` scrolls, so a
+  longer line breaks nothing -- it is just a line nobody reads.
+  `check_navigation.cjs` walks all ten after the heavy scenes have settled,
+  because that is the only place their real width exists.
 - **Both paths, one truth.** A three.js scene's `draw()` is its twin: the same
   facts, side-on, on the 2-D canvas, from the same slice its `sync()`
   computed. The three opening scenes share that slice's shape (`v` in
@@ -168,6 +186,11 @@ into the clip while it plays, or -1.
   number a reader can check on the stage. The definition is `concept`'s job and
   the formula is `claim`'s; a body that starts with either is the version this
   page was rewritten to stop being.
+- `np` is the comments in the NumPy block, and only the comments: the code
+  itself is one copy for both languages, because identifiers are English
+  everywhere in this repo. Values Python would print -- a shape, a dtype, an
+  exponential -- stay raw on both sides; prose around them takes the locale, so
+  `0.7%` is `0,7 %` in Spanish and `(513,)` is `(513,)` in both.
 - `eqcap` is the sentence under a display equation, on the five scenes that
   have one. It must carry the idea in words on its own: there is no polyfill
   if a browser renders the MathML badly. Declare it **only** where the page

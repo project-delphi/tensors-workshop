@@ -198,6 +198,24 @@
       };
     },
 
+    // One frame and its window. `np.hanning(N + 1)[:-1]` is not fussiness:
+    // np.hanning(N) is the *symmetric* window, w[0] == w[N-1] == 0, and
+    // AC.windowOf builds the *periodic* one, 0.5 - 0.5*cos(2*pi*i/N), which
+    // is what an STFT wants and what scipy's get_window returns. Dropping the
+    // last point of the N+1 symmetric window is exactly that.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np, N = s.N, i0 = s.i0;
+      const win = {hann: "np.hanning(N + 1)[:-1]", hamming: "np.hamming(N + 1)[:-1]",
+                   rect: "np.ones(N)"}[s.win];
+      return ctx.K.code([
+        ["N = " + N, c.ms(N / ctx.rate * 1000)],
+        ["w = " + win, c.win[s.win]],
+        "",
+        ["xt = x[" + i0 + ":" + (i0 + N) + "] * w", c.frame(N)],
+        ["abs(xt[0]) + abs(xt[-1])", c.ends(Math.abs(s.f.tapered[0]) + Math.abs(s.f.tapered[N - 1]))]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "One window",
@@ -223,6 +241,13 @@
                "the hop the next picture opens on.",
         predict: "Before you press play: the rectangular window keeps every sample exactly as it is. Should it sound cleaner, then?",
         playFrame: (win) => "this frame on repeat (" + win + ")",
+        np: {
+          ms: (ms) => ms.toFixed(1) + " ms of sound",
+          win: {hann: "periodic, not np.hanning(N)", hamming: "periodic, ends at 0.08",
+                rect: "no taper at all"},
+          frame: (n) => "(" + n + ",) — one column of the matrix",
+          ends: (e) => "what the ends are worth: " + e.toExponential(2)
+        },
         controls: {size: "Window size (N)", win: "Window shape", pos: "Where the frame is cut"},
         options: {win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (no taper)"}},
         readout: (N, ms, i0, secs, win, dimmed, reps, ends) =>
@@ -266,6 +291,13 @@
                "dadas con H = N/2, el salto con el que abre la imagen siguiente.",
         predict: "Antes de reproducir: la ventana rectangular conserva cada muestra tal cual. ¿Debería sonar más limpia, entonces?",
         playFrame: (win) => "este marco en bucle (" + win + ")",
+        np: {
+          ms: (ms) => ms.toFixed(1).replace(".", ",") + " ms de sonido",
+          win: {hann: "periódica, no np.hanning(N)", hamming: "periódica, acaba en 0,08",
+                rect: "sin perfil ninguno"},
+          frame: (n) => "(" + n + ",) — una columna de la matriz",
+          ends: (e) => "lo que valen los extremos: " + e.toExponential(2)
+        },
         controls: {size: "Tamaño de ventana (N)", win: "Forma de ventana", pos: "Dónde se corta el marco"},
         options: {win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (sin perfil)"}},
         readout: (N, ms, i0, secs, win, dimmed, reps, ends) =>

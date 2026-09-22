@@ -236,6 +236,27 @@
       };
     },
 
+    // The batch a loader hands a model. `[:, :, :crop]` is the only reason a
+    // loader crops at all -- np.stack refuses a ragged list outright, and the
+    // shortest recording is the ceiling -- and `[:, None]` is the channel
+    // axis: one, because these are mono, and the axis is there so the same
+    // model takes stereo without a reshape.
+    code(ctx) {
+      const ex = examples(ctx), c = ctx.copy.np, crop = ctx.state.crop;
+      if (!ex.length) return ctx.K.code(["clips = [stft(x) for x in recordings]"]);
+      const F = ex[0].F, B = ex.length;
+      const shortest = ex.reduce((m, e) => Math.min(m, e.T), Infinity);
+      const fits = crop <= shortest;
+      return ctx.K.code([
+        "clips = [np.abs(stft(x)) for x in recordings]",
+        ["[c.shape for c in clips]", c.clips(B, F, ex.map((e) => e.T))],
+        ["clips = [c[:, :" + crop + "] for c in clips]", c.crop(crop, shortest, fits)],
+        "",
+        ["T = np.stack(clips)", fits ? "(" + B + ", " + F + ", " + crop + ")" : c.refuse()],
+        ["T = T[:, None]", fits ? c.batch(B, F, crop) : c.chan()]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "The batch",
@@ -257,6 +278,14 @@
                "Point at any of them to see which extent of the picture it measures. C is 1 here " +
                "because these recordings are mono; a stereo file would make it 2.",
         predict: "Before you touch the crop: which of the four numbers changes when you drag it?",
+        np: {
+          clips: (b, f, ts) => b + " of them: " + f + " x " + ts.join("/"),
+          crop: (k, sh, fits) => fits ? "every one to " + k + " frames"
+            : k + " is past the shortest: " + sh,
+          refuse: () => "ValueError: all input arrays must have the same shape",
+          batch: (b, f, t) => "(" + b + ", 1, " + f + ", " + t + ") — N C F T",
+          chan: () => "the channel axis: 1, because these are mono"
+        },
         controls: {lit: "Which example", crop: "Crop every example to"},
         options: {lit: {voice: "voice", beat: "beat", tone: "440 Hz tone", file: "your file"}},
         names: {voice: "voice", beat: "beat", tone: "440 Hz tone", file: "your file"},
@@ -310,6 +339,14 @@
                "tramas. Señala cualquiera para ver qué extensión de la imagen mide. Aquí C es 1 " +
                "porque estas grabaciones son mono; un archivo estéreo lo haría 2.",
         predict: "Antes de tocar el recorte: ¿cuál de los cuatro números cambia al arrastrarlo?",
+        np: {
+          clips: (b, f, ts) => b + " grabaciones: " + f + " x " + ts.join("/"),
+          crop: (k, sh, fits) => fits ? "cada una a " + k + " marcos"
+            : k + " pasa de la más corta: " + sh,
+          refuse: () => "ValueError: all input arrays must have the same shape",
+          batch: (b, f, t) => "(" + b + ", 1, " + f + ", " + t + ") — N C F T",
+          chan: () => "el eje de canal: 1, porque son mono"
+        },
         controls: {lit: "Qué ejemplo", crop: "Recortar cada ejemplo a"},
         options: {lit: {voice: "voz", beat: "ritmo", tone: "tono de 440 Hz", file: "tu archivo"}},
         names: {voice: "voz", beat: "ritmo", tone: "tono de 440 Hz", file: "tu archivo"},

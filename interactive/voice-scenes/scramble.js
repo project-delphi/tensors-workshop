@@ -129,6 +129,33 @@
       };
     },
 
+    // The layout on the control, and only that one: the point of the scene is
+    // that each is a permutation of the same numbers, so `Z.size` is printed
+    // every time and never moves. `transpose(2, 1, 0, 3)` swaps the two
+    // *block* axes and leaves the two inside a block alone -- which is exactly
+    // what AC.patchShuffle does, and what a patchifier does with its axes in
+    // the wrong order.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np, st = s.base;
+      const F = st.F, T = st.T, g = F / PATCH;
+      const rows = [
+        ["Z.shape", c.shape(F, T)],
+        ["Z.size", c.size(F * T)],
+        ""
+      ];
+      if (s.layout === "transpose") {
+        rows.push(["Y = Z.T", c.view(T, F)]);
+      } else if (s.layout === "patches") {
+        rows.push(["Y = Z.reshape(" + g + ", " + PATCH + ", " + g + ", " + PATCH + ")", c.grid(g, PATCH)]);
+        rows.push(["Y = Y.transpose(2, 1, 0, 3)", c.blocks()]);
+        rows.push(["Y = Y.reshape(" + F + ", " + T + ")", c.inside()]);
+      } else {
+        rows.push(["Y = Z", c.none()]);
+      }
+      rows.push(["Y.size == Z.size", "True"]);
+      return ctx.K.code(rows);
+    },
+
     copy: {
       en: {
         tab: "Reshape & hear it",
@@ -148,6 +175,15 @@
            "survives, across them it does not, so you hear the voice arriving in the wrong order " +
            "rather than as noise.</p>",
         predict: "Before you press play: the transpose loses nothing at all. Should it still sound like a voice?",
+        np: {
+          shape: (f, t) => "(" + f + ", " + t + ") complex",
+          size: (n) => n + " numbers, the same in every layout",
+          view: (f, t) => "(" + f + ", " + t + ") — a view; not one number moved",
+          grid: (g, p) => "a " + g + "x" + g + " grid of " + p + "x" + p + " blocks",
+          blocks: () => "the two block axes swapped",
+          inside: () => "the two inside a block never moved",
+          none: () => "the matrix as the transform left it"
+        },
         controls: {layout: "Layout"},
         options: {layout: {none: "as the transform built it", transpose: "transposed",
                            patches: "27 × 27 patches, shuffled"}},
@@ -198,6 +234,15 @@
            "sonido sobrevive, entre ellos no, así que oyes la voz llegando en el orden equivocado y " +
            "no como ruido.</p>",
         predict: "Antes de reproducir: la transposición no pierde nada. ¿Debería seguir sonando como una voz?",
+        np: {
+          shape: (f, t) => "(" + f + ", " + t + ") complejo",
+          size: (n) => n + " números, los mismos en cualquier disposición",
+          view: (f, t) => "(" + f + ", " + t + ") — una vista; no se movió ni un número",
+          grid: (g, p) => "una rejilla " + g + "x" + g + " de bloques " + p + "x" + p,
+          blocks: () => "se intercambian los dos ejes de bloque",
+          inside: () => "los dos de dentro nunca se movieron",
+          none: () => "la matriz tal como la dejó la transformada"
+        },
         controls: {layout: "Disposición"},
         options: {layout: {none: "como la construyó la transformada", transpose: "transpuesta",
                            patches: "parches de 27 × 27, barajados"}},

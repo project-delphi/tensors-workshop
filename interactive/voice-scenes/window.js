@@ -307,6 +307,27 @@
       };
     },
 
+    // The whole spectrogram, at the hop and the window on the sliders. The
+    // pad is AC.stft's own -- N/2 zeros at each end, scipy's boundary='zeros'
+    // -- and it is where 465 rather than 464 columns comes from. The frames
+    // matrix is a *view*: sliding_window_view strides over the padded array
+    // and copies nothing, which is the claim the equation above makes.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np, st = s.stft;
+      const N = s.N, hop = s.hop;
+      const win = {hann: "np.hanning(N + 1)[:-1]", hamming: "np.hamming(N + 1)[:-1]",
+                   rect: "np.ones(N)"}[s.win];
+      return ctx.K.code([
+        "from numpy.lib.stride_tricks import sliding_window_view",
+        "",
+        ["N, H = " + N + ", " + hop, c.hop(Math.max(0, N - hop))],
+        ["w = " + win, ""],
+        ["xp = np.pad(x, N // 2)", c.pad(s.shape.padded)],
+        ["S = sliding_window_view(xp, N)[::H]", c.frames(st.T, N)],
+        ["X = np.fft.rfft(S * w, axis=-1).T", c.out(st.F, st.T)]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "Hop",
@@ -334,6 +355,12 @@
                "is what the spectrogram actually draws.",
         predict: "Before you drag: halve the hop. Does the matrix get taller, or wider?",
         rebuilt: "the signal rebuilt from the matrix",
+        np: {
+          hop: (ov) => ov > 0 ? ov + " samples shared by two windows" : "no overlap at all",
+          pad: (n) => "(" + n + ",) — N//2 zeros at each end",
+          frames: (t, n) => "(" + t + ", " + n + ") — a view, nothing copied",
+          out: (f, t) => "(" + f + ", " + t + ") complex"
+        },
         controls: {size: "Window size (N)", overlap: "Overlap", win: "Window shape",
                    pos: "Where the window is"},
         options: {
@@ -387,6 +414,12 @@
                "dibuja el espectrograma.",
         predict: "Antes de arrastrar: reduce el salto a la mitad. ¿La matriz se hace más alta o más ancha?",
         rebuilt: "la señal reconstruida a partir de la matriz",
+        np: {
+          hop: (ov) => ov > 0 ? ov + " muestras en dos ventanas a la vez" : "sin superposición",
+          pad: (n) => "(" + n + ",) — N//2 ceros a cada lado",
+          frames: (t, n) => "(" + t + ", " + n + ") — una vista, no se copia nada",
+          out: (f, t) => "(" + f + ", " + t + ") complejo"
+        },
         controls: {size: "Tamaño de ventana (N)", overlap: "Superposición", win: "Forma de ventana",
                    pos: "Dónde está la ventana"},
         options: {

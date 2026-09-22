@@ -251,6 +251,26 @@
       };
     },
 
+    // Both transforms, because the scene draws both: np.fft.fft gives the N
+    // bars on the stage, the top half of them the mirror image; np.fft.rfft
+    // gives the F the matrix keeps, and they are the first F of the same
+    // numbers. The rebuild is AC.synthTopK -- the k strongest bins kept and
+    // the rest zeroed -- and irfft mirrors them back for free.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np, N = s.N, F = (N >> 1) + 1;
+      const k = s.synthK, binHz = ctx.rate / N;
+      return ctx.K.code([
+        ["np.fft.fft(xt)", c.full(N)],
+        ["X = np.fft.rfft(xt)", c.half(F, ctx.rate / 2)],
+        ["mag = np.abs(X)", c.bin(binHz)],
+        ["mag.argmax()", c.peak(s.peak, s.peak * binHz)],
+        "",
+        ["keep = np.argsort(mag)[-" + k + ":]", c.keep(k, F)],
+        "Y = np.zeros_like(X); Y[keep] = X[keep]",
+        ["xk = np.fft.irfft(Y, n=N)", c.err(s.err)]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "The transform",
@@ -283,6 +303,15 @@
         playK: (k) => k + (k === 1 ? " sinusoid" : " sinusoids"),
         axFrame: "the frame", axSynth: (k) => "rebuilt from " + k,
         axKept: (F) => F + " bins kept", axMirror: "mirror image, dropped",
+        np: {
+          full: (n) => "(" + n + ",) complex — the bars on the stage",
+          half: (f, nyq) => "(" + f + ",) — the mirror half dropped, to " + (nyq / 1000).toFixed(0) + " kHz",
+          bin: (hz) => "one bin every " + hz.toFixed(1) + " Hz",
+          peak: (b, hz) => "bin " + b + ", " + hz.toFixed(0) + " Hz",
+          keep: (k, f) => k + " of " + f + " bins",
+          err: (e) => e < 0.0005 ? "exactly xt again: nothing was approximated"
+            : (e * 100).toFixed(1) + "% away, measured on the frame's peak"
+        },
         controls: {size: "Window size (N)", k: "Components to rebuild from (k)",
                    win: "Window shape", pos: "Where the frame is cut"},
         options: {win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (no taper)"}},
@@ -335,6 +364,15 @@
         playK: (k) => k + (k === 1 ? " sinusoide" : " sinusoides"),
         axFrame: "el marco", axSynth: (k) => "reconstruido con " + k,
         axKept: (F) => F + " bins guardados", axMirror: "imagen especular, descartada",
+        np: {
+          full: (n) => "(" + n + ",) complejo — las barras del escenario",
+          half: (f, nyq) => "(" + f + ",) — sin la mitad especular, hasta " + (nyq / 1000).toFixed(0) + " kHz",
+          bin: (hz) => "un bin cada " + hz.toFixed(1).replace(".", ",") + " Hz",
+          peak: (b, hz) => "bin " + b + ", " + hz.toFixed(0) + " Hz",
+          keep: (k, f) => k + " de " + f + " bins",
+          err: (e) => e < 0.0005 ? "otra vez xt exactamente: no se aproximó nada"
+            : (e * 100).toFixed(1).replace(".", ",") + " % de la altura del marco"
+        },
         controls: {size: "Tamaño de ventana (N)", k: "Componentes para reconstruir (k)",
                    win: "Forma de ventana", pos: "Dónde se corta el marco"},
         options: {win: {hann: "Hann", hamming: "Hamming", rect: "rectangular (sin perfil)"}},

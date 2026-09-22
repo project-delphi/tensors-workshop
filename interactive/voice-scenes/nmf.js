@@ -267,6 +267,34 @@
       };
     },
 
+    // NMF on the magnitudes, not on Z: the constraint is that both factors
+    // are non-negative, and a complex matrix has no order to be non-negative
+    // in. sklearn's NMF is the same multiplicative update AC.nmfStep runs.
+    // The error beside it is the truncated SVD's at the same k, which NMF
+    // never beats -- a constrained minimum cannot be below an unconstrained
+    // one, and that is the scene's whole claim.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np;
+      const F = s.stft ? s.stft.F : null, T = s.stft ? s.stft.T : null;
+      const ready = s.V && s.nmf && s.err !== null;
+      const k = s.k;
+      const rows = [
+        "from sklearn.decomposition import NMF",
+        "",
+        ["V = np.abs(Z)", c.mag(F, T)],
+        "m = NMF(n_components=" + k + ").fit(V)",
+        ["W, H = m.transform(V), m.components_", c.wh(F, k, T)],
+        ["(W >= 0).all() and (H >= 0).all()", "True"]
+      ];
+      if (ready) {
+        rows.push("");
+        rows.push(["np.linalg.norm(V - W @ H) / np.linalg.norm(V)", c.err(s.err)]);
+        rows.push(["sv = np.linalg.svd(V, compute_uv=False)", ""]);
+        rows.push(["np.sqrt((sv[" + k + ":]**2).sum() / (sv**2).sum())", c.svd(svdError(s, k))]);
+      }
+      return ctx.K.code(rows);
+    },
+
     copy: {
       en: {
         tab: "Parts you can name",
@@ -294,6 +322,13 @@
             : "Transforming the recording, then fitting W and H by multiplicative updates.",
         hearAll: "the whole recording",
         hearOne: (n) => "component " + n + " on its own",
+        np: {
+          mag: (f, t) => f ? "(" + f + ", " + t + ") — real, non-negative" : "the magnitudes",
+          wh: (f, k, t) => f ? "(" + f + ", " + k + ") and (" + k + ", " + t + ")"
+            : "a spectrum per part, and when each is on",
+          err: (e) => (e * 100).toFixed(1) + "% of V left over",
+          svd: (e) => (e * 100).toFixed(1) + "%, and NMF cannot beat it"
+        },
         controls: {k: "Components", solo: "Solo"},
         options: {solo: {all: "all of them", 1: "component 1", 2: "component 2",
                          3: "component 3", 4: "component 4"}},
@@ -355,6 +390,13 @@
             : "Transformando la grabación, y después ajustando W y H con actualizaciones multiplicativas.",
         hearAll: "la grabación completa",
         hearOne: (n) => "la componente " + n + " sola",
+        np: {
+          mag: (f, t) => f ? "(" + f + ", " + t + ") — real, no negativa" : "las magnitudes",
+          wh: (f, k, t) => f ? "(" + f + ", " + k + ") y (" + k + ", " + t + ")"
+            : "un espectro por parte, y cuándo suena cada uno",
+          err: (e) => (e * 100).toFixed(1).replace(".", ",") + " % de V sin explicar",
+          svd: (e) => (e * 100).toFixed(1).replace(".", ",") + " %, y NMF no lo mejora"
+        },
         controls: {k: "Componentes", solo: "Aislar"},
         options: {solo: {all: "todas", 1: "componente 1", 2: "componente 2",
                          3: "componente 3", 4: "componente 4"}},

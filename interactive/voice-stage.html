@@ -263,6 +263,32 @@
   }
   .eq [data-hl]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 
+  /* The NumPy under each picture. It sits where the equation sits -- the
+     notation, then the line you would type -- and it is written by changed()
+     rather than fillText(), because every number in it comes from the
+     controls. Nothing here is typed: drop an eight-second file and the shapes
+     in the code follow the shapes on the stage, which is the same rule the
+     readout keeps.
+
+     The code is one copy for both languages, like the <math>; only the `#`
+     comments are translated, through ctx.copy.np(). `contain: inline-size` is
+     the .eqscroll lesson again -- widget-chrome.css's `pre` has `overflow-x:
+     auto` but not containment, so a line as long as the hop scene's
+     sliding_window_view would report its own min-content and take the layout
+     past 390px. */
+  .np { margin: 0.9rem 0 0; max-width: 36rem; }
+  .nplabel {
+    margin: 0 0 0.3rem; font: 600 0.75rem/1.3 var(--sans);
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute);
+  }
+  .np pre { margin: 0; contain: inline-size; border: 1px solid var(--line); }
+  .np pre:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  /* Inline code in prose and in a readout. widget-chrome.css styles `pre` and
+     nothing else, so before this the two <code> spans in the batch scene's
+     body rendered at the browser's own monospace default -- the classic shrink
+     against a 16px body. Scoped away from `pre code`, which is already sized. */
+  .step .body code, .readout code { font: 500 0.85em/1 var(--mono); }
+
   /* Embed mode: the homepage hero. No chrome, no sound, no fetch. The chrome
      that goes is in widget-chrome.css. */
   html.embed .steps, html.embed .stagebar, html.embed .transport,
@@ -309,6 +335,10 @@
         <h2 id="h-sample"></h2>
         <p class="concept" id="con-sample"></p>
         <div class="body" id="body-sample"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-sample"></p>
+          <pre id="np-sample" tabindex="0" role="region" aria-labelledby="nplab-sample"><code></code></pre>
+        </div>
         <p class="predict" id="pr-sample"></p>
         <div class="controls" id="ctl-sample"></div>
         <p class="readout" id="read-sample"></p>
@@ -320,6 +350,10 @@
         <h2 id="h-quantize"></h2>
         <p class="concept" id="con-quantize"></p>
         <div class="body" id="body-quantize"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-quantize"></p>
+          <pre id="np-quantize" tabindex="0" role="region" aria-labelledby="nplab-quantize"><code></code></pre>
+        </div>
         <p class="predict" id="pr-quantize"></p>
         <div class="controls" id="ctl-quantize"></div>
         <p class="readout" id="read-quantize"></p>
@@ -353,6 +387,10 @@
             </math>
           </div>
           <p class="eqcap" id="eqcap-array"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-array"></p>
+          <pre id="np-array" tabindex="0" role="region" aria-labelledby="nplab-array"><code></code></pre>
         </div>
         <p class="predict" id="pr-array"></p>
         <div class="controls" id="ctl-array"></div>
@@ -391,6 +429,10 @@
             </math>
           </div>
           <p class="eqcap" id="eqcap-frame"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-frame"></p>
+          <pre id="np-frame" tabindex="0" role="region" aria-labelledby="nplab-frame"><code></code></pre>
         </div>
         <p class="predict" id="pr-frame"></p>
         <div class="controls" id="ctl-frame"></div>
@@ -434,6 +476,10 @@
             </math>
           </div>
           <p class="eqcap" id="eqcap-spectrum"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-spectrum"></p>
+          <pre id="np-spectrum" tabindex="0" role="region" aria-labelledby="nplab-spectrum"><code></code></pre>
         </div>
         <p class="predict" id="pr-spectrum"></p>
         <div class="controls" id="ctl-spectrum"></div>
@@ -507,6 +553,10 @@
           </div>
           <p class="eqcap" id="eqcap-window"></p>
         </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-window"></p>
+          <pre id="np-window" tabindex="0" role="region" aria-labelledby="nplab-window"><code></code></pre>
+        </div>
         <p class="predict" id="pr-window"></p>
         <div class="controls" id="ctl-window"></div>
         <p class="readout" id="read-window"></p>
@@ -518,6 +568,10 @@
         <h2 id="h-scramble"></h2>
         <p class="concept" id="con-scramble"></p>
         <div class="body" id="body-scramble"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-scramble"></p>
+          <pre id="np-scramble" tabindex="0" role="region" aria-labelledby="nplab-scramble"><code></code></pre>
+        </div>
         <p class="predict" id="pr-scramble"></p>
         <div class="controls" id="ctl-scramble"></div>
         <p class="readout" id="read-scramble"></p>
@@ -529,6 +583,10 @@
         <h2 id="h-lowrank"></h2>
         <p class="concept" id="con-lowrank"></p>
         <div class="body" id="body-lowrank"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-lowrank"></p>
+          <pre id="np-lowrank" tabindex="0" role="region" aria-labelledby="nplab-lowrank"><code></code></pre>
+        </div>
         <p class="predict" id="pr-lowrank"></p>
         <div class="controls" id="ctl-lowrank"></div>
         <p class="readout" id="read-lowrank"></p>
@@ -540,6 +598,10 @@
         <h2 id="h-nmf"></h2>
         <p class="concept" id="con-nmf"></p>
         <div class="body" id="body-nmf"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-nmf"></p>
+          <pre id="np-nmf" tabindex="0" role="region" aria-labelledby="nplab-nmf"><code></code></pre>
+        </div>
         <p class="predict" id="pr-nmf"></p>
         <div class="controls" id="ctl-nmf"></div>
         <p class="readout" id="read-nmf"></p>
@@ -566,6 +628,10 @@
             </math>
           </div>
           <p class="eqcap" id="eqcap-batch"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-batch"></p>
+          <pre id="np-batch" tabindex="0" role="region" aria-labelledby="nplab-batch"><code></code></pre>
         </div>
         <p class="predict" id="pr-batch"></p>
         <div class="controls" id="ctl-batch"></div>
@@ -741,7 +807,7 @@
       glNoWebgl: "This browser reports no WebGL, so this picture is drawn flat. Every number is the same.",
       glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "A voice becomes a frequency-by-time matrix.",
-      shape: "Shape", concept: "Concept",
+      shape: "Shape", concept: "Concept", code: "In NumPy",
       aboutH: "About this page",
       about1: "Every number on this page is computed in the browser from the recording on the stage — " +
               "the count of samples, the rounding error, the bin spacing, the matrix's shape. " +
@@ -804,7 +870,7 @@
       glNoWebgl: "Este navegador no reporta WebGL, así que esta imagen se dibuja plana. Todos los números son los mismos.",
       glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
       embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
-      shape: "Forma", concept: "Concepto",
+      shape: "Forma", concept: "Concepto", code: "En NumPy",
       aboutH: "Sobre esta página",
       about1: "Cada número de esta página se calcula en el navegador a partir de la grabación que hay " +
               "en el escenario: el conteo de muestras, el error de redondeo, la separación entre bins, " +
@@ -1214,6 +1280,14 @@
     if (signal.loaded && active.sync) active.sync(ctx);
     const r = (signal.loaded ? active.readout(ctx) : null) || {};
     $("read-" + active.id).innerHTML = r.html || "";
+    // The NumPy for this picture, at the controls' own values. Written here
+    // rather than at boot for the same reason the readout is: a line that
+    // said `(1024,)` while the window slider had been moved to 2048 would be
+    // the one thing on the page a reader could copy and be wrong about.
+    if (active.code) {
+      const lines = signal.loaded ? active.code(ctx) : [];
+      $("np-" + active.id).firstChild.textContent = lines.join("\n");
+    }
     // The claim card is the scene's copy until the scene can say it in
     // numbers: the hop scene's arrow is (237568,) -> (513, 465) only while
     // the controls are where they opened, and a card still saying that after
@@ -1804,6 +1878,15 @@
       // silent here -- tests/voice_scenes.test.cjs pairs the two instead.
       const cap = document.getElementById("eqcap-" + s.id);
       if (cap) cap.textContent = c.eqcap || "";
+      // The label over the NumPy block. The code itself is written by
+      // changed(), because every number in it comes from the controls; this
+      // is the one part of it that is language and not arithmetic. A scene
+      // with no code() keeps an empty block out of the page entirely.
+      const np = document.getElementById("np-" + s.id);
+      if (np) {
+        np.parentNode.hidden = !s.code;
+        $("nplab-" + s.id).textContent = T.code;
+      }
       // The heading of the group this scene opens, above its kicker.
       if (s.part && s.part[lang] !== group) {
         group = s.part[lang];

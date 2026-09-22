@@ -1150,6 +1150,45 @@ async function audit(page, where) {
         assert(Number((await data()).share) > one,
           `${where}: 64 components should carry more energy than 1`);
 
+        // The NumPy under the picture is built from the same state the readout
+        // is, so the one thing worth asserting is that it followed a control:
+        // a block still saying (513,) under a window slider moved to 2048 is
+        // the one thing on this page a reader could copy and be wrong about.
+        // Polled on the data-* the widget publishes, never after a fixed wait.
+        const npText = (id) => page.locator(`#np-${id}`).innerText();
+        assert.equal((await data()).n, '1024');
+        assert((await npText('spectrum')).includes('(513,)'),
+          `${where}: the spectrum block does not name the 513 bins beside it`);
+        await page.locator('#c-spectrum-size').fill('3');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.bins === '1025',
+          null, {timeout: 5000});
+        const npWide = await npText('spectrum');
+        assert(npWide.includes('(1025,)') && !npWide.includes('(513,)'),
+          `${where}: the spectrum block did not follow the window size`);
+        assert(npWide.includes('np.fft.rfft(xt)'),
+          `${where}: the spectrum block lost its rfft line`);
+        await page.locator('#c-spectrum-size').fill('2');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.bins === '513',
+          null, {timeout: 5000});
+
+        // And the widest block on the page, at both hops: the padded length
+        // and the frame count are the two numbers the equations turn on.
+        await voiceScene(page, 'window');
+        assert.equal((await data()).shape, '513,465');
+        const npHalf = await npText('window');
+        assert(npHalf.includes('(238592,)') && npHalf.includes('(465, 1024)') && npHalf.includes('(513, 465)'),
+          `${where}: the hop block does not name the shapes beside it`);
+        assert(npHalf.includes('sliding_window_view'), `${where}: the hop block lost its view line`);
+        await page.selectOption('#c-window-overlap', 'quarter');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hop === '256',
+          null, {timeout: 8000});
+        const npQuarter = await npText('window');
+        assert(npQuarter.includes('N, H = 1024, 256') && !npQuarter.includes('(465, 1024)'),
+          `${where}: the hop block did not follow the overlap`);
+        await page.selectOption('#c-window-overlap', 'half');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hop === '512',
+          null, {timeout: 8000});
+
         // Low rank: Appendix E, factored in the browser. The factorisation
         // and then the measuring ladder both run behind `busy`, so wait for
         // the phase the scene itself reports rather than a fixed pause.
@@ -1264,6 +1303,26 @@ async function audit(page, where) {
         assert.equal(wi.fftops, '4761600');
         assert.equal(wi.speedup, '51.3', `${where}: the ratio the hop scene prints`);
         assert.equal(wi.contract, 'n', `${where}: n is the axis that disappears`);
+
+        // Every NumPy block, in the state the reader actually finds it. This
+        // is not the same check `npm test` runs: there the three heavy scenes
+        // never finish their factorisation, so their block is the short form
+        // and its width is not the one that ships. Three blocks went out at
+        // 85, 86 and 94 characters under exactly that gap. By this point in
+        // the drive every scene has been reached and settled, so the widest
+        // line here is the widest line there is.
+        for (const id of ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
+                          'scramble', 'lowrank', 'nmf', 'batch']) {
+          await voiceScene(page, id);
+          const text = await page.locator(`#np-${id}`).innerText();
+          assert(text.trim().length > 0, `${where}: #np-${id} is empty`);
+          assert(!/undefined|NaN/.test(text), `${where}: #np-${id} reads "${text}"`);
+          const widest = Math.max(...text.split('\n').map(l => l.length));
+          assert(widest <= 82, `${where}: #np-${id} is ${widest} characters wide`);
+          // The label the frame writes over it, in the page's own language.
+          assert.equal(await page.locator(`#nplab-${id}`).innerText(),
+            lang === 'es' ? 'EN NUMPY' : 'IN NUMPY', `${where}: #nplab-${id}`);
+        }
 
         // Pointing at a letter in the equation bands the axis it names. The
         // hover is published as data-hl and must never disturb the readout,

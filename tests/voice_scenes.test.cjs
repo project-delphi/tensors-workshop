@@ -18,7 +18,7 @@ const SCENES = ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
 // Every string the frame writes into the page, in both languages (see
 // voice-stage.html's fillText() and changed(), and "What the copy says" in
 // voice-scenes/README.md).
-const REQUIRED_COPY = ['tab', 'k', 'h', 'claim', 'concept', 'b', 'predict', 'aria'];
+const REQUIRED_COPY = ['tab', 'k', 'h', 'claim', 'concept', 'b', 'predict', 'aria', 'np'];
 
 // A ctx good enough to run a scene's init() without a browser: a real signal
 // (a full-length tone, the shape every built-in recording actually has) and
@@ -163,6 +163,69 @@ test('a scene writes an eqcap caption exactly where the page has one', () => {
   // makes the scroller a labelled region for a screen reader.
   for (const id of withElement) {
     assert.ok(PAGE.includes(`aria-labelledby="eqcap-${id}"`), `${id}: the scroller is unlabelled`);
+  }
+});
+
+// ------------------------------------------------------- the NumPy blocks
+// The <pre> is static in the page and the lines are the scene's, so the two
+// can drift apart in either direction and the page says nothing: fillText()
+// hides a block whose scene has no code(), and changed() writes into a block
+// that may not be there. This is the pairing, the same shape as the eqcap one.
+
+test('every scene has a code() and a <pre> for it to write into', () => {
+  const withCode = load().filter(s => typeof s.code === 'function').map(s => s.id);
+  const withElement = SCENES.filter(id => PAGE.includes(`id="np-${id}"`));
+  assert.deepEqual(withCode, withElement,
+    'a code() with no <pre> in the page, or a <pre> with no code()');
+  // All ten: every picture on this page is of an array operation, so there is
+  // no scene where the NumPy for it would be a stretch.
+  assert.deepEqual(withElement, SCENES);
+  // The label over each block is the frame's, and it needs an element too --
+  // an unlabelled scrollable region is an axe failure, not a cosmetic one.
+  for (const id of withElement) {
+    assert.ok(PAGE.includes(`id="nplab-${id}"`), `${id}: the block is unlabelled`);
+    assert.ok(PAGE.includes(`aria-labelledby="nplab-${id}"`), `${id}: the <pre> names no label`);
+  }
+});
+
+test('code() returns real lines in both languages, at the opening controls', () => {
+  for (const scene of load()) {
+    for (const lang of ['en', 'es']) {
+      const ctx = makeCtx(scene, lang);
+      scene.init(ctx);
+      if (scene.sync) scene.sync(ctx);
+      const lines = scene.code(ctx);
+      assert.ok(Array.isArray(lines) && lines.length > 0,
+        `${scene.id}: ${lang} code() is empty`);
+      for (const line of lines) {
+        assert.equal(typeof line, 'string', `${scene.id}: ${lang} code() line is not a string`);
+        assert.ok(!/undefined|NaN|\[object/.test(line),
+          `${scene.id}: ${lang} code() line reads "${line}"`);
+      }
+      // A block wider than this scrolls, which is allowed -- `contain:
+      // inline-size` is on the <pre> -- but a line far past the column is a
+      // line nobody reads. The hop scene's sliding_window_view is the widest
+      // thing here and the ceiling is set just above it.
+      const widest = Math.max(...lines.map(l => l.length));
+      assert.ok(widest <= 82, `${scene.id}: ${lang} code() is ${widest} chars wide`);
+    }
+  }
+});
+
+test('no code line carries a data-hl, which the page-wide token grep would read', () => {
+  // The token test below greps the whole page text. A code block is written
+  // into the page at runtime rather than served in it, so it could not trip
+  // that grep today -- but a line containing the attribute would be a trap
+  // waiting for the first person who serves one statically.
+  for (const scene of load()) {
+    for (const lang of ['en', 'es']) {
+      const ctx = makeCtx(scene, lang);
+      scene.init(ctx);
+      if (scene.sync) scene.sync(ctx);
+      for (const line of scene.code(ctx)) {
+        assert.ok(!line.includes('data-hl'), `${scene.id}: ${lang} code() writes a data-hl`);
+      }
+    }
   }
 });
 

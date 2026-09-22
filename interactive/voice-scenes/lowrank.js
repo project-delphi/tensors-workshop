@@ -334,6 +334,35 @@
       };
     },
 
+    // The truncated SVD of the noisy spectrogram, and what rank k keeps. The
+    // page runs a randomised sketch (AC.leftSubspaceSteps) and projects with
+    // U_k U_k^H rather than forming Sigma and V, because it has to stay
+    // interactive -- but the subspace is the same one, and `(U[:, :k] * sv[:k])
+    // @ Vt[:k]` is the form the claim card names, so that is what is written
+    // here. irfft's `n=` is the recording's own length, because the padding
+    // the hop scene added has to come back off.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np;
+      const F = s.stft ? s.stft.F : null, T = s.stft ? s.stft.T : null;
+      const ready = s.phase === "ready";
+      const k = ready ? rungAt(ctx) : null;
+      const kn = k === "full" ? T : k;
+      const rows = [
+        ["Zn = stft(clean + noise)", c.noisy(F, T, s.noisyDb)],
+        ["U, sv, Vt = np.linalg.svd(Zn, full_matrices=False)", c.svd(F, T, T)],
+        ""
+      ];
+      if (ready) {
+        rows.push(["k = " + kn, c.rank(kn, T)]);
+        rows.push(["Zk = (U[:, :k] * sv[:k]) @ Vt[:k]", c.snr(s.snr[k])]);
+        rows.push(["(sv[:k]**2).sum() / (sv**2).sum()", c.kept(s.kept[k])]);
+      } else {
+        rows.push("Zk = (U[:, :k] * sv[:k]) @ Vt[:k]");
+        rows.push("(sv[:k]**2).sum() / (sv**2).sum()");
+      }
+      return ctx.K.code(rows);
+    },
+
     copy: {
       en: {
         tab: "Low rank",
@@ -376,6 +405,13 @@
         hearNames: {
           clean: "the original recording", noisy: "the noisy input",
           rank: (k, ctx) => (k === "full" ? "every component" : "rank " + k)
+        },
+        np: {
+          noisy: (f, t, db) => f ? "(" + f + ", " + t + "), " + db.toFixed(1) + " dB SNR" : "the noisy matrix",
+          svd: (f, t, r) => f ? "(" + f + ", " + r + ") (" + r + ",) (" + r + ", " + t + ")" : "thin: r = min(F, T)",
+          rank: (k, t) => k === t ? "all of them: nothing discarded" : "of " + t,
+          snr: (db) => db.toFixed(2) + " dB, measured",
+          kept: (x) => (x * 100).toFixed(1) + "% of the energy"
         },
         controls: {rung: "Rank kept", hear: "Play"},
         options: {hear: {rank: "the rank above", noisy: "the noisy input", clean: "the original"}},
@@ -457,6 +493,13 @@
         hearNames: {
           clean: "la grabación original", noisy: "la entrada con ruido",
           rank: (k, ctx) => (k === "full" ? "todas las componentes" : "rango " + k)
+        },
+        np: {
+          noisy: (f, t, db) => f ? "(" + f + ", " + t + "), " + db.toFixed(1).replace(".", ",") + " dB SNR" : "la matriz con ruido",
+          svd: (f, t, r) => f ? "(" + f + ", " + r + ") (" + r + ",) (" + r + ", " + t + ")" : "delgada: r = min(F, T)",
+          rank: (k, t) => k === t ? "todas: no se descarta nada" : "de " + t,
+          snr: (db) => db.toFixed(2).replace(".", ",") + " dB, medido",
+          kept: (x) => (x * 100).toFixed(1).replace(".", ",") + " % de la energía"
         },
         controls: {rung: "Rango conservado", hear: "Reproducir"},
         options: {hear: {rank: "el rango de arriba", noisy: "la entrada con ruido", clean: "el original"}},

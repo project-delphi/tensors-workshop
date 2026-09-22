@@ -140,6 +140,24 @@
       };
     },
 
+    // The rounding, exactly as AC.quantize does it: scale by 2^(b-1), round
+    // to the nearest integer, clip to the codes an int of that width holds,
+    // scale back. `np.clip` is not decoration -- without it the one sample at
+    // +1.0 rounds to a code the range has no room for.
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np, b = s.bits;
+      const half = Math.pow(2, b - 1);
+      const q = ctx.AC.quantize(ctx.signal, b);
+      const snr = ctx.AC.snrDb(ctx.signal, q.q);
+      return ctx.K.code([
+        ["half = 2 ** (" + b + " - 1)", c.half(q.levels)],
+        "codes = np.clip(np.round(x * half), -half, half - 1)",
+        ["q = codes / half", c.step(q.step)],
+        ["err = x - q", c.peak(q.maxErr)],
+        ["snr = 10 * np.log10((x**2).sum() / (err**2).sum())", c.snr(snr)]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "Quantization",
@@ -163,6 +181,12 @@
         rounded: (bits) => "the recording rounded to " + bits + " bits",
         playBits: (bits) => "rounded to " + bits + " bits",
         levelsText: (n) => n.toLocaleString("en") + (n > 1024 ? " levels, closer than a pixel" : " levels"),
+        np: {
+          half: (levels) => levels + " levels",
+          step: (st) => "step " + st.toExponential(2),
+          peak: (e) => "worst move " + e.toExponential(1),
+          snr: (db) => Number.isFinite(db) ? db.toFixed(1) + " dB" : "inf: nothing moved"
+        },
         controls: {bits: "Bit depth", zoom: "Zoom", pos: "Position"},
         readout: (bits, levels, step, snr, maxErr, inview, more) =>
           "<b>" + bits + " bits</b> is <b>" + levels.toLocaleString("en") + "</b> levels, " +
@@ -202,6 +226,12 @@
         rounded: (bits) => "la grabación redondeada a " + bits + " bits",
         playBits: (bits) => "redondeada a " + bits + " bits",
         levelsText: (n) => n.toLocaleString("es") + (n > 1024 ? " niveles, más juntos que un píxel" : " niveles"),
+        np: {
+          half: (levels) => levels + " niveles",
+          step: (st) => "paso " + st.toExponential(2),
+          peak: (e) => "peor salto " + e.toExponential(1),
+          snr: (db) => Number.isFinite(db) ? db.toFixed(1).replace(".", ",") + " dB" : "inf: nada se movió"
+        },
         controls: {bits: "Profundidad de bits", zoom: "Zoom", pos: "Posición"},
         readout: (bits, levels, step, snr, maxErr, inview, more) =>
           "<b>" + bits + " bits</b> son <b>" + levels.toLocaleString("es") + "</b> niveles, " +

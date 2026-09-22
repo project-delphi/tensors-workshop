@@ -285,6 +285,25 @@ lowercase** -- `stage.dataset.fN` writes `data-f-n`, so a camel-case key is a
 selector nobody will guess. The shape badge on the stage takes a scene's `shape(ctx)` when it has
 one and its readout's `data.shape` otherwise, and publishes `data-tensorshape`.
 
+**And every section carries the NumPy for its picture**, in a static
+`<pre id="np-<scene>">` right under the equation -- the notation, then the line
+you would type. A scene supplies `code(ctx)`, beside `readout(ctx)` and built
+from the same `ctx.state`, so the shapes in the code cannot disagree with the
+shapes on the stage: drop an eight-second file and both follow it. The frame
+writes it in `changed()`, not `fillText()`, for that reason, and hides the
+block of a scene with no `code()`. The lines are **one copy for both
+languages**, like the `<math>`; only the trailing `#` comments are translated,
+through a `np` key in the copy table, and `K.code(rows)` lays them out from
+`[code, comment]` pairs with the hashes aligned. Three things a new block must
+keep: `contain: inline-size` on the `<pre>` (the `.eqscroll` lesson -- a long
+line otherwise takes the layout past 390px), `tabindex="0"` with
+`aria-labelledby` on it (axe requires a scrollable region to be reachable and
+named), and **82 characters**, which `check_navigation.cjs` measures live on
+every one of the ten. `npm test` measures it too, but only at the opening
+state: the three heavy scenes have not finished factorising there, so their
+short form is what it sees -- which is how three blocks once shipped at 85, 86
+and 94.
+
 The attention stage (`attention-stage.html`, titled *Attention as two
 contractions*) is the same scroller shape as the audio stage, minus the
 transport and the timeline: seven sections down the left, a sticky stage on
