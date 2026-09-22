@@ -984,6 +984,45 @@ async function audit(page, where) {
           null, {timeout: 20000});
         const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
 
+        // Same measurement the attention stage takes, for the same reason:
+        // nothing clips an SVG child laid out past the viewBox and nothing
+        // reports one, it is simply not painted, while every data-* below
+        // goes on reading correctly. Every grid on this stage is sized by a
+        // slider -- a core is r2 x (r0*r1), a factor is 24 x r -- so the
+        // measurement is taken at the corners of those sliders too, not
+        // only where each scene opens. That is how the hour factor shipped
+        // 24 units off the bottom of the cp scene, the tucker core 380
+        // units off its right edge, and a CP term with no column left to
+        // match drew its bar downwards out of the stage entirely.
+        const fits = async (what) => {
+          const box = await page.evaluate(() => {
+            const svg = document.getElementById('draw');
+            const inv = svg.getScreenCTM() && svg.getScreenCTM().inverse();
+            if (!inv) return null;
+            let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+            for (const node of svg.querySelectorAll('*')) {
+              if (typeof node.getBBox !== 'function' || !node.getScreenCTM()) continue;
+              let b;
+              try { b = node.getBBox(); } catch (e) { continue; }
+              if (!b.width && !b.height) continue;
+              const m = inv.multiply(node.getScreenCTM());
+              for (const [px, py] of [[b.x, b.y], [b.x + b.width, b.y],
+                                      [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]]) {
+                const x = m.a * px + m.c * py + m.e, y = m.b * px + m.d * py + m.f;
+                x0 = Math.min(x0, x); y0 = Math.min(y0, y);
+                x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+              }
+            }
+            return {x0, y0, x1, y1};
+          });
+          assert(box, `${where}: ${what} drew nothing measurable`);
+          // A couple of units of slack: a <text> box is the font's, not the
+          // glyphs', and a title sits above its grid's own y.
+          assert(box.x0 >= -3 && box.y0 >= -3 && box.x1 <= 823 && box.y1 <= 423,
+            `${where}: ${what} draws outside the 820x420 viewBox ` +
+            `(x ${box.x0.toFixed(0)}..${box.x1.toFixed(0)}, y ${box.y0.toFixed(0)}..${box.y1.toFixed(0)})`);
+        };
+
         // The tensor scene: it is the one the page opens on. On the runner
         // taxi.json is a same-origin static file, so the fetch always
         // succeeds -- data-standin says so, never typed.
@@ -994,6 +1033,7 @@ async function audit(page, where) {
         assert.equal(d.entries, '480');
         assert.equal(d.order, '3');
         assert.equal(d.busiest, '18', `${where}: the busiest hour, summed across every route, is 18`);
+        await fits('tensor');
 
         // Unfold: the mode-2 unfolding is 24 rows, the entry count is
         // invariant across all three unfoldings.
@@ -1005,6 +1045,7 @@ async function audit(page, where) {
         assert.equal(d.cols, '20');
         assert.equal(d.entries, '480');
         assert.equal(d.invariant, '1');
+        await fits('unfold');
 
         // HOSVD: linalg-core.svd's thin U caps the hour rank at 20, not 24 --
         // both the data and the slider's own max attribute say so.
@@ -1015,6 +1056,12 @@ async function audit(page, where) {
         assert.equal(d.rmax, '20');
         assert.equal(await page.locator('#c-hosvd-r').getAttribute('max'), '20',
           `${where}: the hour rank slider's own max should be 20, not 24`);
+        await fits('hosvd');
+        // 24 x 20 of them: the grid has to shrink to its box, and below the
+        // size at which a number is still a number it shades instead.
+        await page.locator('#c-hosvd-r').fill('20');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.r === '20');
+        await fits('hosvd at r = 20');
 
         // Tucker: the handbook's own published numbers, byte-exact on the
         // claim card, and lowering the hour rank cannot raise the error.
@@ -1035,11 +1082,20 @@ async function audit(page, where) {
         assert.equal(await page.locator('#claim').textContent(),
           'T ≈ G ×₁ A ×₂ B ×₃ C,  480 → 102,  4.71×  at  6.7%',
           `${where}: the tucker claim card should be byte-exact`);
+        await fits('tucker');
         const errBefore = Number(d.err);
         await page.locator('#c-tucker-r2').fill('20');
         await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '2,2,20');
         d = await data();
         assert(Number(d.err) <= errBefore, `${where}: raising the hour rank should not raise the error`);
+        // The core is r2 x (r0 * r1): at every slider's max it is 20 x 20,
+        // 400 numbers, and it has to stay on the stage.
+        await page.locator('#c-tucker-r0').fill('4');
+        await page.locator('#c-tucker-r1').fill('5');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '4,5,20');
+        await fits('tucker at every rank max');
+        assert(Number((await data()).ratio) < 1,
+          `${where}: at full multilinear rank Tucker should cost more than the dense tensor`);
 
         // Rank-1: 33 parameters, and scaling one entry of a is proportional
         // across the whole row by construction.
@@ -1051,6 +1107,7 @@ async function audit(page, where) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.scaled !== undefined);
         d = await data();
         assert.equal(d.proportional, '1');
+        await fits('rank1');
 
         // CP: rank 3 recovers all three planted terms on the synthetic
         // tensor; rank 1 cannot.
@@ -1059,12 +1116,25 @@ async function audit(page, where) {
         d = await data();
         assert.equal(d.recovered, '3');
         assert.equal(d.unique, '1');
+        await fits('cp');
         const errAtR3 = Number(d.err);
         await page.locator('#c-cp-r').fill('1');
         await page.waitForFunction(() => document.getElementById('stage').dataset.r === '1');
         d = await data();
         assert(Number(d.err) > errAtR3, `${where}: rank 1 CP should fit worse than rank 3`);
         assert(Number(d.recovered) < 3, `${where}: rank 1 CP should recover fewer terms`);
+        // Two of the three planted terms have no fitted column left to
+        // match at R = 1. That is a match of zero, not the -1 the search
+        // starts from, which would reach the bar chart as a bar drawn
+        // downwards off the bottom of the stage.
+        await fits('cp at R = 1');
+        // The claim card carries R(I + J + K), so it has to follow R.
+        assert.equal(await page.locator('#claim').textContent(),
+          'T \u2248 \u03a3\u1d63 a\u1d63 \u2297 b\u1d63 \u2297 c\u1d63,  R(I + J + K) = 33',
+          `${where}: the cp claim card should count this R's parameters`);
+        await page.locator('#c-cp-r').fill('6');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.r === '6');
+        await fits('cp at R = 6');
 
         // Budget: the same 99 parameters CP spends at R = 3, spent on the
         // best Tucker triple that fits inside it -- not (3, 3, 3), and never
@@ -1083,6 +1153,21 @@ async function audit(page, where) {
         assert.notEqual(d.tuckerranks, '3,3,3');
         assert(Number(d.tuckererr) >= bestErr - 1e-9,
           `${where}: the closest-params pick should not beat the best-error pick`);
+        assert.equal(d.tuckerfits, '1');
+        await fits('budget');
+        // At R = 1 the cloud is empty and that is the finding: CP spends
+        // 4 + 5 + 24 = 33, and the smallest Tucker there is buys the same
+        // three columns and pays one more for a core. Reading a pick out of
+        // an empty search threw here, on a scene whose every other
+        // assertion passed.
+        await page.locator('#c-budget-cpr').fill('1');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.cpr === '1');
+        d = await data();
+        assert.equal(d.budget, '33');
+        assert.equal(d.tuckerfits, '0', `${where}: no Tucker triple fits CP's budget at R = 1`);
+        assert.equal(d.cheapest, '34', `${where}: the smallest Tucker triple costs one more than CP at R = 1`);
+        assert.equal(d.tuckerranks, '');
+        await fits('budget at R = 1');
 
         // A deep link opens straight on the named scene -- link by scene
         // name, never by a step number that moves on a reorder.
@@ -1734,7 +1819,7 @@ async function audit(page, where) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 5, `${lang}/index: five hero embeds`);
+        assert.equal(await frames.count(), 6, `${lang}/index: six hero embeds`);
         // Only the open tab's widget is fetched. A hidden iframe is not
         // lazy-loaded whatever `loading` says, so the others hold their URL
         // in data-src until the tab script hands it over.
@@ -1761,6 +1846,7 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-linalg').isHidden());
         assert(await page.locator('#hero-panel-voice').isHidden());
         assert(await page.locator('#hero-panel-attention').isHidden());
+        assert(await page.locator('#hero-panel-factor').isHidden());
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
@@ -1792,6 +1878,13 @@ async function audit(page, where) {
           `${lang}/index: attention embed not loaded on opening its tab`);
         assert((await open.getAttribute('href')).includes(`attention-stage.html?lang=${lang}`),
           `${lang}/index: open button did not follow the attention tab`);
+        await page.locator('#hero-tab-factor').click();
+        assert(await page.locator('#hero-panel-factor').isVisible(), `${lang}/index: factorisation tab`);
+        assert(await page.locator('#hero-panel-attention').isHidden());
+        assert(await page.locator('#hero-panel-factor iframe').getAttribute('src'),
+          `${lang}/index: factorisation embed not loaded on opening its tab`);
+        assert((await open.getAttribute('href')).includes(`factor-stage.html?lang=${lang}`),
+          `${lang}/index: open button did not follow the factorisation tab`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);

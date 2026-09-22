@@ -363,8 +363,15 @@ planted rank-1 terms at the taxi tensor's own shape, and publishes
 ~2 kB tensor even so, opens on the `tucker` scene, and is otherwise silent and
 still like every other widget's embed. Link by scene name (`#tensor`,
 `#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`, `#budget`); controls are
-`#c-<scene>-<control>` and readouts `#read-<scene>`. The contract is
-`factor-scenes/README.md`.
+`#c-<scene>-<control>` and readouts `#read-<scene>`. Its pictures are
+measured the way the attention stage's are, and for one reason more: every
+grid here is **sized by a slider** -- `hosvd`'s factor is 24 x r,
+`tucker`'s core is r2 x (r0*r1), `cp` draws three factors R columns wide --
+so the check measures each scene against the `820 x 420` at its opening
+values *and at the corners of the sliders that resize it*, and `K.numGrid`
+takes a `maxW`/`maxH` box, shrinking its cell to fit and shading rather
+than printing below the size at which a number is still a number. The
+contract is `factor-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a

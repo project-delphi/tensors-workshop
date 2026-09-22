@@ -67,9 +67,19 @@
       const bases = FC.hosvdBases(T);
       const h = FC.hosvd(T, [s.r0, s.r1, s.r2], bases);
       const core2d = FC.unfold(h.core, 2); // the core, flattened for a readable grid
-      K.numGrid(svg, core2d, {x: 40, y: 60, digits: 2, cellW: 58, cellH: 18, title: ctx.copy.axCore});
-      K.numGrid(svg, h.factors[0], {x: 40, y: 60 + core2d.length * 18 + 40, digits: 2, cellW: 46, cellH: 16, title: ctx.copy.axA});
-      K.numGrid(svg, h.factors[1], {x: 250, y: 60 + core2d.length * 18 + 40, digits: 2, cellW: 46, cellH: 16, title: ctx.copy.axB});
+      // The core is r2 x (r0 * r1), so the sliders take it from 3 x 4 to
+      // 20 x 20 -- 400 numbers, which is not a table and would in any case
+      // be drawn straight off the stage, where SVG would silently not paint
+      // it. It is given a box instead, and shades rather than prints once a
+      // cell is too small for a number: a core that stops being readable is
+      // the honest picture of a core that has stopped being small. The two
+      // short factors sit under whatever height it came out at.
+      const core = K.numGrid(svg, core2d, {
+        x: 40, y: 60, digits: 2, cellW: 58, cellH: 18, maxW: 400, maxH: 180,
+        heatToken: "--fa-core", title: ctx.copy.axCore
+      });
+      K.numGrid(svg, h.factors[0], {x: 40, y: core.y1 + 40, digits: 2, cellW: 46, cellH: 16, title: ctx.copy.axA});
+      K.numGrid(svg, h.factors[1], {x: 250, y: core.y1 + 40, digits: 2, cellW: 46, cellH: 16, title: ctx.copy.axB});
       const col0 = h.factors[2].map((row) => row[0]);
       let peak = 0;
       for (let i = 1; i < col0.length; i++) if (col0[i] > col0[peak]) peak = i;

@@ -74,6 +74,24 @@ scenes share a control name.
 - **No three.js.** Every picture here is SVG with real `<text>` -- a number
   grid, a bar chart, a slab -- because axe can measure text over a filled
   rectangle and cannot measure it over a canvas.
+- **A picture a slider can grow gets a box.** Nothing clips an SVG child
+  laid out past the `820 x 420` viewBox and nothing reports one -- it is
+  simply not painted, while `readout()` goes on quoting its numbers and
+  every `data-*` assertion still passes. Three scenes draw a grid whose
+  shape a control moves: `hosvd`'s factor is 24 x r, `tucker`'s core is
+  r2 x (r0*r1), and `cp` draws all three factors at R columns each. Each
+  hands `maxW`/`maxH` to `K.numGrid`, which shrinks the cell to fit and,
+  below the size at which a number is still a number, shades each cell by
+  |value| instead of printing it. `check_navigation.cjs` measures the union
+  of every SVG child's box, through the CTM, against the viewBox -- at each
+  scene's opening values **and at the corners of the sliders that resize
+  it**.
+- **A bar's value has to be inside its own scale.** `K.bars` draws
+  `value / max` of its height from a shared zero, so a negative value is
+  drawn *downwards*, straight off the bottom of the stage, where again
+  nothing clips it. `FC.matchTerms` returns a score of 0 for a planted term
+  with no fitted column left to match -- at R below the number of planted
+  terms -- rather than the -1 its search starts from.
 - **Derive before you write.** Anything a control implies goes in `sync()`.
   `readout()` and `draw()` are both called after it, so the readout and the
   `data-*` attributes never describe the state the last frame left behind.

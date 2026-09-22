@@ -93,13 +93,39 @@
   // defaults to 0 (every count on this stage is an integer). Returns
   // {x0, y0, x1, y1, cellW, cellH} so a caller can address a cell later
   // (the hour bars sit under column 0 of a factor grid, say).
+  //
+  // Every grid on this stage is sized by a slider -- a core is r2 x r0*r1,
+  // a factor is 24 x r -- and a grid laid out past the viewBox is not
+  // clipped and not reported, it is simply not drawn. So `opts.maxW` and
+  // `opts.maxH` are the box the grid must stay inside, and the cell shrinks
+  // to fit it. Below the size at which a number is still a number, the grid
+  // stops printing them and shades each cell by |value| instead: a 20 x 20
+  // core is not a table anyone reads, and drawing it as one at 5px would be
+  // a picture that only looks like information. TEXT_FLOOR is where that
+  // switch happens, and `heat` in the return says which one was drawn.
+  const TEXT_FLOOR = 6.5;
   function numGrid(parent, M, opts) {
     const o = opts || {};
     const rows = M.length, cols = M[0].length;
     const digits = o.digits === undefined ? 0 : o.digits;
-    const cellW = o.cellW || (28 + digits * 7);
-    const cellH = o.cellH || 20;
-    const fontSize = Math.min(11.5, cellH * 0.72);
+    let cellW = o.cellW || (28 + digits * 7);
+    let cellH = o.cellH || 20;
+    if (o.maxW) cellW = Math.min(cellW, o.maxW / cols);
+    if (o.maxH) cellH = Math.min(cellH, o.maxH / rows);
+    // The widest string the grid will actually print, so a narrow cell
+    // shrinks the type rather than letting two numbers run together.
+    let wide = 1;
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) wide = Math.max(wide, fmt(M[i][j], digits).length);
+    }
+    const fontSize = Math.min(11.5, cellH * 0.72, (cellW - 4) / (0.62 * wide));
+    const heat = fontSize < TEXT_FLOOR;
+    let peak = 0;
+    if (heat) {
+      for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) peak = Math.max(peak, Math.abs(M[i][j]));
+      }
+    }
     const x0 = o.x || 0, y0 = o.y || 0;
     const g = el("g", {});
     g.appendChild(el("path", {
@@ -115,6 +141,19 @@
       for (let j = 0; j < cols; j++) {
         const cx = x0 + j * cellW + cellW / 2, cy = y0 + i * cellH + cellH / 2;
         const tok = o.at ? o.at(i, j) : null;
+        if (heat) {
+          g.appendChild(el("rect", {
+            x: x0 + j * cellW, y: y0 + i * cellH,
+            width: Math.max(cellW - 0.6, 0.6), height: Math.max(cellH - 0.6, 0.6),
+            fill: css(tok || o.heatToken || "--fa-core"),
+            // A HOSVD core puts almost all of itself in one corner entry, so
+            // a linear ramp off that peak would leave every other cell at
+            // the floor and draw an empty box. The 0.4 power is what makes
+            // the corner's concentration visible as a shape.
+            "fill-opacity": peak ? 0.12 + 0.78 * Math.pow(Math.abs(M[i][j]) / peak, 0.4) : 0.12
+          }));
+          continue;
+        }
         if (tok) {
           g.appendChild(el("rect", {
             x: x0 + j * cellW + 1, y: y0 + i * cellH + 1, width: cellW - 2, height: cellH - 2,
@@ -129,7 +168,7 @@
     }
     if (o.title) label(parent, x0, y0 - 8, o.title, {size: 12, anchor: "start", baseline: "middle"});
     parent.appendChild(g);
-    return {x0, y0, x1: xEnd, y1: y0 + rows * cellH, cellW, cellH};
+    return {x0, y0, x1: xEnd, y1: y0 + rows * cellH, cellW, cellH, heat};
   }
 
   // A bar chart, values against a shared zero, positive up. `opts.at(i)`

@@ -2,7 +2,7 @@
 title: ""
 pagetitle: "Interactivo · Tensores para Aprendizaje Automático"
 lang: es
-description: "Cinco herramientas de navegador para el taller: broadcasting, el tensor de imagen, la atención, proyección y SVD, y el tensor de audio."
+description: "Herramientas de navegador para el taller: broadcasting, el tensor de imagen, la atención, proyección y SVD, el tensor de audio, y Tucker y CP."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -112,6 +112,26 @@ Directo a <a href="../interactive/voice-stage.html?lang=es#frame">una ventana</a
 o <a href="../interactive/voice-stage.html?lang=es#batch">el lote</a>.
 
 <a href="../interactive/voice-stage.html?lang=es" class="resource-button">Abrir el tensor de audio</a>
+:::
+::: {.resource-card}
+### 🚕 Tucker y CP
+
+<span data-language-key="tucker-cp-stage"></span>
+
+Un tensor real, factorizado de dos maneras: 6383 viajes de taxi de Nueva York,
+barrio de origen por barrio de destino por hora del día. Desdobla ese cubo de
+tres formas, toma la SVD de cada desdoblado y recompone un núcleo pequeño más
+tres matrices factor: 480 números reducidos a 102, con un 6,7 % de error, y el
+factor de hora con su pico en la 18 aunque nadie le dijera nunca qué es una
+hora. Luego construye un término de rango 1 con tres vectores, encuentra varios
+a la vez con mínimos cuadrados alternos y gasta un mismo presupuesto de
+parámetros de las dos maneras. Secciones 10 y 11, y apéndice C.
+
+Directo al <a href="../interactive/factor-stage.html?lang=es#tucker">núcleo y sus tres factores</a>,
+a <a href="../interactive/factor-stage.html?lang=es#rank1">un término de rango 1</a>
+o al <a href="../interactive/factor-stage.html?lang=es#budget">mismo presupuesto gastado de dos maneras</a>.
+
+<a href="../interactive/factor-stage.html?lang=es" class="resource-button">Abrir Tucker y CP</a>
 :::
 ::::
 

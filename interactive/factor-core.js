@@ -326,6 +326,12 @@
         const sc = score(r, p);
         if (sc > bestScore) { bestScore = sc; best = r; }
       }
+      // With R below the number of planted terms there is no column left to
+      // match against: that is a score of zero, not the -1 the search
+      // started from. A negative score reaches a bar chart as a bar drawn
+      // downwards off the bottom of the stage, which nothing clips and
+      // nothing reports.
+      if (best < 0) { matches.push({term: p, col: -1, score: 0}); continue; }
       used.add(best);
       matches.push({term: p, col: best, score: bestScore});
     }

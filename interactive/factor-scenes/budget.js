@@ -21,6 +21,18 @@
     axError: "↑ error",
     axKey: "gold: CP  ·  pink: degenerate Tucker  ·  teal: Tucker",
     options: {rule: {"best-error": "best error", "closest-params": "closest params"}},
+    // The claim card is rebuilt on every change, so its words are here
+    // rather than in the scene: "params" reads the same in English under
+    // either rule, and the Spanish table has its own.
+    claimFmt: (cpr, budget, tr, tp) =>
+      `CP R = ${cpr}: ${budget} params  ·  Tucker (${tr.join(", ")}): ${tp} params`,
+    claimNone: (cpr, budget, cheapest) =>
+      `CP R = ${cpr}: ${budget} params  ·  Tucker: nothing under ${cheapest}`,
+    axNone: (cheapest) => `no Tucker triple fits this budget — the smallest one there is costs ${cheapest}`,
+    readoutNone: (cpr, budget, cperr, cheapest) =>
+      `CP at R = <b>${cpr}</b> spends <b>${budget}</b> parameters for <b>${(cperr * 100).toFixed(2)}%</b> error. ` +
+      `No Tucker triple fits inside that budget at all: the smallest one there is, <b>(1, 1, 1)</b>, ` +
+      `costs <b>${cheapest}</b> — the same three columns CP buys, plus one number for the core.`,
     readout: (cpr, budget, cperr, tr, tp, terr, degenerate, better) =>
       `CP at R = <b>${cpr}</b> spends <b>${budget}</b> parameters for <b>${(cperr * 100).toFixed(2)}%</b> error. ` +
       `The <b>${tr.join(", ")}</b> Tucker triple spends <b>${tp}</b> for <b>${(terr * 100).toFixed(2)}%</b> error` +
@@ -42,6 +54,15 @@
     axError: "↑ error",
     axKey: "oro: CP  ·  rosa: Tucker degenerado  ·  verde azulado: Tucker",
     options: {rule: {"best-error": "mejor error", "closest-params": "parámetros más cercanos"}},
+    claimFmt: (cpr, budget, tr, tp) =>
+      `CP R = ${cpr}: ${budget} parámetros  ·  Tucker (${tr.join(", ")}): ${tp} parámetros`,
+    claimNone: (cpr, budget, cheapest) =>
+      `CP R = ${cpr}: ${budget} parámetros  ·  Tucker: nada por debajo de ${cheapest}`,
+    axNone: (cheapest) => `ningún trío de Tucker cabe en este presupuesto — el más pequeño que existe cuesta ${cheapest}`,
+    readoutNone: (cpr, budget, cperr, cheapest) =>
+      `CP en R = <b>${cpr}</b> gasta <b>${budget}</b> parámetros para un error del <b>${(cperr * 100).toFixed(2)}%</b>. ` +
+      `Ningún trío de Tucker cabe en ese presupuesto: el más pequeño que existe, <b>(1, 1, 1)</b>, ` +
+      `cuesta <b>${cheapest}</b> — las mismas tres columnas que compra CP, más un número para el núcleo.`,
     readout: (cpr, budget, cperr, tr, tp, terr, degenerate, better) =>
       `CP en R = <b>${cpr}</b> gasta <b>${budget}</b> parámetros para un error del <b>${(cperr * 100).toFixed(2)}%</b>. ` +
       `El trío de Tucker <b>${tr.join(", ")}</b> gasta <b>${tp}</b> para un error del <b>${(terr * 100).toFixed(2)}%</b>` +
@@ -74,14 +95,19 @@
       });
       const budget = FC.cpParams(T.shape, s.cpr);
       const search = FC.tuckerSearch(T, budget);
+      // At R = 1 the cloud is empty, and that is the finding rather than a
+      // failure: CP spends 4 + 5 + 24 = 33, and the smallest Tucker there
+      // is buys the same three columns and then pays one more for a core.
+      // So `pick` can be undefined, and everything downstream says so.
       const pick = s.rule === "best-error" ? search.best : search.closest;
+      const cheapest = FC.tuckerParams(T.shape, [1, 1, 1]);
       const cpAtR = cpPoints[s.cpr - 1];
-      return {cpPoints, budget, search, pick, cpAtR};
+      return {cpPoints, budget, search, pick, cpAtR, cheapest};
     },
 
     draw(ctx) {
       const svg = ctx.svg;
-      const {cpPoints, search, pick, cpAtR} = this.facts(ctx);
+      const {cpPoints, search, pick, cpAtR, cheapest} = this.facts(ctx);
       const X0 = 60, Y0 = 240, W = 480, H = 180;
       const maxParams = Math.max(budgetSafe(cpPoints), 99) + 5;
       const maxErr = Math.max(0.3, ...cpPoints.map((p) => p.err), ...search.candidates.map((c) => c.error));
@@ -106,27 +132,44 @@
           fill: K.css("--fa-t")
         }));
       });
-      svg.appendChild(K.el("line", {
-        x1: px(cpAtR.params), y1: py(cpAtR.err), x2: px(pick.params), y2: py(pick.error),
-        stroke: K.css("--fa-core"), "stroke-width": 2, "stroke-dasharray": "5 4"
-      }));
-      svg.appendChild(K.el("circle", {
-        cx: px(pick.params), cy: py(pick.error), r: 6, fill: "none",
-        stroke: K.css(pick.degenerate ? "--fa-err" : "--fa-core"), "stroke-width": 2.4
-      }));
+      if (pick) {
+        svg.appendChild(K.el("line", {
+          x1: px(cpAtR.params), y1: py(cpAtR.err), x2: px(pick.params), y2: py(pick.error),
+          stroke: K.css("--fa-core"), "stroke-width": 2, "stroke-dasharray": "5 4"
+        }));
+        svg.appendChild(K.el("circle", {
+          cx: px(pick.params), cy: py(pick.error), r: 6, fill: "none",
+          stroke: K.css(pick.degenerate ? "--fa-err" : "--fa-core"), "stroke-width": 2.4
+        }));
+      } else {
+        // An empty cloud would otherwise be a picture of nothing happening.
+        K.label(svg, X0 + 12, Y0 - H / 2, ctx.copy.axNone(cheapest),
+          {size: 11.5, colour: "--fa-err", anchor: "start"});
+      }
 
       function budgetSafe(pts) { return Math.max(...pts.map((p) => p.params)); }
     },
 
     readout(ctx) {
       const s = ctx.state, c = ctx.copy;
-      const {budget, pick, cpAtR} = this.facts(ctx);
+      const {budget, pick, cpAtR, cheapest} = this.facts(ctx);
+      if (!pick) {
+        return {
+          html: c.readoutNone(s.cpr, budget, cpAtR.err, cheapest),
+          claim: c.claimNone(s.cpr, budget, cheapest),
+          data: {
+            cpr: s.cpr, budget, cperr: cpAtR.err.toFixed(4), tuckerfits: "0", cheapest,
+            tuckerranks: "", tuckerparams: "", tuckererr: "",
+            rule: s.rule, degenerate: "0", better: "0"
+          }
+        };
+      }
       const better = pick.error < cpAtR.err;
       return {
         html: c.readout(s.cpr, budget, cpAtR.err, pick.ranks, pick.params, pick.error, pick.degenerate, better),
-        claim: `CP R = ${s.cpr}: ${budget} params  ·  Tucker (${pick.ranks.join(", ")}): ${pick.params} params`,
+        claim: c.claimFmt(s.cpr, budget, pick.ranks, pick.params),
         data: {
-          cpr: s.cpr, budget, cperr: cpAtR.err.toFixed(4),
+          cpr: s.cpr, budget, cperr: cpAtR.err.toFixed(4), tuckerfits: "1", cheapest,
           tuckerranks: pick.ranks.join(","), tuckerparams: pick.params, tuckererr: pick.error.toFixed(4),
           rule: s.rule, degenerate: pick.degenerate ? "1" : "0", better: better ? "1" : "0"
         }

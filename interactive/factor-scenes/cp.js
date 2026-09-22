@@ -79,11 +79,27 @@
       let matches = [];
       if (s.data === "synthetic") matches = FC.matchTerms(fit, SYN.terms);
       const shapeNames = ["pickup", "dropoff", "hour"];
-      let x = 40;
-      fit.factors.forEach((A, mode) => {
-        const w = Math.min(A.length, 6) * 46;
-        K.numGrid(svg, A, {x, y: 60, digits: 2, cellW: 46, cellH: 16, title: shapeNames[mode]});
-        x += w + 30;
+      // Both dimensions of this picture move: the hour factor has 24 rows,
+      // and all three factors have R columns for an R the reader slides up
+      // to 6. SVG neither clips a child laid out past the viewBox nor
+      // reports one -- it just does not draw it -- so the layout is computed
+      // from what has to fit rather than from the opening values. Three
+      // grids in a row would put the hour one through the term bars below
+      // at R = 3 and off the right edge at R = 6, so the two short factors
+      // stack down the left and the tall one is right-aligned in its own
+      // column, where it can use the full height. Its rows are capped to
+      // end at y = 390, the floor hosvd's own 24-row factor uses.
+      const cellW = 46, cellH = 16;
+      const hour = fit.factors[2];
+      const hourX = 790 - hour[0].length * cellW;
+      K.numGrid(svg, fit.factors[0], {x: 40, y: 60, digits: 2, cellW, cellH, title: shapeNames[0]});
+      K.numGrid(svg, fit.factors[1], {
+        x: 40, y: 60 + fit.factors[0].length * cellH + 38, digits: 2, cellW, cellH,
+        title: shapeNames[1]
+      });
+      K.numGrid(svg, hour, {
+        x: hourX, y: 60, digits: 2, cellW, cellH: Math.min(cellH, 330 / hour.length),
+        title: shapeNames[2]
       });
       K.bars(svg, [1 - fit.error], {
         x: 40, y: 280, w: 60, h: 90, max: 1, at: () => "--fa-t"
@@ -104,12 +120,19 @@
       const T = this.tensorFor(ctx);
       const fit = FC.cpAls(T, s.r, s.iters, 1);
       const params = FC.cpParams(T.shape, s.r);
+      // The claim card carries R(I + J + K), which is 99 only at R = 3 --
+      // the opening value, and the one the copy table's static claim was
+      // written at. It is rebuilt here so it cannot go on asserting a
+      // parameter count the reader has already slid away from. No words in
+      // it, so one form serves both languages.
+      const claim = `T ≈ Σᵣ aᵣ ⊗ bᵣ ⊗ cᵣ,  R(I + J + K) = ${params}`;
       if (s.data === "synthetic") {
         const matches = FC.matchTerms(fit, SYN.terms);
         const recovered = matches.filter((m) => m.score > 0.999).length;
         const unique = recovered === SYN.terms.length;
         return {
           html: c.readoutSyn(s.r, fit.error, recovered, unique),
+          claim,
           data: {
             data: s.data, r: s.r, iters: s.iters, err: fit.error.toFixed(4), params,
             recovered, unique: unique ? "1" : "0"
@@ -118,6 +141,7 @@
       }
       return {
         html: c.readoutTaxi(s.r, fit.error),
+        claim,
         data: {data: s.data, r: s.r, iters: s.iters, err: fit.error.toFixed(4), params, recovered: 0, unique: "0"}
       };
     }

@@ -89,11 +89,16 @@
       });
       K.label(svg, 40, 48, ctx.copy.axSingular(SUBD[s.mode]), {size: 11.5, colour: "--stage-mute"});
       const factor = FC.signFix(U, s.r);
-      // The factor matrix has as many rows as this mode's own dimension --
-      // up to 24, on the hour mode -- so its row height is capped to fit
-      // the stage rather than running the grid off the bottom of it.
-      const cellH = Math.min(18, 330 / factor.length);
-      K.numGrid(svg, factor, {x: 500, y: 60, digits: 3, cellW: 62, cellH, title: ctx.copy.axFactor(s.r)});
+      // The factor matrix is this mode's own dimension by r: up to 24 rows
+      // on the hour mode, and up to 20 columns wherever the slider goes. It
+      // is given the box it has -- x 500 to 790, and down to y 390 -- and
+      // shades rather than prints once a cell is too small for a number,
+      // because a grid drawn past the viewBox is not clipped, it is just
+      // never painted, while the readout goes on quoting its numbers.
+      K.numGrid(svg, factor, {
+        x: 500, y: 60, digits: 3, cellW: 62, cellH: 18, maxW: 290, maxH: 330,
+        heatToken: "--fa-fac", title: ctx.copy.axFactor(s.r)
+      });
     },
 
     readout(ctx) {

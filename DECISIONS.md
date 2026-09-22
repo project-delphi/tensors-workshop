@@ -576,6 +576,35 @@ moves down together, no scene has to learn how tall the claim came out, and
 the check's viewBox assertion still reads the scenes' own coordinates
 unchanged.
 
+**Every picture on the factorisation stage is measured at the corners of
+its own sliders, not only where it opens.** The attention stage learned that
+`data-*` can be right while the picture is wrong; this one adds the reason
+it happens here. Every grid on this stage is *sized by a control* -- the
+HOSVD factor is 24 x r, the Tucker core is r2 x (r0*r1), CP draws three
+factors R columns wide -- so a layout that fits at the opening values is
+saying nothing about the layout two drags later. Measured that way, four
+of the seven scenes were drawing off the stage: CP's 24-row hour factor ran
+24 units past the bottom at every rank; the Tucker core ran 380 units past
+the right edge and 120 past the bottom at (4, 5, 20); the HOSVD factor ran
+to x = 1740 at r = 20; and two of CP's three planted-term bars were drawn
+*downwards* off the bottom at R = 1, because `matchTerms` handed a bar
+chart the -1 its search starts from when there was no fitted column left to
+match. Every one of those states was reachable with one drag, every
+`data-*` on them was correct, and the readout went on quoting numbers for
+cells nobody could see. The same drag also found the CP claim card frozen
+at `R(I + J + K) = 99` whatever R was, and a `budget` scene that threw at
+R = 1 -- where the finding is that no Tucker triple fits at all, since CP
+spends 33 and the smallest Tucker there is buys the same three columns and
+pays one more for a core.
+
+So `K.numGrid` now takes the box it must stay inside and shrinks its cell
+to fit, and below the size at which a number is still a number it shades
+each cell by |value| rather than printing 400 of them at 5px -- a 20 x 20
+core that has stopped being readable is the honest picture of a core that
+has stopped being small. The check measures the union of every SVG child's
+box through the CTM, at each scene's opening values and at the slider
+corners that resize it.
+
 **The factorisation stage's HOSVD is in-page, with the SVD cached per
 unfolding.** A rank slider only slices columns out of a basis three.js-free
 `linalg-core.svd` has already found, so `hosvdBases(T)` runs the three

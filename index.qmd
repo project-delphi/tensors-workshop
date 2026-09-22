@@ -45,6 +45,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
       <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
       <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Attention</button>
+      <button type="button" role="tab" id="hero-tab-factor" aria-selected="false" aria-controls="hero-panel-factor" tabindex="-1">Tucker &amp; CP</button>
     </div>
     <a class="hero-open" data-hero-open href="interactive/tensor-visualizer.html?lang=en">Open the full widget →</a>
   </div>
@@ -67,6 +68,10 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" data-open="interactive/attention-stage.html?lang=en" hidden>
     <iframe class="hero-embed" data-src="interactive/attention-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: attention scores turned into weights that sum to one"></iframe>
     <p class="hero-caption">Softmax turns a row of scores into weights that sum to <code>1</code> — one query attending to four keys.</p>
+  </div>
+  <div class="hero-panel" id="hero-panel-factor" role="tabpanel" aria-labelledby="hero-tab-factor" data-open="interactive/factor-stage.html?lang=en" hidden>
+    <iframe class="hero-embed" data-src="interactive/factor-stage.html?lang=en&amp;embed=1&amp;theme=navy" title="Live demo: a taxi tensor factorised into a small core plus three factor matrices"></iframe>
+    <p class="hero-caption">Real taxi trips, <code>4 × 5 × 24</code>: 480 numbers become a core plus three factors, at 6.7% error.</p>
   </div>
   <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. The moves, live.</p>
 </div>
