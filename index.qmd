@@ -2,7 +2,7 @@
 title: ""
 pagetitle: "Tensors for Machine Learning"
 lang: en
-description: "Master tensors in 210 minutes with real-world data and hands-on Python code."
+description: "Explore tensors in 210 minutes with real data, interactive visuals, and hands-on NumPy notebooks."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -25,12 +25,14 @@ theme:
 A hands-on session on reshaping, solving, convolving and factorizing tensors — written in NumPy, run on real images, video and city data.
 
 ::: {.hero-actions}
-[Start the workshop →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
+[Read the handbook →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 
-[Open the setup notebook]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
+[Set up in Colab]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
 :::
 
 [No install — every notebook runs in Google Colab.]{.hero-note}
+
+[New here? Review the required preparation.](#prerequisites){.hero-prep}
 
 [Taught in English · Questions in English & Spanish]{.hero-language}
 :::
@@ -39,7 +41,7 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
 ```{=html}
 <div class="hero-demos" data-hero-demos>
   <div class="hero-bar">
-    <div class="hero-tabs" role="tablist" aria-label="Live demos">
+    <div class="hero-tabs" role="tablist" aria-label="Widget previews">
       <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Image</button>
       <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Linear algebra</button>
@@ -139,10 +141,11 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   tabs.forEach(function (tab, i) {
     tab.addEventListener("click", function () { show(i); });
     tab.addEventListener("keydown", function (e) {
-      var k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (!k) return;
+      var k = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 3, ArrowUp: -3 }[e.key];
+      var n = e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1
+        : k ? (i + k + tabs.length) % tabs.length : null;
+      if (n === null) return;
       e.preventDefault();
-      var n = (i + k + tabs.length) % tabs.length;
       show(n);
       tabs[n].focus();
     });
@@ -168,56 +171,61 @@ A hands-on session on reshaping, solving, convolving and factorizing tensors —
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Workshop repository</strong><span>Explore the code on GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on Discord</span></p></div>
 </div>
+```
+
+## Before the workshop {#prerequisites}
+
+<span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
+
+Basic linear algebra is enough to begin. Complete the required steps before the session.
+
+:::: {.prerequisite-list}
+::: {.prerequisite-step}
+### Step 1: Core Concepts [Required]{.step-badge}
+
+<span data-language-key="step-1-core-concepts-required"></span>
+
+Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
+:::
+
+::: {.prerequisite-step}
+### Step 2: Setup [Required, 5 mins]{.step-badge}
+
+<span data-language-key="step-2-setup-required-5-mins"></span>
+
+Run [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) in Google Colab to pre-load datasets.
+:::
+
+::: {.prerequisite-step}
+### Step 3: Visual Refresher [Optional]{.step-badge .step-optional}
+
+<span data-language-key="step-3-visual-refresher-optional"></span>
+
+Watch 3Blue1Brown's [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}).
+:::
+::::
+
+```{=html}
 <section class="workshop-audience" aria-labelledby="who-this-is-for">
   <h2 id="who-this-is-for">Who this is for</h2>
   <div class="audience-grid">
     <article class="audience-card">
-      <h3>Software Engineers Pivoting to AI</h3>
-      <ul>
-        <li>Stop guessing array shapes—read PyTorch and JAX code with total confidence.</li>
-        <li>Bridge the gap between clean Python architecture and high-dimensional ML math.</li>
-        <li>Turn your engineering background into practical deep learning fluency.</li>
-      </ul>
+      <h3>Software engineers entering ML</h3>
+      <p>Practice reading tensor shapes in NumPy and recognize the same operations in PyTorch and JAX.</p>
     </article>
     <article class="audience-card">
-      <h3>Data Analysts &amp; Traditional Data Scientists</h3>
-      <ul>
-        <li>Break out of 2D DataFrames and master the 3D/4D tensors powering deep learning.</li>
-        <li>Move beyond Scikit-Learn to process complex image, text, and sequence data.</li>
-        <li>Upgrade your tabular analytics skills into neural network expertise.</li>
-      </ul>
+      <h3>Data analysts and scientists</h3>
+      <p>Extend familiar tabular workflows to images, sequences, and higher-dimensional arrays.</p>
     </article>
     <article class="audience-card">
-      <h3>Self-Taught ML Practitioners</h3>
-      <ul>
-        <li>Never get stuck on a <code>RuntimeError: size mismatch</code> again.</li>
-        <li>Look under the hood of high-level APIs to debug broken tensor operations fast.</li>
-        <li>Stop treating models as black boxes—understand what happens at every layer.</li>
-      </ul>
+      <h3>Self-taught ML practitioners</h3>
+      <p>Trace shape mismatches through indexing, reshaping, broadcasting, and contractions.</p>
     </article>
     <article class="audience-card">
-      <h3>STEM Grads (CS, Physics, Math)</h3>
-      <ul>
-        <li>Turn theoretical linear algebra into hands-on, production-ready Python code.</li>
-        <li>Apply matrix decompositions directly to data compression and neural networks.</li>
-        <li>Connect abstract classwork to real-world machine learning architectures.</li>
-      </ul>
+      <h3>STEM graduates</h3>
+      <p>Connect linear algebra to working Python examples of decompositions and ML.</p>
     </article>
   </div>
-</section>
-<section class="learning-journey" aria-labelledby="journey-title">
-  <p class="section-eyebrow">THE LEARNING JOURNEY</p>
-  <h2 id="journey-title">Your path from arrays to ML.</h2>
-  <p class="journey-intro">Six connected ideas. Code them. See them. Make them click.</p>
-  <ol class="curriculum-track" aria-label="Learning journey">
-    <li><span class="stage-number">01</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Foundations</h3><p>Read shapes and axes.</p></li>
-    <li><span class="stage-number">02</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Tensor Operations</h3><p>Reshape. Broadcast. Contract.</p></li>
-    <li><span class="stage-number">03</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Linear Algebra</h3><p>Solve systems. Find structure.</p></li>
-    <li><span class="stage-number">04</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convolutions</h3><p>Turn pixels into features.</p><span class="stage-extra">Take-home</span></li>
-    <li><span class="stage-number">05</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizations</h3><p>Compress without losing the plot.</p></li>
-    <li><span class="stage-number">06</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>ML Applications</h3><p>Connect the math to models.</p></li>
-  </ol>
-  <a class="journey-link" href="./notebooks.html">Explore the notebooks <span aria-hidden="true">→</span></a>
 </section>
 ```
 
@@ -287,46 +295,31 @@ Core papers, textbook chapters, and repository source code.
 :::
 ::::
 
+```{=html}
+<section class="learning-journey" aria-labelledby="journey-title">
+  <p class="section-eyebrow">THE LEARNING JOURNEY</p>
+  <h2 id="journey-title">Your path from arrays to ML.</h2>
+  <p class="journey-intro">Six connected ideas. Code them. See them. Make them click.</p>
+  <ol class="curriculum-track" aria-label="Learning journey">
+    <li><span class="stage-number">01</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Foundations</h3><p>Read shapes and axes.</p></li>
+    <li><span class="stage-number">02</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Tensor Operations</h3><p>Reshape. Broadcast. Contract.</p></li>
+    <li><span class="stage-number">03</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Linear Algebra</h3><p>Solve systems. Find structure.</p></li>
+    <li><span class="stage-number">04</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convolutions</h3><p>Turn pixels into features.</p><span class="stage-extra">Take-home</span></li>
+    <li><span class="stage-number">05</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizations</h3><p>Compress without losing the plot.</p></li>
+    <li><span class="stage-number">06</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>ML Applications</h3><p>Connect the math to models.</p></li>
+  </ol>
+  <a class="journey-link" href="./notebooks.html">Explore the notebooks <span aria-hidden="true">→</span></a>
+</section>
+```
+
 ## Try one in the browser {#interactive}
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-No install and no account. Type two shapes and watch NumPy line them up; turn
-three photographs into cubes and break the picture with a reshape; scroll a
-sequence through attention one contraction at a time; watch a circle become an
-ellipse; or hear what a transpose does to a recording.
+Explore the complete set of widgets, from broadcasting and image layouts to
+attention, audio, and factorization. No installation or account needed.
 
 [See them all](interactive.qmd){.resource-button}
-
-## Familiar with basic linear algebra? You're ready to go. {#prerequisites}
-
-<span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
-
-:::: {.prerequisite-list}
-::: {.prerequisite-step}
-### Step 1: Core Concepts [Required]{.step-badge}
-
-<span data-language-key="step-1-core-concepts-required"></span>
-
-Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
-:::
-
-::: {.prerequisite-step}
-### Step 2: Setup [Required, 5 mins]{.step-badge}
-
-<span data-language-key="step-2-setup-required-5-mins"></span>
-
-Run [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) in Google Colab to pre-load datasets.
-:::
-
-::: {.prerequisite-step}
-### Step 3: Visual Refresher [Optional]{.step-badge .step-optional}
-
-<span data-language-key="step-3-visual-refresher-optional"></span>
-
-Watch 3Blue1Brown's [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}).
-:::
-::::
 
 ## {{< var workshop.minutes >}} minutes. One hands-on rhythm. {#how-we-work}
 

@@ -2,7 +2,7 @@
 title: ""
 pagetitle: "Tensores para Aprendizaje Automático"
 lang: es
-description: "Domina los tensores en 210 minutos con datos reales y ejercicios prácticos en Python."
+description: "Explora los tensores en 210 minutos con datos reales, visualizaciones interactivas y cuadernos prácticos de NumPy."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -25,12 +25,14 @@ theme:
 Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tensores — escrita en NumPy, sobre imágenes, vídeo y datos urbanos reales.
 
 ::: {.hero-actions}
-[Empieza el taller →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
+[Lee el manual →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 
-[Abre el cuaderno de preparación]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
+[Prepárate en Colab]({{< var repo.colab_base >}}/00-setup-and-data.ipynb){.hero-secondary}
 :::
 
 [Sin instalación — cada cuaderno funciona en Google Colab.]{.hero-note}
+
+[¿Es tu primera vez? Revisa la preparación obligatoria.](#requisitos-previos){.hero-prep}
 
 [Taller en inglés · Preguntas en español e inglés]{.hero-language}
 :::
@@ -39,7 +41,7 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
 ```{=html}
 <div class="hero-demos" data-hero-demos>
   <div class="hero-bar">
-    <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
+    <div class="hero-tabs" role="tablist" aria-label="Vistas previas de las herramientas">
       <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Imagen</button>
       <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
@@ -49,27 +51,27 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
     </div>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
-    <a class="hero-still no-external" href="../interactive/image-tensor.html?lang=es"><img src="../images/hero-image-tensor-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: tres fotos como un tensor 4-D, transpuesto y luego con reshape"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
+    <a class="hero-still no-external" href="../interactive/image-tensor.html?lang=es"><img src="../images/hero-image-tensor-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: tres fotos como un tensor 4-D, transpuesto y luego con reshape"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
   <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
-    <a class="hero-still no-external" href="../interactive/broadcasting-simulator.html?lang=es"><img src="../images/hero-broadcasting-simulator-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: dos formas alineadas desde la derecha y estiradas"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
+    <a class="hero-still no-external" href="../interactive/broadcasting-simulator.html?lang=es"><img src="../images/hero-broadcasting-simulator-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: dos formas alineadas desde la derecha y estiradas"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
   <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
-    <a class="hero-still no-external" href="../interactive/linalg-stage.html?lang=es"><img src="../images/hero-linalg-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
+    <a class="hero-still no-external" href="../interactive/linalg-stage.html?lang=es"><img src="../images/hero-linalg-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Una matriz lleva el círculo unitario a una elipse: <code>A v = σ u</code>, un vector a la vez.</p>
   </div>
   <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" hidden>
-    <a class="hero-still no-external" href="../interactive/voice-stage.html?lang=es"><img src="../images/hero-voice-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: una voz cortada en ventanas, convertida en una matriz de frecuencia por tiempo"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
+    <a class="hero-still no-external" href="../interactive/voice-stage.html?lang=es"><img src="../images/hero-voice-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: una voz cortada en ventanas, convertida en una matriz de frecuencia por tiempo"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Una voz se convierte en una matriz — <code>513 × 465</code> — y puedes oír qué le hace una transposición.</p>
   </div>
   <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" hidden>
-    <a class="hero-still no-external" href="../interactive/attention-stage.html?lang=es"><img src="../images/hero-attention-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: las puntuaciones de atención convertidas en pesos que suman uno"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
+    <a class="hero-still no-external" href="../interactive/attention-stage.html?lang=es"><img src="../images/hero-attention-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: las puntuaciones de atención convertidas en pesos que suman uno"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Softmax convierte una fila de puntuaciones en pesos que suman <code>1</code>: una consulta atendiendo a cuatro claves.</p>
   </div>
   <div class="hero-panel" id="hero-panel-factor" role="tabpanel" aria-labelledby="hero-tab-factor" hidden>
-    <a class="hero-still no-external" href="../interactive/factor-stage.html?lang=es"><img src="../images/hero-factor-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: un tensor de taxis factorizado en un núcleo pequeño más tres matrices factor"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
+    <a class="hero-still no-external" href="../interactive/factor-stage.html?lang=es"><img src="../images/hero-factor-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: un tensor de taxis factorizado en un núcleo pequeño más tres matrices factor"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Viajes de taxi reales, <code>4 × 5 × 24</code>: 480 números se convierten en un núcleo más tres factores, con un 6,7 % de error.</p>
   </div>
   <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Haz clic en una imagen para probarla en vivo.</p>
@@ -139,10 +141,11 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   tabs.forEach(function (tab, i) {
     tab.addEventListener("click", function () { show(i); });
     tab.addEventListener("keydown", function (e) {
-      var k = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
-      if (!k) return;
+      var k = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 3, ArrowUp: -3 }[e.key];
+      var n = e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1
+        : k ? (i + k + tabs.length) % tabs.length : null;
+      if (n === null) return;
       e.preventDefault();
-      var n = (i + k + tabs.length) % tabs.length;
       show(n);
       tabs[n].focus();
     });
@@ -168,56 +171,61 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
   <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Discusión en directo</strong><span>Grupos pequeños en Discord</span></p></div>
 </div>
+```
+
+## Antes del taller {#requisitos-previos}
+
+<span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
+
+Basta con conocer el álgebra lineal básica. Completa los pasos obligatorios antes de la sesión.
+
+:::: {.prerequisite-list}
+::: {.prerequisite-step}
+### Paso 1: Conceptos básicos [Obligatorio]{.step-badge}
+
+<span data-language-key="step-1-core-concepts-required"></span>
+
+Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}).
+:::
+
+::: {.prerequisite-step}
+### Paso 2: Preparación [Obligatorio, 5 min]{.step-badge}
+
+<span data-language-key="step-2-setup-required-5-mins"></span>
+
+Ejecuta el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Google Colab para cargar los conjuntos de datos.
+:::
+
+::: {.prerequisite-step}
+### Paso 3: Repaso visual [Opcional]{.step-badge .step-optional}
+
+<span data-language-key="step-3-visual-refresher-optional"></span>
+
+Mira [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}), de 3Blue1Brown.
+:::
+::::
+
+```{=html}
 <section class="workshop-audience" aria-labelledby="para-quien-es">
   <h2 id="para-quien-es">¿Para quién es este taller?</h2>
   <div class="audience-grid">
     <article class="audience-card">
-      <h3>Ingenieros de software que dan el salto a la IA</h3>
-      <ul>
-        <li>Deja de adivinar las formas de los arrays: lee código de PyTorch y JAX con total confianza.</li>
-        <li>Conecta una arquitectura limpia en Python con las matemáticas de alta dimensionalidad del ML.</li>
-        <li>Convierte tu experiencia en ingeniería en soltura práctica con el aprendizaje profundo.</li>
-      </ul>
+      <h3>Ingenieros de software que entran al ML</h3>
+      <p>Practica la lectura de formas tensoriales en NumPy y reconoce las mismas operaciones en PyTorch y JAX.</p>
     </article>
     <article class="audience-card">
-      <h3>Analistas de datos y científicos de datos tradicionales</h3>
-      <ul>
-        <li>Sal de los DataFrames 2D y domina los tensores 3D/4D que impulsan el aprendizaje profundo.</li>
-        <li>Ve más allá de Scikit-Learn para procesar imágenes, texto y secuencias complejas.</li>
-        <li>Amplía tus habilidades de análisis tabular hasta dominar las redes neuronales.</li>
-      </ul>
+      <h3>Analistas y científicos de datos</h3>
+      <p>Extiende los flujos de trabajo tabulares a imágenes, secuencias y arrays de más dimensiones.</p>
     </article>
     <article class="audience-card">
       <h3>Practicantes autodidactas de ML</h3>
-      <ul>
-        <li>No vuelvas a quedarte atascado con un <code>RuntimeError: size mismatch</code>.</li>
-        <li>Explora el funcionamiento interno de las API de alto nivel para depurar rápidamente operaciones tensoriales que fallan.</li>
-        <li>Deja de tratar los modelos como cajas negras: entiende qué ocurre en cada capa.</li>
-      </ul>
+      <p>Rastrea errores de formas al indexar, remodelar, expandir y contraer tensores.</p>
     </article>
     <article class="audience-card">
-      <h3>Graduados STEM (Informática, Física, Matemáticas)</h3>
-      <ul>
-        <li>Lleva la teoría del álgebra lineal a código práctico en Python, listo para producción.</li>
-        <li>Aplica descomposiciones matriciales directamente a la compresión de datos y las redes neuronales.</li>
-        <li>Conecta los conceptos abstractos de clase con arquitecturas reales de aprendizaje automático.</li>
-      </ul>
+      <h3>Graduados STEM</h3>
+      <p>Conecta el álgebra lineal con ejemplos funcionales de descomposiciones y ML en Python.</p>
     </article>
   </div>
-</section>
-<section class="learning-journey" aria-labelledby="journey-title">
-  <p class="section-eyebrow">LA RUTA DE APRENDIZAJE</p>
-  <h2 id="journey-title">Tu ruta de los arrays al ML.</h2>
-  <p class="journey-intro">Seis ideas conectadas. Programa. Visualiza. Comprende.</p>
-  <ol class="curriculum-track" aria-label="Ruta de aprendizaje">
-    <li><span class="stage-number">01</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Fundamentos</h3><p>Lee formas y ejes.</p></li>
-    <li><span class="stage-number">02</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Operaciones tensoriales</h3><p>Transforma. Expande. Contrae.</p></li>
-    <li><span class="stage-number">03</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Álgebra lineal</h3><p>Resuelve sistemas. Busca estructura.</p></li>
-    <li><span class="stage-number">04</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convoluciones</h3><p>De píxeles a características.</p><span class="stage-extra">Para casa</span></li>
-    <li><span class="stage-number">05</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizaciones</h3><p>Comprime. Conserva lo esencial.</p></li>
-    <li><span class="stage-number">06</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>Aplicaciones de ML</h3><p>Conecta las matemáticas con los modelos.</p></li>
-  </ol>
-  <a class="journey-link" href="./notebooks.html">Explora los cuadernos <span aria-hidden="true">→</span></a>
 </section>
 ```
 
@@ -287,47 +295,31 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 :::
 ::::
 
+```{=html}
+<section class="learning-journey" aria-labelledby="journey-title">
+  <p class="section-eyebrow">LA RUTA DE APRENDIZAJE</p>
+  <h2 id="journey-title">Tu ruta de los arrays al ML.</h2>
+  <p class="journey-intro">Seis ideas conectadas. Programa. Visualiza. Comprende.</p>
+  <ol class="curriculum-track" aria-label="Ruta de aprendizaje">
+    <li><span class="stage-number">01</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 49V15m0 34h43M12 49l26-25"/><path d="m8 21 4-6 4 6m33 24 6 4-6 4m-19-24 8-1-1 8"/><circle cx="38" cy="24" r="3"/></svg><h3>Fundamentos</h3><p>Lee formas y ejes.</p></li>
+    <li><span class="stage-number">02</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="12" width="20" height="30" rx="2"/><path d="M17 12v30M7 22h20M7 32h20m8-11h20m-5-5 5 5-5 5"/><rect x="35" y="35" width="24" height="16" rx="2"/><path d="M43 35v16m8-16v16M35 43h24"/></svg><h3>Operaciones tensoriales</h3><p>Transforma. Expande. Contrae.</p></li>
+    <li><span class="stage-number">03</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 52V12m0 40h46M9 52l36-29M9 52l12-34"/><path d="m18 24 3-6 3 6m14-1h7v7"/><path d="m21 18 24 5 10 27-34-32Z" opacity=".35"/></svg><h3>Álgebra lineal</h3><p>Resuelve sistemas. Busca estructura.</p></li>
+    <li><span class="stage-number">04</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 10h38v38H8zM8 22h38M8 35h38M20 10v38M33 10v38" opacity=".45"/><path d="M20 22h26v26H20z" fill="currentColor" fill-opacity=".15"/><path d="m47 49 11 7m-6-8 6 8-9 1"/></svg><h3>Convoluciones</h3><p>De píxeles a características.</p><span class="stage-extra">Para casa</span></li>
+    <li><span class="stage-number">05</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="17" width="20" height="30" rx="2"/><path d="M30 28h7m-7 7h7"/><rect x="42" y="17" width="7" height="30" rx="1"/><rect x="54" y="17" width="7" height="12" rx="1"/></svg><h3>Factorizaciones</h3><p>Comprime. Conserva lo esencial.</p></li>
+    <li><span class="stage-number">06</span><svg width="60" height="58" viewBox="0 0 66 64" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m12 17 21 0m-21 0 21 30m-21-15 21-15m-21 15 21 15m-21 0 21-30m-21 30 21 0m0-30 20 15m-20 15 20-15" opacity=".5"/><g fill="currentColor"><circle cx="12" cy="17" r="4"/><circle cx="12" cy="32" r="4"/><circle cx="12" cy="47" r="4"/><circle cx="33" cy="17" r="4"/><circle cx="33" cy="47" r="4"/><circle cx="53" cy="32" r="5"/></g></svg><h3>Aplicaciones de ML</h3><p>Conecta las matemáticas con los modelos.</p></li>
+  </ol>
+  <a class="journey-link" href="./notebooks.html">Explora los cuadernos <span aria-hidden="true">→</span></a>
+</section>
+```
+
 ## Pruébalos en el navegador {#interactive}
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-Sin instalar nada y sin cuenta. Escribe dos formas y mira cómo NumPy las alinea;
-convierte tres fotografías en cubos y rompe la imagen con un reshape; recorre una
-secuencia a través de la atención, una contracción cada vez; observa cómo una
-circunferencia se vuelve una elipse; u oye qué le hace una transposición a una
-grabación.
+Explora todas las herramientas, desde broadcasting e imágenes hasta atención,
+audio y factorización. No necesitas instalar nada ni crear una cuenta.
 
 <a href="interactive.html" class="resource-button">Verlas todas</a>
-
-## ¿Conoces el álgebra lineal básica? Ya puedes empezar. {#requisitos-previos}
-
-<span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
-
-:::: {.prerequisite-list}
-::: {.prerequisite-step}
-### Paso 1: Conceptos básicos [Obligatorio]{.step-badge}
-
-<span data-language-key="step-1-core-concepts-required"></span>
-
-Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}).
-:::
-
-::: {.prerequisite-step}
-### Paso 2: Preparación [Obligatorio, 5 min]{.step-badge}
-
-<span data-language-key="step-2-setup-required-5-mins"></span>
-
-Ejecuta el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Google Colab para cargar los conjuntos de datos.
-:::
-
-::: {.prerequisite-step}
-### Paso 3: Repaso visual [Opcional]{.step-badge .step-optional}
-
-<span data-language-key="step-3-visual-refresher-optional"></span>
-
-Mira [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}), de 3Blue1Brown.
-:::
-::::
 
 ## {{< var workshop.minutes >}} minutos de práctica a un ritmo constante. {#cómo-trabajamos}
 
