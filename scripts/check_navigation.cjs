@@ -979,6 +979,217 @@ async function audit(page, where) {
         }
       }
 
+      async function driveFactor(page, where, lang) {
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
+          null, {timeout: 20000});
+        const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
+
+        // Same measurement the attention stage takes, for the same reason:
+        // nothing clips an SVG child laid out past the viewBox and nothing
+        // reports one, it is simply not painted, while every data-* below
+        // goes on reading correctly. Every grid on this stage is sized by a
+        // slider -- a core is r2 x (r0*r1), a factor is 24 x r -- so the
+        // measurement is taken at the corners of those sliders too, not
+        // only where each scene opens. That is how the hour factor shipped
+        // 24 units off the bottom of the cp scene, the tucker core 380
+        // units off its right edge, and a CP term with no column left to
+        // match drew its bar downwards out of the stage entirely.
+        const fits = async (what) => {
+          const box = await page.evaluate(() => {
+            const svg = document.getElementById('draw');
+            const inv = svg.getScreenCTM() && svg.getScreenCTM().inverse();
+            if (!inv) return null;
+            let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+            for (const node of svg.querySelectorAll('*')) {
+              if (typeof node.getBBox !== 'function' || !node.getScreenCTM()) continue;
+              let b;
+              try { b = node.getBBox(); } catch (e) { continue; }
+              if (!b.width && !b.height) continue;
+              const m = inv.multiply(node.getScreenCTM());
+              for (const [px, py] of [[b.x, b.y], [b.x + b.width, b.y],
+                                      [b.x, b.y + b.height], [b.x + b.width, b.y + b.height]]) {
+                const x = m.a * px + m.c * py + m.e, y = m.b * px + m.d * py + m.f;
+                x0 = Math.min(x0, x); y0 = Math.min(y0, y);
+                x1 = Math.max(x1, x); y1 = Math.max(y1, y);
+              }
+            }
+            return {x0, y0, x1, y1};
+          });
+          assert(box, `${where}: ${what} drew nothing measurable`);
+          // A couple of units of slack: a <text> box is the font's, not the
+          // glyphs', and a title sits above its grid's own y.
+          assert(box.x0 >= -3 && box.y0 >= -3 && box.x1 <= 823 && box.y1 <= 423,
+            `${where}: ${what} draws outside the 820x420 viewBox ` +
+            `(x ${box.x0.toFixed(0)}..${box.x1.toFixed(0)}, y ${box.y0.toFixed(0)}..${box.y1.toFixed(0)})`);
+        };
+
+        // This is a scroller, so a hash scrolls the section into view and the
+        // step machine follows the scroll: the stage passes through pictures
+        // on the way, and `data-scene` can read the destination for a frame
+        // while the rest of the dataset is still the scene it is leaving --
+        // or, as CI found here, is already cleared and not yet rewritten, so
+        // `data-recovered` read `undefined` where `3` was expected. On this
+        // Mac that window is too small to hit. So: wait for the scrolling to
+        // stop, then for the scene, then for a key only that scene publishes,
+        // and measure the picture before believing a number in it. The
+        // attention stage's open() and the audio stage's voiceScene() wait
+        // the same way, and AGENTS.md states the rule.
+        const open = async (id, key) => {
+          await page.evaluate((name) => { location.hash = '#' + name; }, id);
+          await page.waitForFunction(() => new Promise(done => {
+            const was = window.scrollY;
+            setTimeout(() => done(window.scrollY === was), 250);
+          }), null, {timeout: 15000});
+          await page.waitForFunction(([name, k]) => {
+            const ds = document.getElementById('stage').dataset;
+            return ds.scene === name && ds[k] !== undefined;
+          }, [id, key], {timeout: 15000})
+            .catch(() => assert.fail(`${where}: #${id} did not open with its own readout`));
+          await fits(id);
+        };
+
+        // The tensor scene: it is the one the page opens on. On the runner
+        // taxi.json is a same-origin static file, so the fetch always
+        // succeeds -- data-standin says so, never typed.
+        let d = await data();
+        assert.equal(d.standin, '0', `${where}: tensor scene should have fetched the real tensor`);
+        assert.equal(d.scene, 'tensor');
+        assert.equal(d.shape, '4,5,24');
+        assert.equal(d.entries, '480');
+        assert.equal(d.order, '3');
+        assert.equal(d.busiest, '18', `${where}: the busiest hour, summed across every route, is 18`);
+        await fits('tensor');
+
+        // Unfold: the mode-2 unfolding is 24 rows, the entry count is
+        // invariant across all three unfoldings.
+        await open('unfold', 'invariant');
+        d = await data();
+        assert.equal(d.mode, '2');
+        assert.equal(d.rows, '24');
+        assert.equal(d.cols, '20');
+        assert.equal(d.entries, '480');
+        assert.equal(d.invariant, '1');
+
+        // HOSVD: linalg-core.svd's thin U caps the hour rank at 20, not 24 --
+        // both the data and the slider's own max attribute say so.
+        await open('hosvd', 'rmax');
+        d = await data();
+        assert.equal(d.mode, '2');
+        assert.equal(d.rmax, '20');
+        assert.equal(await page.locator('#c-hosvd-r').getAttribute('max'), '20',
+          `${where}: the hour rank slider's own max should be 20, not 24`);
+        // 24 x 20 of them: the grid has to shrink to its box, and below the
+        // size at which a number is still a number it shades instead.
+        await page.locator('#c-hosvd-r').fill('20');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.r === '20');
+        await fits('hosvd at r = 20');
+
+        // Tucker: the handbook's own published numbers, byte-exact on the
+        // claim card, and lowering the hour rank cannot raise the error.
+        await open('tucker', 'ranks');
+        d = await data();
+        assert.equal(d.ranks, '2,2,3');
+        assert.equal(d.params, '102');
+        assert.equal(d.dense, '480');
+        assert.equal(d.ratio, '4.71');
+        assert.equal(d.err, '0.067');
+        assert.equal(d.hourpeak, '18');
+        // textContent, not innerText: a claim card is compared byte for
+        // byte, and innerText returns the *rendered* text, where CSS has
+        // collapsed the double spaces this card uses to separate its
+        // clauses. Every other claim assertion in this file reads
+        // textContent for the same reason.
+        assert.equal(await page.locator('#claim').textContent(),
+          'T ≈ G ×₁ A ×₂ B ×₃ C,  480 → 102,  4.71×  at  6.7%',
+          `${where}: the tucker claim card should be byte-exact`);
+        const errBefore = Number(d.err);
+        await page.locator('#c-tucker-r2').fill('20');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '2,2,20');
+        d = await data();
+        assert(Number(d.err) <= errBefore, `${where}: raising the hour rank should not raise the error`);
+        // The core is r2 x (r0 * r1): at every slider's max it is 20 x 20,
+        // 400 numbers, and it has to stay on the stage.
+        await page.locator('#c-tucker-r0').fill('4');
+        await page.locator('#c-tucker-r1').fill('5');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '4,5,20');
+        await fits('tucker at every rank max');
+        assert(Number((await data()).ratio) < 1,
+          `${where}: at full multilinear rank Tucker should cost more than the dense tensor`);
+
+        // Rank-1: 33 parameters, and scaling one entry of a is proportional
+        // across the whole row by construction.
+        await open('rank1', 'slab');
+        d = await data();
+        assert.equal(d.params, '33');
+        await page.locator('#c-rank1-scale').fill('200');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scaled !== undefined);
+        d = await data();
+        assert.equal(d.proportional, '1');
+
+        // CP: rank 3 recovers all three planted terms on the synthetic
+        // tensor; rank 1 cannot.
+        await open('cp', 'recovered');
+        d = await data();
+        assert.equal(d.recovered, '3');
+        assert.equal(d.unique, '1');
+        const errAtR3 = Number(d.err);
+        await page.locator('#c-cp-r').fill('1');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.r === '1');
+        d = await data();
+        assert(Number(d.err) > errAtR3, `${where}: rank 1 CP should fit worse than rank 3`);
+        assert(Number(d.recovered) < 3, `${where}: rank 1 CP should recover fewer terms`);
+        // Two of the three planted terms have no fitted column left to
+        // match at R = 1. That is a match of zero, not the -1 the search
+        // starts from, which would reach the bar chart as a bar drawn
+        // downwards off the bottom of the stage.
+        await fits('cp at R = 1');
+        // The claim card carries R(I + J + K), so it has to follow R.
+        assert.equal(await page.locator('#claim').textContent(),
+          'T \u2248 \u03a3\u1d63 a\u1d63 \u2297 b\u1d63 \u2297 c\u1d63,  R(I + J + K) = 33',
+          `${where}: the cp claim card should count this R's parameters`);
+        await page.locator('#c-cp-r').fill('6');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.r === '6');
+        await fits('cp at R = 6');
+
+        // Budget: the same 99 parameters CP spends at R = 3, spent on the
+        // best Tucker triple that fits inside it -- not (3, 3, 3), and never
+        // over budget -- and the closest-params rule can cost error.
+        await open('budget', 'cheapest');
+        d = await data();
+        assert.equal(d.budget, '99');
+        assert(Number(d.tuckerparams) <= 99, `${where}: the picked Tucker triple must fit the budget`);
+        assert.notEqual(d.tuckerranks, '3,3,3');
+        assert.equal(d.degenerate, '0');
+        const bestErr = Number(d.tuckererr);
+        await page.locator('#c-budget-rule').selectOption('closest-params');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.rule === 'closest-params');
+        d = await data();
+        assert.notEqual(d.tuckerranks, '3,3,3');
+        assert(Number(d.tuckererr) >= bestErr - 1e-9,
+          `${where}: the closest-params pick should not beat the best-error pick`);
+        assert.equal(d.tuckerfits, '1');
+        // At R = 1 the cloud is empty and that is the finding: CP spends
+        // 4 + 5 + 24 = 33, and the smallest Tucker there is buys the same
+        // three columns and pays one more for a core. Reading a pick out of
+        // an empty search threw here, on a scene whose every other
+        // assertion passed.
+        await page.locator('#c-budget-cpr').fill('1');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.cpr === '1');
+        d = await data();
+        assert.equal(d.budget, '33');
+        assert.equal(d.tuckerfits, '0', `${where}: no Tucker triple fits CP's budget at R = 1`);
+        assert.equal(d.cheapest, '34', `${where}: the smallest Tucker triple costs one more than CP at R = 1`);
+        assert.equal(d.tuckerranks, '');
+        await fits('budget at R = 1');
+
+        // A deep link opens straight on the named scene -- link by scene
+        // name, never by a step number that moves on a reorder.
+        await page.goto(`${page.url().split('?')[0]}?lang=${lang}&fresh=1#tucker`);
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
+          null, {timeout: 20000});
+        assert.equal((await data()).scene, 'tucker', `${where}: a deep link to #tucker should open there`);
+      }
+
       async function driveVoice(page, where, lang) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 20000});
@@ -1414,7 +1625,12 @@ async function audit(page, where) {
         // rather than fetching half a megabyte of audio onto the homepage,
         // which is the fourth hero tab below.
         {file: 'voice-stage', en: 'The audio tensor',
-         es: 'El tensor de audio', embed: true, drive: driveVoice}
+         es: 'El tensor de audio', embed: true, drive: driveVoice},
+        // Its embed mode fetches the real (~2 kB) taxi tensor rather than a
+        // synthesised stand-in: it is small enough that a still picture of
+        // the real thing costs nothing extra.
+        {file: 'factor-stage', en: 'Tucker and CP',
+         es: 'Tucker y CP', embed: true, drive: driveFactor}
       ];
       widgetCount = widgets.length;
       for (const widget of widgets) {
@@ -1575,6 +1791,24 @@ async function audit(page, where) {
             // 330px a chip on the stage is what pushes the page sideways.
             assert(await page.locator('#shapebadge').isHidden(),
               `${where} embed: the shape badge is shown on the front door`);
+          } else if (widget.file === 'factor-stage') {
+            // The hero gets the tucker scene, still: no three.js on this
+            // stage at all, and the real (tiny) tensor is fetched even here.
+            await page.waitForFunction(() =>
+              document.getElementById('stage').dataset.ready === '1', null, {timeout: 20000});
+            assert.equal(await page.locator('#stage').getAttribute('data-standin'), '0',
+              `${where} embed: the hero should have fetched the real taxi tensor`);
+            const fetchedTaxi = await page.evaluate(() =>
+              performance.getEntriesByType('resource').some(e => e.name.includes('taxi.json')));
+            assert(fetchedTaxi, `${where} embed: taxi.json was not requested`);
+            assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'tucker',
+              `${where} embed: the hero gets the tucker scene`);
+            assert.equal(await page.locator('#stage').getAttribute('data-ratio'), '4.71');
+            assert(await page.locator('.steps').isHidden(), `${where} embed: the scroller is shown`);
+            assert(await page.locator('#shapebadge').isHidden(),
+              `${where} embed: the shape badge is shown on the front door`);
+            assert.equal(await page.evaluate(() => window.THREE), undefined,
+              `${where} embed: three.js must not be fetched on this stage at all`);
           } else {
             await page.waitForSelector('#draw .cell');
           }
@@ -1598,7 +1832,7 @@ async function audit(page, where) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 5, `${lang}/index: five hero embeds`);
+        assert.equal(await frames.count(), 6, `${lang}/index: six hero embeds`);
         // Only the open tab's widget is fetched. A hidden iframe is not
         // lazy-loaded whatever `loading` says, so the others hold their URL
         // in data-src until the tab script hands it over.
@@ -1625,6 +1859,7 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-linalg').isHidden());
         assert(await page.locator('#hero-panel-voice').isHidden());
         assert(await page.locator('#hero-panel-attention').isHidden());
+        assert(await page.locator('#hero-panel-factor').isHidden());
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
@@ -1656,6 +1891,13 @@ async function audit(page, where) {
           `${lang}/index: attention embed not loaded on opening its tab`);
         assert((await open.getAttribute('href')).includes(`attention-stage.html?lang=${lang}`),
           `${lang}/index: open button did not follow the attention tab`);
+        await page.locator('#hero-tab-factor').click();
+        assert(await page.locator('#hero-panel-factor').isVisible(), `${lang}/index: factorisation tab`);
+        assert(await page.locator('#hero-panel-attention').isHidden());
+        assert(await page.locator('#hero-panel-factor iframe').getAttribute('src'),
+          `${lang}/index: factorisation embed not loaded on opening its tab`);
+        assert((await open.getAttribute('href')).includes(`factor-stage.html?lang=${lang}`),
+          `${lang}/index: open button did not follow the factorisation tab`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);

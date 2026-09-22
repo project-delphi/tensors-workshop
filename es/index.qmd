@@ -45,6 +45,7 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
       <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
       <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Atención</button>
+      <button type="button" role="tab" id="hero-tab-factor" aria-selected="false" aria-controls="hero-panel-factor" tabindex="-1">Tucker y CP</button>
     </div>
     <a class="hero-open" data-hero-open href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a>
   </div>
@@ -67,6 +68,10 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
   <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" data-open="../interactive/attention-stage.html?lang=es" hidden>
     <iframe class="hero-embed" data-src="../interactive/attention-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: las puntuaciones de atención convertidas en pesos que suman uno"></iframe>
     <p class="hero-caption">Softmax convierte una fila de puntuaciones en pesos que suman <code>1</code>: una consulta atendiendo a cuatro claves.</p>
+  </div>
+  <div class="hero-panel" id="hero-panel-factor" role="tabpanel" aria-labelledby="hero-tab-factor" data-open="../interactive/factor-stage.html?lang=es" hidden>
+    <iframe class="hero-embed" data-src="../interactive/factor-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: un tensor de taxis factorizado en un núcleo pequeño más tres matrices factor"></iframe>
+    <p class="hero-caption">Viajes de taxi reales, <code>4 × 5 × 24</code>: 480 números se convierten en un núcleo más tres factores, con un 6,7 % de error.</p>
   </div>
   <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Los movimientos, en vivo.</p>
 </div>

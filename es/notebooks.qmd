@@ -94,6 +94,20 @@ puedes nombrar</a>: todas ellas se pueden oír. Y termina en
 <a href="../interactive/voice-stage.html?lang=es#batch">el lote de rango 4 que
 recibe de verdad un modelo</a>: esas tres grabaciones apiladas en un solo arreglo.
 
+Las secciones 10 y 11 y el apéndice C comparten un
+<a href="../interactive/factor-stage.html?lang=es">escenario de Tucker y CP</a>,
+siete imágenes de un mismo tensor real: 6.383 viajes reales de taxis de Nueva
+York, barrio de origen por barrio de destino por hora del día. Desdobla ese
+cubo de tres maneras, toma la SVD de cada desdoblado, y
+<a href="../interactive/factor-stage.html?lang=es#tucker">recompone un núcleo
+pequeño más tres matrices factor</a>, 480 números reducidos a 102 con un error
+del 6,7%; luego construye un término de rango 1 como tres vectores y
+<a href="../interactive/factor-stage.html?lang=es#cp">encuentra varios a la
+vez con mínimos cuadrados alternos</a>; y termina en
+<a href="../interactive/factor-stage.html?lang=es#budget">el mismo presupuesto
+de parámetros gastado de dos maneras</a>, CP contra cada trío de rangos de
+Tucker que cabe en él.
+
 {{< include ../_includes/notebooks-extra-es.md >}}
 
 ## Ejecutarlos fuera de Colab

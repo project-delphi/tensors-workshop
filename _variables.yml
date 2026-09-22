@@ -116,6 +116,25 @@ repo:
     - interactive/vendor/three-0.169.0/examples/jsm/shaders/CopyShader.js
     - interactive/vendor/three-0.169.0/examples/jsm/shaders/LuminosityHighPassShader.js
     - interactive/vendor/three-0.169.0/examples/jsm/shaders/OutputShader.js
+    # The Tucker & CP stage: its page, its arithmetic (pinned under npm test),
+    # its drawing kit, and one file per scene, loaded by plain <script src>
+    # lines the link harvest does see -- listed anyway, because a scene that
+    # fails to reach docs/ is a picture the page throws on at boot, not a
+    # broken link. No three.js: every picture here is SVG.
+    - interactive/factor-stage.html
+    - interactive/factor-core.js
+    - interactive/factor-kit.js
+    - interactive/factor-scenes/tensor.js
+    - interactive/factor-scenes/unfold.js
+    - interactive/factor-scenes/hosvd.js
+    - interactive/factor-scenes/tucker.js
+    - interactive/factor-scenes/rank1.js
+    - interactive/factor-scenes/cp.js
+    - interactive/factor-scenes/budget.js
+    # The real taxi tensor (scripts/gen_figures.py taxi), fetched by a plain
+    # relative path in factor-stage.html's own script -- the same reason
+    # photos.json is listed here rather than trusted to a link harvest.
+    - interactive/data/taxi.json
 
 workshop:
   authors:

@@ -1,7 +1,7 @@
 ---
 title: ""
 pagetitle: "Interactive · Tensors for Machine Learning"
-description: "Five browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, and the audio tensor."
+description: "Browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, the audio tensor, and Tucker & CP."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -110,6 +110,25 @@ Straight to [one window](interactive/voice-stage.html?lang=en#frame),
 [the batch](interactive/voice-stage.html?lang=en#batch).
 
 [Open the audio tensor](interactive/voice-stage.html?lang=en){.resource-button}
+:::
+::: {.resource-card}
+### 🚕 Tucker and CP
+
+<span data-language-key="tucker-cp-stage"></span>
+
+One real tensor, factorised two ways: 6,383 New York taxi trips, pickup borough
+by dropoff borough by hour of day. Unfold that cube three ways, take the SVD of
+each unfolding, and reassemble a small core plus three factor matrices — 480
+numbers down to 102, at 6.7% error, the hour factor peaking at 18 though nothing
+ever told it what an hour is. Then build a rank-1 term out of three vectors,
+find several at once with alternating least squares, and spend one parameter
+budget both ways. Sections 10 and 11, and Appendix C.
+
+Straight to [the core and its three factors](interactive/factor-stage.html?lang=en#tucker),
+[one rank-1 term](interactive/factor-stage.html?lang=en#rank1) or
+[the same budget spent two ways](interactive/factor-stage.html?lang=en#budget).
+
+[Open Tucker and CP](interactive/factor-stage.html?lang=en){.resource-button}
 :::
 ::::
 
