@@ -81,6 +81,11 @@ figures = [
   "imageio-ffmpeg>=0.4.9",
   "scikit-learn>=1.4",
   "scikit-image>=0.22",
+  # Subsets the vendored faces (fonts/README.md) and, for the link preview,
+  # decompresses one back to TTF in memory: matplotlib's FreeType reads
+  # TTF/OTF and not woff2, so `font_manager.addfont` cannot take the shipped
+  # file directly. `[woff]` is the brotli extra woff2 needs.
+  "fonttools[woff]>=4.50",
 ]
 
 # Executes the notebooks: scripts/test_notebooks.py. Kept out of `test`, which

@@ -191,6 +191,7 @@ notebooks/              Colab notebooks — workshop sections + take-home deep d
 group-tasks.md  es/group-tasks.md   open-ended group activities, EN and ES
 kahoot/                 3 .xlsx quiz import files
 interactive/            standalone widgets + vendored three.js (copied into docs/)
+fonts/                  the two vendored typefaces, their licences and ledger
 scripts/                generators and the link checker
 facilitator-guide.md    live teaching run sheet (Spanish copy in es/)
 assessments.md          entry/exit checks and rubric (also in es/)

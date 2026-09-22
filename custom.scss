@@ -1,7 +1,22 @@
 /*-- scss:defaults --*/
-// A restrained palette: slate ink, one indigo accent, one warm accent reserved
-// for the Kahoot checkpoints so they are findable at a glance in a long page.
-$primary:        #2f4858 !default;
+// Navy ink, one accent, one warm accent reserved for the Kahoot checkpoints
+// so they stay findable at a glance in a long page.
+//
+// $primary is the widgets' own navy (`--bg` under `[data-theme="navy"]` in
+// widget-chrome.css), so an embedded widget sits in a band the same colour as
+// the site's own furniture rather than next to it. Every pair below was
+// measured rather than picked:
+//
+//   white on $navbar-bg        16.7:1     $accent-ink on white   6.4:1
+//   $accent on $navbar-bg      10.5:1     $accent-ink on panel   6.1:1
+//   $primary on white          15.2:1     $link-color on white   6.8:1
+//
+// $accent is for dark surfaces only -- it is 1.6:1 on white, which is why
+// $accent-ink exists and why nothing puts $accent on a light background.
+$primary:        #0f2740 !default;
+$navbar-bg:      #0b1f33 !default;
+$accent:         #6fe0c6 !default;
+$accent-ink:     #0e6b63 !default;
 $link-color:     #2c5f8a !default;
 $body-color:     #1f2933 !default;
 $body-bg:        #ffffff !default;
@@ -11,7 +26,18 @@ $border-color:   #dfe3e8 !default;
 
 $kahoot-accent:  #b3541e;
 
-$font-family-sans-serif: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+// The two vendored faces (fonts/README.md). Inter for UI and body, Source
+// Serif 4 for display headings: a page of this site is mostly prose, and a
+// serif heading over a sans body tells a reader at a glance which is which
+// without a rule or a colour doing it.
+//
+// The `@font-face` rules are in `fonts/fonts.css`, linked from `_quarto.yml`,
+// not here: a Sass `url()` inside the theme is treated as a dependency and
+// resolved against the project directory rather than against where the theme
+// compiles to, which sent Quarto looking two levels above the repo. The
+// comment at the top of that file has the detail.
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !default;
+$headings-font-family:   "Source Serif 4", Georgia, "Times New Roman", serif !default;
 $font-family-monospace:  "SFMono-Regular", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace !default;
 
 $font-size-root:  17px !default;
@@ -452,3 +478,84 @@ main p:has(> a:only-child > img:only-child) + p > em:only-child {
     content: url("images/fig-video-stack.jpg");
   }
 }
+
+// ─── the navbar, the footer, and one card ───────────────────────────────────
+// Three pieces of site furniture that were Cosmo's defaults. They are the
+// first and last thing on every page, so they are worth owning.
+
+// The brand is a name, not a logo lockup: set in the display serif at the
+// weight the headings use, so the navbar and the page below it read as one
+// typographic system rather than two.
+.navbar-brand {
+  font-family: $headings-font-family;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+// The open page, underlined in the accent. Colour is never the only carrier:
+// Quarto also sets `aria-current` on the item, and the underline is a second,
+// non-colour signal for a reader who cannot tell #6fe0c6 from white.
+.navbar-nav .nav-link.active,
+.navbar-nav .nav-link[aria-current="page"] {
+  box-shadow: inset 0 -2px 0 $accent;
+  color: #ffffff;
+}
+.navbar-nav .nav-link:hover { color: $accent; }
+
+// One focus ring for the whole site, in the accent, on the navy the navbar
+// and footer are and on the white the page is. The hero keeps its own lighter
+// ring (homepage.scss), because it sits on a band this one would disappear
+// into.
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid $accent-ink;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+.navbar :where(a, button):focus-visible,
+.nav-footer :where(a, button):focus-visible { outline-color: $accent; }
+
+// The footer is a navy band rather than a grey rule: it closes the page the
+// way the navbar opens it. Quarto renders `page-footer`'s three slots into
+// `.nav-footer`; the words in them are language-neutral on purpose, because
+// there is one footer for both languages.
+.nav-footer {
+  background: $navbar-bg;
+  border-top: 0;
+  color: #e7f0f8;
+  padding-block: 1.4rem;
+  font-size: .86rem;
+}
+.nav-footer a { color: $accent; text-decoration-thickness: from-font; }
+.nav-footer a:hover { color: #ffffff; }
+.nav-footer .nav-footer-center { color: #a3bdd4; }
+
+// One card, used wherever the site puts a linked thing in a box. Defined here
+// rather than on the homepage because it is not the homepage's: the hub page
+// and the landing page both take it.
+.card-tile {
+  display: block;
+  padding: 1rem 1.1rem;
+  border: 1px solid $border-color;
+  border-radius: 16px;
+  background: #ffffff;
+  color: inherit;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(15, 39, 64, .10);
+  border-color: $accent-ink;
+}
+// A hover lift is decoration, and decoration stops for anyone who asked it to.
+@media (prefers-reduced-motion: reduce) {
+  .card-tile { transition: none; }
+  .card-tile:hover { transform: none; }
+}
+.card-tile h3, .card-tile .card-tile-title {
+  margin: 0 0 .35rem;
+  font-family: $headings-font-family;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.card-tile p { max-width: none; margin: 0; font-size: .9rem; color: #56677a; }
