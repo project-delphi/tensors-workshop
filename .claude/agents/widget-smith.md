@@ -64,7 +64,9 @@ notebook or handbook links the new name. Every existing step carries one.
 **`widget-chrome.css` owns the surfaces; a page's own `<style>` owns its
 stage.** The shared file, linked first by every page, holds `--bg`, `--ink`,
 `--ink-mute`, `--panel`, `--sunk`, `--line`, both font stacks, `.wrap`,
-`.site-nav`, the header, `.card` and `.about`, the default button, field,
+`.site-nav` (three pills: home, interactive, notebooks -- each page wires
+them from its own copy table), the header, `.card` and `.about`, the default
+button, field,
 select and slider, `.concept`, `.predict`, `.sr`, `[hidden]` and the embed
 strips — on light, dark and the hero's navy. The page's `<style>` comes second
 and owns its `--accent`, everything on its stage, and the shape it gives a

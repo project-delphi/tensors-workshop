@@ -169,8 +169,10 @@ their section's accent adjusted per theme to clear 4.5:1. `repo.widgets` in
 `interactive/widget-chrome.css`, linked first by every page, owns the
 surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the
 site's own palette from `custom.scss`, on light, dark and the hero's navy),
-the two font stacks, `.wrap` (width from `--wrap`), the `.site-nav` home and
-notebooks links every page opens with, the header, the `.card` and `.about`
+the two font stacks, `.wrap` (width from `--wrap`), the `.site-nav` home,
+interactive and notebooks links every page opens with -- three pills, in the
+page's own language, wired from each page's own copy table because the widgets
+share the stylesheet and not a script -- the header, the `.card` and `.about`
 panels, the default button, field, select and slider, `.concept`, `.predict`,
 `.sr`, `[hidden]` and the chrome embed mode strips. A page's own `<style>`
 comes second and owns its `--accent`, everything on its stage, and the shape
