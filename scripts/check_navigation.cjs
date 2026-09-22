@@ -617,6 +617,55 @@ async function audit(page, where) {
         assert(Number((await data()).solo) <= 2,
           `${where}: soloing component 4 at k = 2 should have fallen back, got solo=${(await data()).solo}`);
 
+        // What a model is handed: the three built-in recordings, transformed
+        // and stacked. They are the same length by construction, so the
+        // opening state stacks with nothing thrown away -- and the crop is
+        // the only reason a loader has one at all.
+        await voiceScene(page, 'batch');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.phase === 'ready',
+          null, {timeout: 30000});
+        const b0 = await data();
+        assert.equal(b0.b, '3', `${where}: three built-in recordings in the batch, got ${b0.b}`);
+        assert.equal(b0.c, '1', `${where}: the recordings are mono, so C is 1`);
+        assert.equal(b0.f, '513', `${where}: the same F as every other transform scene`);
+        assert.equal(b0.shape, '3,1,513,465', `${where}: the rank-4 shape, got ${b0.shape}`);
+        assert.equal(b0.ragged, '0', `${where}: three equal-length recordings are not ragged`);
+        // The crop is the axis the badge has to follow: T moves, nothing else does.
+        await page.locator('#c-batch-crop').fill('200');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.t === '200',
+          null, {timeout: 5000});
+        const b1 = await data();
+        assert.equal(b1.shape, '3,1,513,200', `${where}: only T moves with the crop, got ${b1.shape}`);
+        assert.equal(await stage.getAttribute('data-tensorshape'), '[3, 1, 513, 200]',
+          `${where}: the shape badge did not follow the crop`);
+
+        // The badge is the frame's, and it says a different shape on every
+        // picture -- a rank-1 array here, a matrix there.
+        await voiceScene(page, 'array');
+        assert.equal(await stage.getAttribute('data-tensorshape'), '[237568]',
+          `${where}: the array's badge is the recording's length`);
+        await voiceScene(page, 'window');
+        assert.equal(await stage.getAttribute('data-tensorshape'), '[513, 465]',
+          `${where}: the hop scene's badge is the matrix it builds`);
+
+        // Pointing at a letter in the equation bands the axis it names. The
+        // hover is published as data-hl and must never disturb the readout,
+        // which is written from the controls alone.
+        const readBefore = await page.locator('#read-window').innerHTML();
+        await page.locator('#eqcap-window').scrollIntoViewIfNeeded();
+        await page.locator('.eq [data-hl="freq"]').first().hover();
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hl === 'freq',
+          null, {timeout: 5000});
+        // Keyboard reaches it too: these are focusable for exactly that reason.
+        await page.locator('.eq [data-hl="time"]').first().focus();
+        await page.waitForFunction(() => document.getElementById('stage').dataset.hl === 'time',
+          null, {timeout: 5000});
+        assert.equal(await page.locator('#read-window').innerHTML(), readBefore,
+          `${where}: a hover rewrote the readout, which is the controls' to write`);
+        await page.locator('.eq [data-hl="time"]').first().blur();
+        await page.waitForFunction(() => !document.getElementById('stage').dataset.hl,
+          null, {timeout: 5000});
+
         // Linking by scene name, never by an index that moves on a reorder.
         // A page opened on a spectrogram scene must not fetch three.js: the
         // import map is inert until a module resolves, and the boot only
@@ -1205,6 +1254,10 @@ async function audit(page, where) {
             assert.equal(await page.evaluate(() => window.THREE), undefined,
               `${where} embed: three.js must not be fetched on the front door`);
             assert(await page.locator('.source').isHidden(), `${where} embed: the drop zone is shown`);
+            // The badge goes with the readout: the hero is a teaser, and at
+            // 330px a chip on the stage is what pushes the page sideways.
+            assert(await page.locator('#shapebadge').isHidden(),
+              `${where} embed: the shape badge is shown on the front door`);
           } else {
             await page.waitForSelector('#draw .cell');
           }

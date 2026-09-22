@@ -192,6 +192,8 @@
               what: ctx.copy.playK(s.synthK)};
     },
 
+    shape(ctx) { const N = ctx.state.N; return N ? "[" + ((N >> 1) + 1) + "]" : ""; },
+
     readout(ctx) {
       const s = ctx.state, N = s.N, F = (N >> 1) + 1;
       const binHz = ctx.rate / N;

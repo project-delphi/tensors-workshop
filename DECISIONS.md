@@ -675,7 +675,7 @@ Every scene on this page is a window onto one array, and none of them could
 show both the window and the array: the hop scene drew the whole recording,
 where one window is three pixels wide and the overlap -- the single thing that
 picture exists to teach -- was invisible. One strip under the stage, drawn by
-the frame, carries the global view for all nine: the waveform, a band for
+the frame, carries the global view for all ten: the waveform, a band for
 what the picture above is looking at, and the playhead. The hop scene then
 draws five windows' worth of samples, where the humps cross at half height and
 the overlap is simply there to see.

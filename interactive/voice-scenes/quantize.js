@@ -109,6 +109,8 @@
       return {samples: q.q, what: ctx.copy.rounded(ctx.state.bits)};
     },
 
+    shape(ctx) { return "[" + ctx.signal.length + "]"; },
+
     readout(ctx) {
       const s = ctx.state, v = s.v;
       const q = ctx.AC.quantize(ctx.signal, s.bits);

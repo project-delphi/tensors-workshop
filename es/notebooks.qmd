@@ -61,9 +61,9 @@ sobre un espacio columna, la recta de soluciones de una matriz ancha, un
 determinante que llega a cero, la SVD como una circunferencia que se convierte
 en una elipse y una esfera en un elipsoide, los autovectores de un campo de
 flechas, y las dos maneras en que falla la aritmética.
-Las secciones 00, 04 y 09 y el apéndice E comparten un
+Las secciones 00, 02, 04 y 09 y el apéndice E comparten un
 <a href="../interactive/voice-stage.html?lang=es">escenario del tensor de audio</a>,
-nueve imágenes de una misma grabación: el aire medido 48 000 veces por segundo
+nueve imágenes de una misma grabación y una décima de tres: el aire medido 48 000 veces por segundo
 y redondeado a 16 bits, el arreglo que queda,
 <a href="../interactive/voice-stage.html?lang=es#frame">una ventana recortada de él</a>,
 <a href="../interactive/voice-stage.html?lang=es#spectrum">la transformada que le pregunta
@@ -72,7 +72,9 @@ una matriz de frecuencia por tiempo, qué le hace una transposición a un sonido
 y las dos maneras en que esa matriz se descompone:
 <a href="../interactive/voice-stage.html?lang=es#lowrank">la mejor aproximación de rango k
 que existe</a> y <a href="../interactive/voice-stage.html?lang=es#nmf">las partes que
-puedes nombrar</a>. Todas se pueden oír.
+puedes nombrar</a>: todas ellas se pueden oír. Y termina en
+<a href="../interactive/voice-stage.html?lang=es#batch">el lote de rango 4 que
+recibe de verdad un modelo</a>: esas tres grabaciones apiladas en un solo arreglo.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 

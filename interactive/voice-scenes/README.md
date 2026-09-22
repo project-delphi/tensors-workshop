@@ -8,7 +8,7 @@ order, so a new scene is: one file here, one `<script src>` line, one
 line in `_variables.yml` (the only thing that notices the file failing to
 reach `docs/`). The page throws at boot if a registered scene has no section.
 
-The order is a story in four parts, and the part headings are on the scene
+The order is a story in five parts, and the part headings are on the scene
 that opens each one (`part: {en, es}`). **From air to numbers**: how a
 pressure wave becomes a list (sampled, rounded, written down with a shape and
 a dtype). **From numbers to a matrix**: one window cut out of that list, the
@@ -16,7 +16,9 @@ transform that asks which frequencies are in it, then the window hopping along
 so that each stop is a column. **What a layout does to it**: the reshape you
 can hear go wrong. **What factoring it costs**: the truncated SVD's denoising
 curve, measured rung by rung while the reader waits for the factorisation, and
-the NMF that gives up the best error to get parts you can name.
+the NMF that gives up the best error to get parts you can name. **What a model
+is handed**: the three recordings stacked into a rank-4 batch, and the crop
+that is the only reason a loader has one.
 Each picture introduces exactly one word the next ones use
 -- "sample" and "rate", then "bit depth", then "frame" and "window", then
 "bin", then "hop" and "column" -- and nothing says a word before the picture
@@ -63,6 +65,10 @@ VoiceScenes.register({
   readout(ctx),         // -> {html, data, claim?}; data becomes #stage data-*
                         // for the check, and claim replaces the copy's claim
                         // on the title card when the scene can say it in numbers
+  shape(ctx),           // optional: -> "[513, 465]", the badge on the stage.
+                        // Without one the badge falls back to data.shape, so
+                        // add it only where that is absent or means something
+                        // else
   region(ctx),          // optional: -> {i0, i1}, the samples this picture is
                         // looking at, banded on the timeline strip
   audio(ctx),           // optional: -> {samples, what}; what the play button plays
@@ -82,7 +88,7 @@ THREE, AD, glReady, gl, shownView(), label(text, cls)}`. `AC` is `audio-core.js`
 `voice-kit.js` and `LC` is `linalg-core.js` (the tweens and the orbit). Keep
 everything a control touches on `ctx.state`. `control(id)` is this scene's own control element, because the frame prefixes
 every control with the scene it belongs to (`c-spectrum-size`): the same name
-lives in nine sections now. `source` names the recording on the stage
+lives in ten sections now. `source` names the recording on the stage
 (`voice`, `beat`, `tone`, `file` or `standin`); a scene that caches
 anything derived from the signal keys it on `source` too, and the frame
 empties `state` and `cache` when the recording changes. `head()` is seconds
@@ -162,3 +168,32 @@ into the clip while it plays, or -1.
   number a reader can check on the stage. The definition is `concept`'s job and
   the formula is `claim`'s; a body that starts with either is the version this
   page was rewritten to stop being.
+- `eqcap` is the sentence under a display equation, on the three scenes that
+  have one. It must carry the idea in words on its own: there is no polyfill
+  if a browser renders the MathML badly.
+
+## The display equations
+
+Three sections carry one -- `array`, `window` and `batch`. The `<math>` is
+**hand-written MathML** and lives **statically in the section**, not in a copy
+table: it is the same in both languages, and `check_links.py` reads the static
+HTML. There is no MathJax and no KaTeX, because the claim cards are Unicode
+`textContent` that `check_navigation.cjs` compares byte-exact, and because
+everything here is vendored with a SHA-256.
+
+The letters are the page's own, and they have to agree with the claim cards:
+`f` is a frequency bin, `t` a frame, `H` the hop, `N` the window length, and
+`B`, `C`, `F`, `T` are the sizes. **`k` is the rank** on three other scenes and
+is never a bin.
+
+An `<mi>`, or an `<mrow>` around one, that the reader can point at carries
+`data-hl="<token>"` and `tabindex="0"`. The frame binds hover and focus,
+publishes `data-hl` on `#stage` and repaints; it never calls `changed()`,
+because a hover that rewrote the readout would move the text under the
+reader's own cursor. A scene reads `ctx.hl` in `draw()` and bands that extent
+in `--v-comp`. Only the 2-D scenes honour it: the three opening scenes draw
+through one three.js rig they share, and a vector has no second axis to band.
+
+The shape badge on the stage takes a scene's `shape(ctx)` where it has one and
+its readout's `data.shape` otherwise, and the frame publishes it as
+`data-tensorshape`.

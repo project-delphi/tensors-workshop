@@ -100,9 +100,9 @@
   .steps { min-width: 0; }
   .stagewrap { position: sticky; top: 1.5rem; min-width: 0; }
 
-  /* Stacked, the stage goes *first*. The grid would put it after all nine
+  /* Stacked, the stage goes *first*. The grid would put it after all ten
      sections, where a sticky picture is a picture nobody reading the first
-     eight can see. */
+     nine can see. */
   @media (max-width: 62rem) {
     .two-pane { display: flex; flex-direction: column; gap: 1rem; }
     /* Capped at the viewport, with the stage taking whatever the rest of the
@@ -146,11 +146,21 @@
   .lab.out { color: var(--v-out); }
   .lab.big { font-size: 14px; }
   #claim {
-    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0;
+    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
   }
-  #glnote { position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; font-size: 0.78rem; max-width: 46%;
+  /* The shape of the tensor the picture is of, in one fixed place, so the
+     reader is not carrying "237568" and "513 x 465" between four scenes. */
+  /* Two chips on one line growing towards each other. Overlapping absolute
+     boxes never make the page scroll, so no check would catch them meeting;
+     the widths are what stop it. */
+  #shapebadge {
+    position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; max-width: 34%;
+    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  #glnote { position: absolute; right: 0.75rem; bottom: 0.6rem; margin: 0; font-size: 0.78rem; max-width: 46%;
             color: var(--stage-mute); background: var(--stage-chip); padding: 0.15rem 0.4rem; border-radius: 4px; }
 
   /* The whole recording, under the stage: where the scene is looking, and
@@ -163,6 +173,14 @@
   }
   #timeline:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   #timecap { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--ink-mute); }
+  /* The sample index the sound has reached. aria-hidden, because it is
+     rewritten sixty times a second and a live region would flood a reader. */
+  /* Zero margins and a reserved line: a <p> appearing and disappearing on
+     every press of Play moved the transport out from under the cursor. */
+  #mathhead {
+    margin: 0.2rem 0 0; min-height: 1.1rem;
+    font-family: var(--mono); font-size: 0.76rem; color: var(--ink-mute);
+  }
 
   .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
   .tbuttons { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; }
@@ -187,9 +205,9 @@
   }
   .step .anchor { display: block; height: 0; }
   .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
-  /* The heading of the group a scene opens. The page's structure is four
+  /* The heading of the group a scene opens. The page's structure is five
      ideas in order -- the input, the transform, the effect, what factoring it
-     costs -- not nine numbered steps. */
+     costs, what a model is handed -- not ten numbered steps. */
   .step .part {
     font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
     border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
@@ -213,10 +231,38 @@
   .readout .fault { color: var(--fault); font-weight: 650; }
   .shape { font-family: var(--mono); font-size: 0.86rem; }
 
+  /* Display notation. The <math> is static in the section: it is the same in
+     both languages, and check_links.py reads the static HTML. Only the caption
+     under it is translated. A variable the reader can point at carries
+     [data-hl]; hovering or focusing it bands the axis it names on the stage,
+     which is what connects a letter to the pixels it stands for. */
+  .eq {
+    margin: 0.9rem 0 0; padding: 0.7rem 0.8rem; background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 8px; max-width: 36rem;
+  }
+  /* The scroller is inside the box and is focusable, because a wide equation
+     must not push the page sideways -- check_navigation.cjs asserts no
+     horizontal overflow at 390px -- and axe requires a scrollable region to
+     be reachable from the keyboard. */
+  .eqscroll { overflow-x: auto; }
+  .eq math { font-size: 1.05rem; color: var(--ink);
+             font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", serif; }
+  .eq math + math { margin-top: 0.4rem; }
+  .eqcap { margin: 0.55rem 0 0; font-size: 0.82rem; color: var(--ink-mute); }
+  /* Colour is never the only carrier: the affordance is a dashed underline,
+     and the lit state adds a tint behind it as well as changing it. */
+  .eq [data-hl] { cursor: help; border-bottom: 1px dashed var(--ink-mute); border-radius: 2px; }
+  .eq [data-hl]:hover, .eq [data-hl].is-lit {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    border-bottom: 1px solid var(--accent);
+  }
+  .eq [data-hl]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
   /* Embed mode: the homepage hero. No chrome, no sound, no fetch. The chrome
      that goes is in widget-chrome.css. */
   html.embed .steps, html.embed .stagebar, html.embed .transport,
-  html.embed #timeline, html.embed #timecap,
+  html.embed #timeline, html.embed #timecap, html.embed #mathhead,
+  html.embed #shapebadge,
   html.embed .readout, html.embed .source, html.embed .hint { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { position: static; height: 100vh; display: flex; flex-direction: column; }
@@ -280,6 +326,29 @@
         <h2 id="h-array"></h2>
         <p class="concept" id="con-array"></p>
         <div class="body" id="body-array"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-array">
+            <math display="block">
+              <mrow>
+                <mi>x</mi><mo>=</mo>
+                <msup>
+                  <mrow><mo>[</mo>
+                    <msub><mi>x</mi><mn>0</mn></msub><mo>,</mo>
+                    <msub><mi>x</mi><mn>1</mn></msub><mo>,</mo>
+                    <mo>&#x2026;</mo><mo>,</mo>
+                    <msub><mi>x</mi><mi>n</mi></msub><mo>,</mo>
+                    <mo>&#x2026;</mo><mo>,</mo>
+                    <msub><mi>x</mi><mrow><mi>N</mi><mo>&#x2212;</mo><mn>1</mn></mrow></msub>
+                  <mo>]</mo></mrow>
+                  <mi>T</mi>
+                </msup>
+                <mo>&#x2208;</mo>
+                <msup><mi>&#x211D;</mi><mi>N</mi></msup>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-array"></p>
+        </div>
         <p class="predict" id="pr-array"></p>
         <div class="controls" id="ctl-array"></div>
         <p class="readout" id="read-array"></p>
@@ -313,6 +382,40 @@
         <h2 id="h-window"></h2>
         <p class="concept" id="con-window"></p>
         <div class="body" id="body-window"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-window">
+            <math display="block">
+              <mrow>
+                <mi>X</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="freq" tabindex="0"><mi>f</mi></mrow><mo>,</mo>
+                <mrow data-hl="time" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
+                <mo>=</mo>
+                <munderover>
+                  <mo>&#x2211;</mo>
+                  <mrow><mi>n</mi><mo>=</mo><mn>0</mn></mrow>
+                  <mrow><mi>N</mi><mo>&#x2212;</mo><mn>1</mn></mrow>
+                </munderover>
+                <mi>x</mi><mo stretchy="false">[</mo><mi>t</mi><mo>&#x22C5;</mo><mi>H</mi><mo>+</mo><mi>n</mi><mo stretchy="false">]</mo>
+                <mo>&#x22C5;</mo><mi>w</mi><mo stretchy="false">[</mo><mi>n</mi><mo stretchy="false">]</mo><mo>&#x22C5;</mo>
+                <msup><mi>e</mi>
+                  <mrow><mo>&#x2212;</mo>
+                    <mfrac><mrow><mn>2</mn><mi>&#x3C0;</mi><mi>i</mi><mi>f</mi><mi>n</mi></mrow><mi>N</mi></mfrac>
+                  </mrow>
+                </msup>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <mi>S</mi><mo>=</mo><mo>|</mo><mi>X</mi><mo>|</mo><mo>&#x2208;</mo>
+                <msup><mi>&#x211D;</mi><mrow>
+                  <mrow data-hl="freq" tabindex="0"><mi>F</mi></mrow><mo>&#xD7;</mo>
+                  <mrow data-hl="time" tabindex="0"><mi>T</mi></mrow>
+                </mrow></msup>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-window"></p>
+        </div>
         <p class="predict" id="pr-window"></p>
         <div class="controls" id="ctl-window"></div>
         <p class="readout" id="read-window"></p>
@@ -351,6 +454,33 @@
         <p class="readout" id="read-nmf"></p>
       </section>
 
+      <section class="step" id="step-batch" aria-labelledby="h-batch">
+        <span class="anchor" id="batch"></span>
+        <p class="kicker" id="k-batch"></p>
+        <h2 id="h-batch"></h2>
+        <p class="concept" id="con-batch"></p>
+        <div class="body" id="body-batch"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-batch">
+            <math display="block">
+              <mrow>
+                <mi>&#x1D4AF;</mi><mo>&#x2208;</mo>
+                <msup><mi>&#x211D;</mi><mrow>
+                  <mrow data-hl="batch" tabindex="0"><mi>B</mi></mrow><mo>&#xD7;</mo>
+                  <mrow data-hl="chan" tabindex="0"><mi>C</mi></mrow><mo>&#xD7;</mo>
+                  <mrow data-hl="freq" tabindex="0"><mi>F</mi></mrow><mo>&#xD7;</mo>
+                  <mrow data-hl="time" tabindex="0"><mi>T</mi></mrow>
+                </mrow></msup>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-batch"></p>
+        </div>
+        <p class="predict" id="pr-batch"></p>
+        <div class="controls" id="ctl-batch"></div>
+        <p class="readout" id="read-batch"></p>
+      </section>
+
     </div>
 
     <div class="stagewrap">
@@ -362,11 +492,13 @@
         <canvas id="draw"></canvas>
         <canvas id="gl" hidden></canvas>
         <p id="claim"></p>
+        <p id="shapebadge" hidden></p>
         <p id="glnote" hidden></p>
       </div>
 
       <canvas id="timeline" role="img" aria-label="" tabindex="0"></canvas>
       <p id="timecap"></p>
+      <p id="mathhead" aria-hidden="true"></p>
 
       <div class="transport" id="transport">
         <!-- The buttons are the scene's and hide with a scene that has no
@@ -448,6 +580,7 @@
 <script src="voice-scenes/scramble.js"></script>
 <script src="voice-scenes/lowrank.js"></script>
 <script src="voice-scenes/nmf.js"></script>
+<script src="voice-scenes/batch.js"></script>
 
 <script>
 (function () {
@@ -478,14 +611,15 @@
       intro: "A sound is a list of numbers. A microphone measures the air pressure tens of thousands " +
              "of times a second, each measurement is rounded to one of a fixed set of values, and " +
              "those numbers in order are the tensor — a one-dimensional array you can listen to. " +
-             "This page is nine pictures of that array, in four groups. First how air becomes " +
+             "This page is ten pictures of that array, in five groups. First how air becomes " +
              "numbers: the sampling, the rounding, and the shape and dtype they are stored in. Then " +
              "how those numbers become a matrix: one window cut out of the array, the transform that " +
              "asks which frequencies are in it, and the window sliding along to make a column each " +
              "time. Then what a layout does to it, which is the one you can hear go wrong. Last, " +
              "what factoring that matrix costs: a truncated SVD that denoises best in the middle and " +
              "fails at both ends, and an NMF that gives up the best error on purpose to get parts you " +
-             "can name. Each picture says what is on the stage, then asks you to predict before you " +
+             "can name. Last, what a model is actually handed: three recordings stacked into one " +
+             "rank-4 batch. Each picture says what is on the stage, then asks you to predict before you " +
              "touch a control; the box under the controls is the answer, with this recording's own " +
              "numbers in it.",
       builtin: "Recording", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
@@ -537,7 +671,7 @@
       intro: "Un sonido es una lista de números. Un micrófono mide la presión del aire decenas de " +
              "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
              "valores, y esos números en orden son el tensor: un arreglo de una dimensión que puedes " +
-             "escuchar. Esta página son nueve imágenes de ese arreglo, en cuatro grupos. Primero, cómo " +
+             "escuchar. Esta página son diez imágenes de ese arreglo, en cinco grupos. Primero, cómo " +
              "el aire se vuelve números: el muestreo, el redondeo, y la forma y el dtype con que se " +
              "guardan. Después, cómo esos números se vuelven una matriz: una ventana recortada del " +
              "arreglo, la transformada que pregunta qué frecuencias hay en ella, y la ventana " +
@@ -545,7 +679,8 @@
              "disposición, que es la que puedes oír fallar. Por último, lo que cuesta factorizar esa " +
              "matriz: una SVD truncada que limpia mejor en el medio y falla en los dos extremos, y una " +
              "NMF que renuncia al mejor error a propósito para conseguir partes que puedes nombrar. " +
-             "Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar " +
+             "Por último, lo que recibe de verdad un modelo: tres grabaciones apiladas en un solo " +
+             "lote de rango 4. Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar " +
              "un control; la caja bajo los controles es la respuesta, con los números de esta " +
              "grabación.",
       builtin: "Grabación", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
@@ -803,6 +938,10 @@
   }
   let active = scenes[0];
   let step = 0;
+  // Which axis the reader is pointing at in a display equation, or null.
+  // Frame state, not a scene's: the equations are in the sections and the
+  // band they ask for is drawn by whichever picture is on the stage.
+  let hl = null;
   const ctxFor = new Map();
   const byId = (id) => scenes.find((s) => s.id === id);
 
@@ -845,6 +984,10 @@
       get signal() { return signal.samples; },
       get standIn() { return signal.stand_in; },
       get source() { return signal.source; },
+      // The axis the reader is pointing at in this section's equation, or
+      // null. A scene reads it in draw() and bands that axis; nothing else
+      // may depend on it, because a hover must not rewrite the readout.
+      get hl() { return hl; },
       colour: (token) => K.css(token),
       now, get instant() { return motion.held || reduceMotion; },
       play: (s, what) => audio.play(s, what),
@@ -853,7 +996,7 @@
       changed,
       setControls: (vals) => setControls(scene, vals),
       // A scene's own control element, by the id it declared: the frame
-      // prefixes them with the scene, because the same name lives in nine
+      // prefixes them with the scene, because the same name lives in ten
       // sections now.
       control: (id) => $("c-" + scene.id + "-" + id),
       // The three.js side, filled by bootGL(). `gl` is what build() returned.
@@ -985,6 +1128,22 @@
     // the controls are where they opened, and a card still saying that after
     // the reader has halved the hop contradicts the readout under it.
     $("claim").textContent = r.claim || active.copy[lang].claim;
+    // The shape of the tensor this picture is of. A scene says it outright
+    // where it has a shape to say before its readout does -- the two heavy
+    // factorisations know theirs from the moment the transform lands, long
+    // before the arithmetic finishes -- and otherwise the badge takes the
+    // shape the readout publishes. It goes away rather than lying: while a
+    // recording is still being fetched, and on the batch scene when the crop
+    // is longer than the shortest example, there is no shape to name.
+    let sh = "";
+    if (signal.loaded) {
+      sh = active.shape ? active.shape(ctx)
+         : (r.data && r.data.shape ? "[" + String(r.data.shape).split(",").join(", ") + "]" : "");
+    }
+    const badge = $("shapebadge");
+    badge.textContent = sh ? T.shape + " " + sh : "";
+    badge.hidden = !sh;
+    if (sh) stage.dataset.tensorshape = sh; else delete stage.dataset.tensorshape;
     const aria = ctx.copy.aria(ctx) || "";
     stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
@@ -1143,6 +1302,60 @@
     });
   }
 
+  // Pointing at a letter in an equation bands the axis it names. This never
+  // calls changed(): the readout is written from the controls, and a hover
+  // that rewrote it would move the text under the reader's cursor. It repaints
+  // and publishes data-hl, which is the frame's own attribute, so the prune in
+  // changed() leaves it alone.
+  function lightAxis(token, on) {
+    const next = on ? token : (hl === token ? null : hl);
+    if (next === hl) return;
+    hl = next;
+    if (hl) stage.dataset.hl = hl; else delete stage.dataset.hl;
+    document.querySelectorAll(".eq [data-hl]").forEach((el) => {
+      el.classList.toggle("is-lit", !!hl && el.dataset.hl === hl);
+    });
+    paint();
+  }
+
+  function bindEquations() {
+    document.querySelectorAll(".eq [data-hl]").forEach((el) => {
+      const token = el.dataset.hl;
+      el.addEventListener("pointerenter", () => lightAxis(token, true));
+      el.addEventListener("pointerleave", () => lightAxis(token, false));
+      // The same from the keyboard: these are focusable, so a reader who
+      // never touches a mouse gets the same band.
+      el.addEventListener("focus", () => lightAxis(token, true));
+      el.addEventListener("blur", () => lightAxis(token, false));
+    });
+  }
+
+  // The sample index the sound has reached, written every frame. It is its own
+  // element, outside any live region, because sixty rewrites a second would
+  // flood a screen reader -- the readout beside it carries the same facts
+  // once, from the controls.
+  function mathHead(sounding) {
+    const el = $("mathhead");
+    if (!sounding || embed) { el.textContent = ""; return; }
+    const secs = audio.head();
+    if (secs < 0) { el.textContent = ""; return; }
+    const n = Math.round(secs * signal.rate);
+    // A scene that loops one window is not playing the recording, so a global
+    // index would name a sample nobody is hearing. Those say where they are
+    // inside the window instead.
+    // No thousands separator: "x[12,800]" reads as the two-dimensional index
+    // x[12, 800], which is exactly the notation this page spends nine other
+    // pictures teaching.
+    if (active.loopAudio) {
+      const ctx = contextFor(active);
+      const r = active.region ? active.region(ctx) : null;
+      const len = r ? Math.max(1, r.i1 - r.i0) : 1;
+      el.textContent = "x\u209c[" + (n % len) + "]";
+    } else {
+      el.textContent = "x[" + Math.min(n, signal.samples.length - 1) + "]";
+    }
+  }
+
   // How often a scene doing its own work is allowed to rewrite the readout.
   // Not every frame: rewriting it per frame destroys a reader's selection and
   // makes the browser check race the picture, which is why control changes are
@@ -1179,6 +1392,7 @@
     // The playhead is on the strip whichever surface the picture is drawn on,
     // and the strip has to go back to still once the sound stops.
     if (sounding || wasPlaying !== sounding) { strip.dirty = true; drawStrip(); }
+    if (sounding || wasPlaying !== sounding) mathHead(sounding);
     wasPlaying = sounding;
     wasBusy = busy;
     requestAnimationFrame(frame);
@@ -1493,6 +1707,10 @@
       $("con-" + s.id).dataset.label = T.concept;
       $("body-" + s.id).innerHTML = c.b;
       $("pr-" + s.id).textContent = c.predict || "";
+      // Only three sections carry a display equation. The <math> is static
+      // and language-neutral; this is the sentence under it.
+      const cap = document.getElementById("eqcap-" + s.id);
+      if (cap) cap.textContent = c.eqcap || "";
       // The heading of the group this scene opens, above its kicker.
       if (s.part && s.part[lang] !== group) {
         group = s.part[lang];
@@ -1714,11 +1932,11 @@
   resize();
   stage.dataset.scene = scenes[0].id;
   refreshMotion();
-  if (!embed) { bindStage(); bindStrip(); }
+  if (!embed) { bindStage(); bindStrip(); bindEquations(); }
   loadSignal().then(() => {
     if (signal.failed) $("playstate").textContent = T.failed;
     // Every scene seeds its state and builds its controls now: in a scroller
-    // all nine sections are on the page at once, and a section whose
+    // all ten sections are on the page at once, and a section whose
     // controls appeared only once it had been scrolled to would be a page
     // that changes shape under the reader.
     for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }

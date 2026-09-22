@@ -241,6 +241,11 @@
       return {samples: componentAudio(ctx, s, c), what: ctx.copy.hearOne(c + 1)};
     },
 
+    shape(ctx) {
+      const st = ctx.state.stft;
+      return st ? "[" + st.F + ", " + st.T + "]" : "";
+    },
+
     readout(ctx) {
       const s = ctx.state;
       if (!s.V || !s.nmf || s.err === null) {

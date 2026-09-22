@@ -9,7 +9,7 @@ const assert = require('node:assert/strict');
 
 // In the order voice-stage.html loads them.
 const SCENES = ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
-                 'scramble', 'lowrank', 'nmf'];
+                 'scramble', 'lowrank', 'nmf', 'batch'];
 // Every string the frame writes into the page, in both languages (see
 // voice-stage.html's fillText() and changed(), and "What the copy says" in
 // voice-scenes/README.md).
