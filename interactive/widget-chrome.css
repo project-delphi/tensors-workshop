@@ -3,7 +3,7 @@
    button and input, and the chrome that embed mode strips. Each page keeps
    what is its own -- the section accent, tuned per theme to clear 4.5:1 on
    these surfaces, and everything on and around its stage -- so a widget still
-   reads as one page, but four of them read as one site.
+   reads as one page, but all of them read as one site.
 
    Order matters: a page links this first and its own <style> second, so a
    rule of the same specificity in the page wins. That is how a page sets
@@ -44,6 +44,24 @@
   --sunk: #0b2236;
   --line: #2a4d68;
   --fault: #ff8a80;
+}
+
+/* Ink *on a stage*: the black picture frame the projection and audio stages
+   both draw into, and any stage after them. One set for all three themes,
+   because the stage is black in all three -- it is a picture rather than page
+   furniture, so it does not change colour with the page around it. Measured
+   against --stage-chip, which is the stage's own black: the weakest pairing
+   is --stage-mute at 6.0:1 and the rest run from 10 to 18, so a contrast
+   finding on a stage is real and never something to allowlist.
+
+   The role hues stay with their page: what yellow means on a waveform is not
+   what it means on a projection, and a shared name for two meanings is worse
+   than two names. */
+:root {
+  --stage: #000000;
+  --stage-chip: #000000;
+  --stage-ink: #e8e8e8;
+  --stage-mute: #8a8a8a;
 }
 
 * { box-sizing: border-box; }

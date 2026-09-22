@@ -53,13 +53,9 @@
     --accent: #0e6b63;
     --on-accent: #ffffff;
 
-    /* The stage is black in every theme. It was dark-per-theme; it is black
-       now because the look it takes is a Manim frame, and a frame is a picture
-       rather than page furniture -- it does not change colour with the page
-       around it. The chip under a label is the same black: opaque, so axe has
-       two colours to measure, and invisible, which is the chipless look. */
-    --stage: #000000;
-    --stage-chip: #000000;
+    /* --stage, --stage-chip, --stage-ink and --stage-mute are shared, in
+       widget-chrome.css: every stage is the same black picture frame, and
+       two copies of four tokens had already been written out twice. */
     --stage-serif: "CMU Serif", "Latin Modern Roman", "Times New Roman", Times, serif;
   }
   @media (prefers-color-scheme: dark) {
@@ -74,15 +70,11 @@
     --on-accent: #06202f;
   }
 
-  /* Ink *on the stage*. One set for all three themes, because the stage is
-     black in all three. Measured against the chip, which is the stage's own
-     black: the weakest pairing is --stage-mute at 6.0:1, the rest run from
-     10 to 18, so a contrast finding here is real and never something to
-     allowlist. The hues are Manim's, one role each: yellow is the vector the
-     reader holds, purple is where the matrix sends it. */
+  /* The roles this stage's pictures use, over the shared stage ink. The
+     hues are Manim's, one role each: yellow is the vector the reader holds,
+     purple is where the matrix sends it. Measured against the stage's black
+     chip, they run from 10 to 18:1. */
   :root {
-    --stage-ink: #e8e8e8;
-    --stage-mute: #8a8a8a;
     --v-y: #ffd84d;      /* the input: y, x, the reader's vector */
     --v-out: #c39bd3;    /* the output: A x, M x */
     --v-yhat: #58c4dd;   /* the projection, the left singular vectors */
