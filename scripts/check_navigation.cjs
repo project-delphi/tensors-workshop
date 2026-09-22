@@ -417,38 +417,39 @@ async function audit(page, where) {
         // immediately and prove nothing.
         const changedTo = (key, want) => settled(key, want);
 
-        // tokens: the gather, byte-exact.
-        await open('tokens');
+        // words: the tokenizer sets S -- four words, fifteen characters.
+        await open('words');
         let d = await data();
+        assert.equal(d.s, '4');
+        assert.equal(d.tokens, 'I|know|you|know');
+        await page.selectOption('#c-words-split', 'chars');
+        await changedTo('split', 'chars');
+        assert.equal((await data()).s, '15');
+        await fits('words, split into characters');
+
+        // ids: the vocabulary lookup gives exactly the stage's ids.
+        await open('ids');
+        d = await data();
+        assert.equal(d.ids, '3,1,4,1');
+        assert.equal(d.vocab, '6');
+
+        // embed: the gather, byte-exact, and the repeated word is a repeated row.
+        await open('embed');
+        d = await data();
         assert.equal(d.s, '4'); assert.equal(d.d, '8');
         assert.equal(d.shape, '4,8');
         assert.equal(d.ids, '3,1,4,1');
+        assert.equal(d.repeat, '1');
         assert.equal(await page.locator('#claim').textContent(), 'X = E[ids],  X.shape = (4, 8)',
-          `${where}: tokens claim is not byte-exact`);
+          `${where}: embed claim is not byte-exact`);
 
-        // project: 192 parameters make Q, K and V, and every dot product is
-        // an integer -- the legibility contract the seed keeps.
+        // project: one head's 3 x 8 x 4 = 96 parameters make Q, K and V, and
+        // every dot product is an integer -- the legibility contract the seed
+        // keeps.
         await open('project');
         d = await data();
-        assert.equal(d.wparams, '192');
+        assert.equal(d.wparams, '96');
         assert.equal(d.integer, '1');
-
-        // heads: the honest reshape agrees with the token it should; the
-        // flat one does not, and says so with its own srcof.
-        await open('heads');
-        d = await data();
-        assert.equal(d.agree, '1'); assert.equal(d.mixed, '0');
-        await page.selectOption('#c-heads-order', 'flat');
-        await changedTo('order', 'flat');
-        d = await data();
-        assert.equal(d.shape, '2,4,4'); assert.equal(d.sameshape, '1');
-        assert.equal(d.agree, '0'); assert.equal(d.mixed, '1');
-        const expectedSrc = await page.evaluate(() => {
-          const AC = window.AttentionCore;
-          const X = AC.gather(AC.embedding(), AC.IDS);
-          return AC.traceCell(X, 2, true, 0, 1, 0).from.s;
-        });
-        assert.equal(d.srcof, String(expectedSrc));
 
         // scores: the contraction is over d, the legibility contract makes
         // every unscaled score exactly double its scaled counterpart, and
@@ -463,6 +464,24 @@ async function audit(page, where) {
         d = await data();
         assert(Math.abs(Number(d.lmax) - lmaxScaled * 2) < 1e-9,
           `${where}: unscaled lmax should be exactly double scaled (${d.lmax} vs ${lmaxScaled * 2})`);
+
+        // scale: the raw spread grows like sqrt(d_k) and the scaled one holds
+        // at 1. Polled on the readback of the slider, then read.
+        await open('scale');
+        d = await data();
+        assert.equal(d.dk, '4');
+        assert(Math.abs(Number(d.rawstd) - 2) < 0.2, `${where}: raw spread at d_k = 4 is ${d.rawstd}`);
+        await page.locator('#c-scale-p').fill('8');
+        await changedTo('dk', '256');
+        d = await data();
+        assert(Math.abs(Number(d.rawstd) - 16) < 1.6, `${where}: raw spread at d_k = 256 is ${d.rawstd}`);
+        assert(Math.abs(Number(d.scaledstd) - 1) < 0.1, `${where}: scaled spread is ${d.scaledstd}`);
+        assert(Number(d.peakraw) > 0.9 && Number(d.peakscaled) < 0.5,
+          `${where}: unscaled softmax should saturate and scaled should not (${d.peakraw}, ${d.peakscaled})`);
+        await fits('scale at d_k = 256');
+        await page.locator('#c-scale-p').fill('0');
+        await changedTo('dk', '1');
+        await fits('scale at d_k = 1');
 
         // softmax: over the keys every row sums to 1.000; over the queries
         // it need not; a causal mask gives exact zeros and masks six cells.
@@ -483,16 +502,34 @@ async function audit(page, where) {
         assert.equal(d.masked, '6');
         assert.equal(d.rowsum, '1.000');
 
-        // output: the contraction is over t, and O is a convex combination
-        // of V; merging heads gives back a (4, 8) row per token.
+        // output: the contraction is over t, the output is a convex
+        // combination of V, and the two "know" rows -- identical going in --
+        // come out identical, because nothing has told attention where a
+        // token is.
         await open('output');
         d = await data();
         assert.equal(d.contract, 't');
         assert.equal(d.convex, '1');
-        await page.selectOption('#c-output-merge', 'merged');
-        await changedTo('merge', 'merged');
+        assert.equal(d.sameinput, '1');
+        assert.equal(d.same, '1');
+
+        // heads: the honest reshape agrees with the token it should; the
+        // flat one does not, and says so with its own srcof.
+        await open('heads');
         d = await data();
-        assert.equal(d.merged, '4,8');
+        assert.equal(d.agree, '1'); assert.equal(d.mixed, '0');
+        await page.selectOption('#c-heads-order', 'flat');
+        await changedTo('order', 'flat');
+        d = await data();
+        assert.equal(d.shape, '2,4,4'); assert.equal(d.sameshape, '1');
+        assert.equal(d.agree, '0'); assert.equal(d.mixed, '1');
+        const expectedSrc = await page.evaluate(() => {
+          const AC = window.AttentionCore;
+          const X = AC.gather(AC.embedding(), AC.IDS);
+          return AC.traceCell(X, 2, true, 0, 1, 0).from.s;
+        });
+        assert.equal(d.srcof, String(expectedSrc));
+
 
         // batch: the two einsum strings are literal text, and moving B
         // moves only B in the shape.
@@ -518,6 +555,20 @@ async function audit(page, where) {
             document.getElementById('stage').dataset.shape === want,
           [b, h, sq, dk].join(','), {timeout: 8000});
           await fits(`batch at (${b}, ${h}, ${sq}, ${dk})`);
+        }
+
+        // Every section carries the NumPy for its picture, numpy only, no
+        // line wider than 82 characters, under a label in the page's own
+        // language -- read after every scene has been reached and moved.
+        for (const id of ['words', 'ids', 'embed', 'project', 'scores', 'scale', 'softmax',
+                          'output', 'heads', 'batch']) {
+          const text = await page.locator(`#np-${id}`).innerText();
+          assert(text.trim().length > 0, `${where}: #np-${id} is empty`);
+          assert(!/undefined|NaN|torch|tensorflow|jax/i.test(text), `${where}: #np-${id} reads "${text}"`);
+          const widest = Math.max(...text.split('\n').map(l => l.length));
+          assert(widest <= 82, `${where}: #np-${id} is ${widest} characters wide`);
+          assert.equal(await page.locator(`#nplab-${id}`).innerText(),
+            lang === 'es' ? 'EN NUMPY' : 'IN NUMPY', `${where}: #nplab-${id}`);
         }
 
         // A scene's own name, with a hard reload, opens on it.
@@ -1615,8 +1666,8 @@ async function audit(page, where) {
          es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
         // Its embed mode is the softmax scene, flat and still: no scroller,
         // and -- unlike every other widget here -- nothing to fetch at all.
-        {file: 'attention-stage', en: 'Attention as two contractions',
-         es: 'La atención como dos contracciones', embed: true, drive: driveAttention},
+        {file: 'attention-stage', en: 'Attention, from words to weights',
+         es: 'La atención, de las palabras a los pesos', embed: true, drive: driveAttention},
         // Its embed mode is the portal's still frame -- no scroller, no
         // three.js -- which is the third hero tab below.
         {file: 'linalg-stage', en: 'Projection and the SVD',

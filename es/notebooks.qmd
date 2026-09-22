@@ -61,15 +61,20 @@ reshape y una disposición en memoria con la forma, los strides, el búfer y la 
 
 Las secciones 04 y 06 y el apéndice B comparten un
 <a href="../interactive/attention-stage.html?lang=es">escenario de atención</a>,
-siete imágenes de una misma secuencia: cuatro ids recogidos de una tabla, esa
-tabla proyectada de tres formas en Q, K y V, cada una dividida para que
-<a href="../interactive/attention-stage.html?lang=es#heads">cada cabeza tenga su
-propio eje</a> —un reshape que también tiene que ser un transpose, y el error
-cuando no lo es—, la contracción que produce las puntuaciones,
+diez imágenes que siguen una frase a través de una cabeza de atención: las
+palabras cortadas en tokens y codificadas como ids, los ids trayendo filas de
+una tabla de embeddings, esas filas proyectadas en consultas, claves y valores,
+las puntuaciones,
+<a href="../interactive/attention-stage.html?lang=es#scale">por qué se dividen
+entre √d_k</a>,
 <a href="../interactive/attention-stage.html?lang=es#softmax">softmax
 convirtiéndolas en pesos que suman uno</a>, con una máscara causal como idea
-propia del trabajo para casa, el promedio ponderado que es la salida, y el
-tensor de rango 4 que recibe de verdad un modelo real.
+propia del trabajo para casa, y el promedio ponderado que es la salida.
+Después
+<a href="../interactive/attention-stage.html?lang=es#heads">cada cabeza recibe
+su propio eje</a> —un reshape que también tiene que ser un transpose, y el
+error cuando no lo es— y el tensor de rango 4 que recibe de verdad un modelo
+real. Cada imagen muestra su NumPy.
 
 Las secciones 07, 08 y 09 comparten un
 <a href="../interactive/linalg-stage.html?lang=es">escenario de proyección y SVD</a>,

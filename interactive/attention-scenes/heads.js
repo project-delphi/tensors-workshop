@@ -63,6 +63,7 @@
   window.AttentionScenes.register({
     id: "heads",
     section: "04",
+    part: {en: "Beyond one head", es: "Más allá de una cabeza"},
 
     controls: [
       {id: "order", type: "select", options: ["split", "flat"]},
@@ -90,13 +91,27 @@
       };
     },
 
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np;
+      return ctx.K.code([
+        ["Q_all = np.dot(embeddings, W_Q)", c.all],
+        s.order === "split"
+          ? ["Qh = Q_all.reshape(4, 2, 4).transpose(1, 0, 2)", c.split]
+          : ["Qh = Q_all.reshape(2, 4, 4)", c.flat],
+        ["np.array_equal(Qh[0], Q)", s.order === "split" ? "True: " + c.same : "False"]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "Heads",
         k: "Reshape, then transpose · section 04",
         h: "Giving each head its own axis is a reshape, then a transpose",
         claim: "(4, 8) → (4, 2, 4) → (2, 4, 4)",
-        concept: "Splitting the feature axis into heads is a reshape that keeps every token's own row, " +
+        concept: "The head in the last part used four of the columns a full 8 × 8 projection would " +
+                 "give, and a second head gets the other four, so two heads look for two different " +
+                 "things in the same sentence at no extra cost. " +
+                 "Splitting the feature axis into heads is a reshape that keeps every token's own row, " +
                  "followed by a transpose that moves the head axis to the front. Skip the transpose and " +
                  "the shape is still right — (2, 4, 4) either way — but a head's rows are read straight " +
                  "off the flat buffer, mixing tokens that were never adjacent.",
@@ -106,6 +121,12 @@
            "actually came from — same shape, different source.</p>",
         predict: "Both give a (2, 4, 4) tensor. Does the shape alone prove the split is correct?",
         controls: {order: "Reshape", head: "Head", token: "Token"},
+        np: {
+          all: "(4, 8): both heads",
+          split: "(2, 4, 4): head, token, d",
+          flat: "(2, 4, 4), wrong rows",
+          same: "the Q from before"
+        },
         options: {order: {split: "reshape, then transpose", flat: "flat reshape (no transpose)"}},
         readout: (order, head, token, srcOf, agree) =>
           "Head " + head + ", token " + token + " reads from X's token " + srcOf + " — " +
@@ -119,7 +140,10 @@
         k: "Reshape y después transpose · sección 04",
         h: "Dar a cada cabeza su propio eje es un reshape y después un transpose",
         claim: "(4, 8) → (4, 2, 4) → (2, 4, 4)",
-        concept: "Dividir el eje de características en cabezas es un reshape que conserva la fila " +
+        concept: "La cabeza de la parte anterior usaba cuatro de las columnas que daría una " +
+                 "proyección completa de 8 × 8, y una segunda cabeza recibe las otras cuatro, así " +
+                 "que dos cabezas buscan dos cosas distintas en la misma frase sin coste extra. " +
+                 "Dividir el eje de características en cabezas es un reshape que conserva la fila " +
                  "propia de cada token, seguido de un transpose que mueve el eje de cabezas al frente. " +
                  "Si se salta el transpose la forma sigue siendo correcta —(2, 4, 4) en ambos " +
                  "casos—, pero las filas de una cabeza se leen directo del búfer plano, " +
@@ -131,6 +155,12 @@
         predict: "Ambos dan un tensor (2, 4, 4). ¿La forma sola demuestra que la división es " +
                  "correcta?",
         controls: {order: "Reshape", head: "Cabeza", token: "Token"},
+        np: {
+          all: "(4, 8): ambas cabezas",
+          split: "(2, 4, 4): cabeza, token, d",
+          flat: "(2, 4, 4), filas erróneas",
+          same: "la Q de antes"
+        },
         options: {order: {split: "reshape y después transpose", flat: "reshape plano (sin transpose)"}},
         readout: (order, head, token, srcOf, agree) =>
           "La cabeza " + head + ", token " + token + " lee del token " + srcOf + " de X — " +

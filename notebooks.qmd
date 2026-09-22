@@ -60,15 +60,18 @@ its three photographs into cubes, one per byte, and shows what transpose, reshap
 and a memory layout each do to the shape, the strides, the buffer and the picture.
 
 Sections 04 and 06 and Appendix B share an
-[attention stage](interactive/attention-stage.html?lang=en), seven pictures of
-one sequence: four ids gathered out of a table, that table projected three
-ways into Q, K and V, each split so [every head gets its own
-axis](interactive/attention-stage.html?lang=en#heads) — a reshape that has to
-be a transpose too, and the bug when it is not — the contraction that
-produces the scores, [softmax turning them into weights that sum to
+[attention stage](interactive/attention-stage.html?lang=en), ten pictures
+that follow one sentence through one attention head: the words cut into
+tokens and coded as ids, the ids fetching rows of an embedding table, those
+rows projected into queries, keys and values, the scores, [why they are
+divided by √d_k](interactive/attention-stage.html?lang=en#scale), [softmax
+turning them into weights that sum to
 one](interactive/attention-stage.html?lang=en#softmax), with a causal mask as
-the take-home's own idea, the weighted average that is the output, and the
-rank-4 tensor a real model is actually handed.
+the take-home's own idea, and the weighted average that is the output. Then
+each head gets [its own axis](interactive/attention-stage.html?lang=en#heads)
+— a reshape that has to be a transpose too, and the bug when it is not — and
+the rank-4 tensor a real model is actually handed. Each picture shows its
+NumPy.
 
 Sections 07, 08 and 09 share a
 [projection and SVD stage](interactive/linalg-stage.html?lang=en), eight

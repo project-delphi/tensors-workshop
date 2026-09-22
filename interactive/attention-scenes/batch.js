@@ -1,5 +1,5 @@
 // Scene 7: what a model is actually handed is a rank-4 tensor, B batches of
-// H heads of an (S, D_k) matrix, and the two einsum strings that built the
+// H heads of an (S, d_k) matrix, and the two einsum strings that built the
 // scores and the output are literal text on the stage — the same letters
 // notebook 17 and this stage's own scores and output scenes use, with b and
 // h simply carried along on both sides.
@@ -45,9 +45,9 @@
         {size: 10, fill: ctx.colour("--stage-mute")}));
     }
     // Notation, not a sentence: one sheet's shape serves both languages, and
-    // the prose that says a sheet *is* an (S, D_k) slice lives in copy.b.
+    // the prose that says a sheet *is* an (S, d_k) slice lives in copy.b.
     root.appendChild(K.text(320, originY + gridH + 34,
-      "sheet = (S, D_k) = (" + s.s + ", " + s.dk + ")",
+      "sheet = (S, d_k) = (" + s.s + ", " + s.dk + ")",
       {size: 11, fill: ctx.colour("--stage-mute")}));
 
     root.appendChild(K.text(320, 296, "einsum('bhsd,bhtd->bhst', Q, K)",
@@ -76,7 +76,7 @@
       const lshape = [s.b, s.h, s.s, s.s];
       return {
         html: ctx.copy.readout(shape, AC.elementCount(shape)),
-        claim: "𝒯 ∈ ℝ^(B×H×S×D_k) = (" + shape.join(", ") + ")",
+        claim: "𝒯 ∈ ℝ^(B×H×S×d_k) = (" + shape.join(", ") + ")",
         data: {
           shape: shape.join(","), b: s.b, h: s.h, s: s.s, dk: s.dk,
           lshape: lshape.join(","), elems: AC.elementCount(shape),
@@ -85,20 +85,33 @@
       };
     },
 
+    code(ctx) {
+      const s = ctx.state, t = (a) => "(" + a.join(", ") + ")";
+      return ctx.K.code([
+        ["Q.shape", t([s.b, s.h, s.s, s.dk])],
+        ['scores = np.einsum("bhsd,bhtd->bhst", Q, K) / np.sqrt(d_k)', t([s.b, s.h, s.s, s.s])],
+        ['output = np.einsum("bhst,bhtd->bhsd", attn_weights, V)', t([s.b, s.h, s.s, s.dk])]
+      ]);
+    },
+
     copy: {
       en: {
         tab: "Batch",
         k: "What a model is handed · section 04",
         h: "What a model is actually handed is a rank-4 tensor",
-        claim: "𝒯 ∈ ℝ^(B×H×S×D_k) = (2, 2, 4, 4)",
-        concept: "A batch of B sequences, each with H heads of its own (S, D_k) matrix, is one rank-4 " +
+        claim: "𝒯 ∈ ℝ^(B×H×S×d_k) = (2, 2, 4, 4)",
+        concept: "A batch of B sequences, each with H heads of its own (S, d_k) matrix, is one rank-4 " +
                  "tensor. Every contraction in this stage carries b and h along on both sides of its " +
                  "einsum string — they are never summed over, because a batch item's attention never " +
                  "mixes with another's.",
-        b: "<p>Each sheet is one (S, D_k) slice; B columns of H sheets each is the whole tensor. Move " +
+        b: "<p>Each sheet is one (S, d_k) slice; B columns of H sheets each is the whole tensor. Move " +
            "any slider and the element count below is that shape's own product, not a stored number.</p>",
-        predict: "Doubling S doubles the element count. Does doubling D_k also double it?",
-        controls: {b: "Batch B", h: "Heads H", s: "Sequence S", dk: "D_k"},
+        predict: "Doubling S doubles the element count. Does doubling d_k also double it?",
+        eqcap: "The one-head score from the last part, with two more indices: b picks a sequence in " +
+               "the batch and h a head. Both are on every factor and on the result, and neither is " +
+               "summed over, so each sentence's heads work exactly as the one head did, side by side. " +
+               "d is still the only axis that disappears.",
+        controls: {b: "Batch B", h: "Heads H", s: "Sequence S", dk: "d_k"},
         readout: (shape, elems) =>
           "𝒯.shape = (" + shape.join(", ") + "), <b>" + elems.toLocaleString("en") +
           "</b> numbers in all.",
@@ -110,17 +123,21 @@
         tab: "Lote",
         k: "Lo que recibe un modelo · sección 04",
         h: "Lo que recibe de verdad un modelo es un tensor de rango 4",
-        claim: "𝒯 ∈ ℝ^(B×H×S×D_k) = (2, 2, 4, 4)",
-        concept: "Un lote de B secuencias, cada una con H cabezas de su propia matriz (S, D_k), es un " +
+        claim: "𝒯 ∈ ℝ^(B×H×S×d_k) = (2, 2, 4, 4)",
+        concept: "Un lote de B secuencias, cada una con H cabezas de su propia matriz (S, d_k), es un " +
                  "solo tensor de rango 4. Cada contracción de este escenario lleva b y h en ambos " +
                  "lados de su cadena einsum: nunca se suman, porque la atención de un elemento del " +
                  "lote nunca se mezcla con la de otro.",
-        b: "<p>Cada lámina es una rebanada (S, D_k); B columnas de H láminas cada una es el " +
+        b: "<p>Cada lámina es una rebanada (S, d_k); B columnas de H láminas cada una es el " +
            "tensor entero. Mueve cualquier deslizador y el conteo de elementos de abajo es el producto " +
            "propio de esa forma, no un número guardado.</p>",
-        predict: "Duplicar S duplica el conteo de elementos. ¿Duplicar D_k también lo " +
+        predict: "Duplicar S duplica el conteo de elementos. ¿Duplicar d_k también lo " +
                  "duplica?",
-        controls: {b: "Lote B", h: "Cabezas H", s: "Secuencia S", dk: "D_k"},
+        eqcap: "La puntuación de una cabeza de la parte anterior, con dos índices más: b elige una " +
+               "secuencia del lote y h una cabeza. Ambos están en cada factor y en el resultado, y " +
+               "ninguno se suma, así que las cabezas de cada frase funcionan igual que la única " +
+               "cabeza de antes, una al lado de otra. d sigue siendo el único eje que desaparece.",
+        controls: {b: "Lote B", h: "Cabezas H", s: "Secuencia S", dk: "d_k"},
         readout: (shape, elems) =>
           "𝒯.shape = (" + shape.join(", ") + "), <b>" + elems.toLocaleString("es") +
           "</b> números en total.",

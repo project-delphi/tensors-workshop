@@ -81,12 +81,15 @@ repo:
     - interactive/attention-stage.html
     - interactive/attention-core.js
     - interactive/attention-kit.js
-    - interactive/attention-scenes/tokens.js
+    - interactive/attention-scenes/words.js
+    - interactive/attention-scenes/ids.js
+    - interactive/attention-scenes/embed.js
     - interactive/attention-scenes/project.js
-    - interactive/attention-scenes/heads.js
     - interactive/attention-scenes/scores.js
+    - interactive/attention-scenes/scale.js
     - interactive/attention-scenes/softmax.js
     - interactive/attention-scenes/output.js
+    - interactive/attention-scenes/heads.js
     - interactive/attention-scenes/batch.js
     # The arithmetic under the voice tensor stage, and the recording it
     # factors (interactive/vendor/README.md). The recording is fetched by

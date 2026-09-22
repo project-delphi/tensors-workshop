@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Attention as two contractions</title>
+<title>Attention, from words to weights</title>
 
 <link rel="stylesheet" href="widget-chrome.css">
 <style>
@@ -72,15 +72,19 @@
      content stays byte-exact -- this only shrinks how it is drawn.
 
      `html.embed` is in the selector as well as the width, because an embed
-     is small however wide its frame happens to be: at 520px this rule did
-     not apply, the softmax claim -- the longest of the seven, and the one
-     the embed always opens on -- wrapped to two lines, and the second line
-     sat exactly over the scene's own "L, head 0" title. The width half
-     still has to stay for the non-embedded page at 390px. */
+     is small however wide its frame happens to be: at 520px the width rule
+     did not apply, and the softmax claim -- the one the embed always opens
+     on -- wrapped to two lines over the scene's own title. The width half
+     still has to stay for the non-embedded page at 390px.
+
      The claim's max-width plus the badge's 34% has to stay under 100%, or
-     the two chips share the row and overlap: at 74% the claim's first line
-     ran under "Shape [2, 4, 4]". Wrapping to a third line is the cheaper
-     failure now that the viewBox makes room for however many there are. */
+     the two chips share the row and overlap. Wrapping to a third line is the
+     cheaper failure, now that fitClaim() makes room for however many there
+     are.
+
+     This comment used to be two, and the first closed early: the second
+     paragraph sat bare between them, the parser took it for the start of a
+     selector, and the whole 420px rule below was swallowed with it. */
   @media (max-width: 420px) {
     #claim { font-size: 0.62rem; line-height: 1.25; max-width: 60%; padding: 0.1rem 0.3rem; top: 0.4rem; }
     #shapebadge { font-size: 0.62rem; padding: 0.1rem 0.3rem; top: 0.4rem; }
@@ -127,6 +131,21 @@
   }
   .readout b { color: var(--accent); }
   .shape { font-family: var(--mono); font-size: 0.86rem; }
+
+  /* The NumPy for each picture, the shape voice-stage.html keeps: one copy
+     of the code for both languages, only the `#` comments translated, and
+     written by changed() because every number in it comes from the
+     controls. `contain: inline-size` is the .eqscroll lesson again: without
+     it a long line reports its own min-content and takes the page past
+     390px. */
+  .np { margin: 0.9rem 0 0; max-width: 36rem; }
+  .nplabel {
+    margin: 0 0 0.3rem; font: 600 0.75rem/1.3 var(--sans);
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute);
+  }
+  .np pre { margin: 0; contain: inline-size; border: 1px solid var(--line); }
+  .np pre:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .step .body code, .readout code { font: 500 0.85em/1 var(--mono); }
 
   /* Display notation, the same shape voice-stage.html keeps. Static and
      language-neutral; only the caption under it is translated. */
@@ -177,15 +196,49 @@
 
     <div class="steps" id="steps">
 
-      <section class="step" id="step-tokens" aria-labelledby="h-tokens">
-        <span class="anchor" id="tokens"></span>
-        <p class="kicker" id="k-tokens"></p>
-        <h2 id="h-tokens"></h2>
-        <p class="concept" id="con-tokens"></p>
-        <div class="body" id="body-tokens"></div>
-        <p class="predict" id="pr-tokens"></p>
-        <div class="controls" id="ctl-tokens"></div>
-        <p class="readout" id="read-tokens"></p>
+      <section class="step" id="step-words" aria-labelledby="h-words">
+        <span class="anchor" id="words"></span>
+        <p class="kicker" id="k-words"></p>
+        <h2 id="h-words"></h2>
+        <p class="concept" id="con-words"></p>
+        <div class="body" id="body-words"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-words"></p>
+          <pre id="np-words" tabindex="0" role="region" aria-labelledby="nplab-words"><code></code></pre>
+        </div>
+        <p class="predict" id="pr-words"></p>
+        <div class="controls" id="ctl-words"></div>
+        <p class="readout" id="read-words"></p>
+      </section>
+
+      <section class="step" id="step-ids" aria-labelledby="h-ids">
+        <span class="anchor" id="ids"></span>
+        <p class="kicker" id="k-ids"></p>
+        <h2 id="h-ids"></h2>
+        <p class="concept" id="con-ids"></p>
+        <div class="body" id="body-ids"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-ids"></p>
+          <pre id="np-ids" tabindex="0" role="region" aria-labelledby="nplab-ids"><code></code></pre>
+        </div>
+        <p class="predict" id="pr-ids"></p>
+        <div class="controls" id="ctl-ids"></div>
+        <p class="readout" id="read-ids"></p>
+      </section>
+
+      <section class="step" id="step-embed" aria-labelledby="h-embed">
+        <span class="anchor" id="embed"></span>
+        <p class="kicker" id="k-embed"></p>
+        <h2 id="h-embed"></h2>
+        <p class="concept" id="con-embed"></p>
+        <div class="body" id="body-embed"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-embed"></p>
+          <pre id="np-embed" tabindex="0" role="region" aria-labelledby="nplab-embed"><code></code></pre>
+        </div>
+        <p class="predict" id="pr-embed"></p>
+        <div class="controls" id="ctl-embed"></div>
+        <p class="readout" id="read-embed"></p>
       </section>
 
       <section class="step" id="step-project" aria-labelledby="h-project">
@@ -194,20 +247,13 @@
         <h2 id="h-project"></h2>
         <p class="concept" id="con-project"></p>
         <div class="body" id="body-project"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-project"></p>
+          <pre id="np-project" tabindex="0" role="region" aria-labelledby="nplab-project"><code></code></pre>
+        </div>
         <p class="predict" id="pr-project"></p>
         <div class="controls" id="ctl-project"></div>
         <p class="readout" id="read-project"></p>
-      </section>
-
-      <section class="step" id="step-heads" aria-labelledby="h-heads">
-        <span class="anchor" id="heads"></span>
-        <p class="kicker" id="k-heads"></p>
-        <h2 id="h-heads"></h2>
-        <p class="concept" id="con-heads"></p>
-        <div class="body" id="body-heads"></div>
-        <p class="predict" id="pr-heads"></p>
-        <div class="controls" id="ctl-heads"></div>
-        <p class="readout" id="read-heads"></p>
       </section>
 
       <section class="step" id="step-scores" aria-labelledby="h-scores">
@@ -218,40 +264,38 @@
         <div class="body" id="body-scores"></div>
         <div class="eq">
           <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-scores">
-            <math display="block">
-              <mrow>
-                <mi>L</mi><mo stretchy="false">[</mo>
-                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
-                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
-                <mo>=</mo>
-                <mfrac>
-                  <mrow>
-                    <mo stretchy="false">(</mo>
-                    <munder><mo>&#x2211;</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></munder>
-                    <mi>Q</mi><mo stretchy="false">[</mo>
-                    <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                    <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                    <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
-                    <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
-                    <mi>K</mi><mo stretchy="false">[</mo>
-                    <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                    <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                    <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo>
-                    <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
-                    <mo stretchy="false">)</mo>
-                  </mrow>
-                  <msqrt><msub><mi>D</mi><mi>k</mi></msub></msqrt>
-                </mfrac>
-              </mrow>
-            </math>
+            <math display="block"><mrow><mi>L</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo><mo>=</mo><mfrac><mrow><munder><mo>&#x2211;</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></munder><mi>Q</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo><mi>K</mi><mo stretchy="false">[</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac></mrow></math>
           </div>
           <p class="eqcap" id="eqcap-scores"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-scores"></p>
+          <pre id="np-scores" tabindex="0" role="region" aria-labelledby="nplab-scores"><code></code></pre>
         </div>
         <p class="predict" id="pr-scores"></p>
         <div class="controls" id="ctl-scores"></div>
         <p class="readout" id="read-scores"></p>
+      </section>
+
+      <section class="step" id="step-scale" aria-labelledby="h-scale">
+        <span class="anchor" id="scale"></span>
+        <p class="kicker" id="k-scale"></p>
+        <h2 id="h-scale"></h2>
+        <p class="concept" id="con-scale"></p>
+        <div class="body" id="body-scale"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-scale">
+            <math display="block"><mrow><mi>Var</mi><mo stretchy="false">(</mo><mi mathvariant="bold">q</mi><mo>&#x22C5;</mo><mi mathvariant="bold">k</mi><mo stretchy="false">)</mo><mo>=</mo><munder><mo>&#x2211;</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></munder><mi>Var</mi><mo stretchy="false">(</mo><msub><mi>q</mi><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></msub><msub><mi>k</mi><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></msub><mo stretchy="false">)</mo><mo>=</mo><mrow data-hl="feat" tabindex="0"><msub><mi>d</mi><mi>k</mi></msub></mrow></mrow></math>
+          </div>
+          <p class="eqcap" id="eqcap-scale"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-scale"></p>
+          <pre id="np-scale" tabindex="0" role="region" aria-labelledby="nplab-scale"><code></code></pre>
+        </div>
+        <p class="predict" id="pr-scale"></p>
+        <div class="controls" id="ctl-scale"></div>
+        <p class="readout" id="read-scale"></p>
       </section>
 
       <section class="step" id="step-softmax" aria-labelledby="h-softmax">
@@ -262,26 +306,13 @@
         <div class="body" id="body-softmax"></div>
         <div class="eq">
           <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-softmax">
-            <math display="block">
-              <mrow>
-                <mi>A</mi><mo stretchy="false">[</mo>
-                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
-                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
-                <mo>=</mo>
-                <msub><mi>softmax</mi><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow></msub>
-                <mo stretchy="false">(</mo>
-                <mi>L</mi><mo stretchy="false">[</mo>
-                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
-                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
-                <mo stretchy="false">)</mo>
-              </mrow>
-            </math>
+            <math display="block"><mrow><mi>A</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo><mo>=</mo><mfrac><msup><mi>e</mi><mrow><mi>L</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo></mrow></msup><mrow><munder><mo>&#x2211;</mo><mrow data-hl="key" tabindex="0"><msup><mi>t</mi><mo>′</mo></msup></mrow></munder><msup><mi>e</mi><mrow><mi>L</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><msup><mi>t</mi><mo>′</mo></msup></mrow><mo stretchy="false">]</mo></mrow></msup></mrow></mfrac></mrow></math>
           </div>
           <p class="eqcap" id="eqcap-softmax"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-softmax"></p>
+          <pre id="np-softmax" tabindex="0" role="region" aria-labelledby="nplab-softmax"><code></code></pre>
         </div>
         <p class="predict" id="pr-softmax"></p>
         <div class="controls" id="ctl-softmax"></div>
@@ -296,33 +327,32 @@
         <div class="body" id="body-output"></div>
         <div class="eq">
           <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-output">
-            <math display="block">
-              <mrow>
-                <mi>O</mi><mo stretchy="false">[</mo>
-                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
-                <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
-                <mo>=</mo>
-                <munder><mo>&#x2211;</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow></munder>
-                <mi>A</mi><mo stretchy="false">[</mo>
-                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                <mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo>
-                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo>
-                <mi>V</mi><mo stretchy="false">[</mo>
-                <mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo>
-                <mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo>
-                <mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo>
-                <mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo>
-              </mrow>
-            </math>
+            <math display="block"><mrow><mi>O</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo><mo>=</mo><munder><mo>&#x2211;</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow></munder><mi>A</mi><mo stretchy="false">[</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo><mi>V</mi><mo stretchy="false">[</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo></mrow></math>
           </div>
           <p class="eqcap" id="eqcap-output"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-output"></p>
+          <pre id="np-output" tabindex="0" role="region" aria-labelledby="nplab-output"><code></code></pre>
         </div>
         <p class="predict" id="pr-output"></p>
         <div class="controls" id="ctl-output"></div>
         <p class="readout" id="read-output"></p>
+      </section>
+
+      <section class="step" id="step-heads" aria-labelledby="h-heads">
+        <span class="anchor" id="heads"></span>
+        <p class="kicker" id="k-heads"></p>
+        <h2 id="h-heads"></h2>
+        <p class="concept" id="con-heads"></p>
+        <div class="body" id="body-heads"></div>
+        <div class="np">
+          <p class="nplabel" id="nplab-heads"></p>
+          <pre id="np-heads" tabindex="0" role="region" aria-labelledby="nplab-heads"><code></code></pre>
+        </div>
+        <p class="predict" id="pr-heads"></p>
+        <div class="controls" id="ctl-heads"></div>
+        <p class="readout" id="read-heads"></p>
       </section>
 
       <section class="step" id="step-batch" aria-labelledby="h-batch">
@@ -331,6 +361,16 @@
         <h2 id="h-batch"></h2>
         <p class="concept" id="con-batch"></p>
         <div class="body" id="body-batch"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-batch">
+            <math display="block"><mrow><mi>L</mi><mo stretchy="false">[</mo><mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo><mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo stretchy="false">]</mo><mo>=</mo><mfrac><mrow><munder><mo>&#x2211;</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow></munder><mi>Q</mi><mo stretchy="false">[</mo><mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo><mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo><mrow data-hl="query" tabindex="0"><mi>s</mi></mrow><mo>,</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo><mi>K</mi><mo stretchy="false">[</mo><mrow data-hl="batch" tabindex="0"><mi>b</mi></mrow><mo>,</mo><mrow data-hl="head" tabindex="0"><mi>h</mi></mrow><mo>,</mo><mrow data-hl="key" tabindex="0"><mi>t</mi></mrow><mo>,</mo><mrow data-hl="feat" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo></mrow><msqrt><msub><mi>d</mi><mi>k</mi></msub></msqrt></mfrac></mrow></math>
+          </div>
+          <p class="eqcap" id="eqcap-batch"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-batch"></p>
+          <pre id="np-batch" tabindex="0" role="region" aria-labelledby="nplab-batch"><code></code></pre>
+        </div>
         <p class="predict" id="pr-batch"></p>
         <div class="controls" id="ctl-batch"></div>
         <p class="readout" id="read-batch"></p>
@@ -375,12 +415,15 @@
 <script src="attention-core.js"></script>
 <script src="linalg-core.js"></script>
 <script src="attention-kit.js"></script>
-<script src="attention-scenes/tokens.js"></script>
+<script src="attention-scenes/words.js"></script>
+<script src="attention-scenes/ids.js"></script>
+<script src="attention-scenes/embed.js"></script>
 <script src="attention-scenes/project.js"></script>
-<script src="attention-scenes/heads.js"></script>
 <script src="attention-scenes/scores.js"></script>
+<script src="attention-scenes/scale.js"></script>
 <script src="attention-scenes/softmax.js"></script>
 <script src="attention-scenes/output.js"></script>
+<script src="attention-scenes/heads.js"></script>
 <script src="attention-scenes/batch.js"></script>
 
 <script>
@@ -401,62 +444,66 @@
   const T = {
     en: {
       eyebrow: "Sections 04 and 06 · Appendix B",
-      title: "Attention as two contractions",
+      title: "Attention, from words to weights",
       navHome: "← Workshop home",
       navInteractive: "Interactive",
       navNotebooks: "Notebooks",
-      intro: "Attention is built from ideas this workshop has already met: a gather, a projection, " +
-             "a reshape that has to be a transpose too, and two contractions. Seven pictures, in the " +
-             "order the arithmetic happens: four token ids gathered out of a table, that table " +
-             "projected three ways into Q, K and V, each split so every head gets its own axis, the " +
-             "scores that contraction produces, softmax turning them into weights that sum to one, " +
-             "the weighted average that is the output, and the rank-4 tensor a real model is actually " +
-             "handed. Every picture asks you to predict before you touch a control; the box under the " +
-             "controls is the answer, in this picture's own numbers.",
-      shape: "Shape", concept: "Concept",
+      intro: "A four-word sentence, followed all the way through one attention head, one step " +
+             "per picture: the words cut into tokens, the tokens coded as integers, the " +
+             "integers used to fetch rows of an embedding table, those rows projected into " +
+             "queries, keys and values, every query scored against every key, the scores scaled " +
+             "and turned into weights, and the weights used to average the values. Then two " +
+             "pictures on what a real model adds: more heads, and a batch. Each picture asks you " +
+             "to predict before you touch a control, and each one shows the NumPy that computes " +
+             "it: numpy only, no framework.",
+      shape: "Shape", concept: "Concept", code: "In NumPy",
       reset: "Reset this picture",
       prev: "◀ Back", next: "Next ▶",
       stepOf: (i, n) => i + " of " + n,
       stepName: (i, n, h) => i + " of " + n + ": " + h,
-      embedCap: "Two contractions: Q against K, then the weights against V.",
+      embedCap: "Softmax turns each row of scores into weights that sum to one.",
       aboutH: "About this page",
       about1: "Every number on this page is computed in the browser, from a fixed seed, through " +
-              "attention-core.js. Nothing is drawn to a stored answer; the four token words carry no " +
-              "meaning of their own.",
+              "attention-core.js. Nothing is drawn from a stored answer. The embedding table and " +
+              "the weight matrices are seeded, not trained, and kept to small integers so every " +
+              "sum can be checked by hand, so no number here says anything about what the words " +
+              "mean.",
       about2: "It accompanies section 04 (layout and reshape), section 06 (contraction with einsum) " +
               "and Appendix B (attention is two contractions). Each picture has its own address — " +
-              "#tokens, #project, #heads, #scores, #softmax, #output, #batch — and the notebooks link " +
-              "to the one they are teaching."
+              "#words, #ids, #embed, #project, #scores, #scale, #softmax, #output, #heads, " +
+              "#batch — and the notebooks link to the one they are teaching."
     },
     es: {
       eyebrow: "Secciones 04 y 06 · Apéndice B",
-      title: "La atención como dos contracciones",
+      title: "La atención, de las palabras a los pesos",
       navHome: "← Inicio del taller",
       navInteractive: "Interactivo",
       navNotebooks: "Cuadernos",
-      intro: "La atención está construida con ideas que este taller ya ha visto: una recolección, " +
-             "una proyección, un reshape que también tiene que ser un transpose, y dos contracciones. " +
-             "Siete imágenes, en el orden en que ocurre la aritmética: cuatro ids de token recogidos " +
-             "de una tabla, esa tabla proyectada de tres formas en Q, K y V, cada una dividida para " +
-             "que cada cabeza tenga su propio eje, las puntuaciones que produce esa contracción, " +
-             "softmax convirtiéndolas en pesos que suman uno, el promedio ponderado que es la salida, " +
-             "y el tensor de rango 4 que recibe de verdad un modelo real. Cada imagen te pide una " +
-             "predicción antes de tocar un control; la caja bajo los controles es la respuesta, con " +
-             "los números propios de esta imagen.",
-      shape: "Forma", concept: "Concepto",
+      intro: "Una frase de cuatro palabras, seguida de principio a fin a través de una cabeza de " +
+             "atención, un paso por imagen: las palabras cortadas en tokens, los tokens " +
+             "codificados como enteros, los enteros usados para traer filas de una tabla de " +
+             "embeddings, esas filas proyectadas en consultas, claves y valores, cada consulta " +
+             "puntuada contra cada clave, las puntuaciones escaladas y convertidas en pesos, y los " +
+             "pesos usados para promediar los valores. Después, dos imágenes sobre lo que añade " +
+             "un modelo real: más cabezas y un lote. Cada imagen te pide una predicción antes de " +
+             "tocar un control, y cada una muestra el NumPy que la calcula: solo numpy, ningún " +
+             "framework.",
+      shape: "Forma", concept: "Concepto", code: "En NumPy",
       reset: "Reiniciar esta imagen",
       prev: "◀ Atrás", next: "Siguiente ▶",
       stepOf: (i, n) => i + " de " + n,
       stepName: (i, n, h) => i + " de " + n + ": " + h,
-      embedCap: "Dos contracciones: Q contra K, y después los pesos contra V.",
+      embedCap: "Softmax convierte cada fila de puntuaciones en pesos que suman uno.",
       aboutH: "Sobre esta página",
       about1: "Cada número de esta página se calcula en el navegador, a partir de una semilla fija, " +
-              "mediante attention-core.js. Nada se dibuja sobre una respuesta guardada; las cuatro " +
-              "palabras de token no tienen significado propio.",
+              "mediante attention-core.js. Nada se dibuja a partir de una respuesta guardada. La " +
+              "tabla de embeddings y las matrices de pesos están sembradas, no entrenadas, y " +
+              "limitadas a enteros pequeños para que cada suma pueda comprobarse a mano, así que " +
+              "ningún número de aquí dice nada sobre lo que significan las palabras.",
       about2: "Acompaña a la sección 04 (disposición y reshape), a la 06 (contracción con einsum) y " +
               "al Apéndice B (la atención son dos contracciones). Cada imagen tiene su propia " +
-              "dirección (#tokens, #project, #heads, #scores, #softmax, #output, #batch) y los " +
-              "cuadernos enlazan a la que están enseñando."
+              "dirección (#words, #ids, #embed, #project, #scores, #scale, #softmax, #output, " +
+              "#heads, #batch) y los cuadernos enlazan a la que están enseñando."
     }
   }[lang];
 
@@ -578,6 +625,10 @@
     written.clear();
     Object.keys(data).forEach((k) => { stage.dataset[k] = String(data[k]); written.add(k); });
 
+    // The NumPy block, written here rather than in fillText() because every
+    // number in it comes from the controls.
+    if (active.code) $("np-" + active.id).firstChild.textContent = active.code(ctx).join("\n");
+
     rebuildLabels(active);
     active.draw(ctx);
     fitClaim();
@@ -647,6 +698,21 @@
       $("pr-" + s.id).textContent = c.predict || "";
       const cap = document.getElementById("eqcap-" + s.id);
       if (cap) cap.textContent = c.eqcap || "";
+      // The label over the NumPy block; the code itself is changed()'s. A
+      // scene with no code() keeps an empty block out of the page.
+      const np = document.getElementById("np-" + s.id);
+      if (np) {
+        np.parentNode.hidden = !s.code;
+        $("nplab-" + s.id).textContent = T.code;
+      }
+      // The heading of the part this scene opens, above its kicker.
+      if (s.part && s.part[lang] !== group) {
+        group = s.part[lang];
+        const part = document.createElement("p");
+        part.className = "part";
+        part.textContent = group;
+        $("k-" + s.id).before(part);
+      }
     });
     const dots = $("dots");
     dots.replaceChildren();

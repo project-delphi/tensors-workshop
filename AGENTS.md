@@ -343,42 +343,61 @@ state: the three heavy scenes have not finished factorising there, so their
 short form is what it sees -- which is how three blocks once shipped at 85, 86
 and 94.
 
-The attention stage (`attention-stage.html`, titled *Attention as two
-contractions*) is the same scroller shape as the audio stage, minus the
-transport and the timeline: seven sections down the left, a sticky stage on
-the right, one `<section class="step">` per scene, each opening with a
-predict-first line. **No three.js and no canvas anywhere on it**: every
-picture is inline SVG with real `<text>`, drawn by `attention-kit.js`'s
-`numGrid`, `bars` and `arrowRow` from arrays `attention-core.js` computed. A
-scene's `draw()` runs only on a control change or a scene switch, never on a
-per-frame clock, which is what makes "never re-tween `<text>`" trivially true
-here -- there is no frame loop to tween inside. `attention-core.js` seeds
-everything from `SEED = 17`: a six-row embedding table in `{0, 1}`, three
-projection matrices with at most three non-zero `{-1, 0, 1}` entries per
-column, and four fixed ids (`ids = [3, 1, 4, 1]`, repeating one on purpose) --
-so every Q, K and V entry a reader sees is an integer with `|value| <= 3`, a
-legibility contract `tests/attention_core.test.cjs` pins. Two scenes carry
-the same reshape bug the audio stage's `scramble` warns about in general: the
-`heads` scene's "flat" option is a *direct* reshape with no transpose, same
-shape as the honest one, wrong tokens in every row after the first, and
-`traceCell` says exactly which token a cell actually came from. Three scenes
-(`scores`, `softmax`, `output`) carry a display equation in notebook 17's own
-letters (`b`, `h`, `s`, `t`, `d`), with `data-hl` tokens exactly `{batch,
-head, query, key, feat}` -- never `k`, which is the rank on three of the
-projection stage's own scenes. Link a scene by its name (`#tokens`,
-`#heads`, `#scores`, `#softmax`, `#output`, `#batch`, `#project`), never a
-step number. Its embed is stricter than every other widget's: nothing on the
-stage fetches anything beyond its own scripts, its CSS and the one vendored
-face that CSS names, so the check counts resource entries rather than
-checking `window.THREE` alone. **An SVG child
-laid out past the viewBox is not clipped and not reported -- it is simply
-not drawn**, while the readout goes on quoting its numbers, so the check
-measures every scene as it opens: the union of its children's boxes, through
-the CTM, against the `640 × 400`, and `batch` -- the one scene whose picture
-is sized from its sliders -- at both corners of them. A scene starts 44
-units down to clear the claim chip, and `fitClaim()` grows the viewBox
-upward when the chip measures taller than that, so no scene has to know how
-tall the claim came out. The contract is `attention-scenes/README.md`.
+The attention stage (`attention-stage.html`, titled *Attention, from words
+to weights*) is the same scroller shape as the audio stage, minus the
+transport and the timeline: **ten sections in three parts** down the left, a
+sticky stage on the right, one `<section class="step">` per scene, each
+opening with a predict-first line. It follows one sentence, "I know you
+know", from words to attention's output -- from words to numbers (`words`,
+`ids`, `embed`), one attention head (`project`, `scores`, `scale`,
+`softmax`, `output`), and beyond one head (`heads`, `batch`). **No three.js
+and no canvas anywhere on it**: every picture is inline SVG with real
+`<text>`, drawn by `attention-kit.js`'s `numGrid`, `bars`, `arrowRow` and
+`chips` from arrays `attention-core.js` computed. A scene's `draw()` runs
+only on a control change or a scene switch, never on a per-frame clock, which
+is what makes "never re-tween `<text>`" trivially true here -- there is no
+frame loop to tween inside. `attention-core.js` seeds everything from
+`SEED = 17`: a six-row embedding table in `{0, 1}`, three projection matrices
+with at most three non-zero `{-1, 0, 1}` entries per column, and a six-word
+vocabulary chosen so the sentence encodes to the fixed ids (`[3, 1, 4, 1]`,
+"know" repeated on purpose) -- so every Q, K and V entry a reader sees is an
+integer with `|value| <= 3`, a legibility contract
+`tests/attention_core.test.cjs` pins. The one-head part uses
+`headProjections(0)`, the first four columns of those matrices, so its
+numbers are head 0's in `heads`; the test pins that too. Its honest ending is
+that the two "know" rows come out of attention identical: without position,
+the same word is the same query, key and value. `scale` is the one scene
+that does not draw the stage's own Q and K; it samples ±1 vectors through
+`scaleSpread` and draws the *typical* query, not the first, because the
+first at d_k = 256 was a two-way tie that told the opposite story. The
+`heads` scene carries the same reshape bug the audio stage's `scramble`
+warns about in general: its "flat" option is a *direct* reshape with no
+transpose, same shape as the honest one, wrong tokens in every row after the
+first, and `traceCell` says exactly which token a cell actually came from.
+Five scenes (`scores`, `scale`, `softmax`, `output`, `batch`) carry a display
+equation in notebook 17's own letters (`b`, `h`, `s`, `t`, `d`), with
+`data-hl` tokens exactly `{batch, head, query, key, feat}` -- the one-head
+ones use only `s`, `t` and `d`, and `batch` carries the four-index form --
+never `k` as an index, which is the rank on three of the projection stage's
+own scenes. **Every section carries its NumPy**, numpy only, in a
+`<pre id="np-<scene>">` the frame writes from the scene's `code(ctx)`, on
+the audio stage's rules (one copy of the code, translated `#` comments, 82
+characters, measured by `npm test` at every setting of a scene's controls and
+by `check_navigation.cjs` after the drive). Link a scene by its name
+(`#words`, `#ids`, `#embed`, `#project`, `#scores`, `#scale`, `#softmax`,
+`#output`, `#heads`, `#batch`), never a step number. Its embed is stricter
+than every other widget's: nothing on the stage fetches anything beyond its
+own scripts, its CSS and the one vendored face that CSS names, so the check
+counts resource entries rather than checking `window.THREE` alone. **An SVG child laid out past the viewBox is
+not clipped and not reported -- it is simply not drawn**, while the readout
+goes on quoting its numbers, so the check measures every scene as it opens:
+the union of its children's boxes, through the CTM, against the `640 × 400`,
+and `words` and `scale` at the far end of their controls, and `batch` --
+whose picture is sized from its sliders -- at both corners of them. A scene
+starts 44 units down to clear the claim chip, and `fitClaim()` grows the
+viewBox upward when the chip measures taller than that, so no scene has to
+know how tall the claim came out. The contract is
+`attention-scenes/README.md`.
 
 The factorisation stage (`factor-stage.html`, titled *Tucker and CP*) is the
 same scroller shape again, without three.js: **seven sections**, one
