@@ -69,6 +69,7 @@ text, then run the appropriate generator:
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32 and 64 px) | `scripts/gen_figures.py widget` |
+| `interactive/data/taxi.json` (the factorisation stage's own copy of the Block 6 taxi tensor) | `scripts/gen_figures.py taxi` (network: the taxi CSV) |
 | `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
 | `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
@@ -340,6 +341,31 @@ units down to clear the claim chip, and `fitClaim()` grows the viewBox
 upward when the chip measures taller than that, so no scene has to know how
 tall the claim came out. The contract is `attention-scenes/README.md`.
 
+The factorisation stage (`factor-stage.html`, titled *Tucker and CP*) is the
+same scroller shape again, without three.js: **seven sections**, one
+`<section class="step">` per scene, all SVG with real `<text>` so axe can
+measure it. It opens on the real taxi tensor -- 4 pickup boroughs by 5
+dropoff boroughs by 24 hours, `interactive/data/taxi.json`, generated with the
+network by `scripts/gen_figures.py taxi` and committed rather than fetched
+live from the CSV -- and section 10 unfolds it three ways, takes the SVD of
+each unfolding, and reassembles a small core plus three factors (Tucker);
+section 11 builds a rank-1 term as three vectors, finds several with CP-ALS,
+and spends the same parameter budget on CP and on Tucker to compare them
+fairly. `factor-core.js` calls into `linalg-core.js` for its SVD, its matrix
+product and its pseudoinverse, so it loads after it; two things the stage's
+own comments explain are `linalg-core.svd`'s **thin `U`**, which caps the hour
+rank at 20 rather than 24, and its **sign convention**, which differs between
+a tall unfolding and a wide one and so is renormalised to positive-largest
+inside `hosvd()` rather than trusted from whichever branch produced it. On a
+fetch failure the page draws `FC.synthetic()`, a tensor built from three
+planted rank-1 terms at the taxi tensor's own shape, and publishes
+`data-standin="1"`; the embed (`?embed=1&theme=navy`) fetches the real,
+~2 kB tensor even so, opens on the `tucker` scene, and is otherwise silent and
+still like every other widget's embed. Link by scene name (`#tensor`,
+`#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`, `#budget`); controls are
+`#c-<scene>-<control>` and readouts `#read-<scene>`. The contract is
+`factor-scenes/README.md`.
+
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
 reshape -- is `interactive/tensor-core.js`; the stage's -- least squares two
@@ -353,6 +379,10 @@ by reshape-then-transpose and the two contractions -- is
 `interactive/attention-core.js`, pinned the same way by
 `tests/attention_core.test.cjs`, and carries none of the three state machines
 below because the stage has no camera and no idle drift to keep one for.
+The factorisation stage's -- unfold/fold, mode products, HOSVD, CP-ALS, the
+budget search -- is `interactive/factor-core.js`, pinned by
+`tests/factor_core.test.cjs`, and calls into `linalg-core.js` for its SVD
+rather than carrying a second one, so it loads after it.
 Three kinds of
 state machine live there too, and they are the exception that says what the rule
 is for: where a stretch of idle drift takes its origin, where an *interrupted*
@@ -621,6 +651,7 @@ uv run --group execute python scripts/test_notebooks.py --offline
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
 uv run --group figures python scripts/gen_figures.py widget   # just the visualizer's photos.json; no network
+uv run --group figures python scripts/gen_figures.py taxi     # the factorisation stage's taxi.json; needs the network
 uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–15
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16

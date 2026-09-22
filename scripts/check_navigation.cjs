@@ -979,6 +979,119 @@ async function audit(page, where) {
         }
       }
 
+      async function driveFactor(page, where, lang) {
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
+          null, {timeout: 20000});
+        const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
+
+        // The tensor scene: it is the one the page opens on. On the runner
+        // taxi.json is a same-origin static file, so the fetch always
+        // succeeds -- data-standin says so, never typed.
+        let d = await data();
+        assert.equal(d.standin, '0', `${where}: tensor scene should have fetched the real tensor`);
+        assert.equal(d.scene, 'tensor');
+        assert.equal(d.shape, '4,5,24');
+        assert.equal(d.entries, '480');
+        assert.equal(d.order, '3');
+        assert.equal(d.busiest, '18', `${where}: the busiest hour, summed across every route, is 18`);
+
+        // Unfold: the mode-2 unfolding is 24 rows, the entry count is
+        // invariant across all three unfoldings.
+        await page.evaluate(() => { location.hash = '#unfold'; });
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'unfold');
+        d = await data();
+        assert.equal(d.mode, '2');
+        assert.equal(d.rows, '24');
+        assert.equal(d.cols, '20');
+        assert.equal(d.entries, '480');
+        assert.equal(d.invariant, '1');
+
+        // HOSVD: linalg-core.svd's thin U caps the hour rank at 20, not 24 --
+        // both the data and the slider's own max attribute say so.
+        await page.evaluate(() => { location.hash = '#hosvd'; });
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'hosvd');
+        d = await data();
+        assert.equal(d.mode, '2');
+        assert.equal(d.rmax, '20');
+        assert.equal(await page.locator('#c-hosvd-r').getAttribute('max'), '20',
+          `${where}: the hour rank slider's own max should be 20, not 24`);
+
+        // Tucker: the handbook's own published numbers, byte-exact on the
+        // claim card, and lowering the hour rank cannot raise the error.
+        await page.evaluate(() => { location.hash = '#tucker'; });
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'tucker');
+        d = await data();
+        assert.equal(d.ranks, '2,2,3');
+        assert.equal(d.params, '102');
+        assert.equal(d.dense, '480');
+        assert.equal(d.ratio, '4.71');
+        assert.equal(d.err, '0.067');
+        assert.equal(d.hourpeak, '18');
+        // textContent, not innerText: a claim card is compared byte for
+        // byte, and innerText returns the *rendered* text, where CSS has
+        // collapsed the double spaces this card uses to separate its
+        // clauses. Every other claim assertion in this file reads
+        // textContent for the same reason.
+        assert.equal(await page.locator('#claim').textContent(),
+          'T ≈ G ×₁ A ×₂ B ×₃ C,  480 → 102,  4.71×  at  6.7%',
+          `${where}: the tucker claim card should be byte-exact`);
+        const errBefore = Number(d.err);
+        await page.locator('#c-tucker-r2').fill('20');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '2,2,20');
+        d = await data();
+        assert(Number(d.err) <= errBefore, `${where}: raising the hour rank should not raise the error`);
+
+        // Rank-1: 33 parameters, and scaling one entry of a is proportional
+        // across the whole row by construction.
+        await page.evaluate(() => { location.hash = '#rank1'; });
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'rank1');
+        d = await data();
+        assert.equal(d.params, '33');
+        await page.locator('#c-rank1-scale').fill('200');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scaled !== undefined);
+        d = await data();
+        assert.equal(d.proportional, '1');
+
+        // CP: rank 3 recovers all three planted terms on the synthetic
+        // tensor; rank 1 cannot.
+        await page.evaluate(() => { location.hash = '#cp'; });
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'cp');
+        d = await data();
+        assert.equal(d.recovered, '3');
+        assert.equal(d.unique, '1');
+        const errAtR3 = Number(d.err);
+        await page.locator('#c-cp-r').fill('1');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.r === '1');
+        d = await data();
+        assert(Number(d.err) > errAtR3, `${where}: rank 1 CP should fit worse than rank 3`);
+        assert(Number(d.recovered) < 3, `${where}: rank 1 CP should recover fewer terms`);
+
+        // Budget: the same 99 parameters CP spends at R = 3, spent on the
+        // best Tucker triple that fits inside it -- not (3, 3, 3), and never
+        // over budget -- and the closest-params rule can cost error.
+        await page.evaluate(() => { location.hash = '#budget'; });
+        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'budget');
+        d = await data();
+        assert.equal(d.budget, '99');
+        assert(Number(d.tuckerparams) <= 99, `${where}: the picked Tucker triple must fit the budget`);
+        assert.notEqual(d.tuckerranks, '3,3,3');
+        assert.equal(d.degenerate, '0');
+        const bestErr = Number(d.tuckererr);
+        await page.locator('#c-budget-rule').selectOption('closest-params');
+        await page.waitForFunction(() => document.getElementById('stage').dataset.rule === 'closest-params');
+        d = await data();
+        assert.notEqual(d.tuckerranks, '3,3,3');
+        assert(Number(d.tuckererr) >= bestErr - 1e-9,
+          `${where}: the closest-params pick should not beat the best-error pick`);
+
+        // A deep link opens straight on the named scene -- link by scene
+        // name, never by a step number that moves on a reorder.
+        await page.goto(`${page.url().split('?')[0]}?lang=${lang}&fresh=1#tucker`);
+        await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
+          null, {timeout: 20000});
+        assert.equal((await data()).scene, 'tucker', `${where}: a deep link to #tucker should open there`);
+      }
+
       async function driveVoice(page, where, lang) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 20000});
@@ -1414,7 +1527,12 @@ async function audit(page, where) {
         // rather than fetching half a megabyte of audio onto the homepage,
         // which is the fourth hero tab below.
         {file: 'voice-stage', en: 'The audio tensor',
-         es: 'El tensor de audio', embed: true, drive: driveVoice}
+         es: 'El tensor de audio', embed: true, drive: driveVoice},
+        // Its embed mode fetches the real (~2 kB) taxi tensor rather than a
+        // synthesised stand-in: it is small enough that a still picture of
+        // the real thing costs nothing extra.
+        {file: 'factor-stage', en: 'Tucker and CP',
+         es: 'Tucker y CP', embed: true, drive: driveFactor}
       ];
       widgetCount = widgets.length;
       for (const widget of widgets) {
@@ -1575,6 +1693,24 @@ async function audit(page, where) {
             // 330px a chip on the stage is what pushes the page sideways.
             assert(await page.locator('#shapebadge').isHidden(),
               `${where} embed: the shape badge is shown on the front door`);
+          } else if (widget.file === 'factor-stage') {
+            // The hero gets the tucker scene, still: no three.js on this
+            // stage at all, and the real (tiny) tensor is fetched even here.
+            await page.waitForFunction(() =>
+              document.getElementById('stage').dataset.ready === '1', null, {timeout: 20000});
+            assert.equal(await page.locator('#stage').getAttribute('data-standin'), '0',
+              `${where} embed: the hero should have fetched the real taxi tensor`);
+            const fetchedTaxi = await page.evaluate(() =>
+              performance.getEntriesByType('resource').some(e => e.name.includes('taxi.json')));
+            assert(fetchedTaxi, `${where} embed: taxi.json was not requested`);
+            assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'tucker',
+              `${where} embed: the hero gets the tucker scene`);
+            assert.equal(await page.locator('#stage').getAttribute('data-ratio'), '4.71');
+            assert(await page.locator('.steps').isHidden(), `${where} embed: the scroller is shown`);
+            assert(await page.locator('#shapebadge').isHidden(),
+              `${where} embed: the shape badge is shown on the front door`);
+            assert.equal(await page.evaluate(() => window.THREE), undefined,
+              `${where} embed: three.js must not be fetched on this stage at all`);
           } else {
             await page.waitForSelector('#draw .cell');
           }

@@ -784,7 +784,7 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 *480 numbers become 102. The two charts are TODO 6. On the left, the busiest hour in the raw counts. On the right, the peak of the hour factor — which the decomposition built without ever being told what an hour is.*
 
-**The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition discovered evening rush hour by itself.** Nobody told it about time, traffic or commuting. It found the dominant pattern along that axis, because that is what a decomposition does.
+**The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition discovered evening rush hour by itself.** Nobody told it about time, traffic or commuting. It found the dominant pattern along that axis, because that is what a decomposition does. The [Tucker and CP stage](interactive/factor-stage.html?lang=en#tucker) runs this same decomposition live, on this same tensor, with the three ranks as sliders, so this table's 480 → 102, 4.71× and 6.7% move under your own hand as you change them.
 
 Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one expression. That is why `einsum` came first.
 
@@ -851,7 +851,7 @@ That example is synthetic by design: it isolates the structural question without
 3. search Tucker ranks near that same parameter budget, and keep the one with the **lowest reconstruction error**;
 4. compare error and interpretability at that matched budget.
 
-Step 3 is where this goes wrong most easily. Picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode, and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor, `pickup borough × dropoff borough × hour`. It uses the workshop's pinned storm clip as a second tensor-shaped example.
+Step 3 is where this goes wrong most easily. Picking the candidate whose parameter count is merely *closest* to the budget can hand Tucker a degenerate rank-1 mode, and manufacture the conclusion. The notebook runs the comparison this way on the real NYC taxi tensor, `pickup borough × dropoff borough × hour`. It uses the workshop's pinned storm clip as a second tensor-shaped example. The [budget picture](interactive/factor-stage.html?lang=en#budget) on the Tucker and CP stage draws exactly this: CP's error against its parameter count for `R` = 1 through 6, a cloud of every Tucker rank triple that fits inside each budget, and a toggle between **best error** and **closest params** so you can watch the second rule hand Tucker a degenerate rank-1 axis on the same tensor this section is about.
 
 ```python
 # TODO 1: Choose a CP rank R for the taxi tensor.
@@ -1039,7 +1039,7 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 <span data-language-key="appendix-c-take-home-cp-vs-tucker"></span>
 
-The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. There CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook.
+The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. There CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook, and the [Tucker and CP stage](interactive/factor-stage.html?lang=en) runs the whole comparison live in the browser, on the same taxi tensor, with no notebook to launch.
 
 > 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 

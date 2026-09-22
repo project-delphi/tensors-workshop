@@ -803,7 +803,7 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 *480 números se convierten en 102. Los dos diagramas son el TODO 6. A la izquierda, la hora con más viajes en los recuentos brutos. A la derecha, el pico del factor de hora, que la descomposición construyó sin que nadie le dijera nunca qué es una hora.*
 
-**El resultado: 4,7× menos números, 6,7 % de error.** Pero lo importante es el TODO 6. El patrón más fuerte del factor de hora tiene su pico en la **hora 18**, y esa es también la hora con más viajes en los datos brutos. **La descomposición descubrió la hora punta de la tarde por sí sola.** Nadie le habló de tiempo, ni de tráfico, ni de desplazamientos al trabajo. Encontró el patrón dominante en ese eje, porque eso es lo que hace una descomposición.
+**El resultado: 4,7× menos números, 6,7 % de error.** Pero lo importante es el TODO 6. El patrón más fuerte del factor de hora tiene su pico en la **hora 18**, y esa es también la hora con más viajes en los datos brutos. **La descomposición descubrió la hora punta de la tarde por sí sola.** Nadie le habló de tiempo, ni de tráfico, ni de desplazamientos al trabajo. Encontró el patrón dominante en ese eje, porque eso es lo que hace una descomposición. El [escenario de Tucker y CP](../interactive/factor-stage.html?lang=es#tucker) ejecuta esta misma descomposición en vivo, sobre este mismo tensor, con los tres rangos como deslizadores, de modo que estos 480 → 102, 4,71× y 6,7 % de esta tabla se mueven bajo tu propia mano al cambiarlos.
 
 Fíjate en las cadenas de einsum: `'ijk,ia,jb,kc->abc'` contrae tres ejes en una sola expresión. Por eso `einsum` vino antes.
 
@@ -870,7 +870,7 @@ Aplanar no es necesariamente incorrecto. El problema aparece cuando fusionamos d
 3. buscar rangos de Tucker cercanos a ese mismo presupuesto de parámetros y quedarse con el de **menor error de reconstrucción**;
 4. comparar error e interpretabilidad con ese presupuesto igualado.
 
-El paso 3 es donde esto se tuerce con más facilidad. Elegir el candidato cuyo número de parámetros sea *simplemente el más cercano* al presupuesto puede regalarle a Tucker un modo degenerado de rango 1, y fabricar la conclusión. El cuaderno hace la comparación de esta forma sobre el tensor real de taxis de Nueva York, `distrito de recogida × distrito de destino × hora`. Usa el clip de tormenta fijado del taller como segundo ejemplo con forma de tensor.
+El paso 3 es donde esto se tuerce con más facilidad. Elegir el candidato cuyo número de parámetros sea *simplemente el más cercano* al presupuesto puede regalarle a Tucker un modo degenerado de rango 1, y fabricar la conclusión. El cuaderno hace la comparación de esta forma sobre el tensor real de taxis de Nueva York, `distrito de recogida × distrito de destino × hora`. Usa el clip de tormenta fijado del taller como segundo ejemplo con forma de tensor. La [imagen del presupuesto](../interactive/factor-stage.html?lang=es#budget) del escenario de Tucker y CP dibuja exactamente esto: el error de CP frente a su número de parámetros para `R` = 1 a 6, una nube con cada trío de rangos de Tucker que cabe en cada presupuesto, y un interruptor entre **mejor error** y **parámetros más cercanos** para que veas a esta segunda regla regalarle a Tucker un eje degenerado de rango 1 sobre el mismo tensor del que trata esta sección.
 
 ```python
 # TODO 1: Choose a CP rank R for the taxi tensor.
@@ -1061,7 +1061,7 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 <span data-language-key="appendix-c-take-home-cp-vs-tucker"></span>
 
-El ejercicio de CP frente a Tucker que vivía aquí se mudó a la propia sesión, como **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. Allí CP y Tucker se comparan con un **presupuesto de parámetros equivalente** en lugar de rango contra rango, y el análisis se amplía a Tensor Train y t-SVD. La [sección 11](#sec-11-factorizaciones-tensoriales) es el texto que acompaña a ese cuaderno.
+El ejercicio de CP frente a Tucker que vivía aquí se mudó a la propia sesión, como **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. Allí CP y Tucker se comparan con un **presupuesto de parámetros equivalente** en lugar de rango contra rango, y el análisis se amplía a Tensor Train y t-SVD. La [sección 11](#sec-11-factorizaciones-tensoriales) es el texto que acompaña a ese cuaderno, y el [escenario de Tucker y CP](../interactive/factor-stage.html?lang=es) ejecuta toda la comparación en vivo en el navegador, sobre el mismo tensor de taxis, sin necesidad de abrir ningún cuaderno.
 
 ## Apéndice D — Para casa: Cholesky construye datos correlacionados {#apendice-d-cholesky}
 

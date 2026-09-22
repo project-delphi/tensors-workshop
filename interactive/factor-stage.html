@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tucker and CP</title>
+
+<link rel="stylesheet" href="widget-chrome.css">
+<style>
+  /* The surfaces, type and frame are widget-chrome.css; this page owns its
+     accent and everything on the stage. --stage, --stage-chip, --stage-ink
+     and --stage-mute are shared there -- this page never redeclares them. */
+  :root {
+    --accent: #a21caf;   /* 6.3:1 on white */
+    --on-accent: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="navy"]) { --accent: #e879f9; --on-accent: #2a0a2e; } /* 6.9:1 */
+  }
+  /* On the homepage hero's navy band. */
+  :root[data-theme="navy"] { --accent: #e879f9; --on-accent: #2a0a2e; } /* 6.2:1 */
+
+  /* The roles this stage's pictures use, over the shared stage ink -- the
+     same five hexes the audio stage measured against --stage-chip's black
+     (--v-sig, --v-axis, --v-out, --v-comp, --v-res), so the contrast is
+     already proven: --fa-r at 13.7:1 is the weakest of the five. */
+  :root {
+    --fa-t: #ffd84d;     /* the tensor itself: the traced cell, the CP points */
+    --fa-fac: #58c4dd;   /* a factor matrix; the pickup axis */
+    --fa-core: #c39bd3;  /* the Tucker core; the dropoff axis; a matched pick */
+    --fa-r: #7ee787;     /* one more of something being counted; the fit bar */
+    --fa-err: #fc6c85;   /* a degenerate pick; an unmatched CP term */
+  }
+
+  .two-pane {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+    gap: 1.75rem;
+    align-items: start;
+    margin-top: 1.25rem;
+  }
+  .steps { min-width: 0; }
+  .stagewrap { position: sticky; top: 1.5rem; min-width: 0; }
+
+  @media (max-width: 62rem) {
+    .two-pane { display: flex; flex-direction: column; gap: 1rem; }
+    .stagewrap {
+      order: -1; top: 0; z-index: 2; padding-bottom: 0.5rem; background: var(--bg);
+      display: flex; flex-direction: column;
+      max-height: 100vh; max-height: 100svh;
+    }
+    #stage { flex: 1 1 auto; height: auto; min-height: 12rem; }
+    .step { min-height: 0; padding: 1.4rem 0; }
+  }
+
+  #stage {
+    position: relative; height: min(56vh, 30rem);
+    background: var(--stage); border: 1px solid var(--line);
+    border-radius: 10px; overflow: hidden;
+  }
+  #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  #draw { display: block; width: 100%; height: 100%; }
+  #claim {
+    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
+    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  #shapebadge {
+    position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; max-width: 34%;
+    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+
+  #dots { display: inline-flex; gap: 0.35rem; align-items: center; }
+  .stagebar .dot {
+    width: 0.8rem; height: 0.8rem; padding: 0; border-radius: 50%;
+    border: 2px solid var(--ink-mute); background: transparent; cursor: pointer;
+  }
+  .stagebar .dot:hover { border-color: var(--accent); }
+  .stagebar .dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
+  #stepnum { font: 600 0.85rem/1 var(--sans); color: var(--ink-mute); }
+
+  .step {
+    min-height: 74vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 1rem 0;
+  }
+  .step .anchor { display: block; height: 0; }
+  .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
+  .step .part {
+    font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
+    border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
+  }
+  .step .kicker { margin-bottom: 0.5rem; }
+  .step p, .step .body { max-width: 36rem; overflow-wrap: break-word; }
+  .step.is-active h2 { color: var(--accent); }
+
+  .controls { display: grid; gap: 0.7rem; margin: 0.9rem 0 0; max-width: 34rem; }
+  .controls label { display: block; font-size: 0.85rem; font-weight: 600; }
+  .controls .val { float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
+  .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
+  .controls select { width: 100%; max-width: 22rem; }
+
+  .readout {
+    margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 8px; font-size: 0.92rem;
+    min-height: 3.2rem; max-width: 36rem;
+  }
+  .readout b { color: var(--accent); }
+  .shape { font-family: var(--mono); font-size: 0.86rem; }
+
+  /* Embed mode: the homepage hero. No chrome, no scroller. */
+  /* The badge goes with the readout: the hero is a teaser, and at 330px a
+     second chip on the stage is what pushes the claim card into a third
+     line right under it. */
+  html.embed .steps, html.embed .stagebar, html.embed .readout, html.embed #shapebadge { display: none; }
+  html.embed .two-pane { display: block; margin: 0; }
+  html.embed .stagewrap { position: static; height: 100vh; display: flex; flex-direction: column; }
+  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; height: auto; min-height: 0; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header>
+    <nav class="site-nav" aria-label="Site">
+      <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
+    </nav>
+    <p class="eyebrow" id="eyebrow"></p>
+    <h1 id="title"></h1>
+    <p id="intro"></p>
+  </header>
+
+  <div class="two-pane">
+
+    <!-- One section per scene, in reading order. The anchor spans are
+         static because check_links.py reads the static HTML: without them
+         every #tucker and #cp in the handbooks and notebooks is a link to a
+         fragment that does not resolve. -->
+    <div class="steps" id="steps">
+
+      <section class="step" id="step-tensor" aria-labelledby="h-tensor">
+        <span class="anchor" id="tensor"></span>
+        <p class="kicker" id="k-tensor"></p>
+        <h2 id="h-tensor"></h2>
+        <p class="concept" id="con-tensor"></p>
+        <div class="body" id="body-tensor"></div>
+        <p class="predict" id="pr-tensor"></p>
+        <div class="controls" id="ctl-tensor"></div>
+        <p class="readout" id="read-tensor"></p>
+      </section>
+
+      <section class="step" id="step-unfold" aria-labelledby="h-unfold">
+        <span class="anchor" id="unfold"></span>
+        <p class="kicker" id="k-unfold"></p>
+        <h2 id="h-unfold"></h2>
+        <p class="concept" id="con-unfold"></p>
+        <div class="body" id="body-unfold"></div>
+        <p class="predict" id="pr-unfold"></p>
+        <div class="controls" id="ctl-unfold"></div>
+        <p class="readout" id="read-unfold"></p>
+      </section>
+
+      <section class="step" id="step-hosvd" aria-labelledby="h-hosvd">
+        <span class="anchor" id="hosvd"></span>
+        <p class="kicker" id="k-hosvd"></p>
+        <h2 id="h-hosvd"></h2>
+        <p class="concept" id="con-hosvd"></p>
+        <div class="body" id="body-hosvd"></div>
+        <p class="predict" id="pr-hosvd"></p>
+        <div class="controls" id="ctl-hosvd"></div>
+        <p class="readout" id="read-hosvd"></p>
+      </section>
+
+      <section class="step" id="step-tucker" aria-labelledby="h-tucker">
+        <span class="anchor" id="tucker"></span>
+        <p class="kicker" id="k-tucker"></p>
+        <h2 id="h-tucker"></h2>
+        <p class="concept" id="con-tucker"></p>
+        <div class="body" id="body-tucker"></div>
+        <p class="predict" id="pr-tucker"></p>
+        <div class="controls" id="ctl-tucker"></div>
+        <p class="readout" id="read-tucker"></p>
+      </section>
+
+      <section class="step" id="step-rank1" aria-labelledby="h-rank1">
+        <span class="anchor" id="rank1"></span>
+        <p class="kicker" id="k-rank1"></p>
+        <h2 id="h-rank1"></h2>
+        <p class="concept" id="con-rank1"></p>
+        <div class="body" id="body-rank1"></div>
+        <p class="predict" id="pr-rank1"></p>
+        <div class="controls" id="ctl-rank1"></div>
+        <p class="readout" id="read-rank1"></p>
+      </section>
+
+      <section class="step" id="step-cp" aria-labelledby="h-cp">
+        <span class="anchor" id="cp"></span>
+        <p class="kicker" id="k-cp"></p>
+        <h2 id="h-cp"></h2>
+        <p class="concept" id="con-cp"></p>
+        <div class="body" id="body-cp"></div>
+        <p class="predict" id="pr-cp"></p>
+        <div class="controls" id="ctl-cp"></div>
+        <p class="readout" id="read-cp"></p>
+      </section>
+
+      <section class="step" id="step-budget" aria-labelledby="h-budget">
+        <span class="anchor" id="budget"></span>
+        <p class="kicker" id="k-budget"></p>
+        <h2 id="h-budget"></h2>
+        <p class="concept" id="con-budget"></p>
+        <div class="body" id="body-budget"></div>
+        <p class="predict" id="pr-budget"></p>
+        <div class="controls" id="ctl-budget"></div>
+        <p class="readout" id="read-budget"></p>
+      </section>
+
+    </div>
+
+    <div class="stagewrap">
+      <!-- role="img" with a label rewritten per scene: every fact the stage
+           draws is also in the readout. -->
+      <div id="stage" role="img" aria-label="" tabindex="0">
+        <svg id="draw" viewBox="0 0 820 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <p id="claim"></p>
+        <p id="shapebadge" hidden></p>
+      </div>
+
+      <div class="stagebar">
+        <button type="button" id="prev"></button>
+        <span id="dots" role="group" aria-labelledby="stepnum"></span>
+        <span id="stepnum"></span>
+        <button type="button" id="next"></button>
+        <span class="grow"></span>
+        <button type="button" id="reset"></button>
+      </div>
+      <p id="embedcap"></p>
+      <p class="sr" id="status" aria-live="polite"></p>
+    </div>
+
+  </div>
+
+  <div class="about" aria-labelledby="h-about">
+    <h2 id="h-about"></h2>
+    <p id="about-1"></p>
+    <p id="about-2"></p>
+  </div>
+
+</div>
+
+<!-- linalg-core.js supplies the tweens and pickActive(); factor-core.js is
+     the arithmetic factor-core.test.cjs pins; factor-kit.js is the SVG
+     drawing kit and the scene registry. All plain scripts, so the page
+     works from file://. No three.js: every picture here is SVG. -->
+<script src="linalg-core.js"></script>
+<script src="factor-core.js"></script>
+<script src="factor-kit.js"></script>
+<script src="factor-scenes/tensor.js"></script>
+<script src="factor-scenes/unfold.js"></script>
+<script src="factor-scenes/hosvd.js"></script>
+<script src="factor-scenes/tucker.js"></script>
+<script src="factor-scenes/rank1.js"></script>
+<script src="factor-scenes/cp.js"></script>
+<script src="factor-scenes/budget.js"></script>
+
+<script>
+(function () {
+  "use strict";
+  const FC = window.FactorCore, K = window.FactorKit, LC = window.LinalgCore;
+  const $ = (id) => document.getElementById(id);
+
+  const params = new URLSearchParams(location.search);
+  const lang = params.get("lang") === "es" ? "es" : "en";
+  const embed = params.get("embed") === "1";
+  const theme = params.get("theme");
+  document.documentElement.lang = lang;
+  if (embed) document.documentElement.classList.add("embed");
+  if (theme === "navy") document.documentElement.dataset.theme = "navy";
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const T = {
+    en: {
+      eyebrow: "Sections 10 and 11 · Appendix C",
+      title: "Tucker and CP",
+      navHome: "← Workshop home", navNotebooks: "Notebooks",
+      intro: "A tensor can be replaced by a small core plus one factor matrix per axis (Tucker), " +
+             "or by a sum of a few rank-1 terms (CP). Both are on the same 4 x 5 x 24 tensor of real " +
+             "New York taxi trips -- pickup borough by dropoff borough by hour of day -- so every " +
+             "number on this page is the same tensor, cut and put back together seven ways. Section 10 " +
+             "builds Tucker: the three unfoldings, the SVD of each, and the core and three factors they " +
+             "assemble into. Section 11 builds CP: a rank-1 term as three vectors, the alternating least " +
+             "squares that finds several of them, and the parameter budget CP and Tucker each spend " +
+             "differently for the same tensor. Each picture asks you to predict before you touch a " +
+             "control; the box under the controls is the answer, with this tensor's own numbers in it.",
+      reset: "Reset this picture",
+      prev: "◀ Back", next: "Next ▶",
+      stepOf: (i, n) => i + " of " + n,
+      stepName: (i, n, h) => i + " of " + n + ": " + h,
+      failed: "The taxi tensor could not be loaded, so every picture on this page is a synthesised " +
+              "stand-in instead: the shapes and the arithmetic are real, the counts are not.",
+      embedCap: "A real tensor becomes a small core and three factor matrices.",
+      shape: "Shape", concept: "Concept",
+      aboutH: "About this page",
+      about1: "Every number on this page is computed in the browser from the tensor on the stage -- the " +
+              "unfolded shapes, the singular values, the core, the CP error. Nothing is drawn to a " +
+              "stored answer.",
+      about2: "It accompanies section 10 (Tucker) and section 11 (CP), with Appendix C's take-home. Each " +
+              "picture has its own address -- #tensor, #unfold, #hosvd, #tucker, #rank1, #cp, #budget -- " +
+              "and the notebooks link to the one they are teaching. The tensor is built from 6,383 real " +
+              "New York taxi trips (the taxis dataset seaborn ships, itself from the NYC Taxi & " +
+              "Limousine Commission)."
+    },
+    es: {
+      eyebrow: "Secciones 10 y 11 · Apéndice C",
+      title: "Tucker y CP",
+      navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
+      intro: "Un tensor puede sustituirse por un núcleo pequeño más una matriz factor por eje (Tucker), " +
+             "o por una suma de unos pocos términos de rango 1 (CP). Ambos se muestran sobre el mismo " +
+             "tensor de 4 x 5 x 24 de viajes reales de taxis de Nueva York -- barrio de origen por " +
+             "barrio de destino por hora del día -- así que cada número de esta página es el mismo " +
+             "tensor, cortado y recompuesto de siete maneras. La sección 10 construye Tucker: los tres " +
+             "desdoblados, la SVD de cada uno, y el núcleo y los tres factores que arman. La sección 11 " +
+             "construye CP: un término de rango 1 como tres vectores, los mínimos cuadrados alternos que " +
+             "encuentran varios de ellos, y el presupuesto de parámetros que CP y Tucker gastan de forma " +
+             "distinta para el mismo tensor. Cada imagen te pide una predicción antes de tocar un " +
+             "control; la caja bajo los controles es la respuesta, con los números de este tensor.",
+      reset: "Reiniciar esta imagen",
+      prev: "◀ Atrás", next: "Siguiente ▶",
+      stepOf: (i, n) => i + " de " + n,
+      stepName: (i, n, h) => i + " de " + n + ": " + h,
+      failed: "No se pudo cargar el tensor de taxis, así que cada imagen de esta página es en cambio un " +
+              "sustituto sintetizado: las formas y la aritmética son reales, los conteos no.",
+      embedCap: "Un tensor real se convierte en un núcleo pequeño y tres matrices factor.",
+      shape: "Forma", concept: "Concepto",
+      aboutH: "Sobre esta página",
+      about1: "Cada número de esta página se calcula en el navegador a partir del tensor que hay en el " +
+              "escenario -- las formas desdobladas, los valores singulares, el núcleo, el error de CP. " +
+              "Nada se dibuja sobre una respuesta guardada.",
+      about2: "Acompaña a la sección 10 (Tucker) y a la 11 (CP), con el trabajo para casa del Apéndice C. " +
+              "Cada imagen tiene su propia dirección -- #tensor, #unfold, #hosvd, #tucker, #rank1, #cp, " +
+              "#budget -- y los cuadernos enlazan a la que están enseñando. El tensor se construye con " +
+              "6.383 viajes reales de taxis de Nueva York (el conjunto de datos taxis que distribuye " +
+              "seaborn, a su vez de la Comisión de Taxis y Limusinas de la ciudad de Nueva York)."
+    }
+  }[lang];
+
+  // -------------------------------------------------------------- the data
+  // A synthesised stand-in on a fetch failure -- or in the tests, where the
+  // network may be unavailable -- with the same shape as the real tensor, so
+  // every picture on this page still draws something true. The embed fetches
+  // the real, tiny (~2 kB) tensor too: it is small enough that a still
+  // picture of the real thing costs nothing extra.
+  const GENERIC_NAMES = {pickup: ["P0", "P1", "P2", "P3"], dropoff: ["D0", "D1", "D2", "D3", "D4"]};
+  let taxi = null, names = GENERIC_NAMES, standIn = true, failed = false;
+
+  function loadTaxi() {
+    return fetch("data/taxi.json")
+      .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then((json) => {
+        taxi = FC.tensor(json.data, json.shape);
+        names = {pickup: json.pickup, dropoff: json.dropoff};
+        standIn = false;
+      })
+      .catch(() => {
+        const syn = FC.synthetic();
+        taxi = syn.T;
+        names = GENERIC_NAMES;
+        standIn = true;
+        failed = true;
+      });
+  }
+
+  // -------------------------------------------------------------- scenes
+  const scenes = window.FactorScenes.list();
+  if (!scenes.length) throw new Error("factor-stage: no scenes registered");
+  for (const s of scenes) {
+    if (!$("step-" + s.id)) throw new Error("factor-stage: no section for scene " + s.id);
+  }
+  let active = scenes[0];
+  let step = 0;
+  const ctxFor = new Map();
+  const byId = (id) => scenes.find((s) => s.id === id);
+
+  const stage = $("stage"), svg = $("draw");
+
+  function contextFor(scene) {
+    if (ctxFor.has(scene.id)) return ctxFor.get(scene.id);
+    const c = {
+      FC, K, lang, embed,
+      get taxi() { return taxi; },
+      get standIn() { return standIn; },
+      get names() { return names; },
+      state: {},
+      cache: {},
+      svg, stage,
+      get copy() { return scene.copy[lang]; },
+      colour: (token) => K.css(token),
+      changed,
+      setControls: (vals) => setControls(scene, vals),
+      control: (id) => $("c-" + scene.id + "-" + id)
+    };
+    ctxFor.set(scene.id, c);
+    return c;
+  }
+
+  // ------------------------------------------------------- the controls
+  function buildControls(scene) {
+    const host = $("ctl-" + scene.id);
+    host.textContent = "";
+    const ctx = contextFor(scene);
+    const copy = scene.copy[lang];
+    (scene.controls || []).forEach((spec) => {
+      const wrap = document.createElement("label");
+      const val = document.createElement("span");
+      val.className = "val";
+      wrap.appendChild(val);
+      const name = document.createElement("span");
+      name.textContent = (copy.controls && copy.controls[spec.id]) || spec.id;
+      wrap.appendChild(name);
+
+      let input;
+      if (spec.type === "select") {
+        input = document.createElement("select");
+        spec.options.forEach((o) => {
+          const opt = document.createElement("option");
+          opt.value = o;
+          opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
+          input.appendChild(opt);
+        });
+        input.value = String(ctx.state[spec.id]);
+      } else {
+        input = document.createElement("input");
+        input.type = "range";
+        input.min = spec.min; input.max = spec.max; input.step = spec.step || 1;
+        input.value = String(ctx.state[spec.id]);
+      }
+      input.id = "c-" + scene.id + "-" + spec.id;
+      input.autocomplete = "off";
+      input.addEventListener("input", () => {
+        ctx.state[spec.id] = spec.type === "select" ? input.value : Number(input.value);
+        if (active !== scene) showScene(scene, false);
+        changed();
+      });
+      val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
+      wrap.appendChild(input);
+      host.appendChild(wrap);
+    });
+  }
+
+  function rebuildLabels(scene) {
+    const ctx = contextFor(scene), copy = scene.copy[lang];
+    (scene.controls || []).forEach((spec) => {
+      const input = $("c-" + scene.id + "-" + spec.id);
+      if (!input) return;
+      const val = input.parentNode.querySelector(".val");
+      if (val) val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
+    });
+  }
+
+  function setControls(scene, vals) {
+    const ctx = contextFor(scene);
+    Object.keys(vals).forEach((k) => {
+      ctx.state[k] = vals[k];
+      const input = $("c-" + scene.id + "-" + k);
+      if (input) input.value = String(vals[k]);
+    });
+    rebuildLabels(scene);
+    changed();
+  }
+
+  // -------------------------------------------------------- the readout
+  const written = new Set();
+
+  function changed() {
+    const ctx = contextFor(active);
+    // Whatever the control changed, the scene derives from it before
+    // anything is written down or painted: readout(), draw() and data-* all
+    // read ctx.state after sync(), never the frame the last paint left.
+    if (active.sync) active.sync(ctx);
+    const r = (taxi ? active.readout(ctx) : null) || {};
+    $("read-" + active.id).innerHTML = r.html || "";
+    $("claim").textContent = r.claim || active.copy[lang].claim;
+
+    let sh = "";
+    if (taxi) sh = (r.data && r.data.shape) ? "[" + String(r.data.shape).split(",").join(", ") + "]" : "";
+    const badge = $("shapebadge");
+    badge.textContent = sh ? T.shape + " " + sh : "";
+    badge.hidden = !sh;
+    if (sh) stage.dataset.tensorshape = sh; else delete stage.dataset.tensorshape;
+
+    const aria = (taxi && ctx.copy.aria) ? ctx.copy.aria(ctx) : "";
+    stage.setAttribute("aria-label", aria);
+
+    const data = Object.assign({scene: active.id}, r.data || {});
+    data.standin = standIn ? "1" : "0";
+    written.forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
+    written.clear();
+    Object.keys(data).forEach((k) => {
+      stage.dataset[k] = String(data[k]);
+      written.add(k);
+    });
+    rebuildLabels(active);
+    paint();
+  }
+
+  function paint() {
+    svg.textContent = "";
+    if (!taxi) return;
+    const ctx = contextFor(active);
+    active.draw(ctx);
+  }
+
+  // ----------------------------------------------------------- the chrome
+  function fillText() {
+    let group = null;
+    scenes.forEach((s) => {
+      const c = s.copy[lang];
+      $("k-" + s.id).textContent = c.k;
+      $("h-" + s.id).textContent = c.h;
+      $("con-" + s.id).innerHTML = c.concept || "";
+      $("con-" + s.id).dataset.label = T.concept;
+      $("body-" + s.id).innerHTML = c.b;
+      $("pr-" + s.id).textContent = c.predict || "";
+      if (s.part && s.part[lang] !== group) {
+        group = s.part[lang];
+        const part = document.createElement("p");
+        part.className = "part";
+        part.textContent = group;
+        $("k-" + s.id).before(part);
+      }
+    });
+    const dots = $("dots");
+    dots.replaceChildren();
+    scenes.forEach((s, i) => {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "dot";
+      b.setAttribute("aria-label", T.stepName(i + 1, scenes.length, s.copy[lang].h));
+      b.addEventListener("click", () => goTo(i, true));
+      dots.appendChild(b);
+    });
+  }
+
+  function showScene(scene, scroll) {
+    const isNew = active !== scene;
+    active = scene;
+    step = scenes.indexOf(scene);
+    scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
+    Array.from($("dots").children).forEach((d, j) => {
+      if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
+    });
+    $("prev").disabled = step === 0;
+    $("next").disabled = step === scenes.length - 1;
+    $("stepnum").textContent = T.stepOf(step + 1, scenes.length);
+    if (isNew) $("status").textContent = scene.copy[lang].h;
+    changed();
+    if (scroll) {
+      $("step-" + scene.id).scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
+    }
+  }
+
+  const goTo = (i, scroll) =>
+    showScene(scenes[Math.max(0, Math.min(scenes.length - 1, i))], scroll);
+
+  function watchSteps() {
+    let queued = false;
+    const settle = () => {
+      queued = false;
+      const rects = scenes.map((s) => {
+        const r = $("step-" + s.id).getBoundingClientRect();
+        return {top: r.top, bottom: r.bottom};
+      });
+      const band = innerHeight / 2;
+      const next = LC.pickActive(rects, band - 50, band + 50, step);
+      if (next >= 0 && next !== step) showScene(scenes[next], false);
+    };
+    const kick = () => { if (!queued) { queued = true; requestAnimationFrame(settle); } };
+    const io = new IntersectionObserver(kick, {threshold: [0, 0.25, 0.5, 0.75, 1]});
+    scenes.forEach((s) => io.observe($("step-" + s.id)));
+    addEventListener("scroll", kick, {passive: true});
+    kick();
+  }
+
+  $("site-home").textContent = T.navHome;
+  $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+  $("site-notebooks").textContent = T.navNotebooks;
+  $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
+  $("eyebrow").textContent = T.eyebrow;
+  $("title").textContent = T.title;
+  $("intro").textContent = T.intro;
+  $("reset").textContent = T.reset;
+  $("prev").textContent = T.prev;
+  $("next").textContent = T.next;
+  $("h-about").textContent = T.aboutH;
+  $("about-1").textContent = T.about1;
+  $("about-2").innerHTML = T.about2;
+  document.title = T.title;
+
+  if (embed) {
+    const cap = $("embedcap");
+    const b = document.createElement("b");
+    b.textContent = T.embedCap;
+    cap.appendChild(b);
+  }
+
+  $("reset").addEventListener("click", () => {
+    const ctx = contextFor(active);
+    if (active.reset) active.reset(ctx);
+    buildControls(active);
+    changed();
+  });
+  $("prev").addEventListener("click", () => goTo(step - 1, true));
+  $("next").addEventListener("click", () => goTo(step + 1, true));
+
+  if (!embed) addEventListener("hashchange", () => {
+    const s = byId((location.hash || "").replace("#", ""));
+    if (s) showScene(s, true);
+  });
+
+  fillText();
+  stage.dataset.scene = scenes[0].id;
+
+  loadTaxi().then(() => {
+    if (failed) $("status").textContent = T.failed;
+    for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
+    const wanted = embed ? byId("tucker") : byId((location.hash || "").replace("#", ""));
+    showScene(wanted || scenes[0], false);
+    stage.dataset.ready = "1";
+    if (!embed) {
+      watchSteps();
+      if (wanted) $("step-" + wanted.id).scrollIntoView({block: "center"});
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

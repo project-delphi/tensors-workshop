@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- **A sixth widget: Tucker and CP.** Seven scenes, no three.js, on the real taxi tensor -- 4 pickup boroughs by 5 dropoff boroughs by 24 hours, 6,383 trips. Section 10 unfolds the cube three ways, takes the SVD of each unfolding, and reassembles a small core plus three factors (`hosvd()`); section 11 builds a rank-1 term as three vectors, finds several with CP-ALS, and spends the same parameter budget on CP and on Tucker to see which one it buys more with. `interactive/data/taxi.json` is generated with the network by `scripts/gen_figures.py taxi` and reproduces the handbook's own published numbers -- 480 -> 102, 4.71x, 6.7% error, hour 18 the peak -- which `tests/factor_core.test.cjs` pins by reading the file from disk, since it has no byte-exact gate of its own. `linalg-core.svd`'s thin `U` caps the hour rank at 20, not 24, and its sign convention (which differs between a tall unfolding and a wide one) is renormalised to positive-largest inside `hosvd()` rather than trusted from whichever branch produced it.
+
 ## 2026-09-22
 
 - **The widgets have a page.** `Interactive` in the navbar, in both languages: one card per tool, saying what it answers and which sections it belongs to, and -- new -- linking straight to the pictures worth arriving at, `#portal`, `#heads`, `#lowrank`, `#transpose`. They had been spread across the hero, a card grid under it, the notebooks page and both handbooks, and the attention stage reached the front door not at all. The homepage section keeps its heading and its anchor and now carries a sentence and a link, so the five descriptions live in one place rather than four. The hero gains a fifth chip for the attention stage, whose embed fetches nothing at all.

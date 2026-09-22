@@ -1198,11 +1198,39 @@ def widget_photos() -> Path:
     return path
 
 
+def widget_taxi() -> Path:
+    """The factorisation stage's own copy of the Block 6 tensor: the same
+    6,433 real trips `taxi_tensor()` builds for the handbook figure, written
+    small enough (~2 kB) that the page can fetch it on every load. Needs the
+    network (the taxis.csv), which is why it is its own subcommand rather
+    than living in `widget`, which is documented as network-free."""
+    import json
+
+    T, pb, db = taxi_tensor()
+    path = INTERACTIVE / "data" / "taxi.json"
+    path.parent.mkdir(exist_ok=True)
+    out = {
+        "shape": list(T.shape),
+        "modes": ["pickup", "dropoff", "hour"],
+        "pickup": pb,
+        "dropoff": db,
+        "trips": int(T.sum()),
+        "data": [int(v) for v in T.astype(int).flatten(order="C")],
+    }
+    path.write_text(json.dumps(out, separators=(",", ":")) + "\n", encoding="utf-8")
+    report(path, f"{out['shape']} = {len(out['data'])} counts, {out['trips']} trips")
+    return path
+
+
 if __name__ == "__main__":
     stack()
     if sys.argv[1:] == ["widget"]:
         print("The visualizer's photos (no network: shipped with scikit-image)")
         widget_photos()
+        sys.exit(0)
+    if sys.argv[1:] == ["taxi"]:
+        print("The factorisation stage's tensor (network: the taxi CSV)")
+        widget_taxi()
         sys.exit(0)
     print("Loading the arrays (network: the pinned clip and the taxi CSV)")
     arrays = load_ladder()
