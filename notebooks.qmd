@@ -48,18 +48,24 @@ by hand and then change what "fit" means.
 16 connects PCA’s matrix views to satellite land-cover classification, clustering,
 and tensor PCA, with Plato’s cave and three animations.
 
-Four groups of sections have a widget beside them. Section 03 has a
+Several sections have a widget beside them, listed here in section order.
+
+Section 03 has a
 [broadcasting simulator](interactive/broadcasting-simulator.html?lang=en) that
-lines two shapes up from the right and steps through the stretch, and section 04
-has a [reshape and transpose visualizer](interactive/tensor-visualizer.html?lang=en) that turns
+lines two shapes up from the right and steps through the stretch.
+
+Section 04 has a
+[reshape and transpose visualizer](interactive/tensor-visualizer.html?lang=en) that turns
 its three photographs into cubes, one per byte, and shows what transpose, reshape
 and a memory layout each do to the shape, the strides, the buffer and the picture.
+
 Sections 07, 08 and 09 share a
 [projection and SVD stage](interactive/linalg-stage.html?lang=en), eight
 pictures of one problem: least squares as a projection onto a column space,
 a wide matrix's line of solutions, a determinant reaching zero, the SVD as a
 circle turning into an ellipse and a sphere into an ellipsoid, the
 eigenvectors of a field of arrows, and the two ways the arithmetic fails.
+
 Sections 00, 02, 04 and 09 and Appendix E share an
 [audio tensor stage](interactive/voice-stage.html?lang=en), nine pictures of
 one recording and a tenth of three: air measured 48 000 times a second and rounded to 16 bits, the

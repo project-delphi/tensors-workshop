@@ -16,8 +16,9 @@ When a rule here surprises you, look it up there before changing it.
 
 A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
 code — the deliverables are the rendered site, Colab notebooks for the workshop
-sections and take-home extras, two revealjs decks, four standalone interactive
-widgets and three Kahoot spreadsheets.
+sections and take-home extras, two revealjs decks, the standalone interactive
+widgets listed under `repo.widgets` in `_variables.yml`, and three Kahoot
+spreadsheets.
 
 **Desktops and laptops are the target, and phones are not.** The session is
 delivered on them and the site is read on them, so anything here may assume a
@@ -157,11 +158,12 @@ generator nor a byte-exact gate -- which is why it has a section of its own
 rather than a corner of the one above. Nothing regenerates these files, so
 nothing catches a mistake in them by comparing bytes; what guards them
 instead is `npm test` over the core modules and `check_navigation.cjs` over
-the rendered pages, both under `## Commands`. Four HTML widgets -- the
+the rendered pages, both under `## Commands`. The HTML widgets -- the
 section 03 broadcasting simulator, the section 04 reshape & transpose
 visualizer, the sections 07/09 projection & SVD stage, and the sections
-00/02/04/09 audio tensor stage -- each with EN/ES copy tables, `?lang=`, and its
-section's accent adjusted per theme to clear 4.5:1. **The frame is shared**:
+00/02/04/09 audio tensor stage -- each carry EN/ES copy tables, `?lang=`, and
+their section's accent adjusted per theme to clear 4.5:1. `repo.widgets` in
+`_variables.yml` is the list of them; prose here does not count them. **The frame is shared**:
 `interactive/widget-chrome.css`, linked first by every page, owns the
 surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the
 site's own palette from `custom.scss`, on light, dark and the hero's navy),
@@ -302,8 +304,8 @@ rolls -- and both its scenes and both its render paths take the camera from
 screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the
-widget counts instead, which `check_navigation.cjs` treats as a regression. All
-four hero widgets take `?embed=1&theme=navy`, and none of them fetches
+widget counts instead, which `check_navigation.cjs` treats as a regression.
+Every widget takes `?embed=1&theme=navy`, and none of them fetches
 three.js there: the stage's embed is the portal's still frame, drawn flat,
 with the scroller and its steps gone. The hero is four tabs and the check pins
 that at four. **The way out of an embed is the hero's own `.hero-open`
@@ -327,12 +329,13 @@ every `repo.widgets` line.
 `check_links.py` fails the build if any file in `repo.widgets` is missing from
 `docs/` -- for the addons that is the *only* guard, since an import map is
 element content and the link harvest reads attributes. `check_navigation.cjs`
-drives all four widgets in both languages, from a per-widget `drive` callback
-rather than a flag, and runs axe over them. The stage's callback opens every one
+drives every widget in both languages, from a per-widget `drive` callback
+rather than a flag, and runs axe over them; its `widgets` table is the order
+the `drive*` functions are written in. The stage's callback opens every one
 of its eight steps and asserts each step's claim off `data-*`. Every colour a widget puts on text
 clears 4.5:1 per theme -- the four axis hues have `--axN-ink` text variants,
-and the stage's dark-in-every-theme canvas has one `--stage*` set measured
-against the label chip -- so a contrast finding in a widget is real, never
+and the stages' dark-in-every-theme canvas has one `--stage*` set in
+`widget-chrome.css`, measured against the label chip -- so a contrast finding in a widget is real, never
 something to allowlist.
 
 **A long line does not get clipped, it disappears.** three.js frustum-culls a
