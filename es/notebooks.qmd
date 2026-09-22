@@ -55,7 +55,7 @@ La sección 03 tiene un
 que alinea dos formas desde la derecha y recorre el estiramiento paso a paso.
 
 La sección 04 tiene un
-<a href="../interactive/tensor-visualizer.html?lang=es">visualizador del tensor de imagen</a>
+<a href="../interactive/image-tensor.html?lang=es">visualizador del tensor de imagen</a>
 que convierte sus tres fotografías en cubos, uno por byte, y muestra qué hacen transpose,
 reshape y una disposición en memoria con la forma, los strides, el búfer y la imagen.
 

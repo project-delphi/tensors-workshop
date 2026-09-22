@@ -258,7 +258,7 @@ async function audit(page, where) {
       // above is still settling and reads as camera motion.
       await page.setViewportSize({width: 1440, height: 1000});
       await page.goto(
-        `${origin}${prefix}interactive/tensor-visualizer.html?lang=${lang}`);
+        `${origin}${prefix}interactive/image-tensor.html?lang=${lang}`);
       await page.waitForFunction(() =>
         document.querySelector('#stage').dataset.photos === '3',
         null, {timeout: 10000});
@@ -322,7 +322,7 @@ async function audit(page, where) {
 
     // `#transpose` in the URL opens the page on that tab.
     await page.goto(
-      `${origin}${prefix}interactive/tensor-visualizer.html?lang=${lang}#transpose`);
+      `${origin}${prefix}interactive/image-tensor.html?lang=${lang}#transpose`);
     await page.waitForSelector('#tab-transpose');
     assert(await page.locator('#transpose').isVisible(),
       `${where}: #transpose in the URL did not open its tab`);
@@ -1609,7 +1609,7 @@ async function audit(page, where) {
       // in. Keep the two in step: with six of them a reader looking for one
       // callback has nothing else to go on.
       const widgets = [
-        {file: 'tensor-visualizer', en: 'The image tensor',
+        {file: 'image-tensor', en: 'The image tensor',
          es: 'El tensor de imagen', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
          es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
@@ -1732,7 +1732,7 @@ async function audit(page, where) {
           assert(await page.locator('aside').isHidden(), `${where} embed: panel shown`);
           assert(await page.locator('header').isHidden(), `${where} embed: header shown`);
           assert.equal(await page.locator('html').getAttribute('data-theme'), 'navy');
-          if (widget.file === 'tensor-visualizer') {
+          if (widget.file === 'image-tensor') {
             await page.waitForFunction(() =>
               document.querySelector('#stage').dataset.photos === '3', null, {timeout: 10000});
             assert.equal(await page.evaluate(() => window.THREE), undefined,
@@ -1852,7 +1852,7 @@ async function audit(page, where) {
         const open = page.locator('.hero-open');
         assert.equal(await open.count(), 1, `${lang}/index: one open-the-widget button`);
         assert(await open.isVisible(), `${lang}/index: open-the-widget button hidden`);
-        assert((await open.getAttribute('href')).includes(`tensor-visualizer.html?lang=${lang}`),
+        assert((await open.getAttribute('href')).includes(`image-tensor.html?lang=${lang}`),
           `${lang}/index: open button starts on the first tab`);
         assert(await page.locator('#hero-panel-layout').isVisible());
         assert(await page.locator('#hero-panel-broadcast').isHidden());

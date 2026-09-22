@@ -212,7 +212,7 @@ shapes do not give that away. Notation, then the line you would type, then the
 question, then the controls, is the order that reads.
 
 The code is one copy for both languages and only the `#` comments are
-translated, which is `tensor-visualizer.html`'s rule and the same reason the
+translated, which is `image-tensor.html`'s rule and the same reason the
 `<math>` is static: identifiers are English everywhere in this repo. A value
 Python would print stays raw on both sides -- `(237568,)` is not `(237.568,)`
 in Spanish, because that is a shape and not a number in prose.

@@ -36,7 +36,7 @@ repo:
     # the embed chrome. Linked by <link href>, which the harvest does see;
     # listed anyway because without it every widget renders unstyled.
     - interactive/widget-chrome.css
-    - interactive/tensor-visualizer.html
+    - interactive/image-tensor.html
     - interactive/tensor-core.js
     - interactive/data/photos.json
     - interactive/broadcasting-simulator.html
