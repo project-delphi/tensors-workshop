@@ -1739,10 +1739,15 @@ async function audit(page, where) {
               `${where} embed: three.js must not be fetched on the front door`);
           } else if (widget.file === 'attention-stage') {
             // No three.js and no sound anywhere on this stage, so its embed
-            // fetches nothing at all beyond the page's own scripts and CSS --
-            // stricter than every other widget here, which is what this
-            // asserts: zero resource entries that are not this page's own
-            // code or styling.
+            // fetches nothing at all beyond the page's own scripts and its
+            // styling -- stricter than every other widget here, which is
+            // what this asserts: zero resource entries that are not this
+            // page's own code, its CSS, or the one vendored face that CSS
+            // names. The font is on the list because a widget is a page of
+            // this site with no navbar, so `widget-chrome.css` loads Inter
+            // itself; leaving it off would mean the embed rendering in
+            // whatever the reader's machine has while the page around it
+            // renders in the site's own type.
             await page.waitForFunction(() =>
               document.getElementById('stage').dataset.ready === '1', null, {timeout: 10000});
             assert.equal(await page.locator('#stage').getAttribute('data-scene'), 'softmax',
@@ -1751,7 +1756,7 @@ async function audit(page, where) {
             const fetched = await page.evaluate(() =>
               performance.getEntriesByType('resource')
                 .map(e => e.name)
-                .filter(n => !/\.(js|css)(\?|$)/.test(n)));
+                .filter(n => !/\.(js|css|woff2)(\?|$)/.test(n)));
             assert.equal(fetched.length, 0,
               `${where} embed: fetched something that is not code or CSS: ${fetched.join(', ')}`);
             assert.equal(await page.evaluate(() => window.THREE), undefined,

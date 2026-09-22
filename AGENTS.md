@@ -366,8 +366,9 @@ head, query, key, feat}` -- never `k`, which is the rank on three of the
 projection stage's own scenes. Link a scene by its name (`#tokens`,
 `#heads`, `#scores`, `#softmax`, `#output`, `#batch`, `#project`), never a
 step number. Its embed is stricter than every other widget's: nothing on the
-stage fetches anything beyond its own scripts and CSS, so the check counts
-resource entries rather than checking `window.THREE` alone. **An SVG child
+stage fetches anything beyond its own scripts, its CSS and the one vendored
+face that CSS names, so the check counts resource entries rather than
+checking `window.THREE` alone. **An SVG child
 laid out past the viewBox is not clipped and not reported -- it is simply
 not drawn**, while the readout goes on quoting its numbers, so the check
 measures every scene as it opens: the union of its children's boxes, through
