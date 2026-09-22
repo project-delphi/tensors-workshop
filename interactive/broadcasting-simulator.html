@@ -147,6 +147,7 @@
     <header>
       <nav class="site-nav" aria-label="Site">
         <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+        <a id="site-interactive" href="../interactive.html">Interactive</a>
         <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
       </nav>
       <p class="eyebrow" id="eyebrow">Section 03 · indexing and broadcasting</p>
@@ -204,6 +205,7 @@
     eyebrow: "Section 03 · indexing and broadcasting",
     lead: "Two shapes, lined up from the right. NumPy stretches any axis of size 1 to match the other, and refuses anything else. A dashed cell is a copy that is never made: the picture shows the repeats, the buffer holds one.",
     navHome: "← Workshop home",
+    navInteractive: "Interactive",
     navNotebooks: "Notebooks",
     shapes: "Shapes",
     a: "Shape A",
@@ -251,6 +253,7 @@
     eyebrow: "Sección 03 · indexación y broadcasting",
     lead: "Dos formas, alineadas desde la derecha. NumPy estira cualquier eje de tamaño 1 para que coincida con el otro, y rechaza todo lo demás. Una celda discontinua es una copia que nunca se hace: la imagen muestra las repeticiones, el búfer guarda una.",
     navHome: "← Inicio del taller",
+    navInteractive: "Interactivo",
     navNotebooks: "Cuadernos",
     shapes: "Formas",
     a: "Forma A",
@@ -483,6 +486,8 @@
     $("lead").textContent = T.lead;
     $("site-home").textContent = T.navHome;
     $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+    $("site-interactive").textContent = T.navInteractive;
+    $("site-interactive").href = lang === "es" ? "../es/interactive.html" : "../interactive.html";
     $("site-notebooks").textContent = T.navNotebooks;
     $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("h-shapes").textContent = T.shapes;

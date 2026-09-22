@@ -311,6 +311,7 @@
   <header>
     <nav class="site-nav" aria-label="Site">
       <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-interactive" href="../interactive.html">Interactive</a>
       <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
     </nav>
     <p class="eyebrow" id="eyebrow"></p>
@@ -764,7 +765,9 @@
     en: {
       eyebrow: "Sections 00, 04 and 09 · Appendix E",
       title: "The audio tensor",
-      navHome: "← Workshop home", navNotebooks: "Notebooks",
+      navHome: "← Workshop home",
+      navInteractive: "Interactive",
+      navNotebooks: "Notebooks",
       intro: "A sound is a list of numbers. A microphone measures the air pressure tens of thousands " +
              "of times a second, each measurement is rounded to one of a fixed set of values, and " +
              "those numbers in order are the tensor — a one-dimensional array you can listen to. " +
@@ -824,7 +827,9 @@
     es: {
       eyebrow: "Secciones 00, 04 y 09 · Apéndice E",
       title: "El tensor de audio",
-      navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
+      navHome: "← Inicio del taller",
+      navInteractive: "Interactivo",
+      navNotebooks: "Cuadernos",
       intro: "Un sonido es una lista de números. Un micrófono mide la presión del aire decenas de " +
              "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
              "valores, y esos números en orden son el tensor: un arreglo de una dimensión que puedes " +
@@ -1996,6 +2001,8 @@
   // ----------------------------------------------------------- the chrome
   $("site-home").textContent = T.navHome;
   $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+  $("site-interactive").textContent = T.navInteractive;
+  $("site-interactive").href = lang === "es" ? "../es/interactive.html" : "../interactive.html";
   $("site-notebooks").textContent = T.navNotebooks;
   $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
   $("eyebrow").textContent = T.eyebrow;

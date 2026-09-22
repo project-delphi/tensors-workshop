@@ -286,6 +286,7 @@
   <header>
     <nav class="site-nav" aria-label="Site">
       <a class="site-home" id="site-home" href="../index.html">← Workshop home</a>
+      <a id="site-interactive" href="../interactive.html">Interactive</a>
       <a id="site-notebooks" href="../notebooks.html">Notebooks</a>
     </nav>
     <p class="eyebrow" id="eyebrow">Sections 07, 08 and 09 · projection and the SVD</p>
@@ -524,7 +525,9 @@
 
   const EN = {
     title: "Projection and the SVD",
-    navHome: "← Workshop home", navNotebooks: "Notebooks",
+    navHome: "← Workshop home",
+    navInteractive: "Interactive",
+    navNotebooks: "Notebooks",
     eyebrow: "Sections 07, 08 and 09 · projection and the SVD",
     lead: "This page is eight pictures of one problem: solving A x = b, or fitting y ≈ X β, when the matrix is not a well-behaved square. They are separate ideas that meet in that problem, in three groups. First, what least squares draws: a tall matrix cannot reach every target, a wide one reaches it in too many ways, and a square one can flatten a dimension on the way, which is where projection, the pseudoinverse and the determinant come from. Then, what the SVD says: what any matrix does to a circle and a sphere, and the directions a square matrix leaves alone. Last, where the arithmetic fails: predictors that nearly agree, and a number format that cannot tell them apart. Each picture says what is on the stage, then asks you to predict before you touch a control; the box under the controls is the answer, with the numbers in it.",
     prev: "◀ Back", next: "Next ▶",
@@ -550,7 +553,9 @@
 
   const ES = {
     title: "Proyección y la SVD",
-    navHome: "← Inicio del taller", navNotebooks: "Cuadernos",
+    navHome: "← Inicio del taller",
+    navInteractive: "Interactivo",
+    navNotebooks: "Cuadernos",
     eyebrow: "Secciones 07, 08 y 09 · proyección y la SVD",
     lead: "Esta página son ocho imágenes de un mismo problema: resolver A x = b, o ajustar y ≈ X β, cuando la matriz no es un cuadrado bien portado. Son ideas distintas que se encuentran en ese problema, en tres grupos. Primero, lo que dibujan los mínimos cuadrados: una matriz alta no alcanza cualquier objetivo, una ancha lo alcanza de demasiadas maneras, y una cuadrada puede aplastar una dimensión por el camino, que es de donde salen la proyección, la pseudoinversa y el determinante. Después, lo que dice la SVD: qué le hace cualquier matriz a una circunferencia y a una esfera, y qué direcciones deja en paz una matriz cuadrada. Por último, dónde falla la aritmética: predictores que casi coinciden y un formato numérico que no los distingue. Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar un control; la caja bajo los controles es la respuesta, con los números dentro.",
     prev: "◀ Atrás", next: "Siguiente ▶",
@@ -662,6 +667,8 @@
     $("title").textContent = T.title;
     $("site-home").textContent = T.navHome;
     $("site-home").href = lang === "es" ? "../es/index.html" : "../index.html";
+    $("site-interactive").textContent = T.navInteractive;
+    $("site-interactive").href = lang === "es" ? "../es/interactive.html" : "../interactive.html";
     $("site-notebooks").textContent = T.navNotebooks;
     $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("eyebrow").textContent = T.eyebrow;
