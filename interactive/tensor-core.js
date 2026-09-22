@@ -1,4 +1,4 @@
-// The arithmetic under the reshape & transpose visualizer: strides, contiguity,
+// The arithmetic under the image tensor visualizer: strides, contiguity,
 // memory orders, and NumPy's rule for when a reshape is a view. It is kept
 // apart from tensor-visualizer.html so `npm test` can pin it without a browser
 // (tests/tensor_core.test.cjs): this is the lesson the widget exists to show,

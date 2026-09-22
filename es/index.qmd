@@ -40,10 +40,11 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
 <div class="hero-demos" data-hero-demos>
   <div class="hero-bar">
     <div class="hero-tabs" role="tablist" aria-label="Demostraciones en vivo">
-      <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Reshape y transpose</button>
+      <button type="button" role="tab" id="hero-tab-layout" aria-selected="true" aria-controls="hero-panel-layout">Imagen</button>
       <button type="button" role="tab" id="hero-tab-broadcast" aria-selected="false" aria-controls="hero-panel-broadcast" tabindex="-1">Broadcasting</button>
       <button type="button" role="tab" id="hero-tab-linalg" aria-selected="false" aria-controls="hero-panel-linalg" tabindex="-1">Álgebra lineal</button>
       <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
+      <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Atención</button>
     </div>
     <a class="hero-open" data-hero-open href="../interactive/tensor-visualizer.html?lang=es">Abrir la herramienta completa →</a>
   </div>
@@ -63,7 +64,11 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
     <iframe class="hero-embed" data-src="../interactive/voice-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: una voz cortada en ventanas, convertida en una matriz de frecuencia por tiempo"></iframe>
     <p class="hero-caption">Una voz se convierte en una matriz — <code>513 × 465</code> — y puedes oír qué le hace una transposición.</p>
   </div>
-  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Cuatro de los movimientos, en vivo.</p>
+  <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" data-open="../interactive/attention-stage.html?lang=es" hidden>
+    <iframe class="hero-embed" data-src="../interactive/attention-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: las puntuaciones de atención convertidas en pesos que suman uno"></iframe>
+    <p class="hero-caption">Softmax convierte una fila de puntuaciones en pesos que suman <code>1</code>: una consulta atendiendo a cuatro claves.</p>
+  </div>
+  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Los movimientos, en vivo.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-es tensor-desc-es" xmlns="http://www.w3.org/2000/svg">
@@ -307,66 +312,13 @@ Artículos clave, capítulos de libros y código fuente del repositorio.
 
 <span data-language-key="try-one-in-the-browser"></span>
 
-Sin instalar nada y sin cuenta. Cuatro herramientas vivas que responden una
-pregunta que las páginas solo pueden describir.
+Sin instalar nada y sin cuenta. Escribe dos formas y mira cómo NumPy las alinea;
+convierte tres fotografías en cubos y rompe la imagen con un reshape; recorre una
+secuencia a través de la atención, una contracción cada vez; observa cómo una
+circunferencia se vuelve una elipse; u oye qué le hace una transposición a una
+grabación.
 
-:::: {.widget-grid}
-::: {.resource-card}
-### 🧮 Simulador de broadcasting
-
-<span data-language-key="broadcasting-simulator"></span>
-
-Escribe dos formas. Mira cómo NumPy las alinea desde la derecha, rellena la más
-corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Sección 03.
-
-<a href="../interactive/broadcasting-simulator.html?lang=es" class="resource-button">Probar formas</a>
-:::
-
-::: {.resource-card}
-### 🧊 Visualizador de reshape y transpose
-
-<span data-language-key="layout-visualizer"></span>
-
-Tres fotos reales como un solo tensor 4-D, un cubo por byte. Transpónlo y
-observa cómo la forma y los strides se permutan mientras la imagen no cambia;
-hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
-o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
-NumPy y el PyTorch que lo hace. Sección 04.
-
-<a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Probar reshape y transpose</a>
-:::
-
-::: {.resource-card}
-### 📐 Escenario de proyección y SVD
-
-<span data-language-key="projection-svd-stage"></span>
-
-Los mínimos cuadrados son una proyección: desplázate y observa cómo la sombra
-de un vector objetivo aterriza en el plano que generan sus predictores, con el
-residuo encontrándolo en ángulo recto. Después el portal de la SVD, donde una
-circunferencia unidad se vuelve una elipse y A v = σ u deja de ser notación, y
-de ahí a los autovectores, dos columnas casi colineales y float32 dividiendo
-exactamente por cero. Ocho imágenes de un mismo problema, secciones 07, 08 y 09.
-
-<a href="../interactive/linalg-stage.html?lang=es" class="resource-button">Probar proyección y SVD</a>
-:::
-
-::: {.resource-card}
-### 🎙️ Escenario del tensor de audio
-
-<span data-language-key="voice-tensor-stage"></span>
-
-Siete imágenes de una misma grabación. El aire se vuelve números: 48 000 por
-segundo, cada uno redondeado a 16 bits, escritos en un array que puedes
-escuchar. Luego se recorta una ventana, se le pregunta a la transformada qué
-frecuencias hay en ella, y la ventana avanza para construir una matriz de
-frecuencia por tiempo, 513 × 465, y puedes oír qué le hace una transposición.
-Termina en el lote de rango 4 que recibe un modelo: tres grabaciones apiladas.
-Secciones 00, 02, 04 y 09.
-
-<a href="../interactive/voice-stage.html?lang=es" class="resource-button">Probar el tensor de audio</a>
-:::
-::::
+<a href="interactive.html" class="resource-button">Verlas todas</a>
 
 ## ¿Conoces el álgebra lineal básica? Ya puedes empezar. {#requisitos-previos}
 

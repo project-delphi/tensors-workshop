@@ -1,0 +1,118 @@
+---
+title: ""
+pagetitle: "Interactivo · Tensores para Aprendizaje Automático"
+lang: es
+description: "Cinco herramientas de navegador para el taller: broadcasting, el tensor de imagen, la atención, proyección y SVD, y el tensor de audio."
+toc: false
+anchor-sections: false
+page-layout: full
+theme:
+  - cosmo
+  - ../custom.scss
+  - ../homepage.scss
+---
+
+::::: {.workshop-landing}
+
+# Interactivo
+
+<span data-language-key="interactive"></span>
+
+Sin instalar nada y sin cuenta. Cada una de estas herramientas se ejecuta en tu
+navegador, en inglés o en español, y responde una pregunta que las páginas solo
+pueden describir: mueve un control y las formas, los strides y los números se
+mueven con él. Todas están además enlazadas desde la sección a la que
+pertenecen, en el <a href="./tensors_workshop_plan_with_quizzes.html">manual</a>
+y en la <a href="notebooks.html">página de cuadernos</a>.
+
+:::: {.widget-grid}
+::: {.resource-card}
+### 🧮 Simulador de broadcasting
+
+<span data-language-key="broadcasting-simulator"></span>
+
+Escribe dos formas. Mira cómo NumPy las alinea desde la derecha, rellena la más
+corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Sección 03.
+
+<a href="../interactive/broadcasting-simulator.html?lang=es" class="resource-button">Probar formas</a>
+:::
+
+::: {.resource-card}
+### 🧊 El tensor de imagen
+
+<span data-language-key="layout-visualizer"></span>
+
+Tres fotos reales como un solo tensor 4-D, un cubo por byte. Transpónlo y
+observa cómo la forma y los strides se permutan mientras la imagen no cambia;
+hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
+o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
+NumPy y el PyTorch que lo hace. Sección 04.
+
+Directo a <a href="../interactive/tensor-visualizer.html?lang=es#transpose">transpose</a>,
+<a href="../interactive/tensor-visualizer.html?lang=es#reshape">reshape</a> o
+<a href="../interactive/tensor-visualizer.html?lang=es#memory">la disposición en memoria</a>.
+
+<a href="../interactive/tensor-visualizer.html?lang=es" class="resource-button">Abrir el tensor de imagen</a>
+:::
+
+::: {.resource-card}
+### 👁️ La atención como dos contracciones
+
+<span data-language-key="attention-stage"></span>
+
+Siete imágenes de una misma secuencia, con números lo bastante pequeños como
+para sumarlos a mano: cuatro ids recogidos de una tabla de embeddings, esa tabla
+proyectada de tres formas en Q, K y V, cada una dividida para que cada cabeza
+tenga su propio eje —un reshape que también tiene que ser un transpose, y el
+error cuando no lo es—, la contracción que produce las puntuaciones, softmax
+convirtiéndolas en pesos que suman uno, el promedio ponderado que es la salida,
+y el tensor de rango 4 que recibe un modelo real. Secciones 04 y 06, y apéndice B.
+
+Directo a <a href="../interactive/attention-stage.html?lang=es#heads">cada cabeza con su propio eje</a>,
+<a href="../interactive/attention-stage.html?lang=es#scores">las puntuaciones</a> o
+<a href="../interactive/attention-stage.html?lang=es#softmax">softmax</a>.
+
+<a href="../interactive/attention-stage.html?lang=es" class="resource-button">Abrir el escenario de atención</a>
+:::
+
+::: {.resource-card}
+### 📐 Escenario de proyección y SVD
+
+<span data-language-key="projection-svd-stage"></span>
+
+Los mínimos cuadrados son una proyección: desplázate y observa cómo la sombra
+de un vector objetivo aterriza en el plano que generan sus predictores, con el
+residuo encontrándolo en ángulo recto. Después el portal de la SVD, donde una
+circunferencia unidad se vuelve una elipse y A v = σ u deja de ser notación, y
+de ahí a los autovectores, dos columnas casi colineales y float32 dividiendo
+exactamente por cero. Un mismo problema, secciones 07, 08 y 09.
+
+Directo al <a href="../interactive/linalg-stage.html?lang=es#portal">portal de la SVD</a>,
+los <a href="../interactive/linalg-stage.html?lang=es#eigen">autovectores</a> o
+<a href="../interactive/linalg-stage.html?lang=es#precision">float32 dividiendo por cero</a>.
+
+<a href="../interactive/linalg-stage.html?lang=es" class="resource-button">Abrir el escenario de proyección y SVD</a>
+:::
+
+::: {.resource-card}
+### 🎙️ El tensor de audio
+
+<span data-language-key="voice-tensor-stage"></span>
+
+El aire se vuelve números: 48 000 por segundo, cada uno redondeado a 16 bits,
+escritos en un array que puedes escuchar. Luego se recorta una ventana, se le
+pregunta a la transformada qué frecuencias hay en ella, y la ventana avanza para
+construir una matriz de frecuencia por tiempo, 513 × 465, y puedes oír qué le
+hace una transposición. Termina en el lote de rango 4 que recibe un modelo: tres
+grabaciones apiladas. Secciones 00, 02, 04 y 09, y apéndice E.
+
+Directo a <a href="../interactive/voice-stage.html?lang=es#frame">una ventana</a>,
+<a href="../interactive/voice-stage.html?lang=es#spectrum">la transformada</a>,
+<a href="../interactive/voice-stage.html?lang=es#lowrank">la mejor aproximación de rango k que existe</a>
+o <a href="../interactive/voice-stage.html?lang=es#batch">el lote</a>.
+
+<a href="../interactive/voice-stage.html?lang=es" class="resource-button">Abrir el tensor de audio</a>
+:::
+::::
+
+:::::

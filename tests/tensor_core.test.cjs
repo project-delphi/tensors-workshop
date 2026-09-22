@@ -1,4 +1,4 @@
-// Pins the arithmetic under the reshape & transpose visualizer
+// Pins the arithmetic under the image tensor visualizer
 // (interactive/tensor-core.js). Run with `npm test`; no browser, no render.
 // Each case is a lesson the widget teaches, so a failure here is a wrong
 // number on screen rather than a broken page -- the kind of regression the

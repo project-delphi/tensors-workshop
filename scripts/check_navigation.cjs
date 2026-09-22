@@ -11,7 +11,7 @@ const prefix = '/tensors-workshop/';
 const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
   '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif',
   '.webp':'image/webp', '.woff2':'font/woff2'};
-const pages = ['index', 'notebooks', 'kahoot', 'references', 'companion', 'teach',
+const pages = ['index', 'notebooks', 'interactive', 'kahoot', 'references', 'companion', 'teach',
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 
@@ -1312,8 +1312,8 @@ async function audit(page, where) {
       // in. Keep the two in step: with six of them a reader looking for one
       // callback has nothing else to go on.
       const widgets = [
-        {file: 'tensor-visualizer', en: 'Reshape, transpose and strides',
-         es: 'Reshape, transpose y strides', embed: true, drive: driveVisualizer},
+        {file: 'tensor-visualizer', en: 'The image tensor',
+         es: 'El tensor de imagen', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
          es: 'Broadcasting, paso a paso', embed: true, drive: driveBroadcasting},
         // Its embed mode is the softmax scene, flat and still: no scroller,
@@ -1502,16 +1502,19 @@ async function audit(page, where) {
         }
       }
 
-      // The hero carries all four widgets live, behind four tabs, in the page's
+      // The hero carries every widget live, behind one tab each, in the page's
       // own language. The static diagram is the fallback and must still be
-      // in the document for reduced motion and phones.
+      // in the document for reduced motion and phones. The count is pinned
+      // because a widget added to `repo.widgets` and not to the hero is the
+      // failure this catches -- the attention stage shipped invisible from
+      // the front door for exactly that reason.
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 4, `${lang}/index: four hero embeds`);
+        assert.equal(await frames.count(), 5, `${lang}/index: five hero embeds`);
         // Only the open tab's widget is fetched. A hidden iframe is not
-        // lazy-loaded whatever `loading` says, so the other two hold their URL
+        // lazy-loaded whatever `loading` says, so the others hold their URL
         // in data-src until the tab script hands it over.
         const urls = await frames.evaluateAll(els =>
           els.map(e => [e.getAttribute('src'), e.getAttribute('data-src')]));
@@ -1535,6 +1538,7 @@ async function audit(page, where) {
         assert(await page.locator('#hero-panel-broadcast').isHidden());
         assert(await page.locator('#hero-panel-linalg').isHidden());
         assert(await page.locator('#hero-panel-voice').isHidden());
+        assert(await page.locator('#hero-panel-attention').isHidden());
         await page.locator('#hero-tab-broadcast').click();
         assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
         assert(await page.locator('#hero-panel-layout').isHidden());
@@ -1559,6 +1563,13 @@ async function audit(page, where) {
           `${lang}/index: voice embed not loaded on opening its tab`);
         assert((await open.getAttribute('href')).includes(`voice-stage.html?lang=${lang}`),
           `${lang}/index: open button did not follow the voice tab`);
+        await page.locator('#hero-tab-attention').click();
+        assert(await page.locator('#hero-panel-attention').isVisible(), `${lang}/index: attention tab`);
+        assert(await page.locator('#hero-panel-voice').isHidden());
+        assert(await page.locator('#hero-panel-attention iframe').getAttribute('src'),
+          `${lang}/index: attention embed not loaded on opening its tab`);
+        assert((await open.getAttribute('href')).includes(`attention-stage.html?lang=${lang}`),
+          `${lang}/index: open button did not follow the attention tab`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);

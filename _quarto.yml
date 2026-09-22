@@ -7,6 +7,7 @@ project:
   render:
     - index.qmd
     - notebooks.qmd
+    - interactive.qmd
     - kahoot.qmd
     - references.qmd
     - companion.qmd
@@ -26,6 +27,7 @@ project:
     - workshop-feedback.md
     - es/index.qmd
     - es/notebooks.qmd
+    - es/interactive.qmd
     - es/kahoot.qmd
     - es/references.qmd
     - es/companion.qmd
@@ -90,6 +92,12 @@ website:
         rel: lang-en
       - href: es/notebooks.qmd
         text: Cuadernos
+        rel: lang-es
+      - href: interactive.qmd
+        text: Interactive
+        rel: lang-en
+      - href: es/interactive.qmd
+        text: Interactivo
         rel: lang-es
       - href: kahoot.qmd
         text: Kahoot

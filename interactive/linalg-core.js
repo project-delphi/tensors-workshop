@@ -501,7 +501,7 @@
 
   // ─── the idle drift ───────────────────────────────────────────────────────
   //
-  // The same machine tensor-core.js runs for the reshape visualizer, with this
+  // The same machine tensor-core.js runs for the image tensor visualizer, with this
   // stage's own constants and one difference: there is no breath on the dolly.
   // The portal's framing is fitted to sigma_1 and a breath that pulled the
   // camera *in* would crop the ellipse it exists to show, so the second axis of

@@ -159,7 +159,7 @@ rather than a corner of the one above. Nothing regenerates these files, so
 nothing catches a mistake in them by comparing bytes; what guards them
 instead is `npm test` over the core modules and `check_navigation.cjs` over
 the rendered pages, both under `## Commands`. The HTML widgets -- the
-section 03 broadcasting simulator, the section 04 reshape & transpose
+section 03 broadcasting simulator, the section 04 image tensor
 visualizer, the sections 07/09 projection & SVD stage, the sections
 00/02/04/09 audio tensor stage, and the sections 04/06/Appendix B attention
 stage -- each carry EN/ES copy tables, `?lang=`, and
@@ -411,8 +411,9 @@ exactly one home; before adding a paragraph, find whose job it is:
 | Document | Owns | Never contains |
 |---|---|---|
 | `_variables.yml` | Every shared fact: repo coordinates, section titles and minutes, the running clock, quiz metadata, prerequisite URLs. | — |
-| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, and how we work. | Teaching content or exercises. A section table, Colab instructions, or a tour of the datasets — the homepage is a front door, and all three were cut from it. |
+| `index.qmd` / `es/index.qmd` | The student's entry point: what this is, who it is for, **what each resource is for**, prerequisites in full, and how we work. The hero carries one live tab per widget. | Teaching content or exercises. A section table, Colab instructions, or a tour of the datasets — the homepage is a front door, and all three were cut from it. A card per widget: that is `interactive.qmd`'s, and the homepage keeps one sentence and a link. |
 | The handbook (`tensors_workshop_plan_with_quizzes.md`, and `es/` beside it) | The session text: theory, exercises, worked solutions, the appendices, facilitator notes. The only document that owns Part/Block. | Prerequisites, setup instructions, "how we work" — it links to the homepage for those. The bibliography — it links to `references.qmd`, and its `## Further Reading` section is now only that pointer. |
+| `interactive.qmd` / `es/interactive.qmd` | One card per widget in `repo.widgets`: what it answers, which sections it belongs to, and the named scenes worth linking straight to. The only page that gathers them. | The workshop's content. A count of the widgets — say what they are, not how many. |
 | `notebooks.qmd` / `es/notebooks.qmd` | The list of every notebook, how they are built, what each one needs, and how to run them off Colab. The only page left that enumerates all thirteen sections in both languages, which is what check 6 watches. Its *What each notebook needs* table is generated — do not hand-edit it. | The workshop's content or its schedule. |
 | `kahoot.qmd` / `es/kahoot.qmd` | The three quizzes and how to run them. The live questions on kahoot.it stay in English; this page is the how-to. | — |
 | `references.qmd` / `es/references.qmd` | Every citation, with DOIs and author pages. | Prerequisites — it links to the homepage. Teaching content: it says what a work is *for*, never what it says. |
