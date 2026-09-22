@@ -75,7 +75,12 @@
   }
 
   function load(ctx) {
-    if (ctx.embed || pending) return;
+    // `failed` is the third guard and not an optional one: sync() is called
+    // from paint(), paint() is the end of changed(), and the catch below
+    // calls changed() -- so without this a single 404 refetches forever, for
+    // as long as the reader stays on this section. lowrank.js keeps the same
+    // guard on its own phase.
+    if (ctx.embed || pending || ctx.state.failed) return;
     if (BUILTIN.every((n) => CACHE.has(n))) return;
     // voice first, because its length is what the synthesised tone is cut to:
     // the three are the same shape because they are the same length, and that
@@ -120,21 +125,15 @@
       return {i0: 0, i1: keep};
     },
 
+    // The one scene whose lesson is that the shape may not exist. When the
+    // crop is longer than the shortest example there is no rank-4 tensor to
+    // name, and a badge naming one would contradict the readout under it.
     shape(ctx) {
       const ex = examples(ctx);
       if (!ex.length) return "";
+      const shortest = ex.reduce((m, e) => Math.min(m, e.T), Infinity);
+      if (ctx.state.crop > shortest) return "";
       return "[" + ex.length + ", 1, " + ex[0].F + ", " + ctx.state.crop + "]";
-    },
-
-    playLabel(ctx) { return ctx.copy.names[ctx.state.lit] || ctx.state.lit; },
-
-    audio(ctx) {
-      const ex = examples(ctx);
-      const one = ex.find((e) => e.name === ctx.state.lit) || ex[0];
-      if (!one) return null;
-      const keep = Math.min(one.samples.length, ctx.state.crop * HOP);
-      return {samples: one.samples.subarray(0, keep),
-              what: ctx.copy.names[one.name] || one.name};
     },
 
     draw(ctx) {
@@ -191,10 +190,14 @@
       // One bracket per axis of the equation above, lit when the reader points
       // at that letter. Faint the rest of the time, because the picture is the
       // slabs and not the furniture.
+      // B's label goes under its bracket, left-aligned: right-aligned at
+      // x = 12 the chip starts off the left edge of the canvas.
       axis(ctx, g, K, "batch", lit, {x: 12, y0: stackTop, y1: stackBot},
-           "B = " + ex.length, true);
+           "B = " + ex.length, true, {x: 8, y: stackBot + 10});
+      // F's goes at the top of its bracket, not the middle, which is the
+      // baseline the first row's name is already on.
       axis(ctx, g, K, "freq", lit, {x: L - 9, y0: stackTop, y1: stackTop + rowH},
-           "F = " + ex[0].F, true);
+           "F = " + ex[0].F, true, {x: L - 11, y: stackTop + 6, right: true});
       axis(ctx, g, K, "time", lit,
            {y: stackBot + 12, x0: L, x1: L + spanW * (Math.min(crop, widest) / widest)},
            "T = " + crop, false);
@@ -343,7 +346,7 @@
 
   // A bracket for one axis of the equation, lit when the reader points at that
   // letter in the section above. Vertical or horizontal, same idea.
-  function axis(ctx, g, K, token, lit, box, text, vertical) {
+  function axis(ctx, g, K, token, lit, box, text, vertical, lab) {
     const on = lit === token;
     const col = on ? ctx.colour("--v-comp") : ctx.colour("--stage-mute");
     g.strokeStyle = col;
@@ -357,9 +360,9 @@
       g.lineTo(box.x1, box.y); g.lineTo(box.x1, box.y - 5);
     }
     g.stroke();
-    if (on) {
-      if (vertical) K.label(g, text, box.x - 2, (box.y0 + box.y1) / 2, col, {size: 11, right: true});
-      else K.label(g, text, (box.x0 + box.x1) / 2, box.y + 4, col, {size: 11});
-    }
+    if (!on) return;
+    if (lab) K.label(g, text, lab.x, lab.y, col, {size: 11, right: !!lab.right});
+    else if (vertical) K.label(g, text, box.x - 2, (box.y0 + box.y1) / 2, col, {size: 11, right: true});
+    else K.label(g, text, (box.x0 + box.x1) / 2, box.y + 4, col, {size: 11});
   }
 })();

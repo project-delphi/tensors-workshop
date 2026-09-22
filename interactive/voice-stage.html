@@ -146,14 +146,17 @@
   .lab.out { color: var(--v-out); }
   .lab.big { font-size: 14px; }
   #claim {
-    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0;
+    position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
   }
   /* The shape of the tensor the picture is of, in one fixed place, so the
      reader is not carrying "237568" and "513 x 465" between four scenes. */
+  /* Two chips on one line growing towards each other. Overlapping absolute
+     boxes never make the page scroll, so no check would catch them meeting;
+     the widths are what stop it. */
   #shapebadge {
-    position: absolute; right: 0.75rem; top: 0.6rem; margin: 0;
+    position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; max-width: 34%;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
   }
@@ -1121,11 +1124,13 @@
     // the controls are where they opened, and a card still saying that after
     // the reader has halved the hop contradicts the readout under it.
     $("claim").textContent = r.claim || active.copy[lang].claim;
-    // The shape of the tensor this picture is of. Its own method rather than
-    // a readout key, because it belongs to the frame's furniture and every
-    // scene answers it -- the badge must never blank out mid-scroll. A scene
-    // says its shape outright when it has one to say; otherwise the badge
-    // takes the shape its readout already publishes, which most of them do.
+    // The shape of the tensor this picture is of. A scene says it outright
+    // where it has a shape to say before its readout does -- the two heavy
+    // factorisations know theirs from the moment the transform lands, long
+    // before the arithmetic finishes -- and otherwise the badge takes the
+    // shape the readout publishes. It goes away rather than lying: while a
+    // recording is still being fetched, and on the batch scene when the crop
+    // is longer than the shortest example, there is no shape to name.
     let sh = "";
     if (signal.loaded) {
       sh = active.shape ? active.shape(ctx)

@@ -160,7 +160,7 @@ instead is `npm test` over the core modules and `check_navigation.cjs` over
 the rendered pages, both under `## Commands`. Four HTML widgets -- the
 section 03 broadcasting simulator, the section 04 reshape & transpose
 visualizer, the sections 07/09 projection & SVD stage, and the sections
-00/04/09 audio tensor stage -- each with EN/ES copy tables, `?lang=`, and its
+00/02/04/09 audio tensor stage -- each with EN/ES copy tables, `?lang=`, and its
 section's accent adjusted per theme to clear 4.5:1. **The frame is shared**:
 `interactive/widget-chrome.css`, linked first by every page, owns the
 surfaces (`--bg`, `--ink`, `--ink-mute`, `--panel`, `--sunk`, `--line`, the

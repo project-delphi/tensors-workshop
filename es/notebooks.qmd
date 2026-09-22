@@ -72,9 +72,9 @@ una matriz de frecuencia por tiempo, qué le hace una transposición a un sonido
 y las dos maneras en que esa matriz se descompone:
 <a href="../interactive/voice-stage.html?lang=es#lowrank">la mejor aproximación de rango k
 que existe</a> y <a href="../interactive/voice-stage.html?lang=es#nmf">las partes que
-puedes nombrar</a>; y al final <a href="../interactive/voice-stage.html?lang=es#batch">el
-lote de rango 4 que recibe de verdad un modelo</a>, tres grabaciones apiladas.
-Todas se pueden oír.
+puedes nombrar</a>: todas ellas se pueden oír. Y termina en
+<a href="../interactive/voice-stage.html?lang=es#batch">el lote de rango 4 que
+recibe de verdad un modelo</a>: esas tres grabaciones apiladas en un solo arreglo.
 
 {{< include ../_includes/notebooks-extra-es.md >}}
 

@@ -70,9 +70,10 @@ the window hopping along to build a frequency-by-time matrix, what a
 transpose does to a sound, and the two ways that matrix comes
 apart — [the best rank-k approximation there
 is](interactive/voice-stage.html?lang=en#lowrank) and [the parts you can
-name](interactive/voice-stage.html?lang=en#nmf) — and last [the rank-4 batch a
-model is actually handed](interactive/voice-stage.html?lang=en#batch), three
-recordings stacked. You can hear every one of them.
+name](interactive/voice-stage.html?lang=en#nmf) — you can hear every one of
+those. It ends on [the rank-4 batch a model is actually
+handed](interactive/voice-stage.html?lang=en#batch): those three recordings
+stacked into one array.
 
 {{< include _includes/notebooks-extra-en.md >}}
 

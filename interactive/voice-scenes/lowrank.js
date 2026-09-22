@@ -298,6 +298,11 @@
       return {samples: built.audio, what: ctx.copy.hearNames.rank(rungAt(ctx), ctx)};
     },
 
+    shape(ctx) {
+      const st = ctx.state.stft;
+      return st ? "[" + st.F + ", " + st.T + "]" : "";
+    },
+
     readout(ctx) {
       const s = ctx.state;
       if (s.phase === "failed") {
