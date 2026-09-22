@@ -1831,6 +1831,20 @@ async function audit(page, where) {
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
+
+        // The two vendored faces arrived and were accepted. This is the only
+        // guard a @font-face gets from a browser: `check_links.py` sees the
+        // files reach docs/, but a woff2 that is corrupt, or a url() that
+        // resolves to the wrong depth on one language's pages, fails
+        // silently -- the page renders in the fallback stack and looks
+        // merely a bit different. The Spanish half matters most: the
+        // stylesheet is linked at a different depth there.
+        await page.evaluate(() => document.fonts.ready);
+        for (const face of ['1em Inter', '1em "Source Serif 4"']) {
+          assert(await page.evaluate(f => document.fonts.check(f), face),
+            `${lang}/index: ${face} did not load — see fonts/README.md`);
+        }
+
         const frames = page.locator('iframe.hero-embed');
         assert.equal(await frames.count(), 6, `${lang}/index: six hero embeds`);
         // Only the open tab's widget is fetched. A hidden iframe is not

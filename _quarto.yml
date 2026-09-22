@@ -53,6 +53,11 @@ project:
     # Standalone widgets. Copied verbatim, like the notebooks — nothing
     # renders them, so without this line they never reach docs/.
     - interactive/**
+    # The two vendored typefaces (fonts/README.md). Reached from a
+    # `@font-face url()`, which is CSS content rather than an attribute, so
+    # the link harvest cannot see them either -- `repo.widgets` lists both
+    # so check_links.py fails the build if one stops arriving.
+    - fonts/**
 
 website:
   # Optional instructor diagnostics use draft: true for unlisted, direct-link access.
@@ -62,6 +67,12 @@ website:
   site-url: https://project-delphi.github.io/tensors-workshop
   repo-url: https://github.com/project-delphi/tensors-workshop
   favicon: favicon.svg
+  # The link preview. One card for the whole site, drawn offline by
+  # `scripts/gen_figures.py og` in the vendored faces, so it is the same
+  # picture wherever it is unfurled.
+  open-graph: true
+  twitter-card: true
+  image: images/og-card.png
   navbar:
     background: primary
     search: true
@@ -150,6 +161,15 @@ website:
         href: https://github.com/project-delphi/tensors-workshop
         aria-label: "Source on GitHub"
   page-footer:
+    # Two slots, not three. A middle slot with a row of section links is what
+    # this footer wants, and Quarto will not carry one: it rewrites a
+    # relative href in `page-footer` positionally and gets it wrong as soon
+    # as there is more than one. Rendered from here, the Spanish page
+    # resolved the first two links, pointed the *English* handbook at the
+    # Spanish file, and left the remaining four as literal `.qmd` paths. The
+    # link row belongs in `include-after-body`, beside the language switch,
+    # which is per-page and already works -- and that is the navigation
+    # redesign's job rather than this change's.
     left: "Tensors for Machine Learning · Built with [Quarto](https://quarto.org)"
     right: "[Source](https://github.com/project-delphi/tensors-workshop)"
 
@@ -162,6 +182,10 @@ format:
     theme:
       - cosmo
       - custom.scss
+    # The @font-face rules, as a plain stylesheet beside the files they name.
+    # Not in custom.scss: see the comment at the top of fonts/fonts.css.
+    css:
+      - fonts/fonts.css
     toc: true
     toc-depth: 3
     anchor-sections: true

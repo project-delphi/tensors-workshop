@@ -1,0 +1,46 @@
+/* The site's two vendored faces (fonts/README.md), declared here rather than
+   in custom.scss.
+
+   A Sass `url()` inside the theme is not left alone: Quarto treats it as a
+   dependency, resolves it against the *project* directory rather than against
+   where the stylesheet compiles to, and copies the file next to the compiled
+   CSS. So `url("../../fonts/x.woff2")` -- correct for a browser reading
+   `docs/site_libs/bootstrap/`, which is where the theme lands -- sent Quarto
+   looking two levels above the repo and failed the render outright.
+
+   The established workaround in this repo is to write such a path as if from
+   the project root and let Quarto copy the file next to the compiled CSS --
+   see the `prefers-reduced-motion` block at the foot of `custom.scss`, which
+   does exactly that for one image. That would work here too, but it puts a
+   second copy of 300 KB of font in `site_libs/` while `resources: fonts/**`
+   is already carrying the first to `docs/fonts/`, and `repo.widgets` would
+   then be guarding the copy nothing loads.
+
+   A plain stylesheet is copied verbatim and keeps its own URLs, and this one
+   sits in the same directory as the files it names, so the paths are bare
+   siblings that no output layout can break. `_quarto.yml` links it and
+   `resources: fonts/**` carries the whole directory to docs/; `repo.widgets`
+   in `_variables.yml` lists all three files, because a `@font-face url()` is
+   CSS content the link harvest cannot see.
+
+   `font-display: swap`: these are the body text, and a reader waiting on
+   78 KB before seeing a word is worse than a reflow.
+
+   Both faces are variable, so one file per family covers every weight the
+   site uses -- which is why there is no 400/600/700 trio here. */
+
+@font-face {
+  font-family: "Inter";
+  src: url("inter-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  src: url("source-serif-4-latin.woff2") format("woff2");
+  font-weight: 200 900;
+  font-style: normal;
+  font-display: swap;
+}

@@ -1017,6 +1017,40 @@ the "a hover must not rewrite the readout" assertion would have passed
 whatever the readout did. Every selector there is scoped to its `#step-<id>`
 now.
 
+**The site vendors a typeface pair, and the `@font-face` is not in the
+theme** (2026-09-22). The site had been set in a system-font stack, which is
+free and is a different page on every operating system. Three things decided
+the change and its shape:
+
+*Why vendored rather than a CDN.* `check_navigation.cjs` aborts every
+off-origin request, so a `fonts.googleapis.com` stylesheet would load on a
+reader's machine and test as the fallback stack on the runner -- the class of
+difference nothing in CI can see. The same reasoning already vendored three.js
+and the stages' CMU Serif, with the same ledger. Both faces are subset to
+latin + latin-ext, which is what Spanish needs, and Inter is instanced to
+`wght` 400–800 because only weight varies here.
+
+*Why not system fonts.* Because of one asset: `images/og-card.png` is drawn
+by matplotlib, offline, with no browser and no system font list to fall
+through. Vendoring is what lets the card be set in the same two faces a
+reader's browser renders, from the same two files.
+
+*Why the `@font-face` is in `fonts/fonts.css` and not `custom.scss`.* It was
+in the theme first, written `url("../../fonts/x.woff2")` -- correct for a
+browser, since the theme compiles to `docs/site_libs/bootstrap/`. Quarto does
+not leave a Sass `url()` alone: it treats it as a dependency, resolves it
+against the *project* directory rather than against where the stylesheet
+lands, and copies the file next to the compiled CSS. That path sent it
+looking two levels above the repo and failed the render outright. The
+repo's existing workaround is to write such a path as if from the project
+root and let Quarto do the copy -- `custom.scss`'s reduced-motion block does
+exactly that for one image -- but here that would leave a second copy of
+300 KB of font in `site_libs/` while `resources: fonts/**` already carries
+the first, and `repo.widgets` would be guarding the copy nothing loads. A
+plain stylesheet beside the files it names keeps its own URLs, and
+`format.html.css` gets rewritten per page depth by Quarto, so one line serves
+both languages.
+
 ## Commands and checks: the browser check
 
 **The widgets share one frame, and the way out of an embed is one button on

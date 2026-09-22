@@ -68,6 +68,7 @@ text, then run the appropriate generator:
 | `notebooks/*.ipynb` -- every cell between the header and footer, including Setup | the notebook itself; editable directly in Colab/Gemini |
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
+| `images/og-card.png` (the link preview, 1200×630, in the vendored faces) | `scripts/gen_figures.py og` |
 | `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32 and 64 px) | `scripts/gen_figures.py widget` |
 | `interactive/data/taxi.json` (the factorisation stage's own copy of the Block 6 taxi tensor) | `scripts/gen_figures.py taxi` (network: the taxi CSV) |
 | `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
@@ -103,10 +104,14 @@ What each generator draws, and the rules each one keeps:
   the generator: `gen_figures.py` imports its pin, palette and fetcher, and the
   handbook's *The Data We Use* section is where they would return. Do not
   re-add a dataset strip to the homepage.
-- `gen_figures.py` builds the banner, the handbook's four figures and the
-  visualizer's `photos.json`, importing the pin, palette and fetcher from
-  `gen_thumbnails.py`. Every figure is drawn from an array the workshop actually
-  uses, so the numbers printed on a figure are the numbers the exercise prints.
+- `gen_figures.py` builds the banner, the handbook's four figures, the link
+  preview and the visualizer's `photos.json`, importing the pin, palette and
+  fetcher from `gen_thumbnails.py`. Every figure is drawn from an array the
+  workshop actually uses, so the numbers printed on a figure are the numbers
+  the exercise prints. `og` draws `images/og-card.png` from the same ladder
+  the banner uses, on the navbar's navy, in the two vendored faces loaded off
+  disk through `font_manager.addfont` -- there is no browser and no system
+  font list here, which is the whole reason those files are in the repo.
 - `gen_cube_gifs.py` draws the cube animations the notebooks embed, **at least
   three per notebook** (the move the section is named after, a move it needs,
   and the section's own subject), each in its notebook's accent from
@@ -151,6 +156,37 @@ holds four ideas and the sections under each; `brainstorm_svg()` in
 reading titles from `sections:`. The generator refuses a section under no idea
 or two. It is emitted twice (two columns and one) and `custom.scss` switches at
 44rem; colours and type live in `custom.scss` under `.brainstorm`.
+
+## The typefaces
+
+**Both faces are vendored**, under `fonts/`: Inter (variable, `wght` 400–800,
+`opsz` instanced out) for UI and body, Source Serif 4 (variable, both axes)
+for display headings, each subset to latin + latin-ext so Spanish keeps its
+diacritics and `¿¡`. `fonts/README.md` is the ledger -- URL, SHA-256, date
+and the exact subset command per face -- in the shape of
+`interactive/vendor/README.md`. Both are SIL OFL with the licence committed.
+
+**Off-origin fonts are not an option here**: `check_navigation.cjs` aborts
+every external request, so a Google Fonts `<link>` would load for a reader
+and test as the fallback stack on the runner, and nothing would say so.
+
+**The `@font-face` rules are in `fonts/fonts.css`, not `custom.scss`.**
+Quarto does not leave a Sass `url()` alone -- it resolves it against the
+*project* directory rather than against where the theme compiles to, and
+copies the file next to the compiled CSS. A plain stylesheet keeps its own
+URLs, and this one sits beside the files it names, so both `url()`s are bare
+siblings. `_quarto.yml` links it under `format.html.css`, which Quarto
+rewrites per page depth. `interactive/widget-chrome.css` declares Inter
+separately at `../fonts/`, because a widget is a page with no navbar and no
+site stylesheet; the stages' vendored CMU Serif is untouched, being the Manim
+look on a black canvas rather than the page's type.
+
+**All three files are in `repo.widgets`.** A `@font-face url()` is CSS
+content, which the link harvest cannot see, so `check_links.py` failing on a
+missing file is their only guard -- the `cmu-serif` entries are the
+precedent. `check_navigation.cjs` also asserts `document.fonts.check` for
+both faces on `index` in both languages, which is what catches a corrupt
+woff2 or a URL that resolves to the wrong depth on one language's pages.
 
 ## The widgets
 

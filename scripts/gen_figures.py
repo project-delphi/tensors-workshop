@@ -57,6 +57,14 @@ from gen_thumbnails import (
 MARK = "#c44e52"
 PAPER = "#ffffff"
 
+# The link preview's own three colours, and the only place this module draws
+# on anything but paper. They are custom.scss's $navbar-bg and $accent, and
+# the footer's muted ink: measured on the navy at 16.7:1, 10.5:1 and 8.6:1,
+# because a card is read at thumbnail size in someone else's timeline.
+NAVY = "#0b1f33"
+CARD_ACCENT = "#6fe0c6"
+CARD_MUTE = "#a3bdd4"
+
 TAXIS_URL = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.csv"
 
 
@@ -1222,8 +1230,136 @@ def widget_taxi() -> Path:
     return path
 
 
+# ─── the link preview ───────────────────────────────────────────────────────
+
+
+def og_card(arrays) -> Path:
+    """The Open Graph card: 1200 x 630, drawn once, offline.
+
+    It is the ladder the banner uses -- a scalar, a vector, a matrix, a photo,
+    a clip -- under the site's name, because the ladder *is* the workshop's
+    argument and a link preview gets one picture to make it.
+
+    The type is the site's own two vendored faces, read off disk. That is the
+    point of vendoring them: this card is rendered here, by matplotlib, with
+    no browser and no system font list to fall back through, so without the
+    files it would come out in DejaVu Sans and be the one piece of the site
+    that looks like nothing else on it. Naming the files also means the card
+    cannot change because the machine that drew it has a different font
+    installed.
+
+    They go through fontTools twice on the way in, for two reasons that both
+    come down to matplotlib not being a browser.
+
+    Its FreeType reads TTF and OTF, not woff2, so `font_manager.addfont`
+    cannot take the shipped file. woff2 is that same TTF under Brotli, so the
+    first pass simply decompresses it. The glyphs stay the browser's, byte for
+    byte, which is the property worth keeping: the whole reason to draw this
+    card offline is that it matches the page it links to.
+
+    And matplotlib cannot read a variable font's axes. Handed the variable
+    file it picks one default instance and prints `Failed to find font weight
+    600 for Inter, now using 400` -- a warning, not an error, so the card
+    would quietly ship with a title in the body weight. The second pass
+    instances each face at the weight this card actually asks for, which is
+    what makes `fontweight` mean anything here.
+    """
+    import tempfile
+
+    from fontTools.ttLib import TTFont
+    from fontTools.varLib import instancer
+    from matplotlib import font_manager
+
+    fonts = Path(__file__).resolve().parent.parent / "fonts"
+    tmp = tempfile.TemporaryDirectory(prefix="og-card-fonts-")
+    for face, weight in (
+        ("inter-latin.woff2", 400),
+        ("inter-latin.woff2", 600),
+        ("source-serif-4-latin.woff2", 600),
+    ):
+        path = fonts / face
+        if not path.exists():
+            raise SystemExit(f"og_card: {path} is missing -- see fonts/README.md")
+        ttf = Path(tmp.name) / f"{path.stem}-{weight}.ttf"
+        try:
+            font = TTFont(path)
+            font.flavor = None
+            axes = {"wght": weight}
+            if "opsz" in {a.axisTag for a in font["fvar"].axes}:
+                # The display size this card sets each face at, so the face
+                # arrives with the contrast and spacing it was drawn for.
+                axes["opsz"] = 36
+            instancer.instantiateVariableFont(font, axes, inplace=True)
+            font.save(ttf)
+        except Exception as exc:  # pragma: no cover - a corrupt vendored file
+            raise SystemExit(f"og_card: could not unpack {face}: {exc}") from exc
+        font_manager.fontManager.addfont(str(ttf))
+
+    plt = mpl()
+    fig = plt.figure(figsize=(12.0, 6.3), dpi=100)
+    fig.patch.set_facecolor(NAVY)
+
+    # The ladder across the middle, on the navy rather than on paper: the
+    # rungs are drawn by the same functions the banner uses, so the card
+    # cannot drift away from the picture the site opens with. `top=` is
+    # ladder_panels' name for the axes' *bottom* in figure coordinates, which
+    # is the one thing to get right here -- the band has to clear the subtitle
+    # above it and the arc below.
+    for ax, draw in zip(
+        ladder_panels(fig, [], top=0.20, height=0.42),
+        rungs_for(arrays, annotate=False),
+    ):
+        draw(ax)
+        ax.set_facecolor(NAVY)
+
+    fig.text(
+        0.055,
+        0.845,
+        "Tensors for Machine Learning",
+        fontfamily="Source Serif 4",
+        fontsize=46,
+        fontweight=600,
+        color="#ffffff",
+        va="top",
+        ha="left",
+    )
+    fig.text(
+        0.055,
+        0.680,
+        "A 210-minute workshop  \u00b7  English and Spanish  \u00b7  every notebook runs cold in Colab",
+        fontfamily="Inter",
+        fontsize=19,
+        fontweight=400,
+        color=CARD_MUTE,
+        va="top",
+        ha="left",
+    )
+    fig.text(
+        0.055,
+        0.085,
+        "one number  \u2192  a vector  \u2192  a matrix  \u2192  a tensor  \u2192  a batch",
+        fontfamily="Inter",
+        fontsize=17,
+        fontweight=600,
+        color=CARD_ACCENT,
+        va="bottom",
+        ha="left",
+    )
+
+    out = IMAGES / "og-card.png"
+    canvas_to_pil(fig).save(out, "PNG", optimize=True)
+    plt.close(fig)
+    tmp.cleanup()
+    report(out, "the link preview, 1200 x 630, in the vendored faces")
+    return out
+
+
 if __name__ == "__main__":
     stack()
+    if sys.argv[1:] == ["og"]:
+        print("The link preview (network: the pinned clip and the taxi CSV)")
+        og_card(load_ladder())
+        sys.exit(0)
     if sys.argv[1:] == ["widget"]:
         print("The visualizer's photos (no network: shipped with scikit-image)")
         widget_photos()
@@ -1241,5 +1377,7 @@ if __name__ == "__main__":
     fig_video_stack(arrays)
     gif_video_stack(arrays)
     fig_tucker_taxi(arrays)
+    print("The link preview")
+    og_card(arrays)
     print("The visualizer's photos")
     widget_photos()
