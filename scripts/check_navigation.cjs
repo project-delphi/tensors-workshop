@@ -1023,6 +1023,31 @@ async function audit(page, where) {
             `(x ${box.x0.toFixed(0)}..${box.x1.toFixed(0)}, y ${box.y0.toFixed(0)}..${box.y1.toFixed(0)})`);
         };
 
+        // This is a scroller, so a hash scrolls the section into view and the
+        // step machine follows the scroll: the stage passes through pictures
+        // on the way, and `data-scene` can read the destination for a frame
+        // while the rest of the dataset is still the scene it is leaving --
+        // or, as CI found here, is already cleared and not yet rewritten, so
+        // `data-recovered` read `undefined` where `3` was expected. On this
+        // Mac that window is too small to hit. So: wait for the scrolling to
+        // stop, then for the scene, then for a key only that scene publishes,
+        // and measure the picture before believing a number in it. The
+        // attention stage's open() and the audio stage's voiceScene() wait
+        // the same way, and AGENTS.md states the rule.
+        const open = async (id, key) => {
+          await page.evaluate((name) => { location.hash = '#' + name; }, id);
+          await page.waitForFunction(() => new Promise(done => {
+            const was = window.scrollY;
+            setTimeout(() => done(window.scrollY === was), 250);
+          }), null, {timeout: 15000});
+          await page.waitForFunction(([name, k]) => {
+            const ds = document.getElementById('stage').dataset;
+            return ds.scene === name && ds[k] !== undefined;
+          }, [id, key], {timeout: 15000})
+            .catch(() => assert.fail(`${where}: #${id} did not open with its own readout`));
+          await fits(id);
+        };
+
         // The tensor scene: it is the one the page opens on. On the runner
         // taxi.json is a same-origin static file, so the fetch always
         // succeeds -- data-standin says so, never typed.
@@ -1037,26 +1062,22 @@ async function audit(page, where) {
 
         // Unfold: the mode-2 unfolding is 24 rows, the entry count is
         // invariant across all three unfoldings.
-        await page.evaluate(() => { location.hash = '#unfold'; });
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'unfold');
+        await open('unfold', 'invariant');
         d = await data();
         assert.equal(d.mode, '2');
         assert.equal(d.rows, '24');
         assert.equal(d.cols, '20');
         assert.equal(d.entries, '480');
         assert.equal(d.invariant, '1');
-        await fits('unfold');
 
         // HOSVD: linalg-core.svd's thin U caps the hour rank at 20, not 24 --
         // both the data and the slider's own max attribute say so.
-        await page.evaluate(() => { location.hash = '#hosvd'; });
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'hosvd');
+        await open('hosvd', 'rmax');
         d = await data();
         assert.equal(d.mode, '2');
         assert.equal(d.rmax, '20');
         assert.equal(await page.locator('#c-hosvd-r').getAttribute('max'), '20',
           `${where}: the hour rank slider's own max should be 20, not 24`);
-        await fits('hosvd');
         // 24 x 20 of them: the grid has to shrink to its box, and below the
         // size at which a number is still a number it shades instead.
         await page.locator('#c-hosvd-r').fill('20');
@@ -1065,8 +1086,7 @@ async function audit(page, where) {
 
         // Tucker: the handbook's own published numbers, byte-exact on the
         // claim card, and lowering the hour rank cannot raise the error.
-        await page.evaluate(() => { location.hash = '#tucker'; });
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'tucker');
+        await open('tucker', 'ranks');
         d = await data();
         assert.equal(d.ranks, '2,2,3');
         assert.equal(d.params, '102');
@@ -1082,7 +1102,6 @@ async function audit(page, where) {
         assert.equal(await page.locator('#claim').textContent(),
           'T ≈ G ×₁ A ×₂ B ×₃ C,  480 → 102,  4.71×  at  6.7%',
           `${where}: the tucker claim card should be byte-exact`);
-        await fits('tucker');
         const errBefore = Number(d.err);
         await page.locator('#c-tucker-r2').fill('20');
         await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '2,2,20');
@@ -1099,24 +1118,20 @@ async function audit(page, where) {
 
         // Rank-1: 33 parameters, and scaling one entry of a is proportional
         // across the whole row by construction.
-        await page.evaluate(() => { location.hash = '#rank1'; });
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'rank1');
+        await open('rank1', 'slab');
         d = await data();
         assert.equal(d.params, '33');
         await page.locator('#c-rank1-scale').fill('200');
         await page.waitForFunction(() => document.getElementById('stage').dataset.scaled !== undefined);
         d = await data();
         assert.equal(d.proportional, '1');
-        await fits('rank1');
 
         // CP: rank 3 recovers all three planted terms on the synthetic
         // tensor; rank 1 cannot.
-        await page.evaluate(() => { location.hash = '#cp'; });
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'cp');
+        await open('cp', 'recovered');
         d = await data();
         assert.equal(d.recovered, '3');
         assert.equal(d.unique, '1');
-        await fits('cp');
         const errAtR3 = Number(d.err);
         await page.locator('#c-cp-r').fill('1');
         await page.waitForFunction(() => document.getElementById('stage').dataset.r === '1');
@@ -1139,8 +1154,7 @@ async function audit(page, where) {
         // Budget: the same 99 parameters CP spends at R = 3, spent on the
         // best Tucker triple that fits inside it -- not (3, 3, 3), and never
         // over budget -- and the closest-params rule can cost error.
-        await page.evaluate(() => { location.hash = '#budget'; });
-        await page.waitForFunction(() => document.getElementById('stage').dataset.scene === 'budget');
+        await open('budget', 'cheapest');
         d = await data();
         assert.equal(d.budget, '99');
         assert(Number(d.tuckerparams) <= 99, `${where}: the picked Tucker triple must fit the budget`);
@@ -1154,7 +1168,6 @@ async function audit(page, where) {
         assert(Number(d.tuckererr) >= bestErr - 1e-9,
           `${where}: the closest-params pick should not beat the best-error pick`);
         assert.equal(d.tuckerfits, '1');
-        await fits('budget');
         // At R = 1 the cloud is empty and that is the finding: CP spends
         // 4 + 5 + 24 = 33, and the smallest Tucker there is buys the same
         // three columns and pays one more for a core. Reading a pick out of
