@@ -95,6 +95,55 @@
     return M;
   }
 
+  // Where one entry T[idx] lands in the mode-`mode` unfolding: its row is its
+  // own index on that axis, its column the other indices read as one number,
+  // the last axis fastest -- the same decoding unfold() writes with, run the
+  // other way. The unfold scene flies each voxel to this address, so it is
+  // pinned against unfold() itself for every cell and every mode.
+  function unfoldIndex(idx, shape, mode) {
+    const others = otherAxes(shape, mode);
+    let col = 0;
+    for (const ax of others) col = col * shape[ax] + idx[ax];
+    return {
+      row: idx[mode], col, rows: shape[mode],
+      cols: others.reduce((a, ax) => a * shape[ax], 1)
+    };
+  }
+
+  // The flat offset of T[idx] -- the "which entry" slider's own number -- and
+  // back again.
+  function flatIndex(idx, shape) {
+    let off = 0;
+    for (let ax = 0; ax < shape.length; ax++) off = off * shape[ax] + idx[ax];
+    return off;
+  }
+  function multiIndex(flat, shape) {
+    const idx = new Array(shape.length);
+    let rem = flat;
+    for (let ax = shape.length - 1; ax >= 0; ax--) { idx[ax] = rem % shape[ax]; rem = Math.floor(rem / shape[ax]); }
+    return idx;
+  }
+
+  // The sum over every axis but `mode`: marginal(T, 2) is the trips in each
+  // hour across all twenty routes, the curve the hour factor's first column
+  // turns out to be the shape of.
+  function marginal(T, mode) {
+    const out = new Array(T.shape[mode]).fill(0);
+    const idx = new Array(T.shape.length);
+    for (let flat = 0; flat < T.data.length; flat++) {
+      let rem = flat;
+      for (let ax = 0; ax < T.shape.length; ax++) { idx[ax] = Math.floor(rem / T.strides[ax]); rem %= T.strides[ax]; }
+      out[idx[mode]] += T.data[flat];
+    }
+    return out;
+  }
+
+  function argmax(v) {
+    let best = 0;
+    for (let i = 1; i < v.length; i++) if (v[i] > v[best]) best = i;
+    return best;
+  }
+
   // fold's exact inverse: the same column decoding, written back.
   function fold(M, mode, shape) {
     const others = otherAxes(shape, mode);
@@ -146,6 +195,41 @@
       den += T.data[i] * T.data[i];
     }
     return den > 0 ? Math.sqrt(num / den) : 0;
+  }
+
+  function norm(T) {
+    let s = 0;
+    for (let i = 0; i < T.data.length; i++) s += T.data[i] * T.data[i];
+    return Math.sqrt(s);
+  }
+
+  // The cell a reconstruction misses by most, and by how much, signed:
+  // {idx, t, r, diff} with diff = t - r, so a positive diff is trips the model
+  // left out.
+  function largestMiss(T, R) {
+    let best = 0;
+    for (let i = 1; i < T.data.length; i++) {
+      if (Math.abs(T.data[i] - R.data[i]) > Math.abs(T.data[best] - R.data[best])) best = i;
+    }
+    return {
+      idx: multiIndex(best, T.shape), t: T.data[best], r: R.data[best],
+      diff: T.data[best] - R.data[best]
+    };
+  }
+
+  // How much of a matrix's squared mass its first r singular values hold,
+  // and the relative error of keeping only those r: sqrt(1 - kept). On the
+  // taxi unfoldings the first value alone holds 99%, which is why the stage
+  // publishes this to two decimals rather than as a rounded percent -- a
+  // whole-percent readout said 100% at r = 1.
+  function svdEnergy(S, r) {
+    let total = 0, kept = 0;
+    for (let i = 0; i < S.length; i++) {
+      total += S[i] * S[i];
+      if (i < r) kept += S[i] * S[i];
+    }
+    const share = total > 0 ? kept / total : 1;
+    return {kept: share, error: Math.sqrt(Math.max(0, 1 - share))};
   }
 
   // ─── HOSVD / Tucker ────────────────────────────────────────────────────────
@@ -207,6 +291,23 @@
     };
   }
 
+  // What one core entry G[a, b, c] contributes: g times the outer product of
+  // A[:, a], B[:, b] and C[:, c]. Those columns are orthonormal, so the
+  // contributions are mutually orthogonal and each one's share of the
+  // reconstruction's squared norm is just g^2 / sum(g^2) -- no second
+  // reconstruction needed, and the shares add to exactly 1.
+  function coreTerm(h, a, b, c) {
+    const G = h.core;
+    const g = at(G, a, b, c);
+    let total = 0;
+    for (let i = 0; i < G.data.length; i++) total += G.data[i] * G.data[i];
+    const col = (M, j) => M.map((row) => row[j]);
+    return {
+      g, share: total > 0 ? (g * g) / total : 0,
+      a: col(h.factors[0], a), b: col(h.factors[1], b), c: col(h.factors[2], c)
+    };
+  }
+
   // ─── CP-ALS ────────────────────────────────────────────────────────────────
 
   function lcg(seed) {
@@ -244,17 +345,23 @@
     return out;
   }
 
+  // One least-squares solve: the factor for `mode` that best fits T with the
+  // other two held where they are. It is the whole of ALS's arithmetic, and
+  // it is split out so cpTrace() can stop between the three solves of a sweep
+  // and still land, bit for bit, where cpAls() does.
+  function cpSolveMode(T, factors, R, mode) {
+    const others = otherAxes(T.shape, mode);
+    let V = null;
+    for (const ax of others) {
+      const G = LC.mul(LC.transpose(factors[ax]), factors[ax]);
+      V = V ? hadamard(V, G) : G;
+    }
+    return LC.mul(mttkrp(T, mode, factors, R), LC.pinv(V));
+  }
+
   function cpStep(T, factors, R) {
     const next = factors.slice();
-    for (let mode = 0; mode < T.shape.length; mode++) {
-      const others = otherAxes(T.shape, mode);
-      let V = null;
-      for (const ax of others) {
-        const G = LC.mul(LC.transpose(next[ax]), next[ax]);
-        V = V ? hadamard(V, G) : G;
-      }
-      next[mode] = LC.mul(mttkrp(T, mode, next, R), LC.pinv(V));
-    }
+    for (let mode = 0; mode < T.shape.length; mode++) next[mode] = cpSolveMode(T, next, R, mode);
     return next;
   }
 
@@ -296,6 +403,84 @@
     const out = {factors, recon, error: relError(T, recon), R, iters, seed: s};
     m.set(key, out);
     return out;
+  }
+
+  // ALS one solve at a time: entry 0 is the random start, then every sweep
+  // adds three entries, one per factor solved (mode 0, 1, 2). Each entry
+  // keeps the factors as they stand after that solve and the error they
+  // give. Every solve is an exact least-squares minimum over one factor with
+  // the other two fixed, so the error can never rise from one entry to the
+  // next -- the property the als scene's curve draws, and the test pins.
+  const traceCache = new WeakMap();
+
+  function cpTrace(T, R, sweeps, seed) {
+    const s = seed === undefined ? 1 : seed;
+    const key = R + "|" + sweeps + "|" + s;
+    let m = traceCache.get(T);
+    if (!m) { m = new Map(); traceCache.set(T, m); }
+    if (m.has(key)) return m.get(key);
+    const rng = lcg(s);
+    let factors = T.shape.map((d) => randFactor(d, R, rng));
+    const steps = [{sweep: 0, mode: -1, factors, error: relError(T, cpRecon(factors, T.shape))}];
+    for (let sw = 1; sw <= sweeps; sw++) {
+      for (let mode = 0; mode < T.shape.length; mode++) {
+        const next = factors.slice();
+        next[mode] = cpSolveMode(T, factors, R, mode);
+        factors = next;
+        steps.push({sweep: sw, mode, factors, error: relError(T, cpRecon(factors, T.shape))});
+      }
+    }
+    const out = {steps, R, sweeps, seed: s};
+    m.set(key, out);
+    return out;
+  }
+
+  // A CP fit's columns carry their scale anywhere: a*2 with c/2 is the same
+  // tensor. So a term is drawn as a weight and three unit vectors -- lambda_r
+  // = |a_r| |b_r| |c_r| -- sorted heaviest first, with a and b turned so their
+  // largest entry is positive and any leftover sign carried by c. `order[r]`
+  // is the fitted column that became term r.
+  //
+  // `congruence[p][q]` is the cosine between terms p and q as whole rank-1
+  // tensors, which is the product of their three cosines. Two terms near -1
+  // point opposite ways: both large, mostly cancelling, the fit spending its
+  // numbers on a difference -- CP's known degeneracy. `cancelling` lists the
+  // pairs past CANCEL, heaviest first.
+  const CANCEL = -0.85;
+
+  function cpNormalize(fit) {
+    const F = fit.factors;
+    const R = F[0][0].length;
+    const terms = [];
+    for (let r = 0; r < R; r++) {
+      const cols = F.map((M) => M.map((row) => row[r]));
+      const norms = cols.map((v) => Math.sqrt(v.reduce((a, x) => a + x * x, 0)));
+      const unit = cols.map((v, m) => v.map((x) => (norms[m] > 0 ? x / norms[m] : 0)));
+      for (let m = 0; m < unit.length - 1; m++) {
+        let big = 0;
+        for (let i = 1; i < unit[m].length; i++) if (Math.abs(unit[m][i]) > Math.abs(unit[m][big])) big = i;
+        if (unit[m][big] < 0) {
+          unit[m] = unit[m].map((x) => -x);
+          const last = unit.length - 1;
+          unit[last] = unit[last].map((x) => -x);
+        }
+      }
+      terms.push({col: r, weight: norms.reduce((a, b) => a * b, 1), vecs: unit});
+    }
+    terms.sort((p, q) => q.weight - p.weight);
+    const dot = (u, v) => u.reduce((a, x, i) => a + x * v[i], 0);
+    const congruence = terms.map((p) => terms.map((q) =>
+      p.vecs.reduce((acc, u, m) => acc * dot(u, q.vecs[m]), 1)));
+    const cancelling = [];
+    for (let p = 0; p < R; p++)
+      for (let q = p + 1; q < R; q++)
+        if (congruence[p][q] < CANCEL) cancelling.push([p, q]);
+    return {
+      weights: terms.map((t) => t.weight),
+      factors: [0, 1, 2].map((m) => terms.map((t) => t.vecs[m])),   // [mode][term] -> vector
+      order: terms.map((t) => t.col),
+      congruence, cancelling
+    };
   }
 
   function normalize(v) {
@@ -368,21 +553,46 @@
   // scored by its HOSVD error; "best" is the lowest error inside the budget,
   // "closest" is the triple whose own parameter count comes nearest the
   // budget from below, which is often a worse, sometimes degenerate, pick.
-  function tuckerSearch(T, budget, bases) {
+  // Every rank triple the bases allow, scored once and cached on the tensor:
+  // 4 x 5 x 20 = 400 HOSVDs of a 480-entry tensor. The budget scene used to
+  // run a fresh HOSVD for every triple under budget on every change, twice.
+  const candCache = new WeakMap();
+
+  function tuckerCandidates(T, bases) {
+    if (candCache.has(T)) return candCache.get(T);
     const B = bases || hosvdBases(T);
     const rmax = B.map((b) => b.U[0].length);
-    const candidates = [];
+    const all = [];
     for (let r0 = 1; r0 <= rmax[0]; r0++)
       for (let r1 = 1; r1 <= rmax[1]; r1++)
         for (let r2 = 1; r2 <= rmax[2]; r2++) {
-          const params = tuckerParams(T.shape, [r0, r1, r2]);
-          if (params > budget) continue;
           const h = hosvd(T, [r0, r1, r2], B);
-          candidates.push({
-            ranks: [r0, r1, r2], params, error: h.error,
+          all.push({
+            ranks: [r0, r1, r2], params: h.params, error: h.error,
             degenerate: r0 === 1 || r1 === 1 || r2 === 1
           });
         }
+    candCache.set(T, all);
+    return all;
+  }
+
+  // The lowest HOSVD error any Tucker triple reaches for each budget, as a
+  // staircase: one step per triple that beats everything cheaper. Ties on
+  // parameters keep the lower error.
+  function tuckerFrontier(T, bases) {
+    const all = tuckerCandidates(T, bases).slice().sort((a, b) => a.params - b.params || a.error - b.error);
+    const steps = [];
+    let best = Infinity;
+    for (const c of all) {
+      if (c.error < best - 1e-15) { best = c.error; steps.push(c); }
+    }
+    return steps;
+  }
+
+  function tuckerSearch(T, budget, bases) {
+    const B = bases || hosvdBases(T);
+    const rmax = B.map((b) => b.U[0].length);
+    const candidates = tuckerCandidates(T, B).filter((c) => c.params <= budget);
     candidates.sort((a, b) => a.error - b.error);
     const best = candidates[0];
     const closest = candidates.reduce((a, b) => {
@@ -395,9 +605,11 @@
 
   const FactorCore = {
     tensor, at, fibre,
-    unfold, fold, modeProduct, outer3, relError,
-    hosvdBases, hosvd, signFix, tuckerParams,
-    cpParams, cpAls, cpRecon, matchTerms, tuckerSearch, synthetic,
+    unfold, fold, unfoldIndex, flatIndex, multiIndex, marginal, argmax,
+    modeProduct, outer3, relError, norm, largestMiss, svdEnergy,
+    hosvdBases, hosvd, coreTerm, signFix, tuckerParams,
+    cpParams, cpAls, cpSolveMode, cpTrace, cpNormalize, cpRecon, matchTerms, CANCEL,
+    tuckerCandidates, tuckerFrontier, tuckerSearch, synthetic,
     lcg
   };
   if (typeof module !== "undefined" && module.exports) module.exports = FactorCore;
