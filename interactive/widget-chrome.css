@@ -10,6 +10,19 @@
    `--accent`, `--wrap` and the pill radius on its tabs without this file
    knowing which page it is on. */
 
+/* The site's UI face, vendored (fonts/README.md). A widget is a page of this
+   site with no navbar, so it loads the font itself rather than inheriting a
+   stylesheet: `../fonts/` from `docs/interactive/` is the one copy every page
+   uses. The stages' CMU Serif labels are separate and unaffected -- that face
+   is the Manim look on a black canvas, not the page's type. */
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/inter-latin.woff2") format("woff2");
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* custom.scss: $body-bg, $body-color, $border-color, the two font stacks. */
   --bg: #ffffff;
@@ -19,7 +32,7 @@
   --sunk: #eef2f6;
   --line: #dfe3e8;
   --fault: #b3261e;
-  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --mono: "SFMono-Regular", ui-monospace, Menlo, Consolas, "Liberation Mono", monospace;
   --wrap: 96rem;
 }
