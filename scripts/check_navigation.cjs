@@ -1785,7 +1785,7 @@ async function audit(page, where) {
           await page.goto(
             `${origin}${prefix}interactive/${widget.file}.html?lang=${lang}&embed=1&theme=navy`);
           await page.waitForSelector('#embedcap b');
-          // The way out is the hero's own button, not a link in the caption.
+          // A caption never carries a link; the embed is only ever a picture.
           assert.equal(await page.locator('#embedcap a').count(), 0, `${where} embed: link in the caption`);
           assert(await page.locator('aside').isHidden(), `${where} embed: panel shown`);
           assert(await page.locator('header').isHidden(), `${where} embed: header shown`);
@@ -1885,12 +1885,16 @@ async function audit(page, where) {
         }
       }
 
-      // The hero carries every widget live, behind one tab each, in the page's
-      // own language. The static diagram is the fallback and must still be
-      // in the document for reduced motion and phones. The count is pinned
-      // because a widget added to `repo.widgets` and not to the hero is the
-      // failure this catches -- the attention stage shipped invisible from
-      // the front door for exactly that reason.
+      // The hero carries a still of every widget, behind one tab each, in the
+      // page's own language, and each still is a link to its widget. The
+      // static diagram is the fallback and must still be in the document for
+      // phones. The count is pinned because a widget added to `repo.widgets`
+      // and not to the hero is the failure this catches -- the attention
+      // stage shipped invisible from the front door for exactly that reason.
+      const heroTabs = [
+        ['layout', 'image-tensor'], ['broadcast', 'broadcasting-simulator'],
+        ['linalg', 'linalg-stage'], ['voice', 'voice-stage'],
+        ['attention', 'attention-stage'], ['factor', 'factor-stage']];
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
@@ -1908,82 +1912,47 @@ async function audit(page, where) {
             `${lang}/index: ${face} did not load — see fonts/README.md`);
         }
 
-        const frames = page.locator('iframe.hero-embed');
-        assert.equal(await frames.count(), 6, `${lang}/index: six hero embeds`);
-        // Only the open tab's widget is fetched. A hidden iframe is not
-        // lazy-loaded whatever `loading` says, so the others hold their URL
-        // in data-src until the tab script hands it over.
-        const urls = await frames.evaluateAll(els =>
-          els.map(e => [e.getAttribute('src'), e.getAttribute('data-src')]));
-        for (const [src, deferred] of urls) {
-          const url = src || deferred;
-          assert(url && url.includes(`lang=${lang}`) && url.includes('embed=1') && url.includes('theme=navy'),
-            `${lang}/index: hero embed src ${url}`);
-        }
-        assert.equal(urls.filter(([src]) => src).length, 1,
-          `${lang}/index: only the open tab's widget is loaded`);
+        // No widget runs on the front door: the pictures are pictures, and
+        // the way into a widget is clicking one.
+        assert.equal(await page.locator('.hero-visual iframe').count(), 0,
+          `${lang}/index: an iframe is back in the hero`);
+        assert.equal(await page.locator('.hero-open').count(), 0,
+          `${lang}/index: the open-the-widget button is back`);
         assert(await page.locator('.hero-visual.has-js').count() === 1, `${lang}/index: tab script did not run`);
-        // One way out to the full widget, outside the frames, in one place:
-        // it follows the open tab rather than moving with each widget's own
-        // caption.
-        const open = page.locator('.hero-open');
-        assert.equal(await open.count(), 1, `${lang}/index: one open-the-widget button`);
-        assert(await open.isVisible(), `${lang}/index: open-the-widget button hidden`);
-        assert((await open.getAttribute('href')).includes(`image-tensor.html?lang=${lang}`),
-          `${lang}/index: open button starts on the first tab`);
-        assert(await page.locator('#hero-panel-layout').isVisible());
-        assert(await page.locator('#hero-panel-broadcast').isHidden());
-        assert(await page.locator('#hero-panel-linalg').isHidden());
-        assert(await page.locator('#hero-panel-voice').isHidden());
-        assert(await page.locator('#hero-panel-attention').isHidden());
-        assert(await page.locator('#hero-panel-factor').isHidden());
-        await page.locator('#hero-tab-broadcast').click();
-        assert(await page.locator('#hero-panel-broadcast').isVisible(), `${lang}/index: broadcasting tab`);
-        assert(await page.locator('#hero-panel-layout').isHidden());
-        assert(await page.locator('#hero-panel-broadcast iframe').getAttribute('src'),
-          `${lang}/index: broadcasting embed not loaded on opening its tab`);
-        assert((await open.getAttribute('href')).includes(`broadcasting-simulator.html?lang=${lang}`),
-          `${lang}/index: open button did not follow the tab`);
-        await page.locator('#hero-tab-linalg').click();
-        assert(await page.locator('#hero-panel-linalg').isVisible(), `${lang}/index: linear algebra tab`);
-        assert(await page.locator('#hero-panel-broadcast').isHidden());
-        const stageFrame = page.locator('#hero-panel-linalg iframe');
-        assert(await stageFrame.getAttribute('src'),
-          `${lang}/index: stage embed not loaded on opening its tab`);
-        // data-src is spent, which is what stops a second visit to the tab
-        // reassigning src and reloading the widget from scratch.
-        assert.equal(await stageFrame.getAttribute('data-src'), null,
-          `${lang}/index: reopening a tab would reload its widget`);
-        await page.locator('#hero-tab-voice').click();
-        assert(await page.locator('#hero-panel-voice').isVisible(), `${lang}/index: voice tab`);
-        assert(await page.locator('#hero-panel-linalg').isHidden());
-        assert(await page.locator('#hero-panel-voice iframe').getAttribute('src'),
-          `${lang}/index: voice embed not loaded on opening its tab`);
-        assert((await open.getAttribute('href')).includes(`voice-stage.html?lang=${lang}`),
-          `${lang}/index: open button did not follow the voice tab`);
-        await page.locator('#hero-tab-attention').click();
-        assert(await page.locator('#hero-panel-attention').isVisible(), `${lang}/index: attention tab`);
-        assert(await page.locator('#hero-panel-voice').isHidden());
-        assert(await page.locator('#hero-panel-attention iframe').getAttribute('src'),
-          `${lang}/index: attention embed not loaded on opening its tab`);
-        assert((await open.getAttribute('href')).includes(`attention-stage.html?lang=${lang}`),
-          `${lang}/index: open button did not follow the attention tab`);
-        await page.locator('#hero-tab-factor').click();
-        assert(await page.locator('#hero-panel-factor').isVisible(), `${lang}/index: factorisation tab`);
-        assert(await page.locator('#hero-panel-attention').isHidden());
-        assert(await page.locator('#hero-panel-factor iframe').getAttribute('src'),
-          `${lang}/index: factorisation embed not loaded on opening its tab`);
-        assert((await open.getAttribute('href')).includes(`factor-stage.html?lang=${lang}`),
-          `${lang}/index: open button did not follow the factorisation tab`);
+        const stills = page.locator('.hero-panel a.hero-still');
+        assert.equal(await stills.count(), heroTabs.length, `${lang}/index: one still per widget`);
+        for (const [i, [tab, file]] of heroTabs.entries()) {
+          if (i) await page.locator(`#hero-tab-${tab}`).click();
+          const panel = page.locator(`#hero-panel-${tab}`);
+          assert(await panel.isVisible(), `${lang}/index: ${tab} tab`);
+          for (const [other] of heroTabs) {
+            if (other !== tab) assert(await page.locator(`#hero-panel-${other}`).isHidden(),
+              `${lang}/index: ${other} panel shown with ${tab} open`);
+          }
+          const link = panel.locator('a.hero-still');
+          assert((await link.getAttribute('href')).endsWith(`interactive/${file}.html?lang=${lang}`),
+            `${lang}/index: the ${tab} still does not link to ${file}`);
+          const img = link.locator('img');
+          assert((await img.getAttribute('src')).endsWith(`images/hero-${file}-${lang}.webp`),
+            `${lang}/index: the ${tab} still is not its own language's picture`);
+          assert((await img.getAttribute('alt')).length > 20, `${lang}/index: the ${tab} still has no alt`);
+          // The picture arrived: a lazy image in a panel just opened.
+          await page.waitForFunction(el => el.complete && el.naturalWidth > 0,
+            await img.elementHandle(), {timeout: 10000});
+        }
+        // Clicking the picture is the way in, in the same tab. `no-external`
+        // is what keeps it there: Quarto's link script compares a link with
+        // `site-url`, so off the live host it would open every still in a
+        // new tab and this wait would never see the navigation.
+        await Promise.all([
+          page.waitForURL(u => u.pathname.endsWith('/interactive/factor-stage.html')
+            && u.searchParams.get('lang') === lang, {waitUntil: 'commit'}),
+          page.locator('#hero-panel-factor a.hero-still').click()]);
+        await page.goBack();
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
-        assert(await page.locator('.hero-demos').isHidden(), `${lang}/index: embeds hidden on a phone`);
-        // Loaded on a phone, where the diagram replaces the demos outright:
-        // no widget is fetched at all, since a display:none iframe would be.
-        await page.reload();
-        assert.equal(await frames.evaluateAll(els => els.filter(e => e.getAttribute('src')).length), 0,
-          `${lang}/index: a widget was fetched behind the diagram fallback`);
+        assert(await page.locator('.hero-demos').isHidden(), `${lang}/index: stills hidden on a phone`);
         await page.setViewportSize({width: 1440, height: 1000});
       }
 

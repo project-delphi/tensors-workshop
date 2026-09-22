@@ -175,9 +175,9 @@ pre {
    a scrollbar in the hero over something nobody can see. */
 .sr { position: absolute; top: 0; left: 0; margin: 0; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; }
 
-/* Embed mode, the homepage hero: the stage, a caption, and nothing else. The
-   way out to the full page is the hero's own button, outside the frame, so
-   it sits in one place whichever tab is open. Each page adds the rules that
+/* Embed mode, what the homepage hero's stills are screenshots of
+   (scripts/gen_hero_stills.cjs): the stage, a caption, and nothing else. The
+   still itself is the link to the full page. Each page adds the rules that
    turn its own layout into a frame-tall column. */
 #embedcap { display: none; }
 html.embed .wrap { max-width: none; padding: 0; }

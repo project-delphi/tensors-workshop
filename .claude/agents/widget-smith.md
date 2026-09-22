@@ -141,14 +141,13 @@ the colour, never allowlist it.**
 
 ## Embeds
 
-All four widgets take `?embed=1&theme=navy` for the hero, which is four tabs
-and the check pins that at four. None of them fetches three.js there: the
-stage's embed is the portal's still frame, drawn flat, scroller gone. Only the
-open tab's widget is fetched — every panel keeps its URL in `data-src` until
-the tab script hands it over once, because a hidden iframe is never
-lazy-loaded. The way out of an embed is the hero's own `.hero-open` button,
-whose `href` comes from the open panel's `data-open`; an embed's `#embedcap`
-carries a caption and **never** a link. The check asserts both.
+Every widget takes `?embed=1&theme=navy`, and none of them fetches three.js
+there: the stage's embed is the portal's still frame, drawn flat, scroller
+gone. The hero no longer loads the embeds: `scripts/gen_hero_stills.cjs`
+screenshots each one per language into `images/hero-<widget>-<lang>.webp`,
+and the hero shows that picture as a link to the widget. **Change what an
+embed draws and rerun `npm run gen:hero`**, or the front door shows the old
+picture. An embed's `#embedcap` carries a caption and **never** a link.
 
 ## Upgrading three.js
 

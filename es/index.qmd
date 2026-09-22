@@ -47,33 +47,32 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Atención</button>
       <button type="button" role="tab" id="hero-tab-factor" aria-selected="false" aria-controls="hero-panel-factor" tabindex="-1">Tucker y CP</button>
     </div>
-    <a class="hero-open" data-hero-open href="../interactive/image-tensor.html?lang=es">Abrir la herramienta completa →</a>
   </div>
-  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout" data-open="../interactive/image-tensor.html?lang=es">
-    <iframe class="hero-embed" data-src="../interactive/image-tensor.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: tres fotos como un tensor 4-D, transpuesto y luego con reshape"></iframe>
+  <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
+    <a class="hero-still no-external" href="../interactive/image-tensor.html?lang=es"><img src="../images/hero-image-tensor-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: tres fotos como un tensor 4-D, transpuesto y luego con reshape"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
     <p class="hero-caption">Fotos reales, un cubo por byte. transpose conserva la imagen; reshape la rompe.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" data-open="../interactive/broadcasting-simulator.html?lang=es" hidden>
-    <iframe class="hero-embed" data-src="../interactive/broadcasting-simulator.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: dos formas alineadas desde la derecha y estiradas"></iframe>
+  <div class="hero-panel" id="hero-panel-broadcast" role="tabpanel" aria-labelledby="hero-tab-broadcast" hidden>
+    <a class="hero-still no-external" href="../interactive/broadcasting-simulator.html?lang=es"><img src="../images/hero-broadcasting-simulator-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: dos formas alineadas desde la derecha y estiradas"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
     <p class="hero-caption">Dos formas alineadas desde la derecha; cada eje de tamaño 1 se estira, y nada se copia.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" data-open="../interactive/linalg-stage.html?lang=es" hidden>
-    <iframe class="hero-embed" data-src="../interactive/linalg-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"></iframe>
+  <div class="hero-panel" id="hero-panel-linalg" role="tabpanel" aria-labelledby="hero-tab-linalg" hidden>
+    <a class="hero-still no-external" href="../interactive/linalg-stage.html?lang=es"><img src="../images/hero-linalg-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: el círculo unitario que una matriz convierte en una elipse, con sus vectores singulares"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
     <p class="hero-caption">Una matriz lleva el círculo unitario a una elipse: <code>A v = σ u</code>, un vector a la vez.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" data-open="../interactive/voice-stage.html?lang=es" hidden>
-    <iframe class="hero-embed" data-src="../interactive/voice-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: una voz cortada en ventanas, convertida en una matriz de frecuencia por tiempo"></iframe>
+  <div class="hero-panel" id="hero-panel-voice" role="tabpanel" aria-labelledby="hero-tab-voice" hidden>
+    <a class="hero-still no-external" href="../interactive/voice-stage.html?lang=es"><img src="../images/hero-voice-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: una voz cortada en ventanas, convertida en una matriz de frecuencia por tiempo"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
     <p class="hero-caption">Una voz se convierte en una matriz — <code>513 × 465</code> — y puedes oír qué le hace una transposición.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" data-open="../interactive/attention-stage.html?lang=es" hidden>
-    <iframe class="hero-embed" data-src="../interactive/attention-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: las puntuaciones de atención convertidas en pesos que suman uno"></iframe>
+  <div class="hero-panel" id="hero-panel-attention" role="tabpanel" aria-labelledby="hero-tab-attention" hidden>
+    <a class="hero-still no-external" href="../interactive/attention-stage.html?lang=es"><img src="../images/hero-attention-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: las puntuaciones de atención convertidas en pesos que suman uno"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
     <p class="hero-caption">Softmax convierte una fila de puntuaciones en pesos que suman <code>1</code>: una consulta atendiendo a cuatro claves.</p>
   </div>
-  <div class="hero-panel" id="hero-panel-factor" role="tabpanel" aria-labelledby="hero-tab-factor" data-open="../interactive/factor-stage.html?lang=es" hidden>
-    <iframe class="hero-embed" data-src="../interactive/factor-stage.html?lang=es&amp;embed=1&amp;theme=navy" title="Demostración en vivo: un tensor de taxis factorizado en un núcleo pequeño más tres matrices factor"></iframe>
+  <div class="hero-panel" id="hero-panel-factor" role="tabpanel" aria-labelledby="hero-tab-factor" hidden>
+    <a class="hero-still no-external" href="../interactive/factor-stage.html?lang=es"><img src="../images/hero-factor-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: un tensor de taxis factorizado en un núcleo pequeño más tres matrices factor"><span class="hero-still-cue" aria-hidden="true">Pruébalo en vivo →</span></a>
     <p class="hero-caption">Viajes de taxi reales, <code>4 × 5 × 24</code>: 480 números se convierten en un núcleo más tres factores, con un 6,7 % de error.</p>
   </div>
-  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Los movimientos, en vivo.</p>
+  <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Haz clic en una imagen para probarla en vivo.</p>
 </div>
 <div class="hero-fallback">
 <svg class="hero-diagram" viewBox="-14 0 534 400" role="img" aria-labelledby="tensor-title-es tensor-desc-es" xmlns="http://www.w3.org/2000/svg">
@@ -122,38 +121,19 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
 </div>
 <script>
 (function () {
+  // Tabs only: each panel is a still of its widget, linked to the widget
+  // itself, so there is nothing to load here but the picture -- and a lazy
+  // <img> in a hidden panel is not fetched until its tab opens.
   var wrap = document.querySelector("[data-hero-demos]");
   if (!wrap) return;
   var tabs = wrap.querySelectorAll("[role=tab]");
   var panels = wrap.querySelectorAll("[role=tabpanel]");
-  // One way out to the full widget, outside the frames, so it sits in the
-  // same place whichever tab is open; it follows the tab.
-  var open = wrap.querySelector("[data-hero-open]");
-  // A hidden iframe is not lazy-loaded: a browser treats one as a tracking
-  // pixel and fetches it anyway, whatever `loading` says. So every panel
-  // carries its URL in data-src and is handed it only when it is really on
-  // screen -- the open tab, and not at all where homepage.scss replaces the
-  // whole row with the static diagram, which is the reader least able to
-  // spare three widgets.
-  var diagram = matchMedia("(prefers-reduced-motion: reduce), (max-width: 540px)");
-  function load(panel) {
-    var frame = panel && panel.querySelector("iframe[data-src]");
-    if (!frame || diagram.matches) return;
-    // Once: assigning src again on a later visit to the tab would reload the
-    // widget and throw away what the reader had set up in it.
-    frame.src = frame.getAttribute("data-src");
-    frame.removeAttribute("data-src");
-  }
   function show(i) {
     tabs.forEach(function (tab, j) {
       var on = i === j;
       tab.setAttribute("aria-selected", on ? "true" : "false");
       tab.tabIndex = on ? 0 : -1;
       panels[j].hidden = !on;
-      if (on) {
-        load(panels[j]);
-        open.href = panels[j].getAttribute("data-open");
-      }
     });
   }
   tabs.forEach(function (tab, i) {
@@ -167,12 +147,6 @@ Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tens
       tabs[n].focus();
     });
   });
-  // The open tab: now, or whenever a resize or a changed motion preference
-  // first puts the demos on screen.
-  diagram.addEventListener("change", function () {
-    load(wrap.querySelector("[role=tabpanel]:not([hidden])"));
-  });
-  load(panels[0]);
   wrap.parentElement.classList.add("has-js");
 })();
 </script>
