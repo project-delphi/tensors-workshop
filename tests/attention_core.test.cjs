@@ -157,3 +157,44 @@ test('smallInts and projMatrix are deterministic for a fixed seed', () => {
   assert.deepEqual(AC.smallInts(3, 2, 2, 0, 1), AC.smallInts(3, 2, 2, 0, 1));
   assert.deepEqual(AC.projMatrix(3, 8, 3), AC.projMatrix(3, 8, 3));
 });
+
+test('the sentence tokenises to the stage ids, and the tokenizer sets S', () => {
+  const words = AC.tokenize(AC.SENTENCE, 'words');
+  assert.deepEqual(words, ['I', 'know', 'you', 'know']);
+  assert.deepEqual(AC.encode(words, AC.VOCAB), AC.IDS);
+  assert.equal(AC.tokenize(AC.SENTENCE, 'chars').length, 15);
+  assert.throws(() => AC.encode(['cat'], AC.VOCAB), /not in the vocabulary/);
+});
+
+test('headProjections(h) is exactly the head-h slice splitHeads takes of X W', () => {
+  const {X, P} = pipeline();
+  for (let h = 0; h < HEADS; h++) {
+    const Ph = AC.headProjections(h);
+    for (const w of ['WQ', 'WK', 'WV']) {
+      assert.deepEqual(AC.matmul(X, Ph[w]), AC.splitHeads(AC.matmul(X, P[w]), HEADS)[h]);
+    }
+  }
+});
+
+test('the spread of q.k grows like sqrt(d_k), and dividing by sqrt(d_k) holds it at 1', () => {
+  let lastPeak = 0;
+  for (const dk of [1, 4, 16, 64, 256]) {
+    const r = AC.scaleSpread(dk, 400, 8);
+    assert.ok(Math.abs(r.rawStd / Math.sqrt(dk) - 1) < 0.1, `d_k=${dk}: raw std ${r.rawStd}`);
+    assert.ok(Math.abs(r.scaledStd - 1) < 0.1, `d_k=${dk}: scaled std ${r.scaledStd}`);
+    assert.ok(r.peakRaw >= lastPeak, `d_k=${dk}: the unscaled peak should only rise`);
+    lastPeak = r.peakRaw;
+  }
+  assert.ok(AC.scaleSpread(256, 400, 8).peakRaw > 0.9, 'unscaled softmax should saturate at 256');
+  assert.ok(AC.scaleSpread(256, 400, 8).peakScaled < 0.5, 'scaled softmax should not');
+  assert.deepEqual(AC.scaleSpread(16, 50, 8).raw, AC.scaleSpread(16, 50, 8).raw, 'seeded');
+});
+
+test('without position, the two "know" rows come out of attention identical', () => {
+  const {X} = pipeline();
+  const P = AC.headProjections(0);
+  const Q = AC.matmul(X, P.WQ), K = AC.matmul(X, P.WK), V = AC.matmul(X, P.WV);
+  const O = AC.attend(AC.softmax(AC.scores([Q], [K], DK, true), 'keys'), [V])[0];
+  assert.deepEqual(O[1], O[3]);
+  assert.notDeepEqual(O[0], O[2]);
+});

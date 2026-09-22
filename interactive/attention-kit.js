@@ -170,7 +170,84 @@
     return g;
   }
 
-  const AttentionKit = {AttentionScenes, SVGNS, css, el, text, chip, numGrid, bars, arrowRow};
+  // A row of token chips, one per string, each an opaque box with the token
+  // in it and its position under it -- the words and ids scenes' picture of
+  // a sequence before it is a matrix. `mark(i)` lights one; `fill(i)` tints
+  // a chip's outline by what it is (a word, an id). Returns the <g> and the
+  // chips' centres, so a scene can draw arrows out of them.
+  function chips(opts) {
+    const {x, y, w, h, gap, items} = opts;
+    const g = el("g", {class: "chips"});
+    const centres = [];
+    items.forEach((label, i) => {
+      const cx = x + i * (w + gap);
+      const on = opts.mark ? opts.mark(i) : false;
+      const colour = opts.colourOf ? opts.colourOf(i) : css("--stage-ink");
+      g.appendChild(chip(cx, y, w, h, {fill: css("--stage-chip"), rx: 6}));
+      g.appendChild(el("rect", {
+        x: cx, y: y, width: w, height: h, rx: 6, fill: "none",
+        stroke: on ? colour : css("--stage-mute"), "stroke-width": on ? 2.5 : 1
+      }));
+      g.appendChild(text(cx + w / 2, y + h / 2, label,
+        {fill: on ? colour : css("--stage-ink"), size: opts.size || 15}));
+      if (opts.index !== false) {
+        g.appendChild(text(cx + w / 2, y + h + 13, String(i), {fill: css("--stage-mute"), size: 10}));
+      }
+      centres.push({x: cx + w / 2, top: y, bottom: y + h});
+    });
+    return {g, centres};
+  }
+
+  // A plain arrow, a line with an open head, for the words and ids scenes.
+  function arrow(x1, y1, x2, y2, opts) {
+    const o = opts || {};
+    const colour = o.colour || css("--stage-mute");
+    const g = el("g", {class: "arrow"});
+    g.appendChild(el("line", {
+      x1, y1, x2, y2, stroke: colour, "stroke-width": o.width || 1.2,
+      "stroke-dasharray": o.dash || "", opacity: o.opacity === undefined ? 0.9 : o.opacity
+    }));
+    const a = Math.atan2(y2 - y1, x2 - x1), r = 6;
+    const p = (da) => (x2 - r * Math.cos(a + da)) + "," + (y2 - r * Math.sin(a + da));
+    g.appendChild(el("polyline", {
+      points: p(0.45) + " " + x2 + "," + y2 + " " + p(-0.45), fill: "none",
+      stroke: colour, "stroke-width": o.width || 1.2, opacity: o.opacity === undefined ? 0.9 : o.opacity
+    }));
+    return g;
+  }
+
+  // Lay out a scene's code(), one row per line: a bare string, or [code,
+  // comment] where the comments line up on the longest line carrying one.
+  // The same function as voice-kit.js's, for the same reason: the code is one
+  // copy for both languages and only the comments come from the scene's `np`
+  // copy, and the width has to be measured after the numbers are
+  // interpolated. Not shared through a common file because the two kits are
+  // loaded by different pages and share nothing else.
+  function code(rows) {
+    let width = 0;
+    for (const r of rows) {
+      if (Array.isArray(r) && r[1]) width = Math.max(width, r[0].length);
+    }
+    return rows.map((r) => {
+      if (!Array.isArray(r)) return r;
+      if (!r[1]) return r[0];
+      return r[0] + " ".repeat(width - r[0].length + 2) + "# " + r[1];
+    });
+  }
+
+  // How NumPy prints a float in a short array: up to 2 decimals, trailing
+  // zeros dropped ("0.2", "0.67", "1."), which is what `print(output[2])`
+  // shows with np.set_printoptions(precision=2).
+  function npNum(v) {
+    if (Number.isInteger(v)) return v + ".";
+    return String(Number(v.toFixed(2)));
+  }
+  const npRow = (row) => "[" + row.map(npNum).join(" ") + "]";
+
+  const AttentionKit = {
+    AttentionScenes, SVGNS, css, el, text, chip, numGrid, bars, arrowRow, chips, arrow,
+    code, npNum, npRow
+  };
 
   if (typeof module !== "undefined" && module.exports) module.exports = AttentionKit;
   else { root.AttentionKit = AttentionKit; root.AttentionScenes = AttentionScenes; }

@@ -1,19 +1,23 @@
-// Scene 5: softmax makes every row of weights sum to exactly 1 — over the
-// keys, the direction attention actually uses. Over the queries instead, on
-// purpose, the rows do not, which is the whole point of the axis control. A
-// causal mask sends the future's score to -Infinity before the softmax, and
-// softmax turns that into an exact zero weight, never a small one.
+// Scene 7: softmax turns a row of scores into weights -- exponentiate, then
+// divide by the row's total -- so every weight is positive, the row sums to
+// exactly 1, and a bigger score still means a bigger weight. The chosen
+// query's row is worked through on the right, one step per line. Normalised
+// over the queries instead, on purpose, the rows do not sum to 1, which is
+// the point of the axis control. A causal mask sends the future's score to
+// -Infinity before the softmax, and softmax turns that into an exact zero
+// weight, never a small one.
 (function () {
   "use strict";
+
+  const f1 = (v) => (v === -Infinity ? "−∞" : Number.isInteger(v) ? String(v) : v.toFixed(1));
 
   function pipeline(ctx) {
     if (ctx.cache.softmax) return ctx.cache.softmax;
     const AC = ctx.AC;
     const X = AC.gather(AC.embedding(), AC.IDS);
-    const P = AC.projections();
-    const Q = AC.splitHeads(AC.matmul(X, P.WQ), 2);
-    const K = AC.splitHeads(AC.matmul(X, P.WK), 2);
-    ctx.cache.softmax = {L: AC.scores(Q, K, 4, true), mask: AC.causalMask(4)};
+    const P = AC.headProjections(0);
+    const Q = AC.matmul(X, P.WQ), K = AC.matmul(X, P.WK);
+    ctx.cache.softmax = {L: AC.scores([Q], [K], 4, true), mask: AC.causalMask(4)};
     return ctx.cache.softmax;
   }
 
@@ -25,39 +29,59 @@
 
   function draw(ctx) {
     const {L, A} = current(ctx);
-    const K = ctx.K, svg = ctx.svg, s = ctx.state;
+    const K = ctx.K, svg = ctx.svg, s = ctx.state, AC = ctx.AC;
     while (svg.firstChild) svg.removeChild(svg.firstChild);
     const root = K.el("g", {transform: "translate(0,44)"});
     svg.appendChild(root);
+    const words = AC.IDS.map((id) => AC.VOCAB[id]);
+    const hl = ctx.hl;
+    // Pointing at s or t in the equation bands the chosen row: s picks the
+    // row, and the sum over t runs along it.
+    const band = (i) => (hl === "query" || hl === "key") && i === s.query;
 
     // The group is translated clear of the claim chip, so everything below
     // has 356 units of height to live in rather than the viewBox's 400. Two
     // four-row grids and a bar chart only fit at cellH = 30; at 34 the last
-    // row of A was drawn past the bottom edge and simply vanished. Nothing
-    // clips an SVG child or complains about one, and the readout's numbers
-    // stay right either way -- which is why these figures are worked out
-    // against the height rather than nudged until they look about right.
-    root.appendChild(K.text(160, 14, "L, head " + s.head, {fill: ctx.colour("--stage-ink")}));
+    // row of A was drawn past the bottom edge and simply vanished.
+    root.appendChild(K.text(150, 14, "scores", {fill: ctx.colour("--stage-ink")}));
     root.appendChild(K.numGrid({
-      x: 40, y: 32, cellW: 40, cellH: 30, values: L[s.head],
-      fmt: (v) => (v === -Infinity ? "−∞" : Number.isInteger(v) ? String(v) : v.toFixed(1)),
-      colourOf: () => ctx.colour("--at-res"),
-      mark: (i, j) => L[s.head][i][j] === -Infinity
+      x: 70, y: 32, cellW: 40, cellH: 30, values: L[0], fmt: f1, rowLabels: words,
+      colourOf: (i, j) => ctx.colour(L[0][i][j] === -Infinity ? "--at-res" : "--at-q"),
+      mark: (i, j) => L[0][i][j] === -Infinity || i === s.query || band(i)
     }));
 
-    root.appendChild(K.text(190, 178, "A = softmax(L), over " + (s.axis === "keys" ? "t" : "s"), {fill: ctx.colour("--stage-ink")}));
+    root.appendChild(K.text(186, 178, "attn_weights, over " + (s.axis === "keys" ? "keys (t)" : "queries (s)"),
+      {fill: ctx.colour("--stage-ink")}));
     root.appendChild(K.numGrid({
-      x: 40, y: 196, cellW: 58, cellH: 30, values: A[s.head],
-      fmt: (v) => v.toFixed(3), size: 11,
+      x: 70, y: 196, cellW: 58, cellH: 30, values: A[0], rowLabels: words,
+      fmt: (v) => v.toFixed(2), size: 12,
       colourOf: () => ctx.colour("--at-w"),
-      mark: () => false
+      mark: (i, j) => i === s.query || band(i)
     }));
 
-    const sums = ctx.AC.rowSums(A, "t")[s.head];
-    root.appendChild(K.text(490, 190, "row sums over t", {size: 11, fill: ctx.colour("--stage-mute")}));
+    // The chosen query's row, worked: the scores, their exponentials, and
+    // each exponential over the row's total. Under "queries" the bottom line
+    // is still what A holds, which is why it stops summing to 1.
+    const row = L[0][s.query];
+    const ex = row.map((v) => Math.exp(v));
+    const total = ex.reduce((a, b) => a + b, 0);
+    root.appendChild(K.text(496, 14, "row " + s.query + " (“" + words[s.query] + "”)",
+      {fill: ctx.colour("--stage-ink")}));
+    root.appendChild(K.numGrid({
+      x: 384, y: 32, cellW: 58, cellH: 30,
+      values: [row, ex, A[0][s.query]],
+      fmt: (v, i) => (i === 0 ? f1(v) : v.toFixed(2)), size: 12,
+      rowLabels: ["score", "exp", "weight"],
+      mark: (i) => i === 2, colourOf: () => ctx.colour("--at-w")
+    }));
+    root.appendChild(K.text(496, 136, "Σ exp = " + total.toFixed(2),
+      {size: 12, fill: ctx.colour("--stage-mute")}));
+
+    const sums = AC.rowSums(A, "t")[0];
+    root.appendChild(K.text(490, 190, "each row's sum over t", {size: 11, fill: ctx.colour("--stage-mute")}));
     root.appendChild(K.bars({
       x: 400, y: 316, w: 180, h: 90, values: sums, hi: 1.2, gap: 8,
-      labels: [0, 1, 2, 3].map(String),
+      labels: words,
       colourOf: (i) => Math.abs(sums[i] - 1) < 1e-6 ? ctx.colour("--at-w") : ctx.colour("--at-res")
     }));
   }
@@ -67,97 +91,138 @@
     section: "B",
 
     controls: [
+      {id: "query", type: "range", min: 0, max: 3, step: 1, fmt: (v) => String(v)},
       {id: "axis", type: "select", options: ["keys", "queries"]},
-      {id: "mask", type: "select", options: ["none", "causal"]},
-      {id: "head", type: "range", min: 0, max: 1, step: 1, fmt: (v) => String(v)}
+      {id: "mask", type: "select", options: ["none", "causal"]}
     ],
 
-    init(ctx) { Object.assign(ctx.state, {axis: "keys", mask: "none", head: 0}); },
+    init(ctx) { Object.assign(ctx.state, {query: 2, axis: "keys", mask: "none"}); },
     draw,
 
     readout(ctx) {
       const {A} = current(ctx);
       const s = ctx.state, AC = ctx.AC;
-      const sums = AC.rowSums(A, "t")[s.head];
+      const sums = AC.rowSums(A, "t")[0];
       let worst = 0;
       for (let i = 1; i < sums.length; i++) if (Math.abs(sums[i] - 1) > Math.abs(sums[worst] - 1)) worst = i;
       const rowsum = sums[worst].toFixed(3);
-      const amax = Math.max(...A[s.head].flat());
-      // masked counts the causally-forbidden cells in L; exactZero is a
-      // boolean sanity check that softmax actually turned at least one of
-      // them into an *exact* zero weight in A, never a small positive one.
+      const amax = Math.max(...A[0].flat());
+      // masked counts the causally-forbidden cells in L; exactzero is a
+      // boolean check that softmax turned at least one of them into an
+      // *exact* zero weight in A, never a small positive one.
       let masked = 0, exactZero = 0;
       if (s.mask === "causal") {
         const mask = pipeline(ctx).mask;
-        for (const row of mask) for (const v of row) if (v === -Infinity) masked++;
-        exactZero = A[s.head].some((row) => row.some((v) => v === 0)) ? 1 : 0;
+        for (const r of mask) for (const v of r) if (v === -Infinity) masked++;
+        exactZero = A[0].some((r) => r.some((v) => v === 0)) ? 1 : 0;
       }
       return {
         html: ctx.copy.readout(s.axis, worst, rowsum),
-        claim: "A[h, s, t] = softmaxₜ L[h, s, t],  Σₜ A[h, s, t] = 1",
         data: {
-          shape: "2,4,4",
+          shape: "4,4",
           axis: s.axis, mask: s.mask, rowsum: rowsum, worstrow: worst,
           masked: masked, exactzero: exactZero, amax: amax.toFixed(3),
-          over: s.axis === "keys" ? "t" : "s"
+          over: s.axis === "keys" ? "t" : "s", query: s.query
         }
       };
+    },
+
+    code(ctx) {
+      const {A} = current(ctx);
+      const s = ctx.state, c = ctx.copy.np, K = ctx.K;
+      const axis = s.axis === "keys" ? "-1" : "0";
+      const rows = [];
+      if (s.mask === "causal") {
+        rows.push("# " + c.mask);
+        rows.push("scores = np.where(np.tri(4, dtype=bool), scores, -np.inf)");
+      }
+      if (s.axis === "queries") rows.push("# " + c.wrong);
+      rows.push("attn_weights = np.exp(scores) / np.sum(np.exp(scores), axis=" + axis +
+                ", keepdims=True)");
+      rows.push(["attn_weights[" + s.query + "]", K.npRow(A[0][s.query])]);
+      rows.push(["attn_weights.sum(axis=-1)", K.npRow(ctx.AC.rowSums(A, "t")[0])]);
+      rows.push("# " + c.stable);
+      return K.code(rows);
     },
 
     copy: {
       en: {
         tab: "Softmax",
         k: "Weights that sum to one · Appendix B",
-        h: "Softmax makes every row of weights sum to exactly one",
-        claim: "A[h, s, t] = softmaxₜ L[h, s, t],  Σₜ A[h, s, t] = 1",
-        concept: "Softmax exponentiates and normalises, so the direction it sums over is a choice: " +
-                 "over the keys (t) it is ordinary attention, and every query's weights add to exactly " +
-                 "1. Normalise over the queries (s) instead and nothing stops that same row summing to " +
-                 "anything else — the axis a sum is taken over is part of the definition, not a detail.",
-        b: "<p>Switch axis to \"queries\" and watch the bar chart below stop reading 1.000 for most " +
-           "rows. Switch mask to \"causal\" and the upper triangle of L turns to −∞; softmax " +
-           "turns that into exact zeros in A, never a small positive weight.</p>",
-        predict: "A masked score is −∞ before the softmax. What weight does it get after?",
-        eqcap: "The subscript t on softmax says which axis the exponentials are normalised over: the " +
-               "keys, which is the direction ordinary attention uses. b and h are carried on both " +
-               "sides of the equation, untouched by the sum.",
-        controls: {axis: "Normalise over", mask: "Mask", head: "Head"},
+        h: "Softmax turns each row of scores into weights that sum to exactly one",
+        claim: "attn_weights = softmax(scores),  each row sums to 1",
+        concept: "Scores can be any size and either sign, but the next step takes a weighted " +
+                 "average, and that needs weights that are positive and add up to 1. Softmax " +
+                 "gets both in two moves. Exponentiating makes every score positive and keeps " +
+                 "their order, so a bigger score still means a bigger weight. Dividing by the " +
+                 "row's total then makes the row add up to exactly 1. Since e<sup>a</sup> / " +
+                 "e<sup>b</sup> = e<sup>a−b</sup>, only the gaps between scores matter, which is " +
+                 "why the previous picture's spread mattered so much.",
+        b: "<p>The right-hand panel works one row through: its scores, their exponentials, and " +
+           "each exponential divided by the total Σ. Move the query slider to change the row. " +
+           "The “know” rows have four equal scores, so they get four equal weights of 0.25: " +
+           "a query that matches nothing spreads its attention evenly. Switch axis to " +
+           "“queries” and the bars stop reading 1.00. Switch mask to “causal” and every " +
+           "later key becomes −∞, which softmax turns into an exact 0.</p>",
+        predict: "A score of −∞ goes into the softmax. What weight comes out: small, or exactly 0?",
+        eqcap: "exp makes every term positive, and the sum underneath runs over t′, every key in " +
+               "the same row, so the weights in a row add up to exactly 1. s, the query, is the " +
+               "same on the top and the bottom: each query's row is normalised on its own. In the code, " +
+               "L is scores and A is attn_weights.",
+        controls: {query: "Query (row)", axis: "Normalise over", mask: "Mask"},
         options: {axis: {keys: "keys (ordinary attention)", queries: "queries (the wrong axis, on purpose)"},
                   mask: {none: "none", causal: "causal"}},
+        np: {
+          mask: "hide every later key",
+          wrong: "axis=0 normalises each column: the wrong way, on purpose",
+          stable: "real code subtracts scores.max(axis=-1, keepdims=True) first; same result"
+        },
         readout: (axis, worst, rowsum) =>
           "Row " + worst + " sums to <b>" + rowsum + "</b> over t" +
-          (axis === "keys" ? " — every row does." : ", not 1.000 — that is the point of this axis."),
-        aria: (ctx) => "L and A as four by four grids for head " + ctx.state.head +
-                        ", with each row's sum over t drawn as a bar chart below."
+          (axis === "keys" ? ", and so does every other row." : ", not 1.000. That is what normalising the wrong axis does."),
+        aria: (ctx) => "The scores and the attention weights as four by four grids, the row for query " +
+                        ctx.state.query + " worked through as score, exponential and weight, and " +
+                        "each row's sum drawn as a bar chart."
       },
       es: {
         tab: "Softmax",
         k: "Pesos que suman uno · Apéndice B",
-        h: "Softmax hace que cada fila de pesos sume exactamente uno",
-        claim: "A[h, s, t] = softmaxₜ L[h, s, t],  Σₜ A[h, s, t] = 1",
-        concept: "Softmax exponencia y normaliza, así que la dirección sobre la que suma es " +
-                 "una elección: sobre las claves (t) es la atención habitual, y los pesos de " +
-                 "cada consulta suman exactamente 1. Normaliza sobre las consultas (s) en su lugar y " +
-                 "nada impide que esa misma fila sume otra cosa: el eje sobre el que se suma es parte " +
-                 "de la definición, no un detalle.",
-        b: "<p>Cambia axis a «queries» y observa cómo el gráfico de barras de abajo " +
-           "deja de marcar 1.000 en la mayoría de las filas. Cambia mask a «causal» y el " +
-           "triángulo superior de L pasa a −∞; softmax lo convierte en ceros exactos en " +
-           "A, nunca en un peso pequeño.</p>",
-        predict: "Una puntuación enmascarada es −∞ antes del softmax. ¿Qué peso " +
-                 "recibe después?",
-        eqcap: "El subíndice t en softmax dice sobre qué eje se normalizan las " +
-               "exponenciales: las claves, que es la dirección que usa la atención habitual. " +
-               "b y h se llevan en ambos lados de la ecuación, sin que la suma los toque.",
-        controls: {axis: "Normalizar sobre", mask: "Máscara", head: "Cabeza"},
+        h: "Softmax convierte cada fila de puntuaciones en pesos que suman exactamente uno",
+        claim: "attn_weights = softmax(scores),  cada fila suma 1",
+        concept: "Las puntuaciones pueden ser de cualquier tamaño y signo, pero el paso siguiente " +
+                 "hace un promedio ponderado, y para eso hacen falta pesos positivos que sumen 1. " +
+                 "Softmax consigue las dos cosas en dos movimientos. La exponencial hace positiva " +
+                 "cada puntuación y conserva su orden, así que una puntuación mayor sigue dando un " +
+                 "peso mayor. Dividir entre el total de la fila hace que la fila sume exactamente " +
+                 "1. Como e<sup>a</sup> / e<sup>b</sup> = e<sup>a−b</sup>, solo importan las " +
+                 "diferencias entre puntuaciones, y por eso importaba tanto la dispersión de la " +
+                 "imagen anterior.",
+        b: "<p>El panel de la derecha desarrolla una fila: sus puntuaciones, sus exponenciales y " +
+           "cada exponencial dividida entre el total Σ. Mueve el deslizador de consulta para " +
+           "cambiar de fila. Las filas “know” tienen cuatro puntuaciones iguales, así que " +
+           "reciben cuatro pesos iguales de 0.25: una consulta que no encaja con nada reparte su " +
+           "atención por igual. Cambia axis a “queries” y las barras dejan de marcar 1.00. " +
+           "Cambia mask a “causal” y cada clave posterior pasa a −∞, que softmax convierte " +
+           "en un 0 exacto.</p>",
+        predict: "Una puntuación de −∞ entra en el softmax. ¿Qué peso sale: pequeño, o exactamente 0?",
+        eqcap: "exp hace positivo cada término, y la suma de abajo recorre t′, todas las claves de " +
+               "la misma fila, así que los pesos de una fila suman exactamente 1. s, la consulta, " +
+               "es la misma arriba y abajo: cada fila de consulta se normaliza por su cuenta. En el " +
+               "código, L es scores y A es attn_weights.",
+        controls: {query: "Consulta (fila)", axis: "Normalizar sobre", mask: "Máscara"},
         options: {axis: {keys: "claves (atención habitual)", queries: "consultas (el eje erróneo, a propósito)"},
                   mask: {none: "ninguna", causal: "causal"}},
+        np: {
+          mask: "oculta cada clave posterior",
+          wrong: "axis=0 normaliza cada columna: el eje erróneo, a propósito",
+          stable: "el código real resta antes scores.max(axis=-1, keepdims=True); igual"
+        },
         readout: (axis, worst, rowsum) =>
           "La fila " + worst + " suma <b>" + rowsum + "</b> sobre t" +
-          (axis === "keys" ? ": todas las filas lo hacen." : ", no 1.000: ese es el punto de este eje."),
-        aria: (ctx) => "L y A como cuadrículas de cuatro por cuatro para la cabeza " +
-                        ctx.state.head + ", con la suma de cada fila sobre t dibujada como gráfico " +
-                        "de barras debajo."
+          (axis === "keys" ? ", y también todas las demás." : ", no 1.000. Eso hace normalizar el eje erróneo."),
+        aria: (ctx) => "Las puntuaciones y los pesos de atención como cuadrículas de cuatro por " +
+                        "cuatro, la fila de la consulta " + ctx.state.query + " desarrollada como " +
+                        "puntuación, exponencial y peso, y la suma de cada fila como gráfico de barras."
       }
     }
   });

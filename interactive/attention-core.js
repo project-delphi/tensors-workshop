@@ -26,6 +26,14 @@
   const H = 2;         // the head count this stage fixes
   const IDS = [3, 1, 4, 1];
 
+  // The sentence the stage opens on, and the six-word vocabulary its ids
+  // index. Chosen so that tokenising it gives exactly IDS, [3, 1, 4, 1], and
+  // so the repeated id is a repeated *word* a reader can see: "know" twice.
+  // The embedding table is seeded, not trained, so no row of it means
+  // anything about its word; the copy says so on every scene that shows one.
+  const SENTENCE = "I know you know";
+  const VOCAB = ["the", "know", "we", "I", "you", "not"];
+
   // ─── a tiny deterministic generator ────────────────────────────────────────
   // A linear congruential generator, not Math.random: the same seed has to
   // produce the same numbers in Node (the tests) and in every browser (the
@@ -87,6 +95,34 @@
       WK: projMatrix(SEED + 2, D, 3),
       WV: projMatrix(SEED + 3, D, 3)
     };
+  }
+
+  // ─── from a string to ids ──────────────────────────────────────────────────
+  // Split on whitespace ("words") or into single characters, spaces included
+  // ("chars"). The tokenizer is a choice, and the sequence length S is a
+  // consequence of it: 4 words, 15 characters, the same sentence.
+  function tokenize(text, mode) {
+    return mode === "chars" ? Array.from(text) : text.split(/\s+/).filter(Boolean);
+  }
+
+  // A vocabulary lookup, word -> row index. An unknown word is an error
+  // rather than a silent -1: a real tokenizer maps it to an <unk> row, and
+  // this stage has none.
+  function encode(tokens, vocab) {
+    return tokens.map((w) => {
+      const i = vocab.indexOf(w);
+      if (i < 0) throw new Error("encode: " + JSON.stringify(w) + " is not in the vocabulary");
+      return i;
+    });
+  }
+
+  // One head's projections: columns h*dh .. h*dh+dh-1 of each full D x D
+  // matrix. That is exactly the slice splitHeads later takes of X W, so head
+  // 0 here and head 0 of the heads scene are the same numbers.
+  function headProjections(h, heads) {
+    const P = projections(), n = heads || H, dh = D / n;
+    const cut = (M) => M.map((r) => r.slice(h * dh, h * dh + dh));
+    return {WQ: cut(P.WQ), WK: cut(P.WK), WV: cut(P.WV)};
   }
 
   // ─── plain linear algebra ──────────────────────────────────────────────────
@@ -275,6 +311,61 @@
     return {Q: Q, K: K, V: V, L: L, A: A, O: O, merged: mergeHeads(O)};
   }
 
+  // ─── why divide by sqrt(d_k) ─────────────────────────────────────────────
+  // `trials` queries, each against `keys` keys, every component +-1 -- so
+  // every component has variance 1, and a dot product of d_k of them is a sum
+  // of d_k independent +-1 terms: variance exactly d_k, spread sqrt(d_k).
+  // Dividing by sqrt(d_k) puts the spread back at 1 for every d_k. Softmax
+  // is then taken over each query's keys both ways, and the mean of the
+  // largest weight says how close to one-hot the row has become.
+  function scaleSpread(dk, trials, keys, seed) {
+    const rnd = lcg(seed === undefined ? SEED + 7 : seed);
+    const pm = () => (rnd() < 0.5 ? -1 : 1);
+    const raw = [];
+    let peakRaw = 0, peakScaled = 0;
+    const rows = [];
+    const soft = (row) => {
+      const mx = Math.max(...row);
+      const e = row.map((v) => Math.exp(v - mx));
+      const sum = e.reduce((a, b) => a + b, 0);
+      return e.map((v) => v / sum);
+    };
+    for (let n = 0; n < trials; n++) {
+      const q = Array.from({length: dk}, pm);
+      const row = [];
+      for (let t = 0; t < keys; t++) {
+        let acc = 0;
+        for (let d = 0; d < dk; d++) acc += q[d] * pm();
+        row.push(acc);
+      }
+      const scaled = row.map((v) => v / Math.sqrt(dk));
+      const wRaw = soft(row), wScaled = soft(scaled);
+      const peak = Math.max(...wRaw);
+      peakRaw += peak;
+      peakScaled += Math.max(...wScaled);
+      rows.push({raw: row, scaled, wRaw, wScaled, peak});
+      raw.push(...row);
+    }
+    const std = (xs) => {
+      const m = xs.reduce((a, b) => a + b, 0) / xs.length;
+      return Math.sqrt(xs.reduce((a, v) => a + (v - m) * (v - m), 0) / xs.length);
+    };
+    const rawStd = std(raw);
+    // The one row the stage draws is the typical one -- the query whose
+    // unscaled peak weight sits nearest the mean -- rather than the first,
+    // which at d_k = 256 happened to be a two-way tie at 0.50 while the rows
+    // averaged 0.93: an honest sample that told the opposite story.
+    const mean = peakRaw / trials;
+    let typical = rows[0];
+    for (const r of rows) if (Math.abs(r.peak - mean) < Math.abs(typical.peak - mean)) typical = r;
+    return {
+      dk, raw, scaled: raw.map((v) => v / Math.sqrt(dk)),
+      rawStd, scaledStd: rawStd / Math.sqrt(dk),
+      peakRaw: peakRaw / trials, peakScaled: peakScaled / trials,
+      sample: typical
+    };
+  }
+
   // 3 D^2, independent of the head count: splitting into more heads only
   // slices the same three D x D matrices differently.
   function paramCount(dim, heads) { return 3 * dim * dim; }
@@ -324,9 +415,10 @@
   }
 
   const AttentionCore = {
-    SEED, D, S, H, IDS,
+    SEED, D, S, H, IDS, SENTENCE, VOCAB,
     lcg, smallInts, projMatrix,
-    embedding, gather, projections,
+    tokenize, encode,
+    embedding, gather, projections, headProjections, scaleSpread,
     transpose, matmul,
     splitHeads, splitHeadsWrong, traceCell, mergeHeads,
     scores, softmax, causalMask, applyMask, attend, attention,

@@ -10,7 +10,8 @@ const PAGE = fs.readFileSync(
   path.join(__dirname, '..', 'interactive', 'attention-stage.html'), 'utf8');
 
 // In the order attention-stage.html loads them.
-const SCENES = ['tokens', 'project', 'heads', 'scores', 'softmax', 'output', 'batch'];
+const SCENES = ['words', 'ids', 'embed', 'project', 'scores', 'scale', 'softmax', 'output',
+                'heads', 'batch'];
 const REQUIRED_COPY = ['tab', 'k', 'h', 'claim', 'concept', 'b', 'predict', 'aria'];
 
 function makeCtx(scene) {
@@ -147,7 +148,7 @@ test('a scene writes an eqcap caption exactly where the page has one', () => {
   const withElement = SCENES.filter(id => PAGE.includes(`id="eqcap-${id}"`));
   assert.deepEqual(withCopy, withElement,
     'a caption with no element in the page, or an element with no caption');
-  assert.deepEqual(withElement, ['scores', 'softmax', 'output']);
+  assert.deepEqual(withElement, ['scores', 'scale', 'softmax', 'output', 'batch']);
   for (const scene of load()) {
     if (scene.copy.en.eqcap === undefined) continue;
     for (const lang of ['en', 'es']) {
@@ -164,4 +165,70 @@ test('the equations name five axes, and no more', () => {
   const tokens = [...PAGE.matchAll(/data-hl="([a-z]+)"/g)].map(m => m[1]);
   assert.deepEqual([...new Set(tokens)].sort(),
     ['batch', 'feat', 'head', 'key', 'query']);
+});
+
+// ------------------------------------------------------ the NumPy blocks
+// Every value a control can take, or both ends of each slider when the
+// whole grid would be too many -- the widest line is usually at a corner.
+function settings(scene) {
+  const axes = (scene.controls || []).map(spec => spec.type === 'select'
+    ? spec.options.map(o => [spec.id, o])
+    : Array.from({length: (spec.max - spec.min) / (spec.step || 1) + 1},
+        (_, i) => [spec.id, spec.min + i * (spec.step || 1)]));
+  const size = axes.reduce((n, a) => n * a.length, 1);
+  const pick = size > 512 ? axes.map(a => [a[0], a[a.length - 1]]) : axes;
+  let out = [{}];
+  for (const a of pick) out = out.flatMap(o => a.map(([k, v]) => ({...o, [k]: v})));
+  return out;
+}
+
+test('every scene shows its NumPy, 82 characters at most, in both languages', () => {
+  for (const scene of load()) {
+    assert.equal(typeof scene.code, 'function', `${scene.id}: no code()`);
+    assert.ok(PAGE.includes(`id="np-${scene.id}"`), `${scene.id}: no NumPy block in the page`);
+    for (const lang of ['en', 'es']) {
+      for (const vals of settings(scene)) {
+        const ctx = makeCtx(scene);
+        Object.defineProperty(ctx, 'copy', {get: () => scene.copy[lang]});
+        scene.init(ctx);
+        Object.assign(ctx.state, vals);
+        if (scene.sync) scene.sync(ctx);
+        const lines = scene.code(ctx);
+        assert.ok(lines.length > 0, `${scene.id}: code() is empty`);
+        for (const line of lines) {
+          assert.ok(!/undefined|NaN/.test(line), `${scene.id} ${lang}: "${line}"`);
+          assert.ok(line.length <= 82,
+            `${scene.id} ${lang} at ${JSON.stringify(vals)}: ${line.length} characters: ${line}`);
+        }
+      }
+    }
+  }
+});
+
+// The five lines the page exists to teach, spelled exactly the way a reader
+// would type them.
+test('the core NumPy lines appear verbatim', () => {
+  const all = load().map(scene => {
+    const ctx = makeCtx(scene);
+    scene.init(ctx);
+    return scene.code(ctx).join('\n');
+  }).join('\n');
+  for (const line of [
+    'embeddings = vocab_matrix[token_ids]',
+    'Q = np.dot(embeddings, W_q)',
+    'K = np.dot(embeddings, W_k)',
+    'V = np.dot(embeddings, W_v)',
+    'scores = np.dot(Q, K.T) / np.sqrt(d_k)',
+    'attn_weights = np.exp(scores) / np.sum(np.exp(scores), axis=-1, keepdims=True)',
+    'output = np.dot(attn_weights, V)'
+  ]) assert.ok(all.includes(line), `missing: ${line}`);
+  assert.ok(!/torch|tensorflow|jax/i.test(all), 'a framework crept into the NumPy');
+});
+
+test('three scenes open a part, in reading order', () => {
+  const parts = load().filter(s => s.part).map(s => s.id);
+  assert.deepEqual(parts, ['words', 'project', 'heads']);
+  for (const scene of load().filter(s => s.part)) {
+    assert.ok(scene.part.en && scene.part.es, `${scene.id}: part needs both languages`);
+  }
 });

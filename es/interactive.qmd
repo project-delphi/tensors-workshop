@@ -56,21 +56,23 @@ Directo a <a href="../interactive/image-tensor.html?lang=es#transpose">transpose
 :::
 
 ::: {.resource-card}
-### 👁️ La atención como dos contracciones
+### 👁️ La atención, de las palabras a los pesos
 
 <span data-language-key="attention-stage"></span>
 
-Siete imágenes de una misma secuencia, con números lo bastante pequeños como
-para sumarlos a mano: cuatro ids recogidos de una tabla de embeddings, esa tabla
-proyectada de tres formas en Q, K y V, cada una dividida para que cada cabeza
-tenga su propio eje —un reshape que también tiene que ser un transpose, y el
-error cuando no lo es—, la contracción que produce las puntuaciones, softmax
-convirtiéndolas en pesos que suman uno, el promedio ponderado que es la salida,
-y el tensor de rango 4 que recibe un modelo real. Secciones 04 y 06, y apéndice B.
+Una frase de cuatro palabras, "I know you know", seguida a través de una sola
+cabeza de atención con números lo bastante pequeños como para sumarlos a mano:
+las palabras cortadas en tokens, los tokens codificados como ids, los ids
+trayendo filas de una tabla de embeddings, esas filas proyectadas en consultas,
+claves y valores, las puntuaciones, por qué se dividen entre √d_k, softmax
+convirtiéndolas en pesos que suman uno, y el promedio ponderado que es la
+salida. Después, más cabezas y el lote que recibe un modelo real. Cada imagen
+lleva el NumPy que la calcula. Secciones 04 y 06, y apéndice B.
 
-Directo a <a href="../interactive/attention-stage.html?lang=es#heads">cada cabeza con su propio eje</a>,
-<a href="../interactive/attention-stage.html?lang=es#scores">las puntuaciones</a> o
-<a href="../interactive/attention-stage.html?lang=es#softmax">softmax</a>.
+Directo a <a href="../interactive/attention-stage.html?lang=es#scale">por qué √d_k</a>,
+<a href="../interactive/attention-stage.html?lang=es#scores">las puntuaciones</a>,
+<a href="../interactive/attention-stage.html?lang=es#softmax">softmax</a> o
+<a href="../interactive/attention-stage.html?lang=es#heads">cada cabeza con su propio eje</a>.
 
 <a href="../interactive/attention-stage.html?lang=es" class="resource-button">Abrir el escenario de atención</a>
 :::

@@ -6,19 +6,33 @@ One file per scene of `../attention-stage.html`, loaded in order by plain
 file calls `AttentionScenes.register({...})` once. The page reads the
 registry back in that order, so a new scene is: one file here, one
 `<script src>` line, one `<section class="step" id="step-<id>">` in the page,
-one `<span class="anchor" id="<id>"></span>` at the top of that section, and
+one `<span class="anchor" id="<id>"></span>` at the top of that section, its
+`<pre id="np-<id>">` NumPy block, and
 one `repo.widgets` line in `_variables.yml` (the only thing that notices the
 file failing to reach `docs/`). The page throws at boot if a registered scene
 has no section.
 
-The order is the arithmetic's own: a sequence is four ids gathered out of an
-embedding table (`tokens`), that table projected three ways into Q, K and V
-(`project`), each split so every head gets its own axis — a reshape that has
-to be a transpose too, and the bug when it is not (`heads`) — the contraction
-that produces the scores (`scores`), softmax turning them into weights that
-sum to one, with a causal mask as the take-home's own idea (`softmax`), the
-weighted average that is the output (`output`), and the rank-4 tensor a real
-model is actually handed (`batch`).
+The order is the journey from a sentence to attention's output, in three
+parts, each opened by the scene that declares it in its own `part:`.
+**From words to numbers**: "I know you know" cut into tokens, where the
+tokenizer sets S (`words`); each token coded as its id in a six-word
+vocabulary, `[3, 1, 4, 1]` (`ids`); the ids fetching rows of the embedding
+table (`embed`). **One attention head**: X projected into Q, K and V by three
+8 × 4 matrices (`project`); every query against every key (`scores`); why the
+scores are divided by √d_k (`scale`); softmax turning a row of scores into
+weights that sum to one, with a causal mask as the take-home's own idea
+(`softmax`); and the weighted average of the values, where the two "know"
+rows come out identical because attention alone cannot see position
+(`output`). **Beyond one head**: the 8 × 8 projection split so every head gets
+its own axis, a reshape that has to be a transpose too, and the bug when it
+is not (`heads`); and the rank-4 tensor a real model is handed (`batch`).
+
+The one-head scenes use `AC.headProjections(0)`, columns 0–3 of the full
+projections, so every number in the middle part is head 0's number in
+`heads`; `tests/attention_core.test.cjs` pins that the two agree. `scale` is
+the one scene that does not draw the stage's own Q and K: it samples ±1
+vectors from `AC.scaleSpread`, on its own seed, because its claim is about
+d_k and the stage's d_k is fixed at 4.
 
 **No three.js, and no canvas.** Every picture on this stage is inline SVG
 with real `<text>` elements, so axe can measure contrast and a reader can
@@ -54,6 +68,8 @@ AttentionScenes.register({
                         // for the check, and claim replaces the copy's claim
                         // on the title card when the scene can say it in numbers
   shape(ctx),           // optional: -> "[2, 4, 4]", the badge on the stage.
+  code(ctx),            // -> lines of NumPy, through K.code(); see below
+  part: {en, es},       // optional: the heading of the part this scene opens
   reset(ctx)            // optional: back to the opening state
 });
 ```
@@ -125,8 +141,10 @@ the reader's cursor.
 
 ## The display equations
 
-Three sections carry one — `scores`, `softmax` and `output` — using notebook
-17's own letters: `b` batch, `h` head, `s` query, `t` key, `d` feature. The
+Five sections carry one — `scores`, `scale`, `softmax`, `output` and `batch` —
+using notebook 17's own letters: `b` batch, `h` head, `s` query, `t` key, `d`
+feature. The one-head equations use only `s`, `t` and `d`; `batch` carries the
+four-index form, which is where `b` and `h` appear. The
 `<math>` is hand-written MathML and lives **statically in the section**, the
 same reason the audio stage's five equations do: it is the same in both
 languages and `check_links.py` reads the static HTML. Only the `eqcap`
@@ -142,3 +160,24 @@ The `.eqscroll` around each `<math>` needs both `overflow-x: auto;` and
 not a smaller intrinsic width, so a formula wider than the column still
 pushes the page sideways at 390px. See `widget-chrome.css` and the audio
 stage's own comment on the same trap.
+
+## The NumPy blocks
+
+Every section carries the NumPy for its picture in a static
+`<pre id="np-<scene>">` under its equation, the audio stage's shape: a scene
+supplies `code(ctx)`, built from the same `ctx.state` as `readout(ctx)`, and
+the frame writes it in `changed()`. The lines are one copy for both
+languages; only the trailing `#` comments are translated, through the copy's
+`np` key, and `K.code(rows)` lines the hashes up. **NumPy only**, never a
+framework: the brief the stage was rebuilt to is explicit, and
+`tests/attention_scenes.test.cjs` fails on `torch`, `tensorflow` or `jax`. The
+five lines the stage exists to teach are pinned verbatim there too
+(`embeddings = vocab_matrix[token_ids]`, the three `np.dot` projections,
+`scores = np.dot(Q, K.T) / np.sqrt(d_k)`, the softmax written out with
+`np.exp` and `keepdims=True`, and `output = np.dot(attn_weights, V)`).
+
+**82 characters**, measured in both places: `npm test` renders every scene's
+`code()` in both languages at every setting of its controls, or at the
+corners when there are too many, and `check_navigation.cjs` reads each block
+off the page after the drive has moved it. The softmax line alone is 80, so
+it carries no comment; put a note for it on its own `#` line.

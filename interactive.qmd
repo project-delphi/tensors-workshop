@@ -54,21 +54,23 @@ Straight to [transpose](interactive/image-tensor.html?lang=en#transpose),
 :::
 
 ::: {.resource-card}
-### 👁️ Attention as two contractions
+### 👁️ Attention, from words to weights
 
 <span data-language-key="attention-stage"></span>
 
-Seven pictures of one sequence, every number small enough to add up by hand:
-four ids gathered out of an embedding table, that table projected three ways
-into Q, K and V, each split so every head gets its own axis — a reshape that
-has to be a transpose too, and the bug when it is not — the contraction that
-makes the scores, softmax turning them into weights that sum to one, the
-weighted average that is the output, and the rank-4 tensor a real model is
-handed. Sections 04 and 06, and Appendix B.
+One four-word sentence, "I know you know", followed through a single
+attention head with every number small enough to add up by hand: the words
+cut into tokens, the tokens coded as ids, the ids fetching rows of an
+embedding table, those rows projected into queries, keys and values, the
+scores, why they are divided by √d_k, softmax turning them into weights that
+sum to one, and the weighted average that is the output. Then more heads,
+and the batch a real model is handed. Every picture carries the NumPy that
+computes it. Sections 04 and 06, and Appendix B.
 
-Straight to [every head gets its own axis](interactive/attention-stage.html?lang=en#heads),
-[the scores](interactive/attention-stage.html?lang=en#scores) or
-[softmax](interactive/attention-stage.html?lang=en#softmax).
+Straight to [why √d_k](interactive/attention-stage.html?lang=en#scale),
+[the scores](interactive/attention-stage.html?lang=en#scores),
+[softmax](interactive/attention-stage.html?lang=en#softmax) or
+[every head gets its own axis](interactive/attention-stage.html?lang=en#heads).
 
 [Open the attention stage](interactive/attention-stage.html?lang=en){.resource-button}
 :::
