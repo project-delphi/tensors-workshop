@@ -980,6 +980,11 @@
     if (signal.loaded && active.sync) active.sync(ctx);
     const r = (signal.loaded ? active.readout(ctx) : null) || {};
     $("read-" + active.id).innerHTML = r.html || "";
+    // The claim card is the scene's copy until the scene can say it in
+    // numbers: the hop scene's arrow is (237568,) -> (513, 465) only while
+    // the controls are where they opened, and a card still saying that after
+    // the reader has halved the hop contradicts the readout under it.
+    $("claim").textContent = r.claim || active.copy[lang].claim;
     const aria = ctx.copy.aria(ctx) || "";
     stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
@@ -1475,9 +1480,9 @@
 
   // -------------------------------------------------------------- scenes
   // The copy is written once, at boot. Only the stage's own furniture -- the
-  // claim card, the chrome that belongs to a three.js picture -- changes when
-  // the reader moves from one picture to the next, because in a scroller that
-  // happens on every scroll settle.
+  // chrome that belongs to a three.js picture -- changes when the reader
+  // moves from one picture to the next, because in a scroller that happens
+  // on every scroll settle. The claim card is changed()'s, not this one's.
   function fillText() {
     let group = null;
     scenes.forEach((s) => {
@@ -1526,7 +1531,6 @@
     }
     active = scene;
     step = scenes.indexOf(scene);
-    $("claim").textContent = scene.copy[lang].claim;
     scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
     Array.from($("dots").children).forEach((d, j) => {
       if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
