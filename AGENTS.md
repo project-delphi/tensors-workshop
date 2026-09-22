@@ -30,12 +30,12 @@ mobile support are kept anyway, for reasons that are not phones:
   page. Keep it. An element that overflows at 390 is usually one with no width
   constraint at all, which is a bug at any size — the check is a canary, not a
   promise that a phone is supported.
-- `homepage.scss` swaps the hero's live widgets for the static diagram under
-  `@media (prefers-reduced-motion: reduce), (max-width: 540px)`. **Both halves
-  are load-bearing.** The reduced-motion half is an accessibility fallback; the
-  width half is what `check_navigation.cjs` asserts at 390px, where it requires
-  `.hero-fallback` to be visible and `.hero-demos` hidden, in both languages.
-  Dropping either half means changing that check in the same commit.
+- `homepage.scss` swaps the hero's widget stills for the static diagram under
+  `@media (max-width: 540px)`, which is what `check_navigation.cjs` asserts at
+  390px, where it requires `.hero-fallback` to be visible and `.hero-demos`
+  hidden, in both languages. There is no reduced-motion half any more: the
+  stills do not move. Dropping the width rule means changing that check in the
+  same commit.
 
 ## Generated files: the one rule that matters
 
@@ -69,6 +69,7 @@ text, then run the appropriate generator:
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `images/og-card.png` (the link preview, 1200×630, in the vendored faces) | `scripts/gen_figures.py og` |
+| `images/hero-*-{en,es}.webp` (the homepage hero's widget stills) | `scripts/gen_hero_stills.cjs` (`npm run gen:hero`) |
 | `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32 and 64 px) | `scripts/gen_figures.py widget` |
 | `interactive/data/taxi.json` (the factorisation stage's own copy of the Block 6 taxi tensor) | `scripts/gen_figures.py taxi` (network: the taxi CSV) |
 | `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
@@ -464,14 +465,15 @@ screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 widget counts instead, which `check_navigation.cjs` treats as a regression.
 Every widget takes `?embed=1&theme=navy`, and none of them fetches
 three.js there: the stage's embed is the portal's still frame, drawn flat,
-with the scroller and its steps gone. The hero is four tabs and the check pins
-that at four. **The way out of an embed is the hero's own `.hero-open`
-button**, one element beside the tab row whose `href` the tab script takes
-from the open panel's `data-open`; an embed's `#embedcap` carries a caption
-and never a link, and the check asserts both. Only the open tab's widget is
-fetched, and none at all where the static diagram replaces the demos -- a
-hidden iframe is never lazy-loaded, so every panel keeps its URL in
-`data-src` until the tab script hands it over, once.
+with the scroller and its steps gone. **The hero does not load the embeds;
+it shows pictures of them.** One tab per widget, and each panel is a
+screenshot of that widget's embed in the page's language
+(`images/hero-<widget>-<lang>.webp`, drawn by `scripts/gen_hero_stills.cjs`),
+wrapped in a link to the full widget -- the picture is the way in, and there is
+no separate open button. The check pins one still per widget, the link and the
+picture per tab, and no iframe in the hero. An embed's `#embedcap` still
+carries a caption and never a link. Rerun the generator when an embed's
+picture changes; nothing will tell you a still is stale.
 
 three.js is **vendored** at `interactive/vendor/`, core build and eleven
 `examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their
@@ -722,6 +724,7 @@ uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
 uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
 uv run --group figures python scripts/gen_slide_art.py        # needs Chrome and the network
+npm run gen:hero                                              # the hero's widget stills, from each embed
 ```
 
 `check_links.py` is the site test suite -- there is no pytest here. It prints

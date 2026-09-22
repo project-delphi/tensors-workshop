@@ -1075,6 +1075,19 @@ surfaces are within 0.4% luminance of the old ones), and the browser check
 now asserts the home link per language, the button per tab, and no link in
 any caption.
 
+**The hero shows pictures of the widgets, not the widgets** (2026-09-22). Six
+live embeds behind tabs meant the front door carried six widgets' worth of
+code, a `data-src` dance so a hidden iframe was not fetched anyway, and a
+separate "Open the full widget" button whose `href` the tab script had to keep
+in step with the open tab. A reader on the homepage is deciding where to go,
+not using a widget. Each panel is now a screenshot of that widget's embed, in
+the page's language, and the picture is the link: one click on what you are
+looking at, instead of a button in the corner that means "that". The stills
+are generated (`scripts/gen_hero_stills.cjs`, Playwright, WebP encoded by
+Chromium's own canvas so no image library is needed) and, like every other
+image here, not in the CI gate. The reduced-motion half of the diagram swap
+went with the iframes: nothing in the hero moves any more.
+
 **axe audits the pages and the widgets, not the decks, and allowlists by
 element.** The first run (2026-09-18) found four rules over 120 nodes. Two
 were ours and are fixed: the Okabe–Ito axis hues as 12–14px text in the
