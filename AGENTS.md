@@ -197,14 +197,15 @@ takes is a Manim frame; the label chip stays opaque, and black, so axe has two
 colours to measure.
 
 The audio stage (`voice-stage.html`, titled *The audio tensor*) is the same
-registry shape as the projection stage and now the same scroller: **nine
+registry shape as the projection stage and now the same scroller: **ten
 sections down the left, a sticky stage on the right**, one `<section
-class="step">` per scene, grouped under four part headings, each declared by
+class="step">` per scene, grouped under five part headings, each declared by
 the scene that opens it in its own `part:` -- from air to numbers (sampling,
 quantization, the array), from numbers to a matrix (one window, the transform
 of it, the hop), what a layout does to it (the reshape you can hear go wrong),
-and what factoring it costs (the best rank-k there is, and the parts you can
-name). It was five tabs; the tabs hid the order the ideas have to be met in,
+what factoring it costs (the best rank-k there is, and the parts you can
+name), and what a model is handed (the three recordings stacked into a rank-4
+batch). It was five tabs; the tabs hid the order the ideas have to be met in,
 and "window and hop" and the transform itself were words in control labels
 rather than pictures. `voice-kit.js` holds the registry and the drawing;
 `audio-core.js` holds the arithmetic and `npm test` pins it, including one
@@ -250,9 +251,26 @@ drops is decoded in the page at that rate, capped at 8 s, and never leaves the
 tab. The embed never fetches a recording -- it draws the spectrogram scene
 from a synthesised stand-in of the same length, and `data-standin` says which
 is on screen. Link by scene name (`#sample`, `#quantize`, `#array`, `#frame`,
-`#spectrum`, `#window`, `#scramble`, `#lowrank`, `#nmf`); controls are
-`#c-<scene>-<control>` and readouts `#read-<scene>`, because the same control
-name now lives in nine sections. The contract is `voice-scenes/README.md`.
+`#spectrum`, `#window`, `#scramble`, `#lowrank`, `#nmf`, `#batch`); controls
+are `#c-<scene>-<control>` and readouts `#read-<scene>`, because the same
+control name now lives in ten sections. The contract is
+`voice-scenes/README.md`.
+
+**Three sections carry a display equation**, and it is hand-written **MathML**
+with no library: the claim cards are Unicode `textContent` that
+`check_navigation.cjs` compares byte-exact, so a renderer would break them,
+and this repo vendors every asset with a SHA-256 anyway. The `<math>` is
+static in the section because it is the same in both languages and
+`check_links.py` reads the static HTML; only the `eqcap` caption under it is
+translated. The indices are the page's own -- `f` for a frequency bin, `t` for
+a frame, `H` for the hop, `N` for the window -- and **never `k`, which is the
+rank** on three other scenes. An `<mi>` the reader can point at carries
+`data-hl`; the frame publishes it as `data-hl` on `#stage` and the scene bands
+that axis in `draw()`, without ever calling `changed()`, because a hover must
+not rewrite the readout. Only the 2-D scenes honour it: the three opening
+scenes draw through one shared three.js rig, and a vector has no second axis
+to band. The shape badge on the stage takes a scene's `shape(ctx)` when it has
+one and its readout's `data.shape` otherwise, and publishes `data-tensorshape`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a

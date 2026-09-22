@@ -37,6 +37,25 @@
     s.mag = ctx.AC.magnitude(st.Z, st.F, st.T);
     s.w = ctx.AC.windowOf(s.win, N);
     s.img = null;
+    s.peakRow = null;
+  }
+
+  // The loudest bin in the whole matrix, for the band that shows what f is.
+  // The current window's own peak would do, except that the scene opens on
+  // the tail of the recording, where it is bin 0 and the band lands under the
+  // time axis looking like part of it.
+  function peakRow(ctx) {
+    const s = ctx.state;
+    if (s.peakRow !== null && s.peakRow !== undefined) return s.peakRow;
+    const st = s.stft, mag = s.mag;
+    let best = -1, at = 0;
+    for (let f = 0; f < st.F; f++) {
+      let row = 0;
+      for (let t = 0; t < st.T; t++) row += mag[f * st.T + t];
+      if (row > best) { best = row; at = f; }
+    }
+    s.peakRow = at;
+    return at;
   }
 
   const frameOf = (ctx) =>
@@ -193,6 +212,30 @@
       K.label(g, (peakF * ctx.rate / s.N).toFixed(0) + " Hz",
               W - 6, specY + 6, ctx.colour("--v-out"), {size: 11, mono: true, right: true});
 
+      // Pointing at f or t in the equation above bands the extent that letter
+      // measures -- a row of the matrix for a frequency bin, a column for a
+      // frame. This is what ties a letter to the pixels it stands for, and it
+      // is drawn over the matrix but under the playhead.
+      if (ctx.hl === "freq" || ctx.hl === "time") {
+        const lit = ctx.colour("--v-comp");
+        g.strokeStyle = lit;
+        g.lineWidth = 2;
+        if (ctx.hl === "freq") {
+          const pr = peakRow(ctx);
+          const rowH = Math.max(3, specH / st.F);
+          const y = specY + specH - (pr + 1) / st.F * specH;
+          g.strokeRect(L, y - 0.5, plotW, rowH + 1);
+          K.label(g, "f = " + pr + "  (" + (pr * ctx.rate / s.N).toFixed(0) + " Hz)",
+                  L + plotW, Math.max(specY + 6, y - 18), lit,
+                  {size: 11, mono: true, right: true});
+        } else {
+          const colW = Math.max(2, plotW / st.T);
+          const x = L + f / st.T * plotW;
+          g.strokeRect(x - 0.5, specY, colW + 1, specH);
+          K.label(g, "t = " + f, L, specY + 24, lit, {size: 11, mono: true});
+        }
+      }
+
       // Where the rebuilt signal has got to, on the waveform and across the
       // matrix: the same instant in both pictures.
       const h = ctx.head();
@@ -263,6 +306,10 @@
            "the right is that column on its own: the bars of the previous picture, stood on end. " +
            "Change the window size and the hop and watch the shape tag move — a shorter hop means " +
            "more columns for the same voice, and the box below counts them.</p>",
+        eqcap: "f picks a frequency bin and t picks a frame, so X[f, t] is one cell of the " +
+               "matrix below — point at either letter to see which extent of the picture it " +
+               "measures. H is the hop and w is the window shape, both of them controls here. " +
+               "S is the magnitude of X, which is what the spectrogram actually draws.",
         predict: "Before you drag: halve the hop. Does the matrix get taller, or wider?",
         rebuilt: "the signal rebuilt from the matrix",
         controls: {size: "Window size (N)", overlap: "Overlap", win: "Window shape",
@@ -309,6 +356,10 @@
            "la derecha es esa columna sola: las barras de la imagen anterior, puestas de pie. Cambia " +
            "el tamaño de la ventana y el salto y mira moverse la etiqueta de forma: un salto más " +
            "corto significa más columnas para la misma voz, y la caja de abajo las cuenta.</p>",
+        eqcap: "f elige un bin de frecuencia y t elige una trama, así que X[f, t] es una celda " +
+               "de la matriz de abajo; señala cualquiera de las dos letras para ver qué extensión " +
+               "de la imagen mide. H es el salto y w es la forma de la ventana, ambos controles " +
+               "aquí. S es la magnitud de X, que es lo que dibuja el espectrograma.",
         predict: "Antes de arrastrar: reduce el salto a la mitad. ¿La matriz se hace más alta o más ancha?",
         rebuilt: "la señal reconstruida a partir de la matriz",
         controls: {size: "Tamaño de ventana (N)", overlap: "Superposición", win: "Forma de ventana",

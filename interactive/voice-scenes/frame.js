@@ -148,6 +148,8 @@
               what: ctx.copy.playFrame(ctx.copy.options.win[s.win])};
     },
 
+    shape(ctx) { const N = ctx.state.N; return N ? "[" + N + "]" : ""; },
+
     readout(ctx) {
       const s = ctx.state, N = s.N;
       const ms = N / ctx.rate * 1000;

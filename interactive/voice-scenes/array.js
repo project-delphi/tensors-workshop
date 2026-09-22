@@ -114,6 +114,9 @@
            "<p>Switch the dtype to int16 and the same beads show the integers the file actually " +
            "stores; float32 is what you are handed after dividing by 32 768. Same sound, same beads, " +
            "twice the bytes — which is the arithmetic in the box below.</p>",
+        eqcap: "N is how many numbers there are and n picks one of them out, counting from 0 — " +
+               "so the last one is x with subscript N minus 1, not N. The transpose sign is there " +
+               "because a vector in this workshop is a column.",
         predict: "Before you switch: how many bytes is 4.95 s of int16?",
         whole: "the whole recording",
         controls: {start: "First index shown", dtype: "dtype"},
@@ -144,6 +147,9 @@
            "guarda de verdad; float32 es lo que te entregan tras dividir entre 32 768. El mismo " +
            "sonido, las mismas cuentas, el doble de bytes: esa es la aritmética de la caja de " +
            "abajo.</p>",
+        eqcap: "N es cuántos números hay y n elige uno de ellos, contando desde 0 —así que el " +
+               "último es x con subíndice N menos 1, no N—. El signo de transposición está " +
+               "porque en este taller un vector es una columna.",
         predict: "Antes de cambiar: ¿cuántos bytes son 4,95 s en int16?",
         whole: "la grabación entera",
         controls: {start: "Primer índice mostrado", dtype: "dtype"},

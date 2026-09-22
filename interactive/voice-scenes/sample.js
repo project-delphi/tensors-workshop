@@ -122,6 +122,8 @@
       return {samples: out, what: ctx.copy.held(ctx.rate / k)};
     },
 
+    shape(ctx) { const v = ctx.state.v; return v ? "[" + Math.ceil(ctx.signal.length / v.k) + "]" : ""; },
+
     readout(ctx) {
       const s = ctx.state, v = s.v;
       const rate = ctx.rate / v.k;

@@ -60,8 +60,8 @@ pictures of one problem: least squares as a projection onto a column space,
 a wide matrix's line of solutions, a determinant reaching zero, the SVD as a
 circle turning into an ellipse and a sphere into an ellipsoid, the
 eigenvectors of a field of arrows, and the two ways the arithmetic fails.
-Sections 00, 04 and 09 and Appendix E share an
-[audio tensor stage](interactive/voice-stage.html?lang=en), nine pictures of
+Sections 00, 02, 04 and 09 and Appendix E share an
+[audio tensor stage](interactive/voice-stage.html?lang=en), ten pictures of
 one recording: air measured 48 000 times a second and rounded to 16 bits, the
 array that leaves, [one window cut out of
 it](interactive/voice-stage.html?lang=en#frame), [the transform that asks that
@@ -70,7 +70,9 @@ the window hopping along to build a frequency-by-time matrix, what a
 transpose does to a sound, and the two ways that matrix comes
 apart — [the best rank-k approximation there
 is](interactive/voice-stage.html?lang=en#lowrank) and [the parts you can
-name](interactive/voice-stage.html?lang=en#nmf). You can hear every one of them.
+name](interactive/voice-stage.html?lang=en#nmf) — and last [the rank-4 batch a
+model is actually handed](interactive/voice-stage.html?lang=en#batch), three
+recordings stacked. You can hear every one of them.
 
 {{< include _includes/notebooks-extra-en.md >}}
 
