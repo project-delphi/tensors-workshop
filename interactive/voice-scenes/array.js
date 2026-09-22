@@ -90,6 +90,9 @@
       const first = s.dtype === "int16" ? String(v.codes[0]) : v.x[0].toFixed(4);
       return {
         html: ctx.copy.readout(N, s.dtype, itemsize, bytes, v.i0, first, N / ctx.rate),
+        // A dropped file is shorter than the built-ins, and the card would go
+        // on claiming 237568 over a readout saying otherwise.
+        claim: "x.shape = (" + N + ",)",
         data: {
           shape: N, dtype: s.dtype, itemsize, bytes, i0: v.i0, x0: first, show: SHOW
         }

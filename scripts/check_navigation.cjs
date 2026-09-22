@@ -411,6 +411,8 @@ async function audit(page, where) {
         // The array: its shape, and the bytes each dtype costs.
         await voiceScene(page, 'array');
         assert.equal((await data()).shape, '237568');
+        assert.equal(await page.locator('#claim').textContent(), 'x.shape = (237568,)',
+          `${where}: the array's claim card is not the length on the stage`);
         assert.equal((await data()).bytes, String(237568 * 4), `${where}: float32 bytes`);
         await page.selectOption('#c-array-dtype', 'int16');
         await page.waitForFunction(() => document.getElementById('stage').dataset.dtype === 'int16', null, {timeout: 5000});

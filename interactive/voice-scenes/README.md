@@ -116,9 +116,11 @@ into the clip while it plays, or -1.
   reader's selection and makes the browser check race the picture.
 - **A claim card in numbers is the readout's, not the copy's.** `copy.claim` is
   the scene's formula and is what the card shows until the recording has
-  loaded. A scene whose shape is a control's to move — the frame's `(N,)`, the
-  hop scene's `(237568,) → (513, 465)` — returns a `claim` from `readout()`
-  instead, so the card cannot sit there contradicting the readout under it.
+  loaded. A scene whose shape anything can move — a control, or a shorter
+  recording the reader dropped — returns a `claim` from `readout()` instead, so
+  the card cannot sit there contradicting the readout under it. Three do: the
+  array's `(237568,)`, the frame's `(N,)` and the hop scene's
+  `(237568,) → (513, 465)`.
 - **Sound is never automatic, and never stale.** An `AudioContext` is built on
   the first press of a transport button and never before, which is both the
   autoplay policy and the reason the hero embed can exist at all. Nothing plays
