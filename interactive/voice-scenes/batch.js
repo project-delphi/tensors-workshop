@@ -69,7 +69,8 @@
 
   // Everything the picture is of, in batch order.
   function examples(ctx) {
-    const built = BUILTIN.map((n) => CACHE.get(n)).filter(Boolean);
+    if (!BUILTIN.every((n) => CACHE.has(n))) return [];
+    const built = BUILTIN.map((n) => CACHE.get(n));
     const own = ownClip(ctx);
     return own ? built.concat([own]) : built;
   }
@@ -226,7 +227,7 @@
           c: 1,
           f: ex[0].F,
           t: crop,
-          shape: ex.length + ",1," + ex[0].F + "," + crop,
+          shape: fits ? ex.length + ",1," + ex[0].F + "," + crop : "",
           lit: ctx.state.lit,
           ragged: ragged ? "1" : "0",
           fits: fits ? "1" : "0",

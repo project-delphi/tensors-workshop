@@ -360,7 +360,8 @@ Seven pictures of one recording. Air becomes numbers: 48 000 a second, each
 rounded to 16 bits, written down as an array you can listen to. Then one window
 is cut out of it, the transform is asked which frequencies are in that window,
 and the window hops along to build a frequency-by-time matrix, 513 × 465 — and
-you can hear what a transpose does to it. Sections 00, 04 and 09.
+you can hear what a transpose does to it. It ends on the rank-4 batch a model
+is handed, three recordings stacked. Sections 00, 02, 04 and 09.
 
 [Try the audio tensor](interactive/voice-stage.html?lang=en){.resource-button}
 :::

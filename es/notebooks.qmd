@@ -63,7 +63,7 @@ en una elipse y una esfera en un elipsoide, los autovectores de un campo de
 flechas, y las dos maneras en que falla la aritmética.
 Las secciones 00, 02, 04 y 09 y el apéndice E comparten un
 <a href="../interactive/voice-stage.html?lang=es">escenario del tensor de audio</a>,
-diez imágenes de una misma grabación: el aire medido 48 000 veces por segundo
+nueve imágenes de una misma grabación y una décima de tres: el aire medido 48 000 veces por segundo
 y redondeado a 16 bits, el arreglo que queda,
 <a href="../interactive/voice-stage.html?lang=es#frame">una ventana recortada de él</a>,
 <a href="../interactive/voice-stage.html?lang=es#spectrum">la transformada que le pregunta

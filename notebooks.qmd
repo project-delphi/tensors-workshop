@@ -61,8 +61,8 @@ a wide matrix's line of solutions, a determinant reaching zero, the SVD as a
 circle turning into an ellipse and a sphere into an ellipsoid, the
 eigenvectors of a field of arrows, and the two ways the arithmetic fails.
 Sections 00, 02, 04 and 09 and Appendix E share an
-[audio tensor stage](interactive/voice-stage.html?lang=en), ten pictures of
-one recording: air measured 48 000 times a second and rounded to 16 bits, the
+[audio tensor stage](interactive/voice-stage.html?lang=en), nine pictures of
+one recording and a tenth of three: air measured 48 000 times a second and rounded to 16 bits, the
 array that leaves, [one window cut out of
 it](interactive/voice-stage.html?lang=en#frame), [the transform that asks that
 window which frequencies are in it](interactive/voice-stage.html?lang=en#spectrum),

@@ -175,8 +175,12 @@
   #timecap { margin: 0.3rem 0 0; font-size: 0.76rem; color: var(--ink-mute); }
   /* The sample index the sound has reached. aria-hidden, because it is
      rewritten sixty times a second and a live region would flood a reader. */
-  #mathhead { font-family: var(--mono); font-size: 0.76rem; color: var(--ink-mute); }
-  #mathhead:empty { display: none; }
+  /* Zero margins and a reserved line: a <p> appearing and disappearing on
+     every press of Play moved the transport out from under the cursor. */
+  #mathhead {
+    margin: 0.2rem 0 0; min-height: 1.1rem;
+    font-family: var(--mono); font-size: 0.76rem; color: var(--ink-mute);
+  }
 
   .transport { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; margin-top: 0.6rem; }
   .tbuttons { display: flex; flex-wrap: wrap; gap: 0.45rem; align-items: center; }

@@ -361,7 +361,8 @@ segundo, cada uno redondeado a 16 bits, escritos en un array que puedes
 escuchar. Luego se recorta una ventana, se le pregunta a la transformada qué
 frecuencias hay en ella, y la ventana avanza para construir una matriz de
 frecuencia por tiempo, 513 × 465, y puedes oír qué le hace una transposición.
-Secciones 00, 04 y 09.
+Termina en el lote de rango 4 que recibe un modelo: tres grabaciones apiladas.
+Secciones 00, 02, 04 y 09.
 
 <a href="../interactive/voice-stage.html?lang=es" class="resource-button">Probar el tensor de audio</a>
 :::
