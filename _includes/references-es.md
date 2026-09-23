@@ -45,14 +45,21 @@ Una idea por entrada, con ejemplos.
 
 Todas las entradas están en [El blog de ML](https://project-delphi.github.io/ml-blog/).
 
+- [De NumPy a JAX](https://project-delphi.github.io/ml-blog/posts/numpy-to-jax/)
+- [Un tensor en Python puro](https://project-delphi.github.io/ml-blog/posts/numpy-like-tensor/)
 - [¿Por qué hay tantas factorizaciones matriciales?](https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/)
 - [Factorizaciones como optimización](https://project-delphi.github.io/ml-blog/posts/matrix-factorizations/)
 - [Gira, estira y vuelve a girar](https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/)
 - [Las direcciones que una matriz no gira](https://project-delphi.github.io/ml-blog/posts/eigendecomposition/)
+- [¿Vectores propios o singulares?](https://project-delphi.github.io/ml-blog/posts/eigendecomposition-vs-svd/)
 - [¿Se puede invertir una función recursiva?](https://project-delphi.github.io/ml-blog/posts/recursive-inversion/)
 - [Factorizaciones e inversas tensoriales](https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/)
 - [Para qué sirve factorizar un tensor](https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/)
+- [CP o Tucker](https://project-delphi.github.io/ml-blog/posts/cp-or-tucker/)
 - [Inversas tensoriales en la práctica](https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/)
 - [Inversas tensoriales, paso a paso](https://project-delphi.github.io/ml-blog/posts/tensor-inverse-examples/)
 - [Tensores dispersos](https://project-delphi.github.io/ml-blog/posts/sparse_tensors/)
 - [La atención como dos contracciones](https://project-delphi.github.io/ml-blog/posts/attention/)
+- [Seis perspectivas de PCA](https://project-delphi.github.io/ml-blog/posts/six-views-of-pca/)
+- [PCA probabilística](https://project-delphi.github.io/ml-blog/posts/probabilistic-pca/)
+- [Por fin entendí Fourier](https://project-delphi.github.io/ml-blog/posts/fourier-transform-intuition/)

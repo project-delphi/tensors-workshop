@@ -45,14 +45,21 @@ One idea per post, with examples.
 
 Every post lives on [The ML blog](https://project-delphi.github.io/ml-blog/).
 
+- [NumPy to JAX](https://project-delphi.github.io/ml-blog/posts/numpy-to-jax/)
+- [A tensor in pure Python](https://project-delphi.github.io/ml-blog/posts/numpy-like-tensor/)
 - [Why so many matrix factorizations?](https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/)
 - [Factorizations as optimization](https://project-delphi.github.io/ml-blog/posts/matrix-factorizations/)
 - [Rotate, stretch, rotate again](https://project-delphi.github.io/ml-blog/posts/svd-rotate-stretch-rotate/)
 - [The directions a matrix refuses to turn](https://project-delphi.github.io/ml-blog/posts/eigendecomposition/)
+- [Eigenvectors or singular vectors?](https://project-delphi.github.io/ml-blog/posts/eigendecomposition-vs-svd/)
 - [Can you invert a recursive function?](https://project-delphi.github.io/ml-blog/posts/recursive-inversion/)
 - [Tensor factorizations and inverses](https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/)
 - [What a tensor factorization buys you](https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/)
+- [CP or Tucker](https://project-delphi.github.io/ml-blog/posts/cp-or-tucker/)
 - [Tensor inverses in practice](https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/)
 - [Tensor inverses, worked through](https://project-delphi.github.io/ml-blog/posts/tensor-inverse-examples/)
 - [Sparse tensors](https://project-delphi.github.io/ml-blog/posts/sparse_tensors/)
 - [Attention as two contractions](https://project-delphi.github.io/ml-blog/posts/attention/)
+- [Six views of PCA](https://project-delphi.github.io/ml-blog/posts/six-views-of-pca/)
+- [Probabilistic PCA](https://project-delphi.github.io/ml-blog/posts/probabilistic-pca/)
+- [Fourier finally clicked](https://project-delphi.github.io/ml-blog/posts/fourier-transform-intuition/)
