@@ -119,15 +119,19 @@ Straight to [one window](interactive/voice-stage.html?lang=en#frame),
 <span data-language-key="tucker-cp-stage"></span>
 
 One real tensor, factorised two ways: 6,383 New York taxi trips, pickup borough
-by dropoff borough by hour of day. Unfold that cube three ways, take the SVD of
-each unfolding, and reassemble a small core plus three factor matrices — 480
-numbers down to 102, at 6.7% error, the hour factor peaking at 18 though nothing
-ever told it what an hour is. Then build a rank-1 term out of three vectors,
-find several at once with alternating least squares, and spend one parameter
-budget both ways. Sections 10 and 11, and Appendix C.
+by dropoff borough by hour of day, as a cube of voxels you can turn and click —
+three quarters of it one Manhattan route. Watch the cube lay itself flat into
+each unfolding, see what the SVD of one finds, and reassemble a small core plus
+three factor matrices: 480 numbers down to 102, at 6.7% error, one core entry
+carrying 99% of the fit. Then build the best rank-1 term there is, see what
+several of them look like, play alternating least squares one solve at a time
+from five starts that do not all agree, and spend one parameter budget both
+ways. Sections 10 and 11, and Appendix C.
 
-Straight to [the core and its three factors](interactive/factor-stage.html?lang=en#tucker),
-[one rank-1 term](interactive/factor-stage.html?lang=en#rank1) or
+Straight to [the cube laid flat](interactive/factor-stage.html?lang=en#unfold),
+[the core and its three factors](interactive/factor-stage.html?lang=en#tucker),
+[one rank-1 term](interactive/factor-stage.html?lang=en#rank1),
+[ALS, solve by solve](interactive/factor-stage.html?lang=en#als) or
 [the same budget spent two ways](interactive/factor-stage.html?lang=en#budget).
 
 [Open Tucker and CP](interactive/factor-stage.html?lang=en){.resource-button}

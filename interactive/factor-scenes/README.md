@@ -1,31 +1,49 @@
 # The factorisation stage's scenes
 
 One file per scene of `../factor-stage.html`, loaded in order by plain
-`<script src>` lines after `factor-core.js` and `factor-kit.js`. Each file
-calls `FactorScenes.register({...})` once. The page reads the registry back
-in that order, so a new scene is: one file here, one `<script src>` line, one
-`<section class="step" id="step-<id>">` in the page, one
-`<span class="anchor" id="<id>"></span>` at the top of that section, and one
-`repo.widgets` line in `_variables.yml` (the only thing that notices the file
-failing to reach `docs/`). The page throws at boot if a registered scene has
-no section.
+`<script src>` lines after `linalg-core.js`, `factor-core.js` and
+`factor-kit.js`. Each file calls `FactorScenes.register({...})` once. The page
+reads the registry back in that order, so a new scene is: one file here, one
+`<script src>` line, one `<section class="step" id="step-<id>">` in the page
+with its `<span class="anchor" id="<id>">`, its `.eq` block and its `.np`
+block, one `repo.widgets` line in `_variables.yml` (the only thing that
+notices the file failing to reach `docs/`), and one entry in
+`tests/factor_scenes.test.cjs`'s `SCENES`. The page throws at boot if a
+registered scene has no section.
 
-The order is a story in two parts, one per workshop section. **Section 10,
-Tucker**: one hour's real counts as a picture, the three ways to flatten that
-picture into a matrix, the SVD each flattening gives up, and the core and
-three factors that put it back together smaller. **Section 11, CP**: a rank-1
-term as three vectors and an outer product, the alternating least squares
-that finds several of them on a tensor built from exactly three, and the
-trade CP and Tucker each make for the same parameter budget. Each picture
-introduces exactly one word the next ones use -- "unfolding", then "rank" as
-a triple, then "core", then "outer product", then "term" -- and nothing says
-a word before the picture that defines it.
+The order is a story in four parts, each heading declared by the scene that
+opens it (`part: {en, es}`). **A table with three indices**: the taxi tensor
+as the cube it is, then that cube laid flat three ways. **Tucker: one basis
+per axis**: the SVD of one unfolding and the patterns it finds, then the core
+and three factors that rebuild the cube. **CP: a sum of rank-1 pieces**: one
+term, several terms, and the alternating least squares that finds them. **A
+fair comparison**: the same parameter budget spent both ways. Each picture
+introduces one word the next ones use -- "fibre" and "slice", "unfolding",
+"pattern", "core", "term", "solve" -- and nothing says a word before the
+picture that defines it.
 
 Scenes are sections down a scroller with a sticky stage, the shape
 `voice-stage.html` and `linalg-stage.html` keep, and the reader's place in it
 is whichever section crosses a band through the middle of the viewport
-(`LC.pickActive`, from `linalg-core.js`, which this stage loads for that and
-for `tweenStart`/`retarget`).
+(`LC.pickActive`).
+
+## Two surfaces
+
+`tensor`, `unfold`, `tucker` and `rank1` draw in three.js (`gl: true`): they
+are pictures of a cube, and a fibre, a slice, a slab being dealt out and a
+factor against the side of a core are all things depth shows. Each of them
+also draws an **SVG twin** in `draw()`, from the same model and projected
+through the same orbit (`ctx.basis()`, `ctx.projector()`), which is what a
+reader without WebGL, the hero embed and the browser check's layout
+measurement all see. A twin is fitted to `ctx.box()`, a board the shape of the
+stage, so it is on the board at every orbit and every slider corner by
+construction. `hosvd`, `cp`, `als` and `budget` are SVG only, on a fixed
+820 x 420 board: a scree, term cards, an error curve and a scatter are flat
+pictures, and `<text>` draws their numbers better than a canvas can.
+
+three.js is booted lazily by the frame on the first `gl` scene shown, through
+the projection stage's `vendor/linalg-boot.js` and the page's import map; a
+page opened on a flat scene, and the embed, never fetch it.
 
 ## What a scene provides
 
@@ -36,119 +54,126 @@ FactorScenes.register({
                          // to a step number, which moves on a reorder
   section: "10",         // the workshop section this belongs to, for the kicker
   part: {en, es},        // optional: the heading of the group this scene opens
-  controls: [             // the frame builds these into this scene's section
-    {id: "r2", type: "range", min: 1, max: 20, step: 1, fmt: (v, ctx) => "..."}
+  hl: ["core", "hour"],  // the data-hl tokens its equation names; it must light
+                         // each one (the test holds every token in its section
+                         // to this list)
+  controls: [            // the frame builds these into this scene's section
+    {id: "r2", type: "range", min: 1, max: 20, step: 1, fmt: (v, ctx) => "..."},
+    {id: "view", type: "select", options: ["parts", "rebuilt"]},
+    {id: "entry", type: "select", options: ["0,0,0"], available: (ctx) => [...]},
+    {id: "play", type: "play", target: "flatten", rate: 38}
+                         // a button that walks `target` from its min to its max
+                         // at `rate` per second, through setControls; it jumps
+                         // to the end under reduced motion
   ],
-  copy: {en, es},         // tab, k, h, claim, concept, b, predict, controls: {id: label},
-                          // options: {id: {value: label}}, readout(...), aria(ctx)
-  init(ctx),              // seed ctx.state; called once for every scene at boot
-  sync(ctx),              // optional: derive from the controls. Called before
-                          // readout() and before draw(), so both see the same state
-  draw(ctx),              // paint into ctx.svg (an <svg>, cleared first by the frame)
-  readout(ctx),           // -> {html, data, claim?}; data becomes #stage data-*
-                          // for the check, and claim replaces the copy's claim
-                          // on the title card when the scene can say it in numbers
-  reset(ctx)               // optional: back to the opening state
+  copy: {en, es},        // k, h, concept, claim, predict, b, eqcap, np, aria(ctx),
+                         // controls: {id: label}, options: {id: {value: label} |
+                         // (value, ctx) => label}, and the scene's own strings
+  init(ctx),             // seed ctx.state; called once for every scene at boot
+  sync(ctx),             // optional: derive from the controls, before readout
+                         // and draw
+  draw(ctx),             // paint into ctx.svg: the picture, or a gl scene's twin
+  readout(ctx),          // -> {html, data, claim?, caption?}; data becomes
+                         // #stage data-*, claim replaces the copy's claim,
+                         // caption is the line under the picture
+  code(ctx),             // -> the NumPy for this picture through K.code(rows),
+                         // built from ctx.state like readout()
+  shape(ctx),            // optional: the badge, where data.shape is not it
+  arrive(ctx),           // optional: an entrance, once, never under reduced motion
+  animates(ctx),         // optional: true while the picture is still easing,
+                         // which is what keeps the flat path repainting
+  pick(ctx, key),        // optional: a click on the stage that did not move;
+                         // key is the data-pick (SVG) or gl.pick key (three.js)
+                         // under it, and the scene turns it into setControls()
+  tip(ctx, key),         // optional: the text of the hover chip for that key
+  reset(ctx),            // optional: back to the opening state (default: init)
+
+  // gl scenes only:
+  gl: true,
+  pose: {fov, home: {az, el}, limits, margin},   // how the orbit frames it
+  bounds(ctx),           // -> {min, max}: what must be in frame, labels included;
+                         // the camera looks at its middle and backs off to fit it
+  framing(ctx, view),    // optional: reshape the view it is drawn from (the unfold
+                         // levels out as the cube lies flat) without touching the
+                         // reader's own orbit
+  still(ctx),            // optional: true where the idle drift should hold off
+  build(ctx) -> gl,      // once: {scene, cam, pick: [{mesh, key(id)}], ...}
+  render(ctx, gl)        // per frame: move what the state says moves
 });
 ```
 
-`ctx` is built once per scene by the page:
-`{FC, K, lang, embed, taxi, standIn, names, state, cache, svg, W, H, copy,
-colour(token), changed(), setControls(vals), control(id)}`. `FC` is
-`factor-core.js`, `K` is `factor-kit.js`. `taxi` is the tensor built from
-`data/taxi.json` on a successful fetch, or the tensor `FC.synthetic()` builds
-instead -- a scene reads `ctx.standIn` to know which, and every scene must
-draw something true either way. `names` is `{pickup: [...4 names], dropoff:
-[...5 names]}`, the real borough names on a fetch, or generic `P0..P3` /
-`D0..D4` on the stand-in, since the synthetic tensor has no boroughs of its
-own. `control(id)` is this scene's own control element, because the frame
-prefixes every control with the scene it belongs to (`c-tucker-r2`): several
-scenes share a control name.
+`ctx` is built once per scene by the page: `{FC, K, LC, lang, embed,
+reduceMotion, taxi, standIn, names, state, cache, svg, stage, copy,
+colour(token), hl, hover, now(), instant, changed(), setControls(vals),
+control(id), aspect, THREE, AD, glReady, gl, view(), basis(), projector(points,
+box), box(), label(text, cls)}`. `taxi` is the tensor built from
+`data/taxi.json`, or `FC.synthetic()` on a fetch failure (`standIn` says
+which). `names` holds the borough names and their short forms (`Mn`, `Bk`);
+the stand-in's are `P0..P3` and `D0..D4`. `hl` is the piece an equation
+letter under the pointer names and `hover` the key under the pointer on the
+stage: a scene lights both in `draw()` and `render()`, and nothing it writes
+into a readout may depend on either.
 
 ## The rules every scene keeps
 
-- **Nothing on screen is typed.** Every number in a readout and every
-  highlighted cell is computed from the tensor being shown, through
+- **Nothing on screen is typed.** Every number in a readout, a label, a claim
+  and a NumPy comment is computed from the tensor being shown, through
   `factor-core.js`, which `npm test` pins. A scene that needs new arithmetic
   adds it there, with a test.
-- **No three.js.** Every picture here is SVG with real `<text>` -- a number
-  grid, a bar chart, a slab -- because axe can measure text over a filled
-  rectangle and cannot measure it over a canvas.
-- **A picture a slider can grow gets a box.** Nothing clips an SVG child
-  laid out past the `820 x 420` viewBox and nothing reports one -- it is
-  simply not painted, while `readout()` goes on quoting its numbers and
-  every `data-*` assertion still passes. Three scenes draw a grid whose
-  shape a control moves: `hosvd`'s factor is 24 x r, `tucker`'s core is
-  r2 x (r0*r1), and `cp` draws all three factors at R columns each. Each
-  hands `maxW`/`maxH` to `K.numGrid`, which shrinks the cell to fit and,
-  below the size at which a number is still a number, shades each cell by
-  |value| instead of printing it. `check_navigation.cjs` measures the union
-  of every SVG child's box, through the CTM, against the viewBox -- at each
-  scene's opening values **and at the corners of the sliders that resize
-  it**.
-- **A bar's value has to be inside its own scale.** `K.bars` draws
-  `value / max` of its height from a shared zero, so a negative value is
-  drawn *downwards*, straight off the bottom of the stage, where again
-  nothing clips it. `FC.matchTerms` returns a score of 0 for a planted term
-  with no fitted column left to match -- at R below the number of planted
-  terms -- rather than the -1 its search starts from.
+- **Geometry eases; text never does.** No `<text>` and no chip is tweened, and
+  every readout and `data-*` is written from `ctx.state`, never from the eased
+  picture, so the browser check reads the truth while the picture is still
+  moving. Geometry eases by identity through `K.follow`, keyed per piece, so a
+  control moved mid-move is a new target rather than a restart. The unfold's
+  move is `FC.morphStep`, which folds back through the cube to change mode.
+- **A picture a slider can grow stays on its board.** Nothing clips an SVG
+  child laid out past the viewBox and nothing reports one -- it is simply not
+  painted, while `readout()` goes on quoting its numbers. A twin is fitted by
+  `ctx.projector`; a 2-D picture a control resizes (`hosvd`'s scree, `cp`'s
+  cards) lays itself out from what has to fit. `check_navigation.cjs`
+  measures every scene at its opening values, at the corners of the sliders
+  that resize it, and each twin after a turn.
+- **A bar's value has to be inside its own scale.** `K.bars` draws signed
+  values from a zero inside the box (`signed: true`), never downwards off the
+  bottom of it.
+- **Every gesture has a control.** A click on a voxel, a scree bar, a core
+  entry, a seed or a budget point sets controls a keyboard can also reach, and
+  a hover only shows a tip. The stage is `role="img"`, so `aria(ctx)` names
+  every fact the picture draws.
 - **Derive before you write.** Anything a control implies goes in `sync()`.
-  `readout()` and `draw()` are both called after it, so the readout and the
-  `data-*` attributes never describe the state the last frame left behind.
-- **The readout is written from the controls, never from an animation.** It
-  is rewritten when something changes, not per frame.
-- **This stage snaps, and that is a decision rather than an omission.**
-  Every scene redraws synchronously on a control change; there is no
-  animation clock on the page at all, and nothing moves on its own. The
-  other two stages ease, and the reason this one does not is what it draws:
-  grids of integers. A digit sliding through every value between 102 and 93
-  is noise, not a picture, and the numbers here *are* the lesson -- `4.71`
-  and `6.7%` are figures the handbook publishes, and a reader has to be able
-  to read them off the stage mid-drag. The bar heights (`rank1`'s three
-  factors, `hosvd`'s singular values, `budget`'s cloud) are the one place
-  easing would earn its keep, and they are not eased today because
-  `factor-kit.js` rebuilds its SVG on every paint, so a CSS transition has
-  no previous element to run from. Adding one means keeping the rects and
-  interpolating, not a one-line change.
-
-  If that is ever done, the rule the other stages keep applies: ease a
-  bar's height or a highlight's opacity, **never** a `<text>`, and write the
-  readout and every `data-*` from the slider's *target* rather than from the
-  eased frame, so the browser check reads the truth while the picture is
-  still moving.
-- **A claim card in numbers is the readout's, not the copy's.** `copy.claim`
-  is the scene's formula and is what the card shows until the scene can say
-  it in numbers. A scene whose shape a control moves -- `tucker`'s ranks,
-  `cp`'s rank and data source, `budget`'s toggle -- returns a `claim` from
-  `readout()` instead.
-- **A slider seeds the scene, so its own default has to sit on its grid.** A
-  default value not reachable from `min` by a whole number of `step`s snaps
-  on the first drag.
-- **Both languages** in `copy`, in the same commit, and `aria(ctx)` names
-  every fact the picture draws, because `#stage` is `role="img"`.
-- **Colours are tokens** (`--fa-t`, `--fa-fac`, `--fa-core`, `--fa-r`,
-  `--fa-err`, `--stage-ink`, `--stage-mute`) through `K.css`, never hex.
-  Every label sits on an opaque chip (`K.label`), because axe cannot resolve
-  contrast against a picture behind translucent text and reports
-  "incomplete" instead of pass or fail.
-- **On fetch failure the page draws `FC.synthetic()`** and publishes
-  `data-standin="1"`. A scene that only makes sense on the real tensor (none
-  currently do) would have to say so in its own readout; none may go blank.
+- **A slider seeds the scene, so its own default has to sit on its grid.**
+- **Both languages** in `copy`, in the same commit, with the same keys. The
+  NumPy is one copy for both; only its `#` comments come from `copy.np`, and no
+  line may pass 82 characters at any setting of the scene's controls.
+- **Colours are tokens** through `K.css` and `K.colour`, never hex: the three
+  axes `--fa-m0` (pickup), `--fa-m1` (dropoff) and `--fa-m2` (hour), `--fa-t`
+  for what the reader picked, `--fa-core` for the model's own (the core, a
+  rebuild), `--fa-err` for a negative, a miss or a cancelling pair. Every
+  label sits on an opaque chip (`K.label`, `K.label2d`), because axe cannot
+  resolve contrast against a picture behind translucent text.
+- **Frame-owned `data-*` are the frame's.** `gl`, `cam`, `hl`, `hover`, `easing`,
+  `playing`, `paused`, `turns` and `ready` are written by the page; a readout
+  that wrote one would have it pruned on the next change.
 
 ## What the copy says
 
-- `k` is the kicker: the concept and its section ("Unfolding · section 10"),
-  never a number.
-- `h` names the scene's one concept as a sentence a reader could repeat.
-- `concept` states it in the register of *Deep Learning* chapter 2, in one or
-  two sentences, and is drawn in a box before anything about the picture.
-- `claim` is the title card on the stage: one line, in the notation the scene
-  is about (`T ≈ G ×₁ A ×₂ B ×₃ C`).
-- `predict` is the question the reader answers *before* touching a control,
-  the way the notebooks' predict-first cells work. The readout is then the
-  answer, as a sentence with the numbers in it.
-- `b` is one or two short paragraphs of HTML, and it opens with the concrete
-  thing on the stage, with one number a reader can check.
+- `k` is the kicker: the concept and its section, never a number.
+- `h` names the scene's one idea as a sentence a reader could repeat.
+- `concept` states it in one or two sentences, with its citation: *Deep
+  Learning* for what a tensor and an SVD are, Kolda & Bader for Tucker, CP and
+  ALS, which that book does not cover.
+- `claim` is the title card: one line, in the notation the scene is about.
+  A scene whose claim a control moves returns one from `readout()`.
+- `predict` is the question to answer *before* touching a control, the way the
+  notebooks' predict-first cells work -- and where there is a worked mistake
+  for it (`worked-mistakes.md`: "hour rank 3 keeps three hours", "equal ranks
+  mean equal budgets", "rescaling a factor changes the tensor"), it is that
+  mistake. The readout is then the answer, with this tensor's numbers in it.
+- `b` opens with the concrete thing on the stage and one number a reader can
+  check, and the formula comes after.
+- Modes count from 0 (T₍₀₎ to T₍₂₎, G ×₀ A ×₁ B ×₂ C), and the letters are
+  notebook 10's: i, j, k for pickup, dropoff and hour, a, b, c for the kept
+  patterns, r for a CP term.
 
 **Every `readout().data` key is lowercase.** `stage.dataset.fN` writes
 `data-f-n`, so a camel-case key becomes a selector nobody will guess and the

@@ -637,6 +637,71 @@ of the tucker scene is the trip counts, borough by borough, hour by hour. So
 this embed is the one exception to "an embed fetches nothing": it fetches the
 same tiny file the full page does, and `data-standin="0"` says so.
 
+**Four of the factorisation stage's scenes draw in three.js after all.** The
+stage shipped SVG-only on the attention stage's reasoning (above): its
+pictures were grids of numbers, and `<text>` draws those well. That holds for
+four of its scenes -- a scree, term cards, an error curve and a scatter stay
+SVG -- and it did not hold for the other four, which are pictures *of a
+cube*. The tensor was faked as 24 isometric cards, the unfolding as three
+rectangles with a dot, the Tucker model as four grids, and none of them could
+show what the words mean: a fibre is a line through the cube, a slice a plane
+of it, an unfolding the cube's slabs dealt out side by side, and Tucker's
+factors the three edges of a small core. So `tensor`, `unfold`, `tucker` and
+`rank1` draw 480 voxels (a voxel's *volume* is its count -- a side
+proportional to the count would let the one route that holds 76% of the
+trips read as far more), on the audio and projection stages' own frame: the
+same vendored build, import map, lazy boot and orbit camera. The axe concern
+that kept three.js out is met the way those stages meet it: every label on
+the three.js path is a CSS2D chip on the stage's opaque black. Each of the
+four draws an SVG twin from the same model, projected through the same
+orbit, and that twin is what the hero embed shows, so the front door still
+fetches no three.js; the twin takes a board the shape of the stage rather
+than the 2-D scenes' 820 x 420, because letterboxed into that it was a
+picture a third of the frame.
+
+**This stage's geometry now eases, and its text still never does.** The
+README said the stage snaps because its numbers are the lesson, and a digit
+sliding from 102 to 93 is noise. That rule is kept exactly: no `<text>` and
+no chip is ever tweened, and every readout and `data-*` is written from the
+controls, never from the eased picture. What eases is geometry, by identity:
+`K.follow` keys every voxel and tile ("G:0,0,0", "C:18,1") and moves each
+from wherever it is towards where the controls put it, so a rank slider
+dragged mid-move is a new target rather than a restart, a piece a larger rank
+adds grows in place, and one a smaller rank removes shrinks where it stood.
+The unfold is the one move with a shape of its own, and its state machine is
+in the core like the other stages' camera machines: `FC.morphStep` steps the
+shown {mode, t} towards the controls' at a fixed speed and folds back through
+the cube to change mode, because one flat matrix cannot become another
+without passing through the cube, and a straight blend between two layouts
+sends voxels through each other. The morph itself turns, then deals the
+slabs sideways at their own depths, then presses them flat, and
+`tests/factor_scenes.test.cjs` checks every pair of the 480 voxels at every
+twentieth of the way for all three modes: none ever overlaps.
+
+**The measurement extends to the orbit and to the forced-flat path.** On the
+three.js path the picture is pixels no check can measure, and what can fall
+off the stage is its labels, so `fits()` measures the CSS2D chips against the
+stage there and the SVG against its own viewBox on the flat path. A new
+forced-flat pass aborts `linalg-boot.js` and, for each of the four twins,
+measures at home, after ten turns left and six up, and at the slider corner
+that grows it most, then clicks a voxel and requires the controls to follow.
+
+**Modes count from 0 on this stage.** The unfoldings were T₍₀₎ to T₍₂₎ while
+the claim card said G ×₁ A ×₂ B ×₃ C, so the card and the controls under it
+disagreed about which axis was which. It is ×₀ ×₁ ×₂ now, matching NumPy's
+axes, the stage's own "mode 2 is hour" and notebook 10's own mode-counted
+cell; the indices are notebook 10's einsum letters, i, j, k for pickup,
+dropoff and hour and a, b, c for the kept patterns.
+
+**The budget scene says which fits it is comparing, and what they show.**
+The Tucker errors are HOSVD's (which on this tensor match notebook 11's
+iterative fit to four places) and the CP ones are one ALS run, seed 1 and
+100 sweeps, so neither is a proven optimum, and the copy says so. What they
+show is that the winner depends on the budget: at 66 numbers Tucker's best
+is 4.69% against CP's 7.00%, and from 99 on CP wins. The handbooks' line that
+Tucker "is usually more accurate at the same size" is not what this tensor
+does; it is left for the handbooks' own change rather than edited here.
+
 ## Which document owns what
 
 **Seven documents, one home per fact.** They drifted once -- five copies of the

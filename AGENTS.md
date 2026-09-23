@@ -199,8 +199,9 @@ instead is `npm test` over the core modules and `check_navigation.cjs` over
 the rendered pages, both under `## Commands`. The HTML widgets -- the
 section 03 broadcasting simulator, the section 04 image tensor
 visualizer, the sections 07/09 projection & SVD stage, the sections
-00/02/04/09 audio tensor stage, and the sections 04/06/Appendix B attention
-stage -- each carry EN/ES copy tables, `?lang=`, and
+00/02/04/09 audio tensor stage, the sections 04/06/Appendix B attention
+stage, and the sections 10/11/Appendix C factorisation stage -- each carry
+EN/ES copy tables, `?lang=`, and
 their section's accent adjusted per theme to clear 4.5:1. `repo.widgets` in
 `_variables.yml` is the list of them; prose here does not count them. **The frame is shared**:
 `interactive/widget-chrome.css`, linked first by every page, owns the
@@ -401,36 +402,47 @@ know how tall the claim came out. The contract is
 `attention-scenes/README.md`.
 
 The factorisation stage (`factor-stage.html`, titled *Tucker and CP*) is the
-same scroller shape again, without three.js: **seven sections**, one
-`<section class="step">` per scene, all SVG with real `<text>` so axe can
-measure it. It opens on the real taxi tensor -- 4 pickup boroughs by 5
+same scroller shape again: **eight sections in four parts**, one `<section
+class="step">` per scene, on the real taxi tensor -- 4 pickup boroughs by 5
 dropoff boroughs by 24 hours, `interactive/data/taxi.json`, generated with the
 network by `scripts/gen_figures.py taxi` and committed rather than fetched
-live from the CSV -- and section 10 unfolds it three ways, takes the SVD of
-each unfolding, and reassembles a small core plus three factors (Tucker);
-section 11 builds a rank-1 term as three vectors, finds several with CP-ALS,
-and spends the same parameter budget on CP and on Tucker to compare them
-fairly. `factor-core.js` calls into `linalg-core.js` for its SVD, its matrix
-product and its pseudoinverse, so it loads after it; two things the stage's
-own comments explain are `linalg-core.svd`'s **thin `U`**, which caps the hour
-rank at 20 rather than 24, and its **sign convention**, which differs between
-a tall unfolding and a wide one and so is renormalised to positive-largest
-inside `hosvd()` rather than trusted from whichever branch produced it. On a
-fetch failure the page draws `FC.synthetic()`, a tensor built from three
-planted rank-1 terms at the taxi tensor's own shape, and publishes
-`data-standin="1"`; the embed (`?embed=1&theme=navy`) fetches the real,
-~2 kB tensor even so, opens on the `tucker` scene, and is otherwise silent and
-still like every other widget's embed. Link by scene name (`#tensor`,
-`#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`, `#budget`); controls are
-`#c-<scene>-<control>` and readouts `#read-<scene>`. Its pictures are
-measured the way the attention stage's are, and for one reason more: every
-grid here is **sized by a slider** -- `hosvd`'s factor is 24 x r,
-`tucker`'s core is r2 x (r0*r1), `cp` draws three factors R columns wide --
-so the check measures each scene against the `820 x 420` at its opening
-values *and at the corners of the sliders that resize it*, and `K.numGrid`
-takes a `maxW`/`maxH` box, shrinking its cell to fit and shading rather
-than printing below the size at which a number is still a number. The
-contract is `factor-scenes/README.md`.
+live from the CSV. Section 10 is the cube (`tensor`), the cube laid flat
+three ways (`unfold`), the SVD of one unfolding (`hosvd`) and the core and
+three factors that rebuild it (`tucker`); section 11 is one rank-1 term
+(`rank1`), several (`cp`), the alternating least squares that finds them
+(`als`), and the same parameter budget spent both ways (`budget`). **Four of
+them draw in three.js** -- `tensor`, `unfold`, `tucker`, `rank1`, the
+pictures of a cube -- on the audio stage's frame (lazy boot through
+`vendor/linalg-boot.js`, the import map, `linalg-core`'s orbit, drift and
+glide), and each draws an **SVG twin** from the same model projected through
+the same orbit, which is the no-WebGL path, the hero embed and what the
+browser check measures; the twin takes a board the shape of the stage. The
+other four are SVG only. A voxel's *volume* is its count, because one route
+holds 76% of the trips. Geometry eases by piece (`K.follow`) and text never
+does; the unfold's move is `FC.morphStep`, a state machine in the core that
+folds back through the cube to change mode, and its turn-deal-press morph is
+tested for no two voxels ever overlapping. Every section carries a MathML
+equation with `data-hl` tokens exactly `{pickup, dropoff, hour, core,
+rank}` -- which on this stage light the piece in the **three.js scenes
+too** -- in notebook 10's letters (i, j, k; a, b, c for the kept patterns;
+modes from 0, `G ×₀ A ×₁ B ×₂ C`), and a `<pre id="np-<scene>">` of NumPy on
+the audio stage's rules. Every gesture -- a voxel, a scree bar, a core
+entry, a seed, a budget point -- sets controls a keyboard also reaches.
+`factor-core.js` calls into `linalg-core.js` for its SVD, its matrix product
+and its pseudoinverse, so it loads after it; two things the core's comments
+explain are `linalg-core.svd`'s **thin `U`**, which caps the hour rank at 20
+rather than 24, and its **sign convention**, which differs between a tall
+unfolding and a wide one and so is renormalised to positive-largest inside
+`hosvd()` rather than trusted from whichever branch produced it. On a fetch
+failure the page draws `FC.synthetic()` and publishes `data-standin="1"`; the
+embed (`?embed=1&theme=navy`) fetches the real, ~2 kB tensor even so, opens on
+the `tucker` twin, and fetches no three.js. Link by scene name (`#tensor`,
+`#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`, `#als`, `#budget`); controls
+are `#c-<scene>-<control>` and readouts `#read-<scene>`. The check measures
+each 2-D scene against its 820 x 420 at its opening values *and at the
+corners of the sliders that resize it*, each twin at home, after a turn and at
+its largest slider corner on a forced-flat pass, and on the three.js path the
+label chips against the stage. The contract is `factor-scenes/README.md`.
 
 **Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
 strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
@@ -445,8 +457,10 @@ by reshape-then-transpose and the two contractions -- is
 `interactive/attention-core.js`, pinned the same way by
 `tests/attention_core.test.cjs`, and carries none of the three state machines
 below because the stage has no camera and no idle drift to keep one for.
-The factorisation stage's -- unfold/fold, mode products, HOSVD, CP-ALS, the
-budget search -- is `interactive/factor-core.js`, pinned by
+The factorisation stage's -- unfold/fold and an entry's unfolding address,
+mode products, HOSVD and one core entry's share, CP-ALS solve by solve and a
+fit normalised into weights, the budget search and its frontier, and the
+unfold's `morphStep` -- is `interactive/factor-core.js`, pinned by
 `tests/factor_core.test.cjs`, and calls into `linalg-core.js` for its SVD
 rather than carrying a second one, so it loads after it.
 Three kinds of
@@ -478,7 +492,8 @@ picture changes; nothing will tell you a still is stale.
 three.js is **vendored** at `interactive/vendor/`, core build and eleven
 `examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their
 transitive imports), each with its URL, SHA-256 and date in a README. The
-addons say `from 'three'`, and a **static import map** in the stage's `<head>`
+addons say `from 'three'`, and a **static import map** in the `<head>` of each
+page that draws in three.js (the projection, audio and factorisation stages)
 resolves that -- rewriting the specifier in eleven files would make the README's
 hashes describe something other than what upstream ships. The map is inert
 until a module import resolves, so the lazy `bootGL()` still holds. Upgrading

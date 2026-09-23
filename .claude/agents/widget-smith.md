@@ -27,7 +27,7 @@ rule here surprises you.
 | `linalg-stage.html` + `linalg-kit.js` + `linalg-core.js` + `linalg-scenes/*.js` | sections 07/09 — eight steps |
 | `voice-stage.html` + `voice-kit.js` + `audio-core.js` + `voice-scenes/*.js` | sections 00/02/04/09 — ten scrolling sections, five of them carrying a static MathML equation (`array`, `frame`, `spectrum`, `window`, `batch`) |
 | `attention-stage.html` + `attention-kit.js` + `attention-core.js` + `attention-scenes/*.js` | sections 04/06/Appendix B — ten scenes in three parts (words to numbers, one head, beyond one head), all inline SVG (no three.js), every one with a NumPy block from `code()`, five carrying a static MathML equation (`scores`, `scale`, `softmax`, `output`, `batch`) |
-| `factor-stage.html` + `factor-kit.js` + `factor-core.js` + `factor-scenes/*.js` | sections 10/11 — seven scenes, no three.js: every picture is SVG. Fetches the real taxi tensor (`data/taxi.json`, `scripts/gen_figures.py taxi`) even in its embed |
+| `factor-stage.html` + `factor-kit.js` + `factor-core.js` + `factor-scenes/*.js` | sections 10/11 — eight scenes; `tensor`, `unfold`, `tucker` and `rank1` draw in three.js with an SVG twin projected through the same orbit (the twin is the embed and the hero still), the other four are SVG. Geometry eases by piece (`K.follow`), text never does; the unfold's morph is `FC.morphStep`. Fetches the real taxi tensor (`data/taxi.json`, `scripts/gen_figures.py taxi`) even in its embed |
 | `widget-chrome.css` | the frame every widget shares, including the stage ink tokens |
 | `vendor/` | three.js core build and eleven `examples/jsm` addons |
 
