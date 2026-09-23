@@ -25,6 +25,10 @@ Every group shares: **our choice → our evidence → what could change our mind
 Different choices are welcome. Make the assumptions clear.
 Post these three lines in Discord. Invite one group to explain its choice.
 
+Three tasks are games with a score: the bug hunt in 04, and compression golf
+in 10 and 11. There, the share line carries the score, and the facilitator
+keeps the leaderboard on the whiteboard or in the chat.
+
 Quick picks: [axis meaning](#axis-meaning), [silent bugs](#silent-bugs), and
 [compression](#compression).
 
@@ -104,23 +108,26 @@ where it would be a poor choice. Use a notebook plot or a small sketch.
 
 <a id="silent-bugs"></a>
 
-## 04 · A test that catches the bug
+## 04 · Bug hunt: which line scrambled the astronaut?
 
 <span data-language-key="04-a-test-that-catches-the-bug"></span>
 
-**When:** After “code that runs and is still wrong” in
-[Notebook 04](notebooks/04-reshape-and-transpose.ipynb).
-**Time:** 6 minutes.
+**When:** After Exercise 1 in
+[Notebook 04](notebooks/04-reshape-and-transpose.ipynb), at the bug-hunt cell.
+**Time:** 6 minutes: 2 to match, 3 to write a test, 1 to share.
 
-A teammate converts NHWC images to NCHW using `reshape`. The output has the
-requested shape. Design a review that can tell whether pixel meaning survived.
+Four lines each turn the astronaut from HWC into CHW. All four give shape
+`(3, 512, 512)`, and none of them raises an error. The notebook draws the four
+results side by side, A to D. Only one of them is right.
 
-- What could a shape check miss?
-- Which pixel or channel would you track through the conversion?
-- What test would still work when two axes have the same size?
+- Round 1: match each picture to its line. One is noise, one is blue, one lies
+  on her side.
+- Round 2: rewrite `looks_right(chw)` until `score_test` reports 3 of 3 bugs
+  caught and no false alarm. It starts as a shape check, which catches none.
+- Which bug gets past a test that looks at a whole channel at once, and why?
 
-**Share:** One test in code or pseudocode and one visual check. Explain what
-each catches. Try them on the notebook's correct and incorrect conversions.
+**Share:** Our matches → our test and its score → the bug a weaker test let
+through.
 
 ## 05 · Keep the event, fit the budget
 
@@ -216,42 +223,46 @@ group supplies the new fact; revise your answer if needed.
 
 <a id="compression"></a>
 
-## 10 · What must compression preserve?
+## 10 · Compression golf, hole 1
 
 <span data-language-key="10-what-must-compression-preserve"></span>
 
-**When:** After the rank explorer in
+**When:** In the rank explorer in
 [Notebook 10](notebooks/10-tucker-decomposition.ipynb).
 **Time:** 8 minutes.
 
-The taxi tensor supports two users: one studies the overall daily pattern;
-the other studies a particular pickup–dropoff route at its busiest hour.
-Propose a compression choice for each.
+Store the taxi tensor in as few numbers as you can while the relative error
+stays under 7%. The explorer starts at ranks (2, 2, 3): 102 numbers in place of
+480, at 6.7%. It prints your score under the heatmaps. Fewest numbers wins.
 
-- Would the same Tucker mode ranks suit both users?
-- Could a small global error hide a large error in the route they care about?
-- Which plot or local error would you inspect before accepting the result?
+- Which of the three ranks can you cut furthest before the error crosses 7%?
+- Your entry scores the whole tensor. Could it still badly miss one route at
+  its busiest hour? Check it in the explorer's error heatmap.
+- What would a user who only cares about that route choose instead?
 
-**Share:** Two rank proposals, or one shared proposal with a defense. Use a
-notebook result and specify one additional check.
+**Share:** Our entry (ranks · numbers · error) → the rank we cut furthest and
+why it held → the user who would reject our entry.
 
-## 11 · Is this comparison fair?
+## 11 · Compression golf, hole 2
 
 <span data-language-key="11-is-this-comparison-fair"></span>
 
-**When:** After the matched-budget comparison in
-[Notebook 11](notebooks/11-tensor-factorizations.ipynb).
-**Time:** 8 minutes.
+**When:** After Exercise 1 in
+[Notebook 11](notebooks/11-tensor-factorizations.ipynb), at the golf cell.
+**Time:** 8 minutes: 5 to play, 3 for the leaderboard.
 
-A report declares CP better than Tucker because CP had lower error at
-“rank 3.” Design a comparison that could support a useful recommendation.
+Hole 1 was Tucker alone under 7%, and the best entry stored 60 numbers. Now
+CP is in the bag too, and the bar is 2%. `golf("cp", 4)` or
+`golf("tucker", (4, 4, 3))` fits one model and prints its scorecard line.
+Fewest numbers under 2% wins.
 
-- What does rank 3 mean for each model? What was actually stored?
-- Which budget should be matched: parameters, bytes, or runtime?
-- Besides reconstruction error, what outcome matters for the intended task?
+- Which model did you try first, and why?
+- Exercise 1 fixed the budget and compared errors. This hole fixes the error
+  and compares budgets. Does the same model win?
+- A report calls CP better than Tucker at “rank 3”. What did it hold fixed?
 
-**Share:** A three-measure benchmark plan. Name what you will hold fixed and
-one uncertainty that would remain after running it.
+**Share:** Our entry → the other model's best entry → the bar at which the
+other model would win.
 
 ## 12 · Bring a problem from your field
 

@@ -520,6 +520,33 @@ If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
+## Myth or fact? {.computing-slide}
+
+Back from the break: three claims from sections 02–04. Hands up for **myth**.
+
+1. Shuffling four frames leaves their mean unchanged.\
+   [**Fact.** 1.5 before and after — which is why the mean cannot tell you the order survived.]{.fragment}
+2. NaNs after standardizing mean the formula has a bug.\
+   [**Myth.** A column that never varies has a standard deviation of 0; three digit pixels never vary.]{.fragment}
+3. If a transpose and a reshape both give shape `(3, 2, 2)`, they hold the same values in the same places.\
+   [**Myth.** The same entry, `[1, 0, 0]`, is 1 after the transpose and 4 after the reshape.]{.fragment}
+
+::: {.notes}
+One minute, while the room settles. This is the slot's retrieval question.
+
+Read each claim and count hands for "myth". Before revealing, ask one person
+for a counterexample to a claim the room called a myth. Then click through the
+verdicts one at a time.
+
+1. Fact, and a trap: frames [0, 1, 2, 3] shuffled to [0, 3, 1, 2] keep a mean
+   of 1.5, but the steps go from [1, 1, 1] to [3, -2, 1].
+2. Myth: the formula divided by zero, and it was right to. A constant column
+   is a finding about the data, not a bug.
+3. Myth: notebook 04's predict-first question, and the bug hunt's lesson.
+
+All three are worked mistakes 02, 03 and 04.
+:::
+
 ## {background-image="images/slides-final/slide-16.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">File to frames to tensor to model: a four-stage pipeline showing how a video becomes a masked tensor, with the validity-mask formula spelled out.</p>
@@ -580,6 +607,32 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 
 ::: {.notes}
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+:::
+
+## Myth or fact? {.computing-slide}
+
+Back from the break: three claims from sections 05–06. Hands up for **myth**.
+
+1. `clip[1]` is the second thing that happened in the video.\
+   [**Myth.** `clip` keeps every 45th frame of 720, so `clip[1]` is source frame 45.]{.fragment}
+2. `np.einsum('ii->', A)` adds up the whole matrix.\
+   [**Myth.** A repeated letter keeps only the diagonal: 8 for `[[5, 2], [7, 3]]`, whose total is 17.]{.fragment}
+3. `np.einsum('ij->', A)` adds up the whole matrix.\
+   [**Fact.** Two different letters, both summed away: 17.]{.fragment}
+
+::: {.notes}
+One minute, while the room settles. This is the slot's retrieval question.
+
+Read each claim and count hands for "myth". Claims 2 and 3 differ by one
+letter, so expect a split vote on them. Ask someone who voted "myth" on 2 to
+say which entries it adds. Then click through the verdicts.
+
+1. Myth: an index into a sampled axis is a position in the array, not a
+   moment. 97.8% of the recorded frames are not in the tensor at all.
+2. Myth: 5 + 3 = 8, not 5 + 2 + 7 + 3 = 17.
+3. Fact: which letters repeat decides what enters the sum.
+
+These are worked mistakes 05 and 06.
 :::
 
 ## Same predictions, different coefficients {.computing-slide}
@@ -759,6 +812,33 @@ If you are short of time, run Exercise 2 and skip Exercise 3.
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
 
+## Myth or fact? {.computing-slide}
+
+Back from the break: three claims from sections 07–09. Hands up for **myth**.
+
+1. If `pinv` returns an answer without complaint, the matrix was invertible.\
+   [**Myth.** `pinv` answers for every matrix. With a duplicated column it answers for a rank-2 matrix, and `P @ A` is not the identity.]{.fragment}
+2. A forecast 1% off one step ahead can be over 3% off twelve steps ahead.\
+   [**Fact.** At `w = 1.1`, the error grows to 1% × 1.1¹² = 3.14%.]{.fragment}
+3. Two fits can both be almost exact and still disagree on their coefficients.\
+   [**Fact.** Their predictions differ by 0.000001 and their coefficients by 1.41.]{.fragment}
+
+::: {.notes}
+One minute, while the room settles. This is the slot's retrieval question.
+
+Read each claim and count hands for "myth". Two of three are facts this time;
+the room will expect one, as before. Ask for a counterexample to claim 1 before
+revealing it.
+
+1. Myth: check the rank, not whether an exception appeared.
+2. Fact: a recursive forecast eats its own output, so the update rule is
+   applied to the error too. At w = 0.9 it dies away instead.
+3. Fact: nearly collinear columns, the same lesson as section 07's collinear
+   stage. Look at the conditioning as well as the fit.
+
+These are worked mistakes 07, 08 and 09.
+:::
+
 ## {background-image="images/slides-final/slide-28.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Table to tensor to HOSVD to reconstruction: a four-step pipeline turns a trip table into an order-3 tensor, computes its HOSVD core and factors, and reconstructs it with visible error.</p>
@@ -772,6 +852,28 @@ tensors so models run on phones. In biotech, on (genes × samples × conditions)
 they find structure PCA cannot reach — PCA can only ever see two axes.
 :::
 
+## Compression golf: hole 1 {.computing-slide}
+
+Store the taxi tensor in as few numbers as you can, with relative error **under 7%**. Fewest numbers wins.
+
+- Tee off at ranks (2, 2, 3): 102 numbers, 6.70% error.
+- The rank explorer prints your score under its heatmaps.
+- Post one line: ranks · numbers · error.
+
+::: {.notes}
+Eight minutes in the rank explorer: notebook 10's core activity is the hole.
+Keep the board on the whiteboard or in the chat, sorted by numbers stored.
+
+Par is (3, 3, 1): 60 numbers at 4.69%. Most teams go (2, 2, 3), then
+(2, 2, 2), then (2, 2, 1), and miss: 46 numbers at 7.14%. (3, 2, 1) and
+(2, 3, 1) miss too, at 7.13% and 7.12%. The move that wins is spending ranks on
+the boroughs, not the hours. From (2, 2, 1), raising the hour rank to 3 buys
+0.44 points of error; raising both borough ranks to 3 buys 2.45.
+
+If nobody is under 70 numbers by minute six, ask: which rank have you not
+tried raising?
+:::
+
 ## Predict first: which hour does the hour factor pick? {.computing-slide}
 
 480 taxi counts become a small core and three factor matrices. The notebook printed one hour; find it in the picture.
@@ -779,14 +881,15 @@ they find structure PCA cannot reach — PCA can only ever see two axes.
 <a href="../../interactive/factor-stage.html?lang=en#tucker" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the Tucker widget ↗</a>
 
 ::: {.notes}
-Show this after the notebook's rank explorer has printed its two hours, as
-the evidence for "defend a choice" — never before: the scene labels the hour
-factor's peak, and both the notebook's reveal and Kahoot 3's last question
-are about that hour.
+Show this after golf, as the evidence for "defend the winner" — never
+before: the scene labels the hour factor's peak, and both the notebook's
+reveal and Kahoot 3's last question are about that hour.
 
-On the projector: ranks (2, 2, 3) hold 102 numbers in place of 480 — a 4.71x
-saving, at 6.7% error. Point at the hour factor: it peaks at 18, the hour the
-notebook just printed. Two tools, one answer. Click a core voxel to show which pickup pattern,
+On the projector: set the ranks to the room's winning entry, usually
+(3, 3, 1): 60 numbers in place of 480, an 8x saving, at 4.69% error. One hour
+pattern is left, and it peaks at 18, the hour the notebook printed. The
+winning entry kept exactly the daily shape the trips are built around. Two
+tools, one answer. Click a core voxel to show which pickup pattern,
 dropoff pattern and hour pattern it weights. Switch the view to rebuilt, then
 to residual, to show what the compression misses.
 :::
@@ -849,6 +952,26 @@ Explore later
 Optional reference: Tensor Train and t-SVD are outside today’s CP–Tucker comparison. Return to the core activity if teaching live.
 :::
 
+## Compression golf: hole 2 {.computing-slide}
+
+Any model now. Relative error **under 2%**; fewest numbers wins.
+
+- `golf("cp", 4)` or `golf("tucker", (4, 4, 3))` prints one scorecard line.
+- Hole 1 was won with 60 numbers. This bar costs more.
+- Post your best line.
+
+::: {.notes}
+Five minutes to play, then three for the board and the next slide.
+
+Par is CP rank 6: 198 numbers at 1.76%. Tucker's best is (4, 4, 5), 236
+numbers at 1.80%; (4, 4, 4) stores 196 and misses at 2.26%. CP rank 5 misses
+too, at 2.17%.
+
+Put the two holes side by side on the board. At 7%, Tucker won with 60
+numbers against CP's 66. At 2%, CP wins with 198 against Tucker's 236. Same
+tensor, same two models, and the winner flipped. Then open the budget scene.
+:::
+
 ## Predict first: same budget — who wins? {.computing-slide}
 
 The same parameter budget, spent as CP and spent as Tucker — once the pairs have their own numbers.
@@ -856,19 +979,21 @@ The same parameter budget, spent as CP and spent as Tucker — once the pairs ha
 <a href="../../interactive/factor-stage.html?lang=en#budget" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the budget widget ↗</a>
 
 ::: {.notes}
-Hold this for group task 11's share-out, after the pairs have compared their
-own CP and Tucker fits: it is the matched comparison the task asks for, and
-shown earlier it answers the pair exercise for them.
+Hold this for golf's leaderboard, after the pairs have compared their own CP
+and Tucker fits: it shows both holes in one picture, and shown earlier it
+answers the pair exercise for them.
 
 Ask the room to predict before you click: CP rank 3 and Tucker (3, 3, 3) —
 same cost? They are not: CP rank 3 is 99 numbers, Tucker (3, 3, 3) is 126.
 
 Drag the budget down to 66 parameters: Tucker wins, 4.69% error against CP's
-7.00%. From 99 numbers on, CP wins instead. The one number to leave the room
+7.00%. (The notebook's CP reached 6.73% there; the stage's fit stops early from
+one start, as its ALS scene shows.) From 99 numbers on, CP wins instead: hole 1
+was won left of that line, hole 2 right of it. The one number to leave the room
 with: which model wins depends on the budget, not on which one is "better".
 
-Then put the task's question back to the room: was the report's "rank 3"
-comparison fair, and what did each model actually store?
+Then put the report's question to the room: it called CP better at "rank 3".
+What did it hold fixed, and what did each model actually store?
 :::
 
 ## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}

@@ -25,6 +25,10 @@ Cada grupo comparte: **nuestra elección → nuestra evidencia → qué nos har�
 cambiar de opinión**. Se admiten decisiones distintas. Aclaren sus supuestos.
 Publiquen esas tres líneas en Discord. Invita a un grupo a explicar su elección.
 
+Tres actividades son juegos con puntuación: la caza del error en 04 y el golf de
+compresión en 10 y 11. En ellas, la línea que se comparte incluye la
+puntuación, y quien facilita lleva la clasificación en la pizarra o en el chat.
+
 Para empezar: [significado de los ejes](#axis-meaning),
 [errores silenciosos](#silent-bugs) y [compresión](#compression).
 
@@ -105,24 +109,27 @@ caso en que sería una mala elección. Usen una gráfica del cuaderno o un dibuj
 
 <a id="silent-bugs"></a>
 
-## 04 · Una prueba que detecte el error
+## 04 · Caza del error: ¿qué línea desordenó al astronauta?
 
 <span data-language-key="04-a-test-that-catches-the-bug"></span>
 
-**Cuándo:** Después del ejercicio sobre código que funciona pero está mal en el
-[cuaderno 04](../notebooks/04-reshape-and-transpose.ipynb).
-**Tiempo:** 6 minutos.
+**Cuándo:** Después del Ejercicio 1 del
+[cuaderno 04](../notebooks/04-reshape-and-transpose.ipynb), en la celda de la caza del error.
+**Tiempo:** 6 minutos: 2 para emparejar, 3 para escribir una prueba y 1 para compartir.
 
-Alguien convierte imágenes NHWC a NCHW con `reshape`. La salida tiene la forma
-pedida. Diseñen una revisión que compruebe si se conservó el significado de los
-píxeles.
+Cuatro líneas pasan al astronauta de HWC a CHW. Las cuatro dan forma
+`(3, 512, 512)` y ninguna da error. El cuaderno dibuja los cuatro resultados uno
+al lado del otro, de la A a la D. Solo uno es correcto.
 
-- ¿Qué error podría escapar a una comprobación de forma?
-- ¿Qué píxel o canal seguirían durante la conversión?
-- ¿Qué prueba funcionaría aunque dos ejes tuvieran el mismo tamaño?
+- Ronda 1: emparejen cada imagen con su línea. Una es ruido, otra es azul y otra
+  está tumbada de lado.
+- Ronda 2: reescriban `looks_right(chw)` hasta que `score_test` indique 3 de 3
+  errores detectados y ninguna falsa alarma. Empieza como una comprobación de
+  forma, que no detecta ninguno.
+- ¿Qué error supera una prueba que mira un canal entero de una vez, y por qué?
 
-**Compartan:** Una prueba en código o pseudocódigo y una comprobación visual.
-Expliquen qué detecta cada una. Pruébenlas con ambas conversiones del cuaderno.
+**Compartan:** Nuestros emparejamientos → nuestra prueba y su puntuación → el
+error que dejó pasar una prueba más débil.
 
 ## 05 · Conserva el evento dentro del presupuesto
 
@@ -218,42 +225,47 @@ aporta el dato nuevo; revisen su respuesta si hace falta.
 
 <a id="compression"></a>
 
-## 10 · ¿Qué debe conservar la compresión?
+## 10 · Golf de compresión, hoyo 1
 
 <span data-language-key="10-what-must-compression-preserve"></span>
 
-**Cuándo:** Después del explorador de rango en el
+**Cuándo:** En el explorador de rango del
 [cuaderno 10](../notebooks/10-tucker-decomposition.ipynb).
 **Tiempo:** 8 minutos.
 
-Dos personas usan el tensor de taxis. Una estudia el patrón diario general;
-la otra, una ruta concreta de origen a destino en su hora más concurrida.
-Propongan una compresión para cada una.
+Guarden el tensor de taxis en el menor número de números posible con un error
+relativo por debajo del 7%. El explorador empieza en rangos (2, 2, 3): 102
+números en lugar de 480, con un 6,7%. Imprime la puntuación bajo los mapas de
+calor. Gana quien guarde menos.
 
-- ¿Servirían los mismos rangos por modo de Tucker?
-- ¿Podría un error global pequeño ocultar un error grande en esa ruta?
-- ¿Qué gráfica o error local revisarían antes de aceptar el resultado?
+- ¿Cuál de los tres rangos pueden recortar más antes de que el error pase del 7%?
+- Su entrada puntúa el tensor entero. ¿Podría fallar mucho en una ruta a su hora
+  más concurrida? Compruébenlo en el mapa de error del explorador.
+- ¿Qué elegiría alguien a quien solo le importa esa ruta?
 
-**Compartan:** Dos propuestas de rango, o una común con una justificación.
-Usen un resultado del cuaderno y propongan una comprobación adicional.
+**Compartan:** Nuestra entrada (rangos · números · error) → el rango que más
+recortamos y por qué aguantó → quién rechazaría nuestra entrada.
 
-## 11 · ¿Es justa esta comparación?
+## 11 · Golf de compresión, hoyo 2
 
 <span data-language-key="11-is-this-comparison-fair"></span>
 
-**Cuándo:** Después de comparar presupuestos similares en el
-[cuaderno 11](../notebooks/11-tensor-factorizations.ipynb).
-**Tiempo:** 8 minutos.
+**Cuándo:** Después del Ejercicio 1 del
+[cuaderno 11](../notebooks/11-tensor-factorizations.ipynb), en la celda de golf.
+**Tiempo:** 8 minutos: 5 para jugar y 3 para la clasificación.
 
-Un informe declara que CP supera a Tucker porque obtuvo menor error con
-«rango 3». Diseñen una comparación que permita recomendar un método útil.
+El hoyo 1 fue Tucker solo, bajo el 7%, y la mejor entrada guardó 60 números.
+Ahora CP también está en la bolsa y la barra es del 2%. `golf("cp", 4)` o
+`golf("tucker", (4, 4, 3))` ajusta un modelo e imprime su línea de puntuación.
+Gana quien guarde menos números por debajo del 2%.
 
-- ¿Qué significa rango 3 en cada modelo? ¿Qué se almacenó realmente?
-- ¿Qué presupuesto igualarían: parámetros, bytes o tiempo?
-- Además del error de reconstrucción, ¿qué resultado importa para la tarea?
+- ¿Qué modelo probaron primero y por qué?
+- El Ejercicio 1 fijó el presupuesto y comparó errores. Este hoyo fija el error y
+  compara presupuestos. ¿Gana el mismo modelo?
+- Un informe dice que CP supera a Tucker con «rango 3». ¿Qué mantuvo fijo?
 
-**Compartan:** Un plan con tres medidas. Nombren qué mantendrán fijo y una
-incertidumbre que seguiría pendiente tras ejecutar la comparación.
+**Compartan:** Nuestra entrada → la mejor entrada del otro modelo → la barra con
+la que ganaría el otro modelo.
 
 ## 12 · Trae un problema de tu campo
 
