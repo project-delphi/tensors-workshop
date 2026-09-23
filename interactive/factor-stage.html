@@ -5,6 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Tucker and CP</title>
 
+<!-- The vendored addons say `import ... from 'three'`, which only an import
+     map can resolve without a bundler. It must be static and in <head>, and
+     it fetches nothing until a module import resolves -- so the lazy boot
+     below holds, and a page opened on a flat scene or as the hero embed never
+     pulls three.js at all. See vendor/README.md. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three-0.169.0.module.min.js",
+    "three/addons/": "./vendor/three-0.169.0/examples/jsm/"
+  }
+}
+</script>
+
 <link rel="stylesheet" href="widget-chrome.css">
 <style>
   /* The surfaces, type and frame are widget-chrome.css; this page owns its
@@ -20,18 +34,27 @@
   /* On the homepage hero's navy band. */
   :root[data-theme="navy"] { --accent: #e879f9; --on-accent: #2a0a2e; } /* 6.2:1 */
 
-  /* The roles this stage's pictures use, over the shared stage ink -- the
-     same five hexes the audio stage measured against --stage-chip's black
-     (--v-sig, --v-axis, --v-out, --v-comp, --v-res), so the contrast is
-     already proven: --fa-r at 13.7:1 is the weakest of the five. */
+  /* The roles this stage's pictures use, over the shared stage ink. Every one
+     is measured against --stage-chip's black, which is what every label on
+     the stage sits on; the weakest is --fa-m0 at 10.2:1.
+
+     The three axes have one colour each, everywhere: a fibre, a factor plate,
+     a bar row and a letter pointed at in an equation. Gold is what the reader
+     has picked out, purple is the model's own (the core, a rebuild), pink is
+     a sign gone negative or a term fighting another. */
   :root {
-    --fa-t: #ffd84d;     /* the tensor itself: the traced cell, the CP points */
-    --fa-fac: #58c4dd;   /* a factor matrix; the pickup axis */
-    --fa-core: #c39bd3;  /* the Tucker core; the dropoff axis; a matched pick */
-    --fa-r: #7ee787;     /* one more of something being counted; the fit bar */
-    --fa-err: #fc6c85;   /* a degenerate pick; an unmatched CP term */
+    --fa-m0: #58c4dd;    /* pickup: the i axis, factor A */
+    --fa-m1: #f5a97f;    /* dropoff: the j axis, factor B */
+    --fa-m2: #7ee787;    /* hour: the k axis, factor C */
+    --fa-t: #ffd84d;     /* what the reader picked: a cell, a core entry, a CP term */
+    --fa-core: #c39bd3;  /* the Tucker core; a rebuild; a positive entry */
+    --fa-err: #fc6c85;   /* negative; what a model misses; a cancelling pair */
+    --fa-ghost: #5a5a5a; /* a cell that holds no trips (decoration: never text) */
   }
 
+  /* The scroller. align-items:start is load-bearing: the grid default
+     stretches the item to full height, and position:sticky then has nothing
+     left to stick to. */
   .two-pane {
     display: grid;
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
@@ -54,21 +77,61 @@
   }
 
   #stage {
-    position: relative; height: min(56vh, 30rem);
+    position: relative; height: min(58vh, 32rem);
     background: var(--stage); border: 1px solid var(--line);
     border-radius: 10px; overflow: hidden;
   }
+  #stage[data-turns="1"] { cursor: grab; touch-action: pan-y; }
+  #stage[data-grab] { cursor: grabbing; }
+  #stage[data-hover]:not([data-grab]) { cursor: pointer; }
   #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
-  #draw { display: block; width: 100%; height: 100%; }
+  #draw, #gl { display: block; width: 100%; height: 100%; }
+  #gl { position: absolute; inset: 0; }
+  #gl[hidden] { display: none; }
+  /* A label over the three.js stage: the same opaque chip the SVG labels sit
+     on, for the same reason -- axe cannot measure contrast over a canvas. */
+  .lab {
+    font: 600 12px/1 var(--mono); color: var(--stage-ink); background: var(--stage-chip);
+    padding: 2px 5px; border-radius: 3px; white-space: nowrap; letter-spacing: 0.01em;
+  }
+  .lab.mute { color: var(--stage-mute); font-weight: 500; }
+  .lab.m0 { color: var(--fa-m0); }
+  .lab.m1 { color: var(--fa-m1); }
+  .lab.m2 { color: var(--fa-m2); }
+  .lab.sig { color: var(--fa-t); }
+  .lab.core { color: var(--fa-core); }
+  .lab.err { color: var(--fa-err); }
+  .lab.big { font-size: 14px; }
+  .lab.lit { outline: 1px solid currentColor; }
   #claim {
     position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
   }
+  /* Two chips on one line growing towards each other. Overlapping absolute
+     boxes never make the page scroll, so no check would catch them meeting;
+     the widths are what stop it. */
   #shapebadge {
     position: absolute; right: 0.75rem; top: 0.6rem; margin: 0; max-width: 34%;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  /* A line the scene can say under its picture, from the controls: the three
+     addresses of one entry, the cell a rebuild misses by most. */
+  #stagecap {
+    position: absolute; left: 0.75rem; bottom: 0.6rem; margin: 0; max-width: 60%;
+    font-size: 0.78rem; color: var(--stage-ink); background: var(--stage-chip);
+    padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
+  }
+  #glnote { position: absolute; right: 0.75rem; bottom: 0.6rem; margin: 0; font-size: 0.78rem; max-width: 36%;
+            color: var(--stage-mute); background: var(--stage-chip); padding: 0.15rem 0.4rem; border-radius: 4px; }
+  /* What is under the pointer. aria-hidden: it follows the mouse, and every
+     fact it names is also in the readout or reachable by a control. */
+  #tip {
+    position: absolute; left: 0; top: 0; margin: 0; pointer-events: none; z-index: 3;
+    font: 600 0.78rem/1.25 var(--mono); color: var(--stage-ink); background: var(--stage-chip);
+    border: 1px solid var(--stage-mute); padding: 0.2rem 0.45rem; border-radius: 4px;
+    white-space: nowrap;
   }
 
   #dots { display: inline-flex; gap: 0.35rem; align-items: center; }
@@ -87,6 +150,9 @@
   }
   .step .anchor { display: block; height: 0; }
   .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
+  /* The heading of the group a scene opens. The page is four ideas in
+     order -- the cube, Tucker, CP, a fair comparison -- not eight numbered
+     steps. */
   .step .part {
     font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
     border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
@@ -100,6 +166,8 @@
   .controls .val { float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
   .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
   .controls select { width: 100%; max-width: 22rem; }
+  .controls .playrow { display: flex; align-items: center; gap: 0.6rem; }
+  .controls button.play { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
 
   .readout {
     margin: 0.7rem 0 0; padding: 0.65rem 0.8rem; background: var(--sunk);
@@ -109,11 +177,49 @@
   .readout b { color: var(--accent); }
   .shape { font-family: var(--mono); font-size: 0.86rem; }
 
-  /* Embed mode: the homepage hero. No chrome, no scroller. */
-  /* The badge goes with the readout: the hero is a teaser, and at 330px a
-     second chip on the stage is what pushes the claim card into a third
-     line right under it. */
-  html.embed .steps, html.embed .stagebar, html.embed .readout, html.embed #shapebadge { display: none; }
+  /* Display notation. The <math> is static in the section: it is the same in
+     both languages, and check_links.py reads the static HTML. Only the caption
+     under it is translated. A letter the reader can point at carries
+     [data-hl]; hovering or focusing it lights the piece it names on the stage
+     -- the fibre along that axis, the factor plate, the core -- on both
+     surfaces, which is what connects a letter to the thing it stands for. */
+  .eq {
+    margin: 0.9rem 0 0; padding: 0.7rem 0.8rem; background: var(--sunk);
+    border: 1px solid var(--line); border-radius: 8px; max-width: 36rem;
+  }
+  /* `contain: inline-size` keeps a formula wider than the column from
+     reporting its own min-content up through the layout, which is what took
+     the audio stage past 390px; the box scrolls instead, and is focusable
+     because axe requires a scrollable region to be reachable. */
+  .eqscroll { overflow-x: auto; contain: inline-size; }
+  .eq math { font-size: 1.05rem; color: var(--ink);
+             font-family: "STIX Two Math", "Cambria Math", "Latin Modern Math", serif; }
+  .eq math + math { margin-top: 0.4rem; }
+  .eqcap { margin: 0.55rem 0 0; font-size: 0.82rem; color: var(--ink-mute); }
+  /* Colour is never the only carrier: the affordance is a dashed underline,
+     and the lit state adds a tint behind it as well as changing it. */
+  .eq [data-hl] { cursor: help; border-bottom: 1px dashed var(--ink-mute); border-radius: 2px; }
+  .eq [data-hl]:hover, .eq [data-hl].is-lit {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    border-bottom: 1px solid var(--accent);
+  }
+  .eq [data-hl]:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+  /* The NumPy under each picture, written by changed() because every number
+     in it comes from the controls. One copy of the code for both languages;
+     only the `#` comments are translated. */
+  .np { margin: 0.9rem 0 0; max-width: 36rem; }
+  .nplabel {
+    margin: 0 0 0.3rem; font: 600 0.75rem/1.3 var(--sans);
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute);
+  }
+  .np pre { margin: 0; contain: inline-size; border: 1px solid var(--line); }
+  .np pre:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .step .body code, .readout code { font: 500 0.85em/1 var(--mono); }
+
+  /* Embed mode: the homepage hero. No chrome, no scroller, no three.js. */
+  html.embed .steps, html.embed .stagebar, html.embed .readout, html.embed #shapebadge,
+  html.embed #stagecap, html.embed .hint { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { position: static; height: 100vh; display: flex; flex-direction: column; }
   html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; height: auto; min-height: 0; }
@@ -140,10 +246,10 @@
 
   <div class="two-pane">
 
-    <!-- One section per scene, in reading order. The anchor spans are
-         static because check_links.py reads the static HTML: without them
-         every #tucker and #cp in the handbooks and notebooks is a link to a
-         fragment that does not resolve. -->
+    <!-- One section per scene, in reading order. The anchor spans and the
+         <math> are static because check_links.py reads the static HTML:
+         without them every #tucker and #cp in the handbooks and notebooks is
+         a link to a fragment that does not resolve. -->
     <div class="steps" id="steps">
 
       <section class="step" id="step-tensor" aria-labelledby="h-tensor">
@@ -152,6 +258,34 @@
         <h2 id="h-tensor"></h2>
         <p class="concept" id="con-tensor"></p>
         <div class="body" id="body-tensor"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-tensor">
+            <math display="block">
+              <mrow>
+                <mi>T</mi><mo>&#x2208;</mo>
+                <msup><mi>&#x211D;</mi><mrow>
+                  <mrow data-hl="pickup" tabindex="0"><mn>4</mn></mrow><mo>&#xD7;</mo>
+                  <mrow data-hl="dropoff" tabindex="0"><mn>5</mn></mrow><mo>&#xD7;</mo>
+                  <mrow data-hl="hour" tabindex="0"><mn>24</mn></mrow>
+                </mrow></msup>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <mi>T</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="pickup" tabindex="0"><mi>i</mi></mrow><mo>,</mo>
+                <mrow data-hl="dropoff" tabindex="0"><mi>j</mi></mrow><mo>,</mo>
+                <mrow data-hl="hour" tabindex="0"><mi>k</mi></mrow>
+                <mo stretchy="false">]</mo>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-tensor"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-tensor"></p>
+          <pre id="np-tensor" tabindex="0" role="region" aria-labelledby="nplab-tensor"><code></code></pre>
+        </div>
         <p class="predict" id="pr-tensor"></p>
         <div class="controls" id="ctl-tensor"></div>
         <p class="readout" id="read-tensor"></p>
@@ -163,6 +297,40 @@
         <h2 id="h-unfold"></h2>
         <p class="concept" id="con-unfold"></p>
         <div class="body" id="body-unfold"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-unfold">
+            <math display="block">
+              <mrow>
+                <msub><mi>T</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub>
+                <mo stretchy="false">[</mo>
+                <mrow data-hl="hour" tabindex="0"><mi>k</mi></mrow><mo>,</mo>
+                <mn>5</mn><mo>&#x2062;</mo><mrow data-hl="pickup" tabindex="0"><mi>i</mi></mrow>
+                <mo>+</mo><mrow data-hl="dropoff" tabindex="0"><mi>j</mi></mrow>
+                <mo stretchy="false">]</mo>
+                <mo>=</mo>
+                <mi>T</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="pickup" tabindex="0"><mi>i</mi></mrow><mo>,</mo>
+                <mrow data-hl="dropoff" tabindex="0"><mi>j</mi></mrow><mo>,</mo>
+                <mrow data-hl="hour" tabindex="0"><mi>k</mi></mrow>
+                <mo stretchy="false">]</mo>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <msub><mi>T</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo stretchy="false">)</mo></mrow></msub>
+                <mo>&#x2208;</mo>
+                <msup><mi>&#x211D;</mi><mrow>
+                  <mrow data-hl="hour" tabindex="0"><mn>24</mn></mrow><mo>&#xD7;</mo><mn>20</mn>
+                </mrow></msup>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-unfold"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-unfold"></p>
+          <pre id="np-unfold" tabindex="0" role="region" aria-labelledby="nplab-unfold"><code></code></pre>
+        </div>
         <p class="predict" id="pr-unfold"></p>
         <div class="controls" id="ctl-unfold"></div>
         <p class="readout" id="read-unfold"></p>
@@ -174,6 +342,30 @@
         <h2 id="h-hosvd"></h2>
         <p class="concept" id="con-hosvd"></p>
         <div class="body" id="body-hosvd"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-hosvd">
+            <math display="block">
+              <mrow>
+                <msub><mi>T</mi><mrow><mo stretchy="false">(</mo><mrow data-hl="hour" tabindex="0"><mn>2</mn></mrow><mo stretchy="false">)</mo></mrow></msub>
+                <mo>=</mo><mi>U</mi><mo>&#x2062;</mo><mi mathvariant="normal">&#x3A3;</mi><mo>&#x2062;</mo>
+                <msup><mi>V</mi><mo>&#x22A4;</mo></msup>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <mrow data-hl="hour" tabindex="0"><mi>C</mi></mrow><mo>=</mo>
+                <mi>U</mi><mo stretchy="false">[</mo><mo>:</mo><mo>,</mo><mspace width="0.25em"/><mo>:</mo>
+                <mrow data-hl="rank" tabindex="0"><msub><mi>r</mi><mn>2</mn></msub></mrow>
+                <mo stretchy="false">]</mo>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-hosvd"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-hosvd"></p>
+          <pre id="np-hosvd" tabindex="0" role="region" aria-labelledby="nplab-hosvd"><code></code></pre>
+        </div>
         <p class="predict" id="pr-hosvd"></p>
         <div class="controls" id="ctl-hosvd"></div>
         <p class="readout" id="read-hosvd"></p>
@@ -185,6 +377,35 @@
         <h2 id="h-tucker"></h2>
         <p class="concept" id="con-tucker"></p>
         <div class="body" id="body-tucker"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-tucker">
+            <math display="block">
+              <mrow>
+                <mi>T</mi><mo>&#x2248;</mo>
+                <mrow data-hl="core" tabindex="0"><mi>G</mi></mrow>
+                <msub><mo>&#xD7;</mo><mn>0</mn></msub><mrow data-hl="pickup" tabindex="0"><mi>A</mi></mrow>
+                <msub><mo>&#xD7;</mo><mn>1</mn></msub><mrow data-hl="dropoff" tabindex="0"><mi>B</mi></mrow>
+                <msub><mo>&#xD7;</mo><mn>2</mn></msub><mrow data-hl="hour" tabindex="0"><mi>C</mi></mrow>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <mi>T</mi><mo stretchy="false">[</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>,</mo><mi>k</mi><mo stretchy="false">]</mo>
+                <mo>&#x2248;</mo>
+                <munder><mo>&#x2211;</mo><mrow data-hl="rank" tabindex="0"><mi>a</mi><mo>,</mo><mi>b</mi><mo>,</mo><mi>c</mi></mrow></munder>
+                <mrow data-hl="core" tabindex="0"><mi>G</mi><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow>
+                <mrow data-hl="pickup" tabindex="0"><mi>A</mi><mo stretchy="false">[</mo><mi>i</mi><mo>,</mo><mi>a</mi><mo stretchy="false">]</mo></mrow>
+                <mrow data-hl="dropoff" tabindex="0"><mi>B</mi><mo stretchy="false">[</mo><mi>j</mi><mo>,</mo><mi>b</mi><mo stretchy="false">]</mo></mrow>
+                <mrow data-hl="hour" tabindex="0"><mi>C</mi><mo stretchy="false">[</mo><mi>k</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-tucker"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-tucker"></p>
+          <pre id="np-tucker" tabindex="0" role="region" aria-labelledby="nplab-tucker"><code></code></pre>
+        </div>
         <p class="predict" id="pr-tucker"></p>
         <div class="controls" id="ctl-tucker"></div>
         <p class="readout" id="read-tucker"></p>
@@ -196,6 +417,25 @@
         <h2 id="h-rank1"></h2>
         <p class="concept" id="con-rank1"></p>
         <div class="body" id="body-rank1"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-rank1">
+            <math display="block">
+              <mrow>
+                <mi>T</mi><mo stretchy="false">[</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>,</mo><mi>k</mi><mo stretchy="false">]</mo>
+                <mo>&#x2248;</mo>
+                <mrow data-hl="rank" tabindex="0"><mi>&#x3BB;</mi></mrow><mo>&#x2062;</mo>
+                <mrow data-hl="pickup" tabindex="0"><mi>a</mi><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo></mrow><mo>&#x2062;</mo>
+                <mrow data-hl="dropoff" tabindex="0"><mi>b</mi><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo></mrow><mo>&#x2062;</mo>
+                <mrow data-hl="hour" tabindex="0"><mi>c</mi><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo></mrow>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-rank1"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-rank1"></p>
+          <pre id="np-rank1" tabindex="0" role="region" aria-labelledby="nplab-rank1"><code></code></pre>
+        </div>
         <p class="predict" id="pr-rank1"></p>
         <div class="controls" id="ctl-rank1"></div>
         <p class="readout" id="read-rank1"></p>
@@ -207,9 +447,74 @@
         <h2 id="h-cp"></h2>
         <p class="concept" id="con-cp"></p>
         <div class="body" id="body-cp"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-cp">
+            <math display="block">
+              <mrow>
+                <mi>T</mi><mo stretchy="false">[</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>,</mo><mi>k</mi><mo stretchy="false">]</mo>
+                <mo>&#x2248;</mo>
+                <munder><mo>&#x2211;</mo><mrow data-hl="rank" tabindex="0"><mi>r</mi></mrow></munder>
+                <mrow data-hl="rank" tabindex="0"><msub><mi>&#x3BB;</mi><mi>r</mi></msub></mrow><mo>&#x2062;</mo>
+                <mrow data-hl="pickup" tabindex="0"><msub><mi>a</mi><mi>r</mi></msub><mo stretchy="false">[</mo><mi>i</mi><mo stretchy="false">]</mo></mrow><mo>&#x2062;</mo>
+                <mrow data-hl="dropoff" tabindex="0"><msub><mi>b</mi><mi>r</mi></msub><mo stretchy="false">[</mo><mi>j</mi><mo stretchy="false">]</mo></mrow><mo>&#x2062;</mo>
+                <mrow data-hl="hour" tabindex="0"><msub><mi>c</mi><mi>r</mi></msub><mo stretchy="false">[</mo><mi>k</mi><mo stretchy="false">]</mo></mrow>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-cp"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-cp"></p>
+          <pre id="np-cp" tabindex="0" role="region" aria-labelledby="nplab-cp"><code></code></pre>
+        </div>
         <p class="predict" id="pr-cp"></p>
         <div class="controls" id="ctl-cp"></div>
         <p class="readout" id="read-cp"></p>
+      </section>
+
+      <section class="step" id="step-als" aria-labelledby="h-als">
+        <span class="anchor" id="als"></span>
+        <p class="kicker" id="k-als"></p>
+        <h2 id="h-als"></h2>
+        <p class="concept" id="con-als"></p>
+        <div class="body" id="body-als"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-als">
+            <math display="block">
+              <mrow>
+                <mi>M</mi><mo stretchy="false">[</mo>
+                <mrow data-hl="pickup" tabindex="0"><mi>i</mi></mrow><mo>,</mo>
+                <mrow data-hl="rank" tabindex="0"><mi>r</mi></mrow>
+                <mo stretchy="false">]</mo><mo>=</mo>
+                <munder><mo>&#x2211;</mo><mrow><mi>j</mi><mo>,</mo><mi>k</mi></mrow></munder>
+                <mi>T</mi><mo stretchy="false">[</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>,</mo><mi>k</mi><mo stretchy="false">]</mo>
+                <mrow data-hl="dropoff" tabindex="0"><mi>B</mi><mo stretchy="false">[</mo><mi>j</mi><mo>,</mo><mi>r</mi><mo stretchy="false">]</mo></mrow>
+                <mrow data-hl="hour" tabindex="0"><mi>C</mi><mo stretchy="false">[</mo><mi>k</mi><mo>,</mo><mi>r</mi><mo stretchy="false">]</mo></mrow>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <mrow data-hl="pickup" tabindex="0"><mi>A</mi></mrow><mo>&#x2190;</mo><mi>M</mi><mo>&#x2062;</mo>
+                <msup>
+                  <mrow><mo>(</mo>
+                    <mrow data-hl="dropoff" tabindex="0"><msup><mi>B</mi><mo>&#x22A4;</mo></msup><mi>B</mi></mrow>
+                    <mo>&#x2217;</mo>
+                    <mrow data-hl="hour" tabindex="0"><msup><mi>C</mi><mo>&#x22A4;</mo></msup><mi>C</mi></mrow>
+                  <mo>)</mo></mrow>
+                  <mo>+</mo>
+                </msup>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-als"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-als"></p>
+          <pre id="np-als" tabindex="0" role="region" aria-labelledby="nplab-als"><code></code></pre>
+        </div>
+        <p class="predict" id="pr-als"></p>
+        <div class="controls" id="ctl-als"></div>
+        <p class="readout" id="read-als"></p>
       </section>
 
       <section class="step" id="step-budget" aria-labelledby="h-budget">
@@ -218,6 +523,38 @@
         <h2 id="h-budget"></h2>
         <p class="concept" id="con-budget"></p>
         <div class="body" id="body-budget"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-budget">
+            <math display="block">
+              <mrow>
+                <mi mathvariant="normal">CP</mi><mo>:</mo><mspace width="0.4em"/>
+                <mrow data-hl="rank" tabindex="0"><mi>R</mi></mrow><mo>&#x2062;</mo>
+                <mo stretchy="false">(</mo>
+                <mrow data-hl="pickup" tabindex="0"><mn>4</mn></mrow><mo>+</mo>
+                <mrow data-hl="dropoff" tabindex="0"><mn>5</mn></mrow><mo>+</mo>
+                <mrow data-hl="hour" tabindex="0"><mn>24</mn></mrow>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+            <math display="block">
+              <mrow>
+                <mi mathvariant="normal">Tucker</mi><mo>:</mo><mspace width="0.4em"/>
+                <mrow data-hl="core" tabindex="0">
+                  <msub><mi>r</mi><mn>0</mn></msub><msub><mi>r</mi><mn>1</mn></msub><msub><mi>r</mi><mn>2</mn></msub>
+                </mrow>
+                <mo>+</mo>
+                <mrow data-hl="pickup" tabindex="0"><mn>4</mn><msub><mi>r</mi><mn>0</mn></msub></mrow><mo>+</mo>
+                <mrow data-hl="dropoff" tabindex="0"><mn>5</mn><msub><mi>r</mi><mn>1</mn></msub></mrow><mo>+</mo>
+                <mrow data-hl="hour" tabindex="0"><mn>24</mn><msub><mi>r</mi><mn>2</mn></msub></mrow>
+              </mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-budget"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-budget"></p>
+          <pre id="np-budget" tabindex="0" role="region" aria-labelledby="nplab-budget"><code></code></pre>
+        </div>
         <p class="predict" id="pr-budget"></p>
         <div class="controls" id="ctl-budget"></div>
         <p class="readout" id="read-budget"></p>
@@ -227,11 +564,17 @@
 
     <div class="stagewrap">
       <!-- role="img" with a label rewritten per scene: every fact the stage
-           draws is also in the readout. -->
-      <div id="stage" role="img" aria-label="" tabindex="0">
+           draws is also in the readout. tabindex so the three.js scenes can
+           be turned from the keyboard; bindStage() is never called in embed
+           mode. -->
+      <div id="stage" role="img" aria-label="" tabindex="0" data-gl="none">
         <svg id="draw" viewBox="0 0 820 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <canvas id="gl" hidden></canvas>
         <p id="claim"></p>
         <p id="shapebadge" hidden></p>
+        <p id="stagecap" hidden></p>
+        <p id="glnote" hidden></p>
+        <p id="tip" aria-hidden="true" hidden></p>
       </div>
 
       <div class="stagebar">
@@ -241,7 +584,11 @@
         <button type="button" id="next"></button>
         <span class="grow"></span>
         <button type="button" id="reset"></button>
+        <button type="button" id="home" hidden></button>
+        <label class="toggle" id="glow-wrap" hidden><input type="checkbox" id="glow" checked> <span id="glow-label"></span></label>
+        <button type="button" id="motion" aria-pressed="false"></button>
       </div>
+      <p class="hint" id="hint" hidden></p>
       <p id="embedcap"></p>
       <p class="sr" id="status" aria-live="polite"></p>
     </div>
@@ -256,10 +603,13 @@
 
 </div>
 
-<!-- linalg-core.js supplies the tweens and pickActive(); factor-core.js is
-     the arithmetic factor-core.test.cjs pins; factor-kit.js is the SVG
-     drawing kit and the scene registry. All plain scripts, so the page
-     works from file://. No three.js: every picture here is SVG. -->
+<!-- linalg-core.js supplies the SVD, the tweens, pickActive() and the orbit
+     camera; factor-core.js is the arithmetic factor-core.test.cjs pins;
+     factor-kit.js is the drawing kit and the scene registry. All plain
+     scripts, so the page works from file://. Four scenes draw in three.js,
+     which vendor/linalg-boot.js hands over through bootGL() below --
+     injected on the first three.js scene shown, so a page opened on a flat
+     scene, or as the hero embed, never fetches it. -->
 <script src="linalg-core.js"></script>
 <script src="factor-core.js"></script>
 <script src="factor-kit.js"></script>
@@ -269,6 +619,7 @@
 <script src="factor-scenes/tucker.js"></script>
 <script src="factor-scenes/rank1.js"></script>
 <script src="factor-scenes/cp.js"></script>
+<script src="factor-scenes/als.js"></script>
 <script src="factor-scenes/budget.js"></script>
 
 <script>
@@ -293,32 +644,42 @@
       navHome: "← Workshop home",
       navInteractive: "Interactive",
       navNotebooks: "Notebooks",
-      intro: "A tensor can be replaced by a small core plus one factor matrix per axis (Tucker), " +
-             "or by a sum of a few rank-1 terms (CP). Both are on the same 4 x 5 x 24 tensor of real " +
-             "New York taxi trips -- pickup borough by dropoff borough by hour of day -- so every " +
-             "number on this page is the same tensor, cut and put back together seven ways. Section 10 " +
-             "builds Tucker: the three unfoldings, the SVD of each, and the core and three factors they " +
-             "assemble into. Section 11 builds CP: a rank-1 term as three vectors, the alternating least " +
-             "squares that finds several of them, and the parameter budget CP and Tucker each spend " +
-             "differently for the same tensor. Each picture asks you to predict before you touch a " +
-             "control; the box under the controls is the answer, with this tensor's own numbers in it.",
-      reset: "Reset this picture",
+      intro: "6,383 real New York taxi trips, counted by pickup borough, dropoff borough and hour of " +
+             "day, make a 4 × 5 × 24 cube of 480 numbers -- and three quarters of those trips never " +
+             "leave Manhattan. This page is eight pictures of that one cube, in four groups. First the " +
+             "cube itself, and the three ways to lay it flat as a matrix. Then Tucker: the SVD of each " +
+             "flattening finds a few patterns per axis, and a small core says how much each " +
+             "combination of patterns matters -- 102 numbers standing in for 480, at 6.7% error. Then " +
+             "CP: one term is three vectors multiplied together, several terms are found by " +
+             "alternating least squares, and the answer depends on where the search starts. Last, the " +
+             "only fair way to compare the two: the same number of parameters. The four pictures of " +
+             "the cube turn -- drag them -- and you can click a voxel, a bar or a point to pick it. " +
+             "Each picture asks you to predict before you touch a control; the box under the controls " +
+             "is the answer, with this tensor's own numbers in it.",
+      reset: "Reset this picture", home: "Home view", glow: "Glow",
+      motion: "Pause motion", motionOn: "Resume motion",
       prev: "◀ Back", next: "Next ▶",
+      pause: "❚❚ Pause",
       stepOf: (i, n) => i + " of " + n,
       stepName: (i, n, h) => i + " of " + n + ": " + h,
+      hint: "Drag to turn · scroll to move closer · + / − keys · click a voxel to pick it · hover pauses motion.",
       failed: "The taxi tensor could not be loaded, so every picture on this page is a synthesised " +
               "stand-in instead: the shapes and the arithmetic are real, the counts are not.",
-      embedCap: "A real tensor becomes a small core and three factor matrices.",
-      shape: "Shape", concept: "Concept",
+      glNoScript: "Three-dimensional view unavailable, so this picture is drawn flat. Every number is the same.",
+      glNoWebgl: "This browser reports no WebGL, so this picture is drawn flat. Every number is the same.",
+      glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
+      embedCap: "480 taxi counts become a small core and three factor matrices.",
+      shape: "Shape", concept: "Concept", code: "In NumPy",
       aboutH: "About this page",
       about1: "Every number on this page is computed in the browser from the tensor on the stage -- the " +
-              "unfolded shapes, the singular values, the core, the CP error. Nothing is drawn to a " +
-              "stored answer.",
+              "unfolded shapes, the singular values, the core, every CP term and every ALS step. " +
+              "Nothing is drawn to a stored answer.",
       about2: "It accompanies section 10 (Tucker) and section 11 (CP), with Appendix C's take-home. Each " +
-              "picture has its own address -- #tensor, #unfold, #hosvd, #tucker, #rank1, #cp, #budget -- " +
-              "and the notebooks link to the one they are teaching. The tensor is built from 6,383 real " +
-              "New York taxi trips (the taxis dataset seaborn ships, itself from the NYC Taxi & " +
-              "Limousine Commission)."
+              "picture has its own address -- #tensor, #unfold, #hosvd, #tucker, #rank1, #cp, #als, " +
+              "#budget -- and the notebooks link to the one they are teaching. The tensor is built from " +
+              "6,383 real New York taxi trips (the taxis dataset seaborn ships, itself from the NYC Taxi " +
+              "& Limousine Commission).",
+      turn: "Drag or use arrow keys to turn; scroll or use plus and minus to move closer. Hover pauses motion."
     },
     es: {
       eyebrow: "Secciones 10 y 11 · Apéndice C",
@@ -326,43 +687,55 @@
       navHome: "← Inicio del taller",
       navInteractive: "Interactivo",
       navNotebooks: "Cuadernos",
-      intro: "Un tensor puede sustituirse por un núcleo pequeño más una matriz factor por eje (Tucker), " +
-             "o por una suma de unos pocos términos de rango 1 (CP). Ambos se muestran sobre el mismo " +
-             "tensor de 4 x 5 x 24 de viajes reales de taxis de Nueva York -- barrio de origen por " +
-             "barrio de destino por hora del día -- así que cada número de esta página es el mismo " +
-             "tensor, cortado y recompuesto de siete maneras. La sección 10 construye Tucker: los tres " +
-             "desdoblados, la SVD de cada uno, y el núcleo y los tres factores que arman. La sección 11 " +
-             "construye CP: un término de rango 1 como tres vectores, los mínimos cuadrados alternos que " +
-             "encuentran varios de ellos, y el presupuesto de parámetros que CP y Tucker gastan de forma " +
-             "distinta para el mismo tensor. Cada imagen te pide una predicción antes de tocar un " +
-             "control; la caja bajo los controles es la respuesta, con los números de este tensor.",
-      reset: "Reiniciar esta imagen",
+      intro: "6.383 viajes reales de taxi en Nueva York, contados por barrio de origen, barrio de " +
+             "destino y hora del día, forman un cubo de 4 × 5 × 24 con 480 números, y tres cuartas " +
+             "partes de esos viajes nunca salen de Manhattan. Esta página son ocho imágenes de ese " +
+             "único cubo, en cuatro grupos. Primero el cubo mismo, y las tres maneras de extenderlo " +
+             "como una matriz. Después Tucker: la SVD de cada desplegado encuentra unos pocos patrones " +
+             "por eje, y un núcleo pequeño dice cuánto importa cada combinación de patrones: 102 " +
+             "números en lugar de 480, con un 6,7% de error. Después CP: un término son tres vectores " +
+             "multiplicados, varios términos se encuentran con mínimos cuadrados alternos, y la " +
+             "respuesta depende de dónde empieza la búsqueda. Por último, la única manera justa de " +
+             "comparar los dos: el mismo número de parámetros. Las cuatro imágenes del cubo giran " +
+             "(arrástralas) y puedes hacer clic en un vóxel, una barra o un punto para elegirlo. Cada " +
+             "imagen te pide una predicción antes de tocar un control; la caja bajo los controles es " +
+             "la respuesta, con los números de este tensor.",
+      reset: "Reiniciar esta imagen", home: "Vista inicial", glow: "Brillo",
+      motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
       prev: "◀ Atrás", next: "Siguiente ▶",
+      pause: "❚❚ Pausa",
       stepOf: (i, n) => i + " de " + n,
       stepName: (i, n, h) => i + " de " + n + ": " + h,
+      hint: "Arrastra para girar · rueda para acercar · teclas + / − · haz clic en un vóxel para elegirlo · el cursor pausa el movimiento.",
       failed: "No se pudo cargar el tensor de taxis, así que cada imagen de esta página es en cambio un " +
               "sustituto sintetizado: las formas y la aritmética son reales, los conteos no.",
-      embedCap: "Un tensor real se convierte en un núcleo pequeño y tres matrices factor.",
-      shape: "Forma", concept: "Concepto",
+      glNoScript: "La vista tridimensional no está disponible, así que esta imagen se dibuja plana. Todos los números son los mismos.",
+      glNoWebgl: "Este navegador no reporta WebGL, así que esta imagen se dibuja plana. Todos los números son los mismos.",
+      glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
+      embedCap: "480 conteos de taxis se convierten en un núcleo pequeño y tres matrices factor.",
+      shape: "Forma", concept: "Concepto", code: "En NumPy",
       aboutH: "Sobre esta página",
       about1: "Cada número de esta página se calcula en el navegador a partir del tensor que hay en el " +
-              "escenario -- las formas desdobladas, los valores singulares, el núcleo, el error de CP. " +
-              "Nada se dibuja sobre una respuesta guardada.",
+              "escenario: las formas desplegadas, los valores singulares, el núcleo, cada término de CP " +
+              "y cada paso de ALS. Nada se dibuja sobre una respuesta guardada.",
       about2: "Acompaña a la sección 10 (Tucker) y a la 11 (CP), con el trabajo para casa del Apéndice C. " +
-              "Cada imagen tiene su propia dirección -- #tensor, #unfold, #hosvd, #tucker, #rank1, #cp, " +
-              "#budget -- y los cuadernos enlazan a la que están enseñando. El tensor se construye con " +
-              "6.383 viajes reales de taxis de Nueva York (el conjunto de datos taxis que distribuye " +
-              "seaborn, a su vez de la Comisión de Taxis y Limusinas de la ciudad de Nueva York)."
+              "Cada imagen tiene su propia dirección (#tensor, #unfold, #hosvd, #tucker, #rank1, #cp, " +
+              "#als, #budget) y los cuadernos enlazan a la que están enseñando. El tensor se construye " +
+              "con 6.383 viajes reales de taxis de Nueva York (el conjunto de datos taxis que distribuye " +
+              "seaborn, a su vez de la Comisión de Taxis y Limusinas de la ciudad de Nueva York).",
+      turn: "Arrastra o usa las flechas para girar; usa la rueda o más y menos para acercar. El cursor pausa el movimiento."
     }
   }[lang];
 
   // -------------------------------------------------------------- the data
-  // A synthesised stand-in on a fetch failure -- or in the tests, where the
-  // network may be unavailable -- with the same shape as the real tensor, so
-  // every picture on this page still draws something true. The embed fetches
-  // the real, tiny (~2 kB) tensor too: it is small enough that a still
-  // picture of the real thing costs nothing extra.
-  const GENERIC_NAMES = {pickup: ["P0", "P1", "P2", "P3"], dropoff: ["D0", "D1", "D2", "D3", "D4"]};
+  // A synthesised stand-in on a fetch failure, with the same shape as the
+  // real tensor, so every picture on this page still draws something true.
+  // The embed fetches the real, tiny (~2 kB) tensor too.
+  const GENERIC_NAMES = {pickup: ["P0", "P1", "P2", "P3"], dropoff: ["D0", "D1", "D2", "D3", "D4"],
+                         pickupShort: ["P0", "P1", "P2", "P3"], dropoffShort: ["D0", "D1", "D2", "D3", "D4"]};
+  // Short names for a borough where a label has no room for the whole one.
+  // Proper names, so one form serves both languages.
+  const SHORT = {"Bronx": "Bx", "Brooklyn": "Bk", "Manhattan": "Mn", "Queens": "Qn", "Staten Island": "SI"};
   let taxi = null, names = GENERIC_NAMES, standIn = true, failed = false;
 
   function loadTaxi() {
@@ -370,12 +743,15 @@
       .then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then((json) => {
         taxi = FC.tensor(json.data, json.shape);
-        names = {pickup: json.pickup, dropoff: json.dropoff};
+        names = {
+          pickup: json.pickup, dropoff: json.dropoff,
+          pickupShort: json.pickup.map((n) => SHORT[n] || n.slice(0, 2)),
+          dropoffShort: json.dropoff.map((n) => SHORT[n] || n.slice(0, 2))
+        };
         standIn = false;
       })
       .catch(() => {
-        const syn = FC.synthetic();
-        taxi = syn.T;
+        taxi = FC.synthetic().T;
         names = GENERIC_NAMES;
         standIn = true;
         failed = true;
@@ -390,15 +766,38 @@
   }
   let active = scenes[0];
   let step = 0;
+  // Which piece the reader is pointing at in a display equation, and which
+  // one under the pointer on the stage. Frame state, not a scene's: neither
+  // may rewrite a readout, because a hover that moved text under the cursor
+  // would be a page that fights its reader.
+  let hl = null, hover = null;
   const ctxFor = new Map();
   const byId = (id) => scenes.find((s) => s.id === id);
 
   const stage = $("stage"), svg = $("draw");
 
+  // The pausable clock the drift and the camera glide run on. Held by the
+  // button, by a pointer over a three.js scene, by keyboard focus on it, and
+  // by a hidden tab. Geometry eases on real time instead -- a reader who
+  // clicks a voxel has the pointer over the stage, and a picture that froze
+  // mid-move whenever the pointer was on it would look broken.
+  const motion = {manual: reduceMotion, over: false, focus: false, held: false, heldAt: 0, offset: 0};
+  const now = () => (motion.held ? motion.heldAt : performance.now()) - motion.offset;
+  function refreshMotion() {
+    motion.hover = motion.over && !!active.gl;
+    const hold = motion.manual || motion.hover || motion.focus || document.hidden;
+    const t = performance.now();
+    if (hold && !motion.held) motion.heldAt = t;
+    if (!hold && motion.held) motion.offset += t - motion.heldAt;
+    motion.held = hold;
+    stage.dataset.paused = hold ? "1" : "0";
+    refreshDrift();
+  }
+
   function contextFor(scene) {
     if (ctxFor.has(scene.id)) return ctxFor.get(scene.id);
     const c = {
-      FC, K, lang, embed,
+      FC, K, LC, lang, embed, reduceMotion,
       get taxi() { return taxi; },
       get standIn() { return standIn; },
       get names() { return names; },
@@ -407,21 +806,81 @@
       svg, stage,
       get copy() { return scene.copy[lang]; },
       colour: (token) => K.css(token),
+      // The piece named by the equation letter under the pointer, and the key
+      // of whatever is under it on the stage. A scene reads both in draw() and
+      // render(); nothing it writes into a readout may depend on either.
+      get hl() { return hl; },
+      get hover() { return hover; },
+      // Real time, for geometry that eases. `instant` is true under reduced
+      // motion or the pause button: a scene then snaps to its target.
+      now: () => performance.now(),
+      get instant() { return reduceMotion || motion.manual; },
       changed,
       setControls: (vals) => setControls(scene, vals),
-      control: (id) => $("c-" + scene.id + "-" + id)
+      control: (id) => $("c-" + scene.id + "-" + id),
+      get aspect() {
+        const r = stage.getBoundingClientRect();
+        return Math.max(0.2, r.width / Math.max(1, r.height));
+      },
+      // The three.js side, filled by bootGL(). `gl` is what build() returned.
+      get THREE() { return window.THREE; },
+      get AD() { return window.THREE_ADDONS; },
+      get glReady() { return GL.ready; },
+      gl: null,
+      // The view this scene is drawn from right now -- the reader's orbit,
+      // eased by a glide, reshaped by the scene's own framing -- as a screen
+      // basis. The flat twin projects through it, so a drag turns the twin
+      // exactly as it turns the three.js picture.
+      view: () => framedView(scene),
+      basis: () => K.viewBasis(framedView(scene), sceneTarget(scene)),
+      // A projection fitted into `box` at the scale the home view would get,
+      // shrunk further only if the current view needs more room: the twin
+      // holds still under a small turn rather than breathing, and never
+      // leaves the viewBox.
+      projector: (points, box) => {
+        const B = K.viewBasis(framedView(scene), sceneTarget(scene));
+        const P0 = K.projector(points, K.viewBasis(homeFramed(scene), sceneTarget(scene)), box);
+        const P1 = K.projector(points, B, box);
+        return P1.s <= P0.s ? P1 : K.projector(points, B, shrinkBox(box, P0.s, P1.s));
+      },
+      label: (text, cls) => K.label2d(text, cls)
     };
     ctxFor.set(scene.id, c);
     return c;
   }
+  // A box around the same centre whose fitted scale is `want` rather than the
+  // `got` it would give -- the current view fits at the home view's scale.
+  function shrinkBox(box, want, got) {
+    const k = want / got;
+    const cx = (box[0] + box[2]) / 2, cy = (box[1] + box[3]) / 2;
+    const hw = (box[2] - box[0]) / 2 * k, hh = (box[3] - box[1]) / 2 * k;
+    return [cx - hw, cy - hh, cx + hw, cy + hh];
+  }
 
   // ------------------------------------------------------- the controls
+  // Scenes declare controls; the frame builds them into that scene's own
+  // section, labels them from the scene's copy in the page's language, and
+  // hands back plain values. A `play` control is a button that walks another
+  // control of the same scene from its minimum to its maximum.
   function buildControls(scene) {
     const host = $("ctl-" + scene.id);
     host.textContent = "";
     const ctx = contextFor(scene);
     const copy = scene.copy[lang];
     (scene.controls || []).forEach((spec) => {
+      if (spec.type === "play") {
+        const row = document.createElement("div");
+        row.className = "playrow";
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "play";
+        b.id = "c-" + scene.id + "-" + spec.id;
+        b.textContent = (copy.controls && copy.controls[spec.id]) || spec.id;
+        b.addEventListener("click", () => togglePlay(scene, spec));
+        row.appendChild(b);
+        host.appendChild(row);
+        return;
+      }
       const wrap = document.createElement("label");
       const val = document.createElement("span");
       val.className = "val";
@@ -433,10 +892,13 @@
       let input;
       if (spec.type === "select") {
         input = document.createElement("select");
-        spec.options.forEach((o) => {
+        // `available` narrows the list to what is legal right now -- the core
+        // entries the ranks actually have -- so an option that would blank
+        // the picture is never offered.
+        (spec.available ? spec.available(ctx) : spec.options).forEach((o) => {
           const opt = document.createElement("option");
           opt.value = o;
-          opt.textContent = (copy.options && copy.options[spec.id] && copy.options[spec.id][o]) || o;
+          opt.textContent = optionLabel(copy, spec, o, ctx);
           input.appendChild(opt);
         });
         input.value = String(ctx.state[spec.id]);
@@ -450,6 +912,9 @@
       input.autocomplete = "off";
       input.addEventListener("input", () => {
         ctx.state[spec.id] = spec.type === "select" ? input.value : Number(input.value);
+        // A hand on the control the player is walking takes it back.
+        if (player && player.scene === scene && player.spec.target === spec.id) stopPlay();
+        dropDrift();
         if (active !== scene) showScene(scene, false);
         changed();
       });
@@ -459,11 +924,31 @@
     });
   }
 
+  function optionLabel(copy, spec, o, ctx) {
+    const table = copy.options && copy.options[spec.id];
+    if (typeof table === "function") return table(o, ctx);
+    return (table && table[o]) || o;
+  }
+
   function rebuildLabels(scene) {
     const ctx = contextFor(scene), copy = scene.copy[lang];
     (scene.controls || []).forEach((spec) => {
       const input = $("c-" + scene.id + "-" + spec.id);
-      if (!input) return;
+      if (!input || spec.type === "play") return;
+      if (spec.type === "select" && spec.available) {
+        const want = spec.available(ctx);
+        const have = Array.from(input.options).map((o) => o.value);
+        if (want.join(",") !== have.join(",")) {
+          input.textContent = "";
+          want.forEach((o) => {
+            const opt = document.createElement("option");
+            opt.value = o;
+            opt.textContent = optionLabel(copy, spec, o, ctx);
+            input.appendChild(opt);
+          });
+        }
+        input.value = String(ctx.state[spec.id]);
+      }
       const val = input.parentNode.querySelector(".val");
       if (val) val.textContent = spec.fmt ? spec.fmt(ctx.state[spec.id], ctx) : "";
     });
@@ -477,32 +962,87 @@
       if (input) input.value = String(vals[k]);
     });
     rebuildLabels(scene);
-    changed();
+    if (scene === active) changed();
+  }
+
+  // ----------------------------------------------------------- the player
+  // One control walking another. It steps through setControls(), so every
+  // value it passes is a value the readout is written from, and it publishes
+  // data-playing while it runs. It stops on a change of picture, on a hand on
+  // the control it is walking, and at the end.
+  let player = null;
+  function togglePlay(scene, spec) {
+    if (player) { const same = player.scene === scene && player.spec === spec; stopPlay(); if (same) return; }
+    const ctx = contextFor(scene);
+    const target = (scene.controls || []).find((c) => c.id === spec.target);
+    if (!target) return;
+    if (active !== scene) showScene(scene, false);
+    const lo = target.min, hi = target.max;
+    let from = Number(ctx.state[spec.target]);
+    if (from >= hi) from = lo;
+    if (ctx.instant) { setControls(scene, {[spec.target]: hi}); return; }
+    setControls(scene, {[spec.target]: from});
+    player = {scene, spec, target, t0: performance.now(), from};
+    stage.dataset.playing = "1";
+    $("c-" + scene.id + "-" + spec.id).textContent = T.pause;
+  }
+  function stopPlay() {
+    if (!player) return;
+    const b = $("c-" + player.scene.id + "-" + player.spec.id);
+    if (b) b.textContent = player.scene.copy[lang].controls[player.spec.id];
+    player = null;
+    stage.dataset.playing = "0";
+  }
+  function stepPlay() {
+    if (!player || player.scene !== active) return;
+    const ctx = contextFor(active);
+    const {spec, target} = player;
+    const stepSize = target.step || 1;
+    const raw = player.from + (spec.rate || 30) * (performance.now() - player.t0) / 1000;
+    const v = Math.min(target.max, target.min + Math.floor((raw - target.min) / stepSize + 1e-9) * stepSize);
+    if (v !== ctx.state[spec.target]) setControls(active, {[spec.target]: v});
+    if (v >= target.max) stopPlay();
   }
 
   // -------------------------------------------------------- the readout
+  // Written from the controls' values, never from anything eased, and only
+  // when something changed -- rewriting it every frame destroys a reader's
+  // selection and makes the browser check race the animation.
   const written = new Set();
 
   function changed() {
     const ctx = contextFor(active);
     // Whatever the control changed, the scene derives from it before
-    // anything is written down or painted: readout(), draw() and data-* all
-    // read ctx.state after sync(), never the frame the last paint left.
-    if (active.sync) active.sync(ctx);
+    // anything is written down or painted.
+    if (taxi && active.sync) active.sync(ctx);
     const r = (taxi ? active.readout(ctx) : null) || {};
     $("read-" + active.id).innerHTML = r.html || "";
+    // The NumPy for this picture, at the controls' own values.
+    if (active.code) {
+      const lines = taxi ? active.code(ctx) : [];
+      $("np-" + active.id).firstChild.textContent = lines.join("\n");
+    }
     $("claim").textContent = r.claim || active.copy[lang].claim;
+    const cap = $("stagecap");
+    cap.textContent = (taxi && r.caption) || "";
+    cap.hidden = !cap.textContent;
 
     let sh = "";
-    if (taxi) sh = (r.data && r.data.shape) ? "[" + String(r.data.shape).split(",").join(", ") + "]" : "";
+    if (taxi) {
+      sh = active.shape ? active.shape(ctx)
+         : (r.data && r.data.shape ? "[" + String(r.data.shape).split(",").join(", ") + "]" : "");
+    }
     const badge = $("shapebadge");
     badge.textContent = sh ? T.shape + " " + sh : "";
     badge.hidden = !sh;
     if (sh) stage.dataset.tensorshape = sh; else delete stage.dataset.tensorshape;
 
     const aria = (taxi && ctx.copy.aria) ? ctx.copy.aria(ctx) : "";
-    stage.setAttribute("aria-label", aria);
+    stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
+    // Only the keys a readout wrote last time are pruned: data-gl, data-cam,
+    // data-hl, data-hover, data-playing, data-paused and data-ready are the
+    // frame's, and a readout must never write one of them.
     const data = Object.assign({scene: active.id}, r.data || {});
     data.standin = standIn ? "1" : "0";
     written.forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
@@ -515,11 +1055,465 @@
     paint();
   }
 
+  // ------------------------------------------------------------ painting
+  // Which surface is live: the three.js canvas for a three.js scene once the
+  // modules are in, the SVG otherwise -- including for a three.js scene's
+  // twin while the modules load, or forever if they never do.
+  const glLive = () => !!(active.gl && GL.ready && !embed);
+
   function paint() {
-    svg.textContent = "";
-    if (!taxi) return;
+    const live = glLive();
+    $("gl").hidden = !live;
+    svg.style.display = live ? "none" : "block";
+    // The CSS2D labels are HTML over the stage, not pixels in it, so the SVG
+    // does not paint over them: hide the layer with its canvas.
+    if (GL.lab) GL.lab.domElement.style.display = live ? "" : "none";
+    if (live) {
+      renderGL();
+    } else {
+      stage.dataset.gl = "none";
+      svg.textContent = "";
+      if (!taxi) return;
+      active.draw(contextFor(active));
+    }
+  }
+
+  // Pointing at a letter in an equation lights the piece it names. This never
+  // calls changed(): the readout is written from the controls. It repaints and
+  // publishes data-hl, which is the frame's own attribute.
+  function lightAxis(token, on) {
+    const next = on ? token : (hl === token ? null : hl);
+    if (next === hl) return;
+    hl = next;
+    if (hl) stage.dataset.hl = hl; else delete stage.dataset.hl;
+    document.querySelectorAll(".eq [data-hl]").forEach((el) => {
+      el.classList.toggle("is-lit", !!hl && el.dataset.hl === hl);
+    });
+    if (!glLive()) paint();
+  }
+
+  function bindEquations() {
+    document.querySelectorAll(".eq [data-hl]").forEach((el) => {
+      const token = el.dataset.hl;
+      el.addEventListener("pointerenter", () => lightAxis(token, true));
+      el.addEventListener("pointerleave", () => lightAxis(token, false));
+      el.addEventListener("focus", () => lightAxis(token, true));
+      el.addEventListener("blur", () => lightAxis(token, false));
+    });
+  }
+
+  function frame() {
     const ctx = contextFor(active);
-    active.draw(ctx);
+    stepPlay();
+    // `animates` is a picture still easing towards its controls. On the flat
+    // path that costs a repaint per frame only while it is true; the three.js
+    // path repaints every frame anyway, for the drift and the glide.
+    const moving = taxi && active.animates ? active.animates(ctx) : false;
+    if (glLive()) renderGL();
+    else if (moving || glide.active) paint();
+    requestAnimationFrame(frame);
+  }
+
+  // ------------------------------------------------- the three.js stage
+  // One renderer, one composer (render pass, bloom, output) and one CSS2D
+  // label layer, re-pointed at whichever three.js scene is on the stage --
+  // the shape linalg-stage.html and voice-stage.html keep. Booted lazily, on
+  // the first three.js scene shown.
+  const GL = {ready: false, wanted: false, note: null, glow: true, budget: true, frames: [],
+              renderer: null, composer: null, pass: null, bloom: null, lab: null, stamp: "",
+              ray: null, labScene: null};
+  const STAGE = {target: null, canvas: null};
+
+  function whenThree(ms) {
+    return new Promise((resolve, reject) => {
+      if (window.THREE && window.THREE_ADDONS) return resolve();
+      const timer = setTimeout(() => reject(new Error("timeout")), ms);
+      addEventListener("three-ready", () => { clearTimeout(timer); resolve(); }, {once: true});
+      const s = document.createElement("script");
+      s.type = "module";
+      s.src = "vendor/linalg-boot.js";
+      s.onerror = () => { clearTimeout(timer); reject(new Error("load")); };
+      document.head.appendChild(s);
+    });
+  }
+
+  function glNote(why) {
+    const note = $("glnote");
+    GL.note = why;
+    if (why && active.gl) { note.textContent = T[why]; note.hidden = false; }
+    else note.hidden = true;
+  }
+
+  function bootGL() {
+    if (GL.wanted || embed) return;
+    GL.wanted = true;
+    whenThree(6000).then(() => {
+      if (initGL()) {
+        glNote(null);
+        resizeGL();
+        showScene(active, false);
+        refreshDrift();
+      } else glNote("glNoWebgl");
+    }).catch(() => glNote("glNoScript"));
+  }
+
+  function initGL() {
+    const THREE = window.THREE, AD = window.THREE_ADDONS;
+    let renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({canvas: $("gl"), antialias: true, alpha: false});
+    } catch (e) { return false; }
+    if (!renderer || !renderer.getContext()) return false;
+
+    STAGE.canvas = new THREE.Color(K.css("--stage"));
+    STAGE.target = STAGE.canvas.clone().convertSRGBToLinear();
+    renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 1.5));
+    renderer.setClearColor(STAGE.target, 1);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    GL.renderer = renderer;
+
+    GL.lab = new AD.CSS2DRenderer();
+    GL.lab.domElement.style.position = "absolute";
+    GL.lab.domElement.style.top = "0";
+    GL.lab.domElement.style.left = "0";
+    GL.lab.domElement.style.pointerEvents = "none";
+    GL.lab.domElement.style.overflow = "hidden";
+    stage.insertBefore(GL.lab.domElement, $("claim"));
+
+    const composer = new AD.EffectComposer(renderer);
+    GL.pass = new AD.RenderPass(new THREE.Scene(), new THREE.PerspectiveCamera());
+    composer.addPass(GL.pass);
+    // The voxels are drawn under the threshold on purpose: only the picked
+    // cell, the lit core entry and the fibres' frames are bright enough to
+    // bloom, so 24 Manhattan voxels in a row do not merge into one bar.
+    GL.bloom = new AD.UnrealBloomPass(new THREE.Vector2(1, 1), 0.45, 0.35, 0.8);
+    composer.addPass(GL.bloom);
+    // Last, always: without it the composer bypasses outputColorSpace.
+    composer.addPass(new AD.OutputPass());
+    GL.composer = composer;
+    GL.ray = new THREE.Raycaster();
+    GL.ready = true;
+    return true;
+  }
+
+  function resizeGL() {
+    if (!GL.ready) return;
+    const r = stage.getBoundingClientRect();
+    const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+    GL.renderer.setSize(w, h, false);
+    GL.composer.setSize(w, h);
+    GL.bloom.setSize(w, h);
+    GL.lab.setSize(w, h);
+    for (const s of scenes) {
+      const c = ctxFor.get(s.id);
+      if (!c || !c.gl) continue;
+      c.gl.cam.aspect = w / h;
+      c.gl.cam.updateProjectionMatrix();
+    }
+  }
+
+  // Where each three.js scene is looked at from: one pair of angles per
+  // scene, kept while the reader is on another picture. What is drawn may be
+  // an eased version of it (shownView), reshaped by the scene (framedView).
+  const views = {};
+  const viewOf = (id) => {
+    if (!views[id]) {
+      const s = byId(id);
+      views[id] = LC.orbitView(s.pose.home.az, s.pose.home.el);
+    }
+    return views[id];
+  };
+
+  const glide = {active: false, scene: null, az: null, el: null};
+  function glideTo(id, fromAz, fromEl, toAz, toEl, ms) {
+    if (reduceMotion || motion.held) { glide.active = false; return; }
+    const t = now();
+    if (glide.active && glide.scene === id) {
+      glide.az = LC.retarget(glide.az, toAz, t, ms);
+      glide.el = LC.retarget(glide.el, toEl, t, ms);
+    } else {
+      glide.az = LC.tweenStart(fromAz, toAz, t, ms);
+      glide.el = LC.tweenStart(fromEl, toEl, t, ms);
+    }
+    glide.scene = id;
+    glide.active = true;
+  }
+  function shownView(id) {
+    const v = viewOf(id);
+    if (!glide.active || glide.scene !== id) return v;
+    const t = now();
+    const a = LC.tweenAt(glide.az, t), e = LC.tweenAt(glide.el, t);
+    if (a.done && e.done) { glide.active = false; refreshDrift(); return v; }
+    return {az: a.value, el: e.value, dolly: v.dolly};
+  }
+  // A scene may reshape the view it is drawn from -- the unfold levels the
+  // camera as the cube lies flat -- without touching the reader's own orbit,
+  // so going back to the cube gives them back the view they left.
+  function framedView(scene) {
+    const v = shownView(scene.id);
+    return scene.framing ? scene.framing(contextFor(scene), v) : v;
+  }
+  function homeFramed(scene) {
+    const H = LC.orbitView(scene.pose.home.az, scene.pose.home.el);
+    return scene.framing ? scene.framing(contextFor(scene), H) : H;
+  }
+  // What the camera looks at: the middle of the scene's own bounds, so a
+  // picture that grows one way (the Tucker diagram's hour plate, a cube laid
+  // flat) stays centred on the stage.
+  function sceneTarget(scene) {
+    const ctx = contextFor(scene);
+    if (scene.pose.target) return scene.pose.target;
+    if (!taxi || !scene.bounds) return [0, 0, 0];
+    const b = scene.bounds(ctx);
+    return [(b.min[0] + b.max[0]) / 2, (b.min[1] + b.max[1]) / 2, (b.min[2] + b.max[2]) / 2];
+  }
+
+  // The idle drift: the stage sways until someone reaches for it. The shape
+  // of a stretch and the transitions between them are linalg-core's.
+  const drift = Object.assign(LC.driftIdle(), {});
+  const driftWanted = () =>
+    !reduceMotion && !embed && !document.hidden && !motion.held && !glide.active && glLive() &&
+    !(active.still && active.still(contextFor(active)));
+  function setDrift(on) {
+    if (on === drift.on) return;
+    const t = performance.now();
+    Object.assign(drift, on ? LC.driftStart(drift, viewOf(active.id), t) : LC.driftPause(drift, t));
+  }
+  const refreshDrift = () => setDrift(driftWanted());
+  const dropDrift = () => { Object.assign(drift, LC.driftRelease(drift, performance.now())); };
+
+  function takeView(id) {
+    const from = shownView(id);
+    glide.active = false;
+    return {az: from.az, el: from.el, dolly: from.dolly};
+  }
+  // Turning works on both surfaces: the flat twin projects through the same
+  // view. Moving closer is the three.js picture's alone -- the twin is fitted
+  // to the viewBox, and a twin that could be zoomed past it would be a
+  // picture SVG silently stops painting.
+  function orbitBy(dAz, dEl) {
+    if (!active.gl || embed) return;
+    dropDrift();
+    views[active.id] = LC.orbitBy(takeView(active.id), dAz, dEl, active.pose.limits);
+    stampCam();
+    if (!glLive()) paint();
+  }
+  function dollyBy(factor) {
+    if (!glLive()) return;
+    dropDrift();
+    views[active.id] = LC.orbitDolly(takeView(active.id), factor, active.pose.limits);
+    stampCam();
+  }
+  function homeView() {
+    if (!active.gl) return;
+    dropDrift();
+    const from = shownView(active.id);
+    const home = active.pose.home;
+    views[active.id] = LC.orbitView(home.az, home.el);
+    glideTo(active.id, from.az, from.el, home.az, home.el, 600);
+    stampCam();
+    if (!glLive()) paint();
+  }
+
+  function stampCam() {
+    if (!active.gl) { if (stage.dataset.cam) delete stage.dataset.cam; GL.stamp = ""; return; }
+    const v = viewOf(active.id);
+    const at = v.az.toFixed(2) + "," + v.el.toFixed(2) + "," + v.dolly.toFixed(2);
+    if (GL.stamp !== at) { GL.stamp = at; stage.dataset.cam = at; }
+  }
+
+  // How far back the camera sits: far enough that the scene's own bounds,
+  // seen from its home view, fit the stage at its current aspect -- the same
+  // fit the twin makes -- so a slider that grows the picture moves the camera
+  // back rather than cropping it.
+  function fitDistance(ctx, scene) {
+    const P = scene.pose;
+    const b = scene.bounds(ctx);
+    const target = sceneTarget(scene);
+    const B = K.viewBasis(homeFramed(scene), target);
+    // The exact perspective bound: a corner `z` nearer the camera than the
+    // target, `u` across and `v` up, is inside the frustum when the eye is at
+    // least z + |u| / tan(half-fov-x) and z + |v| / tan(half-fov-y) away.
+    const ty = Math.tan(P.fov * Math.PI / 360), tx = ty * ctx.aspect;
+    const m = P.margin || 1.08;
+    let dist = 0;
+    for (const p of K.corners(b.min, b.max)) {
+      const d = [p[0] - target[0], p[1] - target[1], p[2] - target[2]];
+      const u = d[0] * B.right[0] + d[1] * B.right[1] + d[2] * B.right[2];
+      const v = d[0] * B.up[0] + d[1] * B.up[1] + d[2] * B.up[2];
+      const z = d[0] * B.fwd[0] + d[1] * B.fwd[1] + d[2] * B.fwd[2];
+      dist = Math.max(dist, z + m * Math.abs(u) / tx, z + m * Math.abs(v) / ty);
+    }
+    return dist;
+  }
+
+  function applyCamera(ctx) {
+    const P = active.pose;
+    if (drift.on && !glide.active) {
+      Object.assign(viewOf(active.id), LC.driftPose(drift, performance.now() - drift.t0, P.limits));
+    }
+    const target = sceneTarget(active);
+    const eye = LC.orbitEye(target, fitDistance(ctx, active), framedView(active));
+    const cam = ctx.gl.cam;
+    cam.up.set(0, 1, 0);
+    cam.position.set(eye[0], eye[1], eye[2]);
+    cam.lookAt(target[0], target[1], target[2]);
+    stampCam();
+  }
+
+  function renderGL() {
+    const ctx = contextFor(active);
+    if (!ctx.gl) {
+      ctx.gl = active.build(ctx);
+      resizeGL();
+    }
+    if (GL.labScene !== active.id) {
+      GL.labScene = active.id;
+      GL.lab.domElement.replaceChildren();
+    }
+    const t0 = performance.now();
+    applyCamera(ctx);
+    active.render(ctx, ctx.gl);
+    GL.pass.scene = ctx.gl.scene;
+    GL.pass.camera = ctx.gl.cam;
+    GL.bloom.enabled = GL.glow && !reduceMotion && GL.budget;
+    GL.composer.render();
+    GL.lab.render(ctx.gl.scene, ctx.gl.cam);
+    stage.dataset.gl = "composer";
+
+    if (GL.bloom.enabled && GL.frames.length < 60) {
+      GL.frames.push(performance.now() - t0);
+      if (GL.frames.length === 60) {
+        const med = GL.frames.slice().sort((a, b) => a - b)[30];
+        if (med > 24) {
+          GL.budget = false;
+          $("glow").checked = false;
+          GL.glow = false;
+          glNote("glSlow");
+        }
+      }
+    }
+  }
+
+  // ------------------------------------------------------ the reader's hand
+  // What is under the pointer: a key the scene wrote on an SVG element
+  // (data-pick), or one it maps a three.js instance to (gl.pick). Hover
+  // publishes data-hover and a tip and repaints; a click that did not move
+  // is a pick, and the scene turns it into control values.
+  function pickAt(clientX, clientY, target) {
+    if (glLive()) {
+      const ctx = contextFor(active);
+      const gl = ctx.gl;
+      if (!gl || !gl.pick || !gl.pick.length) return null;
+      const r = stage.getBoundingClientRect();
+      const ndc = new window.THREE.Vector2(((clientX - r.left) / r.width) * 2 - 1, -((clientY - r.top) / r.height) * 2 + 1);
+      GL.ray.setFromCamera(ndc, gl.cam);
+      const hits = GL.ray.intersectObjects(gl.pick.map((p) => p.mesh), false);
+      if (!hits.length) return null;
+      const h = hits[0];
+      const p = gl.pick.find((q) => q.mesh === h.object);
+      return p ? p.key(h.instanceId) : null;
+    }
+    const el = target && target.closest ? target.closest("[data-pick]") : null;
+    return el && svg.contains(el) ? el.getAttribute("data-pick") : null;
+  }
+
+  function setHover(key, clientX, clientY) {
+    const tip = $("tip");
+    const ctx = contextFor(active);
+    const text = key && active.tip ? active.tip(ctx, key) : "";
+    if (key !== hover) {
+      hover = key;
+      if (hover) stage.dataset.hover = hover; else delete stage.dataset.hover;
+      if (!glLive()) paint();
+    }
+    if (!text) { tip.hidden = true; return; }
+    tip.textContent = text;
+    tip.hidden = false;
+    const r = stage.getBoundingClientRect();
+    const w = tip.offsetWidth, h = tip.offsetHeight;
+    let x = clientX - r.left + 14, y = clientY - r.top + 14;
+    if (x + w > r.width - 6) x = clientX - r.left - w - 14;
+    if (y + h > r.height - 6) y = clientY - r.top - h - 14;
+    tip.style.transform = "translate(" + Math.max(4, x) + "px," + Math.max(4, y) + "px)";
+  }
+
+  function bindStage() {
+    let live = null, down = null, queued = null;
+    stage.addEventListener("pointerenter", () => { motion.over = true; refreshMotion(); });
+    stage.addEventListener("pointerleave", () => {
+      motion.over = false; refreshMotion();
+      setHover(null, 0, 0);
+    });
+    stage.addEventListener("focusin", () => { motion.focus = stage.matches(":focus-visible") && !!active.gl; refreshMotion(); });
+    stage.addEventListener("focusout", () => { motion.focus = false; refreshMotion(); });
+    document.addEventListener("visibilitychange", refreshMotion);
+
+    stage.addEventListener("pointerdown", (e) => {
+      down = {x: e.clientX, y: e.clientY, t: performance.now(), target: e.target};
+      if (!active.gl) return;
+      try { stage.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
+      live = {id: e.pointerId, x: e.clientX, y: e.clientY};
+      stage.dataset.grab = "1";
+    });
+    stage.addEventListener("pointermove", (e) => {
+      if (live && e.pointerId === live.id) {
+        const dx = e.clientX - live.x, dy = e.clientY - live.y;
+        live.x = e.clientX; live.y = e.clientY;
+        if (Math.abs(dx) + Math.abs(dy) > 0) orbitBy(-dx * 0.008, dy * 0.005);
+        return;
+      }
+      // Hover, throttled to one pick per frame: a raycast per pointer event
+      // is several per frame on a fast mouse.
+      if (!queued) {
+        requestAnimationFrame(() => {
+          const q = queued; queued = null;
+          if (!q || !taxi) return;
+          setHover(pickAt(q.x, q.y, q.target), q.x, q.y);
+        });
+      }
+      queued = {x: e.clientX, y: e.clientY, target: e.target};
+    });
+    const release = (e) => {
+      const wasLive = live && e.pointerId === live.id;
+      if (wasLive) { live = null; delete stage.dataset.grab; }
+      if (!down || e.type === "pointercancel") { down = null; return; }
+      const moved = Math.hypot(e.clientX - down.x, e.clientY - down.y);
+      const quick = performance.now() - down.t < 400;
+      const target = down.target;
+      down = null;
+      if (moved >= 5 || !quick || !taxi || !active.pick) return;
+      // Picked from where the press began: on the flat path the element under
+      // a captured pointer is the stage, not the voxel.
+      const key = pickAt(e.clientX, e.clientY, glLive() ? null : target);
+      if (!key) return;
+      dropDrift();
+      active.pick(contextFor(active), key);
+    };
+    stage.addEventListener("pointerup", release);
+    stage.addEventListener("pointercancel", release);
+    stage.addEventListener("wheel", (e) => {
+      if (!glLive() || e.ctrlKey || e.metaKey || e.altKey) return;
+      e.preventDefault();
+      const pixels = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? stage.clientHeight : 1);
+      dollyBy(Math.exp(Math.max(-0.35, Math.min(0.35, pixels * 0.0015))));
+    }, {passive: false});
+    stage.addEventListener("keydown", (e) => {
+      if (!active.gl || e.ctrlKey || e.metaKey || e.altKey) return;
+      const d = e.shiftKey ? 0.3 : 0.1;
+      const moves = {
+        ArrowLeft: () => orbitBy(d, 0), ArrowRight: () => orbitBy(-d, 0),
+        ArrowUp: () => orbitBy(0, -d), ArrowDown: () => orbitBy(0, d),
+        "+": () => dollyBy(0.9), "=": () => dollyBy(0.9), "-": () => dollyBy(1.11),
+        Home: () => homeView()
+      };
+      const move = moves[e.key];
+      if (!move) return;
+      e.preventDefault();
+      motion.focus = true;
+      refreshMotion();
+      move();
+    });
   }
 
   // ----------------------------------------------------------- the chrome
@@ -533,6 +1527,13 @@
       $("con-" + s.id).dataset.label = T.concept;
       $("body-" + s.id).innerHTML = c.b;
       $("pr-" + s.id).textContent = c.predict || "";
+      const cap = document.getElementById("eqcap-" + s.id);
+      if (cap) cap.textContent = c.eqcap || "";
+      const np = document.getElementById("np-" + s.id);
+      if (np) {
+        np.parentNode.hidden = !s.code;
+        $("nplab-" + s.id).textContent = T.code;
+      }
       if (s.part && s.part[lang] !== group) {
         group = s.part[lang];
         const part = document.createElement("p");
@@ -553,8 +1554,14 @@
     });
   }
 
+  const arrived = new Set();
+
+  // The reader is now looking at this picture. Called by the scroll watcher,
+  // by the bar, by a hash and by a control in a section that is not the
+  // active one -- so everything expensive here is behind a change of scene.
   function showScene(scene, scroll) {
     const isNew = active !== scene;
+    if (isNew) { stopPlay(); setHover(null, 0, 0); }
     active = scene;
     step = scenes.indexOf(scene);
     scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
@@ -565,7 +1572,32 @@
     $("next").disabled = step === scenes.length - 1;
     $("stepnum").textContent = T.stepOf(step + 1, scenes.length);
     if (isNew) $("status").textContent = scene.copy[lang].h;
+
+    const ctx = contextFor(scene);
+    const three = !!scene.gl && !embed;
+    stage.dataset.turns = three ? "1" : "0";
+    $("home").hidden = !three;
+    $("glow-wrap").hidden = !(three && GL.ready);
+    $("hint").hidden = !three;
+    glNote(GL.note);
+    if (three) bootGL();
+    if (three && GL.ready && (isNew || !arrived.has(scene.id))) {
+      const v = viewOf(scene.id);
+      dropDrift();
+      const from = LC.orbitClamp({az: v.az - 0.3, el: v.el - 0.08, dolly: v.dolly}, scene.pose.limits);
+      glideTo(scene.id, from.az, from.el, v.az, v.el, 900);
+    }
+    // An entrance plays the first time the reader reaches the picture, on
+    // whichever surface it is drawn -- but a three.js scene waits for its
+    // modules, so the entrance is not spent on a twin nobody will see again.
+    const ready = !three || GL.ready || GL.note;
+    if (taxi && ready && !arrived.has(scene.id) && !ctx.instant && scene.arrive) {
+      arrived.add(scene.id);
+      scene.arrive(ctx);
+    }
+    stampCam();
     changed();
+    refreshMotion();
     if (scroll) {
       $("step-" + scene.id).scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block: "center"});
     }
@@ -603,8 +1635,13 @@
   $("title").textContent = T.title;
   $("intro").textContent = T.intro;
   $("reset").textContent = T.reset;
+  $("home").textContent = T.home;
+  $("glow-label").textContent = T.glow;
+  $("hint").textContent = T.hint;
   $("prev").textContent = T.prev;
   $("next").textContent = T.next;
+  $("motion").textContent = reduceMotion ? T.motionOn : T.motion;
+  $("motion").setAttribute("aria-pressed", String(reduceMotion));
   $("h-about").textContent = T.aboutH;
   $("about-1").textContent = T.about1;
   $("about-2").innerHTML = T.about2;
@@ -619,13 +1656,31 @@
 
   $("reset").addEventListener("click", () => {
     const ctx = contextFor(active);
-    if (active.reset) active.reset(ctx);
+    stopPlay();
+    if (active.reset) active.reset(ctx); else active.init(ctx);
     buildControls(active);
+    homeView();
     changed();
   });
+  $("home").addEventListener("click", () => homeView());
   $("prev").addEventListener("click", () => goTo(step - 1, true));
   $("next").addEventListener("click", () => goTo(step + 1, true));
+  $("glow").addEventListener("change", (e) => {
+    GL.glow = e.target.checked;
+    if (GL.glow) {
+      GL.budget = true;
+      GL.frames = [];
+      if (GL.note === "glSlow") glNote(null);
+    }
+  });
+  $("motion").addEventListener("click", () => {
+    motion.manual = !motion.manual;
+    $("motion").setAttribute("aria-pressed", String(motion.manual));
+    $("motion").textContent = motion.manual ? T.motionOn : T.motion;
+    refreshMotion();
+  });
 
+  window.addEventListener("resize", () => { resizeGL(); if (!glLive()) paint(); });
   if (!embed) addEventListener("hashchange", () => {
     const s = byId((location.hash || "").replace("#", ""));
     if (s) showScene(s, true);
@@ -633,6 +1688,9 @@
 
   fillText();
   stage.dataset.scene = scenes[0].id;
+  stage.dataset.playing = "0";
+  refreshMotion();
+  if (!embed) { bindStage(); bindEquations(); }
 
   loadTaxi().then(() => {
     if (failed) $("status").textContent = T.failed;
@@ -644,6 +1702,7 @@
       watchSteps();
       if (wanted) $("step-" + wanted.id).scrollIntoView({block: "center"});
     }
+    requestAnimationFrame(frame);
   });
 })();
 </script>

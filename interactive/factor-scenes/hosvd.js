@@ -1,59 +1,116 @@
-// Scene 3: what the SVD says about one unfolding. A scree of singular
-// values, the first r lit, and the factor matrix those r columns make --
-// the piece hosvd() in factor-core.js assembles into Tucker's A, B and C.
+// Scene 3: what the SVD of one unfolding finds. A scree of its singular
+// values on a log scale (on a linear one there is a single bar), the kept
+// columns of U drawn as the patterns they are -- day curves for hour,
+// labelled bars for a borough -- and the unfolding beside what rank r misses
+// of it. The piece hosvd() in factor-core.js assembles into Tucker's A, B, C.
 // See factor-scenes/README.md for the contract this keeps.
 (function () {
   "use strict";
   const FC = window.FactorCore, K = window.FactorKit;
-  const SUBD = ["₀", "₁", "₂"];
   const RMAX_LABEL = [4, 5, 20];
+  const LETTER = ["A", "B", "C"];
+  const AXES = ["pickup", "dropoff", "hour"];
+  const AXES_ES = ["origen", "destino", "hora"];
+
+  function facts(ctx) {
+    const T = ctx.taxi, s = ctx.state;
+    const bases = FC.hosvdBases(T);
+    const S = bases[s.mode].S;
+    const U = FC.signFix(bases[s.mode].U, s.r);
+    const e = FC.svdEnergy(S, s.r);
+    const u = FC.unfoldingRebuild(T, s.mode, s.r, bases);
+    const col0 = U.map((row) => row[0]);
+    return {S, U, e, u, col0, rmax: RMAX_LABEL[s.mode]};
+  }
+
+  // Who a borough pattern is mostly about: its largest entry, by name.
+  function mostly(ctx, mode, v) {
+    let best = 0;
+    for (let i = 1; i < v.length; i++) if (Math.abs(v[i]) > Math.abs(v[best])) best = i;
+    const names = mode === 0 ? ctx.names.pickup : ctx.names.dropoff;
+    return {name: names[best], w: v[best]};
+  }
+
 
   const EN = {
     k: "The SVD of one unfolding · section 10",
-    h: "Each unfolding has its own SVD, and its own rank",
-    concept: "The SVD of a matrix ranks its directions by how much of the matrix each explains. Keeping the first r of them is the best possible rank-r approximation — the Eckart–Young theorem, the same one section 09's truncated SVD used on an image. <span class=\"cite\">Deep Learning §2.8</span>",
-    claim: "A = U[:, :r]  from  SVD(T₍₀₎)",
-    predict: "Before you slide: mode 2's unfolding is 24 × 20. Can r ever reach 24 there, or does something else cap it first?",
-    b: "<p>Each of the three unfoldings gets its own SVD, computed once and cached: sliding r just keeps more or fewer of its columns. The bars are the singular values, largest first; the ones inside r are lit, and how fast they fall off is how compressible this mode is.</p><p>Mode 2's unfolding is only 24 × 20, so its SVD hands back at most 20 columns — a <em>thin</em> U, the shape NumPy's own <code>svd(..., full_matrices=False)</code> returns. That is the hour rank's ceiling, not 24.</p>",
+    h: "An unfolding's SVD finds a few patterns, and each spans its whole axis",
+    concept: 'The SVD of a matrix ranks its directions by how much of the matrix each explains, and keeping the first r is the best rank-r approximation there is -- the Eckart–Young theorem section 09 used on an image. The columns of U are patterns over the rows. <span class="cite">Deep Learning §2.8</span>',
+    claim: "C = U[:, :r₂]  from  SVD(T₍₂₎)",
+    predict: "Before you slide: “hour rank 3 keeps three of the 24 hours.” True or false?",
+    b: "<p>The bars are the singular values of one unfolding, largest first, on a log scale -- on a linear one you would see a single bar, because the first holds 99.8% of the hour unfolding's energy: σ₁ = 1,101, σ₂ = 31. The lit bars are the ones kept; click a bar to keep up to it.</p><p>Underneath, each kept column of U is drawn as what it is. For hour, column 0 is the day's own shape -- the dashed line is the trips per hour, rescaled to match -- and the other columns are corrections to it, each running across all 24 hours. So hour rank 3 keeps three <em>patterns</em> over the whole day, not three of its hours. For a borough mode, column 0 is almost exactly Manhattan. On the right: the unfolding, and what rank r misses of it.</p>",
+    eqcap: "The SVD of the hour unfolding; the hour factor C is its first r₂ left singular vectors, each a pattern over all 24 hours.",
+    np: {
+      unfold: (r, c) => "(" + r + ", " + c + ")",
+      svd: (r, c) => "U: (" + r + ", " + c + "), the thin SVD",
+      factor: (r, k, what) => "(" + r + ", " + k + "): " + k + " " + what + " patterns",
+      energy: (e) => e + " of the energy"
+    },
     controls: {mode: "Which unfolding", r: "Rank kept, r"},
-    // Drawn on the stage. Every visible string is translated, including the
-    // ones inside the picture -- the stage is not chrome, and a literal here
-    // renders the same under a Spanish heading.
-    axSingular: (sub) => `Singular values, mode ${sub}`,
-    axFactor: (r) => `A: U[:, :${r}]`,
     options: {mode: {0: "pickup (mode 0)", 1: "dropoff (mode 1)", 2: "hour (mode 2)"}},
-    readout: (mode, r, rmax, sv0, kept) =>
-      `Mode ${mode}'s SVD keeps <b>r = ${r}</b> of at most <b>${rmax}</b> columns. ` +
-      `The largest singular value is <b>${sv0.toFixed(1)}</b>, and the kept columns hold <b>${kept}%</b> of the singular-value mass.` +
-      (mode === 2 && rmax === 20 ? " (24 × 20: the thin U caps this mode at 20, not 24.)" : ""),
+    names: AXES,
+    axScree: "σ, log scale",
+    axPattern: (L, r) => L + " = U[:, :" + r + "]",
+    axDay: "dashed: trips per hour",
+    axX: (m, r, c) => "T" + m + "  " + r + " × " + c,
+    axMiss: (r, x) => "what rank " + r + " misses, ×" + x,
+    tip: (n, sv, e) => "σ" + n + " = " + sv + " · keep " + (n) + ": " + e + "%",
+    readout: (mode, r, rmax, sv0, sv1, energy, uerr, u0) =>
+      `Mode ${mode}'s SVD: σ₁ = <b>${sv0}</b>, σ₂ = <b>${sv1}</b>. Keeping <b>r = ${r}</b> of at most ${rmax} ` +
+      `columns holds <b>${energy}%</b> of this unfolding's energy, and the rank-${r} rebuild misses it by <b>${uerr}%</b>. ` +
+      u0 + (mode === 2 && rmax === 20 ? " (24 × 20: the thin U has 20 columns, so r stops at 20, not 24.)" : ""),
+    u0Hour: (peak, busiest, r) => `Column 0 is the day's shape: it peaks at hour ${peak}, and the trips per hour peak at ${busiest}. ` +
+      `Every kept column is a pattern across all 24 hours -- rank ${r} keeps ${r} ${r === 1 ? "pattern" : "patterns"}, not ${r} of the hours.`,
+    u0Borough: (name, w) => `Column 0 is almost exactly ${name} (${w}): one borough carries this unfolding.`,
     aria: (ctx) => {
       const s = ctx.state;
-      return `A bar chart of singular values for mode ${s.mode}, largest first, with the first ${s.r} lit, and a matrix of ${s.r} factor columns beside it.`;
+      return `A log-scale bar chart of the singular values of the ${AXES[s.mode]} unfolding with the first ${s.r} lit, ` +
+             `the ${s.r} kept columns of U drawn as patterns, and heat maps of the unfolding and of what rank ${s.r} misses of it.`;
     }
   };
   const ES = {
-    k: "La SVD de un desdoblado · sección 10",
-    h: "Cada desdoblado tiene su propia SVD, y su propio rango",
-    concept: "La SVD de una matriz ordena sus direcciones por cuánto de la matriz explica cada una. Quedarse con las primeras r es la mejor aproximación posible de rango r — el teorema de Eckart–Young, el mismo que usó la SVD truncada de la sección 09 sobre una imagen. <span class=\"cite\">Deep Learning §2.8</span>",
-    claim: "A = U[:, :r]  desde  SVD(T₍₀₎)",
-    predict: "Antes de deslizar: el desdoblado del modo 2 es 24 × 20. ¿Puede r llegar a 24 ahí, o algo más lo limita antes?",
-    b: "<p>Cada uno de los tres desdoblados tiene su propia SVD, calculada una vez y guardada: deslizar r solo conserva más o menos de sus columnas. Las barras son los valores singulares, el mayor primero; los que están dentro de r se iluminan, y qué tan rápido caen dice cuán compresible es este modo.</p><p>El desdoblado del modo 2 es solo 24 × 20, así que su SVD devuelve como mucho 20 columnas — una U <em>delgada</em>, la forma que devuelve el propio <code>svd(..., full_matrices=False)</code> de NumPy. Ese es el techo del rango de la hora, no 24.</p>",
-    controls: {mode: "Qué desdoblado", r: "Rango conservado, r"},
-    axSingular: (sub) => `Valores singulares, modo ${sub}`,
-    axFactor: (r) => `A: U[:, :${r}]`,
+    k: "La SVD de un desplegado · sección 10",
+    h: "La SVD de un desplegado encuentra unos pocos patrones, y cada uno recorre todo su eje",
+    concept: 'La SVD de una matriz ordena sus direcciones por cuánto de la matriz explica cada una, y quedarse con las primeras r es la mejor aproximación de rango r que existe: el teorema de Eckart–Young que la sección 09 usó sobre una imagen. Las columnas de U son patrones sobre las filas. <span class="cite">Deep Learning §2.8</span>',
+    claim: "C = U[:, :r₂]  desde  SVD(T₍₂₎)",
+    predict: "Antes de deslizar: «el rango 3 de la hora conserva tres de las 24 horas». ¿Verdadero o falso?",
+    b: "<p>Las barras son los valores singulares de un desplegado, el mayor primero, en escala logarítmica: en una lineal verías una sola barra, porque el primero contiene el 99,8% de la energía del desplegado de la hora: σ₁ = 1.101, σ₂ = 31. Las barras iluminadas son las que se conservan; haz clic en una barra para conservar hasta ella.</p><p>Debajo, cada columna conservada de U se dibuja como lo que es. Para la hora, la columna 0 es la forma misma del día (la línea discontinua son los viajes por hora, reescalados para coincidir) y las otras columnas son correcciones, cada una a lo largo de las 24 horas. Así que el rango 3 de la hora conserva tres <em>patrones</em> sobre el día entero, no tres de sus horas. Para un modo de barrio, la columna 0 es casi exactamente Manhattan. A la derecha: el desplegado, y lo que el rango r se deja de él.</p>",
+    eqcap: "La SVD del desplegado de la hora; el factor de la hora C son sus primeros r₂ vectores singulares izquierdos, cada uno un patrón sobre las 24 horas.",
+    np: {
+      unfold: (r, c) => "(" + r + ", " + c + ")",
+      svd: (r, c) => "U: (" + r + ", " + c + "), la SVD delgada",
+      factor: (r, k, what) => "(" + r + ", " + k + "): " + k + " patrones de " + what,
+      energy: (e) => e + " de la energía"
+    },
+    controls: {mode: "Qué desplegado", r: "Rango conservado, r"},
     options: {mode: {0: "origen (modo 0)", 1: "destino (modo 1)", 2: "hora (modo 2)"}},
-    readout: (mode, r, rmax, sv0, kept) =>
-      `La SVD del modo ${mode} conserva <b>r = ${r}</b> de a lo sumo <b>${rmax}</b> columnas. ` +
-      `El mayor valor singular es <b>${sv0.toFixed(1)}</b>, y las columnas conservadas contienen el <b>${kept}%</b> de la masa de valores singulares.` +
-      (mode === 2 && rmax === 20 ? " (24 × 20: la U delgada limita este modo a 20, no a 24.)" : ""),
+    names: AXES_ES,
+    axScree: "σ, escala log",
+    axPattern: (L, r) => L + " = U[:, :" + r + "]",
+    axDay: "discontinua: viajes por hora",
+    axX: (m, r, c) => "T" + m + "  " + r + " × " + c,
+    axMiss: (r, x) => "lo que se deja el rango " + r + ", ×" + x,
+    tip: (n, sv, e) => "σ" + n + " = " + sv + " · conservar " + n + ": " + e + "%",
+    readout: (mode, r, rmax, sv0, sv1, energy, uerr, u0) =>
+      `La SVD del modo ${mode}: σ₁ = <b>${sv0}</b>, σ₂ = <b>${sv1}</b>. Conservar <b>r = ${r}</b> de a lo sumo ${rmax} ` +
+      `columnas guarda el <b>${energy}%</b> de la energía de este desplegado, y la reconstrucción de rango ${r} falla por un <b>${uerr}%</b>. ` +
+      u0 + (mode === 2 && rmax === 20 ? " (24 × 20: la U delgada tiene 20 columnas, así que r se detiene en 20, no en 24.)" : ""),
+    u0Hour: (peak, busiest, r) => `La columna 0 es la forma del día: tiene su pico en la hora ${peak}, y los viajes por hora tienen el suyo en la ${busiest}. ` +
+      `Cada columna conservada es un patrón a lo largo de las 24 horas: el rango ${r} conserva ${r} ${r === 1 ? "patrón" : "patrones"}, no ${r} de las horas.`,
+    u0Borough: (name, w) => `La columna 0 es casi exactamente ${name} (${w}): un solo barrio lleva este desplegado.`,
     aria: (ctx) => {
       const s = ctx.state;
-      return `Un gráfico de barras de valores singulares para el modo ${s.mode}, el mayor primero, con los primeros ${s.r} iluminados, y una matriz de ${s.r} columnas factor al lado.`;
+      return `Un gráfico de barras en escala logarítmica de los valores singulares del desplegado de ${AXES_ES[s.mode]} con los primeros ${s.r} iluminados, ` +
+             `las ${s.r} columnas conservadas de U dibujadas como patrones, y mapas de calor del desplegado y de lo que el rango ${s.r} se deja de él.`;
     }
   };
 
+  const num = (ctx, v, d) => K.num(v, d, ctx.lang);
+
   window.FactorScenes.register({
     id: "hosvd", section: "10",
+    part: {en: "Tucker: one basis per axis", es: "Tucker: una base por eje"},
+    hl: ["hour", "rank"],
     copy: {en: EN, es: ES},
 
     controls: [
@@ -67,8 +124,8 @@
     },
 
     // The select's value is a string; the rank slider's ceiling depends on
-    // which mode is chosen, so its max attribute is rewritten here, before
-    // draw() and readout() both read the clamped value.
+    // which mode is chosen, so its max is rewritten here, before draw() and
+    // readout() both read the clamped value.
     sync(ctx) {
       ctx.state.mode = Number(ctx.state.mode);
       const rmax = RMAX_LABEL[ctx.state.mode];
@@ -77,43 +134,127 @@
       if (ctx.state.r > rmax) ctx.state.r = rmax;
     },
 
+    pick(ctx, key) {
+      if (key.startsWith("r:")) ctx.setControls({r: Number(key.slice(2))});
+    },
+    tip(ctx, key) {
+      if (!key.startsWith("r:")) return "";
+      const n = Number(key.slice(2));
+      const S = FC.hosvdBases(ctx.taxi)[ctx.state.mode].S;
+      return ctx.copy.tip(n, num(ctx, S[n - 1], 1), K.pct(FC.svdEnergy(S, n).kept, 2, ctx.lang));
+    },
+
     draw(ctx) {
-      const T = ctx.taxi, s = ctx.state, svg = ctx.svg;
-      const bases = FC.hosvdBases(T);
-      const S = bases[s.mode].S;
-      const U = bases[s.mode].U;
-      const rmax = RMAX_LABEL[s.mode];
-      K.bars(svg, S, {
-        x: 40, y: 60, w: 420, h: 130,
-        at: (i) => (i < s.r ? "--fa-t" : "--fa-fac"), lit: (i) => i < s.r
+      const s = ctx.state, svg = ctx.svg, c = ctx.copy;
+      const f = facts(ctx);
+      const hlHour = ctx.hl === "hour", hlRank = ctx.hl === "rank";
+      const axTok = K.AXIS[s.mode];
+      // The scree, log scale. Zero singular values (the hour unfolding's
+      // last three) sit on the floor rather than at minus infinity.
+      const pos = f.S.filter((v) => v > 1e-9);
+      const lo = Math.log10(Math.min(...pos)) - 0.3, hi = Math.log10(f.S[0]) + 0.1;
+      const logs = f.S.map((v) => (v > 1e-9 ? Math.log10(v) - lo : 0));
+      K.label(svg, 40, 62, c.axScree, {size: 10.5, colour: "--stage-mute"});
+      K.bars(svg, logs, {
+        x: 40, y: 72, w: 340, h: 110, max: hi - lo, gap: 3,
+        at: (i) => (i < s.r ? "--fa-t" : axTok), lit: (i) => i < s.r && hlRank,
+        alpha: 0.7, pick: (i) => "r:" + (i + 1)
       });
-      K.label(svg, 40, 48, ctx.copy.axSingular(SUBD[s.mode]), {size: 11.5, colour: "--stage-mute"});
-      const factor = FC.signFix(U, s.r);
-      // The factor matrix is this mode's own dimension by r: up to 24 rows
-      // on the hour mode, and up to 20 columns wherever the slider goes. It
-      // is given the box it has -- x 500 to 790, and down to y 390 -- and
-      // shades rather than prints once a cell is too small for a number,
-      // because a grid drawn past the viewBox is not clipped, it is just
-      // never painted, while the readout goes on quoting its numbers.
-      K.numGrid(svg, factor, {
-        x: 500, y: 60, digits: 3, cellW: 62, cellH: 18, maxW: 290, maxH: 330,
-        heatToken: "--fa-fac", title: ctx.copy.axFactor(s.r)
-      });
+      // Hover says which bar would be the cut.
+      if (ctx.hover && ctx.hover.startsWith("r:")) {
+        const n = Number(ctx.hover.slice(2));
+        const bw = (340 - 3 * (f.S.length - 1)) / f.S.length;
+        svg.appendChild(K.el("line", {x1: 40 + n * (bw + 3) - 1.5, y1: 70, x2: 40 + n * (bw + 3) - 1.5, y2: 184,
+          stroke: K.css("--fa-t"), "stroke-width": 1.5, "stroke-dasharray": "3 3"}));
+      }
+
+      // The kept columns as the patterns they are.
+      const y0 = 230, h = 150;
+      K.label(svg, 40, y0 - 12, c.axPattern(LETTER[s.mode], s.r), {size: 11, colour: axTok, stroke: hlHour && s.mode === 2 ? axTok : undefined});
+      if (s.mode === 2) {
+        const hours = FC.marginal(ctx.taxi, 2);
+        const norm = Math.hypot(...hours) || 1;
+        const lim = Math.max(...f.U.map((row) => Math.max(...row.map(Math.abs))), 0.3);
+        svg.appendChild(K.el("line", {x1: 40, y1: y0 + h / 2, x2: 380, y2: y0 + h / 2, stroke: K.css("--stage-mute"), "stroke-width": 0.8}));
+        for (let q = s.r - 1; q >= 0; q--) {
+          K.curve(svg, f.U.map((row) => row[q]), {
+            x: 40, y: y0, w: 340, h, min: -lim, max: lim, token: "--fa-m2",
+            width: q === 0 ? 2.6 : 1.3, opacity: q === 0 ? 1 : Math.max(0.3, 0.8 - 0.1 * q),
+            dots: q === 0 ? (i) => i === FC.argmax(f.col0) : false, dotToken: () => "--fa-t", dotR: 3.4
+          });
+        }
+        // The trips per hour, rescaled to U[:, 0]'s length, over the top: the
+        // two lines lying on each other is the claim.
+        K.curve(svg, hours.map((v) => v / norm), {x: 40, y: y0, w: 340, h, min: -lim, max: lim, token: "--stage-ink", width: 1.3, dash: "4 4"});
+        [0, 6, 12, 18, 23].forEach((hr) => K.label(svg, 40 + (hr / 23) * 340, y0 + h + 14, String(hr), {size: 10, anchor: "middle", colour: "--fa-m2"}));
+        K.label(svg, 380, y0 - 12, c.axDay, {size: 10, anchor: "end", colour: "--stage-mute"});
+      } else {
+        // Borough patterns: one group of bars per kept column, a borough per bar.
+        const names = s.mode === 0 ? ctx.names.pickupShort : ctx.names.dropoffShort;
+        const groupW = 340 / s.r;
+        for (let q = 0; q < s.r; q++) {
+          const v = f.U.map((row) => row[q]);
+          const b = K.bars(svg, v, {
+            x: 40 + q * groupW + 6, y: y0 + 4, w: groupW - 12, h: h - 20, max: 1, signed: true, gap: 2,
+            at: (i) => (v[i] >= 0 ? axTok : "--fa-err"), alpha: q === 0 ? 0.95 : 0.6
+          });
+          if (groupW > 60) names.forEach((nm, i) => K.label(svg, b.px(i), y0 + h + 4, nm, {size: 9, anchor: "middle", colour: axTok}));
+          K.label(svg, 40 + q * groupW + groupW / 2, y0 + h - 2 + (groupW > 60 ? 16 : 0), String(q), {size: 9.5, anchor: "middle", colour: "--stage-mute"});
+        }
+      }
+
+      // The unfolding, and what rank r misses of it, each on its own scale.
+      const X = f.u.X, R = f.u.residual;
+      const rows = X.length, cols = X[0].length;
+      K.label(svg, 430, 62, c.axX(K.mode(s.mode), rows, cols), {size: 11, colour: axTok});
+      K.heat(svg, X, {x: 430, y: 72, w: 360, h: 140, pos: "--fa-core"});
+      let peakX = 0, peakR = 0;
+      for (const row of X) for (const v of row) peakX = Math.max(peakX, Math.abs(v));
+      for (const row of R) for (const v of row) peakR = Math.max(peakR, Math.abs(v));
+      const scale = peakR > 1e-9 ? Math.max(1, Math.round(peakX / peakR)) : 1;
+      K.label(svg, 430, 244, c.axMiss(s.r, scale), {size: 11, colour: "--fa-err"});
+      K.heat(svg, R, {x: 430, y: 254, w: 360, h: 140, peak: peakR > 1e-9 ? peakR : 1, pos: "--fa-err", neg: "--fa-core"});
     },
 
     readout(ctx) {
-      const T = ctx.taxi, s = ctx.state, c = ctx.copy;
-      const bases = FC.hosvdBases(T);
-      const S = bases[s.mode].S;
-      const rmax = RMAX_LABEL[s.mode];
-      const total = S.reduce((a, v) => a + v * v, 0);
-      const kept = total > 0 ? Math.round(100 * S.slice(0, s.r).reduce((a, v) => a + v * v, 0) / total) : 0;
-      const fshape = T.shape[s.mode] + "×" + s.r;
+      const s = ctx.state, c = ctx.copy;
+      const f = facts(ctx);
+      let u0;
+      if (s.mode === 2) {
+        const hours = FC.marginal(ctx.taxi, 2);
+        u0 = c.u0Hour(FC.argmax(f.col0), FC.argmax(hours), s.r);
+      } else {
+        const m = mostly(ctx, s.mode, f.col0);
+        u0 = c.u0Borough(m.name, num(ctx, m.w, 2));
+      }
+      const energy = K.pct(f.e.kept, 2, ctx.lang), uerr = K.pct(f.u.error, 1, ctx.lang);
       return {
-        html: c.readout(s.mode, s.r, rmax, S[0], kept),
-        claim: `A = U[:, :${s.r}]  from  SVD(T₍${SUBD[s.mode]}₎)`,
-        data: {mode: s.mode, r: s.r, rmax, sv0: S[0].toFixed(2), kept, fshape}
+        html: c.readout(s.mode, s.r, f.rmax, num(ctx, f.S[0], 1), num(ctx, f.S[1] || 0, 1), energy, uerr, u0),
+        claim: LETTER[s.mode] + " = U[:, :" + s.r + "]  from  SVD(T" + K.mode(s.mode) + ")",
+        data: {
+          mode: s.mode, r: s.r, rmax: f.rmax, sv0: f.S[0].toFixed(2), sv1: (f.S[1] || 0).toFixed(2),
+          energy: f.e.kept.toFixed(4), uerr: f.u.error.toFixed(4),
+          u0peak: FC.argmax(f.col0.map(Math.abs)),
+          fshape: ctx.taxi.shape[s.mode] + "×" + s.r
+        }
       };
+    },
+
+    shape(ctx) {
+      const s = ctx.state;
+      return "[" + ctx.taxi.shape[s.mode] + ", " + s.r + "]";
+    },
+
+    code(ctx) {
+      const s = ctx.state, c = ctx.copy.np, T = ctx.taxi;
+      const f = facts(ctx);
+      const rows = T.shape[s.mode], cols = T.data.length / rows;
+      return K.code([
+        ["X = np.moveaxis(T, " + s.mode + ", 0).reshape(" + rows + ", -1)", c.unfold(rows, cols)],
+        ["U, s, Vt = np.linalg.svd(X, full_matrices=False)", c.svd(rows, f.rmax)],
+        [LETTER[s.mode] + " = U[:, :" + s.r + "]", c.factor(rows, s.r, ctx.copy.names[s.mode])],
+        ["(s[:" + s.r + "] ** 2).sum() / (s ** 2).sum()", c.energy(f.e.kept.toFixed(4))]
+      ]);
     }
   });
 })();

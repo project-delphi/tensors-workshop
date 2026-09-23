@@ -308,3 +308,42 @@ test('largestMiss names the cell a rebuild misses by most, signed', () => {
   near(m.t, FC.at(taxi, ...m.idx), 0);
   near(m.diff, m.t - m.r, 1e-12);
 });
+
+test('morphStep: reaches its target without overshoot, and folds back to the cube to change mode', () => {
+  let s = {mode: 2, t: 0};
+  const want = {mode: 2, t: 1};
+  let frames = 0;
+  while ((s.t !== want.t || s.mode !== want.mode) && frames < 1000) {
+    const next = FC.morphStep(s, want, 1 / 60, 1.4);
+    assert.ok(next.t >= s.t && next.t <= 1, 'monotone towards the target, never past it');
+    s = next; frames++;
+  }
+  assert.deepEqual(s, want);
+  assert.ok(frames > 30 && frames < 60, `${frames} frames at 1.4 per second`);
+  // Interrupted half way to a new mode: it goes down to the cube in the old
+  // mode first, switches only at t = 0, then comes back up.
+  s = {mode: 2, t: 1};
+  const other = {mode: 0, t: 1};
+  const seen = [];
+  for (let n = 0; n < 200 && !(s.mode === 0 && s.t === 1); n++) {
+    s = FC.morphStep(s, other, 1 / 60, 1.4);
+    seen.push(s);
+  }
+  const switchAt = seen.findIndex((q) => q.mode === 0);
+  assert.equal(seen[switchAt].t, 0);
+  assert.ok(seen.slice(0, switchAt).every((q) => q.mode === 2));
+  assert.deepEqual(s, other);
+  // No time, no motion.
+  assert.deepEqual(FC.morphStep({mode: 1, t: 0.4}, {mode: 1, t: 0.9}, 0, 1.4), {mode: 1, t: 0.4});
+});
+
+test('unfoldingRebuild: rank r of one unfolding misses exactly the energy past r', () => {
+  const bases = FC.hosvdBases(taxi);
+  for (const [mode, r] of [[2, 1], [2, 3], [0, 2], [1, 4]]) {
+    const u = FC.unfoldingRebuild(taxi, mode, r, bases);
+    near(u.error, FC.svdEnergy(bases[mode].S, r).error, 1e-9, `mode ${mode} r ${r}`);
+    for (let i = 0; i < u.X.length; i++)
+      for (let j = 0; j < u.X[0].length; j++) near(u.rebuilt[i][j] + u.residual[i][j], u.X[i][j], 1e-9);
+  }
+  near(FC.unfoldingRebuild(taxi, 2, 20, bases).error, 0, 1e-9);
+});

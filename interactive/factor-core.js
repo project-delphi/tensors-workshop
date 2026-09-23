@@ -291,6 +291,21 @@
     };
   }
 
+  // One unfolding kept at rank r: U_r U_r^T X, the best rank-r matrix there
+  // is for it (Eckart-Young), and what that leaves behind. Its relative error
+  // is svdEnergy(S, r).error, which the test holds it to.
+  function unfoldingRebuild(T, mode, r, bases) {
+    const B = bases || hosvdBases(T);
+    const X = unfold(T, mode);
+    const U = B[mode].U.map((row) => row.slice(0, r));
+    const rebuilt = LC.mul(U, LC.mul(LC.transpose(U), X));
+    const residual = X.map((row, i) => row.map((v, j) => v - rebuilt[i][j]));
+    let num = 0, den = 0;
+    for (let i = 0; i < X.length; i++)
+      for (let j = 0; j < X[0].length; j++) { num += residual[i][j] ** 2; den += X[i][j] ** 2; }
+    return {X, rebuilt, residual, error: den > 0 ? Math.sqrt(num / den) : 0};
+  }
+
   // What one core entry G[a, b, c] contributes: g times the outer product of
   // A[:, a], B[:, b] and C[:, c]. Those columns are orthonormal, so the
   // contributions are mutually orthogonal and each one's share of the
@@ -547,6 +562,27 @@
     return {T, shape, terms};
   }
 
+  // ─── the unfold's picture, moving ──────────────────────────────────────────
+  //
+  // What the unfold scene shows -- a mode and how far the cube has been laid
+  // flat along it, 0 to 1 -- stepping towards what its controls say, at a
+  // fixed speed per second. A change of mode folds the picture back up to the
+  // cube before laying it down the new way: one flat matrix cannot become a
+  // different one without passing through the cube, and a straight blend
+  // between two layouts sends voxels through each other. It never overshoots,
+  // and it takes its origin from wherever it was interrupted, which is the
+  // part a screenshot cannot show and this state-in, state-out form can pin.
+  function morphStep(shown, want, dt, speed) {
+    const step = Math.max(0, speed * dt);
+    if (shown.mode !== want.mode) {
+      if (shown.t <= step) return {mode: want.mode, t: 0};
+      return {mode: shown.mode, t: shown.t - step};
+    }
+    const d = want.t - shown.t;
+    if (Math.abs(d) <= step) return {mode: want.mode, t: want.t};
+    return {mode: shown.mode, t: shown.t + Math.sign(d) * step};
+  }
+
   // ─── CP budget vs Tucker ────────────────────────────────────────────────────
   //
   // Every Tucker rank triple that fits inside a CP model's parameter count,
@@ -607,10 +643,10 @@
     tensor, at, fibre,
     unfold, fold, unfoldIndex, flatIndex, multiIndex, marginal, argmax,
     modeProduct, outer3, relError, norm, largestMiss, svdEnergy,
-    hosvdBases, hosvd, coreTerm, signFix, tuckerParams,
+    hosvdBases, hosvd, unfoldingRebuild, coreTerm, signFix, tuckerParams,
     cpParams, cpAls, cpSolveMode, cpTrace, cpNormalize, cpRecon, matchTerms, CANCEL,
     tuckerCandidates, tuckerFrontier, tuckerSearch, synthetic,
-    lcg
+    morphStep, lcg
   };
   if (typeof module !== "undefined" && module.exports) module.exports = FactorCore;
   else root.FactorCore = FactorCore;
