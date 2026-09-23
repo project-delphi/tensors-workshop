@@ -705,7 +705,7 @@ Explora después
 :::
 
 <p class="sr-only">¿Y los tensores? Tres tarjetas. La primera: no hay ninguna inversa tensorial de uso común. Es una pregunta legítima con una respuesta honesta, no un hueco en tu lectura. La segunda: sí existen definiciones, basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa. La tercera: en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado. Un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4. Y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.</p>
-<p class="sr-only">Aquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, la deconvolución de Richardson-Lucy de la sección 09 y Tucker en la sección 10 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.</p>
+<p class="sr-only">Aquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, Tucker en la sección 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab"}
 
 [📖 {{< var reading.inverses_practice.title_es >}} ↗]({{< var reading.inverses_practice.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
@@ -731,7 +731,7 @@ manual no define directamente. Si no dijiste esas palabras durante la §06, espe
 que caigan en frío.
 
 ESTE ES EL PRIMER CUESTIONARIO QUE HAY QUE RECORTAR si vas mal de tiempo: la
-pseudoinversa y la distancia se repasan de forma narrativa en el cierre.
+pseudoinversa vuelve en la diapositiva de la idea única del cierre.
 :::
 
 ## {{< var sections.s08.n >}} · {{< var sections.s08.title_es >}} {#sec-08-recursion-with-matrices .outcomes-slide}
@@ -760,11 +760,16 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 
 ## {background-image="images/slides-final/slide-24.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La diapositiva está marcada explícitamente como un esquema conceptual, a reemplazar por la salida del notebook 08 cuando se implemente el Issue #49.</p>
+<p class="sr-only">Gradient descent también es recursión: las formas escalar, vectorial y matricial del descenso de gradiente se muestran una junto a otra. La misma regla de actualización escala de un número a vectores y matrices.</p>
 [Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 08 en Google Colab"}
 
 [📖 {{< var reading.eigen.title_es >}} ↗]({{< var reading.eigen.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 [📖 {{< var reading.recursion.title_es >}} ↗]({{< var reading.recursion.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
+::: {.notes}
+Una imagen, no un ejercicio: el cuaderno 08 no ejecuta el descenso de
+gradiente. Di que todo bucle de entrenamiento es esta misma recursión y sigue.
+:::
 
 ## {{< var sections.s09.n >}} · {{< var sections.s09.title_es >}} {#sec-09-matrix-factorizations .outcomes-slide}
 
@@ -929,9 +934,9 @@ rango de la §10, que imprime la hora más ocupada y la hora en la que alcanza
 su pico el primer patrón horario de Tucker, nunca antes, o revela la
 respuesta.
 
-NUNCA RECORTES ESTE. Es la forma más barata de comprobar si Tucker y CP han
-calado antes de que se vayan. Además hace de ensayo en directo del propio repaso
-del cierre, así que enlaza directamente del podio con el cierre.
+NUNCA RECORTES ESTE. Comprueba si Tucker ha calado mientras el resultado de los
+taxis sigue en pantalla. Pasa directamente del podio a la sección 11, que lleva
+el mismo tensor a CP.
 :::
 
 ## {{< var sections.s11.n >}} · {{< var sections.s11.title_es >}} {#sec-11-tensor-factorizations .outcomes-slide}

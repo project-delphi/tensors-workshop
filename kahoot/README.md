@@ -15,11 +15,13 @@ so it reinforces rather than interrupts.
 |---|---|---|---|---|
 | **1 — Tensor Vocabulary & Shapes** | [`kahoot_quiz_1_vocabulary_shapes.xlsx`](kahoot_quiz_1_vocabulary_shapes.xlsx) | Section 04, before the first break | 01, 03, 04 | 6 |
 | **2 — Einsum, Distance & the Pseudoinverse** | [`kahoot_quiz_2_distance_pseudoinverse.xlsx`](kahoot_quiz_2_distance_pseudoinverse.xlsx) | Section 07, before the recursion demo | 06, 07 | 6 |
-| **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, immediately before the wrap-up | 10, plus leftover convolution from extra 13 | 6 |
+| **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, before section 11 | 10, plus leftover convolution from extra 13 | 6 |
 
-Sections **00, 02, 05, 08, 09 and 11** have no quiz. Five of those are
+Sections **00, 02, 05, 08, 09, 11 and 12** have no quiz. Five of those are
 deliberate: the quizzes are checkpoints after exercise stretches, so the setup,
-the two group blocks, the recursion demo and the wrap-up are not covered by one.
+the demos in 02 and 08, the group block in 05 and the wrap-up are not covered
+by one. Sections 09 and 11 are the gap: both are exercises, and no question
+has caught up with either yet.
 
 **09 is not.** Quiz 3 used to cover it, and it no longer does — half that
 quiz still asks about convolution, which left the live agenda when it became
@@ -67,22 +69,22 @@ exercise**, or expect the last two questions to land cold.
 
 **Quiz 3 spoils section 10 if you run it early.** Its final question names hour
 18 as the peak of the taxi tensor's hour factor, which is exactly what section
-10's TODO 6 asks students to discover. It must come *after*.
+10's rank explorer prints. It must come *after*.
 
 ## If you are running out of time
 
 The handbook's cutting order, in order:
 
-1. **Quiz 2** — the least novel of the three; the pseudoinverse and distance get
-   re-covered narratively in the wrap-up.
-2. TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home).
-3. The RNN snippet in section 08.
-4. Question 5 of either group block.
-5. **Quiz 1.**
+1. **Quiz 2** — the least novel of the three; the pseudoinverse comes back on
+   the wrap-up's one-idea slide.
+2. **Quiz 1.**
+
+Everything past a notebook's **Core complete**, and every appendix, already
+sits outside the 210 minutes, so cutting it saves nothing.
 
 **Never cut** section 01's *Three Operations That Matter*, section 10, or
-**Quiz 3** — the last is the cheapest way to check whether Tucker and CP
-actually landed before students leave.
+**Quiz 3** — the last checks whether Tucker landed while the taxi result is
+still on screen.
 
 ## Editing a quiz
 

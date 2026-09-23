@@ -1,6 +1,6 @@
 ---
 title: "Tensores para Aprendizaje Automático"
-subtitle: "Un taller de 3 horas (+3 controles de Kahoot) — Manual del estudiante"
+subtitle: "Un taller de 210 minutos con tres controles de Kahoot — Manual del estudiante"
 lang: es
 title-block-banner: ../images/hero-band.png
 title-block-banner-color: body
@@ -80,7 +80,8 @@ también antes del siguiente cambio de contexto: una pausa, o una Parte nueva.
 Así el cuestionario refuerza el trabajo en vez de interrumpirlo. El
 cuestionario 1 cierra el trabajo de formas y vocabulario de las secciones 03 y
 04. El 2 cierra el tramo de einsum y pseudoinversa, secciones 06 y 07. El 3
-cierra el tramo de descomposiciones, secciones 09 y 10, justo antes del cierre.
+cierra el Tucker de la sección 10 mientras el resultado de los taxis sigue en
+pantalla, antes de que la sección 11 lleve el mismo tensor a CP.
 
 ---
 
@@ -815,7 +816,7 @@ Fíjate en las cadenas de einsum: `'ijk,ia,jb,kc->abc'` contrae tres ejes en una
 
 <span data-language-key="kahoot-quiz-3-convolution-tensor-decompositions-5-min"></span>
 
-**Hazlo justo después de la sección 10, antes de la sección 11.** Sus seis preguntas siguen cubriendo convolución y correlación junto con Tucker y CP. La convolución pasó a ser el ejercicio para casa 13 cuando las factorizaciones entraron en la jornada, y las preguntas todavía no se han reescrito. Hazlo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Lanza `kahoot_quiz_3_convolution_decompositions.xlsx` (6 preguntas, ~5 min). Sirve además de ensayo en vivo del propio repaso del cierre, así que enlaza directamente del cuestionario al cierre.
+**Hazlo justo después de la sección 10, antes de la sección 11.** Sus seis preguntas siguen cubriendo convolución y correlación junto con Tucker y CP. La convolución pasó a ser el ejercicio para casa 13 cuando las factorizaciones entraron en la jornada, y las preguntas todavía no se han reescrito. Hazlo mientras el resultado de la hora punta del tensor de taxis siga en pantalla. Lanza `kahoot_quiz_3_convolution_decompositions.xlsx` (6 preguntas, ~5 min) y pasa directamente del podio a la sección 11, que lleva el mismo tensor a CP.
 
 ---
 
@@ -937,12 +938,12 @@ Para el tratamiento interactivo completo —selector de método, tiempos medidos
 
 Lo que has hecho hoy:
 
-1. **Parte I**: aprender el vocabulario de los tensores (eje, orden, forma, corte, fibra, desplegado, contracción, descomposición), y que el desplegado convierte cualquier tensor en una matriz sin perder un solo número.
-2. **Parte II**: trabajar qué significan los ejes y por qué el eje de lote y el eje de tiempo son semánticamente distintos.
-3. **Parte III**: indexar, hacer broadcasting, reorganizar y transponer datos reales de tumores e imágenes médicas reales, y tropezar con problemas reales: píxeles de varianza cero, y `reshape` destruyendo una imagen en silencio.
-4. **Parte IV**: escribir contracciones con `einsum`; resolver un sistema irresoluble de 20 433 ecuaciones con la pseudoinversa; usar la recursión para pronosticar tráfico aéreo real y para encontrar un vector propio; convolucionar y deconvolucionar una fotografía real; y comprimir 4,7× un tensor real de taxis con Tucker, cuyo patrón horario más fuerte tiene su pico en la hora punta.
+1. **Parte I**: leer una fotografía real como un tensor: forma `(512, 512, 3)`, 786 432 números, y un eje que se conoce por lo que significa además de por su tamaño.
+2. **Parte II**: barajar un lote de dígitos y un clip de vídeo con la misma permutación: los dígitos conservaron sus etiquetas y el vídeo perdió su historia, porque el eje de lote y el eje de tiempo son ejes de distinto tipo.
+3. **Parte III**: estandarizar 1797 dígitos con broadcasting y tropezar con los píxeles que nunca varían y se convierten en NaN; mover el eje de canal de imágenes reales de microscopía y cazar el único `reshape` que corre sin error y desordena una fotografía; y quedarse con 16 de los 720 fotogramas de un vídeo real, cada uno rastreado hasta el fotograma del que salió.
+4. **Parte IV**: pasar una imagen en color a gris con un solo `einsum`; ver cómo la pseudoinversa elige la más pequeña de muchas respuestas igual de buenas cuando dos columnas son copia una de la otra; calcular Fibonacci como una potencia de matriz; ajustar el tráfico aéreo real por QR y por las ecuaciones normales, y descubrir residuos parecidos que esconden coeficientes distintos; y reducir un tensor real de taxis de 480 conteos a 60 números con Tucker, conservando un único patrón diario con su pico en la hora 18, antes de que CP ganara el mismo juego al bajar el umbral de error al 2 %.
 
-**Una sola idea conecta las secciones 07, 09 y 10:** cuando un problema no tiene respuesta exacta ni inversa verdadera, no te rindes: buscas la mejor aproximación estable. Esas tres secciones la *enuncian*. La ves ocurrir tres veces: la pseudoinversa sobre un sistema lineal real en la sección 07, Tucker sobre un tensor demasiado grande en la sección 10, y Richardson-Lucy sobre una fotografía desenfocada en el ejercicio 13.
+**Una sola idea conecta las secciones 07, 09 y 10:** cuando un problema no tiene respuesta exacta ni inversa verdadera, no te rindes: buscas la mejor aproximación estable. Esas tres secciones la *enuncian*. La ves ocurrir tres veces: la pseudoinversa sobre dos columnas que son copia una de la otra en la sección 07, Tucker sobre el tensor de taxis en la sección 10, y Richardson-Lucy sobre una fotografía desenfocada en el ejercicio 13.
 
 **Adónde ir después**
 
@@ -1249,7 +1250,7 @@ sobel = np.array([[-1,0,1],[-2,0,2],[-1,0,1]], float)
 #         even though it does not undo anything?
 # TODO 4 (true deconvolution): add small noise to the blurred image, then try to
 #         recover the original with skimage.restoration.richardson_lucy(...,
-#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 20-pixel
+#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 25-pixel
 #         border. Did it improve?
 ```
 
@@ -1296,7 +1297,7 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Idioma.** El alumnado tiene el inglés como segunda lengua (Colombia). Habla despacio, evita los modismos y define los términos la primera vez que los uses. Nombra en voz alta los cognados en español desde el principio —*eje*, *descomposición*, *contracción*, *convolución*—: quita fricción de inmediato. Invita a preguntar en cualquiera de los dos idiomas. Avisa de los dos sentidos de «rank» al comienzo de la Parte I.
 
-**Números verificados.** Toda salida citada en este documento se ejecutó y se comprobó: radio medio maligno frente a benigno 17,5/12,1; 3 píxeles de varianza cero en los dígitos; 207 valores faltantes en los datos de vivienda; RMSE de vivienda ≈ 75 980; error de deconvolución 0,1157 → 0,0815 (excluyendo un borde de 20 píxeles); Tucker sobre taxis con compresión 4,71× al 6,7 % de error y el factor de hora con su pico en las 18; para el apéndice E, una grabación de 4,949 s que da una STFT de (513, 465) cuyo mejor rango probado es 40 a 9,08 dB frente a los 5,00 dB de la entrada ruidosa; y, para la sección 09, la Vandermonde de grado 10 de la serie aérea con κ(X) = 2,16e7 y κ(XᵀX) = 4,65e14, con errores de coeficiente de 1,95e-03 por ecuaciones normales frente a 2,04e-14 por QR, y el rango 16 de la imagen astronaut a 21,1 dB. Si alguien obtiene algo distinto, merece investigarse en lugar de descartarse. **La única excepción son los tiempos de la sección 09.** Son propiedades de la máquina, no de los datos. Una CPU de Colab no los reproducirá, y por eso el apéndice cita razones y no milisegundos.
+**Números verificados.** Toda salida citada en este documento se ejecutó y se comprobó: radio medio maligno frente a benigno 17,5/12,1; 3 píxeles de varianza cero en los dígitos; 207 valores faltantes en los datos de vivienda; RMSE de vivienda ≈ 75 980; error de deconvolución 0,1157 → 0,0815 (excluyendo un borde de 25 píxeles); Tucker sobre taxis con compresión 4,71× al 6,7 % de error y el factor de hora con su pico en las 18; para el apéndice E, una grabación de 4,949 s que da una STFT de (513, 465) cuyo mejor rango probado es 40 a 9,08 dB frente a los 5,00 dB de la entrada ruidosa; y, para la sección 09, la Vandermonde de grado 10 de la serie aérea con κ(X) = 2,16e7 y κ(XᵀX) = 4,65e14, con errores de coeficiente de 1,95e-03 por ecuaciones normales frente a 2,04e-14 por QR, y el rango 16 de la imagen astronaut a 21,1 dB. Si alguien obtiene algo distinto, merece investigarse en lugar de descartarse. **La única excepción son los tiempos de la sección 09.** Son propiedades de la máquina, no de los datos. Una CPU de Colab no los reproducirá, y por eso el apéndice cita razones y no milisegundos.
 
 **Las descargas.** Tres CSV desde URL raw de GitHub. Son pequeños y rápidos. Aun así, confirma en los primeros 5 minutos que todas las descargas han funcionado: quien falle en silencio se quedará atascado en las secciones 07 y 10. Ten los tres CSV replicados en el repositorio del taller como alternativa.
 
@@ -1306,11 +1307,11 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Los tres cuestionarios de Kahoot.** Cada uno son 6 preguntas en `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx` y `kahoot_quiz_3_convolution_decompositions.xlsx`, situados después de las secciones 04, 07 y 10 respectivamente. Importa cada uno a un kahoot con antelación (Create → Add question → Import → Import spreadsheet); no lo hagas en directo. Presupuesta 5 minutos por cuestionario con el podio incluido; a los grupos les suele apetecer ver la clasificación, y está bien, es la recompensa. Estos suman 15 minutos en total, y llevan el taller de 195 a 210 minutos.
 
-**Recortes por tiempo.** En este orden: quita el **Kahoot 2** (el menos novedoso de los tres: la pseudoinversa y la distancia se vuelven a cubrir narrativamente en el cierre), luego el TODO 4 del apéndice F (deconvolución verdadera, lo más exigente técnicamente y ya de por sí para casa), luego el fragmento de RNN de la demo de recursión, luego la pregunta 5 del bloque de grupo del pipeline de vídeo, y luego el **Kahoot 1**. No quites nunca la §1.3 de la Parte I, la sección 10 ni el **Kahoot 3**. El Kahoot 3 es la forma más barata de comprobar si Tucker y CP han calado, y solo puedes comprobarlo antes de que la gente se vaya.
+**Recortes por tiempo.** En este orden: quita el **Kahoot 2** (el menos novedoso de los tres: la pseudoinversa vuelve en la diapositiva de la idea única del cierre) y luego el **Kahoot 1**. Todo lo que queda después del **Fin de la ruta esencial** de un cuaderno, y todos los apéndices, ya está fuera de los 210 minutos, así que quitarlo no ahorra nada. No quites nunca la §1.3 de la Parte I, la sección 10 ni el **Kahoot 3**: el último comprueba si Tucker ha calado mientras el resultado de los taxis sigue en pantalla.
 
 **Asperezas conocidas.** El TODO 4 del apéndice F es lo más difícil del taller.
 Quien se salte el recorte del borde concluirá que la deconvolución falló, así
-que señala el recorte de 20 píxeles con claridad *antes* de que empiece el
+que señala el recorte de 25 píxeles con claridad *antes* de que empiece el
 ejercicio, no después. El TODO 3 de la sección 07 pide provocar un error a
 propósito. Habrá quien piense que ha hecho algo mal, así que di de antemano que
 el error es el resultado esperado.

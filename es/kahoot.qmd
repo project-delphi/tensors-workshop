@@ -82,7 +82,7 @@ caen en frío.
 
 |  |  |
 |---|---|
-| **Se lanza después de** | Sección 10 — Descomposición de Tucker, justo antes del cierre |
+| **Se lanza después de** | Sección 10 — Descomposición de Tucker, antes de la sección 11 |
 | **Cubre** | Sección 10, más las preguntas de convolución que quedan del extra 13 |
 | **Duración** | {{< var kahoot.q3.questions >}} preguntas, ~5 min |
 | **Archivo para importar** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
@@ -94,8 +94,8 @@ Lánzalo mientras el resultado de la hora punta del tensor de taxis siga en
 pantalla. Su última pregunta nombra la hora 18, así que **tiene** que ir
 después del explorador de rango de la sección 10, que imprime la hora más
 ocupada y la hora en la que alcanza su pico el primer patrón horario de
-Tucker. Lanzarlo antes regala la respuesta. Sirve además de ensayo en vivo del
-propio repaso del cierre, así que pasa del podio al cierre sin interrupción.
+Tucker. Lanzarlo antes regala la respuesta. Después pasa del podio a la
+sección 11 sin interrupción: lleva el mismo tensor a CP.
 
 ## Cómo lanzarlos
 
@@ -104,8 +104,8 @@ propio repaso del cierre, así que pasa del podio al cierre sin interrupción.
 - **Presupuesta 5 minutos cada uno, con el podio incluido.** A los grupos les
   suele apetecer ver la clasificación, y está bien. Es la recompensa.
 - **No importes en directo.** Ver la nota al comienzo de esta página.
-- **Estos suman 15 minutos** y llevan el taller de 180 a
-  {{< var workshop.minutes >}}.
+- **Estos suman 15 minutos.** Con las tres pausas de 5 minutos, llevan los
+  180 minutos de secciones a {{< var workshop.minutes >}}.
 
 ## Si te falta tiempo
 
@@ -113,15 +113,14 @@ propio repaso del cierre, así que pasa del podio al cierre sin interrupción.
 
 El orden de recorte del manual, en este orden:
 
-1. **Cuestionario 2** — el menos novedoso de los tres; la pseudoinversa y la
-   distancia se vuelven a cubrir narrativamente en el cierre.
-2. El TODO 4 del apéndice F (deconvolución verdadera: lo más exigente
-   técnicamente, y ya de por sí para casa).
-3. El fragmento de RNN de la sección 08.
-4. La pregunta 5 de cualquiera de los bloques de grupo.
-5. **Cuestionario 1.**
+1. **Cuestionario 2** — el menos novedoso de los tres; la pseudoinversa vuelve
+   en la diapositiva de la idea única del cierre.
+2. **Cuestionario 1.**
+
+Todo lo que queda después del **Fin de la ruta esencial** de un cuaderno, y
+todos los apéndices, ya está fuera de los {{< var workshop.minutes >}} minutos,
+así que quitarlo no ahorra nada.
 
 **No recortes nunca** las *Tres operaciones que importan* de la sección 01, la
-sección 10 ni el **cuestionario 3**. El cuestionario 3 es la forma más barata
-de comprobar si Tucker y CP han calado, y solo puedes comprobarlo antes de que
-la gente se vaya.
+sección 10 ni el **cuestionario 3**. El cuestionario 3 comprueba si Tucker ha
+calado mientras el resultado de los taxis sigue en pantalla.

@@ -1,6 +1,6 @@
 ---
 title: "Tensors for Machine Learning"
-subtitle: "A 3-Hour Workshop (+3 Kahoot Checks) — Student Handbook"
+subtitle: "A 210-Minute Workshop with Three Kahoot Checks — Student Handbook"
 title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
@@ -61,8 +61,8 @@ supply its content, while the material is still fresh. Each also lands before
 the next context switch — a break, or a new Part. So a quiz reinforces the work
 rather than interrupting it. Quiz 1 closes out the shape-and-vocabulary work of
 sections 03 and 04. Quiz 2 closes out the einsum and pseudoinverse stretch,
-sections 06 and 07. Quiz 3 closes out the decomposition stretch, sections 09
-and 10, right before the wrap-up.
+sections 06 and 07. Quiz 3 closes out section 10's Tucker while the taxi
+result is still on screen, before section 11 takes the same tensor to CP.
 
 ---
 
@@ -796,7 +796,7 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 
 <span data-language-key="kahoot-quiz-3-convolution-tensor-decompositions-5-min"></span>
 
-**Run this right after section 10, before section 11.** Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min). This also doubles as a live rehearsal of the Wrap-up's own recap, so segue straight from the quiz into it.
+**Run this right after section 10, before section 11.** Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min), then go straight from the podium into section 11, which takes the same tensor to CP.
 
 ---
 
@@ -921,12 +921,12 @@ For the full interactive treatment — method chooser, measured timing, matched-
 
 What you did today:
 
-1. **Part I** — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing a single number.
-2. **Part II** — worked through what axes mean and why batch and time axes are semantically different.
-3. **Part III** — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.
-4. **Part IV** — wrote contractions with `einsum`; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, whose strongest hour pattern peaks at rush hour.
+1. **Part I** — read a real photograph as a tensor: shape `(512, 512, 3)`, 786,432 numbers, and an axis known by what it means as well as by its size.
+2. **Part II** — shuffled a batch of digits and a clip of video with the same permutation: the digits kept their labels and the video lost its story, because a batch axis and a time axis are different kinds of axis.
+3. **Part III** — standardized 1,797 digits with broadcasting and hit the pixels that never vary and turn into NaN; moved the channel axis of real microscopy images and caught the one reshape that runs without an error and scrambles a photograph; and kept 16 of a real video's 720 frames, each traced back to the frame it came from.
+4. **Part IV** — turned a colour image grey with one `einsum`; watched the pseudoinverse pick the smallest of many equally good answers when two columns are copies of each other; ran Fibonacci as a matrix power; fitted real airline traffic by QR and by the normal equations, and found similar residuals hiding different coefficients; and shrank a real taxi tensor from 480 counts to 60 numbers with Tucker, keeping one daily pattern that peaks at hour 18, before CP won the same game once the error bar dropped to 2%.
 
-**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. Those three sections *state* it. You watch it happen three times: the pseudoinverse on a real linear system in section 07, Tucker on an oversized tensor in section 10, and Richardson-Lucy on a blurred photograph in take-home 13.
+**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. Those three sections *state* it. You watch it happen three times: the pseudoinverse on two columns that are copies of each other in section 07, Tucker on the taxi tensor in section 10, and Richardson-Lucy on a blurred photograph in take-home 13.
 
 **Where to go next**
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
@@ -1229,7 +1229,7 @@ sobel = np.array([[-1,0,1],[-2,0,2],[-1,0,1]], float)
 #         even though it does not undo anything?
 # TODO 4 (true deconvolution): add small noise to the blurred image, then try to
 #         recover the original with skimage.restoration.richardson_lucy(...,
-#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 20-pixel
+#         num_iter=50). Measure error BEFORE and AFTER, ignoring a 25-pixel
 #         border. Did it improve?
 ```
 
@@ -1276,7 +1276,7 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Language.** Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — *eje*, *descomposición*, *contracción*, *convolución* — it removes friction immediately. Invite questions in either language. Warn about the two meanings of "rank" at the start of Part I.
 
-**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (20-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; for Appendix E, a 4.949 s recording giving a (513, 465) STFT whose best tested rank is 40 at 9.08 dB against the noisy input's 5.00 dB; and, for section 09, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is section 09's timings.** Those are properties of the machine, not of the data. A Colab CPU will not reproduce them, which is why the appendix quotes ratios rather than milliseconds.
+**Verified numbers.** Every output quoted in this document was executed and checked: malignant vs benign mean radius 17.5/12.1; 3 zero-variance digit pixels; 207 missing values in the housing data; housing RMSE ≈ 75,980; deconvolution error 0.1157 → 0.0815 (25-pixel border excluded); taxi Tucker 4.71× compression at 6.7% error with the hour factor peaking at 18; for Appendix E, a 4.949 s recording giving a (513, 465) STFT whose best tested rank is 40 at 9.08 dB against the noisy input's 5.00 dB; and, for section 09, the degree-10 airline Vandermonde at κ(X) = 2.16e7 and κ(XᵀX) = 4.65e14, with coefficient errors of 1.95e-03 by the normal equations against 2.04e-14 by QR, and rank 16 of the astronaut image at 21.1 dB. If a student gets something different, it is worth investigating rather than dismissing. **The one exception is section 09's timings.** Those are properties of the machine, not of the data. A Colab CPU will not reproduce them, which is why the appendix quotes ratios rather than milliseconds.
 
 **The downloads.** Three CSVs from GitHub raw URLs. They are small and fast. Even so, confirm in the first 5 minutes that every download succeeded: a student whose download fails quietly will be stuck at sections 07 and 10. Have the three CSVs mirrored in the workshop repo as a fallback.
 
@@ -1286,10 +1286,10 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after sections 04, 07 and 10 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes total, taking the workshop from 195 to 210 minutes.
 
-**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — pseudoinverse and distance get re-covered narratively in the Wrap-up), then TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home anyway), then the RNN snippet in the recursion demo, then question 5 of the video-pipeline group block, then **Kahoot Quiz 1**. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one is the cheapest way to check whether Tucker/CP actually landed before students leave.
+**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — the pseudoinverse comes back on the wrap-up's one-idea slide), then **Kahoot Quiz 1**. Everything past a notebook's **Core complete**, and every appendix, already sits outside the 210 minutes, so cutting it saves nothing. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one checks whether Tucker landed while the taxi result is still on screen.
 
 **Known rough edges.** Appendix F TODO 4 is the hardest thing in the workshop.
 A student who skips the border crop will conclude deconvolution failed, so flag
-the 20-pixel crop clearly *before* the exercise starts, not after. Section 07
+the 25-pixel crop clearly *before* the exercise starts, not after. Section 07
 TODO 3 asks students to trigger an error deliberately — some will think they
 did something wrong, so say in advance that the error is the expected result.

@@ -22,7 +22,7 @@ theme:
 
 <span data-language-key="see-tensors-think-in-ml"></span>
 
-A hands-on session on reshaping, solving, convolving and factorizing tensors — written in NumPy, run on real images, video and city data.
+A hands-on session on reshaping, solving and factorizing tensors — written in NumPy, run on real images, video and city data.
 
 ::: {.hero-actions}
 [Read the handbook →](./tensors_workshop_plan_with_quizzes.html){.hero-button}

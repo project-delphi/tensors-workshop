@@ -22,7 +22,7 @@ theme:
 
 <span data-language-key="see-tensors-think-in-ml"></span>
 
-Una sesión práctica sobre remodelar, resolver, convolucionar y factorizar tensores — escrita en NumPy, sobre imágenes, vídeo y datos urbanos reales.
+Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrita en NumPy, sobre imágenes, vídeo y datos urbanos reales.
 
 ::: {.hero-actions}
 [Lee el manual →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
