@@ -539,6 +539,38 @@ html[lang="es"] .reveal .reading-tab::after {
   display: none !important;
 }
 
+// ── Projector-moment widget link ────────────────────────────────────────
+// The link on a projector-moment slide, which the facilitator opens on the
+// projector inside the section's own minutes. Deliberately its own class, not
+// `.colab-tab` or `.reading-tab`: both of those retire once deck-pace.html
+// builds its side panel (`.reveal.deck-colab-ready .colab-tab / .reading-tab
+// { display: none !important; }`), and a widget link swallowed into that
+// panel would not be the thing the facilitator opens on the projector. This
+// class is never touched by deck-pace.html, so it stays inline and visible
+// on the slide it belongs to.
+.reveal .widget-tab {
+  position: relative;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 26px;
+  padding: 12px 26px;
+  border: 2px solid #0f8f93;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #e6fbfa 0%, #cdf2ef 100%);
+  color: #045b5e !important;
+  font-family: $presentation-heading-font;
+  font-size: 30px;
+  font-weight: 700;
+  text-decoration: none !important;
+  box-shadow: 0 8px 20px rgba(6, 47, 92, .12);
+}
+
+.reveal .widget-tab:hover,
+.reveal .widget-tab:focus {
+  opacity: .88;
+}
+
 // Every slide is a `## {background-image=...}` with no title text, so pandoc
 // emits an empty `<h2>` ahead of the `h1.sr-only` that actually names the
 // section. `display: none` takes the empty heading out of the accessibility

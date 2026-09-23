@@ -84,9 +84,10 @@ the last two questions land cold.
 : {tbl-colwidths="[20,80]"}
 
 Run it while the taxi-tensor rush-hour result is still on screen. Its final
-question names hour 18, so it **must** come after section 10's TODO 6. Running
-it early gives the answer away. It doubles as a live rehearsal of the wrap-up's
-own recap, so go straight from the podium into the wrap-up.
+question names hour 18, so it **must** come after section 10's rank explorer,
+which prints the busiest hour and the hour Tucker's first hour pattern peaks
+at. Running it early gives the answer away. It doubles as a live rehearsal of
+the wrap-up's own recap, so go straight from the podium into the wrap-up.
 
 ## Running them
 

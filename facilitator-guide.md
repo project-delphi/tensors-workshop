@@ -29,6 +29,9 @@ Open solutions only after an attempt. Run selected folded plotting cells;
 folded code still needs to execute.
 
 Use the opening retrieval question for about 30 seconds within each slot.
+Projector moments are predict-first too: ask the room what will happen before
+you press anything, and take one answer before the reveal. Each one sits inside
+its slot's modelling time, so it replaces talk rather than adding to it.
 Learners try first, open Hint 1 if stuck, then Hint 2 only if needed. Where a
 feedback helper is supplied, run its definition and call it with the learner's
 own results before revealing the solution. Passing its numerical checks still
@@ -41,21 +44,21 @@ requires an explanation of the axes and the result.
 Follow the [workshop agenda](tensors_workshop_plan_with_quizzes.md).
 Keep its quizzes and breaks. Within the selected notebook slots:
 
-| Notebook | Use the slot this way |
-|---|---|
-| 00 · 5 min | Entry check 3; runtime check and welcome 2. Setup was pre-work. |
-| 01 · 20 min | Model one shape 4; Exercise 1 and partner check 16. |
-| 02 · 20 min | Axis key and Exercise 2: 14; [axis-meaning task](group-tasks.md#axis-meaning): 6. |
-| 03 · 15 min | Model indexing 3; Exercise 3 and feedback 11; independent broadcasting checkpoint 1. |
-| 04 · 15 min | Exercise 1: 9; [silent-bug task](group-tasks.md#silent-bugs): 6. |
-| 05 · 15 min | Exercise 1: 7; group task 05: 8. |
-| 06 · 15 min | Model one contraction 4; Exercise 1 and feedback 10; independent contraction checkpoint 1. |
-| 07 · 15 min | Model duplicate columns 3; compare coefficients and norms 9; explain what remains unidentified and checkpoint 3. |
-| 08 · 10 min | Model one update 3; Exercise 1 and check 7. |
-| 09 · 15 min | Exercise 1: 9; residual mistake below: 3; required SVD-to-Tucker bridge: 3. No timing sweeps. |
-| 10 · 15 min | Explain core and factors 4; rank explorer 8; defend a choice 3. |
-| 11 · 15 min | Exercise 1 in pairs: 7; group task 11: 8. No model sweeps. |
-| 12 · 5 min | Individual exit check. Assign take-homes after collection. |
+| Notebook | Use the slot this way | On the projector |
+|---|---|---|
+| 00 · 5 min | Cold open 1½; entry check 3; runtime check and welcome ½. Setup was pre-work. | [A voice, transposed](interactive/voice-stage.html?lang=en#scramble): play it as built, then transposed. Ask why the same numbers now sound like noise; do not answer yet. Sound on. |
+| 01 · 20 min | Model one shape 4; Exercise 1 and partner check 16. | — |
+| 02 · 20 min | Opening prediction 2; axis key and Exercise 2: 12; [axis-meaning task](group-tasks.md#axis-meaning): 6. | — |
+| 03 · 15 min | Model broadcasting 3; Exercise 3 and feedback 11; independent broadcasting checkpoint 1. | [Broadcasting simulator](interactive/broadcasting-simulator.html?lang=en), inside the modelling 3: the room predicts the result shape, then one mismatch that errors. |
+| 04 · 15 min | Opening prediction and the projector 2; Exercise 1: 7; [silent-bug task](group-tasks.md#silent-bugs): 6. | [Reshape a photo](interactive/image-tensor.html?lang=en#reshape): the cold open's bug, on an image. Name it as that bug. |
+| 05 · 15 min | Opening prediction 2, which is Exercise 1's prediction step; Exercise 1: 5; group task 05: 8. | — |
+| 06 · 15 min | Model one contraction 4; Exercise 1 and feedback 10; independent contraction checkpoint 1. | — |
+| 07 · 15 min | Model duplicate columns 3; compare coefficients and norms 9; explain what remains unidentified and checkpoint 3. | [Collinear columns](interactive/linalg-stage.html?lang=en#collinear), inside the modelling 3. |
+| 08 · 10 min | Model one update 3; Exercise 1 and check 7. | — |
+| 09 · 15 min | Exercise 1: 9; residual mistake below: 3; required SVD-to-Tucker bridge: 3. No timing sweeps. | — |
+| 10 · 15 min | Explain core and factors 4; rank explorer 8; defend a choice 3. | [Tucker on the taxi tensor](interactive/factor-stage.html?lang=en#tucker), inside defend-a-choice 3, after the rank explorer: its hour factor peaks at 18, the hour the notebook printed. Never before it. |
+| 11 · 15 min | Exercise 1 in pairs: 7; group task 11: 8. No model sweeps. | [Same budget, CP and Tucker](interactive/factor-stage.html?lang=en#budget), at group task 11's share-out, as the matched comparison the task asks for. Not before the pair exercise, which it would answer. |
+| 12 · 5 min | Individual exit check. Assign take-homes after collection. | Just before it, on the "one idea" slide: replay the transposed voice for 30 seconds and let the room name the bug. |
 
 Use [group tasks 05 and 11](group-tasks.md) at their notebook headings.
 Use the written prompts; optional explorers are not prerequisites. For task 04,

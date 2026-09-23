@@ -29,8 +29,11 @@ Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegida
 el código plegado también necesita ejecutarse.
 
 Dedica unos 30 segundos a la pregunta inicial de recuperación dentro de cada
-bloque. Primero intentan resolver; si se atascan, abren la Pista 1 y luego la
-Pista 2 solo si hace falta. Si hay una función de comprobación, ejecuten su
+bloque. Los momentos de proyector también son de predicción primero: pregunta
+a la sala qué va a pasar antes de pulsar nada, y recoge una respuesta antes de
+revelar el resultado. Cada uno cabe dentro del tiempo de modelado del bloque,
+así que sustituye la explicación en vez de sumarse a ella. Primero intentan
+resolver; si se atascan, abren la Pista 1 y luego la Pista 2 solo si hace falta. Si hay una función de comprobación, ejecuten su
 definición y llámenla con sus propios resultados antes de revelar la solución.
 Superar las comprobaciones numéricas todavía exige explicar los ejes y el resultado.
 
@@ -41,21 +44,21 @@ Superar las comprobaciones numéricas todavía exige explicar los ejes y el resu
 Sigue la [agenda del taller](tensors_workshop_plan_with_quizzes.md).
 Conserva cuestionarios y pausas. Distribuye así cada bloque:
 
-| Cuaderno | Uso del tiempo |
-|---|---|
-| 00 · 5 min | Diagnóstico inicial 3; bienvenida y comprobación técnica 2. La preparación era previa. |
-| 01 · 20 min | Modelar una forma 4; Ejercicio 1 y revisión en pareja 16. |
-| 02 · 20 min | Clave de ejes y Ejercicio 2: 14; actividad grupal 02: 6. |
-| 03 · 15 min | Modelar indexación 3; Ejercicio 3 y comprobación 11; comprobación individual de broadcasting 1. |
-| 04 · 15 min | Ejercicio 1: 9; actividad grupal 04: 6. |
-| 05 · 15 min | Ejercicio 1: 7; actividad grupal 05: 8. |
-| 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 10; comprobación individual de contracción 1. |
-| 07 · 15 min | Modelar columnas duplicadas 3; comparar coeficientes y normas 9; explicar qué sigue sin identificarse y comprobar 3. |
-| 08 · 10 min | Modelar una actualización 3; Ejercicio 1 y comprobación 7. |
-| 09 · 15 min | Ejercicio 1: 9; error sobre residuos: 3; puente obligatorio de SVD a Tucker: 3. Sin barridos de tiempos. |
-| 10 · 15 min | Explicar núcleo y factores 4; explorador de rangos 8; defender una elección 3. |
-| 11 · 15 min | Ejercicio 1 en parejas: 7; actividad grupal 11: 8. Sin barridos de modelos. |
-| 12 · 5 min | Comprobación individual de salida. Asignar tareas después de recogerla. |
+| Cuaderno | Uso del tiempo | En pantalla |
+|---|---|---|
+| 00 · 5 min | Apertura en frío 1½; diagnóstico inicial 3; comprobación técnica y bienvenida ½. La preparación era previa. | <a href="../interactive/voice-stage.html?lang=es#scramble">Una voz, transpuesta</a>: reprodúcela tal cual y luego transpuesta. Pregunta por qué los mismos números ahora suenan a ruido; no respondas todavía. Con sonido. |
+| 01 · 20 min | Modelar una forma 4; Ejercicio 1 y revisión en pareja 16. | — |
+| 02 · 20 min | Predicción inicial 2; clave de ejes y Ejercicio 2: 12; [actividad de significado de ejes](group-tasks.md#axis-meaning): 6. | — |
+| 03 · 15 min | Modelar broadcasting 3; Ejercicio 3 y comprobación 11; comprobación individual de broadcasting 1. | <a href="../interactive/broadcasting-simulator.html?lang=es">Simulador de broadcasting</a>, dentro del modelado 3: la sala predice la forma del resultado y luego un desajuste que da error. |
+| 04 · 15 min | Predicción inicial y el proyector 2; Ejercicio 1: 7; [actividad de errores silenciosos](group-tasks.md#silent-bugs): 6. | <a href="../interactive/image-tensor.html?lang=es#reshape">Reshape de una foto</a>: el error de la apertura en frío, sobre una imagen. Nómbralo como ese error. |
+| 05 · 15 min | Predicción inicial 2, que es el paso de predicción del Ejercicio 1; Ejercicio 1: 5; actividad grupal 05: 8. | — |
+| 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 10; comprobación individual de contracción 1. | — |
+| 07 · 15 min | Modelar columnas duplicadas 3; comparar coeficientes y normas 9; explicar qué sigue sin identificarse y comprobar 3. | <a href="../interactive/linalg-stage.html?lang=es#collinear">Columnas colineales</a>, dentro del modelado 3. |
+| 08 · 10 min | Modelar una actualización 3; Ejercicio 1 y comprobación 7. | — |
+| 09 · 15 min | Ejercicio 1: 9; error sobre residuos: 3; puente obligatorio de SVD a Tucker: 3. Sin barridos de tiempos. | — |
+| 10 · 15 min | Explicar núcleo y factores 4; explorador de rangos 8; defender una elección 3. | <a href="../interactive/factor-stage.html?lang=es#tucker">Tucker en el tensor de taxis</a>, dentro de defender una elección 3, después del explorador de rangos: su factor de hora tiene el pico en la hora 18, la que imprimió el cuaderno. Nunca antes. |
+| 11 · 15 min | Ejercicio 1 en parejas: 7; actividad grupal 11: 8. Sin barridos de modelos. | <a href="../interactive/factor-stage.html?lang=es#budget">Mismo presupuesto, CP y Tucker</a>, en la puesta en común de la actividad grupal 11, como la comparación con el mismo presupuesto que pide la actividad. No antes del ejercicio en parejas, al que daría la respuesta. |
+| 12 · 5 min | Comprobación individual de salida. Asignar tareas después de recogerla. | Justo antes, en la diapositiva de "una sola idea": vuelve a reproducir la voz transpuesta 30 segundos y deja que la sala nombre el error. |
 
 Busca las [actividades grupales](group-tasks.md) por número de cuaderno.
 Usa las preguntas escritas; los exploradores opcionales no son requisitos.
