@@ -115,7 +115,7 @@ NB_VIZ_RE = re.compile(
 IMG_TAG_RE = re.compile(r"<img\b[^>]*>")
 ALT_RE = re.compile(r'alt="([^"]*)"')
 
-# The ML blog posts both decks and the two deep dives link to. These are the
+# The ML blog posts both decks and the notebooks link to. These are the
 # only external URLs in the deck, and nothing here fetches them — the checker
 # is offline by design, and whether a post is still published is a manual
 # concern (see the `reading:` comment in _variables.yml). What *is* checked,

@@ -610,17 +610,21 @@ brainstorm:
 # URL is declared" rule needs no exception for the references page.
 #
 # Both decks link them from the slide where the concept is introduced, as
-# `.reading-tab` chips, and the two factorization notebooks list them at the end.
-# Neither deck hard-codes a URL: they live here for the same reason every
+# `.reading-tab` chips, and the notebooks for those sections list them at the
+# end. Neither deck hard-codes a URL: they live here for the same reason every
 # other shared fact does, so the EN and ES decks cannot come to disagree.
+# `pca` and `ppca` have no chip. Their home is notebook 16, an extra with no
+# section in either deck; notebook 12 lists them among its take-homes, but the
+# deck's one chip for section 12 goes to `fourier`.
 #
 # The notebooks are the exception, and the only one. An .ipynb has no
-# `{{< var >}}`, so 09 and 11 carry a copy of the URL *and* of the title.
-# check_links.py catches half of that drift — change a `url` here and the
-# notebook's now-undeclared copy fails check 1 — but a `title_en` or
+# `{{< var >}}`, so 01, 04, 09, 11, 12, 13 and 16 carry a copy of the URL
+# *and* of the title, in the "Where this goes next" cell (16: "Sources and
+# next steps"). check_links.py catches half of that drift — change a `url`
+# here and the notebook's now-undeclared copy fails check 1 — but a `title_en` or
 # `title_es` edit reaches the decks and silently does not reach the
-# notebooks. Change a title here and change it in the notebook's "Where this
-# goes next" cell in the same commit.
+# notebooks. Change a title here and change it in every notebook that
+# carries its URL, in the same commit.
 #
 # `title_es` is a real translation of the post's title, but **the posts
 # themselves are in English**. The ES deck says so on screen: slides.scss adds
@@ -631,7 +635,7 @@ brainstorm:
 # not follow them — it is offline by design. It does check that both decks
 # link exactly the same set and that every URL in them is declared here, which
 # is the half that can go wrong silently. The other half, whether the post is
-# still there, is a manual concern: last verified 2026-09-05, all 200.
+# still there, is a manual concern: last verified 2026-09-22, all 200.
 #
 # Slug note: `sparse_tensors` uses an underscore where every other post uses
 # hyphens. That is the blog's URL, not a typo here.
@@ -640,6 +644,10 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/posts/six-views-of-pca/"
     title_en: "Six views of PCA"
     title_es: "Seis perspectivas de PCA"
+  ppca:
+    url: "https://project-delphi.github.io/ml-blog/posts/probabilistic-pca/"
+    title_en: "Probabilistic PCA"
+    title_es: "PCA probabilística"
   # The blog itself, not a post. It is here so that the "read one of these"
   # preamble in the deep-dive notebooks names it from the same place the posts
   # come from, and so check_links.py's "every ml-blog URL is declared" rule has
@@ -648,6 +656,14 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/"
     title_en: "The ML blog"
     title_es: "El blog de ML"
+  numpy_to_jax:
+    url: "https://project-delphi.github.io/ml-blog/posts/numpy-to-jax/"
+    title_en: "NumPy to JAX"
+    title_es: "De NumPy a JAX"
+  pure_python_tensor:
+    url: "https://project-delphi.github.io/ml-blog/posts/numpy-like-tensor/"
+    title_en: "A tensor in pure Python"
+    title_es: "Un tensor en Python puro"
   why_so_many:
     url: "https://project-delphi.github.io/ml-blog/posts/why-so-many-matrix-factorizations/"
     title_en: "Why so many matrix factorizations?"
@@ -664,6 +680,10 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/posts/eigendecomposition/"
     title_en: "The directions a matrix refuses to turn"
     title_es: "Las direcciones que una matriz no gira"
+  eigen_vs_svd:
+    url: "https://project-delphi.github.io/ml-blog/posts/eigendecomposition-vs-svd/"
+    title_en: "Eigenvectors or singular vectors?"
+    title_es: "¿Vectores propios o singulares?"
   recursion:
     url: "https://project-delphi.github.io/ml-blog/posts/recursive-inversion/"
     title_en: "Can you invert a recursive function?"
@@ -676,6 +696,10 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/"
     title_en: "What a tensor factorization buys you"
     title_es: "Para qué sirve factorizar un tensor"
+  cp_or_tucker:
+    url: "https://project-delphi.github.io/ml-blog/posts/cp-or-tucker/"
+    title_en: "CP or Tucker"
+    title_es: "CP o Tucker"
   inverses_practice:
     url: "https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/"
     title_en: "Tensor inverses in practice"
@@ -692,6 +716,10 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/posts/attention/"
     title_en: "Attention as two contractions"
     title_es: "La atención como dos contracciones"
+  fourier:
+    url: "https://project-delphi.github.io/ml-blog/posts/fourier-transform-intuition/"
+    title_en: "Fourier finally clicked"
+    title_es: "Por fin entendí Fourier"
 
 # ── References and further reading ───────────────────────────────────────────
 # The bibliography, and the single home for it. It used to live in the
@@ -944,17 +972,24 @@ references:
       # Keys into `reading:` above. `home` is the blog itself, not a post, so
       # it is deliberately not listed — the intro links it instead.
       reading:
+        - numpy_to_jax
+        - pure_python_tensor
         - why_so_many
         - optimization
         - svd
         - eigen
+        - eigen_vs_svd
         - recursion
         - tensor_factorizations
         - uses
+        - cp_or_tucker
         - inverses_practice
         - inverse_examples
         - sparse
         - attention
+        - pca
+        - ppca
+        - fourier
 
 # ── Agenda ───────────────────────────────────────────────────────────────────
 # The agenda table both decks show, one entry per row. Everything numeric —

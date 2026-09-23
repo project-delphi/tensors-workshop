@@ -124,6 +124,8 @@ La preparación se hizo antes. Recoge el diagnóstico individual antes de discut
 
 [Colab ↗]({{< var repo.colab_base >}}/01-what-a-tensor-is.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 01 in Google Colab"}
 
+[📖 {{< var reading.numpy_to_jax.title_es >}} ↗]({{< var reading.numpy_to_jax.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
 ::: {.notes}
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
@@ -419,6 +421,8 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 <p class="sr-only">transpose no es reshape: la misma comparación de histología entre transpose y reshape, más un lote real NHWC a NCHW con una imagen de histología, una foto de astronauta y una foto de gato, cada una reordenada correctamente.</p>
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 04 en Google Colab"}
 
+[📖 {{< var reading.pure_python_tensor.title_es >}} ↗]({{< var reading.pure_python_tensor.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
 ## {#sec-kahoot-1 background-image="images/slides-final/slide-14.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 1 — {{< var kahoot.q1.title_es >}}</h1>
@@ -655,6 +659,8 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 <p class="sr-only">Factoriza una vez, resuelve muchas: el mismo problema real de mínimos cuadrados de tres formas. Las ecuaciones normales son las más rápidas de escribir, y elevan al cuadrado el número de condición. QR es la opción estable por defecto, y nunca forma A-traspuesta-A. La SVD es la más cara y la más informativa, porque Eckart-Young da el error de truncamiento sin construir el truncamiento.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 09 en Google Colab"}
 
+[📖 {{< var reading.eigen_vs_svd.title_es >}} ↗]({{< var reading.eigen_vs_svd.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
 ::: {.notes}
 La tabla de operaciones y el cronómetro no coinciden, y ese desacuerdo es la
 lección. Lo que sobrevive a la máquina es la razón entre métodos a tamaño fijo: una SVD completa cerca de 39 veces una Cholesky. No el exponente, que queda por debajo de 3 por el paralelismo y la caché.
@@ -751,6 +757,8 @@ Explora después
 <p class="sr-only">Cuatro descomposiciones, cuatro tratos. CP guarda una suma de componentes de rango 1, R por I más J más K números, y es la opción cuando hay que leer los componentes uno a uno. Tucker guarda un subespacio por modo más un núcleo, y es la opción cuando cada modo necesita su propio rango. Tensor Train guarda una cadena de núcleos pequeños, que crece solo linealmente con el orden, y es la opción cuando un núcleo denso explotaría. Y t-SVD aplica una FFT sobre el modo 3, SVD matriciales y una FFT inversa, y es la opción cuando el tercer modo tiene un significado propio.</p>
 [Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 11 en Google Colab"}
 
+[📖 {{< var reading.cp_or_tucker.title_es >}} ↗]({{< var reading.cp_or_tucker.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
 ::: {.notes}
 Referencia opcional: Tensor Train y t-SVD quedan fuera de la comparación CP–Tucker de hoy. Vuelve a la actividad esencial durante el taller.
 :::
@@ -789,6 +797,8 @@ di que el ejercicio para casa 13 es donde le ocurre a una fotografía real.
 {{< var sections.s12.explore_es >}}
 
 [Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 12 in Google Colab"}
+
+[📖 {{< var reading.fourier.title_es >}} ↗]({{< var reading.fourier.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 
 ::: {.notes}
 Recoge la comprobación individual de cinco minutos antes de asignar extensiones.

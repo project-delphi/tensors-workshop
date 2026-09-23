@@ -122,6 +122,8 @@ Setup was pre-work. Collect the individual entry check before discussion.
 
 [Colab ↗]({{< var repo.colab_base >}}/01-what-a-tensor-is.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 01 in Google Colab"}
 
+[📖 {{< var reading.numpy_to_jax.title_en >}} ↗]({{< var reading.numpy_to_jax.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
 ::: {.notes}
 Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
 :::
@@ -411,6 +413,8 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 <p class="sr-only">Transpose is not reshape: the histology transpose-versus-reshape comparison, plus a real NHWC-to-NCHW batch of a histology slide, an astronaut photo and a cat photo, each correctly reordered.</p>
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 04 in Google Colab"}
 
+[📖 {{< var reading.pure_python_tensor.title_en >}} ↗]({{< var reading.pure_python_tensor.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
 ## {#sec-kahoot-1 background-image="images/slides-final/slide-14.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 1 — {{< var kahoot.q1.title_en >}}</h1>
@@ -642,6 +646,8 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 <p class="sr-only">Factor once, solve many: the same real least-squares problem three ways. Normal equations are fastest to write, and they square the condition number. QR is the stable default, and never forms A-transpose-A. SVD is the most expensive and the most informative, because Eckart-Young gives the truncation error without building the truncation.</p>
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
 
+[📖 {{< var reading.eigen_vs_svd.title_en >}} ↗]({{< var reading.eigen_vs_svd.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
 ::: {.notes}
 The flop table and the stopwatch disagree, and the disagreement is the
 lesson. What survives the machine is the ratio between methods at a fixed
@@ -739,6 +745,8 @@ Explore later
 <p class="sr-only">Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.</p>
 [Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
 
+[📖 {{< var reading.cp_or_tucker.title_en >}} ↗]({{< var reading.cp_or_tucker.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
 ::: {.notes}
 Optional reference: Tensor Train and t-SVD are outside today’s CP–Tucker comparison. Return to the core activity if teaching live.
 :::
@@ -777,6 +785,8 @@ say that take-home 13 is where it happens to a real photograph.
 {{< var sections.s12.explore_en >}}
 
 [Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
+
+[📖 {{< var reading.fourier.title_en >}} ↗]({{< var reading.fourier.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
 ::: {.notes}
 Collect the five-minute individual exit check before assigning any extensions.
