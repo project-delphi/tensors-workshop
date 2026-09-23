@@ -75,7 +75,7 @@ the last two questions land cold.
 
 |  |  |
 |---|---|
-| **Runs after** | Section 10 — Tucker decomposition, immediately before the wrap-up |
+| **Runs after** | Section 10 — Tucker decomposition, before section 11 |
 | **Covers** | Section 10, plus leftover convolution questions from extra 13 |
 | **Length** | {{< var kahoot.q3.questions >}} questions, ~5 min |
 | **Import file** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
@@ -86,8 +86,8 @@ the last two questions land cold.
 Run it while the taxi-tensor rush-hour result is still on screen. Its final
 question names hour 18, so it **must** come after section 10's rank explorer,
 which prints the busiest hour and the hour Tucker's first hour pattern peaks
-at. Running it early gives the answer away. It doubles as a live rehearsal of
-the wrap-up's own recap, so go straight from the podium into the wrap-up.
+at. Running it early gives the answer away. Then go straight from the podium
+into section 11, which takes the same tensor to CP.
 
 ## Running them
 
@@ -96,8 +96,8 @@ the wrap-up's own recap, so go straight from the podium into the wrap-up.
 - **Budget 5 minutes each, including the podium.** Groups want to see the
   leaderboard, and that is fine. It is the payoff.
 - **Do not import live.** See the note at the top of this page.
-- **These add 15 minutes**, taking the workshop from 180 to
-  {{< var workshop.minutes >}}.
+- **These add 15 minutes.** With the three 5-minute breaks, they take the
+  180 minutes of sections to {{< var workshop.minutes >}}.
 
 ## If you are running out of time
 
@@ -105,13 +105,13 @@ the wrap-up's own recap, so go straight from the podium into the wrap-up.
 
 The handbook's cutting order, in order:
 
-1. **Quiz 2** — the least novel of the three; the pseudoinverse and distance get
-   re-covered narratively in the wrap-up.
-2. TODO 4 of Appendix F (true deconvolution — the most technically demanding, and now take-home).
-3. The RNN snippet in section 08.
-4. Question 5 of either group block.
-5. **Quiz 1.**
+1. **Quiz 2** — the least novel of the three; the pseudoinverse comes back on
+   the wrap-up's one-idea slide.
+2. **Quiz 1.**
+
+Everything past a notebook's **Core complete**, and every appendix, already
+sits outside the {{< var workshop.minutes >}} minutes, so cutting it saves nothing.
 
 **Never cut** section 01's *Three Operations That Matter*, section 10, or
-**Quiz 3**. Quiz 3 is the cheapest way to find out whether Tucker and CP
-landed, and the only chance to find out is before students leave.
+**Quiz 3**. Quiz 3 checks whether Tucker landed while the taxi result is
+still on screen.

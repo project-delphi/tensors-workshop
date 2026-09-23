@@ -688,7 +688,7 @@ Explore later
 :::
 
 <p class="sr-only">What about tensors? Three cards. First: no tensor inverse is in common use. That is a fair question with an honest answer, not a gap in your reading. Second: definitions do exist, built on the Einstein product and on the t-product for order-3 tensors, and they are active research. Third: in practice you unfold the tensor into a matrix, apply the matrix pseudoinverse, and fold the result back. A 4 by 3 by 5 tensor unfolds to 4 by 15, whose pseudoinverse is 15 by 4. M A-plus M returns M exactly, because unfolding loses nothing.</p>
-<p class="sr-only">This is also where the second half's through-line starts: the pseudoinverse in section 07, Richardson-Lucy deconvolution in section 09 and Tucker in section 10 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.</p>
+<p class="sr-only">This is also where the second half's through-line starts: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
 
 [📖 {{< var reading.inverses_practice.title_en >}} ↗]({{< var reading.inverses_practice.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
@@ -712,8 +712,8 @@ WARNING: two questions ask about Euclidean distance and cosine similarity, which
 the handbook never defines directly. If you did not say those words during §06,
 expect them to land cold.
 
-THIS IS THE FIRST QUIZ TO CUT if you are over time — the pseudoinverse and
-distance both get re-covered narratively in the wrap-up.
+THIS IS THE FIRST QUIZ TO CUT if you are over time — the pseudoinverse comes
+back on the wrap-up's one-idea slide.
 :::
 
 ## {{< var sections.s08.n >}} · {{< var sections.s08.title_en >}} {#sec-08-recursion-with-matrices .outcomes-slide}
@@ -742,11 +742,16 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 
 ## {background-image="images/slides-final/slide-24.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
-<p class="sr-only">Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The slide is explicitly marked as a conceptual placeholder, to be replaced by notebook 08's own output once Issue #49 is implemented.</p>
+<p class="sr-only">Gradient descent is also recursion: the scalar, vector and matrix forms of gradient descent are shown side by side. The same update rule scales from a number to vectors and matrices.</p>
 [Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 08 in Google Colab"}
 
 [📖 {{< var reading.eigen.title_en >}} ↗]({{< var reading.eigen.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 [📖 {{< var reading.recursion.title_en >}} ↗]({{< var reading.recursion.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
+::: {.notes}
+A picture, not an exercise: notebook 08 does not run gradient descent. Say
+that every training loop is this same recursion, and move on.
+:::
 
 ## {{< var sections.s09.n >}} · {{< var sections.s09.title_en >}} {#sec-09-matrix-factorizations .outcomes-slide}
 
@@ -908,9 +913,9 @@ ITS LAST QUESTION NAMES HOUR 18 — it must come AFTER §10's rank explorer,
 which prints the busiest hour and the hour Tucker's first hour pattern peaks
 at, never before, or it gives the answer away.
 
-NEVER CUT THIS ONE. It is the cheapest way to check whether Tucker and CP
-actually landed before students leave. It also doubles as a live rehearsal of the
-wrap-up's own recap, so segue straight from the podium into the wrap-up.
+NEVER CUT THIS ONE. It checks whether Tucker landed while the taxi result is
+still on screen. Go straight from the podium into section 11, which takes the
+same tensor to CP.
 :::
 
 ## {{< var sections.s11.n >}} · {{< var sections.s11.title_en >}} {#sec-11-tensor-factorizations .outcomes-slide}
@@ -944,7 +949,7 @@ Explore later
 :::
 
 <p class="sr-only">Four decompositions, four bargains. CP stores a sum of rank-1 components, R times I plus J plus K numbers, and is the choice when the components have to be read one by one. Tucker stores one subspace per mode plus a core, and is the choice when each mode needs a rank of its own. Tensor Train stores a chain of small cores, growing only linearly with order, and is the choice when a dense core would explode. And t-SVD takes an FFT along mode 3, matrix SVDs, and an inverse FFT, and is the choice when the third mode carries a meaning of its own.</p>
-[Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
+[Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
 
 [📖 {{< var reading.cp_or_tucker.title_en >}} ↗]({{< var reading.cp_or_tucker.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 

@@ -52,10 +52,6 @@ speaker view rather than trusting memory. The notes hold Appendix G's facilitato
 guidance where it is actually needed:
 
 - the two meanings of **"rank"**, at the start of Part I
-- the **deliberate `LinAlgError`** in section 07, which students will think is
-  their mistake
-- the **20-pixel border crop** in section 09, which must be said *before* the
-  exercise, not after
 - on each Kahoot slide: import ahead of time, budget 5 minutes, and where that
   quiz sits in the cutting order
 

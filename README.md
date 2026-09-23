@@ -227,8 +227,8 @@ split is in [LICENSE](LICENSE).
 # Tensores para Aprendizaje Automático
 
 **Un taller de 3,5 horas (210 minutos con tres controles de conocimiento con
-Kahoot) que te lleva de «sé lo que es una matriz» a manipular, resolver,
-convolucionar y factorizar tensores.**
+Kahoot) que te lleva de «sé lo que es una matriz» a manipular, resolver y
+factorizar matrices y tensores.**
 
 📍 **[project-delphi.github.io/tensors-workshop/es](https://project-delphi.github.io/tensors-workshop/es/)**
  · 🇬🇧 [In English](#tensors-for-machine-learning)
