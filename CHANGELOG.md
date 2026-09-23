@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-09-23
+
+- **The widgets reach the timed session.** Each deck gains six projector-moment slides, each one a predict-first question with a link to the widget page it needs:
+  - a 90-second cold open on the audio stage, where the same 263,169 numbers, transposed, turn a voice into noise;
+  - the broadcasting simulator in section 03;
+  - a reshape breaking a photo in 04, named as the cold open's bug;
+  - collinear columns in 07;
+  - Tucker on the taxi tensor in 10, after the rank explorer;
+  - the matched parameter budget in 11, at group task 11's share-out.
+
+  Each moment's notes script says what to press and the one number to point at. The "one idea" slide before the exit check replays the voice, and the room names the bug. The facilitator run sheet gains an *On the projector* column, in both languages. Every moment takes its time from the slot's own modelling time, so the clock does not move. Kahoot 3's notes now say it goes after section 10's rank explorer, which is where the hour-18 answer now appears.
+
 ## 2026-09-22
 
 - **Six new posts from the ML blog, linked where their idea is taught.** Both decks carry a reading chip for *NumPy to JAX* (section 01), *A tensor in pure Python* (04), *Eigenvectors or singular vectors?* (09), *CP or Tucker* (11) and *Fourier finally clicked* (12). The notebooks end on the same posts: 01, 04 and 13 gain a *Where this goes next* cell, 12 gains one naming a post per take-home, 09 and 11 add theirs to the list they already had, and 16 lists *Probabilistic PCA* beside *Six views of PCA*. The references page lists every one of them, and *Six views of PCA* too, which it had been missing. *NumPy to JAX* sits on section 01's title slide rather than the frameworks slide it describes: the three computing slides hide the Colab panel a chip is shown in, so a chip there is never seen.

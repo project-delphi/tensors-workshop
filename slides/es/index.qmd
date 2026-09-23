@@ -28,6 +28,26 @@ nuevo se define la primera vez que aparece. Habla despacio y evita modismos;
 nombra pronto los cognados: eje, descomposición, contracción, convolución.
 :::
 
+## Predicción: los mismos números — ¿sigue sonando a voz? {.computing-slide}
+
+Reproduce la voz tal como se construyó y luego cambia la disposición y reprodúcela otra vez: los mismos 263.169 números, solo en otro orden.
+
+<a href="../../interactive/voice-stage.html?lang=es#scramble" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de voz ↗</a>
+
+::: {.notes}
+Sonido activado — prueba los altavoces de la sala antes de que llegue el
+grupo; esto solo funciona si lo oyen. Reproduce la voz tal como la construyó
+la transformada: suena a voz. Cambia Disposición a transpuesta y reproduce de
+nuevo: los mismos 263.169 números, solo reordenados, y es ruido.
+
+El número que hay que señalar: 263.169 — dilo en voz alta las dos veces, para
+que la sala oiga que no se perdió nada.
+
+Pregunta por qué una transposición que no pierde nada arruina igual el
+sonido — y no respondas. Promete que la sección 04 y la última diapositiva
+del cierre vuelven sobre esto.
+:::
+
 ## {background-image="images/slides-final/slide-02.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">La idea del workshop: cuatro tarjetas muestran escalar, vector, matriz y tensor como arreglos 0D, 1D, 2D y ND, cada uno definido por su forma. La pregunta guía del día: antes de operar, ¿qué representa cada eje?</p>
@@ -392,6 +412,27 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 <p class="sr-only">Indexación en acción: los mismos cuatro paneles de indexación, máscaras, recorte satelital y broadcasting, con una franja resumen que nombra cada técnica.</p>
 [Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 03 en Google Colab"}
 
+## Predicción: ¿qué forma sale? {.computing-slide}
+
+Antes de pulsar nada, adivina la forma del resultado — luego prueba dos formas que no encajan.
+
+<a href="../../interactive/broadcasting-simulator.html?lang=es" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de broadcasting ↗</a>
+
+::: {.notes}
+Empieza con el preset "dígitos: estandarizar", (1797, 64) + (64,). Pide a la
+sala que prediga la forma del resultado antes de pulsar nada: (1797, 64).
+
+Luego haz clic en "un offset por fila ✗": (4, 5) + (4,). Pregunta otra vez —
+NumPy alinea las formas por la derecha, y el último eje es 5 contra 4,
+ninguno de los dos es 1, así que se niega y lanza un `ValueError`. El número
+que hay que señalar: el eje que tiene que valer exactamente 1 para estirarse,
+no solo ser igual.
+
+Haz clic en "…como columna ✓" a continuación: (4, 5) + (4, 1) — ahora sí
+funciona. Los mismos dos números, convertidos de fila a columna, y el error
+desaparece.
+:::
+
 ## {{< var sections.s04.n >}} · {{< var sections.s04.title_es >}} {#sec-04-reshape-and-transpose .outcomes-slide}
 
 ::: {.sec-part}
@@ -422,6 +463,27 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 04 en Google Colab"}
 
 [📖 {{< var reading.pure_python_tensor.title_es >}} ↗]({{< var reading.pure_python_tensor.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
+
+## Predicción: ¿sobrevive esta foto a un reshape? {.computing-slide}
+
+El mismo error del arranque, ahora en una foto: reshape en vez de transpose sobre el mismo lote.
+
+<a href="../../interactive/image-tensor.html?lang=es#reshape" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de tensor de imagen ↗</a>
+
+::: {.notes}
+Nómbralo como el error del arranque antes de mostrarlo: los números
+sobreviven, los ejes ya no significan lo que el código supuso.
+
+En la pestaña Reshape (abierta por defecto), cambia al lote NHWC a NCHW y
+activa "Comparar con reshape": y = los mismos bytes, releídos en orden de
+memoria y vertidos en esa forma. La imagen se rompe en franjas — los mismos
+bytes, los ejes equivocados.
+
+Desactiva la comparación para mostrar el resultado correcto: un transpose
+reordena los ejes y no lee nada, así que la foto sobrevive. La pregunta con
+la que dejar la sala: ¿qué operación no lee nada, no mueve nada, y aun así
+acierta?
+:::
 
 ## {#sec-kahoot-1 background-image="images/slides-final/slide-14.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -550,6 +612,25 @@ Para columnas duplicadas `A = [x, x]`, las predicciones dependen de la suma de c
 
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer"}
 
+## Predicción: ¿cuánto se mueve la respuesta? {.computing-slide}
+
+Mueve el objetivo un 2% y observa qué les pasa a los coeficientes cuando dos columnas dicen casi lo mismo.
+
+<a href="../../interactive/linalg-stage.html?lang=es#collinear" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de colinealidad ↗</a>
+
+::: {.notes}
+Haz clic en "90°: independientes" y pulsa el botón que mueve el objetivo un
+2%. Las barras se mueven cerca de un 2% — los coeficientes siguen a los
+datos.
+
+Ahora haz clic en "0.5°: casi paralelas" y pulsa el mismo botón otra vez: el
+mismo 2% de cambio en el objetivo ahora mueve los coeficientes más de un
+300%. El número que hay que dejar en la sala: 2% de entrada, más de 300% de
+salida, en cuanto dos predictores son casi la misma columna.
+
+Señala κ(X), impreso junto a las barras — el número de condición es la cota
+de cuánto puede empeorar.
+:::
 
 ## {.extension-slide background-image="images/slides-final/slide-21.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -706,6 +787,27 @@ biotecnología, sobre datos (genes × muestras × condiciones), encuentran
 estructura que PCA no alcanza: PCA solo puede ver dos ejes.
 :::
 
+## Predicción: ¿qué hora elige el factor de hora? {.computing-slide}
+
+480 conteos de taxis se convierten en un núcleo pequeño y tres matrices factor. El cuaderno imprimió una hora; encuéntrala en la imagen.
+
+<a href="../../interactive/factor-stage.html?lang=es#tucker" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de Tucker ↗</a>
+
+::: {.notes}
+Muéstralo después de que el explorador de rango del cuaderno haya impreso
+sus dos horas, como evidencia para "defender una elección"; nunca antes: la
+escena rotula el pico del factor de hora, y tanto la revelación del cuaderno
+como la última pregunta del Kahoot 3 tratan de esa hora.
+
+En el proyector: los rangos (2, 2, 3) guardan 102 números en lugar de 480 —
+un ahorro de 4,71×, con un error del 6,7%. Señala el factor de hora: su pico
+está en la hora 18, la misma que acaba de imprimir el cuaderno. Dos
+herramientas, una respuesta. Haz clic en un vóxel del núcleo
+para mostrar qué patrón de origen, de destino y de hora pondera. Cambia la
+vista a reconstruido, y luego a residual, para mostrar lo que se pierde con
+la compresión.
+:::
+
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_es >}}</h1>
@@ -716,8 +818,10 @@ estructura que PCA no alcanza: PCA solo puede ver dos ejes.
 Ejecútalo justo después de la sección 10, con el resultado de la hora punta del
 tensor de taxis todavía en pantalla.
 
-SU ÚLTIMA PREGUNTA NOMBRA LA HORA 18: tiene que ir DESPUÉS del TODO 6 de la §10,
-nunca antes, o revela la respuesta.
+SU ÚLTIMA PREGUNTA NOMBRA LA HORA 18: tiene que ir DESPUÉS del explorador de
+rango de la §10, que imprime la hora más ocupada y la hora en la que alcanza
+su pico el primer patrón horario de Tucker, nunca antes, o revela la
+respuesta.
 
 NUNCA RECORTES ESTE. Es la forma más barata de comprobar si Tucker y CP han
 calado antes de que se vayan. Además hace de ensayo en directo del propio repaso
@@ -763,6 +867,30 @@ Explora después
 Referencia opcional: Tensor Train y t-SVD quedan fuera de la comparación CP–Tucker de hoy. Vuelve a la actividad esencial durante el taller.
 :::
 
+## Predicción: mismo presupuesto — ¿quién gana? {.computing-slide}
+
+El mismo presupuesto de parámetros, gastado como CP y como Tucker — cuando las parejas ya tengan sus propios números.
+
+<a href="../../interactive/factor-stage.html?lang=es#budget" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de presupuesto ↗</a>
+
+::: {.notes}
+Guárdalo para la puesta en común de la actividad grupal 11, después de que
+las parejas hayan comparado sus propios ajustes de CP y Tucker: es la
+comparación con el mismo presupuesto que pide la actividad, y mostrado antes
+les resuelve el ejercicio en parejas.
+
+Pide a la sala que prediga antes de hacer clic: CP rango 3 y Tucker (3, 3,
+3) — ¿cuestan lo mismo? No: CP rango 3 son 99 números, Tucker (3, 3, 3) son
+126.
+
+Baja el presupuesto a 66 parámetros: gana Tucker, 4,69% de error frente al
+7,00% de CP. A partir de 99 números, gana CP. El número que hay que dejar en
+la sala: quién gana depende del presupuesto, no de cuál es "mejor".
+
+Después devuelve a la sala la pregunta de la actividad: ¿era justa la
+comparación del informe "de rango 3", y qué guardaba de verdad cada modelo?
+:::
+
 ## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Una idea conecta el taller: la pseudoinversa de la sección 07, Tucker en la 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 aparecen juntas como tres casos de la misma idea — aproximar estructura útil cuando la solución exacta no basta.</p>
@@ -776,6 +904,12 @@ La diapositiva de inversas tensoriales de la sección 07 la abre; aquí se cierr
 
 La convolución es la única de las tres patas que la sala ya no ejecuta. Dilo, y
 di que el ejercicio para casa 13 es donde le ocurre a una fotografía real.
+
+Callback de 30 segundos al arranque, dentro de este repaso: reproduce otra
+vez la voz transpuesta de la primerísima diapositiva. Deja que la sala nombre
+el error: un reshape o un transpose hecho sin preguntar qué significa cada
+eje. Luego vuelve a "como la construyó la transformada" y déjala sonar
+limpia. Es la misma idea, oída dos veces.
 :::
 
 ## {{< var sections.s12.n >}} · {{< var sections.s12.title_es >}} {#sec-12-wrap-up-and-take-homes .outcomes-slide}

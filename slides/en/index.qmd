@@ -29,6 +29,26 @@ avoid idiom, and name the Spanish cognates early: eje, descomposición,
 contracción, convolución.
 :::
 
+## Predict first: same numbers — still a voice? {.computing-slide}
+
+Play the voice as built, then switch the layout and play it again: the same 263,169 numbers, only in a different order.
+
+<a href="../../interactive/voice-stage.html?lang=en#scramble" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the voice widget ↗</a>
+
+::: {.notes}
+Sound on — test the room's speakers before people arrive; this only works if
+they can hear it. Press play on the voice as the transform built it: it
+sounds like a voice. Switch Layout to transposed and press play again: same
+263,169 numbers, only reordered, and it is noise.
+
+The one number to point at: 263,169 — say it out loud both times, so the room
+hears that nothing was lost.
+
+Ask why a transpose that loses nothing still ruins the sound — and do not
+answer. Promise the room that section 04 and the wrap-up's last slide both
+come back to this.
+:::
+
 ## {background-image="images/slides-final/slide-02.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">The workshop idea: four cards show scalar, vector, matrix and tensor as 0D, 1D, 2D and ND arrays, each defined by its shape. The guiding question of the day: before operating, what does each axis represent?</p>
@@ -384,6 +404,25 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 <p class="sr-only">Indexing in action: the same four indexing, masking, satellite-cropping and broadcasting panels, with a summary strip naming each technique.</p>
 [Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 03 in Google Colab"}
 
+## Predict first: what shape comes out? {.computing-slide}
+
+Before you press anything, guess the result shape — then try two shapes that do not line up.
+
+<a href="../../interactive/broadcasting-simulator.html?lang=en" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the broadcasting widget ↗</a>
+
+::: {.notes}
+Start on the "digits: standardize" preset, (1797, 64) + (64,). Ask the room to
+predict the result shape before you press anything: (1797, 64).
+
+Then click "one offset per row ✗": (4, 5) + (4,). Ask again — NumPy aligns
+shapes from the right, and the last axis is 5 against 4, neither of them 1, so
+it refuses and throws a `ValueError`. The one number to point at: whichever
+axis has to be exactly 1 to stretch, not just equal.
+
+Click "…as a column ✓" next: (4, 5) + (4, 1) — now it broadcasts. Same two
+numbers, reshaped from a row into a column, and the error is gone.
+:::
+
 ## {{< var sections.s04.n >}} · {{< var sections.s04.title_en >}} {#sec-04-reshape-and-transpose .outcomes-slide}
 
 ::: {.sec-part}
@@ -414,6 +453,27 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 04 in Google Colab"}
 
 [📖 {{< var reading.pure_python_tensor.title_en >}} ↗]({{< var reading.pure_python_tensor.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
+
+## Predict first: does a reshape survive this photo? {.computing-slide}
+
+The cold open's bug, on a photo this time: reshape instead of transpose on the same batch.
+
+<a href="../../interactive/image-tensor.html?lang=en#reshape" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the image tensor widget ↗</a>
+
+::: {.notes}
+Name it as the cold open's bug before you show it: the numbers survive, the
+axes do not mean what the code assumed they mean.
+
+On the Reshape tab (open by default), switch to the NHWC-to-NCHW batch and
+turn on "Compare with reshape": y = the same bytes, reread in memory order
+and poured into that shape. The picture breaks into stripes — same bytes,
+wrong axes.
+
+Turn the comparison off to show the correct result: a transpose reorders the
+axes and reads nothing, so the photo survives. The one question to leave the
+room with: which operation reads nothing and moves nothing, and still gets
+this right?
+:::
 
 ## {#sec-kahoot-1 background-image="images/slides-final/slide-14.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -538,6 +598,24 @@ For duplicated columns `A = [x, x]`, predictions depend on the sum of the coeffi
 
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer"}
 
+## Predict first: how far does the answer move? {.computing-slide}
+
+Nudge the target by 2% and watch what happens to the coefficients when two columns say almost the same thing.
+
+<a href="../../interactive/linalg-stage.html?lang=en#collinear" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the collinearity widget ↗</a>
+
+::: {.notes}
+Click "90°: independent", then press the button that nudges the target by
+2%. The bars move by about 2% — the coefficients track the data.
+
+Now click "0.5°: nearly parallel" and press the same button again: the same
+2% nudge in the target now moves the coefficients by over 300%. The one
+number to leave the room with: 2% in, 300%+ out, once two predictors are
+nearly the same column.
+
+Point at κ(X) printed next to the bars — the condition number is the bound on
+how much worse it is allowed to get.
+:::
 
 ## {.extension-slide background-image="images/slides-final/slide-21.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
@@ -694,6 +772,25 @@ tensors so models run on phones. In biotech, on (genes × samples × conditions)
 they find structure PCA cannot reach — PCA can only ever see two axes.
 :::
 
+## Predict first: which hour does the hour factor pick? {.computing-slide}
+
+480 taxi counts become a small core and three factor matrices. The notebook printed one hour; find it in the picture.
+
+<a href="../../interactive/factor-stage.html?lang=en#tucker" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the Tucker widget ↗</a>
+
+::: {.notes}
+Show this after the notebook's rank explorer has printed its two hours, as
+the evidence for "defend a choice" — never before: the scene labels the hour
+factor's peak, and both the notebook's reveal and Kahoot 3's last question
+are about that hour.
+
+On the projector: ranks (2, 2, 3) hold 102 numbers in place of 480 — a 4.71x
+saving, at 6.7% error. Point at the hour factor: it peaks at 18, the hour the
+notebook just printed. Two tools, one answer. Click a core voxel to show which pickup pattern,
+dropoff pattern and hour pattern it weights. Switch the view to rebuilt, then
+to residual, to show what the compression misses.
+:::
+
 ## {#sec-kahoot-3 background-image="images/slides-final/slide-29.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <h1 class="sr-only">Kahoot 3 — {{< var kahoot.q3.title_en >}}</h1>
@@ -704,8 +801,9 @@ they find structure PCA cannot reach — PCA can only ever see two axes.
 Run this right after section 10, while the taxi-tensor rush-hour result is still
 on screen.
 
-ITS LAST QUESTION NAMES HOUR 18 — it must come AFTER §10 TODO 6, never before,
-or it gives the answer away.
+ITS LAST QUESTION NAMES HOUR 18 — it must come AFTER §10's rank explorer,
+which prints the busiest hour and the hour Tucker's first hour pattern peaks
+at, never before, or it gives the answer away.
 
 NEVER CUT THIS ONE. It is the cheapest way to check whether Tucker and CP
 actually landed before students leave. It also doubles as a live rehearsal of the
@@ -751,6 +849,28 @@ Explore later
 Optional reference: Tensor Train and t-SVD are outside today’s CP–Tucker comparison. Return to the core activity if teaching live.
 :::
 
+## Predict first: same budget — who wins? {.computing-slide}
+
+The same parameter budget, spent as CP and spent as Tucker — once the pairs have their own numbers.
+
+<a href="../../interactive/factor-stage.html?lang=en#budget" class="widget-tab" target="_blank" rel="noopener noreferrer">Open the budget widget ↗</a>
+
+::: {.notes}
+Hold this for group task 11's share-out, after the pairs have compared their
+own CP and Tucker fits: it is the matched comparison the task asks for, and
+shown earlier it answers the pair exercise for them.
+
+Ask the room to predict before you click: CP rank 3 and Tucker (3, 3, 3) —
+same cost? They are not: CP rank 3 is 99 numbers, Tucker (3, 3, 3) is 126.
+
+Drag the budget down to 66 parameters: Tucker wins, 4.69% error against CP's
+7.00%. From 99 numbers on, CP wins instead. The one number to leave the room
+with: which model wins depends on the budget, not on which one is "better".
+
+Then put the task's question back to the room: was the report's "rank 3"
+comparison fair, and what did each model actually store?
+:::
+
 ## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">One idea connects the workshop: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
@@ -764,6 +884,12 @@ inverse slide opens it; this is where it closes.
 
 Convolution is the one leg of the three the room no longer runs. Say so, and
 say that take-home 13 is where it happens to a real photograph.
+
+30-second callback to the cold open, inside this recap: replay the
+transposed voice from the very first slide. Let the room name the bug —
+a reshape or transpose done without asking what each axis means. Then switch
+back to "as the transform built it" and let it play clean. That is the one
+idea, heard twice.
 :::
 
 ## {{< var sections.s12.n >}} · {{< var sections.s12.title_en >}} {#sec-12-wrap-up-and-take-homes .outcomes-slide}

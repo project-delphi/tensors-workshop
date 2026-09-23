@@ -92,9 +92,10 @@ caen en frío.
 
 Lánzalo mientras el resultado de la hora punta del tensor de taxis siga en
 pantalla. Su última pregunta nombra la hora 18, así que **tiene** que ir
-después del TODO 6 de la sección 10. Lanzarlo antes regala la respuesta. Sirve
-además de ensayo en vivo del propio repaso del cierre, así que pasa del podio
-al cierre sin interrupción.
+después del explorador de rango de la sección 10, que imprime la hora más
+ocupada y la hora en la que alcanza su pico el primer patrón horario de
+Tucker. Lanzarlo antes regala la respuesta. Sirve además de ensayo en vivo del
+propio repaso del cierre, así que pasa del podio al cierre sin interrupción.
 
 ## Cómo lanzarlos
 
