@@ -534,6 +534,35 @@ recorta antes el Kahoot 2.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
+## ¿Mito o hecho? {.computing-slide}
+
+De vuelta de la pausa: tres afirmaciones de las secciones 02–04. Mano alzada para **mito**.
+
+1. Barajar cuatro fotogramas deja su media igual.\
+   [**Hecho.** 1,5 antes y después; por eso la media no puede decirte si el orden sobrevivió.]{.fragment}
+2. Si al estandarizar salen NaN, la fórmula tiene un error.\
+   [**Mito.** Una columna que nunca varía tiene desviación típica 0; tres píxeles de los dígitos nunca varían.]{.fragment}
+3. Si una transposición y un reshape dan los dos forma `(3, 2, 2)`, guardan los mismos valores en los mismos sitios.\
+   [**Mito.** La misma entrada, `[1, 0, 0]`, vale 1 tras la transposición y 4 tras el reshape.]{.fragment}
+
+::: {.notes}
+Un minuto, mientras la sala se sienta. Es la pregunta de recuperación del bloque.
+
+Lee cada afirmación y cuenta las manos para "mito". Antes de revelar, pide a
+una persona un contraejemplo para una afirmación que la sala llamó mito.
+Después revela los veredictos uno a uno.
+
+1. Hecho, y una trampa: los fotogramas [0, 1, 2, 3] barajados como
+   [0, 3, 1, 2] conservan la media de 1,5, pero los pasos van de [1, 1, 1] a
+   [3, -2, 1].
+2. Mito: la fórmula dividió entre cero, y con razón. Una columna constante es
+   un hallazgo sobre los datos, no un error.
+3. Mito: la pregunta de predicción del cuaderno 04 y la lección de la caza del
+   error.
+
+Las tres son los errores resueltos 02, 03 y 04.
+:::
+
 ## {background-image="images/slides-final/slide-16.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Archivo a frames a tensor a modelo: una tubería de cuatro etapas muestra cómo un vídeo se convierte en un tensor enmascarado, con la fórmula de la máscara de validez.</p>
@@ -594,6 +623,32 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 
 ::: {.notes}
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+:::
+
+## ¿Mito o hecho? {.computing-slide}
+
+De vuelta de la pausa: tres afirmaciones de las secciones 05–06. Mano alzada para **mito**.
+
+1. `clip[1]` es lo segundo que pasó en el video.\
+   [**Mito.** `clip` guarda uno de cada 45 fotogramas de 720, así que `clip[1]` es el fotograma 45.]{.fragment}
+2. `np.einsum('ii->', A)` suma la matriz entera.\
+   [**Mito.** Una letra repetida conserva solo la diagonal: 8 para `[[5, 2], [7, 3]]`, cuyo total es 17.]{.fragment}
+3. `np.einsum('ij->', A)` suma la matriz entera.\
+   [**Hecho.** Dos letras distintas, las dos sumadas: 17.]{.fragment}
+
+::: {.notes}
+Un minuto, mientras la sala se sienta. Es la pregunta de recuperación del bloque.
+
+Lee cada afirmación y cuenta las manos para "mito". Las afirmaciones 2 y 3
+difieren en una letra, así que espera un voto dividido. Pide a alguien que
+votó "mito" en la 2 que diga qué entradas suma. Después revela los veredictos.
+
+1. Mito: un índice sobre un eje muestreado es una posición en el array, no un
+   momento. El 97,8% de los fotogramas grabados ni siquiera está en el tensor.
+2. Mito: 5 + 3 = 8, no 5 + 2 + 7 + 3 = 17.
+3. Hecho: qué letras se repiten decide qué entra en la suma.
+
+Son los errores resueltos 05 y 06.
 :::
 
 ## Mismas predicciones, coeficientes distintos {.computing-slide}
@@ -773,6 +828,33 @@ Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
 :::
 
+## ¿Mito o hecho? {.computing-slide}
+
+De vuelta de la pausa: tres afirmaciones de las secciones 07–09. Mano alzada para **mito**.
+
+1. Si `pinv` devuelve una respuesta sin quejarse, la matriz era invertible.\
+   [**Mito.** `pinv` responde para cualquier matriz. Con una columna duplicada responde para una matriz de rango 2, y `P @ A` no es la identidad.]{.fragment}
+2. Un pronóstico con un 1% de error a un paso puede errar más de un 3% a doce pasos.\
+   [**Hecho.** Con `w = 1.1`, el error crece a 1% × 1,1¹² = 3,14%.]{.fragment}
+3. Dos ajustes pueden ser casi exactos y aun así discrepar en sus coeficientes.\
+   [**Hecho.** Sus predicciones difieren en 0,000001 y sus coeficientes en 1,41.]{.fragment}
+
+::: {.notes}
+Un minuto, mientras la sala se sienta. Es la pregunta de recuperación del bloque.
+
+Lee cada afirmación y cuenta las manos para "mito". Esta vez dos de tres son
+hechos; la sala esperará uno, como antes. Pide un contraejemplo para la
+afirmación 1 antes de revelarla.
+
+1. Mito: comprueba el rango, no si apareció una excepción.
+2. Hecho: un pronóstico recursivo se alimenta de su propia salida, así que la
+   regla de actualización también se aplica al error. Con w = 0.9 se apaga.
+3. Hecho: columnas casi colineales, la misma lección que la escena de
+   colinealidad de la sección 07. Mira el condicionamiento además del ajuste.
+
+Son los errores resueltos 07, 08 y 09.
+:::
+
 ## {background-image="images/slides-final/slide-28.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
 
 <p class="sr-only">Tabla a tensor a HOSVD a reconstrucción: una tubería de cuatro pasos convierte una tabla de viajes en un tensor de orden 3, calcula su núcleo y factores por HOSVD, y lo reconstruye mostrando el error.</p>
@@ -787,6 +869,30 @@ biotecnología, sobre datos (genes × muestras × condiciones), encuentran
 estructura que PCA no alcanza: PCA solo puede ver dos ejes.
 :::
 
+## Golf de compresión: hoyo 1 {.computing-slide}
+
+Guarda el tensor de taxis en el menor número de números posible, con un error relativo **por debajo del 7%**. Gana quien guarde menos.
+
+- Salida desde los rangos (2, 2, 3): 102 números, 6,70% de error.
+- El explorador de rangos imprime tu puntuación bajo sus mapas de calor.
+- Publica una línea: rangos · números · error.
+
+::: {.notes}
+Ocho minutos en el explorador de rangos: la actividad esencial del cuaderno 10
+es el hoyo. Lleva la clasificación en la pizarra o en el chat, ordenada por
+números almacenados.
+
+El par es (3, 3, 1): 60 números con un 4,69%. La mayoría de los equipos van a
+(2, 2, 3), luego a (2, 2, 2), luego a (2, 2, 1), y fallan: 46 números con un
+7,14%. (3, 2, 1) y (2, 3, 1) también fallan, con un 7,13% y un 7,12%. Lo que
+gana es gastar rangos en los distritos, no en las horas. Desde (2, 2, 1),
+subir el rango horario a 3 gana 0,44 puntos de error; subir los dos rangos de
+distrito a 3 gana 2,45.
+
+Si al minuto seis nadie baja de 70 números, pregunta: ¿qué rango no han
+probado a subir?
+:::
+
 ## Predicción: ¿qué hora elige el factor de hora? {.computing-slide}
 
 480 conteos de taxis se convierten en un núcleo pequeño y tres matrices factor. El cuaderno imprimió una hora; encuéntrala en la imagen.
@@ -794,15 +900,15 @@ estructura que PCA no alcanza: PCA solo puede ver dos ejes.
 <a href="../../interactive/factor-stage.html?lang=es#tucker" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de Tucker ↗</a>
 
 ::: {.notes}
-Muéstralo después de que el explorador de rango del cuaderno haya impreso
-sus dos horas, como evidencia para "defender una elección"; nunca antes: la
-escena rotula el pico del factor de hora, y tanto la revelación del cuaderno
-como la última pregunta del Kahoot 3 tratan de esa hora.
+Muéstralo después del golf, como evidencia para "defender al ganador"; nunca
+antes: la escena rotula el pico del factor de hora, y tanto la revelación del
+cuaderno como la última pregunta del Kahoot 3 tratan de esa hora.
 
-En el proyector: los rangos (2, 2, 3) guardan 102 números en lugar de 480 —
-un ahorro de 4,71×, con un error del 6,7%. Señala el factor de hora: su pico
-está en la hora 18, la misma que acaba de imprimir el cuaderno. Dos
-herramientas, una respuesta. Haz clic en un vóxel del núcleo
+En el proyector: pon los rangos de la entrada ganadora de la sala,
+normalmente (3, 3, 1): 60 números en lugar de 480, un ahorro de 8×, con un
+error del 4,69%. Queda un solo patrón horario, y su pico está en la hora 18, la
+que imprimió el cuaderno. La entrada ganadora conservó justo la forma diaria
+sobre la que se construyen los viajes. Dos herramientas, una respuesta. Haz clic en un vóxel del núcleo
 para mostrar qué patrón de origen, de destino y de hora pondera. Cambia la
 vista a reconstruido, y luego a residual, para mostrar lo que se pierde con
 la compresión.
@@ -867,6 +973,27 @@ Explora después
 Referencia opcional: Tensor Train y t-SVD quedan fuera de la comparación CP–Tucker de hoy. Vuelve a la actividad esencial durante el taller.
 :::
 
+## Golf de compresión: hoyo 2 {.computing-slide}
+
+Ahora vale cualquier modelo. Error relativo **por debajo del 2%**; gana quien guarde menos.
+
+- `golf("cp", 4)` o `golf("tucker", (4, 4, 3))` imprime una línea de puntuación.
+- El hoyo 1 se ganó con 60 números. Esta barra cuesta más.
+- Publica tu mejor línea.
+
+::: {.notes}
+Cinco minutos para jugar y tres para la clasificación y la diapositiva siguiente.
+
+El par es CP de rango 6: 198 números con un 1,76%. Lo mejor de Tucker es
+(4, 4, 5), 236 números con un 1,80%; (4, 4, 4) guarda 196 y falla con un
+2,26%. CP de rango 5 también falla, con un 2,17%.
+
+Pon los dos hoyos uno al lado del otro en la pizarra. Con el 7%, Tucker ganó
+con 60 números frente a los 66 de CP. Con el 2%, CP gana con 198 frente a los
+236 de Tucker. El mismo tensor, los mismos dos modelos, y el ganador cambió.
+Después abre la escena del presupuesto.
+:::
+
 ## Predicción: mismo presupuesto — ¿quién gana? {.computing-slide}
 
 El mismo presupuesto de parámetros, gastado como CP y como Tucker — cuando las parejas ya tengan sus propios números.
@@ -874,21 +1001,23 @@ El mismo presupuesto de parámetros, gastado como CP y como Tucker — cuando la
 <a href="../../interactive/factor-stage.html?lang=es#budget" class="widget-tab" target="_blank" rel="noopener noreferrer">Abrir el widget de presupuesto ↗</a>
 
 ::: {.notes}
-Guárdalo para la puesta en común de la actividad grupal 11, después de que
-las parejas hayan comparado sus propios ajustes de CP y Tucker: es la
-comparación con el mismo presupuesto que pide la actividad, y mostrado antes
-les resuelve el ejercicio en parejas.
+Guárdalo para la clasificación del golf, después de que las parejas hayan
+comparado sus propios ajustes de CP y Tucker: muestra los dos hoyos en una sola
+imagen, y mostrado antes les resuelve el ejercicio en parejas.
 
 Pide a la sala que prediga antes de hacer clic: CP rango 3 y Tucker (3, 3,
 3) — ¿cuestan lo mismo? No: CP rango 3 son 99 números, Tucker (3, 3, 3) son
 126.
 
 Baja el presupuesto a 66 parámetros: gana Tucker, 4,69% de error frente al
-7,00% de CP. A partir de 99 números, gana CP. El número que hay que dejar en
-la sala: quién gana depende del presupuesto, no de cuál es "mejor".
+7,00% de CP. (El CP del cuaderno llegó al 6,73% ahí; el ajuste de la escena se
+detiene antes desde un único arranque, como muestra su escena de ALS.) A
+partir de 99 números, gana CP: el hoyo 1 se ganó a la izquierda de esa línea y
+el hoyo 2 a la derecha. El número que hay que dejar en la sala: quién gana
+depende del presupuesto, no de cuál es "mejor".
 
-Después devuelve a la sala la pregunta de la actividad: ¿era justa la
-comparación del informe "de rango 3", y qué guardaba de verdad cada modelo?
+Después lleva a la sala la pregunta del informe: dijo que CP era mejor "con
+rango 3". ¿Qué mantuvo fijo, y qué guardaba de verdad cada modelo?
 :::
 
 ## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}

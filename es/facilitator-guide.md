@@ -29,7 +29,10 @@ Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegida
 el código plegado también necesita ejecutarse.
 
 Dedica unos 30 segundos a la pregunta inicial de recuperación dentro de cada
-bloque. Los momentos de proyector también son de predicción primero: pregunta
+bloque. Después de cada pausa, en 05, 07 y 10, esa pregunta es la diapositiva
+**¿Mito o hecho?** de la presentación, y dura un minuto: tres afirmaciones del
+tramo anterior a la pausa, una votación a mano alzada en cada una, un
+contraejemplo para un mito y la revelación. Los momentos de proyector también son de predicción primero: pregunta
 a la sala qué va a pasar antes de pulsar nada, y recoge una respuesta antes de
 revelar el resultado. Cada uno cabe dentro del tiempo de modelado del bloque,
 así que sustituye la explicación en vez de sumarse a ella. Primero intentan
@@ -50,14 +53,14 @@ Conserva cuestionarios y pausas. Distribuye así cada bloque:
 | 01 · 20 min | Modelar una forma 4; Ejercicio 1 y revisión en pareja 16. | — |
 | 02 · 20 min | Predicción inicial 2; clave de ejes y Ejercicio 2: 12; [actividad de significado de ejes](group-tasks.md#axis-meaning): 6. | — |
 | 03 · 15 min | Modelar broadcasting 3; Ejercicio 3 y comprobación 11; comprobación individual de broadcasting 1. | <a href="../interactive/broadcasting-simulator.html?lang=es">Simulador de broadcasting</a>, dentro del modelado 3: la sala predice la forma del resultado y luego un desajuste que da error. |
-| 04 · 15 min | Predicción inicial y el proyector 2; Ejercicio 1: 7; [actividad de errores silenciosos](group-tasks.md#silent-bugs): 6. | <a href="../interactive/image-tensor.html?lang=es#reshape">Reshape de una foto</a>: el error de la apertura en frío, sobre una imagen. Nómbralo como ese error. |
-| 05 · 15 min | Predicción inicial 2, que es el paso de predicción del Ejercicio 1; Ejercicio 1: 5; actividad grupal 05: 8. | — |
+| 04 · 15 min | Predicción inicial y el proyector 2; Ejercicio 1: 7; [caza del error](group-tasks.md#silent-bugs) 6: emparejar 2, prueba y puntuación 3, compartir 1. | <a href="../interactive/image-tensor.html?lang=es#reshape">Reshape de una foto</a>: el error de la apertura en frío, sobre una imagen. Nómbralo como ese error. |
+| 05 · 15 min | Mito o hecho 1; predicción inicial 2, que es el paso de predicción del Ejercicio 1; Ejercicio 1: 4; actividad grupal 05: 8. | — |
 | 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 10; comprobación individual de contracción 1. | — |
-| 07 · 15 min | Modelar columnas duplicadas 3; comparar coeficientes y normas 9; explicar qué sigue sin identificarse y comprobar 3. | <a href="../interactive/linalg-stage.html?lang=es#collinear">Columnas colineales</a>, dentro del modelado 3. |
+| 07 · 15 min | Mito o hecho 1; modelar columnas duplicadas 3; comparar coeficientes y normas 8; explicar qué sigue sin identificarse y comprobar 3. | <a href="../interactive/linalg-stage.html?lang=es#collinear">Columnas colineales</a>, dentro del modelado 3. |
 | 08 · 10 min | Modelar una actualización 3; Ejercicio 1 y comprobación 7. | — |
 | 09 · 15 min | Ejercicio 1: 9; error sobre residuos: 3; puente obligatorio de SVD a Tucker: 3. Sin barridos de tiempos. | — |
-| 10 · 15 min | Explicar núcleo y factores 4; explorador de rangos 8; defender una elección 3. | <a href="../interactive/factor-stage.html?lang=es#tucker">Tucker en el tensor de taxis</a>, dentro de defender una elección 3, después del explorador de rangos: su factor de hora tiene el pico en la hora 18, la que imprimió el cuaderno. Nunca antes. |
-| 11 · 15 min | Ejercicio 1 en parejas: 7; actividad grupal 11: 8. Sin barridos de modelos. | <a href="../interactive/factor-stage.html?lang=es#budget">Mismo presupuesto, CP y Tucker</a>, en la puesta en común de la actividad grupal 11, como la comparación con el mismo presupuesto que pide la actividad. No antes del ejercicio en parejas, al que daría la respuesta. |
+| 10 · 15 min | Mito o hecho 1; explicar núcleo y factores 3; [golf de compresión, hoyo 1](group-tasks.md#compression) en el explorador de rangos 8; clasificación y defensa del ganador 3. | <a href="../interactive/factor-stage.html?lang=es#tucker">Tucker en el tensor de taxis</a>, dentro de los últimos 3, después del golf: ponlo en los rangos ganadores, normalmente (3, 3, 1). Su único patrón horario tiene el pico en la hora 18, la que imprimió el cuaderno. Nunca antes del golf. |
+| 11 · 15 min | Ejercicio 1 en parejas: 7; golf de compresión, hoyo 2: 5; clasificación y la escena 3. Sin barridos de modelos. | <a href="../interactive/factor-stage.html?lang=es#budget">Mismo presupuesto, CP y Tucker</a>, durante la clasificación: los dos hoyos en una sola imagen. No antes del ejercicio en parejas, al que daría la respuesta. |
 | 12 · 5 min | Comprobación individual de salida. Asignar tareas después de recogerla. | Justo antes, en la diapositiva de "una sola idea": vuelve a reproducir la voz transpuesta 30 segundos y deja que la sala nombre el error. |
 
 Busca las [actividades grupales](group-tasks.md) por número de cuaderno.
@@ -66,12 +69,22 @@ Para la actividad 04, usa el ejemplo pequeño de [reshape](worked-mistakes.md) s
 Cada bloque incluye la puesta en común. Habla un grupo; los demás entregan:
 **elección → evidencia → qué nos haría cambiar de opinión**.
 
+Los tres juegos llevan puntuación. En la caza del error, ejecuta la celda de la
+clave solo después de la ronda 2. En el golf, cada equipo publica una línea
+(rangos · números · error) en el chat o la dice en voz alta; ordena la
+clasificación por números almacenados y pregunta al equipo en cabeza cómo llegó
+ahí. El par del hoyo 1 es Tucker (3, 3, 1), 60 números con un 4,69%; (2, 2, 1),
+(3, 2, 1) y (2, 3, 1) fallan por menos de 0,15 puntos. El par del hoyo 2 es CP de
+rango 6, 198 números con un 1,76%, frente a lo mejor de Tucker, (4, 4, 5) con
+236. Pon los dos ganadores uno al lado del otro: Tucker gana con el 7% y CP gana
+con el 2%, lo que responde a «¿qué modelo es mejor?» antes de que nadie lo
+pregunte.
+
 En el cuaderno 11, primero predicen el almacenamiento y luego usan la pista
 opcional de código parcial para completar el ajuste y la comparación. Reserva
 los siete minutos en pareja para elegir, comprobar e interpretar; ejecuta las
 instalaciones durante la preparación. Si el ajuste tarda mucho, demuestra la
-solución incluida después del intento. Conserva los ocho minutos de discusión
-grupal. Anota tiempos reales de finalización y uso de pistas para comprobar
+solución incluida después del intento. Conserva los ocho minutos de golf. Anota tiempos reales de finalización y uso de pistas para comprobar
 si esta distribución funciona con el grupo.
 
 ## Comprobaciones inicial y final
@@ -98,6 +111,11 @@ Usa los [errores resueltos](worked-mistakes.md) dentro de los bloques
 anteriores. Hay uno por cuaderno; los cuatro que encajan en un bloque de grupo
 son orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11.
 Muestra la afirmación. Pide un contraejemplo. Revela la corrección al final.
+
+Las tres rondas de **¿Mito o hecho?** después de las pausas son esas mismas
+entradas en formato rápido: 02–04 antes de la sección 05, 05–06 antes de la 07
+y 07–09 antes de la 10. Cada ronda mezcla mitos con afirmaciones ciertas, así
+que la votación nunca regala la respuesta.
 
 Si la mitad del grupo repite un error, modela el ejemplo pequeño y pide otra
 predicción. Omite una demostración opcional, no la pausa ni la comprobación final.

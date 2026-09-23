@@ -198,6 +198,18 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
             "Microscopy / Microscopía: (660, 550)",
         ],
         "s04-06": ["HWC: (512, 512, 3)", "CHW: (3, 512, 512)"],
+        # The bug hunt's starting test is a shape check, and it catches none
+        # of the three bugs; the key's channel-mean test lets exactly one
+        # through (the height-width swap), and one off-diagonal pixel catches
+        # all three. Those three scores are the whole game.
+        "p04-bug-hunt-test": [
+            "Caught / Detectados: 0 of/de 3 · false alarms / falsas alarmas: 0",
+        ],
+        "p04-bug-hunt-key": [
+            "Caught / Detectados: 2 of/de 3 · false alarms / falsas alarmas: 0\n"
+            "Got through / Se colaron: A",
+            "Caught / Detectados: 3 of/de 3 · false alarms / falsas alarmas: 0",
+        ],
     },
     "05": {
         "s05-02": ["Recorded source frames / Fotogramas grabados:"],
@@ -242,6 +254,15 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
     "11": {
         "s13-setup": ["Taxi tensor / Tensor taxis: (4, 5, 24) entries: 480"],
         "s13-ex1-solution": ["Taxi shape: (4, 5, 24)"],
+        # Compression golf's bars were chosen from these fits: hole 1 (notebook
+        # 10, 7%) is won by Tucker (3, 3, 1) at 60 numbers, hole 2 (here, 2%)
+        # by CP rank 6 at 198 against Tucker (4, 4, 5) at 236. Change the
+        # tensor or the fit settings and re-derive both before trusting the
+        # notebooks' and the decks' par.
+        "p11-golf": [
+            "CP rank / rango 3 · 99 numbers / números · error 3.50% · "
+            "over the 2% bar / sobre la barra ✗",
+        ],
     },
     "12": {
         # Unstandardized PCA answers a different question: one component
