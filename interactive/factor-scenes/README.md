@@ -151,7 +151,7 @@ into a readout may depend on either.
   rebuild), `--fa-err` for a negative, a miss or a cancelling pair. Every
   label sits on an opaque chip (`K.label`, `K.label2d`), because axe cannot
   resolve contrast against a picture behind translucent text.
-- **Frame-owned `data-*` are the frame's.** `gl`, `cam`, `hl`, `hover`,
+- **Frame-owned `data-*` are the frame's.** `gl`, `cam`, `hl`, `hover`, `easing`,
   `playing`, `paused`, `turns` and `ready` are written by the page; a readout
   that wrote one would have it pruned on the next change.
 

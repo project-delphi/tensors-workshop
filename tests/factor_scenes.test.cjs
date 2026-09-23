@@ -193,7 +193,7 @@ test('init(), draw(), readout() and code() run in both languages, and draw no Na
         assert.ok(r && r.html && r.data, `${scene.id}: readout() returned no html or data`);
         assert.ok(!/NaN|undefined/.test(r.html), `${scene.id} ${lang}: readout reads ${r.html}`);
         for (const k of Object.keys(r.data)) assert.equal(k, k.toLowerCase(), `${scene.id}: data key ${k} is not lowercase`);
-        for (const k of ['gl', 'cam', 'hl', 'hover', 'playing', 'paused', 'ready']) {
+        for (const k of ['gl', 'cam', 'hl', 'hover', 'playing', 'easing', 'paused', 'turns', 'ready']) {
           assert.ok(!(k in r.data), `${scene.id}: readout writes the frame's own data-${k}`);
         }
       }

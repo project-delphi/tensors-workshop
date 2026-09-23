@@ -1047,8 +1047,8 @@
     stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
     // Only the keys a readout wrote last time are pruned: data-gl, data-cam,
-    // data-hl, data-hover, data-playing, data-paused and data-ready are the
-    // frame's, and a readout must never write one of them.
+    // data-hl, data-hover, data-playing, data-easing, data-paused and
+    // data-ready are the frame's, and a readout must never write one of them.
     const data = Object.assign({scene: active.id}, r.data || {});
     data.standin = standIn ? "1" : "0";
     written.forEach((k) => { if (!(k in data)) delete stage.dataset[k]; });
@@ -1059,6 +1059,20 @@
     });
     rebuildLabels(active);
     paint();
+    stampEasing();
+  }
+
+  // Whether the picture is still on its way to what the controls say --
+  // geometry easing, the unfold morphing, a camera glide. The frame's own
+  // attribute, so the browser check can wait for the picture to arrive
+  // rather than for a number of milliseconds that is enough on one machine.
+  // Stamped straight after a change as well as every frame: a check that
+  // read it between the change and the next frame would see the old "0".
+  function stampEasing() {
+    const ctx = contextFor(active);
+    const moving = !!(taxi && active.animates && active.animates(ctx)) || glide.active;
+    const v = moving ? "1" : "0";
+    if (stage.dataset.easing !== v) stage.dataset.easing = v;
   }
 
   // ------------------------------------------------------------ painting
@@ -1129,6 +1143,7 @@
     const moving = taxi && active.animates ? active.animates(ctx) : false;
     if (glLive()) renderGL();
     else if (moving || glide.active) paint();
+    stampEasing();
     requestAnimationFrame(frame);
   }
 

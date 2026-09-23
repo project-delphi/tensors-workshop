@@ -120,13 +120,13 @@ o <a href="../interactive/voice-stage.html?lang=es#batch">el lote</a>.
 
 <span data-language-key="tucker-cp-stage"></span>
 
-Un tensor real, factorizado de dos maneras: 6383 viajes de taxi de Nueva York,
+Un tensor real, factorizado de dos maneras: 6.383 viajes de taxi de Nueva York,
 barrio de origen por barrio de destino por hora del día, como un cubo de vóxeles
 que puedes girar y en el que puedes hacer clic: tres cuartas partes de él son una
 sola ruta de Manhattan. Mira cómo el cubo se extiende en cada desplegado, qué
 encuentra la SVD de uno de ellos, y recompón un núcleo pequeño más tres matrices
-factor: 480 números reducidos a 102, con un 6,7 % de error, y una sola entrada
-del núcleo que lleva el 99 % del ajuste. Luego construye el mejor término de
+factor: 480 números reducidos a 102, con un 6,7% de error, y una sola entrada
+del núcleo que lleva el 99% del ajuste. Luego construye el mejor término de
 rango 1 que existe, mira cómo son varios de ellos, reproduce los mínimos
 cuadrados alternos resolución a resolución desde cinco puntos de partida que no
 siempre coinciden, y gasta un mismo presupuesto de parámetros de las dos

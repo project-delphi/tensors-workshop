@@ -21,7 +21,10 @@
     const pick = s.rule === "best-error" ? search.best : search.closest;
     const cheapest = FC.tuckerParams(T.shape, [1, 1, 1]);
     const cpAt = cp[s.cpr - 1];
-    const same = FC.hosvd(T, [s.cpr, Math.min(s.cpr, 5), Math.min(s.cpr, 20)].map((r, m) => Math.min(r, [4, 5, 20][m])));
+    // Tucker at CP's own rank on every axis, for the comparison equal ranks
+    // invite. It exists only up to R = 4: the pickup axis has four boroughs,
+    // so there is no (5, 5, 5), and a clamped (4, 5, 5) is not equal ranks.
+    const same = s.cpr <= 4 ? FC.hosvd(T, [s.cpr, s.cpr, s.cpr]) : null;
     const frontier = FC.tuckerFrontier(T);
     // Who wins at each of the six budgets, Tucker's best against CP.
     const wins = cp.map((q) => {
@@ -195,7 +198,7 @@
       svg.appendChild(K.el("line", {x1: px(f.budget), y1: PLOT.y, x2: px(f.budget), y2: Y1, stroke: K.css("--stage-ink"), "stroke-width": 1, "stroke-dasharray": "5 4"}));
       K.label(svg, px(f.budget), PLOT.y - 12, c.axBudget(f.budget), {size: 10, anchor: "middle"});
       // Equal ranks, for comparison: never the same budget.
-      if (f.same.params <= PLOT.pmax) {
+      if (f.same && f.same.params <= PLOT.pmax) {
         svg.appendChild(K.el("circle", {cx: px(f.same.params), cy: py(f.same.error), r: 5.5, fill: "none", stroke: K.css("--stage-ink"), "stroke-width": 1.2, "stroke-dasharray": "2 2"}));
         K.label(svg, px(f.same.params) + 4, py(f.same.error) - 16, c.axSame(f.same.ranks.join(", "), f.same.params), {size: 9.5, colour: "--stage-mute"});
       }
@@ -254,7 +257,7 @@
       const pct = (v) => K.pct(v, 2, ctx.lang);
       const winsTxt = c.wins(f.cp.map((q, i) => q.params + " → " + c.winner[f.wins[i]]).join(", "));
       const common = {cpr: s.cpr, budget: f.budget, cperr: f.cpAt.err.toFixed(4), cheapest: f.cheapest, rule: s.rule,
-                      wins: f.wins.join(","), sameparams: f.same.params};
+                      wins: f.wins.join(","), sameparams: f.same ? f.same.params : ""};
       if (!f.pick) {
         return {
           html: c.readoutNone(s.cpr, f.budget, pct(f.cpAt.err), f.cheapest),
@@ -281,8 +284,10 @@
         rows.push(["r = (" + f.pick.ranks.join(", ") + ")", ""]);
         rows.push(["np.prod(r) + np.dot(T.shape, r)", c.tucker(f.pick.params, "(" + f.pick.ranks.join(", ") + ")")]);
       }
-      rows.push(["rr = (" + f.same.ranks.join(", ") + ")", ""]);
-      rows.push(["np.prod(rr) + np.dot(T.shape, rr)", c.same(f.same.params)]);
+      if (f.same) {
+        rows.push(["rr = (" + f.same.ranks.join(", ") + ")", ""]);
+        rows.push(["np.prod(rr) + np.dot(T.shape, rr)", c.same(f.same.params)]);
+      }
       return K.code(rows);
     }
   });

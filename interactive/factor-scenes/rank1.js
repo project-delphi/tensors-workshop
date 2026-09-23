@@ -137,7 +137,7 @@
   const EN = {
     k: "A rank-1 term · section 11",
     h: "One weight and three vectors fill the whole cube -- and 10% is all they miss",
-    concept: 'The simplest tensor that is not all zero is an outer product: T[i, j, k] = λ a[i] b[j] c[k]. It takes I + J + K numbers to describe I · J · K entries -- and the vectors can trade scale among themselves without changing a single entry. <span class="cite">Kolda &amp; Bader §3</span>',
+    concept: 'The simplest tensor that is not all zero is one weight times three vectors: every cell is the weight times one entry from each vector. It takes I + J + K numbers to describe I · J · K cells -- and the vectors can trade scale among themselves without changing a single cell. <span class="cite">Kolda &amp; Bader §3</span>',
     claim: "T[i, j, k] ≈ λ a[i] b[j] c[k],  33 numbers",
     predict: "Before you slide: double a and halve c. Does anything in the cube change?",
     b: "<p>This is the best single term the taxi tensor has: a weight λ = 1,096.8 and three unit vectors -- a over pickup (the bars on the left), b over dropoff (on top), c over the hour (along the bottom). Their product fills all 480 cells from 4 + 5 + 24 = 33 numbers, and misses the real counts by only 10.07%. a is almost exactly Manhattan, b too, and c is the shape of the day: the same λ as the Tucker core's corner, found a second way.</p><p>Scale one entry of <b>a</b> and a whole plane of the cube scales with it -- every dropoff, every hour -- because each of those cells is a[i] times the same b ⊗ c picture. Then <b>move</b> a factor from c into a: the bars change and not one voxel does. The scale lives in λ, and the vectors are unit length so that it has one place to live.</p>",
@@ -168,7 +168,7 @@
   const ES = {
     k: "Un término de rango 1 · sección 11",
     h: "Un peso y tres vectores llenan el cubo entero, y solo se dejan un 10%",
-    concept: 'El tensor más simple que no es todo ceros es un producto externo: T[i, j, k] = λ a[i] b[j] c[k]. Hacen falta I + J + K números para describir I · J · K entradas, y los vectores pueden intercambiarse escala entre sí sin cambiar ni una entrada. <span class="cite">Kolda &amp; Bader §3</span>',
+    concept: 'El tensor más simple que no es todo ceros es un peso por tres vectores: cada celda es el peso por una entrada de cada vector. Hacen falta I + J + K números para describir I · J · K celdas, y los vectores pueden intercambiarse escala entre sí sin cambiar ni una celda. <span class="cite">Kolda &amp; Bader §3</span>',
     claim: "T[i, j, k] ≈ λ a[i] b[j] c[k],  33 números",
     predict: "Antes de deslizar: duplica a y divide c a la mitad. ¿Cambia algo en el cubo?",
     b: "<p>Este es el mejor término único que tiene el tensor de taxis: un peso λ = 1.096,8 y tres vectores unitarios: a sobre el origen (las barras de la izquierda), b sobre el destino (arriba), c sobre la hora (a lo largo de la base). Su producto llena las 480 celdas con 4 + 5 + 24 = 33 números, y se aleja de los conteos reales solo un 10,07%. a es casi exactamente Manhattan, b también, y c es la forma del día: el mismo λ que la esquina del núcleo de Tucker, encontrado por otro camino.</p><p>Escala una entrada de <b>a</b> y todo un plano del cubo se escala con ella (cada destino, cada hora) porque cada una de esas celdas es a[i] por la misma imagen b ⊗ c. Después <b>mueve</b> un factor de c a a: las barras cambian y ni un vóxel lo hace. La escala vive en λ, y los vectores tienen longitud unitaria para que tenga un solo sitio donde vivir.</p>",

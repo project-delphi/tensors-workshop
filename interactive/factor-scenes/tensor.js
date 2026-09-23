@@ -111,7 +111,7 @@
   const EN = {
     k: "The taxi tensor · section 10",
     h: "Three indices make a cube, and three quarters of it is one route",
-    concept: 'An order-3 tensor is a cube of numbers T[i, j, k]. Fix two of the indices and what is left is a fibre, a vector; fix one and what is left is a slice, a matrix. <span class="cite">Deep Learning §2.1</span>',
+    concept: 'An order-3 tensor is a cube of numbers with one index per axis. Fix two of the three indices and what is left is a fibre, a vector; fix one and what is left is a slice, a matrix. <span class="cite">Deep Learning §2.1</span>',
     claim: "T ∈ ℝ⁴ˣ⁵ˣ²⁴,  480 counts",
     predict: "Before you drag: is the busiest hour the same on every route, or does each route keep its own clock?",
     b: "<p>Each voxel is one count: how many of 6,383 New York taxi trips went from one borough to another in one hour of the day. A voxel's <em>volume</em> is its count, so the long bright rod through the middle -- Manhattan to Manhattan, 4,885 trips -- is three quarters of the whole cube, and the ghosts are the 207 cells nobody rode.</p><p>Pick a cell with the sliders or by clicking a voxel. The three frames are the fibres through it: its route's whole day (green, along hour), every dropoff from its pickup in that hour (orange), every pickup into its dropoff in that hour (blue). A <b>slice</b> fixes one index instead and lights the matrix that is left.</p>",
@@ -151,7 +151,7 @@
   const ES = {
     k: "El tensor de taxis · sección 10",
     h: "Tres índices forman un cubo, y tres cuartas partes de él son una sola ruta",
-    concept: 'Un tensor de orden 3 es un cubo de números T[i, j, k]. Fija dos de los índices y lo que queda es una fibra, un vector; fija uno y lo que queda es un corte, una matriz. <span class="cite">Deep Learning §2.1</span>',
+    concept: 'Un tensor de orden 3 es un cubo de números con un índice por eje. Fija dos de los tres índices y lo que queda es una fibra, un vector; fija uno y lo que queda es un corte, una matriz. <span class="cite">Deep Learning §2.1</span>',
     claim: "T ∈ ℝ⁴ˣ⁵ˣ²⁴,  480 conteos",
     predict: "Antes de arrastrar: ¿la hora más ocupada es la misma en todas las rutas, o cada ruta lleva su propio reloj?",
     b: "<p>Cada vóxel es un conteo: cuántos de 6.383 viajes de taxi en Nueva York fueron de un barrio a otro en una hora del día. El <em>volumen</em> de un vóxel es su conteo, así que la barra larga y brillante del medio (de Manhattan a Manhattan, 4.885 viajes) es tres cuartas partes de todo el cubo, y los fantasmas son las 207 celdas en las que no viajó nadie.</p><p>Elige una celda con los deslizadores o haciendo clic en un vóxel. Los tres marcos son las fibras que pasan por ella: el día entero de su ruta (verde, a lo largo de la hora), cada destino desde su origen en esa hora (naranja), cada origen hacia su destino en esa hora (azul). Un <b>corte</b> fija en cambio un índice e ilumina la matriz que queda.</p>",

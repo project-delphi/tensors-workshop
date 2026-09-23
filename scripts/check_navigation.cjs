@@ -1037,6 +1037,13 @@ async function audit(page, where) {
         const stageIs = (key, value) => page.waitForFunction(([k, v]) =>
           document.getElementById('stage').dataset[k] === v, [key, value], {timeout: 10000})
           .catch(() => assert.fail(`${where}: data-${key} never became ${value}`));
+        // The picture has arrived at what the controls say: the frame
+        // publishes data-easing while geometry eases, the unfold morphs or
+        // the camera glides. Polled, never slept on -- a runner slower than
+        // this Mac is still mid-ease at any fixed number of milliseconds.
+        const settled = () => page.waitForFunction(() =>
+          document.getElementById('stage').dataset.easing === '0', null, {timeout: 15000})
+          .catch(() => assert.fail(`${where}: the picture never came to rest`));
         const set = async (scene, control, value) => {
           const input = page.locator(`#c-${scene}-${control}`);
           if (await input.evaluate(e => e.tagName) === 'SELECT') await input.selectOption(String(value));
@@ -1122,6 +1129,7 @@ async function audit(page, where) {
             return ds.scene === name && ds[k] !== undefined;
           }, [id, key], {timeout: 15000})
             .catch(() => assert.fail(`${where}: #${id} did not open with its own readout`));
+          await settled();
           await fits(id);
         };
 
@@ -1138,7 +1146,7 @@ async function audit(page, where) {
           .catch(() => assert.fail(`${where}: the vendored three.js modules never loaded for the factor stage`));
         await page.waitForFunction(() => ['composer', 'none'].includes(
           document.getElementById('stage').dataset.gl), null, {timeout: 5000});
-        await page.waitForTimeout(200);
+        await settled();
         if ((await data()).gl === 'none') console.log(`  (${where}: no WebGL here, exercising the factor stage's twins)`);
         d = await data();
         assert.equal(d.shape, '4,5,24');
@@ -1179,14 +1187,14 @@ async function audit(page, where) {
         await stageIs('playing', '0');
         await page.waitForFunction(() => document.getElementById('stage').dataset.tensorshape === '[24, 20]',
           null, {timeout: 5000});
-        await page.waitForTimeout(1200);
+        await settled();
         await fits('unfold, flat along hour');
         await set('unfold', 'mode', 0);
         await stageIs('mode', '0');
         d = await data();
         assert.equal(d.rows, '4');
         assert.equal(d.cols, '120');
-        await page.waitForTimeout(2000);
+        await settled();
         await fits('unfold, flat along pickup');
 
         // HOSVD: the thin U caps the hour rank at 20, and one pattern holds
@@ -1234,7 +1242,7 @@ async function audit(page, where) {
           `${where}: the tucker claim card should be byte-exact`);
         await set('tucker', 'view', 'residual');
         await stageIs('view', 'residual');
-        await page.waitForTimeout(900);
+        await settled();
         await fits('tucker, what it misses');
         await set('tucker', 'view', 'parts');
         await stageIs('view', 'parts');
@@ -1248,7 +1256,7 @@ async function audit(page, where) {
         await set('tucker', 'r0', 4);
         await set('tucker', 'r1', 5);
         await stageIs('ranks', '4,5,20');
-        await page.waitForTimeout(900);
+        await settled();
         await fits('tucker at every rank max');
         assert(Number((await data()).ratio) < 1,
           `${where}: at full multilinear rank Tucker should cost more than the dense tensor`);
@@ -1269,7 +1277,7 @@ async function audit(page, where) {
         d = await data();
         assert.equal(d.unchanged, '1', `${where}: a x 2, c / 2 is the same tensor`);
         assert.equal(d.err, '0.1007');
-        await page.waitForTimeout(900);
+        await settled();
         await fits('rank1 with a factor moved');
 
         // CP: rank 3 recovers all three planted terms and their weights; a
@@ -1343,6 +1351,12 @@ async function audit(page, where) {
           `${where}: the closest-params pick should not beat the best-error pick`);
         assert.equal(d.tuckerfits, '1');
         await set('budget', 'rule', 'best-error');
+        // Past R = 4 there is no equal-rank Tucker to compare -- pickup has
+        // four boroughs -- and the scene must not claim one.
+        await set('budget', 'cpr', 6);
+        await stageIs('cpr', '6');
+        assert.equal((await data()).sameparams, '', `${where}: an equal-rank Tucker claimed at R = 6`);
+        assert(!/rr = /.test(await page.locator('#np-budget').innerText()), `${where}: equal ranks claimed at R = 6`);
         await set('budget', 'cpr', 2);
         await stageIs('cpr', '2');
         assert.equal((await data()).better, '1', `${where}: Tucker wins at 66`);
@@ -1390,6 +1404,8 @@ async function audit(page, where) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 20000});
         assert.equal((await data()).scene, 'budget', `${where}: a deep link to #budget should open there`);
+        // A fixed wait on purpose: this asserts that nothing arrives, and
+        // there is no attribute for a fetch that was never made.
         await page.waitForTimeout(400);
         assert.equal(await page.evaluate(() => window.THREE), undefined,
           `${where}: a page opened on a flat scene fetched three.js`);
@@ -1975,6 +1991,7 @@ async function audit(page, where) {
               for (let n = 0; n < 6; n++) await page.keyboard.press('ArrowUp');
               await page.waitForFunction(was => document.getElementById('stage').dataset.cam !== was, cam, {timeout: 5000})
                 .catch(() => assert.fail(`${where}: twin ${scene} did not turn`));
+              await page.waitForFunction(() => document.getElementById('stage').dataset.easing === '0', null, {timeout: 15000});
               m = await measure();
               assert(m.bad === 0 && !m.nan, `${where}: twin ${scene} turned off its board: ${JSON.stringify(m)}`);
               const readout = await page.locator(`#read-${scene}`).innerText();
@@ -2006,6 +2023,7 @@ async function audit(page, where) {
                 await page.locator('#c-tucker-r0').fill('4');
                 await page.locator('#c-tucker-r1').fill('5');
                 await page.waitForFunction(() => document.getElementById('stage').dataset.ranks === '4,5,20');
+                await page.waitForFunction(() => document.getElementById('stage').dataset.easing === '0', null, {timeout: 15000});
                 m = await measure();
                 assert(m.bad === 0 && !m.nan, `${where}: twin tucker at full rank: ${JSON.stringify(m)}`);
               }
