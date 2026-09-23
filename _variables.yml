@@ -103,7 +103,8 @@ repo:
     - interactive/vendor/cmu-serif/cmu-serif-500-roman.woff2
     - interactive/vendor/cmu-serif/cmu-serif-500-italic.woff2
     # The post-processing addons and the CSS2D label renderer, resolved from
-    # the bare specifier `three` by an import map in linalg-stage.html. A map
+    # the bare specifier `three` by an import map in linalg-stage.html,
+    # voice-stage.html and factor-stage.html. A map
     # is element content rather than an attribute, so the link harvest cannot
     # see it either -- these lines are the only thing that would notice one of
     # them failing to reach docs/.
@@ -123,7 +124,9 @@ repo:
     # its drawing kit, and one file per scene, loaded by plain <script src>
     # lines the link harvest does see -- listed anyway, because a scene that
     # fails to reach docs/ is a picture the page throws on at boot, not a
-    # broken link. No three.js: every picture here is SVG.
+    # broken link. Four of its scenes draw in three.js, through the same
+    # vendor/linalg-boot.js and addons listed above for the projection stage;
+    # each has an SVG twin, which is what the hero embed shows.
     - interactive/factor-stage.html
     - interactive/factor-core.js
     - interactive/factor-kit.js
@@ -133,6 +136,7 @@ repo:
     - interactive/factor-scenes/tucker.js
     - interactive/factor-scenes/rank1.js
     - interactive/factor-scenes/cp.js
+    - interactive/factor-scenes/als.js
     - interactive/factor-scenes/budget.js
     # The real taxi tensor (scripts/gen_figures.py taxi), fetched by a plain
     # relative path in factor-stage.html's own script -- the same reason

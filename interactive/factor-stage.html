@@ -843,7 +843,13 @@
         const P1 = K.projector(points, B, box);
         return P1.s <= P0.s ? P1 : K.projector(points, B, shrinkBox(box, P0.s, P1.s));
       },
-      label: (text, cls) => K.label2d(text, cls)
+      label: (text, cls) => K.label2d(text, cls),
+      // Where a twin may draw: the board less the claim chip at the top and
+      // the caption at the bottom.
+      box: () => {
+        const vb = (svg.getAttribute("viewBox") || "0 0 820 420").split(/\s+/).map(Number);
+        return [40, 58, 780, vb[3] - 30];
+      }
     };
     ctxFor.set(scene.id, c);
     return c;
@@ -1073,9 +1079,21 @@
     } else {
       stage.dataset.gl = "none";
       svg.textContent = "";
+      // A 2-D scene is laid out on a fixed 820 x 420 board. A three.js
+      // scene's twin is fitted, not laid out, so it takes a board the shape
+      // of the stage and fills it -- the hero embed's still is one of these,
+      // and letterboxed into 820 x 420 it was a picture a third of the frame.
+      const H = active.gl ? twinHeight() : 420;
+      const vb = "0 0 820 " + H;
+      if (svg.getAttribute("viewBox") !== vb) svg.setAttribute("viewBox", vb);
       if (!taxi) return;
       active.draw(contextFor(active));
     }
+  }
+  function twinHeight() {
+    const r = stage.getBoundingClientRect();
+    if (!r.width || !r.height) return 420;
+    return Math.max(420, Math.min(900, Math.round(820 * r.height / r.width)));
   }
 
   // Pointing at a letter in an equation lights the piece it names. This never

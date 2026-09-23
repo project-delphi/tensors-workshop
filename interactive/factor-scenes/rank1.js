@@ -101,7 +101,7 @@
     const want = target(ctx);
     c.ease = c.ease || {};
     const items = K.follow(c.ease, want.items, t, TAU, ctx.instant);
-    const m = Object.assign({}, want, {items});
+    const m = Object.assign({}, want, {items, bounds: K.withLabels(want.bounds, want.labels)});
     c.memo = {key, t, m};
     return m;
   }
@@ -273,7 +273,7 @@
 
     draw(ctx) {
       const m = shown(ctx);
-      const P = ctx.projector(K.corners(m.bounds.min, m.bounds.max), [40, 56, 780, 396]);
+      const P = ctx.projector(K.corners(m.bounds.min, m.bounds.max), ctx.box());
       K.boxes2(ctx.svg, m.items, ctx.basis(), P);
       K.labels2(ctx.svg, m.labels, P);
     },

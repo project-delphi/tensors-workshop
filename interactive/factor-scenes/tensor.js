@@ -216,7 +216,7 @@
       return ctx.cache.arrive !== undefined && ctx.now() - ctx.cache.arrive < ARRIVE.lag * 24 + ARRIVE.ms;
     },
 
-    bounds() { return BOUNDS; },
+    bounds(ctx) { return K.withLabels(BOUNDS, model(ctx).labels); },
 
     pick(ctx, key) {
       if (!key.startsWith("cell:")) return;
@@ -270,8 +270,9 @@
     // The twin: the same model, projected through the same view.
     draw(ctx) {
       const m = model(ctx);
-      const pts = K.corners(BOUNDS.min, BOUNDS.max);
-      const P = ctx.projector(pts, [70, 58, 750, 392]);
+      const b = K.withLabels(BOUNDS, m.labels);
+      const pts = K.corners(b.min, b.max);
+      const P = ctx.projector(pts, ctx.box());
       const B = ctx.basis();
       K.edges2(ctx.svg, m.outline.min, m.outline.max, P, "--stage-mute", {opacity: 0.35, width: 1});
       if (m.slab) K.edges2(ctx.svg, m.slab.min, m.slab.max, P, "--stage-ink", {opacity: 0.7, dash: "4 3"});

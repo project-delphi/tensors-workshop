@@ -88,6 +88,7 @@ function makeCtx(env, scene, lang) {
     const view = () => (scene.framing ? scene.framing(ctx, home()) : home());
     ctx.basis = () => K.viewBasis(view(), scene.pose.target || [0, 0, 0]);
     ctx.projector = (points, box) => K.projector(points, ctx.basis(), box);
+    ctx.box = () => [40, 58, 780, 390];
   }
   return ctx;
 }

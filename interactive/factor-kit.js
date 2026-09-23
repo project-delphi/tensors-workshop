@@ -493,6 +493,21 @@
     return P;
   }
 
+  // A scene's bounds grown to hold its own labels' anchors, and a little
+  // more: what the camera frames and the twin fits has to be everything that
+  // is drawn, and a label placed off the cube's corner is drawn too.
+  function withLabels(bounds, labels, pad) {
+    const p = pad === undefined ? 0.8 : pad;
+    const min = bounds.min.slice(), max = bounds.max.slice();
+    for (const L of labels) {
+      for (let q = 0; q < 3; q++) {
+        min[q] = Math.min(min[q], L.pos[q] - p);
+        max[q] = Math.max(max[q], L.pos[q] + p);
+      }
+    }
+    return {min, max};
+  }
+
   // The eight corners of an axis-aligned box, for projector().
   function corners(min, max) {
     const out = [];
@@ -784,7 +799,10 @@
     for (const [key, cur] of store.map) {
       if (seen.has(key)) continue;
       for (let q = 0; q < 3; q++) cur.s[q] -= cur.s[q] * k;
-      if (instant || Math.max(cur.s[0], cur.s[1], cur.s[2]) < 2e-3) { store.map.delete(key); continue; }
+      // Dropped once it is a speck, not once it is nothing: a piece of the
+      // last view shrinking where it stood can stand outside this view's
+      // frame, and an exponential never quite reaches zero.
+      if (instant || Math.max(cur.s[0], cur.s[1], cur.s[2]) < 0.05) { store.map.delete(key); continue; }
       moving = true;
       out.push(Object.assign({}, cur.item, {c: cur.c.slice(), s: cur.s.slice(), pick: undefined}));
     }
@@ -796,7 +814,7 @@
     FactorScenes, css, AXIS, AXIS_CLS, HL_AXIS, HL_NAME, fmt, num, pct, sup, sub, shapeSup, mode, code, idx,
     el, label, numGrid, heat, bars, curve,
     cubePos, side, smooth, rotate, TURN, PHASE, unfoldEnd, unfoldPose, unfoldTurn, depthCount,
-    viewBasis, projector, corners, boxes2, edges2,
+    viewBasis, projector, withLabels, corners, boxes2, edges2,
     colour, light, voxels, glowBox, frameBox, setBox, label2d, setLabel, labels2, labelPool, palette, CLS_TOKEN, ease, follow
   };
   if (typeof module !== "undefined" && module.exports) module.exports = FactorKit;

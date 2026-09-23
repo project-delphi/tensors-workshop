@@ -96,16 +96,18 @@ handed](interactive/voice-stage.html?lang=en#batch): those three recordings
 stacked into one array.
 
 Sections 10 and 11 and Appendix C share a
-[Tucker and CP stage](interactive/factor-stage.html?lang=en), seven pictures
+[Tucker and CP stage](interactive/factor-stage.html?lang=en), eight pictures
 of one real tensor — 6,383 New York taxi trips, pickup borough by dropoff
-borough by hour of day. It unfolds that cube three ways, takes the SVD of
-each unfolding, and [reassembles a small core plus three factor
+borough by hour of day. It [lays that cube flat three
+ways](interactive/factor-stage.html?lang=en#unfold), takes the SVD of each
+unfolding, and [reassembles a small core plus three factor
 matrices](interactive/factor-stage.html?lang=en#tucker), 480 numbers down to
-102 at 6.7% error; then it builds a rank-1 term as three vectors and
-[finds several of them at once with alternating least
-squares](interactive/factor-stage.html?lang=en#cp); and it ends on [the same
-parameter budget spent two ways](interactive/factor-stage.html?lang=en#budget),
-CP against every Tucker rank triple that fits inside it.
+102 at 6.7% error; then it builds a rank-1 term as three vectors, shows [what
+several of them look like](interactive/factor-stage.html?lang=en#cp) and [how
+alternating least squares finds them](interactive/factor-stage.html?lang=en#als);
+and it ends on [the same parameter budget spent two
+ways](interactive/factor-stage.html?lang=en#budget), CP against every Tucker
+rank triple that fits inside it.
 
 {{< include _includes/notebooks-extra-en.md >}}
 

@@ -129,7 +129,8 @@
     }
     if (selPos) labels.push({text: String(Math.round(cell)), pos: [selPos[0], selPos[1] + 1.1, selPos[2] + 0.3], cls: "sig", size: 13});
     const pad = t > 0.9 ? [side * 1.25, 2.6 + shape[2] * 0 + side * 0.1, 0.8] : [2.6, 1.6, 1.6];
-    const bounds = {min: [lo[0] - pad[0], lo[1] - pad[1], lo[2] - pad[2]], max: [hi[0] + pad[0] * 0.4, hi[1] + pad[1] + 0.6, hi[2] + pad[2]]};
+    const bounds = K.withLabels({min: [lo[0] - pad[0], lo[1] - pad[1], lo[2] - pad[2]],
+                                 max: [hi[0] + pad[0] * 0.4, hi[1] + pad[1] + 0.6, hi[2] + pad[2]]}, labels);
     // The cube's outline, only while it is one.
     const outline = t < 0.02 ? {min: [-12.5, -2, -2.5], max: [12.5, 2, 2.5]} : null;
     return {items, selPos, selSize, labels, bounds, turn, view, outline};
@@ -313,7 +314,7 @@
     draw(ctx) {
       const m = model(ctx);
       const pts = K.corners(m.bounds.min, m.bounds.max);
-      const P = ctx.projector(pts, [40, 58, 780, 392]);
+      const P = ctx.projector(pts, ctx.box());
       const items = m.items.slice();
       if (m.selPos) items.push({c: m.selPos, s: m.selSize, token: "--fa-t", alpha: 1.25, pick: "cell:" + ctx.state.flat});
       if (m.outline) K.edges2(ctx.svg, m.outline.min, m.outline.max, P, "--stage-mute", {opacity: 0.35, width: 1});
