@@ -784,7 +784,7 @@ ratio = T.size / (core.size + sum(u.size for u in Us))            # 4.71
 
 *480 numbers become 102. The two charts are TODO 6. On the left, the busiest hour in the raw counts. On the right, the peak of the hour factor — which the decomposition built without ever being told what an hour is.*
 
-**The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition discovered evening rush hour by itself.** Nobody told it about time, traffic or commuting. It found the dominant pattern along that axis, because that is what a decomposition does. The [Tucker and CP stage](interactive/factor-stage.html?lang=en#tucker) runs this same decomposition live, on this same tensor, with the three ranks as sliders, so this table's 480 → 102, 4.71× and 6.7% move under your own hand as you change them.
+**The result: 4.7× fewer numbers, 6.7% error.** But the important part is TODO 6. The strongest pattern in the hour factor peaks at **hour 18** — and that is also the busiest hour in the raw data. **The decomposition found evening rush hour without being told what an hour is.** That is expected rather than magic: every entry is a trip count, so the strongest pattern along the hour axis follows how busy each hour is. It found the dominant pattern along that axis, because that is what a decomposition does. The [Tucker and CP stage](interactive/factor-stage.html?lang=en#tucker) runs this same decomposition live, on this same tensor, with the three ranks as sliders, so this table's 480 → 102, 4.71× and 6.7% move under your own hand as you change them.
 
 Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one expression. That is why `einsum` came first.
 
@@ -924,7 +924,7 @@ What you did today:
 1. **Part I** — learned the vocabulary of tensors (axis, order, shape, slice, fiber, unfolding, contraction, decomposition), and that unfolding turns any tensor into a matrix without losing a single number.
 2. **Part II** — worked through what axes mean and why batch and time axes are semantically different.
 3. **Part III** — indexed, broadcast, reshaped and transposed real tumour data and real medical images, and hit real problems: zero-variance pixels, and reshape silently destroying an image.
-4. **Part IV** — wrote contractions with `einsum`; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, which found rush hour on its own.
+4. **Part IV** — wrote contractions with `einsum`; solved an unsolvable 20,433-equation system with the pseudoinverse; used recursion to forecast real airline traffic and to find an eigenvector; convolved and deconvolved a real photograph; and compressed a real taxi tensor 4.7× with Tucker, whose strongest hour pattern peaks at rush hour.
 
 **One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. Those three sections *state* it. You watch it happen three times: the pseudoinverse on a real linear system in section 07, Tucker on an oversized tensor in section 10, and Richardson-Lucy on a blurred photograph in take-home 13.
 

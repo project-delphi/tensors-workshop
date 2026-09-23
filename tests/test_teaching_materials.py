@@ -13,12 +13,14 @@ import unittest.mock
 from pathlib import Path
 
 from scripts.check_teaching_materials import (
+    COUNTEREXAMPLE,
     ROOT,
     anchors,
     check_links,
     check_route,
     check_sequence,
     check_tasks,
+    route_of,
     support_of,
 )
 
@@ -85,6 +87,40 @@ class Routes(unittest.TestCase):
             path = next((ROOT / "notebooks").glob(f"{number:02}-*.ipynb"))
             with self.subTest(notebook=path.name):
                 self.assertTrue(check_sequence(json.loads(path.read_text()), path.name))
+
+    def test_live_cores_do_not_open_on_a_table(self):
+        """A live core's hook is the first thing a learner sees after setup.
+
+        A Markdown table -- rows of data with no question attached -- is not a
+        hook. Checked structurally (a table separator row) rather than by cell
+        id, so it catches whichever cell a notebook happens to open its core
+        with, predict-first or otherwise.
+        """
+        table_row = re.compile(r"^\s*\|?\s*:?-{3,}")
+        failing = []
+        for number in range(1, 12):
+            path = next((ROOT / "notebooks").glob(f"{number:02}-*.ipynb"))
+            nb = json.loads(path.read_text())
+            sequence = check_sequence(nb, path.name)
+            if not sequence:
+                continue
+            prep, _ = route_of(nb, path.name)
+            ids = [c.get("id") for c in nb["cells"]]
+            last_prep_at = (
+                max(ids.index(cid) for cid in prep)
+                if prep
+                else ids.index(sequence[0]) - 1
+            )
+            opener = nb["cells"][last_prep_at + 1]
+            source = "".join(opener.get("source", []))
+            with self.subTest(notebook=path.name):
+                if any(table_row.match(line) for line in source.splitlines()):
+                    failing.append(path.name)
+        self.assertEqual(
+            failing,
+            [],
+            f"live cores open on a table: {failing}",
+        )
 
     def test_broken_routes(self):
         for mode in (
@@ -253,7 +289,7 @@ class WorkedExamples(unittest.TestCase):
         fails here, and so does one that gains a second -- which the old
         one-cell-per-name bookkeeping would have hidden.
         """
-        begin = "# --- counterexample / contraejemplo"
+        begin = COUNTEREXAMPLE
         end = "# --- end counterexample"
         found = {}
         for path in sorted((ROOT / "notebooks").glob("*.ipynb")):
@@ -281,9 +317,11 @@ class WorkedExamples(unittest.TestCase):
     def test_predict_cells_execute(self):
         """The predict-first widgets run, and the reveal branches both print.
 
-        `ci_cells` in notebooks 00, 12, 16, 17 and 18 keeps these cells out of
-        the kernel sweep on purpose: their live `RadioButtons` and `Checkbox`
-        are what stalled it. That leaves the widget half of every predict cell
+        `run_set` in scripts/test_notebooks.py steps over a predict-first
+        cell wherever it sits -- in `ci_cells` (notebooks 00, 12, 16, 17 and
+        18) or in a live core `sequence` (02, 04 and 05 open theirs with one)
+        -- because their live `RadioButtons` and `Checkbox` are what stalled
+        the kernel sweep. That leaves the widget half of every predict cell
         -- `pred_panel`, `pred_render` and `check_prediction` -- executed by
         nothing else, so a typo there would reach Colab silently. The sibling
         test above runs only the delimited counterexample.
@@ -327,7 +365,7 @@ class WorkedExamples(unittest.TestCase):
             "IPython.display": ipython.display,
         }
 
-        begin = "# --- counterexample / contraejemplo"
+        begin = COUNTEREXAMPLE
         checked = []
         for path in sorted((ROOT / "notebooks").glob("*.ipynb")):
             for cell in json.loads(path.read_text(encoding="utf-8"))["cells"]:
