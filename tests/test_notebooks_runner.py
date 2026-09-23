@@ -26,6 +26,8 @@ ROOT = Path(__file__).resolve().parent.parent
 # a script; importing it as a module does not.
 sys.path.insert(0, str(ROOT / "scripts"))
 
+from check_teaching_materials import COUNTEREXAMPLE  # noqa: E402
+
 import scripts.test_notebooks as tn  # noqa: E402
 
 # ── harness ──────────────────────────────────────────────────────────────────
@@ -265,6 +267,86 @@ class RunSet(unittest.TestCase):
             ["sol", "setup"],
             "expected the whole-notebook fallback, not the solution cell on its own",
         )
+
+    def _predict_sequence_notebook(self, marker=COUNTEREXAMPLE):
+        nb = notebook(
+            cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),
+            cell("## Predict / Predice\n", kind="markdown", cid="predict-md"),
+            cell(
+                f"{marker}\nimport ipywidgets as widgets\nwidgets.RadioButtons()\n",
+                cid="predict-code",
+            ),
+            cell("plain()\n", cid="plain"),
+            cell("# TODO\n", cid="act", tags=["workshop-core-activity"]),
+            cell("answer()\n", cid="sol", tags=["solution"]),
+            cell("checkpoint()\n", cid="checkpoint"),
+            cell(
+                "## Explore later / Explora después\n", kind="markdown", cid="boundary"
+            ),
+            prep=["prep-1"],
+        )
+        nb["cells"][1]["metadata"]["workshop"]["sequence"] = [
+            "prep-1",
+            "predict-md",
+            "predict-code",
+            "plain",
+            "act",
+            "sol",
+            "checkpoint",
+        ]
+        nb["cells"][1]["metadata"]["workshop"]["checkpoint"] = "checkpoint"
+        return nb
+
+    def test_predict_cell_in_the_live_sequence_is_not_executed(self):
+        """A predict-first cell may open a live core (02, 04, 05), but its
+        RadioButtons/Checkbox stalled the widget probe on two runs in three.
+        The runner must step over it by its counterexample marker."""
+        nb = self._predict_sequence_notebook()
+        chosen, _, _ = tn.run_set(nb, "fixture")
+        ids = [nb["cells"][i]["id"] for i in chosen]
+        self.assertNotIn("predict-code", ids)
+        self.assertEqual(ids, ["prep-1", "plain", "act", "sol", "checkpoint"])
+
+        # Strip the marker: the same cell, without the thing that identifies
+        # it as predict-first, must now run like any other sequence cell.
+        stripped = self._predict_sequence_notebook(marker="")
+        chosen, _, _ = tn.run_set(stripped, "fixture")
+        ids = [stripped["cells"][i]["id"] for i in chosen]
+        self.assertIn("predict-code", ids)
+
+    def test_ci_cells_may_not_name_a_predict_cell(self):
+        nb = notebook(
+            cell(
+                "## Core activity\n",
+                kind="markdown",
+                cid="act",
+                tags=["workshop-core-activity"],
+            ),
+            cell("setup()\n", cid="setup"),
+            cell(
+                f"{COUNTEREXAMPLE}\n"
+                "import ipywidgets as widgets\nwidgets.RadioButtons()\n",
+                cid="predict-code",
+            ),
+        )
+        nb["cells"][1]["metadata"]["workshop"]["ci_cells"] = ["setup", "predict-code"]
+        with self.assertRaises(ValueError):
+            tn.run_set(nb, "fixture")
+
+    def test_no_shipped_run_set_executes_a_predict_cell(self):
+        import nbformat
+
+        paths = sorted((ROOT / "notebooks").glob("[0-9][0-9]-*.ipynb"))
+        for path in paths:
+            nb = nbformat.read(path, as_version=4)
+            with self.subTest(notebook=path.name):
+                chosen, _, _ = tn.run_set(nb, path.name)
+                for i in chosen:
+                    self.assertFalse(
+                        tn.is_predict_cell(nb["cells"][i]),
+                        f"{path.name}: run set executes predict-first cell "
+                        f"{nb['cells'][i].get('id')}",
+                    )
 
 
 class Stub(unittest.TestCase):

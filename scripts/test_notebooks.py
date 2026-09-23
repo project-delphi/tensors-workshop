@@ -30,6 +30,14 @@ Those run sets are self-contained; none needs an intervening cell.
 Notebooks whose route holds no executable code at all fall back to running
 every code cell in document order, solutions included.
 
+A live sequence may open with a predict-first cell -- the counterexample block
+plus a live RadioButtons/Checkbox widget that hooks notebooks 02, 04 and 05.
+Its widgets stalled the widget probe for the whole PROBE_CELL_TIMEOUT on two
+runs in three, so this runner steps over it wherever it appears in a route --
+by its counterexample marker, never by id or tag -- and leaves it to
+tests/test_teaching_materials.py, which runs it once against stubbed widgets.
+A `ci_cells` entry may not name one either.
+
 COLAB IS THE RUNTIME THIS DEFENDS
 ---------------------------------
 Nothing here is stripped or mocked. `%pip install` lines run verbatim, remote
@@ -74,6 +82,7 @@ NBDIR = ROOT / "notebooks"
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from check_teaching_materials import (  # noqa: E402
     check_sequence,
+    is_predict_cell,
     route_of,
     support_of,
     workshop_meta,
@@ -159,7 +168,10 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
             "order-3 tensor / tensor de orden 3: shape=(2, 3, 4), ndim=3, size=24",
             "Digits / Dígitos: (1797, 8, 8)",
             "Astronaut / Astronauta: (512, 512, 3)",
-        ]
+        ],
+        "p01-hook-code": [
+            "Numbers stored / Números guardados: 786432",
+        ],
     },
     "02": {
         "s02-02": ["real_video / video real: (16, 540, 960, 3)"],
@@ -220,7 +232,12 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
         "s12-b-a673c50f1008": ["Design matrix / Matriz de diseño: (144, 11)"],
     },
     "10": {
-        "s10-02": ["Tensor shape / Forma del tensor: (4, 5, 24)", "Order / Orden: 3"]
+        "s10-02": ["Tensor shape / Forma del tensor: (4, 5, 24)", "Order / Orden: 3"],
+        "p10-rank-explorer": [
+            "Busiest hour in the data / Hora con más viajes en los datos: 18",
+            "Hour where Tucker's first hour pattern is strongest / Hora en "
+            "que el primer patrón horario de Tucker es más fuerte: 18",
+        ],
     },
     "11": {
         "s13-setup": ["Taxi tensor / Tensor taxis: (4, 5, 24) entries: 480"],
@@ -452,19 +469,38 @@ def run_set(nb: dict, label: str) -> tuple[list[int], str, str | None]:
                     raise ValueError(
                         f"{label}: ci_cells names {cid}, which is not a code cell"
                     )
+                if is_predict_cell(cells[ids.index(cid)]):
+                    raise ValueError(
+                        f"{label}: ci_cells names {cid}, a predict-first cell; "
+                        f"its widgets are left to tests/test_teaching_materials.py"
+                    )
             chosen = [ids.index(cid) for cid in declared]
         else:
-            chosen = [i for i, c in enumerate(cells) if c.get("cell_type") == "code"]
+            chosen = [
+                i
+                for i, c in enumerate(cells)
+                if c.get("cell_type") == "code" and not is_predict_cell(c)
+            ]
 
     # Explicit fallback run sets also exercise their declared feedback helpers.
     chosen.extend(ids.index(cid) for cid in support)
     # Execute every code cell in the physical live block, including worked
     # examples and feedback widgets, rather than silently testing only the TODO.
-    chosen.extend(
-        ids.index(cid)
-        for cid in check_sequence(nb, label)
-        if cells[ids.index(cid)].get("cell_type") == "code"
-    )
+    # A predict-first cell is the one exception: its live widgets stalled the
+    # widget probe for the whole PROBE_CELL_TIMEOUT on two runs in three, so it
+    # is skipped here wherever it sits in the sequence and left to
+    # tests/test_teaching_materials.py, which runs it once against stubs.
+    skipped_predict = []
+    for cid in check_sequence(nb, label):
+        c = cells[ids.index(cid)]
+        if c.get("cell_type") != "code":
+            continue
+        if is_predict_cell(c):
+            skipped_predict.append(cid)
+            continue
+        chosen.append(ids.index(cid))
+    for cid in skipped_predict:
+        print(f"      skipped predict-first: {cid}")
     return sorted(set(chosen)), activity, paired
 
 

@@ -82,8 +82,22 @@ predict cells hold live widgets that stall the sweep, and 12, whose route is a
 written answer and whose audio explorer would stall the kernel. Each names the
 code cells the fallback would have picked minus the predict cell, and 16 also
 minus its frame stepper. Do not widen one to include an explorer: `run_set()`
-refuses an entry that is not a unique code cell, and check 2's `EXPECTED`
-guard refuses one that drops an asserted cell.
+refuses an entry that is not a unique code cell, refuses a predict-first cell
+outright, and check 2's `EXPECTED` guard refuses one that drops an asserted
+cell.
+
+A predict cell may sit inside a live `sequence` — notebooks 02, 04 and 05 open
+theirs on one, as the hook — but never in `prep`, `support`, or `ci_cells`,
+and never copy its counterexample marker into a second cell: the checks that
+read it assume exactly one per notebook. `run_set()` knows a predict cell by
+that marker and steps over it wherever it sits, so CI never executes it; check
+its widgets in Colab by hand whenever you add or move one.
+
+A live core opens on a hook: the first cell after the last prep cell is an
+output, a prediction or one number a reader can check, in plain words, with
+the formula second and any vocabulary or axis table after it. Number a list
+only when it is a sequence. `test_live_cores_do_not_open_on_a_table` refuses a
+table in that position.
 
 Feedback helpers live in **visible** code cells before the core activity, are
 tagged `workshop-support`, are listed in `workshop.support`, and take learner

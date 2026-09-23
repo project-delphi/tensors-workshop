@@ -574,23 +574,34 @@ notebook and rerun `gen_tables.py`; never edit the group.
 Core routes and learning prompts are notebook-owned body cells. The route
 cell's `metadata.workshop` lists preparation IDs and the activity ID. Live
 notebooks 01–11 also declare the complete contiguous `sequence` and its
-`checkpoint`; the runtime runner executes every code cell in that sequence.
-Shared `practice_en/es` and `explore_en/es` in `_variables.yml` own the visible
-outcome labels in notebook headers, slides and handbook. Visible **Core prep**
-labels and `workshop-core-prep` / `workshop-core-activity` tags identify the
-route. Do not make a core route depend on an optional exercise or an unopened
-solution. `scripts/check_teaching_materials.py` checks these references and the
-kit's local links statically; `tests/test_teaching_materials.py` tests the
-checker and the tiny worked examples.
+`checkpoint`; the runtime runner executes every code cell in that sequence
+except the predict-first cell, which it knows by its counterexample marker and
+leaves to `tests/test_teaching_materials.py`. Shared `practice_en/es` and
+`explore_en/es` in `_variables.yml` own the visible outcome labels in notebook
+headers, slides and handbook. Visible **Core prep** labels and
+`workshop-core-prep` / `workshop-core-activity` tags identify the route. Do not
+make a core route depend on an optional exercise or an unopened solution.
+`scripts/check_teaching_materials.py` checks these references and the kit's
+local links statically; `tests/test_teaching_materials.py` tests the checker
+and the tiny worked examples.
+
+**A live core opens on a hook, not a table.** The first cell after the last
+prep cell is something that surprises -- an output, a prediction, one number a
+reader can check -- said in plain words, with the formula second and the
+vocabulary or axis-letter table after it. Number a list only when it is a
+sequence. Notebooks 02, 04 and 05 open on their predict-first cell; the rest
+open on a small worked example. `test_live_cores_do_not_open_on_a_table`
+refuses a table in that position.
 
 `scripts/test_notebooks.py` runs the route: one fresh kernel per notebook
 executes the declared route and then the **paired solution**, the
 `solution`-tagged cell immediately after the activity, because many activity
 cells are the student's blank `# TODO` block. A route with no executable code
 (notebooks 00, 12, 16, 17 and 18) names what CI executes in `ci_cells` on the
-same scaffold cell; `run_set()` refuses an entry that is not a unique code cell, and
-check 2's `EXPECTED` guard refuses one that drops an asserted cell. Keep the
-blanket fallback for a notebook with no route. The runner asserts that a blank
+same scaffold cell; `run_set()` refuses an entry that is not a unique code cell
+or that is a predict-first cell, and check 2's `EXPECTED` guard refuses one
+that drops an asserted cell. Keep the blanket fallback for a notebook with no
+route. The runner asserts that a blank
 activity stayed blank, that each route prints its `EXPECTED` numbers, and that
 no widget callback failed -- a sweep of controls bounded by
 `WORKSHOP_PROBE_CHANGES` (8) and `WORKSHOP_PROBE_BUDGET` (20 s), with pyplot
