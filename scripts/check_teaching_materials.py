@@ -13,6 +13,24 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
+
+# The marker a predict-first cell opens with -- exactly one per notebook, so
+# scripts/test_notebooks.py can name the cell it steps over the same way
+# tests/test_teaching_materials.py names the one it runs against stubs.
+COUNTEREXAMPLE = "# --- counterexample / contraejemplo"
+
+
+def is_predict_cell(cell: dict) -> bool:
+    """A predict-first cell: live widgets that stall the kernel's widget probe.
+
+    Identified by the counterexample marker, not by an id fragment (ids vary --
+    p16-counterexample-code, m17-counterexample) and not by a tag.
+    """
+    return cell.get("cell_type") == "code" and COUNTEREXAMPLE in "".join(
+        cell.get("source", [])
+    )
+
+
 PAIRED = (
     "group-tasks.md",
     "facilitator-guide.md",

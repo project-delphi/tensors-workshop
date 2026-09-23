@@ -849,6 +849,26 @@ out: `p16-stepper` is a frame stepper, and the rule everywhere else is that no
 route runs one. The fallback had been running it, network and all, which is
 the bug this fixes rather than a cost it pays.
 
+**A predict cell can open a core; the runner steps over it.** A predict cell's
+live `RadioButtons` or `Checkbox` is what made the widget sweep stall for the
+whole `PROBE_CELL_TIMEOUT` on two runs in three, which is why every predict
+cell had been kept outside every route. Notebooks 02, 04 and 05 now open their
+live core on one, as the hook, so `run_set` in `scripts/test_notebooks.py`
+skips a predict cell wherever it sits in a route -- in a live `sequence` or
+named in `ci_cells` -- rather than requiring routes to keep it out. It finds
+the cell by the `COUNTEREXAMPLE` marker, the same one
+`check_teaching_materials.route_of` and its neighbors already require to be
+exactly one per notebook, so the cell the kernel skips is by construction the
+one `tests/test_teaching_materials.py` runs against stubbed widgets. The three
+hooks sit after prep rather than before it: notebook 02 and notebook 05 need
+prep's Colab widget manager output, and notebook 04 needs prep's `widgets` and
+`display` imports. The cost is unchanged from before -- the widget half of a
+predict cell runs only against stubs, never a real kernel -- so a predict cell
+moved into a core must still be checked in Colab by hand. "Outside every
+route" in the two entries above now means outside every executed set: the
+predict cells in 00, 12, 16, 17 and 18 stay named in `ci_cells` and still never
+run.
+
 **The widget sweep silences the display publisher.** `widgets.interactive_output`
 runs its callback inside an `Output` widget, whose `__exit__` hands the
 traceback to the frontend and returns `True`, so a broken callback leaves a

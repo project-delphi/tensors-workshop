@@ -2,6 +2,10 @@
 
 ## 2026-09-23
 
+- **Every live core opens on something to predict, not a table to read.** The vocabulary and axis-letter tables stay, one cell down. Notebook 01 now starts with a photo and asks how many numbers it takes to hold it (786,432). 02, 04 and 05 start with their predict-first question, moved up from *Explore later*: shuffle four frames and see which statistic moves, a tiny image made (3, 2, 2) by a transpose and by a reshape, and which source frame `clip[1]` really is (45, not 1). 03 and 06 start on their smallest worked example (`[[2, 10], [4, 14]] - [3, 12]`, and a pixel contracted to 21). 08 starts on the Fibonacci picture. 10 starts on notebook 09's `[[3, 0], [0, 1]]`, whose 1 a rank-1 fit lost, which had been hidden inside a fold. Where a learning loop re-asked what the hook had just answered, it now builds on the answer instead: after ten steps rather than four, `clip[15]` rather than `clip[1]`. Notebook 05's setup no longer prints the frame indices, which gave the answer away.
+- **The rush hour lands in notebook 10's core.** Before its sliders, the rank explorer prints the busiest hour in the data and the hour Tucker's first hour pattern is strongest, 18 and 18, and says why it compares sizes rather than signs: an SVD may return the pattern with every sign flipped. The exercise after the core now starts from that result and asks what the *second* pattern picks out.
+- **The notebook runner steps over a predict-first cell inside a route.** Its live widgets stalled the widget sweep, which is why every one had been kept out of the routes. `run_set()` recognises it by its counterexample marker, leaves it to the unit test that already runs it against stubbed widgets, and refuses one named in `ci_cells`. A new test refuses a live core whose first cell after setup is a table.
+
 - **The widgets reach the timed session.** Each deck gains six projector-moment slides, each one a predict-first question with a link to the widget page it needs:
   - a 90-second cold open on the audio stage, where the same 263,169 numbers, transposed, turn a voice into noise;
   - the broadcasting simulator in section 03;
