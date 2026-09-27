@@ -180,7 +180,11 @@ class PipInstalled(unittest.TestCase):
             seen |= gt.pip_installed(
                 gt.notebook_code(ROOT / "notebooks" / gt.notebook_name(s))
             )
-        self.assertEqual(seen, {"imageio", "tensorly", "pyttb", "torch"})
+        # `imageio-ffmpeg` is named beside `imageio[ffmpeg]` so the extra's
+        # backend is pinned too, not left to whatever PyPI serves on the day.
+        self.assertEqual(
+            seen, {"imageio", "imageio-ffmpeg", "tensorly", "pyttb", "torch"}
+        )
 
 
 if __name__ == "__main__":

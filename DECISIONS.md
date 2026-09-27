@@ -819,6 +819,22 @@ through the same failure and the picture would shake.
 
 ## How a notebook looks
 
+**Every download has a copy in `data/`, and a fallback that says it fell
+back.** Five days before the first live run, the storm clip sat on two live
+cores (02, 05) with no retry and no second source: one refusal from Wikimedia,
+which throttles cloud addresses, and all of 05's core raised a bare
+`URLError`. The three CSVs came from GitHub raw with a bare `pd.read_csv(URL)`,
+and the handbook told the facilitator to "have the three CSVs mirrored in the
+workshop repo as a fallback" when no mirror existed. The copies are served by
+the same Pages deploy as the site, because a copy on GitHub raw would share the
+rate limit it is there to route around. The notebooks' SHA-256 pins are
+checked against whichever source answered, which is what makes a second source
+safe. The cost is that a dead upstream no longer fails the gate -- the
+fallback passes, by design -- so `fetch()` prints a fixed phrase and
+`test_notebooks.py` lists every fallback under `FELL BACK:`. Notebook 14's
+monkey tensor is the exception: its repository has no licence, so it is not
+copied.
+
 **Notebooks 00 and 12 name their CI cells.** Notebook 12's core path tells the
 student "Exit check (5 min). No code required ... Other exercises and
 explorers are optional", and that is the real lesson, so the route is not the

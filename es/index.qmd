@@ -181,7 +181,7 @@ Basta con conocer el álgebra lineal básica. Completa los pasos obligatorios an
 
 :::: {.prerequisite-list}
 ::: {.prerequisite-step}
-### Paso 1: Conceptos básicos [Obligatorio]{.step-badge}
+### Paso 1: Conceptos básicos [Obligatorio · ~2–3 h]{.step-badge}
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
@@ -193,17 +193,21 @@ Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.de
 
 <span data-language-key="step-2-setup-required-5-mins"></span>
 
-Ejecuta el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Google Colab para cargar los conjuntos de datos.
+Ejecuta el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Google Colab para comprobar que Colab y las descargas de datos funcionan en tu equipo. [¿Colab bloqueado o sin cuenta de Google? Consulta las preguntas frecuentes.](faq.qmd#colab-access)
 :::
 
 ::: {.prerequisite-step}
-### Paso 3: Repaso visual [Opcional]{.step-badge .step-optional}
+### Paso 3: Repaso visual [Opcional · ~3 h]{.step-badge .step-optional}
 
 <span data-language-key="step-3-visual-refresher-optional"></span>
 
 Mira [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}), de 3Blue1Brown.
 :::
 ::::
+
+**El día del taller:** trae tu portátil y el cargador, inicia sesión en
+Google en tu navegador, y abre el [cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb)
+desde la [página de cuadernos](notebooks.qmd) cuando comience la sesión.
 
 ```{=html}
 <section class="workshop-audience" aria-labelledby="para-quien-es">

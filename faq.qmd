@@ -51,6 +51,19 @@ Each notebook has a **Setup** section that loads its own data and installs
 any additional packages it needs. Run Setup before the exercises.
 For a local Jupyter environment, use the [local setup instructions](notebooks.qmd#running-them-somewhere-other-than-colab).
 
+### What if Colab won't run for me, or on my work laptop? {#colab-access}
+
+Colab needs a Google account, and a personal one is safest: a work or school
+account may have Colab switched off by its administrator. On first run, Colab may warn "This
+notebook was not authored by Google"; click **Run anyway**. The notebooks
+come from this workshop's public GitHub repository. Colab does not save your
+edits on its own: use **File → Save a copy in Drive**, or closing the tab
+loses them. If your work laptop blocks Colab or Google sign-in entirely, test
+this at home before the session, bring a personal device if you can, and
+otherwise pair with a neighbour on the day. The
+[interactive widgets](interactive.qmd) run in any browser and need no
+account.
+
 ### Do the notebooks share data or variables? {#independence}
 
 No. Each notebook is self-contained, so you can open a section without running

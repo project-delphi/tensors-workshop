@@ -181,7 +181,7 @@ Basic linear algebra is enough to begin. Complete the required steps before the 
 
 :::: {.prerequisite-list}
 ::: {.prerequisite-step}
-### Step 1: Core Concepts [Required]{.step-badge}
+### Step 1: Core Concepts [Required · ~2–3 h]{.step-badge}
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
@@ -193,17 +193,21 @@ Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearning
 
 <span data-language-key="step-2-setup-required-5-mins"></span>
 
-Run [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) in Google Colab to pre-load datasets.
+Run [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) in Google Colab to check that Colab and the data downloads work on your machine. [Colab blocked, or no Google account? See the FAQ.](faq.qmd#colab-access)
 :::
 
 ::: {.prerequisite-step}
-### Step 3: Visual Refresher [Optional]{.step-badge .step-optional}
+### Step 3: Visual Refresher [Optional · ~3 h]{.step-badge .step-optional}
 
 <span data-language-key="step-3-visual-refresher-optional"></span>
 
 Watch 3Blue1Brown's [*Essence of linear algebra*]({{< var workshop.prereq_video_url >}}).
 :::
 ::::
+
+**On the day:** bring your laptop and charger, sign in to Google in your
+browser, and open [Notebook 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb)
+from the [notebooks page](notebooks.qmd) when the session starts.
 
 ```{=html}
 <section class="workshop-audience" aria-labelledby="who-this-is-for">

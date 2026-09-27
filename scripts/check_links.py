@@ -112,6 +112,11 @@ NB_IMG_RE = re.compile(rf"{re.escape(REPO['site'])}/images/([A-Za-z0-9._-]+)")
 NB_VIZ_RE = re.compile(
     rf"{re.escape(REPO['site'])}/(interactive/[A-Za-z0-9._-]+\.html)"
 )
+# The workshop's own copies of the datasets a notebook downloads, which its
+# fetch falls back to when the upstream host does not answer (data/README.md).
+# Nothing else would notice one missing: the fallback only runs on the day the
+# upstream is down, which is the one day a 404 from the site costs a section.
+NB_DATA_RE = re.compile(rf"{re.escape(REPO['site'])}/data/([A-Za-z0-9._-]+)")
 IMG_TAG_RE = re.compile(r"<img\b[^>]*>")
 ALT_RE = re.compile(r'alt="([^"]*)"')
 
@@ -352,7 +357,7 @@ def check_notebooks() -> None:
         nbformat = None
         print("      nbformat unavailable — structural checks only")
 
-    n_refs = n_imgs = n_maths = 0
+    n_refs = n_imgs = n_maths = n_data = 0
     for s in NOTEBOOKS:
         name = f"{s['n']}-{s['slug']}.ipynb"
         path = NBDIR / name
@@ -428,6 +433,13 @@ def check_notebooks() -> None:
         for alt in IMG_TAG_RE.findall(body):
             if not ALT_RE.search(alt) or not ALT_RE.search(alt).group(1).strip():
                 fail(f"{name}: an <img> has no alt text")
+        for target in sorted(set(NB_DATA_RE.findall(body))):
+            n_data += 1
+            if not (ROOT / "data" / target).exists():
+                fail(
+                    f"{name}: falls back to data/{target}, which does not exist "
+                    f"-- python3 scripts/fetch_mirrors.py {target}"
+                )
         for target in sorted(set(NB_VIZ_RE.findall(body))):
             if not (ROOT / target).exists():
                 fail(f"{name}: links {target}, which does not exist")
@@ -448,6 +460,7 @@ def check_notebooks() -> None:
         f"text, each a cube animation of the notebook showing it"
     )
     print(f"      {n_maths} display-maths blocks, balanced and in plain markdown")
+    print(f"      {n_data} dataset fallbacks, each a file in data/")
 
 
 def check_notebook_maths(nb, name) -> int:

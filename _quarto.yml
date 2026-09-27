@@ -47,6 +47,9 @@ project:
     - kahoot/*.xlsx
     - notebooks/*.ipynb
     - images/**
+    # The datasets' fallback copies (data/README.md). A notebook fetches them
+    # from the published site by absolute URL, so they must reach docs/.
+    - data/**
     # The companion's Audio Overview. Copied verbatim, like the notebooks --
     # nothing renders it, so it must be a resource or it never reaches docs/.
     - media/**
