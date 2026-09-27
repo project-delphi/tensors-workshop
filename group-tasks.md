@@ -382,6 +382,20 @@ why the smallest rank reaching 95% energy might still erase an important detail.
 
 **Share:** Your chosen rank, retained energy, factor count and one limitation.
 
+## 19 · Which job is this tensor being asked to do?
+
+<span data-language-key="19-compress-or-predict"></span>
+
+**When:** After Part 5 in [Notebook 19](notebooks/19-cp-or-tucker-in-practice.ipynb). Follow-up only.
+**Time:** 10 minutes.
+
+Each person names one tensor from their own work or study. As a group, decide
+whether its job is to store it in fewer numbers or to predict entries nobody
+observed, then choose CP or Tucker and name the measurement that would prove the
+choice wrong.
+
+**Share:** One tensor, its job, the model you chose and the measurement that could overturn it.
+
 ## Facilitator prompts
 
 <span data-language-key="facilitator-prompts"></span>

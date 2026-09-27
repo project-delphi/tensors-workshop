@@ -75,6 +75,7 @@ text, then run the appropriate generator:
 | `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
 | `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
+| `images/cube-19-*.gif` (the core, the fold, CP's cancelling terms) | `scripts/gen_cp_tucker_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.webp` (art added since #45) | `scripts/gen_slide_art.py` |
 | `data/*` (the datasets' fallback copies; network, not in the CI gate) | `scripts/fetch_mirrors.py` |
 | `docs/` (build output, gitignored -- never committed) | `quarto render` |
@@ -95,7 +96,7 @@ floors, not pins, so matplotlib drift alone can rewrite every figure with no
 input changed. `gen_thumbnails.py`, `gen_figures.py` and `gen_cube_gifs.py`
 print a `Stack:` line naming the versions that drew the files; compare it with
 the line in the commit that last drew the image before deciding whether a
-dirty `git status` is an input change or a matplotlib release. The other three
+dirty `git status` is an input change or a matplotlib release. The others
 print nothing, so there you check the inputs by hand.
 
 What each generator draws, and the rules each one keeps:
@@ -133,6 +134,10 @@ What each generator draws, and the rules each one keeps:
   cannot catch occlusion, so light plane 0 or `hide` what is in front.
 - `gen_pca_gifs.py` and `gen_tensor_module_gifs.py` draw notebooks 16 and
   17–18; both use `loop=0` for the same reason.
+- `gen_cp_tucker_gifs.py` draws notebook 19's three: CP's superdiagonal core
+  against Tucker's dense one, the 8 × 8 block fold, and two rank-one terms
+  growing as 1/ε while their sum converges -- the cancellation Part 3 of the
+  notebook measures on a real kernel. Captions are expressions, `loop=0`.
 - `gen_slide_art.py` draws the `slide-NNa` insertions from HTML and CSS,
   screenshotted by headless Chrome at 1920×1080 and encoded as WebP with
   Pillow, so it runs under `--group figures`. The thirty-one pre-existing slides
@@ -598,7 +603,7 @@ refuses a table in that position.
 executes the declared route and then the **paired solution**, the
 `solution`-tagged cell immediately after the activity, because many activity
 cells are the student's blank `# TODO` block. A route with no executable code
-(notebooks 00, 12, 16, 17 and 18) names what CI executes in `ci_cells` on the
+(notebooks 00, 12, 16, 17, 18 and 19) names what CI executes in `ci_cells` on the
 same scaffold cell; `run_set()` refuses an entry that is not a unique code cell
 or that is a predict-first cell, and check 2's `EXPECTED` guard refuses one
 that drops an asserted cell. Keep the blanket fallback for a notebook with no
@@ -635,6 +640,8 @@ copy: an entry in `scripts/fetch_mirrors.py` and `data/README.md`, then
 `python3 scripts/fetch_mirrors.py <name>`; check 4 fails the build until the
 file is there. A dataset whose licence does not permit redistribution gets no
 copy -- notebook 14's monkey tensor has none -- and keeps its retries.
+Deep dive 19 (FB15k-237 and the blog's kernel) arrived with its own
+`fetch()` and no copies yet; it is take-home, so nothing in the room waits on it.
 
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages
@@ -764,6 +771,7 @@ uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–1
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
 uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
+uv run --group figures python scripts/gen_cp_tucker_gifs.py       # notebook 19
 uv run --group figures python scripts/gen_slide_art.py        # needs Chrome and the network
 npm run gen:hero                                              # the hero's widget stills, from each embed
 ```

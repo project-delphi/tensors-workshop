@@ -532,3 +532,25 @@ assert wrong_retention < 0.95 <= correct_retention
 La energía es amplitud al cuadrado. La proporción correcta es 34/35, no 8/9. Transferencia: ¿por qué un fondo brillante debilita la energía como prueba del detalle visual?
 
 </details>
+
+## 19 · El entrenamiento enseña a DistMult el sentido de una relación
+
+<span data-language-key="19-symmetric-score"></span>
+
+«DistMult puntúa igual `(Francia, contiene, París)` y `(París, contiene, Francia)` al principio, pero con suficientes hechos el entrenamiento romperá el empate».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+rng_claim = np.random.default_rng(19)
+e_paris, e_france, w_contains = rng_claim.standard_normal((3, 8))
+france_contains_paris = np.sum(e_france * w_contains * e_paris)
+paris_contains_france = np.sum(e_paris * w_contains * e_france)
+assert np.isclose(france_contains_paris, paris_contains_france)
+```
+
+La puntuación es una suma de productos y la multiplicación conmuta: las dos puntuaciones son iguales para cualquier embedding, así que ningún entrenamiento las separa. Transferencia: en un grafo de citas, ¿cuántos pares costaría esto y qué medirías primero?
+
+</details>

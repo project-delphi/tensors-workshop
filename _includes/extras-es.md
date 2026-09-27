@@ -7,3 +7,4 @@
 | 16 | PCA desde la perspectiva de los tensores | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/16-pca-from-tensors.ipynb) |
 | 17 | Atención multicabeza 4D: reorganiza Q, K y V | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) |
 | 18 | Compresión de características latentes con SVD | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/18-feature-compression.ipynb) |
+| 19 | CP o Tucker en la práctica | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/19-cp-or-tucker-in-practice.ipynb) |
