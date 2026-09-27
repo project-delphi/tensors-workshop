@@ -17,6 +17,7 @@ frame 0 after it ends. The accent is notebook 19's, `gen_notebooks.ACCENTS`
 indexed modulo its length.
 """
 
+import sys
 from pathlib import Path
 
 import matplotlib
@@ -28,9 +29,13 @@ from matplotlib.patches import Rectangle
 from PIL import Image
 from skimage import data as skdata
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from gen_notebooks import ACCENTS  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "images"
-ACCENT, CORAL, INK, MUTED, EMPTY = "#0891b2", "#c45c26", "#20334a", "#8a909c", "#e9ecf1"
+ACCENT = ACCENTS[19 % len(ACCENTS)]  # the notebook's own accent, as its header draws it
+CORAL, INK, MUTED, EMPTY = "#c45c26", "#20334a", "#8a909c", "#e9ecf1"
 DURATION = 1800
 plt.rcParams.update(
     {

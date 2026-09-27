@@ -98,7 +98,7 @@ NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16
 
 # A remote that cannot be reached is not a broken notebook.
 #
-# Twelve of the routes above fetch a real dataset, unmocked, because Colab is
+# Every route above fetches a real dataset, unmocked, because Colab is
 # the runtime this defends. The cost is that someone else's server having a bad
 # day turns this job red while saying nothing about the notebook. Chicago's
 # portal is the worst of them: it answers 503 for minutes at a time and
@@ -301,8 +301,12 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
     # 19 reads two pinned files: FB15k-237's training split and the blog post's
     # data folder at one commit, both checked against their SHA-256 before use.
     # So the counts are as fixed as the files. The fits are asserted by their
-    # verdicts, not their decimals: ALS and Adam are deterministic for a seed
-    # but not across BLAS builds, and the lesson is which model wins.
+    # verdicts, never their decimals: ALS and Adam are deterministic for a seed
+    # but not across BLAS builds. Three verdicts are counts -- DistMult 0 and
+    # TuckER 36 of 36, and group lasso's 6 of 30 -- and each sits far from its
+    # threshold: TuckER's loss reaches 0.0000, and the prox zeroes the 24
+    # spare terms exactly while the six kept sit near 0.3. A flip there is the
+    # lesson changing, not rounding.
     "19": {
         "c19-ex1-ref": [
             "CP stops compressing at rank / CP deja de comprimir en el rango: 1139",
@@ -335,7 +339,9 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
         "c19-scree": ["Error de truncamiento ≤ cota: True"],
         "c19-prune-fit": ["group lasso, μ = 3e-4       6 of 30"],
         "c19-ex5-solution": ["unfold_image(fold(img)) gives the image back exactly."],
-        "c19-img-compress": ["Tucker  clears 28 dB at (32, 32, 16, 3): 50,176 numbers"],
+        "c19-img-compress": [
+            "Fewer numbers at the threshold / Menos números en el umbral: CP",
+        ],
         "c19-img-predict": [
             "Better at predicting hidden pixels / Mejor prediciendo píxeles ocultos: Tucker",
         ],
