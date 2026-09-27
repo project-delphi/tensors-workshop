@@ -48,6 +48,11 @@ by hand and then change what "fit" means.
 16 connects PCA’s matrix views to satellite land-cover classification, clustering,
 and tensor PCA, with Plato’s cave and three animations.
 
+19 asks which of CP and Tucker to choose, on a real knowledge graph, a trained
+ResNet-18 kernel and a photograph, and finds that the model that compresses best
+is not the one that predicts best. It works through the ML blog post
+*CP or Tucker in practice*.
+
 Several sections have a widget beside them, listed here in section order.
 
 Section 03 has a

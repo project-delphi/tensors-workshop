@@ -525,3 +525,25 @@ assert wrong_retention < 0.95 <= correct_retention
 Energy is squared amplitude. The correct ratio is 34/35, not 8/9. Transfer: why does a bright background weaken energy as a test of visual detail?
 
 </details>
+
+## 19 · Training teaches DistMult which way a relation goes
+
+<span data-language-key="19-symmetric-score"></span>
+
+“DistMult scores `(France, contains, Paris)` and `(Paris, contains, France)` the same at first, but with enough facts training will break the tie.”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+rng_claim = np.random.default_rng(19)
+e_paris, e_france, w_contains = rng_claim.standard_normal((3, 8))
+france_contains_paris = np.sum(e_france * w_contains * e_paris)
+paris_contains_france = np.sum(e_paris * w_contains * e_france)
+assert np.isclose(france_contains_paris, paris_contains_france)
+```
+
+The score is a sum of products, and multiplication commutes: the two scores are equal for every embedding, so no amount of training separates them. Transfer: in a citation graph, how many pairs would this cost, and what would you measure first?
+
+</details>

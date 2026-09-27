@@ -77,6 +77,15 @@ pausable widgets. Their three GIFs apiece are generated from the notebook
 animation functions by `scripts/gen_tensor_module_gifs.py`; the same export
 cells work in Colab without FFmpeg.
 
+19 works through the ML blog post *CP or Tucker in practice*: CP and Tucker on
+the FB15k-237 knowledge graph, a trained ResNet-18 kernel and a photograph
+folded into 8 × 8 blocks. Its experiments are cut down to run in about two
+minutes on Colab's CPU, and where the full run would take hours it downloads the
+post's cached results, pinned to one commit of the blog's repository and
+checked against their SHA-256. Its three animations are drawn by
+`scripts/gen_cp_tucker_gifs.py`; every other figure is drawn live from its own
+fits.
+
 ## Shape of each notebook
 
 1. **Header** — **Practise today** and **Explore later**, in both languages.
@@ -91,7 +100,8 @@ entirely take-home material.
 
 Every notebook carries **at least three animations**: small numbered cubes
 performing the moves that section teaches, drawn by `scripts/gen_cube_gifs.py` (16 uses `scripts/gen_pca_gifs.py`;
-17–18 use `scripts/gen_tensor_module_gifs.py`)
+17–18 use `scripts/gen_tensor_module_gifs.py`; 19 uses
+`scripts/gen_cp_tucker_gifs.py`)
 and served from the published site. The first two draw the moves; the third
 draws the data the section teaches them on — a colour image being split into
 its channels, a clip losing a moment, a count nobody recorded. In every section

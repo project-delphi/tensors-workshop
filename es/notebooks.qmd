@@ -48,6 +48,11 @@ se ajusta a mano y después se cambia qué significa «ajustar».
 El 16 conecta las vistas matriciales de PCA con clasificación de cobertura terrestre,
 agrupamiento y PCA tensorial, con la caverna de Platón y tres animaciones.
 
+El 19 pregunta cuál elegir entre CP y Tucker, sobre un grafo de conocimiento real,
+un kernel entrenado de ResNet-18 y una fotografía, y encuentra que el modelo que
+mejor comprime no es el que mejor predice. Sigue la entrada del blog
+*CP or Tucker in practice* (en inglés).
+
 Varias secciones tienen una herramienta al lado, en orden de sección.
 
 La sección 03 tiene un

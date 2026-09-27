@@ -56,6 +56,7 @@ Todas las entradas están en [El blog de ML](https://project-delphi.github.io/ml
 - [Factorizaciones e inversas tensoriales](https://project-delphi.github.io/ml-blog/posts/tensor-factorizations/)
 - [Para qué sirve factorizar un tensor](https://project-delphi.github.io/ml-blog/posts/uses-of-tensor-factorizations/)
 - [CP o Tucker](https://project-delphi.github.io/ml-blog/posts/cp-or-tucker/)
+- [CP o Tucker en la práctica](https://project-delphi.github.io/ml-blog/posts/cp-or-tucker-in-practice/)
 - [Inversas tensoriales en la práctica](https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/)
 - [Inversas tensoriales, paso a paso](https://project-delphi.github.io/ml-blog/posts/tensor-inverse-examples/)
 - [Tensores dispersos](https://project-delphi.github.io/ml-blog/posts/sparse_tensors/)
