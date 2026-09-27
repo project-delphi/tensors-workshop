@@ -151,6 +151,8 @@ fell_back: list[str] = []
 # with the bilingual sentence the fetch cells were written to print rather than
 # with an opaque timeout. Notebook 15's fetch_crime is the longest: three
 # attempts at 70s, 9s of backoff, then 30s for the workshop's copy -- 249s.
+# Notebook 00's setup is next: four fetch() calls, each two sources of two
+# 15s tries and a 2s pause -- 256s. Raise fetch()'s timeout and this breaks.
 CELL_TIMEOUT = 300
 
 # Cells slower than this are named as they finish, so a long CI step says

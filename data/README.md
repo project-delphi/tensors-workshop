@@ -38,8 +38,8 @@ These back the live cores, so they matter on the day.
 housing.csv  sha256 8a3727f4cf54ac1a327f69b1d5b4db54c5834ea81c6e4efc0d163300022a685e  bytes 1423529
 taxis.csv    sha256 08d6d71784dbaa2651fee37fc03389754194c05d72d2d19cbc2c799dea6ac09d  bytes 869349
 flights.csv  sha256 237d834127d9c6355630d8f443a7a2377b5925923010009b59809ba0b67f4fac  bytes 2350
-storm.webm   sha256 e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b  (pinned in 02, 05, 11)
 fetched 2026-09-27
+storm.webm   sha256 e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79dc1b  (pinned in 02, 05, 11)
 ```
 
 ## Take-home
