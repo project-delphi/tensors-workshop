@@ -392,6 +392,20 @@ Expliquen por qué conservar el 95% de energía puede borrar un detalle importan
 
 **Compartan:** El rango, la energía retenida, el número de factores escalares y una limitación.
 
+## 19 · ¿Qué trabajo se le pide a este tensor?
+
+<span data-language-key="19-compress-or-predict"></span>
+
+**Cuándo:** Después de la Parte 5 del [Cuaderno 19](../notebooks/19-cp-or-tucker-in-practice.ipynb). Solo seguimiento.
+**Tiempo:** 10 minutos.
+
+Cada persona nombra un tensor de su trabajo o sus estudios. En grupo, decidan
+si su trabajo es guardarlo con menos números o predecir entradas que nadie
+observó; después elijan CP o Tucker y nombren la medida que demostraría que la
+elección es errónea.
+
+**Compartan:** Un tensor, su trabajo, el modelo elegido y la medida que podría refutarlo.
+
 ## Preguntas para facilitar la discusión
 
 <span data-language-key="facilitator-prompts"></span>

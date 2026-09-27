@@ -511,6 +511,12 @@ datasets:
   - match: "data.cityofchicago.org"
     label_en: "Chicago crime reports"
     label_es: "informes de delitos de Chicago"
+  - match: "FB15k-237"
+    label_en: "the FB15k-237 knowledge graph"
+    label_es: "el grafo de conocimiento FB15k-237"
+  - match: "posts/cp-or-tucker-in-practice/data"
+    label_en: "a ResNet-18 kernel and cached fits"
+    label_es: "un kernel de ResNet-18 y ajustes guardados"
 
 # ── The brainstorm diagram ───────────────────────────────────────────────────
 # One picture of the whole day, on both companion pages. Four ideas, and every
@@ -561,7 +567,7 @@ brainstorm:
       title_es: "Se factoriza"
       gloss_en: "Break it into simpler parts you can use."
       gloss_es: "Divídelo en partes más simples que puedas usar."
-      sections: ["07", "08", "09", "10", "11", "14", "15", "16", "18"]
+      sections: ["07", "08", "09", "10", "11", "14", "15", "16", "18", "19"]
 
   # The ribbon under the four cards. There are **two different claims** about
   # the workshop's connecting idea, and they name different sections. Keeping
@@ -700,6 +706,12 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/posts/cp-or-tucker/"
     title_en: "CP or Tucker"
     title_es: "CP o Tucker"
+  # Notebook 19 works through this post, so it carries the URL and title in
+  # its opening map and its "Sources and next steps" cell.
+  cp_tucker_practice:
+    url: "https://project-delphi.github.io/ml-blog/posts/cp-or-tucker-in-practice/"
+    title_en: "CP or Tucker in practice"
+    title_es: "CP o Tucker en la práctica"
   inverses_practice:
     url: "https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/"
     title_en: "Tensor inverses in practice"
@@ -983,6 +995,7 @@ references:
         - tensor_factorizations
         - uses
         - cp_or_tucker
+        - cp_tucker_practice
         - inverses_practice
         - inverse_examples
         - sparse
@@ -1866,3 +1879,53 @@ extras:
       - "Implementar reconstrucción de rango k con una matricización documentada."
       - "Comprobar la identidad energía/error y encontrar el menor rango para un umbral."
       - "Comparar rangos 1, 5, 20 y 50, coste de almacenamiento y reconstrucción CP."
+  x19:
+    n: "19"
+    slug: "cp-or-tucker-in-practice"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home · about 2 hours"
+    format_line_es: "estudio a fondo · para después · unas 2 horas"
+    title_en: "CP or Tucker in practice"
+    title_es: "CP o Tucker en la práctica"
+    summary_en: "Take CP and Tucker to a real knowledge graph, a trained ResNet-18 kernel and a photograph: see which core can express an asymmetric relation, which stores a kernel in fewer numbers and at what hidden price, how to choose the rank, and why the model that compresses best does not predict best."
+    summary_es: "Llevar CP y Tucker a un grafo de conocimiento real, un kernel entrenado de ResNet-18 y una fotografía: ver qué núcleo puede expresar una relación asimétrica, cuál guarda un kernel con menos números y a qué precio oculto, cómo elegir el rango, y por qué el modelo que mejor comprime no es el que mejor predice."
+    network_note_for: "FB15k-237"
+    network_note_en: "21 MB, once"
+    network_note_es: "21 MB, una vez"
+    intro_en: |-
+      Sections 10 and 11 fitted Tucker and CP to a small taxi tensor and compared how many numbers each stored. This deep dive takes the same two models to three tensors people factorise for a living, and asks which one to choose:
+
+      > **CP and Tucker differ in one object, the core tensor, and the right core depends on whether the factorisation has to predict entries nobody observed or store a known tensor in fewer numbers.**
+
+      On the FB15k-237 knowledge graph the job is prediction, and the question is what a core can *express*. On a trained ResNet-18 convolution kernel the job is storage, and the question is what a core *costs* — and what CP's savings hide. Then the question both leave open, which rank to fit. Last, a photograph that can be asked either job, and ranks the two models in opposite orders.
+
+      It works through the ML blog post *CP or Tucker in practice* at a first-read pace, with the heaviest experiments cut to run in a few minutes on Colab's CPU.
+    intro_es: |-
+      > 🇪🇸 Las secciones 10 y 11 ajustaron Tucker y CP a un tensor pequeño de taxis y compararon cuántos números guardaba cada uno. Este estudio a fondo lleva los mismos dos modelos a tres tensores que se factorizan de verdad y pregunta cuál elegir:
+      >
+      > **CP y Tucker difieren en un solo objeto, el tensor núcleo, y el núcleo correcto depende de si la factorización tiene que predecir entradas que nadie observó o guardar un tensor conocido con menos números.**
+      >
+      > En el grafo de conocimiento FB15k-237 el trabajo es predecir, y la pregunta es qué puede **expresar** un núcleo. En un kernel de convolución entrenado de ResNet-18 el trabajo es guardar, y la pregunta es lo que **cuesta** un núcleo y lo que esconde el ahorro de CP. Después, la pregunta que ambos dejan abierta: qué rango ajustar. Por último, una fotografía a la que se le pueden pedir los dos trabajos, y que ordena los dos modelos al revés.
+      >
+      > Sigue la entrada del blog «CP or Tucker in practice» (en inglés) a ritmo de primera lectura, con los experimentos más pesados recortados para la CPU de Colab.
+    objectives_en:
+      - "Write CP as **Tucker with a superdiagonal core**, and count what each stores."
+      - "Explain why **Tucker's factors** are defined only up to a change of basis and **CP's** are not."
+      - "Measure from real triples how often a knowledge-graph relation is **reversed**, and how often a symmetric score gets the chance to be wrong."
+      - "Write **DistMult, RESCAL and TuckER** as one scoring function with three cores, and show DistMult cannot learn a direction."
+      - "Implement a CP-compressed convolution as **four layers** and Tucker-2 as three, and verify the wiring against the dense layer."
+      - "Compare CP and Tucker-2 at **matched parameter budgets**, and read CP's advantage as **cancellation** between large terms."
+      - "Read ranks off an **HOSVD scree**, check its truncation bound, and say when a spectrum cannot choose a rank."
+      - "Find a CP rank by **over-parameterising and pruning** with a group-lasso proximal step."
+      - "Fold a photograph into a 4-way tensor and show that the model that **compresses** best is not the one that **predicts** best."
+    objectives_es:
+      - "Escribir CP como **Tucker con núcleo superdiagonal** y contar lo que guarda cada uno."
+      - "Explicar por qué los **factores de Tucker** solo están definidos salvo un cambio de base y los de **CP** no."
+      - "Medir con tripletas reales con qué frecuencia una relación de un grafo de conocimiento está **invertida**, y cuántas veces una puntuación simétrica tiene ocasión de equivocarse."
+      - "Escribir **DistMult, RESCAL y TuckER** como una sola función de puntuación con tres núcleos, y mostrar que DistMult no puede aprender un sentido."
+      - "Programar una convolución comprimida con CP como **cuatro capas** y Tucker-2 como tres, y comprobar el cableado frente a la capa densa."
+      - "Comparar CP y Tucker-2 con **presupuestos de parámetros iguales** e interpretar la ventaja de CP como **cancelación** entre términos grandes."
+      - "Leer rangos en el **codo de HOSVD**, comprobar su cota de truncamiento y decir cuándo un espectro no puede elegir un rango."
+      - "Encontrar un rango CP **sobreparametrizando y podando** con un paso proximal de group lasso."
+      - "Plegar una fotografía en un tensor de 4 modos y mostrar que el modelo que mejor **comprime** no es el que mejor **predice**."

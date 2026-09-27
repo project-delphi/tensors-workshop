@@ -20,5 +20,6 @@
 | 16 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-learn`, `pillow` | sí — parches satelitales de UCI Landsat (archivo de 101 KB, con caché) |
 | 17 | `matplotlib`, `ipywidgets`, `torch` | no |
 | 18 | `matplotlib`, `ipywidgets`, `torch` | no |
+| 19 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-image`, `scipy`, `tensorly`†, `torch` | sí — el grafo de conocimiento FB15k-237 (21 MB, una vez), un kernel de ResNet-18 y ajustes guardados |
 
 : Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}

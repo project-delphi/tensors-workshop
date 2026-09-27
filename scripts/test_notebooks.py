@@ -94,11 +94,11 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 
 # Routes that fetch remote data or run %pip. --offline skips exactly these.
 # 12 is here for the voice.wav it fetches inside its fallback run.
-NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16"}
+NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16", "19"}
 
 # A remote that cannot be reached is not a broken notebook.
 #
-# Twelve of the routes above fetch a real dataset, unmocked, because Colab is
+# Every route above fetches a real dataset, unmocked, because Colab is
 # the runtime this defends. The cost is that someone else's server having a bad
 # day turns this job red while saying nothing about the notebook. Chicago's
 # portal is the worst of them: it answers 503 for minutes at a time and
@@ -297,6 +297,54 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
     "15": {
         "s15-03": ["Tensor / Tensor: (7, 24, 78, 10)"],
         "s15-07": ["Squared error charges both misses 4", "614 times more"],
+    },
+    # 19 reads two pinned files: FB15k-237's training split and the blog post's
+    # data folder at one commit, both checked against their SHA-256 before use.
+    # So the counts are as fixed as the files. The fits are asserted by their
+    # verdicts, never their decimals: ALS and Adam are deterministic for a seed
+    # but not across BLAS builds. Three verdicts are counts -- DistMult 0 and
+    # TuckER 36 of 36, and group lasso's 6 of 30 -- and each sits far from its
+    # threshold: TuckER's loss reaches 0.0000, and the prox zeroes the 24
+    # spare terms exactly while the six kept sit near 0.3. A flip there is the
+    # lesson changing, not rounding.
+    "19": {
+        "c19-ex1-ref": [
+            "CP stops compressing at rank / CP deja de comprimir en el rango: 1139",
+            "Square Tucker-2 stops compressing at rank / Tucker-2 cuadrado deja de "
+            "comprimir en el rango: 230",
+        ],
+        "c19-kg-data": [
+            "Training triples / Tripletas de entrenamiento: 272,115",
+            "Entities, relations / Entidades, relaciones: 14,505, 237",
+        ],
+        "c19-kg-reversal": [
+            "Never reversed / Nunca invertidas: 207 relations carrying 81% of triples",
+            "Pares expuestos en relaciones nunca invertidas: 3.0%",
+            "/location/location/contains: 5,201 pairs, 0% reversed, 80% exposed",
+        ],
+        "c19-ex2-solution": [
+            "With the superdiagonal core, TuckER's score is DistMult's.",
+            "TuckER's score is RESCAL's.",
+        ],
+        "c19-kg-toy-train": [
+            "Hechos por encima de su inverso: DistMult 0, TuckER 36 (of 36)",
+        ],
+        "c19-conv-data": ["Kernel / Kernel: (256, 256, 3, 3), 589,824 weights / pesos"],
+        "c19-ex3-solution": ["The chain holds 18,648 weights, the formula's 518 × 36."],
+        "c19-budget-live": ["Lower error at 32× / Menor error a 32×: CP"],
+        "c19-budget-cached": [
+            "CP fits better at every budget / CP ajusta mejor en todos los "
+            "presupuestos: True",
+        ],
+        "c19-scree": ["Error de truncamiento ≤ cota: True"],
+        "c19-prune-fit": ["group lasso, μ = 3e-4       6 of 30"],
+        "c19-ex5-solution": ["unfold_image(fold(img)) gives the image back exactly."],
+        "c19-img-compress": [
+            "Fewer numbers at the threshold / Menos números en el umbral: CP",
+        ],
+        "c19-img-predict": [
+            "Better at predicting hidden pixels / Mejor prediciendo píxeles ocultos: Tucker",
+        ],
     },
 }
 
