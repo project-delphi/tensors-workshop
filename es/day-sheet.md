@@ -4,6 +4,8 @@ subtitle: "Una página para la sala"
 lang: es
 ---
 
+::: {.day-sheet-intro}
+
 [English](../day-sheet.md) · [Enseñar este taller](teach.qmd)
 
 Todo en esta página viene de la
@@ -11,6 +13,8 @@ Todo en esta página viene de la
 [agenda](tensors_workshop_plan_with_quizzes.md#agenda), [Kahoot](kahoot.qmd)
 y las [preguntas frecuentes](faq.qmd#colab-access) — nada aquí es nuevo.
 Imprímela, o déjala abierta en una segunda pantalla.
+
+:::
 
 ::: {.day-sheet}
 
@@ -36,7 +40,7 @@ Decide los recortes según el reloj, no sobre la marcha. Detalle completo en
 [Si vas con retraso](facilitator-guide.md#si-vas-con-retraso).
 
 | Comprueba en | Deberías empezar | Si vas con retraso |
-|---|---|---|
+|------|---------|----------------------------------------------|
 | +0:45 | 03 | Un grupo informa la actividad de ejes de 02; se omite el resto (−3). |
 | +1:00 | 04 | Solo la ronda 1 de la caza del error; se omite la reescritura de la ronda 2 (−3). |
 | +1:15 | Kahoot 1 | Hazlo. 6–10 min de retraso: elimina ya el Kahoot 2. 10+: elimina también el Kahoot 1. |
@@ -78,7 +82,7 @@ los archivos de importación.
 
 :::
 
-<div class="day-sheet-break"></div>
+::: {.day-sheet-strip}
 
 ## Franja de tiempos
 
@@ -114,3 +118,5 @@ _variables.yml; re-check the others if a section's minutes change. -->
 | Kahoot 3 | +03:05 | {{< var schedule.quiz_minutes >}} | | | | |
 | 11 · {{< var sections.s11.title_es >}} | {{< var sections.s11.start >}} | {{< var sections.s11.minutes >}} | | | | |
 | 12 · {{< var sections.s12.title_es >}} | {{< var sections.s12.start >}} | {{< var sections.s12.minutes >}} | | | | |
+
+:::

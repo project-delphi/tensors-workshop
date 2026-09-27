@@ -4,6 +4,8 @@ subtitle: "One page for the room"
 lang: en
 ---
 
+::: {.day-sheet-intro}
+
 [Español](es/day-sheet.md) · [Teach this workshop](teach.qmd)
 
 Everything on this page is assembled from the
@@ -11,6 +13,8 @@ Everything on this page is assembled from the
 [agenda](tensors_workshop_plan_with_quizzes.md#schedule), [Kahoot](kahoot.qmd)
 and the [FAQ](faq.qmd#colab-access) — nothing here is new. Print it, or keep
 it open on a second screen.
+
+:::
 
 ::: {.day-sheet}
 
@@ -36,7 +40,7 @@ Decide cuts at the clock, not in the moment. Full detail in
 [If you are behind](facilitator-guide.md#if-you-are-behind).
 
 | Check at | You should be starting | If you are behind |
-|---|---|---|
+|------|---------|----------------------------------------------|
 | +0:45 | 03 | One group reports 02's axis task; skip the rest (−3). |
 | +1:00 | 04 | Bug hunt round 1 only, skip round 2's rewrite (−3). |
 | +1:15 | Kahoot 1 | Run it. 6–10 min late: drop Kahoot 2 now. 10+: drop Kahoot 1 too. |
@@ -76,7 +80,7 @@ launch. See [Kahoot](kahoot.qmd) for the join links and import files.
 
 :::
 
-<div class="day-sheet-break"></div>
+::: {.day-sheet-strip}
 
 ## Timing strip
 
@@ -112,3 +116,5 @@ _variables.yml; re-check the others if a section's minutes change. -->
 | Kahoot 3 | +03:05 | {{< var schedule.quiz_minutes >}} | | | | |
 | 11 · {{< var sections.s11.title_en >}} | {{< var sections.s11.start >}} | {{< var sections.s11.minutes >}} | | | | |
 | 12 · {{< var sections.s12.title_en >}} | {{< var sections.s12.start >}} | {{< var sections.s12.minutes >}} | | | | |
+
+:::
