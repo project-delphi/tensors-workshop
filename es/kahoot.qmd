@@ -21,17 +21,8 @@ cómo lanzarlos. El alumnado puede preguntar en español; las opciones que verá
 en pantalla siguen en inglés.
 :::
 
-::: {.kahoot-note}
-**Quien imparte: importa cada hoja de cálculo en kahoot.it *antes* de la
-sesión.** Create → Add question → Import → Import spreadsheet. Hacerlo en
-directo cuesta varios minutos que no tienes.
-
-Los tres **enlaces de entrada de abajo siguen apuntando a `kahoot.it`**. Eso
-funciona: el alumnado introduce ahí el PIN de tu pantalla. Cuando cada
-cuestionario exista, pega su URL de entrada en el campo `url:` de
-`_variables.yml` y vuelve a renderizar. Cada enlace de este sitio, en ambas
-barajas y en los cuadernos, se lee de ese archivo.
-:::
+**Ve a [kahoot.it](https://kahoot.it) e introduce el PIN que aparece en
+pantalla.**
 
 ## Cuestionario 1 — {{< var kahoot.q1.title_es >}} {#quiz-1}
 
@@ -96,6 +87,19 @@ después del explorador de rango de la sección 10, que imprime la hora más
 ocupada y la hora en la que alcanza su pico el primer patrón horario de
 Tucker. Lanzarlo antes regala la respuesta. Después pasa del podio a la
 sección 11 sin interrupción: lleva el mismo tensor a CP.
+
+<details class="kahoot-note"><summary>Para facilitadores</summary>
+
+**Quien imparte: importa cada hoja de cálculo en kahoot.it *antes* de la
+sesión.** Create → Add question → Import → Import spreadsheet. Hacerlo en
+directo cuesta varios minutos que no tienes.
+
+Los tres **enlaces de entrada de las tablas de arriba siguen apuntando a
+`kahoot.it`**. Eso funciona: el alumnado introduce ahí el PIN de tu pantalla.
+Cuando cada cuestionario exista, pega su URL de entrada en el campo `url:` de
+`_variables.yml` y vuelve a renderizar. Cada enlace de este sitio, en ambas
+barajas y en los cuadernos, se lee de ese archivo.
+</details>
 
 ## Cómo lanzarlos
 

@@ -56,6 +56,21 @@ Puedes trabajar en Google Colab desde los enlaces de la
 Ejecuta Setup antes de los ejercicios. Si prefieres Jupyter en tu computador,
 sigue las [instrucciones de instalación local](notebooks.qmd#ejecutarlos-fuera-de-colab).
 
+### ¿Qué hago si Colab no me funciona, o no funciona en mi portátil del trabajo? {#colab-access}
+
+Colab necesita una cuenta de Google, y una personal es lo más seguro: una
+cuenta del trabajo o del centro de estudios puede tener Colab desactivado por
+su administrador. La
+primera vez, Colab puede avisar «This notebook was not authored by Google»;
+haz clic en **Run anyway**. Los cuadernos vienen del repositorio público de
+GitHub de este taller. Colab no guarda tus cambios por sí solo: usa
+**File → Save a copy in Drive**, o los perderás al cerrar la pestaña. Si tu
+portátil del trabajo bloquea Colab o el inicio de sesión de Google por
+completo, pruébalo en casa antes de la sesión, trae un dispositivo personal
+si puedes, y si no, trabaja en pareja con quien tengas al lado ese día. Las
+[herramientas interactivas](interactive.qmd) funcionan en cualquier
+navegador y no necesitan cuenta.
+
 ### ¿Los cuadernos comparten datos o variables? {#independence}
 
 No. Cada cuaderno es independiente: puedes abrir una sección sin ejecutar

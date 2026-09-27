@@ -1,5 +1,14 @@
 # Changelog
 
+## 2026-09-27
+
+- **A download that fails no longer stops a section.** Every dataset a notebook fetches now has a copy on this site, and the notebook falls back to it when the original host does not answer: the storm clip in 00, 02, 05 and 11, the three CSVs in 00 and 07–11, and the take-home data in 15 and 16. Each download retries first, and the same SHA-256 check applies to the copy. If both sources fail, the cell prints one sentence in English and Spanish, not a traceback. Notebook 14's monkey recordings have no licence that allows a copy, so it keeps its retries.
+- **`tensorly` and `imageio` are pinned** (`tensorly==0.9.0`, `imageio[ffmpeg]==2.37.4`, `imageio-ffmpeg==0.6.0`), so a new release cannot change a notebook on the day.
+- **The FAQ covers Colab trouble**: you need a personal Google account, you click *Run anyway* at the "not authored by Google" warning, you use *Save a copy in Drive* to keep your edits, and what to do on a locked-down work laptop. The widgets need no account at all.
+- **The homepage says how long pre-work takes** (about 2–3 hours, plus the optional 3Blue1Brown series at about 3 hours) and what to bring and open on the day. It no longer says notebook 00 "pre-loads" the datasets, because Colab throws its runtimes away. Notebook 00 says to run Setup before the day and to leave the entry check for the session.
+- **The Kahoot page opens with the one line students need**: go to kahoot.it and enter the PIN on screen. The facilitator's setup notes are folded below it.
+- Notebook 00's dataset table sends the voice recording to notebook 12's take-home rather than to notebook 11. The README shows one licence badge (CC BY 4.0 for the text, MIT for the code), not two.
+
 ## 2026-09-23
 
 - **The copy now says what the session does.** The handbook's "What you did today" listed a 20,433-equation system, an airline forecast, an eigenvector and a deconvolved photograph, none of which the room runs any more. It now lists what each core does, from the photograph's 786,432 numbers to the taxi tensor kept in 60. Quiz 3 is described where it runs, after section 10 and before section 11, not "right before the wrap-up". The cutting order drops three items that sit outside the 210 minutes and so saved nothing. The handbook's subtitle says 210 minutes, not 3 hours. The homepage and the Spanish README stop promising convolution. Slide 24 loses its "replace when Issue #49 is implemented" banner, since that issue was closed without the notebook work. Slide 29b's Colab tab is titled with the notebook it opens. The deconvolution border is 25 pixels everywhere, which is what produces the quoted 0.1157 → 0.0815.

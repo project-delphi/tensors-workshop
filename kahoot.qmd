@@ -15,17 +15,7 @@ is still fresh. Each one also runs **before** the next context switch — a brea
 or a new Part. That way a quiz reinforces the work rather than interrupting
 it.
 
-::: {.kahoot-note}
-**Facilitators: import each spreadsheet into kahoot.it *before* the session.**
-Create → Add question → Import → Import spreadsheet. Doing it live costs several
-minutes you do not have.
-
-The three **join links below still point at `kahoot.it` itself**. That works:
-students enter the PIN from your screen there. Once each quiz exists, paste its
-direct join URL into the `url:` field of `_variables.yml` and re-render. Every
-link on this site, in both decks and in the notebooks, reads from that
-one file.
-:::
+**Go to [kahoot.it](https://kahoot.it) and enter the PIN shown on screen.**
 
 ## Quiz 1 — {{< var kahoot.q1.title_en >}} {#quiz-1}
 
@@ -88,6 +78,19 @@ question names hour 18, so it **must** come after section 10's rank explorer,
 which prints the busiest hour and the hour Tucker's first hour pattern peaks
 at. Running it early gives the answer away. Then go straight from the podium
 into section 11, which takes the same tensor to CP.
+
+<details class="kahoot-note"><summary>For facilitators</summary>
+
+**Import each spreadsheet into kahoot.it *before* the session.**
+Create → Add question → Import → Import spreadsheet. Doing it live costs several
+minutes you do not have.
+
+The three **join links in the tables above still point at `kahoot.it` itself**.
+That works: students enter the PIN from your screen there. Once each quiz
+exists, paste its direct join URL into the `url:` field of `_variables.yml`
+and re-render. Every link on this site, in both decks and in the notebooks,
+reads from that one file.
+</details>
 
 ## Running them
 

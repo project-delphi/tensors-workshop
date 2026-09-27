@@ -142,10 +142,15 @@ UNREACHABLE = re.compile(
     re.VERBOSE,
 )
 
+# What every fetch prints when its upstream did not answer and it used the
+# copy in data/ instead (data/README.md).
+FELL_BACK_MARK = "using the workshop's copy of"
+fell_back: list[str] = []
+
 # Bigger than any cell's own retry budget, so a slow-but-alive remote fails
 # with the bilingual sentence the fetch cells were written to print rather than
 # with an opaque timeout. Notebook 15's fetch_crime is the longest: three
-# attempts at 70s plus 9s of backoff.
+# attempts at 70s, 9s of backoff, then 30s for the workshop's copy -- 249s.
 CELL_TIMEOUT = 300
 
 # Cells slower than this are named as they finish, so a long CI step says
@@ -863,6 +868,14 @@ def execute(path: Path, number: str, show_output: bool) -> str | None:
             print(f"              {why}")
             return f"{number} ({cell.get('id')})"
 
+    # A fetch that fell back to the workshop's copy in data/ passed -- that is
+    # what the copy is for -- but the upstream host it skipped is dead or
+    # unwell, and this gate is the only thing that would ever notice.
+    for cell in trimmed["cells"]:
+        for line in stdout_of(cell).splitlines():
+            if FELL_BACK_MARK in line:
+                fell_back.append(f"{number} ({cell.get('id')}): {line.strip()[:100]}")
+
     reported = False
     for cell in trimmed["cells"]:
         cid = cell.get("id")
@@ -1004,6 +1017,13 @@ def main(argv: list[str] | None = None) -> int:
             f"unreachable: {', '.join(unreachable)}"
         )
         print("  Those notebooks did not run. Rerun when the host is back.")
+    if fell_back:
+        # Not a failure: the reader got the same bytes. But the host is down,
+        # and on the day a second outage -- of the site -- would cost the room.
+        print(f"FELL BACK: {len(fell_back)} download(s) used the copy in data/:")
+        for line in fell_back:
+            print(f"  {line}")
+        print("  Check the upstream host; the notebook may need a new source.")
     if failures:
         print(f"{len(failures)} FAILURE(S)")
         return 1

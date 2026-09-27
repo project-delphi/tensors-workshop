@@ -102,6 +102,10 @@ table td:first-child { font-variant-numeric: tabular-nums; color: #64748b; }
   border-radius: 0 4px 4px 0;
 }
 .kahoot-note p { margin-bottom: 0; max-width: none; }
+// The facilitators' notes, folded under the student line.
+.kahoot-note summary { cursor: pointer; font-weight: 600; }
+.kahoot-note[open] summary { margin-bottom: .5rem; }
+.kahoot-note p + p { margin-top: .6rem; }
 
 // Placeholder Kahoot URLs are meant to be conspicuous until they are replaced.
 code.todo, .todo > code { color: $kahoot-accent; font-weight: 600; }

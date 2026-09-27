@@ -76,6 +76,7 @@ text, then run the appropriate generator:
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
 | `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.webp` (art added since #45) | `scripts/gen_slide_art.py` |
+| `data/*` (the datasets' fallback copies; network, not in the CI gate) | `scripts/fetch_mirrors.py` |
 | `docs/` (build output, gitignored -- never committed) | `quarto render` |
 
 **The CI gate.** `publish.yml` reruns `gen_tables.py` and `gen_notebooks.py`
@@ -621,6 +622,20 @@ source cannot pass for a cause. A skipped route is named in the summary under
 `UNCHECKED:`, so a run that reports less than usual never reads like a clean
 one.
 
+**Every download a notebook makes has a copy in `data/`**, served from the
+site at `https://project-delphi.github.io/tensors-workshop/data/<name>`, and
+the fetch falls back to it when the upstream host does not answer. The helper
+is `fetch()`, pasted into each setup cell that downloads: it retries each
+source, checks the notebook's SHA-256 against whichever source answered, prints
+`using the workshop's copy of` when it fell back, and fails in one bilingual
+sentence chained to the transport error, so `UNREACHABLE` still sees the cause.
+A fallback passes, so `test_notebooks.py` lists each one under `FELL BACK:`,
+which is now the only place a dead upstream shows. Add a download and add its
+copy: an entry in `scripts/fetch_mirrors.py` and `data/README.md`, then
+`python3 scripts/fetch_mirrors.py <name>`; check 4 fails the build until the
+file is there. A dataset whose licence does not permit redistribution gets no
+copy -- notebook 14's monkey tensor has none -- and keeps its retries.
+
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages
 aligned. **`worked-mistakes.md` pairs one-to-one with the predict-first
@@ -764,7 +779,8 @@ new check is appended, never inserted. Twelve can fail the build:
    notebook link names an `.ipynb` that exists; every image a notebook embeds
    from the site names a file in `images/`, with alt text, and is one of that
    notebook's own `cube-NN-*` animations (URLs absolute, because Colab has no
-   checkout to resolve against).
+   checkout to resolve against); every dataset copy a notebook falls back to
+   is a file in `data/`.
 5. Both decks carry every section anchor.
 6. The EN and ES notebooks pages list the same thirteen sections.
 7. The two references pages cite the same works; every ml-blog URL is declared
