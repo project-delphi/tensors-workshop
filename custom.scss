@@ -563,3 +563,41 @@ main p:has(> a:only-child > img:only-child) + p > em:only-child {
   font-weight: 600;
 }
 .card-tile p { max-width: none; margin: 0; font-size: .9rem; color: #56677a; }
+
+// The day sheet (day-sheet.md / es/day-sheet.md): a facilitator print
+// reference. `.day-sheet` wraps the one-page part (tabs, clock strip, Kahoot
+// PINs, Colab/Wi-Fi fallback); the timing strip after it prints as its own
+// page via `.day-sheet-break`. Scoped to this page only, through the wrapper
+// class and `body:has(.day-sheet)` for the chrome Quarto itself draws around
+// it, rather than a global print stylesheet.
+.day-sheet {
+  font-size: .93rem;
+}
+.day-sheet h2 {
+  margin-top: .9rem;
+  padding-bottom: .15rem;
+  font-size: 1.08rem;
+}
+.day-sheet ol, .day-sheet ul { margin-bottom: .4rem; }
+.day-sheet table { font-size: .82rem; }
+.day-sheet-break { break-before: page; }
+
+@media print {
+  body:has(.day-sheet) #quarto-header,
+  body:has(.day-sheet) #quarto-margin-sidebar,
+  body:has(.day-sheet) footer.footer {
+    display: none !important;
+  }
+  body:has(.day-sheet) #quarto-content { margin: 0; }
+  body:has(.day-sheet) #title-block-header {
+    margin-bottom: .3rem;
+  }
+  body:has(.day-sheet) #title-block-header h1 { font-size: 1.1rem; margin: 0; }
+  body:has(.day-sheet) #title-block-header .subtitle { font-size: .85rem; }
+  .day-sheet {
+    font-size: 10.5px;
+  }
+  .day-sheet p, .day-sheet li { max-width: none; }
+  .day-sheet h2 { margin-top: .4rem; font-size: 12.5px; }
+  .day-sheet-break { break-before: page; }
+}

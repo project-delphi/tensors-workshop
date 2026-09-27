@@ -177,7 +177,7 @@ Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrit
 
 <span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
 
-Basta con conocer el álgebra lineal básica. Completa los pasos obligatorios antes de la sesión.
+Con vectores y matrices basta para empezar. Completa los pasos obligatorios antes de la sesión.
 
 :::: {.prerequisite-list}
 ::: {.prerequisite-step}
@@ -185,7 +185,7 @@ Basta con conocer el álgebra lineal básica. Completa los pasos obligatorios an
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
-Repasa vectores, matrices y SVD en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}).
+Repasa vectores y matrices en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}). La sección de ese capítulo sobre la SVD vale la pena hojearla si es nueva para ti —el taller la reintroduce desde cero, así que no es lectura obligatoria.
 :::
 
 ::: {.prerequisite-step}

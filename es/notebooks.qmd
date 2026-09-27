@@ -15,9 +15,16 @@ encabezado lleva un resumen de una línea en español.
 Los cuadernos 01–11 separan la sesión en vivo del estudio posterior:
 
 1. **Encabezado:** **Practica hoy** y **Explora después**, con los mismos resultados que las diapositivas y el manual.
-2. **Bloque esencial continuo:** recuerda, ejemplo, intento, retroalimentación y comprobación. La preparación y funciones de comprobación aparecen donde se necesitan. Sigue de arriba abajo.
-3. **Fin de la ruta esencial:** guarda tu explicación y sigue las pausas y quizzes del facilitador.
-4. **Explora después:** material de consulta, ejercicios y exploradores opcionales.
+2. **Ejecuta primero la celda de preparación y luego sigue de arriba abajo.**
+   Cada cuaderno abre con una ruta corta: un recuerdo rápido, un ejemplo
+   resuelto y después tu propio intento, con retroalimentación y una
+   comprobación. Intenta el ejercicio tú mismo antes de abrir la solución
+   plegada.
+3. **Fin de la ruta esencial:** aquí termina la ruta anterior. Guarda tu
+   explicación —es lo que necesita la sesión— y sigue las pausas y
+   cuestionarios del facilitador.
+4. **Explora después:** material opcional al que vuelves más tarde —más
+   consulta, ejercicios y exploradores.
 
 El cuaderno 00 conserva el diagnóstico de entrada y la preparación previa; el 12 empieza con la comprobación de salida. Los estudios a fondo aparecen más abajo, en **Para ir más lejos**. Las soluciones siguen plegadas: ábrelas tras un intento. Cada cuaderno carga sus propios datos y se ejecuta de forma independiente.
 
