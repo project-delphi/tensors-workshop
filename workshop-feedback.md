@@ -16,5 +16,6 @@ Facilitator fills in: date ___ · workshop commit/tag ___ · runtime ___
 3. What changed your mind? Name one prediction and the evidence: ___
 4. What should we change? Shorten ___ / add an example of ___ / allow more time for ___
 
-Facilitator note: record actual section times and anonymous counts of common
-errors. Open one concrete issue for the next run. Keep raw responses private.
+Facilitator note: record actual section times on the [day sheet's timing
+strip](day-sheet.md#timing-strip), plus anonymous counts of common errors.
+Open one concrete issue for the next run. Keep raw responses private.

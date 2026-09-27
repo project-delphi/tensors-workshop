@@ -1,0 +1,51 @@
+name: health
+
+# Once a day, run every notebook route against the real dataset hosts and FAIL
+# if any route was skipped as unreachable or any download fell back to data/.
+# The `notebooks` job in publish.yml passes on both, deliberately -- a dead
+# host is not a PR's fault -- so without this a host that dies between pushes
+# is only noticed by the room. A failed scheduled run is emailed by GitHub to
+# the account that last changed this schedule; its summary names the route.
+#
+# Written for the run-up to the first live session. Keep it if it earns its
+# minutes, or delete this file afterwards.
+
+on:
+  schedule:
+    # 11:47 UTC is 06:47 in Bogotá: early enough to act on the same day.
+    - cron: "47 11 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  notebooks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: false
+
+      - name: Execute every route, strictly
+        env:
+          MPLBACKEND: Agg
+        run: |
+          set -o pipefail
+          uv run --group execute python scripts/test_notebooks.py --strict \
+            | tee run.log
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo "## Notebook health"
+            grep -E "^(UNCHECKED|FELL BACK|STRICT|  [0-9]{2} \(|[0-9]+ FAILURE|All notebook|[0-9]+ of [0-9]+)" run.log \
+              || echo "No summary line found; read the log."
+          } >> "$GITHUB_STEP_SUMMARY"

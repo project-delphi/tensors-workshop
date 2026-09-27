@@ -53,6 +53,33 @@ storm.webm   sha256 e377fcdd2c79b55bce13c2c24b5dd7e412af39cd400eec548a79d0e59d79
 landsat.zip  sha256 7c54e0e11c872a1b0b647da370d596dcb06746159cce4121d92ccd70b7d7ce3c  (pinned in 16)
 ```
 
+## Deep dive 19
+
+The blog post's cached data, from `project-delphi/ml-blog` at the commit the
+notebook pins (`d9f634c`); that repository is MIT for code and CC BY 4.0 for
+writing. The notebook checks each file's SHA-256 whichever source answers.
+
+| File | What it is |
+|---|---|
+| `resnet18_layer3_1_conv2.npy` | A trained ResNet-18 kernel, `layer3.1.conv2` |
+| `sweep_cp_seed0.csv`, `sweep_cp_seed1.csv`, `sweep_cp_seed2.csv` | The post's CP budget sweeps, three seeds |
+| `sweep_tucker2.csv` | The post's Tucker-2 budget sweep |
+
+```
+resnet18_layer3_1_conv2.npy  sha256 2ace0a79d66e0d1ed2239639269df7f831122100033483a41779b760202e7df5  bytes 2359424
+sweep_cp_seed0.csv           sha256 f5fb2d3eb3a1ceb09608c12a2c48513dd9f59a411489a7063c2dc8b192e1e832  bytes 394
+sweep_cp_seed1.csv           sha256 6adfe63c99a8749f99418a581cf66f1476dbb924f9f0bddc33e99d0acf7e8780  bytes 396
+sweep_cp_seed2.csv           sha256 6b942cafbace76f821ff96ab2c130a2af69ea5b4a1866a524bbc14611ceddd89  bytes 396
+sweep_tucker2.csv            sha256 1a3fb982baa9ce1e8ff2c0a3ff75aca31b7f59f5a3af97e9bb423a7f2f268cfe  bytes 8970
+fetched 2026-09-27
+```
+
+**Not copied: notebook 19's FB15k-237 training split**
+(`github.com/ibalazevic/TuckER`, from Microsoft Research's release). TuckER's
+MIT licence covers its code; neither the dataset's own README nor its download
+page states terms for the data, so there is nothing that plainly permits
+redistributing it. The notebook keeps its retries.
+
 **Not copied: notebook 14's monkey BMI tensor**
 (`gitlab.com/tensors/tensor_data_monkey_bmi`). Its repository carries no
 licence, so there is nothing that permits redistributing it. Notebook 14 keeps

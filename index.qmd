@@ -177,7 +177,7 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
 
 <span data-language-key="familiar-with-basic-linear-algebra-you-re-ready-to-go"></span>
 
-Basic linear algebra is enough to begin. Complete the required steps before the session.
+Vectors and matrices are what you need to begin. Complete the required steps before the session.
 
 :::: {.prerequisite-list}
 ::: {.prerequisite-step}
@@ -185,7 +185,7 @@ Basic linear algebra is enough to begin. Complete the required steps before the 
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
-Review vectors, matrices, and SVD in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}).
+Review vectors and matrices in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}). That chapter's section on SVD is worth a skim if it is new to you — the workshop re-introduces it from scratch, so it is not required reading.
 :::
 
 ::: {.prerequisite-step}

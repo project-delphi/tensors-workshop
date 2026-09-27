@@ -63,6 +63,7 @@ or execution count would fail CI and check 1.
     uv run --group execute python scripts/test_notebooks.py --list
     uv run --group execute python scripts/test_notebooks.py --only 10
     uv run --group execute python scripts/test_notebooks.py --offline
+    uv run --group execute python scripts/test_notebooks.py --strict
 """
 
 from __future__ import annotations
@@ -993,6 +994,12 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--show-output", action="store_true", help="echo each executed cell's stdout"
     )
+    parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="fail when a route was UNCHECKED or a download FELL BACK "
+        "(the scheduled health check; the PR gate passes on both)",
+    )
     args = parser.parse_args(argv)
 
     paths = sorted(NBDIR.glob("[0-9][0-9]-*.ipynb"))
@@ -1076,6 +1083,13 @@ def main(argv: list[str] | None = None) -> int:
         print("  Check the upstream host; the notebook may need a new source.")
     if failures:
         print(f"{len(failures)} FAILURE(S)")
+        return 1
+    # The PR gate passes on both, because neither is the change's fault. The
+    # scheduled health check (.github/workflows/health.yml) passes --strict:
+    # there a failing run is the whole point -- it is the only thing that
+    # emails anyone when a dataset host dies between pushes.
+    if args.strict and (unreachable or fell_back):
+        print("STRICT: failing because a remote was unreachable or fell back.")
         return 1
     if args.list:
         print("Run sets resolved.")

@@ -27,6 +27,7 @@ practice or discussion time; notebook 13 stays take-home work.
 <span data-language-key="teaching-resources"></span>
 
 - **[Facilitator guide](facilitator-guide.md)** — Prepare the room, follow the section timings, and respond when learners get stuck.
+- **[Day sheet](day-sheet.md)** — One printable page: the tabs to open, the clock strip, Kahoot PIN blanks, and what to do if Colab or Wi-Fi fails.
 - **[Entry and exit checks](assessments.md)** — Collect individual reasoning at the start and end; use the included key and rubric.
 - **[Group tasks](group-tasks.md)** — Choose short discussions with a time box and a concrete group deliverable.
 - **[Worked mistakes](worked-mistakes.md)** — Ask learners to predict, test a counterexample, and explain the correction.
