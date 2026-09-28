@@ -51,76 +51,13 @@ them. Section 11's live core compares CP and Tucker using library calls; its
 four-model overview is extension material. Notebooks 14 and 15 build on that
 comparison by fitting CP by hand and then changing what "fit" means.
 
-16 connects PCA’s matrix views to satellite land-cover classification, clustering,
-and tensor PCA, with Plato’s cave and three animations.
-
-19 asks which of CP and Tucker to choose, on a real knowledge graph, a trained
-ResNet-18 kernel and a photograph, and finds that the model that compresses best
-is not the one that predicts best. It works through the ML blog post
-*CP or Tucker in practice*.
-
-Several sections have a widget beside them, listed here in section order.
-
-Section 03 has a
-[broadcasting simulator](interactive/broadcasting-simulator.html?lang=en) that
-lines two shapes up from the right and steps through the stretch.
-
-Section 04 has an
-[image tensor visualizer](interactive/image-tensor.html?lang=en) that turns
-its three photographs into cubes, one per byte, and shows what transpose, reshape
-and a memory layout each do to the shape, the strides, the buffer and the picture.
-
-Sections 04 and 06 and Appendix B share an
-[attention stage](interactive/attention-stage.html?lang=en), ten pictures
-that follow one sentence through one attention head: the words cut into
-tokens and coded as ids, the ids fetching rows of an embedding table, those
-rows projected into queries, keys and values, the scores, [why they are
-divided by √d_k](interactive/attention-stage.html?lang=en#scale), [softmax
-turning them into weights that sum to
-one](interactive/attention-stage.html?lang=en#softmax), with a causal mask as
-the take-home's own idea, and the weighted average that is the output. Then
-each head gets [its own axis](interactive/attention-stage.html?lang=en#heads)
-— a reshape that has to be a transpose too, and the bug when it is not — and
-the rank-4 tensor a real model is actually handed. Each picture shows its
-NumPy.
-
-Sections 07, 08 and 09 share a
-[projection and SVD stage](interactive/linalg-stage.html?lang=en), eight
-pictures of one problem: least squares as a projection onto a column space,
-a wide matrix's line of solutions, a determinant reaching zero, the SVD as a
-circle turning into an ellipse and a sphere into an ellipsoid, the
-eigenvectors of a field of arrows, and the two ways the arithmetic fails.
-
-Sections 00, 02, 04 and 09 and Appendix E share an
-[audio tensor stage](interactive/voice-stage.html?lang=en), nine pictures of
-one recording and a tenth of three: air measured 48 000 times a second and rounded to 16 bits, the
-array that leaves, [one window cut out of
-it](interactive/voice-stage.html?lang=en#frame), [the transform that asks that
-window which frequencies are in it](interactive/voice-stage.html?lang=en#spectrum),
-the window hopping along to build a frequency-by-time matrix, what a
-transpose does to a sound, and the two ways that matrix comes
-apart — [the best rank-k approximation there
-is](interactive/voice-stage.html?lang=en#lowrank) and [the parts you can
-name](interactive/voice-stage.html?lang=en#nmf) — you can hear every one of
-those. It ends on [the rank-4 batch a model is actually
-handed](interactive/voice-stage.html?lang=en#batch): those three recordings
-stacked into one array.
-
-Sections 10 and 11 and Appendix C share a
-[Tucker and CP stage](interactive/factor-stage.html?lang=en), eight pictures
-of one real tensor — 6,383 New York taxi trips, pickup borough by dropoff
-borough by hour of day. It [lays that cube flat three
-ways](interactive/factor-stage.html?lang=en#unfold), takes the SVD of each
-unfolding, and [reassembles a small core plus three factor
-matrices](interactive/factor-stage.html?lang=en#tucker), 480 numbers down to
-102 at 6.7% error; then it builds a rank-1 term as three vectors, shows [what
-several of them look like](interactive/factor-stage.html?lang=en#cp) and [how
-alternating least squares finds them](interactive/factor-stage.html?lang=en#als);
-and it ends on [the same parameter budget spent two
-ways](interactive/factor-stage.html?lang=en#budget), CP against every Tucker
-rank triple that fits inside it.
-
 {{< include _includes/notebooks-extra-en.md >}}
+
+Deep dive 19 works through the ML blog post *CP or Tucker in practice*.
+
+The browser widgets beside the sections have a page of their own:
+[Interactive](interactive.qmd) gives each one a card, with the sections it
+belongs to and the scenes worth opening directly.
 
 ## Running them somewhere other than Colab
 

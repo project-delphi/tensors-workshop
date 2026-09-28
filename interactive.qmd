@@ -21,7 +21,7 @@ No install and no account. Each of these runs in your browser, in English or
 Spanish, and answers a question the pages can only describe: move a control and
 the shapes, the strides and the numbers move with it. Every one is also linked
 from the section it belongs to, in the [handbook](./tensors_workshop_plan_with_quizzes.html)
-and on the [notebooks page](notebooks.qmd).
+and in the notebooks.
 
 :::: {.widget-grid}
 ::: {.resource-card}
