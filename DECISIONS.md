@@ -805,8 +805,23 @@ Moving the controls exposed a pointer bug the check had been stepping around.
 The last thing the projection stage's check clicked was now a dock button
 under the stage, so the reloaded page came up with the pointer already on
 the stage. Chrome sent `pointerenter` before the stage had a listener, and
-the drift ran under a hovering pointer. Every drifting stage now also counts
-its first `pointermove`, and `:hover` at bind time, as arriving.
+the drift ran under a hovering pointer. The first fix counted `:hover` at
+bind time as arriving too, which froze two stages for anyone whose mouse
+happened to rest where the stage loads -- see the next entry.
+
+**A resting pointer does not hold the drift; a moving one does**
+(2026-09-28). The widgets are meant to be moving the moment a page opens,
+and measured with the pointer resting on the stage at load, the image tensor
+and the projection stage were not: the first because of the `:hover` check
+above, the second because Chromium fires `pointerenter` with no movement at
+all when the element under a still cursor changes, and the WebGL canvas
+arriving on boot is such a change. So only `pointermove` holds a drift.
+Every real reader moves on the way in, so nothing is lost. The attention
+stage and the broadcasting simulator had no motion to hold: the simulator
+now plays its stretch once on load, and the attention stage fades its
+opening picture in, element by element, rather than tweening anything, since
+its contract keeps `<text>` still and its readouts are measured off the
+DOM. `movesOnLoad()` in the browser check is what keeps all six moving.
 
 ## Which document owns what
 

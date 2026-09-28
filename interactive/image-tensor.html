@@ -3080,16 +3080,17 @@
     // the same box as the stage (its only in-flow child), so this is the
     // reader's idea of "on the widget" and nothing else changes.
     const wrap = el.closest(".stagewrap") || el;
-    // The first move counts as arriving too: a pointer already resting here
-    // when the page loaded entered before this listener existed.
+    // A move is what counts as arriving, not pointerenter: Chromium fires
+    // enter with no movement when the element under a still cursor changes,
+    // and a pointer resting here when the page loaded entered before this
+    // listener existed. Neither is a reader, and the stage sways from the
+    // moment the page opens; a real reader moves on the way in.
     const arrive = () => {
       if (drift.hover) return;
       drift.hover = true;
       setDrift(false);
     };
-    wrap.addEventListener("pointerenter", arrive);
     wrap.addEventListener("pointermove", arrive);
-    if (wrap.matches(":hover")) arrive();
     wrap.addEventListener("pointerleave", () => {
       drift.hover = false;
       clearTimeout(drift.timer);

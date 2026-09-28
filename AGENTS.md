@@ -329,7 +329,18 @@ where an *interrupted* tween takes its origin, and where an orbit's clamps
 sit, are all invisible in a screenshot and survive an end-state assertion, so
 each is written as a state in and a state out and pinned like the arithmetic.
 A widget that drifts while idle hands the view over the moment a reader
-reaches for it. Everything else that touches a widget's state -- anything a
+reaches for it.
+
+**Every widget is moving within seconds of opening**, with nothing asked of
+the reader: the four that drift start drifting, the broadcasting simulator
+plays its stretch once, and the attention stage draws its first picture in
+(opacity only, once, for the scene the page opens on). A *moving* pointer is
+what holds a drift -- `pointermove`, never `pointerenter`, which Chromium
+fires with no movement when the element under a still cursor changes. Under
+`prefers-reduced-motion` none of it plays. `check_navigation.cjs`'s
+`movesOnLoad()` loads each widget with the pointer resting on its stage and
+fails unless the stage changes; a load animation publishes a `data-*` flag
+(`data-playing`, `data-arriving`) so the drive waits for it before axe runs. Everything else that touches a widget's state -- anything a
 screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the

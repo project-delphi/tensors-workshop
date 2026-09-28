@@ -391,8 +391,43 @@ async function audit(page, where) {
       `${where}: the reshape tab stayed open beside #transpose`);
       }
 
-      async function driveBroadcasting(page) {
+      // Every widget is moving within a few seconds of opening, with nothing
+      // asked of the reader: the four stages that drift start drifting, the
+      // broadcasting simulator plays its stretch, the attention stage draws
+      // its first picture in. Loaded with the pointer already resting on the
+      // stage, because that is the case that used to freeze two of them: a
+      // resting pointer is not a reader reaching for the view, only a moving
+      // one is. Two screenshots of the stage differing is the definition of
+      // "moving" that holds for all six, whatever each one draws with; the
+      // loop's own interval is the thing under test, not a stand-in for a
+      // value to poll.
+      async function movesOnLoad(page, file, where) {
+        await page.setViewportSize({width: 1440, height: 1000});
+        await page.goto(`${origin}${prefix}interactive/${file}.html?lang=en`);
+        const box = await page.locator('#stage').boundingBox();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.reload();
+        const shot = async () =>
+          (await page.locator('#stage').screenshot()).toString('base64');
+        const first = await shot();
+        let moved = false;
+        for (let i = 0; i < 40 && !moved; i++) {
+          await page.waitForTimeout(200);
+          moved = await shot() !== first;
+        }
+        assert(moved,
+          `${where}: the stage should be moving within 8 s of loading, with the pointer resting on it`);
+        await page.mouse.move(2, 2);
+      }
+
+      async function driveBroadcasting(page, where) {
         await page.waitForSelector('#draw .cell');
+        // The page opens by playing the stretch once (movesOnLoad() below
+        // checks that it moves). Let it finish, so axe measures the picture
+        // at rest rather than a cell mid-transition.
+        await page.waitForFunction(() => document.getElementById('stage').dataset.playing === '0',
+          null, {timeout: 10000})
+          .catch(() => assert.fail(`${where}: the opening stretch never finished`));
       }
 
       // The attention stage. Seven scenes, no three.js and no sound, so what
@@ -403,6 +438,11 @@ async function audit(page, where) {
       async function driveAttention(page, where, lang) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 10000});
+        // The opening picture draws itself in (movesOnLoad() below checks
+        // that it moves); every measurement here is of the picture at rest.
+        await page.waitForFunction(() => !('arriving' in document.getElementById('stage').dataset),
+          null, {timeout: 10000})
+          .catch(() => assert.fail(`${where}: the entrance never finished`));
         const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
 
         // Nothing clips an SVG child and nothing complains about one. A grid
@@ -955,8 +995,8 @@ async function audit(page, where) {
           return `${h.az.toFixed(2)},${h.el.toFixed(2)},1.00`;
         });
         // Under the pointer the drift stands down, so what moves from here on
-        // is the reader moving it. Poll `data-paused`, which the pointerenter
-        // handler sets, rather than sleeping a guess at when it lands.
+        // is the reader moving it. Poll `data-paused`, which a pointermove over
+        // the stage sets, rather than sleeping a guess at when it lands.
         await page.mouse.move(midX, midY);
         await page.waitForFunction(() => document.querySelector('#stage').dataset.paused === 'true',
           null, {timeout: 3000})
@@ -2024,6 +2064,8 @@ async function audit(page, where) {
             assert(fits, `${where}: horizontal overflow at ${width}`);
           }
           await audit(page, where);
+          // One language: the motion has no copy in it, and it costs seconds.
+          if (lang === 'en') await movesOnLoad(page, widget.file, where);
 
           if (widget.file === 'linalg-stage') {
             // Deliberately lose the GL module: all eight flat scenes must

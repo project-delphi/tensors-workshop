@@ -57,6 +57,14 @@
   }
   #stage:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   #picture { display: block; width: 100%; height: 100%; }
+  /* The entrance: the opening picture draws itself in, piece by piece, once,
+     when the page loads. Opacity only -- nothing moves, so no box the browser
+     check measures and no number a readout quotes is ever mid-flight. The
+     stagger is set per element by enter(). */
+  @keyframes at-in { from { opacity: 0; } to { opacity: 1; } }
+  #picture.arriving :is(text, rect, path, line, polyline, polygon, circle) {
+    animation: at-in 0.45s ease-out both;
+  }
   #claim {
     position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
     font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
@@ -612,10 +620,40 @@
     changed();
   }
 
+  // -------------------------------------------------------- the entrance
+  // This stage has no camera to drift, so the page opens by drawing its first
+  // picture in, element by element in document order -- the sentence, then
+  // its tokens one at a time. Once, at load, and only for the scene the page
+  // opens on: later scenes arrive as they always did, and the check's axe
+  // pass never meets a half-faded picture. `data-arriving` is up while it
+  // plays, so the check polls it rather than guessing how long it takes.
+  const ENTER_STEP_MS = 35, ENTER_MAX_MS = 1400, ENTER_FADE_MS = 450;
+  let entering = 0;
+  function enter() {
+    const svg = $("picture");
+    const parts = [...svg.querySelectorAll("text, rect, path, line, polyline, polygon, circle")];
+    parts.forEach((el, i) => { el.style.animationDelay = Math.min(i * ENTER_STEP_MS, ENTER_MAX_MS) + "ms"; });
+    svg.classList.add("arriving");
+    stage.dataset.arriving = "1";
+    const last = Math.min((parts.length - 1) * ENTER_STEP_MS, ENTER_MAX_MS);
+    entering = setTimeout(finishEntrance, last + ENTER_FADE_MS + 50);
+  }
+  function finishEntrance() {
+    if (!entering) return;
+    clearTimeout(entering);
+    entering = 0;
+    const svg = $("picture");
+    svg.classList.remove("arriving");
+    svg.querySelectorAll("[style]").forEach((el) => { el.style.animationDelay = ""; });
+    delete stage.dataset.arriving;
+  }
+
   // -------------------------------------------------------- the readout
   const written = new Set();
 
   function changed() {
+    // A reader who touches a control mid-entrance gets the picture at once.
+    finishEntrance();
     const ctx = contextFor(active);
     if (active.sync) active.sync(ctx);
     const r = active.readout(ctx) || {};
@@ -681,6 +719,7 @@
     document.querySelectorAll(".eq [data-hl]").forEach((el) => {
       el.classList.toggle("is-lit", !!hl && el.dataset.hl === hl);
     });
+    finishEntrance();
     active.draw(contextFor(active));
   }
 
@@ -824,6 +863,7 @@
   if (!embed) bindEquations();
   const wanted = embed ? byId("softmax") : byId((location.hash || "").replace("#", ""));
   showScene(wanted || scenes[0], false);
+  if (!embed && !reduceMotion) enter();
   stage.dataset.ready = "1";
   if (!embed) {
     watchSteps();

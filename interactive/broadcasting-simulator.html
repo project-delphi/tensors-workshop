@@ -535,20 +535,30 @@
         `<label for="${id}">${T.stepNames[s]}</label>`;
     }).join("");
     $("steps").addEventListener("change", (e) => {
+      // The reader's own step wins over a stretch still playing.
+      stop();
       state.step = e.target.value;
       render();
     });
   }
 
+  // `data-playing` is up while the stretch runs, so the browser check can
+  // see that the page opened moving and wait for it to finish.
   let timer = 0;
   function play() {
     clearTimeout(timer);
+    $("stage").dataset.playing = "1";
     const run = (i) => {
       state.step = STEPS[i];
       render();
       if (i < STEPS.length - 1) timer = setTimeout(() => run(i + 1), 1100);
+      else $("stage").dataset.playing = "0";
     };
     run(0);
+  }
+  function stop() {
+    clearTimeout(timer);
+    $("stage").dataset.playing = "0";
   }
 
   function render() {
@@ -649,12 +659,19 @@
   buildSteps();
   ["a", "b"].forEach((key) => {
     $(`in-${key}`).addEventListener("input", (e) => {
+      stop();
       state[key] = e.target.value;
       render();
     });
   });
   $("replay").addEventListener("click", play);
   render();
+  // The page opens by playing the stretch once -- as written, aligned,
+  // stretched, result -- so the first thing a reader sees is broadcasting
+  // happening rather than its end state. Not in embed mode, which cycles the
+  // presets below, and not for a reader who asked for less motion: they get
+  // the result straight away, as before.
+  if (!embed && !matchMedia("(prefers-reduced-motion: reduce)").matches) play();
 
   // Embed mode, for the homepage hero: cycle the presets, one stretch every
   // few seconds, with the preset's name in the caption. The hero shows a still

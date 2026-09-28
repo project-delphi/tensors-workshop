@@ -1830,14 +1830,15 @@
   // dolly, hover and focus to hold the drift. Never bound in embed mode.
   function bindStage() {
     let live = null;
-    // A pointer already resting on the stage when the page loads was over it
-    // before this listener existed, so its pointerenter was never heard and
-    // the drift turned on under it. The first move over the stage, or :hover
-    // right now, says the same thing.
+    // A pointer that *moves* over the stage holds the drift; pointerenter
+    // alone does not. Chromium fires enter without any movement when the
+    // element under a still cursor changes -- the WebGL canvas arriving on
+    // boot is one -- and a pointer resting there when the page loaded
+    // entered before any listener existed. Neither is a reader reaching for
+    // the view, and the stage is meant to be moving from the moment the page
+    // opens; any real reader moves on the way in, so a move is the signal.
     const hovered = () => { if (!motion.over) { motion.over = true; refreshMotion(); } };
-    stage.addEventListener("pointerenter", hovered);
     stage.addEventListener("pointermove", hovered);
-    if (stage.matches(":hover")) hovered();
     stage.addEventListener("pointerleave", () => { motion.over = false; refreshMotion(); });
     stage.addEventListener("focusin", () => { motion.focus = stage.matches(":focus-visible") && !!active.gl; refreshMotion(); });
     stage.addEventListener("focusout", () => { motion.focus = false; refreshMotion(); });
