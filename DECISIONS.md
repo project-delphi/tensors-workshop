@@ -1453,6 +1453,21 @@ change to add tracing touches one function instead of choosing a spot in a
 after: all six matched (`audit(` off by one, the new function's own call
 into `harness.audit`, not a duplicated or dropped assertion).
 
+**A failed browser scenario keeps a trace; a passing one keeps nothing**
+(2026-09-28). The check aborts on its first failed assertion, and until now
+CI kept only the log line, so every failure meant rerunning the shard
+locally to see the page. `scenario()` now records each scenario as one
+Playwright trace chunk when `NAV_EVIDENCE` is set, throws the chunk away
+when the scenario passes, and on a failure saves it beside a full-page
+screenshot of every open page and the error. CI uploads that folder only
+when the step fails. The trace records the screencast, not DOM snapshots.
+Timed on shard 1/3 (the attention and projection stages), alone on one
+machine: 156 s untraced, 152 s with the screencast, 224 s with DOM snapshots
+or with both. A 44% slower run is exactly what the stages' timing-sensitive
+checks (idle drift, a tween interrupted mid-flight) should not be subjected
+to on a slower runner, so DOM snapshots are opt-in, `NAV_TRACE_DOM=1`, for a
+local rerun of the one scenario you are chasing.
+
 ## Publishing
 
 **`docs/` was committed, once.** While it was, CI had to prove the committed
