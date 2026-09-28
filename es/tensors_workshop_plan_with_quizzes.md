@@ -381,7 +381,7 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **`reshape` solo reinterpreta los números en el orden en que están en memoria. `transpose` los mueve según el significado de los ejes.** Los dos dan la forma `(3, 512, 512)`; solo uno es la imagen. Y el TODO 4 va más al fondo: en cuanto dos ejes comparten tamaño, la forma no puede decirte cuál es cuál. Solo tu propio seguimiento puede.
 
-Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/image-tensor.html?lang=es">visualizador del tensor de imagen</a>. Transpón NHWC a NCHW y observa cómo la forma y los strides se permutan mientras la imagen no se mueve; después compáralo con reshape y mira cómo se rompe.
+Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/image-tensor.html?lang=es">visualizador del tensor de imagen</a>. Transpón NHWC a NCHW y observa cómo los cubos siguen la nueva forma mientras la tira del búfer bajo ellos no mueve ni un byte; después compáralo con reshape y mira cómo se rompe la imagen.
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 

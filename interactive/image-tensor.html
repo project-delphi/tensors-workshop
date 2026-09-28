@@ -181,10 +181,10 @@
   .under h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0 0 0.45rem; color: var(--ink-mute); }
   .under p { margin: 0.45rem 0 0; font-size: 0.8rem; line-height: 1.45; color: var(--ink-mute); overflow-wrap: break-word; }
   .under p code, .under h2 code { font: 0.9em var(--mono); color: var(--ink); }
-  .strip-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.7rem; margin-top: 0.4rem; }
+  .strip-row { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.5rem; margin-top: 0.4rem; }
   .strip-row .tag { flex: 0 0 5.5rem; font: 700 0.75rem/1.3 var(--mono); color: var(--ink); overflow-wrap: anywhere; }
   .strip-row .tag small { display: block; font: 500 0.68rem/1.3 var(--sans); color: var(--ink-mute); }
-  .strip-row canvas { width: 5.5rem; height: 5.5rem; border: 1px solid var(--line); border-radius: 4px; image-rendering: pixelated; background: var(--sunk); }
+  .strip-row canvas { width: 4.75rem; height: 4.75rem; border: 1px solid var(--line); border-radius: 4px; image-rendering: pixelated; background: var(--sunk); }
   .strip-row.wrong .tag { color: #b3261e; }
   :root[data-theme="navy"] .strip-row.wrong .tag { color: #f87171; }
   @media (prefers-color-scheme: dark) { :root:not([data-theme="navy"]) .strip-row.wrong .tag { color: #f87171; } }
@@ -207,12 +207,43 @@
   .tabpanel > h3:first-child { margin-top: 0.2rem; }
   aside h3 { font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.06em; margin: 0.85rem 0 0.35rem; color: var(--ink-mute); }
   aside .panel > :first-child + h3 { margin-top: 0.2rem; }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.45rem 0.7rem; }
-  .field { min-width: 0; }
-  .field .k { display: flex; justify-content: space-between; font: 600 0.75rem/1.2 var(--mono); }
+  /* What x is right now, above the tabs: the shape, and whether reading it in
+     shape order walks the buffer straight through. Every tab changes one of
+     the two, so both sit where the eye lands after a click. */
+  aside .now .readout { margin-top: 0; font-size: 1rem; }
+  #mem-order { font-size: 0.85rem; }
+  .badge {
+    display: inline-block; margin: 0.4rem 0 0; padding: 0.15rem 0.55rem;
+    font: 650 0.74rem/1.4 var(--sans); border-radius: 999px;
+    border: 1px solid var(--line); background: var(--sunk); color: var(--ink);
+  }
+  .badge[data-contig="1"] { border-color: var(--accent); color: var(--accent); }
+  .lede { margin: 0 0 0.6rem; font-size: 0.82rem; line-height: 1.45; color: var(--ink); overflow-wrap: break-word; }
+  .lede code, .note code { font: 0.95em var(--mono); color: var(--ink); }
+  /* Transpose: the presets say which order is in force, and the swap row does
+     exactly one thing, whichever axes a reshape has left behind. */
+  .presets.orders { display: grid; grid-template-columns: 1fr 1fr; }
+  .presets.orders button { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 0.05rem; border-radius: 8px; }
+  .presets.orders button { text-align: left; }
+  .presets.orders button small { font: 500 0.68rem/1.2 var(--mono); color: var(--ink-mute); white-space: nowrap; }
+  .presets.orders button[aria-pressed="true"] small { color: inherit; }
+  .swap { display: flex; flex-wrap: wrap; align-items: center; gap: 0.4rem; }
+  .swap select { font-family: var(--mono); font-weight: 700; min-width: 0; max-width: 8.5rem; }
+  /* Slice: one picker per axis, written as the index expression it is. */
+  .pick { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 0.35rem 0.25rem; font: 700 0.95rem/1 var(--mono); }
+  .pick .br { padding-bottom: 0.45rem; }
+  .pick label { display: flex; flex-direction: column; gap: 0.2rem; font: 700 0.72rem/1.2 var(--mono); }
+  .pick select, .pick input { font: 600 0.85rem/1.2 var(--mono); width: 3.45rem; padding: 0.3rem 0.2rem; }
+  .pick input { color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 7px; }
+  /* Memory: three copies, each a button that names the call it makes. The one
+     x is already in is pressed, and pressing it copies nothing. */
+  .layouts { display: grid; gap: 0.4rem; }
+  .layouts button { display: grid; gap: 0.1rem; text-align: left; padding: 0.45rem 0.65rem; }
+  .layouts button code { font: 500 0.72rem/1.35 var(--mono); overflow-wrap: anywhere; }
+  .layouts button small { font: 500 0.72rem/1.3 var(--sans); color: var(--ink-mute); }
+  .layouts button[aria-pressed="true"] small { color: inherit; }
+  .inline-field { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.82rem; }
   .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  .seg.stack { flex-direction: column; }
-  .seg.stack label { text-align: left; padding: 0.4rem 0.7rem; white-space: nowrap; }
   .seg label {
     flex: 1; text-align: center; padding: 0.35rem 0.4rem; font-size: 0.8rem; cursor: pointer;
     background: var(--sunk);
@@ -228,14 +259,12 @@
   .seg.axes input[value="1"]:checked + label { background: var(--ax1); color: #14110f; }
   .seg.axes input[value="2"]:checked + label { background: var(--ax2); color: #14110f; }
   .seg.axes input[value="3"]:checked + label { background: var(--ax3); color: #14110f; }
-  .chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
-  .chips button, .presets button, .tools button, .tools label {
+  .presets button, .tools button, .tools label {
     font: 500 0.75rem/1.3 var(--sans); padding: 0.3rem 0.6rem; cursor: pointer;
     color: var(--ink); background: var(--sunk);
     border: 1px solid var(--line); border-radius: 999px;
   }
-  .chips button { font: 700 0.85rem/1.3 var(--mono); border-radius: 7px; min-width: 2.3rem; border-width: 2px; }
-  .chips button[aria-pressed="true"] { outline: 2px solid var(--ink); outline-offset: 1px; }
+  .presets button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   .tools label:hover { border-color: var(--accent); }
   /* The file input itself is off-screen -- every browser draws it differently
      and none of them like being restyled -- so the focus ring has to be put
@@ -353,6 +382,62 @@
         </div>
       </div>
       <aside class="card">
+        <!-- The state first, then the operations that change it, so what a
+             reader reaches for sits beside the stage it changes. The data
+             choices are further down: they are picked once, and each one
+             starts the array over. -->
+        <section class="panel now" aria-labelledby="h-now">
+          <h2 id="h-now"></h2>
+          <p class="readout" id="shape-readout"></p>
+          <p class="badge" id="contig-badge"></p>
+        </section>
+
+        <!-- One tab per operation. The panel ids are plain words on purpose:
+             `#transpose` in the URL opens the page on that tab, and a link to
+             it resolves for check 3, which looks a fragment up by id. -->
+        <div class="tabs" id="tabs" role="tablist" aria-labelledby="h-ops">
+          <span class="sr" id="h-ops">Operations</span>
+          <button type="button" role="tab" id="tab-reshape" aria-controls="reshape" aria-selected="true"></button>
+          <button type="button" role="tab" id="tab-transpose" aria-controls="transpose" aria-selected="false" tabindex="-1"></button>
+          <button type="button" role="tab" id="tab-slice" aria-controls="slice" aria-selected="false" tabindex="-1"></button>
+          <button type="button" role="tab" id="tab-memory" aria-controls="memory" aria-selected="false" tabindex="-1"></button>
+        </div>
+        <div class="tabpanel" id="reshape" role="tabpanel" aria-labelledby="tab-reshape">
+          <p class="lede" id="shape-note"></p>
+          <div class="presets shapes" id="shape-presets" role="group" aria-labelledby="tab-reshape"></div>
+          <label class="toggle"><input type="checkbox" id="compare"><span id="compare-label"></span></label>
+          <p class="note" id="compare-note"></p>
+        </div>
+        <div class="tabpanel" id="transpose" role="tabpanel" aria-labelledby="tab-transpose" hidden>
+          <p class="lede" id="order-lede"></p>
+          <h3 id="h-orders"></h3>
+          <div class="presets orders" id="order-presets" role="group" aria-labelledby="h-orders"></div>
+          <h3 id="h-swap"></h3>
+          <div class="swap" role="group" aria-labelledby="h-swap">
+            <select id="swap-a"></select>
+            <span aria-hidden="true">↔</span>
+            <select id="swap-b"></select>
+            <button type="button" id="swap-go"></button>
+          </div>
+          <p class="note" id="order-note"></p>
+        </div>
+        <div class="tabpanel" id="slice" role="tabpanel" aria-labelledby="tab-slice" hidden>
+          <h3 id="h-idx">Selected element</h3>
+          <div class="pick" id="indices" role="group" aria-labelledby="h-idx"></div>
+          <p class="note" id="pick-note"></p>
+          <h3 id="h-slice">Highlight a slice</h3>
+          <div class="seg axes" id="slices" role="radiogroup" aria-labelledby="h-slice"></div>
+          <p class="note" id="slice-note"></p>
+        </div>
+        <div class="tabpanel" id="memory" role="tabpanel" aria-labelledby="tab-memory" hidden>
+          <p class="lede" id="mem-now"></p>
+          <p class="readout" id="mem-order"></p>
+          <h3 id="h-layouts"></h3>
+          <div class="layouts" id="layouts" role="group" aria-labelledby="h-layouts"></div>
+          <p class="note" id="layout-note"></p>
+          <p class="note" id="buffer-note"></p>
+        </div>
+
         <section class="panel" aria-labelledby="h-data">
           <h2 id="h-data">Data</h2>
           <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
@@ -360,7 +445,8 @@
           <div id="shape-photo">
             <h3 id="h-size">Shape</h3>
             <div class="checks" id="photo-checks"></div>
-            <div class="seg" id="res" role="radiogroup" aria-labelledby="h-size" style="margin-top:0.45rem"></div>
+            <label class="inline-field" for="res"><span id="res-label"></span>
+              <select id="res"></select></label>
             <!-- A photograph of the reader's own, as a fourth slab of the
                  batch. It is decoded, cropped and shrunk by this page; there
                  is no server to send it to and nothing survives the tab. -->
@@ -378,42 +464,7 @@
           </div>
           <label class="toggle"><input type="checkbox" id="values" checked><span id="values-label"></span></label>
           <p class="note" id="values-note"></p>
-          <p class="readout" id="shape-readout"></p>
         </section>
-
-        <!-- One tab per operation. The panel ids are plain words on purpose:
-             `#transpose` in the URL opens the page on that tab, and a link to
-             it resolves for check 3, which looks a fragment up by id. -->
-        <div class="tabs" id="tabs" role="tablist" aria-labelledby="h-ops">
-          <span class="sr" id="h-ops">Operations</span>
-          <button type="button" role="tab" id="tab-reshape" aria-controls="reshape" aria-selected="true"></button>
-          <button type="button" role="tab" id="tab-transpose" aria-controls="transpose" aria-selected="false" tabindex="-1"></button>
-          <button type="button" role="tab" id="tab-slice" aria-controls="slice" aria-selected="false" tabindex="-1"></button>
-          <button type="button" role="tab" id="tab-memory" aria-controls="memory" aria-selected="false" tabindex="-1"></button>
-        </div>
-        <div class="tabpanel" id="reshape" role="tabpanel" aria-labelledby="tab-reshape">
-          <div class="presets shapes" id="shape-presets" role="group" aria-labelledby="tab-reshape"></div>
-          <p class="note" id="shape-note"></p>
-          <label class="toggle"><input type="checkbox" id="compare"><span id="compare-label"></span></label>
-          <p class="note" id="compare-note"></p>
-        </div>
-        <div class="tabpanel" id="transpose" role="tabpanel" aria-labelledby="tab-transpose" hidden>
-          <div class="presets" id="order-presets" role="group" aria-labelledby="tab-transpose"></div>
-          <div class="chips" id="chips" role="group" aria-labelledby="tab-transpose"></div>
-          <p class="note" id="order-note"></p>
-        </div>
-        <div class="tabpanel" id="slice" role="tabpanel" aria-labelledby="tab-slice" hidden>
-          <h3 id="h-idx">Selected element</h3>
-          <div class="row" id="indices"></div>
-          <h3 id="h-slice">Highlight a slice</h3>
-          <div class="seg axes" id="slices" role="radiogroup" aria-labelledby="h-slice"></div>
-        </div>
-        <div class="tabpanel" id="memory" role="tabpanel" aria-labelledby="tab-memory" hidden>
-          <div class="seg stack" id="layouts" role="radiogroup" aria-labelledby="tab-memory"></div>
-          <div class="tools"><button type="button" id="contig"></button></div>
-          <p class="note" id="layout-note"></p>
-          <p class="note" id="buffer-note"></p>
-        </div>
 
         <section class="panel" aria-labelledby="h-mem">
           <h2 id="h-mem">Strides</h2>
@@ -477,15 +528,19 @@
   const BASE_GAP = 1.5;          // between the outermost slots, along x
   const BASE_ZGAP = 0.55;        // between planes, along z
   const FIT = 1.55;
-  const MAX_RES = 64;            // the largest photo side photos.json carries
-  const MAX_PHOTOS = 4;          // the three shipped ones, plus one the reader adds
-  // Every instance the mesh will ever need: a full batch, at the largest
-  // side, three channels deep. 49152 -- the reader has to ask for all of it,
-  // by turning every photo on at 64x64, and the default is 2304. The mesh is
-  // allocated at this size whatever is on screen, which is about 7 MB of
-  // matrix and colour buffers standing by; the embed never pays it, because
-  // the front door draws flat and does not fetch three.js at all.
-  const MAX_CELLS = MAX_PHOTOS * 3 * MAX_RES * MAX_RES;
+  const MAX_RES = 128;           // the largest photo side photos.json carries
+  // The instanced meshes start this big and grow to the next power of two
+  // when a batch asks for more. A full batch at 128x128 is 196608 cubes --
+  // four photos, three channels deep -- and allocating that up front put
+  // about 30 MB of matrix and colour buffers behind the default 2304. The
+  // embed never allocates any: the front door draws flat and does not fetch
+  // three.js at all.
+  const START_CELLS = 16384;
+  // Past this many cubes an operation cuts rather than glides. A tween
+  // rebuilds every cube's place and colour on every frame, and at 64x64 and
+  // up that took longer than the tween itself -- the cubes jumped a frame or
+  // two late, which read as the operation working only some of the time.
+  const TWEEN_MAX_CELLS = 20000;
   const VALUE_MIN_PX = 20;       // narrower than this, a cube cannot carry a legible number
   const VALUE_MAX_LABELS = 1024;
   const N_CHOICES = [12, 24, 48, 120];   // every one of them fits in a uint8
@@ -503,6 +558,7 @@
   const DRIFT_RESUME_MS = 300;   // after the pointer leaves the stage
 
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
+  const ORDER_KEYS = ["NHWC", "NCHW", "swapHW", "reverse"];
 
   const EN = {
     title: "The image tensor",
@@ -514,11 +570,12 @@
     data: "Data & shape",
     datas: { photos: "Photos", numbers: "Counting numbers" },
     dataNotePhotos: "The histology slide, the astronaut and the coffee cup notebook 04 stacks -- shipped with scikit-image, downsampled here.",
-    dataNoteNumbers: "np.arange, so every value is its own position in the buffer as it was built and the offset arithmetic can be checked by eye. The cubes follow the shape here, so every reshape lays them out again.",
+    dataNoteNumbers: "np.arange, so every value is its own position in the buffer as it was built and the offset arithmetic can be checked by eye.",
     dataNoteFailed: "The photos did not load, so the cubes count instead.",
     values: "Values in the cubes",
     valuesNote: "Drawn when a cube is wide enough to read: 4×4, fewer photos, or zoom in.",
     size: "Photos and size",
+    resLabelHead: "Pixels per side",
     resLabel: (r) => `${r}×${r}`,
     addPhoto: "Add a photo of your own",
     changePhoto: "Change your photo",
@@ -530,25 +587,48 @@
     nHead: "How many elements",
     nNote: (n) => `x = np.arange(${n}). Every factorisation of ${n} is a reshape you can take below.`,
     shapeOf: "shape",
+    now: "x right now",
+    badge: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last", none: "not contiguous: a view" },
     ops: "Operations",
     tabs: { reshape: "Reshape", transpose: "Transpose", slice: "Slice", memory: "Memory" },
     kindView: "view",
     kindCopy: "copy",
-    shapeNoteView: (n) => `Every shape whose sizes multiply to ${n}. The buffer is not touched: the bytes keep the order they are already in, and only the strides change. That is what makes a reshape free.`,
-    shapeNoteCopy: (n) => `Every shape whose sizes multiply to ${n}. This view is not C-contiguous, so only the shapes its strides can still express are free: each button says whether taking it is a view or a copy.`,
-    shapeSwitch: "watch the cubes rearrange",
-    presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H↔W", reverse: "reverse (.T)" },
-    orderNote: "Click two axes to swap them. Same buffer, new shape, new strides -- a view, no copy.",
-    orderNoteLost: "Click two axes to swap them. The named presets need B, C, H and W, and a reshape has merged or split them away.",
-    orderNoteNumbers: "Click two axes to swap them. np.arange has no named axes -- nothing here is a batch or a channel -- so the presets that name them are off.",
-    layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
-    contig: ".contiguous()",
-    contigNote: "Rewrites the buffer in the order this view reads it. The shape does not move; every byte does. Watch the strip below.",
-    layoutNoteC: "The last axis of the shape is contiguous. NumPy's default.",
-    layoutNoteF: "The first axis of the shape is contiguous. Fortran, some SciPy.",
-    layoutNoteCL: "PyTorch memory_format for NCHW: position 1 of the shape runs fastest.",
-    layoutNoteView: "None of these: x is a non-contiguous view. The buffer was written in another order and transpose only changed how it is read. Copy it into one of these to make it contiguous again.",
-    layoutCopy: "Same shape. The buffer is rewritten -- a copy.",
+    shapeNoteView: (n) => `Pour the same ${n} bytes into another shape. x is C-contiguous, so every shape is a view: the buffer is untouched and only the strides change.`,
+    shapeNoteCopy: (n) => `Pour the same ${n} bytes into another shape. x is not C-contiguous, so only the shapes its strides can still express are free; for the rest NumPy copies first. Each button says which.`,
+    shapeSwitch: "let the cubes follow the shape",
+    presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "swap H ↔ W", reverse: "reverse (.T)" },
+    orderLede: "Transpose renames the axes: the shape and the strides permute together, and not one byte of the buffer moves. The cubes rearrange because the shape did.",
+    hOrders: "Named orders",
+    orderHere: "current order",
+    hSwap: "Swap two axes",
+    swapGo: "Swap",
+    swapA: "First axis to swap",
+    swapB: "Second axis to swap",
+    orderNote: "The highlighted order is the one x is in. Every transpose is a view: new shape, new strides, same buffer.",
+    orderNoteLost: "NHWC and NCHW need B, C, H and W, and a reshape has merged or split them away. Swapping two axes still works on any shape.",
+    orderNoteNumbers: "np.arange has no named axes -- nothing here is a batch or a channel -- so the orders that name them are off. Swapping two axes works on any shape.",
+    saidSameOrder: "Already in that order: the transpose would hand back the same view.",
+    memNow: {
+      C: "x is C-contiguous: reading it in shape order, last axis fastest, walks the buffer straight through from the first byte to the last.",
+      F: "x is F-contiguous: the first axis of the shape runs fastest in memory. Reading it in shape order hops through the buffer.",
+      CL: "x is channels_last: position 1 of the shape runs fastest, which is PyTorch's layout for an NCHW tensor stored as NHWC.",
+      none: "x is not contiguous in any of these orders: it is a view that reads the buffer out of order. A transpose did that without moving a byte; a copy puts the bytes in reading order again."
+    },
+    memOrder: "Memory order, slowest → fastest:",
+    hLayouts: "Copy into a layout",
+    layouts: { C: "C order", F: "Fortran order", CL: "channels_last" },
+    layoutCalls: {
+      C: "np.ascontiguousarray(x)  ·  t.contiguous()",
+      F: "np.asfortranarray(x)",
+      CL: "t.contiguous(memory_format=torch.channels_last)"
+    },
+    layoutWhat: {
+      C: "last axis fastest -- NumPy's default",
+      F: "first axis fastest -- Fortran, some SciPy",
+      CL: "position 1 fastest -- rank 4 only"
+    },
+    layoutHere: "x is already in this order",
+    layoutNote: "A copy rewrites every byte into the chosen order: the shape stays, and the strides and the buffer strip under the stage change. The order x is already in is highlighted, and choosing it copies nothing.",
     reshape: "Compare with reshape",
     reshapeNote: "y = the same bytes, reread in memory order and poured into this shape. Identical when the buffer is already in this order; scrambled otherwise. The cubes show y while this is on.",
     arrange: "Arrange the cubes",
@@ -560,6 +640,9 @@
     stageArranged: (a, d, z, b) => `Arranged by position: ${a} runs across, ${d} down, ${z} in depth, ${b} across the slots.`,
     idx: "Selected element",
     slice: "Highlight a slice",
+    pickNote: (o, v) => `Offset ${o}, value ${v}. Or click a cube on the stage.`,
+    sliceNone: "Choose an axis to light every element that shares the selected index along it; the rest dims.",
+    sliceNote: (expr, s) => `${expr} has shape ${s}. Everything outside it is dimmed on the stage and in the buffer strip.`,
     stride: "Strides",
     ax: "Axis",
     np: "bytes",
@@ -581,7 +664,7 @@
     stripSame: "identical: the buffer was already in this order",
     ribbon: "The buffer",
     ribbonNote: (order, n) => `${n} bytes in memory, one bar each, in the order they are stored: ${order} (slowest → fastest). Ticks mark the slowest stride. The outlined bar is the selected element.`,
-    bufferNote: "The 1-D buffer is the strip under the stage: it holds still through a reshape or a transpose, and only .contiguous() moves a bar.",
+    bufferNote: "The strip under the stage is the 1-D buffer itself: it holds still through every reshape and transpose, and only a copy moves a bar.",
     code: "In code",
     copy: "Copy",
     reset: "Reset log",
@@ -590,7 +673,7 @@
     glNoScript: "The 3-D renderer did not load — showing the isometric canvas instead. Everything on the panel is the same.",
     status: (o, i, s) => `Offset ${o} at x[${i.join(", ")}]${s ? `, ${s}` : ""}`,
     stageLabel: "A tensor drawn as cubes, one per element.",
-    stageHelp: "Drag, or use the arrow keys, to rotate. Hold Shift and drag, or use the right button, to pan. Pinch, hold Ctrl and scroll, or press plus and minus to zoom. Press F to look at the tensor face on, and Home to reset the view. Click a cube, or use the index sliders, to select an element.",
+    stageHelp: "Drag, or use the arrow keys, to rotate. Hold Shift and drag, or use the right button, to pan. Pinch, hold Ctrl and scroll, or press plus and minus to zoom. Press F to look at the tensor face on, and Home to reset the view. Click a cube, or use the index pickers on the Slice tab, to select an element.",
     sliderIdx: (ax) => `Index along ${ax}`,
     sameBuf: "same buffer",
     strideNote: "NumPy reports strides in bytes; PyTorch reports them in elements. uint8, so the two agree here.",
@@ -644,11 +727,12 @@
     data: "Datos y forma",
     datas: { photos: "Fotos", numbers: "Números que cuentan" },
     dataNotePhotos: "El corte histológico, la astronauta y la taza de café que apila el cuaderno 04: vienen con scikit-image, aquí reducidas.",
-    dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer tal como se construyó y la aritmética de offsets se comprueba a ojo. Aquí los cubos siguen la forma, así que cada reshape los vuelve a disponer.",
+    dataNoteNumbers: "np.arange, así que cada valor es su propia posición en el búfer tal como se construyó y la aritmética de offsets se comprueba a ojo.",
     dataNoteFailed: "Las fotos no se cargaron, así que los cubos cuentan.",
     values: "Valores en los cubos",
     valuesNote: "Se dibujan cuando un cubo es lo bastante ancho para leerse: 4×4, menos fotos, o acerca el zoom.",
     size: "Fotos y tamaño",
+    resLabelHead: "Píxeles por lado",
     resLabel: (r) => `${r}×${r}`,
     addPhoto: "Añade una foto tuya",
     changePhoto: "Cambia tu foto",
@@ -660,25 +744,48 @@
     nHead: "Cuántos elementos",
     nNote: (n) => `x = np.arange(${n}). Cada factorización de ${n} es un reshape que puedes tomar abajo.`,
     shapeOf: "forma",
+    now: "x ahora mismo",
+    badge: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last", none: "no contiguo: una vista" },
     ops: "Operaciones",
     tabs: { reshape: "Reshape", transpose: "Transpose", slice: "Corte", memory: "Memoria" },
     kindView: "vista",
     kindCopy: "copia",
-    shapeNoteView: (n) => `Todas las formas cuyos tamaños multiplican ${n}. El búfer no se toca: los bytes conservan el orden que ya tenían y solo cambian los strides. Por eso un reshape es gratis.`,
-    shapeNoteCopy: (n) => `Todas las formas cuyos tamaños multiplican ${n}. Esta vista no es contigua en C, así que solo son gratis las formas que sus strides todavía pueden expresar: cada botón dice si es una vista o una copia.`,
-    shapeSwitch: "ver cómo se reorganizan los cubos",
-    presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H↔W", reverse: "invertir (.T)" },
-    orderNote: "Haz clic en dos ejes para intercambiarlos. El mismo búfer, nueva forma, nuevos strides: una vista, sin copia.",
-    orderNoteLost: "Haz clic en dos ejes para intercambiarlos. Los presets con nombre necesitan B, C, H y W, y un reshape los ha fundido o partido.",
-    orderNoteNumbers: "Haz clic en dos ejes para intercambiarlos. np.arange no tiene ejes con nombre (aquí nada es un lote ni un canal), así que los presets que los nombran están desactivados.",
-    layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
-    contig: ".contiguous()",
-    contigNote: "Reescribe el búfer en el orden en que esta vista lo lee. La forma no se mueve; todos los bytes sí. Míralo en la tira de abajo.",
-    layoutNoteC: "El último eje de la forma es contiguo. Lo que NumPy hace por defecto.",
-    layoutNoteF: "El primer eje de la forma es contiguo. Fortran, parte de SciPy.",
-    layoutNoteCL: "memory_format de PyTorch para NCHW: la posición 1 de la forma es la más rápida.",
-    layoutNoteView: "Ninguna de estas: x es una vista no contigua. El búfer se escribió en otro orden y transpose solo cambió cómo se lee. Cópialo a una de ellas para volver a hacerlo contiguo.",
-    layoutCopy: "La misma forma. El búfer se reescribe: una copia.",
+    shapeNoteView: (n) => `Vierte los mismos ${n} bytes en otra forma. x es contiguo en C, así que toda forma es una vista: el búfer no se toca y solo cambian los strides.`,
+    shapeNoteCopy: (n) => `Vierte los mismos ${n} bytes en otra forma. x no es contiguo en C, así que solo son gratis las formas que sus strides todavía pueden expresar; para las demás NumPy copia primero. Cada botón dice cuál.`,
+    shapeSwitch: "que los cubos sigan la forma",
+    presets: { NHWC: "NHWC", NCHW: "NCHW", swapHW: "intercambiar H ↔ W", reverse: "invertir (.T)" },
+    orderLede: "transpose renombra los ejes: la forma y los strides se permutan juntos y no se mueve ni un byte del búfer. Los cubos se reorganizan porque la forma cambió.",
+    hOrders: "Órdenes con nombre",
+    orderHere: "orden actual",
+    hSwap: "Intercambiar dos ejes",
+    swapGo: "Intercambiar",
+    swapA: "Primer eje a intercambiar",
+    swapB: "Segundo eje a intercambiar",
+    orderNote: "El orden resaltado es el que tiene x. Todo transpose es una vista: nueva forma, nuevos strides, el mismo búfer.",
+    orderNoteLost: "NHWC y NCHW necesitan B, C, H y W, y un reshape los ha fundido o partido. Intercambiar dos ejes sigue funcionando con cualquier forma.",
+    orderNoteNumbers: "np.arange no tiene ejes con nombre (aquí nada es un lote ni un canal), así que los órdenes que los nombran están desactivados. Intercambiar dos ejes funciona con cualquier forma.",
+    saidSameOrder: "Ya está en ese orden: el transpose devolvería la misma vista.",
+    memNow: {
+      C: "x es contiguo en C: leído en el orden de la forma, con el último eje como el más rápido, recorre el búfer de corrido del primer byte al último.",
+      F: "x es contiguo en F: el primer eje de la forma es el más rápido en memoria. Leído en el orden de la forma, salta por el búfer.",
+      CL: "x es channels_last: la posición 1 de la forma es la más rápida, que es como PyTorch guarda un tensor NCHW en disposición NHWC.",
+      none: "x no es contiguo en ninguno de estos órdenes: es una vista que lee el búfer desordenado. Un transpose lo hizo sin mover un byte; una copia vuelve a poner los bytes en orden de lectura."
+    },
+    memOrder: "Orden en memoria, del más lento al más rápido:",
+    hLayouts: "Copiar a una disposición",
+    layouts: { C: "Orden C", F: "Orden Fortran", CL: "channels_last" },
+    layoutCalls: {
+      C: "np.ascontiguousarray(x)  ·  t.contiguous()",
+      F: "np.asfortranarray(x)",
+      CL: "t.contiguous(memory_format=torch.channels_last)"
+    },
+    layoutWhat: {
+      C: "el último eje es el más rápido: lo que NumPy hace por defecto",
+      F: "el primer eje es el más rápido: Fortran, parte de SciPy",
+      CL: "la posición 1 es la más rápida: solo en rango 4"
+    },
+    layoutHere: "x ya está en este orden",
+    layoutNote: "Una copia reescribe cada byte en el orden elegido: la forma se queda, y cambian los strides y la tira del búfer bajo el escenario. El orden en que ya está x aparece resaltado, y elegirlo no copia nada.",
     reshape: "Comparar con reshape",
     reshapeNote: "y = los mismos bytes, releídos en orden de memoria y vertidos en esta forma. Idéntico cuando el búfer ya está en este orden; revuelto si no. Los cubos muestran y mientras esto esté activo.",
     arrange: "Disponer los cubos",
@@ -690,6 +797,9 @@
     stageArranged: (a, d, z, b) => `Dispuesto por posición: ${a} corre en horizontal, ${d} hacia abajo, ${z} en profundidad y ${b} por los lotes.`,
     idx: "Elemento seleccionado",
     slice: "Resaltar un corte",
+    pickNote: (o, v) => `Offset ${o}, valor ${v}. O haz clic en un cubo del escenario.`,
+    sliceNone: "Elige un eje para iluminar cada elemento que comparte el índice seleccionado a lo largo de él; el resto se atenúa.",
+    sliceNote: (expr, s) => `${expr} tiene forma ${s}. Todo lo que queda fuera se atenúa en el escenario y en la tira del búfer.`,
     stride: "Strides",
     ax: "Eje",
     np: "bytes",
@@ -711,7 +821,7 @@
     stripSame: "idéntico: el búfer ya estaba en este orden",
     ribbon: "El búfer",
     ribbonNote: (order, n) => `${n} bytes en memoria, una barra cada uno, en el orden en que se guardan: ${order} (del más lento al más rápido). Las marcas señalan el stride más lento. La barra con borde es el elemento seleccionado.`,
-    bufferNote: "El búfer 1-D es la tira bajo el escenario: no se mueve con un reshape ni con un transpose, y solo .contiguous() cambia una barra de sitio.",
+    bufferNote: "La tira bajo el escenario es el propio búfer 1-D: no se mueve con ningún reshape ni transpose, y solo una copia cambia una barra de sitio.",
     code: "En código",
     copy: "Copiar",
     reset: "Reiniciar registro",
@@ -720,7 +830,7 @@
     glNoScript: "El renderizador 3-D no se cargó: se muestra el canvas isométrico. Todo lo del panel es igual.",
     status: (o, i, s) => `Offset ${o} en x[${i.join(", ")}]${s ? `, ${s}` : ""}`,
     stageLabel: "Un tensor dibujado como cubos, uno por elemento.",
-    stageHelp: "Arrastra, o usa las flechas del teclado, para rotar. Mantén Mayús y arrastra, o usa el botón derecho, para desplazar. Pellizca, mantén Ctrl y usa la rueda, o pulsa más y menos para hacer zoom. Pulsa F para mirar el tensor de frente e Inicio para restablecer la vista. Haz clic en un cubo, o usa los deslizadores de índice, para seleccionar un elemento.",
+    stageHelp: "Arrastra, o usa las flechas del teclado, para rotar. Mantén Mayús y arrastra, o usa el botón derecho, para desplazar. Pellizca, mantén Ctrl y usa la rueda, o pulsa más y menos para hacer zoom. Pulsa F para mirar el tensor de frente e Inicio para restablecer la vista. Haz clic en un cubo, o usa los selectores de índice de la pestaña Corte, para seleccionar un elemento.",
     sliderIdx: (ax) => `Índice sobre ${ax}`,
     sameBuf: "el mismo búfer",
     strideNote: "NumPy da los strides en bytes; PyTorch los da en elementos. uint8, así que aquí coinciden.",
@@ -785,7 +895,7 @@
     stride: [],                   // elements, parallel to shape
     axisId: [],                   // the source axis each position carries, or null
     compare: false,               // show y = ravel(order="K").reshape(shape)
-    arrange: "meaning",           // where a cube sits: by source place, or by shape position; set per source in rebuildSource()
+    arrange: "position",          // where a cube sits: by shape position, or by where it sat in the array as built
     values: true,                 // print each value on its cube when there is room
     idx: [],                      // the selected element, logical
     slice: -1                     // a position, or -1
@@ -797,7 +907,6 @@
   const view = { ...HOME };
   let PHOTOS = null;
   let SRC = null;                 // the array as it was built
-  let sourceKind = null;          // "photos" or "numbers": which kind SRC last was
   let BUF = [];                   // the value at each memory offset
   let BUFSRC = [];                // which source element lives at each memory offset
   let VOX = [];                   // the cubes, at their resting places
@@ -828,7 +937,11 @@
     }
     return value;
   }
-  const flushCss = () => cssCache.clear();
+  // A photo's cubes take one of 768 fills (three channels, 256 values), and
+  // each fill is two colour strings parsed and mixed -- once per cube per
+  // render until this, which at 128x128 was 147456 of each.
+  const fillCache = new Map();
+  const flushCss = () => { cssCache.clear(); fillCache.clear(); };
   matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
     flushCss();
     render();
@@ -897,15 +1010,6 @@
     state.idx = state.shape.map(() => 0);
     state.slice = -1;
     state.compare = false;
-    // Photos open by meaning, so the picture survives a transpose; counting
-    // numbers open by position, so a reshape visibly lays the cubes out again
-    // -- by meaning the (24,) row kept drawing as the 2x3x4 block it came from.
-    // Only when the *kind* of source changes: a new resolution or element
-    // count is also a restart, and must not undo a choice the reader made.
-    if (SRC.kind !== sourceKind) {
-      sourceKind = SRC.kind;
-      state.arrange = SRC.kind === "photos" ? "meaning" : "position";
-    }
     history.length = 0;
   }
 
@@ -989,9 +1093,8 @@
     return out;
   }
 
-  // Replaces the reader's previous photo if there is one, so the batch never
-  // grows past MAX_PHOTOS and the mesh is never asked for more instances than
-  // it was sized for.
+  // Replaces the reader's previous photo if there is one, so the batch is
+  // never more than the three shipped photos and one of the reader's.
   async function takePhoto(file) {
     const img = await decodeImage(file);
     const px = {};
@@ -1225,7 +1328,13 @@
     return mix(mix(hue, "#ffffff", 0.84), hue, t);
   }
   function chanFill(c, v) {
-    return mix(css("--pale"), css(CHANVAR[c]), 0.12 + 0.88 * (v / 255));
+    const key = c * 256 + v;
+    let fill = fillCache.get(key);
+    if (fill === undefined) {
+      fill = mix(css("--pale"), css(CHANVAR[c]), 0.12 + 0.88 * (v / 255));
+      fillCache.set(key, fill);
+    }
+    return fill;
   }
   // The colour of an element: its channel when the cubes are photo bytes,
   // otherwise its value along the fastest axis.
@@ -1260,7 +1369,17 @@
     $("site-notebooks").textContent = T.navNotebooks;
     $("site-notebooks").href = lang === "es" ? "../es/notebooks.html" : "../notebooks.html";
     $("h-data").textContent = T.data;
+    $("h-now").textContent = T.now;
     $("h-size").textContent = T.size;
+    $("res-label").textContent = T.resLabelHead;
+    $("order-lede").textContent = T.orderLede;
+    $("h-orders").textContent = T.hOrders;
+    $("h-swap").textContent = T.hSwap;
+    $("swap-go").textContent = T.swapGo;
+    $("swap-a").setAttribute("aria-label", T.swapA);
+    $("swap-b").setAttribute("aria-label", T.swapB);
+    $("h-layouts").textContent = T.hLayouts;
+    $("layout-note").textContent = T.layoutNote;
     $("h-n").textContent = T.nHead;
     $("h-ops").textContent = T.ops;
     ["reshape", "transpose", "slice", "memory"].forEach((k) => { $(`tab-${k}`).textContent = T.tabs[k]; });
@@ -1272,7 +1391,6 @@
     $("photo-note").textContent = T.photoNote;
     $("values-label").textContent = T.values;
     $("values-note").textContent = T.valuesNote;
-    $("contig").textContent = T.contig;
     $("compare-label").textContent = T.reshape;
     $("compare-note").textContent = T.reshapeNote;
     $("h-mem").textContent = T.stride;
@@ -1438,37 +1556,52 @@
 
   // ─── controls ─────────────────────────────────────────────────────────────
 
-  function indexSliders(host) {
+  // One picker per axis, laid out as the index expression it is: x[i, j, k].
+  // A dropdown while the axis is short enough to list, so every index is one
+  // choice away and none is a drag that overshoots; a number field past that,
+  // because a (2304,) reshape would otherwise be a 2304-entry menu.
+  const PICK_MAX = 256;
+  function indexPickers(host) {
     host.innerHTML = "";
     const hues = axisHues();
+    const text = (t) => {
+      const span = document.createElement("span");
+      span.className = "br";
+      span.setAttribute("aria-hidden", "true");
+      span.textContent = t;
+      return span;
+    };
+    host.append(text("x["));
     state.shape.forEach((sizeOf, p) => {
-      const wrap = document.createElement("div");
-      wrap.className = "field";
-      const lab = document.createElement("div");
-      lab.className = "k";
+      if (p) host.append(text(","));
+      const lab = document.createElement("label");
       lab.style.color = `var(${hues[p]}-ink)`;
       const name = document.createElement("span");
       name.textContent = axTag(p);
-      const val = document.createElement("span");
-      val.className = "val";
-      val.textContent = String(state.idx[p]);
-      lab.append(name, val);
-      const input = document.createElement("input");
-      input.type = "range";
-      input.min = "0";
-      input.max = String(sizeOf - 1);
+      const listed = sizeOf <= PICK_MAX;
+      const input = document.createElement(listed ? "select" : "input");
+      if (listed) {
+        input.innerHTML = range(sizeOf).map((i) => `<option value="${i}">${i}</option>`).join("");
+      } else {
+        Object.assign(input, { type: "number", min: "0", max: String(sizeOf - 1), step: "1" });
+      }
       input.value = String(state.idx[p]);
       input.dataset.pos = String(p);
       input.setAttribute("aria-label", T.sliderIdx(axName(p)));
-      input.style.accentColor = `var(${hues[p]})`;
-      input.addEventListener("input", () => {
-        state.idx[p] = Number(input.value);
+      input.style.borderColor = `var(${hues[p]})`;
+      input.addEventListener(listed ? "change" : "input", () => {
+        const v = Number(input.value);
+        // A half-typed number is not an index yet; the field keeps it and the
+        // stage keeps the last one that was.
+        if (!Number.isInteger(v) || v < 0 || v >= sizeOf) return;
+        state.idx[p] = v;
         peeking = false;
         render();
       });
-      wrap.append(lab, input);
-      host.appendChild(wrap);
+      lab.append(name, input);
+      host.append(lab);
     });
+    host.append(text("]"));
   }
 
   function buildPhotoChecks() {
@@ -1537,7 +1670,7 @@
       restart();
     });
     $("res").innerHTML = (PHOTOS ? PHOTOS.res : []).map((r) =>
-      radio("res", String(r), T.resLabel(r), state.res === r)).join("");
+      `<option value="${r}">${T.resLabel(r)}</option>`).join("");
     $("res").addEventListener("change", (e) => {
       state.res = Number(e.target.value);
       restart();
@@ -1562,30 +1695,28 @@
       if (button) doReshape(button.dataset.shape.split(",").map(Number));
     });
 
-    // Transpose.
+    // Transpose. Each preset carries the permutation it would apply from
+    // here, so the button is also the line of code; syncControls() rewrites
+    // it after every operation, because the same order is a different
+    // permutation from a different starting point.
     $("order-presets").innerHTML = "";
-    [["NHWC", () => ORDER_PRESETS.NHWC.map(posOfId)],
-     ["NCHW", () => ORDER_PRESETS.NCHW.map(posOfId)],
-     ["swapHW", () => swapPerm(posOfId(2), posOfId(3))],
-     ["reverse", () => range(rank()).reverse()]].forEach(([key, next]) => {
+    ORDER_KEYS.forEach((key) => {
       const button = document.createElement("button");
       button.type = "button";
       button.id = `order-${key}`;
-      button.textContent = T.presets[key];
-      button.addEventListener("click", () => doTranspose(next()));
+      button.innerHTML = `<span>${T.presets[key]}</span><small></small>`;
+      button.addEventListener("click", () => {
+        const perm = ORDER_PERMS[key]();
+        if (perm.every((p, i) => p === i)) { $("status").textContent = T.saidSameOrder; return; }
+        doTranspose(perm);
+      });
       $("order-presets").appendChild(button);
     });
-    $("chips").addEventListener("click", (e) => {
-      const button = e.target.closest("button");
-      if (!button) return;
-      const p = Number(button.dataset.pos);
-      const armed = $("chips").querySelector('[aria-pressed="true"]');
-      if (!armed) { button.setAttribute("aria-pressed", "true"); return; }
-      const other = Number(armed.dataset.pos);
-      armed.setAttribute("aria-pressed", "false");
-      if (other === p) return;
-      $("status").textContent = T.swapped(axTag(other), axTag(p));
-      doTranspose(swapPerm(other, p));
+    $("swap-go").addEventListener("click", () => {
+      const a = Number($("swap-a").value), b = Number($("swap-b").value);
+      if (a === b) { $("status").textContent = T.saidSameOrder; return; }
+      $("status").textContent = T.swapped(axTag(a), axTag(b));
+      doTranspose(swapPerm(a, b));
     });
 
     // Arrangement: on the stage, where its effect is.
@@ -1597,11 +1728,15 @@
       render();
     });
 
-    // Memory layout, and the copy that puts the buffer in it.
+    // Memory layout: one button per copy, naming the call that makes it. The
+    // C-order one keeps the id it always had, `#contig`.
     $("layouts").innerHTML = ["C", "F", "CL"].map((k) =>
-      radio("layout", k, T.layouts[k], false)).join("");
-    $("layouts").addEventListener("change", (e) => doContiguous(e.target.value));
-    $("contig").addEventListener("click", () => doContiguous("C"));
+      `<button type="button" id="${k === "C" ? "contig" : `layout-${k}`}" data-layout="${k}" aria-pressed="false">` +
+      `<b>${T.layouts[k]}</b><code>${T.layoutCalls[k]}</code><small>${T.layoutWhat[k]}</small></button>`).join("");
+    $("layouts").addEventListener("click", (e) => {
+      const button = e.target.closest("button");
+      if (button) doContiguous(button.dataset.layout);
+    });
 
     $("compare").addEventListener("change", (e) => {
       state.compare = e.target.checked;
@@ -1631,6 +1766,13 @@
     perm[b] = a;
     return perm;
   }
+  // What each preset would pass to transpose() from the shape in hand.
+  const ORDER_PERMS = {
+    NHWC: () => ORDER_PRESETS.NHWC.map(posOfId),
+    NCHW: () => ORDER_PRESETS.NCHW.map(posOfId),
+    swapHW: () => swapPerm(posOfId(2), posOfId(3)),
+    reverse: () => range(rank()).reverse()
+  };
 
   // Rebuilt only when the shape, the identities or the data change, because a
   // slider being dragged must not be replaced under the pointer.
@@ -1639,10 +1781,17 @@
     const hues = axisHues();
     if (key !== controlsKey) {
       controlsKey = key;
-      indexSliders($("indices"));
-      $("chips").innerHTML = state.shape.map((_, p) =>
-        `<button type="button" data-pos="${p}" aria-pressed="false" style="border-color:var(${hues[p]});color:var(${hues[p]}-ink)" aria-label="${axName(p)}">${axTag(p)}</button>`
-      ).join("");
+      indexPickers($("indices"));
+      // The two swap pickers default to the last two axes, which is the swap
+      // a reader most often wants -- H and W of an image, rows and columns of
+      // a matrix.
+      ["swap-a", "swap-b"].forEach((id, k) => {
+        $(id).innerHTML = state.shape.map((n, p) =>
+          `<option value="${p}">${axTag(p)} · ${n}</option>`).join("");
+        $(id).value = String(Math.max(0, rank() - 2 + k));
+        $(id).disabled = rank() < 2;
+      });
+      $("swap-go").disabled = rank() < 2;
       $("slices").innerHTML = [-1, ...range(rank())].map((p) => {
         const label = p < 0 ? T.none : axTag(p);
         const color = p < 0 ? "" : css(hues[p]);
@@ -1664,7 +1813,7 @@
       }).join("");
     }
     $("shape-note").innerHTML = (copies ? T.shapeNoteCopy : T.shapeNoteView)(numel()) +
-      (state.arrange === "meaning" ? ` <button type="button" class="inline" id="to-position">${T.shapeSwitch}</button>` : "");
+      (byPos() ? "" : ` <button type="button" class="inline" id="to-position">${T.shapeSwitch}</button>`);
     const toPosition = $("to-position");
     if (toPosition) toPosition.addEventListener("click", () => {
       beginTween();
@@ -1676,6 +1825,19 @@
     const hasLetters = !!(SRC && SRC.letters);
     ["NHWC", "NCHW"].forEach((k) => { $(`order-${k}`).disabled = !named; });
     $("order-swapHW").disabled = !(hasLetters && posOfId(2) >= 0 && posOfId(3) >= 0);
+    $("order-reverse").disabled = rank() < 2;
+    ORDER_KEYS.forEach((k) => {
+      const button = $(`order-${k}`);
+      const perm = button.disabled ? null : ORDER_PERMS[k]();
+      const here = !!perm && perm.every((p, i) => p === i);
+      // Pressed means "x is in this order", which only a named order can be:
+      // a swap or a reversal is an action, and is never a state. The order in
+      // force says so rather than showing the identity it would apply.
+      const pressed = here && (k === "NHWC" || k === "NCHW");
+      button.querySelector("small").textContent = pressed ? T.orderHere
+        : perm ? `transpose(${perm.join(",")})` : "";
+      button.setAttribute("aria-pressed", String(pressed));
+    });
     $("order-note").textContent = named ? T.orderNote
       : (hasLetters ? T.orderNoteLost : T.orderNoteNumbers);
 
@@ -1683,10 +1845,9 @@
     $("shape-photo").hidden = !photoMode;
     $("shape-numbers").hidden = photoMode;
     $("n-note").textContent = T.nNote(state.n);
-    document.querySelectorAll("#indices input").forEach((el) => {
+    document.querySelectorAll("#indices select, #indices input").forEach((el) => {
       const p = Number(el.dataset.pos);
-      el.value = String(state.idx[p]);
-      el.parentElement.querySelector(".val").textContent = String(state.idx[p]);
+      if (document.activeElement !== el || el.tagName === "SELECT") el.value = String(state.idx[p]);
     });
     document.querySelectorAll("#datas input").forEach((el) => {
       el.checked = el.value === state.data;
@@ -1694,20 +1855,37 @@
     });
     $("data-note").textContent = !PHOTOS ? T.dataNoteFailed
       : (photoMode ? T.dataNotePhotos : T.dataNoteNumbers);
-    document.querySelectorAll("#res input").forEach((el) => { el.checked = Number(el.value) === state.res; });
+    $("res").value = String(state.res);
     document.querySelectorAll("#ns input").forEach((el) => { el.checked = Number(el.value) === state.n; });
     $("values").checked = state.values;
     document.querySelectorAll("#arrange button").forEach((b) => {
       b.setAttribute("aria-pressed", String(b.dataset.arrange === state.arrange));
     });
+    // The memory tab says what x is before it offers to change it. A rank-1
+    // array is C- and F-contiguous at once; C is named, being NumPy's.
     const layout = currentLayout();
-    document.querySelectorAll("#layouts input").forEach((el) => {
-      el.checked = el.value === layout;
-      el.disabled = !posOrder(el.value);
+    document.querySelectorAll("#layouts button").forEach((el) => {
+      const here = el.dataset.layout === layout;
+      el.setAttribute("aria-pressed", String(here));
+      el.title = here ? T.layoutHere : "";
+      el.disabled = !posOrder(el.dataset.layout);
     });
-    $("layout-note").textContent = (layout
-      ? `${{ C: T.layoutNoteC, F: T.layoutNoteF, CL: T.layoutNoteCL }[layout]} ${T.layoutCopy}`
-      : T.layoutNoteView) + ` ${T.contigNote}`;
+    $("mem-now").textContent = T.memNow[layout || "none"];
+    $("mem-order").innerHTML = `<span class="dim">${T.memOrder}</span> ` +
+      memOrder().map((p) => axSpan(p, axTag(p))).join(" → ");
+    const badge = $("contig-badge");
+    badge.textContent = T.badge[layout || "none"];
+    badge.dataset.contig = layout ? "1" : "0";
+
+    const off = offsetOf(state.idx);
+    $("pick-note").textContent = T.pickNote(off, shownValue(state.idx));
+    if (state.slice < 0) {
+      $("slice-note").textContent = T.sliceNone;
+    } else {
+      const sel = state.shape.map((_, p) => p === state.slice ? String(state.idx[p]) : ":");
+      $("slice-note").textContent = T.sliceNote(`x[${sel.join(", ")}]`,
+        shapeText(state.shape.filter((_, p) => p !== state.slice)));
+    }
     $("compare").checked = state.compare;
     document.querySelectorAll("#slices input").forEach((el) => { el.checked = Number(el.value) === state.slice; });
     // The letters are worth naming only when they mean something. After a
@@ -1850,7 +2028,7 @@
   let raf = 0;
 
   function beginTween() {
-    if (reduceMotion || embed) return;
+    if (reduceMotion || embed || VOX.length > TWEEN_MAX_CELLS) return;
     pending = new Map(VOX.map((v) => [v.src, { x: v.x, y: v.y, z: v.z, color: v.color, off: v.off }]));
   }
   function settleTween() {
@@ -1988,6 +2166,23 @@
   }
   const project = (x, y, z, w, h) => (mode === "gl" && GL.ready)
     ? glTo(x, y, z, w, h) : canvasTo(x, y, z, w, h);
+  // The same projection with the matrices multiplied once, for the one caller
+  // that projects every cube: glTo() updates the group's world matrix per
+  // call, which a click on a 128x128 batch paid 147456 times.
+  function projector(w, h) {
+    if (!(mode === "gl" && GL.ready)) return (x, y, z) => canvasTo(x, y, z, w, h);
+    const THREE = GL.THREE;
+    const cam = glCamera();
+    GL.group.updateMatrixWorld(true);
+    cam.updateMatrixWorld();
+    const m = new THREE.Matrix4().multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse)
+      .multiply(GL.group.matrixWorld);
+    const v = new THREE.Vector3();
+    return (x, y, z) => {
+      v.set(x, y, z).applyMatrix4(m);
+      return [(v.x * 0.5 + 0.5) * w, (-v.y * 0.5 + 0.5) * h];
+    };
+  }
 
   // ─── the cubes ────────────────────────────────────────────────────────────
 
@@ -2267,11 +2462,26 @@
     const q = new THREE.Quaternion();
     const pos = new THREE.Vector3();
     const scl = new THREE.Vector3();
-    const c = new THREE.Color();
     // Two meshes: a cell is either in the slice or dimmed, and instance colour
     // carries no alpha. Both materials stay constant, so nothing is allocated
     // per cell per frame.
     let nLit = 0, nDim = 0;
+    voxels.forEach((v) => { if (v.alpha < 1) nDim++; else nLit++; });
+    growMeshes(Math.max(nLit, nDim));
+    nLit = 0;
+    nDim = 0;
+    // A colour string is parsed once per distinct string, not once per cube:
+    // a photo's fills are at most 768 strings, and parsing one per cube per
+    // frame was most of a tween's cost at the larger sizes.
+    const colour = (str) => {
+      let c = GL.colours.get(str);
+      if (!c) {
+        if (GL.colours.size > 4096) GL.colours.clear();
+        c = new THREE.Color(str);
+        GL.colours.set(str, c);
+      }
+      return c;
+    };
     const side = cubeSide() / 0.86;
     voxels.forEach((v) => {
       const mesh = v.alpha < 1 ? GL.dim : GL.lit;
@@ -2281,7 +2491,7 @@
       scl.set(k, k, k);
       m.compose(pos, q, scl);
       mesh.setMatrixAt(i, m);
-      mesh.setColorAt(i, c.set(v.color));
+      mesh.setColorAt(i, colour(v.color));
     });
     GL.lit.count = nLit;
     GL.dim.count = nDim;
@@ -2336,20 +2546,9 @@
     $("stage").insertBefore(canvas, $("overlays"));
 
     const box = new THREE.BoxGeometry(0.86, 0.86, 0.86);
-    const instanced = (opacity) => {
-      const mat = new THREE.MeshLambertMaterial({
-        transparent: opacity < 1, opacity, depthWrite: opacity === 1
-      });
-      const mesh = new THREE.InstancedMesh(box, mat, MAX_CELLS);
-      mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
-      mesh.setColorAt(0, new THREE.Color("#ffffff"));   // allocates instanceColor
-      mesh.count = 0;
-      mesh.frustumCulled = false;
-      group.add(mesh);
-      return mesh;
-    };
-    const lit = instanced(1);
-    const dim = instanced(0.15);
+    const lit = instancedMesh(THREE, box, 1, START_CELLS);
+    const dim = instancedMesh(THREE, box, 0.15, START_CELLS);
+    group.add(lit, dim);
     const outline = new THREE.LineSegments(
       new THREE.EdgesGeometry(box),
       new THREE.LineBasicMaterial({ color: css("--ink") })
@@ -2363,8 +2562,39 @@
       return a;
     });
     Object.assign(GL, { ready: true, THREE, renderer, scene, camera, ortho, group, box, lit, dim, outline, arrows,
-                        labels: [], texCache: new Map() });
+                        cap: START_CELLS, colours: new Map(), labels: [], texCache: new Map() });
     return true;
+  }
+
+  function instancedMesh(THREE, box, opacity, cap) {
+    const mat = new THREE.MeshLambertMaterial({
+      transparent: opacity < 1, opacity, depthWrite: opacity === 1
+    });
+    const mesh = new THREE.InstancedMesh(box, mat, cap);
+    mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    mesh.setColorAt(0, new THREE.Color("#ffffff"));   // allocates instanceColor
+    mesh.count = 0;
+    mesh.frustumCulled = false;
+    return mesh;
+  }
+  // An InstancedMesh cannot be resized, so a batch bigger than the buffers
+  // replaces both meshes with ones the next power of two up. It only ever
+  // grows: going back down to 16x16 keeps the larger buffers, which is
+  // cheaper than reallocating on every change of size.
+  function growMeshes(need) {
+    if (need <= GL.cap) return;
+    let cap = GL.cap;
+    while (cap < need) cap *= 2;
+    ["lit", "dim"].forEach((k) => {
+      const old = GL[k];
+      const next = instancedMesh(GL.THREE, GL.box, old.material.opacity, cap);
+      GL.group.remove(old);
+      old.dispose();
+      old.material.dispose();
+      GL.group.add(next);
+      GL[k] = next;
+    });
+    GL.cap = cap;
   }
 
   // The value printed on a cube, as a billboard just outside its face nearest
@@ -2753,9 +2983,10 @@
     const rect = canvas.getBoundingClientRect();
     const px = clientX - rect.left, py = clientY - rect.top;
     const draw = drawList();
+    const to = projector(rect.width, rect.height);
     let best = null, bestD = 28;
     draw.forEach((v) => {
-      const [x, y] = project(v.x, v.y, v.z, rect.width, rect.height);
+      const [x, y] = to(v.x, v.y, v.z);
       const d = Math.hypot(x - px, y - py);
       if (d < bestD) { bestD = d; best = v; }
     });
@@ -2849,10 +3080,17 @@
     // the same box as the stage (its only in-flow child), so this is the
     // reader's idea of "on the widget" and nothing else changes.
     const wrap = el.closest(".stagewrap") || el;
-    wrap.addEventListener("pointerenter", () => {
+    // A move is what counts as arriving, not pointerenter: Chromium fires
+    // enter with no movement when the element under a still cursor changes,
+    // and a pointer resting here when the page loaded entered before this
+    // listener existed. Neither is a reader, and the stage sways from the
+    // moment the page opens; a real reader moves on the way in.
+    const arrive = () => {
+      if (drift.hover) return;
       drift.hover = true;
       setDrift(false);
-    });
+    };
+    wrap.addEventListener("pointermove", arrive);
     wrap.addEventListener("pointerleave", () => {
       drift.hover = false;
       clearTimeout(drift.timer);
@@ -3106,8 +3344,9 @@
       if (!res.ok) throw new Error(String(res.status));
       const json = await res.json();
       if (!json.photos || json.photos.length !== 3) throw new Error("shape");
-      // The instanced mesh is sized for MAX_RES; a larger side added to
-      // WIDGET_RES in gen_figures.py would overflow it silently, so drop it.
+      // The meshes grow to fit, but past MAX_RES a full batch is more cubes
+      // than the page can rebuild at a usable rate; a larger side added to
+      // WIDGET_RES in gen_figures.py is left out until this is raised too.
       json.res = json.res.filter((r) => r <= MAX_RES);
       if (!json.res.length) throw new Error("res");
       if (!json.res.includes(state.res)) state.res = Math.max(...json.res);

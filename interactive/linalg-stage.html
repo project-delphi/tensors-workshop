@@ -103,7 +103,9 @@
 
   #stage {
     position: relative;
-    height: min(68vh, 44rem);
+    /* Shorter than the 68vh it was: the step's controls now sit under it in
+       the same sticky column, and the column is one viewport tall. */
+    height: min(56vh, 40rem);
     background: var(--stage);
     border: 1px solid var(--line);
     border-radius: 10px;
@@ -467,6 +469,11 @@
         <div id="comparison" hidden></div>
       </div>
 
+      <!-- The step in view's sliders and readout, moved here from its section
+           by step-dock.js on a wide screen, so they sit under the picture
+           they change. -->
+      <div class="dock" id="dock" hidden></div>
+
       <div class="stagebar">
         <button type="button" id="prev"></button>
         <span id="dots" role="group" aria-labelledby="stepnum"></span>
@@ -501,6 +508,7 @@
      core under `npm test`. The vendored three.js and its addons
      (vendor/linalg-boot.js) are injected by bootGL() below rather than
      written here, so embed mode -- the hero -- never fetches them. -->
+<script src="step-dock.js"></script>
 <script src="linalg-core.js"></script>
 <script src="linalg-kit.js"></script>
 <script src="linalg-scenes/projection.js"></script>
@@ -867,7 +875,15 @@
     // pointerenter and pointerleave, not over/out: the label chips and the
     // CSS2D layers are children of #stage, and being over one of them is still
     // being on the stage.
-    stage.addEventListener("pointerenter", () => { drift.hover = true; refreshMotion(); });
+    // A pointer that *moves* over the stage holds the drift; pointerenter
+    // alone does not. Chromium fires enter without any movement when the
+    // element under a still cursor changes -- the WebGL canvas arriving on
+    // boot is one -- and a pointer resting there when the page loaded
+    // entered before any listener existed. Neither is a reader reaching for
+    // the view, and the stage is meant to be moving from the moment the page
+    // opens; any real reader moves on the way in, so a move is the signal.
+    const hovered = () => { if (!drift.hover) { drift.hover = true; refreshMotion(); } };
+    stage.addEventListener("pointermove", hovered);
     stage.addEventListener("pointerleave", () => {
       drift.hover = false;
       refreshMotion();
@@ -1226,6 +1242,7 @@
       arriveOnce(sc);
     }
     STEPS.forEach((s, j) => $(s.el).classList.toggle("is-active", j === n));
+    if (dock) dock.show(STEPS[n].el);
     Array.from($("dots").children).forEach((d, j) => {
       if (j === n) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
     });
@@ -1340,7 +1357,8 @@
   $("reset").addEventListener("click", () => {
     const sc = BY_ID[STEPS[state.step].scene];
     if (sc.reset) sc.reset(CTX[sc.id]);
-    for (const input of $(sc.section).querySelectorAll('input[type="range"]')) {
+    const where = dock ? dock.controlsOf(sc.section) : $(sc.section);
+    for (const input of where.querySelectorAll('input[type="range"]')) {
       input.value = input.defaultValue;
       input.dispatchEvent(new Event("input", {bubbles: true}));
     }
@@ -1376,6 +1394,10 @@
     const n = stepOf((location.hash || "").replace("#", ""));
     if (n >= 0) setStep(n, true);
   });
+  // After the copy and the presets are built, since the presets are among
+  // what moves; before the first setStep, which shows a panel.
+  const dock = embed ? null
+    : StepDock.mount("dock", STEPS.map((s) => s.el), ".ctl, .readout", "(min-width: 56.01rem)");
   setStep(at >= 0 ? at : 0, false);
 
   if (embed) {

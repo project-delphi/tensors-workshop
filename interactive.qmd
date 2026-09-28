@@ -40,9 +40,9 @@ stretch every axis of size 1 — or refuse, and say which axis. Section 03.
 
 <span data-language-key="image-tensor"></span>
 
-Three real photos as one 4-D tensor, a cube per byte. Transpose it and watch
-the shape and strides permute while the picture stays; reshape it and watch
-the picture break; rewrite the buffer C, Fortran or channels_last and watch
+Three real photos as one 4-D tensor, a cube per byte, up to 128 × 128.
+Transpose it and watch the cubes follow the new shape while not one byte of
+the buffer moves; reshape it and watch the picture break; rewrite the buffer C, Fortran or channels_last and watch
 only the memory move. Every click prints the NumPy and PyTorch that does it.
 Section 04.
 
