@@ -2253,6 +2253,13 @@ async function audit(page, where) {
         ['layout', 'image-tensor'], ['broadcast', 'broadcasting-simulator'],
         ['linalg', 'linalg-stage'], ['voice', 'voice-stage'],
         ['attention', 'attention-stage'], ['factor', 'factor-stage']];
+      // Desktop width, set explicitly rather than inherited from whatever
+      // the pages loop left it at: at 390px `.hero-demos` is CSS-hidden in
+      // favour of `.hero-fallback`, and a shard that runs the pages loop but
+      // never the widgets loop (which used to leave the viewport at 1440 as
+      // a side effect of its own embed checks) would open the hero at
+      // mobile width and fail every panel-visible assertion below.
+      await page.setViewportSize({width: 1440, height: 1000});
       for (const lang of ['en', 'es']) {
         console.log(`Checking the hero demos (${lang})`);
         await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
