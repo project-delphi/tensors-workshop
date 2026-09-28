@@ -82,8 +82,8 @@ checker serves `docs/` locally, checks both languages and mobile/desktop
 widths, and tests section links, keyboard activation and fallback navigation.
 It also runs [axe](https://github.com/dequelabs/axe-core) over every page and
 every widget: a serious or critical WCAG A/AA violation fails it. The short
-allowlist at the top of `scripts/check_navigation.cjs` names the element and
-the reason for each entry; a finding on a page or widget of ours is fixed,
+allowlist near the top of `scripts/navigation/harness.cjs` names the element
+and the reason for each entry; a finding on a page or widget of ours is fixed,
 not listed.
 It saves assessment screenshots in the system temporary directory. To use an
 existing Chrome installation, set `BROWSER_EXECUTABLE` to its executable path.
