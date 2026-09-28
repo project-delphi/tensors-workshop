@@ -23,7 +23,7 @@ navegador, en inglés o en español, y responde una pregunta que las páginas so
 pueden describir: mueve un control y las formas, los strides y los números se
 mueven con él. Todas están además enlazadas desde la sección a la que
 pertenecen, en el <a href="./tensors_workshop_plan_with_quizzes.html">manual</a>
-y en la <a href="notebooks.html">página de cuadernos</a>.
+y en los cuadernos.
 
 :::: {.widget-grid}
 ::: {.resource-card}
