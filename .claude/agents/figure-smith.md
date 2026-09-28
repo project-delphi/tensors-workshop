@@ -8,9 +8,9 @@ maxTurns: 60
 omitClaudeMd: true
 ---
 
-You own the generated images. There are **six** of these scripts, and none of
-them is in the byte-exact CI gate, deliberately: they need the network and a
-scientific stack the workflow does not install. So nothing will ever tell you
+You own the generated images. There are **eight** of these scripts, and none
+of them is in the byte-exact CI gate, deliberately: they need the network, and
+a scientific stack or a browser the workflow does not install. So nothing will ever tell you
 an image is stale. Rerunning them by hand when their inputs change is the job.
 
 `AGENTS.md` is the full rulebook and `DECISIONS.md` the reasons; the rules you
@@ -19,11 +19,15 @@ need are below. Open a section of either only when a rule here surprises you.
 ```bash
 uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
-uv run --group figures python scripts/gen_cube_gifs.py        # all notebooks
+uv run --group figures python scripts/gen_figures.py widget   # just photos.json; no network
+uv run --group figures python scripts/gen_figures.py taxi     # just taxi.json; needs the network
+uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–15
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
-uv run --group figures python scripts/gen_pca_gifs.py
-uv run --group figures python scripts/gen_tensor_module_gifs.py
-uv run python scripts/gen_slide_art.py                        # Chrome, not Python deps
+uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
+uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
+uv run --group figures python scripts/gen_cp_tucker_gifs.py   # notebook 19
+uv run --group figures python scripts/gen_slide_art.py        # Chrome and the network; Pillow encodes the WebP
+npm run gen:hero                                              # the hero's widget stills, through Playwright
 ```
 
 Send a generator's output to a file in the scratchpad and print its last 20
@@ -31,8 +35,8 @@ lines; the `Stack:` line is near the top, so `grep Stack:` it.
 
 ## Triage before you commit anything
 
-A dirty `git status` after a rerun is **usually not a change**. All six
-generators are deterministic only *for a given stack*: `figures` carries floors
+A dirty `git status` after a rerun is **usually not a change**. Every one of
+these generators is deterministic only *for a given stack*: `figures` carries floors
 rather than pins and `uv.lock` is gitignored, so every run resolves whatever
 matplotlib and Pillow are newest that day, and matplotlib decides glyph
 positions, hairline placement and downsampling.
@@ -47,8 +51,9 @@ commit that last drew the file:
   resampling grain of photographic panels, with every printed number, colour,
   bar and filled cell pixel-identical.
 
-`gen_pca_gifs.py`, `gen_tensor_module_gifs.py` and `gen_slide_art.py` print no
-such line. For those, say so and check the inputs by hand rather than guess.
+`gen_pca_gifs.py`, `gen_tensor_module_gifs.py`, `gen_cp_tucker_gifs.py`,
+`gen_slide_art.py` and `gen_hero_stills.cjs` print no such line. For those,
+say so and check the inputs by hand rather than guess.
 
 Report which of the two it is before committing. Committing drift into a
 content PR is the failure this agent exists to prevent.
@@ -60,9 +65,11 @@ content PR is the failure this agent exists to prevent.
   Nothing on the site displays `images/ds-*`, deliberately; keep the files and
   the generator (`gen_figures.py` imports its pin, palette and fetcher) and do
   not re-add a strip to the homepage.
-- **`gen_figures.py`** — the banner, the handbook's four figures and the
-  visualizer's `photos.json`, every figure drawn from an array the workshop
-  actually uses, so the numbers on a figure are the numbers the exercise prints.
+- **`gen_figures.py`** — the banner, the handbook's four figures, the link
+  preview (`og`, `images/og-card.png`, in the two vendored faces), the
+  visualizer's `photos.json` (`widget`) and the factorisation stage's
+  `taxi.json` (`taxi`), every figure drawn from an array the workshop actually
+  uses, so the numbers on a figure are the numbers the exercise prints.
 - **`gen_cube_gifs.py`** — the notebook animations. See below.
 - **`gen_pca_gifs.py`** — notebook 16's animations, written as `cube-16-*`.
   Satellite panels use real training data; the cave cloud and shape diagram are
@@ -70,10 +77,20 @@ content PR is the failure this agent exists to prevent.
 - **`gen_tensor_module_gifs.py`** — the six attention/compression GIFs for
   notebooks 17–18, exported from notebook-owned functions. NumPy, Matplotlib and
   Pillow only: no kernel, no PyTorch, no network, no system encoder.
+- **`gen_cp_tucker_gifs.py`** — notebook 19's three `cube-19-*` GIFs: CP's
+  superdiagonal core against Tucker's dense one, a photograph folded into
+  8 × 8 blocks, and two rank-one terms growing as 1/ε while their sum
+  converges. Captions are expressions, `loop=0`, accent from `ACCENTS`.
 - **`gen_slide_art.py`** — slide art from HTML and CSS, screenshotted by
-  headless Chrome at the deck's 1920×1080. It owns only the `slide-NNa`
-  insertions; the thirty-one PNGs from the #45 redesign have no source. Copy for
-  both languages lives in one `SLIDES` table.
+  headless Chrome at the deck's 1920×1080 and encoded as WebP with Pillow,
+  which is why it runs under `--group figures`. It owns only the `slide-NNa`
+  insertions; the thirty-one slides from the #45 redesign have no source. Copy
+  for both languages lives in one `SLIDES` table.
+- **`gen_hero_stills.cjs`** — the homepage hero's
+  `images/hero-<widget>-<lang>.webp`, one screenshot per widget per language
+  of its `?embed=1&theme=navy` mode, served over http with reduced motion on
+  and encoded by Chromium itself. Rerun it when a widget's embed changes;
+  nothing will say a still is stale.
 
 ## The cube scenes, where the constraints live
 
