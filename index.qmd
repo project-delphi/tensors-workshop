@@ -24,6 +24,8 @@ theme:
 
 A hands-on session on reshaping, solving and factorizing tensors — written in NumPy, run on real images, video and city data.
 
+[{{< var event.date >}} · {{< var event.time >}} · {{< var event.venue >}}]{.hero-event}
+
 ::: {.hero-actions}
 [Read the handbook →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 
@@ -169,7 +171,7 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
 <div class="credibility-strip">
   <div class="instructor-credit"><p><span>Workshop by</span><strong><a href="{{< var workshop.authors.ravi.url >}}">{{< var workshop.authors.ravi.name >}}</a> and <a href="{{< var workshop.authors.sebastian.url >}}">{{< var workshop.authors.sebastian.name >}}</a></strong></p></div>
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Workshop repository</strong><span>Explore the code on GitHub ↗</span></span></a>
-  <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on Discord</span></p></div>
+  <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on <a href="{{< var event.discord >}}">Discord</a></span></p></div>
 </div>
 ```
 

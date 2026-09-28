@@ -85,11 +85,18 @@ Check the first error and confirm that Setup and the required preparation
 cells have run in the current runtime. If you restarted the runtime, run them
 again. For a download failure, check your connection and the notebook's
 network requirements. During the workshop, share the notebook number, the
-cell, and the error message with the facilitator in Discord.
+cell, and the error message with the facilitator in [Discord]({{< var event.discord >}}).
 
 If code runs but a result seems wrong, compare it with the notebook's expected
 result and use the [worked mistakes](worked-mistakes.md) to practice checking
 shapes, axes, and assumptions.
+
+### Where do I ask for help? {#help-contact}
+
+Ask in the workshop's [Discord community]({{< var event.discord >}}), before,
+during or after the session, in English or Spanish. For anything you would
+rather not post there, write to
+[{{< var event.contact >}}](mailto:{{< var event.contact >}}).
 
 ## Learning during and after the session {#learning}
 
