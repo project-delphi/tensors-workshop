@@ -2,6 +2,7 @@
 
 ## 2026-09-27
 
+- The English and Spanish copy now makes clear that the 210 minutes include the Kahoot quizzes, directs facilitators to the existing cutting order when running late, and distinguishes section 11's live CP/Tucker comparison from its four-model extension material.
 - **A download that fails no longer stops a section.** The datasets the notebooks fetch now have copies on this site, and a notebook falls back to its copy when the original host does not answer: the storm clip in 00, 02, 05 and 11, the three CSVs in 00 and 07–11, and the take-home data in 15 and 16. Each download retries first, and the same SHA-256 check applies to the copy. If both sources fail, the cell prints one sentence in English and Spanish, not a traceback. Notebook 14's monkey recordings have no licence that allows a copy, so it keeps its retries.
 - **`tensorly` and `imageio` are pinned** (`tensorly==0.9.0`, `imageio[ffmpeg]==2.37.4`, `imageio-ffmpeg==0.6.0`), so a new release cannot change a notebook on the day.
 - **The FAQ covers Colab trouble**: you need a personal Google account, you click *Run anyway* at the "not authored by Google" warning, you use *Save a copy in Drive* to keep your edits, and what to do on a locked-down work laptop. The widgets need no account at all.

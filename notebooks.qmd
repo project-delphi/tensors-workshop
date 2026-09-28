@@ -41,9 +41,9 @@ investigating rather than dismissing.
 These are **not sections**. They are deep dives, handed out as take-home
 material. They have no slides, no Kahoot, and no minutes on the workshop clock:
 the {{< var workshop.minutes >}}-minute agenda is exactly what it was without
-them. 14 and 15 pick up where section 11 stops — section 11 fits CP as one of
-four methods and calls the library deliberately as a black box; these two fit it
-by hand and then change what "fit" means.
+them. Section 11's live core compares CP and Tucker using library calls; its
+four-model overview is extension material. Notebooks 14 and 15 build on that
+comparison by fitting CP by hand and then changing what "fit" means.
 
 16 connects PCA’s matrix views to satellite land-cover classification, clustering,
 and tensor PCA, with Plato’s cave and three animations.

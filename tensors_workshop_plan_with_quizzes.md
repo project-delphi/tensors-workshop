@@ -1272,7 +1272,7 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Structure.** Four parts that build on each other: understand what a tensor is → reason about why axes exist → manipulate axes → compute with and factorize tensors. Sections 07, 09 and 10 share one theme: *no exact inverse exists, so find the best stable approximation*. Stating that connection out loud at the wrap-up is what makes the second half feel like one lesson rather than four.
 
-**Do not rush Part I.** It is the students' first contact with tensor theory and every later block uses its vocabulary. If running late, cut Appendix material, not Part I.
+**Do not rush Part I.** It is the students' first contact with tensor theory and every later block uses its vocabulary. If running late, follow the **Cutting for time** order below.
 
 **Language.** Students are ESL (Colombia). Speak slowly, avoid idiom, and define terms on first use. Name the Spanish cognates aloud early — *eje*, *descomposición*, *contracción*, *convolución* — it removes friction immediately. Invite questions in either language. Warn about the two meanings of "rank" at the start of Part I.
 
