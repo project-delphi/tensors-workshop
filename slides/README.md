@@ -60,9 +60,8 @@ Numbers that can drift:
 | Slide | Section | What it shows | Notebook numbers | Note |
 |---|---|---|---|---|
 | 21 | 07 (extension) | California Housing least-squares fit: `X.shape`, predicted-vs-true scatter, residual histogram | nb 07: `X.shape = (20433, 7)`, 20,433 equations | **Found stale:** the EN headline reads "20.433 equations" (a period, the Spanish thousands separator) — it disagrees with its own body text ("20,433 equations, 7 variables") three lines below and with the EN notebook. The ES slide correctly reads "20.433"; the EN headline looks like it was drawn from the ES asset. The EN formula card also reads "A⁺b minimizea", Spanish *minimiza* half-translated. |
-| 30 | 07 / 09 / 10 (recap, no anchor) | "One idea connects the workshop": pseudoinverse, deconvolution and Tucker panels side by side | nb 07: same California Housing numbers as slide 21 | **Found stale:** the EN slide's pseudoinverse panel is untranslated — it reads "Pseudoinversa" and "20.433 equations = an underdetermined least squares solution", the ES panel dropped into the EN deck rather than redrawn in English. **"Underdetermined" is also wrong in any language:** 20,433 equations in 7 unknowns is *overdetermined*, which is why there is no exact solution. The Tucker panel's first title reads "Tensor real", Spanish too. |
 | 26a | 09 | Factor once, solve many: normal equations, QR and SVD, cost compared | nb 09: "flop table predicts / la tabla predice 39x" (the `sweep_times` cell) | Matches the notebook's own printed line today. It is exactly the kind of number a rerun of the timing sweep can move, which is why it is filed here rather than lower down. |
-| 28 | 10 | Table → tensor → HOSVD → reconstruction | nb 10's rank explorer opens at `(2, 2, 3)`; the golf activity's winning entry is `(3, 3, 1)` at 4.69% error | The slide's own reconstruction uses `ranks=(4, 4, 6)`, which appears in neither place in the notebook — it reads as a one-off illustration rather than a printed result. The same panel repeats on slide 30. |
+| 28 | 10 | Table → tensor → HOSVD → reconstruction | nb 10's rank explorer opens at `(2, 2, 3)`; the golf activity's winning entry is `(3, 3, 1)` at 4.69% error | The slide's own reconstruction uses `ranks=(4, 4, 6)`, which appears in neither place in the notebook — it reads as a one-off illustration rather than a printed result. |
 
 Equations and teaching text a translator would have to redraw:
 
@@ -91,6 +90,14 @@ Pure pictures:
 | 14 | Kahoot 1 | Divider — its full text already lives in the qmd as `sr-only` |
 | 22 | Kahoot 2 | Divider, same as above |
 | 29 | Kahoot 3 | Divider, same as above |
+
+**Slide 30 was the first to move** (2026-09-28). It is now the *one idea* slide in
+both decks: its words are Quarto content, and its three pictures are drawn
+from the notebooks' own data by `scripts/gen_figures.py recap` into
+`slides/images/`, with no words in them, so both decks share one copy. The
+hand-drawn version had a Spanish panel and an "underdetermined" caption in the
+English deck, a Tucker panel at ranks nobody ran, and the wrong section
+numbers and minutes.
 
 `slide-25`, `slide-26` and `slide-31` are not in any of the three tables above:
 see *Unused art* below — no anchor links them, so they are the lowest priority
@@ -252,14 +259,14 @@ section's.
 | **29b** | · | 11 | CP, Tucker, TT and t-SVD — what each stores and what it buys (extension) |
 | golf | · | 11 | Compression golf, hole 2 |
 | predict | · | 11 | Same budget — who wins? |
-| 30 | · | 12 | One idea connects sections 07, 10 and take-home 13 |
+| one idea | · | 12 | One idea connects sections 07, 10 and take-home 13 |
 | outcomes | `sec-12-wrap-up-and-take-homes` | 12 | Wrap-up and take-homes |
 
 A numbered row is background art; a **bold** number has a source in
 `scripts/gen_slide_art.py`. `outcomes` is a section's opening slide, built
 from `_variables.yml` (its minutes, *Practise today* and *Explore later*) rather
 than drawn, so it cannot disagree with the agenda. `predict`, `myth or fact`,
-`golf` and `computing` are HTML slides written in the qmd.
+`golf`, `computing` and `one idea` are HTML slides written in the qmd.
 
 **Unused art.** `slide-25.webp` and `slide-26.webp` (the old convolution slides)
 and `slide-31.webp` (the old wrap-up, which read `11 ·`) are still in the

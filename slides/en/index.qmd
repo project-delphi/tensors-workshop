@@ -1041,9 +1041,42 @@ Then put the report's question to the room: it called CP better at "rank 3".
 What did it hold fixed, and what did each model actually store?
 :::
 
-## {background-image="images/slides-final/slide-30.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
+## One idea connects the workshop {.computing-slide .recap-slide}
 
-<p class="sr-only">One idea connects the workshop: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are shown side by side as three instances of the same idea — approximate useful structure when the exact solution is not enough.</p>
+[Approximate useful structure when the exact solution is not enough.]{.recap-lead}
+
+:::: {.recap-grid}
+::: {.recap-card}
+<h3>Pseudoinverse</h3>
+[Section 07]{.recap-where}
+
+![](../images/recap-pinv.webp){fig-alt="House prices against the pseudoinverse's predictions for all 20,433 districts: a cloud of points around a dashed line of perfect prediction."}
+
+`X.shape = (20433, 7)`: 20,433 equations, 7 unknowns, no exact solution. `pinv(X) @ y` is the least-squares fit; the dashed line is a perfect prediction.
+:::
+
+::: {.recap-card}
+<h3>Tucker</h3>
+[Section 10]{.recap-where}
+
+![](../images/recap-tucker.webp){fig-alt="Taxi trips per hour of the day as counted, drawn as bars, and as rebuilt from 60 numbers, drawn as a line. Both peak at hour 18, which is marked."}
+
+480 taxi counts kept as 60 numbers, ranks `(3, 3, 1)`, at 4.69% error. Trips per hour, counted and rebuilt: both peak at 18:00.
+:::
+
+::: {.recap-card}
+<h3>Deconvolution</h3>
+[Take-home 13]{.recap-where}
+
+![](../images/recap-deconv.webp){fig-alt="The camera-operator photograph, the same crop blurred and noisy, and the Richardson-Lucy recovery, which is sharper but not exact."}
+
+A known 9 × 9 blur, undone approximately: Richardson–Lucy, 20 iterations, 18.9% → 13.1% error. Plausible, not exact.
+:::
+::::
+
+[hard problem → structure → useful approximation]{.recap-flow}
+
+[**Key idea:** we are not always looking for algebraic exactness; we are looking for a representation that preserves what matters.]{.recap-key}
 
 [Colab ↗]({{< var repo.colab_base >}}/12-wrap-up-and-take-homes.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 12 in Google Colab"}
 
@@ -1051,6 +1084,9 @@ What did it hold fixed, and what did each model actually store?
 Stating this connection explicitly is what makes the second half feel like one
 lesson rather than four separate blocks. Do not skip it. Section 07's tensor
 inverse slide opens it; this is where it closes.
+
+Every number on the slide is one the room printed: `X.shape` in section 07's
+Exercise 2, hole 1's par in section 10's golf, and take-home 13's Exercise 3.
 
 Convolution is the one leg of the three the room no longer runs. Say so, and
 say that take-home 13 is where it happens to a real photograph.
