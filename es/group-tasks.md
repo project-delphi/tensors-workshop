@@ -265,6 +265,9 @@ Gana quien guarde menos números por debajo del 2%.
 - El Ejercicio 1 fijó el presupuesto y comparó errores. Este hoyo fija el error y
   compara presupuestos. ¿Gana el mismo modelo?
 - Un informe dice que CP supera a Tucker con «rango 3». ¿Qué mantuvo fijo?
+- Observen `cp_fit.factors[2][:, 0]` del Ejercicio 1. ¿Qué significa un valor
+  de esa columna, y cómo se compara interpretarlo con leer las columnas de
+  Tucker junto con su núcleo?
 
 **Compartan:** Nuestra entrada → la mejor entrada del otro modelo → la barra con
 la que ganaría el otro modelo.
