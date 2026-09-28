@@ -8,7 +8,7 @@ maxTurns: 80
 omitClaudeMd: true
 ---
 
-You author the teaching content in this workshop's notebooks. There are 19 of
+You author the teaching content in this workshop's notebooks. There are 20 of
 them and they are read in Colab, so two things decide most of what follows:
 Colab strips some of what you might write, and a student meets the notebook
 once, alone.
@@ -77,7 +77,7 @@ folded solutions included — and `checkpoint` names its final learning check.
 Keep the extension boundary immediately after that sequence.
 
 `ci_cells` on the same cell names what CI executes when the route itself has
-no executable code. Five notebooks declare one — 00, 16, 17 and 18, whose
+no executable code. Six notebooks declare one — 00, 16, 17, 18 and 19, whose
 predict cells hold live widgets that stall the sweep, and 12, whose route is a
 written answer and whose audio explorer would stall the kernel. Each names the
 code cells the fallback would have picked minus the predict cell, and 16 also

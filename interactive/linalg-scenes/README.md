@@ -1,17 +1,56 @@
 # The stage's scenes
 
-One file per step of `../linalg-stage.html`, loaded in step order by plain
-`<script src>` lines after `linalg-core.js` and `linalg-kit.js`. Each file calls
-`LinalgScenes.register({...})` once. The page reads the registry back in that
-order, so a new step is: one file here, one `<section class="step">` in the
-page, one `<script src>` line, and one `repo.widgets` line in `_variables.yml`
-(the only thing that notices the file failing to reach `docs/`).
+One file per step of `../linalg-stage.html` (*Projection and the SVD*), loaded
+in step order by plain `<script src>` lines after `linalg-core.js` and
+`linalg-kit.js`. Each file calls `LinalgScenes.register({...})` once. The page
+reads the registry back in that order, so a new step is: one file here, one
+`<section class="step">` in the page with a `<span class="anchor" id="<id>">`
+at its top, one `<script src>` line, and one `repo.widgets` line in
+`_variables.yml` (the only thing that notices the file failing to reach
+`docs/`).
+
+The page is the frame -- layout, the step machine, the camera, boot -- and
+keeps nothing that belongs to one scene. `linalg-kit.js` is the drawing every
+scene shares (arrows, labels, bracketed column vectors, the axes), written
+once for three.js and once for the flat SVG, so the two render paths take
+their furniture from one place.
 
 The order is a story, not a list: what least squares draws (projection, the
 line of answers, a determinant reaching zero), then what the SVD says (the
 portal, the ellipsoid, the eigenvectors), then the two ways the arithmetic
 fails (near-collinear columns, float32). The portal comes before any step that
-says "singular value", because it is where that word is defined.
+says "singular value", because it is where that word is defined. By scene
+name and workshop section:
+
+| `projection` | `wide` | `collapse` | `portal` | `ellipsoid` | `eigen` | `collinear` | `precision` |
+|---|---|---|---|---|---|---|---|
+| 07 | 07 | 07 | 09 | 09 | 08 | 09 | 09 |
+
+Link to a step by that name (`#portal`, `#eigen`), never `#step-N`: the number
+moves on a reorder and the name does not, and the notebooks and both handbooks
+link by name.
+
+The stage is **black in every theme**, and its labels are set in the vendored
+CMU Serif (`../vendor/cmu-serif/`), because the look it takes is a Manim
+frame, and a frame is a picture that does not change colour with the page
+around it. Every label sits on an opaque chip that is the stage's own black,
+so axe has two colours to measure rather than a canvas it cannot resolve.
+
+## The arithmetic and the camera
+
+`linalg-core.js` holds the arithmetic, and `tests/linalg_core.test.cjs` pins
+it under `npm test`: least squares two ways, a one-sided-Jacobi SVD, the
+condition number and the pseudoinverse, with the null space, a 3 x 3
+eigen-solver, float32 rounding and an unguarded Cramer solve for the steps
+that need them. The other three stages load it too: for `pickActive`, the
+scroller's step machine; the audio and factorisation stages for the orbit and
+the tweens; and `factor-core.js` for its SVD.
+
+It also holds the stage's camera, as state machines a test can pin: where a
+stretch of idle drift takes its origin, where an interrupted tween takes its
+origin, and where the orbit's clamps sit. The stage orbits from one frame --
+azimuth about world +Y, up always +Y, so nothing it draws ever rolls -- and
+every scene and both render paths take the camera from `orbitEye`.
 
 ## What a scene provides
 
@@ -53,10 +92,11 @@ LinalgScenes.register({
 css, reduceMotion, embed, state, flat, stage, stageColour(), shownView(),
 viewBasis(), place(list), changed(), bindSlider(id, opts)}`. `changed()` is
 what a control calls: it redraws the flat path or rewrites the readout,
-whichever is live. `bindSlider` is `LinalgKit.bindSlider` with this ctx
-bound: it tints the track with the token of the thing the slider moves, shows
-the value in the label, brightens the object while dragging, and hands the
-value to `onInput`, which is where the scene retargets its tween.
+whichever is live. **Every slider is bound through `ctx.bindSlider`**, which
+is `LinalgKit.bindSlider` with this ctx bound: it tints the track with the
+token of the thing the slider moves, shows the value in the label, brightens
+the object while dragging, and hands the value to `onInput`, which is where
+the scene retargets its tween.
 
 ## What the copy says
 
