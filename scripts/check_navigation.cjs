@@ -15,6 +15,49 @@ const pages = ['index', 'notebooks', 'interactive', 'kahoot', 'references', 'com
   'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 
+// Sharding. `scripts/run_navigation_shards.cjs` is what `npm run
+// check:navigation` actually runs: it spawns one process per shard, each
+// with `--shard i/N` (or `NAV_SHARD=i/N`), and this file answers to that flag
+// on its own too, so a single shard -- or the whole thing, unsharded -- can
+// still be run directly for debugging. Shard 0 carries every check that
+// belongs to no one widget: the site pages, the hero, keyboard and
+// disclosure navigation, the readiness pages, the wide table and the
+// host-root/offline fallbacks, and the slides. The six widgets are spread
+// across the rest, sized from measured wall time rather than line count
+// (see DECISIONS.md) so three concurrent shards land close together.
+const WIDGET_FILES = ['image-tensor', 'broadcasting-simulator', 'attention-stage',
+  'linalg-stage', 'factor-stage', 'voice-stage'];
+const SHARD_WIDGETS_FOR_3 = [
+  [],                                                          // 0: site + hero only
+  ['linalg-stage', 'attention-stage'],                          // 1
+  ['voice-stage', 'factor-stage', 'image-tensor', 'broadcasting-simulator']  // 2
+];
+function parseShard() {
+  const i = process.argv.indexOf('--shard');
+  const inline = process.argv.find(a => a.startsWith('--shard='));
+  const raw = i >= 0 ? process.argv[i + 1] : inline ? inline.slice('--shard='.length) : process.env.NAV_SHARD;
+  if (!raw) return null;
+  const [index, total] = raw.split('/').map(Number);
+  if (!Number.isInteger(index) || !Number.isInteger(total) || total < 1 || index < 0 || index >= total) {
+    throw new Error(`--shard wants "i/N" with 0 <= i < N, got "${raw}"`);
+  }
+  return {index, total};
+}
+const shard = parseShard();
+// Every shard also runs the site pages, the hero &c. unless it is explicitly
+// one of the widget-only shards a 3-way split creates -- so a single-shard
+// invocation (`--shard 0/1`, or no flag at all) still runs everything, and a
+// 2-way or 4-way split still gives every shard something of its own to check.
+function widgetsForShard({index, total}) {
+  if (total === 1) return WIDGET_FILES;
+  if (index === 0) return [];
+  if (total === 3) return SHARD_WIDGETS_FOR_3[index] || [];
+  const rest = total - 1;
+  return WIDGET_FILES.filter((_, n) => n % rest === index - 1);
+}
+const runsSite = !shard || shard.index === 0 || shard.total === 1;
+const shardWidgets = shard ? widgetsForShard(shard) : WIDGET_FILES;
+
 // The accessibility pass. axe runs over every page and every widget, and a
 // `serious` or `critical` WCAG 2.x A/AA violation fails the check unless the
 // rule *and the element* are listed here with the reason. Entries are by
@@ -68,6 +111,7 @@ async function audit(page, where) {
   let browser;
   let anchors = 0;
   let widgetCount = 0;
+  let widgets = [];
   try {
     browser = await chromium.launch({headless: true,
       ...(process.env.BROWSER_EXECUTABLE ? {executablePath: process.env.BROWSER_EXECUTABLE} : {})});
@@ -79,6 +123,7 @@ async function audit(page, where) {
     const errors = [];
     page.on('pageerror', error => { errors.push(error.message); console.error(error.message); });
     if (!process.argv.includes('--slides-only')) {
+      if (runsSite) {
       for (const lang of ['en', 'es']) {
         const other = lang === 'en' ? 'es' : 'en';
         for (const name of pages) {
@@ -136,6 +181,7 @@ async function audit(page, where) {
           }
         }
       }
+      } // runsSite
 
       // The three widgets are resources, not Quarto pages, so none has a
       // navbar and none is reachable by clicking. Three.js is vendored, so it
@@ -1877,8 +1923,11 @@ async function audit(page, where) {
 
       // The widgets, and the order the drive* functions above are written
       // in. Keep the two in step: with six of them a reader looking for one
-      // callback has nothing else to go on.
-      const widgets = [
+      // callback has nothing else to go on. This is the full set regardless
+      // of sharding -- WIDGET_FILES above, which decides who runs which, is
+      // checked against it below, so a widget dropped from every shard's
+      // table is still caught rather than quietly never run anywhere.
+      const ALL_WIDGETS = [
         {file: 'image-tensor', en: 'The image tensor',
          es: 'El tensor de imagen', embed: true, drive: driveVisualizer},
         {file: 'broadcasting-simulator', en: 'Broadcasting, step by step',
@@ -1902,6 +1951,11 @@ async function audit(page, where) {
         {file: 'voice-stage', en: 'The audio tensor',
          es: 'El tensor de audio', embed: true, drive: driveVoice}
       ];
+      assert.equal(ALL_WIDGETS.length, WIDGET_FILES.length,
+        'WIDGET_FILES (the sharding table) and the widgets table have drifted apart');
+      assert.deepEqual(ALL_WIDGETS.map(w => w.file).sort(), WIDGET_FILES.slice().sort(),
+        'WIDGET_FILES (the sharding table) and the widgets table name different files');
+      widgets = shard ? ALL_WIDGETS.filter(w => shardWidgets.includes(w.file)) : ALL_WIDGETS;
       widgetCount = widgets.length;
       for (const widget of widgets) {
         console.log(`Checking ${widget.file}`);
@@ -2188,6 +2242,7 @@ async function audit(page, where) {
         }
       }
 
+      if (runsSite) {
       // The hero carries a still of every widget, behind one tab each, in the
       // page's own language, and each still is a link to its widget. The
       // static diagram is the fallback and must still be in the document for
@@ -2227,6 +2282,10 @@ async function audit(page, where) {
         for (const [i, [tab, file]] of heroTabs.entries()) {
           if (i) await page.locator(`#hero-tab-${tab}`).click();
           const panel = page.locator(`#hero-panel-${tab}`);
+          // Polled rather than read once: a click's own layout, or the very
+          // first panel's on a machine busy with other shards' browsers, can
+          // lag a synchronous read past what a single check tolerates.
+          await panel.waitFor({state: 'visible', timeout: 5000}).catch(() => {});
           assert(await panel.isVisible(), `${lang}/index: ${tab} tab`);
           for (const [other] of heroTabs) {
             if (other !== tab) assert(await page.locator(`#hero-panel-${other}`).isHidden(),
@@ -2358,10 +2417,14 @@ async function audit(page, where) {
       await page.goto(`${origin}${prefix}faq.html#offline`);
       await page.waitForFunction(() => document.querySelector('nav a[rel="lang-switch-es"]').href.endsWith('/es/faq.html'));
       await page.unroute('**/es/faq.html');
+      } // runsSite
     }
 
     // Exercise Reveal's presentation mode; phone widths activate its separate
     // scrolling reader. The website's mobile navigation is checked above.
+    // Bundled into the site shard along with the pages, the hero &c.: it is
+    // not one widget's to own any more than they are.
+    if (runsSite) {
     await page.setViewportSize({width: 1440, height: 1000});
     for (const lang of ['en', 'es']) {
       console.log(`Checking ${lang} slide links`);
@@ -2406,10 +2469,19 @@ async function audit(page, where) {
       await page.waitForFunction(() => typeof Reveal !== 'undefined' && Reveal.isReady()
         && Reveal.getCurrentSlide().id === 'sec-07-inverses-and-pseudoinverse');
     }
+    } // runsSite
     assert.deepEqual(errors, [], 'Uncaught browser errors');
     assert.deepEqual(a11y, [], 'Accessibility violations (axe, serious or critical)');
-    console.log(process.argv.includes('--slides-only') ? 'Slide links passed.' :
-      `Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, ${widgetCount} interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
+    if (process.argv.includes('--slides-only')) {
+      console.log('Slide links passed.');
+    } else if (!shard) {
+      console.log(`Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, ${widgetCount} interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
+    } else {
+      const scope = runsSite
+        ? `the site pages, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks and the slides`
+        : `${widgetCount} widget(s) (${widgets.map(w => w.file).join(', ') || 'none'})`;
+      console.log(`Shard ${shard.index + 1}/${shard.total} passed: ${scope}.`);
+    }
   } finally {
     if (browser) await browser.close();
     await new Promise(resolve => server.close(resolve));

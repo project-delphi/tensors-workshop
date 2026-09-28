@@ -509,6 +509,22 @@ timeout as a ceiling rather than a schedule. `waitForTimeout` is left only
 where the wait is itself under test, such as the visualizer's 0.3 s drift
 resume.
 
+**The check is sharded, not just faster.** `render`'s 893 s job spent 743 s of
+it inside `check_navigation.cjs`, driving six widgets in two languages one at
+a time on a runner with four vCPUs it never used at once. Splitting the site
+pages, the hero and the six widgets across three concurrent processes
+(`scripts/run_navigation_shards.cjs`, spawning `check_navigation.cjs --shard
+i/3`) cut that wall time roughly to its slowest shard rather than their sum.
+Each shard opens its own browser and its own static server on its own port --
+nothing here shares one -- and the split was sized from measured local wall
+time per widget, not from a line count, since a widget with fewer lines but
+more `page.goto` round trips can still be the slower one. `--shard i/N` is a
+flag `check_navigation.cjs` answers to directly, so debugging one shard, or
+running the whole thing unsharded, never goes through the runner at all; the
+widgets table it drives is checked against the sharding table's own list of
+files on every run, sharded or not, so a widget dropped from both would still
+be caught.
+
 **The attention stage draws every picture in SVG, never three.js.** The other
 scroller-shaped widgets exist because three of the audio stage's opening
 scenes and every step of the projection stage need depth or a camera the

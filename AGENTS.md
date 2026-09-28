@@ -535,10 +535,12 @@ assertion then reads the pre-gesture value and fails only in CI. So a new or
 changed assertion in `check_navigation.cjs` goes through `page.waitForFunction`
 on the `data-*` the widget publishes, with a timeout as the ceiling rather than
 the schedule. This is a rule for what you write, not a description of the file:
-about twenty `waitForTimeout` calls are still in there, some of them feeding an
-assertion rather than being the thing under test. Leave a fixed wait only where
-the wait *is* the subject, such as the visualizer's 0.3 s drift resume or the
-reduced-motion check.
+about fifteen `waitForTimeout` calls are still in there, and every one of them
+is the thing under test rather than a stand-in for polling it -- a bounded
+retry loop's own interval, the visualizer's and the projection stage's drift
+resume, hover freezing a tween, a manual pause, or a reduced-motion check that
+the camera does not move on its own. Leave a fixed wait only there; anywhere
+else, poll the value the next assertion needs, with a timeout as the ceiling.
 
 ## Which document owns what
 
@@ -755,7 +757,9 @@ uv run --group lint ruff check scripts tests            # CI runs both of these
 uv run --group lint ruff format scripts tests           # (format --check in CI)
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests -v
-npm run check:navigation                                # the browser check and the axe pass, after a render
+npm run check:navigation                                # the browser check and the axe pass, after a render (3 shards, concurrently)
+node scripts/check_navigation.cjs --shard 1/3           # one shard alone, for debugging; 0 is the site pages and the hero
+node scripts/check_navigation.cjs                       # the whole thing, unsharded and serial
 npm test                                                # the visualizer's arithmetic, no browser
 
 # Runs the notebooks. A kernel per notebook, the network, and the scientific
