@@ -252,7 +252,8 @@
            "<p>Por encima de esa línea, un movimiento más rápido no desaparece. Sus cuentas caen exactamente " +
            "donde caerían las de una onda más lenta, y la onda más lenta es la que oyes: el <em>aliasing</em>, " +
            "el mismo efecto que hace que una rueda parezca girar hacia atrás en el cine, con fotogramas en " +
-           "lugar de muestras. Con una frecuencia de muestreo de 3 kHz, todo lo de la voz por encima de 1,5 kHz vuelve plegado hacia abajo " +
+           "lugar de muestras. Con una frecuencia de muestreo de 3 kHz, todo lo de la voz por encima " +
+           "de 1,5 kHz vuelve plegado hacia abajo " +
            "como tonos falsos y más graves, y ese grano metálico no es detalle que falta sino detalle " +
            "equivocado. Un conversor real filtra esas frecuencias antes de muestrear y suaviza la escalera " +
            "después; <a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery muestra ambas " +

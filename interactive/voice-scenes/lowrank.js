@@ -386,9 +386,7 @@
            "rank-one pieces. The noise here is white, the same strength at every frequency and " +
            "every moment, with no shape to repeat, so its energy is spread thinly over all of " +
            "them. Keep the top k and you keep most of the voice but only a small share of the " +
-           "noise, roughly k parts in 513, one for each frequency bin. Keep too few and the " +
-           "voice goes with the noise; keep them all and you have rebuilt the noisy input " +
-           "exactly.</p>" +
+           "noise, roughly k parts in the several hundred it is spread over.</p>" +
            "<p>The curve is scored against the clean recording, in the decibels of the rounding " +
            "picture: every 3 dB gained halves the energy of what is still wrong.</p>",
         predict: "Before you drag: more components means a closer approximation. Should more always sound better?",
@@ -397,8 +395,10 @@
              "with a rank-8 update instead of a full matrix, lets a recommender fill in a ratings " +
              "matrix from a few taste profiles, and lets a matrix of millions of entries be stored " +
              "as two thin ones. The picture also shows the catch they all share: the rank is a " +
-             "choice, the best one is somewhere in the middle, and it has to be measured on what " +
-             "you care about — never on the approximation error, which only improves as k grows.",
+             "choice, the best one is somewhere in the middle — too few components take the voice " +
+             "with the noise, all of them rebuild the noisy input exactly — and it has to be " +
+             "measured on what you care about, never on the approximation error, which only " +
+             "improves as k grows.",
         fullRank: "every component", fullShort: "all",
         spectrum: "singular values",
         axisSnr: "signal-to-noise against rank",
@@ -496,8 +496,7 @@
            "rango uno. El ruido aquí es blanco, con la misma intensidad en cada frecuencia y cada instante, " +
            "sin forma que repetir, así que su energía se reparte finamente entre todas ellas. Quédate con las " +
            "k primeras y conservas la mayor parte de la voz pero solo una pequeña parte del ruido, más o menos " +
-           "k partes de 513, una por cada bin de frecuencia. Si te quedas con muy pocas, la voz se va con el " +
-           "ruido; si te quedas con todas, has reconstruido exactamente la entrada ruidosa.</p>" +
+           "k partes de los varios cientos entre los que se reparte.</p>" +
            "<p>La curva se puntúa contra la grabación limpia, en los decibelios de la imagen del redondeo: " +
            "cada 3 dB ganados reducen a la mitad la energía de lo que sigue mal.</p>",
         predict: "Antes de arrastrar: más componentes significa una aproximación más cercana. ¿Debería sonar siempre mejor cuantas más haya?",
@@ -506,8 +505,10 @@
              "actualización de rango 8 en vez de una matriz completa, que un sistema de recomendación rellene " +
              "una matriz de valoraciones a partir de unos pocos perfiles de gusto, y que una matriz de millones " +
              "de entradas se guarde como dos delgadas. La imagen muestra también el problema que todas " +
-             "comparten: el rango es una elección, el mejor está en algún punto intermedio, y hay que medirlo " +
-             "sobre lo que te importa, nunca sobre el error de aproximación, que solo mejora al crecer k.",
+             "comparten: el rango es una elección, el mejor está en algún punto intermedio —con muy pocas " +
+             "componentes la voz se va con el ruido, con todas se reconstruye exactamente la entrada " +
+             "ruidosa— y hay que medirlo sobre lo que te importa, nunca sobre el error de aproximación, " +
+             "que solo mejora al crecer k.",
         fullRank: "todas las componentes", fullShort: "todas",
         spectrum: "valores singulares",
         axisSnr: "señal-ruido frente al rango",

@@ -309,20 +309,20 @@
         b: "<p>W is each component's frequency signature and H is when that component is switched " +
            "on; the spectrogram on the left is what they multiply back to. Solo one and play it. " +
            "The reason to pay the error below is in what you hear.</p>" +
-           "<p>Why does forbidding negative numbers produce parts? The SVD's components may be " +
+           "<p>What does forbidding negative numbers change? The SVD's components may be " +
            "negative, so they combine by cancellation: the second one is typically a correction " +
-           "to the first — add energy here, take it away there — and on its own it is not a " +
-           "sound. When real sounds mix, their magnitudes add, to a good approximation, and never " +
+           "to the first — add energy here, take it away there. When real sounds mix, their magnitudes add, to a good approximation, and never " +
            "subtract. If every column of W is a spectrum and every row of H a loudness over time, " +
            "both non-negative, each component can only ever add, and the cheapest way to rebuild " +
-           "V from pieces that only add is to find the pieces that actually recur: a drum's " +
-           "spectrum and when it hits, a note and when it sounds. A component becomes a thing " +
-           "rather than a direction.</p>" +
+           "V from pieces that only add is to find the pieces that actually recur.</p>" +
            "<p>The fit uses Lee and Seung's multiplicative updates. Each step multiplies every " +
            "entry of W and H by a ratio of non-negative numbers, so an entry that starts positive " +
            "can never cross zero, and the error can never go up.</p>",
         predict: "Before you solo one: the SVD is provably the better approximation. What could NMF have that it does not?",
-        why: "NMF is the standard first tool for taking a mixture apart into pieces you can use: " +
+        why: "An SVD component on its own is a correction, not a sound; an NMF component is a " +
+             "thing — a drum's spectrum and when it hits, a note and when it sounds — rather than " +
+             "a direction. That makes NMF the standard first tool for taking a mixture apart into " +
+             "pieces you can use: " +
              "pulling a voice out of background music, transcribing which notes a piano is " +
              "playing, finding topics in a matrix of word counts — each topic a non-negative bundle " +
              "of words — or materials in a hyperspectral image. The general lesson is section 09's: " +
@@ -397,19 +397,21 @@
         b: "<p>W es la firma en frecuencia de cada componente y H es cuándo se enciende esa componente; el " +
            "espectrograma de la izquierda es lo que su producto reconstruye. Aísla una y reprodúcela. La razón " +
            "para pagar el error de abajo está en lo que oyes.</p>" +
-           "<p>¿Por qué prohibir los números negativos produce partes? Las componentes de la SVD pueden ser " +
+           "<p>¿Qué cambia al prohibir los números negativos? Las componentes de la SVD pueden ser " +
            "negativas, así que se combinan por cancelación: la segunda suele ser una corrección de la primera " +
-           "—añade energía aquí, quítala allá— y por sí sola no es un sonido. Cuando se mezclan sonidos " +
+           "—añade energía aquí, quítala allá—. Cuando se mezclan sonidos " +
            "reales, sus magnitudes se suman, con buena aproximación, y nunca se restan. Si cada columna de W " +
            "es un espectro y cada fila de H una sonoridad en el tiempo, ambas no negativas, cada componente " +
            "solo puede sumar, y la manera más barata de reconstruir V con piezas que solo suman es encontrar " +
-           "las piezas que de verdad se repiten: el espectro de un tambor y cuándo suena, una nota y cuándo se " +
-           "toca. Una componente pasa a ser una cosa y no una dirección.</p>" +
+           "las piezas que de verdad se repiten.</p>" +
            "<p>El ajuste usa las actualizaciones multiplicativas de Lee y Seung. Cada paso multiplica cada " +
            "entrada de W y H por una razón de números no negativos, así que una entrada que empieza positiva " +
            "nunca puede cruzar el cero, y el error nunca puede subir.</p>",
         predict: "Antes de aislar una: la SVD es demostrablemente la mejor aproximación. ¿Qué podría tener NMF que ella no tiene?",
-        why: "NMF es la primera herramienta habitual para separar una mezcla en piezas que puedes usar: extraer " +
+        why: "Una componente de la SVD, por sí sola, es una corrección y no un sonido; una componente de " +
+             "NMF es una cosa —el espectro de un tambor y cuándo suena, una nota y cuándo se toca— y no una " +
+             "dirección. Por eso NMF es la primera herramienta habitual para separar una mezcla en piezas " +
+             "que puedes usar: extraer " +
              "una voz de la música de fondo, transcribir qué notas toca un piano, encontrar temas en una matriz " +
              "de recuentos de palabras —cada tema, un paquete no negativo de palabras— o materiales en una " +
              "imagen hiperespectral. La lección general es la de la sección 09: la factorización con el mejor " +

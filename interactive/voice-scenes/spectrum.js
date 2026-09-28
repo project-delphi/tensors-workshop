@@ -288,19 +288,17 @@
            "on the yellow one and the sound is the frame again: nothing was approximated, the " +
            "components were simply summed back up. The box below counts how far off the rebuild " +
            "still is, and it reaches zero only there.</p>" +
-           "<p>Each bar is a <em>bin</em>: one frequency the transform tests for. Bin f is f whole " +
-           "cycles per frame, so with 1024 samples at 48 kHz the bins sit 48 000 / 1024 ≈ 46.9 Hz " +
-           "apart. The transform's answer for a bin is a complex number. Its size, the height of " +
+           "<p>Each bar is a <em>bin</em>: one frequency the transform tests for, and bin f is f " +
+           "whole cycles per frame. The transform's answer for a bin is a complex number. Its size, the height of " +
            "the bar, is how much of that frequency the frame contains; its angle, the " +
            "<em>phase</em>, is where in its cycle that wave starts, which the picture does not draw " +
            "but the rebuild needs. The heights are in decibels, because a sound's loud and quiet " +
            "parts differ by orders of magnitude: the 70 dB the axis spans is a factor of ten " +
            "million in energy.</p>" +
            "<p>The grey half of the picture is the same answer twice. A recording is a list of real " +
-           "numbers, and the transform of real numbers is mirror-symmetric: the bar at 20 kHz is the " +
-           "bar at 4 kHz reflected, carrying no new information. So only the first half plus one is " +
-           "kept, which is where the matrix's 513 rows come from — and the last one kept sits at " +
-           "24 kHz, the Nyquist frequency from the first picture, arriving from the other side. " +
+           "numbers, and the transform of real numbers is mirror-symmetric: the bar at 28 kHz is the " +
+           "bar at 20 kHz reflected, carrying no new information. So only the first half plus one " +
+           "is kept, which is where the matrix's 513 rows come from. " +
            "<a href='https://www.youtube.com/watch?v=spUNpyF58BY'>3Blue1Brown builds this transform " +
            "from a rotating vector</a> if you want the machinery.</p>",
         eqcap: "ℱ is the transform written as a matrix — not F, which counts bins on the " +
@@ -316,7 +314,8 @@
              "these bars rather than on the raw wave, why keeping only the strongest (the k slider) " +
              "is the idea behind lossy codecs such as MP3, and roughly what your ear does: the " +
              "cochlea is a coiled strip that resonates at a different frequency along its length. " +
-             "The one trade-off is the frame length. Bins are fₛ/N apart and always stop at fₛ/2, so " +
+             "The one trade-off is the frame length. Bins are fₛ/N apart and always stop at fₛ/2, the " +
+             "Nyquist frequency from the first picture, so " +
              "a longer frame resolves frequency more finely and blurs when things happen — the " +
              "time–frequency uncertainty that physics knows from any Fourier pair.",
         kOf: (k) => k === 1 ? "the strongest 1" : "the strongest " + k,
@@ -367,9 +366,8 @@
            "se apoya exactamente sobre la amarilla y el sonido vuelve a ser el marco: no se aproximó " +
            "nada, simplemente se volvieron a sumar las componentes. La caja de abajo cuenta cuánto le " +
            "falta a la reconstrucción, y solo llega a cero ahí.</p>" +
-           "<p>Cada barra es un <em>bin</em>: una frecuencia que la transformada comprueba. El bin f son f " +
-           "ciclos enteros por marco, así que con 1024 muestras a 48 kHz los bins quedan separados 48 000 / " +
-           "1024 ≈ 46,9 Hz. La respuesta de la transformada para un bin es un número complejo. Su tamaño, la " +
+           "<p>Cada barra es un <em>bin</em>: una frecuencia que la transformada comprueba, y el bin f " +
+           "son f ciclos enteros por marco. La respuesta de la transformada para un bin es un número complejo. Su tamaño, la " +
            "altura de la barra, es cuánto de esa frecuencia contiene el marco; su ángulo, la <em>fase</em>, es " +
            "en qué punto de su ciclo empieza esa onda, algo que la imagen no dibuja pero que la reconstrucción " +
            "necesita. Las alturas están en decibelios, porque las partes fuertes y débiles de un sonido " +
@@ -377,9 +375,8 @@
            "energía.</p>" +
            "<p>La mitad gris de la imagen es la misma respuesta dos veces. Una grabación es una lista de " +
            "números reales, y la transformada de números reales es simétrica respecto al centro: la barra de " +
-           "20 kHz es la de 4 kHz reflejada, y no aporta nada nuevo. Por eso solo se guarda la primera mitad " +
-           "más uno, que es de donde salen las 513 filas de la matriz, y la última que se guarda está en 24 " +
-           "kHz, la frecuencia de Nyquist de la primera imagen, que llega desde el otro lado. " +
+           "28 kHz es la de 20 kHz reflejada, y no aporta nada nuevo. Por eso solo se guarda la primera " +
+           "mitad más uno, que es de donde salen las 513 filas de la matriz. " +
            "<a href='https://www.youtube.com/watch?v=spUNpyF58BY'>3Blue1Brown construye esta " +
            "transformada a partir de un vector que gira</a> si quieres la maquinaria.</p>",
         eqcap: "ℱ es la transformada escrita como matriz, no F, que en la imagen siguiente " +
@@ -396,7 +393,8 @@
              "barras y no con la onda cruda, por eso conservar solo las más fuertes (el deslizador k) es la idea " +
              "detrás de códecs con pérdida como MP3, y es más o menos lo que hace tu oído: la cóclea es una tira " +
              "enroscada que resuena a una frecuencia distinta a lo largo de su longitud. El único compromiso es " +
-             "la longitud del marco. Los bins están separados fₛ/N y siempre terminan en fₛ/2, así que un marco " +
+             "la longitud del marco. Los bins están separados fₛ/N y siempre terminan en fₛ/2, la frecuencia " +
+             "de Nyquist de la primera imagen, así que un marco " +
              "más largo resuelve la frecuencia con más finura y difumina cuándo ocurren las cosas: la " +
              "incertidumbre tiempo–frecuencia que la física conoce de cualquier par de Fourier.",
         kOf: (k) => k === 1 ? "la más fuerte" : "las " + k + " más fuertes",
