@@ -88,6 +88,10 @@ async function drive(ctx, page, where, lang) {
   assert.equal(await data('bufsig'), viewSig,
     `${where}: a transpose must not move a byte`);
   await tab('memory');
+  // The layouts are radio buttons, and the one x is in is checked: NCHW
+  // read off an NHWC buffer is exactly PyTorch's channels_last.
+  assert(await page.locator('#layout-CL').isChecked(),
+    `${where}: NCHW over an NHWC buffer should read as channels_last`);
   await page.locator('#contig').click();
   assert.notEqual(await data('bufsig'), viewSig,
     `${where}: .contiguous() must rewrite the buffer`);
@@ -95,6 +99,13 @@ async function drive(ctx, page, where, lang) {
     `${where}: .contiguous() must leave the shape alone`);
   assert.equal(await data('strides'), '768,256,16,1',
     `${where}: .contiguous() must leave C-contiguous strides`);
+  // F and channels_last copy too, and each leaves its own strides.
+  for (const [id, strides] of [['layout-F', '1,3,9,144'], ['layout-CL', '768,1,48,3'],
+                               ['contig', '768,256,16,1']]) {
+    await page.locator(`#${id}`).click();
+    assert.equal(await data('strides'), strides, `${where}: #${id} strides`);
+    assert(await page.locator(`#${id}`).isChecked(), `${where}: #${id} should be checked`);
+  }
 
   // Face on, the gaps close and -- in photo mode -- the channel
   // planes composite back into the photograph.

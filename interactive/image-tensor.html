@@ -235,13 +235,21 @@
   .pick label { display: flex; flex-direction: column; gap: 0.2rem; font: 700 0.72rem/1.2 var(--mono); }
   .pick select, .pick input { font: 600 0.85rem/1.2 var(--mono); width: 3.45rem; padding: 0.3rem 0.2rem; }
   .pick input { color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 7px; }
-  /* Memory: three copies, each a button that names the call it makes. The one
-     x is already in is pressed, and pressing it copies nothing. */
+  /* Memory: three layouts as radio buttons, each naming the call that copies
+     into it. The one x is already in is checked, none is while x is a view,
+     and choosing another copies. */
   .layouts { display: grid; gap: 0.4rem; }
-  .layouts button { display: grid; gap: 0.1rem; text-align: left; padding: 0.45rem 0.65rem; }
-  .layouts button code { font: 500 0.72rem/1.35 var(--mono); overflow-wrap: anywhere; }
-  .layouts button small { font: 500 0.72rem/1.3 var(--sans); color: var(--ink-mute); }
-  .layouts button[aria-pressed="true"] small { color: inherit; }
+  .layouts label {
+    display: grid; grid-template-columns: auto 1fr; column-gap: 0.55rem; align-items: start;
+    padding: 0.45rem 0.65rem; cursor: pointer; color: var(--ink);
+    background: var(--sunk); border: 1px solid var(--line); border-radius: 8px;
+  }
+  .layouts label:has(input:checked) { border-color: var(--accent); background: var(--panel); box-shadow: inset 3px 0 0 var(--accent); }
+  .layouts label:has(input:disabled) { opacity: 0.45; cursor: not-allowed; }
+  .layouts input { margin: 0.15rem 0 0; width: 1rem; height: 1rem; }
+  .layouts span { display: grid; gap: 0.1rem; min-width: 0; }
+  .layouts code { font: 500 0.72rem/1.35 var(--mono); overflow-wrap: anywhere; }
+  .layouts small { font: 500 0.72rem/1.3 var(--sans); color: var(--ink-mute); }
   .inline-field { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.82rem; }
   .seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
   .seg label {
@@ -434,7 +442,7 @@
           <p class="lede" id="mem-now"></p>
           <p class="readout" id="mem-order"></p>
           <h3 id="h-layouts"></h3>
-          <div class="layouts" id="layouts" role="group" aria-labelledby="h-layouts"></div>
+          <div class="layouts" id="layouts" role="radiogroup" aria-labelledby="h-layouts"></div>
           <p class="note" id="layout-note"></p>
           <p class="note" id="buffer-note"></p>
         </div>
@@ -620,7 +628,7 @@
     },
     memOrder: "Memory order, slowest → fastest:",
     hLayouts: "Copy into a layout",
-    layouts: { C: "C order", F: "Fortran order", CL: "channels_last" },
+    layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     layoutCalls: {
       C: "np.ascontiguousarray(x)  ·  t.contiguous()",
       F: "np.asfortranarray(x)",
@@ -632,7 +640,7 @@
       CL: "position 1 fastest -- rank 4 only"
     },
     layoutHere: "x is already in this order",
-    layoutNote: "A copy rewrites every byte into the chosen order: the shape stays, and the strides and the buffer strip under the stage change. The order x is already in is highlighted, and choosing it copies nothing.",
+    layoutNote: "A copy rewrites every byte into the chosen order: the shape stays, and the strides and the buffer strip under the stage change. The layout x is already in is selected, and none is while x is a view.",
     reshape: "Compare with reshape",
     reshapeNote: "y = the same bytes, reread in memory order and poured into this shape. Identical when the buffer is already in this order; scrambled otherwise. The cubes show y while this is on.",
     arrange: "Arrange the cubes",
@@ -695,7 +703,7 @@
     drag: "Drag to rotate, Shift-drag to pan. Pinch, or hold Ctrl (⌘ on a Mac) and scroll, to zoom.",
     swapped: (a, b) => `Swapped ${a} and ${b}.`,
     saidReshape: (s, kind) => `Reshaped to ${s} — a ${kind}.`,
-    saidContig: (k) => `Copied into ${k} order. Same shape, new buffer.`,
+    saidContig: (k) => `Copied: x is now ${k}. Same shape, new buffer.`,
     saidAlready: (k) => `Already ${k}. NumPy hands back the same array -- nothing is copied.`,
     gizmoArm: (ax) => `Look down the ${ax} axis`,
     gizmoLabel: "Axis orientation",
@@ -783,7 +791,7 @@
     },
     memOrder: "Orden en memoria, del más lento al más rápido:",
     hLayouts: "Copiar a una disposición",
-    layouts: { C: "Orden C", F: "Orden Fortran", CL: "channels_last" },
+    layouts: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last (PyTorch)" },
     layoutCalls: {
       C: "np.ascontiguousarray(x)  ·  t.contiguous()",
       F: "np.asfortranarray(x)",
@@ -795,7 +803,7 @@
       CL: "la posición 1 es la más rápida: solo en rango 4"
     },
     layoutHere: "x ya está en este orden",
-    layoutNote: "Una copia reescribe cada byte en el orden elegido: la forma se queda, y cambian los strides y la tira del búfer bajo el escenario. El orden en que ya está x aparece resaltado, y elegirlo no copia nada.",
+    layoutNote: "Una copia reescribe cada byte en el orden elegido: la forma se queda, y cambian los strides y la tira del búfer bajo el escenario. La disposición en que ya está x aparece seleccionada, y ninguna mientras x sea una vista.",
     reshape: "Comparar con reshape",
     reshapeNote: "y = los mismos bytes, releídos en orden de memoria y vertidos en esta forma. Idéntico cuando el búfer ya está en este orden; revuelto si no. Los cubos muestran y mientras esto esté activo.",
     arrange: "Disponer los cubos",
@@ -858,7 +866,7 @@
     drag: "Arrastra para rotar, Mayús+arrastrar para desplazar. Pellizca, o mantén Ctrl (⌘ en Mac) y usa la rueda, para hacer zoom.",
     swapped: (a, b) => `${a} y ${b} intercambiados.`,
     saidReshape: (s, kind) => `Reshape a ${s}: una ${kind}.`,
-    saidContig: (k) => `Copiado al orden ${k}. Misma forma, búfer nuevo.`,
+    saidContig: (k) => `Copiado: x ahora es ${k}. Misma forma, búfer nuevo.`,
     saidAlready: (k) => `Ya es ${k}. NumPy devuelve el mismo array: no se copia nada.`,
     gizmoArm: (ax) => `Mirar a lo largo del eje ${ax}`,
     gizmoLabel: "Orientación de los ejes",
@@ -1744,15 +1752,12 @@
       render();
     });
 
-    // Memory layout: one button per copy, naming the call that makes it. The
-    // C-order one keeps the id it always had, `#contig`.
+    // Memory layout: one radio per layout, naming the call that copies into
+    // it. The C one keeps the id it always had, `#contig`.
     $("layouts").innerHTML = ["C", "F", "CL"].map((k) =>
-      `<button type="button" id="${k === "C" ? "contig" : `layout-${k}`}" data-layout="${k}" aria-pressed="false">` +
-      `<b>${T.layouts[k]}</b><code>${T.layoutCalls[k]}</code><small>${T.layoutWhat[k]}</small></button>`).join("");
-    $("layouts").addEventListener("click", (e) => {
-      const button = e.target.closest("button");
-      if (button) doContiguous(button.dataset.layout);
-    });
+      `<label><input type="radio" name="layout" id="${k === "C" ? "contig" : `layout-${k}`}" value="${k}">` +
+      `<span><b>${T.layouts[k]}</b><code>${T.layoutCalls[k]}</code><small>${T.layoutWhat[k]}</small></span></label>`).join("");
+    $("layouts").addEventListener("change", (e) => doContiguous(e.target.value));
 
     $("compare").addEventListener("change", (e) => {
       state.compare = e.target.checked;
@@ -1884,11 +1889,11 @@
     // The memory tab says what x is before it offers to change it. A rank-1
     // array is C- and F-contiguous at once; C is named, being NumPy's.
     const layout = currentLayout();
-    document.querySelectorAll("#layouts button").forEach((el) => {
-      const here = el.dataset.layout === layout;
-      el.setAttribute("aria-pressed", String(here));
-      el.title = here ? T.layoutHere : "";
-      el.disabled = !posOrder(el.dataset.layout);
+    document.querySelectorAll("#layouts input").forEach((el) => {
+      const here = el.value === layout;
+      el.checked = here;
+      el.closest("label").title = here ? T.layoutHere : "";
+      el.disabled = !posOrder(el.value);
     });
     $("mem-now").textContent = T.memNow[layout || "none"];
     $("mem-order").innerHTML = `<span class="dim">${T.memOrder}</span> ` +
