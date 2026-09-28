@@ -1315,6 +1315,12 @@
   const refreshDrift = () => setDrift(driftWanted());
   const dropDrift = () => { Object.assign(drift, LC.driftRelease(drift, performance.now())); };
 
+  // Read the pose, then let go of the drift -- in that order. shownView() is
+  // where a glide that has just ended hands the view back to the drift
+  // (refreshDrift), seeding it from the pose *before* this gesture. Releasing
+  // first and reading second restarted the drift on that stale seed, and the
+  // next frame's drift pose overwrote the reader's zoom or turn. On a busy
+  // machine, with no frame between a glide's end and the click, it did.
   function takeView(id) {
     const from = shownView(id);
     glide.active = false;
@@ -1326,21 +1332,23 @@
   // picture SVG silently stops painting.
   function orbitBy(dAz, dEl) {
     if (!active.gl || embed) return;
+    const from = takeView(active.id);
     dropDrift();
-    views[active.id] = LC.orbitBy(takeView(active.id), dAz, dEl, active.pose.limits);
+    views[active.id] = LC.orbitBy(from, dAz, dEl, active.pose.limits);
     stampCam();
     if (!glLive()) paint();
   }
   function dollyBy(factor) {
     if (!glLive()) return;
+    const from = takeView(active.id);
     dropDrift();
-    views[active.id] = LC.orbitDolly(takeView(active.id), factor, active.pose.limits);
+    views[active.id] = LC.orbitDolly(from, factor, active.pose.limits);
     stampCam();
   }
   function homeView() {
     if (!active.gl) return;
-    dropDrift();
     const from = shownView(active.id);
+    dropDrift();
     const home = active.pose.home;
     views[active.id] = LC.orbitView(home.az, home.el);
     glideTo(active.id, from.az, from.el, home.az, home.el, 600);

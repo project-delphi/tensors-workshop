@@ -821,6 +821,12 @@
 
   // Taking hold of the stage ends whatever was easing it, and the delta is
   // applied to the pose the reader can *see*.
+  // Read the pose, then let go of the drift -- in that order. shownView() is
+  // where a glide that has just ended hands the view back to the drift
+  // (refreshDrift), seeding it from the pose *before* this gesture. Releasing
+  // first and reading second restarted the drift on that stale seed, and the
+  // next frame's drift pose overwrote the reader's zoom or turn. On a busy
+  // machine, with no frame between a glide's end and the click, it did.
   function takeView(scene) {
     const from = shownView(scene);
     glide.active = false;
@@ -828,20 +834,22 @@
   }
   function orbitBy(dAz, dEl) {
     const scene = STEPS[state.step].scene;
+    const from = takeView(scene);
     dropDrift();
-    state.views[scene] = LC.orbitBy(takeView(scene), dAz, dEl, POSE[scene].limits);
+    state.views[scene] = LC.orbitBy(from, dAz, dEl, POSE[scene].limits);
     afterView(scene);
   }
   function dollyBy(factor) {
     const scene = STEPS[state.step].scene;
+    const from = takeView(scene);
     dropDrift();
-    state.views[scene] = LC.orbitDolly(takeView(scene), factor, POSE[scene].limits);
+    state.views[scene] = LC.orbitDolly(from, factor, POSE[scene].limits);
     afterView(scene);
   }
   function homeView() {
     const scene = STEPS[state.step].scene;
-    dropDrift();
     const from = shownView(scene);
+    dropDrift();
     const home = POSE[scene].home;
     state.views[scene] = LC.orbitView(home.az, home.el);
     glideTo(scene, from.az, from.el, home.az, home.el, 600);
