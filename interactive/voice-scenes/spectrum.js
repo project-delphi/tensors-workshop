@@ -277,19 +277,30 @@
         k: "The discrete Fourier transform · Appendix E",
         h: "The transform asks one frame which frequencies are in it",
         claim: "X[f] = Σₙ xₜ[n] e^(−2πifn/N)",
-        concept: "A frame of N samples can be written as a sum of N sinusoids, one per frequency, " +
-                 "and the transform is the change of basis that finds their sizes. It loses nothing: " +
-                 "the same N numbers go in and come out, in a different coordinate system.",
+        concept: "A frame of N samples can be written exactly as a sum of sinusoids at N " +
+                 "frequencies — 0, 1, 2, … whole cycles per frame — each with its own size and its own " +
+                 "starting point. The discrete Fourier transform is the change of basis that finds " +
+                 "them. It loses nothing: N numbers go in and N come out, in a different coordinate " +
+                 "system, and the inverse transform turns them back.",
         b: "<p>Take k down to 1 and press play: one sinusoid, and you can hear which one — the bar " +
            "lit purple in the picture, and the frequency in the box below. Raise k and the others " +
            "arrive one at a time. At 513 — every bin the transform kept — the purple line lies exactly " +
            "on the yellow one and the sound is the frame again: nothing was approximated, the " +
            "components were simply summed back up. The box below counts how far off the rebuild " +
            "still is, and it reaches zero only there.</p>" +
+           "<p>Each bar is a <em>bin</em>: one frequency the transform tests for. Bin f is f whole " +
+           "cycles per frame, so with 1024 samples at 48 kHz the bins sit 48 000 / 1024 ≈ 46.9 Hz " +
+           "apart. The transform's answer for a bin is a complex number. Its size, the height of " +
+           "the bar, is how much of that frequency the frame contains; its angle, the " +
+           "<em>phase</em>, is where in its cycle that wave starts, which the picture does not draw " +
+           "but the rebuild needs. The heights are in decibels, because a sound's loud and quiet " +
+           "parts differ by orders of magnitude: the 70 dB the axis spans is a factor of ten " +
+           "million in energy.</p>" +
            "<p>The grey half of the picture is the same answer twice. A recording is a list of real " +
            "numbers, and the transform of real numbers is mirror-symmetric: the bar at 20 kHz is the " +
            "bar at 4 kHz reflected, carrying no new information. So only the first half plus one is " +
-           "kept, which is where the matrix's 513 rows come from. " +
+           "kept, which is where the matrix's 513 rows come from — and the last one kept sits at " +
+           "24 kHz, the Nyquist frequency from the first picture, arriving from the other side. " +
            "<a href='https://www.youtube.com/watch?v=spUNpyF58BY'>3Blue1Brown builds this transform " +
            "from a rotating vector</a> if you want the machinery.</p>",
         eqcap: "ℱ is the transform written as a matrix — not F, which counts bins on the " +
@@ -299,6 +310,15 @@
                "first N/2 + 1 rows are kept. The FFT computes this same product in N log₂ N " +
                "operations instead of N²: an algorithm, not a different transform.",
         predict: "Before you slide the window size: doubling N doubles the number of bars. Do they reach higher in frequency, or sit closer together?",
+        why: "Sound is sparse in frequency. A sung note is a handful of peaks — a pitch and its " +
+             "whole-number multiples — and a vowel is a few broad humps, so a few numbers in this " +
+             "basis say what a thousand say in time. That is why nearly every audio model works on " +
+             "these bars rather than on the raw wave, why keeping only the strongest (the k slider) " +
+             "is the idea behind lossy codecs such as MP3, and roughly what your ear does: the " +
+             "cochlea is a coiled strip that resonates at a different frequency along its length. " +
+             "The one trade-off is the frame length. Bins are fₛ/N apart and always stop at fₛ/2, so " +
+             "a longer frame resolves frequency more finely and blurs when things happen — the " +
+             "time–frequency uncertainty that physics knows from any Fourier pair.",
         kOf: (k) => k === 1 ? "the strongest 1" : "the strongest " + k,
         playK: (k) => k + (k === 1 ? " sinusoid" : " sinusoids"),
         axFrame: "the frame", axSynth: (k) => "rebuilt from " + k,
@@ -337,19 +357,29 @@
         k: "La transformada discreta de Fourier · Apéndice E",
         h: "La transformada pregunta a un marco qué frecuencias hay en él",
         claim: "X[f] = Σₙ xₜ[n] e^(−2πifn/N)",
-        concept: "Un marco de N muestras puede escribirse como una suma de N sinusoides, una por " +
-                 "frecuencia, y la transformada es el cambio de base que halla sus tamaños. No " +
-                 "pierde nada: entran y salen los mismos N números, en otro sistema de coordenadas.",
+        concept: "Un marco de N muestras puede escribirse exactamente como una suma de sinusoides de N frecuencias " +
+                 "—0, 1, 2, … ciclos enteros por marco—, cada una con su propio tamaño y su propio punto de partida. " +
+                 "La transformada de Fourier discreta es el cambio de base que las halla. No pierde nada: entran N " +
+                 "números y salen N, en otro sistema de coordenadas, y la transformada inversa los devuelve.",
         b: "<p>Baja k a 1 y pulsa reproducir: una sinusoide, y puedes oír cuál — la barra encendida " +
            "en morado en la imagen, y la frecuencia en la caja de abajo. Sube k y las demás van " +
            "llegando de una en una. En 513 —todos los bins que guardó la transformada— la línea morada " +
            "se apoya exactamente sobre la amarilla y el sonido vuelve a ser el marco: no se aproximó " +
            "nada, simplemente se volvieron a sumar las componentes. La caja de abajo cuenta cuánto le " +
            "falta a la reconstrucción, y solo llega a cero ahí.</p>" +
-           "<p>La mitad gris de la imagen es la misma respuesta dos veces. Una grabación es una lista " +
-           "de números reales, y la transformada de números reales es simétrica respecto al centro: " +
-           "la barra de 20 kHz es la de 4 kHz reflejada, y no aporta nada nuevo. Por eso solo se " +
-           "guarda la primera mitad más uno, que es de donde salen las 513 filas de la matriz. " +
+           "<p>Cada barra es un <em>bin</em>: una frecuencia que la transformada comprueba. El bin f son f " +
+           "ciclos enteros por marco, así que con 1024 muestras a 48 kHz los bins quedan separados 48 000 / " +
+           "1024 ≈ 46,9 Hz. La respuesta de la transformada para un bin es un número complejo. Su tamaño, la " +
+           "altura de la barra, es cuánto de esa frecuencia contiene el marco; su ángulo, la <em>fase</em>, es " +
+           "en qué punto de su ciclo empieza esa onda, algo que la imagen no dibuja pero que la reconstrucción " +
+           "necesita. Las alturas están en decibelios, porque las partes fuertes y débiles de un sonido " +
+           "difieren en órdenes de magnitud: los 70 dB que abarca el eje son un factor de diez millones en " +
+           "energía.</p>" +
+           "<p>La mitad gris de la imagen es la misma respuesta dos veces. Una grabación es una lista de " +
+           "números reales, y la transformada de números reales es simétrica respecto al centro: la barra de " +
+           "20 kHz es la de 4 kHz reflejada, y no aporta nada nuevo. Por eso solo se guarda la primera mitad " +
+           "más uno, que es de donde salen las 513 filas de la matriz, y la última que se guarda está en 24 " +
+           "kHz, la frecuencia de Nyquist de la primera imagen, que llega desde el otro lado. " +
            "<a href='https://www.youtube.com/watch?v=spUNpyF58BY'>3Blue1Brown construye esta " +
            "transformada a partir de un vector que gira</a> si quieres la maquinaria.</p>",
         eqcap: "ℱ es la transformada escrita como matriz, no F, que en la imagen siguiente " +
@@ -360,6 +390,15 @@
                "ese mismo producto en N log₂ N operaciones en vez de N²: un algoritmo, no otra " +
                "transformada.",
         predict: "Antes de mover el tamaño de ventana: duplicar N duplica el número de barras. ¿Llegan más alto en frecuencia, o se juntan más?",
+        why: "El sonido es disperso en frecuencia. Una nota cantada es un puñado de picos —un tono y sus " +
+             "múltiplos enteros— y una vocal son unas pocas jorobas anchas, así que unos pocos números en esta " +
+             "base dicen lo que mil dicen en el tiempo. Por eso casi todo modelo de audio trabaja con estas " +
+             "barras y no con la onda cruda, por eso conservar solo las más fuertes (el deslizador k) es la idea " +
+             "detrás de códecs con pérdida como MP3, y es más o menos lo que hace tu oído: la cóclea es una tira " +
+             "enroscada que resuena a una frecuencia distinta a lo largo de su longitud. El único compromiso es " +
+             "la longitud del marco. Los bins están separados fₛ/N y siempre terminan en fₛ/2, así que un marco " +
+             "más largo resuelve la frecuencia con más finura y difumina cuándo ocurren las cosas: la " +
+             "incertidumbre tiempo–frecuencia que la física conoce de cualquier par de Fourier.",
         kOf: (k) => k === 1 ? "la más fuerte" : "las " + k + " más fuertes",
         playK: (k) => k + (k === 1 ? " sinusoide" : " sinusoides"),
         axFrame: "el marco", axSynth: (k) => "reconstruido con " + k,

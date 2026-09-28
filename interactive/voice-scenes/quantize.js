@@ -176,8 +176,23 @@
            "<p>The blue lines are the values a sample is allowed to take, 2ᵇ of them. Slide the bits " +
            "down and they thin out while the stalks grow; slide up to 16 and the beads stop moving " +
            "altogether, because this recording was stored as 16-bit integers and the rounding is " +
-           "already in it.</p>",
+           "already in it.</p>" +
+           "<p>The readout measures the damage in <em>decibels</em>. The signal-to-noise ratio is " +
+           "the energy of the recording divided by the energy of the error, and because such " +
+           "ratios span many orders of magnitude they are quoted as 10·log₁₀ of the ratio: 10 dB " +
+           "is a factor of ten, 20 dB a hundred, 60 dB a million. One more bit halves the step, " +
+           "which halves every stalk and so quarters their energy — about 6 dB a bit, which the " +
+           "readout lets you check. So 16 bits leave roughly 16 × 6 ≈ 96 dB between the loudest " +
+           "sound a file can hold and its rounding error, about the span from a quiet room to the " +
+           "threshold of pain. A recording that never gets near full scale uses only part of that " +
+           "range, so its own ratio, the one in the readout, comes out lower.</p>",
         predict: "Before you slide: at 4 bits, how many different heights can a bead have?",
+        why: "Bits are the price of precision, paid in memory and bandwidth: 16-bit audio is half " +
+             "the size of 32-bit, and 8-bit is half again. Deep learning makes the same trade with " +
+             "its own numbers. A model's weights are measurements too, and storing them in 8 or 4 " +
+             "bits instead of 32 is quantization with exactly this kind of error — it is how a large " +
+             "language model fits on a laptop. The question is always the one on this stage: how " +
+             "coarse can the ruler get before the error is something you notice?",
         rounded: (bits) => "the recording rounded to " + bits + " bits",
         playBits: (bits) => "rounded to " + bits + " bits",
         levelsText: (n) => n.toLocaleString("en") + (n > 1024 ? " levels, closer than a pixel" : " levels"),
@@ -221,8 +236,23 @@
            "<p>Las líneas azules son los valores que una muestra puede tomar, 2\u1d47 de ellos. Baja " +
            "los bits y se espacian mientras los tallos crecen; súbelos a 16 y las cuentas dejan de " +
            "moverse del todo, porque esta grabación se guardó como enteros de 16 bits y el redondeo ya " +
-           "está en ella.</p>",
+           "está en ella.</p>" +
+           "<p>La lectura mide el daño en <em>decibelios</em>. La relación señal a ruido es la energía de la " +
+           "grabación dividida entre la energía del error, y como estas razones abarcan muchos órdenes de " +
+           "magnitud se expresan como 10·log₁₀ de la razón: 10 dB es un factor de diez, 20 dB cien, 60 dB un " +
+           "millón. Un bit más reduce a la mitad el paso, lo que reduce a la mitad cada tallo y por tanto " +
+           "divide su energía entre cuatro: unos 6 dB por bit, cosa que la lectura te deja comprobar. Así, 16 " +
+           "bits dejan unos 16 × 6 ≈ 96 dB entre el sonido más fuerte que puede contener un archivo y su error " +
+           "de redondeo, más o menos la distancia entre una habitación silenciosa y el umbral del dolor. Una " +
+           "grabación que nunca se acerca a la escala completa usa solo parte de ese rango, así que su propia " +
+           "relación, la de la lectura, sale más baja.</p>",
         predict: "Antes de deslizar: a 4 bits, ¿cuántas alturas distintas puede tener una cuenta?",
+        why: "Los bits son el precio de la precisión, que se paga en memoria y ancho de banda: el audio de 16 " +
+             "bits ocupa la mitad que el de 32, y el de 8 bits la mitad otra vez. El aprendizaje profundo hace " +
+             "el mismo trato con sus propios números. Los pesos de un modelo también son medidas, y guardarlos " +
+             "en 8 o 4 bits en vez de 32 es cuantización con exactamente este tipo de error: así cabe un modelo " +
+             "de lenguaje grande en un portátil. La pregunta es siempre la de este escenario: ¿hasta qué punto " +
+             "puede engrosarse la regla antes de que el error sea algo que notes?",
         rounded: (bits) => "la grabación redondeada a " + bits + " bits",
         playBits: (bits) => "redondeada a " + bits + " bits",
         levelsText: (n) => n.toLocaleString("es") + (n > 1024 ? " niveles, más juntos que un píxel" : " niveles"),

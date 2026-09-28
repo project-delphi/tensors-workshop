@@ -18,7 +18,7 @@ const SCENES = ['sample', 'quantize', 'array', 'frame', 'spectrum', 'window',
 // Every string the frame writes into the page, in both languages (see
 // voice-stage.html's fillText() and changed(), and "What the copy says" in
 // voice-scenes/README.md).
-const REQUIRED_COPY = ['tab', 'k', 'h', 'claim', 'concept', 'b', 'predict', 'aria', 'np'];
+const REQUIRED_COPY = ['tab', 'k', 'h', 'claim', 'concept', 'b', 'predict', 'why', 'aria', 'np'];
 
 // A ctx good enough to run a scene's init() without a browser: a real signal
 // (a full-length tone, the shape every built-in recording actually has) and
@@ -163,6 +163,21 @@ test('a scene writes an eqcap caption exactly where the page has one', () => {
   // makes the scroller a labelled region for a screen reader.
   for (const id of withElement) {
     assert.ok(PAGE.includes(`aria-labelledby="eqcap-${id}"`), `${id}: the scroller is unlabelled`);
+  }
+});
+
+// ------------------------------------------------------ why it matters
+// Every scene closes on what its idea is for outside the page, and
+// fillText() writes it into a #why-<scene> box it looks up unguarded -- so a
+// section without one is a page that throws at boot, not an empty box.
+
+test('every scene has a why-it-matters box, and copy worth putting in it', () => {
+  assert.deepEqual(SCENES.filter(id => PAGE.includes(`id="why-${id}"`)), SCENES);
+  for (const scene of load()) {
+    for (const lang of ['en', 'es']) {
+      assert.ok(typeof scene.copy[lang].why === 'string' && scene.copy[lang].why.length > 200,
+        `${scene.id}: ${lang} why is missing or a stub`);
+    }
   }
 });
 

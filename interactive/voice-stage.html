@@ -287,7 +287,21 @@
      nothing else, so before this the two <code> spans in the batch scene's
      body rendered at the browser's own monospace default -- the classic shrink
      against a 16px body. Scoped away from `pre code`, which is already sized. */
-  .step .body code, .readout code { font: 500 0.85em/1 var(--mono); }
+  .step .body code, .readout code, .why code { font: 500 0.85em/1 var(--mono); }
+
+  /* Why the scene's idea is worth having, once the reader has tried it: the
+     concept box's shape on the sunk surface, so the two never read as one. */
+  .why {
+    margin: 0.9rem 0 0; padding: 0.6rem 0.85rem; max-width: 36rem;
+    background: var(--sunk); border: 1px solid var(--line);
+    border-left: 3px solid var(--accent); border-radius: 8px;
+    font-size: 0.92rem; line-height: 1.55; overflow-wrap: break-word;
+  }
+  .why[data-label]::before {
+    content: attr(data-label); display: block;
+    font: 700 0.65rem/1 var(--sans); letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--ink-mute); margin-bottom: 0.35rem;
+  }
 
   /* Embed mode: the homepage hero. No chrome, no sound, no fetch. The chrome
      that goes is in widget-chrome.css. */
@@ -343,6 +357,7 @@
         <p class="predict" id="pr-sample"></p>
         <div class="controls" id="ctl-sample"></div>
         <p class="readout" id="read-sample"></p>
+        <div class="why" id="why-sample"></div>
       </section>
 
       <section class="step" id="step-quantize" aria-labelledby="h-quantize">
@@ -358,6 +373,7 @@
         <p class="predict" id="pr-quantize"></p>
         <div class="controls" id="ctl-quantize"></div>
         <p class="readout" id="read-quantize"></p>
+        <div class="why" id="why-quantize"></div>
       </section>
 
       <section class="step" id="step-array" aria-labelledby="h-array">
@@ -396,6 +412,7 @@
         <p class="predict" id="pr-array"></p>
         <div class="controls" id="ctl-array"></div>
         <p class="readout" id="read-array"></p>
+        <div class="why" id="why-array"></div>
       </section>
 
       <section class="step" id="step-frame" aria-labelledby="h-frame">
@@ -438,6 +455,7 @@
         <p class="predict" id="pr-frame"></p>
         <div class="controls" id="ctl-frame"></div>
         <p class="readout" id="read-frame"></p>
+        <div class="why" id="why-frame"></div>
       </section>
 
       <section class="step" id="step-spectrum" aria-labelledby="h-spectrum">
@@ -485,6 +503,7 @@
         <p class="predict" id="pr-spectrum"></p>
         <div class="controls" id="ctl-spectrum"></div>
         <p class="readout" id="read-spectrum"></p>
+        <div class="why" id="why-spectrum"></div>
       </section>
 
       <section class="step" id="step-window" aria-labelledby="h-window">
@@ -561,6 +580,7 @@
         <p class="predict" id="pr-window"></p>
         <div class="controls" id="ctl-window"></div>
         <p class="readout" id="read-window"></p>
+        <div class="why" id="why-window"></div>
       </section>
 
       <section class="step" id="step-scramble" aria-labelledby="h-scramble">
@@ -576,6 +596,7 @@
         <p class="predict" id="pr-scramble"></p>
         <div class="controls" id="ctl-scramble"></div>
         <p class="readout" id="read-scramble"></p>
+        <div class="why" id="why-scramble"></div>
       </section>
 
       <section class="step" id="step-lowrank" aria-labelledby="h-lowrank">
@@ -591,6 +612,7 @@
         <p class="predict" id="pr-lowrank"></p>
         <div class="controls" id="ctl-lowrank"></div>
         <p class="readout" id="read-lowrank"></p>
+        <div class="why" id="why-lowrank"></div>
       </section>
 
       <section class="step" id="step-nmf" aria-labelledby="h-nmf">
@@ -606,6 +628,7 @@
         <p class="predict" id="pr-nmf"></p>
         <div class="controls" id="ctl-nmf"></div>
         <p class="readout" id="read-nmf"></p>
+        <div class="why" id="why-nmf"></div>
       </section>
 
       <section class="step" id="step-batch" aria-labelledby="h-batch">
@@ -637,6 +660,7 @@
         <p class="predict" id="pr-batch"></p>
         <div class="controls" id="ctl-batch"></div>
         <p class="readout" id="read-batch"></p>
+        <div class="why" id="why-batch"></div>
       </section>
 
     </div>
@@ -777,17 +801,19 @@
       intro: "A sound is a list of numbers. A microphone measures the air pressure tens of thousands " +
              "of times a second, each measurement is rounded to one of a fixed set of values, and " +
              "those numbers in order are the tensor — a one-dimensional array you can listen to. " +
-             "This page is ten pictures of that array, in five groups. First how air becomes " +
+             "This page is ten pictures of that array, in five groups, and it assumes no signal " +
+             "processing: every term is defined where it is first used. First how air becomes " +
              "numbers: the sampling, the rounding, and the shape and dtype they are stored in. Then " +
              "how those numbers become a matrix: one window cut out of the array, the transform that " +
              "asks which frequencies are in it, and the window sliding along to make a column each " +
-             "time. Then what a layout does to it, which is the one you can hear go wrong. Last, " +
+             "time. Then what a layout does to it, which is the one you can hear go wrong. Then " +
              "what factoring that matrix costs: a truncated SVD that denoises best in the middle and " +
              "fails at both ends, and an NMF that gives up the best error on purpose to get parts you " +
              "can name. Last, what a model is actually handed: three recordings stacked into one " +
-             "rank-4 batch. Each picture says what is on the stage, then asks you to predict before you " +
-             "touch a control; the box under the controls is the answer, with this recording's own " +
-             "numbers in it.",
+             "rank-4 batch. Each picture says what is on the stage, explains why it works, and asks " +
+             "you to predict before you touch a control; the box under the controls is the answer, " +
+             "with this recording's own numbers in it, and the last box says why the idea matters " +
+             "beyond this page.",
       builtin: "Recording", builtinVoice: "a voice (4.9 s)", builtinBeat: "a reggaeton beat (4.9 s)",
       builtinTone: "a 440 Hz tone (4.9 s)", builtinFile: "your own file",
       drop: "Drop an audio file here, or choose one",
@@ -816,7 +842,7 @@
       glNoWebgl: "This browser reports no WebGL, so this picture is drawn flat. Every number is the same.",
       glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "A voice becomes a frequency-by-time matrix.",
-      shape: "Shape", concept: "Concept", code: "In NumPy",
+      shape: "Shape", concept: "Concept", code: "In NumPy", why: "Why it matters",
       aboutH: "About this page",
       about1: "Every number on this page is computed in the browser from the recording on the stage — " +
               "the count of samples, the rounding error, the bin spacing, the matrix's shape. " +
@@ -839,18 +865,20 @@
       intro: "Un sonido es una lista de números. Un micrófono mide la presión del aire decenas de " +
              "miles de veces por segundo, cada medida se redondea a uno de un conjunto fijo de " +
              "valores, y esos números en orden son el tensor: un arreglo de una dimensión que puedes " +
-             "escuchar. Esta página son diez imágenes de ese arreglo, en cinco grupos. Primero, cómo " +
-             "el aire se vuelve números: el muestreo, el redondeo, y la forma y el dtype con que se " +
-             "guardan. Después, cómo esos números se vuelven una matriz: una ventana recortada del " +
-             "arreglo, la transformada que pregunta qué frecuencias hay en ella, y la ventana " +
-             "avanzando para producir una columna en cada parada. Después, qué le hace una " +
-             "disposición, que es la que puedes oír fallar. Por último, lo que cuesta factorizar esa " +
-             "matriz: una SVD truncada que limpia mejor en el medio y falla en los dos extremos, y una " +
-             "NMF que renuncia al mejor error a propósito para conseguir partes que puedes nombrar. " +
-             "Por último, lo que recibe de verdad un modelo: tres grabaciones apiladas en un solo " +
-             "lote de rango 4. Cada imagen dice qué hay en el escenario y luego te pide una predicción antes de tocar " +
-             "un control; la caja bajo los controles es la respuesta, con los números de esta " +
-             "grabación.",
+             "escuchar. Esta página son diez imágenes de ese arreglo, en cinco grupos, y no supone " +
+             "conocimientos de procesamiento de señales: cada término se define donde aparece por " +
+             "primera vez. Primero, cómo el aire se vuelve números: el muestreo, el redondeo, y la " +
+             "forma y el dtype con que se guardan. Después, cómo esos números se vuelven una matriz: " +
+             "una ventana recortada del arreglo, la transformada que pregunta qué frecuencias hay en " +
+             "ella, y la ventana avanzando para producir una columna en cada parada. Después, qué le " +
+             "hace una disposición, que es la que puedes oír fallar. Luego, lo que cuesta factorizar " +
+             "esa matriz: una SVD truncada que limpia mejor en el medio y falla en los dos extremos, " +
+             "y una NMF que renuncia al mejor error a propósito para conseguir partes que puedes " +
+             "nombrar. Por último, lo que recibe de verdad un modelo: tres grabaciones apiladas en " +
+             "un solo lote de rango 4. Cada imagen dice qué hay en el escenario, explica por qué " +
+             "funciona y te pide una predicción antes de tocar un control; la caja bajo los " +
+             "controles es la respuesta, con los números de esta grabación, y la última caja dice " +
+             "por qué importa la idea más allá de esta página.",
       builtin: "Grabación", builtinVoice: "una voz (4,9 s)", builtinBeat: "un ritmo de reguetón (4,9 s)",
       builtinTone: "un tono de 440 Hz (4,9 s)", builtinFile: "tu propio archivo",
       drop: "Suelta un archivo de audio aquí, o elige uno",
@@ -881,7 +909,7 @@
       glNoWebgl: "Este navegador no reporta WebGL, así que esta imagen se dibuja plana. Todos los números son los mismos.",
       glSlow: "El brillo está desactivado: este dispositivo no iba al ritmo. Vuelve a marcar la casilla para intentarlo otra vez.",
       embedCap: "Una voz se convierte en una matriz de frecuencia por tiempo.",
-      shape: "Forma", concept: "Concepto", code: "En NumPy",
+      shape: "Forma", concept: "Concepto", code: "En NumPy", why: "Por qué importa",
       aboutH: "Sobre esta página",
       about1: "Cada número de esta página se calcula en el navegador a partir de la grabación que hay " +
               "en el escenario: el conteo de muestras, el error de redondeo, la separación entre bins, " +
@@ -1902,6 +1930,8 @@
       $("con-" + s.id).dataset.label = T.concept;
       $("body-" + s.id).innerHTML = c.b;
       $("pr-" + s.id).textContent = c.predict || "";
+      $("why-" + s.id).innerHTML = c.why || "";
+      $("why-" + s.id).dataset.label = T.why;
       // Five sections carry a display equation. The <math> is static and
       // language-neutral; this is the sentence under it. A scene with eqcap
       // copy and no element to put it in, or an element with no copy, is

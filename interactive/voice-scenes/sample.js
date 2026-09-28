@@ -167,8 +167,9 @@
         h: "A microphone measures the air 48 000 times a second",
         claim: "x[n] = p(n / fₛ)",
         concept: "Sound is a pressure that varies continuously in time. A recording is not: it is " +
-                 "that pressure measured at equal intervals, fₛ times a second, and nothing " +
-                 "between the measurements is kept. The measurements, in order, are a one-dimensional " +
+                 "that pressure measured at equal intervals, fₛ times a second — the " +
+                 "<em>sampling rate</em> — and nothing between the measurements is kept. Each " +
+                 "measurement is a <em>sample</em>, and the samples, in order, are a one-dimensional " +
                  "array.",
         b: "<p>The yellow trace is air pressure against time. A loudspeaker or a voice pushes the air, " +
            "then lets it fall back, so the trace swings above and below the line: what the microphone " +
@@ -178,11 +179,28 @@
            "can see the two halves disagree.</p>" +
            "<p>Slide the zoom in and the trace comes apart into beads: one number every 1/48 000 of a " +
            "second, with nothing at all between them. Then lower the rate. The beads thin out, the " +
-           "purple staircase is what those fewer numbers hold on to, and play lets you hear it. " +
-           "(A real converter smooths that staircase back out; " +
-           "<a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery shows this on a " +
-           "bench full of equipment</a>, and it is worth 24 minutes.)</p>",
+           "purple staircase is what those fewer numbers hold on to, and play lets you hear it.</p>" +
+           "<p>How many beads are enough? A wave that goes up and down once needs at least two " +
+           "beads per cycle — one near the top, one near the bottom — or the beads cannot tell it " +
+           "from something slower. So a rate of fₛ can only describe frequencies below fₛ/2, the " +
+           "<em>Nyquist frequency</em>. Human hearing stops near 20 kHz, which is why 44.1 and " +
+           "48 kHz are the usual rates: a little over twice what the ear can use.</p>" +
+           "<p>Above that line a faster wiggle does not vanish. Its beads land exactly where a " +
+           "slower wave's would, and the slower wave is what you hear — <em>aliasing</em>, the same " +
+           "effect as a wagon wheel turning backwards on film, with frames instead of samples. At a " +
+           "rate of 3 kHz, everything in the voice above 1.5 kHz comes back folded down as false, lower " +
+           "tones, and that metallic grit is not missing detail but wrong detail. A real converter " +
+           "filters those frequencies out before it samples and smooths the staircase after; " +
+           "<a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery shows both on a " +
+           "bench full of equipment</a>, and it is worth 24 minutes.</p>",
         predict: "Before you zoom: how many numbers is one millisecond of this recording?",
+        why: "The rate fixes two things at once: how long the array is (rate × seconds) and the " +
+             "highest frequency it can hold (half the rate). Almost everything that makes speech " +
+             "intelligible sits below 8 kHz, so speech models such as Whisper resample to 16 kHz " +
+             "before they look at anything — a third of the numbers, and nothing the model needs is " +
+             "lost. The telephone network went further, to 8 kHz, which is why a voice on the phone " +
+             "sounds muffled and is still understood. Choosing a rate is the first modelling " +
+             "decision, and it is made before any model sees the data.",
         held: (rate) => "the recording held at " + rate.toLocaleString("en") + " Hz",
         playAt: (khz) => "at " + khz + " kHz",
         np: {
@@ -212,23 +230,41 @@
         k: "Muestreo · sección 00",
         h: "Un micrófono mide el aire 48 000 veces por segundo",
         claim: "x[n] = p(n / fₛ)",
-        concept: "El sonido es una presión que varía de forma continua en el tiempo. Una grabación " +
-                 "no: es esa presión medida a intervalos iguales, fₛ veces por segundo, y nada de " +
-                 "lo que hay entre las medidas se conserva. Las medidas, en orden, son un arreglo de " +
-                 "una dimensión.",
+        concept: "El sonido es una presión que varía de forma continua en el tiempo. Una grabación no: es esa " +
+                 "presión medida a intervalos iguales, fₛ veces por segundo —la <em>frecuencia de muestreo</em>—, y " +
+                 "nada de lo que hay entre las medidas se conserva. Cada medida es una <em>muestra</em>, y las " +
+                 "muestras, en orden, son un arreglo de una dimensión.",
         b: "<p>El trazo amarillo es la presión del aire frente al tiempo. Un altavoz o una voz empuja " +
            "el aire y luego lo deja volver, así que el trazo oscila por encima y por debajo de la línea: " +
            "lo que informa el micrófono es la <em>diferencia</em> respecto al aire en reposo, y todo " +
            "empujón se paga con un tirón. Por eso la imagen parece casi reflejada arriba y abajo, y por " +
            "eso su promedio es cero. Solo casi: en el ritmo, un bombo es un empujón brusco hacia arriba " +
            "y una recuperación lenta, y se ve que las dos mitades no coinciden.</p>" +
-           "<p>Acerca el zoom y el trazo se deshace en cuentas: un número cada 1/48 000 de segundo, y " +
-           "nada en absoluto entre ellas. Después baja la frecuencia de muestreo. Las cuentas se " +
-           "espacian, la escalera morada es lo que retienen esos números más escasos, y al reproducir " +
-           "lo oyes. (Un conversor real vuelve a suavizar esa escalera; " +
-           "<a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery lo demuestra con " +
-           "un banco lleno de instrumentos</a>, y vale los 24 minutos.)</p>",
+           "<p>Acerca el zoom y el trazo se deshace en cuentas: un número cada 1/48 000 de segundo, y nada en " +
+           "absoluto entre ellas. Después baja la frecuencia de muestreo. Las cuentas se espacian, la escalera " +
+           "morada es lo que retienen esos números más escasos, y al reproducir lo oyes.</p>" +
+           "<p>¿Cuántas cuentas bastan? Una onda que sube y baja una vez necesita al menos dos cuentas por " +
+           "ciclo —una cerca de la cresta y otra cerca del valle— o las cuentas no pueden distinguirla de algo " +
+           "más lento. Así que una frecuencia de muestreo fₛ solo puede describir frecuencias por debajo de " +
+           "fₛ/2, la <em>frecuencia de Nyquist</em>. El oído humano se detiene cerca de los 20 kHz, y por eso " +
+           "44,1 y 48 kHz son las frecuencias habituales: un poco más del doble de lo que el oído puede " +
+           "aprovechar.</p>" +
+           "<p>Por encima de esa línea, un movimiento más rápido no desaparece. Sus cuentas caen exactamente " +
+           "donde caerían las de una onda más lenta, y la onda más lenta es la que oyes: el <em>aliasing</em>, " +
+           "el mismo efecto que hace que una rueda parezca girar hacia atrás en el cine, con fotogramas en " +
+           "lugar de muestras. Con una frecuencia de muestreo de 3 kHz, todo lo de la voz por encima de 1,5 kHz vuelve plegado hacia abajo " +
+           "como tonos falsos y más graves, y ese grano metálico no es detalle que falta sino detalle " +
+           "equivocado. Un conversor real filtra esas frecuencias antes de muestrear y suaviza la escalera " +
+           "después; <a href=\'https://www.youtube.com/watch?v=cIQ9IXSUzuM\'>Monty Montgomery muestra ambas " +
+           "cosas con un banco lleno de instrumentos</a>, y vale los 24 minutos.</p>",
         predict: "Antes de acercar: ¿cuántos números hay en un milisegundo de esta grabación?",
+        why: "La frecuencia fija dos cosas a la vez: cuánto mide el arreglo (frecuencia × segundos) y la " +
+             "frecuencia más alta que puede contener (la mitad de la frecuencia de muestreo). Casi todo lo que " +
+             "hace inteligible el habla está por debajo de 8 kHz, así que modelos de voz como Whisper " +
+             "remuestrean a 16 kHz antes de mirar nada: un tercio de los números, y no se pierde nada que el " +
+             "modelo necesite. La red telefónica fue más lejos, hasta 8 kHz, y por eso una voz por teléfono " +
+             "suena apagada y aun así se entiende. Elegir una frecuencia de muestreo es la primera decisión de " +
+             "modelado, y se toma antes de que ningún modelo vea los datos.",
         held: (rate) => "la grabación retenida a " + rate.toLocaleString("es") + " Hz",
         playAt: (khz) => "a " + khz + " kHz",
         np: {

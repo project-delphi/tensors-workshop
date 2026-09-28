@@ -222,17 +222,32 @@
         k: "The window · Appendix E",
         h: "One window is N numbers cut out of the array",
         claim: "xₜ[n] = x[t·H + n] · w[n],  xₜ.shape = (N,)",
-        concept: "The transform is not given the recording. It is given a short run of consecutive " +
-                 "samples — a frame — multiplied by a window: a taper that is zero at both ends and " +
-                 "one in the middle. The frame is what everything after this point operates on.",
+        concept: "The transform is not given the whole recording. It is given a short run of " +
+                 "consecutive samples — a <em>frame</em>, a few tens of milliseconds long — multiplied " +
+                 "sample by sample by a <em>window</em>: a smooth taper that is zero at both ends and " +
+                 "one in the middle. The usual one is the Hann window, a single raised cosine, " +
+                 "w[n] = ½ − ½ cos(2πn/N). The windowed frame is what everything after this point " +
+                 "operates on.",
         b: "<p>Switch the window to rectangular and press play. The frame repeats 47 times a second " +
            "and you hear a buzz at exactly that rate. Nothing is wrong with the samples: the cut is " +
            "what you are hearing. A frame taken at an arbitrary moment starts and ends mid-swing, so " +
            "every repeat begins with a jump, and a jump is a click.</p>" +
+           "<p>Why is a loop the right test? Because it is exactly what the transform on the next " +
+           "picture assumes. It describes N samples as a sum of waves that each fit a whole number " +
+           "of cycles into the frame, so as far as the transform can tell, the frame is one period " +
+           "of a signal that repeats for ever — the loop you are hearing. The seam is real to it " +
+           "too. A sudden jump is built out of every frequency at once, so the transform of a " +
+           "rectangular frame smears each true frequency across dozens of neighbouring ones: " +
+           "<em>spectral leakage</em>. A pure tone that should be one bar becomes a hill, and a " +
+           "quiet sound near a loud one is buried under the loud one's skirt.</p>" +
            "<p>Switch back to Hann. The blue envelope is the window, the purple line is every sample " +
            "multiplied by it, and both ends are now zero — the frame begins and ends in silence, so " +
-           "the repeats join without a seam. That is the entire reason for the taper, and the price " +
-           "is on the next picture.</p>",
+           "the repeats join without a seam and the leakage falls away steeply. That is the entire " +
+           "reason for the taper. Its price is that samples near the ends are turned down, so a " +
+           "Hann frame hears its middle more than its edges; the hop picture shows how overlapping " +
+           "the frames pays that back. Hamming is a tuned compromise that stops at 0.08 instead of " +
+           "zero: it suppresses the leakage nearest a peak better than Hann and the far leakage " +
+           "worse.</p>",
         eqcap: "𝒳 is every frame at once, one column per frame, and building it computes " +
                "nothing — 𝒳[n, t] is simply sample t·H + n of the recording, read at a " +
                "stride. H is the hop, the step from one column to the next; at H = N the columns tile " +
@@ -240,6 +255,13 @@
                "Point at a letter to see the extent it measures. The counts are quoted at H = N/2, " +
                "the hop the next picture opens on.",
         predict: "Before you press play: the rectangular window keeps every sample exactly as it is. Should it sound cleaner, then?",
+        why: "Almost every spectrogram you will meet was computed through a Hann window: it is the " +
+             "default in librosa and torchaudio and in the front end of speech models such as " +
+             "Whisper. It is the cheapest fix for leakage there is — N multiplications per frame — " +
+             "and it is what lets a transform tell a quiet sound from the edge of a loud one. The " +
+             "frame length is a choice too. For speech it is usually 20 to 30 ms: short enough that " +
+             "the sound is roughly steady inside it, since a vowel lasts longer than that, and long " +
+             "enough to hold a couple of cycles of a low voice's pitch.",
         playFrame: (win) => "this frame on repeat (" + win + ")",
         np: {
           ms: (ms) => ms.toFixed(1) + " ms of sound",
@@ -271,18 +293,30 @@
         k: "La ventana · Apéndice E",
         h: "Una ventana son N números recortados del arreglo",
         claim: "xₜ[n] = x[t·H + n] · w[n],  xₜ.shape = (N,)",
-        concept: "A la transformada no se le da la grabación. Se le da una tirada corta de muestras " +
-                 "consecutivas —un marco— multiplicada por una ventana: un perfil que vale cero en " +
-                 "los dos extremos y uno en el centro. El marco es sobre lo que opera todo lo que " +
-                 "viene después.",
+        concept: "A la transformada no se le da la grabación entera. Se le da una tirada corta de muestras " +
+                 "consecutivas —un <em>marco</em>, de unas pocas decenas de milisegundos— multiplicada muestra a " +
+                 "muestra por una <em>ventana</em>: un perfil suave que vale cero en los dos extremos y uno en el " +
+                 "centro. La habitual es la ventana de Hann, un único coseno elevado, w[n] = ½ − ½ cos(2πn/N). El " +
+                 "marco con ventana es sobre lo que opera todo lo que viene después.",
         b: "<p>Cambia la ventana a rectangular y pulsa reproducir. El marco se repite 47 veces por " +
            "segundo y oyes un zumbido exactamente a esa frecuencia. Las muestras no tienen nada malo: " +
            "lo que oyes es el corte. Un marco tomado en un momento cualquiera empieza y acaba a media " +
            "oscilación, así que cada repetición arranca con un salto, y un salto es un chasquido.</p>" +
-           "<p>Vuelve a Hann. La envolvente azul es la ventana, la línea morada es cada muestra " +
-           "multiplicada por ella, y ahora los dos extremos valen cero: el marco empieza y acaba en " +
-           "silencio, así que las repeticiones se unen sin costura. Esa es toda la razón del perfil, " +
-           "y el precio está en la imagen siguiente.</p>",
+           "<p>¿Por qué un bucle es la prueba adecuada? Porque es exactamente lo que supone la transformada de " +
+           "la imagen siguiente. Describe N muestras como una suma de ondas que caben cada una un número " +
+           "entero de ciclos en el marco, así que, hasta donde la transformada puede saber, el marco es un " +
+           "periodo de una señal que se repite para siempre: el bucle que estás oyendo. La costura también es " +
+           "real para ella. Un salto brusco está hecho de todas las frecuencias a la vez, así que la " +
+           "transformada de un marco rectangular esparce cada frecuencia verdadera entre decenas de vecinas: " +
+           "la <em>fuga espectral</em>. Un tono puro que debería ser una barra se convierte en una colina, y " +
+           "un sonido débil junto a uno fuerte queda enterrado bajo la falda del fuerte.</p>" +
+           "<p>Vuelve a Hann. La envolvente azul es la ventana, la línea morada es cada muestra multiplicada " +
+           "por ella, y ahora los dos extremos valen cero: el marco empieza y acaba en silencio, así que las " +
+           "repeticiones se unen sin costura y la fuga cae con fuerza. Esa es toda la razón del perfil. Su " +
+           "precio es que las muestras cercanas a los extremos se atenúan, así que un marco con Hann oye más " +
+           "su centro que sus bordes; la imagen del salto muestra cómo superponer los marcos lo compensa. " +
+           "Hamming es un compromiso ajustado que se detiene en 0,08 en vez de en cero: suprime mejor que Hann " +
+           "la fuga más cercana a un pico y peor la fuga lejana.</p>",
         eqcap: "𝒳 son todos los marcos a la vez, una columna por marco, y construirla no " +
                "calcula nada: 𝒳[n, t] es sencillamente la muestra t·H + n de la grabación, " +
                "leída a un paso fijo. H es el salto, el paso de una columna a la siguiente; con H = N " +
@@ -290,6 +324,13 @@
                "reshape sin más. Señala una letra para ver la extensión que mide. Las cuentas están " +
                "dadas con H = N/2, el salto con el que abre la imagen siguiente.",
         predict: "Antes de reproducir: la ventana rectangular conserva cada muestra tal cual. ¿Debería sonar más limpia, entonces?",
+        why: "Casi todos los espectrogramas que verás se calcularon con una ventana de Hann: es la opción por " +
+             "defecto en librosa y torchaudio y en la entrada de modelos de voz como Whisper. Es el remedio más " +
+             "barato que existe contra la fuga —N multiplicaciones por marco— y es lo que permite a una " +
+             "transformada distinguir un sonido débil del borde de uno fuerte. La longitud del marco también es " +
+             "una elección. Para la voz suele ser de 20 a 30 ms: lo bastante corta para que el sonido sea más o " +
+             "menos estable dentro de ella, ya que una vocal dura más que eso, y lo bastante larga para contener " +
+             "un par de ciclos del tono de una voz grave.",
         playFrame: (win) => "este marco en bucle (" + win + ")",
         np: {
           ms: (ms) => ms.toFixed(1).replace(".", ",") + " ms de sonido",
