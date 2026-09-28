@@ -41,11 +41,11 @@ Decide cuts at the clock, not in the moment. Full detail in
 
 | Check at | You should be starting | If you are behind |
 |------|---------|----------------------------------------------|
-| +0:45 | 03 | One group reports 02's axis task; skip the rest (−3). |
+| +0:39 | 02's axis-meaning task | One group reports; skip the rest (−3). |
 | +1:00 | 04 | Bug hunt round 1 only, skip round 2's rewrite (−3). |
 | +1:15 | Kahoot 1 | Run it. 6–10 min late: drop Kahoot 2 now. 10+: drop Kahoot 1 too. |
-| +1:25 | 05 | Myth or fact → the retrieval question (−1); one group reports (−4). |
-| +2:00 | 07 | Myth or fact → the retrieval question (−1); drop Kahoot 2 if still in (−5). |
+| +1:25 | 05 | Myth or fact → the retrieval question (−½); one group reports (−4). |
+| +2:00 | 07 | Myth or fact → the retrieval question (−½); drop Kahoot 2 if still in (−5). |
 | +2:30 | 09 | Skip the residual mistake; keep the SVD-to-Tucker bridge (−3). |
 | +2:50 | 10 | Keep golf and the Tucker stage whole, whatever the clock says. |
 | +3:10 | 11 | Hole 2 as a demo (−3); 10+ late: 3 min attempt then demo (−4). |
@@ -91,30 +91,6 @@ Fill this in as the session runs; it is what the
 guide](facilitator-guide.md#after-the-session) ask you to bring back. Planned
 values are from the [agenda](tensors_workshop_plan_with_quizzes.md#schedule).
 
-<!-- Maintainers: the Kahoot and break start times below are copied by hand
-from the agenda. The section rows read `start` and `minutes` from
-_variables.yml; re-check the others if a section's minutes change. -->
-
-| Segment | Planned start | Planned min | Actual start | Actual end | Cut taken | Notes |
-|---|---|---|---|---|---|---|
-| 00 · {{< var sections.s00.title_en >}} | {{< var sections.s00.start >}} | {{< var sections.s00.minutes >}} | | | | |
-| 01 · {{< var sections.s01.title_en >}} | {{< var sections.s01.start >}} | {{< var sections.s01.minutes >}} | | | | |
-| 02 · {{< var sections.s02.title_en >}} | {{< var sections.s02.start >}} | {{< var sections.s02.minutes >}} | | | | |
-| 03 · {{< var sections.s03.title_en >}} | {{< var sections.s03.start >}} | {{< var sections.s03.minutes >}} | | | | |
-| 04 · {{< var sections.s04.title_en >}} | {{< var sections.s04.start >}} | {{< var sections.s04.minutes >}} | | | | |
-| Kahoot 1 | +01:15 | {{< var schedule.quiz_minutes >}} | | | | |
-| Break | +01:20 | {{< var schedule.break_minutes >}} | | | | |
-| 05 · {{< var sections.s05.title_en >}} | {{< var sections.s05.start >}} | {{< var sections.s05.minutes >}} | | | | |
-| 06 · {{< var sections.s06.title_en >}} | {{< var sections.s06.start >}} | {{< var sections.s06.minutes >}} | | | | |
-| Break | +01:55 | {{< var schedule.break_minutes >}} | | | | |
-| 07 · {{< var sections.s07.title_en >}} | {{< var sections.s07.start >}} | {{< var sections.s07.minutes >}} | | | | |
-| Kahoot 2 | +02:15 | {{< var schedule.quiz_minutes >}} | | | | |
-| 08 · {{< var sections.s08.title_en >}} | {{< var sections.s08.start >}} | {{< var sections.s08.minutes >}} | | | | |
-| 09 · {{< var sections.s09.title_en >}} | {{< var sections.s09.start >}} | {{< var sections.s09.minutes >}} | | | | |
-| Break | +02:45 | {{< var schedule.break_minutes >}} | | | | |
-| 10 · {{< var sections.s10.title_en >}} | {{< var sections.s10.start >}} | {{< var sections.s10.minutes >}} | | | | |
-| Kahoot 3 | +03:05 | {{< var schedule.quiz_minutes >}} | | | | |
-| 11 · {{< var sections.s11.title_en >}} | {{< var sections.s11.start >}} | {{< var sections.s11.minutes >}} | | | | |
-| 12 · {{< var sections.s12.title_en >}} | {{< var sections.s12.start >}} | {{< var sections.s12.minutes >}} | | | | |
+{{< include _includes/day-sheet-strip-en.md >}}
 
 :::

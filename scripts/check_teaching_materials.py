@@ -1,18 +1,23 @@
 #!/usr/bin/env python3
 """Validate GitHub teaching resources and explicit core-cell routes.
 
-Stdlib only. Checks structure and local links, not translation quality or runtime
+Checks structure and local links, not translation quality or runtime
 dependencies. The full site checker owns rendered pages and notebook validity.
+`check_clock_table` is the one check that reaches for `timeline.py` (and so
+`--group site`'s pyyaml, not stdlib alone) to confirm the facilitator guide's
+and day sheet's hand-written check-at times still match the running clock.
 """
 
 from __future__ import annotations
 
 import json
 import re
+import sys
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "scripts"))
 
 # The marker a predict-first cell opens with -- exactly one per notebook, so
 # scripts/test_notebooks.py can name the cell it steps over the same way
@@ -285,6 +290,83 @@ def check_sequence(notebook: dict, label: str) -> list[str]:
     return sequence
 
 
+CLOCK_TABLES = (
+    "facilitator-guide.md",
+    "es/facilitator-guide.md",
+    "day-sheet.md",
+    "es/day-sheet.md",
+)
+
+
+def cut_table_rows(text: str) -> list[tuple[str, str]]:
+    """(check-at, should-be-starting) for every body row of the cut/clock table.
+
+    Both languages' facilitator guide ("If you are behind") and day sheet
+    ("Clock strip") carry this table under a distinctive header; a blank
+    "check at" cell is a continuation row sharing the row above it (the
+    Kahoot 1 lateness ladder), and both cells are returned unmodified so the
+    caller decides what a blank means.
+    """
+    lines = text.splitlines()
+    header = next(
+        (
+            i
+            for i, line in enumerate(lines)
+            if line.startswith("| Check at") or line.startswith("| Comprueba en")
+        ),
+        None,
+    )
+    if header is None:
+        raise ValueError("no cut/clock table found")
+    rows = []
+    for line in lines[header + 2 :]:
+        if not line.startswith("|"):
+            break
+        cells = [c.strip() for c in line.strip().strip("|").split("|")]
+        rows.append((cells[0], cells[1]))
+    return rows
+
+
+def check_clock_table(path: Path) -> tuple[int, int]:
+    """Every hand-written check-at time must match `timeline`'s own clock.
+
+    Only a row whose "should be starting" cell names a segment plainly --
+    a bare section number (`03`) or `Kahoot N` -- can be checked this way; a
+    row naming something else (an activity partway through a section, like
+    02's axis-meaning task) is skipped, and the skip is counted so a summary
+    that checks less than usual never reads like a clean one.
+    """
+    import timeline  # noqa: PLC0415  (sibling module, scripts/ on sys.path)
+
+    starts: dict[str, int] = {}
+    minute = 0
+    for name, length in timeline.atoms():
+        starts[name] = minute
+        minute += length
+
+    checked = skipped = 0
+    for check_at, starting in cut_table_rows(path.read_text()):
+        if not starting:
+            continue
+        section = re.fullmatch(r"\d{2}", starting)
+        kahoot = re.fullmatch(r"Kahoot (\d)", starting)
+        if not (section or kahoot):
+            skipped += 1
+            continue
+        segment_id = starting if section else f"q{kahoot[1]}"
+        if segment_id not in starts:
+            raise ValueError(f"{path}: {starting!r} is not a known segment")
+        expected_minute = starts[segment_id]
+        actual = re.fullmatch(r"\+(\d+):(\d{2})", check_at)
+        if not actual or int(actual[1]) * 60 + int(actual[2]) != expected_minute:
+            raise ValueError(
+                f"{path}: {starting} starts at {timeline.clock(expected_minute, '+')} "
+                f"on the clock, table says {check_at or '(blank)'}"
+            )
+        checked += 1
+    return checked, skipped
+
+
 def check(root: Path = ROOT) -> None:
     paths = sorted((root / "notebooks").glob("[0-9][0-9]-*.ipynb"))
     notebooks = {p.name[:2]: p.name for p in paths}
@@ -325,8 +407,14 @@ def check(root: Path = ROOT) -> None:
             keys.append(set(found))
         if keys[0] != keys[1]:
             raise ValueError(f"{source}: English and Spanish language keys differ")
+    checked = skipped = 0
+    for name in CLOCK_TABLES:
+        c, s = check_clock_table(root / name)
+        checked += c
+        skipped += s
     print(
-        f"Teaching materials valid: {len(paths)} core routes, paired tasks and local links"
+        f"Teaching materials valid: {len(paths)} core routes, paired tasks and "
+        f"local links; {checked} clock rows checked, {skipped} skipped"
     )
 
 
