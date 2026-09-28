@@ -182,6 +182,14 @@ workshop:
     >
     > Ya tienes una forma práctica de pensar sobre tensores: **primero el significado de los ejes, después la operación matemática**.
 
+# ── Community ────────────────────────────────────────────────────────────────
+# The workshop's Discord server. Groups post their share-backs there during the
+# session, and a pre-work problem (a notebook 00 download that fails) is
+# reported there before it. One invite for both languages; every page that
+# says "Discord" links it from here, so a new invite is a one-line change.
+community:
+  discord: "https://discord.gg/mHb688bAR"
+
 # ── Kahoot quizzes ───────────────────────────────────────────────────────────
 # `url` is the live join/share link. It does not exist until the facilitator
 # imports the .xlsx into kahoot.it (Create → Add question → Import → Import

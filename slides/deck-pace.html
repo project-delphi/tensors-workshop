@@ -136,37 +136,44 @@
     setInterval(tick, 1000);
 
     // ── The section breadcrumb ──────────────────────────────────────────
-    // Walk every section in document order, not just the top-level ones.
-    // Historically the rendered HTML was flat — a level-1 title slide, then
-    // its level-2 slides as siblings — with reveal's init wrapping each
-    // group in a `.stack` to make it a vertical column, so by the time this
-    // runs the level-1 slides sit one level down. Since issue #45's redesign
-    // (31 flat, image-backed slides per deck, every slide a plain `##`
-    // level-2 background-image block) only the 15 section/Kahoot divider
-    // slides carry the intentional `h1.sr-only` marker, so detection keys
-    // off that specific element rather than the level. Deliberately not a
-    // bare "h1, h2": an ordinary content slide has no heading of its own —
-    // its `##` line carries only slide attributes — but matching any h2 on
-    // principle would be one accidental heading away from manufacturing a
-    // false section break.
+    // Walk every section in document order, not just the top-level ones:
+    // reveal's init wraps vertical groups in a `.stack`, so by the time this
+    // runs a slide may sit one level down.
+    //
+    // Two kinds of slide open a section. A section's own opener is the
+    // `.outcomes-slide` that #117 made of every divider -- its `##` heading
+    // is the section's name, and its `.sec-part` the part. A Kahoot break is
+    // an image slide whose name is in an `h1.sr-only`, with no `.sec-part`.
+    // Until 2026-09-28 only the second kind was recognised, so the crumb
+    // showed nothing before Kahoot 1 and the last Kahoot's name on every
+    // slide after it. Deliberately not a bare "h1, h2": most slides carry an
+    // `h2` of their own, and matching any of them would manufacture a
+    // section break on every one.
+    function sectionHeading(slide) {
+      if (slide.classList.contains("outcomes-slide")) {
+        return slide.querySelector("h2");
+      }
+      return slide.querySelector("h1.sr-only");
+    }
+
     var slides = reveal.querySelectorAll(".slides section");
     var crumbText = "";
     Array.prototype.forEach.call(slides, function (slide) {
       // `.stack` wrappers are neither level, and must not take a crumb.
       var isSlide = slide.classList.contains("level1") ||
                     slide.classList.contains("level2");
-      var heading = slide.querySelector("h1.sr-only");
+      var heading = isSlide ? sectionHeading(slide) : null;
       if (heading) {
         var title = heading.textContent.trim();
         // Drop the "01 · " prefix: the slide number already tells the room
         // where it is, and the part is about to be spelled out anyway.
         title = title.replace(/^\d+\s*·\s*/, "");
-        // A hidden marker on the divider slide, not an attribute on the
+        // A hidden marker on the opening slide, not an attribute on the
         // heading: a var shortcode inside a heading's `{...}` is not parsed
         // as an attribute at all, and takes the #sec-NN anchor down with it.
         // (Quarto runs its shortcode parser over this file too, so the
         // shortcode cannot be written out literally here either.) Kahoot
-        // dividers carry no `.sec-part` at all, so they fall straight to the
+        // breaks carry no `.sec-part` at all, so they fall straight to the
         // plain-title branch below.
         var marker = slide.querySelector(".sec-part");
         var part = marker ? marker.textContent.trim() : "";
@@ -251,11 +258,12 @@
     // the wrong notebook, with nothing to fail.
     //
     // The rule, in one sentence: a section makes its notebook available on
-    // every slide of that section, while a Kahoot break adopts none, so a
-    // slide sitting after a break carries its own link. Groups start at each
-    // divider (the `h1.sr-only` marker the breadcrumb already keys off); a
-    // divider with a `.sec-part` is a section and shares its links group-wide,
-    // and one without — a Kahoot — leaves them on the declaring slide.
+    // every slide of that section that names none of its own, while a Kahoot
+    // break adopts none, so a slide sitting after a break carries its own
+    // link. Groups start at each opener (`sectionHeading()`, which the
+    // breadcrumb uses too); an opener with a `.sec-part` is a section and
+    // shares its links group-wide, and one without — a Kahoot — leaves them
+    // on the declaring slide.
 
     // Reading chips ride the same walk. They are not indirected through a
     // number the way notebooks are — there is no canonical id for a blog post
@@ -340,24 +348,24 @@
         var own = colabNumbers(slide);
         var ownReading = readingLinks(slide);
 
-        if (slide.querySelector("h1.sr-only")) {
+        if (sectionHeading(slide)) {
           group = slide.querySelector(".sec-part")
-            ? { numbers: own, reading: ownReading }
+            ? { numbers: own.slice(), reading: ownReading.slice() }
             : null;   // a Kahoot break shares nothing forward
         }
 
         panelSlides.push(slide);
 
         if (group) {
-          // Every slide of the section pushes the same object, so a link
-          // found later in the walk reaches the divider too. Union, not
-          // replacement: a section whose second slide carries a link must not
-          // lose the one its divider declared.
-          own.forEach(function (number) {
-            if (group.numbers.indexOf(number) === -1) {
-              group.numbers.push(number);
-            }
-          });
+          // Every slide of the section shares the same object, so a link
+          // found later in the walk reaches the opener too. The section's
+          // notebook is the first one it declares -- its opener's, today --
+          // and a later slide's own notebook never joins it (see below). The
+          // reading chips are a union: a section whose second slide carries
+          // one must not lose the one its opener declared.
+          if (!group.numbers.length) {
+            Array.prototype.push.apply(group.numbers, own);
+          }
 
           ownReading.forEach(function (link) {
             for (var i = 0; i < group.reading.length; i++) {
@@ -369,7 +377,15 @@
             group.reading.push(link);
           });
 
-          panelEntries.push(group);
+          // A slide's own notebook wins over the section's: slide 30 sits in
+          // section 11's run but opens notebook 12, and must show 12 alone.
+          // The section's notebook fills in only where a slide declares none.
+          // The reading chips are shared across the whole section; no
+          // section carries more than two.
+          panelEntries.push({
+            numbers: own.length ? own : group.numbers,
+            reading: group.reading
+          });
         } else {
           panelEntries.push({ numbers: own, reading: ownReading });
         }
@@ -393,8 +409,8 @@
 
       var current = Reveal.getCurrentSlide();
       var position = current ? panelSlides.indexOf(current) : -1;
-      // A section's links are resolved only now, after the whole walk, so a
-      // divider carrying no link of its own still shows the one declared
+      // A section's links are resolved only now, after the whole walk, so an
+      // opener carrying no link of its own still shows the one declared
       // later in its section.
       var entry = position === -1 ? null : panelEntries[position];
       var numbers = (entry && entry.numbers) || [];
