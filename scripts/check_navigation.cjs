@@ -982,14 +982,29 @@ async function audit(page, where) {
         // so the buttons would act on whichever step the scroll landed on.
         const dollyOf = c => Number(c.split(',')[2]);
         const press = id => page.evaluate(id => document.getElementById(id).click(), id);
+        // Polled, then asserted: on a runner busy with the other shards'
+        // browsers the stamp can read another step's view for a frame (a late
+        // scroll-follow callback, or three.js finishing its boot), and a read
+        // taken once then fails a zoom that did happen. The assertion after
+        // each poll still carries the message.
+        const dollyTo = (want) => page.waitForFunction((want) => {
+          const d = Number(document.querySelector('#stage').dataset.cam.split(',')[2]);
+          return want === 'in' ? d < 1 : want === 'out' ? d > 1 : d === 1;
+        }, want, {timeout: 5000}).catch(() => {});
+        const camIs = (want) => page.waitForFunction((want) =>
+          document.querySelector('#stage').dataset.cam === want, want, {timeout: 5000})
+          .catch(() => {});
         await press('zoom-in');
+        await dollyTo('in');
         assert(dollyOf(await cam()) < 1,
           `${where}: Zoom in should bring the camera closer (${await cam()})`);
         await press('zoom-out');
         await press('zoom-out');
+        await dollyTo('out');
         assert(dollyOf(await cam()) > 1,
           `${where}: Zoom out should move the camera away (${await cam()})`);
         await press('home');
+        await camIs(homeCam);
         assert.equal(await cam(), homeCam,
           `${where}: the Home button should also reset the zoom`);
 
@@ -1038,14 +1053,17 @@ async function audit(page, where) {
           await open(n);
           await press('home');
           await press('zoom-in');
+          await dollyTo('in');
           assert(dollyOf(await cam()) < 1, `${where}: step ${n} zooms in`);
           await press('zoom-out'); await press('zoom-out');
+          await dollyTo('out');
           assert(dollyOf(await cam()) > 1, `${where}: step ${n} zooms out`);
           // The step's controls live in the dock under the stage on a wide
           // screen (step-dock.js), not in the step's own section.
           const input = page.locator(`.dock-panel[data-step="step-${n}"] input[type=range]`).first();
           await input.fill(await input.getAttribute('max'));
           await press('reset');
+          await dollyTo('home');
           assert.equal(dollyOf(await cam()), 1, `${where}: step ${n} reset restores framing`);
           assert(await input.evaluate(e => e.value === e.defaultValue),
             `${where}: step ${n} reset restores the experiment`);
@@ -2334,7 +2352,11 @@ async function audit(page, where) {
           page.waitForURL(u => u.pathname.endsWith('/interactive/factor-stage.html')
             && u.searchParams.get('lang') === lang, {waitUntil: 'commit'}),
           page.locator('#hero-panel-factor a.hero-still').click()]);
-        await page.goBack();
+        // Back to the homepage by address, not by history: goBack() asked the
+        // factor stage for its history while three.js was still booting, and
+        // with two other shards' browsers on the runner that page's target
+        // was sometimes already detached ("Not attached to an active page").
+        await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
