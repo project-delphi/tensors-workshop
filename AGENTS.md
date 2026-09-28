@@ -371,9 +371,14 @@ every `repo.widgets` line.
 `check_links.py` fails the build if any file in `repo.widgets` is missing from
 `docs/` -- for the addons that is the *only* guard, since an import map is
 element content and the link harvest reads attributes. `check_navigation.cjs`
-drives every widget in both languages, from a per-widget `drive` callback
-rather than a flag, and runs axe over them; its `widgets` table is the order
-the `drive*` functions are written in. The stage's callback opens every one
+is the entry point; the checks themselves are split under
+`scripts/navigation/` -- `harness.cjs` for sharding, the server and browser
+setup, and `scenario()`; `site.cjs` for the checks that belong to no one
+widget; `widgets/<file>.cjs`, one per widget, for its own `drive`, and where
+it has one, `fallback` and `embed`. `check_navigation.cjs`'s own
+`ALL_WIDGETS` table is the order the `widgets/*.cjs` `drive*` functions are
+written in, and drives every widget in both languages, running axe over
+each. The stage's callback opens every one
 of its eight steps and asserts each step's claim off `data-*`. Every colour a widget puts on text
 clears 4.5:1 per theme -- the four axis hues have `--axN-ink` text variants,
 and the stages' dark-in-every-theme canvas has one `--stage*` set in
@@ -394,7 +399,8 @@ long line is genuinely the picture.
 `waitForTimeout` long enough on this Mac is short on the GitHub Linux runner,
 where the whole check runs slower and a wheel or drag settles later; the
 assertion then reads the pre-gesture value and fails only in CI. So a new or
-changed assertion in `check_navigation.cjs` goes through `page.waitForFunction`
+changed assertion in `check_navigation.cjs` or `scripts/navigation/**` goes
+through `page.waitForFunction`
 on the `data-*` the widget publishes, with a timeout as the ceiling rather than
 the schedule. This is a rule for what you write, not a description of the file:
 about fifteen `waitForTimeout` calls are still in there, and every one of them
