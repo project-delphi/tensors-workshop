@@ -141,7 +141,9 @@ What each generator draws, and the rules each one keeps:
 - `gen_slide_art.py` draws the `slide-NNa` insertions from HTML and CSS,
   screenshotted by headless Chrome at 1920×1080 and encoded as WebP with
   Pillow, so it runs under `--group figures`. The thirty-one pre-existing slides
-  have no source and are redrawn by hand. Copy for both languages lives in one
+  have no source and are redrawn by hand -- touching one moves its equations,
+  numbers and teaching text into editable Quarto content instead, per the rule
+  and inventory in `slides/README.md`. Copy for both languages lives in one
   `SLIDES` table.
 
 **The companion's assets have no generator.** The infographic PNGs and the
