@@ -158,7 +158,25 @@ jobs:
         run: npm test
 
       - name: Check navigation in a browser
+        # A failed scenario keeps a Playwright trace, a screenshot of every
+        # open page and the error under NAV_EVIDENCE (scripts/navigation/
+        # harness.cjs, scenario()); SCREENSHOT_DIR is where the check's own
+        # screenshots and the day sheet's PDFs go. A green run adds nothing.
+        env:
+          NAV_EVIDENCE: ${{ runner.temp }}/navigation-evidence/failed
+          SCREENSHOT_DIR: ${{ runner.temp }}/navigation-evidence/screenshots
         run: npm run check:navigation
+
+      # Only when something failed: then the trace is the difference between
+      # rerunning the whole check locally and opening the step that broke.
+      # `npx playwright show-trace trace.zip`, or trace.playwright.dev.
+      - name: Upload browser-check evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: navigation-evidence
+          path: ${{ runner.temp }}/navigation-evidence
+          retention-days: 14
 
       # The tested build is what ships. Everything above has run against this
       # exact docs/ — the checkers, the byte-identity check on the notebooks,
@@ -234,9 +252,27 @@ jobs:
 
       - name: Execute the core routes
         # Headless: the solutions plot, and no runner has a display.
+        # --artifacts keeps what this run actually saw: each route's
+        # executed notebook, its plots, environment.txt and coverage, so a
+        # reviewer who cannot start a kernel can still see what CI ran.
+        # $RUNNER_TEMP, not the checkout, so it is never near notebooks/.
         env:
           MPLBACKEND: Agg
-        run: uv run --group execute python scripts/test_notebooks.py
+        run: |
+          uv run --group execute python scripts/test_notebooks.py \
+            --artifacts "$RUNNER_TEMP/notebook-evidence"
+
+      # Kept regardless of whether the run above passed: a failing route's
+      # traceback in the route copy is the most useful thing a reviewer can
+      # download. retention-days is short because this is a debugging aid,
+      # not a record.
+      - name: Upload notebook evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: notebook-evidence
+          path: ${{ runner.temp }}/notebook-evidence
+          retention-days: 14
 
       - name: Fail if executing a notebook changed it
         # The runner executes in memory and never writes back. If that ever

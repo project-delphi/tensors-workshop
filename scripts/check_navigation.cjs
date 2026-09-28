@@ -1,7 +1,9 @@
 // Render first. Requires Playwright and its Chromium browser (see CONTRIBUTING).
 // This file is the entry point: every flag and env var it has always
 // honoured (`--shard i/N` / `NAV_SHARD`, `--slides-only`, `NAV_ROOT`,
-// `SCREENSHOT_DIR`, `PLAYWRIGHT_MODULE`, `BROWSER_EXECUTABLE`) still lands
+// `SCREENSHOT_DIR`, `PLAYWRIGHT_MODULE`, `BROWSER_EXECUTABLE`), and
+// `NAV_EVIDENCE` -- where a failed scenario's trace and screenshots go --
+// still lands
 // here, because `package.json`'s scripts, `scripts/run_navigation_shards.cjs`,
 // CI and the docs all call it by this name. What it actually checks is split
 // across `scripts/navigation/`: `harness.cjs` for sharding, the server,
@@ -120,6 +122,12 @@ async function driveOneWidget(ctx, widget, where, lang) {
     const ctx = {
       page, context, origin, prefix, root, screenshots, counters, a11y,
       audit: (where) => harness.audit(page, where, a11y),
+      // One folder per shard, since the shards run at once and share the root.
+      evidence: process.env.NAV_EVIDENCE ? {
+        dir: path.join(path.resolve(process.env.NAV_EVIDENCE),
+          shard ? `shard-${shard.index}-of-${shard.total}` : 'unsharded'),
+        tracing: false,
+      } : null,
     };
     if (!process.argv.includes('--slides-only')) {
       if (runsSite) {

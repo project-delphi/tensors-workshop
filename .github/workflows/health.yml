@@ -35,12 +35,26 @@ jobs:
           enable-cache: false
 
       - name: Execute every route, strictly
+        # --artifacts, same as publish.yml's notebooks job: a daily failure
+        # is emailed with a log, and the route copy plus environment.txt is
+        # what turns that email into something actionable without rerunning
+        # the whole health check by hand.
         env:
           MPLBACKEND: Agg
         run: |
           set -o pipefail
           uv run --group execute python scripts/test_notebooks.py --strict \
+            --artifacts "$RUNNER_TEMP/notebook-evidence" \
             | tee run.log
+
+      - name: Upload notebook evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: notebook-evidence-health
+          path: ${{ runner.temp }}/notebook-evidence
+          retention-days: 14
+
       - name: Summarise
         if: always()
         run: |
