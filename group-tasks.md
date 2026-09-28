@@ -260,6 +260,9 @@ Fewest numbers under 2% wins.
 - Exercise 1 fixed the budget and compared errors. This hole fixes the error
   and compares budgets. Does the same model win?
 - A report calls CP better than Tucker at “rank 3”. What did it hold fixed?
+- Look at `cp_fit.factors[2][:, 0]` from Exercise 1. What does one value in
+  that column mean, and how does interpreting it compare with reading
+  Tucker's columns together with its core?
 
 **Share:** Our entry → the other model's best entry → the bar at which the
 other model would win.
