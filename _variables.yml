@@ -298,7 +298,7 @@ companion:
     # because that is the part a screen reader actually reads out. The
     # YouTube embed, when it lands, wins over it: an embed carries its own
     # poster.
-    thumb: "images/companion-video.png"
+    thumb: "images/companion-video.webp"
     thumb_alt_en: "Watch the NotebookLM video: Tensors Machine Learning, illustrated with stacked tensor slices."
     thumb_alt_es: "Ver el vídeo de NotebookLM: Tensors Machine Learning, ilustrado con cortes de un tensor apilados."
 

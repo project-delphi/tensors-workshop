@@ -11,7 +11,7 @@ venv/
 # Local browser-check dependencies. package.json and package-lock.json ARE
 # committed: the navigation check runs in CI, and `npm ci` needs the lock to
 # install the pinned Playwright rather than resolving a new one.
-node_modules/
+node_modules
 
 # uv's resolution of pyproject.toml, written on the first `uv run`. Not
 # committed, deliberately. The groups there carry floors rather than pins so a
@@ -49,3 +49,6 @@ pca_data/
 # Claude Code's resume checkpoint, written near a context limit. Session
 # state, not source.
 /.claude/RESUME.md
+
+# Worktrees Claude Code makes for isolated agents.
+.claude/worktrees/

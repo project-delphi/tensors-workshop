@@ -146,48 +146,69 @@ section's.
 
 | Slide | Anchor | Notebook | What it introduces |
 |---|---|---|---|
-| 01–02 | — | — | Title, the workshop idea |
+| 01 | — | — | Title |
+| predict | — | — | Cold open: same numbers — still a voice? |
+| 02 | — | — | The workshop idea |
 | **02a** | — | — | Four ideas, one object — the whole day in four cards |
 | 03 | — | — | The four datasets |
 | agenda | — | — | The running clock, from `_includes/agenda-{en,es}.md` |
-| 04 | `sec-00-setup-and-data` | 00 | Setup and welcome |
-| 05 | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
+| outcomes | `sec-00-setup-and-data` | 00 | Setup and welcome |
+| outcomes | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
 | 06 | · | 01 | Map of factorizations — the map section 09 walks |
 | 07 | · | 01 | What a factorization gives you: number → polynomial → matrix → tensor |
 | computing primer | `numpy-memory`, `hardware-acceleration`, `numerical-software-stack` | 01 | NumPy memory, hardware and numerical software |
-| 08 | `sec-02-thinking-in-n-dimensions` | 02 | Thinking in N dimensions |
+| outcomes | `sec-02-thinking-in-n-dimensions` | 02 | Thinking in N dimensions |
 | 09 | · | 02 | Batch is not time |
-| 10 | `sec-03-indexing-and-broadcasting` | 03 | Indexing and broadcasting |
+| outcomes | `sec-03-indexing-and-broadcasting` | 03 | Indexing and broadcasting |
 | 11 | · | 03 | Broadcasting on real images |
-| 12 | `sec-04-reshape-and-transpose` | 04 | Reshape and transpose |
+| predict | · | 03 | What shape comes out? |
+| outcomes | `sec-04-reshape-and-transpose` | 04 | Reshape and transpose |
 | 13 | · | 04 | Reshape vs. transpose |
+| predict | · | 04 | Does a reshape survive this photo? |
 | 14 | `sec-kahoot-1` | — | Quiz 1 |
-| 15 | `sec-05-video-pipeline-design` | 05 | Video pipeline design |
+| outcomes | `sec-05-video-pipeline-design` | 05 | Video pipeline design |
+| myth or fact | · | 05 | Three claims from the block before the break |
 | 16 | · | 05 | Pad or sample |
-| 17 | `sec-06-contraction-with-einsum` | 06 | Contraction with einsum |
+| outcomes | `sec-06-contraction-with-einsum` | 06 | Contraction with einsum |
 | 18 | · | 06 | Reading an einsum expression |
 | 19 | · | 06 | NumPy and einsum, side by side |
-| 20 | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
-| **20a** | · | 07 | Square, singular, tall, wide — and what `A⁺` returns in each |
-| 21 | · | 07 | California Housing, 20,433 equations |
-| **21a** | · | 07 | Tensor inverses: unfold → `pinv` → fold, and the second half's through-line |
+| outcomes | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
+| myth or fact | · | 07 | Three claims from the block before the break |
+| computing | · | 07 | Same predictions, different coefficients |
+| predict | · | 07 | How far does the answer move? |
+| 21 | · | 07 | California Housing, 20,433 equations (extension) |
+| **21a** | · | 07 | Tensor inverses: unfold → `pinv` → fold, and the second half's through-line (extension) |
 | 22 | `sec-kahoot-2` | — | Quiz 2 |
-| 23 | `sec-08-recursion-with-matrices` | 08 | Recursion with matrices |
+| outcomes | `sec-08-recursion-with-matrices` | 08 | Recursion with matrices |
 | 24 | · | 08 | Eigenvectors and the dominant direction |
-| **25a** | `sec-09-matrix-factorizations` | 09 | Matrix factorizations, and where eigendecomposition is named |
+| outcomes | `sec-09-matrix-factorizations` | 09 | Matrix factorizations |
 | **26a** | · | 09 | Factor once, solve many — three routes to the same least squares |
-| 27 | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
+| outcomes | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
+| myth or fact | · | 10 | Three claims from the block before the break |
 | 28 | · | 10 | Table → tensor → HOSVD → reconstruction |
+| golf | · | 10 | Compression golf, hole 1 |
+| predict | · | 10 | Which hour does the hour factor pick? |
 | 29 | `sec-kahoot-3` | — | Quiz 3 |
-| **29a** | `sec-11-tensor-factorizations` | 11 | Tensor factorizations: structure first, then rank |
-| **29b** | · | 11 | CP, Tucker, TT and t-SVD — what each stores and what it buys |
+| outcomes | `sec-11-tensor-factorizations` | 11 | Tensor factorizations |
+| **29b** | · | 11 | CP, Tucker, TT and t-SVD — what each stores and what it buys (extension) |
+| golf | · | 11 | Compression golf, hole 2 |
+| predict | · | 11 | Same budget — who wins? |
 | 30 | · | 12 | One idea connects sections 07, 10 and take-home 13 |
-| **31a** | `sec-12-wrap-up-and-take-homes` | 12 · take-home 13 | Wrap-up and take-homes |
+| outcomes | `sec-12-wrap-up-and-take-homes` | 12 | Wrap-up and take-homes |
+
+A numbered row is background art; a **bold** number has a source in
+`scripts/gen_slide_art.py`. `outcomes` is a section's opening slide, built
+from `_variables.yml` (its minutes, *Practise today* and *Explore later*) rather
+than drawn, so it cannot disagree with the agenda. `predict`, `myth or fact`,
+`golf` and `computing` are HTML slides written in the qmd.
 
 **Unused art.** `slide-25.webp` and `slide-26.webp` (the old convolution slides)
 and `slide-31.webp` (the old wrap-up, which read `11 ·`) are still in the
 repository and referenced by nothing. They are kept because they cannot be
-regenerated: the tool that drew them is not here.
+regenerated: the tool that drew them is not here. The section dividers that
+#117 replaced with outcome slides (`slide-04` … `slide-27` and the generated
+`25a`, `29a`, `31a`), and `slide-20a`, were deleted on 2026-09-28; they are in
+git history before that date if a divider ever comes back.
 
 **What the notebooks teach that no slide does**, and deliberately so — these are
 take-home material, and the room's 210 minutes do not stretch to them:
@@ -211,23 +232,15 @@ place rather than right in the first. Two consequences, both deliberate:
 - The baked corner number no longer matches the slide's true position. It is
   decoration — `slide-number: false` in both deck headers means reveal shows no
   number of its own — and since `slide-02a` it stops being authoritative from
-  `slide-03` onward, rather than after section 07 as it did when `slide-20a`
-  was the first insertion.
+  `slide-03` onward.
 - New art carries **no corner number at all**, so it cannot be wrong.
-- The **closing slide was rebuilt** here rather than left stale. `slide-31`'s
-  art read `11 · Wrap-up and take-homes` after the wrap-up became section 12,
-  so `slide-31a` replaces it — same layout, correct number, and without the
-  Spanish that had leaked into the English card labels (*compara
-  representations*, *STFT → matriz → SVD*). It is the `closing` layout in
-  `gen_slide_art.py`: five centred cards, the sentence to leave with, and the
-  thanks line, with no callout bar competing against the closing statement.
 
 To add or change one of the generated slides, edit `SLIDES` in
 [`scripts/gen_slide_art.py`](../scripts/gen_slide_art.py) — copy for both
 languages lives there, next to each other, which is the point — and run:
 
 ```bash
-uv run python scripts/gen_slide_art.py
+uv run --group figures python scripts/gen_slide_art.py
 ```
 
 It needs Chrome or Chromium and the network (Google Fonts), so like
