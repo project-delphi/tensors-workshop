@@ -80,10 +80,11 @@ rango 6, 198 números con un 1,76%, frente a lo mejor de Tucker, (4, 4, 5) con
 con el 2%, lo que responde a «¿qué modelo es mejor?» antes de que nadie lo
 pregunte.
 
-En el cuaderno 11, primero predicen el almacenamiento y luego usan la pista
-opcional de código parcial para completar el ajuste y la comparación. Reserva
-los siete minutos en pareja para elegir, comprobar e interpretar; ejecuta las
-instalaciones durante la preparación. Si el ajuste tarda mucho, demuestra la
+En el cuaderno 11, los ajustes CP y Tucker ya están en la celda TAREA; primero
+predicen el almacenamiento y luego la ejecutan. Reserva los siete minutos en
+pareja para elegir el presupuesto, contar parámetros, calcular ambos errores
+relativos e interpretar la diferencia; ejecuta las instalaciones durante la
+preparación. Si el ajuste tarda mucho, demuestra la
 solución incluida después del intento. Conserva los ocho minutos de golf. Anota tiempos reales de finalización y uso de pistas para comprobar
 si esta distribución funciona con el grupo.
 
