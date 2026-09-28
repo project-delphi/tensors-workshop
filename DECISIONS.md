@@ -170,6 +170,42 @@ the generator writes. An SVG with a fixed `viewBox` does not reflow, so the
 layout is emitted twice and `custom.scss` picks one at 44rem; the diagram
 draws itself from the site's own SCSS variables.
 
+## The typefaces
+
+**The site vendors a typeface pair, and the `@font-face` is not in the
+theme** (2026-09-22). The site had been set in a system-font stack, which is
+free and is a different page on every operating system. Three things decided
+the change and its shape:
+
+*Why vendored rather than a CDN.* `check_navigation.cjs` aborts every
+off-origin request, so a `fonts.googleapis.com` stylesheet would load on a
+reader's machine and test as the fallback stack on the runner -- the class of
+difference nothing in CI can see. The same reasoning already vendored three.js
+and the stages' CMU Serif, with the same ledger. Both faces are subset to
+latin + latin-ext, which is what Spanish needs, and Inter is instanced to
+`wght` 400–800 because only weight varies here.
+
+*Why not system fonts.* Because of one asset: `images/og-card.png` is drawn
+by matplotlib, offline, with no browser and no system font list to fall
+through. Vendoring is what lets the card be set in the same two faces a
+reader's browser renders, from the same two files.
+
+*Why the `@font-face` is in `fonts/fonts.css` and not `custom.scss`.* It was
+in the theme first, written `url("../../fonts/x.woff2")` -- correct for a
+browser, since the theme compiles to `docs/site_libs/bootstrap/`. Quarto does
+not leave a Sass `url()` alone: it treats it as a dependency, resolves it
+against the *project* directory rather than against where the stylesheet
+lands, and copies the file next to the compiled CSS. That path sent it
+looking two levels above the repo and failed the render outright. The
+repo's existing workaround is to write such a path as if from the project
+root and let Quarto do the copy -- `custom.scss`'s reduced-motion block does
+exactly that for one image -- but here that would leave a second copy of
+300 KB of font in `site_libs/` while `resources: fonts/**` already carries
+the first, and `repo.widgets` would be guarding the copy nothing loads. A
+plain stylesheet beside the files it names keeps its own URLs, and
+`format.html.css` gets rewritten per page depth by Quarto, so one line serves
+both languages.
+
 ## The widgets
 
 **The attention stage read the stage mid-scroll** (2026-09-22). `driveAttention`
@@ -720,11 +756,34 @@ does; it is left for the handbooks' own change rather than edited here.
 
 ## Which document owns what
 
-**Seven documents, one home per fact.** They drifted once -- five copies of the
+**One home per fact.** The documents drifted once -- five copies of the
 prerequisites, three different local-run commands, two incompatible
 vocabularies -- which is why the ownership table exists and why the local-run
 command, still written in six places, no longer carries a package list that can
 drift: the list is the generated `notebooks` group.
+
+**The Spanish handbook is a labelled machine translation** (2026-09-07, #82).
+#82 gave the notebooks page and the handbook their Spanish halves. The
+handbook's was machine-translated rather than written, and says so in a
+callout at the top, the way the companion pages say what they are; code and
+every `# TODO` stay in English, because that is what a student types into the
+notebook. The English handbook stays the source of truth, and translating it
+is what surfaced three facts wrong in it that would otherwise have been
+mirrored: six blocks and sections 00–11 where there are seven and 00–12, and
+notebooks 11 and 12 labelled with the wrong numbers. Nothing generated or
+checked the Spanish copy then, which is why the rule is to change both in the
+same commit; check 13 now compares their shape and their fenced code, and
+still cannot see wording.
+
+**A segment is a section, and Block is only a label** (2026-09-05,
+`466d454`). The handbook's prose navigated by "Block 4" while every notebook,
+deck and Colab badge said a section number, and the handbook had no key from
+one to the other. That commit generated the handbook's schedule from
+`_variables.yml` with Part, Block and section in one row, turned every "Block
+4" in the prose into "section 07", and left Block as a secondary label on the
+exercise headings only. Part and Block stay in `_variables.yml` because the
+handbook still prints them; everywhere else the number a reader meets is the
+section's.
 
 **The stage's scenes are one file each, under a registry.** `linalg-stage.html`
 shipped with two steps and a card listing the six still to come, and the two
@@ -835,6 +894,23 @@ through the same failure and the picture would shake.
 
 ## How a notebook looks
 
+**A live core opens on a hook** (2026-09-23, #184). Before it, a timed core
+could open on its vocabulary or axis-letter table, so the first thing a
+learner met after setup was rows of definitions with no question attached.
+#184 put something to predict, or one number to check, at the top of each core
+in 01–06, 08 and 10, with the table one cell down: notebook 01 asks how many
+numbers a photo takes (786,432); 02, 04 and 05 open on their predict-first
+cell, moved up from *Explore later*; 10 opens on notebook 09's
+`[[3, 0], [0, 1]]`, whose 1 a rank-1 fit lost and which had been hidden inside
+a fold. Where a learning loop then
+re-asked what the hook had just answered, it now builds on the answer instead,
+and notebook 05's setup stopped printing the frame indices, which gave the
+hook's answer away. The runner had to learn to step over a predict cell inside
+a route, which is the entry on predict cells below.
+`test_live_cores_do_not_open_on_a_table` finds the opener structurally, by a
+table separator row rather than a cell id, so it holds whichever cell a
+notebook opens with.
+
 **Every download has a copy in `data/`, and a fallback that says it fell
 back.** Five days before the first live run, the storm clip sat on two live
 cores (02, 05) with no retry and no second source: one refusal from Wikimedia,
@@ -929,6 +1005,35 @@ options from Python. `\mathrm{ndim}` rather than `\texttt`: MathJax spaces
 `\texttt` as though each letter were a variable, so `ndim` comes out as
 "ndi m", and `\text{\texttt{...}}` is worse -- text mode does not define
 `\texttt` and the macro ships to the reader literally.
+
+**`plumbing` folds a cell without quarantining it** (2026-09-08, #85). Notebook
+01's four widget explorers were folded behind a Colab form title, because
+their output is the lesson and their source is scaffolding, and
+`_normalize_cell` began restoring the fold for anything tagged `hide-input`
+rather than for solutions alone, so a Colab round-trip cannot quietly unfold
+one. Check 10 stayed on `solution` cells, because the two folds hide different
+things: a reader may never open a solution, so nothing visible may depend on
+one, while a plumbing cell is meant to be run -- the fold hides its source,
+not its execution. #108 (2026-09-14) applied the tag to the explorers still
+bare in 06, 07, 08, 10, 12 and 13, which had opened on some sixty lines of
+widget construction before the lesson: forty-three cells, with notebook 10's
+rank explorer left unfolded because it is the core activity.
+
+## Extras: notebooks that are not sections
+
+**An extra is `sections:` without the clock** (2026-09-03, #53). The repo had
+no notion of a notebook outside the sections, and two places refused one
+outright: `check_links.py` failed any `.ipynb` it could not match to a
+declared section, and `gen_notebooks.py` built every header and footer from
+`sections.sNN`. Two take-home deep dives were coming, so the kind had to exist
+first. Leaving `minutes`, `start`, `end` and `part` off is the mechanism, not
+a shortcut: `timeline.py` only ever walks `sections`, so an extra cannot move
+a start time, the agenda or `workshop.minutes`, and it has no slide anchor
+and no Kahoot by construction rather than by a check someone has to remember.
+The checks split on the same line -- an extra is a notebook to every check
+that reads notebooks and nothing at all to the ones about the decks, the
+notebooks pages' section list and the clock -- which is why the notebooks-page
+parity check needed no change.
 
 ## No commits on main
 
@@ -1032,7 +1137,7 @@ committed or uploaded. A decoder resamples silently and does not report the
 file's own rate, so the label says "decoded at 48 kHz" rather than pretending
 to know.
 
-**Check 4 looks at notebook-to-notebook links and embedded images** because a
+**Check 1 looks at notebook-to-notebook links and embedded images** because a
 notebook reaches `docs/` as a verbatim copy rather than a rendered page, so
 nothing else looks at those, which is how notebook 01 spent months linking two
 files that had never existed. Ownership rather than a count for the cube
@@ -1083,9 +1188,13 @@ unchecked, and stops claiming "All notebook routes executed cleanly", so the
 one way this gate reports less than usual is never something a reader has to
 infer.
 
-**Checks 11 and 12 only print a TODO.** Both cover material that is pasted in
-after the page exists -- Kahoot join URLs, companion exports -- and CI must not
-go red in between.
+**Check 11 only prints a TODO, and check 12 nearly always does.** Both cover
+material that is pasted in after the page exists -- Kahoot join URLs, companion
+exports -- and CI must not go red in between. The exception is
+`companion.shorts` (#82): a short is listed with its link, so what can be wrong
+with one is a mistake rather than a wait -- a field missing, a `covers` that
+names no section, which is the typo `covers` was given a check for, or a
+`lang` that is neither language -- and those three fail the build.
 
 **ruff, with a small rule set.** Twelve thousand lines of Python had no linter
 or formatter until 2026-09-17; the first run found nothing worse than unsorted
@@ -1133,40 +1242,6 @@ section carried `freq` and picked the wrong section the moment a second did
 the "a hover must not rewrite the readout" assertion would have passed
 whatever the readout did. Every selector there is scoped to its `#step-<id>`
 now.
-
-**The site vendors a typeface pair, and the `@font-face` is not in the
-theme** (2026-09-22). The site had been set in a system-font stack, which is
-free and is a different page on every operating system. Three things decided
-the change and its shape:
-
-*Why vendored rather than a CDN.* `check_navigation.cjs` aborts every
-off-origin request, so a `fonts.googleapis.com` stylesheet would load on a
-reader's machine and test as the fallback stack on the runner -- the class of
-difference nothing in CI can see. The same reasoning already vendored three.js
-and the stages' CMU Serif, with the same ledger. Both faces are subset to
-latin + latin-ext, which is what Spanish needs, and Inter is instanced to
-`wght` 400–800 because only weight varies here.
-
-*Why not system fonts.* Because of one asset: `images/og-card.png` is drawn
-by matplotlib, offline, with no browser and no system font list to fall
-through. Vendoring is what lets the card be set in the same two faces a
-reader's browser renders, from the same two files.
-
-*Why the `@font-face` is in `fonts/fonts.css` and not `custom.scss`.* It was
-in the theme first, written `url("../../fonts/x.woff2")` -- correct for a
-browser, since the theme compiles to `docs/site_libs/bootstrap/`. Quarto does
-not leave a Sass `url()` alone: it treats it as a dependency, resolves it
-against the *project* directory rather than against where the stylesheet
-lands, and copies the file next to the compiled CSS. That path sent it
-looking two levels above the repo and failed the render outright. The
-repo's existing workaround is to write such a path as if from the project
-root and let Quarto do the copy -- `custom.scss`'s reduced-motion block does
-exactly that for one image -- but here that would leave a second copy of
-300 KB of font in `site_libs/` while `resources: fonts/**` already carries
-the first, and `repo.widgets` would be guarding the copy nothing loads. A
-plain stylesheet beside the files it names keeps its own URLs, and
-`format.html.css` gets rewritten per page depth by Quarto, so one line serves
-both languages.
 
 ## Commands and checks: the browser check
 
@@ -1233,6 +1308,32 @@ is built from source on every deploy. That retired a gate rather than
 replacing one, and it is why check 2 is narrowed to what a fresh render can
 still get wrong.
 
+**`slides/deck-pace.html` owns the timer** (2026-08-25, `9260c5d`). Reveal's
+`totalTime` drives only the speaker view, which neither the room nor a
+recording sees, so the deck draws its own clock and hands the same total to
+`Reveal.configure()` so the speaker view agrees. The number lives in
+`TOTAL_SECONDS` because `total-time:` in a deck header is not a Quarto
+passthrough: it never reaches reveal's config, and nothing says so -- which is
+why check 9 exists, since nothing else would notice the JavaScript going stale
+when `workshop.minutes` changes. The two traps each cost a render to find.
+Quarto runs its shortcode parser over included HTML, so a bare `var`
+shortcode in a comment there crashes the render with `Cannot get Attr from
+TypeNil`. And a `var` shortcode inside a heading's `{...}` is not parsed as an
+attribute: Pandoc folds the brace into the heading text and generates an id
+from it, taking every `#sec-NN` anchor with it, so the part number reaches the
+breadcrumb through a hidden `.sec-part` div.
+
+**`render:` is an explicit list** (2026-08-21, `c167b3d`). Without one, Quarto
+sweeps up every notebook and tries to execute it, and renders every README as
+a page. That is the reason `CLAUDE.md` gave when it first wrote the rule
+down; the shorter AGENTS.md of #128 kept the rule and dropped the reason.
+The `rel: lang-en` / `rel: lang-es` half came later (2026-09-07, `f8c71f0`):
+Quarto has one global navbar and no way to vary it per language, so every
+destination appeared twice on every page, Slides beside Diapositivas. `rel` is the one attribute Quarto
+passes through to the anchor, and `custom.scss` hides the half that does not
+match the page's `html lang` -- so an item with no `rel` is hidden by neither
+rule and shows in both languages.
+
 **The lightbox is opt-in.** A bare `lightbox: true` is auto: it wrapped every
 image on the site in an `<a class="lightbox">`, which put an anchor between the
 `<p>` and the `<img>`, so the figure rules in `custom.scss` stopped matching
@@ -1245,3 +1346,18 @@ carries `.lightbox`.
 table of contents open that grid is asymmetric, so on a laptop every figure
 sat off to the right of the text it illustrates. The 46rem box costs label
 size on the widest figures, which is what their `.lightbox` is for.
+
+## Working on WSL2 (Windows)
+
+**`.gitattributes` pins `eol=lf`** (2026-08-21, `7585e13`). The CI gate diffs
+the regenerated tree byte for byte, so a generated file committed with CRLF
+reads as drift and turns the gate red for everyone. The pin went in before any
+CRLF had landed -- the tree was already all-LF, so it normalised nothing --
+and `3486d3a` corrected its rationale the same day: `core.autocrlf=true` is
+not the hazard, because it normalises CRLF back to LF on staging. The hazard
+is `autocrlf=false` (or unset, off Windows) on a machine whose Python writes
+CRLF in text mode, as native Windows does; that commits CRLF, CI regenerates
+the same files with LF, and the diff fails. `eol=lf` overrides `autocrlf`
+whatever a clone has it set to, which beats asking every contributor to
+configure their own, and it is why the WSL2 notes say not to "fix" line
+endings with `core.autocrlf=false`.
