@@ -121,7 +121,7 @@ TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.c
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
 ```
 
-El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) descarga los tres e imprime sus formas — `(20640, 10) (6433, 14) (144, 3)`. Ejecútalo en Colab antes de la sesión. Si falla, dilo en Discord enseguida: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después. Todos los demás cuadernos cargan solo los datos que necesita su propia sección, así que puedes abrir cualquiera de ellos en frío.
+El [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) descarga los tres e imprime sus formas — `(20640, 10) (6433, 14) (144, 3)`. Ejecútalo en Colab antes de la sesión. Si falla, dilo en [Discord]({{< var community.discord >}}) enseguida: una descarga que falla en silencio te deja atascado en las secciones 07 y 10, una hora después. Todos los demás cuadernos cargan solo los datos que necesita su propia sección, así que puedes abrir cualquiera de ellos en frío.
 
 ---
 
@@ -381,13 +381,13 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **`reshape` solo reinterpreta los números en el orden en que están en memoria. `transpose` los mueve según el significado de los ejes.** Los dos dan la forma `(3, 512, 512)`; solo uno es la imagen. Y el TODO 4 va más al fondo: en cuanto dos ejes comparten tamaño, la forma no puede decirte cuál es cuál. Solo tu propio seguimiento puede.
 
-Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/image-tensor.html?lang=es">visualizador del tensor de imagen</a>. Transpón NHWC a NCHW y observa cómo la forma y los strides se permutan mientras la imagen no se mueve; después compáralo con reshape y mira cómo se rompe.
+Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/image-tensor.html?lang=es">visualizador del tensor de imagen</a>. Transpón NHWC a NCHW y observa cómo los cubos siguen la nueva forma mientras la tira del búfer bajo ellos no mueve ni un byte; después compáralo con reshape y mira cómo se rompe la imagen.
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 
 <span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>
 
-**Hazlo antes de la pausa, justo después de la sección 04.** La sala acaba de usar orden, eje, forma, corte, fibra, varianza, reshape y transposición. Es el momento en que esas palabras están más frescas. Lanza `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 preguntas, ~5 min con el podio incluido). No hace falta preparación más allá de haberlo importado a un kahoot con antelación.
+**Hazlo antes de la pausa, justo después de la sección 04.** La sala acaba de usar orden, eje, forma, varianza, reshape y transposición. Es el momento en que esas palabras están más frescas. Una pregunta pide qué se obtiene al fijar todos los índices menos uno, una fibra, que solo cubre el *Explora después* de la sección 01. Da la definición en una línea cuando se revele la respuesta. Lanza `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 preguntas, ~5 min con el podio incluido). No hace falta preparación más allá de haberlo importado a un kahoot con antelación.
 
 ## Pausa (5 min)
 
@@ -402,7 +402,7 @@ Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../inter
 
 <span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span>
 
-De vuelta a tu canal de grupo. 10 minutos de diseño, 5 de puesta en común. No hay una única respuesta correcta.
+La franja en directo es el núcleo del cuaderno 05, no este ejercicio de diseño: una ronda de un minuto de ¿Mito o hecho?, la predicción inicial y el Ejercicio 1 (6 minutos en total), y después la [actividad grupal 05](group-tasks.md#keep-the-event), *conserva el evento dentro del presupuesto*, durante 8 minutos, con sus tres líneas de puesta en común publicadas en [Discord]({{< var community.discord >}}). Las cinco preguntas de abajo son la versión para casa del mismo problema. No hay una única respuesta correcta.
 
 > Diseña la forma del tensor en cada etapa —*archivo bruto → fotogramas decodificados → lote preprocesado → entrada del modelo → salida del modelo*— para **los dos** sistemas:
 > - **Tecnología:** una app de vídeos cortos que calcula una representación por vídeo a partir de fotogramas muestreados, para elegir qué reproducir a continuación.

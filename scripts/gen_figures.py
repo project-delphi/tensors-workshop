@@ -1151,7 +1151,7 @@ def fig_tucker_taxi(arrays) -> Path:
 # bytes do not depend on which matplotlib is installed.
 
 INTERACTIVE = IMAGES.parent / "interactive"
-WIDGET_RES = (4, 8, 16, 32, 64)
+WIDGET_RES = (4, 8, 16, 32, 64, 128)
 WIDGET_PHOTOS = (
     # id, name_en, name_es, loader, call, credit -- credits are the ones the
     # scikit-image docstrings give.

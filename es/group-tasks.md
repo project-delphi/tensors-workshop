@@ -23,7 +23,7 @@ antes de empezar. Reutiliza resultados; basta un dibujo o pseudocódigo.
 
 Cada grupo comparte: **nuestra elección → nuestra evidencia → qué nos haría
 cambiar de opinión**. Se admiten decisiones distintas. Aclaren sus supuestos.
-Publiquen esas tres líneas en [Discord]({{< var event.discord >}}). Invita a un grupo a explicar su elección.
+Publiquen esas tres líneas en [Discord]({{< var community.discord >}}). Invita a un grupo a explicar su elección.
 
 Tres actividades son juegos con puntuación: la caza del error en 04 y el golf de
 compresión en 10 y 11. En ellas, la línea que se comparte incluye la
@@ -130,6 +130,8 @@ al lado del otro, de la A a la D. Solo uno es correcto.
 
 **Compartan:** Nuestros emparejamientos → nuestra prueba y su puntuación → el
 error que dejó pasar una prueba más débil.
+
+<a id="keep-the-event"></a>
 
 ## 05 · Conserva el evento dentro del presupuesto
 

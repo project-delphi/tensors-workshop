@@ -77,7 +77,7 @@
   }
 
   #stage {
-    position: relative; height: min(58vh, 32rem);
+    position: relative; height: min(52vh, 30rem);
     background: var(--stage); border: 1px solid var(--line);
     border-radius: 10px; overflow: hidden;
   }
@@ -577,6 +577,11 @@
         <p id="tip" aria-hidden="true" hidden></p>
       </div>
 
+      <!-- The step in view's controls and readout, moved here from its
+           section by step-dock.js on a wide screen, so they sit under the
+           picture they change. -->
+      <div class="dock" id="dock" hidden></div>
+
       <div class="stagebar">
         <button type="button" id="prev"></button>
         <span id="dots" role="group" aria-labelledby="stepnum"></span>
@@ -610,6 +615,7 @@
      which vendor/linalg-boot.js hands over through bootGL() below --
      injected on the first three.js scene shown, so a page opened on a flat
      scene, or as the hero embed, never fetches it. -->
+<script src="step-dock.js"></script>
 <script src="linalg-core.js"></script>
 <script src="factor-core.js"></script>
 <script src="factor-kit.js"></script>
@@ -760,6 +766,9 @@
 
   // -------------------------------------------------------------- scenes
   const scenes = window.FactorScenes.list();
+  // Set once the controls exist (step-dock.js); null in embed mode, where
+  // there are no controls to show.
+  let dock = null;
   if (!scenes.length) throw new Error("factor-stage: no scenes registered");
   for (const s of scenes) {
     if (!$("step-" + s.id)) throw new Error("factor-stage: no section for scene " + s.id);
@@ -1315,6 +1324,12 @@
   const refreshDrift = () => setDrift(driftWanted());
   const dropDrift = () => { Object.assign(drift, LC.driftRelease(drift, performance.now())); };
 
+  // Read the pose, then let go of the drift -- in that order. shownView() is
+  // where a glide that has just ended hands the view back to the drift
+  // (refreshDrift), seeding it from the pose *before* this gesture. Releasing
+  // first and reading second restarted the drift on that stale seed, and the
+  // next frame's drift pose overwrote the reader's zoom or turn. On a busy
+  // machine, with no frame between a glide's end and the click, it did.
   function takeView(id) {
     const from = shownView(id);
     glide.active = false;
@@ -1326,21 +1341,23 @@
   // picture SVG silently stops painting.
   function orbitBy(dAz, dEl) {
     if (!active.gl || embed) return;
+    const from = takeView(active.id);
     dropDrift();
-    views[active.id] = LC.orbitBy(takeView(active.id), dAz, dEl, active.pose.limits);
+    views[active.id] = LC.orbitBy(from, dAz, dEl, active.pose.limits);
     stampCam();
     if (!glLive()) paint();
   }
   function dollyBy(factor) {
     if (!glLive()) return;
+    const from = takeView(active.id);
     dropDrift();
-    views[active.id] = LC.orbitDolly(takeView(active.id), factor, active.pose.limits);
+    views[active.id] = LC.orbitDolly(from, factor, active.pose.limits);
     stampCam();
   }
   function homeView() {
     if (!active.gl) return;
-    dropDrift();
     const from = shownView(active.id);
+    dropDrift();
     const home = active.pose.home;
     views[active.id] = LC.orbitView(home.az, home.el);
     glideTo(active.id, from.az, from.el, home.az, home.el, 600);
@@ -1473,7 +1490,15 @@
 
   function bindStage() {
     let live = null, down = null, queued = null;
-    stage.addEventListener("pointerenter", () => { motion.over = true; refreshMotion(); });
+    // A pointer that *moves* over the stage holds the drift; pointerenter
+    // alone does not. Chromium fires enter without any movement when the
+    // element under a still cursor changes -- the WebGL canvas arriving on
+    // boot is one -- and a pointer resting there when the page loaded
+    // entered before any listener existed. Neither is a reader reaching for
+    // the view, and the stage is meant to be moving from the moment the page
+    // opens; any real reader moves on the way in, so a move is the signal.
+    const hovered = () => { if (!motion.over) { motion.over = true; refreshMotion(); } };
+    stage.addEventListener("pointermove", hovered);
     stage.addEventListener("pointerleave", () => {
       motion.over = false; refreshMotion();
       setHover(null, 0, 0);
@@ -1598,6 +1623,7 @@
     active = scene;
     step = scenes.indexOf(scene);
     scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
+    if (dock) dock.show("step-" + scene.id);
     Array.from($("dots").children).forEach((d, j) => {
       if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
     });
@@ -1728,6 +1754,7 @@
   loadTaxi().then(() => {
     if (failed) $("status").textContent = T.failed;
     for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
+    if (!embed) dock = StepDock.mount("dock", scenes.map((s) => "step-" + s.id), ".controls, .readout", "(min-width: 62.01rem)");
     const wanted = embed ? byId("tucker") : byId((location.hash || "").replace("#", ""));
     showScene(wanted || scenes[0], false);
     stage.dataset.ready = "1";

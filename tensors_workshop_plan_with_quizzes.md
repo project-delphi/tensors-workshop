@@ -103,7 +103,7 @@ TAXIS   = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/taxis.c
 FLIGHTS = "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/flights.csv"
 ```
 
-[Notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) downloads all three and prints their shapes — `(20640, 10) (6433, 14) (144, 3)`. Run it in Colab before the session. If it fails, say so in Discord at once: a download that fails quietly leaves you stuck at sections 07 and 10, an hour in. Every other notebook loads only the data its own section needs, so you can open any one of them cold.
+[Notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) downloads all three and prints their shapes — `(20640, 10) (6433, 14) (144, 3)`. Run it in Colab before the session. If it fails, say so in [Discord]({{< var community.discord >}}) at once: a download that fails quietly leaves you stuck at sections 07 and 10, an hour in. Every other notebook loads only the data its own section needs, so you can open any one of them cold.
 
 ---
 
@@ -363,13 +363,13 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 **Reshape only reinterprets numbers in memory order. Transpose moves them according to axis meaning.** Both give shape `(3, 512, 512)`; only one is the image. And TODO 4 makes the deeper point: once two axes share a size, the shape cannot tell you which is which. Only your own tracking can.
 
-The three photographs above are cubes, one per byte, on the [image tensor visualizer](interactive/image-tensor.html?lang=en). Transpose NHWC to NCHW and watch the shape and the strides permute while the picture stays put; then compare with reshape and watch it break.
+The three photographs above are cubes, one per byte, on the [image tensor visualizer](interactive/image-tensor.html?lang=en). Transpose NHWC to NCHW and watch the cubes follow the new shape while the buffer strip under them does not move a byte; then compare with reshape and watch the picture break.
 
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 
 <span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>
 
-**Run this before the break, right after section 04.** The room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest. Launch `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.
+**Run this before the break, right after section 04.** The room has just used order, axis, shape, variance, reshape and transpose. This is the moment those words are freshest. One question asks what fixing every index but one gives you, a fiber, which only section 01's *Explore later* covers. Give the one-line definition as its answer is revealed. Launch `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.
 
 ## Break (5 min)
 
@@ -384,7 +384,7 @@ The three photographs above are cubes, one per byte, on the [image tensor visual
 
 <span data-language-key="05-group-exercise-video-pipeline-design-15-min"></span>
 
-Back to your breakout channel. 10 minutes design, 5 minutes share-back. There is no single correct answer.
+The live slot is notebook 05's core, not this design exercise: a one-minute Myth or fact round, the opening prediction and Exercise 1 (6 minutes together), then [group task 05](group-tasks.md#keep-the-event), *keep the event, fit the budget*, for 8 minutes, with its three-line share-back posted in [Discord]({{< var community.discord >}}). The five questions below are the take-home version of the same problem. There is no single correct answer.
 
 > Design the tensor shape at each stage — *raw file → decoded frames → preprocessed batch → model input → model output* — for **both** systems:
 > - **Tech:** a short-video app computing one embedding per video from sampled frames, to choose what to play next.

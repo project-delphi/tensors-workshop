@@ -93,7 +93,7 @@ Revisa el primer error y confirma que ejecutaste Setup y las celdas de
 preparación necesarias en el entorno actual. Si reiniciaste el entorno,
 ejecútalas de nuevo. Si falla una descarga, comprueba tu conexión y los
 requisitos de red del cuaderno. Durante el taller, comparte con quien lo
-facilita el número del cuaderno, la celda y el mensaje de error en [Discord]({{< var event.discord >}}).
+facilita el número del cuaderno, la celda y el mensaje de error en [Discord]({{< var community.discord >}}).
 
 Si el código se ejecuta pero el resultado parece incorrecto, compáralo con el
 resultado esperado y usa los [errores resueltos](worked-mistakes.md) para
@@ -101,7 +101,7 @@ practicar la revisión de formas, ejes y supuestos.
 
 ### ¿Dónde puedo pedir ayuda? {#help-contact}
 
-Pregunta en la [comunidad de Discord]({{< var event.discord >}}) del taller,
+Pregunta en la [comunidad de Discord]({{< var community.discord >}}) del taller,
 antes, durante o después de la sesión, en español o en inglés. Para lo que
 prefieras no publicar allí, escribe a
 [{{< var event.contact >}}](mailto:{{< var event.contact >}}).

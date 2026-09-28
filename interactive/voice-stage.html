@@ -118,7 +118,7 @@
   }
 
   #stage {
-    position: relative; height: min(56vh, 30rem);
+    position: relative; height: min(44vh, 26rem);
     background: var(--stage); border: 1px solid var(--line);
     border-radius: 10px; overflow: hidden;
   }
@@ -692,6 +692,11 @@
         </div>
       </div>
 
+      <!-- The step in view's controls and readout, moved here from its
+           section by step-dock.js on a wide screen, so they sit under the
+           picture they change. -->
+      <div class="dock" id="dock" hidden></div>
+
       <div class="stagebar">
         <button type="button" id="prev"></button>
         <span id="dots" role="group" aria-labelledby="stepnum"></span>
@@ -726,6 +731,7 @@
      the first three.js scene, so a page opened on a spectrogram scene, or as
      the hero embed, never fetches it. The transform scenes draw into the 2-D
      canvas: a spectrum and a spectrogram are pictures. -->
+<script src="step-dock.js"></script>
 <script src="audio-core.js"></script>
 <script src="linalg-core.js"></script>
 <script src="voice-kit.js"></script>
@@ -1091,6 +1097,9 @@
 
   // ---------------------------------------------------------- the scenes
   const scenes = window.VoiceScenes.list();
+  // Set once the controls exist (step-dock.js); null in embed mode, where
+  // there are no controls to show.
+  let dock = null;
   if (!scenes.length) throw new Error("voice-stage: no scenes registered");
   for (const s of scenes) {
     // A scene with no section would register, build its controls into
@@ -1720,6 +1729,12 @@
   const refreshDrift = () => setDrift(driftWanted());
   const dropDrift = () => { Object.assign(drift, LC.driftRelease(drift, performance.now())); };
 
+  // Read the pose, then let go of the drift -- in that order. shownView() is
+  // where a glide that has just ended hands the view back to the drift
+  // (refreshDrift), seeding it from the pose *before* this gesture. Releasing
+  // first and reading second restarted the drift on that stale seed, and the
+  // next frame's drift pose overwrote the reader's zoom or turn. On a busy
+  // machine, with no frame between a glide's end and the click, it did.
   function takeView(id) {
     const from = shownView(id);
     glide.active = false;
@@ -1727,20 +1742,22 @@
   }
   function orbitBy(dAz, dEl) {
     if (!glLive()) return;
+    const from = takeView(active.id);
     dropDrift();
-    views[active.id] = LC.orbitBy(takeView(active.id), dAz, dEl, active.pose.limits);
+    views[active.id] = LC.orbitBy(from, dAz, dEl, active.pose.limits);
     stampCam();
   }
   function dollyBy(factor) {
     if (!glLive()) return;
+    const from = takeView(active.id);
     dropDrift();
-    views[active.id] = LC.orbitDolly(takeView(active.id), factor, active.pose.limits);
+    views[active.id] = LC.orbitDolly(from, factor, active.pose.limits);
     stampCam();
   }
   function homeView() {
     if (!glLive()) return;
-    dropDrift();
     const from = shownView(active.id);
+    dropDrift();
     const home = active.pose.home;
     views[active.id] = LC.orbitView(home.az, home.el);
     glideTo(active.id, from.az, from.el, home.az, home.el, 600);
@@ -1813,7 +1830,15 @@
   // dolly, hover and focus to hold the drift. Never bound in embed mode.
   function bindStage() {
     let live = null;
-    stage.addEventListener("pointerenter", () => { motion.over = true; refreshMotion(); });
+    // A pointer that *moves* over the stage holds the drift; pointerenter
+    // alone does not. Chromium fires enter without any movement when the
+    // element under a still cursor changes -- the WebGL canvas arriving on
+    // boot is one -- and a pointer resting there when the page loaded
+    // entered before any listener existed. Neither is a reader reaching for
+    // the view, and the stage is meant to be moving from the moment the page
+    // opens; any real reader moves on the way in, so a move is the signal.
+    const hovered = () => { if (!motion.over) { motion.over = true; refreshMotion(); } };
+    stage.addEventListener("pointermove", hovered);
     stage.addEventListener("pointerleave", () => { motion.over = false; refreshMotion(); });
     stage.addEventListener("focusin", () => { motion.focus = stage.matches(":focus-visible") && !!active.gl; refreshMotion(); });
     stage.addEventListener("focusout", () => { motion.focus = false; refreshMotion(); });
@@ -1931,6 +1956,7 @@
     active = scene;
     step = scenes.indexOf(scene);
     scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
+    if (dock) dock.show("step-" + scene.id);
     Array.from($("dots").children).forEach((d, j) => {
       if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
     });
@@ -2123,6 +2149,7 @@
     // controls appeared only once it had been scrolled to would be a page
     // that changes shape under the reader.
     for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
+    if (!embed) dock = StepDock.mount("dock", scenes.map((s) => "step-" + s.id), ".controls, .readout", "(min-width: 62.01rem)");
     // The hero gets the spectrogram picture, drawn from the stand-in and
     // with no three.js: its caption describes that picture.
     const wanted = embed ? byId("window") : byId((location.hash || "").replace("#", ""));

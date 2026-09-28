@@ -36,6 +36,10 @@ repo:
     # the panel card and the embed chrome. Linked by <link href>, which the harvest does see;
     # listed anyway because without it every widget renders unstyled.
     - interactive/widget-chrome.css
+    # The step dock the four scrollers share (the controls of the step in
+    # view, under the stage). A <script src>, so the harvest sees it too;
+    # listed because without it every scroller throws on load.
+    - interactive/step-dock.js
     # The site's two vendored typefaces and the stylesheet that declares them
     # (fonts/README.md). The woff2 files are reached only from a
     # `@font-face url()` in fonts/fonts.css and widget-chrome.css, which is CSS
@@ -180,15 +184,22 @@ workshop:
 
 # ── Event ────────────────────────────────────────────────────────────────────
 # The one live session: when, where, and how to reach the organizers. The
-# homepage hero, the FAQ and the group tasks read these, so a change of room
-# or invite is made here once. The venue says "to be confirmed" until the
-# classroom is assigned -- do not guess a room number.
+# homepage hero and the FAQ read these, so a change of room is made here once;
+# the Discord invite is `community.discord`, below. The venue says "to be
+# confirmed" until the classroom is assigned -- do not guess a room number.
 event:
   date: "2 October 2026"
   time: "5:00 PM–8:00 PM COT (UTC-5)"
   venue: "Universidad El Bosque, Bogotá, Colombia — classroom to be confirmed"
-  discord: "https://discord.gg/mHb688bAR"
   contact: "ravkalia@gmail.com"
+
+# ── Community ────────────────────────────────────────────────────────────────
+# The workshop's Discord server. Groups post their share-backs there during the
+# session, and a pre-work problem (a notebook 00 download that fails) is
+# reported there before it. One invite for both languages; every page that
+# says "Discord" links it from here, so a new invite is a one-line change.
+community:
+  discord: "https://discord.gg/mHb688bAR"
 
 # ── Kahoot quizzes ───────────────────────────────────────────────────────────
 # `url` is the live join/share link. It does not exist until the facilitator

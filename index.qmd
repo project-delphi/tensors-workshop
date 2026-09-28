@@ -171,7 +171,7 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
 <div class="credibility-strip">
   <div class="instructor-credit"><p><span>Workshop by</span><strong><a href="{{< var workshop.authors.ravi.url >}}">{{< var workshop.authors.ravi.name >}}</a> and <a href="{{< var workshop.authors.sebastian.url >}}">{{< var workshop.authors.sebastian.name >}}</a></strong></p></div>
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Workshop repository</strong><span>Explore the code on GitHub ↗</span></span></a>
-  <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Live discussion</strong><span>Small groups on <a href="{{< var event.discord >}}">Discord</a></span></p></div>
+  <a class="community-credit" href="{{< var community.discord >}}"><span class="community-dot" aria-hidden="true"></span><span><strong>Live discussion</strong><span>Small groups on Discord ↗</span></span></a>
 </div>
 ```
 

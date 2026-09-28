@@ -224,9 +224,24 @@ async function audit(page, where) {
       `${where}: photo batch is not NHWC 16px by default`);
     // Transpose permutes the shape; the reshape comparison adds a row.
     await tab('transpose');
+    // The cubes follow the shape from the start, so a transpose visibly
+    // moves them: by meaning, readers took the stillness for a failed click.
+    assert.equal(await page.locator('#stage').getAttribute('data-arrange'), 'position',
+      `${where}: the photos should open following the shape`);
     await page.locator('#order-NCHW').click();
     assert((await readout()).includes('(3, 3, 16, 16)'),
       `${where}: NCHW preset did not permute the shape`);
+    assert.equal(await page.locator('#order-NCHW').getAttribute('aria-pressed'), 'true',
+      `${where}: the NCHW preset should say it is the order in force`);
+    // The swap row: H and W at 16 x 16 leave the shape alone and trade
+    // strides, and swapping them back is the same view again.
+    const strides = () => page.locator('#stage').getAttribute('data-strides');
+    await page.locator('#swap-a').selectOption('2');
+    await page.locator('#swap-b').selectOption('3');
+    await page.locator('#swap-go').click();
+    assert.equal(await strides(), '768,1,3,48', `${where}: swapping H and W did not trade strides`);
+    await page.locator('#swap-go').click();
+    assert.equal(await strides(), '768,1,48,3', `${where}: swapping back did not restore NCHW`);
     assert.equal(await page.locator('#imgstrip .strip-row').count(), 1);
     await tab('reshape');
     await page.locator('#compare').check();
@@ -376,8 +391,43 @@ async function audit(page, where) {
       `${where}: the reshape tab stayed open beside #transpose`);
       }
 
-      async function driveBroadcasting(page) {
+      // Every widget is moving within a few seconds of opening, with nothing
+      // asked of the reader: the four stages that drift start drifting, the
+      // broadcasting simulator plays its stretch, the attention stage draws
+      // its first picture in. Loaded with the pointer already resting on the
+      // stage, because that is the case that used to freeze two of them: a
+      // resting pointer is not a reader reaching for the view, only a moving
+      // one is. Two screenshots of the stage differing is the definition of
+      // "moving" that holds for all six, whatever each one draws with; the
+      // loop's own interval is the thing under test, not a stand-in for a
+      // value to poll.
+      async function movesOnLoad(page, file, where) {
+        await page.setViewportSize({width: 1440, height: 1000});
+        await page.goto(`${origin}${prefix}interactive/${file}.html?lang=en`);
+        const box = await page.locator('#stage').boundingBox();
+        await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await page.reload();
+        const shot = async () =>
+          (await page.locator('#stage').screenshot()).toString('base64');
+        const first = await shot();
+        let moved = false;
+        for (let i = 0; i < 40 && !moved; i++) {
+          await page.waitForTimeout(200);
+          moved = await shot() !== first;
+        }
+        assert(moved,
+          `${where}: the stage should be moving within 8 s of loading, with the pointer resting on it`);
+        await page.mouse.move(2, 2);
+      }
+
+      async function driveBroadcasting(page, where) {
         await page.waitForSelector('#draw .cell');
+        // The page opens by playing the stretch once (movesOnLoad() below
+        // checks that it moves). Let it finish, so axe measures the picture
+        // at rest rather than a cell mid-transition.
+        await page.waitForFunction(() => document.getElementById('stage').dataset.playing === '0',
+          null, {timeout: 10000})
+          .catch(() => assert.fail(`${where}: the opening stretch never finished`));
       }
 
       // The attention stage. Seven scenes, no three.js and no sound, so what
@@ -388,6 +438,11 @@ async function audit(page, where) {
       async function driveAttention(page, where, lang) {
         await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
           null, {timeout: 10000});
+        // The opening picture draws itself in (movesOnLoad() below checks
+        // that it moves); every measurement here is of the picture at rest.
+        await page.waitForFunction(() => !('arriving' in document.getElementById('stage').dataset),
+          null, {timeout: 10000})
+          .catch(() => assert.fail(`${where}: the entrance never finished`));
         const data = () => page.evaluate(() => ({...document.getElementById('stage').dataset}));
 
         // Nothing clips an SVG child and nothing complains about one. A grid
@@ -940,8 +995,8 @@ async function audit(page, where) {
           return `${h.az.toFixed(2)},${h.el.toFixed(2)},1.00`;
         });
         // Under the pointer the drift stands down, so what moves from here on
-        // is the reader moving it. Poll `data-paused`, which the pointerenter
-        // handler sets, rather than sleeping a guess at when it lands.
+        // is the reader moving it. Poll `data-paused`, which a pointermove over
+        // the stage sets, rather than sleeping a guess at when it lands.
         await page.mouse.move(midX, midY);
         await page.waitForFunction(() => document.querySelector('#stage').dataset.paused === 'true',
           null, {timeout: 3000})
@@ -967,14 +1022,29 @@ async function audit(page, where) {
         // so the buttons would act on whichever step the scroll landed on.
         const dollyOf = c => Number(c.split(',')[2]);
         const press = id => page.evaluate(id => document.getElementById(id).click(), id);
+        // Polled, then asserted: on a runner busy with the other shards'
+        // browsers the stamp can read another step's view for a frame (a late
+        // scroll-follow callback, or three.js finishing its boot), and a read
+        // taken once then fails a zoom that did happen. The assertion after
+        // each poll still carries the message.
+        const dollyTo = (want) => page.waitForFunction((want) => {
+          const d = Number(document.querySelector('#stage').dataset.cam.split(',')[2]);
+          return want === 'in' ? d < 1 : want === 'out' ? d > 1 : d === 1;
+        }, want, {timeout: 5000}).catch(() => {});
+        const camIs = (want) => page.waitForFunction((want) =>
+          document.querySelector('#stage').dataset.cam === want, want, {timeout: 5000})
+          .catch(() => {});
         await press('zoom-in');
+        await dollyTo('in');
         assert(dollyOf(await cam()) < 1,
           `${where}: Zoom in should bring the camera closer (${await cam()})`);
         await press('zoom-out');
         await press('zoom-out');
+        await dollyTo('out');
         assert(dollyOf(await cam()) > 1,
           `${where}: Zoom out should move the camera away (${await cam()})`);
         await press('home');
+        await camIs(homeCam);
         assert.equal(await cam(), homeCam,
           `${where}: the Home button should also reset the zoom`);
 
@@ -1023,17 +1093,22 @@ async function audit(page, where) {
           await open(n);
           await press('home');
           await press('zoom-in');
+          await dollyTo('in');
           assert(dollyOf(await cam()) < 1, `${where}: step ${n} zooms in`);
           await press('zoom-out'); await press('zoom-out');
+          await dollyTo('out');
           assert(dollyOf(await cam()) > 1, `${where}: step ${n} zooms out`);
-          const input = page.locator(`#step-${n} input[type=range]`).first();
+          // The step's controls live in the dock under the stage on a wide
+          // screen (step-dock.js), not in the step's own section.
+          const input = page.locator(`.dock-panel[data-step="step-${n}"] input[type=range]`).first();
           await input.fill(await input.getAttribute('max'));
           await press('reset');
+          await dollyTo('home');
           assert.equal(dollyOf(await cam()), 1, `${where}: step ${n} reset restores framing`);
           assert(await input.evaluate(e => e.value === e.defaultValue),
             `${where}: step ${n} reset restores the experiment`);
           if (n <= 6) {
-            const presets = page.locator(`#step-${n} .presets button`);
+            const presets = page.locator(`.dock-panel[data-step="step-${n}"] .presets button`);
             for (let j = 0; j < await presets.count(); j++) {
               await presets.nth(j).evaluate(e => e.click());
               assert(await page.locator(`#read-${n}`).innerText(), `${where}: preset has a readout`);
@@ -1989,6 +2064,8 @@ async function audit(page, where) {
             assert(fits, `${where}: horizontal overflow at ${width}`);
           }
           await audit(page, where);
+          // One language: the motion has no copy in it, and it costs seconds.
+          if (lang === 'en') await movesOnLoad(page, widget.file, where);
 
           if (widget.file === 'linalg-stage') {
             // Deliberately lose the GL module: all eight flat scenes must
@@ -2317,7 +2394,11 @@ async function audit(page, where) {
           page.waitForURL(u => u.pathname.endsWith('/interactive/factor-stage.html')
             && u.searchParams.get('lang') === lang, {waitUntil: 'commit'}),
           page.locator('#hero-panel-factor a.hero-still').click()]);
-        await page.goBack();
+        // Back to the homepage by address, not by history: goBack() asked the
+        // factor stage for its history while three.js was still booting, and
+        // with two other shards' browsers on the runner that page's target
+        // was sometimes already detached ("Not attached to an active page").
+        await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
         assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
         await page.setViewportSize({width: 390, height: 1000});
         assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);

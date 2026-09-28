@@ -42,9 +42,9 @@ corta y estira cada eje de tamaño 1 — o lo rechaza, y dice en qué eje. Secci
 
 <span data-language-key="image-tensor"></span>
 
-Tres fotos reales como un solo tensor 4-D, un cubo por byte. Transpónlo y
-observa cómo la forma y los strides se permutan mientras la imagen no cambia;
-hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
+Tres fotos reales como un solo tensor 4-D, un cubo por byte, hasta 128 × 128.
+Transpónlo y observa cómo los cubos siguen la nueva forma sin que se mueva ni
+un byte del búfer; hazle reshape y mira cómo la imagen se rompe; reescribe el búfer en C, Fortran
 o channels_last y verás que solo se mueve la memoria. Cada clic imprime el
 NumPy y el PyTorch que lo hace. Sección 04.
 
