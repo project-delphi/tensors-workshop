@@ -1,5 +1,13 @@
 # Changelog
 
+## 2026-09-28
+
+- **The deck's footer and notebook panel follow the section again.** Since the section dividers became outcome slides, the footer showed nothing until Kahoot 1 and then the last Kahoot's name on every slide after it, and a slide without its own Colab link showed no button. Both now follow the section you are in; a slide's own notebook link still wins, so the "one idea" slide opens notebook 12.
+- **Every Discord mention links the workshop's server**: the homepage, the FAQ, the group tasks and the handbook's pre-work note. The invite lives once, in `_variables.yml`.
+- **Each section's opening slide has its own speaker note**: the split from the run sheet, the hook it opens on, and what to listen for. Eleven of them shared one generic note. The three computing slides in section 01 now say they are a skim, and the agenda note describes the rhythm the session actually has.
+- **The handbook's section 05 says what runs live**: Myth or fact, the prediction and Exercise 1, then group task 05 for 8 minutes. The five-question design exercise is the take-home version. Kahoot 1's notes no longer claim the room has used "slice" and "fiber", which only *Explore later* covers; they tell the facilitator to define "fiber" when the quiz asks about it.
+- **The feedback form asks for pace and enjoyment** on a 1–5 scale, and the facilitator records the medians.
+
 ## 2026-09-27
 
 - The English and Spanish copy now makes clear that the 210 minutes include the Kahoot quizzes, directs facilitators to the existing cutting order when running late, and distinguishes section 11's live CP/Tucker comparison from its four-model extension material.
