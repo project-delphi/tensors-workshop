@@ -169,7 +169,7 @@ Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrit
 <div class="credibility-strip">
   <div class="instructor-credit"><p><span>Taller de</span><strong><a href="{{< var workshop.authors.ravi.url >}}">{{< var workshop.authors.ravi.name >}}</a> y <a href="{{< var workshop.authors.sebastian.url >}}">{{< var workshop.authors.sebastian.name >}}</a></strong></p></div>
   <a href="{{< var repo.url >}}"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="m8 5-7 7 7 7m8-14 7 7-7 7m-3-17-2 20"/></svg><span><strong>Repositorio del taller</strong><span>Explora el código en GitHub ↗</span></span></a>
-  <div class="community-credit"><span class="community-dot" aria-hidden="true"></span><p><strong>Discusión en directo</strong><span>Grupos pequeños en Discord</span></p></div>
+  <a class="community-credit" href="{{< var community.discord >}}"><span class="community-dot" aria-hidden="true"></span><span><strong>Discusión en directo</strong><span>Grupos pequeños en Discord ↗</span></span></a>
 </div>
 ```
 

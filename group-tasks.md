@@ -23,7 +23,7 @@ the timer. Reuse notebook outputs; a sketch or pseudocode is enough.
 
 Every group shares: **our choice → our evidence → what could change our mind**.
 Different choices are welcome. Make the assumptions clear.
-Post these three lines in Discord. Invite one group to explain its choice.
+Post these three lines in [Discord]({{< var community.discord >}}). Invite one group to explain its choice.
 
 Three tasks are games with a score: the bug hunt in 04, and compression golf
 in 10 and 11. There, the share line carries the score, and the facilitator
@@ -128,6 +128,8 @@ results side by side, A to D. Only one of them is right.
 
 **Share:** Our matches → our test and its score → the bug a weaker test let
 through.
+
+<a id="keep-the-event"></a>
 
 ## 05 · Keep the event, fit the budget
 

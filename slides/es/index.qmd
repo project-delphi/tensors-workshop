@@ -95,9 +95,12 @@ histología, que skimage documenta sin restricciones de copyright conocidas.
 Da la advertencia sobre «rango» al principio de la parte I, no después. Es la fuente de confusión más fiable de este taller. El capítulo 2 usa *rango* para el número de columnas independientes, y la teoría de tensores suele referirse al número de ejes. Hoy: «orden» para el número de ejes, y «rango» solo en el
 sentido del capítulo 2.
 
-El ritmo, para que la sala sepa qué esperar: los bloques de ejercicios son 10
-minutos programando y 5 de explicación; el bloque de grupo (§05) son 10 minutos
-de discusión y una puesta en común.
+El ritmo, para que la sala sepa qué esperar: una sección empieza con una
+predicción, sigue con un ejercicio con su propia comprobación, y la mayoría
+termina con una actividad grupal de 6 a 8 minutos cuya puesta en común de tres
+líneas va a Discord. El guion de la guía de facilitación tiene el reparto
+de cada sección. Cada sección recorre solo la ruta esencial de su cuaderno;
+*Explora después* queda para después.
 :::
 
 ## {{< var sections.s00.n >}} · {{< var sections.s00.title_es >}} {#sec-00-setup-and-data .outcomes-slide}
@@ -147,7 +150,11 @@ La preparación se hizo antes. Recoge el diagnóstico individual antes de discut
 [📖 {{< var reading.numpy_to_jax.title_es >}} ↗]({{< var reading.numpy_to_jax.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Abre con la foto: ¿cuántos números la guardan? 512 × 512 × 3 = 786 432. La
+franja son 4 minutos modelando una forma y 16 para el Ejercicio 1 con revisión
+en pareja; las tres diapositivas de computación tras las dos imágenes se
+hojean, no se enseñan. Atento a «rango» usado para el número de ejes: di
+«orden».
 :::
 
 ## {background-image="images/slides-final/slide-06.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -224,6 +231,8 @@ np.shares_memory(T, T_t)  # True
 </div>
 
 ::: {.notes}
+No entra en la franja en directo: los minutos de la sección 01 son del cuaderno. Hojéala en veinte segundos u omítela; está para leerla después.
+
 Travis Oliphant escribió Guide to NumPy y luego cofundó Continuum Analytics, hoy Anaconda. El slicing básico y la transposición producen vistas; la indexación avanzada produce copias. Los 96 bytes cuentan solo el búfer de datos, sin los metadatos.
 
 Conecta los conceptos de tensor con los arreglos de la sección 02. Lee los
@@ -265,6 +274,8 @@ Fuentes: [Organización interna de NumPy](https://numpy.org/doc/stable/dev/inter
 <div class="computing-takeaway"><strong>Mover datos cuesta tiempo.</strong><span>Reutiliza datos en el dispositivo. Operaciones pequeñas y transferencias repetidas pueden anular la mejora.</span></div>
 
 ::: {.notes}
+No entra en la franja en directo: los minutos de la sección 01 son del cuaderno. Hojéala en veinte segundos u omítela; está para leerla después.
+
 El ancho de banda limita muchas operaciones elemento a elemento; los productos matriciales grandes con buen uso de bloques pueden quedar limitados por el cómputo. Ejemplo de Volta: un Tensor Core realiza un producto 4×4 con acumulación por ciclo, con entradas FP16 y acumulación FP32. Otras generaciones difieren.
 
 SIMD significa una instrucción, múltiples datos. SIMT significa una instrucción,
@@ -321,6 +332,8 @@ Fuentes: [Guía de rendimiento de GPU NVIDIA](https://docs.nvidia.com/deeplearni
 <div class="computing-takeaway"><strong>Nombra los ejes. Comprueba las formas.</strong><span>Estos hábitos sirven en todos los frameworks.</span></div>
 
 ::: {.notes}
+No entra en la franja en directo: los minutos de la sección 01 son del cuaderno. Hojéala en veinte segundos u omítela; está para leerla después.
+
 LAPACK sucedió a LINPACK y EISPACK. Las bibliotecas de descomposición tensorial reutilizan rutinas matriciales. Las funciones puras de JAX permiten el trazado y la compilación con XLA. TensorFlow incluye herramientas para servir modelos. Haiku y Flax gestionan parámetros de redes neuronales. Las operaciones de NumPy pueden usar bibliotecas optimizadas; no garantizan un backend concreto.
 
 BLAS es una interfaz con varias implementaciones, como OpenBLAS y MKL. LAPACK
@@ -367,7 +380,10 @@ Fuentes: [BLAS](https://www.netlib.org/blas/),
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 02 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Abre con la predicción: si barajas cuatro fotogramas, ¿qué estadística cambia?
+(2 min). Después la clave de ejes y el Ejercicio 2 (12), y la actividad grupal
+sobre el significado de los ejes (6). Atento a tratar lote y tiempo como el
+mismo tipo de eje: barajar un lote no hace daño y destruye un clip.
 :::
 
 ## {background-image="images/slides-final/slide-09.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -404,7 +420,11 @@ validez.
 [Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 03 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Modela el broadcasting 3 minutos con el ejemplo más pequeño,
+[[2, 10], [4, 14]] − [3, 12], con el simulador en el proyector: la sala predice
+la forma del resultado y después un desajuste que da error. El Ejercicio 3 y su
+retroalimentación tienen 11. Recoge la comprobación de un minuto antes de
+revelarla, y pregunta qué representa cada número de `mean` antes de dividir.
 :::
 
 ## {background-image="images/slides-final/slide-11.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -454,7 +474,11 @@ desaparece.
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 04 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Abre con una imagen diminuta que queda (3, 2, 2) dos veces, por una
+transposición y por un reshape, con el tensor de imagen en el proyector (2 min).
+El Ejercicio 1 tiene 7. Después la caza del error, 6: emparejar 2, prueba y
+puntuación 3, compartir 1. Nombra el reshape como el error de la apertura en
+frío.
 :::
 
 ## {background-image="images/slides-final/slide-13.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -493,8 +517,10 @@ acierta?
 
 ::: {.notes}
 Ejecútalo antes de la pausa, justo después de la sección 04. Todos acaban de usar
-orden, eje, forma, corte, fibra, varianza, reshape y transposición: es el momento
-en que esas palabras están más frescas.
+orden, eje, forma, varianza, reshape y transposición: es el momento en que esas
+palabras están más frescas. Una pregunta pide qué se obtiene al fijar todos los
+índices menos uno, una fibra, que solo cubre el *Explora después* de la sección
+01. Da la definición en una línea cuando se revele la respuesta.
 
 IMPORTA EL .xlsx CON ANTELACIÓN. Create → Add question → Import → Import
 spreadsheet. No lo hagas en directo.
@@ -531,7 +557,11 @@ recorta antes el Kahoot 2.
 [Colab ↗]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 05 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Primero ¿Mito o hecho? (1 min). Después la predicción: ¿qué fotograma de origen
+es `clip[1]`? Es el 45, no el 1 (2 min), y el Ejercicio 1 (4). La actividad
+grupal 05 tiene 8: conserva el evento dentro del presupuesto, con una puesta en
+común de tres líneas en Discord. Con cinco minutos o más de retraso, informa un
+solo grupo.
 :::
 
 ## ¿Mito o hecho? {.computing-slide}
@@ -589,7 +619,10 @@ Las tres son los errores resueltos 02, 03 y 04.
 [Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 06 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Modela una contracción durante 4 minutos: un píxel contraído a 21. El
+Ejercicio 1 y su retroalimentación tienen 10. Recoge la comprobación de un
+minuto antes de revelarla. Atento a las letras de salida: lo que falta a la
+derecha de la flecha se suma.
 :::
 
 ## {background-image="images/slides-final/slide-18.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -622,7 +655,10 @@ Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Exp
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 07 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Primero ¿Mito o hecho? (1 min). Modela columnas duplicadas durante 3, con el
+paso de columnas colineales en el proyector, y después compara coeficientes y
+normas durante 8: las mismas predicciones con coeficientes distintos. Cierra
+con lo que los datos no pueden identificar, y la comprobación (3).
 :::
 
 ## ¿Mito o hecho? {.computing-slide}
@@ -755,7 +791,8 @@ pseudoinversa vuelve en la diapositiva de la idea única del cierre.
 [Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 08 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Abre con la imagen de Fibonacci: una regla, aplicada otra vez. Modela una
+actualización (3) y después el Ejercicio 1 y su comprobación (7).
 :::
 
 ## {background-image="images/slides-final/slide-24.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -792,7 +829,9 @@ gradiente. Di que todo bucle de entrenamiento es esta misma recursión y sigue.
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 09 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+El Ejercicio 1 tiene 9, el error del residuo 3 y el puente de la SVD a Tucker 3.
+Sin barridos de tiempos. Con retraso a +2:30, omite el error del residuo, nunca
+el puente, que la sección 10 necesita.
 :::
 
 ## {background-image="images/slides-final/slide-26a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -830,7 +869,11 @@ Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 10 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Primero ¿Mito o hecho? (1). Explica núcleo y factores (3), y después el golf de
+compresión, hoyo 1, en el explorador de rangos (8): el par es (3, 3, 1) con 60
+números por debajo del 7%. Clasificación y defensa del ganador (3), y después
+el escenario de Tucker en los rangos ganadores, cuyo patrón horario tiene el
+pico en la hora 18. Nunca antes del golf, y nunca recortes esta sección.
 :::
 
 ## ¿Mito o hecho? {.computing-slide}
@@ -960,7 +1003,10 @@ el mismo tensor a CP.
 [Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 11 in Google Colab"}
 
 ::: {.notes}
-Sigue el bloque esencial continuo del cuaderno. Los demás ejemplos ilustran Explora después; omítelos durante la actividad en vivo. Conserva los tiempos de quizzes y pausas.
+Ejercicio 1 en parejas (7): CP y Tucker con un mismo presupuesto. Después el
+hoyo 2 del golf (5): la barra baja al 2%, y CP de rango 6 gana con 198 números
+frente a los 236 de Tucker. Clasificación y el escenario del presupuesto (3),
+nunca antes del ejercicio en parejas, que respondería.
 :::
 
 ## {.extension-slide background-image="images/slides-final/slide-29b.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
