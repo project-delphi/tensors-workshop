@@ -5,7 +5,7 @@ const {AxeBuilder} = require('@axe-core/playwright');
 const fs = require('node:fs/promises');
 const path = require('node:path');
 const http = require('node:http');
-const root = path.resolve(__dirname, '../docs');
+const root = process.env.NAV_ROOT ? path.resolve(process.env.NAV_ROOT) : path.resolve(__dirname, '../docs');
 const screenshots = process.env.SCREENSHOT_DIR || require('node:os').tmpdir();
 const prefix = '/tensors-workshop/';
 const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
@@ -610,6 +610,25 @@ async function audit(page, where) {
       // this check pass, which is the eleven-day 404 all over again -- and
       // that A v = sigma u holds through the real render path, read off the
       // stage as numbers rather than looked for in pixels.
+      // Next and #<name> both scroll a step into view, and the step machine
+      // (watchSteps' IntersectionObserver) follows the scroll: for as long
+      // as that scroll animates, dataset.step is whatever section is
+      // crossing the viewport's middle, not necessarily the one scrolled to.
+      // Poll for it holding still at the wanted id, rather than sleeping a
+      // guessed length of the scroll and reading once.
+      async function waitStepSettled(page, id, where, timeout = 5000) {
+        await page.waitForFunction((id) => {
+          if (window.__stepSince === undefined || window.__stepAt !== id) {
+            window.__stepAt = id;
+            window.__stepSince = performance.now();
+          }
+          const cur = document.querySelector('#stage').dataset.step;
+          if (cur !== id) { window.__stepAt = null; return false; }
+          return performance.now() - window.__stepSince > 150;
+        }, id, {timeout})
+          .catch(() => assert.fail(`${where}: the stage did not settle on step ${id}`));
+      }
+
       async function driveStage(page, where, lang) {
         // Wait on the *modules*, not on a context. Whether a headless runner
         // gives us WebGL is not something to hang CI on -- that is the same
@@ -669,8 +688,9 @@ async function audit(page, where) {
         // Next scrolls the step into view, and the step machine follows the
         // scroll: for as long as that animation runs the stage is whatever
         // section the viewport's middle is crossing, which is a projection
-        // step on the way past. Let it land before reading the mode off it.
-        await page.waitForTimeout(600);
+        // step on the way past. Poll for it holding at 8, rather than
+        // sleeping a guess at how long the scroll takes.
+        await waitStepSettled(page, '8', where);
         assert.equal(await page.evaluate(() =>
           document.querySelector('#stage').dataset.step), '8',
           `${where}: the stage did not settle on step 8`);
@@ -692,12 +712,9 @@ async function audit(page, where) {
           .catch(() => assert.fail(`${where}: #portal did not open the SVD portal`));
         // The name is followed by a smooth scroll to the section, and the
         // step machine follows the scroll: on the way it may cross a step
-        // that renders through the composer. Let it land before reading.
-        await page.waitForTimeout(900);
-        await page.waitForFunction(() =>
-          document.querySelector('#stage').dataset.step === '4',
-          null, {timeout: 5000})
-          .catch(() => assert.fail(`${where}: the stage did not settle on the portal`));
+        // that renders through the composer. Poll for it holding at 4
+        // rather than sleeping a guess at how long the scroll takes.
+        await waitStepSettled(page, '4', where);
         const mode4 = await page.evaluate(() =>
           document.querySelector('#stage').dataset.gl);
         assert(mode4 === 'direct' || mode4 === 'none',
@@ -710,7 +727,8 @@ async function audit(page, where) {
           return Math.round(Math.atan2(V[1][0], V[0][0]) * 180 / Math.PI + 360) % 360;
         });
         await page.locator('#scrub').fill(String(deg));
-        await page.waitForTimeout(150);
+        await page.waitForFunction(() => document.querySelector('#stage').dataset.aligned === '0',
+          null, {timeout: 3000}).catch(() => {});
         const d = await page.evaluate(() => ({...document.querySelector('#stage').dataset}));
         assert.equal(d.aligned, '0', `${where}: x on v1 should register as aligned`);
         assert.equal(d.step, '4', `${where}: the portal is step 4`);
@@ -733,10 +751,17 @@ async function audit(page, where) {
           await page.waitForFunction((n) =>
             document.querySelector('#stage').dataset.step === String(n), n, {timeout: 8000})
             .catch(() => assert.fail(`${where}: #step-${n} did not open on that step`));
-          await page.waitForTimeout(150);
+          await waitStepSettled(page, String(n), where);
         };
         const data = () => page.evaluate(() => ({...document.querySelector('#stage').dataset}));
-        const settle = () => page.waitForTimeout(150);
+        // A control's own oninput writes the readout synchronously (see
+        // linalg-kit.js's bindSlider), so there is no tween to wait out --
+        // but `settle` still polls the value the next assertion needs,
+        // rather than trusting that write ordering forever, and a ceiling
+        // bounds the poll rather than a guessed sleep standing in for it.
+        const settle = (pick) => pick
+          ? page.waitForFunction(pick, null, {timeout: 4000}).catch(() => {})
+          : page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
         assert.equal(await page.locator('section.step').count(), 8, `${where}: eight steps`);
         assert.equal(await page.locator('#step-road').count(), 0,
           `${where}: the roadmap card should be gone now the steps exist`);
@@ -757,12 +782,15 @@ async function audit(page, where) {
           return LC.norm(LC.mulVec(LC.pinv([[1, 2, 1], [2, -1, 1]]), [3, 1]));
         });
         await page.locator('#sphere').fill(String(Math.round(minnorm * 100)));
-        await settle();
+        await settle(() => document.querySelector('#stage').dataset.grazing === '1');
         let sd = await data();
         assert.equal(sd.grazing, '1', `${where}: the sphere at |x+| = ${minnorm} should graze the line`);
         assert(Math.abs(Number(sd.minnorm) - minnorm) < 2e-3, `${where}: |x+| is ${sd.minnorm}, expected ${minnorm}`);
         await page.locator('#lam').fill('70');
-        await settle();
+        await settle(() => {
+          const s = document.querySelector('#stage').dataset;
+          return Number(s.ridgenorm) < Number(s.minnorm);
+        });
         sd = await data();
         assert(Number(sd.ridgenorm) < Number(sd.minnorm),
           `${where}: ridge (${sd.ridgenorm}) should be shorter than the min-norm solution (${sd.minnorm})`);
@@ -772,7 +800,7 @@ async function audit(page, where) {
         // slider ratio; the third slider at its floor pushes it past 100.
         await open(5);
         await page.locator('#s3').fill('1');
-        await settle();
+        await settle(() => Number(document.querySelector('#stage').dataset.kappa) > 100);
         sd = await data();
         const sig = sd.sigma.split(',').map(Number);
         assert(Math.abs(Number(sd.kappa) - sig[0] / sig[2]) < 1e-2 * Number(sd.kappa),
@@ -784,7 +812,7 @@ async function audit(page, where) {
         sd = await data();
         assert.equal(sd.rank, '3', `${where}: the house starts full rank`);
         await page.locator('#flatten').fill('100');
-        await settle();
+        await settle(() => document.querySelector('#stage').dataset.rank === '2');
         sd = await data();
         assert.equal(sd.det, '0.000', `${where}: det should reach zero, got ${sd.det}`);
         assert.equal(sd.rank, '2', `${where}: rank should drop to 2, got ${sd.rank}`);
@@ -800,7 +828,7 @@ async function audit(page, where) {
         });
         await page.locator('#taz').fill(String(aim[0]));
         await page.locator('#tel').fill(String(aim[1]));
-        await settle();
+        await settle(() => document.querySelector('#stage').dataset.aligned === '0');
         sd = await data();
         assert.equal(sd.aligned, '0', `${where}: x on the first eigenvector should register as aligned`);
         assert(Number(sd.angle) < 4, `${where}: x and M x should be nearly parallel there, got ${sd.angle} degrees`);
@@ -812,11 +840,11 @@ async function audit(page, where) {
         sd = await data();
         assert(Math.abs(Number(sd.kappa) - 1) < 1e-2, `${where}: at 90 degrees kappa should be 1, got ${sd.kappa}`);
         await page.locator('#angle').fill('100');
-        await settle();
+        await settle(() => Number(document.querySelector('#stage').dataset.kappa) > 100);
         sd = await data();
         assert(Number(sd.kappa) > 100, `${where}: at half a degree kappa should pass 100, got ${sd.kappa}`);
         await page.locator('#noise').click();
-        await settle();
+        await settle(() => document.querySelector('#stage').dataset.perturbation === '0.02');
         sd = await data();
         assert.equal(sd.perturbation, '0.02', `${where}: the nudge must be exactly 2%`);
         assert(Number(sd.betaChange) > 100, `${where}: nearly parallel columns amplify a 2% target change`);
@@ -833,13 +861,13 @@ async function audit(page, where) {
         assert(isFinite(Number(sd.kappa)), `${where}: and a finite kappa, got ${sd.kappa}`);
         assert(await page.locator('#fault').isHidden(), `${where}: no fault yet`);
         await page.locator('#angle7').fill('100');
-        await settle();
+        await settle(() => document.querySelector('#stage').dataset.f32 === 'collapsed');
         sd = await data();
         assert.equal(sd.f32, 'collapsed', `${where}: a millionth of a degree should round both columns together`);
         assert.equal(sd.kappa, 'Infinity', `${where}: kappa should be Infinity, got ${sd.kappa}`);
         assert(await page.locator('#fault').isVisible(), `${where}: the fault overlay should show`);
         await page.locator('#angle7').fill('0');
-        await settle();
+        await settle(() => document.querySelector('#stage').dataset.f32 === 'distinct');
         assert(await page.locator('#fault').isHidden(), `${where}: and go when the columns part`);
 
         // The camera. Read off the stage as numbers rather than looked for in
@@ -866,9 +894,12 @@ async function audit(page, where) {
           return `${h.az.toFixed(2)},${h.el.toFixed(2)},1.00`;
         });
         // Under the pointer the drift stands down, so what moves from here on
-        // is the reader moving it.
+        // is the reader moving it. Poll `data-paused`, which the pointerenter
+        // handler sets, rather than sleeping a guess at when it lands.
         await page.mouse.move(midX, midY);
-        await page.waitForTimeout(250);
+        await page.waitForFunction(() => document.querySelector('#stage').dataset.paused === 'true',
+          null, {timeout: 3000})
+          .catch(() => assert.fail(`${where}: hovering the stage should pause the drift`));
         const restingCam = await cam();
         await page.mouse.down();
         await page.mouse.move(midX + 120, midY + 40, {steps: 8});
@@ -973,10 +1004,14 @@ async function audit(page, where) {
         if (lang === 'en') {
           await page.goto(
             `${origin}${prefix}interactive/linalg-stage.html?lang=${lang}`);
+          // dataset.gl reads "none" from the very first flat draw, whichever
+          // way bootGL eventually decides, so that alone is not the decision.
+          // Poll for the decision itself: gl becoming a WebGL mode, or
+          // #glnote coming up to say there is none.
           await page.waitForFunction(() =>
-            document.querySelector('#stage').dataset.gl !== undefined,
+            document.querySelector('#stage').dataset.gl !== 'none' ||
+            !document.getElementById('glnote').hidden,
             null, {timeout: 8000});
-          await page.waitForTimeout(500);
           if (await stage.evaluate(e => e.dataset.gl) === 'none') {
             console.log(`  (${where}: no WebGL here, so there is nothing to drift)`);
           } else {
@@ -1012,13 +1047,23 @@ async function audit(page, where) {
             await page.waitForTimeout(50);
             const geometry = () => stage.locator('.mat-lab').evaluateAll(nodes =>
               nodes.map(e => [e.textContent, e.style.transform]));
+            // Polled the way moves() polls the camera, rather than slept on
+            // a guessed length: a slow runner then takes longer, not fails.
+            const geometryMoves = async (ms) => {
+              const first = JSON.stringify(await geometry());
+              const until = Date.now() + ms;
+              while (Date.now() < until) {
+                await page.waitForTimeout(80);
+                if (JSON.stringify(await geometry()) !== first) return true;
+              }
+              return false;
+            };
             const held = await geometry();
             assert.equal(held.length, 2, `${where}: both vector labels must be present`);
             await page.waitForTimeout(350);
             assert.deepEqual(await geometry(), held, `${where}: hover must freeze geometry as well as drift`);
             await page.mouse.move(2, 2);
-            await page.waitForTimeout(550);
-            assert.notDeepEqual(await geometry(), held, `${where}: geometry resumes on pointer leave`);
+            assert(await geometryMoves(900), `${where}: geometry resumes on pointer leave`);
             await press('motion');
             await page.waitForTimeout(50);
             const paused = await geometry();
@@ -1846,16 +1891,16 @@ async function audit(page, where) {
         // three.js -- which is the third hero tab below.
         {file: 'linalg-stage', en: 'Projection and the SVD',
          es: 'Proyecci\u00f3n y la SVD', embed: true, drive: driveStage},
-        // Its embed mode draws the same scene from a synthesised stand-in
-        // rather than fetching half a megabyte of audio onto the homepage,
-        // which is the fourth hero tab below.
-        {file: 'voice-stage', en: 'The audio tensor',
-         es: 'El tensor de audio', embed: true, drive: driveVoice},
         // Its embed mode fetches the real (~2 kB) taxi tensor rather than a
         // synthesised stand-in: it is small enough that a still picture of
         // the real thing costs nothing extra.
         {file: 'factor-stage', en: 'Tucker and CP',
-         es: 'Tucker y CP', embed: true, drive: driveFactor}
+         es: 'Tucker y CP', embed: true, drive: driveFactor},
+        // Its embed mode draws the same scene from a synthesised stand-in
+        // rather than fetching half a megabyte of audio onto the homepage,
+        // which is the fourth hero tab below.
+        {file: 'voice-stage', en: 'The audio tensor',
+         es: 'El tensor de audio', embed: true, drive: driveVoice}
       ];
       widgetCount = widgets.length;
       for (const widget of widgets) {
