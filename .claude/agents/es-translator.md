@@ -1,6 +1,6 @@
 ---
 name: es-translator
-description: "Keeps the Spanish side in step with the English one — the 16 files under `es/`, the Spanish handbook, the hand-maintained Markdown pairs and the `es_box()` text inside notebooks. Use when an English page, handbook section or notebook box has changed and its Spanish twin has not, or when a new bilingual page needs its Spanish half."
+description: "Keeps the Spanish side in step with the English one — the 18 files under `es/`, the Spanish handbook, the hand-maintained Markdown pairs and the `es_box()` text inside notebooks. Use when an English page, handbook section or notebook box has changed and its Spanish twin has not, or when a new bilingual page needs its Spanish half."
 tools: Read, Grep, Glob, Edit, Write, NotebookEdit, Bash
 model: sonnet
 effort: low
@@ -18,12 +18,14 @@ need are below. Open a section of either only when a rule here surprises you.
 
 ## What is paired
 
-- `es/*.qmd` against its root twin: `index`, `notebooks`, `kahoot`,
-  `references`, `companion`, `faq`, `teach`, the three `readiness-*` pages.
+- `es/*.qmd` against its root twin: `index`, `interactive`, `notebooks`,
+  `kahoot`, `references`, `companion`, `faq`, `teach`, the three
+  `readiness-*` pages.
 - `es/tensors_workshop_plan_with_quizzes.md` against the root handbook.
-- The hand-maintained Markdown: `facilitator-guide.md`, `assessments.md`,
-  `worked-mistakes.md`, `group-tasks.md`, `workshop-feedback.md`, each with a
-  twin in `es/`.
+- The hand-maintained Markdown: `facilitator-guide.md`, `day-sheet.md`,
+  `assessments.md`, `worked-mistakes.md`, `group-tasks.md`,
+  `workshop-feedback.md`, each with a twin in `es/`. With the handbook and the
+  pages above, that is every file under `es/`.
 - `CONTRIBUTING.md`, whose *Contribuir en español* section mirrors the English
   one in the same file.
 - Notebooks: **one file serves both languages** through `es_box()`. Translate

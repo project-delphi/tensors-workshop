@@ -188,12 +188,14 @@ separately at `../fonts/`, because a widget is a page with no navbar and no
 site stylesheet; the stages' vendored CMU Serif is untouched, being the Manim
 look on a black canvas rather than the page's type.
 
-**All three files are in `repo.widgets`.** A `@font-face url()` is CSS
-content, which the link harvest cannot see, so `check_links.py` failing on a
-missing file is their only guard -- the `cmu-serif` entries are the
-precedent. `check_navigation.cjs` also asserts `document.fonts.check` for
-both faces on `index` in both languages, which is what catches a corrupt
-woff2 or a URL that resolves to the wrong depth on one language's pages.
+**All three files are in `repo.widgets`.** `fonts/fonts.css` is a
+`<link href>` on every page, which check 3's harvest sees; the two `.woff2`
+files are named only by a `@font-face url()`, which is CSS content the harvest
+cannot see, so their `repo.widgets` lines are what makes `check_links.py` look
+for them -- the `cmu-serif` entries are the precedent. `check_navigation.cjs`
+also asserts `document.fonts.check` for both faces on `index` in both
+languages, which is what catches a corrupt woff2, or a URL that resolves to the
+wrong depth on one language's pages.
 
 ## The widgets
 
@@ -201,8 +203,8 @@ woff2 or a URL that resolves to the wrong depth on one language's pages.
 generator nor a byte-exact gate -- which is why it has a section of its own
 rather than a corner of the one above. Nothing regenerates these files, so
 nothing catches a mistake in them by comparing bytes; what guards them
-instead is `npm test` over the core modules and `check_navigation.cjs` over
-the rendered pages, both under `## Commands`. The HTML widgets -- the
+instead is `npm test` over the core modules and scene registries and
+`check_navigation.cjs` over the rendered pages, both under `## Commands`. The HTML widgets -- the
 section 03 broadcasting simulator, the section 04 image tensor
 visualizer, the sections 07/09 projection & SVD stage, the sections
 00/02/04/09 audio tensor stage, the sections 04/06/Appendix B attention
@@ -225,267 +227,102 @@ on text in more than one widget belongs in the shared file; a page never
 redeclares a surface token. They are resources, not render targets:
 `interactive/**` is in `resources:` and deliberately absent from `render:`.
 
-The stage is eight steps, one file each under `interactive/linalg-scenes/`,
-registered in load order through `LinalgScenes.register()`; the page
-(`linalg-stage.html`) is the frame -- layout, step machine, camera, boot --
-and `linalg-kit.js` is the drawing every scene shares, once for three.js and
-once for the flat SVG. The order is projection, wide, collapse, portal,
-ellipsoid, eigen, collinear, precision -- sections 07, 07, 07, 09, 09, 08,
-09, 09 -- and the portal sits before every step that says "singular value"
-because it is where the word is defined. A new step is one scene file, one
-`<section>`, one `<script src>` line and one `repo.widgets` line; the contract
-a scene keeps is `linalg-scenes/README.md`. **Link to a step by its scene
-name** (`#portal`, `#eigen`), never `#step-N`: the number moves on a reorder,
-the name does not, and the notebooks and both handbooks use the names. Every
-step opens with a predict-first line and a claim on the stage's title card,
-every slider is bound through `ctx.bindSlider` (tinted with the token of what
-it moves, value in the label, the object lit while dragging) and eases its
-geometry, and each step plays an entrance once (`arrive()`, never under
-reduced motion). The stage is black in every theme and its labels are the
-vendored CMU Serif (`interactive/vendor/cmu-serif/`), because the look it
-takes is a Manim frame; the label chip stays opaque, and black, so axe has two
-colours to measure.
+**Each stage keeps its own rules in a contract README** beside its scene
+files: the `register({...})` shape, what each copy key is for, the scene
+order, the equation's letters and `data-hl` tokens, the arithmetic its core
+holds, and what the browser check measures. Read the one for the stage you
+are touching before you write a scene; this section keeps only what they
+share.
 
-The audio stage (`voice-stage.html`, titled *The audio tensor*) is the same
-registry shape as the projection stage and now the same scroller: **ten
-sections down the left, a sticky stage on the right**, one `<section
-class="step">` per scene, grouped under five part headings, each declared by
-the scene that opens it in its own `part:` -- from air to numbers (sampling,
-quantization, the array), from numbers to a matrix (one window, the transform
-of it, the hop), what a layout does to it (the reshape you can hear go wrong),
-what factoring it costs (the best rank-k there is, and the parts you can
-name), and what a model is handed (the three recordings stacked into a rank-4
-batch). It was five tabs; the tabs hid the order the ideas have to be met in,
-and "window and hop" and the transform itself were words in control labels
-rather than pictures. `voice-kit.js` holds the registry and the drawing;
-`audio-core.js` holds the arithmetic and `npm test` pins it, including one
-frame and its window, the transform of all N bins, the rebuild from the k
-strongest components, the reorderings (whose claim on screen is that they are
-permutations), the rounding (whose claim is that 16 bits changes nothing), and
-both factorizations -- the complex QR and the Hermitian eigendecomposition
-underneath them, that the chunked factorisation is the same arithmetic as the
-drained one, that rank k keeps k singular values, and that NMF drives its
-error down with both factors non-negative. That NMF never beats the truncated
-SVD at the same rank is asserted on the rendered page instead, by
-`check_navigation.cjs` off the two scenes' `data-*`.
-`tests/voice_scenes.test.cjs` pins the registry contract beside it: every
-scene registers, carries the same copy keys and control labels in both
-languages, and opens each slider on a value its own min/step grid contains.
-Two kinds of scene: the three that open the page draw in three.js -- a wave
-that dissolves into beads on a ruler needs depth -- and keep a 2-D twin
-(`draw`) for a reader without WebGL, both from one slice the scene computes;
-the other six draw only into the 2-D canvas, because a spectrum, a
-spectrogram and a pair of factors are pictures. three.js is booted lazily
-on the first three.js scene shown, through the projection stage's
-`vendor/linalg-boot.js` and the same import map, and its camera is
-`linalg-core`'s orbit.
+- **Projection and the SVD** (`linalg-stage.html`, sections 07–09): eight
+  steps from a projection to a float32 failure, in three.js with a flat SVG
+  fallback. Scenes `#projection`, `#wide`, `#collapse`, `#portal`,
+  `#ellipsoid`, `#eigen`, `#collinear`, `#precision`; core `linalg-core.js`
+  (`tests/linalg_core.test.cjs`). The contract is
+  `interactive/linalg-scenes/README.md`.
+- **The audio tensor** (`voice-stage.html`, sections 00/02/04/09): ten
+  sections in five parts from a sampled wave to a rank-4 batch, with a
+  transport and a whole-recording timeline. Scenes `#sample`, `#quantize`,
+  `#array`, `#frame`, `#spectrum`, `#window`, `#scramble`, `#lowrank`, `#nmf`,
+  `#batch`; core `audio-core.js` (`tests/audio_core.test.cjs`). The contract
+  is `interactive/voice-scenes/README.md`.
+- **Attention, from words to weights** (`attention-stage.html`, sections
+  04/06/Appendix B): ten sections that follow "I know you know" to
+  attention's output, all inline SVG. Scenes `#words`, `#ids`, `#embed`,
+  `#project`, `#scores`, `#scale`, `#softmax`, `#output`, `#heads`, `#batch`;
+  core `attention-core.js` (`tests/attention_core.test.cjs`). The contract is
+  `interactive/attention-scenes/README.md`.
+- **Tucker and CP** (`factor-stage.html`, sections 10/11/Appendix C): eight
+  sections on the real 4 × 5 × 24 taxi tensor, four in three.js with SVG
+  twins. Scenes `#tensor`, `#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`,
+  `#als`, `#budget`; core `factor-core.js` (`tests/factor_core.test.cjs`).
+  The contract is `interactive/factor-scenes/README.md`.
 
-**The frame owns the sound and the whole recording.** A transport sits in the
-sticky column, and a control moved while something is playing swaps the sound
-in place from the same moment in the clip -- debounced, generation-tagged, so
-a stale source ending cannot stop its own replacement -- which is what makes
-the sampling rate and the bit depth audible as you drag them. Under the stage
-is one timeline canvas the frame draws, not a scene: the whole recording as a
-waveform, a band for the samples the active picture is looking at
-(`region(ctx)`), and a playhead while the sound runs. Dragging it moves that
-scene's position control (`posControl`), mapped onto the control's own range.
-Because the strip carries the global view, a picture is free to zoom: the hop
-scene shows five windows' worth of samples, which is the only scale at which
-overlapping windows can be seen at all.
+**What the stages share.** Each is a scroller: one `<section class="step">`
+per scene down the left and a sticky stage on the right. A new scene is at
+least a scene file, a section, a `<script src>` line and a `repo.widgets`
+line; its stage's contract lists the rest. **Link to a scene by its name**
+(`#portal`, `#heads`), never `#step-N`: the number moves on a reorder, the
+name does not, and the notebooks and both handbooks use the names. Every scene
+opens with a predict-first line and a claim on the stage's title card, and its
+readout and every `data-*` are written from the controls, never from an eased
+frame, so the browser check reads the truth while a picture is still moving.
+Outside the projection stage a control is `#c-<scene>-<control>` and a readout
+`#read-<scene>`, because one control name lives in several sections. The three
+stages that draw in three.js boot it lazily on the first three.js scene shown,
+through `vendor/linalg-boot.js` and the import map, take their camera from
+`linalg-core`'s orbit, and keep a flat twin for a reader without WebGL.
 
-Three recordings, all exactly 237 568 samples at 48 kHz so every shape on
-every scene is the same for any of them (`vendor/README.md`): the voice, the
-beat, and a 440 Hz tone synthesised in the page, which fetches nothing and
-makes one peak, one line and one stripe of every picture. A file the reader
-drops is decoded in the page at that rate, capped at 8 s, and never leaves the
-tab. The embed never fetches a recording -- it draws the spectrogram scene
-from a synthesised stand-in of the same length, and `data-standin` says which
-is on screen. Link by scene name (`#sample`, `#quantize`, `#array`, `#frame`,
-`#spectrum`, `#window`, `#scramble`, `#lowrank`, `#nmf`, `#batch`); controls
-are `#c-<scene>-<control>` and readouts `#read-<scene>`, because the same
-control name now lives in ten sections. The contract is
-`voice-scenes/README.md`.
-
-**Five sections carry a display equation** (`array`, `frame`, `spectrum`,
-`window`, `batch`), and it is hand-written **MathML** with no library: the
-claim cards are Unicode `textContent` that `check_navigation.cjs` compares
+**A display equation is hand-written MathML, with no library.** The claim
+cards are Unicode `textContent` that `check_navigation.cjs` compares
 byte-exact, so a renderer would break them, and this repo vendors every asset
-with a SHA-256 anyway. The `<math>` is static in the section because it is the
-same in both languages and `check_links.py` reads the static HTML; only the
-`eqcap` caption under it is translated, and `tests/voice_scenes.test.cjs`
-pairs the two -- a caption with no element, or an element with no caption, is
-silent in the page. Together the five say the spectrogram is one matrix
-product: `X = ℱ · diag(w) · 𝒳`, costed both ways in multiply-adds rather than
-in milliseconds, which would be the reader's machine rather than the claim.
-The indices are the page's own -- `f` for a frequency bin, `t` for a frame,
-`n` for a sample within one, `H` for the hop, `N` for the window -- and
-**never `k`, which is the rank** on three other scenes; the two new objects
-are script capitals, like the batch scene's `𝒯`: **`𝒳`** the frames matrix
-`ℝ^{N×T}` and **`ℱ`** the transform as a matrix, never `F`, which counts
-bins. An `<mi>` the reader can point at carries `data-hl`, one of
-`{freq, time, samp, hop, batch, chan}`; the frame publishes it as `data-hl`
-on `#stage` and the scene bands that axis in `draw()`, without ever calling
-`changed()`, because a hover must not rewrite the readout. Only the 2-D
-scenes honour it: the three opening scenes draw through one shared three.js
-rig, and a vector has no second axis to band. **Every readout key is
-lowercase** -- `stage.dataset.fN` writes `data-f-n`, so a camel-case key is a
-selector nobody will guess. The shape badge on the stage takes a scene's `shape(ctx)` when it has
-one and its readout's `data.shape` otherwise, and publishes `data-tensorshape`.
+with a SHA-256 anyway. The `<math>` is static in its section, because it is
+the same in both languages and `check_links.py` reads the static HTML; only
+the `eqcap` caption under it is translated. A letter a reader can point at
+carries a `data-hl` token from its stage's closed set, and pointing at it
+repaints the stage without ever calling `changed()`, because a hover must not
+rewrite the readout. **Every readout key is lowercase** --
+`stage.dataset.fN` writes `data-f-n`, so a camel-case key is a selector
+nobody will guess.
 
-**And every section carries the NumPy for its picture**, in a static
-`<pre id="np-<scene>">` right under the equation -- the notation, then the line
-you would type. A scene supplies `code(ctx)`, beside `readout(ctx)` and built
-from the same `ctx.state`, so the shapes in the code cannot disagree with the
-shapes on the stage: drop an eight-second file and both follow it. The frame
-writes it in `changed()`, not `fillText()`, for that reason, and hides the
-block of a scene with no `code()`. The lines are **one copy for both
-languages**, like the `<math>`; only the trailing `#` comments are translated,
-through a `np` key in the copy table, and `K.code(rows)` lays them out from
-`[code, comment]` pairs with the hashes aligned. Three things a new block must
-keep: `contain: inline-size` on the `<pre>` (the `.eqscroll` lesson -- a long
-line otherwise takes the layout past 390px), `tabindex="0"` with
-`aria-labelledby` on it (axe requires a scrollable region to be reachable and
-named), and **82 characters**, which `check_navigation.cjs` measures live on
-every one of the ten. `npm test` measures it too, but only at the opening
-state: the three heavy scenes have not finished factorising there, so their
-short form is what it sees -- which is how three blocks once shipped at 85, 86
-and 94.
+**The audio, attention and factorisation stages show the NumPy for every
+picture**, in a static `<pre id="np-<scene>">` under the equation that the
+frame fills from the scene's `code(ctx)`. That is built from the same
+`ctx.state` as `readout(ctx)`, so the shapes in the code cannot disagree with
+the shapes on the stage. The code is one copy for both languages; only its
+trailing `#` comments are translated, through the copy's `np` key, and no
+line passes **82 characters**, which `check_navigation.cjs` measures live on
+every block.
 
-The attention stage (`attention-stage.html`, titled *Attention, from words
-to weights*) is the same scroller shape as the audio stage, minus the
-transport and the timeline: **ten sections in three parts** down the left, a
-sticky stage on the right, one `<section class="step">` per scene, each
-opening with a predict-first line. It follows one sentence, "I know you
-know", from words to attention's output -- from words to numbers (`words`,
-`ids`, `embed`), one attention head (`project`, `scores`, `scale`,
-`softmax`, `output`), and beyond one head (`heads`, `batch`). **No three.js
-and no canvas anywhere on it**: every picture is inline SVG with real
-`<text>`, drawn by `attention-kit.js`'s `numGrid`, `bars`, `arrowRow` and
-`chips` from arrays `attention-core.js` computed. A scene's `draw()` runs
-only on a control change or a scene switch, never on a per-frame clock, which
-is what makes "never re-tween `<text>`" trivially true here -- there is no
-frame loop to tween inside. `attention-core.js` seeds everything from
-`SEED = 17`: a six-row embedding table in `{0, 1}`, three projection matrices
-with at most three non-zero `{-1, 0, 1}` entries per column, and a six-word
-vocabulary chosen so the sentence encodes to the fixed ids (`[3, 1, 4, 1]`,
-"know" repeated on purpose) -- so every Q, K and V entry a reader sees is an
-integer with `|value| <= 3`, a legibility contract
-`tests/attention_core.test.cjs` pins. The one-head part uses
-`headProjections(0)`, the first four columns of those matrices, so its
-numbers are head 0's in `heads`; the test pins that too. Its honest ending is
-that the two "know" rows come out of attention identical: without position,
-the same word is the same query, key and value. `scale` is the one scene
-that does not draw the stage's own Q and K; it samples ±1 vectors through
-`scaleSpread` and draws the *typical* query, not the first, because the
-first at d_k = 256 was a two-way tie that told the opposite story. The
-`heads` scene carries the same reshape bug the audio stage's `scramble`
-warns about in general: its "flat" option is a *direct* reshape with no
-transpose, same shape as the honest one, wrong tokens in every row after the
-first, and `traceCell` says exactly which token a cell actually came from.
-Five scenes (`scores`, `scale`, `softmax`, `output`, `batch`) carry a display
-equation in notebook 17's own letters (`b`, `h`, `s`, `t`, `d`), with
-`data-hl` tokens exactly `{batch, head, query, key, feat}` -- the one-head
-ones use only `s`, `t` and `d`, and `batch` carries the four-index form --
-never `k` as an index, which is the rank on three of the projection stage's
-own scenes. **Every section carries its NumPy**, numpy only, in a
-`<pre id="np-<scene>">` the frame writes from the scene's `code(ctx)`, on
-the audio stage's rules (one copy of the code, translated `#` comments, 82
-characters, measured by `npm test` at every setting of a scene's controls and
-by `check_navigation.cjs` after the drive). Link a scene by its name
-(`#words`, `#ids`, `#embed`, `#project`, `#scores`, `#scale`, `#softmax`,
-`#output`, `#heads`, `#batch`), never a step number. Its embed is stricter
-than every other widget's: nothing on the stage fetches anything beyond its
-own scripts, its CSS and the one vendored face that CSS names, so the check
-counts resource entries rather than checking `window.THREE` alone. **An SVG child laid out past the viewBox is
-not clipped and not reported -- it is simply not drawn**, while the readout
-goes on quoting its numbers, so the check measures every scene as it opens:
-the union of its children's boxes, through the CTM, against the `640 × 400`,
-and `words` and `scale` at the far end of their controls, and `batch` --
-whose picture is sized from its sliders -- at both corners of them. A scene
-starts 44 units down to clear the claim chip, and `fitClaim()` grows the
-viewBox upward when the chip measures taller than that, so no scene has to
-know how tall the claim came out. The contract is
-`attention-scenes/README.md`.
+**An SVG child laid out past the viewBox is not clipped and not reported --
+it is simply not drawn**, while the readout goes on quoting its numbers and
+every `data-*` assertion still passes. So `check_navigation.cjs` measures
+what the SVG pictures drew -- the union of every child's box through the CTM,
+against the viewBox -- at a scene's opening values and at the corners of the
+controls that resize it. Each stage's contract says which scenes and which
+corners.
 
-The factorisation stage (`factor-stage.html`, titled *Tucker and CP*) is the
-same scroller shape again: **eight sections in four parts**, one `<section
-class="step">` per scene, on the real taxi tensor -- 4 pickup boroughs by 5
-dropoff boroughs by 24 hours, `interactive/data/taxi.json`, generated with the
-network by `scripts/gen_figures.py taxi` and committed rather than fetched
-live from the CSV. Section 10 is the cube (`tensor`), the cube laid flat
-three ways (`unfold`), the SVD of one unfolding (`hosvd`) and the core and
-three factors that rebuild it (`tucker`); section 11 is one rank-1 term
-(`rank1`), several (`cp`), the alternating least squares that finds them
-(`als`), and the same parameter budget spent both ways (`budget`). **Four of
-them draw in three.js** -- `tensor`, `unfold`, `tucker`, `rank1`, the
-pictures of a cube -- on the audio stage's frame (lazy boot through
-`vendor/linalg-boot.js`, the import map, `linalg-core`'s orbit, drift and
-glide), and each draws an **SVG twin** from the same model projected through
-the same orbit, which is the no-WebGL path, the hero embed and what the
-browser check measures; the twin takes a board the shape of the stage. The
-other four are SVG only. A voxel's *volume* is its count, because one route
-holds 76% of the trips. Geometry eases by piece (`K.follow`) and text never
-does; the unfold's move is `FC.morphStep`, a state machine in the core that
-folds back through the cube to change mode, and its turn-deal-press morph is
-tested for no two voxels ever overlapping. Every section carries a MathML
-equation with `data-hl` tokens exactly `{pickup, dropoff, hour, core,
-rank}` -- which on this stage light the piece in the **three.js scenes
-too** -- in notebook 10's letters (i, j, k; a, b, c for the kept patterns;
-modes from 0, `G ×₀ A ×₁ B ×₂ C`), and a `<pre id="np-<scene>">` of NumPy on
-the audio stage's rules. Every gesture -- a voxel, a scree bar, a core
-entry, a seed, a budget point -- sets controls a keyboard also reaches.
-`factor-core.js` calls into `linalg-core.js` for its SVD, its matrix product
-and its pseudoinverse, so it loads after it; two things the core's comments
-explain are `linalg-core.svd`'s **thin `U`**, which caps the hour rank at 20
-rather than 24, and its **sign convention**, which differs between a tall
-unfolding and a wide one and so is renormalised to positive-largest inside
-`hosvd()` rather than trusted from whichever branch produced it. On a fetch
-failure the page draws `FC.synthetic()` and publishes `data-standin="1"`; the
-embed (`?embed=1&theme=navy`) fetches the real, ~2 kB tensor even so, opens on
-the `tucker` twin, and fetches no three.js. Link by scene name (`#tensor`,
-`#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`, `#als`, `#budget`); controls
-are `#c-<scene>-<control>` and readouts `#read-<scene>`. The check measures
-each 2-D scene against its 820 x 420 at its opening values *and at the
-corners of the sliders that resize it*, each twin at home, after a turn and at
-its largest slider corner on a forced-flat pass, and on the three.js path the
-label chips against the stage. The contract is `factor-scenes/README.md`.
-
-**Arithmetic goes in a core module, and only arithmetic.** The visualizer's --
-strides, contiguity, the memory orders and NumPy's view-or-copy rule for a
-reshape -- is `interactive/tensor-core.js`; the stage's -- least squares two
-ways, a one-sided-Jacobi SVD, the condition number, the pseudoinverse -- is
-`interactive/linalg-core.js` -- with the null space, a 3 x 3 eigen-solver,
-float32 rounding and an unguarded Cramer solve for the steps that need them.
-Both are plain scripts the page loads first, and
-`tests/{tensor,linalg}_core.test.cjs` pin them under `npm test`; the attention
-stage's own arithmetic -- the gather, the three projections, splitting heads
-by reshape-then-transpose and the two contractions -- is
-`interactive/attention-core.js`, pinned the same way by
-`tests/attention_core.test.cjs`, and carries none of the three state machines
-below because the stage has no camera and no idle drift to keep one for.
-The factorisation stage's -- unfold/fold and an entry's unfolding address,
-mode products, HOSVD and one core entry's share, CP-ALS solve by solve and a
-fit normalised into weights, the budget search and its frontier, and the
-unfold's `morphStep` -- is `interactive/factor-core.js`, pinned by
-`tests/factor_core.test.cjs`, and calls into `linalg-core.js` for its SVD
-rather than carrying a second one, so it loads after it.
-Three kinds of
-state machine live there too, and they are the exception that says what the rule
-is for: where a stretch of idle drift takes its origin, where an *interrupted*
-tween takes its origin, and where an orbit's clamps sit, are all invisible in a
-screenshot and survive an end-state assertion, so each is written as a state in
-and a state out and pinned like the arithmetic. Both widgets drift while idle
-and hand the view over the moment a reader reaches for it; the stage orbits
-from one frame -- azimuth about world +Y, up always +Y, so nothing it draws ever
-rolls -- and both its scenes and both its render paths take the camera from
-`orbitEye`. Everything else that touches a widget's state -- anything a
+**Arithmetic goes in a core module, and only arithmetic.** Each is a plain
+script the page loads first, pinned by its `tests/*_core.test.cjs` under
+`npm test`. The visualizer's -- strides, contiguity, the memory orders and
+NumPy's view-or-copy rule for a reshape -- is `interactive/tensor-core.js`;
+each stage's is the core named above, and its contract lists what it holds.
+`factor-core.js` calls into `linalg-core.js` for its SVD rather than carrying
+a second one, so it loads after it. Three kinds of state machine live in
+`tensor-core.js` and `linalg-core.js` too, and they are the exception that
+says what the rule is for: where a stretch of idle drift takes its origin,
+where an *interrupted* tween takes its origin, and where an orbit's clamps
+sit, are all invisible in a screenshot and survive an end-state assertion, so
+each is written as a state in and a state out and pinned like the arithmetic.
+A widget that drifts while idle hands the view over the moment a reader
+reaches for it. Everything else that touches a widget's state -- anything a
 screenshot or `check_navigation.cjs` would catch -- stays in the HTML.
 
 `photos.json` is the visualizer's one generated input; if it fails to load the
 widget counts instead, which `check_navigation.cjs` treats as a regression.
 Every widget takes `?embed=1&theme=navy`, and none of them fetches
-three.js there: the stage's embed is the portal's still frame, drawn flat,
-with the scroller and its steps gone. **The hero does not load the embeds;
+three.js there: the projection stage's embed is the portal's still frame,
+drawn flat, with the scroller and its steps gone. **The hero does not load the embeds;
 it shows pictures of them.** One tab per widget, and each panel is a
 screenshot of that widget's embed in the page's language
 (`images/hero-<widget>-<lang>.webp`, drawn by `scripts/gen_hero_stills.cjs`),
@@ -542,7 +379,7 @@ reduced-motion check.
 
 ## Which document owns what
 
-Seven documents describe the same workshop to different readers. Each fact has
+These documents describe the same workshop to different readers. Each fact has
 exactly one home; before adding a paragraph, find whose job it is:
 
 | Document | Owns | Never contains |
@@ -637,7 +474,7 @@ sentence chained to the transport error, so `UNREACHABLE` still sees the cause.
 A fallback passes, so `test_notebooks.py` lists each one under `FELL BACK:`,
 which is now the only place a dead upstream shows. Add a download and add its
 copy: an entry in `scripts/fetch_mirrors.py` and `data/README.md`, then
-`python3 scripts/fetch_mirrors.py <name>`; check 4 fails the build until the
+`python3 scripts/fetch_mirrors.py <name>`; check 1 fails the build until the
 file is there. Until the first live run, `.github/workflows/health.yml` runs every route
 daily with `--strict`, which fails on any `UNCHECKED` or `FELL BACK`, so a
 host that dies between pushes is reported by e-mail rather than by the room. A dataset whose licence does not permit redistribution gets no
@@ -756,7 +593,7 @@ uv run --group lint ruff format scripts tests           # (format --check in CI)
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests -v
 npm run check:navigation                                # the browser check and the axe pass, after a render
-npm test                                                # the visualizer's arithmetic, no browser
+npm test                                                # every tests/*.test.cjs: the cores and scene registries, no browser
 
 # Runs the notebooks. A kernel per notebook, the network, and the scientific
 # stack — so it is its own CI job, not part of the render gate.
@@ -782,17 +619,21 @@ npm run gen:hero                                              # the hero's widge
 
 `check_links.py` is the site test suite -- there is no pytest here. It prints
 fourteen numbered checks; the numbers are a contract this file refers to, so a
-new check is appended, never inserted. Twelve can fail the build:
+new check is appended, never inserted. Thirteen can fail the build:
 
-1. Notebooks are valid, with no outputs or execution counts.
+1. Notebooks are valid, with no outputs or execution counts, and each header
+   badge points at its own file. Inside every notebook, too, since nothing else
+   reads one: every notebook-to-notebook link names an `.ipynb` that exists;
+   every image embedded from the site names a file in `images/`, with alt
+   text, and is one of that notebook's own `cube-NN-*` animations (URLs
+   absolute, because Colab has no checkout to resolve against); every dataset
+   copy it falls back to is a file in `data/`; and display maths is balanced
+   and outside any blockquote or raw HTML block.
 2. Every notebook `docs/` serves is byte-identical to the one in `notebooks/`.
-3. Internal links resolve, including the `#fragment`; every `thumb` file exists.
-4. Every Colab badge points at its own existing notebook; every notebook-to-
-   notebook link names an `.ipynb` that exists; every image a notebook embeds
-   from the site names a file in `images/`, with alt text, and is one of that
-   notebook's own `cube-NN-*` animations (URLs absolute, because Colab has no
-   checkout to resolve against); every dataset copy a notebook falls back to
-   is a file in `data/`.
+3. Internal links resolve, including the `#fragment`; every `thumb` file exists;
+   every `repo.widgets` file reached `docs/`.
+4. Every Colab URL on the rendered site is well-formed and names a notebook
+   that exists, and every notebook is linked from some page.
 5. Both decks carry every section anchor.
 6. The EN and ES notebooks pages list the same thirteen sections.
 7. The two references pages cite the same works; every ml-blog URL is declared
@@ -802,15 +643,21 @@ new check is appended, never inserted. Twelve can fail the build:
 9. The deck timer's total matches `workshop.minutes`.
 10. No visible notebook cell depends on a name bound only in a folded solution.
 11. Kahoot join URLs -- **prints a TODO, never fails**: pasted in after the page exists.
-12. Companion artifact links and exports -- the same.
+12. Companion artifact links and exports -- a TODO for anything unset, with one
+    exception that fails: a `companion.shorts` entry missing one of `url`,
+    `title_en`, `title_es`, `length`, `lang` or `covers`, whose `covers` names
+    no section, or whose `lang` is neither `en` nor `es`.
 13. The two handbooks have the same shape (heading counts, table rows, notebooks
     linked) and byte-identical fenced code. It cannot catch wording, which is
     the half that drifts.
 14. Both Kahoot pages carry `#quiz-1`, `#quiz-2` and `#quiz-3`.
 
-`--notebooks-only` runs checks 1, 2, 4 and 10 alone; run it after any content
-change. Quarto never executes the notebooks, so building needs Quarto only;
-to run them locally, `uv run --group notebooks jupyter lab`. `matplotlib` and
+`--notebooks-only` runs checks 1 and 10 alone, numbered 1 and 2 in its output;
+run it after any content change. It needs no render, so it skips everything
+that reads `docs/`, check 2 included, and the Colab URLs of check 4 with it --
+the badge and link checks inside the notebooks are check 1's and still run.
+Quarto never executes the notebooks, so building needs Quarto only; to run
+them locally, `uv run --group notebooks jupyter lab`. `matplotlib` and
 `ipywidgets` ship with Colab but not with a local `jupyterlab`, which is why
 the generated group carries them; `tensorly` is `%pip`-installed by the cells
 that need it, so the generator drops it.

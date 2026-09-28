@@ -1,12 +1,15 @@
 # The voice stage's scenes
 
-One file per scene of `../voice-stage.html`, loaded in order by plain
-`<script src>` lines after `audio-core.js` and `voice-kit.js`. Each file calls
-`VoiceScenes.register({...})` once. The page reads the registry back in that
-order, so a new scene is: one file here, one `<script src>` line, one
-`<section class="step" id="step-<id>">` in the page, and one `repo.widgets`
-line in `_variables.yml` (the only thing that notices the file failing to
-reach `docs/`). The page throws at boot if a registered scene has no section.
+One file per scene of `../voice-stage.html` (*The audio tensor*), loaded in
+order by plain `<script src>` lines after `audio-core.js`, which holds the
+arithmetic, and `voice-kit.js`, which holds the registry and the drawing.
+Each file calls `VoiceScenes.register({...})` once. The page reads the
+registry back in that order, so a new scene is: one file here, one
+`<script src>` line, one `<section class="step" id="step-<id>">` in the page
+with a `<span class="anchor" id="<id>">` at its top and its
+`<pre id="np-<id>">`, and one `repo.widgets` line in `_variables.yml` (the
+only thing that notices the file failing to reach `docs/`). The page throws at
+boot if a registered scene has no section.
 
 The order is a story in five parts, and the part headings are on the scene
 that opens each one (`part: {en, es}`). **From air to numbers**: how a
@@ -29,6 +32,42 @@ Scenes are sections down a scroller with a sticky stage, the shape
 crosses a band through the middle of the viewport (`LC.pickActive`). The
 transport is in the sticky column beside the stage rather than in the section,
 because it has to stay under the reader's hand while they scroll.
+
+Link a scene by its name -- `#sample`, `#quantize`, `#array`, `#frame`,
+`#spectrum`, `#window`, `#scramble`, `#lowrank`, `#nmf`, `#batch` -- never by
+its position. Controls are `#c-<scene>-<control>` and readouts
+`#read-<scene>`, because the same control name lives in ten sections.
+
+**Two kinds of scene.** The three that open the page (`sample`, `quantize`,
+`array`) draw in three.js, because a wave that dissolves into beads on a ruler
+needs depth, and each keeps a 2-D twin (`draw`) for a reader without WebGL;
+both are drawn from one slice the scene computes. The other seven draw only
+into the 2-D canvas, because a spectrum, a spectrogram and a pair of factors
+are pictures. three.js is booted lazily on the first three.js scene shown,
+through the projection stage's `vendor/linalg-boot.js` and the same import
+map, and its camera is `linalg-core`'s orbit.
+
+## The frame owns the sound and the whole recording
+
+A control moved while something is playing swaps the sound in place, from the
+same moment in the clip -- debounced, and generation-tagged so that a stale
+source ending cannot stop its own replacement -- which is what makes the
+sampling rate and the bit depth audible as you drag them.
+
+Under the stage is one timeline canvas the frame draws, not a scene: the whole
+recording as a waveform, a band for the samples the active picture is looking
+at (`region(ctx)`), and a playhead while the sound runs. Dragging it moves that
+scene's position control (`posControl`), mapped onto the control's own range.
+Because the strip carries the global view, a picture is free to zoom: the hop
+scene shows five windows' worth of samples, which is the only scale at which
+overlapping windows can be seen at all.
+
+Three recordings, all exactly 237 568 samples at 48 kHz, so every shape on
+every scene is the same for any of them (`../vendor/README.md`): the voice,
+the beat, and a 440 Hz tone synthesised in the page, which fetches nothing and
+makes one peak, one line and one stripe of every picture. A file the reader
+drops is decoded in the page at that rate, capped at 8 s, and never leaves the
+tab.
 
 ## What a scene provides
 
@@ -102,10 +141,22 @@ into the clip while it plays, or -1.
 
 - **Nothing on screen is typed.** Every number in a readout and every shape tag
   is computed from the recording being shown, through `audio-core.js`, which
-  `npm test` pins. A scene that needs new arithmetic adds it there, with a
-  test — including reorderings like the transpose and the patch shuffle, whose
-  whole claim is that they are permutations, and the rounding, whose claim is
-  that 16 bits changes nothing.
+  `npm test` pins (`tests/audio_core.test.cjs`). A scene that needs new
+  arithmetic adds it there, with a test — including reorderings like the
+  transpose and the patch shuffle, whose whole claim is that they are
+  permutations, and the rounding, whose claim is that 16 bits changes nothing.
+  The test also pins one frame and its window, the transform of all N bins,
+  the rebuild from the k strongest components, and both factorisations: the
+  complex QR and Hermitian eigendecomposition underneath them, that the
+  chunked factorisation is the same arithmetic as the drained one, that rank
+  k keeps k singular values, and that NMF drives its error down with both
+  factors non-negative. That NMF never beats the truncated SVD at the same
+  rank is asserted on the rendered page instead, by `check_navigation.cjs`
+  off the two scenes' `data-*`.
+- **The registry has a test of its own.** `tests/voice_scenes.test.cjs` pins
+  that every scene registers, carries the same copy keys and control labels
+  in both languages, and opens each slider on a value its own min/step grid
+  contains.
 - **The NumPy is not typed either.** Every section carries `code(ctx)` under
   its equation, and every number in it comes from `ctx.state` -- the same place
   the readout's do. A hard-coded `(513,)` is a lie the moment a reader drops an
@@ -116,10 +167,21 @@ into the clip while it plays, or -1.
   `tests/test_audio_numpy.py` runs those lines in real NumPy and checks they
   give what the block says they give -- `npm test` has no NumPy, so nothing
   there would notice an expression that is merely plausible.
+- **The frame writes the block, in `changed()`.** Each section has a static
+  `<pre id="np-<scene>">`, under its equation where it has one; the frame
+  fills it in `changed()`, not `fillText()`, because every number in it comes
+  from the state, and hides the block of a scene with no `code()`. A new block keeps
+  `contain: inline-size` on the `<pre>` (the `.eqscroll` lesson -- a long line
+  otherwise takes the layout past 390px) and `tabindex="0"` with
+  `aria-labelledby` (axe requires a scrollable region to be reachable and
+  named).
 - **A block is 82 characters wide, measured live.** The `<pre>` scrolls, so a
   longer line breaks nothing -- it is just a line nobody reads.
   `check_navigation.cjs` walks all ten after the heavy scenes have settled,
-  because that is the only place their real width exists.
+  because that is the only place their real width exists. `npm test`
+  measures too, but only at the opening state, where the three heavy scenes
+  have not finished factorising and show their short form -- which is how
+  three blocks once shipped at 85, 86 and 94.
 - **Both paths, one truth.** A three.js scene's `draw()` is its twin: the same
   facts, side-on, on the 2-D canvas, from the same slice its `sync()`
   computed. The three opening scenes share that slice's shape (`v` in
@@ -153,10 +215,11 @@ into the clip while it plays, or -1.
   `audio()` must stay cheap enough to re-render mid-play (the frame scenes
   rebuild one window; the hop scene inverts a whole spectrogram, which is the
   ceiling), and `playLabel()` must always name what `audio()` would return.
-- **The embed is silent, still, and cheap.** `?embed=1` draws from
-  `K.demoSignal` rather than fetching the recording; `data-standin` says which
-  signal is on screen, and `check_navigation.cjs` asserts it is the stand-in on
-  the front door and the recording on the full page.
+- **The embed is silent, still, and cheap.** `?embed=1` never fetches a
+  recording: it opens on the spectrogram (`window`), drawn from
+  `K.demoSignal`, a synthesised stand-in of the same length; `data-standin`
+  says which signal is on screen, and `check_navigation.cjs` asserts it is the stand-in on the
+  front door and the recording on the full page.
 - **Both languages** in `copy`, in the same commit, and `aria(ctx)` names every
   fact the picture draws, because `#stage` is `role="img"`.
 - **Colours are tokens** (`--v-sig`, `--v-out`, `--v-res`, `--v-axis`,

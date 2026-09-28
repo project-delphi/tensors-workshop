@@ -140,7 +140,7 @@ byte-exact, so anything order-dependent or time-dependent is a finding.
 uv run --group site python scripts/check_links.py --notebooks-only
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests
-npm test          # the widgets' core modules; no browser, no render, seconds
+npm test          # the widgets' cores and scene registries; no browser, no render, seconds
 ```
 
 The full `check_links.py` and `npm run check:navigation` both need a rendered
