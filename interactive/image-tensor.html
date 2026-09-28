@@ -390,6 +390,7 @@
           <h2 id="h-now"></h2>
           <p class="readout" id="shape-readout"></p>
           <p class="badge" id="contig-badge"></p>
+          <div class="tools"><button type="button" id="original"></button></div>
         </section>
 
         <!-- One tab per operation. The panel ids are plain words on purpose:
@@ -556,6 +557,9 @@
   const DRIFT_FPS_MS = 40;       // ~25 fps: the sway needs no more, and every
                                  // frame re-uploads an instance matrix per cube
   const DRIFT_RESUME_MS = 300;   // after the pointer leaves the stage
+  // How long "Show the original photo" holds the photograph flat before the
+  // view lifts back into 3-D and the drift takes it from there.
+  const ORIGINAL_HOLD_MS = 2400;
 
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
   const ORDER_KEYS = ["NHWC", "NCHW", "swapHW", "reverse"];
@@ -668,6 +672,12 @@
     code: "In code",
     copy: "Copy",
     reset: "Reset log",
+    original: { photos: "Show the original photo", numbers: "Start over" },
+    originalTitle: {
+      photos: "Undo every reshape, transpose and copy, and look at the photos face on, the way the camera took them. Then the stage lifts back into 3-D from there.",
+      numbers: "Undo every reshape, transpose and copy, back to np.arange as it was built."
+    },
+    saidOriginal: "Back to the array as it was built: every operation undone.",
     copied: "Copied",
     glNoWebgl: "This browser has no WebGL — showing the isometric canvas instead. Everything on the panel is the same.",
     glNoScript: "The 3-D renderer did not load — showing the isometric canvas instead. Everything on the panel is the same.",
@@ -825,6 +835,12 @@
     code: "En código",
     copy: "Copiar",
     reset: "Reiniciar registro",
+    original: { photos: "Ver la foto original", numbers: "Empezar de nuevo" },
+    originalTitle: {
+      photos: "Deshace cada reshape, transpose y copia, y muestra las fotos de frente, tal como las tomó la cámara. Después el escenario vuelve al 3-D desde ahí.",
+      numbers: "Deshace cada reshape, transpose y copia, y vuelve a np.arange tal como se construyó."
+    },
+    saidOriginal: "De vuelta al array tal como se construyó: todas las operaciones deshechas.",
     copied: "Copiado",
     glNoWebgl: "Este navegador no tiene WebGL: se muestra el canvas isométrico. Todo lo del panel es igual.",
     glNoScript: "El renderizador 3-D no se cargó: se muestra el canvas isométrico. Todo lo del panel es igual.",
@@ -1750,6 +1766,7 @@
     });
 
     $("reset").addEventListener("click", () => { history.length = 0; render(); });
+    $("original").addEventListener("click", showOriginal);
     $("copy").addEventListener("click", async () => {
       try {
         await navigator.clipboard.writeText($("code").textContent);
@@ -1842,6 +1859,9 @@
       : (hasLetters ? T.orderNoteLost : T.orderNoteNumbers);
 
     const photoMode = !!isPhotos();
+    const which = photoMode ? "photos" : "numbers";
+    $("original").textContent = T.original[which];
+    $("original").title = T.originalTitle[which];
     $("shape-photo").hidden = !photoMode;
     $("shape-numbers").hidden = photoMode;
     $("n-note").textContent = T.nNote(state.n);
@@ -2935,13 +2955,15 @@
     renderRibbon();
 
     // What a checker can read without a screenshot: the shape, the strides,
-    // whether the view is snapped flat, and a signature of the buffer that a
-    // view must never change.
+    // whether the view is snapped flat, whether the channel planes composite
+    // into a photograph, and a signature of the buffer that a view must never
+    // change.
     const stage = $("stage");
     stage.dataset.shape = state.shape.join(",");
     stage.dataset.strides = state.stride.join(",");
     stage.dataset.bufsig = bufferSignature();
     stage.dataset.arrange = byPos() ? "position" : "meaning";
+    stage.dataset.reveal = canReveal() ? "1" : "0";
 
     $("status").textContent = T.status(off, state.idx,
       state.slice >= 0 ? T.sliceOf(axName(state.slice)) : "");
@@ -3060,8 +3082,63 @@
   // they leave behind.
   const dropDrift = () => {
     clearTimeout(drift.timer);
+    clearTimeout(originalTimer);
     Object.assign(drift, driftRelease(drift, performance.now()));
   };
+
+  // ─── the original ─────────────────────────────────────────────────────────
+
+  // Every operation undone, and the photos shown the way the camera left
+  // them: arranged by meaning, so C is in depth, and snapped flat on the front
+  // face, so the three channel planes composite back into photographs. After
+  // a beat the view lifts back into 3-D from there, and once that glide is
+  // over the drift takes the pose it left. A reader who takes hold of the view
+  // during the beat keeps it: every way of doing that goes through dropDrift(),
+  // which disarms the lift. Counting numbers have no photo, so for them this
+  // is the same start over, at the view the page opens on.
+  let originalTimer = 0;
+  function showOriginal() {
+    dropDrift();
+    // The same source array as before, so every cube can be followed from
+    // wherever the operations left it back to where it was built.
+    anim = null;
+    peeking = false;
+    beginTween();
+    rebuildSource();
+    view.scale = HOME.scale;
+    view.panX = HOME.panX;
+    view.panY = HOME.panY;
+    $("status").textContent = T.saidOriginal;
+    if (!isPhotos()) {
+      state.arrange = "position";
+      Object.assign(view, HOME);
+      snap.on = false;
+      glide.active = false;
+      setSnapT(0);
+      $("stage").dataset.snapped = "0";
+      $("snap").setAttribute("aria-pressed", "false");
+      $("snap").textContent = T.snapIn;
+      render();
+      refreshDrift();
+      return;
+    }
+    state.arrange = "meaning";
+    // The front face, not whichever face is nearest: only the front one
+    // composites (canReveal), and it is reached by the shorter way round.
+    const front = Math.round(view.yaw / (2 * Math.PI)) * 2 * Math.PI;
+    snap.on = true;
+    $("snap").setAttribute("aria-pressed", "true");
+    $("snap").textContent = T.snapOut;
+    $("stage").dataset.snapped = "1";
+    render();
+    glideTo(front, 0);
+    tick();
+    if (reduceMotion) return;
+    originalTimer = setTimeout(() => {
+      setSnap(false);
+      originalTimer = setTimeout(refreshDrift, SNAP_MS + 40);
+    }, SNAP_MS + ORIGINAL_HOLD_MS);
+  }
 
   function bindPointer() {
     const el = $("stage");
@@ -3184,6 +3261,7 @@
       // Driving the view from the keyboard is the same claim on it as a drag,
       // however the focus arrived: hold the drift until the stage is left.
       drift.focus = true;
+      clearTimeout(originalTimer);
       move();
     });
     $("snap").addEventListener("click", () => { dropDrift(); setSnap(!snap.on); });

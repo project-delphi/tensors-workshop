@@ -373,6 +373,36 @@ async function audit(page, where) {
       null, {timeout: 5000})
       .catch(() => assert.fail(`${where}: Snap to 2-D did not engage`));
 
+    // "Show the original photo" undoes the transpose and the copy above,
+    // back to the buffer as it was stacked, and shows the batch as
+    // photographs: by meaning, flat on the front face, composited.
+    await page.locator('#original').click();
+    assert.equal(await data('shape'), '3,16,16,3',
+      `${where}: the original photo should be NHWC again`);
+    assert.equal(await data('strides'), '768,48,3,1',
+      `${where}: the original photo should be C-contiguous again`);
+    assert.equal(await data('bufsig'), viewSig,
+      `${where}: the original photo should be the buffer as it was stacked`);
+    assert.equal(await data('arrange'), 'meaning',
+      `${where}: the original photo should be arranged by meaning`);
+    await page.waitForFunction(() => {
+      const s = document.querySelector('#stage').dataset;
+      return s.snapped === '1' && s.reveal === '1';
+    }, null, {timeout: 5000})
+      .catch(() => assert.fail(`${where}: the original photo did not composite face on`));
+    assert.equal(await page.locator('#code').innerText().then(t => t.includes('transpose')), false,
+      `${where}: the code log should start over with the original photo`);
+    // After its beat the photo lifts back into 3-D on its own. Once, in
+    // one language: it costs the hold's real seconds.
+    if (lang === 'en') {
+      await page.waitForFunction(() =>
+        document.querySelector('#stage').dataset.snapped === '0',
+        null, {timeout: 10000})
+        .catch(() => assert.fail(`${where}: the original photo never lifted back into 3-D`));
+    }
+    // The numbers below open following the shape; put the pill back.
+    await page.locator('#arrange [data-arrange="position"]').click();
+
     // Counting numbers are a tensor of any rank: every factorisation
     // of 24 is a reshape, and none of them touches the buffer. They
     // open arranged by position, so each reshape visibly re-lays the
