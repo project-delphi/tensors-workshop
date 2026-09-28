@@ -487,6 +487,9 @@ and the display publisher silenced while it runs. Nothing is stripped or
 mocked: `%pip install` runs verbatim and datasets are fetched for real, because
 Colab is the runtime this defends. `check_colab_parity()` guards guarded
 `google.colab` imports, no absolute paths, quiet `%pip`, no hardcoded device.
+`--artifacts DIR` keeps what CI ran: each route's executed notebook, its
+plots, `environment.txt` and a `coverage.json`/`coverage.md` table, uploaded
+by `publish.yml`'s `notebooks` job and by `health.yml`.
 
 **A route whose remote could not be reached is skipped, not failed.** A 502,
 503 or 504, a 429, a refused connection, a DNS miss or a timeout says nothing
@@ -639,6 +642,7 @@ uv run --group execute python scripts/test_notebooks.py --list       # no kernel
 uv run --group execute python scripts/test_notebooks.py --only 10
 uv run --group execute python scripts/test_notebooks.py --offline
 uv run --group execute python scripts/test_notebooks.py --strict   # fail on UNCHECKED or FELL BACK (health.yml)
+uv run --group execute python scripts/test_notebooks.py --artifacts DIR  # keep the route copy, plots, environment.txt, coverage
 
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
