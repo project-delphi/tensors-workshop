@@ -24,6 +24,8 @@ theme:
 
 Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrita en NumPy, sobre imágenes, vídeo y datos urbanos reales.
 
+[{{< var event.date >}} · {{< var event.time >}} · {{< var event.venue >}}]{.hero-event}
+
 ::: {.hero-actions}
 [Lee el manual →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 

@@ -99,6 +99,13 @@ Si el código se ejecuta pero el resultado parece incorrecto, compáralo con el
 resultado esperado y usa los [errores resueltos](worked-mistakes.md) para
 practicar la revisión de formas, ejes y supuestos.
 
+### ¿Dónde puedo pedir ayuda? {#help-contact}
+
+Pregunta en la [comunidad de Discord]({{< var community.discord >}}) del taller,
+antes, durante o después de la sesión, en español o en inglés. Para lo que
+prefieras no publicar allí, escribe a
+[{{< var event.contact >}}](mailto:{{< var event.contact >}}).
+
 ## Aprender durante y después de la sesión {#learning}
 
 ### ¿Debo terminar todos los ejercicios durante el taller? {#pace}

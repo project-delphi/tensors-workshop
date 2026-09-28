@@ -182,6 +182,17 @@ workshop:
     >
     > Ya tienes una forma práctica de pensar sobre tensores: **primero el significado de los ejes, después la operación matemática**.
 
+# ── Event ────────────────────────────────────────────────────────────────────
+# The one live session: when, where, and how to reach the organizers. The
+# homepage hero and the FAQ read these, so a change of room is made here once;
+# the Discord invite is `community.discord`, below. The venue says "to be
+# confirmed" until the classroom is assigned -- do not guess a room number.
+event:
+  date: "2 October 2026"
+  time: "5:00 PM–8:00 PM COT (UTC-5)"
+  venue: "Universidad El Bosque, Bogotá, Colombia — classroom to be confirmed"
+  contact: "ravkalia@gmail.com"
+
 # ── Community ────────────────────────────────────────────────────────────────
 # The workshop's Discord server. Groups post their share-backs there during the
 # session, and a pre-work problem (a notebook 00 download that fails) is
@@ -204,7 +215,7 @@ kahoot:
     title_en: "Tensor Vocabulary & Shapes"
     title_es: "Vocabulario de tensores y formas"
     xlsx: "kahoot/kahoot_quiz_1_vocabulary_shapes.xlsx"
-    url: "https://kahoot.it/"          # TODO: paste the Kahoot 1 join URL
+    url: "https://create.kahoot.it/share/quiz-1-vocabulario-shapes/5e0ea818-c257-46b6-9560-bfd4e94e25a3"
     after: "04"
     covers: ["01", "03", "04"]
     questions: 6
@@ -213,7 +224,7 @@ kahoot:
     title_en: "Einsum, Distance & the Pseudoinverse"
     title_es: "Einsum, distancia y la pseudoinversa"
     xlsx: "kahoot/kahoot_quiz_2_distance_pseudoinverse.xlsx"
-    url: "https://kahoot.it/"          # TODO: paste the Kahoot 2 join URL
+    url: "https://create.kahoot.it/share/quiz-2/ba96018d-4e3b-469e-99d1-f95a28c73f07"
     after: "07"
     covers: ["06", "07"]
     questions: 6
@@ -225,7 +236,7 @@ kahoot:
     title_en: "Convolution & Tensor Decompositions"
     title_es: "Convolución y descomposiciones tensoriales"
     xlsx: "kahoot/kahoot_quiz_3_convolution_decompositions.xlsx"
-    url: "https://kahoot.it/"          # TODO: paste the Kahoot 3 join URL
+    url: "https://create.kahoot.it/share/quiz-3/df01a4ae-cb93-45e0-9bca-c22cf5500d00"
     after: "10"
     covers: ["10"]
     questions: 6
