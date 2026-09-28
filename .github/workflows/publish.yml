@@ -38,7 +38,10 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0
+        # An exact tag: since v8 setup-uv publishes no floating `v10`, so
+        # `@v10` does not resolve. Dependabot bumps it like any other.
+        #
         # No cache key: uv's default keys on **/uv.lock, which is deliberately
         # not committed (see .gitignore), so caching here would key on nothing
         # and claim to do more than it does. The two groups CI resolves are
@@ -225,7 +228,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v10
+      - uses: astral-sh/setup-uv@v10.2.0
         with:
           enable-cache: false
 
