@@ -243,8 +243,9 @@ def write_gif(
     first to the rectangle that changed, which Chrome renders wrong.
 
     `max_kb` is a ceiling, not a target. Nothing in CI looks at image sizes --
-    `images/companion-video.png` is 3.6 MB and no check has ever minded -- so
-    a generator that can quietly add megabytes should say so itself.
+    the companion's video poster shipped as a 3.6 MB PNG for three weeks and
+    no check minded -- so a generator that can quietly add megabytes should
+    say so itself.
     """
     if palette_from == "all":
         from PIL import Image
