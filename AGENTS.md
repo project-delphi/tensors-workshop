@@ -188,15 +188,14 @@ separately at `../fonts/`, because a widget is a page with no navbar and no
 site stylesheet; the stages' vendored CMU Serif is untouched, being the Manim
 look on a black canvas rather than the page's type.
 
-**None of the three files is in `repo.widgets`.** `fonts/fonts.css` is a
+**All three files are in `repo.widgets`.** `fonts/fonts.css` is a
 `<link href>` on every page, which check 3's harvest sees; the two `.woff2`
 files are named only by a `@font-face url()`, which is CSS content the harvest
-cannot see, so `check_links.py` never looks for them -- listing them in
-`repo.widgets` is what would make it, as the `cmu-serif` entries do for the
-stages' face. What guards them today is `check_navigation.cjs`, which asserts
-`document.fonts.check` for both faces on `index` in both languages: that is
-what catches a missing or corrupt woff2, or a URL that resolves to the wrong
-depth on one language's pages.
+cannot see, so their `repo.widgets` lines are what makes `check_links.py` look
+for them -- the `cmu-serif` entries are the precedent. `check_navigation.cjs`
+also asserts `document.fonts.check` for both faces on `index` in both
+languages, which is what catches a corrupt woff2, or a URL that resolves to the
+wrong depth on one language's pages.
 
 ## The widgets
 

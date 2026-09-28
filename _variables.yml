@@ -36,6 +36,16 @@ repo:
     # the panel card and the embed chrome. Linked by <link href>, which the harvest does see;
     # listed anyway because without it every widget renders unstyled.
     - interactive/widget-chrome.css
+    # The site's two vendored typefaces and the stylesheet that declares them
+    # (fonts/README.md). The woff2 files are reached only from a
+    # `@font-face url()` in fonts/fonts.css and widget-chrome.css, which is CSS
+    # content, not an attribute, so the link harvest cannot see them -- these
+    # lines are what would notice either file failing to reach docs/, the way
+    # the cmu-serif lines below are for the stages' labels. #176 meant to add
+    # them and its squash lost them; restored 2026-09-28.
+    - fonts/fonts.css
+    - fonts/inter-latin.woff2
+    - fonts/source-serif-4-latin.woff2
     - interactive/image-tensor.html
     - interactive/tensor-core.js
     - interactive/data/photos.json
