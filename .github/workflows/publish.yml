@@ -34,11 +34,11 @@ jobs:
           # Bump this together with a re-render.
           version: 1.6.40
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10
         # No cache key: uv's default keys on **/uv.lock, which is deliberately
         # not committed (see .gitignore), so caching here would key on nothing
         # and claim to do more than it does. The two groups CI resolves are
@@ -165,7 +165,12 @@ jobs:
       # Uploaded on pull requests too, though only `deploy` ever consumes it: a
       # render that succeeds but cannot be packaged should go red on the PR,
       # not afterwards on a main whose required check is already green.
-      - uses: actions/upload-pages-artifact@v3
+      #
+      # From v4 the action leaves dotfiles out, which drops `.nojekyll` -- a
+      # marker Pages only reads when it builds from a branch, not when it
+      # deploys an artifact. Anything else hidden that reached docs/ was a
+      # mistake: until 2026-09-28 it was 9.5 MB of `.venv/` (see _quarto.yml).
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: docs
 
@@ -216,11 +221,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v7
+      - uses: astral-sh/setup-uv@v10
         with:
           enable-cache: false
 

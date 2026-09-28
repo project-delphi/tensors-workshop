@@ -851,6 +851,11 @@ adding it there and, if it has a counterpart in the other language, tagging
 both navbar items `rel: lang-en` / `rel: lang-es`; an untagged item shows in
 both languages.
 
+**Every `resources:` glob starts with `/`.** Quarto matches a bare glob at any
+depth: `data/**` also matched scipy's test data under CI's `.venv/`, and 9.5 MB
+of it was on Pages until 2026-09-28. `upload-pages-artifact` has left dotfiles
+out since v4, which is a second wall, not the first.
+
 ## Working on WSL2 (Windows)
 
 - Clone into the Linux filesystem (`~/code/...`), **not** `/mnt/c/...`. Quarto

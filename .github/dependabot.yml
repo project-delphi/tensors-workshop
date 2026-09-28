@@ -7,13 +7,25 @@
 # pinned Python version for Dependabot to bump. Quarto is pinned in the
 # workflow by a version string Dependabot does not read; bump it by hand,
 # together with a re-render, as the comment there says.
+#
+# Grouped: one PR per ecosystem per month. The protect-main ruleset requires a
+# branch to be up to date with main, so every merge sends the other open PRs
+# back to BEHIND and a fresh CI run; five separate action bumps serialise into
+# five rounds. And Dependabot stops at five open PRs by default, which is how
+# setup-python, setup-uv and upload-pages-artifact fell two majors behind.
 version: 2
 updates:
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: monthly
+    groups:
+      actions:
+        patterns: ["*"]
   - package-ecosystem: npm
     directory: /
     schedule:
       interval: monthly
+    groups:
+      npm:
+        patterns: ["*"]

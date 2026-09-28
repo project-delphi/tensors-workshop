@@ -45,24 +45,29 @@ project:
     - slides/es/index.qmd
     - tensors_workshop_plan_with_quizzes.md
   resources:
-    - .nojekyll
-    - kahoot/*.xlsx
-    - notebooks/*.ipynb
-    - images/**
+    # Every glob is anchored with a leading `/`. Quarto matches a bare
+    # `data/**` at any depth, so with a virtualenv in the project -- CI's uv
+    # makes one before the render -- `data/**`, `images/**` and
+    # `interactive/**` also matched scipy's and numpy's test data under
+    # `.venv/`, and 9.5 MB of it was deployed to Pages until 2026-09-28.
+    - /.nojekyll
+    - /kahoot/*.xlsx
+    - /notebooks/*.ipynb
+    - /images/**
     # The datasets' fallback copies (data/README.md). A notebook fetches them
     # from the published site by absolute URL, so they must reach docs/.
-    - data/**
+    - /data/**
     # The companion's Audio Overview. Copied verbatim, like the notebooks --
     # nothing renders it, so it must be a resource or it never reaches docs/.
-    - media/**
+    - /media/**
     # Standalone widgets. Copied verbatim, like the notebooks — nothing
     # renders them, so without this line they never reach docs/.
-    - interactive/**
+    - /interactive/**
     # The two vendored typefaces (fonts/README.md). Reached from a
     # `@font-face url()`, which is CSS content rather than an attribute, so
     # the link harvest cannot see them either -- `repo.widgets` lists both
     # so check_links.py fails the build if one stops arriving.
-    - fonts/**
+    - /fonts/**
 
 website:
   # Optional instructor diagnostics use draft: true for unlisted, direct-link access.
