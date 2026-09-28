@@ -1362,6 +1362,31 @@ listed rule still fires on any other node. The decks are out because Reveal's
 hidden-slide DOM is its own; the pass is for our pages, and adding the decks
 would mean deciding what of Reveal's to ignore before seeing anything of ours.
 
+**`check_navigation.cjs` split into `scripts/navigation/`, and kept its own
+name** (2026-09-28). At roughly 2,660 lines in one IIFE, a reader looking for
+one check had no boundary to search by, only the shard comments. The split is
+a pure move -- no assertion, timeout, selector or order of checks changed --
+into `harness.cjs` (sharding, the static server, browser/context/page setup,
+axe, `scenario()`), `site.cjs` (the checks that belong to no one widget: page
+coverage, the site pages, the day sheet's print layout, the hero, keyboard
+and disclosure navigation, the readiness pages, the wide table, the
+host-root/offline fallbacks, the slides), and `widgets/<file>.cjs`, one per
+widget, for its own `drive`, and where it has one, `fallback` (the flat/twin
+check with the GL module deliberately lost) and `embed`. `scripts/check_navigation.cjs`
+stays the entry point and keeps every flag and env var it always
+answered to -- `package.json`'s scripts, `run_navigation_shards.cjs`, CI and
+the docs all call it by that name, and renaming it would be a second change
+riding on a refactor that promised to be neither. `scenario(ctx, name, fn)`
+is new: every check in `site.cjs`, and every widget x language drive, now
+runs through it. It does nothing today -- a scenario that throws just throws
+-- but it is the single place a failure's evidence (a Playwright trace chunk
+from `ctx.context`, screenshots) will attach once that lands, so the next
+change to add tracing touches one function instead of choosing a spot in a
+2,660-line file. Verified by grep-counting `assert(`, `assert.`,
+`waitForFunction(`, `waitForTimeout(`, `audit(` and `page.goto(` before and
+after: all six matched (`audit(` off by one, the new function's own call
+into `harness.audit`, not a duplicated or dropped assertion).
+
 ## Publishing
 
 **`docs/` was committed, once.** While it was, CI had to prove the committed
