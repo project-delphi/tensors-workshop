@@ -6,9 +6,10 @@ arithmetic, and `voice-kit.js`, which holds the registry and the drawing.
 Each file calls `VoiceScenes.register({...})` once. The page reads the
 registry back in that order, so a new scene is: one file here, one
 `<script src>` line, one `<section class="step" id="step-<id>">` in the page
-with a `<span class="anchor" id="<id>">` at its top and its
-`<pre id="np-<id>">`, and one `repo.widgets` line in `_variables.yml` (the
-only thing that notices the file failing to reach `docs/`). The page throws at
+with a `<span class="anchor" id="<id>">` at its top, its `<pre id="np-<id>">`
+and its `<div class="why" id="why-<id>">`, and one `repo.widgets` line in
+`_variables.yml` (the only thing that notices the file failing to reach
+`docs/`). The page throws at
 boot if a registered scene has no section.
 
 The order is a story in five parts, and the part headings are on the scene
@@ -95,7 +96,7 @@ VoiceScenes.register({
     {id: "layout", type: "select", options: ["none", "transpose", "patches"]},
     {id: "pos", type: "range", min: 0, max: 1000, step: 1, fmt: (v, ctx) => "..."}
   ],
-  copy: {en, es},       // tab, k, h, claim, concept, b, predict, controls: {id: label},
+  copy: {en, es},       // tab, k, h, claim, concept, b, predict, why, controls: {id: label},
                         // options: {id: {value: label}}, readout(...), aria(ctx)
   init(ctx),            // seed ctx.state; called once for every scene at boot
   sync(ctx),            // optional: derive from the controls. Called before
@@ -244,11 +245,24 @@ into the clip while it plays, or -1.
 - `predict` is the question the reader answers *before* touching a control, the
   way the notebooks' predict-first cells work. The readout is then the answer,
   as a sentence with the numbers in it.
-- `b` is one or two short paragraphs of HTML, and it **opens with the concrete
-  thing**: the failure you can hear, or the picture in front of you, with one
-  number a reader can check on the stage. The definition is `concept`'s job and
-  the formula is `claim`'s; a body that starts with either is the version this
-  page was rewritten to stop being.
+- `b` is paragraphs of HTML, and it **opens with the concrete thing**: the
+  failure you can hear, or the picture in front of you, with one number a
+  reader can check on the stage. The definition is `concept`'s job and the
+  formula is `claim`'s; a body that starts with either is the version this
+  page was rewritten to stop being. After the concrete paragraph comes the
+  **mechanism** -- a paragraph that opens on the question a reader would ask
+  ("Why is a loop the right test?", "Why exactly half?") and answers it. The
+  reader is a science graduate with no signal processing, so every term of the
+  trade (Nyquist, aliasing, decibel, leakage, bin, phase, overlap-add) is
+  defined in the sentence that first uses it, never just named. A paragraph
+  must not answer the scene's `predict` -- the body is read before it.
+- `why` is the closing box, *Why it matters*: what the idea is used for
+  outside this page -- a library default, a model's front end, the same
+  trade-off somewhere else in deep learning. It sits after the readout, so it
+  is read once the reader has tried the controls, and it is the one place a
+  scene may say the answer to its own `predict` in general terms. Every scene
+  has one; `tests/voice_scenes.test.cjs` pairs it with a `#why-<scene>`
+  element in each section.
 - `np` is the comments in the NumPy block, and only the comments: the code
   itself is one copy for both languages, because identifiers are English
   everywhere in this repo. Values Python would print -- a shape, a dtype, an

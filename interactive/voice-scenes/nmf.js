@@ -301,14 +301,34 @@
         k: "NMF · section 09",
         h: "Giving up the best error to get parts you can name",
         claim: "V ≈ W H,  W, H ≥ 0",
-        concept: "NMF minimises the same ‖V − WH‖ the truncated SVD does, but with every entry of " +
-                 "both factors held at or above zero. A constrained minimum cannot beat an " +
-                 "unconstrained one, so it must be worse on error. It is chosen anyway.",
-        b: "W is each component's frequency signature and H is when that component is switched " +
+        concept: "Non-negative matrix factorisation writes a matrix of non-negative numbers V — " +
+                 "here the magnitude spectrogram — as a product WH in which every entry of both " +
+                 "factors is at or above zero too. It minimises the same ‖V − WH‖ the truncated " +
+                 "SVD does, under that extra constraint, and a constrained minimum cannot beat an " +
+                 "unconstrained one: on error it must lose. It is chosen anyway.",
+        b: "<p>W is each component's frequency signature and H is when that component is switched " +
            "on; the spectrogram on the left is what they multiply back to. Solo one and play it. " +
-           "The reason to pay the error below is in what you hear: non-negative parts add up the " +
-           "way sound does, so a component is a thing rather than a direction.",
+           "The reason to pay the error below is in what you hear.</p>" +
+           "<p>What does forbidding negative numbers change? The SVD's components may be " +
+           "negative, so they combine by cancellation: the second one is typically a correction " +
+           "to the first — add energy here, take it away there. When real sounds mix, their magnitudes add, to a good approximation, and never " +
+           "subtract. If every column of W is a spectrum and every row of H a loudness over time, " +
+           "both non-negative, each component can only ever add, and the cheapest way to rebuild " +
+           "V from pieces that only add is to find the pieces that actually recur.</p>" +
+           "<p>The fit uses Lee and Seung's multiplicative updates. Each step multiplies every " +
+           "entry of W and H by a ratio of non-negative numbers, so an entry that starts positive " +
+           "can never cross zero, and the error can never go up.</p>",
         predict: "Before you solo one: the SVD is provably the better approximation. What could NMF have that it does not?",
+        why: "An SVD component on its own is a correction, not a sound; an NMF component is a " +
+             "thing — a drum's spectrum and when it hits, a note and when it sounds — rather than " +
+             "a direction. That makes NMF the standard first tool for taking a mixture apart into " +
+             "pieces you can use: " +
+             "pulling a voice out of background music, transcribing which notes a piano is " +
+             "playing, finding topics in a matrix of word counts — each topic a non-negative bundle " +
+             "of words — or materials in a hyperspectral image. The general lesson is section 09's: " +
+             "the factorisation with the best error is not always the most useful one, and a " +
+             "constraint that matches how the data was made — here, that sound energy is never " +
+             "negative — can buy meaning an unconstrained optimum does not have.",
         vLabel: "V — the magnitude spectrogram",
         wLabel: "W — frequency signatures (log Hz)",
         hLabel: "H — when each one is on",
@@ -369,15 +389,35 @@
         k: "NMF · sección 09",
         h: "Renunciar al mejor error para obtener partes con nombre",
         claim: "V ≈ W H,  W, H ≥ 0",
-        concept: "NMF minimiza el mismo ‖V − WH‖ que la SVD truncada, pero con todas las entradas " +
-                 "de ambos factores en cero o por encima. Un mínimo con restricciones no puede " +
-                 "superar a uno sin ellas, así que tiene que ser peor en error. Se elige igualmente.",
-        b: "W es la firma en frecuencia de cada componente y H es cuándo se enciende esa " +
-           "componente; el espectrograma de la izquierda es lo que su producto reconstruye. Aísla " +
-           "una y reprodúcela. La razón para pagar el error de abajo está en lo que oyes: las " +
-           "partes no negativas se suman como se suma el sonido, así que una componente es una " +
-           "cosa y no una dirección.",
+        concept: "La factorización no negativa de matrices escribe una matriz de números no negativos V —aquí el " +
+                 "espectrograma de magnitud— como un producto WH en el que también cada entrada de ambos factores es " +
+                 "cero o mayor. Minimiza el mismo ‖V − WH‖ que la SVD truncada, bajo esa restricción adicional, y un " +
+                 "mínimo con restricciones no puede superar a uno sin ellas: en error tiene que perder. Se elige " +
+                 "igualmente.",
+        b: "<p>W es la firma en frecuencia de cada componente y H es cuándo se enciende esa componente; el " +
+           "espectrograma de la izquierda es lo que su producto reconstruye. Aísla una y reprodúcela. La razón " +
+           "para pagar el error de abajo está en lo que oyes.</p>" +
+           "<p>¿Qué cambia al prohibir los números negativos? Las componentes de la SVD pueden ser " +
+           "negativas, así que se combinan por cancelación: la segunda suele ser una corrección de la primera " +
+           "—añade energía aquí, quítala allá—. Cuando se mezclan sonidos " +
+           "reales, sus magnitudes se suman, con buena aproximación, y nunca se restan. Si cada columna de W " +
+           "es un espectro y cada fila de H una sonoridad en el tiempo, ambas no negativas, cada componente " +
+           "solo puede sumar, y la manera más barata de reconstruir V con piezas que solo suman es encontrar " +
+           "las piezas que de verdad se repiten.</p>" +
+           "<p>El ajuste usa las actualizaciones multiplicativas de Lee y Seung. Cada paso multiplica cada " +
+           "entrada de W y H por una razón de números no negativos, así que una entrada que empieza positiva " +
+           "nunca puede cruzar el cero, y el error nunca puede subir.</p>",
         predict: "Antes de aislar una: la SVD es demostrablemente la mejor aproximación. ¿Qué podría tener NMF que ella no tiene?",
+        why: "Una componente de la SVD, por sí sola, es una corrección y no un sonido; una componente de " +
+             "NMF es una cosa —el espectro de un tambor y cuándo suena, una nota y cuándo se toca— y no una " +
+             "dirección. Por eso NMF es la primera herramienta habitual para separar una mezcla en piezas " +
+             "que puedes usar: extraer " +
+             "una voz de la música de fondo, transcribir qué notas toca un piano, encontrar temas en una matriz " +
+             "de recuentos de palabras —cada tema, un paquete no negativo de palabras— o materiales en una " +
+             "imagen hiperespectral. La lección general es la de la sección 09: la factorización con el mejor " +
+             "error no siempre es la más útil, y una restricción que coincide con cómo se hicieron los datos " +
+             "—aquí, que la energía del sonido nunca es negativa— puede comprar un significado que un óptimo sin " +
+             "restricciones no tiene.",
         vLabel: "V — el espectrograma de magnitud",
         wLabel: "W — firmas en frecuencia (Hz log)",
         hLabel: "H — cuándo se enciende cada una",

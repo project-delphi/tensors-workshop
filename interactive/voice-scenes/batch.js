@@ -265,7 +265,8 @@
         claim: "batch.shape = (B, 1, F, T)",
         concept: "A batch axis counts examples. It is the one axis with no physical meaning at " +
                  "all — nothing about the sound changes when an example moves from position 0 to " +
-                 "position 2 — which is exactly why it has to be first, and separate.",
+                 "position 2 — which is exactly why it has to be first, and separate. The usual " +
+                 "order is (B, C, F, T): batch, then channels, then the two axes of each example.",
         b: "<p>Three recordings, each already a frequency-by-time matrix, stacked into one array. " +
            "They stack because they are the same length: the shape tag on every row reads " +
            "<code>(1, 513, 465)</code>, so the whole thing is <code>(3, 1, 513, 465)</code> and a " +
@@ -273,11 +274,27 @@
            "<p>Now drop a file of your own on the picker. It is almost certainly not 4.95 seconds " +
            "long, its row comes out short, and its tag turns red — four arrays of different shapes " +
            "are not a tensor. Pull the crop down to the shortest of them and the tag goes quiet " +
-           "again. That is all a real data loader is doing when it crops.</p>",
+           "again. That is all a real data loader is doing when it crops.</p>" +
+           "<p>The channel axis is there even though it is 1. It is where a stereo file's left and " +
+           "right would go, and it is the axis a convolutional layer mixes: its first layer turns " +
+           "C input channels into many, exactly as an image network starts from the three colour " +
+           "channels of a photograph. Keeping it explicit lets one model take mono and stereo " +
+           "alike.</p>" +
+           "<p>Why crop rather than pad? Either works. Padding fills the short example with zeros " +
+           "up to the longest and carries a mask saying which frames are real; it keeps every " +
+           "frame and costs memory and masking logic. Cropping is simpler and throws some frames " +
+           "away. A loader does one or the other, every time.</p>",
         eqcap: "B counts examples, C counts channels, F counts frequency bins and T counts frames. " +
                "Point at any of them to see which extent of the picture it measures. C is 1 here " +
                "because these recordings are mono; a stereo file would make it 2.",
         predict: "Before you touch the crop: which of the four numbers changes when you drag it?",
+        why: "Batching is where the speed comes from. A GPU does thousands of multiply-adds at " +
+             "once and a single example rarely keeps it busy; handing it B examples in one call " +
+             "applies the same weights to all of them in parallel, for not much more than the cost " +
+             "of one. Training also averages the gradient over the batch, so each step is less " +
+             "noisy. The price is the rule on this stage: every example in a batch has the same " +
+             "shape, so variable-length data — audio, text, video — always passes through a crop, " +
+             "a pad, or a bucketing step that groups similar lengths together.",
         np: {
           clips: (b, f, ts) => b + " of them: " + f + " x " + ts.join("/"),
           crop: (k, sh, fits) => fits ? "every one to " + k + " frames"
@@ -326,7 +343,8 @@
         claim: "batch.shape = (B, 1, F, T)",
         concept: "Un eje de lote cuenta ejemplos. Es el único eje sin ningún significado físico " +
                  "—nada del sonido cambia porque un ejemplo pase de la posición 0 a la 2—, y por " +
-                 "eso mismo tiene que ir primero y aparte.",
+                 "eso mismo tiene que ir primero y aparte. El orden habitual es (B, C, F, T): lote, luego canales, " +
+                 "luego los dos ejes de cada ejemplo.",
         b: "<p>Tres grabaciones, cada una ya una matriz de frecuencia por tiempo, apiladas en un " +
            "solo arreglo. Se apilan porque miden lo mismo: la etiqueta de forma de cada fila dice " +
            "<code>(1, 513, 465)</code>, así que el conjunto es <code>(3, 1, 513, 465)</code> y un " +
@@ -334,11 +352,27 @@
            "<p>Ahora suelta un archivo tuyo en el selector. Casi seguro no dura 4,95 segundos, su " +
            "fila sale corta y su etiqueta se pone roja: cuatro arreglos de formas distintas no son " +
            "un tensor. Baja el recorte hasta el más corto y la etiqueta se calma. Eso es todo lo " +
-           "que hace un cargador de datos real cuando recorta.</p>",
+           "que hace un cargador de datos real cuando recorta.</p>" +
+           "<p>El eje de canales está ahí aunque valga 1. Es donde irían la izquierda y la derecha de un " +
+           "archivo estéreo, y es el eje que mezcla una capa convolucional: su primera capa convierte C " +
+           "canales de entrada en muchos, exactamente como una red de imágenes parte de los tres canales de " +
+           "color de una fotografía. Mantenerlo explícito permite que un mismo modelo acepte mono y estéreo " +
+           "por igual.</p>" +
+           "<p>¿Por qué recortar en vez de rellenar? Cualquiera de las dos sirve. Rellenar completa con ceros " +
+           "el ejemplo corto hasta el más largo y lleva una máscara que indica qué tramas son reales; conserva " +
+           "todas las tramas y cuesta memoria y lógica de enmascarado. Recortar es más sencillo y descarta " +
+           "algunas tramas. Un cargador hace una u otra, siempre.</p>",
         eqcap: "B cuenta ejemplos, C cuenta canales, F cuenta bins de frecuencia y T cuenta " +
                "tramas. Señala cualquiera para ver qué extensión de la imagen mide. Aquí C es 1 " +
                "porque estas grabaciones son mono; un archivo estéreo lo haría 2.",
         predict: "Antes de tocar el recorte: ¿cuál de los cuatro números cambia al arrastrarlo?",
+        why: "El lote es de donde sale la velocidad. Una GPU hace miles de multiplicaciones-sumas a la vez y un " +
+             "solo ejemplo rara vez la mantiene ocupada; darle B ejemplos en una sola llamada aplica los mismos " +
+             "pesos a todos en paralelo, por poco más del coste de uno. El entrenamiento además promedia el " +
+             "gradiente sobre el lote, así que cada paso es menos ruidoso. El precio es la regla de este " +
+             "escenario: todos los ejemplos de un lote tienen la misma forma, así que los datos de longitud " +
+             "variable —audio, texto, video— pasan siempre por un recorte, un relleno o un paso de agrupación " +
+             "por cubos que junta longitudes parecidas.",
         np: {
           clips: (b, f, ts) => b + " grabaciones: " + f + " x " + ts.join("/"),
           crop: (k, sh, fits) => fits ? "cada una a " + k + " marcos"

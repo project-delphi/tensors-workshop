@@ -162,9 +162,11 @@
         k: "Layout and contiguity · section 04",
         h: "The same numbers, in a different order",
         claim: "[F, T] → [T, F]",
-        concept: "A transpose permutes the shape and the strides and reads nothing. The numbers do " +
-                 "not move, and not one of them is lost. Whether that matters depends entirely on " +
-                 "what reads the buffer next.",
+        concept: "A transpose swaps two axes. In NumPy it changes only the shape and the " +
+                 "<em>strides</em> — how many bytes to step in memory to move one place along each " +
+                 "axis — and reads nothing. The numbers do not move, and not one of them is lost. " +
+                 "Whether that matters depends entirely on what reads the array next, and what that " +
+                 "code assumes each axis means.",
         b: "<p>Choose the transpose and press play. Every one of the 263,169 numbers is still " +
            "there — the count above the picture does not move — and the voice is gone. Nothing was " +
            "lost and nothing is recoverable by listening: what was a frequency is being read as a " +
@@ -173,8 +175,21 @@
            "something you can turn back into sound when its two axes are the same length. The patch " +
            "shuffle is the milder version of the same mistake: inside each 27 by 27 block the sound " +
            "survives, across them it does not, so you hear the voice arriving in the wrong order " +
-           "rather than as noise.</p>",
+           "rather than as noise.</p>" +
+           "<p>How can an operation that loses nothing destroy the voice? The inverse transform " +
+           "does not read axis names; it reads positions. It takes each column as one moment's " +
+           "spectrum and lays the moments out in time. After the transpose, each column it is " +
+           "handed is really one frequency's whole story across the recording, and it dutifully " +
+           "plays that as if it were one instant. Every number is right. The meaning attached to " +
+           "where it sits is wrong, and meaning is all a layout carries.</p>",
         predict: "Before you press play: the transpose loses nothing at all. Should it still sound like a voice?",
+        why: "Axis order is a convention, and conventions differ: torchaudio hands you " +
+             "(…, freq, time), many models expect (time, freq), PyTorch stores images as (channel, " +
+             "height, width) and TensorFlow as (height, width, channel). When the shapes happen to " +
+             "fit — square, as here, or merely broadcastable — the wrong order raises no error at " +
+             "all. The model trains, the loss drops a little, and the bug surfaces weeks later if it " +
+             "surfaces at all. This picture is the reason to name your axes, assert your shapes, and " +
+             "look at or listen to what you feed a model.",
         np: {
           shape: (f, t) => "(" + f + ", " + t + ") complex",
           size: (n) => n + " numbers, the same in every layout",
@@ -221,9 +236,10 @@
         k: "Disposición y contigüidad · sección 04",
         h: "Los mismos números, en otro orden",
         claim: "[F, T] → [T, F]",
-        concept: "Una transposición permuta la forma y los pasos, y no lee nada. Los números no se " +
-                 "mueven, y no se pierde ninguno. Que eso importe depende por completo de qué lea " +
-                 "el búfer a continuación.",
+        concept: "Una transposición intercambia dos ejes. En NumPy solo cambia la forma y los <em>pasos</em> " +
+                 "(strides) —cuántos bytes hay que avanzar en memoria para moverse un lugar a lo largo de cada eje— " +
+                 "y no lee nada. Los números no se mueven, y no se pierde ninguno. Que eso importe depende por " +
+                 "completo de qué lea el arreglo a continuación, y de qué suponga ese código que significa cada eje.",
         b: "<p>Elige la transposición y pulsa reproducir. Los 263.169 números siguen todos ahí —el " +
            "conteo sobre la imagen no se mueve— y la voz ha desaparecido. No se perdió nada y nada " +
            "se recupera escuchando: lo que era una frecuencia se lee como un tiempo, y ese es todo " +
@@ -232,8 +248,21 @@
            "solo se puede volver a convertir en sonido cuando sus dos ejes miden lo mismo. El barajado " +
            "en parches es la versión suave del mismo error: dentro de cada bloque de 27 por 27 el " +
            "sonido sobrevive, entre ellos no, así que oyes la voz llegando en el orden equivocado y " +
-           "no como ruido.</p>",
+           "no como ruido.</p>" +
+           "<p>¿Cómo puede destruir la voz una operación que no pierde nada? La transformada inversa no lee " +
+           "nombres de ejes; lee posiciones. Toma cada columna como el espectro de un instante y coloca los " +
+           "instantes en el tiempo. Tras la transposición, cada columna que recibe es en realidad la historia " +
+           "entera de una frecuencia a lo largo de la grabación, y la reproduce diligentemente como si fuera " +
+           "un solo instante. Cada número es correcto. El significado asociado al lugar donde está es erróneo, " +
+           "y el significado es lo único que lleva una disposición.</p>",
         predict: "Antes de reproducir: la transposición no pierde nada. ¿Debería seguir sonando como una voz?",
+        why: "El orden de los ejes es una convención, y las convenciones difieren: torchaudio te entrega (…, " +
+             "freq, time), muchos modelos esperan (time, freq), PyTorch guarda las imágenes como (channel, " +
+             "height, width) y TensorFlow como (height, width, channel). Cuando las formas encajan por " +
+             "casualidad —cuadradas, como aquí, o simplemente compatibles por broadcasting— el orden equivocado " +
+             "no lanza ningún error. El modelo entrena, la pérdida baja un poco, y el fallo aparece semanas " +
+             "después, si es que aparece. Esta imagen es la razón para nombrar tus ejes, comprobar tus formas " +
+             "con assert, y mirar o escuchar lo que le das a un modelo.",
         np: {
           shape: (f, t) => "(" + f + ", " + t + ") complejo",
           size: (n) => n + " números, los mismos en cualquier disposición",

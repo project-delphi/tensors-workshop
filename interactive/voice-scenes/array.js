@@ -136,11 +136,23 @@
            "it: a length, a dtype, and the numbers.</p>" +
            "<p>Switch the dtype to int16 and the same beads show the integers the file actually " +
            "stores; float32 is what you are handed after dividing by 32 768. Same sound, same beads, " +
-           "twice the bytes — which is the arithmetic in the box below.</p>",
+           "twice the bytes — which is the arithmetic in the box below.</p>" +
+           "<p>Why convert at all? An int16 code runs from −32 768 to 32 767, a 24-bit file's from " +
+           "about −8.4 million to 8.4 million, and the same loudness is a different integer in " +
+           "each. Dividing by the full scale puts every file on one axis from −1 to +1, so a model " +
+           "learns about sound rather than about file formats. And floats do not overflow: add " +
+           "two loud int16 arrays in NumPy and the sums past 32 767 wrap round, silently, to large " +
+           "negative numbers.</p>",
         eqcap: "N is how many numbers there are and n picks one of them out, counting from 0 — " +
                "so the last one is x with subscript N minus 1, not N. The transpose sign is there " +
                "because a vector in this workshop is a column.",
         predict: "Before you switch: how many bytes is 4.95 s of int16?",
+        why: "Shape and dtype are the two facts every library checks before it does anything, and " +
+             "most surprises with real data are one of them not being what you assumed: a stereo " +
+             "file is (N, 2), not (N,); a 24-bit file arrives as int32; a loader that returns int16 " +
+             "hands a model numbers 32 768 times larger than it was trained on. The memory is their " +
+             "product, N × itemsize, and it grows fast: an hour of 48 kHz float32 audio is 691 MB " +
+             "before anything has been computed from it.",
         whole: "the whole recording",
         np: {
           slice: (n, x0) => "the " + n + " on the stage; x[0] = " + x0,
@@ -173,11 +185,23 @@
            "<p>Cambia el dtype a int16 y las mismas cuentas muestran los enteros que el archivo " +
            "guarda de verdad; float32 es lo que te entregan tras dividir entre 32 768. El mismo " +
            "sonido, las mismas cuentas, el doble de bytes: esa es la aritmética de la caja de " +
-           "abajo.</p>",
+           "abajo.</p>" +
+           "<p>¿Por qué convertir, entonces? Un código int16 va de −32 768 a 32 767, el de un archivo de 24 " +
+           "bits de aproximadamente −8,4 millones a 8,4 millones, y la misma sonoridad es un entero distinto " +
+           "en cada uno. Dividir entre la escala completa pone todos los archivos en un mismo eje de −1 a +1, " +
+           "de modo que un modelo aprende sobre el sonido y no sobre formatos de archivo. Y los flotantes no " +
+           "se desbordan: suma dos arreglos int16 fuertes en NumPy y las sumas que pasan de 32 767 dan la " +
+           "vuelta, en silencio, hasta números negativos grandes.</p>",
         eqcap: "N es cuántos números hay y n elige uno de ellos, contando desde 0 —así que el " +
                "último es x con subíndice N menos 1, no N—. El signo de transposición está " +
                "porque en este taller un vector es una columna.",
         predict: "Antes de cambiar: ¿cuántos bytes son 4,95 s en int16?",
+        why: "La forma y el dtype son los dos datos que toda biblioteca comprueba antes de hacer nada, y la " +
+             "mayoría de las sorpresas con datos reales son que uno de ellos no es lo que suponías: un archivo " +
+             "estéreo es (N, 2), no (N,); uno de 24 bits llega como int32; un cargador que devuelve int16 " +
+             "entrega a un modelo números 32 768 veces mayores que aquellos con los que se entrenó. La memoria " +
+             "es su producto, N × itemsize, y crece rápido: una hora de audio float32 a 48 kHz son 691 MB antes " +
+             "de haber calculado nada a partir de ella.",
         whole: "la grabación entera",
         np: {
           slice: (n, x0) => "las " + n + " del escenario; x[0] = " + x0,

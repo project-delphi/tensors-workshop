@@ -369,14 +369,36 @@
         k: "Truncated SVD · section 09",
         h: "The best rank is in the middle, and both ends fail",
         claim: "Z ≈ U_k Σ_k V_kᵀ",
-        concept: "The truncated SVD is the best rank-k approximation there is, by Eckart–Young. " +
-                 "This is where that stops being enough: it is optimal on ‖Z − Z_k‖, and what " +
-                 "you care about is how much of the voice survives, which is a different question.",
-        b: "Noise was added to the recording at a measured 5 dB, and the matrix of the result is " +
-           "being factored in your browser right now — that wait is the cost section 09 keeps " +
-           "asking about. Then drag the rank and listen. Watch what happens at the two ends of " +
-           "the curve, and notice that neither end is a bug.",
+        concept: "The singular value decomposition writes any matrix as a sum of rank-one pieces " +
+                 "— each an outer product of two vectors, scaled by a singular value — sorted from " +
+                 "largest to smallest. Keeping the first k gives the best rank-k approximation there " +
+                 "is, by the Eckart–Young theorem: no other rank-k matrix is closer in total squared " +
+                 "error ‖Z − Z_k‖. What you care about is how much of the voice survives, which is " +
+                 "a different question, and this picture measures the difference.",
+        b: "<p>Noise was added to the recording at a measured 5 dB — the voice carries about three " +
+           "times the noise's energy — and the matrix of the result is being factored in your " +
+           "browser right now; that wait is the cost section 09 keeps asking about. Then drag the " +
+           "rank and listen. Watch what happens at the two ends of the curve, and notice that " +
+           "neither end is a bug.</p>" +
+           "<p>Why should throwing components away remove noise? A voice repeats itself in the " +
+           "spectrogram: the same few spectral shapes — a pitch and its harmonics, the hump of a " +
+           "vowel — recur across hundreds of columns, so most of its energy lives in a handful of " +
+           "rank-one pieces. The noise here is white, the same strength at every frequency and " +
+           "every moment, with no shape to repeat, so its energy is spread thinly over all of " +
+           "them. Keep the top k and you keep most of the voice but only a small share of the " +
+           "noise, roughly k parts in the several hundred it is spread over.</p>" +
+           "<p>The curve is scored against the clean recording, in the decibels of the rounding " +
+           "picture: every 3 dB gained halves the energy of what is still wrong.</p>",
         predict: "Before you drag: more components means a closer approximation. Should more always sound better?",
+        why: "This is the bet behind PCA, made on a spectrogram: the structure you want is " +
+             "low-dimensional and the noise is not. The same bet lets LoRA fine-tune a large model " +
+             "with a rank-8 update instead of a full matrix, lets a recommender fill in a ratings " +
+             "matrix from a few taste profiles, and lets a matrix of millions of entries be stored " +
+             "as two thin ones. The picture also shows the catch they all share: the rank is a " +
+             "choice, the best one is somewhere in the middle — too few components take the voice " +
+             "with the noise, all of them rebuild the noisy input exactly — and it has to be " +
+             "measured on what you care about, never on the approximation error, which only " +
+             "improves as k grows.",
         fullRank: "every component", fullShort: "all",
         spectrum: "singular values",
         axisSnr: "signal-to-noise against rank",
@@ -457,14 +479,36 @@
         k: "SVD truncada · sección 09",
         h: "El mejor rango está en el medio, y ambos extremos fallan",
         claim: "Z ≈ U_k Σ_k V_kᵀ",
-        concept: "La SVD truncada es la mejor aproximación de rango k que existe, por " +
-                 "Eckart–Young. Aquí es donde eso deja de bastar: es óptima sobre ‖Z − Z_k‖, y lo " +
-                 "que te importa es cuánta voz sobrevive, que es otra pregunta.",
-        b: "Se añadió ruido a la grabación a 5 dB medidos, y la matriz del resultado se está " +
-           "factorizando en tu navegador ahora mismo: esa espera es el coste por el que la sección " +
-           "09 no deja de preguntar. Después arrastra el rango y escucha. Observa qué pasa en los " +
-           "dos extremos de la curva, y fíjate en que ninguno es un error.",
+        concept: "La descomposición en valores singulares escribe cualquier matriz como una suma de piezas de rango " +
+                 "uno —cada una un producto exterior de dos vectores, escalado por un valor singular— ordenadas de " +
+                 "mayor a menor. Quedarse con las k primeras da la mejor aproximación de rango k que existe, por el " +
+                 "teorema de Eckart–Young: ninguna otra matriz de rango k está más cerca en error cuadrático total " +
+                 "‖Z − Z_k‖. Lo que te importa es cuánta voz sobrevive, que es otra pregunta, y esta imagen mide la " +
+                 "diferencia.",
+        b: "<p>Se añadió ruido a la grabación a 5 dB medidos —la voz lleva aproximadamente tres veces la " +
+           "energía del ruido— y la matriz del resultado se está factorizando en tu navegador ahora mismo; esa " +
+           "espera es el coste por el que la sección 09 no deja de preguntar. Después arrastra el rango y " +
+           "escucha. Observa qué pasa en los dos extremos de la curva, y fíjate en que ninguno es un " +
+           "error.</p>" +
+           "<p>¿Por qué tirar componentes debería quitar ruido? Una voz se repite en el espectrograma: las " +
+           "mismas pocas formas espectrales —un tono y sus armónicos, la joroba de una vocal— reaparecen a lo " +
+           "largo de cientos de columnas, así que la mayor parte de su energía vive en un puñado de piezas de " +
+           "rango uno. El ruido aquí es blanco, con la misma intensidad en cada frecuencia y cada instante, " +
+           "sin forma que repetir, así que su energía se reparte finamente entre todas ellas. Quédate con las " +
+           "k primeras y conservas la mayor parte de la voz pero solo una pequeña parte del ruido, más o menos " +
+           "k partes de los varios cientos entre los que se reparte.</p>" +
+           "<p>La curva se puntúa contra la grabación limpia, en los decibelios de la imagen del redondeo: " +
+           "cada 3 dB ganados reducen a la mitad la energía de lo que sigue mal.</p>",
         predict: "Antes de arrastrar: más componentes significa una aproximación más cercana. ¿Debería sonar siempre mejor cuantas más haya?",
+        why: "Esta es la apuesta detrás del PCA, hecha sobre un espectrograma: la estructura que buscas es de " +
+             "baja dimensión y el ruido no. La misma apuesta permite que LoRA afine un modelo grande con una " +
+             "actualización de rango 8 en vez de una matriz completa, que un sistema de recomendación rellene " +
+             "una matriz de valoraciones a partir de unos pocos perfiles de gusto, y que una matriz de millones " +
+             "de entradas se guarde como dos delgadas. La imagen muestra también el problema que todas " +
+             "comparten: el rango es una elección, el mejor está en algún punto intermedio —con muy pocas " +
+             "componentes la voz se va con el ruido, con todas se reconstruye exactamente la entrada " +
+             "ruidosa— y hay que medirlo sobre lo que te importa, nunca sobre el error de aproximación, " +
+             "que solo mejora al crecer k.",
         fullRank: "todas las componentes", fullShort: "todas",
         spectrum: "valores singulares",
         axisSnr: "señal-ruido frente al rango",

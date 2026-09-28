@@ -334,18 +334,31 @@
         k: "Hop and the spectrogram · Appendix E",
         h: "The window hops along, and every stop is one column",
         claim: "x[n] → X[f, t]",
-        concept: "Take the transform of one frame, move the window along by a fixed hop, and take " +
-                 "it again. The answers, stacked side by side, are a matrix: frequency down, time " +
-                 "across. Nothing is lost — with enough overlap the transform is invertible.",
+        concept: "Take the transform of one frame, move the window along by a fixed step — the " +
+                 "<em>hop</em> — and take it again. The answers, stacked side by side, are a matrix " +
+                 "with frequency up the side and time along the bottom: the short-time Fourier " +
+                 "transform. Its magnitude, drawn as an image, is a <em>spectrogram</em>. With enough " +
+                 "overlap nothing is lost, and the matrix can be turned back into the recording.",
         b: "<p>The blue humps on the waveform are the windows either side of the one you are on. At " +
            "a hop of half the window they cross halfway up, so every sample is covered twice and the " +
            "taper that scaled it down in one frame scales it up in the next. Set the overlap to none " +
            "and the humps separate: now the samples under each dip are scaled towards zero and " +
            "nothing puts them back. Press play — that is the clicking.</p>" +
+           "<p>Why exactly half? A Hann window shifted by N/2 is its own complement: " +
+           "w[n] + w[n + N/2] = 1 for every n, because the two cosines are half a cycle apart and " +
+           "cancel. So when the inverse transform adds the overlapping frames back up — " +
+           "<em>overlap-add</em> — every sample comes back at full weight, and the taper that fixed " +
+           "the leakage costs nothing. That identity is also why the code uses the " +
+           "<em>periodic</em> window, <code>np.hanning(N + 1)[:-1]</code>: the textbook " +
+           "<code>np.hanning(N)</code> puts a zero at both ends, so its period is N − 1 rather than " +
+           "N, and its shifted copies miss 1 by a hair.</p>" +
            "<p>Each stop of the window is one column of the matrix, marked in blue, and the strip on " +
            "the right is that column on its own: the bars of the previous picture, stood on end. " +
-           "Change the window size and the hop and watch the shape tag move — a shorter hop means " +
-           "more columns for the same voice, and the box below counts them.</p>",
+           "Brightness is loudness in decibels and 0 Hz is at the bottom. On the voice, a vowel " +
+           "shows as a stack of evenly spaced horizontal lines — the pitch and its multiples — and " +
+           "a hiss like <em>s</em> as a haze high up; on the tone, there is one line. Change the " +
+           "window size and the hop and watch the shape tag move — a shorter hop means more columns " +
+           "for the same voice, and the box below counts them.</p>",
         eqcap: "The whole spectrogram is one contraction: stack the frames as the columns of " +
                "𝒳, taper them with diag(w), and multiply by ℱ. n — the length of one " +
                "frame — is the axis that disappears, gone from both sides of the arrow, and the " +
@@ -354,6 +367,14 @@
                "to see which extent of the picture it measures. S is the magnitude of X, which " +
                "is what the spectrogram actually draws.",
         predict: "Before you drag: halve the hop. Does the matrix get taller, or wider?",
+        why: "The spectrogram is how most audio reaches a neural network. It turns a sound into an " +
+             "image, frequency by time, so everything built for images — convolutions, and " +
+             "transformers over patches — applies to it. Whisper, for instance, uses a 25 ms Hann " +
+             "window hopping every 10 ms, and folds the bins onto 80 bands spaced the way pitch is " +
+             "heard, on a log scale, before a single weight touches them. And because the matrix " +
+             "can be inverted, a model can work here and hand back sound: denoisers and source " +
+             "separators edit this matrix and invert it, which is what the low-rank picture below " +
+             "does.",
         rebuilt: "the signal rebuilt from the matrix",
         np: {
           hop: (ov) => ov > 0 ? ov + " samples shared by two windows" : "no overlap at all",
@@ -391,20 +412,32 @@
         k: "El salto y el espectrograma · Apéndice E",
         h: "La ventana avanza, y cada parada es una columna",
         claim: "x[n] → X[f, t]",
-        concept: "Transforma un marco, mueve la ventana un salto fijo y transforma otra vez. Las " +
-                 "respuestas, apiladas una junto a otra, son una matriz: frecuencia hacia abajo, " +
-                 "tiempo a lo ancho. No se pierde nada: con suficiente superposición la " +
-                 "transformada es invertible.",
+        concept: "Transforma un marco, mueve la ventana un paso fijo —el <em>salto</em>— y transforma otra vez. Las " +
+                 "respuestas, apiladas una junto a otra, son una matriz con la frecuencia en vertical y el tiempo a " +
+                 "lo largo: la transformada de Fourier de tiempo corto. Su magnitud, dibujada como imagen, es un " +
+                 "<em>espectrograma</em>. Con suficiente superposición no se pierde nada, y la matriz puede " +
+                 "convertirse de nuevo en la grabación.",
         b: "<p>Las jorobas azules sobre la onda son las ventanas a un lado y otro de la que estás " +
            "mirando. Con un salto de media ventana se cruzan a media altura, así que cada muestra " +
            "queda cubierta dos veces y el perfil que la redujo en un marco la realza en el " +
            "siguiente. Pon la superposición en ninguna y las jorobas se separan: ahora las muestras " +
            "bajo cada valle se reducen hacia cero y nada las devuelve. Pulsa reproducir: eso es el " +
            "chasquido.</p>" +
-           "<p>Cada parada de la ventana es una columna de la matriz, marcada en azul, y la tira de " +
-           "la derecha es esa columna sola: las barras de la imagen anterior, puestas de pie. Cambia " +
-           "el tamaño de la ventana y el salto y mira moverse la etiqueta de forma: un salto más " +
-           "corto significa más columnas para la misma voz, y la caja de abajo las cuenta.</p>",
+           "<p>¿Por qué justo la mitad? Una ventana de Hann desplazada N/2 es su propio complemento: w[n] + " +
+           "w[n + N/2] = 1 para todo n, porque los dos cosenos están a medio ciclo de distancia y se cancelan. " +
+           "Así, cuando la transformada inversa vuelve a sumar los marcos superpuestos " +
+           "—<em>superposición-suma</em>—, cada muestra vuelve con peso completo y el perfil que arregló la " +
+           "fuga no cuesta nada. Esa identidad es también la razón por la que el código usa la ventana " +
+           "<em>periódica</em>, <code>np.hanning(N + 1)[:-1]</code>: la <code>np.hanning(N)</code> de los " +
+           "libros de texto pone un cero en ambos extremos, así que su periodo es N − 1 y no N, y sus copias " +
+           "desplazadas se quedan a un pelo de 1.</p>" +
+           "<p>Cada parada de la ventana es una columna de la matriz, marcada en azul, y la tira de la derecha " +
+           "es esa columna sola: las barras de la imagen anterior, puestas de pie. El brillo es la sonoridad " +
+           "en decibelios y 0 Hz está abajo. En la voz, una vocal se ve como una pila de líneas horizontales " +
+           "igualmente espaciadas —el tono y sus múltiplos— y un siseo como <em>s</em> como una neblina en lo " +
+           "alto; en el tono, hay una sola línea. Cambia el tamaño de la ventana y el salto y mira moverse la " +
+           "etiqueta de forma: un salto más corto significa más columnas para la misma voz, y la caja de abajo " +
+           "las cuenta.</p>",
         eqcap: "Todo el espectrograma es una sola contracción: apila los marcos como columnas " +
                "de 𝒳, perfílalos con diag(w) y multiplica por ℱ. n —la longitud de un " +
                "marco— es el eje que desaparece, ausente a ambos lados de la flecha, y las formas " +
@@ -413,6 +446,14 @@
                "para ver qué extensión de la imagen mide. S es la magnitud de X, que es lo que " +
                "dibuja el espectrograma.",
         predict: "Antes de arrastrar: reduce el salto a la mitad. ¿La matriz se hace más alta o más ancha?",
+        why: "El espectrograma es la forma en que la mayor parte del audio llega a una red neuronal. Convierte " +
+             "un sonido en una imagen, frecuencia por tiempo, de modo que todo lo construido para imágenes " +
+             "—convoluciones, y transformers sobre parches— se aplica a él. Whisper, por ejemplo, usa una " +
+             "ventana de Hann de 25 ms con un salto de 10 ms, y pliega los bins en 80 bandas espaciadas como se " +
+             "oye el tono, en escala logarítmica, antes de que un solo peso los toque. Y como la matriz se puede " +
+             "invertir, un modelo puede trabajar aquí y devolver sonido: los supresores de ruido y los " +
+             "separadores de fuentes editan esta matriz y la invierten, que es lo que hace la imagen de rango " +
+             "bajo de más abajo.",
         rebuilt: "la señal reconstruida a partir de la matriz",
         np: {
           hop: (ov) => ov > 0 ? ov + " muestras en dos ventanas a la vez" : "sin superposición",
