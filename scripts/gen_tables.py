@@ -34,6 +34,7 @@ Outputs (all overwritten, none hand-edited):
     _includes/notebook-deps-en.md  _includes/notebook-deps-es.md
     _includes/brainstorm-en.md    _includes/brainstorm-es.md
     _includes/references-en.md    _includes/references-es.md
+    _includes/day-sheet-strip-en.md  _includes/day-sheet-strip-es.md
 """
 
 from __future__ import annotations
@@ -586,6 +587,64 @@ HANDBOOK_HEAD = {
     "es": ("#", "Parte", "Bloque", "Segmento", "Formato", "Min", "Inicio"),
 }
 HANDBOOK_BREAK = {"en": "Break", "es": "Pausa"}
+
+STRIP_HEAD = {
+    "en": (
+        "Segment",
+        "Planned start",
+        "Planned min",
+        "Actual start",
+        "Actual end",
+        "Cut taken",
+        "Notes",
+    ),
+    "es": (
+        "Segmento",
+        "Inicio previsto",
+        "Min previstos",
+        "Inicio real",
+        "Fin real",
+        "Recorte aplicado",
+        "Notas",
+    ),
+}
+
+
+def day_sheet_strip(lang: str) -> str:
+    """The day sheet's Timing strip: every segment, in run order, off the clock.
+
+    The maintainers' comment it replaces admitted the Kahoot and break rows
+    were copied by hand from the agenda; `timeline.atoms()` already walks
+    every segment in run order, so there is nothing left to copy. A section
+    row keeps its `{{< var >}}` start and minutes, unchanged from before, so a
+    section's own page keeps reading `_variables.yml` directly; a Kahoot or
+    break row has no `_variables.yml` entry of its own, so its start comes
+    straight off the clock and its minutes off `schedule.quiz_minutes` /
+    `schedule.break_minutes`, which is a `{{< var >}}` already.
+    """
+    from timeline import atoms, clock  # noqa: PLC0415
+
+    by_n = {s["n"]: s for s in SECTIONS}
+    by_q = {f"q{q['n']}": q for q in QUIZZES}
+    head = STRIP_HEAD[lang]
+    rows = ["| " + " | ".join(head) + " |", "|---|---|---|---|---|---|---|"]
+    minute = 0
+    for name, length in atoms():
+        if s := by_n.get(name):
+            label = f"{s['n']} · {{{{< var sections.s{s['n']}.title_{lang} >}}}}"
+            start = f"{{{{< var sections.s{s['n']}.start >}}}}"
+            minutes = f"{{{{< var sections.s{s['n']}.minutes >}}}}"
+        elif q := by_q.get(name):
+            label = f"Kahoot {q['n']}"
+            start = clock(minute, "+")
+            minutes = "{{< var schedule.quiz_minutes >}}"
+        else:
+            label = HANDBOOK_BREAK[lang]
+            start = clock(minute, "+")
+            minutes = "{{< var schedule.break_minutes >}}"
+        rows.append(f"| {label} | {start} | {minutes} | | | | |")
+        minute += length
+    return "\n".join(rows) + "\n"
 
 
 def readme_table(lang: str) -> str:
@@ -1435,6 +1494,8 @@ def main() -> int:
             "brainstorm-es.md": BANNER + brainstorm_svg("es"),
             "references-en.md": BANNER + references_list("en"),
             "references-es.md": BANNER + references_list("es"),
+            "day-sheet-strip-en.md": BANNER + day_sheet_strip("en"),
+            "day-sheet-strip-es.md": BANNER + day_sheet_strip("es"),
         }
         handbook_schedule = {la: handbook_schedule_table(la) for la in ("en", "es")}
     except ScheduleError as e:

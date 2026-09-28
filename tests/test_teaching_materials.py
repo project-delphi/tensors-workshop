@@ -16,6 +16,7 @@ from scripts.check_teaching_materials import (
     COUNTEREXAMPLE,
     ROOT,
     anchors,
+    check_clock_table,
     check_links,
     check_route,
     check_sequence,
@@ -244,6 +245,26 @@ class Tasks(unittest.TestCase):
                 page.write_text(broken)
                 with self.assertRaises(ValueError):
                     check_tasks(page, {"00": "00-example.ipynb"})
+
+
+class ClockTable(unittest.TestCase):
+    def test_matches_and_flags_a_wrong_time(self):
+        with tempfile.TemporaryDirectory() as folder:
+            page = Path(folder) / "facilitator-guide.md"
+            table = (
+                "| Check at | You should be starting | If you are | Cut |\n"
+                "|---|---|---|---|\n"
+                "| +1:00 | 04 | 5+ min late | Something (−3). |\n"
+                "| +1:15 | Kahoot 1 | up to 5 min late | Run it. |\n"
+                "| +0:39 | 02's axis-meaning task | 5+ min late | One group reports (−3). |\n"
+            )
+            page.write_text(table)
+            self.assertEqual(check_clock_table(page), (2, 1))
+
+            wrong = table.replace("| +1:00 | 04 |", "| +1:05 | 04 |")
+            page.write_text(wrong)
+            with self.assertRaises(ValueError):
+                check_clock_table(page)
 
 
 class WorkedExamples(unittest.TestCase):

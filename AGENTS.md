@@ -62,7 +62,7 @@ text, then run the appropriate generator:
 
 | Generated | Owned by |
 |---|---|
-| `_includes/*.md` (both notebook tables, the agenda both decks show, the companion's video, shorts, audio, infographic, self-check and mind-map blocks, the brainstorm diagram's inline SVG, the notebooks page's dependency table, and the whole body of both references pages) | `scripts/gen_tables.py` |
+| `_includes/*.md` (both notebook tables, the agenda both decks show, the companion's video, shorts, audio, infographic, self-check and mind-map blocks, the brainstorm diagram's inline SVG, the notebooks page's dependency table, the day sheet's timing strip, and the whole body of both references pages) | `scripts/gen_tables.py` |
 | The marker-delimited regions inside `README.md`, `notebooks/README.md`, each language's handbook schedule and the `notebooks` dependency group in `pyproject.toml` -- the rest of all five files is hand-maintained | `scripts/gen_tables.py` |
 | `notebooks/*.ipynb` -- header (cell 0) and footer (final cell) only | `scripts/gen_notebooks.py` using `_variables.yml` |
 | `notebooks/*.ipynb` -- every cell between the header and footer, including Setup | the notebook itself; editable directly in Colab/Gemini |
