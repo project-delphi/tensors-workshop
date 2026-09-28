@@ -12,15 +12,56 @@ const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
   '.json':'application/json', '.svg':'image/svg+xml', '.png':'image/png', '.gif':'image/gif',
   '.webp':'image/webp', '.woff2':'font/woff2'};
 const pages = ['index', 'notebooks', 'interactive', 'kahoot', 'references', 'companion', 'teach',
-  'faq', 'facilitator-guide', 'assessments', 'worked-mistakes', 'group-tasks',
+  'faq', 'facilitator-guide', 'day-sheet', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
+// The readiness pages are unlisted diagnostics with no navbar, so they get a
+// block of their own below rather than the `pages` loop; so do the decks.
+const readinessPages = ['readiness-check', 'readiness-instructor', 'readiness-refresher'];
+const decks = ['slides/en/index', 'slides/es/index'];
+// A page rendered and checked by nothing here, with the reason. Everything in
+// `render:` in `_quarto.yml` is either one of the lists above (in both
+// languages) or in this map, and shard 0 fails on anything that is neither:
+// the day sheet shipped with none of the checks every other page gets, and
+// nothing noticed, because nothing asked. Key by the path as `render:` lists
+// it, without the extension, e.g. `'es/some-page': 'why nothing checks it'`.
+const EXEMPT = {};
+
+// Every rendered page has a check, and every page this file checks is
+// rendered. Read from `_quarto.yml` in the checkout, not from the render, so
+// the list is the one the site is built from. A line parser rather than a
+// YAML library: `render:` is a flat block list, and nothing here installs one.
+async function checkCoverage() {
+  const lines = (await fs.readFile(path.resolve(__dirname, '../_quarto.yml'), 'utf8')).split('\n');
+  const start = lines.findIndex(line => /^\s+render:\s*$/.test(line));
+  assert(start >= 0, '_quarto.yml: no `render:` list under `project:`');
+  const indent = lines[start].search(/\S/);
+  const rendered = [];
+  for (const line of lines.slice(start + 1)) {
+    if (!line.trim() || /^\s*#/.test(line)) continue;
+    const item = line.match(/^(\s*)-\s+(\S+?)\s*(#.*)?$/);
+    if (!item || item[1].length <= indent) break;
+    rendered.push(item[2].replace(/^['"]|['"]$/g, '').replace(/\.(qmd|md|ipynb)$/, ''));
+  }
+  assert(rendered.length, '_quarto.yml: the `render:` list is empty');
+  const bilingual = list => list.flatMap(name => [name, `es/${name}`]);
+  const covered = new Set([...bilingual(pages), ...bilingual(readinessPages), ...decks]);
+  const unassigned = rendered.filter(name => !covered.has(name) && !Object.hasOwn(EXEMPT, name));
+  assert.deepEqual(unassigned, [],
+    `rendered but assigned to no check -- add each to \`pages\` in scripts/check_navigation.cjs, ` +
+    `or to \`EXEMPT\` with the reason nothing checks it: ${unassigned.join(', ')}`);
+  const unrendered = [...covered, ...Object.keys(EXEMPT)].filter(name => !rendered.includes(name));
+  assert.deepEqual(unrendered, [],
+    `checked or exempted here but not in \`render:\` in _quarto.yml: ${unrendered.join(', ')}`);
+  console.log(`Coverage: all ${rendered.length} rendered pages are assigned to a check`);
+}
 
 // Sharding. `scripts/run_navigation_shards.cjs` is what `npm run
 // check:navigation` actually runs: it spawns one process per shard, each
 // with `--shard i/N` (or `NAV_SHARD=i/N`), and this file answers to that flag
 // on its own too, so a single shard -- or the whole thing, unsharded -- can
 // still be run directly for debugging. Shard 0 carries every check that
-// belongs to no one widget: the site pages, the hero, keyboard and
+// belongs to no one widget: that every rendered page is assigned a check,
+// the site pages, the day sheet's print layout, the hero, keyboard and
 // disclosure navigation, the readiness pages, the wide table and the
 // host-root/offline fallbacks, and the slides. The six widgets are spread
 // across the rest, sized from measured wall time rather than line count
@@ -93,6 +134,8 @@ async function audit(page, where) {
 }
 
 (async () => {
+  // First, and before a browser starts: an unassigned page fails in a second.
+  if (runsSite) await checkCoverage();
   const server = http.createServer(async (request, response) => {
     try {
       let relative = decodeURIComponent(new URL(request.url, 'http://localhost').pathname);
@@ -180,6 +223,45 @@ async function audit(page, where) {
               `${lang}/${name}: horizontal overflow at ${width}`);
           }
         }
+      }
+
+      // The day sheet exists to be printed, so its print layout is the page.
+      // `custom.scss` promises that on paper Quarto's chrome and the intro go,
+      // the sheet fits one A4 page, and the timing strip prints as a second
+      // page of its own (`break-before: page`). Two pages is both halves of
+      // that at once: the sheet spilling over, or the strip, makes three, and
+      // the break going missing makes one. Both languages, since the Spanish
+      // copy runs longer and would be the first to spill.
+      for (const lang of ['en', 'es']) {
+        const where = `${lang}/day-sheet (print)`;
+        console.log(`Checking ${where}`);
+        await page.setViewportSize({width: 1440, height: 1000});
+        await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}day-sheet.html`);
+        const chrome = ['#quarto-header', '#quarto-margin-sidebar', 'footer.footer', '.day-sheet-intro'];
+        const sheet = ['.day-sheet', '.day-sheet-strip'];
+        const becomes = (selector, state) => page.locator(selector).first()
+          .waitFor({state, timeout: 5000})
+          .catch(() => assert.fail(`${where}: ${selector} should be ${state}`));
+        // On screen first, so that what disappears on paper is print's doing,
+        // and a selector that has stopped matching cannot pass as hidden.
+        for (const selector of [...chrome, ...sheet]) await becomes(selector, 'visible');
+        await page.emulateMedia({media: 'print'});
+        try {
+          // No page here draws `#quarto-sidebar` today; the rule hides it too.
+          for (const selector of [...chrome, '#quarto-sidebar']) await becomes(selector, 'hidden');
+          for (const selector of sheet) await becomes(selector, 'visible');
+        } finally {
+          await page.emulateMedia({media: null});
+        }
+        // The faces decide the line breaks, and so where the page breaks fall.
+        await page.evaluate(() => document.fonts.ready);
+        const pdf = await page.pdf({preferCSSPageSize: true,
+          path: path.join(screenshots, `day-sheet-${lang}.pdf`)});
+        // Chromium writes each page as its own `/Type /Page` dictionary, in
+        // the clear; `/Type /Pages` is the page tree's root, not a page.
+        const printed = (pdf.toString('latin1').match(/\/Type\s*\/Page(?!s)/g) || []).length;
+        assert.equal(printed, 2,
+          `${where}: printed on ${printed} A4 page(s), not 2 -- the sheet on one, the timing strip on the next`);
       }
       } // runsSite
 
@@ -2466,7 +2548,7 @@ async function audit(page, where) {
         for (const width of [1440, 390]) {
           await page.setViewportSize({width, height: 1000});
           const base = `${origin}${prefix}${lang === 'es' ? 'es/' : ''}`;
-          for (const name of ['readiness-check', 'readiness-instructor', 'readiness-refresher']) {
+          for (const name of readinessPages) {
             await page.goto(`${base}${name}.html`);
             assert.equal(await page.locator('nav.navbar').count(), 0);
             assert((await page.locator('meta[name="robots"]').getAttribute('content')).includes('noindex'));
@@ -2563,10 +2645,10 @@ async function audit(page, where) {
     if (process.argv.includes('--slides-only')) {
       console.log('Slide links passed.');
     } else if (!shard) {
-      console.log(`Passed: ${pages.length * 2} pages at desktop/mobile widths, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, ${widgetCount} interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
+      console.log(`Passed: every rendered page assigned a check, ${pages.length * 2} pages at desktop/mobile widths, the day sheet on two printed pages, ${anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, ${widgetCount} interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
     } else {
       const scope = runsSite
-        ? `the site pages, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks and the slides`
+        ? `page coverage, the site pages, the day sheet's print layout, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks and the slides`
         : `${widgetCount} widget(s) (${widgets.map(w => w.file).join(', ') || 'none'})`;
       console.log(`Shard ${shard.index + 1}/${shard.total} passed: ${scope}.`);
     }
