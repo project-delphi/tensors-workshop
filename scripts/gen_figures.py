@@ -1230,6 +1230,174 @@ def widget_taxi() -> Path:
     return path
 
 
+# ─── the "one idea" slide ───────────────────────────────────────────────────
+#
+# The wrap-up slide in both decks puts three approximations side by side: the
+# pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy in
+# take-home 13. Its words are editable slide content; these are its three
+# pictures, and they carry no words at all, so one copy serves both decks.
+#
+# Each is drawn from the workshop's own copy of what its notebook fetches
+# (`data/`, SHA-256-checked by the notebooks) or from scikit-image, with the
+# notebook's own arithmetic, so the slide's numbers are the ones the room
+# printed: X is (20433, 7); (3, 3, 1) keeps 60 of 480 numbers at 4.69%; the
+# 9 x 9 blur is undone from 18.9% to 13.1% interior error in 20 iterations.
+
+SLIDE_IMAGES = IMAGES.parent / "slides" / "images"
+DATA = IMAGES.parent / "data"
+
+
+def _save_webp(fig, name: str, note: str) -> Path:
+    SLIDE_IMAGES.mkdir(exist_ok=True)
+    out = SLIDE_IMAGES / name
+    canvas_to_pil(fig).save(out, "WEBP", quality=90, method=6)
+    report(out, note)
+    return out
+
+
+def recap_pinv() -> Path:
+    """Notebook 07's Exercise 2: price against the pseudoinverse's prediction.
+
+    The dashed line is a perfect prediction, and the mark: 20,433 equations in
+    7 unknowns have no exact solution, and the cloud around the line is the
+    least-squares residual pinv(X) @ y minimises."""
+    import numpy as np
+    import pandas as pd
+
+    housing = pd.read_csv(DATA / "housing.csv").dropna().reset_index(drop=True)
+    features = [
+        "housing_median_age",
+        "total_rooms",
+        "total_bedrooms",
+        "population",
+        "households",
+        "median_income",
+    ]
+    raw = housing[features].to_numpy(float)
+    X = np.column_stack([np.ones(len(housing)), (raw - raw.mean(0)) / raw.std(0)])
+    y = housing["median_house_value"].to_numpy(float)
+    assert X.shape == (20433, 7), X.shape
+    pred = X @ (np.linalg.pinv(X) @ y)
+
+    plt = mpl()
+    fig = plt.figure(figsize=(6.4, 4.4), dpi=160)
+    ax = fig.add_axes([0.03, 0.04, 0.94, 0.92])
+    ax.scatter(y, pred, s=3, alpha=0.18, color=ACCENT, linewidths=0)
+    lo, hi = 0, 520_000
+    ax.plot([lo, hi], [lo, hi], linestyle="--", color=MARK, lw=2.4)
+    ax.set_xlim(lo, hi)
+    ax.set_ylim(-100_000, 620_000)
+    ax.set_xticks([])
+    ax.set_yticks([])
+    for side in ("top", "right"):
+        ax.spines[side].set_visible(False)
+    out = _save_webp(fig, "recap-pinv.webp", f"X {X.shape}, pinv fit")
+    plt.close(fig)
+    return out
+
+
+def recap_tucker() -> Path:
+    """Notebook 10's golf par, hole 1: Tucker (3, 3, 1) keeps 60 of the taxi
+    tensor's 480 numbers at 4.69% error. Drawn as the day it has to keep --
+    trips per hour as counted (bars) and as rebuilt from those 60 numbers
+    (line) -- because the hour mode at rank 1 is one pattern for every pair of
+    boroughs, and that one pattern still peaks at hour 18, the hour the
+    notebook printed. The mark is hour 18."""
+    import numpy as np
+    import pandas as pd
+
+    taxis = pd.read_csv(DATA / "taxis.csv")
+    taxis["hour"] = pd.to_datetime(taxis["pickup"], errors="coerce").dt.hour
+    sub = taxis.dropna(subset=["pickup_borough", "dropoff_borough", "hour"])
+    pb = sorted(sub["pickup_borough"].unique())
+    db = sorted(sub["dropoff_borough"].unique())
+    T = np.zeros((len(pb), len(db), 24))
+    for (p, d, h), v in (
+        sub.groupby(["pickup_borough", "dropoff_borough", "hour"]).size().items()
+    ):
+        T[pb.index(p), db.index(d), int(h)] = v
+    core, Us, err, _ = tucker(T, (3, 3, 1))
+    numbers = core.size + sum(u.size for u in Us)
+    assert T.shape == (4, 5, 24) and numbers == 60, (T.shape, numbers)
+    assert round(100 * err, 2) == 4.69, err
+    recon = np.einsum("abc,ia,jb,kc->ijk", core, *Us)
+
+    hours = np.arange(24)
+    counted, rebuilt = T.sum(axis=(0, 1)), recon.sum(axis=(0, 1))
+    peak = int(counted.argmax())
+    assert peak == int(rebuilt.argmax()) == 18, (peak, int(rebuilt.argmax()))
+
+    plt = mpl()
+    fig = plt.figure(figsize=(6.4, 4.4), dpi=160)
+    ax = fig.add_axes([0.07, 0.11, 0.9, 0.85])
+    colours = [MARK if h == peak else "#c9d6e3" for h in hours]
+    ax.bar(hours, counted, width=0.8, color=colours, linewidth=0)
+    ax.plot(hours, rebuilt, color=ACCENT, lw=2.6, marker="o", ms=4)
+    ax.set_xticks([0, 6, 12, 18, 23])
+    ax.set_xticklabels(["0", "6", "12", "18", "23"], fontsize=17)
+    ax.set_yticks([])
+    ax.tick_params(length=0)
+    for side in ("top", "right", "left"):
+        ax.spines[side].set_visible(False)
+    out = _save_webp(
+        fig, "recap-tucker.webp", f"(3, 3, 1): {numbers} numbers, {100 * err:.2f}%"
+    )
+    plt.close(fig)
+    return out
+
+
+def recap_deconv() -> Path:
+    """Take-home 13's Exercise 3: the photograph, the same crop under a known
+    9 x 9 blur and noise, and Richardson-Lucy's 20-iteration recovery, each
+    inside the 20-pixel border the notebook's error leaves out. The mark
+    frames the recovery, which is plausible rather than exact."""
+    import numpy as np
+    from scipy import signal
+    from skimage import data
+    from skimage.restoration import richardson_lucy
+
+    img = data.camera().astype(float) / 255.0
+    work = img[128:384, 128:384]
+    psf = np.ones((9, 9), dtype=float)
+    psf /= psf.sum()
+    blurred = signal.fftconvolve(work, psf, mode="same")
+    noise = 0.002 * np.random.default_rng(0).standard_normal(work.shape)
+    noisy = np.clip(blurred + noise, 0, 1)
+    recovered = richardson_lucy(noisy, psf, num_iter=20, clip=False)
+
+    border = 20
+
+    def interior(candidate):
+        ref = work[border:-border, border:-border]
+        cand = candidate[border:-border, border:-border]
+        return np.linalg.norm(cand - ref) / np.linalg.norm(ref)
+
+    before, after = interior(noisy), interior(recovered)
+    assert (round(100 * before, 1), round(100 * after, 1)) == (18.9, 13.1), (
+        before,
+        after,
+    )
+
+    plt = mpl()
+    fig = plt.figure(figsize=(6.4, 2.3), dpi=160)
+    # The interior the notebook measures: its 20-pixel border rings.
+    inside = (slice(border, -border), slice(border, -border))
+    for i, arr in enumerate((work[inside], noisy[inside], recovered[inside])):
+        ax = fig.add_axes([0.01 + i * 0.335, 0.03, 0.31, 0.94])
+        ax.imshow(np.clip(arr, 0, 1), cmap="gray", vmin=0, vmax=1)
+        ax.set_xticks([])
+        ax.set_yticks([])
+        for spine in ax.spines.values():
+            spine.set_visible(i == 2)
+            spine.set_edgecolor(MARK)
+            spine.set_linewidth(3)
+    out = _save_webp(
+        fig, "recap-deconv.webp", f"{100 * before:.1f}% -> {100 * after:.1f}%"
+    )
+    plt.close(fig)
+    return out
+
+
 # ─── the link preview ───────────────────────────────────────────────────────
 
 
@@ -1368,6 +1536,12 @@ if __name__ == "__main__":
         print("The factorisation stage's tensor (network: the taxi CSV)")
         widget_taxi()
         sys.exit(0)
+    if sys.argv[1:] == ["recap"]:
+        print("The 'one idea' slide's pictures (no network: data/ and scikit-image)")
+        recap_pinv()
+        recap_tucker()
+        recap_deconv()
+        sys.exit(0)
     print("Loading the arrays (network: the pinned clip and the taxi CSV)")
     arrays = load_ladder()
     print("Figures")
@@ -1381,3 +1555,7 @@ if __name__ == "__main__":
     og_card(arrays)
     print("The visualizer's photos")
     widget_photos()
+    print("The 'one idea' slide's pictures")
+    recap_pinv()
+    recap_tucker()
+    recap_deconv()

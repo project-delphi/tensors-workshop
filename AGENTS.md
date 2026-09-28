@@ -69,6 +69,7 @@ text, then run the appropriate generator:
 | `images/ds-*` (dataset cards) | `scripts/gen_thumbnails.py` |
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `images/og-card.png` (the link preview, 1200×630, in the vendored faces) | `scripts/gen_figures.py og` |
+| `slides/images/recap-*.webp` (the *one idea* slide's three pictures, shared by both decks) | `scripts/gen_figures.py recap` |
 | `images/hero-*-{en,es}.webp` (the homepage hero's widget stills) | `scripts/gen_hero_stills.cjs` (`npm run gen:hero`) |
 | `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32, 64 and 128 px) | `scripts/gen_figures.py widget` |
 | `interactive/data/taxi.json` (the factorisation stage's own copy of the Block 6 taxi tensor) | `scripts/gen_figures.py taxi` (network: the taxi CSV) |
@@ -645,6 +646,7 @@ uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
 uv run --group figures python scripts/gen_figures.py widget   # just the visualizer's photos.json; no network
 uv run --group figures python scripts/gen_figures.py taxi     # the factorisation stage's taxi.json; needs the network
+uv run --group figures python scripts/gen_figures.py recap    # the one-idea slide's pictures; no network (data/)
 uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–15
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16

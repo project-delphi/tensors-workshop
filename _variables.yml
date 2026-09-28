@@ -609,15 +609,15 @@ brainstorm:
   #   * Where the idea is **stated** — sections 07, 09 and 10. That is the
   #     handbook's wrap-up, and notebook 13's header repeats it.
   #   * Where you **watch it happen** — 07, 10 and take-home 13. That is this
-  #     list, and it is what `slide-30.webp` draws: the pseudoinverse, Tucker
-  #     and Richardson-Lucy deconvolution side by side. That slide is one of
-  #     the thirty-one with no source, so it cannot be redrawn to match a
-  #     different three — which is why the split is the resolution rather
-  #     than picking one list and propagating it.
+  #     list, and it is what both decks' *one idea* slide shows: the
+  #     pseudoinverse, Tucker and Richardson-Lucy deconvolution side by side.
+  #     That slide was hand-drawn art until 2026-09-28; it is now Quarto
+  #     content with pictures from `gen_figures.py recap`, so it can follow
+  #     this list, but by hand -- nothing reads the list into it.
   #
   # So `thread_lead_*` reads "you watch it happen in", not "you meet it in".
   # Change this list and the handbook's second sentence has to move with it,
-  # and the slide cannot follow either. check_links.py verifies only that each
+  # and so does the slide. check_links.py verifies only that each
   # number names a section that exists; the split itself is prose, and prose
   # is what drifts.
   #

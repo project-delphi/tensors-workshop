@@ -268,11 +268,49 @@ $code-block-font-size: 0.62em;
     .accelerator-libraries { line-height: 1.4; }
   }
   &.framework-slide .computing-takeaway strong { flex-basis: 49%; }
+
+  // The "one idea" wrap-up: three approximations side by side, each a
+  // picture drawn by `gen_figures.py recap` and the number the room printed.
+  // The pictures carry no words, so both decks share them.
+  &.recap-slide {
+    h2 { font-size: 2em; margin-bottom: 10px; padding-bottom: 16px; }
+    .recap-lead { display: block; font-size: 1.05em; color: #4b5974; margin: 0 0 24px; }
+    .recap-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 30px; }
+    .recap-card {
+      border: 2px solid #d7e2f4;
+      border-radius: 14px;
+      padding: 18px 24px 22px;
+      background: #fbfdff;
+    }
+    h3 { font-size: 1.15em; margin: 0; }
+    .recap-where {
+      display: block;
+      color: var(--computing-teal);
+      font-size: .66em;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin: 4px 0 12px;
+    }
+    .recap-card img { display: block; width: 100%; height: 320px; object-fit: contain; margin: 0 0 14px; }
+    .recap-card p { font-size: .8em; line-height: 1.38; color: #2c3a55; }
+    .recap-flow {
+      display: block;
+      text-align: center;
+      margin: 26px 0 14px;
+      font-size: .95em;
+      font-weight: 700;
+      color: var(--computing-blue);
+    }
+    .recap-key { display: block; font-size: .9em; color: #2c3a55; }
+    .recap-key strong { color: var(--computing-teal); }
+  }
 }
 
 // These context slides have no notebook action of their own. Hide the inherited
-// section-01 links, which otherwise overlap the right column.
-.reveal:has(.computing-slide.present) .deck-colab-panel {
+// section-01 links, which otherwise overlap the right column. The "one idea"
+// wrap-up is the exception: it opens notebook 12, and leaves the corner free.
+.reveal:has(.computing-slide.present:not(.recap-slide)) .deck-colab-panel {
   display: none;
 }
 
