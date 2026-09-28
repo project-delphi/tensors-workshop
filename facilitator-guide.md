@@ -80,8 +80,8 @@ hole 2 is CP rank 6, 198 numbers at 1.76%, against Tucker's best, (4, 4, 5) at
 which answers the "which model is better?" question before anyone asks it.
 
 In Notebook 11, the CP and Tucker fits are supplied in the TODO cell; predict
-storage first, then run it. Reserve the seven-minute pair slot for choosing
-the budget, counting parameters, computing both relative errors and
+storage first, then run it. Reserve the seven-minute pair slot for checking
+the suggested ranks, counting parameters, computing both relative errors and
 interpreting the gap; run installations during preparation.
 If fitting takes too long, demonstrate the supplied solution after their
 attempt. Keep the eight minutes of golf. Record actual completion

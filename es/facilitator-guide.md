@@ -82,7 +82,7 @@ pregunte.
 
 En el cuaderno 11, los ajustes CP y Tucker ya están en la celda TAREA; primero
 predicen el almacenamiento y luego la ejecutan. Reserva los siete minutos en
-pareja para elegir el presupuesto, contar parámetros, calcular ambos errores
+pareja para revisar los rangos sugeridos, contar parámetros, calcular ambos errores
 relativos e interpretar la diferencia; ejecuta las instalaciones durante la
 preparación. Si el ajuste tarda mucho, demuestra la
 solución incluida después del intento. Conserva los ocho minutos de golf. Anota tiempos reales de finalización y uso de pistas para comprobar
