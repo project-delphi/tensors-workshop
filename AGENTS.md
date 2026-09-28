@@ -381,7 +381,11 @@ widget; `widgets/<file>.cjs`, one per widget, for its own `drive`, and where
 it has one, `fallback` and `embed`. `check_navigation.cjs`'s own
 `ALL_WIDGETS` table is the order the `widgets/*.cjs` `drive*` functions are
 written in, and drives every widget in both languages, running axe over
-each. The stage's callback opens every one
+each. A new check runs inside `scenario()`, because that is where a failure
+keeps its evidence: with `NAV_EVIDENCE=<dir>` set, as CI sets it, a failed
+scenario leaves a Playwright trace, a screenshot of every open page and the
+error in `<dir>/<shard>/<scenario>/`, which CI uploads as the
+`navigation-evidence` artifact. The stage's callback opens every one
 of its eight steps and asserts each step's claim off `data-*`. Every colour a widget puts on text
 clears 4.5:1 per theme -- the four axis hues have `--axN-ink` text variants,
 and the stages' dark-in-every-theme canvas has one `--stage*` set in
@@ -488,6 +492,9 @@ and the display publisher silenced while it runs. Nothing is stripped or
 mocked: `%pip install` runs verbatim and datasets are fetched for real, because
 Colab is the runtime this defends. `check_colab_parity()` guards guarded
 `google.colab` imports, no absolute paths, quiet `%pip`, no hardcoded device.
+`--artifacts DIR` keeps what CI ran: each route's executed notebook, its
+plots, `environment.txt` and a `coverage.json`/`coverage.md` table, uploaded
+by `publish.yml`'s `notebooks` job and by `health.yml`.
 
 **A route whose remote could not be reached is skipped, not failed.** A 502,
 503 or 504, a 429, a refused connection, a DNS miss or a timeout says nothing
@@ -640,6 +647,7 @@ uv run --group execute python scripts/test_notebooks.py --list       # no kernel
 uv run --group execute python scripts/test_notebooks.py --only 10
 uv run --group execute python scripts/test_notebooks.py --offline
 uv run --group execute python scripts/test_notebooks.py --strict   # fail on UNCHECKED or FELL BACK (health.yml)
+uv run --group execute python scripts/test_notebooks.py --artifacts DIR  # keep the route copy, plots, environment.txt, coverage
 
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py
