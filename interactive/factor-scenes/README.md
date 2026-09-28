@@ -1,7 +1,7 @@
 # The factorisation stage's scenes
 
-One file per scene of `../factor-stage.html`, loaded in order by plain
-`<script src>` lines after `linalg-core.js`, `factor-core.js` and
+One file per scene of `../factor-stage.html` (*Tucker and CP*), loaded in
+order by plain `<script src>` lines after `linalg-core.js`, `factor-core.js` and
 `factor-kit.js`. Each file calls `FactorScenes.register({...})` once. The page
 reads the registry back in that order, so a new scene is: one file here, one
 `<script src>` line, one `<section class="step" id="step-<id>">` in the page
@@ -22,10 +22,29 @@ introduces one word the next ones use -- "fibre" and "slice", "unfolding",
 "pattern", "core", "term", "solve" -- and nothing says a word before the
 picture that defines it.
 
+By workshop section: section 10 is the cube (`tensor`), the cube laid flat
+three ways (`unfold`), the SVD of one unfolding (`hosvd`) and the core and
+three factors that rebuild it (`tucker`); section 11 is one rank-1 term
+(`rank1`), several (`cp`), the alternating least squares that finds them
+(`als`), and the same parameter budget spent both ways (`budget`). Link a
+scene by that name (`#tensor`, `#unfold`, `#hosvd`, `#tucker`, `#rank1`,
+`#cp`, `#als`, `#budget`), never by a step number. Controls are
+`#c-<scene>-<control>` and readouts `#read-<scene>`.
+
 Scenes are sections down a scroller with a sticky stage, the shape
 `voice-stage.html` and `linalg-stage.html` keep, and the reader's place in it
 is whichever section crosses a band through the middle of the viewport
 (`LC.pickActive`).
+
+## The tensor
+
+Every picture is of the real taxi tensor -- 4 pickup boroughs by 5 dropoff
+boroughs by 24 hours -- from `interactive/data/taxi.json`, which
+`scripts/gen_figures.py taxi` builds with the network and which is committed
+rather than fetched live from the CSV. On a fetch failure the page draws
+`FC.synthetic()` instead and publishes `data-standin="1"`. The embed
+(`?embed=1&theme=navy`) fetches the real tensor even so -- it is about 2 kB --
+opens on the `tucker` twin, and fetches no three.js.
 
 ## Two surfaces
 
@@ -43,7 +62,27 @@ pictures, and `<text>` draws their numbers better than a canvas can.
 
 three.js is booted lazily by the frame on the first `gl` scene shown, through
 the projection stage's `vendor/linalg-boot.js` and the page's import map; a
-page opened on a flat scene, and the embed, never fetch it.
+page opened on a flat scene, and the embed, never fetch it. The camera is
+`linalg-core`'s orbit, with its idle drift and glide, as on the audio stage. A
+voxel's *volume* is its count, not its side, because one route holds 76% of
+the trips and a side proportional to the count would let it read as far more.
+
+## The arithmetic
+
+`factor-core.js` holds it, and `tests/factor_core.test.cjs` pins it under
+`npm test`: unfold and fold, and an entry's address in each unfolding; mode
+products; HOSVD and one core entry's share of the rebuild; CP-ALS solve by
+solve, and a fit normalised into weights; the budget search and its
+frontier; and the unfold's `morphStep`. It calls into `linalg-core.js` for
+its SVD, its matrix product and its pseudoinverse rather than carrying a
+second copy, so the page loads it after that file. Two things the core's
+comments explain, and a change to `hosvd()` has to keep:
+
+- `linalg-core.svd` returns a **thin `U`**, which caps the hour rank at 20
+  rather than 24.
+- Its **sign convention** differs between a tall unfolding and a wide one, so
+  `hosvd()` renormalises every kept column to positive-largest itself rather
+  than trusting whichever branch produced it.
 
 ## What a scene provides
 
@@ -125,14 +164,19 @@ into a readout may depend on either.
   picture, so the browser check reads the truth while the picture is still
   moving. Geometry eases by identity through `K.follow`, keyed per piece, so a
   control moved mid-move is a new target rather than a restart. The unfold's
-  move is `FC.morphStep`, which folds back through the cube to change mode.
+  move is `FC.morphStep`, which folds back through the cube to change mode;
+  its turn-deal-press morph is tested in `tests/factor_scenes.test.cjs` for
+  no two voxels ever overlapping.
 - **A picture a slider can grow stays on its board.** Nothing clips an SVG
   child laid out past the viewBox and nothing reports one -- it is simply not
   painted, while `readout()` goes on quoting its numbers. A twin is fitted by
   `ctx.projector`; a 2-D picture a control resizes (`hosvd`'s scree, `cp`'s
   cards) lays itself out from what has to fit. `check_navigation.cjs`
-  measures every scene at its opening values, at the corners of the sliders
-  that resize it, and each twin after a turn.
+  measures each 2-D scene against its 820 x 420 at its opening values and at
+  the corners of the sliders that resize it; each twin, on a forced-flat
+  pass, at home, after a turn and at its largest slider corner; and on the
+  three.js path, where the picture is pixels, the label chips against the
+  stage.
 - **A bar's value has to be inside its own scale.** `K.bars` draws signed
   values from a zero inside the box (`signed: true`), never downwards off the
   bottom of it.
@@ -174,6 +218,10 @@ into a readout may depend on either.
 - Modes count from 0 (T₍₀₎ to T₍₂₎, G ×₀ A ×₁ B ×₂ C), and the letters are
   notebook 10's: i, j, k for pickup, dropoff and hour, a, b, c for the kept
   patterns, r for a CP term.
+- Every section carries a MathML equation whose pointable letters take
+  `data-hl` tokens from exactly `{pickup, dropoff, hour, core, rank}`. On
+  this stage they light the piece in the **three.js scenes too**, not only in
+  the SVG ones.
 
 **Every `readout().data` key is lowercase.** `stage.dataset.fN` writes
 `data-f-n`, so a camel-case key becomes a selector nobody will guess and the

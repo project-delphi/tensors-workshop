@@ -1,6 +1,7 @@
 # The attention stage's scenes
 
-One file per scene of `../attention-stage.html`, loaded in order by plain
+One file per scene of `../attention-stage.html` (*Attention, from words to
+weights*), loaded in order by plain
 `<script src>` lines after `attention-core.js`, `linalg-core.js` (for
 `pickActive`, the scroller's own step machine) and `attention-kit.js`. Each
 file calls `AttentionScenes.register({...})` once. The page reads the
@@ -27,19 +28,49 @@ rows come out identical because attention alone cannot see position
 its own axis, a reshape that has to be a transpose too, and the bug when it
 is not (`heads`); and the rank-4 tensor a real model is handed (`batch`).
 
+Link a scene by its name (`#words`, `#ids`, `#embed`, `#project`, `#scores`,
+`#scale`, `#softmax`, `#output`, `#heads`, `#batch`), never by a step number.
+
 The one-head scenes use `AC.headProjections(0)`, columns 0–3 of the full
 projections, so every number in the middle part is head 0's number in
 `heads`; `tests/attention_core.test.cjs` pins that the two agree. `scale` is
-the one scene that does not draw the stage's own Q and K: it samples ±1
-vectors from `AC.scaleSpread`, on its own seed, because its claim is about
-d_k and the stage's d_k is fixed at 4.
+the one scene that does not draw the stage's own Q and K: it samples ±1 vectors from
+`AC.scaleSpread`, on its own seed, because its claim is about d_k and the
+stage's d_k is fixed at 4. It draws the *typical* query, not the first,
+because the first at d_k = 256 was a two-way tie that told the opposite
+story.
+
+The `heads` scene carries the reshape bug the audio stage's `scramble` warns
+about in general: its "flat" option is a *direct* reshape with no transpose,
+the same shape as the honest one and the wrong token in every row after the
+first, and `AC.traceCell` says exactly which token a cell actually came from.
 
 **No three.js, and no canvas.** Every picture on this stage is inline SVG
 with real `<text>` elements, so axe can measure contrast and a reader can
 select a number the way they can on a page of prose. `attention-kit.js`'s
-`numGrid`, `bars` and `arrowRow` build that SVG from arrays
+`numGrid`, `bars`, `arrowRow` and `chips` build that SVG from arrays
 `attention-core.js` computed; nothing in a scene file computes a number a
 readout quotes.
+
+**The embed is stricter than every other widget's.** Nothing on this stage
+fetches anything beyond its own scripts, its CSS and the one vendored face
+that CSS names, so `check_navigation.cjs` counts resource entries rather than
+checking `window.THREE` alone.
+
+## The arithmetic
+
+`attention-core.js` holds it, and `tests/attention_core.test.cjs` pins it
+under `npm test`: the gather, the three projections, splitting heads by
+reshape-then-transpose, and the two contractions. It carries none of the
+camera and drift state machines `linalg-core.js` keeps, because this stage has
+no camera and no idle drift to keep one for.
+
+Everything is seeded from `SEED = 17` (notebook 17's own number): a six-row
+embedding table in `{0, 1}`, three projection matrices with at most three
+non-zero `{-1, 0, 1}` entries per column, and a six-word vocabulary chosen so
+the sentence encodes to the fixed ids `[3, 1, 4, 1]`, "know" repeated on
+purpose. So every Q, K and V entry a reader sees is an integer with
+`|value| <= 3`, a legibility contract the test pins as a property of the seed.
 
 Unlike the audio stage, there is no transport and no timeline: nothing here
 plays a sound or runs on a per-frame clock, so a scene's `draw()` is called
@@ -94,9 +125,9 @@ the reader's cursor.
 ## The rules every scene keeps
 
 - **Nothing on screen is typed.** Every number in a readout, every grid cell
-  and every claim is computed from `attention-core.js`, seeded once (`SEED =
-  17`) so every Q, K and V entry is a legible integer with `|value| <= 3`. A
-  scene that needs new arithmetic adds it there, with a test.
+  and every claim is computed from `attention-core.js`, on the one seed
+  described under *The arithmetic*. A scene that needs new arithmetic adds it
+  there, with a test.
 - **Never snap.** This stage has no camera and no idle drift, so there is no
   tween state machine to keep here the way `linalg-core.js` keeps one for the
   projection stage's orbit — a control's new value is simply what the next
@@ -128,9 +159,10 @@ the reader's cursor.
   and its whole bar chart off the bottom, green the entire time. So
   `check_navigation.cjs` measures each scene as it opens: the union of every
   child's box, mapped back into viewBox units through the CTM, against
-  `640 × 400`. A scene whose picture is sized from its controls — `batch` is
-  the only one — is measured at both corners of its sliders too, because
-  fitting at the opening values proves nothing about the rest.
+  `640 × 400`. `words` and `scale` are measured at the far end of their
+  controls as well, and a scene whose picture is sized from its controls —
+  `batch` is the only one — at both corners of its sliders, because fitting
+  at the opening values proves nothing about the rest.
 - **The top of the viewBox belongs to the claim chip**, and a scene starts
   its drawing 44 units down to clear it. That 44 is a floor, not the whole
   story: the chip is sized in px and the picture in user units, so on a
