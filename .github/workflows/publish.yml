@@ -158,7 +158,25 @@ jobs:
         run: npm test
 
       - name: Check navigation in a browser
+        # A failed scenario keeps a Playwright trace, a screenshot of every
+        # open page and the error under NAV_EVIDENCE (scripts/navigation/
+        # harness.cjs, scenario()); SCREENSHOT_DIR is where the check's own
+        # screenshots and the day sheet's PDFs go. A green run adds nothing.
+        env:
+          NAV_EVIDENCE: ${{ runner.temp }}/navigation-evidence/failed
+          SCREENSHOT_DIR: ${{ runner.temp }}/navigation-evidence/screenshots
         run: npm run check:navigation
+
+      # Only when something failed: then the trace is the difference between
+      # rerunning the whole check locally and opening the step that broke.
+      # `npx playwright show-trace trace.zip`, or trace.playwright.dev.
+      - name: Upload browser-check evidence
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: navigation-evidence
+          path: ${{ runner.temp }}/navigation-evidence
+          retention-days: 14
 
       # The tested build is what ships. Everything above has run against this
       # exact docs/ — the checkers, the byte-identity check on the notebooks,

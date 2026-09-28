@@ -1,7 +1,7 @@
 // The parts of check_navigation.cjs that belong to no one page and no one
 // widget: sharding, the static server, browser/context/page setup, the axe
-// pass, and scenario() -- the single place a scenario's failure evidence
-// (a Playwright trace chunk, screenshots) will attach in a later change.
+// pass, and scenario() -- the single place a failed scenario's evidence
+// (a Playwright trace chunk, screenshots) is kept.
 // scripts/check_navigation.cjs is still the entry point and still owns the
 // flags and env vars; this module is what it wires together.
 const {chromium} = require(process.env.PLAYWRIGHT_MODULE || 'playwright');
@@ -120,13 +120,59 @@ async function openBrowserPage(origin) {
 }
 
 // A named boundary around one check. Every scenario in site.cjs, and every
-// widget x language drive in check_navigation.cjs, runs through this. It does
-// nothing extra today -- a scenario that throws just throws -- but it is the
-// one place a failure's evidence (a trace chunk from `ctx.context`,
-// screenshots) will be recorded once that lands, so a new check calls this
-// rather than running bare.
+// widget x language drive in check_navigation.cjs, runs through this, so a
+// new check calls it rather than running bare.
+//
+// With `NAV_EVIDENCE` set (CI sets it), each scenario is one Playwright trace
+// chunk. A scenario that passes discards its chunk; one that fails keeps it,
+// with a full-page screenshot of every open page and the error, under
+// `<NAV_EVIDENCE>/<shard>/<scenario>/`. The first failure ends the shard, so
+// there is at most one such folder per shard, and a green run writes nothing.
+// Open the trace with `npx playwright show-trace trace.zip`, or drop it on
+// trace.playwright.dev.
+//
+// The trace records the screencast, every action with its timing, the
+// console and the network -- not DOM snapshots. Those cost the widget shards
+// 44% (224 s against 156 s for shard 1/3; the screencast alone, 152 s), and
+// their timing-sensitive checks are the last thing to slow down on a runner.
+// `NAV_TRACE_DOM=1` adds them for a local rerun of the one scenario you are
+// chasing.
 async function scenario(ctx, name, fn) {
-  return fn(ctx);
+  const evidence = ctx.evidence;
+  if (!evidence) return fn(ctx);
+  const tracing = ctx.context.tracing;
+  // `start` opens the first chunk itself; every later scenario opens its own.
+  if (!evidence.tracing) {
+    await tracing.start({title: name, screenshots: true,
+      snapshots: process.env.NAV_TRACE_DOM === '1'});
+    evidence.tracing = true;
+  } else {
+    await tracing.startChunk({title: name});
+  }
+  try {
+    const result = await fn(ctx);
+    await tracing.stopChunk();
+    return result;
+  } catch (error) {
+    await keepEvidence(ctx, name, error).catch(e =>
+      console.error(`Could not save the evidence for "${name}": ${e.message}`));
+    throw error;
+  }
+}
+
+async function keepEvidence(ctx, name, error) {
+  const dir = path.join(ctx.evidence.dir, name.replace(/[^\w.-]+/g, '-'));
+  await fs.mkdir(dir, {recursive: true});
+  await fs.writeFile(path.join(dir, 'error.txt'), `${name}\n\n${error.stack || error}\n`);
+  let n = 0;
+  for (const page of ctx.context.pages()) {
+    // A page the failure left mid-navigation or closed can refuse; the trace
+    // still has its last frame, so one missing screenshot is not worth a throw.
+    await page.screenshot({path: path.join(dir, `page-${n++}.png`), fullPage: true, timeout: 10000})
+      .catch(e => console.error(`No screenshot of ${page.url()}: ${e.message}`));
+  }
+  await ctx.context.tracing.stopChunk({path: path.join(dir, 'trace.zip')});
+  console.error(`Evidence for "${name}": ${dir}`);
 }
 
 module.exports = {
