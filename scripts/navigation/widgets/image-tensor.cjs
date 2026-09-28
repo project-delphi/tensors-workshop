@@ -88,6 +88,10 @@ async function drive(ctx, page, where, lang) {
   assert.equal(await data('bufsig'), viewSig,
     `${where}: a transpose must not move a byte`);
   await tab('memory');
+  // The layouts are radio buttons, and the one x is in is checked: NCHW
+  // read off an NHWC buffer is exactly PyTorch's channels_last.
+  assert(await page.locator('#layout-CL').isChecked(),
+    `${where}: NCHW over an NHWC buffer should read as channels_last`);
   await page.locator('#contig').click();
   assert.notEqual(await data('bufsig'), viewSig,
     `${where}: .contiguous() must rewrite the buffer`);
@@ -95,6 +99,13 @@ async function drive(ctx, page, where, lang) {
     `${where}: .contiguous() must leave the shape alone`);
   assert.equal(await data('strides'), '768,256,16,1',
     `${where}: .contiguous() must leave C-contiguous strides`);
+  // F and channels_last copy too, and each leaves its own strides.
+  for (const [id, strides] of [['layout-F', '1,3,9,144'], ['layout-CL', '768,1,48,3'],
+                               ['contig', '768,256,16,1']]) {
+    await page.locator(`#${id}`).click();
+    assert.equal(await data('strides'), strides, `${where}: #${id} strides`);
+    assert(await page.locator(`#${id}`).isChecked(), `${where}: #${id} should be checked`);
+  }
 
   // Face on, the gaps close and -- in photo mode -- the channel
   // planes composite back into the photograph.
@@ -103,6 +114,36 @@ async function drive(ctx, page, where, lang) {
     document.querySelector('#stage').dataset.snapped === '1',
     null, {timeout: 5000})
     .catch(() => assert.fail(`${where}: Snap to 2-D did not engage`));
+
+  // "Show the original photo" undoes the transpose and the copy above,
+  // back to the buffer as it was stacked, and shows the batch as
+  // photographs: by meaning, flat on the front face, composited.
+  await page.locator('#original').click();
+  assert.equal(await data('shape'), '3,16,16,3',
+    `${where}: the original photo should be NHWC again`);
+  assert.equal(await data('strides'), '768,48,3,1',
+    `${where}: the original photo should be C-contiguous again`);
+  assert.equal(await data('bufsig'), viewSig,
+    `${where}: the original photo should be the buffer as it was stacked`);
+  assert.equal(await data('arrange'), 'meaning',
+    `${where}: the original photo should be arranged by meaning`);
+  await page.waitForFunction(() => {
+    const s = document.querySelector('#stage').dataset;
+    return s.snapped === '1' && s.reveal === '1';
+  }, null, {timeout: 5000})
+    .catch(() => assert.fail(`${where}: the original photo did not composite face on`));
+  assert(!(await page.locator('#code').innerText()).includes('transpose'),
+    `${where}: the code log should start over with the original photo`);
+  // After its beat the photo lifts back into 3-D on its own. Once, in
+  // one language: it costs the hold's real seconds.
+  if (lang === 'en') {
+    await page.waitForFunction(() =>
+      document.querySelector('#stage').dataset.snapped === '0',
+      null, {timeout: 10000})
+      .catch(() => assert.fail(`${where}: the original photo never lifted back into 3-D`));
+  }
+  // The numbers below open following the shape; put the pill back.
+  await page.locator('#arrange [data-arrange="position"]').click();
 
   // Counting numbers are a tensor of any rank: every factorisation
   // of 24 is a reshape, and none of them touches the buffer. They
