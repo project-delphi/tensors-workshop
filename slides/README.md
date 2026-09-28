@@ -59,11 +59,10 @@ Numbers that can drift:
 
 | Slide | Section | What it shows | Notebook numbers | Note |
 |---|---|---|---|---|
-| 21 | 07 (extension) | California Housing least-squares fit: `X.shape`, predicted-vs-true scatter, residual histogram | nb 07: `X.shape = (20433, 7)`, 20,433 equations | **Found stale:** the EN headline reads "20.433 equations" (a period, the Spanish thousands separator) — it disagrees with its own body text ("20,433 equations, 7 variables") three lines below and with the EN notebook. The ES slide correctly reads "20.433"; the EN headline looks like it was drawn from the ES asset. |
-| 30 | 07 / 09 / 10 (recap, no anchor) | "One idea connects the workshop": pseudoinverse, deconvolution and Tucker panels side by side | nb 07: same California Housing numbers as slide 21 | **Found stale:** the EN slide's pseudoinverse panel is untranslated — it reads "Pseudoinversa" and "20.433 equations = an underdetermined least squares solution", the ES panel dropped into the EN deck rather than redrawn in English. |
+| 21 | 07 (extension) | California Housing least-squares fit: `X.shape`, predicted-vs-true scatter, residual histogram | nb 07: `X.shape = (20433, 7)`, 20,433 equations | **Found stale:** the EN headline reads "20.433 equations" (a period, the Spanish thousands separator) — it disagrees with its own body text ("20,433 equations, 7 variables") three lines below and with the EN notebook. The ES slide correctly reads "20.433"; the EN headline looks like it was drawn from the ES asset. The EN formula card also reads "A⁺b minimizea", Spanish *minimiza* half-translated. |
+| 30 | 07 / 09 / 10 (recap, no anchor) | "One idea connects the workshop": pseudoinverse, deconvolution and Tucker panels side by side | nb 07: same California Housing numbers as slide 21 | **Found stale:** the EN slide's pseudoinverse panel is untranslated — it reads "Pseudoinversa" and "20.433 equations = an underdetermined least squares solution", the ES panel dropped into the EN deck rather than redrawn in English. **"Underdetermined" is also wrong in any language:** 20,433 equations in 7 unknowns is *overdetermined*, which is why there is no exact solution. The Tucker panel's first title reads "Tensor real", Spanish too. |
 | 26a | 09 | Factor once, solve many: normal equations, QR and SVD, cost compared | nb 09: "flop table predicts / la tabla predice 39x" (the `sweep_times` cell) | Matches the notebook's own printed line today. It is exactly the kind of number a rerun of the timing sweep can move, which is why it is filed here rather than lower down. |
 | 28 | 10 | Table → tensor → HOSVD → reconstruction | nb 10's rank explorer opens at `(2, 2, 3)`; the golf activity's winning entry is `(3, 3, 1)` at 4.69% error | The slide's own reconstruction uses `ranks=(4, 4, 6)`, which appears in neither place in the notebook — it reads as a one-off illustration rather than a printed result. The same panel repeats on slide 30. |
-| 21a | 07 (extension) | Tensor inverses: unfold → `pinv` → fold back | `T (4, 3, 5) → M (4, 15)` is a worked example, not a shape nb 07 ever prints | Lowest risk of this group: nothing here can go stale, since no rerun of the notebook could contradict a made-up shape. |
 
 Equations and teaching text a translator would have to redraw:
 
@@ -78,6 +77,7 @@ Equations and teaching text a translator would have to redraw:
 | 16 | 05 | File → frames → tensor → model, with the validity-mask formula | `mask[b, t] = 1 if real else 0` |
 | 18 | 06 | Anatomy of einsum | `np.einsum('ij,jk->ik', A, B)` |
 | 19 | 06 | NumPy ↔ einsum equivalence table | Eight code pairs |
+| 21a | 07 (extension) | Tensor inverses: unfold → `pinv` → fold back | `T (4, 3, 5) → M (4, 15)` is a made-up worked example, not a shape notebook 07 prints, so no rerun can contradict it |
 | 24 | 08 | Gradient descent is also recursion: scalar, vector, matrix forms | `x_{k+1} = x_k − η∇f(x_k)` and two more equations |
 | 29b | 11 (extension) | Four decompositions, four bargains: CP, Tucker, Tensor Train, t-SVD | Parameter-count formulas, e.g. `R(I + J + K)` |
 
