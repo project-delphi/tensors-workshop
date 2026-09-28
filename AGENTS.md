@@ -638,10 +638,13 @@ A fallback passes, so `test_notebooks.py` lists each one under `FELL BACK:`,
 which is now the only place a dead upstream shows. Add a download and add its
 copy: an entry in `scripts/fetch_mirrors.py` and `data/README.md`, then
 `python3 scripts/fetch_mirrors.py <name>`; check 4 fails the build until the
-file is there. A dataset whose licence does not permit redistribution gets no
+file is there. Until the first live run, `.github/workflows/health.yml` runs every route
+daily with `--strict`, which fails on any `UNCHECKED` or `FELL BACK`, so a
+host that dies between pushes is reported by e-mail rather than by the room. A dataset whose licence does not permit redistribution gets no
 copy -- notebook 14's monkey tensor has none -- and keeps its retries.
-Deep dive 19 (FB15k-237 and the blog's kernel) arrived with its own
-`fetch()` and no copies yet; it is take-home, so nothing in the room waits on it.
+Deep dive 19 keeps its own `fetch()`, with a `copy=` for the blog post's
+kernel and sweeps; its FB15k-237 split has no stated licence, so, like the
+monkey tensor, it has no copy.
 
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages
@@ -761,6 +764,7 @@ uv run --group execute python scripts/test_notebooks.py
 uv run --group execute python scripts/test_notebooks.py --list       # no kernel
 uv run --group execute python scripts/test_notebooks.py --only 10
 uv run --group execute python scripts/test_notebooks.py --offline
+uv run --group execute python scripts/test_notebooks.py --strict   # fail on UNCHECKED or FELL BACK (health.yml)
 
 # The image generators. Network, heavy deps, not run by CI — see above.
 uv run --group figures python scripts/gen_thumbnails.py

@@ -16,6 +16,7 @@ Completa el facilitador: fecha ___ · commit/versión ___ · entorno ___
 3. ¿Qué te hizo cambiar de opinión? Una predicción y su evidencia: ___
 4. ¿Qué cambiamos? Acortar ___ / añadir un ejemplo de ___ / dar más tiempo a ___
 
-Nota del facilitador: registra tiempos reales y conteos anónimos de errores
-frecuentes. Abre una incidencia concreta para la próxima sesión. Conserva las
-respuestas originales en privado.
+Nota del facilitador: registra los tiempos reales en la [franja de tiempos de
+la hoja del día](day-sheet.md#franja-de-tiempos), y los conteos anónimos de
+errores frecuentes. Abre una incidencia concreta para la próxima sesión.
+Conserva las respuestas originales en privado.

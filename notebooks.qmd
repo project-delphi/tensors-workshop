@@ -15,9 +15,15 @@ español.*
 Notebooks 01–11 separate the live session from later study:
 
 1. **Header:** **Practise today** and **Explore later**, with the same outcomes as the slides and handbook.
-2. **Contiguous core block:** recall, example, attempt, feedback, checkpoint. Preparation and feedback definitions appear where needed. Work straight down.
-3. **Core complete:** keep your explanation and follow the facilitator’s quiz and break schedule.
-4. **Explore later:** optional reference material, exercises, and explorers.
+2. **Run the Setup cell first, then work straight down.** Each notebook opens
+   with a short route to follow: a quick recall, a worked example, then your
+   own attempt, feedback, and a checkpoint. Try the exercise yourself before
+   opening the folded solution.
+3. **Core complete:** the route above ends here. Keep your explanation —
+   that is what the session needs — and follow the facilitator's quiz and
+   break schedule.
+4. **Explore later:** optional material you come back to afterward — more
+   reference, exercises, and explorers.
 
 Notebook 00 keeps the entry check and pre-work setup; 12 starts with the exit check. The deep dives are listed under **Going further** below. Solutions remain folded: open them after an attempt. Each notebook loads its own data and runs independently.
 

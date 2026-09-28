@@ -39,6 +39,11 @@ def chicago_url() -> str:
     return ns["CHICAGO_URL"] + "?" + urllib.parse.urlencode(ns["CHICAGO_QUERY"])
 
 
+BLOG_19 = (
+    "https://raw.githubusercontent.com/project-delphi/ml-blog/"
+    "d9f634c19b10f86efd687c8bfb78734b365705ce/posts/cp-or-tucker-in-practice/data/"
+)
+
 # name in data/ -> (upstream URL, the SHA-256 the notebooks pin, or None)
 MIRRORS = {
     "housing.csv": (
@@ -64,6 +69,27 @@ MIRRORS = {
         "7c54e0e11c872a1b0b647da370d596dcb06746159cce4121d92ccd70b7d7ce3c",
     ),
     "chicago-crime-2023.csv": (None, None),  # URL built from notebook 15
+    # Deep dive 19: the blog post's cached data, at the commit the notebook pins.
+    "resnet18_layer3_1_conv2.npy": (
+        BLOG_19 + "resnet18_layer3_1_conv2.npy",
+        "2ace0a79d66e0d1ed2239639269df7f831122100033483a41779b760202e7df5",
+    ),
+    "sweep_cp_seed0.csv": (
+        BLOG_19 + "sweep_cp_seed0.csv",
+        "f5fb2d3eb3a1ceb09608c12a2c48513dd9f59a411489a7063c2dc8b192e1e832",
+    ),
+    "sweep_cp_seed1.csv": (
+        BLOG_19 + "sweep_cp_seed1.csv",
+        "6adfe63c99a8749f99418a581cf66f1476dbb924f9f0bddc33e99d0acf7e8780",
+    ),
+    "sweep_cp_seed2.csv": (
+        BLOG_19 + "sweep_cp_seed2.csv",
+        "6b942cafbace76f821ff96ab2c130a2af69ea5b4a1866a524bbc14611ceddd89",
+    ),
+    "sweep_tucker2.csv": (
+        BLOG_19 + "sweep_tucker2.csv",
+        "1a3fb982baa9ce1e8ff2c0a3ff75aca31b7f59f5a3af97e9bb423a7f2f268cfe",
+    ),
 }
 
 

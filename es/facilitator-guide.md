@@ -3,7 +3,7 @@ title: "Guía de facilitación"
 lang: es
 ---
 
-[English](../facilitator-guide.md) · [Enseñar este taller](teach.qmd)
+[English](../facilitator-guide.md) · [Enseñar este taller](teach.qmd) · [Hoja del día](day-sheet.md)
 
 Mantén la **agenda de 210 minutos**. Estas actividades sustituyen tiempo de
 práctica o discusión; no alargan el taller. El cuaderno 13 queda para después.
@@ -87,6 +87,43 @@ instalaciones durante la preparación. Si el ajuste tarda mucho, demuestra la
 solución incluida después del intento. Conserva los ocho minutos de golf. Anota tiempos reales de finalización y uso de pistas para comprobar
 si esta distribución funciona con el grupo.
 
+## Si vas con retraso
+
+<span data-language-key="if-behind"></span>
+
+Decide los recortes según el reloj, no sobre la marcha. En cada punto de
+control, compara la hora con el inicio previsto y aplica el recorte de esa
+fila. Los minutos cuentan desde el inicio de la sesión; antes de empezar,
+anota al margen las horas reales. Ningún recorte toca la ruta esencial, los
+puntos de control ni la respuesta a la pregunta de la sección; lo que se va es
+la puesta en común, una segunda ronda o una votación.
+
+| Comprueba en | Deberías empezar | Si llevas | Recorte, y lo que ahorra |
+|---|---|---|---|
+| +0:45 | 03 | 5+ min de retraso | En la actividad de significado de ejes de 02, un grupo informa y los demás omiten la puesta en común (−3). |
+| +1:00 | 04 | 5+ min de retraso | Solo la ronda 1 de la caza del error: emparejar y ejecutar la clave; se omite la reescritura de la ronda 2 (−3). |
+| +1:15 | Kahoot 1 | hasta 5 min de retraso | Hazlo. El Kahoot 2 pasa a ser el recorte previsto. |
+| | | 6–10 min de retraso | Hazlo, y elimina ya el Kahoot 2, para no decidirlo en +2:15 (−5). |
+| | | más de 10 min | Elimina también el Kahoot 1 (−5). Haz la pausa de todos modos. |
+| +1:25 | 05 | 5+ min de retraso | Mito o hecho pasa a ser la pregunta de recuperación de 30 segundos (−1). Actividad 05: informa un grupo (−4). |
+| +2:00 | 07 | 5+ min de retraso | Mito o hecho pasa a ser la pregunta de recuperación (−1). Elimina el Kahoot 2 si sigue en pie (−5). |
+| +2:30 | 09 | 5+ min de retraso | Omite el error sobre residuos; conserva el puente de SVD a Tucker, que la sección 10 necesita (−3). |
+| +2:50 | 10 | cualquiera | Si vas tarde, Mito o hecho pasa a ser la pregunta de recuperación (−1). **Conserva enteros el golf y la escena de Tucker.** |
+| +3:10 | 11 | 5+ min de retraso | Hoyo 2 como demostración: muestra CP de rango 6 con 198 números frente a los 236 de Tucker, y luego la escena (−3). |
+| | | más de 10 min | Ejercicio en parejas: tres minutos de intento y luego demuestra la solución incluida (−4). |
+| +3:25 | 12 | cualquiera | Para donde estés y haz la comprobación final. |
+
+**Nunca recortes:** las pausas, la sección 10, el Kahoot 3 ni la comprobación
+final. La comprobación final es el único registro de lo que cambió la sesión,
+y la siguiente edición se planifica a partir de ella. El Kahoot 3 comprueba si
+Tucker caló mientras el resultado de los taxis sigue en pantalla.
+
+En conjunto, estos recortes recuperan unos 30 minutos, que es más o menos lo
+que se espera que se desvíe una primera edición: los Kahoot, Mito o hecho y
+las rondas de golf suelen pasarse un minuto o dos cada uno. Anota qué recortes
+hiciste y a qué hora; es la línea más útil del
+[formulario de valoración](workshop-feedback.md).
+
 ## Comprobaciones inicial y final
 
 <span data-language-key="entry-and-exit-checks"></span>
@@ -126,5 +163,7 @@ Quienes terminen pronto pueden diseñar un contraejemplo.
 <span data-language-key="after-the-session"></span>
 
 Ofrece el [formulario de opinión](workshop-feedback.md) de dos minutos.
-Anota el commit, tiempos reales, errores frecuentes y un cambio para la próxima sesión.
+Anota el commit, los tiempos reales en la [franja de tiempos de la hoja del
+día](day-sheet.md#franja-de-tiempos), los errores frecuentes y un cambio para
+la próxima sesión.
 Antes de publicarlo, usa la [lista de publicación](https://github.com/project-delphi/tensors-workshop/blob/main/RELEASE_CHECKLIST.md).

@@ -3,7 +3,7 @@ title: "Facilitator run sheet"
 lang: en
 ---
 
-[Español](es/facilitator-guide.md) · [Teach this workshop](teach.qmd)
+[Español](es/facilitator-guide.md) · [Teach this workshop](teach.qmd) · [Day sheet](day-sheet.md)
 
 Use the existing **210-minute agenda**. These activities replace practice or
 discussion time; they do not extend the session. Notebook 13 is take-home work.
@@ -86,6 +86,41 @@ If fitting takes too long, demonstrate the supplied solution after their
 attempt. Keep the eight minutes of golf. Record actual completion
 times and hint use to check whether this allocation works for the group.
 
+## If you are behind
+
+<span data-language-key="if-behind"></span>
+
+Decide cuts at the clock, not in the moment. At each checkpoint, compare the
+time with the planned start and take the cut for that row. Minutes are from the
+session's start; write the real clock times in the margin before you begin.
+Every cut keeps the core route, the checkpoints and the answer to the
+section's question; what goes is sharing, a second round, or a vote.
+
+| Check at | You should be starting | If you are | Cut, and what it saves |
+|---|---|---|---|
+| +0:45 | 03 | 5+ min late | In 02's axis-meaning task, one group reports and the rest skip the share-out (−3). |
+| +1:00 | 04 | 5+ min late | Bug hunt round 1 only: match, then run the answer key; skip round 2's rewrite (−3). |
+| +1:15 | Kahoot 1 | up to 5 min late | Run it. Kahoot 2 is now the planned cut. |
+| | | 6–10 min late | Run it, and drop Kahoot 2 now, so you are not deciding at +2:15 (−5). |
+| | | 10+ min late | Drop Kahoot 1 as well (−5). Take the break anyway. |
+| +1:25 | 05 | 5+ min late | Myth or fact becomes the 30-second retrieval question (−1). Group task 05: one group reports (−4). |
+| +2:00 | 07 | 5+ min late | Myth or fact becomes the retrieval question (−1). Drop Kahoot 2 if it is still in (−5). |
+| +2:30 | 09 | 5+ min late | Skip the residual mistake; keep the SVD-to-Tucker bridge, which section 10 needs (−3). |
+| +2:50 | 10 | any | Myth or fact becomes the retrieval question if late (−1). **Keep golf and the Tucker stage whole.** |
+| +3:10 | 11 | 5+ min late | Hole 2 as a demonstration: show CP rank 6 at 198 numbers against Tucker's 236, then the stage (−3). |
+| | | 10+ min late | Pair exercise: three minutes to attempt, then demonstrate the supplied solution (−4). |
+| +3:25 | 12 | any | Stop wherever you are and run the exit check. |
+
+**Never cut:** the breaks, section 10, Kahoot 3, or the exit check. The exit
+check is the only record of what the session changed, and the next run is
+planned from it. Kahoot 3 checks whether Tucker landed while the taxi result is
+still on screen.
+
+Together these cuts recover about 30 minutes, which is roughly how far a first
+run is expected to drift: Kahoots, Myth or fact and the golf rounds each tend
+to run a minute or two over. Write down which cuts you took and at what time;
+they are the most useful line on the [feedback form](workshop-feedback.md).
+
 ## Entry and exit checks
 
 <span data-language-key="entry-and-exit-checks"></span>
@@ -124,5 +159,6 @@ Fast finishers design a counterexample before opening another exercise.
 <span data-language-key="after-the-session"></span>
 
 Offer the two-minute [feedback form](workshop-feedback.md). Record the workshop
-commit, actual timings, common errors, and one change for the next run.
+commit, actual timings on the [day sheet's timing strip](day-sheet.md#timing-strip),
+common errors, and one change for the next run.
 Use the [release checklist](https://github.com/project-delphi/tensors-workshop/blob/main/RELEASE_CHECKLIST.md) before publishing that change.

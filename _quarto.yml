@@ -21,6 +21,7 @@ project:
     - es/readiness-instructor.qmd
     - es/readiness-refresher.qmd
     - facilitator-guide.md
+    - day-sheet.md
     - assessments.md
     - worked-mistakes.md
     - group-tasks.md
@@ -34,6 +35,7 @@ project:
     - es/teach.qmd
     - es/faq.qmd
     - es/facilitator-guide.md
+    - es/day-sheet.md
     - es/assessments.md
     - es/worked-mistakes.md
     - es/group-tasks.md
