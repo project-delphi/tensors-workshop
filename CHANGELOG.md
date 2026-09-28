@@ -2,6 +2,7 @@
 
 ## 2026-09-27
 
+- The English and Spanish copy now makes clear that the 210 minutes include the Kahoot quizzes, directs facilitators to the existing cutting order when running late, and distinguishes section 11's live CP/Tucker comparison from its four-model extension material.
 - **A day sheet for the room.** A new *Day sheet* page, in both languages, fits on one printed page. It lists the tabs to open in order, the cut plan's clock strip, blanks for the three Kahoot PINs, and what to do if Colab or the Wi-Fi fails. A second printed page has a timing strip: planned start and minutes for every segment, with blanks for the actual times, the cut taken and notes. The feedback form and the facilitator guide now point to that strip.
 - **Plain words on the student path.** The notebooks page explains the route through a notebook without maintainer terms. The homepage asks for vectors and matrices and calls SVD a skim, since the workshop teaches it from scratch. Notebook 00's dataset table names sections in words.
 - **A daily check of every dataset host until the session.** A scheduled run executes every notebook and fails, which e-mails the owner, if a host was unreachable or a download fell back to the workshop's copy. Deep dive 19's blog kernel and sweeps now have copies too; its FB15k-237 split states no licence, so it has none.

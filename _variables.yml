@@ -153,8 +153,8 @@ workshop:
       url: "https://www.linkedin.com/in/sebastian-analytics/"
   title_en: "Tensors for Machine Learning"
   title_es: "Tensores para Aprendizaje Automático"
-  subtitle_en: "A 3.5-hour workshop, plus three Kahoot knowledge checks"
-  subtitle_es: "Un taller de 3,5 horas, más tres controles de conocimiento con Kahoot"
+  subtitle_en: "A 3.5-hour workshop, including three Kahoot knowledge checks"
+  subtitle_es: "Un taller de 3,5 horas que incluye tres controles de conocimiento con Kahoot"
   minutes: 210
   book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
   prereq_repo_url: "https://github.com/Laverde97/linear-algebra-deep-learning"

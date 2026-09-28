@@ -1293,7 +1293,7 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 **Estructura.** Cuatro partes que se construyen una sobre otra: entender qué es un tensor → razonar por qué existen los ejes → manipular ejes → calcular con tensores y factorizarlos. Las secciones 07, 09 y 10 comparten un tema: *no existe una inversa exacta, así que busca la mejor aproximación estable*. Decir esa conexión en voz alta en el cierre es lo que hace que la segunda mitad se sienta como una sola lección en vez de como cuatro.
 
-**No corras en la Parte I.** Es el primer contacto del alumnado con la teoría de tensores y todos los bloques posteriores usan su vocabulario. Si vas con retraso, recorta material de los apéndices, no la Parte I.
+**No corras en la Parte I.** Es el primer contacto del alumnado con la teoría de tensores y todos los bloques posteriores usan su vocabulario. Si vas con retraso, sigue el orden de **Recortes por tiempo** indicado más abajo.
 
 **Idioma.** El alumnado tiene el inglés como segunda lengua (Colombia). Habla despacio, evita los modismos y define los términos la primera vez que los uses. Nombra en voz alta los cognados en español desde el principio —*eje*, *descomposición*, *contracción*, *convolución*—: quita fricción de inmediato. Invita a preguntar en cualquiera de los dos idiomas. Avisa de los dos sentidos de «rank» al comienzo de la Parte I.
 
