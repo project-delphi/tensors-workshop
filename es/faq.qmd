@@ -93,7 +93,7 @@ Revisa el primer error y confirma que ejecutaste Setup y las celdas de
 preparación necesarias en el entorno actual. Si reiniciaste el entorno,
 ejecútalas de nuevo. Si falla una descarga, comprueba tu conexión y los
 requisitos de red del cuaderno. Durante el taller, comparte con quien lo
-facilita el número del cuaderno, la celda y el mensaje de error en Discord.
+facilita el número del cuaderno, la celda y el mensaje de error en [Discord]({{< var community.discord >}}).
 
 Si el código se ejecuta pero el resultado parece incorrecto, compáralo con el
 resultado esperado y usa los [errores resueltos](worked-mistakes.md) para

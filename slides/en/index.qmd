@@ -93,9 +93,11 @@ skimage documents as having no known copyright restrictions.
 Give the "rank" warning at the start of Part I, not later. It is the single most reliable source of confusion in this workshop. Chapter 2 uses *rank* for the number of independent columns; tensor theory usually means the number of axes.
 Today, say "order" for the number of axes, and "rank" only in Chapter 2's sense.
 
-Rhythm, so the room knows what to expect: exercise blocks are 10 minutes coding
-then 5 of explanation; the group block (§05) is 10 minutes of discussion then a
-share-back.
+Rhythm, so the room knows what to expect: a section opens on a prediction, then
+an exercise with its own check, and most close on a group task of 6 to 8
+minutes whose three-line share-back goes in Discord. The run sheet in the
+facilitator guide has every section's split. Every section runs its notebook's
+core route only; *Explore later* is for afterwards.
 :::
 
 ## {{< var sections.s00.n >}} · {{< var sections.s00.title_en >}} {#sec-00-setup-and-data .outcomes-slide}
@@ -145,7 +147,10 @@ Setup was pre-work. Collect the individual entry check before discussion.
 [📖 {{< var reading.numpy_to_jax.title_en >}} ↗]({{< var reading.numpy_to_jax.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Open on the photo: how many numbers hold it? 512 × 512 × 3 = 786,432. The slot
+is 4 minutes modelling one shape and 16 for Exercise 1 with a partner check; the
+three computing slides after the two images are a skim, not a lesson. Listen for
+"rank" meaning the number of axes, and say "order".
 :::
 
 ## {background-image="images/slides-final/slide-06.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -220,6 +225,8 @@ np.shares_memory(T, T_t)  # True
 </div>
 
 ::: {.notes}
+Not in the live slot: section 01's minutes are the notebook's. Skim this in twenty seconds or skip it; it is here to read afterwards.
+
 Travis Oliphant wrote Guide to NumPy and later co-founded Continuum Analytics, now Anaconda. Basic slicing and transposition return views; advanced indexing makes copies. The 96 bytes count the data buffer only, excluding array metadata.
 
 Bridge from tensor concepts to the arrays students will manipulate in section 02.
@@ -260,6 +267,8 @@ Sources: [NumPy internals](https://numpy.org/doc/stable/dev/internals.html),
 <div class="computing-takeaway"><strong>Moving data costs time.</strong><span>Reuse data on the device. Small operations and repeated transfers can erase the speedup.</span></div>
 
 ::: {.notes}
+Not in the live slot: section 01's minutes are the notebook's. Skim this in twenty seconds or skip it; it is here to read afterwards.
+
 Memory bandwidth limits many elementwise operations; large, well-tiled matrix products may be compute-bound. Volta example: a Tensor Core performs a 4×4 matrix multiply-accumulate per clock with FP16 inputs and FP32 accumulation. Later generations differ.
 
 SIMD means single instruction, multiple data. SIMT means single instruction,
@@ -315,6 +324,8 @@ Sources: [NVIDIA GPU performance guide](https://docs.nvidia.com/deeplearning/per
 <div class="computing-takeaway"><strong>Name the axes. Check the shapes.</strong><span>Those habits transfer across frameworks.</span></div>
 
 ::: {.notes}
+Not in the live slot: section 01's minutes are the notebook's. Skim this in twenty seconds or skip it; it is here to read afterwards.
+
 LAPACK succeeded LINPACK and EISPACK. Tensor decomposition libraries reuse matrix routines. JAX pure functions support tracing and XLA compilation. TensorFlow includes tools for serving models. Haiku and Flax manage neural network parameters. The NumPy examples can dispatch to optimized libraries; they do not guarantee a particular backend.
 
 BLAS is an interface with multiple implementations, such as OpenBLAS and MKL.
@@ -360,7 +371,10 @@ Sources: [BLAS](https://www.netlib.org/blas/),
 [Colab ↗]({{< var repo.colab_base >}}/02-thinking-in-n-dimensions.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 02 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Open on the prediction: shuffle four frames, and which statistic moves? (2 min).
+Then the axis key and Exercise 2 (12), and the axis-meaning group task (6).
+Listen for batch and time treated as the same kind of axis: a shuffle is
+harmless across a batch and destroys a clip.
 :::
 
 ## {background-image="images/slides-final/slide-09.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -396,7 +410,11 @@ padded batch with its validity mask.
 [Colab ↗]({{< var repo.colab_base >}}/03-indexing-and-broadcasting.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 03 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Model broadcasting for 3 minutes on the smallest example,
+[[2, 10], [4, 14]] − [3, 12], with the simulator on the projector: the room
+predicts the result shape, then one mismatch that errors. Exercise 3 and its
+feedback get 11. Collect the one-minute checkpoint before revealing it, and ask
+what each number in `mean` stands for before anyone divides.
 :::
 
 ## {background-image="images/slides-final/slide-11.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -444,7 +462,10 @@ numbers, reshaped from a row into a column, and the error is gone.
 [Colab ↗]({{< var repo.colab_base >}}/04-reshape-and-transpose.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 04 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Open on a tiny image made (3, 2, 2) twice, by a transpose and by a reshape,
+with the image tensor on the projector (2 min). Exercise 1 gets 7. Then the bug
+hunt, 6: match 2, test and score 3, share 1. Name the reshape as the cold open's
+bug.
 :::
 
 ## {background-image="images/slides-final/slide-13.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -482,7 +503,7 @@ this right?
 [Kahoot ↗]({{< var kahoot.q1.url >}}){.kahoot-join-tab target="_blank" rel="noopener noreferrer" title="Join Kahoot 1"}
 
 ::: {.notes}
-Run this before the break, right after section 04. The room has just used order, axis, shape, slice, fiber, variance, reshape and transpose. This is the moment those words are freshest.
+Run this before the break, right after section 04. The room has just used order, axis, shape, variance, reshape and transpose. This is the moment those words are freshest. One question asks what fixing every index but one gives you, a fiber, which only section 01's *Explore later* covers. Give the one-line definition as its answer is revealed.
 
 IMPORT THE .xlsx AHEAD OF TIME. Create → Add question → Import → Import
 spreadsheet. Do not do this live.
@@ -517,7 +538,10 @@ If you are badly over time, this is the last quiz to cut — cut Kahoot 2 first.
 [Colab ↗]({{< var repo.colab_base >}}/05-video-pipeline-design.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 05 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Myth or fact first (1 min). Then the prediction: which source frame is
+`clip[1]`? It is 45, not 1 (2 min), and Exercise 1 (4). Group task 05 gets 8:
+keep the event, fit the budget, with a three-line share-back in Discord. Five or
+more minutes late: one group reports.
 :::
 
 ## Myth or fact? {.computing-slide}
@@ -573,7 +597,10 @@ All three are worked mistakes 02, 03 and 04.
 [Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 06 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Model one contraction for 4 minutes: a pixel contracted to 21. Exercise 1 and
+its feedback get 10. Collect the one-minute checkpoint before revealing it.
+Listen for the output letters: whatever is missing right of the arrow is
+summed.
 :::
 
 ## {background-image="images/slides-final/slide-18.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -606,7 +633,10 @@ Follow the contiguous core block in the notebook. Further examples illustrate Ex
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Myth or fact first (1 min). Model duplicate columns for 3, with the collinear
+step on the projector, then compare coefficients and norms for 8: the same
+predictions from different coefficients. Close on what the data cannot identify,
+and the checkpoint (3).
 :::
 
 ## Myth or fact? {.computing-slide}
@@ -737,7 +767,8 @@ back on the wrap-up's one-idea slide.
 [Colab ↗]({{< var repo.colab_base >}}/08-recursion-with-matrices.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 08 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Open on the Fibonacci picture: one rule, applied again. Model one update (3),
+then Exercise 1 and its check (7).
 :::
 
 ## {background-image="images/slides-final/slide-24.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -774,7 +805,9 @@ that every training loop is this same recursion, and move on.
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Exercise 1 gets 9, the residual mistake 3, and the SVD-to-Tucker bridge 3. No
+timing sweeps. Late at +2:30: skip the residual mistake, never the bridge,
+which section 10 needs.
 :::
 
 ## {background-image="images/slides-final/slide-26a.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -814,7 +847,11 @@ If you are short of time, run Exercise 2 and skip Exercise 3.
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Myth or fact first (1). Explain core and factors (3), then compression golf
+hole 1 in the rank explorer (8): par is (3, 3, 1) at 60 numbers under 7%.
+Leaderboard and defend the winner (3), then the Tucker stage at the winning
+ranks, whose hour pattern peaks at 18. Never before golf, and never cut this
+section.
 :::
 
 ## Myth or fact? {.computing-slide}
@@ -939,7 +976,10 @@ same tensor to CP.
 [Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
 
 ::: {.notes}
-Follow the contiguous core block in the notebook. Further examples illustrate Explore later; skip them during the live activity. Keep the existing quiz and break timings.
+Exercise 1 in pairs (7): CP and Tucker on one budget. Then golf hole 2 (5):
+the bar drops to 2%, and CP rank 6 wins with 198 numbers against Tucker's 236.
+Leaderboard and the budget stage (3), never before the pair exercise, which it
+would answer.
 :::
 
 ## {.extension-slide background-image="images/slides-final/slide-29b.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}

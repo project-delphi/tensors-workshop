@@ -89,11 +89,12 @@ stay in English** in both decks.
    uv run --group site python scripts/gen_tables.py
    uv run --group site python scripts/gen_notebooks.py
    ```
-3. Draw the section's slide art, save it as the next
-   `en|es/images/slides-final/slide-NN.webp`, and add
-   `## {#sec-NN-slug background-image="images/slides-final/slide-NN.webp" ...}`
-   with its `.sec-part` marker, its `h1.sr-only` heading, its `sr-only`
-   summary and its `.colab-tab` link to **both** decks.
+3. Copy an existing section's opening slide in **both** decks —
+   `## {{</* var sections.sNN.n */>}} · {{</* var sections.sNN.title_en */>}} {#sec-NN-slug .outcomes-slide}`
+   with its `.sec-part` and `.outcome-time` blocks, *Practise today* and
+   *Explore later* from `_variables.yml`, its `.colab-tab` link and its notes —
+   and change the number. Everything on it comes from `_variables.yml`, so
+   nothing needs drawing.
 4. `quarto render && uv run --group site python scripts/check_links.py`
 
 Step 3 is the one nothing can do for you. Steps 1, 2 and 4 will tell you if you
@@ -101,18 +102,20 @@ forget it.
 
 ## Structure of each deck
 
-Four opening slides → the agenda (generated into
-`_includes/agenda-{en,es}.md` by `scripts/gen_tables.py`) → then per section a
-`##` divider slide carrying the `{#sec-NN-slug}` anchor and one to three
-follow-on slides, with a full-bleed **Kahoot pause** slide after sections 04,
-07 and 10.
+The title and the cold open → three opening slides → the agenda (generated into
+`_includes/agenda-{en,es}.md` by `scripts/gen_tables.py`) → then per section an
+`.outcomes-slide` carrying the `{#sec-NN-slug}` anchor, built from
+`_variables.yml`, and its follow-on slides, with a full-bleed **Kahoot pause**
+slide after sections 04, 07 and 10. The slide map below lists every one.
 
-Apart from the agenda and the three computing slides, every slide is a background
-PNG. What is *not* in the image and must stay in the qmd:
+The follow-on slides are either background art (WebP) or HTML slides written in
+the qmd — the predict-first, myth-or-fact, golf and computing slides. What is
+*not* in an image and must stay in the qmd:
 
 - `<p class="sr-only">` — the slide's summary, this redesign's `fig-alt`.
-- `<h1 class="sr-only">` on the sixteen divider slides — the section name the
-  breadcrumb in `deck-pace.html` reads.
+- The section's name, which the breadcrumb in `deck-pace.html` reads: the
+  `##` heading of each `.outcomes-slide`, and an `<h1 class="sr-only">` on each
+  of the three Kahoot slides, whose heading is an image.
 - `::: {.sec-part}` — the part number, for the same breadcrumb. It cannot be a
   `data-` attribute on the heading; see AGENTS.md.
 - `.colab-tab` links — the canonical notebook URLs `check_links.py` validates,
