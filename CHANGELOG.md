@@ -2,6 +2,7 @@
 
 ## 2026-09-28
 
+- **CI keeps what it ran on every notebook.** `scripts/test_notebooks.py --artifacts DIR` now writes each route's executed notebook (a copy, banner-marked as the CI run set, never the whole notebook), every plot it drew, `environment.txt` (the kernel's Python and every installed package), and a `coverage.json`/`coverage.md` table -- cells executed and by which role, `EXPECTED` assertions, wall time, outcome. `publish.yml`'s `notebooks` job and the daily `health.yml` both upload it as `notebook-evidence`/`notebook-evidence-health` and post the coverage table to the run summary, so a reviewer who cannot start a kernel can see what CI saw.
 - **The deck's footer and notebook panel follow the section again.** Since the section dividers became outcome slides, the footer showed nothing until Kahoot 1 and then the last Kahoot's name on every slide after it, and a slide without its own Colab link showed no button. Both now follow the section you are in; a slide's own notebook link still wins, so the "one idea" slide opens notebook 12.
 - **Every Discord mention links the workshop's server**: the homepage, the FAQ, the group tasks and the handbook's pre-work note. The invite lives once, in `_variables.yml`.
 - **Each section's opening slide has its own speaker note**: the split from the run sheet, the hook it opens on, and what to listen for. Eleven of them shared one generic note. The three computing slides in section 01 now say they are a skim, and the agenda note describes the rhythm the session actually has.

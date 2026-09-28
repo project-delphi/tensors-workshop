@@ -1257,6 +1257,59 @@ unchecked, and stops claiming "All notebook routes executed cleanly", so the
 one way this gate reports less than usual is never something a reader has to
 infer.
 
+**`test_notebooks.py --artifacts` writes route copies, not full runs, and
+reads packages from `importlib.metadata` after the run** (2026-09-28). CI
+executed every notebook's core route from the day the runner existed and kept
+none of it: a reviewer who could not start a kernel had only the pass/fail
+line to go on, and a failing route's own traceback -- the most useful thing a
+kernel produces -- was gone the moment the job ended.
+
+*A route copy, not the whole notebook.* `execute()` already builds `trimmed`
+-- the prologue, the chosen cells, the probe -- because that is the one
+notebook nbclient actually runs; writing it back out costs nothing further
+and is exactly what a reviewer needs to see what CI saw. Writing the *whole*
+notebook instead would print outputs for cells the run never touched (a
+student's blank `# TODO`, an unexecuted explorer) next to the ones it did,
+which reads as a full pass when it is not. The copy carries a banner cell
+saying so in as many words, because `-route.ipynb` in its name is a filename
+convention a reader can miss. It is written right after `client.execute()`,
+before any of the pass/fail bookkeeping below it runs, so a `CellExecutionError`
+still leaves the file on disk with the failing cell's traceback intact --
+that is the one case this exists for.
+
+*Never into `notebooks/`.* The artifact path is validated against `NBDIR` at
+startup and refused if it is inside it, is it, or contains it, because the
+whole point of the byte-exact regenerate gate in `publish.yml` is that
+nothing writes into that directory except a human and `gen_notebooks.py`.
+`$RUNNER_TEMP` in both workflows keeps the habit from ever being tested by
+accident.
+
+*`environment.txt` is built from `importlib.metadata`, not `pip freeze`,
+because a uv venv can have no `pip` installed at all* -- uv manages the
+environment directly and does not need it. `importlib.metadata.distributions()`
+walks installed dist-info regardless. It is written at the very end of the
+run, after every notebook's own `%pip install` (tensorly, `imageio[ffmpeg]`)
+has had the chance to land, so those show up in the list a package added
+mid-run would otherwise be reported as absent from.
+
+*The kernel is checked against the runner, not assumed to match.* `nbclient`
+starts a `python3` kernelspec, which is ordinarily the same venv `uv run`
+resolved -- but nothing enforces that, and reporting the runner's own
+packages for a kernel that used a different interpreter would misname what
+actually ran. A one-line cell (`ENV_PROBE`), appended only when `--artifacts`
+is set, prints the kernel's `sys.executable`; when it disagrees with the
+runner's own, `environment.txt` queries that interpreter's distributions in a
+subprocess instead of trusting `importlib.metadata` in-process.
+
+*Coverage is a table, not a log line.* `coverage_row()` and
+`render_coverage_md()` are plain functions over data `execute()` already has
+-- `chosen`, `activity`, `paired`, the declared `ci_cells`, `EXPECTED` -- kept
+separate from nbclient so they are unit-testable without a kernel, the same
+split `run_set()` and `check_colab_parity()` already use. `GITHUB_STEP_SUMMARY`
+gets the same markdown table appended, so the coverage is visible on the run
+page without downloading anything -- the summary a human reads first, the
+JSON for anything that wants to diff two runs.
+
 **Check 11 only prints a TODO, and check 12 nearly always does.** Both cover
 material that is pasted in after the page exists -- Kahoot join URLs, companion
 exports -- and CI must not go red in between. The exception is

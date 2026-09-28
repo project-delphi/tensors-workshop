@@ -710,6 +710,144 @@ class Unreachable(unittest.TestCase):
                     self.assertIn(path.name[:2], tn.NETWORK)
 
 
+class Artifacts(unittest.TestCase):
+    """The pieces of --artifacts that need no kernel: PNGs, roles, tables."""
+
+    def test_cell_role_classifies_activity_solution_ci_and_prep(self):
+        self.assertEqual(tn.cell_role("act", "act", "sol", None), tn.ROLE_ACTIVITY)
+        self.assertEqual(tn.cell_role("sol", "act", "sol", None), tn.ROLE_SOLUTION)
+        self.assertEqual(
+            tn.cell_role("setup", "act", None, ["setup", "answer"]), tn.ROLE_CI_CELLS
+        )
+        self.assertEqual(tn.cell_role("prep-1", "act", "sol", None), tn.ROLE_PREP)
+
+    def test_png_outputs_decodes_display_data_and_execute_result(self):
+        import base64
+
+        blob = b"\x89PNG\r\n"
+        b64 = base64.b64encode(blob).decode()
+        c = {
+            "outputs": [
+                {"output_type": "stream", "text": "hi\n"},
+                {"output_type": "display_data", "data": {"image/png": b64}},
+                {"output_type": "execute_result", "data": {"image/png": b64}},
+            ]
+        }
+        self.assertEqual(tn.png_outputs(c), [blob, blob])
+
+    def test_png_outputs_ignores_cells_without_images(self):
+        self.assertEqual(tn.png_outputs({"outputs": [{"output_type": "stream"}]}), [])
+
+    def test_write_pngs_names_files_by_notebook_cell_and_index(self):
+        import base64
+        import tempfile
+
+        blob = base64.b64encode(b"a").decode()
+        cells = [
+            {
+                "id": "s01-01",
+                "outputs": [
+                    {"output_type": "display_data", "data": {"image/png": blob}}
+                ]
+                * 2,
+            },
+            {"id": "s01-02", "outputs": []},
+        ]
+        with tempfile.TemporaryDirectory() as d:
+            out = tn.write_pngs(cells, Path(d), "01")
+            names = sorted(p.name for p in out)
+            self.assertEqual(names, ["01-s01-01-0.png", "01-s01-01-1.png"])
+            self.assertEqual((Path(d) / "01-s01-01-0.png").read_bytes(), b"a")
+
+    def test_route_notebook_for_artifact_prepends_a_banner_and_says_not_the_whole(self):
+        trimmed = {
+            "cells": [
+                {
+                    "id": "x",
+                    "cell_type": "code",
+                    "source": "1\n",
+                    "outputs": [],
+                    "metadata": {},
+                }
+            ],
+            "metadata": {},
+            "nbformat": 4,
+            "nbformat_minor": 5,
+        }
+        out = tn.route_notebook_for_artifact(trimmed, "01-foo.ipynb")
+        self.assertEqual(out["cells"][0]["cell_type"], "markdown")
+        banner = "".join(out["cells"][0]["source"])
+        self.assertIn("not the whole notebook", banner)
+        self.assertIn("01-foo.ipynb", banner)
+        self.assertEqual(out["cells"][1]["id"], "x")
+        # The input is untouched.
+        self.assertEqual(len(trimmed["cells"]), 1)
+
+    def test_coverage_row_counts_roles_and_asserted_expectations(self):
+        nb = notebook(
+            cell("setup()\n", cid="prep-1", tags=["workshop-core-prep"]),
+            cell("# TODO\n", cid="act", tags=["workshop-core-activity"]),
+            cell("answer()\n", cid="sol", tags=["solution"]),
+            prep=["prep-1"],
+        )
+        chosen = [2, 3, 4]  # prep-1, act, sol (indices after header + scaffold)
+        row = tn.coverage_row(
+            number="99",
+            label="99-fixture.ipynb",
+            nb=nb,
+            chosen=chosen,
+            activity="act",
+            paired="sol",
+            ci_cells=None,
+            expected={"sol": ["ok"]},
+            ran={"prep-1", "act", "sol"},
+            outcome="passed",
+            wall_seconds=1.2345,
+        )
+        self.assertEqual(row["executed_count"], 3)
+        self.assertEqual(
+            sorted(row["executed_roles"]),
+            sorted([tn.ROLE_PREP, tn.ROLE_ACTIVITY, tn.ROLE_SOLUTION]),
+        )
+        self.assertEqual(row["expected_asserted"], 1)
+        self.assertEqual(row["outcome"], "passed")
+        self.assertEqual(row["wall_seconds"], 1.2)
+
+    def test_render_coverage_md_is_a_readable_table(self):
+        rows = [
+            {
+                "number": "01",
+                "label": "01-a.ipynb",
+                "total_cells": 5,
+                "code_cells": 3,
+                "executed_count": 2,
+                "executed_ids": ["a", "b"],
+                "executed_roles": [tn.ROLE_PREP, tn.ROLE_ACTIVITY],
+                "expected_asserted": 1,
+                "outcome": "passed",
+                "wall_seconds": 3.0,
+            },
+            {
+                "number": "00",
+                "label": "00-z.ipynb",
+                "total_cells": 2,
+                "code_cells": 1,
+                "executed_count": 1,
+                "executed_ids": ["x"],
+                "executed_roles": [tn.ROLE_CI_CELLS],
+                "expected_asserted": 0,
+                "outcome": "UNCHECKED",
+                "wall_seconds": 0.5,
+            },
+        ]
+        md = tn.render_coverage_md(rows)
+        self.assertIn("| Notebook |", md)
+        # Sorted by number, so 00 comes before 01 despite input order.
+        self.assertLess(md.index("00-z.ipynb"), md.index("01-a.ipynb"))
+        self.assertIn("UNCHECKED", md)
+        self.assertIn("route prep ×1", md)
+
+
 class InjectedCells(unittest.TestCase):
     """The prologue and probe are source strings built at import time."""
 

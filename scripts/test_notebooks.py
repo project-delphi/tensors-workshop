@@ -69,7 +69,9 @@ or execution count would fail CI and check 1.
 from __future__ import annotations
 
 import argparse
+import base64
 import copy
+import json
 import os
 import re
 import sys
@@ -751,6 +753,15 @@ PROBE = PROBE.replace("__BUDGET__", str(PROBE_BUDGET_SECONDS)).replace(
     "__CHANGES__", str(PROBE_MAX_CHANGES)
 )
 
+# Printed by a one-line cell appended only when --artifacts is set, so
+# environment.txt can report the interpreter the *kernel* actually used
+# rather than assume it matches the process running this script. uv's
+# `python3` kernelspec is ordinarily the same venv, but nothing enforces
+# that, and a mismatch would make environment.txt list packages nobody
+# actually ran.
+ENV_PROBE_MARK = "WORKSHOP_PYEXEC="
+ENV_PROBE = f"import sys as _s; print({ENV_PROBE_MARK!r} + _s.executable)"
+
 
 # ── Execution ────────────────────────────────────────────────────────────────
 
@@ -810,8 +821,221 @@ def unreachable_in(cell: dict) -> str | None:
     return None
 
 
-def execute(path: Path, number: str, show_output: bool) -> str | None:
-    """Run one notebook's set. Returns a reason string if it had to be skipped."""
+# ── Artifacts: what a reviewer downloads instead of running a kernel ─────────
+#
+# Nothing below starts a kernel. Each function takes what execute() already
+# built -- a trimmed notebook, its chosen cells, its EXPECTED table -- and
+# turns it into something a reviewer can open without Jupyter: the executed
+# route itself, its plots, and one row of a coverage table. Kept as small
+# pure functions on purpose, so they are unit-testable without nbclient.
+
+ROLE_ACTIVITY = "activity"
+ROLE_SOLUTION = "paired solution"
+ROLE_CI_CELLS = "ci_cells"
+ROLE_PREP = "route prep"
+
+
+def cell_role(
+    cid: str, activity: str, paired: str | None, ci_cells: list[str] | None
+) -> str:
+    """Which part of a route a chosen cell id belongs to, for the coverage table."""
+    if cid == activity:
+        return ROLE_ACTIVITY
+    if paired is not None and cid == paired:
+        return ROLE_SOLUTION
+    if ci_cells and cid in ci_cells:
+        return ROLE_CI_CELLS
+    return ROLE_PREP
+
+
+def png_outputs(cell: dict) -> list[bytes]:
+    """Every image/png output on a cell, decoded, in output order."""
+    found = []
+    for item in cell.get("outputs", ()) or ():
+        data = (
+            item.get("data", {})
+            if item.get("output_type")
+            in (
+                "display_data",
+                "execute_result",
+            )
+            else {}
+        )
+        png = data.get("image/png")
+        if png:
+            text = png if isinstance(png, str) else "".join(png)
+            found.append(base64.b64decode(text))
+    return found
+
+
+def write_pngs(cells: list[dict], plots_dir: Path, number: str) -> list[Path]:
+    """Write every image/png output under DIR/plots/NN-<cell-id>-<k>.png."""
+    written = []
+    for cell in cells:
+        cid = cell.get("id", "cell")
+        for k, blob in enumerate(png_outputs(cell)):
+            out = plots_dir / f"{number}-{cid}-{k}.png"
+            out.write_bytes(blob)
+            written.append(out)
+    return written
+
+
+def route_notebook_for_artifact(trimmed: dict, label: str) -> dict:
+    """A copy of the trimmed notebook with a banner cell saying what it is.
+
+    Not the whole notebook: only the CI run set (prologue + route + paired
+    solution + probe), so a reviewer does not mistake it for a full run.
+    """
+    import nbformat
+
+    out = copy.deepcopy(trimmed)
+    banner = nbformat.v4.new_markdown_cell(
+        f"**CI run set for `{label}`, not the whole notebook.**\n"
+        "\n"
+        "This is the trimmed copy `scripts/test_notebooks.py` actually "
+        "executed: the route's preparation cells, its activity, the paired "
+        "solution (or the declared `ci_cells`/fallback set), and the "
+        "prologue/probe cells the runner injects around them. It is written "
+        "whether the run passed or failed -- a failing cell's traceback is "
+        "the most useful thing in it."
+    )
+    banner["id"] = "workshop-artifact-banner"
+    out["cells"] = [banner] + out["cells"]
+    return out
+
+
+def coverage_row(
+    *,
+    number: str,
+    label: str,
+    nb: dict,
+    chosen: list[int],
+    activity: str,
+    paired: str | None,
+    ci_cells: list[str] | None,
+    expected: dict[str, list[str]],
+    ran: set[str],
+    outcome: str,
+    wall_seconds: float,
+) -> dict:
+    """One notebook's row for coverage.json / coverage.md."""
+    cells = nb["cells"]
+    ids = [c.get("id") for c in cells]
+    code_cells = [c for c in cells if c.get("cell_type") == "code"]
+    roles = [cell_role(ids[i], activity, paired, ci_cells) for i in chosen]
+    return {
+        "number": number,
+        "label": label,
+        "total_cells": len(cells),
+        "code_cells": len(code_cells),
+        "executed_count": len(chosen),
+        "executed_ids": [ids[i] for i in chosen],
+        "executed_roles": roles,
+        "expected_asserted": sum(len(v) for k, v in expected.items() if k in ran),
+        "outcome": outcome,
+        "wall_seconds": round(wall_seconds, 1),
+    }
+
+
+def render_coverage_md(rows: list[dict]) -> str:
+    """A readable markdown table, one row per notebook, sorted by number."""
+    header = (
+        "| Notebook | Total cells | Code cells | Executed | Roles | "
+        "EXPECTED asserted | Outcome | Time (s) |\n"
+        "|---|---|---|---|---|---|---|---|\n"
+    )
+    lines = [header]
+    for row in sorted(rows, key=lambda r: r["number"]):
+        role_counts = {}
+        for role in row["executed_roles"]:
+            role_counts[role] = role_counts.get(role, 0) + 1
+        roles = ", ".join(f"{role} ×{n}" for role, n in sorted(role_counts.items()))
+        lines.append(
+            f"| {row['label']} | {row['total_cells']} | {row['code_cells']} | "
+            f"{row['executed_count']} | {roles or '—'} | "
+            f"{row['expected_asserted']} | {row['outcome']} | "
+            f"{row['wall_seconds']} |\n"
+        )
+    return "".join(lines)
+
+
+def write_environment(path: Path, python_executable: str | None) -> None:
+    """Python version, platform and every installed distribution's version.
+
+    `python_executable` is the interpreter the kernel actually reported
+    (captured by ENV_PROBE), used to check it against this process's own
+    `sys.executable`. A uv venv may carry no pip, so distributions come from
+    `importlib.metadata`, not `pip list`; when the kernel disagrees, the list
+    is pulled from *that* interpreter instead, in a subprocess, so a notebook
+    whose `%pip install` landed in a different environment is not
+    misreported as absent.
+    """
+    import importlib.metadata
+    import platform
+    import subprocess
+
+    lines = [
+        f"Python: {sys.version.split()[0]} ({sys.executable})",
+        f"Platform: {platform.platform()}",
+        "",
+    ]
+
+    if python_executable and Path(python_executable) != Path(sys.executable):
+        lines.append(f"Kernel ran under a different interpreter: {python_executable}")
+        probe = subprocess.run(
+            [
+                python_executable,
+                "-c",
+                "import importlib.metadata as m, json\n"
+                "print(json.dumps(sorted((d.metadata['Name'], d.version) "
+                "for d in m.distributions())))",
+            ],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        dists = sorted(set(json.loads(probe.stdout))) if probe.returncode == 0 else []
+        if probe.returncode != 0:
+            lines.append(
+                f"  (could not query it: {probe.stderr.strip()[:200]}; "
+                f"falling back to this process's own packages)"
+            )
+            dists = sorted(
+                {
+                    (d.metadata["Name"], d.version)
+                    for d in importlib.metadata.distributions()
+                }
+            )
+    else:
+        dists = sorted(
+            {
+                (d.metadata["Name"], d.version)
+                for d in importlib.metadata.distributions()
+            }
+        )
+
+    lines.append("")
+    lines.append("Installed distributions:")
+    for name, version in dists:
+        lines.append(f"  {name}=={version}")
+
+    path.write_text("\n".join(lines) + "\n")
+
+
+def execute(
+    path: Path,
+    number: str,
+    show_output: bool,
+    artifacts: Path | None = None,
+) -> tuple[str | None, dict, str | None]:
+    """Run one notebook's set.
+
+    Returns (skip-reason or None, its coverage row, the kernel's own
+    sys.executable or None). `artifacts` is a directory to write the executed
+    route and its plots into -- never `notebooks/`, and written whether the
+    run passed or failed, because a failing cell's traceback is the most
+    useful thing in it.
+    """
     import nbformat
     from nbclient import NotebookClient
     from nbclient.exceptions import CellExecutionError, CellTimeoutError
@@ -822,17 +1046,24 @@ def execute(path: Path, number: str, show_output: bool) -> str | None:
     chosen, activity, paired = run_set(nb, label)
     ids = [c.get("id") for c in nb["cells"]]
     stub = nb["cells"][ids.index(activity)] if activity in ids else None
+    ci_cells = workshop_meta(nb, label).get("ci_cells")
 
     trimmed = copy.deepcopy(nb)
     prologue = nbformat.v4.new_code_cell(PROLOGUE)
     prologue["id"] = "workshop-prologue"
     probe = nbformat.v4.new_code_cell(PROBE)
     probe["id"] = "workshop-probe"
-    trimmed["cells"] = (
-        [prologue] + [copy.deepcopy(nb["cells"][i]) for i in chosen] + [probe]
-    )
+    cells = [prologue] + [copy.deepcopy(nb["cells"][i]) for i in chosen] + [probe]
+    if artifacts is not None:
+        env_probe = nbformat.v4.new_code_cell(ENV_PROBE)
+        env_probe["id"] = "workshop-env-probe"
+        cells.append(env_probe)
+    trimmed["cells"] = cells
 
     print(f"      {len(chosen)} cell(s): {', '.join(ids[i] for i in chosen)} + probe")
+
+    started_at = time.monotonic()
+    failures_before = len(failures)
 
     # A scratch cwd, so nothing a cell writes can land in the repository.
     with tempfile.TemporaryDirectory() as workdir:
@@ -883,6 +1114,28 @@ def execute(path: Path, number: str, show_output: bool) -> str | None:
         except Exception as exc:  # noqa: BLE001 — report, do not raise
             fail(f"{label}: kernel error — {type(exc).__name__}: {exc}")
 
+    # Written here, right after client.execute(), whether it passed or
+    # failed: the failing cell's own traceback is what makes this worth
+    # downloading. Never into notebooks/ -- artifacts is a caller-chosen
+    # scratch directory, and the clean sources must stay byte-identical.
+    kernel_python = None
+    if artifacts is not None:
+        for cell in trimmed["cells"]:
+            if cell.get("id") == "workshop-env-probe":
+                out = stdout_of(cell)
+                if ENV_PROBE_MARK in out:
+                    kernel_python = out.split(ENV_PROBE_MARK, 1)[1].strip()
+        route_cells = [
+            c for c in trimmed["cells"] if c.get("id") != "workshop-env-probe"
+        ]
+        route_nb = copy.deepcopy(trimmed)
+        route_nb["cells"] = route_cells
+        route_nb = route_notebook_for_artifact(route_nb, label)
+        nbformat.write(route_nb, artifacts / f"{number}-route.ipynb")
+        plots_dir = artifacts / "plots"
+        plots_dir.mkdir(parents=True, exist_ok=True)
+        write_pngs(route_cells, plots_dir, number)
+
     expected = EXPECTED.get(number, {})
 
     # Not `set(ids)`: a cell can still exist and yet have dropped out of the
@@ -917,7 +1170,20 @@ def execute(path: Path, number: str, show_output: bool) -> str | None:
         if why:
             print(f"      skipped — {cell.get('id')} could not reach its remote")
             print(f"              {why}")
-            return f"{number} ({cell.get('id')})"
+            row = coverage_row(
+                number=number,
+                label=label,
+                nb=nb,
+                chosen=chosen,
+                activity=activity,
+                paired=paired,
+                ci_cells=ci_cells,
+                expected=expected,
+                ran=ran,
+                outcome="UNCHECKED",
+                wall_seconds=time.monotonic() - started_at,
+            )
+            return f"{number} ({cell.get('id')})", row, kernel_python
 
     # A fetch that fell back to the workshop's copy in data/ passed -- that is
     # what the copy is for -- but the upstream host it skipped is dead or
@@ -967,7 +1233,27 @@ def execute(path: Path, number: str, show_output: bool) -> str | None:
             f"died — {stopped}"
         )
 
-    return None
+    fell_back_here = any(line.startswith(f"{number} (") for line in fell_back)
+    if len(failures) > failures_before:
+        outcome = "failed"
+    elif fell_back_here:
+        outcome = "FELL BACK"
+    else:
+        outcome = "passed"
+    row = coverage_row(
+        number=number,
+        label=label,
+        nb=nb,
+        chosen=chosen,
+        activity=activity,
+        paired=paired,
+        ci_cells=ci_cells,
+        expected=expected,
+        ran=ran,
+        outcome=outcome,
+        wall_seconds=time.monotonic() - started_at,
+    )
+    return None, row, kernel_python
 
 
 # ── Entry point ──────────────────────────────────────────────────────────────
@@ -1000,7 +1286,31 @@ def main(argv: list[str] | None = None) -> int:
         help="fail when a route was UNCHECKED or a download FELL BACK "
         "(the scheduled health check; the PR gate passes on both)",
     )
+    parser.add_argument(
+        "--artifacts",
+        metavar="DIR",
+        help="write what CI saw into DIR: each route's executed notebook, its "
+        "plots, environment.txt, and coverage.json/coverage.md. Never "
+        "notebooks/ -- this is a scratch directory the caller owns.",
+    )
     args = parser.parse_args(argv)
+
+    artifacts = None
+    if args.artifacts:
+        artifacts = Path(args.artifacts).resolve()
+        if (
+            artifacts == NBDIR
+            or NBDIR in artifacts.parents
+            or artifacts in NBDIR.parents
+        ):
+            print(
+                f"--artifacts must not be notebooks/ or contain/be contained by "
+                f"it: {artifacts}",
+                file=sys.stderr,
+            )
+            return 1
+        artifacts.mkdir(parents=True, exist_ok=True)
+        (artifacts / "plots").mkdir(exist_ok=True)
 
     paths = sorted(NBDIR.glob("[0-9][0-9]-*.ipynb"))
     if not paths:
@@ -1018,6 +1328,8 @@ def main(argv: list[str] | None = None) -> int:
 
     skipped = []
     unreachable = []
+    coverage_rows: list[dict] = []
+    kernel_python: str | None = None
     for index, path in enumerate(paths, 1):
         number = path.name[:2]
         print(f"\n[{index}] {path.name}")
@@ -1056,9 +1368,12 @@ def main(argv: list[str] | None = None) -> int:
             continue
 
         try:
-            why = execute(path, number, args.show_output)
+            why, row, seen_python = execute(path, number, args.show_output, artifacts)
             if why:
                 unreachable.append(why)
+            coverage_rows.append(row)
+            if seen_python:
+                kernel_python = seen_python
         except (ValueError, KeyError) as exc:
             fail(f"{path.name}: {exc}")
 
@@ -1081,16 +1396,36 @@ def main(argv: list[str] | None = None) -> int:
         for line in fell_back:
             print(f"  {line}")
         print("  Check the upstream host; the notebook may need a new source.")
+
+    def finish(code: int) -> int:
+        # Written at the very end, win or lose: environment.txt only lists
+        # what actually got installed, including a notebook's own %pip, and
+        # coverage.md/json cover every notebook this run touched regardless
+        # of outcome.
+        if artifacts is not None and not args.list:
+            write_environment(artifacts / "environment.txt", kernel_python)
+            (artifacts / "coverage.json").write_text(
+                json.dumps(coverage_rows, indent=2, sort_keys=True) + "\n"
+            )
+            md = render_coverage_md(coverage_rows)
+            (artifacts / "coverage.md").write_text(md)
+            summary = os.environ.get("GITHUB_STEP_SUMMARY")
+            if summary:
+                with open(summary, "a") as fh:
+                    fh.write("\n## Notebook coverage\n\n")
+                    fh.write(md)
+        return code
+
     if failures:
         print(f"{len(failures)} FAILURE(S)")
-        return 1
+        return finish(1)
     # The PR gate passes on both, because neither is the change's fault. The
     # scheduled health check (.github/workflows/health.yml) passes --strict:
     # there a failing run is the whole point -- it is the only thing that
     # emails anyone when a dataset host dies between pushes.
     if args.strict and (unreachable or fell_back):
         print("STRICT: failing because a remote was unreachable or fell back.")
-        return 1
+        return finish(1)
     if args.list:
         print("Run sets resolved.")
     elif unreachable:
@@ -1102,7 +1437,7 @@ def main(argv: list[str] | None = None) -> int:
         )
     else:
         print("All notebook routes executed cleanly.")
-    return 0
+    return finish(0)
 
 
 if __name__ == "__main__":
