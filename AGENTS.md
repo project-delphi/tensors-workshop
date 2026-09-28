@@ -729,7 +729,10 @@ destroys the `#sec-NN` anchor.
 `_quarto.yml` has an explicit `render:` list on purpose. Adding a page means
 adding it there and, if it has a counterpart in the other language, tagging
 both navbar items `rel: lang-en` / `rel: lang-es`; an untagged item shows in
-both languages.
+both languages. It also means giving the page a check: a place in `pages` in
+`check_navigation.cjs`, or an `EXEMPT` entry there saying why it has none.
+Shard 0 reads `render:` before it starts a browser and fails on a rendered
+page with neither.
 
 **Every `resources:` glob starts with `/`.** Quarto matches a bare glob at any
 depth: `data/**` also matched scipy's test data under CI's `.venv/`, and 9.5 MB

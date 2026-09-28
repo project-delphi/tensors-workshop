@@ -1469,6 +1469,28 @@ passes through to the anchor, and `custom.scss` hides the half that does not
 match the page's `html lang` -- so an item with no `rel` is hidden by neither
 rule and shows in both languages.
 
+**Every page in `render:` is assigned a check** (2026-09-28). The day sheet
+(2026-09-27) went into `render:` and into nothing in `check_navigation.cjs`,
+so the one page whose layout is its whole purpose -- it exists to be printed
+-- got none of the checks every other page gets: no language switch, no axe,
+no 390px canary, and nothing at all on its print stylesheet. Nothing noticed,
+because the browser check's `pages` was a second, hand-kept copy of
+`render:` that nothing compared with the first. Shard 0 now reads `render:`
+out of `_quarto.yml` before it starts a browser, and fails naming every
+rendered page that is not in `pages`, the readiness trio, the decks, or an
+`EXEMPT` map that says why nothing checks it; and, the other way round, on a
+page it checks that is no longer rendered. A line parser reads the list,
+because nothing here installs a YAML library for Node. The day sheet then got
+a print check of its own: under print media Quarto's chrome and the intro are
+hidden, and `page.pdf()` at the stylesheet's A4 comes to exactly two pages,
+which asserts the one-page sheet and the strip's page break at once --
+either spilling makes three, the break going missing makes one. Counting
+`/Type /Page` in the bytes is enough because Chromium writes the page
+dictionaries in the clear, with no object streams; it agreed with the page
+tree's `/Count`, and went to three when a third page was forced. Both
+languages fitted on the day, the Spanish sheet in about three-fifths of its
+page.
+
 **The lightbox is opt-in.** A bare `lightbox: true` is auto: it wrapped every
 image on the site in an `<a class="lightbox">`, which put an anchor between the
 `<p>` and the `<img>`, so the figure rules in `custom.scss` stopped matching
