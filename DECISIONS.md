@@ -379,6 +379,38 @@ the URL is the "transpose page" and a link to it resolves for check 3, which
 looks a fragment up by id. That is also why the *Compare with reshape* checkbox
 is `#compare`: it held `#reshape` first.
 
+**The visualizer opens with the cubes following the shape, and the
+operations beside the stage** (2026-09-28). Photos used to open *by meaning*
+-- every cube kept the place it had in the array as built -- so the picture
+survived a transpose. That is exactly what made the operations look broken:
+a transpose or a reshape moved no cube, only flashed them, and readers
+reported that the two "sometimes work and sometimes don't". By position the
+cubes rearrange on every operation, and the landing view is the honest one:
+NHWC puts H in depth, so the photos are slabs until a transpose to NCHW puts
+the channel planes in depth and the photographs appear. *Bytes stay put* is
+still one click away, and the embed keeps it, so the hero stills did not
+change. The same report said the controls were hard to use, so the panel now
+opens on the state (the shape and whether it is contiguous) and the four
+tabs, with the data choices below them. The two-click swap chips, whose
+armed state was a faint outline, became a named-orders row whose pressed
+button is the order x is in, each showing the `.transpose(...)` it would
+apply from here, plus a swap row of two dropdowns and a button. The index
+sliders became dropdowns, since picking index 5 of 16 is a choice and not a
+drag, falling back to a number field past 256 entries, because a `(2304,)`
+reshape would otherwise be a 2304-entry menu. The Memory tab's radios, which
+copied the buffer when "selected", became three buttons that name the call
+they make, under a sentence saying what x is right now.
+
+**128 × 128 photos, and what it cost.** `photos.json` grew from 170 KB to
+675 KB (212 KB gzipped); the other sizes are byte-identical. A full batch at
+128 is 147,456 cubes, so three things changed with it: the instanced meshes
+start at 16,384 and double on demand instead of allocating the old
+worst case up front (about 30 MB at 128); an operation on more than 20,000
+cubes cuts instead of tweening, because rebuilding every cube per frame took
+longer than the 650 ms tween, and the cubes landed a frame or two late even
+at 64; and a channel's fill and a colour's parse are cached, since both were
+done once per cube per render.
+
 **The stage drifts while idle, and the pointer is the switch.** A reader
 arriving at the visualizer saw a still isometric pile with no sign it was a
 3-D view; the stage note said *drag to rotate*, which is a caption doing a
@@ -753,6 +785,28 @@ show is that the winner depends on the budget: at 66 numbers Tucker's best
 is 4.69% against CP's 7.00%, and from 99 on CP wins. The handbooks' line that
 Tucker "is usually more accurate at the same size" is not what this tensor
 does; it is left for the handbooks' own change rather than edited here.
+
+**A step's controls sit under the stage** (2026-09-28). Each step used to
+end with its sliders and readout, below several paragraphs of prose, while
+the picture they drive stayed stuck at the top of the other column: moving a
+slider meant looking one place and reading another, and on a laptop the
+sliders were often below the fold while the stage was not. `step-dock.js`
+moves those nodes into a dock under the stage. They are moved rather than
+rebuilt, so the scene files, the ids and every `data-*` the browser check
+reads did not change; only a lookup that searched the step itself for its
+controls did (the projection stage's Reset, and two selectors in the check).
+The stages got shorter to make room -- the projection stage from 68vh to 56vh,
+the audio stage from 56vh to 44vh -- and the column is capped at one viewport
+with the dock as the part that scrolls, so the step bar is never pushed out
+of reach. Below the stacking width the controls go back into the prose,
+because there the stuck column already covers most of a narrow screen.
+
+Moving the controls exposed a pointer bug the check had been stepping around.
+The last thing the projection stage's check clicked was now a dock button
+under the stage, so the reloaded page came up with the pointer already on
+the stage. Chrome sent `pointerenter` before the stage had a listener, and
+the drift ran under a hovering pointer. Every drifting stage now also counts
+its first `pointermove`, and `:hover` at bind time, as arriving.
 
 ## Which document owns what
 

@@ -36,6 +36,10 @@ repo:
     # the panel card and the embed chrome. Linked by <link href>, which the harvest does see;
     # listed anyway because without it every widget renders unstyled.
     - interactive/widget-chrome.css
+    # The step dock the four scrollers share (the controls of the step in
+    # view, under the stage). A <script src>, so the harvest sees it too;
+    # listed because without it every scroller throws on load.
+    - interactive/step-dock.js
     # The site's two vendored typefaces and the stylesheet that declares them
     # (fonts/README.md). The woff2 files are reached only from a
     # `@font-face url()` in fonts/fonts.css and widget-chrome.css, which is CSS

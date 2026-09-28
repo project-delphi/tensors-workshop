@@ -188,3 +188,34 @@ html.embed #embedcap {
   overflow-wrap: break-word;
 }
 html.embed #embedcap b { color: var(--ink); font-weight: 650; }
+
+/* The step dock (step-dock.js): the controls and readout of the step in view,
+   under the stage they change. On a wide screen the sticky column becomes a
+   viewport-tall stack -- stage, dock, step bar -- in which only the dock
+   gives way, scrolling inside itself, so the bar that leads to the next
+   picture is never pushed below the fold. Below the page's stacking width
+   the dock is empty and hidden and the controls are back in their steps. */
+.dock {
+  margin-top: 0.6rem; padding: 0.55rem 0.85rem 0.7rem;
+  background: var(--panel); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent); border-radius: 10px;
+  min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+}
+.dock-title {
+  margin: 0 0 0.1rem; font: 700 0.68rem/1.3 var(--sans); letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ink-mute);
+}
+.dock-panel > .ctl:first-of-type, .dock-panel > .controls:first-of-type { margin-top: 0.35rem; }
+.dock .ctl, .dock .controls { max-width: none; }
+html.docked .stagewrap { display: flex; flex-direction: column; max-height: calc(100vh - 3rem); }
+html.docked .stagewrap > * { flex: 0 0 auto; }
+html.docked .stagewrap > .dock { flex: 0 1 auto; }
+html.embed .dock { display: none; }
+/* Tighter than in the prose: the dock shares one viewport with the stage. */
+.dock .ctl, .dock .controls { margin-top: 0.45rem; margin-bottom: 0.2rem; }
+.dock .ctl + .ctl { margin-top: 0.35rem; }
+.dock .ctl label, .dock .controls label { margin-bottom: 0.1rem; }
+.dock .readout { margin-top: 0.5rem; padding: 0.5rem 0.65rem; max-width: none; min-height: 0; font-size: 0.84rem; line-height: 1.5; }
+/* Two columns of sliders where the stage is wide enough, so a step with four
+   controls does not push its readout out of the dock. */
+.dock .controls { grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); column-gap: 1.2rem; }

@@ -224,9 +224,24 @@ async function audit(page, where) {
       `${where}: photo batch is not NHWC 16px by default`);
     // Transpose permutes the shape; the reshape comparison adds a row.
     await tab('transpose');
+    // The cubes follow the shape from the start, so a transpose visibly
+    // moves them: by meaning, readers took the stillness for a failed click.
+    assert.equal(await page.locator('#stage').getAttribute('data-arrange'), 'position',
+      `${where}: the photos should open following the shape`);
     await page.locator('#order-NCHW').click();
     assert((await readout()).includes('(3, 3, 16, 16)'),
       `${where}: NCHW preset did not permute the shape`);
+    assert.equal(await page.locator('#order-NCHW').getAttribute('aria-pressed'), 'true',
+      `${where}: the NCHW preset should say it is the order in force`);
+    // The swap row: H and W at 16 x 16 leave the shape alone and trade
+    // strides, and swapping them back is the same view again.
+    const strides = () => page.locator('#stage').getAttribute('data-strides');
+    await page.locator('#swap-a').selectOption('2');
+    await page.locator('#swap-b').selectOption('3');
+    await page.locator('#swap-go').click();
+    assert.equal(await strides(), '768,1,3,48', `${where}: swapping H and W did not trade strides`);
+    await page.locator('#swap-go').click();
+    assert.equal(await strides(), '768,1,48,3', `${where}: swapping back did not restore NCHW`);
     assert.equal(await page.locator('#imgstrip .strip-row').count(), 1);
     await tab('reshape');
     await page.locator('#compare').check();
@@ -1026,14 +1041,16 @@ async function audit(page, where) {
           assert(dollyOf(await cam()) < 1, `${where}: step ${n} zooms in`);
           await press('zoom-out'); await press('zoom-out');
           assert(dollyOf(await cam()) > 1, `${where}: step ${n} zooms out`);
-          const input = page.locator(`#step-${n} input[type=range]`).first();
+          // The step's controls live in the dock under the stage on a wide
+          // screen (step-dock.js), not in the step's own section.
+          const input = page.locator(`.dock-panel[data-step="step-${n}"] input[type=range]`).first();
           await input.fill(await input.getAttribute('max'));
           await press('reset');
           assert.equal(dollyOf(await cam()), 1, `${where}: step ${n} reset restores framing`);
           assert(await input.evaluate(e => e.value === e.defaultValue),
             `${where}: step ${n} reset restores the experiment`);
           if (n <= 6) {
-            const presets = page.locator(`#step-${n} .presets button`);
+            const presets = page.locator(`.dock-panel[data-step="step-${n}"] .presets button`);
             for (let j = 0; j < await presets.count(); j++) {
               await presets.nth(j).evaluate(e => e.click());
               assert(await page.locator(`#read-${n}`).innerText(), `${where}: preset has a readout`);

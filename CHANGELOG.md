@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-28
+
+- **The image tensor is easier to drive.** The cubes follow the shape by default, so a transpose or a reshape visibly rearranges them. Before, they stayed where the array was built and only flashed. The operations sit at the top of the panel beside the stage, under a line that says what `x` is right now. Transpose has named orders (the pressed one is the order `x` is in, and each shows the `.transpose(...)` it would apply) and a swap made with two dropdowns. Slice picks each index from a dropdown. Memory says whether `x` is contiguous, in what order the bytes are stored, and offers three copies as buttons that name the call they make. The photos come at 128 × 128 too.
+- **The stages' controls are beside the picture.** On the projection & SVD, audio, attention and factorisation stages, the sliders and readout of the step in view now sit in a panel under the stage, not at the bottom of the step's text. The predict-first question stays in the text. On a narrow screen they go back into the steps.
+
 ## 2026-09-27
 
 - The English and Spanish copy now makes clear that the 210 minutes include the Kahoot quizzes, directs facilitators to the existing cutting order when running late, and distinguishes section 11's live CP/Tucker comparison from its four-model extension material.

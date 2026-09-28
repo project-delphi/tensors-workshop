@@ -70,7 +70,7 @@ text, then run the appropriate generator:
 | `images/hero-band.png`, `images/fig-*` (the handbook's figures) | `scripts/gen_figures.py` |
 | `images/og-card.png` (the link preview, 1200×630, in the vendored faces) | `scripts/gen_figures.py og` |
 | `images/hero-*-{en,es}.webp` (the homepage hero's widget stills) | `scripts/gen_hero_stills.cjs` (`npm run gen:hero`) |
-| `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32 and 64 px) | `scripts/gen_figures.py widget` |
+| `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32, 64 and 128 px) | `scripts/gen_figures.py widget` |
 | `interactive/data/taxi.json` (the factorisation stage's own copy of the Block 6 taxi tensor) | `scripts/gen_figures.py taxi` (network: the taxi CSV) |
 | `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
@@ -261,7 +261,21 @@ share.
 **What the stages share.** Each is a scroller: one `<section class="step">`
 per scene down the left and a sticky stage on the right. A new scene is at
 least a scene file, a section, a `<script src>` line and a `repo.widgets`
-line; its stage's contract lists the rest. **Link to a scene by its name**
+line; its stage's contract lists the rest.
+
+**A step's controls sit under the stage, not in its prose.** On a wide
+screen `interactive/step-dock.js` moves each step's controls and readout
+(`.ctl` and `.readout` on the projection stage, `.controls` and `.readout` on
+the other three) into a `#dock` between the stage and the step bar, and
+shows the panel of the step in view; the predict-first line stays in the
+prose, where it is read before anything is touched. The nodes are moved, not
+copied, so ids, listeners and `data-*` are unchanged -- but a lookup that
+searched *the step* for its controls no longer finds them: use the handle's
+`controlsOf(step)`, and in `check_navigation.cjs` the panel,
+`.dock-panel[data-step="step-…"]`. Below the page's stacking width the nodes
+go back to their steps and the dock is hidden. The sticky column is one
+viewport tall and only the dock scrolls, so a stage that grows taller takes
+its height from the dock. **Link to a scene by its name**
 (`#portal`, `#heads`), never `#step-N`: the number moves on a reorder, the
 name does not, and the notebooks and both handbooks use the names. Every scene
 opens with a predict-first line and a claim on the stage's title card, and its

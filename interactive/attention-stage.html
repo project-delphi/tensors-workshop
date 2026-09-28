@@ -385,6 +385,11 @@
         <p id="shapebadge" hidden></p>
       </div>
 
+      <!-- The step in view's controls and readout, moved here from its
+           section by step-dock.js on a wide screen, so they sit under the
+           picture they change. -->
+      <div class="dock" id="dock" hidden></div>
+
       <div class="stagebar">
         <button type="button" id="prev"></button>
         <span id="dots" role="group" aria-labelledby="stepnum"></span>
@@ -412,6 +417,7 @@
      one file per scene in reading order. All plain scripts, so the page
      works from file://. No three.js: every picture is SVG with real
      <text>. -->
+<script src="step-dock.js"></script>
 <script src="attention-core.js"></script>
 <script src="linalg-core.js"></script>
 <script src="attention-kit.js"></script>
@@ -509,6 +515,9 @@
 
   // -------------------------------------------------------------- scenes
   const scenes = window.AttentionScenes.list();
+  // Set once the controls exist (step-dock.js); null in embed mode, where
+  // there are no controls to show.
+  let dock = null;
   if (!scenes.length) throw new Error("attention-stage: no scenes registered");
   for (const s of scenes) {
     if (!$("step-" + s.id)) throw new Error("attention-stage: no section for scene " + s.id);
@@ -731,6 +740,7 @@
     active = scene;
     step = scenes.indexOf(scene);
     scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
+    if (dock) dock.show("step-" + scene.id);
     Array.from($("dots").children).forEach((d, j) => {
       if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
     });
@@ -810,6 +820,7 @@
 
   fillText();
   for (const s of scenes) { s.init(contextFor(s)); buildControls(s); }
+  if (!embed) dock = StepDock.mount("dock", scenes.map((s) => "step-" + s.id), ".controls, .readout", "(min-width: 62.01rem)");
   if (!embed) bindEquations();
   const wanted = embed ? byId("softmax") : byId((location.hash || "").replace("#", ""));
   showScene(wanted || scenes[0], false);
