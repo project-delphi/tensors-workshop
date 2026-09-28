@@ -762,6 +762,22 @@ PROBE = PROBE.replace("__BUDGET__", str(PROBE_BUDGET_SECONDS)).replace(
 ENV_PROBE_MARK = "WORKSHOP_PYEXEC="
 ENV_PROBE = f"import sys as _s; print({ENV_PROBE_MARK!r} + _s.executable)"
 
+# Folded into the prologue only when --artifacts is set. MPLBACKEND=Agg above
+# is what keeps every other run headless, but Agg's own plt.show() is a
+# no-op -- it draws nothing and publishes no image/png output, so a plot in
+# the route would otherwise never reach a route copy's outputs. The inline
+# backend registers a post-cell-execution hook that captures every open
+# figure as PNG through the display publisher and closes it -- the same
+# publisher the probe already silences during its widget sweep (see PROBE),
+# so that silencing still holds under inline. Left off the ordinary run: it
+# is strictly more work per cell, and nothing there reads a plot's pixels.
+INLINE_BACKEND = """
+try:
+    get_ipython().run_line_magic("matplotlib", "inline")
+except Exception:
+    pass
+"""
+
 
 # ── Execution ────────────────────────────────────────────────────────────────
 
@@ -1049,7 +1065,8 @@ def execute(
     ci_cells = workshop_meta(nb, label).get("ci_cells")
 
     trimmed = copy.deepcopy(nb)
-    prologue = nbformat.v4.new_code_cell(PROLOGUE)
+    prologue_src = PROLOGUE + (INLINE_BACKEND if artifacts is not None else "")
+    prologue = nbformat.v4.new_code_cell(prologue_src)
     prologue["id"] = "workshop-prologue"
     probe = nbformat.v4.new_code_cell(PROBE)
     probe["id"] = "workshop-probe"

@@ -859,9 +859,23 @@ class InjectedCells(unittest.TestCase):
     def test_both_cells_are_valid_python(self):
         import ast
 
-        for name, src in (("PROLOGUE", tn.PROLOGUE), ("PROBE", tn.PROBE)):
+        for name, src in (
+            ("PROLOGUE", tn.PROLOGUE),
+            ("PROBE", tn.PROBE),
+            ("INLINE_BACKEND", tn.INLINE_BACKEND),
+        ):
             with self.subTest(cell=name):
                 ast.parse(src)
+
+    def test_inline_backend_is_folded_only_when_artifacts_is_requested(self):
+        """MPLBACKEND=Agg draws nothing for --artifacts to capture; the
+        inline backend is what turns a route's plot into an image/png
+        output, and it is strictly extra work the ordinary run should not
+        pay for."""
+        self.assertIn("matplotlib", tn.INLINE_BACKEND)
+        self.assertIn("inline", tn.INLINE_BACKEND)
+        # execute() concatenates it onto PROLOGUE, never bakes it in.
+        self.assertNotIn("matplotlib", tn.PROLOGUE)
 
     def test_prologue_survives_a_kernel_without_ipywidgets(self):
         """Notebook 00 imports no widgets; the prologue must not raise."""

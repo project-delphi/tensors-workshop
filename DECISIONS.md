@@ -1301,6 +1301,19 @@ is set, prints the kernel's `sys.executable`; when it disagrees with the
 runner's own, `environment.txt` queries that interpreter's distributions in a
 subprocess instead of trusting `importlib.metadata` in-process.
 
+*The kernel switches to the inline backend, but only when `--artifacts` is
+set.* `MPLBACKEND=Agg` at the top of the file keeps every ordinary run
+headless, but Agg's `plt.show()` is a no-op -- no window, and also no
+`image/png` output, so a route's own plots never reached a route copy at
+all; the first runs of this feature produced zero PNGs on notebooks whose
+route draws one. `INLINE_BACKEND`, folded onto `PROLOGUE` only when
+`artifacts` is given, runs `%matplotlib inline` instead: it registers a
+post-cell-execution hook that captures every open figure as PNG through the
+display publisher and closes it, the same publisher the probe already
+silences during its widget sweep, so that silencing keeps holding under
+inline too. Left off the ordinary run on purpose -- it is strictly more work
+per cell for a picture nothing there reads.
+
 *Coverage is a table, not a log line.* `coverage_row()` and
 `render_coverage_md()` are plain functions over data `execute()` already has
 -- `chosen`, `activity`, `paired`, the declared `ci_cells`, `EXPECTED` -- kept
