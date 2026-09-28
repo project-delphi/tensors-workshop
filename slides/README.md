@@ -37,6 +37,65 @@ Anything added since — the `slide-NNa` insertions — has a source:
 in both languages, lays it out in CSS, and screenshots it with headless Chrome
 at the deck's own 1920×1080. See *Drawing slide art* below.
 
+## Moving art into editable content
+
+**The rule:** when you touch one of `slide-01`–`slide-31`, do not just redraw
+it — move its equations, numbers and teaching text into editable Quarto
+content in **both** decks, in the pattern the agenda and the three computing
+slides before section 02 already use (`#numpy-memory`, `#hardware-acceleration`
+and `#numerical-software-stack` in [`en/index.qmd`](en/index.qmd), styled by
+`.computing-slide` in [`slides.scss`](slides.scss)). A number comes from the
+notebook the slide is filed under below, not from the picture; edit both
+languages in the same commit, same as everywhere else in this file. Do this
+gradually, whenever a slide is touched for another reason — this is not a plan
+to migrate all thirty-one at once, and nothing here does.
+
+**The inventory.** Ordered by risk: slides whose numbers can drift first,
+since those are what the paragraph above warns about; then slides whose
+equations or teaching text a translator would have to redraw by hand; then
+pictures that carry neither.
+
+Numbers that can drift:
+
+| Slide | Section | What it shows | Notebook numbers | Note |
+|---|---|---|---|---|
+| 21 | 07 (extension) | California Housing least-squares fit: `X.shape`, predicted-vs-true scatter, residual histogram | nb 07: `X.shape = (20433, 7)`, 20,433 equations | **Found stale:** the EN headline reads "20.433 equations" (a period, the Spanish thousands separator) — it disagrees with its own body text ("20,433 equations, 7 variables") three lines below and with the EN notebook. The ES slide correctly reads "20.433"; the EN headline looks like it was drawn from the ES asset. The EN formula card also reads "A⁺b minimizea", Spanish *minimiza* half-translated. |
+| 30 | 07 / 09 / 10 (recap, no anchor) | "One idea connects the workshop": pseudoinverse, deconvolution and Tucker panels side by side | nb 07: same California Housing numbers as slide 21 | **Found stale:** the EN slide's pseudoinverse panel is untranslated — it reads "Pseudoinversa" and "20.433 equations = an underdetermined least squares solution", the ES panel dropped into the EN deck rather than redrawn in English. **"Underdetermined" is also wrong in any language:** 20,433 equations in 7 unknowns is *overdetermined*, which is why there is no exact solution. The Tucker panel's first title reads "Tensor real", Spanish too. |
+| 26a | 09 | Factor once, solve many: normal equations, QR and SVD, cost compared | nb 09: "flop table predicts / la tabla predice 39x" (the `sweep_times` cell) | Matches the notebook's own printed line today. It is exactly the kind of number a rerun of the timing sweep can move, which is why it is filed here rather than lower down. |
+| 28 | 10 | Table → tensor → HOSVD → reconstruction | nb 10's rank explorer opens at `(2, 2, 3)`; the golf activity's winning entry is `(3, 3, 1)` at 4.69% error | The slide's own reconstruction uses `ranks=(4, 4, 6)`, which appears in neither place in the notebook — it reads as a one-off illustration rather than a printed result. The same panel repeats on slide 30. |
+
+Equations and teaching text a translator would have to redraw:
+
+| Slide | Section | What it shows | Note |
+|---|---|---|---|
+| 02a | — | Four ideas, one object — the whole day in four cards | The longest teaching text of any slide, and on the critical path: it's the map section 01's slides open onto |
+| 06 | 01 | Map of factorizations: LU → Cholesky → QR → SVD → Tucker → CP | Text only, no equations |
+| 07 | 01 | What a factorization gives you: number → polynomial → matrix → tensor | Carries `A = UΣVᵀ` and `X ≈ G ×₁ U₁ ×₂ U₂ ×₃ U₃` |
+| 09 | 02 | Batch is not time | Text-heavy, no equations |
+| 11 | 03 | Indexing in action: rows/columns, masks, an image crop, broadcasting | Its "Daily mean temperature" table and `lat[120:220], lon[250:350]` crop are invented examples, not notebook output — check they still read cleanly before reusing them as the migrated copy |
+| 13 | 04 | Transpose ≠ reshape, plus a real NHWC → NCHW batch | Code snippets, `np.transpose(...)` and `.reshape(...)` |
+| 16 | 05 | File → frames → tensor → model, with the validity-mask formula | `mask[b, t] = 1 if real else 0` |
+| 18 | 06 | Anatomy of einsum | `np.einsum('ij,jk->ik', A, B)` |
+| 19 | 06 | NumPy ↔ einsum equivalence table | Eight code pairs |
+| 21a | 07 (extension) | Tensor inverses: unfold → `pinv` → fold back | `T (4, 3, 5) → M (4, 15)` is a made-up worked example, not a shape notebook 07 prints, so no rerun can contradict it |
+| 24 | 08 | Gradient descent is also recursion: scalar, vector, matrix forms | `x_{k+1} = x_k − η∇f(x_k)` and two more equations |
+| 29b | 11 (extension) | Four decompositions, four bargains: CP, Tucker, Tensor Train, t-SVD | Parameter-count formulas, e.g. `R(I + J + K)` |
+
+Pure pictures:
+
+| Slide | Section | What it shows |
+|---|---|---|
+| 01 | — | Title |
+| 02 | — | The workshop idea, four cards |
+| 03 | — | The four datasets, one phrase each |
+| 14 | Kahoot 1 | Divider — its full text already lives in the qmd as `sr-only` |
+| 22 | Kahoot 2 | Divider, same as above |
+| 29 | Kahoot 3 | Divider, same as above |
+
+`slide-25`, `slide-26` and `slide-31` are not in any of the three tables above:
+see *Unused art* below — no anchor links them, so they are the lowest priority
+of all thirty-one.
+
 ## Present
 
 | Key | What it does |
