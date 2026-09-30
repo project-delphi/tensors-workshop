@@ -25,15 +25,10 @@
   const letterOf = (idx) => (idx === STOP ? GC.STOP : GC.AAS[idx]);
   const cellPos = (i, j, k) => [k - 1.5, 1.5 - j, i - 1.5];   // x third, y second (A on top), z first
 
-  // How many codons the table spends on one residue. A tally over the
-  // table, not new biology: it is what the blocks of colour add up to.
-  function synonyms(idx) {
-    let n = 0;
-    for (let i = 0; i < 4; i++) for (let j = 0; j < 4; j++) for (let k = 0; k < 4; k++) {
-      if (GC.CODE_T[i][j][k] === idx) n++;
-    }
-    return n;
-  }
+  // How many codons the table spends on one residue -- what the blocks of
+  // colour add up to. It is on the claim card, so it lives in the core where
+  // the test pins it, not in two scenes counting the same table twice.
+  const synonyms = (idx) => GC.synonymCount(idx);
 
   // The chosen codon: its letters, its cell, its residue.
   function chosen(ctx) {

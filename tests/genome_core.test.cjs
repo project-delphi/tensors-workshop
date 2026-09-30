@@ -240,3 +240,32 @@ test('index helpers refuse what is not a base or a residue', () => {
   assert.throws(() => G.aaIndex('B'), /not a residue/);
   near(G.PROPS[G.aaIndex('W')][1], 227.8, 1e-9, 'tryptophan is the largest');
 });
+
+test('the tallies a claim card quotes are the core\'s, and these are them', () => {
+  // Redundancy, as the codon cube and the code slices both print it.
+  assert.equal(G.synonymCount(G.aaIndex('M')), 1, 'methionine has one codon');
+  assert.equal(G.synonymCount(G.aaIndex('W')), 1, 'tryptophan has one');
+  for (const a of ['L', 'R', 'S']) assert.equal(G.synonymCount(G.aaIndex(a)), 6, `${a} has six`);
+  assert.equal(G.synonymCount(20), 3, 'three stops');
+  // Every codon is spent on something, so the tallies sum to 64.
+  let total = 0;
+  for (let i = 0; i <= 20; i++) total += G.synonymCount(i);
+  assert.equal(total, 64);
+
+  // The gap the search scene is built on: one perfect window, runner-up 12.
+  const scores = G.matchScores(G.windows(G.CDS, 20).at(40), G.CDS);
+  const spread = G.scoreSpread(scores);
+  assert.deepEqual(spread, {top: 20, count: 1, runnerUp: 12});
+  // Walk the guide off and the top comes down with it, still alone.
+  const walked = G.matchScores(G.mutate(G.windows(G.CDS, 20).at(40), 3), G.CDS);
+  assert.equal(G.scoreSpread(walked).top, 17);
+  // A spread over one value has no runner-up below it, and says so rather
+  // than returning -Infinity into a readout.
+  assert.deepEqual(G.scoreSpread([4, 4, 4]), {top: 4, count: 3, runnerUp: 4});
+
+  // 60 residues land on far fewer distinct points, which the protein scene
+  // prints as the reason its chain revisits places.
+  assert.equal(G.distinctResidues(G.PROTEIN), 18);
+  assert.equal(G.distinctResidues('AAA'), 1);
+  assert.equal(G.distinctResidues(''), 0);
+});

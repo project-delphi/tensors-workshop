@@ -33,9 +33,12 @@
       const guide = GC.mutate(win.at(GUIDE_AT), s.mismatch);
       const scores = GC.matchScores(guide, seq);
       const top = GC.topMatches(scores, 2);
+      // The gap between the best window and the next is this scene's claim,
+      // so the core owns it and the core's test pins it: 20 against 12.
+      const spread = GC.scoreSpread(scores);
       const perfect = scores.filter((v) => v === W).length;
-      const nbest = scores.filter((v) => v === top[0].score).length;
-      f = ctx.cache.facts = {m: s.mismatch, win, guide, scores, top, perfect, nbest};
+      f = ctx.cache.facts = {m: s.mismatch, win, guide, scores, top, perfect,
+                             nbest: spread.count, runnerUp: spread.runnerUp};
     }
     return f;
   }

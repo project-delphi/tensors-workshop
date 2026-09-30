@@ -314,6 +314,41 @@
       .slice(0, n === undefined ? 1 : n);
   }
 
+  // How many of the 64 codons code for one residue. A tally over the table
+  // rather than new biology -- but it is the number the codon cube and the
+  // code slices both put on their claim card ("6 codons", "1 codon"), so it
+  // is pinned here rather than counted twice in two scenes.
+  function synonymCount(idx) {
+    var n = 0, i, j, k;
+    for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) for (k = 0; k < 4; k++) {
+      if (CODE_T[i][j][k] === idx) n++;
+    }
+    return n;
+  }
+
+  // How many windows tie for the top score, and what the next score down is.
+  // The gap between them is the search scene's whole claim -- one window at
+  // 20 and the runner-up at 12 is what makes a contraction a search rather
+  // than a ranking -- so both are pinned.
+  function scoreSpread(scores) {
+    var top = max(scores), n = 0, next = -Infinity, i;
+    for (i = 0; i < scores.length; i++) {
+      if (scores[i] === top) n++;
+      else if (scores[i] > next) next = scores[i];
+    }
+    return {top: top, count: n, runnerUp: next === -Infinity ? top : next};
+  }
+
+  // Distinct residues in a chain. The protein scene draws 60 beads that land
+  // on far fewer points, and says so.
+  function distinctResidues(protein) {
+    var seen = {}, n = 0, i;
+    for (i = 0; i < protein.length; i++) {
+      if (!seen[protein[i]]) { seen[protein[i]] = 1; n++; }
+    }
+    return n;
+  }
+
   function max(list) { return list.reduce(function (a, b) { return b > a ? b : a; }, -Infinity); }
 
   return {
@@ -329,6 +364,8 @@
     translate: translate, translateByContraction: translateByContraction,
     embed: embed, matchScores: matchScores, weightedScores: weightedScores,
     motifAt: motifAt, motifMask: motifMask, maskedScores: maskedScores,
-    mutate: mutate, batchScores: batchScores, topMatches: topMatches, max: max
+    mutate: mutate, batchScores: batchScores, topMatches: topMatches, max: max,
+    synonymCount: synonymCount, scoreSpread: scoreSpread,
+    distinctResidues: distinctResidues
   };
 });
