@@ -64,8 +64,15 @@
   };
 
   // --------------------------------------------------------------- colour
-  const css = (name) =>
-    getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  // A custom property, or a colour that is already one. A scene that computes
+  // a colour -- the twenty-one residue tints are the only case -- hands it to
+  // the same helpers that take tokens, instead of writing custom properties
+  // onto the document root, which leaks out of the stage and is invisible to
+  // anything that runs without a browser.
+  const css = (name) => {
+    if (!name || name[0] !== "-") return name;
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  };
 
   // The four bases keep one colour everywhere on the stage: a chip in a
   // strip, a bead in the helix and a row of a one-hot matrix are all the
@@ -81,6 +88,24 @@
     aa: "--gn-aa", hit: "--gn-hit", miss: "--gn-miss", mask: "--gn-mask",
     core: "--gn-core", rna: "--gn-rna", mute: "--stage-mute", "": "--stage-ink"
   };
+
+  // A residue's tint, shared by every scene that draws the genetic code -- the
+  // codon cube and the code slices both need the same 21 colours or the
+  // redundancy a reader spots in one will not match the other.
+  //
+  // Twenty-one hues off the golden angle, so no two residues adjacent in the
+  // alphabet share one, and the stop takes the stage's own "miss" red. The
+  // stage is black in all three themes, so one lightness serves them all --
+  // but lightness in HSL is not luminance, and at 62% the blue near hue 243
+  // came out at 4.08:1 against that black while the yellows were over 15:1.
+  // 68% is the floor that puts the worst hue at 5.5:1. These are fills, and
+  // the residue's letter is always drawn as well, so colour is never the only
+  // thing carrying the meaning.
+  const RESIDUE_L = 68;
+  function residueTint(idx) {
+    if (idx === 20) return css("--gn-miss");
+    return "hsl(" + (Math.round(idx * 137.508) % 360) + ", 70%, " + RESIDUE_L + "%)";
+  }
 
   // --------------------------------------------------------------- numbers
   // Fixed digits, a real minus, and "-0.000" never shown -- a bracket that
@@ -965,7 +990,7 @@
   }
 
   const GenomeKit = {
-    GenomeScenes, css, BASE_TOKEN, BASE_CLS, CLS_TOKEN, fmt, num, pct, sup, sub, shapeSup, code, idx,
+    GenomeScenes, css, residueTint, BASE_TOKEN, BASE_CLS, CLS_TOKEN, fmt, num, pct, sup, sub, shapeSup, code, idx,
     el, label, numGrid, heat, bars, curve, seqStrip,
     smooth, rotate, helix,
     viewBasis, projector, withLabels, corners, boxes2, edges2, spheres2, segments2,

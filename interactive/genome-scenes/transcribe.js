@@ -57,7 +57,7 @@
     },
     dnaLab: "DNA  (A C G T)", rnaLab: "RNA  (A C G U)", mLab: "M",
     controls: {mode: "Which matrix", at: "Where in the gene"},
-    options: {relabel: "T → U (relabel)", complement: "complement"},
+    options: {mode: {relabel: "T → U (relabel)", complement: "complement"}},
     read: (mode, moved, at) =>
       "<b>" + mode + "</b> · " + moved + " of " + SHOWN + " ones changed column · " +
       "bases " + (at + 1) + "–" + (at + SHOWN),
@@ -96,7 +96,7 @@
     },
     dnaLab: "ADN  (A C G T)", rnaLab: "ARN  (A C G U)", mLab: "M",
     controls: {mode: "Qué matriz", at: "Dónde en el gen"},
-    options: {relabel: "T → U (renombrar)", complement: "complemento"},
+    options: {mode: {relabel: "T → U (renombrar)", complement: "complemento"}},
     read: (mode, moved, at) =>
       "<b>" + mode + "</b> · " + moved + " de " + SHOWN + " unos cambiaron de columna · " +
       "bases " + (at + 1) + "–" + (at + SHOWN),
@@ -174,7 +174,7 @@
 
     readout(ctx) {
       const s = ctx.state, c = ctx.copy, f = facts(ctx);
-      const name = c.options[s.mode];
+      const name = c.options.mode[s.mode];
       return {
         html: c.read(name, f.moved, s.at),
         claim: c.claim(name, f.moved),
