@@ -211,7 +211,8 @@ instead is `npm test` over the core modules and scene registries and
 section 03 broadcasting simulator, the section 04 image tensor
 visualizer, the sections 07/09 projection & SVD stage, the sections
 00/02/04/09 audio tensor stage, the sections 04/06/Appendix B attention
-stage, and the sections 10/11/Appendix C factorisation stage -- each carry
+stage, the sections 10/11/Appendix C factorisation stage, and the sections
+04/06/Appendix G genome stage -- each carry
 EN/ES copy tables, `?lang=`, and
 their section's accent adjusted per theme to clear 4.5:1. `repo.widgets` in
 `_variables.yml` is the list of them; prose here does not count them. **The frame is shared**:
@@ -260,6 +261,16 @@ share.
   twins. Scenes `#tensor`, `#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`,
   `#als`, `#budget`; core `factor-core.js` (`tests/factor_core.test.cjs`).
   The contract is `interactive/factor-scenes/README.md`.
+- **DNA to an edit** (`genome-stage.html`, sections 04/06/Appendix G): eight
+  scenes in four parts, from a sequence as a one-hot tensor to a search that is
+  one contraction, four in three.js with SVG twins. Scenes `#bases`,
+  `#window`, `#transcribe`, `#codons`, `#translate`, `#protein`, `#search`,
+  `#batch`; core `genome-core.js` (`tests/genome_core.test.cjs`). The contract
+  is `interactive/genome-scenes/README.md`. It is the one stage that fetches
+  nothing: its data is two sequence literals in the core, whose provenance
+  ledger is in that README, and whose test checks the genetic code against the
+  deposited translation rather than against itself. It is a stage about how
+  sequence data is represented and deliberately not a design tool.
 
 **What the stages share.** Each is a scroller: one `<section class="step">`
 per scene down the left and a sticky stage on the right. A new scene is at
@@ -285,7 +296,7 @@ opens with a predict-first line and a claim on the stage's title card, and its
 readout and every `data-*` are written from the controls, never from an eased
 frame, so the browser check reads the truth while a picture is still moving.
 Outside the projection stage a control is `#c-<scene>-<control>` and a readout
-`#read-<scene>`, because one control name lives in several sections. The three
+`#read-<scene>`, because one control name lives in several sections. The four
 stages that draw in three.js boot it lazily on the first three.js scene shown,
 through `vendor/linalg-boot.js` and the import map, take their camera from
 `linalg-core`'s orbit, and keep a flat twin for a reader without WebGL.
@@ -364,7 +375,7 @@ three.js is **vendored** at `interactive/vendor/`, core build and eleven
 `examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their
 transitive imports), each with its URL, SHA-256 and date in a README. The
 addons say `from 'three'`, and a **static import map** in the `<head>` of each
-page that draws in three.js (the projection, audio and factorisation stages)
+page that draws in three.js (the projection, audio, factorisation and genome stages)
 resolves that -- rewriting the specifier in eleven files would make the README's
 hashes describe something other than what upstream ships. The map is inert
 until a module import resolves, so the lazy `bootGL()` still holds. Upgrading
