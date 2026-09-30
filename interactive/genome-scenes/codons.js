@@ -55,12 +55,23 @@
       // "aa" lights every cell that codes for the chosen residue: the block.
       const kin = hl === "aa" && idx === ch.idx;
       const back = hl === "aa" && !kin;
+      // The lit cell is wherever the gene's codon puts it, which for ATG is
+      // the back of the cube, behind three others. Nothing reports that: the
+      // claim card goes on naming a cell the reader cannot find. So the rest
+      // of its own first-base column shrinks to a ghost, which opens a line
+      // of sight to it from any angle the orbit allows -- and says something
+      // true while doing it, since those three are the same second and third
+      // base with a different first.
+      const column = !only && !lit
+        && j === ch.cell[1] && k === ch.cell[2];
       items.push({
         key, cell: [i, j, k], c: cellPos(i, j, k),
-        s: only ? (lit ? SIDE : 0) : (lit ? (hl === "codon" ? 1.08 : 1) : (hov === key ? 1 : SIDE)),
+        s: only ? (lit ? SIDE : 0)
+          : lit ? (hl === "codon" ? 1.08 : 1)
+          : column ? 0.42 : (hov === key ? 1 : SIDE),
         token: resToken(idx),
         k: lit ? LIT : (kin ? 1.25 : (back ? DIM : NORM)),
-        alpha: lit ? 1 : (back ? 0.4 : 0.92),
+        alpha: lit ? 1 : column ? 0.5 : (back ? 0.4 : 0.92),
         pick: only && !lit ? undefined : key
       });
     }
