@@ -168,7 +168,8 @@ async function runHero(ctx) {
   const heroTabs = [
     ['layout', 'image-tensor'], ['broadcast', 'broadcasting-simulator'],
     ['linalg', 'linalg-stage'], ['voice', 'voice-stage'],
-    ['attention', 'attention-stage'], ['factor', 'factor-stage']];
+    ['attention', 'attention-stage'], ['factor', 'factor-stage'],
+    ['genome', 'genome-stage']];
   // Desktop width, set explicitly rather than inherited from whatever the
   // pages loop left it at: at 390px `.hero-demos` is CSS-hidden in favour
   // of `.hero-fallback`, and a shard that runs the pages loop but never the

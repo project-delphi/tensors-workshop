@@ -50,6 +50,7 @@ Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrit
       <button type="button" role="tab" id="hero-tab-voice" aria-selected="false" aria-controls="hero-panel-voice" tabindex="-1">Audio</button>
       <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Atención</button>
       <button type="button" role="tab" id="hero-tab-factor" aria-selected="false" aria-controls="hero-panel-factor" tabindex="-1">Tucker y CP</button>
+      <button type="button" role="tab" id="hero-tab-genome" aria-selected="false" aria-controls="hero-panel-genome" tabindex="-1">ADN y ARN</button>
     </div>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
@@ -76,6 +77,8 @@ Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrit
     <a class="hero-still no-external" href="../interactive/factor-stage.html?lang=es"><img src="../images/hero-factor-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir la herramienta: un tensor de taxis factorizado en un núcleo pequeño más tres matrices factor"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
     <p class="hero-caption">Viajes de taxi reales, <code>4 × 5 × 24</code>: 480 números se convierten en un núcleo más tres factores, con un 6,7 % de error.</p>
   </div>
+  <div class="hero-panel" id="hero-panel-genome" role="tabpanel" aria-labelledby="hero-tab-genome" hidden><a class="hero-still no-external" href="../interactive/genome-stage.html?lang=es"><img src="../images/hero-genome-stage-es.webp" width="1200" height="960" loading="lazy" alt="Abrir el widget: el código genético como un cubo de 4 por 4 por 4, con cada codón coloreado según el residuo que codifica"><span class="hero-still-cue" aria-hidden="true">Probar →</span></a>
+    <p class="hero-caption">Un codón son tres vectores one-hot multiplicados: un <code>4 × 4 × 4</code> con un solo 1.</p></div>
   <p class="hero-arc">Un número → un vector → una matriz → un tensor → una capa. Haz clic en una imagen para probarla en vivo.</p>
 </div>
 <div class="hero-fallback">
