@@ -1350,7 +1350,7 @@ Vale la pena predecir tres resultados antes de ejecutar nada. **Transcribir la h
 
 El último punto es la recompensa. Comparar una guía con cada ventana de una secuencia es `einsum('wlb,lb->w')`, porque el producto escalar de dos filas one-hot es 1 exactamente cuando las bases coinciden — de modo que sumar sobre posición y alfabeto *cuenta coincidencias*. Buscar es contraer. Hacerlo con muchas guías a la vez añade un índice por delante y no cambia nada más.
 
-El <a href="interactive/genome-stage.html?lang=es">escenario del genoma</a> es todo esto en ocho imágenes; ve directo al <a href="interactive/genome-stage.html?lang=es#codons">cubo de codones</a>, a la <a href="interactive/genome-stage.html?lang=es#translate">tabla del código</a> o a la <a href="interactive/genome-stage.html?lang=es#search">búsqueda</a>. Es una página sobre cómo se representan los datos de secuencia, y deliberadamente no una herramienta para diseñar nada.
+El <a href="../interactive/genome-stage.html?lang=es">escenario del genoma</a> es todo esto en ocho imágenes; ve directo al <a href="../interactive/genome-stage.html?lang=es#codons">cubo de codones</a>, a la <a href="../interactive/genome-stage.html?lang=es#translate">tabla del código</a> o a la <a href="../interactive/genome-stage.html?lang=es#search">búsqueda</a>. Es una página sobre cómo se representan los datos de secuencia, y deliberadamente no una herramienta para diseñar nada.
 
 **Ejercicio (15 min)**
 ```python
