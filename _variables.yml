@@ -201,6 +201,17 @@ event:
 community:
   discord: "https://discord.gg/mHb688bAR"
 
+# ── Study decks ──────────────────────────────────────────────────────────────
+# Flashcards, practice tests and quiz games for self-paced review, on a site
+# of their own: one deck per section, whose slug is the section's `id`, plus
+# one on the prerequisites. The homepage, the Kahoot page and the FAQ read
+# these; the README spells them out, as it does every other URL.
+study:
+  url_en: "https://tensors-workshop.project-delphi.org/en"
+  url_es: "https://tensors-workshop.project-delphi.org/es"
+  prereq_en: "https://tensors-workshop.project-delphi.org/en/d/prerequisites-linear-algebra"
+  prereq_es: "https://tensors-workshop.project-delphi.org/es/d/prerequisites-linear-algebra"
+
 # ── Kahoot quizzes ───────────────────────────────────────────────────────────
 # `url` is the live join/share link. It does not exist until the facilitator
 # imports the .xlsx into kahoot.it (Create → Add question → Import → Import

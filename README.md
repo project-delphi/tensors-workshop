@@ -41,12 +41,21 @@ Every item is free, and it all runs in your browser. In brief:
 - **Work through
   [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**
   — 14 short bilingual Colab notebooks, ~2–3 hours. Required pre-work.
+- **Check yourself with the
+  [prerequisites study deck](https://tensors-workshop.project-delphi.org/en/d/prerequisites-linear-algebra)**
+  — flashcards, a practice test and a quiz game on that chapter.
 - **Run [notebook 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
   in Colab before the session.** If it fails, say so at once: a download that
   fails quietly leaves you stuck at sections 07 and 10, an hour in.
 
 The full list — the recommended viewing, and what to have ready on the day —
 is on the **[workshop homepage](https://project-delphi.github.io/tensors-workshop/)**, which is where it is maintained.
+
+## Study decks
+
+[Flashcards, practice tests and quiz games](https://tensors-workshop.project-delphi.org/en)
+for every section, plus one deck for the prerequisites, to use before or after
+the session · 🇪🇸 [En español](https://tensors-workshop.project-delphi.org/es)
 
 ## Group activities
 
@@ -258,6 +267,9 @@ Todo es gratuito y no hace falta instalar nada en tu equipo. En resumen:
   [`linear-algebra-deep-learning`](https://github.com/Laverde97/linear-algebra-deep-learning)**:
   14 cuadernos breves y bilingües de Colab, ~2–3 horas. Trabajo previo
   obligatorio.
+- **Ponte a prueba con el
+  [mazo de estudio de prerrequisitos](https://tensors-workshop.project-delphi.org/es/d/prerequisites-linear-algebra)**:
+  tarjetas, un examen de práctica y un juego de preguntas sobre ese capítulo.
 - **Ejecuta el [cuaderno 00](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb)
   en Colab antes de la sesión.** Si falla, avisa enseguida: una descarga que
   falla en silencio te deja atascado en las secciones 07 y 10, una hora
@@ -266,6 +278,12 @@ Todo es gratuito y no hace falta instalar nada en tu equipo. En resumen:
 La lista completa —lo recomendado y lo que hay que tener a mano el día del
 taller— está en la **[página del taller](https://project-delphi.github.io/tensors-workshop/es/)**, que es donde se
 mantiene.
+
+## Mazos de estudio
+
+[Tarjetas, exámenes de práctica y juegos de preguntas](https://tensors-workshop.project-delphi.org/es)
+para cada sección, más un mazo para los prerrequisitos, para usar antes o
+después de la sesión · 🇬🇧 [In English](https://tensors-workshop.project-delphi.org/en)
 
 ## Actividades en grupo
 

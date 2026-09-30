@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-09-29
+
+- **Study decks: flashcards, practice tests and quiz games.** The homepage links the workshop's study site, in the reader's language, from a new card under the toolkit and from the prerequisites' first step, which now ends on the linear-algebra prerequisites deck. The Kahoot page, the FAQ's self-study answer and the README point to it too. There is one deck for every section and one for the prerequisites; the URLs live once, under `study:` in `_variables.yml`.
+
 ## 2026-09-28
 
 - **The audio tensor explains itself.** Every picture on the audio stage now says *why* as well as *what*, for a reader with no signal processing: why two samples per cycle and what aliasing sounds like, what a decibel is and why each bit adds about 6 dB, why a looped frame clicks and so why the Hann window exists, what a bin and a phase are, why Hann windows overlapping by half add back up to exactly one, why dropping components removes noise, why forbidding negative numbers gives parts you can name, and why a batch must be one shape. Each picture also ends on a *Why it matters* box: where the idea turns up next, from Whisper's 16 kHz input and 25 ms windows to weight quantization, LoRA and axis-order bugs. Both languages.

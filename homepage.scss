@@ -307,6 +307,25 @@ body { overflow-x: clip; }
   font-size: .85rem;
 }
 .resource-button:hover { background: #eaf3f9; border-color: var(--landing-accent); }
+/* The study decks are a site of their own, used before and after the session
+   rather than during it, so their card runs the width of the grid under the
+   six instead of trailing them as a seventh -- a straggler at three columns.
+   Copy on the left, its two links on the right while the grid has three
+   columns; at two or one the buttons would squeeze the copy into a sliver,
+   so there it stacks like any other card. */
+.resource-wide { grid-column: 1 / -1; }
+.resource-wide p:last-child { display: flex; flex-wrap: wrap; gap: .6rem; }
+@media (min-width: 801px) {
+  .resource-wide {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: 2rem;
+    align-items: center;
+  }
+  .resource-wide h3, .resource-wide p { grid-column: 1; margin-bottom: 0; }
+  .resource-wide h3 { margin-bottom: .5rem; }
+  .resource-wide p:last-child { grid-column: 2; grid-row: 1 / span 2; margin: 0; padding: 0; }
+}
 .workshop-landing a:focus-visible {
   outline: 3px solid #a34916;
   outline-offset: 4px;

@@ -24,6 +24,10 @@ en pantalla siguen en inglés.
 **Ve a [kahoot.it](https://kahoot.it) e introduce el PIN que aparece en
 pantalla.**
 
+Para practicar por tu cuenta, antes o después de la sesión, los
+[mazos de estudio]({{< var study.url_es >}}) tienen tarjetas, exámenes de
+práctica y juegos de preguntas para cada sección.
+
 ## Cuestionario 1 — {{< var kahoot.q1.title_es >}} {#quiz-1}
 
 *{{< var kahoot.q1.title_en >}}*

@@ -120,6 +120,8 @@ Yes. Start with the prerequisites, then read the
 [handbook](tensors_workshop_plan_with_quizzes.md) alongside the corresponding
 [notebooks](notebooks.qmd). Pause to solve exercises and use the
 [entry and exit checks](assessments.md) to assess your reasoning.
+The [study decks]({{< var study.url_en >}}) have flashcards, practice tests
+and quiz games for every section and for the prerequisites.
 The [references](references.qmd) provide further reading, and the
 [take-home deep dive](notebooks.qmd#going-further) extends the workshop.
 

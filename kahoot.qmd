@@ -17,6 +17,10 @@ it.
 
 **Go to [kahoot.it](https://kahoot.it) and enter the PIN shown on screen.**
 
+To practise on your own, before or after the session, the
+[study decks]({{< var study.url_en >}}) have flashcards, practice tests and
+quiz games for every section.
+
 ## Quiz 1 — {{< var kahoot.q1.title_en >}} {#quiz-1}
 
 *{{< var kahoot.q1.title_es >}}*
