@@ -973,6 +973,123 @@ references:
             optimal low-rank matrix approximation
           note_es: >-
             aproximación matricial óptima de rango bajo
+    # The handbook's section 11 note on the rank of 3 × 3 matrix
+    # multiplication (`#still-open` / `#sigue-abierto`) cites every number
+    # it gives from here. The bounds are dated: when the catalogue's
+    # ⟨3×3×3⟩ row or Bläser's 19 moves, change both handbooks with it.
+    - anchor: ref-open-problems
+      title_en: "An open problem"
+      title_es: "Un problema abierto"
+      note_en: >-
+        The rank of 3 × 3 matrix multiplication, from
+        [section 11](tensors_workshop_plan_with_quizzes.md#still-open). Start
+        with Kolda's post, then the papers behind its numbers.
+      note_es: >-
+        El rango de la multiplicación de matrices 3 × 3, de la
+        [sección 11](tensors_workshop_plan_with_quizzes.md#sigue-abierto).
+        Empieza por la entrada de Kolda y sigue con los artículos que
+        respaldan sus cifras.
+      items:
+        - authors: "Kolda, T. G."
+          year: 2026
+          title: "An Open Problem to Challenge AI Math Skills"
+          url: "https://tammykolda.substack.com/p/an-open-problem-to-challenge-ai-math"
+          where: "The Loss Function"
+          note_en: >-
+            start here: the challenge as she poses it, with all 27 entries to
+            copy and links to the talk and the book it comes from
+          note_es: >-
+            empieza aquí: el reto tal como ella lo plantea, con las 27
+            entradas para copiar y enlaces a la charla y al libro de los que
+            sale
+        - authors: "Strassen, V."
+          year: 1969
+          title: "Gaussian elimination is not optimal"
+          url: "https://doi.org/10.1007/BF02165411"
+          where: "Numerische Mathematik 13(4), 354–356"
+          note_en: >-
+            the seven products for 2 × 2 blocks, in three pages: where the
+            question starts
+          note_es: >-
+            los siete productos para bloques 2 × 2, en tres páginas: donde
+            empieza la pregunta
+        - authors: "Winograd, S."
+          year: 1971
+          title: "On multiplication of 2 × 2 matrices"
+          url: "https://doi.org/10.1016/0024-3795(71)90009-7"
+          where: "Linear Algebra and its Applications 4(4), 381–388"
+          note_en: >-
+            the proof that seven is the fewest for 2 × 2: a lower bound that
+            meets the upper one, which 3 × 3 still lacks
+          note_es: >-
+            la demostración de que siete es el mínimo para 2 × 2: una cota
+            inferior que alcanza a la superior, lo que a 3 × 3 aún le falta
+        - authors: "Laderman, J. D."
+          year: 1976
+          title: >-
+            A noncommutative algorithm for multiplying 3×3 matrices using 23
+            multiplications
+          url: "https://doi.org/10.1090/S0002-9904-1976-13988-2"
+          where: "Bulletin of the American Mathematical Society 82(1), 126–128"
+          note_en: >-
+            the upper bound of 23: a decomposition of the 9 × 9 × 9 tensor you
+            can type in and check
+          note_es: >-
+            la cota superior de 23: una descomposición del tensor 9 × 9 × 9
+            que puedes teclear y comprobar
+        - authors: "Bläser, M."
+          year: 2003
+          title: "On the complexity of the multiplication of matrices of small formats"
+          url: "https://doi.org/10.1016/S0885-064X(02)00007-9"
+          where: "Journal of Complexity 19(1), 43–60"
+          note_en: >-
+            the lower bound of 19, and what it takes to prove that no shorter
+            decomposition exists
+          note_es: >-
+            la cota inferior de 19, y lo que cuesta demostrar que no existe
+            una descomposición más corta
+        - authors: "Smirnov, A. V."
+          year: 2013
+          title: "The bilinear complexity and practical algorithms for matrix multiplication"
+          url: "https://doi.org/10.1134/S0965542513120129"
+          where: "Computational Mathematics and Mathematical Physics 53(12), 1781–1795"
+          note_en: >-
+            the practical exponent that, by Kolda's account, the two AI
+            searches below did not improve on
+          note_es: >-
+            el exponente práctico que, según Kolda, las dos búsquedas con IA
+            de abajo no mejoraron
+        - authors: "Fawzi, A., Balog, M., Huang, A. et al."
+          year: 2022
+          title: "Discovering faster matrix multiplication algorithms with reinforcement learning"
+          url: "https://doi.org/10.1038/s41586-022-05172-4"
+          where: "Nature 610, 47–53"
+          note_en: >-
+            AlphaTensor: what a search for low-rank decompositions looks like
+            with an AI lab's compute behind it
+          note_es: >-
+            AlphaTensor: cómo es una búsqueda de descomposiciones de rango bajo
+            con la capacidad de cómputo de un laboratorio de IA detrás
+        - authors: "Novikov, A., Vũ, N., Eisenberger, M. et al."
+          year: 2025
+          title: "AlphaEvolve: A coding agent for scientific and algorithmic discovery"
+          url: "https://arxiv.org/abs/2506.13131"
+          where: "arXiv:2506.13131"
+          note_en: >-
+            the second search, with matrix multiplication one problem among
+            many; read it beside AlphaTensor
+          note_es: >-
+            la segunda búsqueda, con la multiplicación de matrices como un
+            problema entre muchos; léelo junto a AlphaTensor
+        - authors: "Sedoglavic, A."
+          title: "Yet another catalogue of fast matrix multiplication algorithms"
+          url: "https://fmm.univ-lille.fr/"
+          note_en: >-
+            the best known rank for every small format, and who found it;
+            check a record here before you repeat it
+          note_es: >-
+            el mejor rango conocido para cada formato pequeño, y quién lo
+            encontró; comprueba aquí un récord antes de repetirlo
     - anchor: ref-software
       title_en: "Software"
       title_es: "Software"

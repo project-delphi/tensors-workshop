@@ -2,7 +2,7 @@
 
 ## 2026-09-29
 
-- **Study decks: flashcards, practice tests and quiz games.** The homepage links the workshop's study site, in the reader's language, from a new card under the toolkit and from the prerequisites' first step, which now ends on the linear-algebra prerequisites deck. The Kahoot page, the FAQ's self-study answer and the README point to it too. There is one deck for every section and one for the prerequisites; the URLs live once, under `study:` in `_variables.yml`.
+- **Section 11 ends on an open problem.** A new note in both handbooks, *Still open: the rank of 3 × 3 matrix multiplication*, shows the workshop's rank question is live research with a price on it. Strassen's 7 multiplications for 2 × 2 matrices is the CP rank of a 4 × 4 × 4 tensor. The 3 × 3 tensor is 9 × 9 × 9 with 27 ones, and its rank is only known to lie between 19 and 23; a rank of 21 would beat Strassen. The note's code builds both tensors, checks that contracting one multiplies two matrices, and checks that Strassen's seven rank-one terms rebuild the other exactly. It also says why AI companies care and links Tamara Kolda's 28 September 2026 post that poses the problem. The references page has a new *An open problem* group with the post, Strassen, Winograd, Laderman, Bläser, Smirnov, AlphaTensor, AlphaEvolve and the Lille catalogue of fast algorithms. Section 11's last speaker note in both decks gives the facilitator a one-minute version, and the wrap-up's *Where to go next* points to it.
 
 ## 2026-09-28
 
