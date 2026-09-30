@@ -907,6 +907,55 @@ The storage ratio is the easy half. The workflow that makes it usable is **train
 
 For the full interactive treatment — method chooser, measured timing, matched-budget CP/Tucker comparison, downstream compression and the storage-budget widget — continue with **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
+### Still open: the rank of 3 × 3 matrix multiplication {#still-open}
+
+<span data-language-key="still-open-the-rank-of-3-3-matrix-multiplication"></span>
+
+Multiplying two 2 × 2 matrices the schoolbook way takes 8 multiplications. In 1969 Volker Strassen did it with 7. Applied to blocks, over and over, that one saved multiplication cuts the cost of an `n × n` product from `n³` to `n^2.807`, because `log₂ 7 = 2.807`. Two years later Winograd proved that 7 is the fewest possible.
+
+**That 7 is a CP rank.** Matrix multiplication is a contraction, as section 06 showed, and a fixed tensor of 0s and 1s says which products it adds up. For 2 × 2 matrices that tensor is `4 × 4 × 4`, with one 1 for each of the 8 schoolbook products. Each rank-one term of a CP decomposition costs one multiplication, so a rank-`R` decomposition is an algorithm with `R` multiplications. Strassen's algorithm is seven rank-one terms that add up to the tensor exactly. The code below builds the tensor, checks that contracting it multiplies, and checks Strassen's seven terms:
+
+```python
+import itertools
+
+import numpy as np
+
+def matmul_tensor(n):
+    # One 1 for each schoolbook product A[i, k] * B[k, j], added into C[i, j].
+    M = np.zeros((n * n, n * n, n * n), dtype=int)
+    for i, j, k in itertools.product(range(n), repeat=3):
+        M[i * n + k, k * n + j, i * n + j] = 1
+    return M
+
+M2, M3 = matmul_tensor(2), matmul_tensor(3)
+print(M2.shape, M2.sum(), M3.shape, M3.sum())  # (4, 4, 4) 8 (9, 9, 9) 27
+
+# Contract M3 with two flattened 3 x 3 matrices, and out comes their product.
+rng = np.random.default_rng(0)
+A, B = rng.random((3, 3)), rng.random((3, 3))
+C = np.einsum("abc,a,b->c", M3, A.ravel(), B.ravel()).reshape(3, 3)
+print(np.allclose(C, A @ B))  # True
+
+# Strassen's seven products. Row r of U and of V says which entries of A and
+# of B product r adds up before it multiplies; row r of W says which entries
+# of C it is added to (1) or subtracted from (-1). Order: 11, 12, 21, 22.
+U = np.array([[1, 0, 0, 1], [0, 0, 1, 1], [1, 0, 0, 0], [0, 0, 0, 1],
+              [1, 1, 0, 0], [-1, 0, 1, 0], [0, 1, 0, -1]])
+V = np.array([[1, 0, 0, 1], [1, 0, 0, 0], [0, 1, 0, -1], [-1, 0, 1, 0],
+              [0, 0, 0, 1], [1, 1, 0, 0], [0, 0, 1, 1]])
+W = np.array([[1, 0, 0, 1], [0, 0, 1, -1], [0, 1, 0, 1], [1, 0, 1, 0],
+              [-1, 1, 0, 0], [0, 0, 0, 1], [1, 0, 0, 0]])
+print(np.array_equal(np.einsum("ra,rb,rc->abc", U, V, W), M2))  # True: rank <= 7
+```
+
+For 3 × 3 matrices the tensor is `9 × 9 × 9`, with 27 ones, and **nobody knows its rank**. It is at least 19 (Bläser, 2003) and at most 23 (Laderman, 1976). Rank 21 would beat Strassen: recursing on 3 × 3 blocks would cost `n^2.771`. Rank 22 would not, at `n^2.814`.
+
+**Why it is worth money.** Dense matrix multiplication is the core operation in training and running a neural network, so a cheaper one matters to anyone paying for the hardware. DeepMind has searched for low-rank decompositions of these tensors twice, with AlphaTensor (2022) and AlphaEvolve (2025). By Tamara Kolda's account, neither beat the best practical exponent known at the time, Smirnov's from 2013. The exponent also counts multiplications only: a fast algorithm still has to win on additions, memory traffic and rounding error before a library will use it.
+
+Kolda, co-author of the survey the references page tells you to start with, has put the `9 × 9 × 9` problem to audiences since at least 2015, and posed it again on 28 September 2026 as a test for AI: [*An Open Problem to Challenge AI Math Skills*](https://tammykolda.substack.com/p/an-open-problem-to-challenge-ai-math). Grey Ballard, her co-author, conjectures that the rank is 23, so what is missing may be a proof that nothing shorter exists. Her post lists the same 27 ones, counted from 1 and with the first two axes numbered column by column rather than row by row; renumbering an axis cannot change a rank. The papers behind every number in this note are under [An open problem](references.qmd#ref-open-problems) on the references page, with a catalogue of the best known decompositions for every small size.
+
+> 🇪🇸 Nadie conoce el rango del tensor `9 × 9 × 9` de 27 unos que codifica la multiplicación de matrices 3 × 3: está entre 19 y 23. Un rango 21 daría un algoritmo más rápido que el de Strassen.
+
 ---
 
 
@@ -934,6 +983,7 @@ What you did today:
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
 - **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 12](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
 - **A deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run. See the [notebook index](notebooks.qmd#going-further) for all take-home deep dives.
+- **An open problem** at the end of [section 11](#still-open): a `9 × 9 × 9` tensor of 27 ones whose rank nobody knows, and why a cheaper matrix multiplication is worth finding.
 - **[References and further reading](references.qmd)** — books, the seminal Tucker/CP/SVD papers, `tensorly` and the blog posts, for going deeper than today's 210 minutes.
 
 ---
@@ -954,6 +1004,7 @@ place now, and the Spanish half of the site can reach it.
 Jump straight to a group:
 [linear algebra](references.qmd#ref-linear-algebra) ·
 [tensors](references.qmd#ref-tensors) ·
+[an open problem](references.qmd#ref-open-problems) ·
 [software](references.qmd#ref-software) ·
 [the ML blog](references.qmd#ref-blog).
 

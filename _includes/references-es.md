@@ -30,6 +30,20 @@ Empieza por la revisión. Después elige un método.
   <small>Páginas de autor: [Richard Harshman](https://psychology.uwo.ca/faculty/harshman/)</small>
 - Eckart, C. & Young, G. (1936). [*The approximation of one matrix by another of lower rank*](https://doi.org/10.1007/BF02288367), Psychometrika 1, 211–218 — aproximación matricial óptima de rango bajo.
 
+## Un problema abierto {#ref-open-problems}
+
+El rango de la multiplicación de matrices 3 × 3, de la [sección 11](tensors_workshop_plan_with_quizzes.md#sigue-abierto). Empieza por la entrada de Kolda y sigue con los artículos que respaldan sus cifras.
+
+- Kolda, T. G. (2026). [*An Open Problem to Challenge AI Math Skills*](https://tammykolda.substack.com/p/an-open-problem-to-challenge-ai-math), The Loss Function — empieza aquí: el reto tal como ella lo plantea, con las 27 entradas para copiar y enlaces a la charla y al libro de los que sale.
+- Strassen, V. (1969). [*Gaussian elimination is not optimal*](https://doi.org/10.1007/BF02165411), Numerische Mathematik 13(4), 354–356 — los siete productos para bloques 2 × 2, en tres páginas: donde empieza la pregunta.
+- Winograd, S. (1971). [*On multiplication of 2 × 2 matrices*](https://doi.org/10.1016/0024-3795(71)90009-7), Linear Algebra and its Applications 4(4), 381–388 — la demostración de que siete es el mínimo para 2 × 2: una cota inferior que alcanza a la superior, lo que a 3 × 3 aún le falta.
+- Laderman, J. D. (1976). [*A noncommutative algorithm for multiplying 3×3 matrices using 23 multiplications*](https://doi.org/10.1090/S0002-9904-1976-13988-2), Bulletin of the American Mathematical Society 82(1), 126–128 — la cota superior de 23: una descomposición del tensor 9 × 9 × 9 que puedes teclear y comprobar.
+- Bläser, M. (2003). [*On the complexity of the multiplication of matrices of small formats*](https://doi.org/10.1016/S0885-064X(02)00007-9), Journal of Complexity 19(1), 43–60 — la cota inferior de 19, y lo que cuesta demostrar que no existe una descomposición más corta.
+- Smirnov, A. V. (2013). [*The bilinear complexity and practical algorithms for matrix multiplication*](https://doi.org/10.1134/S0965542513120129), Computational Mathematics and Mathematical Physics 53(12), 1781–1795 — el exponente práctico que, según Kolda, las dos búsquedas con IA de abajo no mejoraron.
+- Fawzi, A., Balog, M., Huang, A. et al. (2022). [*Discovering faster matrix multiplication algorithms with reinforcement learning*](https://doi.org/10.1038/s41586-022-05172-4), Nature 610, 47–53 — AlphaTensor: cómo es una búsqueda de descomposiciones de rango bajo con la capacidad de cómputo de un laboratorio de IA detrás.
+- Novikov, A., Vũ, N., Eisenberger, M. et al. (2025). [*AlphaEvolve: A coding agent for scientific and algorithmic discovery*](https://arxiv.org/abs/2506.13131), arXiv:2506.13131 — la segunda búsqueda, con la multiplicación de matrices como un problema entre muchos; léelo junto a AlphaTensor.
+- Sedoglavic, A. — [*Yet another catalogue of fast matrix multiplication algorithms*](https://fmm.univ-lille.fr/) — el mejor rango conocido para cada formato pequeño, y quién lo encontró; comprueba aquí un récord antes de repetirlo.
+
 ## Software {#ref-software}
 
 Implementaciones para tus proyectos.

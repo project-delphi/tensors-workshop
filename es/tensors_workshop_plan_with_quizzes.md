@@ -925,6 +925,53 @@ La razón de almacenamiento es la mitad fácil. El flujo de trabajo que lo hace 
 
 Para el tratamiento interactivo completo —selector de método, tiempos medidos, comparación CP/Tucker con presupuesto igualado, compresión aguas abajo y el widget de presupuesto de almacenamiento— sigue con **[11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
+### Sigue abierto: el rango de la multiplicación de matrices 3 × 3 {#sigue-abierto}
+
+<span data-language-key="still-open-the-rank-of-3-3-matrix-multiplication"></span>
+
+Multiplicar dos matrices 2 × 2 a la manera escolar cuesta 8 multiplicaciones. En 1969 Volker Strassen lo hizo con 7. Aplicada a bloques, una y otra vez, esa multiplicación ahorrada baja el coste de un producto `n × n` de `n³` a `n^2.807`, porque `log₂ 7 = 2.807`. Dos años después, Winograd demostró que 7 es el mínimo posible.
+
+**Ese 7 es un rango CP.** La multiplicación de matrices es una contracción, como mostró la sección 06, y un tensor fijo de ceros y unos dice qué productos suma. Para matrices 2 × 2 ese tensor es `4 × 4 × 4`, con un 1 por cada uno de los 8 productos escolares. Cada término de rango uno de una descomposición CP cuesta una multiplicación, así que una descomposición de rango `R` es un algoritmo con `R` multiplicaciones. El algoritmo de Strassen son siete términos de rango uno que suman exactamente el tensor. El código de abajo construye el tensor, comprueba que contraerlo multiplica y comprueba los siete términos de Strassen:
+
+```python
+import itertools
+
+import numpy as np
+
+def matmul_tensor(n):
+    # One 1 for each schoolbook product A[i, k] * B[k, j], added into C[i, j].
+    M = np.zeros((n * n, n * n, n * n), dtype=int)
+    for i, j, k in itertools.product(range(n), repeat=3):
+        M[i * n + k, k * n + j, i * n + j] = 1
+    return M
+
+M2, M3 = matmul_tensor(2), matmul_tensor(3)
+print(M2.shape, M2.sum(), M3.shape, M3.sum())  # (4, 4, 4) 8 (9, 9, 9) 27
+
+# Contract M3 with two flattened 3 x 3 matrices, and out comes their product.
+rng = np.random.default_rng(0)
+A, B = rng.random((3, 3)), rng.random((3, 3))
+C = np.einsum("abc,a,b->c", M3, A.ravel(), B.ravel()).reshape(3, 3)
+print(np.allclose(C, A @ B))  # True
+
+# Strassen's seven products. Row r of U and of V says which entries of A and
+# of B product r adds up before it multiplies; row r of W says which entries
+# of C it is added to (1) or subtracted from (-1). Order: 11, 12, 21, 22.
+U = np.array([[1, 0, 0, 1], [0, 0, 1, 1], [1, 0, 0, 0], [0, 0, 0, 1],
+              [1, 1, 0, 0], [-1, 0, 1, 0], [0, 1, 0, -1]])
+V = np.array([[1, 0, 0, 1], [1, 0, 0, 0], [0, 1, 0, -1], [-1, 0, 1, 0],
+              [0, 0, 0, 1], [1, 1, 0, 0], [0, 0, 1, 1]])
+W = np.array([[1, 0, 0, 1], [0, 0, 1, -1], [0, 1, 0, 1], [1, 0, 1, 0],
+              [-1, 1, 0, 0], [0, 0, 0, 1], [1, 0, 0, 0]])
+print(np.array_equal(np.einsum("ra,rb,rc->abc", U, V, W), M2))  # True: rank <= 7
+```
+
+Para matrices 3 × 3 el tensor es `9 × 9 × 9`, con 27 unos, y **nadie conoce su rango**. Es al menos 19 (Bläser, 2003) y como mucho 23 (Laderman, 1976). Un rango 21 superaría a Strassen: recurrir sobre bloques 3 × 3 costaría `n^2.771`. Un rango 22 no, con `n^2.814`.
+
+**Por qué vale dinero.** La multiplicación densa de matrices es la operación central al entrenar y al usar una red neuronal, así que una más barata le importa a quien paga el hardware. DeepMind ha buscado descomposiciones de rango bajo de estos tensores dos veces, con AlphaTensor (2022) y AlphaEvolve (2025). Según Tamara Kolda, ninguna superó el mejor exponente práctico conocido en su momento, el de Smirnov de 2013. Además, el exponente solo cuenta multiplicaciones: un algoritmo rápido también tiene que ganar en sumas, tráfico de memoria y error de redondeo antes de que una biblioteca lo adopte.
+
+Kolda, coautora de la revisión por la que la página de referencias te dice que empieces, plantea el problema `9 × 9 × 9` a su público al menos desde 2015, y volvió a plantearlo el 28 de septiembre de 2026 como prueba para la IA: [*An Open Problem to Challenge AI Math Skills*](https://tammykolda.substack.com/p/an-open-problem-to-challenge-ai-math). Grey Ballard, su coautor, conjetura que el rango es 23, así que lo que falta quizá sea una demostración de que no existe nada más corto. Su entrada enumera los mismos 27 unos, contados desde 1 y con los dos primeros ejes numerados por columnas en lugar de por filas; renumerar un eje no puede cambiar un rango. Los artículos que respaldan cada cifra de esta nota están en [Un problema abierto](references.qmd#ref-open-problems), en la página de referencias, junto con un catálogo de las mejores descomposiciones conocidas para cada tamaño pequeño.
+
 ---
 
 ## 12 · Cierre (5 min)
@@ -952,6 +999,7 @@ Lo que has hecho hoy:
 - `scipy.signal` y `skimage.restoration`: convolución y deconvolución más allá de hoy.
 - **Los cinco ejercicios para casa**, apéndices A a E —PCA, atención, CP, Cholesky y eliminación de ruido en audio—, todos en el [cuaderno 12](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
 - **Un estudio a fondo** que va más allá: [convolución y deconvolución](#apendice-f-convolucion-y-deconvolucion) (apéndice F, cuaderno 13), la tercera aparición de la idea que conecta el día de hoy, y la que la sala no llegó a ejecutar. Consulta el [índice de cuadernos](notebooks.qmd#para-ir-más-lejos) para ver todos los estudios a fondo para casa.
+- **Un problema abierto** al final de la [sección 11](#sigue-abierto): un tensor `9 × 9 × 9` de 27 unos cuyo rango nadie conoce, y por qué vale la pena encontrar una multiplicación de matrices más barata.
 - **[Referencias y lecturas adicionales](references.qmd)**: libros, los artículos fundacionales sobre Tucker/CP/SVD, `tensorly` y las entradas del blog, para profundizar más allá de los 210 minutos de hoy.
 
 > 🇪🇸 Ese es todo el taller. Gracias por participar.
@@ -977,6 +1025,7 @@ española del sitio puede llegar a ella.
 Salta directamente a un grupo:
 [álgebra lineal](references.qmd#ref-linear-algebra) ·
 [tensores](references.qmd#ref-tensors) ·
+[un problema abierto](references.qmd#ref-open-problems) ·
 [software](references.qmd#ref-software) ·
 [el blog de ML](references.qmd#ref-blog).
 
