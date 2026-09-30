@@ -345,7 +345,7 @@ Dos resultados reales. **Los tumores malignos sí tienen un radio medio mayor**:
 
 La regla de formas tiene su propia página: el <a href="../interactive/broadcasting-simulator.html?lang=es">simulador de broadcasting</a> alinea dos formas desde la derecha y recorre el estiramiento paso a paso. Prueba `(4, 5)` contra `(4,)`, y después contra `(4, 1)`.
 
-## 04 · Reshape y transposición de imágenes reales (Bloque 2, 15 min)
+## 04 · Reshape y transposición de imágenes reales (Bloque 2, 15 min) {#sec-04-reshape-transposicion}
 
 **Practica hoy:** {{< var sections.s04.practice_es >}}
 
@@ -382,6 +382,8 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 **`reshape` solo reinterpreta los números en el orden en que están en memoria. `transpose` los mueve según el significado de los ejes.** Los dos dan la forma `(3, 512, 512)`; solo uno es la imagen. Y el TODO 4 va más al fondo: en cuanto dos ejes comparten tamaño, la forma no puede decirte cuál es cuál. Solo tu propio seguimiento puede.
 
 Las tres fotografías de arriba son cubos, uno por byte, en el <a href="../interactive/image-tensor.html?lang=es">visualizador del tensor de imagen</a>. Transpón NHWC a NCHW y observa cómo los cubos siguen la nueva forma mientras la tira del búfer bajo ellos no mueve ni un byte; después compáralo con reshape y mira cómo se rompe la imagen.
+
+Un reshape no trata solo de píxeles. En el <a href="../interactive/genome-stage.html?lang=es#codons">escenario del genoma</a> la misma operación agrupa las bases de un gen en codones — de `(L, 4)` a `(L/3, 3, 4)`, sin coste, porque ya estaban en ese orden — y lo que un codón es entonces resulta ser un `4 × 4 × 4` de rango uno.
 
 ## Kahoot 1 — Vocabulario de tensores y formas (5 min)
 
@@ -424,7 +426,7 @@ La franja en directo es el núcleo del cuaderno 05, no este ejercicio de diseño
 
 <span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span>
 
-## 06 · Contracción con `einsum` (Bloque 3, 15 min)
+## 06 · Contracción con `einsum` (Bloque 3, 15 min) {#sec-06-contraccion-einsum}
 
 **Practica hoy:** {{< var sections.s06.practice_es >}}
 
@@ -463,6 +465,8 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 ```
 
 `c` aparece en las entradas pero no después de la flecha, así que **se suma**: eso es la contracción. `n`, `h` y `w` aparecen después de la flecha, así que **se conservan**. Añadir un eje de lote cuesta exactamente una letra. Por eso merece la pena aprender `einsum`. La misma expresión sirve para una imagen o para un millón, y se lee como las matemáticas del capítulo 2. La atención son dos contracciones más de esta misma forma —`L = Q Kᵀ` suma sobre el eje de características, `O = A V` suma sobre el eje de claves— en las imágenes de <a href="../interactive/attention-stage.html?lang=es#scores">puntuaciones</a> y <a href="../interactive/attention-stage.html?lang=es#output">salida</a> del escenario de atención.
+
+Dos contracciones con datos de secuencia reales hacen el mismo punto en otro alfabeto: el código genético es una tabla de `4 × 4 × 4`, así que la <a href="../interactive/genome-stage.html?lang=es#translate">traducción</a> es una sola contracción sobre los tres ejes de bases, y <a href="../interactive/genome-stage.html?lang=es#search">buscar en una secuencia</a> es `einsum('wlb,lb->w')`: el producto escalar de dos filas one-hot es 1 exactamente cuando las bases coinciden, de modo que sumar sobre posición y alfabeto cuenta coincidencias.
 
 ## 07 · Inversas y la pseudoinversa (Bloque 4, 15 min)
 
@@ -1334,9 +1338,58 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 **Esta es la misma lección que la de la sección 07.** Una inversa directa o no existe o es inutilizable, así que usas un método que encuentra la mejor respuesta estable. La pseudoinversa hace esto para sistemas lineales; Richardson-Lucy y el filtrado de Wiener lo hacen para la deconvolución. En biotecnología esto es rutina. Todo microscopio de fluorescencia desenfoca sus imágenes en una cantidad conocida, la *función de dispersión de punto*, y la deconvolución es práctica habitual antes de contar o medir células.
 
 
-## Apéndice G — Notas para quien imparte {#apendice-g-notas-facilitacion}
+## Apéndice G — Para casa: un gen ya es un tensor {#apendice-g-gen-tensor}
 
-<span data-language-key="appendix-g-facilitator-notes"></span>
+<span data-language-key="appendix-g-take-home-a-gene-is-already-a-tensor"></span>
+
+La [sección 04](#sec-04-reshape-transposicion) reorganiza píxeles y la [sección 06](#sec-06-contraccion-einsum) los contrae. Este apéndice hace las dos cosas con otro tipo de datos, donde los ejes no son el espacio y el color sino la *posición* y el *alfabeto* — y donde el reshape y la contracción resultan ser, cada uno, todo un proceso biológico con nombre propio.
+
+Un gen es una cadena sobre cuatro letras, así que se codifica one-hot como `(L, 4)`: una fila por posición, un 1 por fila. Ese único paso es lo que permite que la aritmética toque una secuencia, y todo lo de abajo es una consecuencia de él.
+
+Vale la pena predecir tres resultados antes de ejecutar nada. **Transcribir la hebra codificante es la matriz identidad** — cada T se llama U y no se mueve ni un número — mientras que complementar es la 4 × 4 con una sola antidiagonal, porque en un eje alfabético intercambiar A con T y C con G *es* invertir el orden. **Un codón es un tensor de rango uno**: tres vectores one-hot multiplicados entre sí dan un 4 × 4 × 4 con exactamente un valor distinto de cero, el objeto más barato que aún necesita tres índices para direccionarse. Y **el código genético es él mismo un 4 × 4 × 4**, así que la traducción es una sola contracción sobre los tres ejes de bases — lo que además vuelve visible la redundancia del código como estructura y no como una lista: seis codones para la leucina, uno para la metionina, y una tercera base que a menudo no importa.
+
+El último punto es la recompensa. Comparar una guía con cada ventana de una secuencia es `einsum('wlb,lb->w')`, porque el producto escalar de dos filas one-hot es 1 exactamente cuando las bases coinciden — de modo que sumar sobre posición y alfabeto *cuenta coincidencias*. Buscar es contraer. Hacerlo con muchas guías a la vez añade un índice por delante y no cambia nada más.
+
+El <a href="interactive/genome-stage.html?lang=es">escenario del genoma</a> es todo esto en ocho imágenes; ve directo al <a href="interactive/genome-stage.html?lang=es#codons">cubo de codones</a>, a la <a href="interactive/genome-stage.html?lang=es#translate">tabla del código</a> o a la <a href="interactive/genome-stage.html?lang=es#search">búsqueda</a>. Es una página sobre cómo se representan los datos de secuencia, y deliberadamente no una herramienta para diseñar nada.
+
+**Ejercicio (15 min)**
+```python
+import numpy as np
+
+BASES = "ACGT"
+seq = "ATGTCAATTTATCAAGAATTTGTTAATAAATATAGTTTAAGT"   # 42 bases, 14 codons
+
+def one_hot(s, alphabet=BASES):
+    out = np.zeros((len(s), len(alphabet)), dtype=np.int8)
+    out[np.arange(len(s)), [alphabet.index(c) for c in s]] = 1
+    return out
+
+X = one_hot(seq)                      # (42, 4), one 1 per row
+assert X.sum(axis=1).min() == X.sum(axis=1).max() == 1
+
+# TODO 1: Transcribe. Build the 4x4 that renames T to U, and the 4x4 that
+#         complements (A<->T, C<->G). One of them is np.eye(4). Which, and
+#         what is the other? Contract each with X over the base axis and
+#         check how many of the 42 ones changed column.
+# TODO 2: Reshape X into codons: (14, 3, 4). Assert it is a view of X, not a
+#         copy. Why is it free?
+# TODO 3: One codon is the outer product of its three one-hot rows. Build it
+#         with einsum and check it is rank one: 64 entries, exactly one of
+#         them 1.
+# TODO 4: Translation as a contraction. CODE below is the genetic code as a
+#         (4, 4, 4) array of residue indices. Contract each codon's rank-one
+#         tensor against it and read off the protein. It should start "MSIY".
+# TODO 5: Search. Take the 20-base window at position 10 as a guide and score
+#         it against every window with einsum('wlb,lb->w'). How many windows
+#         score 20? What does the runner-up score, and why is the gap the
+#         whole point?
+```
+
+Trabaja con la secuencia real de 180 bases de `interactive/genome-core.js` si quieres los números del propio escenario; su procedencia está en `interactive/genome-scenes/README.md`. La comprobación que importa es la que hace la propia prueba del repositorio: traduce la secuencia con tu tabla del código y compárala con la proteína depositada, residuo a residuo. Si no coincide, el error es tuyo, no del registro.
+
+## Apéndice H — Notas para quien imparte {#apendice-h-notas-facilitacion}
+
+<span data-language-key="appendix-h-facilitator-notes"></span>
 
 *(El alumnado puede saltarse esta sección.)*
 

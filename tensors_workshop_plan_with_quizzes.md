@@ -365,6 +365,8 @@ wrong = photo.reshape(3, 512, 512)           # runs, but scrambles the image
 
 The three photographs above are cubes, one per byte, on the [image tensor visualizer](interactive/image-tensor.html?lang=en). Transpose NHWC to NCHW and watch the cubes follow the new shape while the buffer strip under them does not move a byte; then compare with reshape and watch the picture break.
 
+A reshape is not only about pixels. On the [genome stage](interactive/genome-stage.html?lang=en#codons) the same operation groups a gene's bases into codons — `(L, 4)` to `(L/3, 3, 4)`, free, because they were already in that order — and what one codon then is turns out to be a rank-one `4 × 4 × 4`.
+
 ## Kahoot Quiz 1 — Tensor Vocabulary & Shapes (5 min)
 
 <span data-language-key="kahoot-quiz-1-tensor-vocabulary-shapes-5-min"></span>
@@ -445,6 +447,8 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 ```
 
 `c` appears in the inputs but not after the arrow, so it is **summed over** — that is the contraction. `n`, `h`, `w` appear after the arrow, so they are **kept**. Adding a batch axis costs exactly one letter. This is why `einsum` is worth learning. The same expression works for one image or for a million, and it reads like the mathematics in Chapter 2. Attention is two more contractions of exactly this shape — `L = Q Kᵀ` sums over the feature axis, `O = A V` sums over the key axis — on the [attention stage's scores](interactive/attention-stage.html?lang=en#scores) and [output](interactive/attention-stage.html?lang=en#output) pictures.
+
+Two contractions on real sequence data make the same point in a different alphabet: the genetic code is a `4 × 4 × 4` table, so [translation](interactive/genome-stage.html?lang=en#translate) is one contraction over all three base axes, and [searching a sequence](interactive/genome-stage.html?lang=en#search) is `einsum('wlb,lb->w')` — the dot product of two one-hot rows is 1 exactly when the bases agree, so summing over position and alphabet counts matches.
 
 ## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
 
@@ -1315,9 +1319,58 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 **This is the same lesson as section 07.** A direct inverse either does not exist or is unusable, so you use a method that finds the best stable answer instead. The pseudoinverse does this for linear systems; Richardson-Lucy and Wiener filtering do it for deconvolution. In biotech this is routine. Every fluorescence microscope blurs its images by a known amount, the *point spread function*, and deconvolution is standard practice before cells are counted or measured.
 
 
-## Appendix G — Facilitator Notes
+## Appendix G — Take-Home: A Gene Is Already a Tensor
 
-<span data-language-key="appendix-g-facilitator-notes"></span>
+<span data-language-key="appendix-g-take-home-a-gene-is-already-a-tensor"></span>
+
+[Section 04](#reshape-and-transpose-real-images-block-2-15-min) reshapes pixels and [section 06](#contraction-with-einsum-block-3-15-min) contracts them. This appendix runs both on a different kind of data, where the axes are not space and colour but *position* and *alphabet* — and where the reshape and the contraction each turn out to be the whole of a named biological process.
+
+A gene is a string over four letters, so it one-hot encodes to `(L, 4)`: one row per position, one 1 per row. That single step is what lets arithmetic touch a sequence at all, and everything below is a consequence of it.
+
+Three results are worth predicting before you run anything. **Transcribing the coding strand is the identity matrix** — every T is called U and not one number moves — while complementing is the 4 × 4 with a single anti-diagonal, because on an alphabetical axis swapping A with T and C with G *is* reversal. **A codon is a rank-one tensor**: three one-hot vectors multiplied together give a 4 × 4 × 4 with exactly one non-zero, the cheapest object that still needs three indices to address. And **the genetic code is itself a 4 × 4 × 4**, so translation is one contraction over all three base axes — which also makes the code's redundancy visible as structure rather than as a list: six codons for leucine, one for methionine, and a third base that frequently does not matter.
+
+The last one is the payoff. Comparing one guide against every window of a sequence is `einsum('wlb,lb->w')`, because the dot product of two one-hot rows is 1 exactly when the bases agree — so summing over position and alphabet *counts matches*. Search is a contraction. Doing it for many guides at once puts one more index in front and changes nothing else.
+
+The [genome stage](interactive/genome-stage.html?lang=en) is all of this as eight pictures; go straight to [the codon cube](interactive/genome-stage.html?lang=en#codons), [the code table](interactive/genome-stage.html?lang=en#translate) or [the search](interactive/genome-stage.html?lang=en#search). It is a page about how sequence data is represented, and deliberately not a tool for designing anything.
+
+**Exercise (15 min)**
+```python
+import numpy as np
+
+BASES = "ACGT"
+seq = "ATGTCAATTTATCAAGAATTTGTTAATAAATATAGTTTAAGT"   # 42 bases, 14 codons
+
+def one_hot(s, alphabet=BASES):
+    out = np.zeros((len(s), len(alphabet)), dtype=np.int8)
+    out[np.arange(len(s)), [alphabet.index(c) for c in s]] = 1
+    return out
+
+X = one_hot(seq)                      # (42, 4), one 1 per row
+assert X.sum(axis=1).min() == X.sum(axis=1).max() == 1
+
+# TODO 1: Transcribe. Build the 4x4 that renames T to U, and the 4x4 that
+#         complements (A<->T, C<->G). One of them is np.eye(4). Which, and
+#         what is the other? Contract each with X over the base axis and
+#         check how many of the 42 ones changed column.
+# TODO 2: Reshape X into codons: (14, 3, 4). Assert it is a view of X, not a
+#         copy. Why is it free?
+# TODO 3: One codon is the outer product of its three one-hot rows. Build it
+#         with einsum and check it is rank one: 64 entries, exactly one of
+#         them 1.
+# TODO 4: Translation as a contraction. CODE below is the genetic code as a
+#         (4, 4, 4) array of residue indices. Contract each codon's rank-one
+#         tensor against it and read off the protein. It should start "MSIY".
+# TODO 5: Search. Take the 20-base window at position 10 as a guide and score
+#         it against every window with einsum('wlb,lb->w'). How many windows
+#         score 20? What does the runner-up score, and why is the gap the
+#         whole point?
+```
+
+Work from the real 180-base sequence in `interactive/genome-core.js` if you want the stage's own numbers; its provenance is in `interactive/genome-scenes/README.md`. The check that matters is the one the repo's own test makes: translate the sequence with your code table and compare it against the deposited protein, residue for residue. If it does not match, the bug is yours, not the record's.
+
+## Appendix H — Facilitator Notes
+
+<span data-language-key="appendix-h-facilitator-notes"></span>
 
 *(Students may ignore this section.)*
 
