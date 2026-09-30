@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-09-29
+
+- **Section 11 ends on an open problem.** A new note in both handbooks, *Still open: the rank of 3 × 3 matrix multiplication*, shows the workshop's rank question is live research with a price on it. Strassen's 7 multiplications for 2 × 2 matrices is the CP rank of a 4 × 4 × 4 tensor. The 3 × 3 tensor is 9 × 9 × 9 with 27 ones, and its rank is only known to lie between 19 and 23; a rank of 21 would beat Strassen. The note's code builds both tensors, checks that contracting one multiplies two matrices, and checks that Strassen's seven rank-one terms rebuild the other exactly. It also says why AI companies care and links Tamara Kolda's 28 September 2026 post that poses the problem. The references page has a new *An open problem* group with the post, Strassen, Winograd, Laderman, Bläser, Smirnov, AlphaTensor, AlphaEvolve and the Lille catalogue of fast algorithms. Section 11's last speaker note in both decks gives the facilitator a one-minute version, and the wrap-up's *Where to go next* points to it.
+
 ## 2026-09-28
 
 - **The audio tensor explains itself.** Every picture on the audio stage now says *why* as well as *what*, for a reader with no signal processing: why two samples per cycle and what aliasing sounds like, what a decibel is and why each bit adds about 6 dB, why a looped frame clicks and so why the Hann window exists, what a bin and a phase are, why Hann windows overlapping by half add back up to exactly one, why dropping components removes noise, why forbidding negative numbers gives parts you can name, and why a batch must be one shape. Each picture also ends on a *Why it matters* box: where the idea turns up next, from Whisper's 16 kHz input and 25 ms windows to weight quantization, LoRA and axis-order bugs. Both languages.

@@ -1039,6 +1039,15 @@ with: which model wins depends on the budget, not on which one is "better".
 
 Then put the report's question to the room: it called CP better at "rank 3".
 What did it hold fixed, and what did each model actually store?
+
+Only if a minute is left before the recap: rank has a price outside
+compression too. Matrix multiplication is a contraction with a fixed tensor of
+0s and 1s, and that tensor's CP rank is the number of multiplications it
+needs. For 2 × 2 it is 7, Strassen's, which is why `n³` becomes `n^2.807`. For
+3 × 3 it is a 9 × 9 × 9 tensor of 27 ones whose rank nobody knows: somewhere
+from 19 to 23. Rank 21 would beat Strassen, and DeepMind has pointed
+AlphaTensor and AlphaEvolve at the problem. The handbook's *Still open* note
+at the end of section 11 has the code and the papers.
 :::
 
 ## One idea connects the workshop {.computing-slide .recap-slide}

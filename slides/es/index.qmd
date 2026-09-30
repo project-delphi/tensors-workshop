@@ -1069,6 +1069,15 @@ depende del presupuesto, no de cuál es "mejor".
 
 Después lleva a la sala la pregunta del informe: dijo que CP era mejor "con
 rango 3". ¿Qué mantuvo fijo, y qué guardaba de verdad cada modelo?
+
+Solo si queda un minuto antes del resumen: el rango también tiene precio fuera
+de la compresión. La multiplicación de matrices es una contracción con un
+tensor fijo de ceros y unos, y el rango CP de ese tensor es el número de
+multiplicaciones que necesita. Para 2 × 2 es 7, el de Strassen, y por eso `n³`
+pasa a ser `n^2.807`. Para 3 × 3 es un tensor 9 × 9 × 9 de 27 unos cuyo rango
+nadie conoce: está entre 19 y 23. Un rango 21 superaría a Strassen, y DeepMind
+ha lanzado AlphaTensor y AlphaEvolve contra el problema. La nota *Sigue
+abierto* al final de la sección 11 del manual tiene el código y los artículos.
 :::
 
 ## Una idea conecta el taller {.computing-slide .recap-slide}
