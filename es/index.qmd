@@ -190,7 +190,7 @@ Con vectores y matrices basta para empezar. Completa los pasos obligatorios ante
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
-Repasa vectores y matrices en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}). La sección de ese capítulo sobre la SVD vale la pena hojearla si es nueva para ti —el taller la reintroduce desde cero, así que no es lectura obligatoria.
+Repasa vectores y matrices en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}). La sección de ese capítulo sobre la SVD vale la pena hojearla si es nueva para ti —el taller la reintroduce desde cero, así que no es lectura obligatoria. Después ponte a prueba con el [mazo de estudio de prerrequisitos]({{< var study.prereq_es >}}): tarjetas, un examen de práctica y un juego de preguntas sobre ese mismo capítulo.
 :::
 
 ::: {.prerequisite-step}
@@ -301,6 +301,16 @@ Cuestionarios interactivos en directo para comprobar lo aprendido.
 Artículos clave, capítulos de libros y código fuente del repositorio.
 
 [Consulta las fuentes](references.qmd){.resource-button}
+:::
+
+::: {.resource-card .resource-wide}
+### 🗂️ Mazos de estudio
+
+<span data-language-key="study-decks"></span>
+
+Tarjetas, exámenes de práctica y juegos de preguntas a tu ritmo, antes o después de la sesión: un mazo para cada sección y otro para los prerrequisitos. Gratis para empezar, en español e inglés.
+
+[Empieza a estudiar]({{< var study.url_es >}}){.resource-button} [Mazo de prerrequisitos]({{< var study.prereq_es >}}){.resource-button}
 :::
 ::::
 

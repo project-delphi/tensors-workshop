@@ -128,7 +128,9 @@ Sí. Empieza por los requisitos y luego lee el
 [manual](tensors_workshop_plan_with_quizzes.md) junto con los
 [cuadernos](notebooks.qmd) correspondientes. Haz pausas para resolver los
 ejercicios y usa las [evaluaciones de entrada y salida](assessments.md) para
-comprobar tu razonamiento. Las [referencias](references.qmd) ofrecen lecturas
+comprobar tu razonamiento. Los [mazos de estudio]({{< var study.url_es >}})
+tienen tarjetas, exámenes de práctica y juegos de preguntas para cada sección
+y para los prerrequisitos. Las [referencias](references.qmd) ofrecen lecturas
 adicionales y la [profundización para casa](notebooks.qmd#para-ir-más-lejos)
 amplía el taller.
 

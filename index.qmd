@@ -190,7 +190,7 @@ Vectors and matrices are what you need to begin. Complete the required steps bef
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
-Review vectors and matrices in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}). That chapter's section on SVD is worth a skim if it is new to you — the workshop re-introduces it from scratch, so it is not required reading.
+Review vectors and matrices in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}). That chapter's section on SVD is worth a skim if it is new to you — the workshop re-introduces it from scratch, so it is not required reading. Then check yourself with the [prerequisites study deck]({{< var study.prereq_en >}}): flashcards, a practice test and a quiz game on the same chapter.
 :::
 
 ::: {.prerequisite-step}
@@ -301,6 +301,16 @@ Live interactive quizzes for concept checks.
 Core papers, textbook chapters, and repository source code.
 
 [View Sources](references.qmd){.resource-button}
+:::
+
+::: {.resource-card .resource-wide}
+### 🗂️ Study decks
+
+<span data-language-key="study-decks"></span>
+
+Flashcards, practice tests and quiz games at your own pace, before or after the session: one deck for every section, and one for the prerequisites. Free to start, in English and Spanish.
+
+[Start Studying]({{< var study.url_en >}}){.resource-button} [Prerequisites Deck]({{< var study.prereq_en >}}){.resource-button}
 :::
 ::::
 
