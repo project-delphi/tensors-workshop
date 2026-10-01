@@ -141,6 +141,7 @@
   }
 
   const EN = {
+    tab: "search",
     k: "Section 06 · the search",
     h: "Searching is one contraction, and one window out of 161 is the perfect match",
     concept: "A window is a view of 20 bases; a guide is 20 one-hot rows. Multiply them position " +
@@ -198,6 +199,7 @@
   };
 
   const ES = {
+    tab: "buscar",
     k: "Sección 06 · la búsqueda",
     h: "Buscar es una contracción, y una ventana de 161 es la coincidencia perfecta",
     concept: "Una ventana es una vista de 20 bases; una guía son 20 filas one-hot. Multiplícalas " +

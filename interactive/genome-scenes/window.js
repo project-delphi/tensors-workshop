@@ -35,6 +35,7 @@
   }
 
   const EN = {
+    tab: "windows",
     k: "Section 04 · a window is a view",
     h: "161 windows of 20 bases, and not one base copied",
     concept: "A new axis, made by sliding. The window index w is neither time nor a batch: " +
@@ -80,6 +81,7 @@
   };
 
   const ES = {
+    tab: "ventanas",
     k: "Sección 04 · una ventana es una vista",
     h: "161 ventanas de 20 bases, y ni una base copiada",
     concept: "Un eje nuevo, hecho deslizando. El índice de ventana w no es tiempo ni lote: la " +

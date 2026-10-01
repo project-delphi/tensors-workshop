@@ -39,6 +39,7 @@
   }
 
   const EN = {
+    tab: "batch",
     k: "Section 02 · a batch",
     h: "A batch is one more index in the same einsum",
     concept: "A guide axis carried in front. The sum is still over position and alphabet; " +
@@ -87,6 +88,7 @@
   };
 
   const ES = {
+    tab: "lote",
     k: "Sección 02 · un lote",
     h: "Un lote es un índice más en el mismo einsum",
     concept: "Un eje de guías llevado por delante. La suma sigue siendo sobre posición y " +

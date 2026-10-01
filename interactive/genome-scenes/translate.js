@@ -49,6 +49,7 @@
   }
 
   const EN = {
+    tab: "translate",
     k: "Section 06 · translation",
     h: "Translation is one contraction against a 4 × 4 × 4 table",
     concept: "Three one-hot rows make a rank-one tensor, and the genetic code is a tensor too: " +
@@ -100,6 +101,7 @@
   };
 
   const ES = {
+    tab: "traducir",
     k: "Sección 06 · traducción",
     h: "Traducir es una contracción contra una tabla de 4 × 4 × 4",
     concept: "Tres filas one-hot forman un tensor de rango uno, y el código genético también " +

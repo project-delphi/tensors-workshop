@@ -77,6 +77,14 @@ test('a one-hot row has exactly one 1, and the sequence is (L, 4)', () => {
     assert.equal(row.length, 4);
   }
   assert.throws(() => G.oneHot('ACGN'), /not a base/);
+  // Every pair of different bases is the same distance apart, the square
+  // root of 2: one-hot puts no letter nearer to another, which numbering
+  // them 1 to 4 would.
+  for (const a of G.BASES) {
+    for (const b of G.BASES) {
+      assert.ok(Math.abs(G.oneHotDistance(a, b) - (a === b ? 0 : Math.SQRT2)) < 1e-12, `${a}-${b}`);
+    }
+  }
 });
 
 test('T to U is the identity; the complement is the anti-diagonal', () => {
@@ -93,6 +101,24 @@ test('T to U is the identity; the complement is the anti-diagonal', () => {
   assert.equal(G.decode(twice, G.BASES), G.CDS);
   assert.equal(G.transcribe(G.CDS, 'relabel'), G.CDS.replace(/T/g, 'U'));
   assert.throws(() => G.matrixFor('nonsense'), /no such transcription/);
+});
+
+test('the polymerase reads the template, and the RNA comes out as the coding strand', () => {
+  // The template pairs with the coding strand base for base.
+  assert.equal(G.templateStrand('ATGC'), 'TACG');
+  // On the one-hot grid that is the alphabet axis reversed: X[:, ::-1].
+  const X = G.oneHot(G.CDS);
+  assert.deepEqual(G.oneHot(G.templateStrand(G.CDS)), X.map((row) => row.slice().reverse()));
+  // Reading the template by the anti-diagonal is relabelling the coding
+  // strand by the identity: J @ J = I. This is the transcription scene's
+  // whole claim, so it is pinned on all 180 bases.
+  const template = G.templateStrand(G.CDS);
+  assert.equal(G.transcribe(template, 'complement'), G.transcribe(G.CDS, 'relabel'));
+  // Against the template every 1 changes column; against the coding strand
+  // none does.
+  const rna = G.applyAlphabet(G.oneHot(template), G.COMPLEMENT);
+  assert.equal(G.movedOnes(G.oneHot(template), rna), 180);
+  assert.equal(G.movedOnes(X, rna), 0);
 });
 
 test('windows are a view: W = L - w + 1, and nothing is copied', () => {

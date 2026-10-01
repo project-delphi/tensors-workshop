@@ -130,17 +130,20 @@ motif, and each mismatch costs exactly one.
 
 | key | what it is for |
 |---|---|
-| `id` | the section, the `#fragment`, the dot on the step bar |
+| `id` | the section, the `#fragment`, the stop on the rail |
 | `section` | the workshop section, for the kicker |
 | `part` | `{en, es}`, on the scene that opens one of the four parts |
 | `hl` | the `data-hl` tokens its section's `<math>` may point at |
 | `controls` | `range` (min, max, step, fmt) or `select` (options) |
-| `copy` | `{en, es}`: k, h, concept, claim, predict, b, eqcap, aria, np, controls, options |
+| `copy` | `{en, es}`: tab, k, h, predict, concept, b, eqcap, claim, aria, np, controls, options |
 | `init` | seed `ctx.state` |
 | `sync` | derive from the controls, and clamp one against another, before anything reads them |
 | `draw` | paint `ctx.svg` — a flat picture, or a GL scene's twin |
 | `readout` | `{html, claim, data}` |
 | `code` | the NumPy lines, through `K.code(rows)` |
+| `readout().lens` | `{a, b}` half-open, in bases: the stretch of the gene the picture is looking at, for the ribbon; `done: [a, b]` a second, dimmer stretch; `mark` one base |
+| `seek(ctx, i)` | a press on the ribbon at base `i`: move the picture there, through `ctx.setControls` |
+| `arrive` / `animates` | stamp the entrance clock (`ctx.cache.arrive = ctx.now()`); say whether the picture is still moving |
 | `pick` / `tip` | click and hover |
 | `pose` / `bounds` / `build` / `render` | the three.js half |
 
@@ -157,8 +160,10 @@ silently falls back to the raw value, which is how the first scene shipped.
 string. `tests/genome_scenes.test.cjs` fails a scene whose claim says the same
 thing at every setting, on the grounds that it is then decoration.
 
-**No NumPy line passes 82 characters** at any setting in either language,
-measured in the test and again live in the browser check.
+**No NumPy line passes 74 characters** at any setting in either language. The
+repo's ceiling is 82, which the browser check measures live; this stage's
+prose column is the narrow one, so `tests/genome_scenes.test.cjs` holds it to
+what fits there without the block scrolling sideways and hiding its comments.
 
 **The eight `data-hl` tokens are a closed set**: `pos`, `base`, `win`, `rna`,
 `codon`, `aa`, `prop`, `guide`. Pointing at a letter repaints the stage and
@@ -169,6 +174,48 @@ and the code slices — the blocks of one colour a reader spots in one have to b
 the same blocks in the other. It carries a lightness floor: at 62% the blue
 near hue 243 sat at 4.08:1 against the stage's black, and 68% puts the worst
 hue at 5.5:1.
+
+## How a scene looks, moves and reads
+
+These are what make the eight pictures one page, so they are rules and the
+test holds the ones it can.
+
+**The molecule and its tensor share a frame.** A helix sits over the grid it
+becomes; three strands sit over the 4 × 4 that maps one to the next. A picture
+of only the biology or only the matrix is half a scene.
+
+**The ribbon is the thread.** Under the stage, in every scene, is the whole
+gene: 180 ticks. Each scene's `readout()` returns the `lens` it is looking
+through, and `seek()` lets a press on the ribbon move it. The same molecule
+is on screen from the first picture to the last and only the lens moves --
+which is why a scene with no `lens` or no `seek` fails the test.
+
+**Something happens.** Every scene has an entrance that performs its
+operation once (`arrive` stamps `ctx.cache.arrive`; `K.arrival(ctx, ms)` is
+its progress; `K.chase` glides a number to where a control says), and a
+`play` control (`{id: "play", type: "play", target, rate}`) that performs it
+again on request. The readout is written from the controls on the first
+frame; the entrance is only how the picture gets to what it already says.
+Under reduced motion or the pause button `ctx.instant` is true and the
+picture is simply there.
+
+**A flat scene is laid out on an 820 × 500 board**, which is the shape of the
+stage, so it fills it. Keep clear of the claim chip (top left, above y = 46)
+and the shape badge (top right). Nothing may be placed off the board, and
+**no text is set under 11 units** -- below that a thing is drawn as colour,
+not as a letter nobody can read. The test walks every flat scene's SVG at
+every control setting for both.
+
+**Tiles carry letters.** `K.tile` is a base or a residue as its letter on its
+own colour; `solid: false` is the same thing standing back. Text is never
+dimmed by opacity, because half-opacity text is half-contrast text.
+
+**The copy asks before it tells.** In a step the predict-first question comes
+straight after the heading, and neither it nor anything above it gives the
+answer: the readout under the stage does. The heading is one concrete claim
+with one number in it; the body leads with what the picture shows and stays
+short; the formula and the NumPy follow. `tab` is the scene's one-word name
+on the rail, which is its own `#fragment`.
 
 ## What the browser check measures
 

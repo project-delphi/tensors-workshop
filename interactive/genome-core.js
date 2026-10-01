@@ -104,6 +104,16 @@
     });
   }
 
+  // How far apart two bases are once they are one-hot rows: the Euclidean
+  // distance between them. It is the square root of 2 for every pair of
+  // different letters, which is the whole argument for one-hot over numbering
+  // the bases 1 to 4 -- no base is nearer to one than to another.
+  function oneHotDistance(a, b) {
+    var u = oneHot(a)[0], v = oneHot(b)[0], d = 0, i;
+    for (i = 0; i < 4; i++) d += (u[i] - v[i]) * (u[i] - v[i]);
+    return Math.sqrt(d);
+  }
+
   // The two 4 x 4 matrices the transcription scene puts side by side.
   // T -> U moves no number at all: it is the identity, and only the label on
   // the axis changes. The complement swaps A with T and C with G, which in
@@ -142,6 +152,25 @@
   // 4 x 4 in the middle.
   function transcribe(seq, mode) {
     return decode(applyAlphabet(oneHot(seq), matrixFor(mode || "relabel")), RNA_BASES);
+  }
+
+  // The strand the polymerase actually reads. Paired base for base with the
+  // coding strand, so at every position it is the complement -- and on a
+  // one-hot grid in alphabetical order that is the alphabet axis reversed,
+  // X[:, ::-1], the same anti-diagonal matrix again. Transcribing it by that
+  // matrix gives back the coding strand's letters with U for T: the
+  // complement of a complement, J @ J = I, which is why the RNA reads like
+  // the strand that was never touched.
+  function templateStrand(seq) {
+    return decode(applyAlphabet(oneHot(seq), COMPLEMENT), BASES);
+  }
+
+  // How many ones sit in a different column of `out` than of `rows`: what a
+  // 4 x 4 moved. 0 for the identity, every row for the anti-diagonal.
+  function movedOnes(rows, out) {
+    var n = 0, i;
+    for (i = 0; i < rows.length; i++) if (rows[i].indexOf(1) !== out[i].indexOf(1)) n++;
+    return n;
   }
 
   // A window is a view, not a copy: `count` of them, each `width` wide, and
@@ -356,9 +385,9 @@
     CDS: CDS, PROTEIN: PROTEIN, CODE: CODE, CODE_T: CODE_T,
     PROPS: PROPS, PROP_NAMES: PROP_NAMES, MOTIF: MOTIF,
     RELABEL: RELABEL, COMPLEMENT: COMPLEMENT,
-    baseIndex: baseIndex, aaIndex: aaIndex, oneHot: oneHot,
+    baseIndex: baseIndex, aaIndex: aaIndex, oneHot: oneHot, oneHotDistance: oneHotDistance,
     matrixFor: matrixFor, applyAlphabet: applyAlphabet, decode: decode,
-    transcribe: transcribe, windows: windows,
+    transcribe: transcribe, templateStrand: templateStrand, movedOnes: movedOnes, windows: windows,
     codonTensor: codonTensor, nonZeros: nonZeros, codonGrid: codonGrid,
     codonAt: codonAt, codonCount: codonCount,
     translate: translate, translateByContraction: translateByContraction,

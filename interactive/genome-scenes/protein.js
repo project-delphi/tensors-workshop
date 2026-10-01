@@ -121,6 +121,7 @@
   }
 
   const EN = {
+    tab: "protein",
     k: "Section 06 · the protein",
     h: "An embedding is a contraction, not a lookup, and the chain is what it draws",
     concept: "A residue is a one-hot row of 20, exactly as a base is a row of 4. Multiplying the " +
@@ -163,6 +164,7 @@
   };
 
   const ES = {
+    tab: "proteína",
     k: "Sección 06 · la proteína",
     h: "Un embedding es una contracción, no una consulta, y la cadena es lo que dibuja",
     concept: "Un residuo es una fila one-hot de 20, igual que una base es una fila de 4. " +

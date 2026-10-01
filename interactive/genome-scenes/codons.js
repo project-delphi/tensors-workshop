@@ -120,6 +120,7 @@
   const hull = {min: [-2, -2, -2], max: [2, 2, 2]};
 
   const EN = {
+    tab: "codons",
     k: "Section 04 · the genetic code",
     h: "The genetic code is a 4 × 4 × 4 cube, and its blocks of one colour are redundancy",
     concept: "A codon is three bases, so it has three indices, and the table that turns codons " +
@@ -165,6 +166,7 @@
   };
 
   const ES = {
+    tab: "codones",
     k: "Sección 04 · el código genético",
     h: "El código genético es un cubo de 4 × 4 × 4, y sus bloques de un color son redundancia",
     concept: "Un codón son tres bases, así que tiene tres índices, y la tabla que convierte codones " +

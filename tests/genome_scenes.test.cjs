@@ -21,7 +21,7 @@ const PAGE = fs.readFileSync(path.join(ROOT, 'genome-stage.html'), 'utf8');
 // In the order genome-stage.html loads them.
 const SCENES = ['bases', 'window', 'transcribe', 'codons', 'translate', 'protein', 'search', 'batch'];
 const GL_SCENES = ['bases', 'codons', 'protein', 'search'];
-const REQUIRED_COPY = ['k', 'h', 'concept', 'claim', 'predict', 'b', 'aria', 'eqcap', 'np'];
+const REQUIRED_COPY = ['tab', 'k', 'h', 'concept', 'claim', 'predict', 'b', 'aria', 'eqcap', 'np'];
 // The closed set the page's <math> may point at. A ninth token here without a
 // letter carrying it is a scene lighting something nothing can hover.
 const HL_TOKENS = ['aa', 'base', 'codon', 'guide', 'pos', 'prop', 'rna', 'win'];
@@ -29,7 +29,20 @@ const HL_TOKENS = ['aa', 'base', 'codon', 'guide', 'pos', 'prop', 'rna', 'win'];
 // would have it overwritten on the next frame, silently.
 const FRAME_KEYS = ['cam', 'easing', 'gl', 'grab', 'hl', 'hover', 'paused',
   'playing', 'ready', 'scene', 'tensorshape', 'turns'];
-const BOX = [40, 58, 780, 390];
+const BOX = [40, 58, 780, 470];
+// The repo's ceiling for a NumPy line is 82. This stage's prose column is the
+// narrow one of the two, so its own is 74: what fits beside the stage without
+// the block scrolling sideways and hiding the comments.
+const NP_WIDTH = 74;
+// The flat board. A flat scene lays itself out on it, and nothing it draws
+// may be placed outside it: SVG neither clips nor reports such a child.
+const BOARD = {w: 820, h: 500};
+// The smallest type a scene may draw, in board units. Under it a thing is
+// drawn as colour, not as a letter nobody can read.
+const TYPE_FLOOR = 11;
+// GENOME_SCENE=window runs the per-scene tests for that scene alone.
+const ONLY = process.env.GENOME_SCENE;
+const each = (list) => (ONLY ? list.filter((s) => s.id === ONLY) : list);
 
 // ------------------------------------------------------------ a tiny DOM
 function fakeElement(tag) {
@@ -139,7 +152,7 @@ test('every scene registers, in the order the page loads them', () => {
 
 test('every scene carries the required copy in both languages, with matching key sets', () => {
   const {scenes} = load();
-  for (const scene of scenes) {
+  for (const scene of each(scenes)) {
     for (const lang of ['en', 'es']) {
       for (const key of REQUIRED_COPY) {
         assert.notEqual(scene.copy[lang][key], undefined, `${scene.id}: ${lang} copy lacks ${key}`);
@@ -156,7 +169,7 @@ test('every scene carries the required copy in both languages, with matching key
 
 test('every control is labelled in both languages, and every select option too', () => {
   const {scenes} = load();
-  for (const scene of scenes) {
+  for (const scene of each(scenes)) {
     for (const lang of ['en', 'es']) {
       const copy = scene.copy[lang];
       for (const spec of scene.controls || []) {
@@ -178,7 +191,7 @@ test('every control is labelled in both languages, and every select option too',
 
 test('every slider default sits on its own min/step grid', () => {
   const env = load();
-  for (const scene of env.scenes) {
+  for (const scene of each(env.scenes)) {
     const ctx = makeCtx(env, scene, 'en');
     scene.init(ctx);
     for (const spec of scene.controls || []) {
@@ -197,7 +210,7 @@ test('the page points only at tokens its scenes light', () => {
   const {scenes} = load();
   const onPage = [...new Set([...PAGE.matchAll(/data-hl="([a-z]+)"/g)].map((m) => m[1]))].sort();
   assert.deepEqual(onPage, HL_TOKENS, 'the page uses a token outside the closed set');
-  for (const scene of scenes) {
+  for (const scene of each(scenes)) {
     const section = PAGE.slice(PAGE.indexOf(`id="step-${scene.id}"`),
       PAGE.indexOf('</section>', PAGE.indexOf(`id="step-${scene.id}"`)));
     const used = new Set([...section.matchAll(/data-hl="([a-z]+)"/g)].map((m) => m[1]));
@@ -210,7 +223,7 @@ test('the page points only at tokens its scenes light', () => {
 
 test('the three.js scenes declare everything the frame needs to place a camera', () => {
   const {scenes} = load();
-  for (const scene of scenes) {
+  for (const scene of each(scenes)) {
     if (!GL_SCENES.includes(scene.id)) {
       assert.ok(!scene.gl, `${scene.id}: flat scene claims gl`);
       continue;
@@ -227,7 +240,7 @@ test('the three.js scenes declare everything the frame needs to place a camera',
 
 test('draw, readout and code survive every control setting in both languages', () => {
   const env = load();
-  for (const scene of env.scenes) {
+  for (const scene of each(env.scenes)) {
     for (const lang of ['en', 'es']) {
       for (const vals of settings(scene)) {
         const where = `${scene.id} ${lang} ${JSON.stringify(vals)}`;
@@ -257,7 +270,7 @@ test('draw, readout and code survive every control setting in both languages', (
         // The NumPy block is measured live in the browser check; measure it
         // here too, so a long line fails in a second rather than in CI.
         for (const line of lines) {
-          assert.ok(line.length <= 82, `${where}: NumPy line is ${line.length} chars: ${line}`);
+          assert.ok(line.length <= NP_WIDTH, `${where}: NumPy line is ${line.length} chars: ${line}`);
           assert.ok(!/NaN|undefined|Infinity/.test(line), `${where}: NumPy line ${line}`);
         }
       }
@@ -267,7 +280,7 @@ test('draw, readout and code survive every control setting in both languages', (
 
 test('a claim is rebuilt from the controls, not left as a static string', () => {
   const env = load();
-  for (const scene of env.scenes) {
+  for (const scene of each(env.scenes)) {
     const all = settings(scene);
     if (all.length < 2) continue;
     const seen = new Set(all.map((v) => String(run(env, scene, 'en', v).readout.claim)));
@@ -278,7 +291,7 @@ test('a claim is rebuilt from the controls, not left as a static string', () => 
 
 test('the flat twin stays inside the box at every orbit limit', () => {
   const env = load();
-  for (const scene of env.scenes) {
+  for (const scene of each(env.scenes)) {
     if (!scene.gl) continue;
     const lim = scene.pose.limits;
     for (const az of [lim.azMin, 0, lim.azMax]) {
@@ -308,7 +321,7 @@ test('no scene draws a hard-coded English string', () => {
   // legitimately draws "3.ª base". Base letters, residue letters, shapes and
   // NumPy identifiers are all legitimately literal too.
   const ENGLISH = /\b(the|and|with|from|each|window|guide|score|match|residue|sequence)\b/i;
-  for (const scene of env.scenes) {
+  for (const scene of each(env.scenes)) {
     const {ctx} = run(env, scene, 'es', {});
     walk(ctx.svg, (node) => {
       const t = String(node.textContent || '');
@@ -316,5 +329,68 @@ test('no scene draws a hard-coded English string', () => {
       assert.ok(!ENGLISH.test(t),
         `${scene.id}: drew "${t}" while the page is in Spanish, so it bypassed the copy table`);
     });
+  }
+});
+
+test('every readout says where on the gene its picture is looking', () => {
+  const env = load();
+  for (const scene of each(env.scenes)) {
+    for (const vals of settings(scene)) {
+      const {readout} = run(env, scene, 'en', vals);
+      const lens = readout.lens;
+      const where = `${scene.id} ${JSON.stringify(vals)}`;
+      assert.ok(lens, `${where}: no lens for the ribbon`);
+      assert.ok(Number.isInteger(lens.a) && Number.isInteger(lens.b), `${where}: lens is not whole bases`);
+      assert.ok(lens.a >= 0 && lens.b > lens.a && lens.b <= env.GC.CDS.length,
+        `${where}: lens ${lens.a}..${lens.b} is not a stretch of the gene`);
+      if (lens.done) {
+        assert.ok(lens.done[0] >= 0 && lens.done[1] >= lens.done[0] && lens.done[1] <= env.GC.CDS.length,
+          `${where}: lens.done ${lens.done} is not a stretch of the gene`);
+      }
+      if (lens.mark !== undefined && lens.mark !== null) {
+        assert.ok(lens.mark >= 0 && lens.mark < env.GC.CDS.length, `${where}: lens.mark ${lens.mark}`);
+      }
+    }
+    assert.equal(typeof scene.seek, 'function', `${scene.id}: the ribbon cannot move this picture (no seek)`);
+  }
+});
+
+test('a flat scene places nothing off its board, and prints nothing too small to read', () => {
+  const env = load();
+  const num = (v) => (v === undefined ? null : Number(v));
+  for (const scene of each(env.scenes)) {
+    if (scene.gl) continue;
+    for (const lang of ['en', 'es']) {
+      for (const vals of settings(scene)) {
+        const where = `${scene.id} ${lang} ${JSON.stringify(vals)}`;
+        const {ctx} = run(env, scene, lang, vals);
+        walk(ctx.svg, (node) => {
+          const a = node.attrs || {};
+          const xs = [], ys = [];
+          if (node.tag === 'rect') {
+            xs.push(num(a.x), num(a.x) + num(a.width)); ys.push(num(a.y), num(a.y) + num(a.height));
+          } else if (node.tag === 'text') {
+            xs.push(num(a.x)); ys.push(num(a.y));
+            assert.ok(num(a['font-size']) >= TYPE_FLOOR,
+              `${where}: "${node.textContent}" is set at ${a['font-size']}, under the ${TYPE_FLOOR}-unit floor`);
+          } else if (node.tag === 'line') {
+            xs.push(num(a.x1), num(a.x2)); ys.push(num(a.y1), num(a.y2));
+          } else if (node.tag === 'circle') {
+            xs.push(num(a.cx) - num(a.r), num(a.cx) + num(a.r)); ys.push(num(a.cy) - num(a.r), num(a.cy) + num(a.r));
+          } else if (node.tag === 'polyline' || node.tag === 'polygon') {
+            for (const pt of String(a.points).trim().split(/\s+/)) {
+              const [x, y] = pt.split(',').map(Number);
+              xs.push(x); ys.push(y);
+            }
+          }
+          for (const x of xs) {
+            assert.ok(x >= -1 && x <= BOARD.w + 1, `${where}: <${node.tag}> reaches x = ${x}, off the ${BOARD.w}-wide board`);
+          }
+          for (const y of ys) {
+            assert.ok(y >= -1 && y <= BOARD.h + 1, `${where}: <${node.tag}> reaches y = ${y}, off the ${BOARD.h}-tall board`);
+          }
+        });
+      }
+    }
   }
 });
