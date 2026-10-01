@@ -78,7 +78,7 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
     <p class="hero-caption">Real taxi trips, <code>4 × 5 × 24</code>: 480 numbers become a core plus three factors, at 6.7% error.</p>
   </div>
   <div class="hero-panel" id="hero-panel-genome" role="tabpanel" aria-labelledby="hero-tab-genome" hidden><a class="hero-still no-external" href="interactive/genome-stage.html?lang=en"><img src="images/hero-genome-stage-en.webp" width="1200" height="960" loading="lazy" alt="Open the widget: the genetic code as a 4 by 4 by 4 cube, each codon coloured by the residue it codes for"><span class="hero-still-cue" aria-hidden="true">Try it live →</span></a>
-    <p class="hero-caption">A codon is three one-hot vectors multiplied together: a <code>4 × 4 × 4</code> holding one 1.</p></div>
+    <p class="hero-caption">The genetic code as a <code>4 × 4 × 4</code>: six codons for leucine, one for methionine.</p></div>
   <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Click a picture to try it live.</p>
 </div>
 <div class="hero-fallback">
