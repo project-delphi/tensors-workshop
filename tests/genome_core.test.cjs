@@ -290,6 +290,14 @@ test('the tallies a claim card quotes are the core\'s, and these are them', () =
   assert.equal(G.synonymCount(G.aaIndex('W')), 1, 'tryptophan has one');
   for (const a of ['L', 'R', 'S']) assert.equal(G.synonymCount(G.aaIndex(a)), 6, `${a} has six`);
   assert.equal(G.synonymCount(20), 3, 'three stops');
+  assert.equal(G.fixedBoxes(), 8, 'eight of the sixteen first-two-base pairs fix the residue');
+  let boxesByHand = 0;
+  for (const a of 'ACGT') for (const b of 'ACGT') {
+    if (new Set([...'ACGT'].map((c) => G.translate(a + b + c))).size === 1) boxesByHand++;
+  }
+  assert.equal(G.pairFixed(0, 0), false, 'AA: AAA and AAT are not one residue');
+  assert.equal(G.pairFixed(2, 3), true, 'GT: GTx is valine whatever the third base');
+  assert.equal(G.fixedBoxes(), boxesByHand, 'fixedBoxes agrees with a direct count');
   // Every codon is spent on something, so the tallies sum to 64.
   let total = 0;
   for (let i = 0; i <= 20; i++) total += G.synonymCount(i);

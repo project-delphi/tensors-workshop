@@ -254,6 +254,7 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.nonzeros, '1');
   assert.equal(d.synonyms, '1');
   assert.equal(d.shape, '4,4,4');
+  assert.equal(d.boxes, '8', `${where}: 8 of the 16 first-two-base pairs fix the residue`);
   for (const n of [1, 17, 59, 0]) {
     await set('codons', 'n', n);
     await stageIs('n', n);

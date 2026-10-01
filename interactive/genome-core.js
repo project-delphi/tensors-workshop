@@ -362,6 +362,20 @@
     return n;
   }
 
+  // How many of the 16 (first base, second base) pairs fix the residue
+  // whatever the third base is: the boxes of the code, four cells of one
+  // colour in a row along the third axis. 8 in the standard code.
+  function pairFixed(i, j) {
+    var k;
+    for (k = 1; k < 4; k++) if (CODE_T[i][j][k] !== CODE_T[i][j][0]) return false;
+    return true;
+  }
+  function fixedBoxes() {
+    var n = 0, i, j;
+    for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) if (pairFixed(i, j)) n++;
+    return n;
+  }
+
   // How many windows tie for the top score, and what the next score down is.
   // The gap between them is the search scene's whole claim -- one window at
   // 20 and the runner-up at 12 is what makes a contraction a search rather
@@ -533,7 +547,8 @@
     embed: embed, matchScores: matchScores, weightedScores: weightedScores,
     motifAt: motifAt, motifMask: motifMask, maskedScores: maskedScores,
     mutate: mutate, batchScores: batchScores, topMatches: topMatches, max: max,
-    synonymCount: synonymCount, scoreSpread: scoreSpread, meanScore: meanScore,
+    synonymCount: synonymCount, fixedBoxes: fixedBoxes, pairFixed: pairFixed,
+    scoreSpread: scoreSpread, meanScore: meanScore,
     distinctResidues: distinctResidues,
     thirdSwaps: thirdSwaps, wobbleSilent: wobbleSilent,
     points: points, pairDistances: pairDistances, closeTo: closeTo, foldSummary: foldSummary,
