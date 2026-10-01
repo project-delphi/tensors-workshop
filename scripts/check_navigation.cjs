@@ -23,6 +23,7 @@ const attentionStage = require('./navigation/widgets/attention-stage.cjs');
 const linalgStage = require('./navigation/widgets/linalg-stage.cjs');
 const factorStage = require('./navigation/widgets/factor-stage.cjs');
 const voiceStage = require('./navigation/widgets/voice-stage.cjs');
+const genomeStage = require('./navigation/widgets/genome-stage.cjs');
 
 const root = process.env.NAV_ROOT ? path.resolve(process.env.NAV_ROOT) : path.resolve(__dirname, '../docs');
 const screenshots = process.env.SCREENSHOT_DIR || require('node:os').tmpdir();
@@ -39,7 +40,7 @@ const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
 // belongs to no one widget: that every rendered page is assigned a check,
 // the site pages, the day sheet's print layout, the hero, keyboard and
 // disclosure navigation, the readiness pages, the wide table and the
-// host-root/offline fallbacks, and the slides. The six widgets are spread
+// host-root/offline fallbacks, and the slides. The seven widgets are spread
 // across the rest, sized from measured wall time rather than line count
 // (see DECISIONS.md) so three concurrent shards land close together.
 const shard = harness.parseShard();
@@ -136,7 +137,7 @@ async function driveOneWidget(ctx, widget, where, lang) {
       }
 
       // The widgets, and the order the widgets/*.cjs `drive*` functions are
-      // written in. Keep the two in step: with six of them a reader looking
+      // written in. Keep the two in step: with seven of them a reader looking
       // for one callback has nothing else to go on. This is the full set
       // regardless of sharding -- WIDGET_FILES above, which decides who
       // runs which, is checked against it below, so a widget dropped from
@@ -159,6 +160,9 @@ async function driveOneWidget(ctx, widget, where, lang) {
         // rather than fetching half a megabyte of audio onto the homepage,
         // which is the fourth hero tab below.
         {file: 'voice-stage', heroEmbed: true, ...voiceStage},
+        // Its embed mode is the codon cube drawn flat and still, and it
+        // fetches nothing at all: the gene is a literal in genome-core.js.
+        {file: 'genome-stage', heroEmbed: true, ...genomeStage},
       ];
       assert.equal(ALL_WIDGETS.length, harness.WIDGET_FILES.length,
         'WIDGET_FILES (the sharding table) and the widgets table have drifted apart');

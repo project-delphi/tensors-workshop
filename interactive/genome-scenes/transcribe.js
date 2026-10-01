@@ -10,9 +10,14 @@
   const GC = window.GenomeCore, K = window.GenomeKit;
 
   const SHOWN = 12;          // bases on screen; 12 is four codons
+  // The board is 820 wide. A strip is SHOWN chips, so its width is its own
+  // number rather than SHOWN times the grid's cell: at the grid's 26 the RNA
+  // strip ran from 560 to 872, and the chips past 820 were simply never
+  // painted -- which is what SVG does with a child laid out past the viewBox.
+  // No clip, no error, and every data-* still correct.
   const L = {
-    dnaX: 58, rnaX: 560, stripY: 92, gridY: 118,
-    cellW: 26, cellH: 21, mX: 330, mY: 168, mCell: 30
+    dnaX: 58, rnaX: 540, stripY: 92, gridY: 118, stripW: 240,
+    cellW: 26, cellH: 21, mX: 360, mY: 168, mCell: 30
   };
 
   function facts(ctx) {
@@ -142,14 +147,14 @@
       // letter to the row that encodes it.
       K.label(svg, L.dnaX, L.stripY - 16, c.dnaLab, {size: 11, colour: "--stage-mute"});
       K.seqStrip(svg, f.dna, {
-        x: L.dnaX, y: L.stripY, w: SHOWN * L.cellW, h: 18,
+        x: L.dnaX, y: L.stripY, w: L.stripW, h: 18,
         lit: () => lit === "base"
       });
       K.numGrid(svg, f.rows, gridOpts(f.rows, L.dnaX, GC.BASES));
 
       K.label(svg, L.rnaX, L.stripY - 16, c.rnaLab, {size: 11, colour: "--stage-mute"});
       K.seqStrip(svg, f.rna, {
-        x: L.rnaX, y: L.stripY, w: SHOWN * L.cellW, h: 18,
+        x: L.rnaX, y: L.stripY, w: L.stripW, h: 18,
         at: () => "--gn-rna", lit: () => lit === "rna"
       });
       K.numGrid(svg, f.out, gridOpts(f.out, L.rnaX, GC.RNA_BASES));
