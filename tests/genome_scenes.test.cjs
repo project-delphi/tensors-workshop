@@ -19,8 +19,8 @@ const ROOT = path.join(__dirname, '..', 'interactive');
 const PAGE = fs.readFileSync(path.join(ROOT, 'genome-stage.html'), 'utf8');
 
 // In the order genome-stage.html loads them.
-const SCENES = ['bases', 'window', 'transcribe', 'codons', 'translate', 'protein', 'search', 'batch'];
-const GL_SCENES = ['bases', 'codons', 'protein', 'search'];
+const SCENES = ['bases', 'window', 'transcribe', 'codons', 'translate', 'protein', 'fold', 'search', 'batch'];
+const GL_SCENES = ['bases', 'codons', 'protein', 'fold', 'search'];
 const REQUIRED_COPY = ['tab', 'k', 'h', 'concept', 'claim', 'predict', 'b', 'aria', 'eqcap', 'np'];
 // The closed set the page's <math> may point at. A ninth token here without a
 // letter carrying it is a scene lighting something nothing can hover.
@@ -78,7 +78,8 @@ function load() {
       register(scene) { K.GenomeScenes.register(scene); scenes.push(scene); },
       list() { return scenes.slice(); }
     },
-    GenomeCore: GC, GenomeKit: K, LinalgCore: LC
+    GenomeCore: GC, GenomeKit: K, LinalgCore: LC,
+    GenomeFold: require('../interactive/genome-fold.js')
   };
   for (const name of SCENES) {
     delete require.cache[require.resolve(`../interactive/genome-scenes/${name}.js`)];
@@ -102,7 +103,7 @@ function makeCtx(env, scene, lang) {
     colour: () => '#123456', hl: null, hover: null,
     now: () => 1000, instant: true,
     changed() {}, setControls(vals) { Object.assign(ctx.state, vals); }, control: () => null,
-    aspect: 1.6
+    aspect: 1.6, board: () => ({...BOARD})
   };
   if (scene.gl) {
     const view = () => (scene.framing ? scene.framing(ctx, home()) : home());
@@ -388,6 +389,36 @@ test('a flat scene places nothing off its board, and prints nothing too small to
           }
           for (const y of ys) {
             assert.ok(y >= -1 && y <= BOARD.h + 1, `${where}: <${node.tag}> reaches y = ${y}, off the ${BOARD.h}-tall board`);
+          }
+        });
+      }
+    }
+  }
+});
+
+test('an inset is drawn on the board, in type that can be read', () => {
+  const env = load();
+  for (const scene of each(env.scenes)) {
+    if (!scene.hud) continue;
+    assert.ok(scene.gl, `${scene.id}: an inset is for a three.js scene; a flat one draws on its own board`);
+    for (const lang of ['en', 'es']) {
+      for (const vals of settings(scene)) {
+        const where = `${scene.id} ${lang} ${JSON.stringify(vals)} inset`;
+        const {ctx} = run(env, scene, lang, vals);
+        const hud = fakeElement('svg');
+        scene.hud(ctx, hud);
+        assert.ok(count(hud) > 20, `${where}: drew only ${count(hud)} nodes`);
+        walk(hud, (node) => {
+          const a = node.attrs || {};
+          for (const [k, v] of Object.entries(a)) {
+            assert.ok(!/NaN|undefined|Infinity/.test(v), `${where}: <${node.tag} ${k}="${v}"> is not a number`);
+          }
+          if (node.tag === 'text') {
+            assert.ok(Number(a['font-size']) >= TYPE_FLOOR, `${where}: "${node.textContent}" is under the type floor`);
+          }
+          if (node.tag === 'rect') {
+            assert.ok(Number(a.x) >= -1 && Number(a.x) + Number(a.width) <= BOARD.w + 1, `${where}: a rect leaves the board sideways`);
+            assert.ok(Number(a.y) >= -1 && Number(a.y) + Number(a.height) <= BOARD.h + 1, `${where}: a rect leaves the board vertically`);
           }
         });
       }

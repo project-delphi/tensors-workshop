@@ -1,9 +1,10 @@
 # The genome stage's scenes
 
-*DNA to an edit* (`interactive/genome-stage.html`) is a scroller: eight scenes
+*DNA to an edit* (`interactive/genome-stage.html`) is a scroller: nine scenes
 down the left, one sticky stage on the right. It follows one thread — a gene is
-read, transcribed, translated into the protein that then searches a sequence —
-and every arrow in that thread is an operation this workshop already teaches.
+read, transcribed, translated into a protein, the protein folds, and then it
+does its job, which is to search a sequence — and every arrow in that thread is
+an operation this workshop already teaches.
 
 **It is a stage about representation, not a design tool.** It shows what the
 arithmetic is. It does not recommend a target, score a real genome, or hand a
@@ -12,25 +13,30 @@ of the stage reads, and the About panel says so in both languages.
 
 | Scene | Section | The picture | The lesson |
 |---|---|---|---|
-| `#bases` | 01/04 | a double helix, 3-D | a base is a one-hot vector; a sequence is `(L, 4)` |
-| `#window` | 04 | the window matrix | `(W, L, 4)` is a view, not a copy |
-| `#transcribe` | 06 | two 4 × 4 matrices | T→U is the identity; the complement is the anti-diagonal |
-| `#codons` | 04 | the 64-cell cube, 3-D | a codon is a **rank-one** 4 × 4 × 4 |
-| `#translate` | 06 | cube against table | the genetic code is a 4 × 4 × 4; translation is one contraction |
-| `#protein` | 06 | the chain in property space, 3-D | `(P, 20) @ (20, 3)` — an embedding is a contraction |
-| `#search` | 06 | the guide sliding, 3-D | `einsum('wlb,lb->w')` — searching is one contraction |
-| `#batch` | 02/06 | a G × W heatmap | a batch is one more index in the same einsum |
+| `#bases` | 01/04 | a double helix over the grid it becomes, 3-D | a base is a one-hot vector; a sequence is `(L, 4)` |
+| `#window` | 04 | all 3,220 entries of the window array, as diagonal stripes | `(W, L, 4)` is a view, not a copy |
+| `#transcribe` | 06 | three strands, a polymerase, and the 4 × 4 for the base it is on | reading the template is the anti-diagonal; against the coding strand the same RNA is the identity |
+| `#codons` | 04 | the 64-cell cube and three one-hot vectors, 3-D | the code is a 4 × 4 × 4 with blocks; a codon is one cell of it |
+| `#translate` | 06 | mRNA, the code's four slices, the growing chain | translation is one contraction; a third-base swap is an edit |
+| `#protein` | 06 | the 20 residue kinds as a map, the chain as a walk, 3-D | `(P, 20) @ (20, 3)` — an embedding is a table you multiply by |
+| `#fold` | 03 | Cas12a's predicted structure over a grid of distances, 3-D | a fold is `(N, 3)`; `(60, 1300)` distances are one broadcast |
+| `#search` | 06 | the guide's one-hot grid over the sequence's, 3-D | `einsum('wlb,lb->w')` — searching is one contraction |
+| `#batch` | 02/06 | the guides beside their rows of a G × W grid | a batch is one more index in the same einsum |
 
-Four parts, each declared by the scene that opens it: *A sequence is a one-hot
+Five parts, each declared by the scene that opens it: *A sequence is a one-hot
 tensor* (`bases`) · *Transcription is a matrix* (`transcribe`) · *Translation is
-a contraction* (`codons`) · *The search is one einsum* (`search`).
+a contraction* (`codons`) · *The fold is a tensor too* (`fold`) · *The search is
+one einsum* (`search`).
 
 ## The data
 
-Two literals in `interactive/genome-core.js`, and nothing else. There is **no
-generator and no data file**: 180 bases and 60 residues are small enough to
-read in the source, and a literal cannot go stale behind your back the way a
-fetched file can.
+Three literals, and nothing is fetched. Two are in `interactive/genome-core.js`
+and were piped in by hand: 180 bases and 60 residues are small enough to read
+in the source, and a literal cannot go stale behind your back the way a
+fetched file can. The third is the predicted structure the `#fold` scene
+draws -- 1,300 points -- which is too long to pipe by hand, so
+`scripts/gen_genome_fold.py` writes it into `interactive/genome-fold.js` and
+the page loads that as a plain script.
 
 Both were piped in, never retyped. `PROTEIN` is not decoration — it is the
 deposited translation of `CDS`, so `tests/genome_core.test.cjs` can check this
@@ -80,6 +86,40 @@ initiator methionine, so the stage's first codon is `ATG` and the first residue
 is `M`. The commonly cited *Lachnospiraceae* entry is deposited without that
 first residue, which would have made the opening picture need a footnote.
 
+### The fold
+
+`genome-fold.js` is one alpha-carbon per residue of the AlphaFold model of the
+same protein, all 1,300, with each residue's pLDDT: `ca` is 3,900 numbers in
+angstroms to one decimal, `plddt` is 1,300, and `seq` is the model's own
+sequence. It is **generated** -- never hand-edit it.
+
+```
+source   https://alphafold.ebi.ac.uk/files/AF-A0Q7Q2-F1-model_v6.pdb
+sha256   fabfed1a6c7cb6645b4592bbaabb4fa855e25187914548baac8c0cf570fb1df1
+fetched  2026-10-01
+record   AlphaFold Protein Structure Database, model AF-A0Q7Q2-F1, version 6
+         (AlphaFold Monomer v2.0 pipeline); mean pLDDT 92.9
+licence  CC BY 4.0 -- Jumper et al., Nature 596 (2021); Varadi et al.,
+         Nucleic Acids Research 52 (2024)
+literal  genome-fold.js -- the CA atom of each of the 1,300 residues
+command  python3 scripts/gen_genome_fold.py
+```
+
+The generator refuses a model whose SHA-256 is not the pinned one, so a new
+database version stops the script instead of quietly redrawing the fold. The
+test holds the other end: the model's first 60 residues must be the core's own
+`PROTEIN`, which is the deposited translation of `CDS` -- so the structure on
+the stage is provably the structure of the protein the gene on the stage
+encodes.
+
+Two things the page says and must go on saying. **It is a prediction, not a
+measurement**: experimental structures of this protein exist (PDB 5NFV among
+them), and the stage uses the predicted one because it has every residue and
+one licence. And **the 60 residues do not fold onto themselves**: within the
+stretch no two residues more than six apart are within 8 Å. What they touch is
+the rest of the protein, which is why the grid is `(60, 1300)` and not
+`(60, 60)` -- the square one would have shown a diagonal and nothing else.
+
 ### The two scales, and the code
 
 `CODE` is the standard genetic code. It is written in the source in the classic
@@ -117,11 +157,28 @@ core and draws the answer.
   same with a third operand, and identical to `matchScores` when every weight
   is 1), `motifAt` / `motifMask` / `maskedScores` (a mask is broadcasting),
   `mutate` (deterministic, outside-in, so the readout is reproducible),
-  `batchScores`, `topMatches`, `max`.
+  `batchScores`, `topMatches`, `max`, `meanScore`.
+- **What the newer pictures quote** — `oneHotDistance` (every pair of bases is
+  √2 apart), `templateStrand` and `movedOnes` (the strand the enzyme reads;
+  how many ones a 4 × 4 moved), `appearances` (how many windows hold one
+  stored base), `thirdSwaps` and `wobbleSilent` (a third-base swap, and for
+  how many of the gene's codons it is always silent), `scaleProps` and
+  `nearestKind` (the embedding table on one footing; a kind's nearest
+  neighbour in it).
+- **The fold** — `points` (the free reshape of 3N numbers to `(N, 3)`),
+  `pairDistances` (`(A, 3)` against `(B, 3)` to `(A, B)`: the broadcast,
+  written out), `closeTo`, `farthestPartner`, `foldSummary`, `bondLengths`,
+  `mean`. The coordinates are not in the core; only what is done with them is.
 
 Numbers the stage puts on screen, all pinned: the guide at window 40 is the
-only one of 161 that scores 20, the runner-up scores 12, six windows carry the
-motif, and each mismatch costs exactly one.
+only one of 161 that scores 20, the runner-up scores 12, an average window
+6.2, and each mismatch costs exactly one; against the template all 180 ones
+change column and against the coding strand none does; 12 of the 60 codons
+survive any swap of their third base; and in the fold, at 8 Å, 556 of the
+78,000 distances are close, 40 of the 60 rows reach more than 100 residues
+down the chain, residue 4 lies 7.7 Å from residue 1,057, and neighbouring
+alpha-carbons are 3.85 Å apart.
+
 ## What a scene provides
 
 `GenomeScenes.register` throws unless the scene has `id`, `section`, `copy`,
@@ -144,6 +201,7 @@ motif, and each mismatch costs exactly one.
 | `readout().lens` | `{a, b}` half-open, in bases: the stretch of the gene the picture is looking at, for the ribbon; `done: [a, b]` a second, dimmer stretch; `mark` one base |
 | `seek(ctx, i)` | a press on the ribbon at base `i`: move the picture there, through `ctx.setControls` |
 | `arrive` / `animates` | stamp the entrance clock (`ctx.cache.arrive = ctx.now()`); say whether the picture is still moving |
+| `hud(ctx, svg)` | a flat inset over a three.js picture, drawn on `ctx.board()`; one drawing for both surfaces, redrawn when the controls, the pointer or a lit letter change, never per frame. With `pose.inset` (`{bottom: 0.33}`: a share of the stage) the camera and the twin frame the picture in what the inset leaves |
 | `pick` / `tip` | click and hover |
 | `pose` / `bounds` / `build` / `render` | the three.js half |
 
@@ -166,7 +224,9 @@ prose column is the narrow one, so `tests/genome_scenes.test.cjs` holds it to
 what fits there without the block scrolling sideways and hiding its comments.
 
 **The eight `data-hl` tokens are a closed set**: `pos`, `base`, `win`, `rna`,
-`codon`, `aa`, `prop`, `guide`. Pointing at a letter repaints the stage and
+`codon`, `aa`, `prop`, `guide`. The fold reuses three of them rather than
+adding to the set: `codon` is one of the 60 residues the page follows (i),
+`aa` any residue of the protein (j), `prop` a coordinate (d). Pointing at a letter repaints the stage and
 never calls `changed()`, because a hover must not rewrite the readout.
 
 **The residue tint is one function**, `K.residueTint`, shared by the codon cube
@@ -226,13 +286,19 @@ the dataset is rewritten, and the other keys are cleared, not stale, so waiting
 on `data-scene` alone reads `undefined`. That fails reliably only on the slower
 CI runner.
 
-It asserts the teaching numbers off `data-*`: transcription moving 0 of 12 ones
-one way and 12 the other, the search scoring 20 against a runner-up of 12 with
-each mismatch costing exactly one, a codon always holding exactly one non-zero,
-and 161 windows over 180 stored bases against the 3,220 copying them would take.
+It asserts the teaching numbers off `data-*`: transcription moving all 18 ones
+against the template and none against the coding strand, with the same RNA
+either way; the search scoring 20 against a runner-up of 12 with each mismatch
+costing exactly one; a codon always holding exactly one non-zero; 161 windows
+over 180 stored bases against the 3,220 copying them would take; a third-base
+swap of `AUG` changing the residue; and the fold's 556 close pairs at 8 Å. It
+also plays the transcription through (`data-playing`), presses on the ribbon
+and requires the picture to move there, walks the rail, and requires the
+predict-first line to sit straight after every heading.
 
 It measures the SVG children's union **through `getScreenCTM().inverse()`**, at
-each scene's opening values and at the corners of every control. The inverse is
+each scene's opening values and at the corners of every control, and the
+fold's inset against its own board the same way. The inverse is
 the point: `getCTM()` lands in viewport pixels, so a child 50 user units past
 the edge measures as comfortably inside and the check passes while the picture
 is wrong. That is not hypothetical — it is how the RNA strip ran to 872 on an

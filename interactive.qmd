@@ -142,22 +142,25 @@ Straight to [the cube laid flat](interactive/factor-stage.html?lang=en#unfold),
 <span data-language-key="genome-stage"></span>
 
 A gene is a string over a four-letter alphabet, which is already a tensor: 180
-bases of a real cas12 gene become a 180 × 4 grid of ones and zeros, one 1 per
-row. Follow it through — the windows a sliding frame cuts out without copying a
-base, transcription as a 4 × 4 matrix (reading the coding strand moves no number
-at all; the complement is the anti-diagonal), and then translation, where a
-codon turns out to be three one-hot vectors multiplied together, a 4 × 4 × 4
-with a single 1 in it. Contract that against the genetic code, itself a 4 × 4 ×
-4, and the code's redundancy becomes something you can see: six codons for
-leucine, one for methionine. Sixty residues make a protein, a 20 × 3 table of
-properties draws it as a chain in space, and checking a guide against every
-window of the sequence is one contraction — 161 windows, one perfect match, the
-runner-up at 12 of 20. It shows what the arithmetic is; it is not a tool for
-designing anything. Sections 04 and 06, and Appendix G.
+bases of a real cas12a gene become a 180 × 4 grid of ones and zeros, one 1 per
+row. Follow that one stretch through everything a cell does with it. A sliding
+window cuts 161 views out of it without copying a base. An enzyme reads one
+strand and the RNA comes out reading like the other, because transcription is a
+4 × 4 matrix and two complements undo each other. A codon is three one-hot
+vectors multiplied together, the genetic code is a 4 × 4 × 4, and translation is
+one contraction between them — where swapping a codon's third base is the
+page's first edit, and often changes nothing. Sixty residues land on 18 points
+of a property map; the whole protein, as AlphaFold predicts it, is a
+`(1300, 3)` array whose distances are one broadcast; and checking a guide
+against every window of the sequence is one einsum — 161 windows, one perfect
+match, the runner-up at 12 of 20. Under every picture is the gene itself, with
+the stretch that picture is looking at lit. It shows what the arithmetic is; it
+is not a tool for designing anything. Sections 04 and 06, and Appendix G.
 
-Straight to [a codon as a rank-1 tensor](interactive/genome-stage.html?lang=en#codons),
-[the genetic code as a 4 × 4 × 4](interactive/genome-stage.html?lang=en#translate),
-[the protein as a chain](interactive/genome-stage.html?lang=en#protein) or
+Straight to [transcription as a matrix](interactive/genome-stage.html?lang=en#transcribe),
+[the genetic code as a 4 × 4 × 4](interactive/genome-stage.html?lang=en#codons),
+[translation as one contraction](interactive/genome-stage.html?lang=en#translate),
+[the fold and its grid of distances](interactive/genome-stage.html?lang=en#fold) or
 [the search as one einsum](interactive/genome-stage.html?lang=en#search).
 
 [Open DNA to an edit](interactive/genome-stage.html?lang=en){.resource-button}

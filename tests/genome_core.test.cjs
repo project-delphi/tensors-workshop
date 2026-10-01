@@ -132,6 +132,23 @@ test('windows are a view: W = L - w + 1, and nothing is copied', () => {
   assert.throws(() => G.windows(G.CDS, 181), /bad window/);
 });
 
+test('a stored base is seen again in up to `width` windows', () => {
+  const n = G.CDS.length, w = 20, count = G.windows(G.CDS, w).count;
+  assert.equal(G.appearances(n, w, 0), 1);
+  assert.equal(G.appearances(n, w, 19), 20);
+  assert.equal(G.appearances(n, w, 90), 20);
+  assert.equal(G.appearances(n, w, 179), 1);
+  // Brute force, and the total is the 3,220 entries of the array.
+  let total = 0;
+  for (let i = 0; i < n; i++) {
+    let k = 0;
+    for (let j = 0; j < count; j++) if (i >= j && i < j + w) k++;
+    assert.equal(G.appearances(n, w, i), k);
+    total += k;
+  }
+  assert.equal(total, count * w);
+});
+
 test('a codon is a rank-one 4 x 4 x 4: 64 slots, one of them 1', () => {
   const T = G.codonTensor('ATG');
   assert.equal(G.nonZeros(T), 1, 'rank one means one non-zero');
@@ -294,4 +311,101 @@ test('the tallies a claim card quotes are the core\'s, and these are them', () =
   assert.equal(G.distinctResidues(G.PROTEIN), 18);
   assert.equal(G.distinctResidues('AAA'), 1);
   assert.equal(G.distinctResidues(''), 0);
+});
+
+test('the mean score over all 161 windows is the chance level the search predict turns on', () => {
+  const scores = G.matchScores(G.windows(G.CDS, 20).at(40), G.CDS);
+  let sum = 0;
+  for (const v of scores) sum += v;
+  assert.equal(G.meanScore(scores), sum / 161);
+  assert.equal(scores.length, 161);
+  // Far below the runner-up and near the one-in-four a random pair agrees at.
+  assert.ok(G.meanScore(scores) > 3 && G.meanScore(scores) < 7);
+  assert.equal(G.meanScore([2, 4, 6]), 4);
+  assert.equal(G.meanScore([]), 0);
+});
+
+test('a third-base swap: which codons it cannot change, counted from the table', () => {
+  assert.deepEqual(G.thirdSwaps('CTA'), ['L', 'L', 'L', 'L']);
+  assert.deepEqual(G.thirdSwaps('ATG'), ['I', 'I', 'M', 'I']);
+  // The count agrees with an independent loop over the gene's own codons.
+  let want = 0;
+  for (let n = 0; n < 60; n++) {
+    const c = G.CDS.substr(n * 3, 3);
+    if (['A', 'C', 'G', 'T'].every((b) => G.CODE[c.slice(0, 2) + b] === G.CODE[c])) want++;
+  }
+  assert.equal(G.wobbleSilent(G.CDS), want);
+  assert.ok(want > 0 && want < 60);
+  assert.equal(G.wobbleSilent('CTA'), 1);
+  assert.equal(G.wobbleSilent('ATG'), 0);
+});
+
+test('the property space is on one footing, and it means something', () => {
+  // Every axis runs exactly -1..1 over the 20-row table, so none dominates.
+  const S = G.PROPS.map(G.scaleProps);
+  for (let d = 0; d < 3; d++) {
+    assert.equal(Math.min(...S.map((r) => r[d])), -1);
+    assert.equal(Math.max(...S.map((r) => r[d])), 1);
+  }
+  // Chemically alike kinds are neighbours: isoleucine's is leucine (same
+  // volume, a little less hydrophobic), and the charged pairs sit together.
+  assert.equal(G.nearestKind('I').aa, 'L');
+  assert.equal(G.nearestKind('L').aa, 'I');
+  assert.equal(G.nearestKind('K').aa, 'R');
+  assert.equal(G.nearestKind('D').aa, 'E');
+  assert.equal(G.nearestKind('E').aa, 'D');
+  assert.ok(Math.abs(G.nearestKind('I').distance - 0.1556) < 1e-3);
+  // A kind is never its own neighbour.
+  for (const a of G.AAS) assert.notEqual(G.nearestKind(a).aa, a);
+});
+
+test('the fold: 1,300 residues, three coordinates each, and one grid of distances', () => {
+  const F = require('../interactive/genome-fold.js');
+  assert.equal(F.seq.length, 1300);
+  assert.equal(F.ca.length, 3 * 1300);
+  assert.equal(F.plddt.length, 1300);
+  // The structure is of the protein this gene encodes: its first 60 residues
+  // are the core's own PROTEIN, which is the deposited translation of CDS.
+  assert.equal(F.seq.slice(0, 60), G.PROTEIN);
+
+  const Y = G.points(F.ca), X = Y.slice(0, 60);
+  assert.equal(Y.length, 1300);
+  assert.deepEqual(Y[0], F.ca.slice(0, 3));
+  assert.throws(() => G.points([1, 2, 3, 4]), /not a run of x, y, z/);
+
+  // (60, 3) against (1300, 3) is (60, 1300), and one cell of it by hand.
+  const D = G.pairDistances(X, Y);
+  assert.equal(D.length, 60);
+  assert.equal(D[0].length, 1300);
+  const by = Math.hypot(X[3][0] - Y[1056][0], X[3][1] - Y[1056][1], X[3][2] - Y[1056][2]);
+  assert.ok(Math.abs(D[3][1056] - by) < 1e-9);
+  for (let i = 0; i < 60; i++) assert.equal(D[i][i], 0);
+
+  // The one number that does not depend on the fold: neighbouring
+  // alpha-carbons are about 3.8 angstroms apart, all 1,299 times.
+  const bonds = G.bondLengths(Y);
+  assert.equal(bonds.length, 1299);
+  for (const b of bonds) assert.ok(b > 3.6 && b < 4.05, `a bond of ${b}`);
+  assert.ok(Math.abs(G.mean(bonds) - 3.85) < 0.01);
+
+  // What the fold scene quotes at its opening cutoff of 8 angstroms: 556
+  // close pairs, 40 of the 60 rows reaching more than 100 positions down the
+  // chain, and residue 4 lying 7.7 angstroms from residue 1,057.
+  const s = G.foldSummary(D, 8, 100);
+  assert.equal(s.pairs, 556);
+  assert.equal(s.rows, 40);
+  assert.equal(s.farthest.i, 3);
+  assert.equal(s.farthest.j, 1056);
+  assert.equal(s.farthest.apart, 1053);
+  assert.equal(s.farthest.d.toFixed(1), '7.7');
+  // And at the residue it opens on, the tenth.
+  assert.equal(G.closeTo(D, 9, 8).length, 10);
+  const far = G.farthestPartner(D, 9, 8);
+  assert.equal(far.j, 1055);
+  assert.equal(far.apart, 1046);
+  // A tighter cutoff can only lose pairs.
+  assert.ok(G.foldSummary(D, 5, 100).pairs < s.pairs);
+  // The model's own confidence, averaged over the protein.
+  assert.equal(G.mean(F.plddt).toFixed(1), '92.9');
+  assert.equal(G.mean([]), 0);
 });

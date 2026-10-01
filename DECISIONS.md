@@ -857,6 +857,39 @@ stated on the page itself, in the About panel, in both languages, and in the
 Interactive card -- not left implicit -- because a reader who arrives at
 `#search` from a notebook link should not have to infer it.
 
+**The genome stage was rebuilt around one molecule, and gained a fold**
+(2026-10-01). Screenshots of the first version showed what its `data-*` could
+not: pictures filling a third of the stage in 8px type, a transcription scene
+that was three static grids, the biology and the tensor never in one frame, and
+eight scenes with no thread between them. A review of the copy found every
+predict-first question answered by the paragraph above it. So: the stage took
+the shape of its own flat board (820 × 500) and no text is set under 11 units,
+which `tests/genome_scenes.test.cjs` now walks every flat scene's SVG for;
+every scene has an entrance that performs its operation and a play control
+that repeats it; the predict line moved to straight after the heading, and the
+browser check requires that order; and under the stage sits the whole gene as
+a ribbon, with each scene's `readout()` returning the `lens` it is looking
+through. A scene with no `lens` or no `seek` fails the test, because the
+ribbon is the only thing that makes nine pictures one page.
+
+The fold came from a question -- is a protein structure a tensor too? -- and
+the data answered it better than expected. The first 60 residues of Cas12a do
+not fold onto themselves: nothing more than six positions apart is within 8 Å.
+What they touch is the rest of the protein, up to 1,053 positions away. So
+the grid the scene draws is `(60, 1300)`, not `(60, 60)`, which also makes the
+broadcast the honest one, two arrays of different lengths. The model is
+AlphaFold's (AF-A0Q7Q2-F1), chosen over an experimental structure because it
+has every residue under one licence, and the page says it is a prediction
+wherever it shows it. 1,300 points are too many to pipe in by hand as the two
+sequences were, so this one literal has a generator, `gen_genome_fold.py`,
+with the source file's SHA-256 pinned; the page loads the result as a script,
+so "fetches nothing" still holds.
+
+The grid is the frame's first inset: an SVG over the three.js canvas, drawn on
+the twin's own board so one drawing serves both surfaces, with `pose.inset`
+telling the camera and the twin to frame the molecule in what is left. It is
+redrawn when something changes, never per frame.
+
 ## Which document owns what
 
 **One home per fact.** The documents drifted once -- five copies of the
