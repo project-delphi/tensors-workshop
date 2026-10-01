@@ -237,7 +237,7 @@ hue at 5.5:1.
 
 ## How a scene looks, moves and reads
 
-These are what make the eight pictures one page, so they are rules and the
+These are what make the nine pictures one page, so they are rules and the
 test holds the ones it can.
 
 **The molecule and its tensor share a frame.** A helix sits over the grid it

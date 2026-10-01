@@ -37,7 +37,10 @@
     // large as it can be while it turns, where the residues' own bounding
     // box would leave a third of the stage empty.
     const reach = Math.max(...W.map((p) => Math.hypot(p[0], p[1], p[2]))) + 0.2;
-    const h = reach / Math.sqrt(3);
+    // ...less a little: one residue in twenty lies in the outer eighth of
+    // that ball, loops that can brush the frame's edge as the molecule turns,
+    // and framing to them would shrink everything else.
+    const h = reach * 0.88 / Math.sqrt(3);
     const bond = GC.mean(GC.bondLengths(Y));
     return (ctx.cache.model = {Y, X, D, W, reach, bounds: {min: [-h, -h, -h], max: [h, h, h]}, bond, summary: {}});
   }
@@ -345,19 +348,29 @@
       }));
       if (hov >= 0 && hov !== s.pick) band(hov, "--stage-ink", 0.14);
       band(s.pick, "--stage-ink", 0.26);
+      // The lit cells depend on the cutoff and the board, not on the pointer:
+      // up to 1,700 rects, so they are built once for each and re-attached,
+      // or a pointer run down the strip would rebuild the grid sixty times.
       const near = K.css("--gn-aa"), fold = K.css("--gn-hit");
-      for (let i = 0; i < OURS; i++) {
-        const row = m.D[i];
-        for (let j = 0; j < n; j++) {
-          if (j === i || row[j] >= s.cutoff) continue;
-          const local = Math.abs(j - i) <= 4;
-          const w = local ? Math.max(cw, 1.1) : 2.4;
-          svg.appendChild(K.el("rect", {
-            x: (x0 + (j + 0.5) * cw - w / 2).toFixed(2), y: (y0 + i * rowH).toFixed(2),
-            width: w, height: rowH + 0.15, fill: local ? near : fold
-          }));
+      const sig = s.cutoff + "|" + board.h;
+      let cells = ctx.cache.cells;
+      if (!cells || cells.sig !== sig) {
+        const g = K.el("g", {});
+        for (let i = 0; i < OURS; i++) {
+          const row = m.D[i];
+          for (let j = 0; j < n; j++) {
+            if (j === i || row[j] >= s.cutoff) continue;
+            const local = Math.abs(j - i) <= 4;
+            const w = local ? Math.max(cw, 1.1) : 2.4;
+            g.appendChild(K.el("rect", {
+              x: (x0 + (j + 0.5) * cw - w / 2).toFixed(2), y: (y0 + i * rowH).toFixed(2),
+              width: w, height: rowH + 0.15, fill: local ? near : fold
+            }));
+          }
         }
+        cells = ctx.cache.cells = {sig, g};
       }
+      svg.appendChild(cells.g);
       if (f.far && f.far.apart > 4) {
         svg.appendChild(K.el("circle", {
           cx: (x0 + (f.far.j + 0.5) * cw).toFixed(2), cy: (y0 + (s.pick + 0.5) * rowH).toFixed(2), r: 6,

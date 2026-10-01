@@ -101,9 +101,10 @@
 
   /* The stage is the shape of the board the flat scenes are laid out on,
      820 x 500, so a flat picture fills it edge to edge instead of sitting in
-     a letterbox; the ceiling keeps the dock and the bar on a short screen. */
+     a letterbox; the ceiling keeps the dock and the bar on a short screen,
+     where the rail, ribbon, dock and bar need about 22rem between them. */
   #stage {
-    position: relative; aspect-ratio: 820 / 500; max-height: 56vh;
+    position: relative; aspect-ratio: 820 / 500; max-height: min(56vh, calc(100vh - 22rem));
     background: var(--stage); border: 1px solid var(--line);
     border-radius: 10px 10px 0 0; overflow: hidden;
   }
@@ -172,7 +173,7 @@
     white-space: nowrap;
   }
 
-  /* The rail: the eight pictures by name, in the order the gene goes through
+  /* The rail: the nine pictures by name, in the order the gene goes through
      them, with a gap where a new part opens. The names are the pictures' own
      addresses (#transcribe, #search), so the map and the links agree. */
   #rail { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; margin: 0 0 0.55rem; }
@@ -214,9 +215,9 @@
   }
   .step .anchor { display: block; height: 0; }
   .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
-  /* The heading of the group a scene opens. The page is four ideas in
-     order -- a sequence, transcription, translation, the search -- not
-     eight numbered steps. */
+  /* The heading of the group a scene opens. The page is five ideas in
+     order -- a sequence, transcription, translation, the fold, the search --
+     not nine numbered steps. */
   .step .part {
     font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
     border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
