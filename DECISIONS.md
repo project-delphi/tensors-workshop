@@ -823,6 +823,40 @@ opening picture in, element by element, rather than tweening anything, since
 its contract keeps `<text>` still and its readouts are measured off the
 DOM. `movesOnLoad()` in the browser check is what keeps all six moving.
 
+**The genome stage fetches nothing, and its test checks the code against an
+outside record** (2026-09-30). Every other stage here loads its data: the taxi
+tensor, the recording, `photos.json`. This one's data is two strings in
+`genome-core.js` -- 180 bases of a real cas12a coding sequence and the 60
+residues it translates to. At that size a fetch buys nothing and costs a
+stand-in, a failure note and an `if (data)` branch on every draw, all of which
+the frame was carrying when it was copied from the factorisation stage and all
+of which are gone.
+
+What replaces the byte gate a generated data file would have had is the shape
+of the two literals. The protein is not decoration: it is the deposited
+translation of the sequence, so the first test requires this repo's genetic
+code to reproduce it residue for residue, by table lookup and by contraction
+both. A typo in either string fails that, and so does a wrong entry in the
+code table -- which was itself checked against all 1300 residues of the full
+protein, not just the 60 kept. The provenance ledger in
+`interactive/genome-scenes/README.md` follows `fonts/README.md`: record URL,
+the SHA-256 as fetched, the date, and the command that produced the literal.
+Both commands were re-run and reproduce the literals exactly. Neither string
+was ever retyped.
+
+The record is the *Francisella novicida* U112 gene rather than the more
+commonly cited *Lachnospiraceae* one for one reason: it is deposited with its
+initiator methionine, so the stage's first codon is `ATG` and its first
+residue is `M`. The other would have opened the page on a footnote.
+
+**A stage about representation, not a design tool** (2026-09-30). The genome
+stage stops at what the arithmetic is. It runs on one short stretch of one
+gene, its search scenes score that stretch against a guide taken from it, and
+it neither ranks candidate targets nor assembles anything. That boundary is
+stated on the page itself, in the About panel, in both languages, and in the
+Interactive card -- not left implicit -- because a reader who arrives at
+`#search` from a notebook link should not have to infer it.
+
 ## Which document owns what
 
 **One home per fact.** The documents drifted once -- five copies of the

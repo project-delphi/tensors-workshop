@@ -2,7 +2,7 @@
 title: ""
 pagetitle: "Interactivo · Tensores para Aprendizaje Automático"
 lang: es
-description: "Herramientas de navegador para el taller: broadcasting, el tensor de imagen, la atención, proyección y SVD, el tensor de audio, y Tucker y CP."
+description: "Herramientas de navegador para el taller: broadcasting, el tensor de imagen, la atención, proyección y SVD, el tensor de audio, Tucker y CP, y Del ADN a una edición."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -139,6 +139,33 @@ a <a href="../interactive/factor-stage.html?lang=es#als">ALS, resolución a reso
 o al <a href="../interactive/factor-stage.html?lang=es#budget">mismo presupuesto gastado de dos maneras</a>.
 
 <a href="../interactive/factor-stage.html?lang=es" class="resource-button">Abrir Tucker y CP</a>
+:::
+::: {.resource-card}
+### 🧬 Del ADN a una edición
+
+<span data-language-key="genome-stage"></span>
+
+Un gen es una cadena sobre un alfabeto de cuatro letras, y eso ya es un tensor:
+180 bases de un gen cas12 real se convierten en una rejilla de 180 × 4 de unos y
+ceros, con un 1 por fila. Síguela — las ventanas que un marco deslizante recorta
+sin copiar ninguna base, la transcripción como una matriz de 4 × 4 (leer la hebra
+codificante no mueve ningún número; el complemento es la antidiagonal) y después
+la traducción, donde un codón resulta ser tres vectores one-hot multiplicados
+entre sí, un 4 × 4 × 4 con un solo 1 dentro. Contrae eso contra el código
+genético, que también es un 4 × 4 × 4, y la redundancia del código se vuelve
+visible: seis codones para la leucina, uno para la metionina. Sesenta residuos
+forman una proteína, una tabla de propiedades de 20 × 3 la dibuja como una cadena
+en el espacio, y comparar una guía con cada ventana de la secuencia es una sola
+contracción — 161 ventanas, una coincidencia perfecta, la siguiente en 12 de 20.
+Enseña cuál es la aritmética; no es una herramienta para diseñar nada. Secciones
+04 y 06, y apéndice G.
+
+Directo a <a href="../interactive/genome-stage.html?lang=es#codons">un codón como tensor de rango 1</a>,
+al <a href="../interactive/genome-stage.html?lang=es#translate">código genético como un 4 × 4 × 4</a>,
+a <a href="../interactive/genome-stage.html?lang=es#protein">la proteína como una cadena</a>
+o a <a href="../interactive/genome-stage.html?lang=es#search">la búsqueda como un solo einsum</a>.
+
+<a href="../interactive/genome-stage.html?lang=es" class="resource-button">Abrir Del ADN a una edición</a>
 :::
 ::::
 

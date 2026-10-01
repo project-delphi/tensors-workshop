@@ -1,7 +1,7 @@
 ---
 title: ""
 pagetitle: "Interactive · Tensors for Machine Learning"
-description: "Browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, the audio tensor, and Tucker & CP."
+description: "Browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, the audio tensor, Tucker & CP, and DNA to an edit."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -135,6 +135,32 @@ Straight to [the cube laid flat](interactive/factor-stage.html?lang=en#unfold),
 [the same budget spent two ways](interactive/factor-stage.html?lang=en#budget).
 
 [Open Tucker and CP](interactive/factor-stage.html?lang=en){.resource-button}
+:::
+::: {.resource-card}
+### 🧬 DNA to an edit
+
+<span data-language-key="genome-stage"></span>
+
+A gene is a string over a four-letter alphabet, which is already a tensor: 180
+bases of a real cas12 gene become a 180 × 4 grid of ones and zeros, one 1 per
+row. Follow it through — the windows a sliding frame cuts out without copying a
+base, transcription as a 4 × 4 matrix (reading the coding strand moves no number
+at all; the complement is the anti-diagonal), and then translation, where a
+codon turns out to be three one-hot vectors multiplied together, a 4 × 4 × 4
+with a single 1 in it. Contract that against the genetic code, itself a 4 × 4 ×
+4, and the code's redundancy becomes something you can see: six codons for
+leucine, one for methionine. Sixty residues make a protein, a 20 × 3 table of
+properties draws it as a chain in space, and checking a guide against every
+window of the sequence is one contraction — 161 windows, one perfect match, the
+runner-up at 12 of 20. It shows what the arithmetic is; it is not a tool for
+designing anything. Sections 04 and 06, and Appendix G.
+
+Straight to [a codon as a rank-1 tensor](interactive/genome-stage.html?lang=en#codons),
+[the genetic code as a 4 × 4 × 4](interactive/genome-stage.html?lang=en#translate),
+[the protein as a chain](interactive/genome-stage.html?lang=en#protein) or
+[the search as one einsum](interactive/genome-stage.html?lang=en#search).
+
+[Open DNA to an edit](interactive/genome-stage.html?lang=en){.resource-button}
 :::
 ::::
 

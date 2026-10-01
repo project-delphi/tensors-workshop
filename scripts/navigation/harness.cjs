@@ -10,18 +10,18 @@ const http = require('node:http');
 const path = require('node:path');
 const fs = require('node:fs/promises');
 
-// The six widgets, and the order the widgets/*.cjs `drive*` functions are
+// The seven widgets, and the order the widgets/*.cjs `drive*` functions are
 // written in. `check_navigation.cjs`'s own ALL_WIDGETS table keeps the two in
-// step: with six of them a reader looking for one callback has nothing else
+// step: with seven of them a reader looking for one callback has nothing else
 // to go on. This is the full set regardless of sharding -- WIDGET_FILES is
 // what decides who runs which -- checked against ALL_WIDGETS there, so a
 // widget dropped from every shard's table is still caught rather than
 // quietly never run anywhere.
 const WIDGET_FILES = ['image-tensor', 'broadcasting-simulator', 'attention-stage',
-  'linalg-stage', 'factor-stage', 'voice-stage'];
+  'linalg-stage', 'factor-stage', 'voice-stage', 'genome-stage'];
 const SHARD_WIDGETS_FOR_3 = [
   [],                                                          // 0: site + hero only
-  ['linalg-stage', 'attention-stage'],                          // 1
+  ['linalg-stage', 'attention-stage', 'genome-stage'],           // 1
   ['voice-stage', 'factor-stage', 'image-tensor', 'broadcasting-simulator']  // 2
 ];
 

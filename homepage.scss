@@ -165,6 +165,12 @@ body { overflow-x: clip; }
 }
 .hero-bar { margin: 0 0 .6rem; }
 .hero-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
+/* Seven widgets in a three-column grid leave a last row of one, which reads as
+   a mistake rather than a choice. Letting the seventh span the row makes it
+   deliberate. The tab strip's own arrow keys step by 3 and wrap modulo the tab
+   count, so the spanning cell needs no script change -- but an eighth widget
+   would fill the row and this rule should go when that happens. */
+.hero-tabs button:nth-child(7):last-child { grid-column: 1 / -1; }
 .hero-tabs button {
   min-width: 0;
   width: 100%;

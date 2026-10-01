@@ -118,7 +118,7 @@ repo:
     - interactive/vendor/cmu-serif/cmu-serif-500-italic.woff2
     # The post-processing addons and the CSS2D label renderer, resolved from
     # the bare specifier `three` by an import map in linalg-stage.html,
-    # voice-stage.html and factor-stage.html. A map
+    # voice-stage.html, factor-stage.html and genome-stage.html. A map
     # is element content rather than an attribute, so the link harvest cannot
     # see it either -- these lines are the only thing that would notice one of
     # them failing to reach docs/.
@@ -156,6 +156,24 @@ repo:
     # relative path in factor-stage.html's own script -- the same reason
     # photos.json is listed here rather than trusted to a link harvest.
     - interactive/data/taxi.json
+    # The genome stage, DNA to an edit: its page, its arithmetic (pinned under
+    # npm test), its drawing kit, and one file per scene. Four of its scenes
+    # draw in three.js, through the same vendor/linalg-boot.js and addons
+    # above; each has an SVG twin, which is what the hero embed shows. It
+    # fetches nothing -- unlike every other stage here, its data is two short
+    # sequence literals inside genome-core.js, with their provenance in
+    # interactive/genome-scenes/README.md -- so there is no data file to list.
+    - interactive/genome-stage.html
+    - interactive/genome-core.js
+    - interactive/genome-kit.js
+    - interactive/genome-scenes/bases.js
+    - interactive/genome-scenes/window.js
+    - interactive/genome-scenes/transcribe.js
+    - interactive/genome-scenes/codons.js
+    - interactive/genome-scenes/translate.js
+    - interactive/genome-scenes/protein.js
+    - interactive/genome-scenes/search.js
+    - interactive/genome-scenes/batch.js
 
 workshop:
   authors:

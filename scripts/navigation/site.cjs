@@ -168,7 +168,8 @@ async function runHero(ctx) {
   const heroTabs = [
     ['layout', 'image-tensor'], ['broadcast', 'broadcasting-simulator'],
     ['linalg', 'linalg-stage'], ['voice', 'voice-stage'],
-    ['attention', 'attention-stage'], ['factor', 'factor-stage']];
+    ['attention', 'attention-stage'], ['factor', 'factor-stage'],
+    ['genome', 'genome-stage']];
   // Desktop width, set explicitly rather than inherited from whatever the
   // pages loop left it at: at 390px `.hero-demos` is CSS-hidden in favour
   // of `.hero-fallback`, and a shard that runs the pages loop but never the
@@ -225,6 +226,12 @@ async function runHero(ctx) {
       await page.waitForFunction(el => el.complete && el.naturalWidth > 0,
         await img.elementHandle(), {timeout: 10000});
     }
+    // The loop above leaves the last tab open, and the panel clicked below
+    // is the factorisation stage's -- which stopped being the last one when
+    // the genome stage was added, so its panel was hidden and the click went
+    // nowhere. Select it rather than assume the loop ended on it.
+    await page.locator('#hero-tab-factor').click();
+    await page.locator('#hero-panel-factor').waitFor({state: 'visible', timeout: 5000});
     // Clicking the picture is the way in, in the same tab. `no-external`
     // is what keeps it there: Quarto's link script compares a link with
     // `site-url`, so off the live host it would open every still in a
