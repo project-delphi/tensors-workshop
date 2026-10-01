@@ -1348,6 +1348,17 @@ def one_hot(s, alphabet=BASES):
 X = one_hot(seq)                      # (42, 4), one 1 per row
 assert X.sum(axis=1).min() == X.sum(axis=1).max() == 1
 
+# The standard code as a (4, 4, 4) of residue indices on the same ACGT axis,
+# written from the classic TCAG table so its block structure stays visible.
+AAS, TCAG = "ACDEFGHIKLMNPQRSTVWY", "TCAG"
+TABLE = ("FFLLSSSSYY**CC*W"            # T..
+         "LLLLPPPPHHQQRRRR"            # C..
+         "IIIMTTTTNNKKSSRR"            # A..
+         "VVVVAAAADDEEGGGG")           # G..
+res = lambda ch: 20 if ch == "*" else AAS.index(ch)
+CODE = np.array([[[res(TABLE[16 * TCAG.index(a) + 4 * TCAG.index(b) + TCAG.index(c)])
+                   for c in BASES] for b in BASES] for a in BASES])
+
 # TODO 1: Transcribe. Build the 4x4 that renames T to U, and the 4x4 that
 #         complements (A<->T, C<->G). One of them is np.eye(4). Which, and
 #         what is the other? Contract each with X over the base axis and

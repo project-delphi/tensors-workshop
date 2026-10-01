@@ -34,9 +34,15 @@ fetched file can.
 
 Both were piped in, never retyped. `PROTEIN` is not decoration — it is the
 deposited translation of `CDS`, so `tests/genome_core.test.cjs` can check this
-repo's genetic code against an outside authority instead of against itself. A
-typo in either literal fails that test, which is the only guard these two
-strings have.
+repo's genetic code against an outside authority instead of against itself.
+
+Be exact about what that guards. Any change that moves a residue fails the
+test: a wrong entry in the code table, a base dropped or transposed, a shifted
+reading frame. What it does **not** catch is a synonymous edit — `TTT` for
+`TTC` leaves every residue where it was. Nothing in the repo would notice that,
+and nothing can: the only thing that can tell you these 180 bases are still the
+record's 180 bases is re-running the command in the ledger below. That is why
+the command is written out rather than described.
 
 ### The coding sequence
 
@@ -116,9 +122,72 @@ core and draws the answer.
 Numbers the stage puts on screen, all pinned: the guide at window 40 is the
 only one of 161 that scores 20, the runner-up scores 12, six windows carry the
 motif, and each mismatch costs exactly one.
-
 ## What a scene provides
 
-The rest of this contract — the `register({...})` keys, the copy keys, the
-`data-hl` tokens, the equations and what the browser check measures — is
-written as the scenes land.
+`GenomeScenes.register` throws unless the scene has `id`, `section`, `copy`,
+`init`, `draw`, `readout` and `code`; a `gl` scene must also have `pose`,
+`build`, `render` and `bounds`, and both languages need `copy.aria`.
+
+| key | what it is for |
+|---|---|
+| `id` | the section, the `#fragment`, the dot on the step bar |
+| `section` | the workshop section, for the kicker |
+| `part` | `{en, es}`, on the scene that opens one of the four parts |
+| `hl` | the `data-hl` tokens its section's `<math>` may point at |
+| `controls` | `range` (min, max, step, fmt) or `select` (options) |
+| `copy` | `{en, es}`: k, h, concept, claim, predict, b, eqcap, aria, np, controls, options |
+| `init` | seed `ctx.state` |
+| `sync` | derive from the controls, and clamp one against another, before anything reads them |
+| `draw` | paint `ctx.svg` — a flat picture, or a GL scene's twin |
+| `readout` | `{html, claim, data}` |
+| `code` | the NumPy lines, through `K.code(rows)` |
+| `pick` / `tip` | click and hover |
+| `pose` / `bounds` / `build` / `render` | the three.js half |
+
+**Copy keys must match exactly between the two languages**, `np` included, and
+`options` is keyed by **control id first, then value** — flat looks right and
+silently falls back to the raw value, which is how the first scene shipped.
+
+**Every readout key is lowercase and every value a string**, because
+`stage.dataset.fN` writes `data-f-n`. The frame owns `ready`, `scene`, `gl`,
+`cam`, `easing`, `playing`, `paused`, `hl`, `hover`, `grab`, `turns` and
+`tensorshape`; a readout returning one of those has it overwritten next frame.
+
+**A claim is rebuilt from the controls**, never left as the copy table's static
+string. `tests/genome_scenes.test.cjs` fails a scene whose claim says the same
+thing at every setting, on the grounds that it is then decoration.
+
+**No NumPy line passes 82 characters** at any setting in either language,
+measured in the test and again live in the browser check.
+
+**The eight `data-hl` tokens are a closed set**: `pos`, `base`, `win`, `rna`,
+`codon`, `aa`, `prop`, `guide`. Pointing at a letter repaints the stage and
+never calls `changed()`, because a hover must not rewrite the readout.
+
+**The residue tint is one function**, `K.residueTint`, shared by the codon cube
+and the code slices — the blocks of one colour a reader spots in one have to be
+the same blocks in the other. It carries a lightness floor: at 62% the blue
+near hue 243 sat at 4.08:1 against the stage's black, and 68% puts the worst
+hue at 5.5:1.
+
+## What the browser check measures
+
+`scripts/navigation/widgets/genome-stage.cjs` opens each scene **by name**,
+never `#step-N`, through a helper that waits for the scroll to stop and for a
+key only that scene publishes — `data-scene` flips a frame before the rest of
+the dataset is rewritten, and the other keys are cleared, not stale, so waiting
+on `data-scene` alone reads `undefined`. That fails reliably only on the slower
+CI runner.
+
+It asserts the teaching numbers off `data-*`: transcription moving 0 of 12 ones
+one way and 12 the other, the search scoring 20 against a runner-up of 12 with
+each mismatch costing exactly one, a codon always holding exactly one non-zero,
+and 161 windows over 180 stored bases against the 3,220 copying them would take.
+
+It measures the SVG children's union **through `getScreenCTM().inverse()`**, at
+each scene's opening values and at the corners of every control. The inverse is
+the point: `getCTM()` lands in viewport pixels, so a child 50 user units past
+the edge measures as comfortably inside and the check passes while the picture
+is wrong. That is not hypothetical — it is how the RNA strip ran to 872 on an
+820-wide board and swept clean. SVG neither clips such a child nor reports it;
+it simply never paints it.

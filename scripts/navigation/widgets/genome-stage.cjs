@@ -1,5 +1,6 @@
-// DNA to an edit (sections 01/02/04/06), eight scenes on one 180-base gene,
-// four in three.js (bases, codons, protein, search) with SVG twins.
+// DNA to an edit (sections 04/06, Appendix G): eight scenes on 180 bases of
+// a real cas12a gene, four in three.js (bases, codons, protein, search) with
+// SVG twins. It fetches nothing -- the data is two literals in the core.
 const assert = require('node:assert/strict');
 
 const en = 'DNA to an edit';
