@@ -146,23 +146,26 @@ o al <a href="../interactive/factor-stage.html?lang=es#budget">mismo presupuesto
 <span data-language-key="genome-stage"></span>
 
 Un gen es una cadena sobre un alfabeto de cuatro letras, y eso ya es un tensor:
-180 bases de un gen cas12 real se convierten en una rejilla de 180 × 4 de unos y
-ceros, con un 1 por fila. Síguela — las ventanas que un marco deslizante recorta
-sin copiar ninguna base, la transcripción como una matriz de 4 × 4 (leer la hebra
-codificante no mueve ningún número; el complemento es la antidiagonal) y después
-la traducción, donde un codón resulta ser tres vectores one-hot multiplicados
-entre sí, un 4 × 4 × 4 con un solo 1 dentro. Contrae eso contra el código
-genético, que también es un 4 × 4 × 4, y la redundancia del código se vuelve
-visible: seis codones para la leucina, uno para la metionina. Sesenta residuos
-forman una proteína, una tabla de propiedades de 20 × 3 la dibuja como una cadena
-en el espacio, y comparar una guía con cada ventana de la secuencia es una sola
-contracción — 161 ventanas, una coincidencia perfecta, la siguiente en 12 de 20.
+180 bases de un gen cas12a real se convierten en una rejilla de 180 × 4 de unos y
+ceros, con un 1 por fila. Sigue ese tramo por todo lo que hace una célula con él.
+Una ventana deslizante recorta 161 vistas sin copiar ninguna base. Una enzima lee
+una hebra y el ARN sale leyéndose como la otra, porque la transcripción es una
+matriz de 4 × 4 y dos complementos se deshacen entre sí. Un codón son tres
+vectores one-hot multiplicados entre sí, el código genético es un 4 × 4 × 4 y la
+traducción es una sola contracción entre ambos — donde cambiar la tercera base de
+un codón es la primera edición de la página, y a menudo no cambia nada. Sesenta
+residuos caen en 18 puntos de un mapa de propiedades; la proteína entera, tal
+como la predice AlphaFold, es un arreglo `(1300, 3)` cuyas distancias son un solo
+broadcast; y comparar una guía con cada ventana de la secuencia es un solo
+einsum — 161 ventanas, una coincidencia perfecta, la siguiente en 12 de 20. Bajo
+cada imagen está el propio gen, con el tramo que esa imagen mira iluminado.
 Enseña cuál es la aritmética; no es una herramienta para diseñar nada. Secciones
 04 y 06, y apéndice G.
 
-Directo a <a href="../interactive/genome-stage.html?lang=es#codons">un codón como tensor de rango 1</a>,
-al <a href="../interactive/genome-stage.html?lang=es#translate">código genético como un 4 × 4 × 4</a>,
-a <a href="../interactive/genome-stage.html?lang=es#protein">la proteína como una cadena</a>
+Directo a <a href="../interactive/genome-stage.html?lang=es#transcribe">la transcripción como matriz</a>,
+al <a href="../interactive/genome-stage.html?lang=es#codons">código genético como un 4 × 4 × 4</a>,
+a <a href="../interactive/genome-stage.html?lang=es#translate">la traducción como una sola contracción</a>,
+a <a href="../interactive/genome-stage.html?lang=es#fold">el pliegue y su rejilla de distancias</a>
 o a <a href="../interactive/genome-stage.html?lang=es#search">la búsqueda como un solo einsum</a>.
 
 <a href="../interactive/genome-stage.html?lang=es" class="resource-button">Abrir Del ADN a una edición</a>

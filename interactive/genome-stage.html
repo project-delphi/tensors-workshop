@@ -79,8 +79,8 @@
      left to stick to. */
   .two-pane {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
-    gap: 1.75rem;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.4fr);
+    gap: 2rem;
     align-items: start;
     margin-top: 1.25rem;
   }
@@ -94,14 +94,19 @@
       display: flex; flex-direction: column;
       max-height: 100vh; max-height: 100svh;
     }
-    #stage { flex: 1 1 auto; height: auto; min-height: 12rem; }
+    #stage { flex: 1 1 auto; aspect-ratio: auto; max-height: none; min-height: 12rem; }
     .step { min-height: 0; padding: 1.4rem 0; }
+    #rail .stop { font-size: 0.72rem; padding: 0.2rem 0.5rem; }
   }
 
+  /* The stage is the shape of the board the flat scenes are laid out on,
+     820 x 500, so a flat picture fills it edge to edge instead of sitting in
+     a letterbox; the ceiling keeps the dock and the bar on a short screen,
+     where the rail, ribbon, dock and bar need about 22rem between them. */
   #stage {
-    position: relative; height: min(52vh, 30rem);
+    position: relative; aspect-ratio: 820 / 500; max-height: min(56vh, calc(100vh - 22rem));
     background: var(--stage); border: 1px solid var(--line);
-    border-radius: 10px; overflow: hidden;
+    border-radius: 10px 10px 0 0; overflow: hidden;
   }
   #stage[data-turns="1"] { cursor: grab; touch-action: pan-y; }
   #stage[data-grab] { cursor: grabbing; }
@@ -110,11 +115,18 @@
   #draw, #gl { display: block; width: 100%; height: 100%; }
   #gl { position: absolute; inset: 0; }
   #gl[hidden] { display: none; }
+  /* A flat inset over a three.js picture -- the grid of distances under the
+     fold -- on the same board the twin is drawn on, so one drawing serves
+     both surfaces. Only its pickable pieces take the pointer: everywhere
+     else a drag still turns the picture underneath. */
+  #hud { position: absolute; inset: 0; display: block; width: 100%; height: 100%; pointer-events: none; }
+  #hud[hidden] { display: none; }
+  #hud [data-pick] { pointer-events: auto; }
   /* A label over the three.js stage: the same opaque chip the SVG labels sit
      on, for the same reason -- axe cannot measure contrast over a canvas. */
   .lab {
-    font: 600 12px/1 var(--mono); color: var(--stage-ink); background: var(--stage-chip);
-    padding: 2px 5px; border-radius: 3px; white-space: nowrap; letter-spacing: 0.01em;
+    font: 600 13px/1 var(--mono); color: var(--stage-ink); background: var(--stage-chip);
+    padding: 3px 6px; border-radius: 4px; white-space: nowrap; letter-spacing: 0.01em;
   }
   .lab.mute { color: var(--stage-mute); font-weight: 500; }
   .lab.ba { color: var(--gb-a); }
@@ -127,11 +139,12 @@
   .lab.mask { color: var(--gn-mask); }
   .lab.core { color: var(--gn-core); }
   .lab.rna { color: var(--gn-rna); }
-  .lab.big { font-size: 14px; }
+  .lab.big { font-size: 16px; }
+  .lab.small { font-size: 11px; font-weight: 500; }
   .lab.lit { outline: 1px solid currentColor; }
   #claim {
     position: absolute; left: 0.75rem; top: 0.6rem; margin: 0; max-width: 62%;
-    font-size: 0.82rem; color: var(--stage-ink); background: var(--stage-chip);
+    font-size: 0.88rem; font-weight: 600; color: var(--stage-ink); background: var(--stage-chip);
     padding: 0.15rem 0.4rem; border-radius: 4px; font-family: var(--mono);
   }
   /* Two chips on one line growing towards each other. Overlapping absolute
@@ -160,14 +173,40 @@
     white-space: nowrap;
   }
 
-  #dots { display: inline-flex; gap: 0.35rem; align-items: center; }
-  .stagebar .dot {
-    width: 0.8rem; height: 0.8rem; padding: 0; border-radius: 50%;
-    border: 2px solid var(--ink-mute); background: transparent; cursor: pointer;
+  /* The rail: the nine pictures by name, in the order the gene goes through
+     them, with a gap where a new part opens. The names are the pictures' own
+     addresses (#transcribe, #search), so the map and the links agree. */
+  #rail { display: flex; flex-wrap: wrap; align-items: center; gap: 0.3rem; margin: 0 0 0.55rem; }
+  #rail .stop {
+    font: 600 0.78rem/1.2 var(--sans); color: var(--ink-mute); background: transparent;
+    border: 1px solid var(--line); border-radius: 999px; padding: 0.24rem 0.7rem;
   }
-  .stagebar .dot:hover { border-color: var(--accent); }
-  .stagebar .dot[aria-current="step"] { background: var(--accent); border-color: var(--accent); }
+  #rail .stop.opens { margin-left: 0.7rem; }
+  #rail .stop:hover { border-color: var(--accent); color: var(--accent); }
+  #rail .stop[aria-current="step"] { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
   #stepnum { font: 600 0.85rem/1 var(--sans); color: var(--ink-mute); }
+
+  /* The ribbon: the whole gene, 180 bases, one tick each, under every
+     picture. The bright stretch is what the picture above is looking at, so
+     the same molecule is on screen from the first scene to the last and only
+     the lens moves. aria-hidden: it names nothing the readout does not, and
+     every place it can send a reader a control can too. */
+  #ribbon {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 0.6rem;
+    background: var(--stage); border: 1px solid var(--line); border-top: 0;
+    border-radius: 0 0 10px 10px; padding: 0.3rem 0.75rem 0.4rem;
+    font: 500 0.72rem/1 var(--mono); color: var(--stage-mute);
+  }
+  #ribbon svg { display: block; width: 100%; height: 22px; cursor: pointer; touch-action: none; }
+  #ribbon .lens-cap { color: var(--stage-ink); min-width: 6.5em; text-align: right; }
+  html.embed #ribbon, html.embed #rail, html.embed #hud { display: none; }
+
+  /* A new picture fades in rather than cutting. data-easing stays "1" until
+     it has, so nothing measures a half-faded label. */
+  @media (prefers-reduced-motion: no-preference) {
+    #stage.swap #draw, #stage.swap #gl { animation: stage-in 260ms ease-out; }
+  }
+  @keyframes stage-in { from { opacity: 0; } to { opacity: 1; } }
 
   .step {
     min-height: 74vh;
@@ -176,9 +215,9 @@
   }
   .step .anchor { display: block; height: 0; }
   .step h2 { font-size: 1.2rem; font-weight: 650; margin: 0 0 0.2rem; }
-  /* The heading of the group a scene opens. The page is four ideas in
-     order -- a sequence, transcription, translation, the search -- not
-     eight numbered steps. */
+  /* The heading of the group a scene opens. The page is five ideas in
+     order -- a sequence, transcription, translation, the fold, the search --
+     not nine numbered steps. */
   .step .part {
     font: 600 0.8rem/1.3 var(--sans); color: var(--ink-mute);
     border-top: 1px solid var(--line); padding-top: 0.6rem; margin: 0 0 0.9rem; max-width: 36rem;
@@ -192,7 +231,10 @@
   .controls .val { float: right; font-family: var(--mono); font-weight: 500; color: var(--ink-mute); }
   .controls input[type="range"] { width: 100%; accent-color: var(--accent); }
   .controls select { width: 100%; max-width: 22rem; }
-  .controls .playrow { display: flex; align-items: center; gap: 0.6rem; }
+  .controls .playrow { display: flex; align-items: end; gap: 0.6rem; }
+  /* Four across under this stage: a picture with a play button has four
+     controls, and a second row of them would push the readout out of the dock. */
+  .dock .controls { grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); align-items: end; }
   .controls button.play { background: var(--accent); color: var(--on-accent); border-color: var(--accent); font-weight: 650; }
 
   .readout {
@@ -239,7 +281,7 @@
     margin: 0 0 0.3rem; font: 600 0.75rem/1.3 var(--sans);
     letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute);
   }
-  .np pre { margin: 0; contain: inline-size; border: 1px solid var(--line); }
+  .np pre { margin: 0; contain: inline-size; border: 1px solid var(--line); font-size: 0.72rem; }
   .np pre:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
   .step .body code, .readout code { font: 500 0.85em/1 var(--mono); }
 
@@ -248,7 +290,7 @@
   html.embed #stagecap, html.embed .hint { display: none; }
   html.embed .two-pane { display: block; margin: 0; }
   html.embed .stagewrap { position: static; height: 100vh; display: flex; flex-direction: column; }
-  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; height: auto; min-height: 0; }
+  html.embed #stage { flex: 1 1 auto; border: 0; border-radius: 0; aspect-ratio: auto; max-height: none; min-height: 0; }
 
   @media (prefers-reduced-motion: reduce) {
     html { scroll-behavior: auto; }
@@ -282,6 +324,7 @@
         <span class="anchor" id="bases"></span>
         <p class="kicker" id="k-bases"></p>
         <h2 id="h-bases"></h2>
+        <p class="predict" id="pr-bases"></p>
         <p class="concept" id="con-bases"></p>
         <div class="body" id="body-bases"></div>
         <div class="eq">
@@ -299,7 +342,6 @@
           <p class="nplabel" id="nplab-bases"></p>
           <pre id="np-bases" tabindex="0" role="region" aria-labelledby="nplab-bases"><code></code></pre>
         </div>
-        <p class="predict" id="pr-bases"></p>
         <div class="controls" id="ctl-bases"></div>
         <p class="readout" id="read-bases"></p>
       </section>
@@ -308,6 +350,7 @@
         <span class="anchor" id="window"></span>
         <p class="kicker" id="k-window"></p>
         <h2 id="h-window"></h2>
+        <p class="predict" id="pr-window"></p>
         <p class="concept" id="con-window"></p>
         <div class="body" id="body-window"></div>
         <div class="eq">
@@ -325,7 +368,6 @@
           <p class="nplabel" id="nplab-window"></p>
           <pre id="np-window" tabindex="0" role="region" aria-labelledby="nplab-window"><code></code></pre>
         </div>
-        <p class="predict" id="pr-window"></p>
         <div class="controls" id="ctl-window"></div>
         <p class="readout" id="read-window"></p>
       </section>
@@ -334,6 +376,7 @@
         <span class="anchor" id="transcribe"></span>
         <p class="kicker" id="k-transcribe"></p>
         <h2 id="h-transcribe"></h2>
+        <p class="predict" id="pr-transcribe"></p>
         <p class="concept" id="con-transcribe"></p>
         <div class="body" id="body-transcribe"></div>
         <div class="eq">
@@ -348,7 +391,6 @@
           <p class="nplabel" id="nplab-transcribe"></p>
           <pre id="np-transcribe" tabindex="0" role="region" aria-labelledby="nplab-transcribe"><code></code></pre>
         </div>
-        <p class="predict" id="pr-transcribe"></p>
         <div class="controls" id="ctl-transcribe"></div>
         <p class="readout" id="read-transcribe"></p>
       </section>
@@ -357,6 +399,7 @@
         <span class="anchor" id="codons"></span>
         <p class="kicker" id="k-codons"></p>
         <h2 id="h-codons"></h2>
+        <p class="predict" id="pr-codons"></p>
         <p class="concept" id="con-codons"></p>
         <div class="body" id="body-codons"></div>
         <div class="eq">
@@ -374,7 +417,6 @@
           <p class="nplabel" id="nplab-codons"></p>
           <pre id="np-codons" tabindex="0" role="region" aria-labelledby="nplab-codons"><code></code></pre>
         </div>
-        <p class="predict" id="pr-codons"></p>
         <div class="controls" id="ctl-codons"></div>
         <p class="readout" id="read-codons"></p>
       </section>
@@ -383,6 +425,7 @@
         <span class="anchor" id="translate"></span>
         <p class="kicker" id="k-translate"></p>
         <h2 id="h-translate"></h2>
+        <p class="predict" id="pr-translate"></p>
         <p class="concept" id="con-translate"></p>
         <div class="body" id="body-translate"></div>
         <div class="eq">
@@ -397,7 +440,6 @@
           <p class="nplabel" id="nplab-translate"></p>
           <pre id="np-translate" tabindex="0" role="region" aria-labelledby="nplab-translate"><code></code></pre>
         </div>
-        <p class="predict" id="pr-translate"></p>
         <div class="controls" id="ctl-translate"></div>
         <p class="readout" id="read-translate"></p>
       </section>
@@ -406,6 +448,7 @@
         <span class="anchor" id="protein"></span>
         <p class="kicker" id="k-protein"></p>
         <h2 id="h-protein"></h2>
+        <p class="predict" id="pr-protein"></p>
         <p class="concept" id="con-protein"></p>
         <div class="body" id="body-protein"></div>
         <div class="eq">
@@ -420,15 +463,41 @@
           <p class="nplabel" id="nplab-protein"></p>
           <pre id="np-protein" tabindex="0" role="region" aria-labelledby="nplab-protein"><code></code></pre>
         </div>
-        <p class="predict" id="pr-protein"></p>
         <div class="controls" id="ctl-protein"></div>
         <p class="readout" id="read-protein"></p>
+      </section>
+
+      <section class="step" id="step-fold" aria-labelledby="h-fold">
+        <span class="anchor" id="fold"></span>
+        <p class="kicker" id="k-fold"></p>
+        <h2 id="h-fold"></h2>
+        <p class="predict" id="pr-fold"></p>
+        <p class="concept" id="con-fold"></p>
+        <div class="body" id="body-fold"></div>
+        <div class="eq">
+          <div class="eqscroll" tabindex="0" role="group" aria-labelledby="eqcap-fold">
+            <math display="block">
+              <mrow><mi>D</mi><mo>&#x2208;</mo><msup><mi>&#x211D;</mi><mrow><mrow data-hl="codon" tabindex="0"><mn>60</mn></mrow><mo>&#xD7;</mo><mrow data-hl="aa" tabindex="0"><mn>1300</mn></mrow></mrow></msup></mrow>
+            </math>
+            <math display="block">
+              <mrow><mi>D</mi><mo stretchy="false">[</mo><mrow data-hl="codon" tabindex="0"><mi>i</mi></mrow><mo>,</mo><mrow data-hl="aa" tabindex="0"><mi>j</mi></mrow><mo stretchy="false">]</mo><mo>=</mo><msqrt><mrow><munder><mo>&#x2211;</mo><mrow><mrow data-hl="prop" tabindex="0"><mi>d</mi></mrow></mrow></munder><msup><mrow><mo stretchy="false">(</mo><mi>X</mi><mo stretchy="false">[</mo><mrow data-hl="codon" tabindex="0"><mi>i</mi></mrow><mo>,</mo><mrow data-hl="prop" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo><mo>&#x2212;</mo><mi>Y</mi><mo stretchy="false">[</mo><mrow data-hl="aa" tabindex="0"><mi>j</mi></mrow><mo>,</mo><mrow data-hl="prop" tabindex="0"><mi>d</mi></mrow><mo stretchy="false">]</mo><mo stretchy="false">)</mo></mrow><mn>2</mn></msup></mrow></msqrt></mrow>
+            </math>
+          </div>
+          <p class="eqcap" id="eqcap-fold"></p>
+        </div>
+        <div class="np">
+          <p class="nplabel" id="nplab-fold"></p>
+          <pre id="np-fold" tabindex="0" role="region" aria-labelledby="nplab-fold"><code></code></pre>
+        </div>
+        <div class="controls" id="ctl-fold"></div>
+        <p class="readout" id="read-fold"></p>
       </section>
 
       <section class="step" id="step-search" aria-labelledby="h-search">
         <span class="anchor" id="search"></span>
         <p class="kicker" id="k-search"></p>
         <h2 id="h-search"></h2>
+        <p class="predict" id="pr-search"></p>
         <p class="concept" id="con-search"></p>
         <div class="body" id="body-search"></div>
         <div class="eq">
@@ -443,7 +512,6 @@
           <p class="nplabel" id="nplab-search"></p>
           <pre id="np-search" tabindex="0" role="region" aria-labelledby="nplab-search"><code></code></pre>
         </div>
-        <p class="predict" id="pr-search"></p>
         <div class="controls" id="ctl-search"></div>
         <p class="readout" id="read-search"></p>
       </section>
@@ -452,6 +520,7 @@
         <span class="anchor" id="batch"></span>
         <p class="kicker" id="k-batch"></p>
         <h2 id="h-batch"></h2>
+        <p class="predict" id="pr-batch"></p>
         <p class="concept" id="con-batch"></p>
         <div class="body" id="body-batch"></div>
         <div class="eq">
@@ -466,7 +535,6 @@
           <p class="nplabel" id="nplab-batch"></p>
           <pre id="np-batch" tabindex="0" role="region" aria-labelledby="nplab-batch"><code></code></pre>
         </div>
-        <p class="predict" id="pr-batch"></p>
         <div class="controls" id="ctl-batch"></div>
         <p class="readout" id="read-batch"></p>
       </section>
@@ -474,18 +542,26 @@
     </div>
 
     <div class="stagewrap">
+      <nav id="rail" aria-label=""></nav>
       <!-- role="img" with a label rewritten per scene: every fact the stage
            draws is also in the readout. tabindex so the three.js scenes can
            be turned from the keyboard; bindStage() is never called in embed
            mode. -->
       <div id="stage" role="img" aria-label="" tabindex="0" data-gl="none">
-        <svg id="draw" viewBox="0 0 820 420" preserveAspectRatio="xMidYMid meet"></svg>
+        <svg id="draw" viewBox="0 0 820 500" preserveAspectRatio="xMidYMid meet"></svg>
         <canvas id="gl" hidden></canvas>
+        <svg id="hud" preserveAspectRatio="xMidYMid meet" hidden></svg>
         <p id="claim"></p>
         <p id="shapebadge" hidden></p>
         <p id="stagecap" hidden></p>
         <p id="glnote" hidden></p>
         <p id="tip" aria-hidden="true" hidden></p>
+      </div>
+
+      <div id="ribbon" aria-hidden="true">
+        <span id="ribbon-name"></span>
+        <svg id="ribbon-svg" viewBox="0 0 720 22" preserveAspectRatio="none"></svg>
+        <span class="lens-cap" id="ribbon-cap"></span>
       </div>
 
       <!-- The step in view's controls and readout, moved here from its
@@ -495,7 +571,6 @@
 
       <div class="stagebar">
         <button type="button" id="prev"></button>
-        <span id="dots" role="group" aria-labelledby="stepnum"></span>
         <span id="stepnum"></span>
         <button type="button" id="next"></button>
         <span class="grow"></span>
@@ -519,16 +594,18 @@
 
 </div>
 
-<!-- linalg-core.js supplies the SVD, the tweens, pickActive() and the orbit
-     camera; factor-core.js is the arithmetic factor-core.test.cjs pins;
-     factor-kit.js is the drawing kit and the scene registry. All plain
-     scripts, so the page works from file://. Four scenes draw in three.js,
+<!-- linalg-core.js supplies the tweens, pickActive() and the orbit camera;
+     genome-core.js is the arithmetic tests/genome_core.test.cjs pins;
+     genome-fold.js is the generated literal the fold scene draws;
+     genome-kit.js is the drawing kit and the scene registry. All plain
+     scripts, so the page works from file://. Five scenes draw in three.js,
      which vendor/linalg-boot.js hands over through bootGL() below --
      injected on the first three.js scene shown, so a page opened on a flat
      scene, or as the hero embed, never fetches it. -->
 <script src="step-dock.js"></script>
 <script src="linalg-core.js"></script>
 <script src="genome-core.js"></script>
+<script src="genome-fold.js"></script>
 <script src="genome-kit.js"></script>
 <script src="genome-scenes/bases.js"></script>
 <script src="genome-scenes/window.js"></script>
@@ -536,6 +613,7 @@
 <script src="genome-scenes/codons.js"></script>
 <script src="genome-scenes/translate.js"></script>
 <script src="genome-scenes/protein.js"></script>
+<script src="genome-scenes/fold.js"></script>
 <script src="genome-scenes/search.js"></script>
 <script src="genome-scenes/batch.js"></script>
 
@@ -561,48 +639,52 @@
       navHome: "\u2190 Workshop home",
       navInteractive: "Interactive",
       navNotebooks: "Notebooks",
-      intro: "A gene is a string over a four-letter alphabet, which is already a tensor: 180 bases of " +
-             "a real cas12 gene become a 180 \u00d7 4 grid of ones and zeros, exactly one 1 per row. " +
-             "This page is eight pictures of what happens next, in four parts. First the sequence " +
-             "itself, and the windows a sliding frame cuts out of it without copying a single base. " +
-             "Then transcription, which is a 4 \u00d7 4 matrix -- and the interesting part is which " +
-             "one: reading the coding strand moves no number at all, while the complement is the " +
-             "matrix with a single anti-diagonal. Then translation: reshape the bases into codons, and " +
-             "a codon is three one-hot vectors multiplied together -- a 4 \u00d7 4 \u00d7 4 with one 1 " +
-             "in it. Contract that against the genetic code, itself a 4 \u00d7 4 \u00d7 4, and a " +
-             "residue falls out; sixty of them make a protein, and a 20 \u00d7 3 table of properties " +
-             "draws it as a chain in space. Last, what that protein does: checking one 20-base guide " +
-             "against every window of the sequence is a single contraction, and checking several " +
-             "guides at once only puts another index in front of it. Four of the pictures turn -- drag " +
-             "them -- and you can click a base, a codon or a window to pick it. Each picture asks you " +
-             "to predict before you touch a control; the box under the controls is the answer, with " +
-             "this sequence\u2019s own numbers in it.",
+      intro: "A gene is a string over four letters, and that is already a tensor: write each letter as " +
+             "a row of four numbers and 180 bases become a 180 \u00d7 4 grid. This page follows one " +
+             "short stretch of one real gene, the start of cas12a, through what a cell does with it, " +
+             "and every arrow turns out to be one array operation on that grid: a view, a multiplication, a broadcast. That stretch is copied into " +
+             "RNA; the RNA is read three letters at a time into a protein; the protein folds, " +
+             "and its shape is one more array; and then Cas12a, the protein this gene encodes, " +
+             "does its job: it finds the stretch of DNA that matches a " +
+             "20-letter guide, the first step of an edit. The strip under the stage " +
+             "is that stretch, all 180 bases, and the bright part is what the picture above is " +
+             "looking at. Each picture asks you to predict first; the box under its controls answers " +
+             "with this stretch\u2019s own numbers.",
       reset: "Reset this picture", home: "Home view", glow: "Glow",
       motion: "Pause motion", motionOn: "Resume motion",
       prev: "\u25c0 Back", next: "Next \u25b6",
       pause: "\u275a\u275a Pause",
       stepOf: (i, n) => i + " of " + n,
       stepName: (i, n, h) => i + " of " + n + ": " + h,
-      hint: "Drag to turn \u00b7 scroll to move closer \u00b7 + / \u2212 keys \u00b7 click a base to pick it \u00b7 hover pauses motion.",
+      hint: "Drag to turn \u00b7 scroll to move closer \u00b7 + / \u2212 keys \u00b7 click a piece to pick it \u00b7 press on the strip of bases to move there.",
+      hintFlat: "Click a piece to pick it \u00b7 press on the strip of bases to move there.",
       glNoScript: "Three-dimensional view unavailable, so this picture is drawn flat. Every number is the same.",
       glNoWebgl: "This browser reports no WebGL, so this picture is drawn flat. Every number is the same.",
       glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "Three one-hot vectors multiplied: a 4 \u00d7 4 \u00d7 4 holding one 1.",
       shape: "Shape", concept: "Concept", code: "In NumPy",
+      rail: "The nine pictures",
+      ribbon: "cas12a \u00b7 its first 180 bases",
+      lens: (a, b) => (b - a === 1 ? "base " + (a + 1) : "bases " + (a + 1) + "\u2013" + b),
       aboutH: "About this page",
-      about1: "Nothing is fetched: every number here is computed in the browser from two short strings " +
-              "written into genome-core.js. They are the first 180 bases of the cas12a coding sequence " +
-              "of Francisella novicida U112 (ENA ABK90267.1) and the first 60 residues of the protein " +
-              "they code for (UniProt A0Q7Q2). The second is not decoration -- it is the deposited " +
-              "translation of the first, so the test suite can check this page\u2019s genetic code " +
-              "against an outside record rather than against itself. The code table, the Kyte-Doolittle " +
-              "hydropathy scale and the residue volumes are published reference values, and the ledger " +
-              "in genome-scenes/README.md records where each one came from.",
+      about1: "Nothing is fetched: every number here is computed in the browser from literals in the " +
+              "page\u2019s own scripts. Two are short strings: the first 180 bases of the cas12a coding " +
+              "sequence of Francisella novicida U112 (ENA ABK90267.1) and the first 60 residues of the " +
+              "protein they code for (UniProt A0Q7Q2). The second is the deposited translation of the " +
+              "first, so the test suite can check this page\u2019s genetic code against an outside " +
+              "record rather than against itself. The third is the structure in the fold picture: " +
+              "AlphaFold\u2019s model of that same protein (AF-A0Q7Q2-F1, version 6, from the AlphaFold " +
+              "Protein Structure Database, CC BY 4.0; Jumper et al. 2021, Varadi et al. 2024), one point " +
+              "per residue. It is a prediction, not a measurement; experimental structures of Cas12a " +
+              "exist too. The code table, the Kyte-Doolittle hydropathy scale and the residue volumes " +
+              "are published reference values, and the ledger in genome-scenes/README.md records where " +
+              "each of these came from.",
       about2: "This is a page about how sequence data is represented, not a tool for designing " +
-              "anything: it shows you what the arithmetic is, on one short stretch of one gene. It " +
-              "accompanies section 04 (reshape) and section 06 (einsum), with Appendix G\u2019s " +
-              "take-home. Each picture has its own address (#bases, #window, #transcribe, #codons, " +
-              "#translate, #protein, #search, #batch) and the notebooks link to whichever one they are " +
+              "anything: it shows you what the arithmetic is, on one short stretch of one gene, and " +
+              "the guide its search pictures look for is cut from that same stretch. It accompanies " +
+              "section 04 (reshape) and section 06 (einsum), with Appendix G\u2019s take-home. Each " +
+              "picture has its own address (#bases, #window, #transcribe, #codons, #translate, " +
+              "#protein, #fold, #search, #batch) and the notebooks link to whichever one they are " +
               "teaching.",
       turn: "Drag or use arrow keys to turn; scroll or use plus and minus to move closer. Hover pauses motion."
     },
@@ -612,54 +694,57 @@
       navHome: "\u2190 Inicio del taller",
       navInteractive: "Interactivo",
       navNotebooks: "Cuadernos",
-      intro: "Un gen es una cadena sobre un alfabeto de cuatro letras, y eso ya es un tensor: 180 bases " +
-             "de un gen cas12 real se convierten en una rejilla de 180 \u00d7 4 de unos y ceros, con " +
-             "exactamente un 1 por fila. Esta p\u00e1gina son ocho im\u00e1genes de lo que viene " +
-             "despu\u00e9s, en cuatro partes. Primero la secuencia misma, y las ventanas que un marco " +
-             "deslizante recorta de ella sin copiar una sola base. Luego la transcripci\u00f3n, que es " +
-             "una matriz de 4 \u00d7 4 -- y lo interesante es cu\u00e1l: leer la hebra codificante no " +
-             "mueve ning\u00fan n\u00famero, mientras que el complemento es la matriz con una sola " +
-             "antidiagonal. Despu\u00e9s la traducci\u00f3n: reorganiza las bases en codones, y un " +
-             "cod\u00f3n son tres vectores one-hot multiplicados entre s\u00ed -- un 4 \u00d7 4 " +
-             "\u00d7 4 con un solo 1 dentro. Contrae eso contra el c\u00f3digo gen\u00e9tico, que " +
-             "tambi\u00e9n es un 4 \u00d7 4 \u00d7 4, y sale un residuo; sesenta de ellos forman una " +
-             "prote\u00edna, y una tabla de propiedades de 20 \u00d7 3 la dibuja como una cadena en " +
-             "el espacio. Por \u00faltimo, lo que esa prote\u00edna hace: comparar una gu\u00eda de " +
-             "20 bases con cada ventana de la secuencia es una sola contracci\u00f3n, y hacerlo con " +
-             "varias gu\u00edas a la vez solo a\u00f1ade otro \u00edndice por delante. Cuatro de las " +
-             "im\u00e1genes giran -- arr\u00e1stralas -- y puedes hacer clic en una base, un " +
-             "cod\u00f3n o una ventana para seleccionarla. Cada imagen te pide predecir antes de tocar " +
-             "un control; el recuadro bajo los controles es la respuesta, con los n\u00fameros de esta " +
-             "misma secuencia.",
+      intro: "Un gen es una cadena sobre cuatro letras, y eso ya es un tensor: escribe cada letra como " +
+             "una fila de cuatro n\u00fameros y 180 bases se vuelven una rejilla de 180 \u00d7 4. " +
+             "Esta p\u00e1gina sigue un tramo corto de un gen real, el comienzo de cas12a, a " +
+             "trav\u00e9s de lo que una c\u00e9lula hace con \u00e9l, y cada flecha resulta ser " +
+             "una operaci\u00f3n de arreglos sobre esa rejilla: una vista, una multiplicaci\u00f3n, un broadcast. Ese tramo se copia a ARN; el ARN se lee de " +
+             "tres en tres letras para formar una prote\u00edna; la prote\u00edna se pliega, y " +
+             "su forma es un arreglo m\u00e1s; y entonces Cas12a, la prote\u00edna que este gen " +
+             "codifica, hace su trabajo: encuentra el tramo de ADN que " +
+             "coincide con una gu\u00eda de 20 letras, el primer paso de una edici\u00f3n. " +
+             "La cinta bajo el escenario es ese tramo, las 180 bases, y la " +
+             "parte brillante es lo que mira la imagen de arriba. Cada imagen te pide predecir " +
+             "primero; el recuadro bajo sus controles responde con los n\u00fameros de este mismo tramo.",
       reset: "Reiniciar esta imagen", home: "Vista inicial", glow: "Brillo",
       motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
       prev: "\u25c0 Atr\u00e1s", next: "Siguiente \u25b6",
       pause: "\u275a\u275a Pausa",
       stepOf: (i, n) => i + " de " + n,
       stepName: (i, n, h) => i + " de " + n + ": " + h,
-      hint: "Arrastra para girar \u00b7 usa la rueda para acercar \u00b7 teclas + / \u2212 \u00b7 haz clic en una base para seleccionarla \u00b7 el cursor pausa el movimiento.",
+      hint: "Arrastra para girar \u00b7 usa la rueda para acercar \u00b7 teclas + / \u2212 \u00b7 haz clic en una pieza para seleccionarla \u00b7 pulsa sobre la cinta de bases para ir all\u00ed.",
+      hintFlat: "Haz clic en una pieza para seleccionarla \u00b7 pulsa sobre la cinta de bases para ir all\u00ed.",
       glNoScript: "La vista tridimensional no est\u00e1 disponible, as\u00ed que esta imagen se dibuja plana. Todos los n\u00fameros son los mismos.",
       glNoWebgl: "Este navegador no reporta WebGL, as\u00ed que esta imagen se dibuja plana. Todos los n\u00fameros son los mismos.",
       glSlow: "El brillo est\u00e1 desactivado: este dispositivo no lo segu\u00eda bien. Vuelve a marcar la casilla para intentarlo de nuevo.",
       embedCap: "Tres vectores one-hot multiplicados: un 4 \u00d7 4 \u00d7 4 con un 1.",
       shape: "Forma", concept: "Concepto", code: "En NumPy",
+      rail: "Las nueve im\u00e1genes",
+      ribbon: "cas12a \u00b7 sus primeras 180 bases",
+      lens: (a, b) => (b - a === 1 ? "base " + (a + 1) : "bases " + (a + 1) + "\u2013" + b),
       aboutH: "Sobre esta p\u00e1gina",
       about1: "No se descarga nada: cada n\u00famero de aqu\u00ed se calcula en el navegador a partir " +
-              "de dos cadenas cortas escritas en genome-core.js. Son las primeras 180 bases de la " +
-              "secuencia codificante de cas12a de Francisella novicida U112 (ENA ABK90267.1) y los " +
-              "primeros 60 residuos de la prote\u00edna que codifican (UniProt A0Q7Q2). La segunda no " +
-              "es decoraci\u00f3n: es la traducci\u00f3n depositada de la primera, de modo que las " +
+              "de literales en los propios scripts de la p\u00e1gina. Dos son cadenas cortas: las " +
+              "primeras 180 bases de la secuencia codificante de cas12a de Francisella novicida U112 " +
+              "(ENA ABK90267.1) y los primeros 60 residuos de la prote\u00edna que codifican (UniProt " +
+              "A0Q7Q2). La segunda es la traducci\u00f3n depositada de la primera, de modo que las " +
               "pruebas pueden comprobar el c\u00f3digo gen\u00e9tico de esta p\u00e1gina contra un " +
-              "registro externo y no contra s\u00ed mismo. La tabla del c\u00f3digo, la escala de " +
-              "hidropat\u00eda de Kyte-Doolittle y los vol\u00famenes de los residuos son valores de " +
-              "referencia publicados, y el registro de procedencia en genome-scenes/README.md dice de " +
-              "d\u00f3nde sale cada uno.",
+              "registro externo y no contra s\u00ed mismo. El tercero es la estructura de la imagen " +
+              "del pliegue: el modelo de AlphaFold de esa misma prote\u00edna (AF-A0Q7Q2-F1, " +
+              "versi\u00f3n 6, de la AlphaFold Protein Structure Database, CC BY 4.0; Jumper et al. " +
+              "2021, Varadi et al. 2024), un punto por residuo. Es una predicci\u00f3n, no una " +
+              "medici\u00f3n; tambi\u00e9n existen estructuras experimentales de Cas12a. La tabla del " +
+              "c\u00f3digo, la escala de hidropat\u00eda de Kyte-Doolittle y los vol\u00famenes de " +
+              "los residuos son valores de referencia publicados, y el registro de procedencia en " +
+              "genome-scenes/README.md dice de d\u00f3nde sale cada uno.",
       about2: "Esta es una p\u00e1gina sobre c\u00f3mo se representan los datos de secuencia, no una " +
               "herramienta para dise\u00f1ar nada: te ense\u00f1a cu\u00e1l es la aritm\u00e9tica, " +
-              "sobre un tramo corto de un solo gen. Acompa\u00f1a a la secci\u00f3n 04 (reorganizar) " +
-              "y a la 06 (einsum), con el trabajo para casa del Ap\u00e9ndice G. Cada imagen tiene su " +
-              "propia direcci\u00f3n (#bases, #window, #transcribe, #codons, #translate, #protein, " +
-              "#search, #batch) y los cuadernos enlazan a la que est\u00e1n ense\u00f1ando.",
+              "sobre un tramo corto de un solo gen, y la gu\u00eda que buscan sus im\u00e1genes de " +
+              "b\u00fasqueda est\u00e1 cortada de ese mismo tramo. Acompa\u00f1a a la secci\u00f3n 04 " +
+              "(reorganizar) y a la 06 (einsum), con el trabajo para casa del Ap\u00e9ndice G. Cada " +
+              "imagen tiene su propia direcci\u00f3n (#bases, #window, #transcribe, #codons, " +
+              "#translate, #protein, #fold, #search, #batch) y los cuadernos enlazan a la que " +
+              "est\u00e1n ense\u00f1ando.",
       turn: "Arrastra o usa las flechas para girar; usa la rueda o m\u00e1s y menos para acercar. El cursor pausa el movimiento."
     }
   }[lang];
@@ -695,6 +780,7 @@
   const byId = (id) => scenes.find((s) => s.id === id);
 
   const stage = $("stage"), svg = $("draw");
+  const BOARD_H = 500;
 
   // The pausable clock the drift and the camera glide run on. Held by the
   // button, by a pointer over a three.js scene, by keyboard focus on it, and
@@ -765,13 +851,23 @@
       // Where a twin may draw: the board less the claim chip at the top and
       // the caption at the bottom.
       box: () => {
-        const vb = (svg.getAttribute("viewBox") || "0 0 820 420").split(/\s+/).map(Number);
-        return [40, 58, 780, vb[3] - 30];
-      }
+        const vb = (svg.getAttribute("viewBox") || "0 0 820 500").split(/\s+/).map(Number);
+        const I = insetOf(scene);
+        return [40 + 740 * I.left, 58 + (vb[3] - 88) * I.top, 780 - 740 * I.right, vb[3] - 30 - (vb[3] - 88) * I.bottom];
+      },
+      // The board the inset is drawn on: the twin's own, so a HUD laid out
+      // against its height sits where the twin left room for it.
+      board: () => ({w: 820, h: active.gl ? twinHeight() : BOARD_H})
     };
     ctxFor.set(scene.id, c);
     return c;
   }
+  // The share of the stage a scene keeps clear for its inset (pose.inset:
+  // fractions of the width and height). The camera and the twin both frame
+  // the picture in what is left.
+  const NO_INSET = {left: 0, right: 0, top: 0, bottom: 0};
+  const insetOf = (scene) => Object.assign({}, NO_INSET, (scene.pose && scene.pose.inset) || {});
+
   // A box around the same centre whose fitted scale is `want` rather than the
   // `got` it would give -- the current view fits at the home view's scale.
   function shrinkBox(box, want, got) {
@@ -895,13 +991,20 @@
   // data-playing while it runs. It stops on a change of picture, on a hand on
   // the control it is walking, and at the end.
   let player = null;
+  // A slider's top can move with another control (the helix's base with the
+  // number of pairs drawn), so the player reads it off the slider itself.
+  function liveMax(scene, target) {
+    const input = $("c-" + scene.id + "-" + target.id);
+    const m = input ? Number(input.max) : NaN;
+    return Number.isFinite(m) ? Math.min(target.max, m) : target.max;
+  }
   function togglePlay(scene, spec) {
     if (player) { const same = player.scene === scene && player.spec === spec; stopPlay(); if (same) return; }
     const ctx = contextFor(scene);
     const target = (scene.controls || []).find((c) => c.id === spec.target);
     if (!target) return;
     if (active !== scene) showScene(scene, false);
-    const lo = target.min, hi = target.max;
+    const lo = target.min, hi = liveMax(scene, target);
     let from = Number(ctx.state[spec.target]);
     if (from >= hi) from = lo;
     if (ctx.instant) { setControls(scene, {[spec.target]: hi}); return; }
@@ -923,9 +1026,10 @@
     const {spec, target} = player;
     const stepSize = target.step || 1;
     const raw = player.from + (spec.rate || 30) * (performance.now() - player.t0) / 1000;
-    const v = Math.min(target.max, target.min + Math.floor((raw - target.min) / stepSize + 1e-9) * stepSize);
+    const hi = liveMax(active, target);
+    const v = Math.min(hi, target.min + Math.floor((raw - target.min) / stepSize + 1e-9) * stepSize);
     if (v !== ctx.state[spec.target]) setControls(active, {[spec.target]: v});
-    if (v >= target.max) stopPlay();
+    if (v >= hi) stopPlay();
   }
 
   // -------------------------------------------------------- the readout
@@ -933,6 +1037,8 @@
   // when something changed -- rewriting it every frame destroys a reader's
   // selection and makes the browser check race the animation.
   const written = new Set();
+
+  let swapUntil = 0;
 
   function changed() {
     const ctx = contextFor(active);
@@ -961,6 +1067,8 @@
     badge.hidden = !sh;
     if (sh) stage.dataset.tensorshape = sh; else delete stage.dataset.tensorshape;
 
+    drawRibbon(r.lens);
+
     const aria = ctx.copy.aria ? ctx.copy.aria(ctx) : "";
     stage.setAttribute("aria-label", active.gl && GL.ready && !embed ? aria + " " + T.turn : aria);
 
@@ -976,7 +1084,96 @@
     });
     rebuildLabels(active);
     paint();
+    drawHud();
     stampEasing();
+  }
+
+  // The inset, on whichever surface is live. Drawn when something changed --
+  // the controls, the pointer, a letter pointed at -- never per frame.
+  function drawHud() {
+    const hud = $("hud");
+    const on = !!active.hud && !embed;
+    // An SVG element has no `hidden` property, only the attribute.
+    hud.toggleAttribute("hidden", !on);
+    if (!on) { if (hud.firstChild) hud.textContent = ""; return; }
+    const ctx = contextFor(active);
+    const b = ctx.board();
+    hud.setAttribute("viewBox", "0 0 " + b.w + " " + b.h);
+    hud.textContent = "";
+    active.hud(ctx, hud);
+  }
+
+  // ------------------------------------------------------------ the ribbon
+  // One tick per base of the gene, built once; the lens is the stretch the
+  // picture above is looking at, written by changed() from the scene's
+  // readout ({a, b} half-open, in bases; `done` a second, dimmer stretch;
+  // `mark` one base). A press or a drag on it asks the scene to look there
+  // (scene.seek), which goes through setControls like any other hand on a
+  // control -- so the ribbon is one more way to move a slider, never a second
+  // source of state.
+  const RIB = {w: 720, h: 22, built: false, lens: null, done: null, mark: null, ticks: []};
+  function buildRibbon() {
+    const el = $("ribbon-svg"), n = seq.length, tw = RIB.w / n;
+    $("ribbon-name").textContent = T.ribbon;
+    RIB.done = K.el("rect", {x: 0, y: 3, width: 0, height: RIB.h - 6, fill: K.css("--stage-ink"), "fill-opacity": 0.1});
+    el.appendChild(RIB.done);
+    for (let i = 0; i < n; i++) {
+      const t = K.el("rect", {
+        x: (i * tw + 0.5).toFixed(2), y: 6, width: Math.max(1, tw - 1).toFixed(2), height: RIB.h - 12,
+        fill: K.css(K.BASE_TOKEN[seq[i]]), "fill-opacity": 0.38
+      });
+      RIB.ticks.push(t);
+      el.appendChild(t);
+    }
+    RIB.lens = K.el("rect", {x: 0, y: 1.5, width: 0, height: RIB.h - 3, rx: 2, fill: "none",
+                             stroke: K.css("--gn-hit"), "stroke-width": 1.6});
+    el.appendChild(RIB.lens);
+    RIB.mark = K.el("path", {d: "", fill: K.css("--stage-ink")});
+    el.appendChild(RIB.mark);
+    RIB.built = true;
+
+    let held = false;
+    const at = (e) => {
+      const r = el.getBoundingClientRect();
+      return Math.max(0, Math.min(n - 1, Math.floor(((e.clientX - r.left) / Math.max(1, r.width)) * n)));
+    };
+    const seek = (e) => {
+      if (!active.seek) return;
+      dropDrift();
+      active.seek(contextFor(active), at(e));
+    };
+    el.addEventListener("pointerdown", (e) => {
+      held = true;
+      try { el.setPointerCapture(e.pointerId); } catch (_) { /* not fatal */ }
+      seek(e);
+    });
+    el.addEventListener("pointermove", (e) => { if (held) seek(e); });
+    const up = () => { held = false; };
+    el.addEventListener("pointerup", up);
+    el.addEventListener("pointercancel", up);
+  }
+  function drawRibbon(lens) {
+    if (embed) return;
+    if (!RIB.built) buildRibbon();
+    const n = seq.length, tw = RIB.w / n;
+    const L = lens || {a: 0, b: n};
+    const a = Math.max(0, Math.min(n, L.a)), b = Math.max(a, Math.min(n, L.b));
+    RIB.ticks.forEach((t, i) => {
+      const op = i >= a && i < b ? "1" : (L.done && i >= L.done[0] && i < L.done[1] ? "0.62" : "0.38");
+      if (t.getAttribute("fill-opacity") !== op) t.setAttribute("fill-opacity", op);
+    });
+    RIB.lens.setAttribute("x", Math.max(0.8, a * tw - 0.6).toFixed(2));
+    RIB.lens.setAttribute("width", Math.max(3, Math.min(RIB.w - 0.8, b * tw + 0.6) - Math.max(0.8, a * tw - 0.6)).toFixed(2));
+    if (L.done) {
+      RIB.done.setAttribute("x", (L.done[0] * tw).toFixed(2));
+      RIB.done.setAttribute("width", Math.max(0, (L.done[1] - L.done[0]) * tw).toFixed(2));
+    } else RIB.done.setAttribute("width", 0);
+    if (L.mark !== undefined && L.mark !== null) {
+      const x = (L.mark + 0.5) * tw;
+      RIB.mark.setAttribute("d", "M" + (x - 3.5).toFixed(2) + " 0L" + (x + 3.5).toFixed(2) + " 0L" + x.toFixed(2) + " 5.5Z");
+    } else RIB.mark.setAttribute("d", "");
+    $("ribbon-cap").textContent = T.lens(a, b);
+    $("ribbon-svg").style.cursor = active.seek ? "pointer" : "default";
   }
 
   // Whether the picture is still on its way to what the controls say --
@@ -987,7 +1184,9 @@
   // read it between the change and the next frame would see the old "0".
   function stampEasing() {
     const ctx = contextFor(active);
-    const moving = !!(active.animates && active.animates(ctx)) || glide.active;
+    const swapping = performance.now() < swapUntil;
+    if (!swapping && stage.classList.contains("swap")) stage.classList.remove("swap");
+    const moving = !!(active.animates && active.animates(ctx)) || glide.active || swapping;
     const v = moving ? "1" : "0";
     if (stage.dataset.easing !== v) stage.dataset.easing = v;
   }
@@ -1010,11 +1209,12 @@
     } else {
       stage.dataset.gl = "none";
       svg.textContent = "";
-      // A 2-D scene is laid out on a fixed 820 x 420 board. A three.js
-      // scene's twin is fitted, not laid out, so it takes a board the shape
-      // of the stage and fills it -- the hero embed's still is one of these,
-      // and letterboxed into 820 x 420 it was a picture a third of the frame.
-      const H = active.gl ? twinHeight() : 420;
+      // A 2-D scene is laid out on a fixed 820 x 500 board, which is the
+      // shape the stage itself takes. A three.js scene's twin is fitted, not
+      // laid out, so it takes a board the shape of whatever the stage is --
+      // the hero embed's still is one of these, and letterboxed into a fixed
+      // board it was a picture a third of the frame.
+      const H = active.gl ? twinHeight() : BOARD_H;
       const vb = "0 0 820 " + H;
       if (svg.getAttribute("viewBox") !== vb) svg.setAttribute("viewBox", vb);
       active.draw(contextFor(active));
@@ -1022,7 +1222,7 @@
   }
   function twinHeight() {
     const r = stage.getBoundingClientRect();
-    if (!r.width || !r.height) return 420;
+    if (!r.width || !r.height) return BOARD_H;
     return Math.max(420, Math.min(900, Math.round(820 * r.height / r.width)));
   }
 
@@ -1038,6 +1238,7 @@
       el.classList.toggle("is-lit", !!hl && el.dataset.hl === hl);
     });
     if (!glLive()) paint();
+    drawHud();
   }
 
   function bindEquations() {
@@ -1050,6 +1251,7 @@
     });
   }
 
+  let wasMoving = false;
   function frame() {
     const ctx = contextFor(active);
     stepPlay();
@@ -1058,7 +1260,10 @@
     // path repaints every frame anyway, for the drift and the glide.
     const moving = active.animates ? active.animates(ctx) : false;
     if (glLive()) renderGL();
-    else if (moving || glide.active) paint();
+    // One paint more than `moving` asks for: a picture that says it has
+    // arrived on this frame was last painted on the one before, a hair short.
+    else if (moving || glide.active || wasMoving) paint();
+    wasMoving = moving || glide.active;
     stampEasing();
     requestAnimationFrame(frame);
   }
@@ -1291,7 +1496,9 @@
     // The exact perspective bound: a corner `z` nearer the camera than the
     // target, `u` across and `v` up, is inside the frustum when the eye is at
     // least z + |u| / tan(half-fov-x) and z + |v| / tan(half-fov-y) away.
-    const ty = Math.tan(P.fov * Math.PI / 360), tx = ty * ctx.aspect;
+    const I = insetOf(scene);
+    const full = Math.tan(P.fov * Math.PI / 360);
+    const ty = full * (1 - I.top - I.bottom), tx = full * ctx.aspect * (1 - I.left - I.right);
     const m = P.margin || 1.08;
     let dist = 0;
     for (const p of K.corners(b.min, b.max)) {
@@ -1315,6 +1522,14 @@
     cam.up.set(0, 1, 0);
     cam.position.set(eye[0], eye[1], eye[2]);
     cam.lookAt(target[0], target[1], target[2]);
+    // Slide the view so the picture sits in the middle of what its inset
+    // leaves free, rather than under it.
+    const I = insetOf(active);
+    if (I.left || I.right || I.top || I.bottom) {
+      const r = stage.getBoundingClientRect();
+      const w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+      cam.setViewOffset(w, h, (I.right - I.left) / 2 * w, (I.bottom - I.top) / 2 * h, w, h);
+    }
     stampCam();
   }
 
@@ -1358,6 +1573,8 @@
   // publishes data-hover and a tip and repaints; a click that did not move
   // is a pick, and the scene turns it into control values.
   function pickAt(clientX, clientY, target) {
+    const piece = target && target.closest ? target.closest("[data-pick]") : null;
+    if (piece && $("hud").contains(piece)) return piece.getAttribute("data-pick");
     if (glLive()) {
       const ctx = contextFor(active);
       const gl = ctx.gl;
@@ -1371,8 +1588,7 @@
       const p = gl.pick.find((q) => q.mesh === h.object);
       return p ? p.key(h.instanceId) : null;
     }
-    const el = target && target.closest ? target.closest("[data-pick]") : null;
-    return el && svg.contains(el) ? el.getAttribute("data-pick") : null;
+    return piece && svg.contains(piece) ? piece.getAttribute("data-pick") : null;
   }
 
   function setHover(key, clientX, clientY) {
@@ -1383,6 +1599,7 @@
       hover = key;
       if (hover) stage.dataset.hover = hover; else delete stage.dataset.hover;
       if (!glLive()) paint();
+      drawHud();
     }
     if (!text) { tip.hidden = true; return; }
     tip.textContent = text;
@@ -1450,7 +1667,7 @@
       if (moved >= 5 || !quick || !active.pick) return;
       // Picked from where the press began: on the flat path the element under
       // a captured pointer is the stage, not the voxel.
-      const key = pickAt(e.clientX, e.clientY, glLive() ? null : target);
+      const key = pickAt(e.clientX, e.clientY, target);
       if (!key) return;
       dropDrift();
       active.pick(contextFor(active), key);
@@ -1507,15 +1724,17 @@
         $("k-" + s.id).before(part);
       }
     });
-    const dots = $("dots");
-    dots.replaceChildren();
+    const rail = $("rail");
+    rail.setAttribute("aria-label", T.rail);
+    rail.replaceChildren();
     scenes.forEach((s, i) => {
       const b = document.createElement("button");
       b.type = "button";
-      b.className = "dot";
-      b.setAttribute("aria-label", T.stepName(i + 1, scenes.length, s.copy[lang].h));
+      b.className = "stop" + (s.part && i > 0 ? " opens" : "");
+      b.textContent = s.copy[lang].tab || s.id;
+      b.title = s.copy[lang].h;
       b.addEventListener("click", () => goTo(i, true));
-      dots.appendChild(b);
+      rail.appendChild(b);
     });
   }
 
@@ -1531,9 +1750,15 @@
     step = scenes.indexOf(scene);
     scenes.forEach((s, j) => $("step-" + s.id).classList.toggle("is-active", j === step));
     if (dock) dock.show("step-" + scene.id);
-    Array.from($("dots").children).forEach((d, j) => {
+    Array.from($("rail").children).forEach((d, j) => {
       if (j === step) d.setAttribute("aria-current", "step"); else d.removeAttribute("aria-current");
     });
+    if (isNew && !reduceMotion && !embed) {
+      stage.classList.remove("swap");
+      void stage.offsetWidth;          // restart the fade if one was running
+      stage.classList.add("swap");
+      swapUntil = performance.now() + 280;
+    }
     $("prev").disabled = step === 0;
     $("next").disabled = step === scenes.length - 1;
     $("stepnum").textContent = T.stepOf(step + 1, scenes.length);
@@ -1544,7 +1769,8 @@
     stage.dataset.turns = three ? "1" : "0";
     $("home").hidden = !three;
     $("glow-wrap").hidden = !(three && GL.ready);
-    $("hint").hidden = !three;
+    $("hint").hidden = false;
+    $("hint").textContent = three ? T.hint : T.hintFlat;
     glNote(GL.note);
     if (three) bootGL();
     if (three && GL.ready && (isNew || !arrived.has(scene.id))) {
@@ -1603,7 +1829,6 @@
   $("reset").textContent = T.reset;
   $("home").textContent = T.home;
   $("glow-label").textContent = T.glow;
-  $("hint").textContent = T.hint;
   $("prev").textContent = T.prev;
   $("next").textContent = T.next;
   $("motion").textContent = reduceMotion ? T.motionOn : T.motion;
@@ -1646,7 +1871,7 @@
     refreshMotion();
   });
 
-  window.addEventListener("resize", () => { resizeGL(); if (!glLive()) paint(); });
+  window.addEventListener("resize", () => { resizeGL(); if (!glLive()) paint(); drawHud(); });
   if (!embed) addEventListener("hashchange", () => {
     const s = byId((location.hash || "").replace("#", ""));
     if (s) showScene(s, true);

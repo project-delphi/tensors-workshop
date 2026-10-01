@@ -73,6 +73,7 @@ text, then run the appropriate generator:
 | `images/hero-*-{en,es}.webp` (the homepage hero's widget stills) | `scripts/gen_hero_stills.cjs` (`npm run gen:hero`) |
 | `interactive/data/photos.json` (the visualizer's photos at 4, 8, 16, 32, 64 and 128 px) | `scripts/gen_figures.py widget` |
 | `interactive/data/taxi.json` (the factorisation stage's own copy of the Block 6 taxi tensor) | `scripts/gen_figures.py taxi` (network: the taxi CSV) |
+| `interactive/genome-fold.js` (the genome stage's predicted structure of Cas12a: 1,300 alpha-carbons and their pLDDT, as a literal) | `scripts/gen_genome_fold.py` (network: the AlphaFold database; SHA-256-pinned) |
 | `images/cube-00-*.gif` … `images/cube-15-*.gif` (at least three per notebook; `SCENES` stops at 15) | `scripts/gen_cube_gifs.py` |
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
 | `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
@@ -139,6 +140,16 @@ What each generator draws, and the rules each one keeps:
   against Tucker's dense one, the 8 × 8 block fold, and two rank-one terms
   growing as 1/ε while their sum converges -- the cancellation Part 3 of the
   notebook measures on a real kernel. Captions are expressions, `loop=0`.
+- `gen_genome_fold.py` writes the genome stage's `genome-fold.js`: one
+  alpha-carbon per residue of the AlphaFold model of Cas12a (UniProt A0Q7Q2),
+  1,300 of them, with each residue's pLDDT, as a literal the page loads with a
+  `<script src>` so the stage still fetches nothing. Standard library only.
+  The model file is SHA-256-pinned, so a new database version fails the script
+  rather than silently redrawing the fold; `FETCHED` is a constant, so the
+  output is byte-stable for a given model. `tests/genome_core.test.cjs` pins
+  the numbers the fold scene quotes and requires the model's first 60 residues
+  to be the core's own `PROTEIN`. The model is CC BY 4.0 and the file's header,
+  the page's About panel and the scenes README carry the attribution.
 - `gen_slide_art.py` draws the `slide-NNa` insertions from HTML and CSS,
   screenshotted by headless Chrome at 1920×1080 and encoded as WebP with
   Pillow, so it runs under `--group figures`. The thirty-one pre-existing slides
@@ -261,16 +272,21 @@ share.
   twins. Scenes `#tensor`, `#unfold`, `#hosvd`, `#tucker`, `#rank1`, `#cp`,
   `#als`, `#budget`; core `factor-core.js` (`tests/factor_core.test.cjs`).
   The contract is `interactive/factor-scenes/README.md`.
-- **DNA to an edit** (`genome-stage.html`, sections 04/06/Appendix G): eight
-  scenes in four parts, from a sequence as a one-hot tensor to a search that is
-  one contraction, four in three.js with SVG twins. Scenes `#bases`,
-  `#window`, `#transcribe`, `#codons`, `#translate`, `#protein`, `#search`,
-  `#batch`; core `genome-core.js` (`tests/genome_core.test.cjs`). The contract
-  is `interactive/genome-scenes/README.md`. It is the one stage that fetches
-  nothing: its data is two sequence literals in the core, whose provenance
-  ledger is in that README, and whose test checks the genetic code against the
-  deposited translation rather than against itself. It is a stage about how
-  sequence data is represented and deliberately not a design tool.
+- **DNA to an edit** (`genome-stage.html`, sections 04/06/Appendix G): nine
+  scenes in five parts, from a sequence as a one-hot tensor, through the
+  protein's predicted fold, to a search that is one contraction, five in
+  three.js with SVG twins. Scenes `#bases`, `#window`, `#transcribe`,
+  `#codons`, `#translate`, `#protein`, `#fold`, `#search`, `#batch`; core
+  `genome-core.js` (`tests/genome_core.test.cjs`). The contract is
+  `interactive/genome-scenes/README.md`. It is the one stage that fetches
+  nothing: its data is literals -- two sequences in the core, and the
+  AlphaFold model of the protein they encode in the generated
+  `genome-fold.js` -- whose provenance ledger is in that README, and whose
+  test checks the genetic code against the deposited translation, and the
+  structure against that protein, rather than against themselves. Under its
+  stage is the whole gene as a ribbon, and every scene says which stretch of
+  it it is looking at. It is a stage about how sequence data is represented
+  and deliberately not a design tool.
 
 **What the stages share.** Each is a scroller: one `<section class="step">`
 per scene down the left and a sticky stage on the right. A new scene is at
@@ -280,7 +296,7 @@ line; its stage's contract lists the rest.
 **A step's controls sit under the stage, not in its prose.** On a wide
 screen `interactive/step-dock.js` moves each step's controls and readout
 (`.ctl` and `.readout` on the projection stage, `.controls` and `.readout` on
-the other three) into a `#dock` between the stage and the step bar, and
+the others) into a `#dock` between the stage and the step bar, and
 shows the panel of the step in view; the predict-first line stays in the
 prose, where it is read before anything is touched. The nodes are moved, not
 copied, so ids, listeners and `data-*` are unchanged -- but a lookup that
@@ -665,6 +681,7 @@ uv run --group figures python scripts/gen_thumbnails.py
 uv run --group figures python scripts/gen_figures.py
 uv run --group figures python scripts/gen_figures.py widget   # just the visualizer's photos.json; no network
 uv run --group figures python scripts/gen_figures.py taxi     # the factorisation stage's taxi.json; needs the network
+python3 scripts/gen_genome_fold.py                            # the genome stage's genome-fold.js; needs the network, stdlib only
 uv run --group figures python scripts/gen_figures.py recap    # the one-idea slide's pictures; no network (data/)
 uv run --group figures python scripts/gen_cube_gifs.py        # notebooks 00–15
 uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two

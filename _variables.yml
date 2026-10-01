@@ -157,14 +157,17 @@ repo:
     # photos.json is listed here rather than trusted to a link harvest.
     - interactive/data/taxi.json
     # The genome stage, DNA to an edit: its page, its arithmetic (pinned under
-    # npm test), its drawing kit, and one file per scene. Four of its scenes
+    # npm test), its drawing kit, and one file per scene. Five of its scenes
     # draw in three.js, through the same vendor/linalg-boot.js and addons
     # above; each has an SVG twin, which is what the hero embed shows. It
-    # fetches nothing -- unlike every other stage here, its data is two short
-    # sequence literals inside genome-core.js, with their provenance in
-    # interactive/genome-scenes/README.md -- so there is no data file to list.
+    # fetches nothing -- unlike every other stage here, its data is literals:
+    # two short sequences inside genome-core.js, and the predicted structure
+    # the fold scene draws, which scripts/gen_genome_fold.py writes into
+    # genome-fold.js for the page to load as a plain script. Their provenance
+    # is in interactive/genome-scenes/README.md.
     - interactive/genome-stage.html
     - interactive/genome-core.js
+    - interactive/genome-fold.js
     - interactive/genome-kit.js
     - interactive/genome-scenes/bases.js
     - interactive/genome-scenes/window.js
@@ -172,6 +175,7 @@ repo:
     - interactive/genome-scenes/codons.js
     - interactive/genome-scenes/translate.js
     - interactive/genome-scenes/protein.js
+    - interactive/genome-scenes/fold.js
     - interactive/genome-scenes/search.js
     - interactive/genome-scenes/batch.js
 

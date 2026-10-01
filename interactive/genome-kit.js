@@ -225,7 +225,7 @@
     for (let i = 0; i < rows; i++) {
       for (let j = 0; j < cols; j++) wide = Math.max(wide, fmt(M[i][j], digits).length);
     }
-    const fontSize = Math.min(11.5, cellH * 0.72, (cellW - 4) / (0.62 * wide));
+    const fontSize = Math.min(o.font || 11.5, cellH * 0.72, (cellW - 4) / (0.62 * wide));
     const heat = fontSize < TEXT_FLOOR;
     let peak = 0;
     if (heat) {
@@ -958,7 +958,7 @@
     const want = o.size || 22;
     const cw = o.w ? Math.min(want, (o.w - gap * Math.max(0, n - 1)) / Math.max(1, n)) : want;
     const ch = o.h || Math.min(want, Math.max(cw, 4) * 1.15);
-    const fontSize = Math.min(13, cw * 0.78, ch * 0.72);
+    const fontSize = Math.min(o.font || 13, cw * 0.78, ch * 0.72);
     const letters = fontSize >= TEXT_FLOOR;
     const g = el("g", {});
     for (let i = 0; i < n; i++) {
@@ -989,9 +989,90 @@
     };
   }
 
+  // ------------------------------------------------------------- a tile
+  //
+  // One base, or one residue, as a tile: the letter on its own colour. Solid
+  // is the letter in the stage's black on the colour, for the thing the
+  // picture is about; `solid: false` is the letter in its colour on the
+  // stage's chip with a coloured edge, for the same thing standing back. A
+  // tile is never dimmed by opacity -- text at half opacity is text at half
+  // contrast -- so "standing back" is the ghost style and nothing fainter.
+  // `opts.ring` outlines it (the picked one); below the size at which a
+  // letter is a letter it is just the colour.
+  function tile(parent, x, y, w, h, letter, opts) {
+    const o = opts || {};
+    const tok = o.token || BASE_TOKEN[letter] || "--stage-mute";
+    const solid = o.solid !== false;
+    const g = el("g", o.pick ? {"data-pick": o.pick} : {});
+    const r = el("rect", {
+      x: x.toFixed(2), y: y.toFixed(2), width: Math.max(0.6, w).toFixed(2), height: Math.max(0.6, h).toFixed(2),
+      rx: (o.rx === undefined ? Math.min(5, w / 5) : o.rx).toFixed(2),
+      fill: css(solid ? tok : "--stage-chip")
+    });
+    if (o.ring) { r.setAttribute("stroke", css(o.ring)); r.setAttribute("stroke-width", 2.4); }
+    else if (!solid) { r.setAttribute("stroke", css(tok)); r.setAttribute("stroke-width", 1.2); }
+    g.appendChild(r);
+    const size = Math.min(o.font || 16, w * 0.8, h * 0.78);
+    if (letter && size >= TEXT_FLOOR) {
+      g.appendChild(el("text", {
+        x: (x + w / 2).toFixed(2), y: (y + h / 2 + size * 0.36).toFixed(2), "text-anchor": "middle",
+        "font-family": "var(--mono)", "font-size": size.toFixed(2), "font-weight": 700,
+        fill: css(solid ? "--stage" : tok)
+      }, letter));
+    }
+    parent.appendChild(g);
+    return g;
+  }
+
+  // Plain text on the stage's own black, for a caption that stands on empty
+  // board (a row's name, an axis letter). Anything over a picture takes
+  // label() instead: that one brings its own chip.
+  function text(parent, x, y, str, opts) {
+    const o = opts || {};
+    const t = el("text", {
+      x: x.toFixed(2), y: y.toFixed(2), "font-size": o.size || 12.5,
+      "font-family": o.sans ? "var(--sans)" : "var(--mono)", "font-weight": o.weight || 600,
+      fill: css(o.colour || "--stage-ink"), "text-anchor": o.anchor || "start",
+      "dominant-baseline": o.baseline || "auto"
+    }, str);
+    parent.appendChild(t);
+    return t;
+  }
+
+  // ----------------------------------------------------------- an entrance
+  //
+  // How far a picture is through its entrance, 0 to 1. A scene's arrive()
+  // stamps `ctx.cache.arrive`; until it has, and under reduced motion or the
+  // pause button, the picture is simply there. The readout never reads this:
+  // it is written from the controls on the first frame, and the entrance is
+  // only how the picture gets to what the readout already says.
+  function arrival(ctx, ms) {
+    const t0 = ctx.cache.arrive;
+    if (t0 === undefined || ctx.instant) return 1;
+    return Math.max(0, Math.min(1, (ctx.now() - t0) / ms));
+  }
+
+  // A number chasing a target with time constant `tau` seconds: the
+  // polymerase gliding to where the slider says, a window sliding to its
+  // place. `store[name]` holds it; `store[name + "Moving"]` says whether it
+  // has arrived, which is what a scene's animates() reports.
+  function chase(store, name, target, now, tau, instant) {
+    const s = store[name];
+    if (!s || instant) {
+      store[name] = {v: target, t: now, moving: false};
+      return target;
+    }
+    const dt = Math.min(0.1, Math.max(0, (now - s.t) / 1000));
+    s.t = now;
+    s.v += (target - s.v) * (1 - Math.exp(-dt / (tau || 0.18)));
+    if (Math.abs(target - s.v) < 0.01) s.v = target;
+    s.moving = s.v !== target;
+    return s.v;
+  }
+
   const GenomeKit = {
     GenomeScenes, css, residueTint, BASE_TOKEN, BASE_CLS, CLS_TOKEN, fmt, num, pct, sup, sub, shapeSup, code, idx,
-    el, label, numGrid, heat, bars, curve, seqStrip,
+    el, label, numGrid, heat, bars, curve, seqStrip, tile, text, arrival, chase,
     smooth, rotate, helix,
     viewBasis, projector, withLabels, corners, boxes2, edges2, spheres2, segments2,
     colour, light, voxels, spheres, segments, glowBox, frameBox, setBox, label2d, setLabel, labels2, labelPool, palette, ease, follow

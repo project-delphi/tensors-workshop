@@ -104,6 +104,16 @@
     });
   }
 
+  // How far apart two bases are once they are one-hot rows: the Euclidean
+  // distance between them. It is the square root of 2 for every pair of
+  // different letters, which is the whole argument for one-hot over numbering
+  // the bases 1 to 4 -- no base is nearer to one than to another.
+  function oneHotDistance(a, b) {
+    var u = oneHot(a)[0], v = oneHot(b)[0], d = 0, i;
+    for (i = 0; i < 4; i++) d += (u[i] - v[i]) * (u[i] - v[i]);
+    return Math.sqrt(d);
+  }
+
   // The two 4 x 4 matrices the transcription scene puts side by side.
   // T -> U moves no number at all: it is the identity, and only the label on
   // the axis changes. The complement swaps A with T and C with G, which in
@@ -144,6 +154,25 @@
     return decode(applyAlphabet(oneHot(seq), matrixFor(mode || "relabel")), RNA_BASES);
   }
 
+  // The strand the polymerase actually reads. Paired base for base with the
+  // coding strand, so at every position it is the complement -- and on a
+  // one-hot grid in alphabetical order that is the alphabet axis reversed,
+  // X[:, ::-1], the same anti-diagonal matrix again. Transcribing it by that
+  // matrix gives back the coding strand's letters with U for T: the
+  // complement of a complement, J @ J = I, which is why the RNA reads like
+  // the strand that was never touched.
+  function templateStrand(seq) {
+    return decode(applyAlphabet(oneHot(seq), COMPLEMENT), BASES);
+  }
+
+  // How many ones sit in a different column of `out` than of `rows`: what a
+  // 4 x 4 moved. 0 for the identity, every row for the anti-diagonal.
+  function movedOnes(rows, out) {
+    var n = 0, i;
+    for (i = 0; i < rows.length; i++) if (rows[i].indexOf(1) !== out[i].indexOf(1)) n++;
+    return n;
+  }
+
   // A window is a view, not a copy: `count` of them, each `width` wide, and
   // `at(i)` reads straight out of the original string. Nothing is duplicated,
   // which is the same stride argument the image visualizer makes.
@@ -155,6 +184,13 @@
       shape: [seq.length - width + 1, width, 4],
       at: function (i) { return seq.substr(i, width); }
     };
+  }
+
+  // How many windows contain base i: the window array repeats every stored
+  // base, and this is how often. Windows w with w <= i < w + width, w in range.
+  function appearances(length, width, i) {
+    var lo = Math.max(0, i - width + 1), hi = Math.min(i, length - width);
+    return Math.max(0, hi - lo + 1);
   }
 
   // A codon is the outer product of three one-hot vectors, so as a 4 x 4 x 4
@@ -326,6 +362,20 @@
     return n;
   }
 
+  // How many of the 16 (first base, second base) pairs fix the residue
+  // whatever the third base is: the boxes of the code, four cells of one
+  // colour in a row along the third axis. 8 in the standard code.
+  function pairFixed(i, j) {
+    var k;
+    for (k = 1; k < 4; k++) if (CODE_T[i][j][k] !== CODE_T[i][j][0]) return false;
+    return true;
+  }
+  function fixedBoxes() {
+    var n = 0, i, j;
+    for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) if (pairFixed(i, j)) n++;
+    return n;
+  }
+
   // How many windows tie for the top score, and what the next score down is.
   // The gap between them is the search scene's whole claim -- one window at
   // 20 and the runner-up at 12 is what makes a contraction a search rather
@@ -339,6 +389,16 @@
     return {top: top, count: n, runnerUp: next === -Infinity ? top : next};
   }
 
+  // The average score over every window: the chance level the search scene's
+  // predict question turns on. Two unrelated 20-base stretches agree at about
+  // five places, but this stretch is 74% A or T, so the measured mean is 6.2;
+  // the best wrong window is judged against this.
+  function meanScore(scores) {
+    var sum = 0, i;
+    for (i = 0; i < scores.length; i++) sum += scores[i];
+    return scores.length ? sum / scores.length : 0;
+  }
+
   // Distinct residues in a chain. The protein scene draws 60 beads that land
   // on far fewer points, and says so.
   function distinctResidues(protein) {
@@ -349,23 +409,151 @@
     return n;
   }
 
+  // Swapping only the third base of a codon: the residues the four choices
+  // give, in alphabetical A C G T order, and for how many codons of a coding
+  // sequence every one of them is the same residue (the wobble position,
+  // where the code's blocks of one colour pay off). Counted from the table.
+  function thirdSwaps(codon) {
+    var out = [], k;
+    for (k = 0; k < 4; k++) out.push(CODE[codon.slice(0, 2) + BASES[k]]);
+    return out;
+  }
+  function wobbleSilent(seq) {
+    var n = 0, i, s;
+    for (i = 0; i < codonCount(seq); i++) {
+      s = thirdSwaps(codonAt(seq, i));
+      if (s[0] === s[1] && s[1] === s[2] && s[2] === s[3]) n++;
+    }
+    return n;
+  }
+
+  // The embedding table on one footing. Volume runs 60-228 and charge only
+  // -1..1, so every axis is mapped to [-1, 1] by the extremes of the 20 x 3
+  // table itself (not of any one protein): the same residue is at the same
+  // point in any chain, and "near" means near on all three at once.
+  var PROP_LO = [0, 1, 2].map(function (d) {
+    return Math.min.apply(null, PROPS.map(function (r) { return r[d]; }));
+  });
+  var PROP_HI = [0, 1, 2].map(function (d) {
+    return Math.max.apply(null, PROPS.map(function (r) { return r[d]; }));
+  });
+  function scaleProps(row) {
+    return row.map(function (v, d) { return 2 * (v - PROP_LO[d]) / (PROP_HI[d] - PROP_LO[d]) - 1; });
+  }
+  // The kind whose row of the scaled table lies nearest this one's (itself
+  // excluded), and how far: what it means for the space to mean something.
+  function nearestKind(aa) {
+    var from = scaleProps(PROPS[aaIndex(aa)]), best = null, bd = Infinity;
+    AAS.split("").forEach(function (b, i) {
+      if (b === aa) return;
+      var to = scaleProps(PROPS[i]);
+      var d = Math.sqrt(from.reduce(function (acc, v, k) { return acc + (v - to[k]) * (v - to[k]); }, 0));
+      if (d < bd) { bd = d; best = b; }
+    });
+    return {aa: best, distance: bd};
+  }
+
   function max(list) { return list.reduce(function (a, b) { return b > a ? b : a; }, -Infinity); }
+
+  // ---- the fold. A structure is (N, 3): one row per residue, x, y and z of
+  // its alpha-carbon in angstroms. The numbers themselves are not here --
+  // they are the generated literal in genome-fold.js -- only what is done
+  // with them is.
+
+  // The free reshape: a flat run of 3N numbers read as N rows of three.
+  function points(flat) {
+    if (flat.length % 3) throw new Error("not a run of x, y, z: " + flat.length);
+    var out = [], i;
+    for (i = 0; i < flat.length; i += 3) out.push([flat[i], flat[i + 1], flat[i + 2]]);
+    return out;
+  }
+
+  // (A, 3) against (B, 3) -> (A, B): every distance between a row of X and a
+  // row of Y. In NumPy this is one broadcast, X[:, None, :] - Y[None, :, :],
+  // squared and summed over the last axis; the two loops here are that
+  // subtraction written out, and the test checks a cell of it by hand.
+  function pairDistances(X, Y) {
+    return X.map(function (a) {
+      return Y.map(function (b) {
+        var dx = a[0] - b[0], dy = a[1] - b[1], dz = a[2] - b[2];
+        return Math.sqrt(dx * dx + dy * dy + dz * dz);
+      });
+    });
+  }
+
+  // Row i of D is residue i of the stretch, and since the stretch is the
+  // start of the chain, column i is the same residue: D[i][i] is 0 and is
+  // not a pair. Everything else under the cutoff is.
+  function closeTo(D, i, cutoff) {
+    var out = [], j;
+    for (j = 0; j < D[i].length; j++) if (j !== i && D[i][j] < cutoff) out.push(j);
+    return out;
+  }
+
+  // What the grid says about the fold, as the fold scene quotes it: how many
+  // pairs are under the cutoff, how many rows have a partner more than `far`
+  // residues down the chain, and the pair that is farthest apart in the
+  // sequence while still close in space.
+  function foldSummary(D, cutoff, far) {
+    var pairs = 0, rows = 0, best = null, i, j, reach, sep;
+    for (i = 0; i < D.length; i++) {
+      reach = false;
+      for (j = 0; j < D[i].length; j++) {
+        if (j === i || D[i][j] >= cutoff) continue;
+        pairs++;
+        sep = Math.abs(j - i);
+        if (sep > far) reach = true;
+        if (!best || sep > best.apart) best = {i: i, j: j, apart: sep, d: D[i][j]};
+      }
+      if (reach) rows++;
+    }
+    return {pairs: pairs, rows: rows, farthest: best};
+  }
+
+  // The farthest-in-sequence residue that is close to residue i, or null.
+  function farthestPartner(D, i, cutoff) {
+    var best = null, j;
+    for (j = 0; j < D[i].length; j++) {
+      if (j === i || D[i][j] >= cutoff) continue;
+      if (!best || Math.abs(j - i) > best.apart) best = {j: j, apart: Math.abs(j - i), d: D[i][j]};
+    }
+    return best;
+  }
+
+  // The distance from each residue to the next along the chain. It is the
+  // one number in a fold that does not depend on the fold: two neighbouring
+  // alpha-carbons are about 3.8 angstroms apart in every protein.
+  function bondLengths(X) {
+    var out = [], i;
+    for (i = 0; i + 1 < X.length; i++) out.push(pairDistances([X[i]], [X[i + 1]])[0][0]);
+    return out;
+  }
+
+  function mean(list) {
+    if (!list.length) return 0;
+    return list.reduce(function (a, b) { return a + b; }, 0) / list.length;
+  }
 
   return {
     BASES: BASES, RNA_BASES: RNA_BASES, AAS: AAS, STOP: STOP,
     CDS: CDS, PROTEIN: PROTEIN, CODE: CODE, CODE_T: CODE_T,
     PROPS: PROPS, PROP_NAMES: PROP_NAMES, MOTIF: MOTIF,
     RELABEL: RELABEL, COMPLEMENT: COMPLEMENT,
-    baseIndex: baseIndex, aaIndex: aaIndex, oneHot: oneHot,
+    baseIndex: baseIndex, aaIndex: aaIndex, oneHot: oneHot, oneHotDistance: oneHotDistance,
     matrixFor: matrixFor, applyAlphabet: applyAlphabet, decode: decode,
-    transcribe: transcribe, windows: windows,
+    transcribe: transcribe, templateStrand: templateStrand, movedOnes: movedOnes, windows: windows, appearances: appearances,
     codonTensor: codonTensor, nonZeros: nonZeros, codonGrid: codonGrid,
     codonAt: codonAt, codonCount: codonCount,
     translate: translate, translateByContraction: translateByContraction,
     embed: embed, matchScores: matchScores, weightedScores: weightedScores,
     motifAt: motifAt, motifMask: motifMask, maskedScores: maskedScores,
     mutate: mutate, batchScores: batchScores, topMatches: topMatches, max: max,
-    synonymCount: synonymCount, scoreSpread: scoreSpread,
-    distinctResidues: distinctResidues
+    synonymCount: synonymCount, fixedBoxes: fixedBoxes, pairFixed: pairFixed,
+    scoreSpread: scoreSpread, meanScore: meanScore,
+    distinctResidues: distinctResidues,
+    thirdSwaps: thirdSwaps, wobbleSilent: wobbleSilent,
+    points: points, pairDistances: pairDistances, closeTo: closeTo, foldSummary: foldSummary,
+    farthestPartner: farthestPartner, bondLengths: bondLengths, mean: mean,
+    scaleProps: scaleProps, nearestKind: nearestKind
   };
 });

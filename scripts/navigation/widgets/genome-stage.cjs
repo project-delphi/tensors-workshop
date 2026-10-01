@@ -1,18 +1,20 @@
-// DNA to an edit (sections 04/06, Appendix G): eight scenes on 180 bases of
-// a real cas12a gene, four in three.js (bases, codons, protein, search) with
-// SVG twins. It fetches nothing -- the data is two literals in the core.
+// DNA to an edit (sections 04/06, Appendix G): nine scenes on 180 bases of
+// a real cas12a gene, five in three.js (bases, codons, protein, fold, search)
+// with SVG twins. It fetches nothing -- the gene and its protein are two
+// literals in the core, and the predicted structure the fold scene draws is
+// a generated literal the page loads as a script.
 const assert = require('node:assert/strict');
 
 const en = 'DNA to an edit';
 const es = 'Del ADN a una edición';
 
-const SCENES = ['bases', 'window', 'transcribe', 'codons', 'translate', 'protein', 'search', 'batch'];
-const GL_SCENES = ['bases', 'codons', 'protein', 'search'];
+const SCENES = ['bases', 'window', 'transcribe', 'codons', 'translate', 'protein', 'fold', 'search', 'batch'];
+const GL_SCENES = ['bases', 'codons', 'protein', 'fold', 'search'];
 // A key only that scene publishes, to wait on once `data-scene` has flipped.
 const OWN_KEY = {bases: 'ones', window: 'copied', transcribe: 'rna', codons: 'nonzeros',
-  translate: 'cells', protein: 'distinct', search: 'runnerup', batch: 'exact'};
+  translate: 'cells', protein: 'distinct', fold: 'pairs', search: 'runnerup', batch: 'exact'};
 // One key that shows the twin drew with the model's numbers.
-const TWIN_KEY = {bases: 'row', codons: 'codon', protein: 'hydropathy', search: 'score'};
+const TWIN_KEY = {bases: 'row', codons: 'codon', protein: 'hydropathy', fold: 'near', search: 'score'};
 
 async function drive(ctx, page, where, lang) {
   await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1',
@@ -50,10 +52,28 @@ async function drive(ctx, page, where, lang) {
           off.push(lab.textContent);
         }
       }
+      // The inset over a three.js picture is an SVG on its own board, on
+      // either surface: how many of its pieces are laid out off that board.
+      const inset = document.getElementById('hud');
+      let hud = 0;
+      if (inset && !inset.hasAttribute('hidden') && inset.getScreenCTM()) {
+        const ib = inset.viewBox.baseVal, iinv = inset.getScreenCTM().inverse();
+        for (const node of inset.querySelectorAll('*')) {
+          if (typeof node.getBBox !== 'function' || !node.getScreenCTM()) continue;
+          let b;
+          try { b = node.getBBox(); } catch (e) { continue; }
+          if (!b.width && !b.height) continue;
+          const m = iinv.multiply(node.getScreenCTM());
+          for (const [px, py] of [[b.x, b.y], [b.x + b.width, b.y + b.height]]) {
+            const x = m.a * px + m.c * py + m.e, y = m.b * px + m.d * py + m.f;
+            if (x < -3 || y < -3 || x > ib.width + 3 || y > ib.height + 3) hud++;
+          }
+        }
+      }
       const svg = document.getElementById('draw');
       const shown = svg.getClientRects().length > 0 && getComputedStyle(svg).visibility !== 'hidden'
         && getComputedStyle(svg).display !== 'none';
-      if (!shown) return {svg: false, off, gl: stage.dataset.gl};
+      if (!shown) return {svg: false, off, hud, gl: stage.dataset.gl};
       const vb = svg.viewBox.baseVal;
       const inv = svg.getScreenCTM() && svg.getScreenCTM().inverse();
       if (!inv) return null;
@@ -72,11 +92,12 @@ async function drive(ctx, page, where, lang) {
           x1 = Math.max(x1, x); y1 = Math.max(y1, y);
         }
       }
-      return {svg: true, off, x0, y0, x1, y1, w: vb.width, h: vb.height, n,
+      return {svg: true, off, hud, x0, y0, x1, y1, w: vb.width, h: vb.height, n,
               nan: /NaN|Infinity/.test(svg.innerHTML)};
     });
     assert(box, `${where}: ${what} drew nothing measurable`);
     assert.deepEqual(box.off, [], `${where}: ${what} puts labels off the stage`);
+    assert.equal(box.hud, 0, `${where}: ${what} lays ${box.hud} corner(s) of its inset off the board`);
     if (!box.svg) {
       assert.equal(box.gl, 'composer', `${where}: ${what} shows neither the twin nor three.js`);
       return;
@@ -164,6 +185,7 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.row, '1,0,0,0');
   assert.equal(d.length, '180');
   assert.equal(d.ones, '180', `${where}: one 1 per base`);
+  assert.equal(d.distance, '1.414', `${where}: every pair of one-hot bases is the square root of 2 apart`);
   await corners('bases');
   d = await data();
   assert.equal(d.ones, d.length, `${where}: a one-hot row has exactly one 1 per base`);
@@ -176,6 +198,8 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.count, '161');
   assert.equal(d.copied, '3220', `${where}: 161 windows of 20 bases, were they copies`);
   assert.equal(d.stored, '180', `${where}: the view stores the 180 bases once`);
+  assert.equal(d.shape, '161,20,4');
+  assert.equal(d.seen, '20', `${where}: one stored base is seen in 20 windows`);
   await set('window', 'width', 40);
   await stageIs('width', '40');
   d = await data();
@@ -186,17 +210,39 @@ async function drive(ctx, page, where, lang) {
   await stageIs('width', '20');
   await corners('window');
 
-  // ---- transcribe: T -> U is the identity; the complement is the anti-diagonal.
+  // ---- transcribe: the enzyme reads the template, which is the anti-diagonal;
+  // against the coding strand the same RNA is the identity.
   await open('transcribe');
   d = await data();
-  assert.equal(d.mode, 'relabel');
-  assert.equal(d.moved, '0', `${where}: relabelling moves no base`);
-  assert.equal(d.rna, 'AUGUCAAUUUAU');
-  await set('transcribe', 'mode', 'complement');
-  await stageIs('mode', 'complement');
-  assert.equal((await data()).moved, '12', `${where}: the anti-diagonal moves every one of the 12 bases`);
+  assert.equal(d.mode, 'complement');
+  assert.equal(d.upto, '18');
+  assert.equal(d.template, 'TACAGTTAAATAGTTCTT');
+  assert.equal(d.rna, 'AUGUCAAUUUAUCAAGAA', `${where}: the transcript reads like the coding strand, U for T`);
+  assert.equal(d.moved, '18', `${where}: against the template every 1 changes column`);
   await set('transcribe', 'mode', 'relabel');
+  await stageIs('mode', 'relabel');
   await stageIs('moved', '0');
+  assert.equal((await data()).rna, 'AUGUCAAUUUAUCAAGAA', `${where}: the RNA is the same whichever strand it is read against`);
+  await set('transcribe', 'mode', 'complement');
+  await stageIs('moved', '18');
+  // The player walks the enzyme: it publishes data-playing while it runs,
+  // and every value it passes is one the readout was written from.
+  await set('transcribe', 'upto', 0);
+  await stageIs('upto', '0');
+  assert.equal((await data()).rna, '', `${where}: nothing transcribed yet`);
+  await page.evaluate(() => document.getElementById('c-transcribe-play').click());
+  await page.waitForFunction(() => {
+    const ds = document.getElementById('stage').dataset;
+    return ds.playing === '0' && ds.upto === '18';
+  }, null, {timeout: 20000}).catch(() => assert.fail(`${where}: the transcription never played through`));
+  assert.equal((await data()).moved, '18');
+  // The ribbon: a press on the gene moves the picture there, and says where.
+  const ribbon = await page.locator('#ribbon-svg').boundingBox();
+  await page.mouse.click(ribbon.x + ribbon.width * 0.5 + 1, ribbon.y + ribbon.height / 2);
+  await stageIs('at', '90');
+  assert.match(await page.locator('#ribbon-cap').innerText(), /91.108/, `${where}: the ribbon names the stretch`);
+  await set('transcribe', 'at', 0);
+  await stageIs('at', '0');
   await corners('transcribe');
 
   // ---- codons: a codon is rank one.
@@ -208,6 +254,7 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.nonzeros, '1');
   assert.equal(d.synonyms, '1');
   assert.equal(d.shape, '4,4,4');
+  assert.equal(d.boxes, '8', `${where}: 8 of the 16 first-two-base pairs fix the residue`);
   for (const n of [1, 17, 59, 0]) {
     await set('codons', 'n', n);
     await stageIs('n', n);
@@ -222,7 +269,21 @@ async function drive(ctx, page, where, lang) {
   await open('translate');
   d = await data();
   assert.equal(d.cells, '64');
-  assert.match(d.codon, /^[ACGT]{3}$/);
+  assert.equal(d.codon, 'AUG', `${where}: the ribosome reads mRNA, so the codon is spelled with U`);
+  assert.equal(d.aa, 'M');
+  assert.equal(d.third, 'same');
+  assert.equal(d.silent, '1');
+  assert.equal(d.wobble, '12', `${where}: 12 of the gene's 60 codons survive any swap of their third base`);
+  // An edit: swap only the third base. AUG -> AUA is methionine to isoleucine.
+  await set('translate', 'third', 'A');
+  await stageIs('third', 'A');
+  d = await data();
+  assert.equal(d.editedcodon, 'AUA');
+  assert.equal(d.edited, 'I');
+  assert.equal(d.silent, '0', `${where}: methionine has one codon, so no swap of it is silent`);
+  assert.equal(d.aa, 'M', `${where}: the gene's own residue does not follow the edit`);
+  await set('translate', 'third', 'same');
+  await stageIs('silent', '1');
   await corners('translate');
 
   // ---- protein: (P, 20) @ (20, 3).
@@ -234,7 +295,33 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.volume, '162.9');
   assert.equal(d.distinct, '18');
   assert.equal(d.shape, '60,3');
+  assert.match(d.nearest, /^[A-Z]$/, `${where}: the nearest kind in property space`);
   await corners('protein');
+
+  // ---- fold: (1300, 3), and the (60, 1300) grid of distances is one broadcast.
+  await open('fold');
+  d = await data();
+  assert.equal(d.residues, '1300');
+  assert.equal(d.shape, '60,1300');
+  assert.equal(d.pick, '9');
+  assert.equal(d.aa, 'K');
+  assert.equal(d.cutoff, '8');
+  assert.equal(d.near, '10', `${where}: ten residues within 8 angstroms of residue 10`);
+  assert.equal(d.far, '1056');
+  assert.equal(d.apart, '1046', `${where}: its farthest partner is 1,046 positions down the chain`);
+  assert.equal(d.pairs, '556');
+  assert.equal(d.rows, '40');
+  assert.equal(d.bond, '3.85', `${where}: neighbouring alpha-carbons are 3.8 angstroms apart`);
+  assert(await page.locator('#hud').isVisible(), `${where}: the grid of distances is not on the stage`);
+  assert(await page.locator('#hud rect').count() > 500, `${where}: the grid of distances drew almost nothing`);
+  // A tighter cutoff can only lose pairs, and the grid is redrawn with it.
+  await set('fold', 'cutoff', 5);
+  await stageIs('cutoff', '5');
+  d = await data();
+  assert(Number(d.pairs) < 556, `${where}: fewer pairs under 5 angstroms than under 8`);
+  await set('fold', 'cutoff', 8);
+  await stageIs('pairs', '556');
+  await corners('fold');
 
   // ---- search: one einsum; each extra mismatch costs exactly one.
   await open('search');
@@ -246,6 +333,7 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.runnerup, '12');
   assert.equal(d.bestat, '40');
   assert.equal(d.windows, '161');
+  assert.equal(d.mean, '6.2', `${where}: an average window agrees at about six places`);
   await set('search', 'mismatch', 3);
   await stageIs('mismatch', '3');
   await stageIs('score', '17');
@@ -265,6 +353,7 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.windows, '161');
   assert.equal(d.scores, '483', `${where}: 3 guides x 161 windows`);
   assert.equal(d.exact, '20,18,16');
+  assert.equal(d.shape, '3,161');
   await set('batch', 'guides', 6);
   await stageIs('guides', '6');
   assert.equal((await data()).scores, String(6 * 161));
@@ -281,6 +370,27 @@ async function drive(ctx, page, where, lang) {
     const widest = Math.max(...text.split('\n').map(l => l.length));
     assert(widest <= 82, `${where}: #np-${id} is ${widest} characters wide`);
   }
+
+  // The rail names the eight pictures and goes to them. Fired from the page:
+  // a pointer click scrolls the bar into view and the step machine follows
+  // the scroll.
+  assert.equal(await page.locator('#rail .stop').count(), SCENES.length, `${where}: one stop per picture on the rail`);
+  await page.evaluate(() => document.querySelectorAll('#rail .stop')[2].click());
+  await page.waitForFunction(() => new Promise(done => {
+    const was = window.scrollY;
+    setTimeout(() => done(window.scrollY === was), 250);
+  }), null, {timeout: 15000});
+  await page.waitForFunction(() => {
+    const ds = document.getElementById('stage').dataset;
+    return ds.scene === 'transcribe' && ds.rna !== undefined;
+  }, null, {timeout: 15000}).catch(() => assert.fail(`${where}: the rail's third stop should open #transcribe`));
+  assert.equal(await page.locator('#rail .stop[aria-current="step"]').count(), 1, `${where}: one stop is current`);
+  // The question comes before the answer: in every step the predict-first
+  // line is straight after the heading.
+  const order = await page.evaluate(() => [...document.querySelectorAll('section.step')]
+    .filter(sec => !(sec.querySelector('h2').nextElementSibling || {}).classList?.contains('predict'))
+    .map(sec => sec.id));
+  assert.deepEqual(order, [], `${where}: the predict-first line is not straight after the heading`);
 
   // A deep link opens straight on the named scene, by name.
   await page.goto(`${page.url().split('?')[0]}?lang=${lang}&fresh=1#search`);
@@ -316,7 +426,7 @@ async function fallback(ctx, page, where, lang) {
     }
     return {bad, n, nan: /NaN|Infinity/.test(svg.innerHTML)};
   });
-  const TWIN_OWN = {bases: 'ones', codons: 'nonzeros', protein: 'distinct', search: 'runnerup'};
+  const TWIN_OWN = {bases: 'ones', codons: 'nonzeros', protein: 'distinct', fold: 'pairs', search: 'runnerup'};
   for (const scene of GL_SCENES) {
     await page.goto(`${origin}${prefix}interactive/genome-stage.html?lang=${lang}&fallback-check=1#${scene}`);
     await page.waitForFunction(() => document.getElementById('stage').dataset.ready === '1', null, {timeout: 20000});
