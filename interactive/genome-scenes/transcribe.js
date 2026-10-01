@@ -56,20 +56,19 @@
   const EN = {
     tab: "transcribe",
     k: "Section 06 · transcription",
-    h: "Transcription is one 4 × 4 matrix, used at every position",
+    h: "Transcription is one 4 × 4 matrix, applied at all 180 positions at once",
     predict: "Before you press play: the enzyme reads the middle strand and builds the RNA " +
              "from it. Will the RNA's letters match the strand it read, or the other one?",
     concept: "A matrix on the alphabet axis. Every position is transformed by the same " +
-             "4 × 4, so transcribing a whole gene is one contraction over the base axis, " +
+             "4 × 4, so transcribing a whole stretch is one contraction over the base axis, " +
              "not a loop over positions.",
     b: "RNA polymerase walks along the <b>template strand</b> and pairs each base with its " +
        "partner: A with U, C with G, G with C, T with A. On the one-hot grid that pairing is " +
        "a 4 × 4 with a single anti-diagonal, and <b>every 1 changes column</b>. Now compare " +
        "the RNA with the <b>coding strand</b>, the one the enzyme never touched: the same " +
        "letters, with U written for T. That matrix is the identity, and it moves nothing. " +
-       "Two complements undo each other, which is why the copy of a gene reads like the gene. " +
-       "The enzyme does this one base at a time; the einsum applies the same 4 × 4 to every " +
-       "position at once.",
+       "Two complements undo each other, which is why the RNA reads like the coding strand. " +
+       "The enzyme works one base at a time; the einsum does every position at once.",
     eqcap: "The sum runs over b, the base that goes in; c is the base that comes out. The " +
            "position ℓ is only carried along, which is why one 4 × 4 does every row at once.",
     claim: (mode, moved, n) => (mode === "complement"
@@ -91,14 +90,15 @@
     countCap: ["ones that", "changed column"],
     foot: (n) => "the same 4 × 4 at all " + n + " positions: one einsum, no loop",
     tip: (l, from, to) => "position " + l + " · " + from + " → " + to,
-    controls: {mode: "Compare the RNA with", upto: "Bases transcribed", play: "▶ Transcribe", at: "Where in the gene"},
+    controls: {mode: "Compare the RNA with", upto: "Bases transcribed", play: "▶ Transcribe", at: "Where in the stretch"},
     options: {mode: {complement: "the template strand", relabel: "the coding strand"}},
     read: (mode, moved, n, a, b, rna) => (mode === "complement"
       ? "<b>RNA against the template</b>: " + moved + " of " + n + " ones changed column, so the " +
-        "matrix is the anti-diagonal J."
+        "matrix is the anti-diagonal J. The RNA is the template's complement, so letter for letter " +
+        "it matches the coding strand, with U for T."
       : "<b>RNA against the coding strand</b>: " + moved + " of " + n + " ones changed column, so the " +
         "matrix is the identity.") +
-      " Bases " + a + "–" + b + " of the gene; the transcript so far is <code>" + (rna || "—") + "</code>.",
+      " Bases " + a + "–" + b + " of the stretch; the transcript so far is <code>" + (rna || "—") + "</code>.",
     np: {
       x: (n) => "(" + n + ", 4) over A C G T",
       partner: "the partner strand",
@@ -113,19 +113,19 @@
   const ES = {
     tab: "transcribir",
     k: "Sección 06 · transcripción",
-    h: "La transcripción es una sola matriz de 4 × 4, usada en cada posición",
+    h: "La transcripción es una sola matriz de 4 × 4, aplicada a las 180 posiciones a la vez",
     predict: "Antes de pulsar reproducir: la enzima lee la hebra del medio y construye el ARN " +
              "a partir de ella. ¿Las letras del ARN coincidirán con la hebra que leyó o con la otra?",
     concept: "Una matriz sobre el eje del alfabeto. Cada posición se transforma con la misma " +
-             "4 × 4, así que transcribir un gen entero es una contracción sobre el eje de las " +
+             "4 × 4, así que transcribir un tramo entero es una contracción sobre el eje de las " +
              "bases, no un bucle sobre las posiciones.",
     b: "La ARN polimerasa recorre la <b>hebra molde</b> y empareja cada base con su pareja: A " +
        "con U, C con G, G con C, T con A. En la rejilla one-hot ese emparejamiento es una 4 × 4 " +
        "con una sola antidiagonal, y <b>cada 1 cambia de columna</b>. Ahora compara el ARN con " +
        "la <b>hebra codificante</b>, la que la enzima nunca tocó: las mismas letras, con U en " +
        "lugar de T. Esa matriz es la identidad y no mueve nada. Dos complementos se deshacen " +
-       "entre sí, y por eso la copia de un gen se lee como el gen. La enzima lo hace base por " +
-       "base; el einsum aplica la misma 4 × 4 a todas las posiciones a la vez.",
+       "entre sí, y por eso el ARN se lee como la hebra codificante. La enzima trabaja base por " +
+       "base; el einsum hace todas las posiciones a la vez.",
     eqcap: "La suma recorre b, la base que entra; c es la base que sale. La posición ℓ solo " +
            "se arrastra, y por eso una sola 4 × 4 resuelve todas las filas a la vez.",
     claim: (mode, moved, n) => (mode === "complement"
@@ -147,14 +147,15 @@
     countCap: ["unos que cambiaron", "de columna"],
     foot: (n) => "la misma 4 × 4 en las " + n + " posiciones: un einsum, ningún bucle",
     tip: (l, from, to) => "posición " + l + " · " + from + " → " + to,
-    controls: {mode: "Comparar el ARN con", upto: "Bases transcritas", play: "▶ Transcribir", at: "Dónde en el gen"},
+    controls: {mode: "Comparar el ARN con", upto: "Bases transcritas", play: "▶ Transcribir", at: "Dónde en el tramo"},
     options: {mode: {complement: "la hebra molde", relabel: "la hebra codificante"}},
     read: (mode, moved, n, a, b, rna) => (mode === "complement"
       ? "<b>ARN frente al molde</b>: " + moved + " de " + n + " unos cambiaron de columna, así que la " +
-        "matriz es la antidiagonal J."
+        "matriz es la antidiagonal J. El ARN es el complemento del molde, así que letra por letra " +
+        "coincide con la hebra codificante, con U en lugar de T."
       : "<b>ARN frente a la hebra codificante</b>: " + moved + " de " + n + " unos cambiaron de columna, " +
         "así que la matriz es la identidad.") +
-      " Bases " + a + "–" + b + " del gen; el transcrito hasta ahora es <code>" + (rna || "—") + "</code>.",
+      " Bases " + a + "–" + b + " del tramo; el transcrito hasta ahora es <code>" + (rna || "—") + "</code>.",
     np: {
       x: (n) => "(" + n + ", 4) sobre A C G T",
       partner: "la hebra pareja",

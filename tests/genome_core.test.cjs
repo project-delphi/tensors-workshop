@@ -397,7 +397,7 @@ test('the fold: 1,300 residues, three coordinates each, and one grid of distance
   assert.ok(Math.abs(G.mean(bonds) - 3.85) < 0.01);
 
   // What the fold scene quotes at its opening cutoff of 8 angstroms: 556
-  // close pairs, 40 of the 60 rows reaching more than 100 positions down the
+  // lit cells, 40 of the 60 rows reaching more than 100 positions down the
   // chain, and residue 4 lying 7.7 angstroms from residue 1,057.
   const s = G.foldSummary(D, 8, 100);
   assert.equal(s.pairs, 556);

@@ -391,7 +391,8 @@
 
   // The average score over every window: the chance level the search scene's
   // predict question turns on. Two unrelated 20-base stretches agree at about
-  // five places, so the best wrong window is judged against this.
+  // five places, but this stretch is 74% A or T, so the measured mean is 6.2;
+  // the best wrong window is judged against this.
   function meanScore(scores) {
     var sum = 0, i;
     for (i = 0; i < scores.length; i++) sum += scores[i];

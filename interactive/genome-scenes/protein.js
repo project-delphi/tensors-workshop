@@ -243,7 +243,7 @@
   const EN = {
     tab: "protein",
     k: "Section 06 · the protein",
-    h: "60 residues land on only 18 points: an embedding is a table you multiply by",
+    h: "An embedding is a table you multiply by: 20 kinds of residue, three numbers each",
     concept: "A residue is a one-hot row of 20, exactly as a base is a row of 4. Multiplying the " +
              "(P, 20) grid by a 20 × 3 table of published properties is one matrix product, and " +
              "it puts every residue at a point in a space with one axis per property.",
@@ -251,7 +251,7 @@
              "will the chain touch — and which kind do you expect to sit nearest isoleucine?",
     b: "Each sphere is one of the 20 kinds of residue, standing where three published numbers put " +
        "it: how much it avoids water, how much room it takes, and its charge at pH 7. A sphere " +
-       "swells with every time the chain uses it. The bright tail is the last few steps of the " +
+       "swells with each use. The bright tail is the last few steps of the " +
        "chain, running into the residue you picked. Grow the chain, click a sphere, or press play " +
        "to walk it end to end. This is the same answer as looking each residue up in the table, " +
        "written as one matrix product that places all of them at once; each axis is rescaled to " +
@@ -261,11 +261,12 @@
     props: ["hydropathy", "volume", "charge"],
     ends: [["loves water", "avoids water"], ["small", "large"], ["charge −", "charge +"]],
     claim: (upto) => "(" + upto + ", 20) @ (20, 3) = (" + upto + ", 3)",
-    read: (n, aa, row, near, upto, distinct) =>
+    read: (n, aa, row, near, upto, distinct, iso) =>
       "<b>Residue " + n + "</b> is <b>" + aa + "</b>: its row of 20, times the (20, 3) table, is the point <b>" +
       "hydropathy " + row[0] + ", volume " + row[1] + ", charge " + row[2] + "</b>. The kind nearest it " +
       "in this space is <b>" + near + "</b>. So far the chain is " + upto + (upto === 1 ? " residue" : " residues") +
-      " on <b>" + distinct + "</b> distinct " + (distinct === 1 ? "point." : "points."),
+      " on <b>" + distinct + "</b> distinct " + (distinct === 1 ? "point." : "points.") +
+      " Isoleucine's nearest kind is " + iso + ".",
     tip: (aa, row, count) => aa + " · " + row.join(", ") + " · " + count + (count === 1 ? " residue" : " residues"),
     aria: (ctx) => {
       const s = ctx.state, near = GC.nearestKind(PROTEIN[s.pick]).aa;
@@ -287,7 +288,7 @@
   const ES = {
     tab: "proteína",
     k: "Sección 06 · la proteína",
-    h: "60 residuos caen en solo 18 puntos: un embedding es una tabla por la que se multiplica",
+    h: "Un embedding es una tabla por la que se multiplica: 20 tipos de residuo, tres números cada uno",
     concept: "Un residuo es una fila one-hot de 20, igual que una base es una fila de 4. " +
              "Multiplicar la rejilla (P, 20) por una tabla de 20 × 3 de propiedades publicadas es un " +
              "solo producto de matrices, y coloca cada residuo en un punto de un espacio con un eje " +
@@ -296,7 +297,7 @@
              "distintos tocará la cadena, y qué tipo esperas que quede más cerca de la isoleucina?",
     b: "Cada esfera es uno de los 20 tipos de residuo, colocado donde lo ponen tres números " +
        "publicados: cuánto rehúye el agua, cuánto espacio ocupa y su carga a pH 7. Una esfera " +
-       "crece cada vez que la cadena la usa. La cola brillante son los últimos pasos de la " +
+       "crece con cada uso. La cola brillante son los últimos pasos de la " +
        "cadena, que llegan al residuo elegido. Alarga la cadena, pulsa una esfera o dale a " +
        "reproducir para recorrerla entera. Es la misma respuesta que buscar cada residuo en la " +
        "tabla, escrita como un solo producto de matrices que los coloca todos a la vez; cada eje " +
@@ -306,11 +307,12 @@
     props: ["hidropatía", "volumen", "carga"],
     ends: [["ama el agua", "rehúye el agua"], ["pequeño", "grande"], ["carga −", "carga +"]],
     claim: (upto) => "(" + upto + ", 20) @ (20, 3) = (" + upto + ", 3)",
-    read: (n, aa, row, near, upto, distinct) =>
+    read: (n, aa, row, near, upto, distinct, iso) =>
       "<b>El residuo " + n + "</b> es <b>" + aa + "</b>: su fila de 20, por la tabla de 20 × 3, es el punto <b>" +
       "hidropatía " + row[0] + ", volumen " + row[1] + ", carga " + row[2] + "</b>. El tipo más cercano en " +
       "este espacio es <b>" + near + "</b>. Hasta ahora la cadena " + (upto === 1 ? "es 1 residuo" : "son " + upto + " residuos") +
-      " en <b>" + distinct + "</b> " + (distinct === 1 ? "punto distinto." : "puntos distintos."),
+      " en <b>" + distinct + "</b> " + (distinct === 1 ? "punto distinto." : "puntos distintos.") +
+      " El tipo más cercano a la isoleucina es " + iso + ".",
     tip: (aa, row, count) => aa + " · " + row.join(", ") + " · " + count + (count === 1 ? " residuo" : " residuos"),
     aria: (ctx) => {
       const s = ctx.state, near = GC.nearestKind(PROTEIN[s.pick]).aa;
@@ -432,7 +434,7 @@
       const distinct = new Set(PROTEIN.slice(0, s.upto)).size;
       const near = GC.nearestKind(aa).aa;
       return {
-        html: c.read(s.pick + 1, aa, row, near, s.upto, distinct),
+        html: c.read(s.pick + 1, aa, row, near, s.upto, distinct, GC.nearestKind("I").aa),
         claim: c.claim(s.upto),
         caption: "E[" + s.pick + "] = P[" + s.pick + "] @ F = [" + row.join(", ") + "]",
         lens: {a: 3 * s.pick, b: 3 * s.pick + 3, done: [0, 3 * s.upto]},

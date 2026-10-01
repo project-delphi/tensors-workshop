@@ -51,7 +51,7 @@
   const EN = {
     tab: "windows",
     k: "Section 04 · a window is a view",
-    h: "161 windows of 20 bases, and not one base copied",
+    h: "161 windows of 20 bases are one array, seen through a sliding frame",
     concept: "A new axis, made by sliding. The window index w is neither time nor a batch: " +
              "window w and window w + 1 overlap by all but one base, so the axis is a " +
              "position in the sequence, seen through a frame.",
@@ -66,7 +66,7 @@
     eqcap: "W[w, ℓ, b] is X read at w + ℓ: the window index w only shifts where ℓ starts, " +
            "so no entry of W is a new number, just an old one seen again.",
     claim: (count, width, copied, n, lang) =>
-      count + " windows × " + width + " = " + K.num(copied, 0, lang) + " entries, " + n + " stored",
+      count + " windows × " + width + " = " + K.num(copied, 0, lang) + " bases on screen, " + n + " stored",
     aria: (ctx) => {
       const f = facts(ctx);
       return "The window array as an image: " + f.count + " windows across, " + f.width +
@@ -105,7 +105,7 @@
   const ES = {
     tab: "ventanas",
     k: "Sección 04 · una ventana es una vista",
-    h: "161 ventanas de 20 bases, y ni una base copiada",
+    h: "161 ventanas de 20 bases son un solo arreglo, visto por un marco que se desliza",
     concept: "Un eje nuevo, hecho deslizando. El índice de ventana w no es tiempo ni lote: la " +
              "ventana w y la w + 1 se solapan en todas las bases menos una, así que el eje es " +
              "una posición de la secuencia vista a través de un marco.",
@@ -121,7 +121,7 @@
     eqcap: "W[w, ℓ, b] es X leído en w + ℓ: el índice de ventana w solo desplaza dónde " +
            "empieza ℓ, así que ninguna entrada de W es un número nuevo, solo uno viejo otra vez.",
     claim: (count, width, copied, n, lang) =>
-      count + " ventanas × " + width + " = " + K.num(copied, 0, lang) + " entradas, " + n + " guardadas",
+      count + " ventanas × " + width + " = " + K.num(copied, 0, lang) + " bases en pantalla, " + n + " guardadas",
     aria: (ctx) => {
       const f = facts(ctx);
       return "El arreglo de ventanas como imagen: " + f.count + " ventanas a lo ancho, " + f.width +

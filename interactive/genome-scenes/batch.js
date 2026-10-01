@@ -62,18 +62,19 @@
   const EN = {
     tab: "batch",
     k: "Section 02 · a batch",
-    h: "Three guides, 161 windows, 483 scores: a batch is one more index",
+    h: "A batch is one more index: every guide gets its own row of window scores",
     predict: "Before you drag: the einsum is \"glb,wlb->gw\". Which letters are summed away, " +
              "and what shape is left for three guides?",
-    concept: "A batch is an index that no sum touches, so it rides along into the result. " +
-             "Here g is a batch axis because the guides are independent of one another, " +
-             "unlike the window axis, whose neighbours share 19 of their 20 bases.",
+    concept: "g is one more index that nothing sums over, so it survives into the result: one " +
+             "row per guide. The guides are independent of each other, which is what makes g a " +
+             "batch axis; the window axis w survives too, but its neighbours overlap.",
     b: "Each guide is a row of bases on the left, with the bases changed from guide 1 ringed. " +
        "Beside it is the row of scores it earns against every window, brighter for a better " +
        "match, with its best window marked; the bars underneath read the selected row out as " +
        "the skyline from the search. Add guides, walk them further away, and click a cell to " +
-       "pick a row and a window. A gene became a grid; transcription, translation, the " +
-       "embedding and the search were each a multiplication on that grid.",
+       "pick a row and a window. A stretch of a gene became a grid: a window was a view, " +
+       "the fold's distances a broadcast, and transcription, translation, the embedding and " +
+       "the search each one multiplication on that grid.",
     eqcap: "The same contraction as the search: ℓ and b are summed away, while g and w are " +
            "kept, so every guide earns its own row of scores, one per window.",
     claim: (G, W, total) =>
@@ -120,19 +121,19 @@
   const ES = {
     tab: "lote",
     k: "Sección 02 · un lote",
-    h: "Tres guías, 161 ventanas, 483 puntuaciones: un lote es un índice más",
+    h: "Un lote es un índice más: cada guía recibe su propia fila de puntuaciones",
     predict: "Antes de arrastrar: el einsum es \"glb,wlb->gw\". ¿Qué letras se suman y se " +
              "van, y qué forma queda con tres guías?",
-    concept: "Un lote es un índice que ninguna suma toca, así que pasa al resultado. Aquí g es " +
-             "un eje de lote porque las guías son independientes entre sí, a diferencia del " +
-             "eje de ventanas, cuyas vecinas comparten 19 de sus 20 bases.",
+    concept: "g es un índice más que ninguna suma recorre, así que sobrevive en el resultado: una " +
+             "fila por guía. Las guías son independientes entre sí, y eso es lo que hace de g un " +
+             "eje de lote; el eje de ventanas w también sobrevive, pero sus vecinas se solapan.",
     b: "Cada guía es una fila de bases a la izquierda, con las bases cambiadas respecto a la " +
        "guía 1 rodeadas. A su lado va la fila de puntuaciones que obtiene contra cada ventana, " +
        "más brillante cuanto mejor coincide, con su mejor ventana marcada; las barras de abajo " +
        "muestran la fila elegida como el perfil de la búsqueda. Añade guías, aléjalas más y " +
-       "pulsa una celda para elegir una fila y una ventana. Un gen se volvió una rejilla; la " +
-       "transcripción, la traducción, la incrustación y la búsqueda fueron cada una una " +
-       "multiplicación sobre esa rejilla.",
+       "pulsa una celda para elegir una fila y una ventana. Un tramo de un gen se volvió una rejilla: una ventana era " +
+       "una vista, las distancias del pliegue un broadcast, y la transcripción, la traducción, " +
+       "el embedding y la búsqueda, cada una una multiplicación sobre esa rejilla.",
     eqcap: "La misma contracción de la búsqueda: ℓ y b se suman y desaparecen, mientras g y w " +
            "se conservan, así que cada guía obtiene su propia fila de puntuaciones.",
     claim: (G, W, total) =>

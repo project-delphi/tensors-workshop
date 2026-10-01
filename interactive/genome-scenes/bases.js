@@ -154,7 +154,7 @@
   const EN = {
     tab: "bases",
     k: "Section 01 · a sequence as a tensor",
-    h: "A gene is a grid: 180 bases become 180 × 4 ones and zeros",
+    h: "A sequence is a grid: 180 bases become 180 × 4 ones and zeros",
     predict: "Before you touch anything: suppose the bases were numbered instead, A = 1, C = 2, " +
              "G = 3, T = 4. Which base would the numbers say is most like A, and is that true " +
              "of the molecule?",
@@ -166,8 +166,7 @@
        "one-hot encoding is, and it is why every later picture on this page is a " +
        "multiplication. Pick a base with the slider, or click one, and follow the line down to " +
        "its 1. The helix draws the first few dozen bases; the ribbon under the stage is all " +
-       "180. The fainter strand carries nothing new — it is the bright one's partner, base " +
-       "for base, and two pictures on that pairing turns out to be a matrix.",
+       "180. The fainter strand is its partner, base for base.",
     eqcap: "X has one row for each position ℓ and one column for each base b. Every row sums to " +
            "exactly 1, because a base is exactly one letter. Point at a letter to light it.",
     claim: (n, letter, row) => "base " + n + " = " + letter + " → " + K.idx(row),
@@ -196,7 +195,7 @@
   const ES = {
     tab: "bases",
     k: "Sección 01 · una secuencia como tensor",
-    h: "Un gen es una rejilla: 180 bases se vuelven 180 × 4 unos y ceros",
+    h: "Una secuencia es una rejilla: 180 bases se vuelven 180 × 4 unos y ceros",
     predict: "Antes de tocar nada: supón que las bases se numeraran, A = 1, C = 2, G = 3, " +
              "T = 4. ¿Qué base dirían los números que se parece más a A, y es eso cierto de " +
              "la molécula?",
@@ -208,9 +207,7 @@
        "lo que hace la codificación one-hot, y por eso cada imagen posterior de esta página " +
        "es una multiplicación. Elige una base con el deslizador, o haz clic en una, y sigue " +
        "la línea hasta su 1. La hélice dibuja las primeras decenas de bases; la cinta bajo el " +
-       "escenario son las 180. La hebra más tenue no aporta nada nuevo: es la pareja de la " +
-       "brillante, base por base, y dos imágenes más adelante ese emparejamiento resulta ser " +
-       "una matriz.",
+       "escenario son las 180. La hebra más tenue es su pareja, base por base.",
     eqcap: "X tiene una fila por cada posición ℓ y una columna por cada base b. Cada fila suma " +
            "exactamente 1, porque una base es exactamente una letra. Señala una letra para iluminarla.",
     claim: (n, letter, row) => "base " + n + " = " + letter + " → " + K.idx(row),

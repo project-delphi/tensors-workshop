@@ -68,7 +68,7 @@
     k: "Section 06 · translation",
     h: "Translation is one contraction: three one-hot rows pick 1 cell of 64",
     predict: "Before you change it: swap only the third base of this codon. Will the residue " +
-             "change — and for how many of the gene's 60 codons would no swap of the third " +
+             "change — and for how many of this stretch's 60 codons would no swap of the third " +
              "base change it?",
     concept: "A codon is the product of three one-hot vectors: a 4 × 4 × 4 with a single 1. " +
              "Multiply it into the code table and sum over all three base axes, and one " +
@@ -79,7 +79,7 @@
        "is the same answer a table lookup gives, written so that one einsum does all 60 " +
        "codons at once. The table's axes run A C G T as everywhere on this page, with U " +
        "written for T: the relabel the transcription scene showed moves no number. Step or " +
-       "play along the gene, then change only the third base.",
+       "play along the codons, then change only the third base.",
     eqcap: "p[n] is the residue of codon n. K[n] is that codon's 4 × 4 × 4 tensor, a single 1 " +
            "at [a, b, c], and G is the code table. The sum runs over all three base axes, so " +
            "exactly one entry of G survives.",
@@ -112,7 +112,7 @@
     read: (f, nm) => {
       const list = GC.BASES.split("").map((b, k) => ({b, r: f.swaps[k]})).filter((x) => x.b !== f.dna[2])
         .map((x) => f.rna.slice(0, 2) + toRna(x.b) + " " + nm(x.r)).join(", ");
-      const wob = " In this gene, for <b>" + f.wobble + " of the 60 codons</b> no swap of the third " +
+      const wob = " In this stretch, for <b>" + f.wobble + " of the 60 codons</b> no swap of the third " +
                   "base changes the residue.";
       if (f.edited) {
         return "<b>" + f.rna + " → " + f.editRna + ": " + nm(f.aa) +
@@ -138,7 +138,7 @@
     k: "Sección 06 · traducción",
     h: "Traducir es una contracción: tres filas one-hot eligen 1 celda de 64",
     predict: "Antes de cambiarlo: cambia solo la tercera base de este codón. ¿Cambiará el " +
-             "residuo — y para cuántos de los 60 codones del gen ningún cambio de la tercera " +
+             "residuo — y para cuántos de los 60 codones de este tramo ningún cambio de la tercera " +
              "base lo cambiaría?",
     concept: "Un codón es el producto de tres vectores one-hot: un 4 × 4 × 4 con un solo 1. " +
              "Multiplícalo por la tabla del código y suma sobre los tres ejes de bases: lo " +
@@ -149,7 +149,7 @@
        "de abajo. Es la misma respuesta que da una consulta a la tabla, escrita para que un " +
        "solo einsum haga los 60 codones a la vez. Los ejes de la tabla van A C G T, como en " +
        "toda la página, con U escrita por T: el cambio de etiqueta que mostró la " +
-       "transcripción no mueve ningún número. Recorre el gen y cambia solo la tercera base.",
+       "transcripción no mueve ningún número. Recorre los codones y cambia solo la tercera base.",
     eqcap: "p[n] es el residuo del codón n. K[n] es el tensor de 4 × 4 × 4 de ese codón, con un " +
            "solo 1 en [a, b, c], y G es la tabla del código. La suma recorre los tres ejes de " +
            "bases, así que sobrevive exactamente una entrada de G.",
@@ -182,7 +182,7 @@
     read: (f, nm) => {
       const list = GC.BASES.split("").map((b, k) => ({b, r: f.swaps[k]})).filter((x) => x.b !== f.dna[2])
         .map((x) => f.rna.slice(0, 2) + toRna(x.b) + " " + nm(x.r)).join(", ");
-      const wob = " En este gen, para <b>" + f.wobble + " de los 60 codones</b> ningún cambio de la " +
+      const wob = " En este tramo, para <b>" + f.wobble + " de los 60 codones</b> ningún cambio de la " +
                   "tercera base altera el residuo.";
       if (f.edited) {
         return "<b>" + f.rna + " → " + f.editRna + ": " + nm(f.aa) +

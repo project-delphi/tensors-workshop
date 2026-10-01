@@ -113,21 +113,22 @@
   const EN = {
     tab: "fold",
     k: "Section 03 · the fold",
-    h: "A fold is a (1300, 3) array, and its 78,000 distances are one broadcast",
-    predict: "Before you pick a residue: neighbours along the chain sit 3.8 Å apart. Take the " +
-             "residues lying within 8 Å of one of these 60. Is the farthest of them tens of " +
-             "positions down the chain, or hundreds?",
+    h: "A fold is a (1300, 3) array, and 78,000 of its distances are one broadcast",
+    predict: "Before you pick a residue: neighbours along the chain sit about 3.8 Å apart (an " +
+             "ångström is a tenth of a nanometre). Take the residues lying within 8 Å of one of " +
+             "these 60. Is the farthest of them tens of positions down the chain, hundreds, or " +
+             "more than a thousand?",
     concept: "A structure is the plainest tensor on this page: one row per residue, three " +
              "coordinates. Subtract every row of one array from every row of another by " +
              "broadcasting, and the grid of all their distances falls out without a loop.",
-    b: "This is the whole protein the gene encodes, Cas12a, as AlphaFold predicts it: 1,300 " +
-       "residues, one point each. The bright stretch is the 60 that our 180 bases spell. The " +
-       "strip under it is every distance between one of those 60 and one of the 1,300, lit " +
-       "where two residues are close. The band at its left edge is each residue's own " +
-       "neighbours along the chain; <b>everything lit to the right of it is the fold</b>. " +
-       "Pick a residue, or run the pointer down the strip, and the ones close to it light up. " +
-       "It is a prediction, not a measurement, and the model reports how sure it is of every " +
-       "residue.",
+    b: "This is Cas12a, the protein the whole gene encodes, as AlphaFold predicts it: 1,300 " +
+       "residues, one point each, the alpha-carbon at each residue's centre. The bright " +
+       "stretch is the 60 that our 180 bases spell. The strip under it is every distance " +
+       "between one of those 60 and one of the 1,300, lit where two residues are close. The " +
+       "band at its left edge is each residue's own neighbours along the chain; <b>lit cells " +
+       "beyond it are residues the chain has folded back to touch</b>. Pick a residue or " +
+       "sweep the strip. It is a prediction, not a measurement, and the model " +
+       "reports how sure it is of every residue.",
     eqcap: "X holds our 60 residues and Y all 1,300, three coordinates each. Only the " +
            "coordinate d is summed away; i and j both survive, one distance for every pair.",
     claim: (n, letter, near, cutoff, apart) =>
@@ -139,13 +140,15 @@
     strip: (cutoff, rows) => "D < " + cutoff + " Å, lit · one row for each of our " + rows,
     axis: (n) => "one column a residue, 1 to " + n + " →",
     caption: (model, plddt) => "AlphaFold " + model + " · confidence here (pLDDT) " + plddt + " of 100",
-    read: (n, letter, near, cutoff, far, apart, d, pairs, total, rows, bond) =>
+    read: (n, letter, near, cutoff, far, apart, d, pairs, total, rows, bond, gi, gj, ga) =>
       "<b>Residue " + n + "</b> (" + letter + ") has <b>" + near + " residues</b> within " + cutoff + " Å. " +
       (far
         ? "The farthest along the chain is residue " + far + ": <b>" + apart + " positions away</b>, " + d + " Å apart. "
         : "None of them is more than " + apart + " positions away: here the chain touches only itself. ") +
+      (ga ? "The farthest reach of all is residue " + gi + " to residue " + gj + ", " + ga +
+            " positions apart. " : "") +
       "Over all 60 rows, " + pairs + " of the " + total + " distances are under " + cutoff + " Å, and " +
-      rows + " rows reach more than 100 positions down the chain. Neighbours along it are always " +
+      rows + " rows reach more than 100 positions down the chain. Neighbours along it are about " +
       bond + " Å apart.",
     tip: (n, letter, plddt) => "residue " + n + " · " + letter + " · pLDDT " + plddt,
     aria: (ctx) => {
@@ -162,7 +165,7 @@
       x: "(60, 3): the 60 we follow",
       diff: "(60, 1300, 3): no loop",
       d: "(60, 1300): every distance",
-      pairs: (n, cutoff) => n + " pairs under " + cutoff + " Å",
+      pairs: (n, cutoff) => n + " cells < " + cutoff + " Å, self excluded",
       cell: (d, apart) => d + " Å, " + apart + " apart in the chain"
     }
   };
@@ -170,21 +173,22 @@
   const ES = {
     tab: "pliegue",
     k: "Sección 03 · el pliegue",
-    h: "Un pliegue es un arreglo (1300, 3), y sus 78.000 distancias son un solo broadcast",
-    predict: "Antes de elegir un residuo: los vecinos a lo largo de la cadena están a 3,8 Å. " +
-             "Toma los residuos que quedan a menos de 8 Å de alguno de estos 60. ¿El más " +
-             "lejano está a decenas de posiciones en la cadena, o a cientos?",
+    h: "Un pliegue es un arreglo (1300, 3), y 78.000 de sus distancias son un solo broadcast",
+    predict: "Antes de elegir un residuo: los vecinos a lo largo de la cadena están a unos 3,8 Å " +
+             "(un ångström es una décima de nanómetro). Toma los residuos que quedan a menos de " +
+             "8 Å de alguno de estos 60. ¿El más lejano está a decenas de posiciones en la " +
+             "cadena, a cientos, o a más de mil?",
     concept: "Una estructura es el tensor más sencillo de esta página: una fila por residuo, " +
              "tres coordenadas. Resta cada fila de un arreglo de cada fila de otro mediante " +
              "broadcasting y la rejilla de todas sus distancias sale sin un solo bucle.",
-    b: "Esta es la proteína entera que el gen codifica, Cas12a, tal como la predice AlphaFold: " +
-       "1.300 residuos, un punto cada uno. El tramo brillante son los 60 que deletrean " +
-       "nuestras 180 bases. La franja de abajo es cada distancia entre uno de esos 60 y uno de " +
-       "los 1.300, iluminada donde dos residuos están cerca. La banda de su borde izquierdo " +
-       "son los vecinos de cada residuo a lo largo de la cadena; <b>todo lo iluminado a su " +
-       "derecha es el pliegue</b>. Elige un residuo, o recorre la franja con el cursor, y se " +
-       "iluminan los que tiene cerca. Es una predicción, no una medición, y el modelo dice " +
-       "cuánto confía en cada residuo.",
+    b: "Esta es Cas12a, la proteína que codifica el gen entero, tal como la predice AlphaFold: " +
+       "1.300 residuos, un punto cada uno, el carbono alfa en el centro de cada residuo. El " +
+       "tramo brillante son los 60 que deletrean nuestras 180 bases. La franja de abajo es " +
+       "cada distancia entre uno de esos 60 y uno de los 1.300, iluminada donde dos residuos " +
+       "están cerca. La banda de su borde izquierdo son los vecinos de cada residuo a lo largo " +
+       "de la cadena; <b>las celdas iluminadas más allá son residuos con los que la cadena se " +
+       "ha plegado para tocarse</b>. Elige un residuo o recorre la franja. Es " +
+       "una predicción, no una medición, y el modelo dice cuánto confía en cada residuo.",
     eqcap: "X contiene nuestros 60 residuos e Y los 1.300, con tres coordenadas cada uno. Solo " +
            "la coordenada d se suma; i y j sobreviven, una distancia por cada par.",
     claim: (n, letter, near, cutoff, apart) =>
@@ -196,14 +200,16 @@
     strip: (cutoff, rows) => "D < " + cutoff + " Å, iluminado · una fila por cada uno de los " + rows,
     axis: (n) => "una columna por residuo, del 1 al " + n + " →",
     caption: (model, plddt) => "AlphaFold " + model + " · confianza aquí (pLDDT) " + plddt + " de 100",
-    read: (n, letter, near, cutoff, far, apart, d, pairs, total, rows, bond) =>
+    read: (n, letter, near, cutoff, far, apart, d, pairs, total, rows, bond, gi, gj, ga) =>
       "<b>El residuo " + n + "</b> (" + letter + ") tiene <b>" + near + " residuos</b> a menos de " + cutoff + " Å. " +
       (far
         ? "El más lejano en la cadena es el residuo " + far + ": <b>a " + apart + " posiciones</b> y a " + d + " Å. "
         : "Ninguno está a más de " + apart + " posiciones: aquí la cadena solo se toca a sí misma. ") +
+      (ga ? "El alcance más lejano de todos va del residuo " + gi + " al residuo " + gj + ", a " + ga +
+            " posiciones. " : "") +
       "En las 60 filas, " + pairs + " de las " + total + " distancias quedan por debajo de " + cutoff + " Å, y " +
       rows + " filas alcanzan más de 100 posiciones cadena abajo. Los vecinos a lo largo de ella están " +
-      "siempre a " + bond + " Å.",
+      "a unos " + bond + " Å.",
     tip: (n, letter, plddt) => "residuo " + n + " · " + letter + " · pLDDT " + plddt,
     aria: (ctx) => {
       const s = ctx.state, f = facts(ctx);
@@ -219,7 +225,7 @@
       x: "(60, 3): los 60 que seguimos",
       diff: "(60, 1300, 3): sin bucle",
       d: "(60, 1300): cada distancia",
-      pairs: (n, cutoff) => n + " pares bajo " + cutoff + " Å",
+      pairs: (n, cutoff) => n + " celdas < " + cutoff + " Å, sin la propia",
       cell: (d, apart) => d + " Å, a " + apart + " en la cadena"
     }
   };
@@ -394,7 +400,8 @@
       const num = (v) => K.num(v, 0, lang);
       return {
         html: c.read(s.pick + 1, f.letter, f.near.length, s.cutoff, far.apart > 4 ? num(far.j + 1) : "", num(far.apart),
-          K.num(far.d, 1, lang), num(f.sum.pairs), num(OURS * F.seq.length), f.sum.rows, K.num(f.bond, 1, lang)),
+          K.num(far.d, 1, lang), num(f.sum.pairs), num(OURS * F.seq.length), f.sum.rows, K.num(f.bond, 1, lang),
+          ...(f.sum.farthest ? [f.sum.farthest.i + 1, f.sum.farthest.j + 1, f.sum.farthest.apart].map(num) : [])),
         claim: c.claim(s.pick + 1, f.letter, f.near.length, s.cutoff, num(far.apart)),
         caption: c.caption(F.model, Math.round(f.plddt)),
         lens: {a: 3 * s.pick, b: 3 * s.pick + 3},

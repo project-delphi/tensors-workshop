@@ -251,10 +251,10 @@
              "indices, one per base: a 4 × 4 × 4 tensor with a residue in each of its 64 cells. " +
              "One codon is one cell, the product of three one-hot vectors: a 4 × 4 × 4 holding a single 1.",
     b: "Each small cube is one of the 64 codons, tinted by the residue it codes for, so a " +
-       "block of one colour is the code's redundancy. Beside each axis stands a one-hot vector " +
-       "for the gene's codon. Its lit letter selects a plane of 16 cells, and <b>the three " +
+       "block of one colour is the code's redundancy. The letters are DNA's; in the RNA copy T is written U. Beside each axis stands a one-hot vector " +
+       "for the stretch's codon. Its lit letter selects a plane of 16 cells, and <b>the three " +
        "planes meet in exactly one cell</b>. Choose <b>one codon</b> to keep only those cells. " +
-       "▶ reads the gene's 60 codons in turn, and the lit cell hops round the table. " +
+       "▶ reads this stretch's 60 codons in turn, and the lit cell hops round the table. " +
        "Drag to turn the cube; click a cell to jump to that codon.",
     eqcap: "K is the outer product of three one-hot vectors, one for each base of the codon: a, b " +
            "and c index the cube's three axes. Everything is zero except the one cell they name.",
@@ -276,9 +276,9 @@
       const aa = ch.idx === STOP ? "a stop" : ch.aa;
       return "The genetic code as a 4 by 4 by 4 table of 64 small cubes, with a one-hot vector beside each axis. " +
              (ctx.state.show === "code" ? "Each cube is tinted by the residue it codes for. " : "Only the three selected planes and the one chosen cell are shown. ") +
-             "Codon " + (ctx.state.n + 1) + " of the gene is " + ch.codon + ", which codes for " + aa + ".";
+             "Codon " + (ctx.state.n + 1) + " is " + ch.codon + ", which codes for " + aa + ".";
     },
-    controls: {n: "Which codon of the gene", show: "Show", play: "▶ Read the gene"},
+    controls: {n: "Which codon", show: "Show", play: "▶ Read the codons"},
     options: {show: {code: "the whole code, by residue", codon: "one codon: three planes, one cell"}},
     np: {
       uvw: (codon) => "one-hot " + [...codon].join(", "),
@@ -300,10 +300,10 @@
              "índices, uno por base: un tensor de 4 × 4 × 4 con un residuo en cada una de sus 64 celdas. " +
              "Un codón es una celda, el producto de tres vectores one-hot: un 4 × 4 × 4 con un solo 1.",
     b: "Cada cubito es uno de los 64 codones, teñido según el residuo que codifica, así que un " +
-       "bloque de un color es la redundancia del código. Junto a cada eje hay un vector one-hot " +
-       "del codón del gen. Su letra encendida elige un plano de 16 celdas, y <b>los tres planos " +
+       "bloque de un color es la redundancia del código. Las letras son las del ADN; en la copia de ARN la T se escribe U. Junto a cada eje hay un vector one-hot " +
+       "del codón de este tramo. Su letra encendida elige un plano de 16 celdas, y <b>los tres planos " +
        "se cruzan en una sola celda</b>. Elige <b>un codón</b> para quedarte solo con esas celdas. " +
-       "▶ recorre los 60 codones del gen y la celda encendida salta por la tabla. " +
+       "▶ recorre los 60 codones de este tramo y la celda encendida salta por la tabla. " +
        "Arrastra para girar el cubo; haz clic en una celda para ir a ese codón.",
     eqcap: "K es el producto exterior de tres vectores one-hot, uno por cada base del codón: a, b " +
            "y c indexan los tres ejes del cubo. Todo es cero salvo la celda que nombran.",
@@ -325,9 +325,9 @@
       const aa = ch.idx === STOP ? "un alto" : ch.aa;
       return "El código genético como una tabla de 4 por 4 por 4 con 64 cubitos y un vector one-hot junto a cada eje. " +
              (ctx.state.show === "code" ? "Cada cubito está teñido según el residuo que codifica. " : "Solo se ven los tres planos elegidos y la celda del codón. ") +
-             "El codón " + (ctx.state.n + 1) + " del gen es " + ch.codon + ", que codifica " + aa + ".";
+             "El codón " + (ctx.state.n + 1) + " es " + ch.codon + ", que codifica " + aa + ".";
     },
-    controls: {n: "Qué codón del gen", show: "Mostrar", play: "▶ Leer el gen"},
+    controls: {n: "Qué codón", show: "Mostrar", play: "▶ Leer los codones"},
     options: {show: {code: "el código entero, por residuo", codon: "un codón: tres planos, una celda"}},
     np: {
       uvw: (codon) => "one-hot " + [...codon].join(", "),

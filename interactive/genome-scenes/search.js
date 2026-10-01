@@ -222,12 +222,13 @@
              "once and it is one einsum, a score for each of the 161 windows.",
     predict: "Before you slide: two random 20-base stretches agree at about 5 places, one in four. " +
              "Will the best wrong window score nearer 5 or nearer 15?",
-    b: "Behind is the gene's one-hot grid; over a window hovers the guide's own. Where its 1 sits " +
-       "on the sequence's 1 the pair is joined in teal, where it misses, in rose. The bars score " +
-       "the windows in view. A guide is what Cas12a, the protein this very gene encodes, carries: " +
-       "20 bases, matched against DNA. This one is cut from window 41 of this same gene, so a perfect " +
-       "match exists by construction. Slide the window, press play, add mismatches. The arithmetic, " +
-       "not a design tool.",
+    b: "Behind is the stretch's one-hot grid; over a window hovers the guide's own. Where its 1 " +
+       "sits on the sequence's 1 the pair is joined in teal; where it misses, in rose. The bars " +
+       "are the scores of the windows in view. Cas12a, the protein this gene encodes, carries a " +
+       "guide: about 20 bases of RNA, written here in DNA letters, that it matches against DNA. " +
+       "This one is cut from window 41 of this same stretch, so a perfect match exists by " +
+       "construction. Real targeting also needs a short motif beside the site and does not " +
+       "weigh every position equally; this picture is only the counting.",
     eqcap: "s holds one score for each window w. W[w, ℓ, b] is one-hot base b at position ℓ of " +
            "window w, and q is the guide. The product is 1 only where both name the same base.",
     win: (at) => "window " + (at + 1),
@@ -250,7 +251,7 @@
         : perfect === 1
           ? "Exactly one window scores " + W + ", window " + (top[0].at + 1) + "; the best wrong one scores <b>" + top[1].score + "</b>. "
           : perfect + " windows score " + W + ". ") +
-      "An average window, over all 161, scores <b>" + mean + "</b>: that is chance.",
+      "An average window, over all 161, scores <b>" + mean + "</b>: a little over one in four, because this stretch is rich in A and T.",
     tip: (w, score) => "window " + (w + 1) + " · " + score + " of " + W,
     aria: (ctx) => {
       const s = ctx.state, f = facts(ctx);
@@ -280,12 +281,13 @@
              "ventanas a la vez y es un solo einsum, una puntuación para cada una de las 161.",
     predict: "Antes de deslizar: dos tramos al azar de 20 bases coinciden en unos 5 sitios, uno de " +
              "cada cuatro. ¿La mejor ventana equivocada sacará algo más cerca de 5 o de 15?",
-    b: "Detrás está la rejilla one-hot del gen; sobre una ventana flota la de la guía. Donde su 1 " +
+    b: "Detrás está la rejilla one-hot del tramo; sobre una ventana flota la de la guía. Donde su 1 " +
        "cae sobre el 1 de la secuencia, el par se une en turquesa; donde falla, en rosa. Las barras " +
-       "puntúan las ventanas a la vista. Una guía es lo que lleva Cas12a, la proteína que codifica " +
-       "este mismo gen: 20 bases que se buscan en el ADN. Esta está cortada de la ventana 41 de este " +
-       "mismo gen, así que existe una coincidencia perfecta por construcción. Desliza la ventana, " +
-       "pulsa reproducir, añade cambios. La aritmética, no una herramienta de diseño.",
+       "son las puntuaciones de las ventanas a la vista. Cas12a, la proteína que codifica este " +
+       "gen, lleva una guía: unas 20 bases de ARN, escritas aquí con letras de ADN, que busca en " +
+       "el ADN. Esta está cortada de la ventana 41 de este mismo tramo, así que existe una " +
+       "coincidencia perfecta por construcción. La orientación real también exige un motivo corto " +
+       "junto al sitio y no pesa igual todas las posiciones; esta imagen es solo el recuento.",
     eqcap: "s guarda una puntuación por cada ventana w. W[w, ℓ, b] es la base one-hot b en la " +
            "posición ℓ de la ventana w, y q es la guía. El producto vale 1 solo donde ambas nombran la misma base.",
     win: (at) => "ventana " + (at + 1),
@@ -308,7 +310,7 @@
         : perfect === 1
           ? "Exactamente una ventana puntúa " + W + ", la " + (top[0].at + 1) + "; la mejor equivocada puntúa <b>" + top[1].score + "</b>. "
           : perfect + " ventanas puntúan " + W + ". ") +
-      "Una ventana media, de las 161, puntúa <b>" + mean + "</b>: eso es el azar.",
+      "Una ventana media, de las 161, puntúa <b>" + mean + "</b>: algo más de una de cada cuatro, porque este tramo es rico en A y T.",
     tip: (w, score) => "ventana " + (w + 1) + " · " + score + " de " + W,
     aria: (ctx) => {
       const s = ctx.state, f = facts(ctx);

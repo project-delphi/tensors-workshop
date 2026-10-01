@@ -642,29 +642,29 @@
       intro: "A gene is a string over four letters, and that is already a tensor: write each letter as " +
              "a row of four numbers and 180 bases become a 180 \u00d7 4 grid. This page follows one " +
              "short stretch of one real gene, the start of cas12a, through what a cell does with it, " +
-             "and every arrow turns out to be a multiplication on that grid. The gene is copied into " +
+             "and every arrow turns out to be one array operation on that grid: a view, a multiplication, a broadcast. That stretch is copied into " +
              "RNA; the RNA is read three letters at a time into a protein; the protein folds, " +
              "and its shape is one more array; and then Cas12a, the protein this gene encodes, " +
              "does its job: it finds the stretch of DNA that matches a " +
-             "20-letter guide, which is the search every edit begins with. The strip under the stage " +
-             "is the gene itself, all 180 bases, and the bright part is what the picture above is " +
+             "20-letter guide, the first step of an edit. The strip under the stage " +
+             "is that stretch, all 180 bases, and the bright part is what the picture above is " +
              "looking at. Each picture asks you to predict first; the box under its controls answers " +
-             "with this gene\u2019s own numbers.",
+             "with this stretch\u2019s own numbers.",
       reset: "Reset this picture", home: "Home view", glow: "Glow",
       motion: "Pause motion", motionOn: "Resume motion",
       prev: "\u25c0 Back", next: "Next \u25b6",
       pause: "\u275a\u275a Pause",
       stepOf: (i, n) => i + " of " + n,
       stepName: (i, n, h) => i + " of " + n + ": " + h,
-      hint: "Drag to turn \u00b7 scroll to move closer \u00b7 + / \u2212 keys \u00b7 click a piece to pick it \u00b7 press on the gene strip to move there.",
-      hintFlat: "Click a piece to pick it \u00b7 press on the gene strip to move there.",
+      hint: "Drag to turn \u00b7 scroll to move closer \u00b7 + / \u2212 keys \u00b7 click a piece to pick it \u00b7 press on the strip of bases to move there.",
+      hintFlat: "Click a piece to pick it \u00b7 press on the strip of bases to move there.",
       glNoScript: "Three-dimensional view unavailable, so this picture is drawn flat. Every number is the same.",
       glNoWebgl: "This browser reports no WebGL, so this picture is drawn flat. Every number is the same.",
       glSlow: "Glow is off: this device was not keeping up with it. Re-tick the box to try again.",
       embedCap: "Three one-hot vectors multiplied: a 4 \u00d7 4 \u00d7 4 holding one 1.",
       shape: "Shape", concept: "Concept", code: "In NumPy",
       rail: "The nine pictures",
-      ribbon: "the gene \u00b7 180 bases",
+      ribbon: "cas12a \u00b7 its first 180 bases",
       lens: (a, b) => (b - a === 1 ? "base " + (a + 1) : "bases " + (a + 1) + "\u2013" + b),
       aboutH: "About this page",
       about1: "Nothing is fetched: every number here is computed in the browser from literals in the " +
@@ -698,29 +698,29 @@
              "una fila de cuatro n\u00fameros y 180 bases se vuelven una rejilla de 180 \u00d7 4. " +
              "Esta p\u00e1gina sigue un tramo corto de un gen real, el comienzo de cas12a, a " +
              "trav\u00e9s de lo que una c\u00e9lula hace con \u00e9l, y cada flecha resulta ser " +
-             "una multiplicaci\u00f3n sobre esa rejilla. El gen se copia a ARN; el ARN se lee de " +
+             "una operaci\u00f3n de arreglos sobre esa rejilla: una vista, una multiplicaci\u00f3n, un broadcast. Ese tramo se copia a ARN; el ARN se lee de " +
              "tres en tres letras para formar una prote\u00edna; la prote\u00edna se pliega, y " +
              "su forma es un arreglo m\u00e1s; y entonces Cas12a, la prote\u00edna que este gen " +
              "codifica, hace su trabajo: encuentra el tramo de ADN que " +
-             "coincide con una gu\u00eda de 20 letras, que es la b\u00fasqueda con la que empieza " +
-             "toda edici\u00f3n. La cinta bajo el escenario es el gen mismo, las 180 bases, y la " +
+             "coincide con una gu\u00eda de 20 letras, el primer paso de una edici\u00f3n. " +
+             "La cinta bajo el escenario es ese tramo, las 180 bases, y la " +
              "parte brillante es lo que mira la imagen de arriba. Cada imagen te pide predecir " +
-             "primero; el recuadro bajo sus controles responde con los n\u00fameros de este mismo gen.",
+             "primero; el recuadro bajo sus controles responde con los n\u00fameros de este mismo tramo.",
       reset: "Reiniciar esta imagen", home: "Vista inicial", glow: "Brillo",
       motion: "Pausar movimiento", motionOn: "Reanudar movimiento",
       prev: "\u25c0 Atr\u00e1s", next: "Siguiente \u25b6",
       pause: "\u275a\u275a Pausa",
       stepOf: (i, n) => i + " de " + n,
       stepName: (i, n, h) => i + " de " + n + ": " + h,
-      hint: "Arrastra para girar \u00b7 usa la rueda para acercar \u00b7 teclas + / \u2212 \u00b7 haz clic en una pieza para seleccionarla \u00b7 pulsa sobre la cinta del gen para ir all\u00ed.",
-      hintFlat: "Haz clic en una pieza para seleccionarla \u00b7 pulsa sobre la cinta del gen para ir all\u00ed.",
+      hint: "Arrastra para girar \u00b7 usa la rueda para acercar \u00b7 teclas + / \u2212 \u00b7 haz clic en una pieza para seleccionarla \u00b7 pulsa sobre la cinta de bases para ir all\u00ed.",
+      hintFlat: "Haz clic en una pieza para seleccionarla \u00b7 pulsa sobre la cinta de bases para ir all\u00ed.",
       glNoScript: "La vista tridimensional no est\u00e1 disponible, as\u00ed que esta imagen se dibuja plana. Todos los n\u00fameros son los mismos.",
       glNoWebgl: "Este navegador no reporta WebGL, as\u00ed que esta imagen se dibuja plana. Todos los n\u00fameros son los mismos.",
       glSlow: "El brillo est\u00e1 desactivado: este dispositivo no lo segu\u00eda bien. Vuelve a marcar la casilla para intentarlo de nuevo.",
       embedCap: "Tres vectores one-hot multiplicados: un 4 \u00d7 4 \u00d7 4 con un 1.",
       shape: "Forma", concept: "Concepto", code: "En NumPy",
       rail: "Las nueve im\u00e1genes",
-      ribbon: "el gen \u00b7 180 bases",
+      ribbon: "cas12a \u00b7 sus primeras 180 bases",
       lens: (a, b) => (b - a === 1 ? "base " + (a + 1) : "bases " + (a + 1) + "\u2013" + b),
       aboutH: "Sobre esta p\u00e1gina",
       about1: "No se descarga nada: cada n\u00famero de aqu\u00ed se calcula en el navegador a partir " +
