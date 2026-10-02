@@ -134,6 +134,7 @@ async function driveOneWidget(ctx, widget, where, lang) {
       if (runsSite) {
         await harness.scenario(ctx, 'site pages', site.runPages);
         await harness.scenario(ctx, 'day sheet print', site.runDaySheetPrint);
+        await harness.scenario(ctx, 'instructor pace print', site.runPacePrint);
       }
 
       // The widgets, and the order the widgets/*.cjs `drive*` functions are

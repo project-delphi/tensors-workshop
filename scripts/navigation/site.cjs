@@ -9,7 +9,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 
 const pages = ['index', 'notebooks', 'interactive', 'kahoot', 'references', 'companion', 'teach',
-  'faq', 'facilitator-guide', 'day-sheet', 'assessments', 'worked-mistakes', 'group-tasks',
+  'faq', 'facilitator-guide', 'day-sheet', 'instructor-pace', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 // The readiness pages are unlisted diagnostics with no navbar, so they get a
 // block of their own rather than the `pages` loop; so do the decks.
@@ -112,6 +112,20 @@ async function runPages(ctx) {
           `${lang}/${name}: horizontal overflow at ${width}`);
       }
     }
+  }
+}
+
+// The instructor card must remain one printed page in both languages.
+async function runPacePrint(ctx) {
+  const {page, origin, prefix, screenshots} = ctx;
+  for (const lang of ['en', 'es']) {
+    await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}instructor-pace.html`);
+    await page.locator('.pace-guide table').waitFor();
+    await page.evaluate(() => document.fonts.ready);
+    const pdf = await page.pdf({preferCSSPageSize: true,
+      path: path.join(screenshots, `instructor-pace-${lang}.pdf`)});
+    const printed = (pdf.toString('latin1').match(/\/Type\s*\/Page(?!s)/g) || []).length;
+    assert.equal(printed, 1, `${lang}/instructor-pace: expected one A4 page, got ${printed}`);
   }
 }
 
@@ -418,6 +432,6 @@ async function runSlides(ctx) {
 
 module.exports = {
   pages, readinessPages, decks, EXEMPT,
-  checkCoverage, runPages, runDaySheetPrint, runHero,
+  checkCoverage, runPages, runDaySheetPrint, runPacePrint, runHero,
   runKeyboardAndDisclosures, runReadiness, runWideTable, runFallbacks, runSlides,
 };

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-02
+
+- **A one-page instructor pace guide**, in English and Spanish, puts the complete session clock, teaching cues and late-running cuts beside your slides. Find it under Teach.
+
 ## 2026-10-01
 
 - **DNA to an edit, rebuilt.** The genome stage's pictures now fill a larger stage in type you can read, and each one performs its operation instead of tabulating it. A helix sits over the one-hot grid it becomes and drops its ones into it. The window array is drawn whole, 3,220 entries that come out as diagonal stripes because they are 180 numbers seen again. In transcription an enzyme walks the template strand and the RNA appears under it reading like the *other* strand, with the 4 × 4 for the base it is on underneath: the anti-diagonal against the template, the identity against the coding strand, two complements undoing each other. The codon cube is 64 separate cells you can see into, with three one-hot vectors whose planes meet in one cell. Translation runs as it would in a cell, a ribosome moving along the mRNA while the chain grows, and swapping a codon's third base is the page's first edit. The protein is a map of the 20 kinds of residue with the chain walking over it. The search lays the guide's grid over the sequence's and counts where they line up.
