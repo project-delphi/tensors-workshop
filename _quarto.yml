@@ -22,6 +22,7 @@ project:
     - es/readiness-refresher.qmd
     - facilitator-guide.md
     - day-sheet.md
+    - instructor-pace.md
     - assessments.md
     - worked-mistakes.md
     - group-tasks.md
@@ -36,6 +37,7 @@ project:
     - es/faq.qmd
     - es/facilitator-guide.md
     - es/day-sheet.md
+    - es/instructor-pace.md
     - es/assessments.md
     - es/worked-mistakes.md
     - es/group-tasks.md

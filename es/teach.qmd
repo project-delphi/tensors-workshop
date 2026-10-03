@@ -26,6 +26,7 @@ grupales sustituyen tiempo de práctica o discusión; el cuaderno 13 queda para 
 
 <span data-language-key="teaching-resources"></span>
 
+- **[Guía de ritmo para docentes](instructor-pace.md)** — Una página con cada hora de inicio, indicaciones y recortes para la primera sesión.
 - **[Guía de facilitación](facilitator-guide.md)** — Prepara el grupo, sigue los tiempos de cada sección y ayuda a quienes se atasquen.
 - **[Hoja del día](day-sheet.md)** — Una página para imprimir: las pestañas que abrir, la franja de reloj, los espacios para el PIN de cada Kahoot y qué hacer si falla Colab o el Wi-Fi.
 - **[Comprobaciones inicial y final](assessments.md)** — Recoge el razonamiento individual al principio y al final; usa la clave y la rúbrica incluidas.

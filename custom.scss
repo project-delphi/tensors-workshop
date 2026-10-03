@@ -632,3 +632,10 @@ main p:has(> a:only-child > img:only-child) + p > em:only-child {
   .day-sheet-strip table th:nth-child(5) { width: 10%; }
   .day-sheet-strip table th:nth-child(6) { width: 16%; }
 }
+
+// The pacing card shares the day sheet’s print chrome, with room for cues.
+@media print {
+  .pace-guide table th:nth-child(1) { width: 10%; }
+  .pace-guide table th:nth-child(2) { width: 22%; }
+  .pace-guide table tr { break-inside: avoid; }
+}
