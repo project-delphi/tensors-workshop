@@ -231,13 +231,13 @@ workshop:
 
 # ── Event ────────────────────────────────────────────────────────────────────
 # The one live session: when, where, and how to reach the organizers. The
-# homepage hero and the FAQ read these, so a change of room is made here once;
-# the Discord invite is `community.discord`, below. The venue says "to be
-# confirmed" until the classroom is assigned -- do not guess a room number.
+# homepage hero and the FAQ read these, so a change is made here once; the
+# Discord invite is `community.discord`, below. The venue is the city and
+# nothing more: no institution and no room is named.
 event:
   date: "2 October 2026"
   time: "5:00 PM–8:00 PM COT (UTC-5)"
-  venue: "Universidad El Bosque, Bogotá, Colombia — classroom to be confirmed"
+  venue: "Bogotá"
   contact: "ravkalia@gmail.com"
 
 # ── Community ────────────────────────────────────────────────────────────────
