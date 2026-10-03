@@ -55,6 +55,11 @@ comparison by fitting CP by hand and then changing what "fit" means.
 
 Deep dive 19 works through the ML blog post *CP or Tucker in practice*.
 
+Deep dive 20 works through the three *AlphaTensor* posts on the ML blog: it
+writes matrix multiplication as a tensor, plays the search for a faster
+algorithm as a game on the smallest case, and checks the factorisations
+DeepMind published. It trains nothing.
+
 The browser widgets beside the sections have a page of their own:
 [Interactive](interactive.qmd) gives each one a card, with the sections it
 belongs to and the scenes worth opening directly.

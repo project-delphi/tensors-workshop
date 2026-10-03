@@ -43,6 +43,10 @@ BLOG_19 = (
     "https://raw.githubusercontent.com/project-delphi/ml-blog/"
     "d9f634c19b10f86efd687c8bfb78734b365705ce/posts/cp-or-tucker-in-practice/data/"
 )
+ALPHATENSOR_20 = (
+    "https://raw.githubusercontent.com/google-deepmind/alphatensor/"
+    "1949163da3bef7e3eb268a3ac015fd1c2dbfc767/algorithms/"
+)
 
 # name in data/ -> (upstream URL, the SHA-256 the notebooks pin, or None)
 MIRRORS = {
@@ -89,6 +93,16 @@ MIRRORS = {
     "sweep_tucker2.csv": (
         BLOG_19 + "sweep_tucker2.csv",
         "1a3fb982baa9ce1e8ff2c0a3ff75aca31b7f59f5a3af97e9bb423a7f2f268cfe",
+    ),
+    # Deep dive 20: the factorisations DeepMind published with the AlphaTensor
+    # paper, at the commit the notebook pins.
+    "factorizations_r.npz": (
+        ALPHATENSOR_20 + "factorizations_r.npz",
+        "4d59571a2537a9472e8229176d5ebe2925f3e041ad403c095b41853026caec33",
+    ),
+    "factorizations_f2.npz": (
+        ALPHATENSOR_20 + "factorizations_f2.npz",
+        "70f09f349d8d2874ef0e0e089459c7320f5aa3eef277df5ffa67f573709db2da",
     ),
 }
 

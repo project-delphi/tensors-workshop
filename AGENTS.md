@@ -78,6 +78,7 @@ text, then run the appropriate generator:
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
 | `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
 | `images/cube-19-*.gif` (the core, the fold, CP's cancelling terms) | `scripts/gen_cp_tucker_gifs.py` |
+| `images/cube-20-*.gif` (the four trays, Strassen's seven blocks, the two trails) | `scripts/gen_alphatensor_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.webp` (art added since #45) | `scripts/gen_slide_art.py` |
 | `data/*` (the datasets' fallback copies; network, not in the CI gate) | `scripts/fetch_mirrors.py` |
 | `docs/` (build output, gitignored -- never committed) | `quarto render` |
@@ -140,6 +141,17 @@ What each generator draws, and the rules each one keeps:
   against Tucker's dense one, the 8 × 8 block fold, and two rank-one terms
   growing as 1/ε while their sum converges -- the cancellation Part 3 of the
   notebook measures on a real kernel. Captions are expressions, `loop=0`.
+- `gen_alphatensor_gifs.py` draws notebook 20's three, all on the 4 × 4 × 4
+  matrix multiplication tensor: its eight 1s arriving in four trays, one per
+  entry of C; Strassen's seven blocks added one at a time, with the count of
+  cells that differ from the tensor going 8, 12, 12, 12, 10, 8, 4, 0; and the
+  two winning games, greedy's 8, 7, …, 0 against Strassen's climb. Every cell
+  of a block prints its signed value, so +1 and −1 are told apart without
+  colour, and the cells the tensor wants carry a heavy outline. The tensor,
+  `U`, `V` and `W` are the handbook's, and the greedy trail is found by
+  searching all 128,000 moves; the script asserts both trails before it draws
+  them. NumPy, Matplotlib and Pillow only, no network. Captions are
+  expressions, `loop=0`.
 - `gen_genome_fold.py` writes the genome stage's `genome-fold.js`: one
   alpha-carbon per residue of the AlphaFold model of Cas12a (UniProt A0Q7Q2),
   1,300 of them, with each residue's pLDDT, as a literal the page loads with a
@@ -528,7 +540,7 @@ refuses a table in that position.
 executes the declared route and then the **paired solution**, the
 `solution`-tagged cell immediately after the activity, because many activity
 cells are the student's blank `# TODO` block. A route with no executable code
-(notebooks 00, 12, 16, 17, 18 and 19) names what CI executes in `ci_cells` on the
+(notebooks 00, 12, 16, 17, 18, 19 and 20) names what CI executes in `ci_cells` on the
 same scaffold cell; `run_set()` refuses an entry that is not a unique code cell
 or that is a predict-first cell, and check 2's `EXPECTED` guard refuses one
 that drops an asserted cell. Keep the blanket fallback for a notebook with no
@@ -573,6 +585,12 @@ copy -- notebook 14's monkey tensor has none -- and keeps its retries.
 Deep dive 19 keeps its own `fetch()`, with a `copy=` for the blog post's
 kernel and sweeps; its FB15k-237 split has no stated licence, so, like the
 monkey tensor, it has no copy.
+Deep dive 20 pastes the same `fetch()` for the two files of factorisations
+DeepMind published with AlphaTensor, pinned to one commit of their repository;
+both have copies, with that repository's `LICENSE` beside them as
+`data/alphatensor.LICENSE`. The rectangular sizes in those files are object
+arrays, so the notebook loads them with `allow_pickle=True` -- after `fetch()`
+has checked the SHA-256, which is the only reason that is acceptable.
 
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages
@@ -709,6 +727,7 @@ uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
 uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
 uv run --group figures python scripts/gen_cp_tucker_gifs.py       # notebook 19
+uv run --group figures python scripts/gen_alphatensor_gifs.py     # notebook 20; no network
 uv run --group figures python scripts/gen_slide_art.py        # needs Chrome and the network
 npm run gen:hero                                              # the hero's widget stills, from each embed
 ```

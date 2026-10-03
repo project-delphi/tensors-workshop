@@ -554,3 +554,30 @@ assert np.isclose(france_contains_paris, paris_contains_france)
 La puntuación es una suma de productos y la multiplicación conmuta: las dos puntuaciones son iguales para cualquier embedding, así que ningún entrenamiento las separa. Transferencia: en un grafo de citas, ¿cuántos pares costaría esto y qué medirías primero?
 
 </details>
+
+## 20 · Borrar dos celdas a la vez baja el número más deprisa
+
+<span data-language-key="20-uphill-first-move"></span>
+
+«La primera jugada de Strassen borra dos de los unos del tensor de la multiplicación donde una jugada escolar borra uno, así que deja menos celdas no nulas que una jugada escolar».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+rule = np.zeros((4, 4, 4), dtype=int)
+for i in range(2):
+    for j in range(2):
+        for k in range(2):
+            rule[2 * i + k, 2 * k + j, 2 * i + j] = 1
+weights = np.array([1, 0, 0, 1])
+move = np.einsum("a,b,c->abc", weights, weights, weights)
+before = np.count_nonzero(rule)
+after = np.count_nonzero(rule - move)
+assert (before, after) == (8, 12)
+```
+
+La primera jugada resta 1 en ocho celdas, las de `a11`, `a22` × `b11`, `b22` × `c11`, `c22`. Dos valían 1 y pasan a 0, como dice la afirmación. Las otras seis valían 0 y pasan a −1, que es lo que la afirmación olvida. El número sube de 8 a 12, donde una jugada escolar habría dejado 7. Transferencia: nombra otra búsqueda en la que el mejor primer paso empeore la medida habitual de progreso.
+
+</details>

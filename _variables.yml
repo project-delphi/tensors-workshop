@@ -608,6 +608,9 @@ datasets:
   - match: "posts/cp-or-tucker-in-practice/data"
     label_en: "a ResNet-18 kernel and cached fits"
     label_es: "un kernel de ResNet-18 y ajustes guardados"
+  - match: "google-deepmind/alphatensor"
+    label_en: "the factorisations AlphaTensor published"
+    label_es: "las factorizaciones que publicó AlphaTensor"
 
 # ── The brainstorm diagram ───────────────────────────────────────────────────
 # One picture of the whole day, on both companion pages. Four ideas, and every
@@ -658,7 +661,7 @@ brainstorm:
       title_es: "Se factoriza"
       gloss_en: "Break it into simpler parts you can use."
       gloss_es: "Divídelo en partes más simples que puedas usar."
-      sections: ["07", "08", "09", "10", "11", "14", "15", "16", "18", "19"]
+      sections: ["07", "08", "09", "10", "11", "14", "15", "16", "18", "19", "20"]
 
   # The ribbon under the four cards. There are **two different claims** about
   # the workshop's connecting idea, and they name different sections. Keeping
@@ -803,6 +806,21 @@ reading:
     url: "https://project-delphi.github.io/ml-blog/posts/cp-or-tucker-in-practice/"
     title_en: "CP or Tucker in practice"
     title_es: "CP o Tucker en la práctica"
+  # Notebook 20 works through these three posts, one part apiece and the game
+  # across two, so it carries each URL and title in its opening map and its
+  # "Sources and next steps" cell.
+  alphatensor_cube:
+    url: "https://project-delphi.github.io/ml-blog/posts/alphatensor-matmul-cube/"
+    title_en: "AlphaTensor 1: matrix multiplication is a cube"
+    title_es: "AlphaTensor 1: la multiplicación de matrices es un cubo"
+  alphatensor_seven:
+    url: "https://project-delphi.github.io/ml-blog/posts/alphatensor-seven-multiplications/"
+    title_en: "AlphaTensor 2: a factorization is an algorithm"
+    title_es: "AlphaTensor 2: una factorización es un algoritmo"
+  alphatensor_game:
+    url: "https://project-delphi.github.io/ml-blog/posts/alphatensor-tensor-game/"
+    title_en: "AlphaTensor 3: a game nobody can brute-force"
+    title_es: "AlphaTensor 3: un juego que nadie gana por fuerza bruta"
   inverses_practice:
     url: "https://project-delphi.github.io/ml-blog/posts/tensor-inverses-in-practice/"
     title_en: "Tensor inverses in practice"
@@ -1204,6 +1222,9 @@ references:
         - uses
         - cp_or_tucker
         - cp_tucker_practice
+        - alphatensor_cube
+        - alphatensor_seven
+        - alphatensor_game
         - inverses_practice
         - inverse_examples
         - sparse
@@ -2137,3 +2158,47 @@ extras:
       - "Leer rangos en el **codo de HOSVD**, comprobar su cota de truncamiento y decir cuándo un espectro no puede elegir un rango."
       - "Encontrar un rango CP **sobreparametrizando y podando** con un paso proximal de group lasso."
       - "Plegar una fotografía en un tensor de 4 modos y mostrar que el modelo que mejor **comprime** no es el que mejor **predice**."
+  x20:
+    n: "20"
+    slug: "alphatensor"
+    format_en: "deep dive"
+    format_es: "estudio a fondo"
+    format_line_en: "deep dive · take-home · about 90 minutes"
+    format_line_es: "estudio a fondo · para después · unos 90 minutos"
+    title_en: "AlphaTensor: multiplying matrices as a game"
+    title_es: "AlphaTensor: multiplicar matrices como un juego"
+    summary_en: "Write matrix multiplication as a tensor of 0s and 1s, check that Strassen's seven rank-one terms rebuild it exactly, play the search for such terms as a one-player game that a greedy player wins in 8 moves and never 7, and verify the factorisations AlphaTensor published: 47 multiplications for 4 × 4 matrices modulo 2, where the record was 49."
+    summary_es: "Escribir la multiplicación de matrices como un tensor de ceros y unos, comprobar que los siete términos de rango uno de Strassen lo reconstruyen exactamente, jugar la búsqueda de esos términos como un juego de un jugador que un jugador codicioso gana en 8 jugadas y nunca en 7, y verificar las factorizaciones que publicó AlphaTensor: 47 multiplicaciones para matrices 4 × 4 módulo 2, donde el récord era 49."
+    network_note_for: "google-deepmind/alphatensor"
+    network_note_en: "under 1 MB, once"
+    network_note_es: "menos de 1 MB, una vez"
+    intro_en: |-
+      Multiplying two 2 × 2 matrices the schoolbook way takes 8 multiplications. Volker Strassen did it with 7 in 1969. In 2022 a program called AlphaTensor multiplied 4 × 4 matrices, in arithmetic modulo 2, with 47 where the record had been 49. Both results are the same kind of object: the sum of rank-one terms that section 11 fitted to a taxi tensor, here required to be exact.
+
+      > **The rule for multiplying matrices is a fixed tensor of 0s and 1s, and every exact CP decomposition of that tensor into R rank-one terms is an algorithm that multiplies with R multiplications.**
+
+      This deep dive builds the tensor, checks Strassen's seven terms against it, plays the search for such terms as a one-player game on the smallest case, and then downloads the factorisations DeepMind published and verifies them. It trains nothing: it plays the game in NumPy and checks the published answers.
+
+      It works through the three *AlphaTensor* posts on the ML blog at a first-read pace, in NumPy alone.
+    intro_es: |-
+      > 🇪🇸 Multiplicar dos matrices 2 × 2 a la manera escolar cuesta 8 multiplicaciones. Volker Strassen lo hizo con 7 en 1969. En 2022 un programa llamado AlphaTensor multiplicó matrices 4 × 4, en aritmética módulo 2, con 47 donde el récord era 49. Los dos resultados son el mismo tipo de objeto: la suma de términos de rango uno que la sección 11 ajustó a un tensor de taxis, aquí exigida exacta.
+      >
+      > **La regla para multiplicar matrices es un tensor fijo de ceros y unos, y cada descomposición CP exacta de ese tensor en R términos de rango uno es un algoritmo que multiplica con R multiplicaciones.**
+      >
+      > Este estudio a fondo construye el tensor, comprueba contra él los siete términos de Strassen, juega la búsqueda de esos términos como un juego de un jugador en el caso más pequeño, y después descarga las factorizaciones que publicó DeepMind y las verifica. No entrena nada: juega el juego en NumPy y comprueba las respuestas publicadas.
+      >
+      > Sigue las tres entradas «AlphaTensor» del blog de ML (en inglés) a ritmo de primera lectura, solo con NumPy.
+    objectives_en:
+      - "Build the **matrix multiplication tensor** for any size, and multiply two matrices by contracting it."
+      - "Read a **rank-one term** as one multiplication, and an exact CP decomposition with R terms as an algorithm with R multiplications."
+      - "Verify **Strassen's seven terms** cell by cell, run them as an algorithm, and count `7**k` multiplications against `8**k` when they recurse on blocks."
+      - "Play **TensorGame** on the 2 × 2 tensor: count its 128,000 moves, and show that a greedy player wins in 8 moves and never in 7."
+      - "Download the **factorisations AlphaTensor published**, rebuild every tensor from them, and run the 47-multiplication algorithm for 4 × 4 matrices modulo 2."
+      - "State the **open problem**: the rank of 3 × 3 matrix multiplication lies between 19 and 23."
+    objectives_es:
+      - "Construir el **tensor de la multiplicación de matrices** para cualquier tamaño y multiplicar dos matrices contrayéndolo."
+      - "Leer un **término de rango uno** como una multiplicación, y una descomposición CP exacta con R términos como un algoritmo con R multiplicaciones."
+      - "Verificar los **siete términos de Strassen** celda a celda, ejecutarlos como algoritmo y contar `7**k` multiplicaciones frente a `8**k` cuando se aplican por bloques."
+      - "Jugar a **TensorGame** sobre el tensor 2 × 2: contar sus 128.000 jugadas y mostrar que un jugador codicioso gana en 8 jugadas y nunca en 7."
+      - "Descargar las **factorizaciones que publicó AlphaTensor**, reconstruir cada tensor a partir de ellas y ejecutar el algoritmo de 47 multiplicaciones para matrices 4 × 4 módulo 2."
+      - "Enunciar el **problema abierto**: el rango de la multiplicación de matrices 3 × 3 está entre 19 y 23."
