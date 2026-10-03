@@ -1049,10 +1049,13 @@
     }
     // Names. Every tray says which entry of C it is; the rows and columns are
     // named once, on the picked tray or else the bottom one. Past 2 x 2 a
-    // name per row would be eighteen chips on one edge, so only the ends are.
+    // name per row would be eighteen chips on one edge, so only the ends are
+    // -- and past 3 x 3 only the first of each, because a chip is a fixed
+    // size on screen while the cube shrinks under it, and the last row's
+    // name and the first column's share a corner.
     const ref = picked ? st.slice : N - 1;
     const yRef = (h - ref) * TRAY_GAP + (lift ? lift[ref] : 0) - 0.45;
-    const ends = (q) => n === 2 || q === 0 || q === N - 1;
+    const ends = (q) => n === 2 || q === 0 || (n === 3 && q === N - 1);
     for (let c = 0; c < N; c++) {
       if (!(n <= 3 || c === 0 || c === N - 1 || c === st.slice)) continue;
       const y = (h - c) * TRAY_GAP + (lift ? lift[c] : 0);

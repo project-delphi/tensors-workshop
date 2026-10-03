@@ -39,7 +39,8 @@
   const one = (i) => [0, 1, 2, 3].map((k) => (k === i ? 1 : 0));
   const signed = (d) => (d > 0 ? "+" + d : d < 0 ? "−" + -d : "±0");
   // The sum, moved across the equals sign. A term never breaks across a line.
-  const EQUATION = "T − u₁ ∘ v₁ ∘ w₁ − … − u<sub>R</sub> ∘ v<sub>R</sub> ∘ w<sub>R</sub> = 0".replace(/ ∘ /g, "\u00a0∘\u00a0");
+  const EQUATION = "T − u₁ ∘ v₁ ∘ w₁ − … − u<sub>R</sub> ∘ v<sub>R</sub> ∘ w<sub>R</sub> = 0"
+    .replace(/ ∘ /g, "\u00a0∘\u00a0");
   const cellsOf = (X) => { const out = []; X.forEach((x, i) => { if (x) out.push(i); }); return out; };
 
   // The first block of a script that is due. A block counts as played by its
@@ -142,10 +143,10 @@
       predict: "The cube starts with 8 nonzero cells and the aim is 0. Strassen's seven moves win in fewer " +
                "moves than the schoolbook rule's eight. After his first move, how many nonzero cells are " +
                "left: 7, 4, or more than 8?",
-      concept: "Move the blocks to the other side of the equation: " + EQUATION + ". Start with the cube, take away one block a " +
-               "move, and try to be left with zeros in as few moves as possible. The AlphaTensor paper calls " +
-               "this TensorGame: one player, a reward of −1 for every move, and a game won in R moves is an " +
-               "algorithm with R multiplications.",
+      concept: "Move the blocks to the other side of the equation: " + EQUATION + ". Start with the " +
+               "cube, take away one block a move, and try to be left with zeros in as few moves as " +
+               "possible. The AlphaTensor paper calls this TensorGame: one player, a reward of −1 for every " +
+               "move, and a game won in R moves is an algorithm with R multiplications.",
       b: "A move is three lists of weights, each −1, 0 or +1, and it subtracts their block from what is " +
          "left of the cube. A cell that is cleared goes hollow; a cell pushed below zero turns amber and " +
          "says −1. <b>Three games to try.</b> Press <b>Schoolbook's next move</b> until the cube is empty. " +
@@ -178,8 +179,8 @@
           return "<b>Won in " + moves(f.n) + "</b>: an algorithm with " + f.n + " multiplications. The count " +
             "went " + trail + "." +
             (f.n === BEST ? " That is the fewest possible for 2 × 2 matrices."
-              : f.n === SCRIPTS.school.U.length ? " That matches the schoolbook rule; " + BEST + " is possible."
-              : " " + BEST + " is possible.");
+              : f.n === SCRIPTS.school.U.length ? " That matches the schoolbook rule; it can be done in " + BEST + "."
+              : " It can be done in " + BEST + ".");
         }
         if (f.stopped) {
           return "<b>Stopped after " + moves(f.n) + "</b> with " + cells(f.left) + " left: a game that runs " +
@@ -197,7 +198,7 @@
         }
         const moved = f.left - f.was;
         return "<b>" + cells(f.left) + " left</b> after " + moves(f.n) + ". " +
-          (moved > 0 ? "<b>Up, not down:</b> " : "") + who(f.last) + " covered " + cells(f.lastCells) +
+          (moved > 0 ? "<b>Up, not down.</b> " : "") + who(f.last) + " covered " + cells(f.lastCells) +
           (moved ? " and took the count from " + f.was + " to " + f.left + "." : " and left the count at " + f.left + ".") +
           (f.back ? (f.last.by === "greedy"
             ? " It is the move before it with its sign flipped: of all " + K.num(CHOICES, 0, "en") +
@@ -213,7 +214,8 @@
                moves(f.n) + ": " + cells(f.left) + " are not zero. A ring marks each of the eight cells the " +
                "rule fills. " +
                (f.won ? "The cube is empty and the game is won. "
-                 : f.empty || f.over ? "" : "A translucent block shows the move being set up, which would leave " + f.after + ". ") +
+                 : f.empty || f.over ? ""
+                 : "A translucent block shows the move being set up, which would leave " + f.after + ". ") +
                "Beside it, the three lists of weights of that move, and a bar for the count after each move.";
       },
       controls: {u: "u, over A", v: "v, over B", w: "w, over C", school: "Schoolbook's next move",
@@ -244,19 +246,19 @@
       predict: "El cubo empieza con 8 celdas distintas de cero y el objetivo es 0. Las siete jugadas de " +
                "Strassen ganan en menos jugadas que las ocho de la regla escolar. Tras su primera jugada, " +
                "¿cuántas celdas distintas de cero quedan: 7, 4 o más de 8?",
-      concept: "Pasa los bloques al otro lado de la ecuación: " + EQUATION + ". Empieza con el cubo, quita un bloque por " +
-               "jugada e intenta quedarte con ceros en las menos jugadas posibles. El artículo de " +
-               "AlphaTensor lo llama TensorGame: un solo jugador, una recompensa de −1 por cada jugada, y " +
-               "una partida ganada en R jugadas es un algoritmo con R multiplicaciones.",
+      concept: "Pasa los bloques al otro lado de la ecuación: " + EQUATION + ". Empieza con el cubo, " +
+               "quita un bloque por jugada e intenta quedarte con ceros en las menos jugadas posibles. El " +
+               "artículo de AlphaTensor lo llama TensorGame: un solo jugador, una recompensa de −1 por cada " +
+               "jugada, y una partida ganada en R jugadas es un algoritmo con R multiplicaciones.",
       b: "Una jugada son tres listas de pesos, cada uno −1, 0 o +1, y resta su bloque de lo que queda del " +
          "cubo. Una celda que se vacía queda hueca; una celda que baja de cero se vuelve ámbar y dice −1. " +
          "<b>Tres partidas para probar.</b> Pulsa <b>Jugada escolar</b>, la siguiente de la regla " +
          "escolar, hasta vaciar el cubo. <b>Empieza de nuevo</b> y haz lo mismo con <b>Jugada de " +
          "Strassen</b>, mirando la cuenta de la derecha. Empieza de nuevo otra vez, juega la primera de " +
-         "Strassen y pide la " +
-         "<b>jugada voraz</b>: de las " + K.num(CHOICES, 0, "es") + " jugadas, la que deja menos celdas " +
-         "distintas de cero. Para armar una jugada a mano, pulsa los pesos de la derecha para recorrer " +
-         "0, +1, −1, o pulsa una celda del cubo; las celdas translúcidas son el bloque que restaría.",
+         "Strassen y pide la <b>jugada voraz</b>: de las " + K.num(CHOICES, 0, "es") + " jugadas, la que " +
+         "deja menos celdas distintas de cero. Para armar una jugada a mano, pulsa los pesos de la derecha " +
+         "para recorrer 0, +1, −1, o pulsa una celda del cubo; las celdas translúcidas son el bloque que " +
+         "restaría.",
       eqcap: "S es lo que queda del cubo. Empieza siendo T, y la jugada t resta un bloque, tres listas de " +
              "pesos multiplicadas, de lo que dejó la jugada t − 1. La partida se gana cuando S es todo " +
              "ceros, y el número de jugadas que hizo falta es el número de multiplicaciones. Señala la t " +
@@ -300,11 +302,11 @@
         }
         const moved = f.left - f.was;
         return "<b>" + cap(remain(f.left)) + "</b> tras " + moves(f.n) + ". " +
-          (moved > 0 ? "<b>Sube, no baja:</b> " : "") + who(f.last) + " cubrió " + cells(f.lastCells) +
+          (moved > 0 ? "<b>Sube, no baja.</b> " : "") + who(f.last) + " cubrió " + cells(f.lastCells) +
           (moved ? " y llevó la cuenta de " + f.was + " a " + f.left + "." : " y dejó la cuenta en " + f.left + ".") +
           (f.back ? (f.last.by === "greedy"
             ? " Es la jugada anterior con el signo cambiado: de las " + K.num(CHOICES, 0, "es") +
-              " jugadas, la que mejor pinta es deshacer esa jugada."
+              " jugadas, la que parece mejor es deshacer la anterior."
             : " Es la jugada anterior con el signo cambiado, así que las dos se cancelan.") : "") +
           " " + next;
       },
@@ -316,7 +318,8 @@
                "que queda tras " + moves(f.n) + ": " + cells(f.left) + " distintas de cero. Un anillo marca " +
                "cada una de las ocho celdas que la regla llena. " +
                (f.won ? "El cubo está vacío y la partida está ganada. "
-                 : f.empty || f.over ? "" : "Un bloque translúcido muestra la jugada que se está armando, que dejaría " + f.after + ". ") +
+                 : f.empty || f.over ? ""
+                 : "Un bloque translúcido muestra la jugada que se está armando, que dejaría " + f.after + ". ") +
                "Al lado, las tres listas de pesos de esa jugada y una barra con la cuenta tras cada jugada.";
       },
       controls: {u: "u, sobre A", v: "v, sobre B", w: "w, sobre C", school: "Jugada escolar",
@@ -395,7 +398,7 @@
 
     // A fresh store, so the cells start from nothing rather than shrinking
     // from the twin's picture before they grow.
-    arrive(ctx) { ctx.cache.arrive = ctx.now(); ctx.cache.ease = null; ctx.cache.memo = null; window.__arr = (window.__arr || []).concat([[ctx.now(), ctx.glReady, ctx.instant]]); window.__ctx = ctx; },
+    arrive(ctx) { ctx.cache.arrive = ctx.now(); ctx.cache.ease = null; ctx.cache.memo = null; },
     animates(ctx) {
       return K.arrival(ctx, ENTRANCE) < 1 || !!(ctx.cache.ease && ctx.cache.ease.moving);
     },

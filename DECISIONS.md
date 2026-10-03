@@ -890,6 +890,103 @@ the twin's own board so one drawing serves both surfaces, with `pose.inset`
 telling the camera and the twin to frame the molecule in what is left. It is
 redrawn when something changes, never per frame.
 
+**The AlphaTensor stage plays the game; it is not AlphaTensor** (2026-10-03).
+The eighth widget follows three ML-blog posts through twelve scenes: the rule
+for multiplying matrices written as a `4 × 4 × 4` cube, a split of the cube
+into blocks read as an algorithm, and the search for a split played as a game.
+Nothing on the page is a network and nothing is trained. The greedy player in
+the third part is a baseline that loses, drawn because losing is the point,
+and the records in the last scene are quoted from the papers rather than
+computed. The page says so in its About panel, in both languages, and so does
+its Interactive card: a reader who arrives at `#greedy` from a notebook link
+should not come away thinking they watched AlphaTensor play. Deep dive 20 is
+where DeepMind's own published factorizations are loaded and checked.
+
+**Its core is a port, checked against the handbook** (2026-10-03). The
+arithmetic already existed, in the posts' own `model.js`, with every number the
+posts quote asserted by three check scripts. The core is that file ported, and
+its test is those scripts ported, so the stage and the posts cannot quote
+different numbers for the same thing. Two tests check it against a record
+outside itself, as the genome test does: Strassen's `U`, `V`, `W` must equal
+the arrays in the handbook's `#still-open` code block, and the 19, the 23 and
+the two exponents the last scene quotes must be the ones that note prints.
+Change the note and the test fails, which is the direction it should fail in.
+
+One thing is not the blog's. The posts scan the 128,000 moves twice, once to
+count how many help and once to find the best. `survey()` does both in one
+pass, scores a move from only the cells its block covers, and remembers the
+answer per position at module level -- because a readout asks for it several
+times, and the scenes test sweeps every control setting in two languages
+without reloading the core. A test scores every move the long way and requires
+the same histogram.
+
+**The strip is worked out by the frame, never written by a scene**
+(2026-10-03). What the ribbon is to the genome stage, the strip is here: the
+2 × 2 cube laid flat as four trays, under every picture. A scene's `readout()`
+returns the blocks it has in play and a count, and the frame computes the 64
+cells from the core -- what the blocks add up to in parts one and two, what is
+left of the cube once they are subtracted in part three, where the page has
+moved the sum to the other side of the equation. The alternative was each of
+twelve scene files returning 64 numbers, written by ten agents in parallel,
+and a strip that could disagree with the arithmetic in any of them. Three
+scenes are about a count rather than the cube's cells and have nothing for a
+press on the strip to move; the test holds that list closed rather than
+letting `seek` be optional everywhere.
+
+**Five scenes, one cube** (2026-10-03). `cube`, `bigger`, `block`, `strassen`
+and `game` all show the same object, and it has to look like the same object.
+So the picture is in the kit: a scene describes a state -- the values, the
+cells to draw hollow, the ghost of a move not yet played, the rings of the
+target -- and `K.cubeModel` says what to draw on both surfaces. `+1` and `−1`
+differ by a printed sign as well as a fill, and a cell cancelled back to zero
+is a hollow dashed outline, which is what keeps Strassen's overshoot visible
+after it has gone.
+
+**A button is a control; a weight vector is one control, not four**
+(2026-10-03). The game's moves change what the picture is *of* rather than a
+value on a scale, so the frame gained a `button` control type that calls the
+scene's `press()`; the moves played live in `ctx.state` and the test presses
+every pair of buttons from the opening state. The hand-built move could have
+been twelve three-way toggles. That makes the test's sweep 4,096 corners which
+never once visit zero, so `u`, `v` and `w` are each one slider over the 81
+weight vectors, set by clicking the weights drawn on the stage.
+
+**An inset is laid out for the shortest board** (2026-10-03). `block`'s inset
+passed the scenes test, which drew it on an 820 × 500 board, and every
+screenshot taken at 1440 × 1000. The browser driver runs at Playwright's
+default viewport, where the stage is shorter and the twin's board is 420
+tall, and there the inset's last line was written at y = 438. The inset test
+now draws every inset at 420, 500 and 900, and an inset spaces itself for the
+short board and opens up when there is room.
+
+**To scale, not on a log scale** (2026-10-03). `recurse` first drew 8ᵏ and 7ᵏ
+as two bars on a log scale, where at ten levels they are 94% the same length
+-- the opposite of what a picture of a 73.7% saving is for. They are drawn to
+scale against each other now, so the lower bar is what the recipe leaves of
+the upper one.
+
+**A heading does not answer its own prediction** (2026-10-03). Three of the
+ten delegated scenes came back with headings that did -- "A 3 × 3 cube has 729
+cells and only 27 of them hold a 1" over "how many of them hold a 1?" -- and
+the page's own intro answered the first scene's. The headings were rewritten
+and the first question changed. The test can only check that a prediction is a
+question; whether a heading spends it is read, not asserted.
+
+**Eight tabs, four to a row; and the shard table must cover the widget list**
+(2026-10-03). Seven hero tabs in three columns left one alone on a row, which
+a rule let span it. Eight in three columns leaves two, so the grid is four
+columns and the tab strip's Up and Down step by four; the browser check
+presses Down on the first tab and requires the tab underneath, because the
+step and the column count are two numbers in two files. Registering the
+widget also showed that nothing required the 3-way split to drive every
+widget in `WIDGET_FILES` -- and then proved it. The new stage went into shard
+0's row of the table, where the site pages take half a minute and there was
+room; `widgetsForShard()` returned nothing for shard 0 whatever the table
+said; and the shard passed, having driven no widget at all. The stage would
+have shipped unchecked. `harness.cjs` now asks `widgetsForShard()` itself, at
+load, whether the three shards between them drive the list exactly once
+each, and the shard's closing line names the widgets it drove.
+
 ## Which document owns what
 
 **One home per fact.** The documents drifted once -- five copies of the

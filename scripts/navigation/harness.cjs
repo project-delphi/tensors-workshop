@@ -20,20 +20,12 @@ const fs = require('node:fs/promises');
 const WIDGET_FILES = ['image-tensor', 'broadcasting-simulator', 'attention-stage',
   'linalg-stage', 'factor-stage', 'voice-stage', 'genome-stage', 'alphatensor-stage'];
 const SHARD_WIDGETS_FOR_3 = [
-  ['alphatensor-stage'],                                       // 0: site + hero, and one stage
+  // 0: the site pages, the hero and the slides take about half a minute, so
+  // the first shard has room for one stage beside them.
+  ['alphatensor-stage'],
   ['linalg-stage', 'attention-stage', 'genome-stage'],           // 1
   ['voice-stage', 'factor-stage', 'image-tensor', 'broadcasting-simulator']  // 2
 ];
-// A widget in WIDGET_FILES and in no shard would pass every sharded run by
-// never being driven in any of them -- and the sharded run is the one CI
-// uses. The table has to cover the list, and name nothing outside it.
-{
-  const sharded = SHARD_WIDGETS_FOR_3.flat().sort();
-  if (sharded.join() !== WIDGET_FILES.slice().sort().join()) {
-    throw new Error('SHARD_WIDGETS_FOR_3 does not cover WIDGET_FILES exactly: ' +
-      `shards have [${sharded}], the list has [${WIDGET_FILES.slice().sort()}]`);
-  }
-}
 
 function parseShard() {
   const i = process.argv.indexOf('--shard');
@@ -47,16 +39,30 @@ function parseShard() {
   return {index, total};
 }
 
-// Every shard also runs the site pages, the hero &c. unless it is explicitly
-// one of the widget-only shards a 3-way split creates -- so a single-shard
-// invocation (`--shard 0/1`, or no flag at all) still runs everything, and a
-// 2-way or 4-way split still gives every shard something of its own to check.
+// Shard 0 runs the site pages, the hero &c. A single-shard invocation
+// (`--shard 0/1`, or no flag at all) runs everything; the 3-way split CI uses
+// reads the table above, where shard 0 carries a widget too; any other split
+// keeps shard 0 for the site and deals the widgets round the rest.
 function widgetsForShard({index, total}) {
   if (total === 1) return WIDGET_FILES;
-  if (index === 0) return [];
   if (total === 3) return SHARD_WIDGETS_FOR_3[index] || [];
+  if (index === 0) return [];
   const rest = total - 1;
   return WIDGET_FILES.filter((_, n) => n % rest === index - 1);
+}
+
+// A widget in WIDGET_FILES that no shard of the 3-way split drives would pass
+// every sharded run by never being driven in any of them -- and the sharded
+// run is the one CI uses. Asked of widgetsForShard() itself rather than of
+// the table, because the table once named a widget for a shard that function
+// then handed nothing. What the three shards drive between them has to be
+// the list, exactly once each.
+{
+  const driven = [0, 1, 2].flatMap((index) => widgetsForShard({index, total: 3})).sort();
+  if (driven.join() !== WIDGET_FILES.slice().sort().join()) {
+    throw new Error('the 3-way split does not drive WIDGET_FILES exactly once each: ' +
+      `shards drive [${driven}], the list has [${WIDGET_FILES.slice().sort()}]`);
+  }
 }
 
 // The accessibility pass. axe runs over every page and every widget, and a

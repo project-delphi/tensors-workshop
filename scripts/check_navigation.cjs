@@ -208,9 +208,10 @@ async function driveOneWidget(ctx, widget, where, lang) {
     } else if (!shard) {
       console.log(`Passed: every rendered page assigned a check, ${site.pages.length * 2} pages at desktop/mobile widths, the day sheet on two printed pages, ${counters.anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, ${counters.widgetCount} interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
     } else {
+      const drove = `${counters.widgetCount} widget(s) (${counters.widgets.map(w => w.file).join(', ') || 'none'})`;
       const scope = runsSite
-        ? `page coverage, the site pages, the day sheet's print layout, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks and the slides`
-        : `${counters.widgetCount} widget(s) (${counters.widgets.map(w => w.file).join(', ') || 'none'})`;
+        ? `page coverage, the site pages, the day sheet's print layout, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks, the slides, and ${drove}`
+        : drove;
       console.log(`Shard ${shard.index + 1}/${shard.total} passed: ${scope}.`);
     }
   } finally {
