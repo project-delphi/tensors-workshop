@@ -339,8 +339,8 @@ class WorkedExamples(unittest.TestCase):
         """The predict-first widgets run, and the reveal branches both print.
 
         `run_set` in scripts/test_notebooks.py steps over a predict-first
-        cell wherever it sits -- in `ci_cells` (notebooks 00, 12, 16, 17, 18
-        and 19) or in a live core `sequence` (02, 04 and 05 open theirs with one)
+        cell wherever it sits -- in `ci_cells` (notebooks 00, 12, 16, 17, 18,
+        19 and 20) or in a live core `sequence` (02, 04 and 05 open theirs with one)
         -- because their live `RadioButtons` and `Checkbox` are what stalled
         the kernel sweep. That leaves the widget half of every predict cell
         -- `pred_panel`, `pred_render` and `check_prediction` -- executed by

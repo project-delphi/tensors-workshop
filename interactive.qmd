@@ -1,7 +1,7 @@
 ---
 title: ""
 pagetitle: "Interactive · Tensors for Machine Learning"
-description: "Browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, the audio tensor, Tucker & CP, and DNA to an edit."
+description: "Browser tools for the workshop: broadcasting, the image tensor, attention, projection & SVD, the audio tensor, Tucker & CP, DNA to an edit, and AlphaTensor."
 toc: false
 anchor-sections: false
 page-layout: full
@@ -164,6 +164,39 @@ Straight to [transcription as a matrix](interactive/genome-stage.html?lang=en#tr
 [the search as one einsum](interactive/genome-stage.html?lang=en#search).
 
 [Open DNA to an edit](interactive/genome-stage.html?lang=en){.resource-button}
+:::
+::: {.resource-card}
+### ♟️ AlphaTensor: from a rule to a game
+
+<span data-language-key="alphatensor-stage"></span>
+
+Multiplying two 2 × 2 matrices takes eight multiplications, and eight looks
+like a fact about the problem. It is not. Write the rule down as a list of its
+eight products, put a 1 at each one, and the rule is a 4 × 4 × 4 cube of zeros
+and ones that multiplies matrices with one `einsum`. Split that cube into
+blocks that each cost one multiplication and you have an algorithm: add
+Strassen's seven blocks one at a time and the count of wrong cells goes *up*,
+from 8 to 12, before it falls to zero, because the blocks overshoot and cancel.
+Run the seven on numbers, then on the quarters of a matrix, and one saved
+multiplication becomes 73.7% of them at 1,024 × 1,024. Then turn it round:
+start from the cube and subtract blocks until nothing is left. That is the
+game AlphaTensor plays. With five allowed coefficients a single move has
+244,140,625 choices; of the 128,000 different moves left with three, 8 look
+like progress and Strassen's is not one of them; and a player
+who always takes the best-looking move finds eight, never seven. The last
+picture is the record board, where 3 × 3 is still open between 19 and 23.
+Under every picture is the cube laid flat, showing what that picture does to
+it. The page plays the game; it does not run or train a network, and
+AlphaTensor's own results are quoted from the paper. Sections 06 and 11, and
+[deep dive 20](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb).
+
+Straight to [the rule as a cube](interactive/alphatensor-stage.html?lang=en#cube),
+[the product as one einsum](interactive/alphatensor-stage.html?lang=en#read),
+[Strassen's seven blocks](interactive/alphatensor-stage.html?lang=en#strassen),
+[the game](interactive/alphatensor-stage.html?lang=en#game) or
+[why greedy finds eight](interactive/alphatensor-stage.html?lang=en#greedy).
+
+[Open AlphaTensor](interactive/alphatensor-stage.html?lang=en){.resource-button}
 :::
 ::::
 

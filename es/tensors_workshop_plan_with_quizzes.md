@@ -468,6 +468,8 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 
 Dos contracciones con datos de secuencia reales hacen el mismo punto en otro alfabeto: el código genético es una tabla de `4 × 4 × 4`, así que la <a href="../interactive/genome-stage.html?lang=es#translate">traducción</a> es una sola contracción sobre los tres ejes de bases, y <a href="../interactive/genome-stage.html?lang=es#search">buscar en una secuencia</a> es `einsum('wlb,lb->w')`: el producto escalar de dos filas one-hot es 1 exactamente cuando las bases coinciden, de modo que sumar sobre posición y alfabeto cuenta coincidencias.
 
+La propia multiplicación de matrices es una de estas, con la regla escrita como dato. Los ocho productos de un producto de `2 × 2` son ocho unos en un tensor de `4 × 4 × 4`, y <a href="../interactive/alphatensor-stage.html?lang=es#read">contraer ese tensor con las dos matrices</a> es `einsum("abc,a,b->c", T, A.ravel(), B.ravel())`: dieciséis términos por cada entrada de la respuesta, catorce de ellos multiplicados por cero. La sección 11 vuelve a ese tensor para preguntar en cuántas piezas se parte.
+
 ## 07 · Inversas y la pseudoinversa (Bloque 4, 15 min)
 
 **Practica hoy:** {{< var sections.s07.practice_es >}}
@@ -969,6 +971,8 @@ W = np.array([[1, 0, 0, 1], [0, 0, 1, -1], [0, 1, 0, 1], [1, 0, 1, 0],
               [-1, 1, 0, 0], [0, 0, 0, 1], [1, 0, 0, 0]])
 print(np.array_equal(np.einsum("ra,rb,rc->abc", U, V, W), M2))  # True: rank <= 7
 ```
+
+El <a href="../interactive/alphatensor-stage.html?lang=es">escenario de AlphaTensor</a> es esta nota en doce imágenes. Suma <a href="../interactive/alphatensor-stage.html?lang=es#strassen">los siete términos de Strassen</a> a un cubo vacío de uno en uno y la cuenta de celdas equivocadas *sube*, de 8 a 12, antes de bajar a cero: los términos se pasan y se cancelan. Después dale la vuelta a la suma y <a href="../interactive/alphatensor-stage.html?lang=es#game">juégala como un juego</a>, restando términos hasta que no quede nada. Ese es el juego que juega AlphaTensor, y <a href="../interactive/alphatensor-stage.html?lang=es#greedy">un jugador que siempre elige la jugada que mejor se ve</a> encuentra ocho términos y nunca siete. El **[estudio a fondo 20](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb)** hace la misma aritmética en NumPy, y luego carga las descomposiciones que publicó DeepMind y las comprueba.
 
 Para matrices 3 × 3 el tensor es `9 × 9 × 9`, con 27 unos, y **nadie conoce su rango**. Es al menos 19 (Bläser, 2003) y como mucho 23 (Laderman, 1976). Un rango 21 superaría a Strassen: recurrir sobre bloques 3 × 3 costaría `n^2.771`. Un rango 22 no, con `n^2.814`.
 

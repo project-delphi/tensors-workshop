@@ -74,6 +74,31 @@ sweep_tucker2.csv            sha256 1a3fb982baa9ce1e8ff2c0a3ff75aca31b7f59f5a3af
 fetched 2026-09-27
 ```
 
+## Deep dive 20
+
+The factorisations DeepMind published with the AlphaTensor paper, from
+`github.com/google-deepmind/alphatensor` at the commit the notebook pins
+(`1949163`), folder `algorithms/`. Copyright 2022 DeepMind Technologies
+Limited. That repository licenses its software under Apache-2.0 and its other
+materials under CC BY 4.0; both permit redistribution with attribution, the two
+files here are unmodified, and `alphatensor.LICENSE` beside them is the
+repository's own `LICENSE` file. Cite the paper: Fawzi, A. et al. (2022),
+*Discovering faster matrix multiplication algorithms with reinforcement
+learning*, Nature 610, 47–53, `doi.org/10.1038/s41586-022-05172-4`. The
+notebook checks each file's SHA-256 whichever source answers.
+
+| File | What it is |
+|---|---|
+| `factorizations_r.npz` | 93 sizes, in standard arithmetic: for each `a,b,c`, three arrays whose columns are the rank-one terms |
+| `factorizations_f2.npz` | 20 sizes, in arithmetic modulo 2, same layout |
+| `alphatensor.LICENSE` | The Apache-2.0 text, as that repository ships it |
+
+```
+factorizations_r.npz   sha256 4d59571a2537a9472e8229176d5ebe2925f3e041ad403c095b41853026caec33  bytes 746206
+factorizations_f2.npz  sha256 70f09f349d8d2874ef0e0e089459c7320f5aa3eef277df5ffa67f573709db2da  bytes 16021
+fetched 2026-10-03
+```
+
 **Not copied: notebook 19's FB15k-237 training split**
 (`github.com/ibalazevic/TuckER`, from Microsoft Research's release). TuckER's
 MIT licence covers its code; neither the dataset's own README nor its download

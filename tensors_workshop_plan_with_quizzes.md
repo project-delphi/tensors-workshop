@@ -450,6 +450,8 @@ np.einsum('ik,kj->ij', A, B)   # matrix product == A @ B
 
 Two contractions on real sequence data make the same point in a different alphabet: the genetic code is a `4 × 4 × 4` table, so [translation](interactive/genome-stage.html?lang=en#translate) is one contraction over all three base axes, and [searching a sequence](interactive/genome-stage.html?lang=en#search) is `einsum('wlb,lb->w')` — the dot product of two one-hot rows is 1 exactly when the bases agree, so summing over position and alphabet counts matches.
 
+Matrix multiplication is itself one of these, with the rule written down as data. The eight products of a `2 × 2` product are eight 1s in a `4 × 4 × 4` tensor, and [contracting that tensor against the two matrices](interactive/alphatensor-stage.html?lang=en#read) is `einsum("abc,a,b->c", T, A.ravel(), B.ravel())`: sixteen terms for each entry of the answer, fourteen of them multiplied by zero. Section 11 comes back to that tensor to ask how few pieces it splits into.
+
 ## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
 
 **Practise today:** {{< var sections.s07.practice_en >}}
@@ -951,6 +953,8 @@ W = np.array([[1, 0, 0, 1], [0, 0, 1, -1], [0, 1, 0, 1], [1, 0, 1, 0],
               [-1, 1, 0, 0], [0, 0, 0, 1], [1, 0, 0, 0]])
 print(np.array_equal(np.einsum("ra,rb,rc->abc", U, V, W), M2))  # True: rank <= 7
 ```
+
+The [AlphaTensor stage](interactive/alphatensor-stage.html?lang=en) is this note as twelve pictures. Add [Strassen's seven terms](interactive/alphatensor-stage.html?lang=en#strassen) to an empty cube one at a time and the count of wrong cells goes *up*, from 8 to 12, before it falls to zero: the terms overshoot and cancel. Then turn the sum round and [play it as a game](interactive/alphatensor-stage.html?lang=en#game), subtracting terms until nothing is left. That is the game AlphaTensor plays, and [a player who always takes the best-looking move](interactive/alphatensor-stage.html?lang=en#greedy) finds eight terms and never seven. **[Deep dive 20](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb)** runs the same arithmetic in NumPy, then loads the decompositions DeepMind published and checks them.
 
 For 3 × 3 matrices the tensor is `9 × 9 × 9`, with 27 ones, and **nobody knows its rank**. It is at least 19 (Bläser, 2003) and at most 23 (Laderman, 1976). Rank 21 would beat Strassen: recursing on 3 × 3 blocks would cost `n^2.771`. Rank 22 would not, at `n^2.814`.
 

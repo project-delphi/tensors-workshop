@@ -78,6 +78,7 @@ text, then run the appropriate generator:
 | `images/cube-16-*.gif` (notebook 16's PCA animations) | `scripts/gen_pca_gifs.py` |
 | `images/cube-17-*.gif`, `images/cube-18-*.gif` (attention and compression) | `scripts/gen_tensor_module_gifs.py` |
 | `images/cube-19-*.gif` (the core, the fold, CP's cancelling terms) | `scripts/gen_cp_tucker_gifs.py` |
+| `images/cube-20-*.gif` (the four trays, Strassen's seven blocks, the two trails) | `scripts/gen_alphatensor_gifs.py` |
 | `slides/{en,es}/images/slides-final/slide-NNa.webp` (art added since #45) | `scripts/gen_slide_art.py` |
 | `data/*` (the datasets' fallback copies; network, not in the CI gate) | `scripts/fetch_mirrors.py` |
 | `docs/` (build output, gitignored -- never committed) | `quarto render` |
@@ -140,6 +141,17 @@ What each generator draws, and the rules each one keeps:
   against Tucker's dense one, the 8 × 8 block fold, and two rank-one terms
   growing as 1/ε while their sum converges -- the cancellation Part 3 of the
   notebook measures on a real kernel. Captions are expressions, `loop=0`.
+- `gen_alphatensor_gifs.py` draws notebook 20's three, all on the 4 × 4 × 4
+  matrix multiplication tensor: its eight 1s arriving in four trays, one per
+  entry of C; Strassen's seven blocks added one at a time, with the count of
+  cells that differ from the tensor going 8, 12, 12, 12, 10, 8, 4, 0; and the
+  two winning games, greedy's 8, 7, …, 0 against Strassen's climb. Every cell
+  of a block prints its signed value, so +1 and −1 are told apart without
+  colour, and the cells the tensor wants carry a heavy outline. The tensor,
+  `U`, `V` and `W` are the handbook's, and the greedy trail is found by
+  searching all 128,000 moves; the script asserts both trails before it draws
+  them. NumPy, Matplotlib and Pillow only, no network. Captions are
+  expressions, `loop=0`.
 - `gen_genome_fold.py` writes the genome stage's `genome-fold.js`: one
   alpha-carbon per residue of the AlphaFold model of Cas12a (UniProt A0Q7Q2),
   1,300 of them, with each residue's pLDDT, as a literal the page loads with a
@@ -222,8 +234,9 @@ instead is `npm test` over the core modules and scene registries and
 section 03 broadcasting simulator, the section 04 image tensor
 visualizer, the sections 07/09 projection & SVD stage, the sections
 00/02/04/09 audio tensor stage, the sections 04/06/Appendix B attention
-stage, the sections 10/11/Appendix C factorisation stage, and the sections
-04/06/Appendix G genome stage -- each carry
+stage, the sections 10/11/Appendix C factorisation stage, the sections
+04/06/Appendix G genome stage, and the sections 06/11 AlphaTensor stage --
+each carry
 EN/ES copy tables, `?lang=`, and
 their section's accent adjusted per theme to clear 4.5:1. `repo.widgets` in
 `_variables.yml` is the list of them; prose here does not count them. **The frame is shared**:
@@ -278,8 +291,8 @@ share.
   three.js with SVG twins. Scenes `#bases`, `#window`, `#transcribe`,
   `#codons`, `#translate`, `#protein`, `#fold`, `#search`, `#batch`; core
   `genome-core.js` (`tests/genome_core.test.cjs`). The contract is
-  `interactive/genome-scenes/README.md`. It is the one stage that fetches
-  nothing: its data is literals -- two sequences in the core, and the
+  `interactive/genome-scenes/README.md`. It fetches nothing: its data is
+  literals -- two sequences in the core, and the
   AlphaFold model of the protein they encode in the generated
   `genome-fold.js` -- whose provenance ledger is in that README, and whose
   test checks the genetic code against the deposited translation, and the
@@ -287,6 +300,24 @@ share.
   stage is the whole gene as a ribbon, and every scene says which stretch of
   it it is looking at. It is a stage about how sequence data is represented
   and deliberately not a design tool.
+- **AlphaTensor, from a rule to a game** (`alphatensor-stage.html`, sections
+  06/11 and deep dive 20): twelve scenes in three parts, one per post of the
+  ML-blog series it follows -- the rule for multiplying matrices as a
+  `4 × 4 × 4` cube, a split of the cube into blocks as an algorithm, and the
+  search for a split as a one-player game -- five in three.js with SVG twins.
+  Scenes `#rule`, `#cube`, `#read`, `#bigger`, `#block`, `#strassen`, `#run`,
+  `#recurse`, `#game`, `#space`, `#greedy`, `#learn`; core
+  `alphatensor-core.js` (`tests/alphatensor_core.test.cjs`). The contract is
+  `interactive/alphatensor-scenes/README.md`. It fetches nothing and has no
+  data file at all: the tensor is built from the rule, and the core is a port
+  of the posts' own model whose test also requires Strassen's arrays to equal
+  the ones in the handbook's `#still-open` note. Under its stage is the 2 × 2
+  cube laid flat as a strip of four trays; a scene hands the frame the blocks
+  it has in play and the frame works the 64 cells out, so no scene writes
+  them. The five cube scenes draw one picture, which lives in the kit
+  (`K.cubeModel`). `game` adds a control type, `button`, for an action that
+  is not a value. It plays the game and is deliberately not AlphaTensor: no
+  network runs, and the records in `#learn` are quoted from the papers.
 
 **What the stages share.** Each is a scroller: one `<section class="step">`
 per scene down the left and a sticky stage on the right. A new scene is at
@@ -312,7 +343,7 @@ opens with a predict-first line and a claim on the stage's title card, and its
 readout and every `data-*` are written from the controls, never from an eased
 frame, so the browser check reads the truth while a picture is still moving.
 Outside the projection stage a control is `#c-<scene>-<control>` and a readout
-`#read-<scene>`, because one control name lives in several sections. The four
+`#read-<scene>`, because one control name lives in several sections. The five
 stages that draw in three.js boot it lazily on the first three.js scene shown,
 through `vendor/linalg-boot.js` and the import map, take their camera from
 `linalg-core`'s orbit, and keep a flat twin for a reader without WebGL.
@@ -329,8 +360,8 @@ rewrite the readout. **Every readout key is lowercase** --
 `stage.dataset.fN` writes `data-f-n`, so a camel-case key is a selector
 nobody will guess.
 
-**The audio, attention and factorisation stages show the NumPy for every
-picture**, in a static `<pre id="np-<scene>">` under the equation that the
+**The audio, attention, factorisation, genome and AlphaTensor stages show the
+NumPy for every picture**, in a static `<pre id="np-<scene>">` under the equation that the
 frame fills from the scene's `code(ctx)`. That is built from the same
 `ctx.state` as `readout(ctx)`, so the shapes in the code cannot disagree with
 the shapes on the stage. The code is one copy for both languages; only its
@@ -363,8 +394,10 @@ reaches for it.
 
 **Every widget is moving within seconds of opening**, with nothing asked of
 the reader: the four that drift start drifting, the broadcasting simulator
-plays its stretch once, and the attention stage draws its first picture in
-(opacity only, once, for the scene the page opens on). A *moving* pointer is
+plays its stretch once, the attention stage draws its first picture in
+(opacity only, once, for the scene the page opens on), and the AlphaTensor
+stage, which opens on a flat scene, deals the rule's eight products one at a
+time. A *moving* pointer is
 what holds a drift -- `pointermove`, never `pointerenter`, which Chromium
 fires with no movement when the element under a still cursor changes. Under
 `prefers-reduced-motion` none of it plays. `check_navigation.cjs`'s
@@ -391,8 +424,8 @@ three.js is **vendored** at `interactive/vendor/`, core build and eleven
 `examples/jsm` addons (the composer, the bloom pass, CSS2D labels and their
 transitive imports), each with its URL, SHA-256 and date in a README. The
 addons say `from 'three'`, and a **static import map** in the `<head>` of each
-page that draws in three.js (the projection, audio, factorisation and genome stages)
-resolves that -- rewriting the specifier in eleven files would make the README's
+page that draws in three.js (the projection, audio, factorisation, genome and
+AlphaTensor stages) resolves that -- rewriting the specifier in eleven files would make the README's
 hashes describe something other than what upstream ships. The map is inert
 until a module import resolves, so the lazy `bootGL()` still holds. Upgrading
 means both builds, both hash tables, both boot modules, the import map, and
@@ -507,7 +540,7 @@ refuses a table in that position.
 executes the declared route and then the **paired solution**, the
 `solution`-tagged cell immediately after the activity, because many activity
 cells are the student's blank `# TODO` block. A route with no executable code
-(notebooks 00, 12, 16, 17, 18 and 19) names what CI executes in `ci_cells` on the
+(notebooks 00, 12, 16, 17, 18, 19 and 20) names what CI executes in `ci_cells` on the
 same scaffold cell; `run_set()` refuses an entry that is not a unique code cell
 or that is a predict-first cell, and check 2's `EXPECTED` guard refuses one
 that drops an asserted cell. Keep the blanket fallback for a notebook with no
@@ -552,6 +585,12 @@ copy -- notebook 14's monkey tensor has none -- and keeps its retries.
 Deep dive 19 keeps its own `fetch()`, with a `copy=` for the blog post's
 kernel and sweeps; its FB15k-237 split has no stated licence, so, like the
 monkey tensor, it has no copy.
+Deep dive 20 pastes the same `fetch()` for the two files of factorisations
+DeepMind published with AlphaTensor, pinned to one commit of their repository;
+both have copies, with that repository's `LICENSE` beside them as
+`data/alphatensor.LICENSE`. The rectangular sizes in those files are object
+arrays, so the notebook loads them with `allow_pickle=True` -- after `fetch()`
+has checked the SHA-256, which is the only reason that is acceptable.
 
 The facilitator guide, assessments, worked mistakes and feedback form are
 hand-maintained Markdown with matching files in `es/`. Keep both languages
@@ -663,7 +702,7 @@ uv run --group lint ruff format scripts tests           # (format --check in CI)
 uv run --group test python scripts/check_teaching_materials.py
 uv run --group test python -m unittest discover -s tests -v
 npm run check:navigation                                # the browser check and the axe pass, after a render (3 shards, concurrently)
-node scripts/check_navigation.cjs --shard 1/3           # one shard alone, for debugging; 0 is the site pages and the hero
+node scripts/check_navigation.cjs --shard 1/3           # one shard alone, for debugging; 0 is the site pages, the hero and one stage
 node scripts/check_navigation.cjs                       # the whole thing, unsharded and serial
 npm test                                                # every tests/*.test.cjs: the cores and scene registries, no browser
 
@@ -688,6 +727,7 @@ uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
 uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
 uv run --group figures python scripts/gen_cp_tucker_gifs.py       # notebook 19
+uv run --group figures python scripts/gen_alphatensor_gifs.py     # notebook 20; no network
 uv run --group figures python scripts/gen_slide_art.py        # needs Chrome and the network
 npm run gen:hero                                              # the hero's widget stills, from each embed
 ```

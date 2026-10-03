@@ -58,6 +58,11 @@ cambian qué significa «ajustar».
 El estudio 19 recorre la entrada del blog *CP or Tucker in practice* (en
 inglés).
 
+El estudio 20 recorre las tres entradas *AlphaTensor* del blog (en inglés):
+escribe la multiplicación de matrices como un tensor, juega la búsqueda de un
+algoritmo más rápido como un juego en el caso más pequeño y comprueba las
+factorizaciones que publicó DeepMind. No entrena nada.
+
 Las herramientas del navegador que acompañan a las secciones tienen su propia
 página: <a href="interactive.html">Interactivo</a> dedica una tarjeta a cada
 una, con las secciones a las que pertenece y las escenas que vale la pena abrir

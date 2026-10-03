@@ -24,6 +24,7 @@ const linalgStage = require('./navigation/widgets/linalg-stage.cjs');
 const factorStage = require('./navigation/widgets/factor-stage.cjs');
 const voiceStage = require('./navigation/widgets/voice-stage.cjs');
 const genomeStage = require('./navigation/widgets/genome-stage.cjs');
+const alphatensorStage = require('./navigation/widgets/alphatensor-stage.cjs');
 
 const root = process.env.NAV_ROOT ? path.resolve(process.env.NAV_ROOT) : path.resolve(__dirname, '../docs');
 const screenshots = process.env.SCREENSHOT_DIR || require('node:os').tmpdir();
@@ -40,8 +41,8 @@ const types = {'.html':'text/html', '.js':'text/javascript', '.css':'text/css',
 // belongs to no one widget: that every rendered page is assigned a check,
 // the site pages, the day sheet's print layout, the hero, keyboard and
 // disclosure navigation, the readiness pages, the wide table and the
-// host-root/offline fallbacks, and the slides. The seven widgets are spread
-// across the rest, sized from measured wall time rather than line count
+// host-root/offline fallbacks, and the slides. The eight widgets are spread
+// across all three, sized from measured wall time rather than line count
 // (see DECISIONS.md) so three concurrent shards land close together.
 const shard = harness.parseShard();
 const runsSite = !shard || shard.index === 0 || shard.total === 1;
@@ -138,7 +139,7 @@ async function driveOneWidget(ctx, widget, where, lang) {
       }
 
       // The widgets, and the order the widgets/*.cjs `drive*` functions are
-      // written in. Keep the two in step: with seven of them a reader looking
+      // written in. Keep the two in step: with eight of them a reader looking
       // for one callback has nothing else to go on. This is the full set
       // regardless of sharding -- WIDGET_FILES above, which decides who
       // runs which, is checked against it below, so a widget dropped from
@@ -164,6 +165,10 @@ async function driveOneWidget(ctx, widget, where, lang) {
         // Its embed mode is the codon cube drawn flat and still, and it
         // fetches nothing at all: the gene is a literal in genome-core.js.
         {file: 'genome-stage', heroEmbed: true, ...genomeStage},
+        // Its embed mode is Strassen's blocks part-added, drawn flat and
+        // still, and it fetches nothing at all: the cube is built from the
+        // rule in alphatensor-core.js.
+        {file: 'alphatensor-stage', heroEmbed: true, ...alphatensorStage},
       ];
       assert.equal(ALL_WIDGETS.length, harness.WIDGET_FILES.length,
         'WIDGET_FILES (the sharding table) and the widgets table have drifted apart');
@@ -203,9 +208,10 @@ async function driveOneWidget(ctx, widget, where, lang) {
     } else if (!shard) {
       console.log(`Passed: every rendered page assigned a check, ${site.pages.length * 2} pages at desktop/mobile widths, the day sheet on two printed pages, ${counters.anchors} section switches, keyboard navigation, disclosures, slide links, fallbacks, ${counters.widgetCount} interactive widgets, both stages' idle drift, the SVD stage's camera under a drag, the arrow keys and Home, the SVD portal's A v = sigma u, and axe on every page and widget.`);
     } else {
+      const drove = `${counters.widgetCount} widget(s) (${counters.widgets.map(w => w.file).join(', ') || 'none'})`;
       const scope = runsSite
-        ? `page coverage, the site pages, the day sheet's print layout, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks and the slides`
-        : `${counters.widgetCount} widget(s) (${counters.widgets.map(w => w.file).join(', ') || 'none'})`;
+        ? `page coverage, the site pages, the day sheet's print layout, the hero, keyboard/disclosure navigation, the readiness pages, the wide table, host-root fallbacks, the slides, and ${drove}`
+        : drove;
       console.log(`Shard ${shard.index + 1}/${shard.total} passed: ${scope}.`);
     }
   } finally {

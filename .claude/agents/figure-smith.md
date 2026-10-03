@@ -1,6 +1,6 @@
 ---
 name: figure-smith
-description: "Runs and maintains the eight image generators — dataset cards, handbook figures and the link preview, cube GIFs, notebook 16's PCA animations, the 17/18 tensor-module animations, deep dive 19's CP/Tucker animations, slide art, and the hero's widget stills. Use when an image input changed, a new animation is needed, or a rerun left `git status` dirty and it has to be decided whether that is a real change or matplotlib drift. Knows the scene constraints CI cannot check."
+description: "Runs and maintains the nine image generators — dataset cards, handbook figures and the link preview, cube GIFs, notebook 16's PCA animations, the 17/18 tensor-module animations, deep dive 19's CP/Tucker animations, deep dive 20's AlphaTensor animations, slide art, and the hero's widget stills. Use when an image input changed, a new animation is needed, or a rerun left `git status` dirty and it has to be decided whether that is a real change or matplotlib drift. Knows the scene constraints CI cannot check."
 tools: Read, Grep, Glob, Edit, Write, Bash
 model: sonnet
 effort: low
@@ -26,6 +26,7 @@ uv run --group figures python scripts/gen_cube_gifs.py 04 10  # just these two
 uv run --group figures python scripts/gen_pca_gifs.py         # notebook 16
 uv run --group figures python scripts/gen_tensor_module_gifs.py  # notebooks 17–18
 uv run --group figures python scripts/gen_cp_tucker_gifs.py   # notebook 19
+uv run --group figures python scripts/gen_alphatensor_gifs.py # notebook 20
 uv run --group figures python scripts/gen_slide_art.py        # Chrome and the network; Pillow encodes the WebP
 npm run gen:hero                                              # the hero's widget stills, through Playwright
 ```
@@ -52,7 +53,8 @@ commit that last drew the file:
   bar and filled cell pixel-identical.
 
 `gen_pca_gifs.py`, `gen_tensor_module_gifs.py`, `gen_cp_tucker_gifs.py`,
-`gen_slide_art.py` and `gen_hero_stills.cjs` print no such line. For those,
+`gen_alphatensor_gifs.py`, `gen_slide_art.py` and `gen_hero_stills.cjs` print
+no such line. For those,
 say so and check the inputs by hand rather than guess.
 
 Report which of the two it is before committing. Committing drift into a
@@ -81,6 +83,12 @@ content PR is the failure this agent exists to prevent.
   superdiagonal core against Tucker's dense one, a photograph folded into
   8 × 8 blocks, and two rank-one terms growing as 1/ε while their sum
   converges. Captions are expressions, `loop=0`, accent from `ACCENTS`.
+- **`gen_alphatensor_gifs.py`** — notebook 20's three `cube-20-*` GIFs, all on
+  the 4 × 4 × 4 matrix multiplication tensor: the eight 1s arriving in the
+  four trays, Strassen's seven blocks added one at a time with the count
+  8 → 12 → 12 → 12 → 10 → 8 → 4 → 0 (the sign of every −1 is printed, never
+  left to the colour), and the two trails, greedy's against Strassen's.
+  Captions are expressions, `loop=0`, accent from `ACCENTS`, no network.
 - **`gen_slide_art.py`** — slide art from HTML and CSS, screenshotted by
   headless Chrome at the deck's 1920×1080 and encoded as WebP with Pillow,
   which is why it runs under `--group figures`. It owns only the `slide-NNa`

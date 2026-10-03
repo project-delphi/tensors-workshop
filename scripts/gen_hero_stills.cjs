@@ -38,6 +38,7 @@ const WIDGETS = {
   'attention-stage': () => document.getElementById('stage').dataset.ready === '1',
   'factor-stage': () => document.getElementById('stage').dataset.ready === '1',
   'genome-stage': () => document.getElementById('stage').dataset.ready === '1',
+  'alphatensor-stage': () => document.getElementById('stage').dataset.ready === '1',
 };
 
 const TYPES = {
