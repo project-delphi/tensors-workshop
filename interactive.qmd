@@ -172,16 +172,17 @@ Straight to [transcription as a matrix](interactive/genome-stage.html?lang=en#tr
 
 Multiplying two 2 × 2 matrices takes eight multiplications, and eight looks
 like a fact about the problem. It is not. Write the rule down as a list of its
-eight products, put a 1 at each one, and the rule is a 4 × 4 × 4 block of zeros
-and ones that multiplies matrices with one `einsum`. Split that block into
-pieces that each cost one multiplication and you have an algorithm: add
-Strassen's seven pieces one at a time and the count of wrong cells goes *up*,
-from 8 to 12, before it falls to zero, because the pieces overshoot and cancel.
+eight products, put a 1 at each one, and the rule is a 4 × 4 × 4 cube of zeros
+and ones that multiplies matrices with one `einsum`. Split that cube into
+blocks that each cost one multiplication and you have an algorithm: add
+Strassen's seven blocks one at a time and the count of wrong cells goes *up*,
+from 8 to 12, before it falls to zero, because the blocks overshoot and cancel.
 Run the seven on numbers, then on the quarters of a matrix, and one saved
 multiplication becomes 73.7% of them at 1,024 × 1,024. Then turn it round:
-start from the cube and subtract pieces until nothing is left. That is the
-game AlphaTensor plays. A single move has 244,140,625 choices; of the 128,000
-simplest, 8 look like progress and Strassen's is not one of them; and a player
+start from the cube and subtract blocks until nothing is left. That is the
+game AlphaTensor plays. With five allowed coefficients a single move has
+244,140,625 choices; of the 128,000 different moves left with three, 8 look
+like progress and Strassen's is not one of them; and a player
 who always takes the best-looking move finds eight, never seven. The last
 picture is the record board, where 3 × 3 is still open between 19 and 23.
 Under every picture is the cube laid flat, showing what that picture does to

@@ -177,16 +177,17 @@ o a <a href="../interactive/genome-stage.html?lang=es#search">la búsqueda como 
 
 Multiplicar dos matrices de 2 × 2 cuesta ocho multiplicaciones, y ocho parece un
 hecho del problema. No lo es. Escribe la regla como la lista de sus ocho
-productos, pon un 1 en cada uno, y la regla es un bloque de 4 × 4 × 4 de ceros y
-unos que multiplica matrices con un solo `einsum`. Parte ese bloque en piezas
-que cuestan una multiplicación cada una y tienes un algoritmo: suma las siete
-piezas de Strassen de una en una y la cuenta de celdas equivocadas *sube*, de 8
-a 12, antes de bajar a cero, porque las piezas se pasan y se cancelan. Aplica
+productos, pon un 1 en cada uno, y la regla es un cubo de 4 × 4 × 4 de ceros y
+unos que multiplica matrices con un solo `einsum`. Descompón ese cubo en bloques
+que cuestan una multiplicación cada uno y tienes un algoritmo: suma los siete
+bloques de Strassen de uno en uno y la cuenta de celdas equivocadas *sube*, de 8
+a 12, antes de bajar a cero, porque los bloques se pasan y se cancelan. Aplica
 las siete a números, luego a los cuartos de una matriz, y una multiplicación
 ahorrada se vuelve el 73,7 % de ellas en 1.024 × 1.024. Después dale la vuelta:
-empieza con el cubo y resta piezas hasta que no quede nada. Ese es el juego que
-juega AlphaTensor. Una sola jugada tiene 244.140.625 opciones; de las 128.000
-más simples, 8 parecen un avance y la de Strassen no es una de ellas; y un
+empieza con el cubo y resta bloques hasta que no quede nada. Ese es el juego que
+juega AlphaTensor. Con cinco coeficientes permitidos una sola jugada tiene
+244.140.625 opciones; de las 128.000 jugadas distintas que quedan con tres, 8
+parecen un avance y la de Strassen no es una de ellas; y un
 jugador que siempre elige la jugada que mejor se ve encuentra ocho, nunca
 siete. La última imagen es el tablero de récords, donde 3 × 3 sigue abierto
 entre 19 y 23. Bajo cada imagen está el cubo extendido, mostrando lo que esa

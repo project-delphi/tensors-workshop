@@ -965,12 +965,48 @@ as two bars on a log scale, where at ten levels they are 94% the same length
 scale against each other now, so the lower bar is what the recipe leaves of
 the upper one.
 
-**A heading does not answer its own prediction** (2026-10-03). Three of the
-ten delegated scenes came back with headings that did -- "A 3 × 3 cube has 729
-cells and only 27 of them hold a 1" over "how many of them hold a 1?" -- and
-the page's own intro answered the first scene's. The headings were rewritten
-and the first question changed. The test can only check that a prediction is a
-question; whether a heading spends it is read, not asserted.
+**A heading does not answer its own prediction, and a scene opens before its
+answer** (2026-10-03). Three of the ten delegated scenes came back with
+headings that answered their own question -- "A 3 × 3 cube has 729 cells and
+only 27 of them hold a 1" over "how many of them hold a 1?" -- and the page's
+own intro answered the first scene's. A teaching review then found the rest:
+the claim card on the stage, which is on screen beside the question, gave the
+answer in eight of twelve scenes because each opened already in its answering
+state; `game` asked what `strassen` had just shown; `learn` asked "how few"
+where two of its three options were right. So the scenes that can open
+before their answer now do -- `strassen` with nothing added, `bigger` at
+2 × 2, `recurse` at one level -- and the reader's first move is what answers
+the question; and the questions that repeated an earlier scene ask something
+new. The test can only check that a prediction is a question; whether
+something on the page spends it is read, not asserted.
+
+**One noun for one thing** (2026-10-03). The same review counted five meanings
+of "block" across the page: the whole cube, a filled cell, a tray's grid
+lines, a rank-one term, and a sub-matrix -- the last two in one sentence. A
+block is now a rank-one term and nothing else; the tensor is the cube, a
+sub-matrix is a quarter, and in the third group a block subtracted is a move.
+The three groups lost their "Part one ·" labels, since Part is the
+handbook's word. In Spanish a split is a *descomposición*, never a
+*partición*: the blocks overlap and cancel, which a partition does not.
+
+**The strip counts its own blocks** (2026-10-03). Under `bigger` the strip
+first said "27 multiplications · equals the cube" beside a 2 × 2 cube built
+from eight blocks, and under `recurse` "282,475,249". The count is now what
+the strip's own blocks cost, 8 and 7; the picture above carries its own
+number.
+
+**49 is Strassen twice, not the record** (2026-10-03). The record board's
+4 × 4 row was documented as "the shortest split anyone has found". It is not:
+AlphaEvolve reported 48 for complex-valued matrices in 2025. The 49 is on the
+board because it is what the mod-2 result of 47 is measured against, so the
+row now says that, carries the 48 beside it, and the core's comment, the
+README's ledger and the About panel say records move and where to check one.
+The code review raised it from memory; the arXiv abstract confirmed it.
+
+**A press on the strip stops the player** (2026-10-03). A hand on a slider
+took the control back from a running `play`; a press on the strip, or on a
+cell of the stage, did not, so the player's next frame walked the control on
+and undid the press. Both now stop it first.
 
 **Eight tabs, four to a row; and the shard table must cover the widget list**
 (2026-10-03). Seven hero tabs in three columns left one alone on a row, which

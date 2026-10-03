@@ -19,7 +19,6 @@
   const X0 = 24, W = 540;                       // the ladder's bars
   const ROW = [52, 152, 252];                   // the three rungs with bars
   const YEARS_Y = 408;
-  const SEC_PER_YEAR = 365.25 * 24 * 3600;
 
   // Digits of a whole number, grouped for the page's language.
   function group(s, lang) {
@@ -41,7 +40,7 @@
       if (ly < 3) return K.num(Math.pow(10, ly), ly < 1 ? 1 : 0, lang) + " " + c.years;
       return sciStr(ly, lang) + " " + c.years;
     }
-    const secs = Math.pow(10, ly) * SEC_PER_YEAR;
+    const secs = Math.pow(10, AC.log10Seconds(lg, PER_SECOND));
     if (secs < 1) return c.underSecond;
     return K.num(secs, secs < 10 ? 1 : 0, lang) + " " + c.seconds;
   }
@@ -58,20 +57,25 @@
   const EN = {
     tab: "space",
     k: "Section 11 · too many games",
-    h: "The number of games leaves the page",
-    predict: "A Go player chooses among at most 361 points. One move of the 2 × 2 game fills three vectors " +
-             "of four entries, each entry one of five values. More choices than Go, or fewer?",
+    h: "How many games are there?",
+    predict: "A Go player has at most 361 choices a move. One move here fills three vectors of four " +
+             "entries, each entry one of five values. Roughly how many choices is that: thousands, " +
+             "millions, or hundreds of millions?",
     concept: "A move is three vectors of n² entries, so with f allowed values there are f^(3n²) ways to " +
              "fill one in. A game strings moves together, so its count is that number to the power of the " +
              "moves played. Nobody tries them all.",
-    b: "The ladder is a scale of powers of ten: each tick is ten times the one before. Choose the " +
-       "<b>matrix size</b>, the <b>coefficients</b> and the <b>moves in a game</b>, and the top of the " +
-       "ladder moves to fit. Set 4 × 4 and 49 moves for the largest number this page will write. The " +
-       "panel on the right cuts the 2 × 2 game down as far as it goes, to the 128,000 blocks the next " +
-       "scene looks at.",
+    b: "The ladder is a scale of powers of ten: each tick is ten times the one before. It opens on the " +
+       "paper's five coefficients, −2 … 2, which give 5¹² triples of vectors. That overstates the task, " +
+       "and the panel on the right cuts it down to the game this page plays, in three steps. Allow only " +
+       "−1, 0 and 1 and there are 3¹² = 531,441 triples. Drop the triples with an all-zero vector, which " +
+       "subtract nothing, and 80³ = 512,000 remain. Flipping the signs of two of the three vectors gives " +
+       "the same block, so divide by 4: 128,000 distinct blocks. Those are the moves the game before " +
+       "this and the picture after it use. Choose the <b>matrix size</b>, the <b>coefficients</b> and " +
+       "the <b>moves in a game</b>, and the top of the ladder moves to fit. Set 4 × 4 and 49 moves for " +
+       "the largest number this page will write.",
     eqcap: "One move fills three vectors of n² entries, each entry one of f values, so it has f^(3n²) " +
-           "choices. A game of R moves multiplies that number by itself R times. R is the depth rung " +
-           "on the ladder.",
+           "choices. A game of R moves makes R such choices in a row, so its count is f^(3n²) raised to " +
+           "the power R. R is the “Moves in a game” control.",
     claim: (one, d, dg) => d + (d === 1 ? " move" : " moves") + " · " + dg + " digits",
     go: "Go: points on the board",
     goTag: "at most",
@@ -92,8 +96,10 @@
     blocks: "blocks",
     noSign: "sign duplicates gone",
     sets: "sets of seven blocks",
-    read: (one, dg, gs, digs, tm) =>
-      "<b>Far more: " + one + "</b> choices at one move, against at most 361 in Go. A game of " + dg +
+    // The answer in the question's own words, for the two counts short enough to have them.
+    size: {6: "Hundreds of thousands", 9: "Hundreds of millions"},
+    read: (lead, one, dg, gs, digs, tm) =>
+      "<b>" + (lead ? lead + ": " : "") + one + "</b> choices at one move, against at most 361 in Go. A game of " + dg +
       " is one of " + gs + " sequences, a number with " + digs + " digits. At a billion games a second " +
       "that is " + tm + ".",
     aria: (ctx) => {
@@ -115,21 +121,25 @@
   const ES = {
     tab: "espacio",
     k: "Sección 11 · demasiadas partidas",
-    h: "El número de partidas se sale de la página",
-    predict: "Un jugador de Go elige entre 361 puntos como máximo. Una jugada del juego de 2 × 2 llena " +
-             "tres vectores de cuatro entradas, cada entrada con uno de cinco valores. ¿Más opciones " +
-             "que en el Go, o menos?",
+    h: "¿Cuántas partidas hay?",
+    predict: "Un jugador de Go tiene como máximo 361 opciones por jugada. Aquí una jugada llena tres " +
+             "vectores de cuatro entradas, cada entrada con uno de cinco valores. ¿Cuántas opciones son, " +
+             "más o menos: miles, millones o cientos de millones?",
     concept: "Una jugada son tres vectores de n² entradas, así que con f valores permitidos hay f^(3n²) " +
              "formas de llenar una. Una partida encadena jugadas, así que su cuenta es ese número elevado " +
              "al número de jugadas. Nadie las prueba todas.",
-    b: "La escalera es una escala de potencias de diez: cada marca vale diez veces la anterior. Elige el " +
-       "<b>tamaño de la matriz</b>, los <b>coeficientes</b> y las <b>jugadas de una partida</b>, y la " +
-       "parte alta de la escalera se ajusta. Con 4 × 4 y 49 jugadas sale el número más grande que esta " +
-       "página escribe. El panel de la derecha recorta el juego de 2 × 2 todo lo posible, hasta los " +
-       "128.000 bloques que mira la escena siguiente.",
+    b: "La escalera es una escala de potencias de diez: cada marca vale diez veces la anterior. Arranca " +
+       "con los cinco coeficientes del artículo, −2 … 2, que dan 5¹² ternas de vectores. Eso exagera la " +
+       "tarea, y el panel de la derecha la recorta hasta el juego que juega esta página, en tres pasos. " +
+       "Admite solo −1, 0 y 1 y hay 3¹² = 531.441 ternas. Quita las ternas con algún vector nulo, que no " +
+       "restan nada, y quedan 80³ = 512.000. Cambiar el signo de dos de los tres vectores da el mismo " +
+       "bloque, así que divide entre 4: 128.000 bloques distintos. Esas son las jugadas que usan el " +
+       "juego anterior y la imagen siguiente. Elige el <b>tamaño de la matriz</b>, los " +
+       "<b>coeficientes</b> y las <b>jugadas de una partida</b>, y la parte alta de la escalera se " +
+       "ajusta. Con 4 × 4 y 49 jugadas sale el número más grande que esta página escribe.",
     eqcap: "Una jugada llena tres vectores de n² entradas, cada una con uno de f valores, así que tiene " +
-           "f^(3n²) opciones. Una partida de R jugadas multiplica ese número por sí mismo R veces. R es " +
-           "el peldaño de la profundidad en la escalera.",
+           "f^(3n²) opciones. Una partida de R jugadas hace R de esas elecciones seguidas, así que su " +
+           "cuenta es f^(3n²) elevado a R. R es el control «Jugadas de una partida».",
     claim: (one, d, dg) => d + (d === 1 ? " jugada" : " jugadas") + " · " + dg + " cifras",
     go: "Go: puntos del tablero",
     goTag: "como máximo",
@@ -150,8 +160,9 @@
     blocks: "bloques",
     noSign: "sin duplicados de signo",
     sets: "conjuntos de siete bloques",
-    read: (one, dg, gs, digs, tm) =>
-      "<b>Muchísimas más: " + one + "</b> opciones en una jugada, frente a 361 como máximo en el Go. Una " +
+    size: {6: "Cientos de miles", 9: "Cientos de millones"},
+    read: (lead, one, dg, gs, digs, tm) =>
+      "<b>" + (lead ? lead + ": " : "") + one + "</b> opciones en una jugada, frente a 361 como máximo en el Go. Una " +
       "partida de " + dg + " es una entre " + gs + " secuencias, un número de " + digs + " cifras. A mil " +
       "millones de partidas por segundo, eso son " + tm + ".",
     aria: (ctx) => {
@@ -287,7 +298,8 @@
       const one = AC.digits(s.lgMove) <= 20 ? AC.powString(s.f, s.e) : null;
       const sc = AC.sci(s.lgMove);
       return {
-        html: c.read(s.moveStr, depthWord, s.gamesStr, K.num(s.digits, 0, lang), timeStr(s.lgGames, lang, c)),
+        html: c.read(c.size[AC.digits(s.lgMove)] || "", s.moveStr, depthWord, s.gamesStr,
+                     K.num(s.digits, 0, lang), timeStr(s.lgGames, lang, c)),
         claim: c.claim(s.moveStr, s.d, K.num(s.digits, 0, lang)),
         strip: {mode: "owed", terms: [], count: 0},
         data: {

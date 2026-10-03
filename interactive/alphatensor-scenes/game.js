@@ -73,6 +73,8 @@
       moves, n, u, v, w, P, left, won, stopped, over: won || stopped, empty, X, after,
       delta: after === null ? null : after - left, cells: X ? AC.nnz(X) : 0,
       last, lastX, lastCells: lastX ? AC.nnz(lastX) : 0, was: n ? P.trail[n - 1] : left,
+      // How many of the moves played left fewer nonzero cells than the move before.
+      lowered: P.trail.filter((x, i) => i && x < P.trail[i - 1]).length,
       // The last move is the one before it with its sign flipped.
       back: !!(before && AC.isZero(AC.add(lastX, AC.rankOne(before.u, before.v, before.w)))),
       sig: [s.u, s.v, s.w].join(",") + "|" +
@@ -133,6 +135,13 @@
   const EN = (() => {
     const cells = (k) => k + (k === 1 ? " cell" : " cells");
     const moves = (n) => n + (n === 1 ? " move" : " moves");
+    // A game is stopped at LIMIT moves, so a count of them is never past sixteen.
+    const WORDS = ["none", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+                   "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen"];
+    const word = (n) => WORDS[n] || String(n);
+    // "four of the seven moves lowered it", read off the trail of a game that was won.
+    const lowered = (f) => (f.lowered === f.n ? "all " + word(f.n) + " moves lowered it"
+      : word(f.lowered) + " of the " + word(f.n) + " moves lowered it");
     const who = (m) => (m.by === "school" ? "The schoolbook rule's move " + (m.r + 1) + " of " + SCRIPTS.school.U.length
       : m.by === "strassen" ? "Strassen's move " + (m.r + 1) + " of " + SCRIPTS.strassen.U.length
       : m.by === "greedy" ? "The greedy move" : "Your block");
@@ -140,16 +149,18 @@
       tab: "game",
       k: "Section 11 · the game",
       h: "Finding an algorithm is the same job as emptying the cube",
-      predict: "The cube starts with 8 nonzero cells and the aim is 0. Strassen's seven moves win in fewer " +
-               "moves than the schoolbook rule's eight. After his first move, how many nonzero cells are " +
-               "left: 7, 4, or more than 8?",
+      predict: "Every move costs one, whether it helps or not. Strassen's seven blocks, played as seven " +
+               "moves, win the game. How many of the seven leave fewer nonzero cells than the move before: " +
+               "all seven, four, or one?",
       concept: "Move the blocks to the other side of the equation: " + EQUATION + ". Start with the " +
                "cube, take away one block a move, and try to be left with zeros in as few moves as " +
                "possible. The AlphaTensor paper calls this TensorGame: one player, a reward of −1 for every " +
                "move, and a game won in R moves is an algorithm with R multiplications.",
-      b: "A move is three lists of weights, each −1, 0 or +1, and it subtracts their block from what is " +
-         "left of the cube. A cell that is cleared goes hollow; a cell pushed below zero turns amber and " +
-         "says −1. <b>Three games to try.</b> Press <b>Schoolbook's next move</b> until the cube is empty. " +
+      b: "A move is three lists of weights, and it subtracts their block from what is left of the cube. " +
+         "The weights are −1, 0 and +1, which makes " + K.num(CHOICES, 0, "en") + " different blocks: the " +
+         "next picture counts them, and the one after it tries every one. A cell that is cleared goes " +
+         "hollow; a cell pushed below zero turns amber and says −1. <b>Three games to try.</b> Press " +
+         "<b>Schoolbook's next move</b> until the cube is empty. " +
          "<b>Start over</b> and do the same with <b>Strassen's next move</b>, watching the count on the " +
          "right. Start over once more, play Strassen's first move, and ask for the <b>greedy move</b>: of " +
          "all " + K.num(CHOICES, 0, "en") + " moves, the one that leaves the fewest nonzero cells. To build " +
@@ -177,8 +188,8 @@
         const trail = f.P.trail.join(", ");
         if (f.won) {
           return "<b>Won in " + moves(f.n) + "</b>: an algorithm with " + f.n + " multiplications. The count " +
-            "went " + trail + "." +
-            (f.n === BEST ? " That is the fewest possible for 2 × 2 matrices."
+            "went " + trail + ": <b>" + lowered(f) + "</b>." +
+            (f.n === BEST ? " That is the fewest possible for 2 × 2 matrices (Winograd, 1971)."
               : f.n === SCRIPTS.school.U.length ? " That matches the schoolbook rule; it can be done in " + BEST + "."
               : " It can be done in " + BEST + ".");
         }
@@ -236,6 +247,12 @@
     const moves = (n) => n + (n === 1 ? " jugada" : " jugadas");
     const remain = (k) => (k === 1 ? "queda 1 celda" : "quedan " + k + " celdas");
     const cap = (s) => s.charAt(0).toUpperCase() + s.slice(1);
+    const WORDS = ["ninguna", "una", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez",
+                   "once", "doce", "trece", "catorce", "quince", "dieciséis"];
+    const word = (n) => WORDS[n] || String(n);
+    const lowered = (f) => (f.lowered === f.n ? "las " + word(f.n) + " jugadas la bajaron"
+      : f.lowered === 1 ? "una de las " + word(f.n) + " jugadas la bajó"
+      : word(f.lowered) + " de las " + word(f.n) + " jugadas la bajaron");
     const who = (m) => (m.by === "school" ? "La jugada " + (m.r + 1) + " de " + SCRIPTS.school.U.length + " de la regla escolar"
       : m.by === "strassen" ? "La jugada " + (m.r + 1) + " de " + SCRIPTS.strassen.U.length + " de Strassen"
       : m.by === "greedy" ? "La jugada voraz" : "Tu bloque");
@@ -243,15 +260,17 @@
       tab: "juego",
       k: "Sección 11 · el juego",
       h: "Encontrar un algoritmo es el mismo trabajo que vaciar el cubo",
-      predict: "El cubo empieza con 8 celdas distintas de cero y el objetivo es 0. Las siete jugadas de " +
-               "Strassen ganan en menos jugadas que las ocho de la regla escolar. Tras su primera jugada, " +
-               "¿cuántas celdas distintas de cero quedan: 7, 4 o más de 8?",
+      predict: "Cada jugada cuesta uno, ayude o no. Los siete bloques de Strassen, jugados como siete " +
+               "jugadas, ganan la partida. ¿Cuántas de las siete dejan menos celdas distintas de cero que " +
+               "la jugada anterior: las siete, cuatro o una?",
       concept: "Pasa los bloques al otro lado de la ecuación: " + EQUATION + ". Empieza con el cubo, " +
                "quita un bloque por jugada e intenta quedarte con ceros en las menos jugadas posibles. El " +
                "artículo de AlphaTensor lo llama TensorGame: un solo jugador, una recompensa de −1 por cada " +
                "jugada, y una partida ganada en R jugadas es un algoritmo con R multiplicaciones.",
-      b: "Una jugada son tres listas de pesos, cada uno −1, 0 o +1, y resta su bloque de lo que queda del " +
-         "cubo. Una celda que se vacía queda hueca; una celda que baja de cero se vuelve ámbar y dice −1. " +
+      b: "Una jugada son tres listas de pesos, y resta su bloque de lo que queda del cubo. Los pesos son " +
+         "−1, 0 y +1, lo que da " + K.num(CHOICES, 0, "es") + " bloques distintos: la imagen siguiente los " +
+         "cuenta, y la que viene después los prueba todos. Una celda que se vacía queda hueca; una celda " +
+         "que baja de cero se vuelve ámbar y dice −1. " +
          "<b>Tres partidas para probar.</b> Pulsa <b>Jugada escolar</b>, la siguiente de la regla " +
          "escolar, hasta vaciar el cubo. <b>Empieza de nuevo</b> y haz lo mismo con <b>Jugada de " +
          "Strassen</b>, mirando la cuenta de la derecha. Empieza de nuevo otra vez, juega la primera de " +
@@ -281,8 +300,8 @@
         const trail = f.P.trail.join(", ");
         if (f.won) {
           return "<b>Partida ganada en " + moves(f.n) + "</b>: un algoritmo con " + f.n + " multiplicaciones. " +
-            "La cuenta fue " + trail + "." +
-            (f.n === BEST ? " Es lo mínimo posible para matrices de 2 × 2."
+            "La cuenta fue " + trail + ": <b>" + lowered(f) + "</b>." +
+            (f.n === BEST ? " Es lo mínimo posible para matrices de 2 × 2 (Winograd, 1971)."
               : f.n === SCRIPTS.school.U.length ? " Iguala a la regla escolar; se puede en " + BEST + "."
               : " Se puede en " + BEST + ".");
         }
@@ -358,7 +377,7 @@
 
   window.AlphaTensorScenes.register({
     id: "game", section: "11", gl: true,
-    part: {en: "Part three · the game", es: "Tercera parte · el juego"},
+    part: {en: "The game", es: "El juego"},
     hl: ["r"],
     copy: {en: EN, es: ES},
 

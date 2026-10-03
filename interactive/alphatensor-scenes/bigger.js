@@ -2,11 +2,14 @@
 // the cube is n^2 cells on a side and holds n^3 ones: 8 of 64 (12.5%), 27 of
 // 729 (3.7%), 64 of 4,096 (1.6%), 125 of 15,625 (0.8%). "Multiplying takes n^3
 // multiplications" is the statement that the cube has n^3 ones and each is
-// paid for one at a time. Past 3 x 3 the cube is drawn as trays and block
-// lines with no specks for the zeros. Beside it, on the inset, is a table of
-// the four sizes (each row pickable) and a bar for the share that is nonzero.
-// The 2 x 2 rule's eight cells are the corner of every bigger cube: pressing
-// one on the strip lights the cell with the same (i, j, k) here.
+// paid for one at a time. Past 3 x 3 the cube is drawn as trays, and the
+// faint lines that split each tray by matrix row, with no specks for the
+// zeros. Beside it, on the inset, is a table of the four sizes (each row
+// pickable) and a bar for the share that is nonzero. The 2 x 2 rule's eight
+// cells are the corner of every bigger cube: pressing one on the strip lights
+// the cell with the same (i, j, k) here. It opens on 2 x 2, the cube the page
+// has shown so far and the 12.5% its question starts from; the strip stays
+// that cube at every size.
 // Drawn in three.js, with an SVG twin from the same model.
 // See alphatensor-scenes/README.md for the contract this keeps.
 (function () {
@@ -14,6 +17,9 @@
   const AC = window.AlphaTensorCore, K = window.AlphaTensorKit;
 
   const SIZES = [2, 3, 4, 5], TAU = 0.16, ENTRANCE = 1500;
+  // The strip is the 2 x 2 cube whatever size the picture shows, and the
+  // schoolbook rule builds it in eight multiplications.
+  const SCHOOL = AC.blocksOf(AC.schoolbook(2));
   const tensors = {};
   const tensorOf = (n) => tensors[n] || (tensors[n] = AC.tensor(n));
   const nOf = (ctx) => ctx.state.n;
@@ -62,14 +68,16 @@
     tab: "bigger",
     k: "Section 06 · bigger matrices",
     h: "A bigger matrix gives a bigger, emptier cube",
-    predict: "For 3 × 3 matrices the cube is 9 × 9 × 9: 729 cells. How many of them hold a 1?",
+    predict: "At 2 × 2 the cube is 12.5% full: 8 ones among 64 cells. Before you slide: at 5 × 5, will " +
+             "the share of cells that hold a 1 be about the same, about half of that, or under 1%?",
     concept: "Every product in the schoolbook rule is one 1 in the cube. Multiplying two n × n matrices " +
              "takes n³ products, so the cube has n³ ones, while its side grows as n² and its cell count " +
              "as n⁶. The cube gets bigger and emptier together.",
     b: "Slide <b>n</b> from 2 to 5 and watch the cube grow while the ones stay few. The statement " +
        "\"matrix multiplication takes n³ multiplications\" is the statement that the cube holds n³ ones " +
-       "and the schoolbook rule pays for them one at a time. Past 3 × 3 the cube is drawn as trays and " +
-       "block lines only. Click a row of the table to jump to that size, or press a cell on the strip " +
+       "and the schoolbook rule pays for them one at a time. Past 3 × 3 the empty cells are not drawn: " +
+       "only the trays, and the faint lines that split each tray wherever a new row of A, or of B, " +
+       "begins. Click a row of the table to jump to that size, or press a cell on the strip " +
        "below: the 2 × 2 rule is the corner of every bigger cube, so the same cell lights up here.",
     eqcap: "Tₙ is the cube for n × n matrices, n² cells on each side. Summing its entries counts the " +
            "1s, and there are n³ of them: one for each product the schoolbook rule makes.",
@@ -78,10 +86,11 @@
     side: (n, s) => n + " × " + n + " matrices · cube " + s + " × " + s + " × " + s,
     claim: (n, ones, cells, share) => n + " × " + n + " · " + ones + " ones in " + cells + " cells · " + share + "% full",
     read: (f) =>
-      "<b>" + f.ones + "</b> ones: one per product, " + f.n + "³ = " + f.ones + ", in a cube of " + f.cells +
-      " cells, so " + f.zeros + " cells hold a 0 and the cube is " + f.share + "% full. " +
-      (f.n === 2 ? "This is the 2 × 2 cube: 8 of 64, the fullest this page will show."
-        : "A 2 × 2 cube is " + f.share2 + "% full, so this one is " + f.ratio + " times emptier."),
+      "<b>" + f.share + "% full</b>: " +
+      (f.n === 2
+        ? f.ones + " ones, one per product of the rule, among " + f.cells + " cells. Slide to a bigger matrix."
+        : f.ones + " ones (" + f.n + "³, one per product) among " + f.cells + " cells. The 2 × 2 cube is " +
+          f.share2 + "% full, so this one is " + f.ratio + " times emptier."),
     tip: (a, b, c, v) => "(" + a + ", " + b + ", " + c + ") holds " + v,
     aria: (ctx) => {
       const f = facts(ctx);
@@ -100,15 +109,18 @@
     tab: "mayor",
     k: "Sección 06 · matrices mayores",
     h: "Una matriz mayor da un cubo mayor y más vacío",
-    predict: "Para matrices de 3 × 3 el cubo es de 9 × 9 × 9: 729 celdas. ¿Cuántas guardan un 1?",
+    predict: "En 2 × 2 el cubo está lleno al 12,5 %: 8 unos entre 64 celdas. Antes de deslizar: en 5 × 5, " +
+             "¿la parte de las celdas que guardan un 1 será más o menos la misma, cerca de la mitad, o " +
+             "menos del 1 %?",
     concept: "Cada producto de la regla escolar es un 1 en el cubo. Multiplicar dos matrices de n × n " +
              "necesita n³ productos, así que el cubo tiene n³ unos, mientras que su lado crece como n² y " +
              "su número de celdas como n⁶. El cubo se hace más grande y más vacío a la vez.",
     b: "Desliza <b>n</b> de 2 a 5 y mira cómo crece el cubo mientras los unos siguen siendo pocos. La " +
        "frase «multiplicar matrices necesita n³ multiplicaciones» es la frase «el cubo tiene n³ unos» y " +
-       "la regla escolar paga cada uno por separado. Pasado 3 × 3 el cubo se dibuja solo con bandejas y " +
-       "líneas de bloque. Haz clic en una fila de la tabla para ir a ese tamaño, o pulsa una celda de la " +
-       "tira de abajo: la regla de 2 × 2 es la esquina de todos los cubos mayores, y aquí se ilumina la " +
+       "la regla escolar paga cada uno por separado. Pasado 3 × 3 las celdas vacías no se dibujan: solo " +
+       "las bandejas, y las líneas tenues que parten cada bandeja donde empieza una nueva fila de A, o " +
+       "de B. Haz clic en una fila de la tabla para ir a ese tamaño, o pulsa una celda de la " +
+       "cinta de abajo: la regla de 2 × 2 es la esquina de todos los cubos mayores, y aquí se ilumina la " +
        "misma celda.",
     eqcap: "Tₙ es el cubo de las matrices de n × n, con n² celdas por lado. Sumar sus entradas cuenta los " +
            "unos, y hay n³: uno por cada producto que hace la regla escolar.",
@@ -117,10 +129,12 @@
     side: (n, s) => "matrices de " + n + " × " + n + " · cubo de " + s + " × " + s + " × " + s,
     claim: (n, ones, cells, share) => n + " × " + n + " · " + ones + " unos en " + cells + " celdas · " + share + " % llena",
     read: (f) =>
-      "<b>" + f.ones + "</b> unos: uno por producto, " + f.n + "³ = " + f.ones + ", en un cubo de " + f.cells +
-      " celdas, así que " + f.zeros + " celdas guardan un 0 y el cubo está lleno al " + f.share + " %. " +
-      (f.n === 2 ? "Este es el cubo de 2 × 2: 8 de 64, el más lleno que verás en esta página."
-        : "Un cubo de 2 × 2 está lleno al " + f.share2 + " %, así que este está " + f.ratio + " veces más vacío."),
+      "<b>Lleno al " + f.share + " %</b>: " +
+      (f.n === 2
+        ? f.ones + " unos, uno por producto de la regla, entre " + f.cells + " celdas. Desliza hacia una " +
+          "matriz mayor."
+        : f.ones + " unos (" + f.n + "³, uno por producto) entre " + f.cells + " celdas. El cubo de 2 × 2 " +
+          "está lleno al " + f.share2 + " %, así que este está " + f.ratio + " veces más vacío."),
     tip: (a, b, c, v) => "(" + a + ", " + b + ", " + c + ") vale " + v,
     aria: (ctx) => {
       const f = facts(ctx);
@@ -158,8 +172,10 @@
       {id: "play", type: "play", target: "n", rate: 0.5}
     ],
 
+    // 2 x 2: the cube the reader has just read, and the 12.5% the question
+    // starts from. The answer is at the other end of the slider.
     init(ctx) {
-      ctx.state.n = 3;
+      ctx.state.n = 2;
       ctx.state.mark = -1;
     },
 
@@ -219,7 +235,7 @@
                                      "fill-opacity": now ? 0.24 : 1,
                                      stroke: now ? K.css("--stage-ink") : "none", "stroke-width": 1.4}));
         const cells = [z.n + " × " + z.n, String(z.side), K.num(z.cells, 0, lang), String(z.ones),
-                       K.num(z.share * 100, 1, lang) + "%"];
+                       K.num(z.share * 100, 1, lang) + (lang === "es" ? " %" : "%")];
         cells.forEach((t, i) => K.text(g, colX[i], ry + rh / 2 + 1, t, {
           size: 12, colour: now ? "--stage-ink" : "--stage-mute", weight: now ? 700 : 500,
           anchor: i === 0 ? "start" : "end", baseline: "middle"}));
@@ -246,13 +262,12 @@
 
     readout(ctx) {
       const c = ctx.copy, f = facts(ctx), s = ctx.state, lang = ctx.lang;
-      const fl = Object.assign({}, f, {cells: K.num(f.cells, 0, lang), ones: K.num(f.ones, 0, lang),
-                                       zeros: K.num(f.zeros, 0, lang)});
+      const fl = Object.assign({}, f, {cells: K.num(f.cells, 0, lang), ones: K.num(f.ones, 0, lang)});
       return {
         html: c.read(fl),
         claim: c.claim(f.n, fl.ones, fl.cells, f.share),
         caption: "",
-        strip: {mode: "built", terms: AC.blocksOf(AC.schoolbook(2)), count: f.n * f.n * f.n,
+        strip: {mode: "built", terms: SCHOOL, count: SCHOOL.length,
                 lit: s.mark >= 0 ? [s.mark] : []},
         data: {
           share: (f.raw * 100).toFixed(1), n: String(f.n), side: String(f.side), cells: String(f.cells),

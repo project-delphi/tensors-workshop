@@ -46,12 +46,15 @@ published results held as a small table (`RECORDS`).
 | 2 × 2 needs exactly 7 | Winograd (1971) | — |
 | 3 × 3 is at least 19 | Bläser (2003) | the handbook note's own sentence |
 | 3 × 3 is at most 23 | Laderman (1976) | the handbook note's own sentence |
-| 4 × 4 in 49 | Strassen's seven, applied twice | `recursion(2).strassen` |
+| 4 × 4 in 49 | Strassen's seven, applied twice; AlphaTensor matched it in ordinary arithmetic. Shown as what the mod-2 result is measured against, not as the shortest known | `recursion(2).strassen` |
+| 4 × 4 over the complex numbers in 48 | Novikov et al. (2025), *AlphaEvolve*, arXiv:2506.13131: "a procedure to multiply two 4 × 4 complex-valued matrices using 48 scalar multiplications" | the abstract, read 2026-10-03 |
 | 4 × 4 mod 2 in 47 (was 49); 4 × 5 by 5 × 5 in 76 (was 80) | Fawzi et al. (2022), *Discovering faster matrix multiplication algorithms with reinforcement learning*, Nature 610 | deep dive 20 loads DeepMind's published factorizations and verifies both |
 
-Every paper is on the references page under *An open problem*. When a bound
-moves, change `RECORDS`, the handbook note and this table together: the test
-reads the note and fails on a mismatch.
+Every paper is on the references page under *An open problem*, with a
+catalogue of the best known count for every small size. Records move — the
+4 × 4 row did in 2025 — so when one does, change `RECORDS`, the handbook
+note and this table together: the test reads the note and fails on a
+mismatch.
 
 Two things in the core are not the blog's. `survey(R, N)` looks at all
 128,000 moves from a position once — how many lower the count of nonzero
@@ -154,16 +157,20 @@ sixteen cells, a ring on each of the eight 1s of the rule. It is what makes
 twelve pictures one page. A scene's `readout()` returns
 
 ```js
-strip: {mode: "built" | "owed", terms: [{u, v, w}, …], count, lit?: [cell, …], tray?: c}
+strip: {mode: "built" | "owed", terms: [{u, v, w}, …], count, lit?: [cell, …], tray?: c, note?}
 ```
 
 and **the frame works the 64 cells out from the core**: in `built` mode the
 filled cells are what `terms` add up to (parts one and two); in `owed` mode
 they are what is left of the cube once `terms` are subtracted (part three,
 where the sum has been moved to the other side of the equation). No scene
-writes 64 numbers. `count` is the multiplications, or moves, the picture has
-spent; `lit` is the flat indices of the cells it is pointing at (`AC.cell(4,
-a, b, c)`); `tray` is the one tray it is reading.
+writes 64 numbers. `count` is the multiplications, or moves, that those
+blocks cost — the strip's own, so 8 under `bigger` and 7 under `recurse`
+whatever size or depth the picture above is showing, or the caption would
+say "27 multiplications" beside a cube built from eight; `lit` is the flat
+indices of the cells it is pointing at (`AC.cell(4, a, b, c)`); `tray` is the
+one tray it is reading; `note` replaces the caption's second line, for the one
+scene (`block`) whose default line would answer the next scene's question.
 
 A press on a cell of the strip calls `scene.seek(ctx, cellIndex)`, which goes
 through `ctx.setControls` like any other hand on a control. Every scene has
@@ -222,11 +229,25 @@ with `pose.inset` keeping that share of the stage clear.
 half-contrast text: a thing standing back is drawn in `--stage-mute`.
 
 **The copy asks before it tells.** The predict-first question comes straight
-after the heading, ends in a question mark, and neither it nor the heading
-gives the answer: the readout under the stage does, opening on the answer in
-bold. Lead with the concrete thing and one number a reader can check; the
-formula and the NumPy follow. Nothing is called a step. Spanish is written,
-not transliterated: *bloque*, *celda*, *jugada*, *bandeja*, *regla escolar*.
+after the heading, ends in a question mark, and neither it nor the heading,
+the concept box or the body gives the answer: the readout under the stage
+does, opening on the answer in bold. Where a scene can open *before* its
+answer, it does — `strassen` with nothing added, `bigger` at 2 × 2, `recurse`
+at one level, `game` with no move played — so the reader's first move is
+what answers the question. A question may rest on what an earlier scene
+showed; it may not repeat one an earlier scene answered. Lead with the
+concrete thing and one number a reader can check; the formula and the NumPy
+follow. Nothing is called a step, and the three groups are named, not
+numbered: "Part" is the handbook's word.
+
+**One noun for one thing.** The *cube* is the 4 × 4 × 4 tensor, a *cell* one
+of its entries, a *tray* one slice. A *block* is a rank-one term `u ∘ v ∘ w`
+and nothing else — not the cube, not a filled cell, not a sub-matrix, which
+is a *quarter*. In the third group a block subtracted from the cube is a
+*move*. A split of the cube into blocks is a *split*; in Spanish it is a
+*descomposición*, never a *partición*, because the blocks overlap and cancel.
+Spanish is written, not transliterated: *bloque*, *celda*, *jugada*,
+*bandeja*, *cinta*, *regla escolar*.
 
 **`space` and `greedy` count moves differently**, and say so: 5¹² is every
 triple with five coefficients, zero vectors and duplicates included; 128,000

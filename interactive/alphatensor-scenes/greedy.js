@@ -53,8 +53,9 @@
   const EN = {
     tab: "greedy",
     k: "Section 11 · the best-looking move",
-    h: "Always taking the best-looking move finds eight, and never seven",
-    predict: "From the full cube there are 128,000 different moves. How many of them leave fewer than 8 nonzero cells?",
+    h: "Taking the best-looking move every turn does not find Strassen's seven",
+    predict: "From the full cube there are 128,000 different moves: the distinct blocks counted in the last " +
+             "picture. How many of them leave fewer than 8 nonzero cells?",
     concept: "We cannot look at every game, so play one game well: at each turn take the move that leaves the " +
              "fewest nonzero cells. For a matrix that works, because the SVD peels off the best layer every time. " +
              "On this cube it does not: the cell count has to go up before it can come down.",
@@ -119,16 +120,17 @@
   const ES = {
     tab: "voraz",
     k: "Sección 11 · la jugada que mejor se ve",
-    h: "Tomar siempre la jugada que mejor se ve encuentra ocho, y nunca siete",
-    predict: "Desde el cubo completo hay 128.000 jugadas distintas. ¿Cuántas de ellas dejan menos de 8 celdas distintas de cero?",
-    concept: "No podemos mirar todas las partidas, así que juguemos una bien: en cada turno, la jugada que " +
-             "deja menos celdas distintas de cero. Con una matriz funciona, porque la SVD arranca la mejor " +
-             "capa cada vez. Con este cubo no: la cuenta de celdas tiene que subir antes de poder bajar.",
+    h: "Tomar siempre la jugada que mejor se ve no encuentra las siete de Strassen",
+    predict: "Desde el cubo completo hay 128.000 jugadas distintas: los bloques distintos que contó la " +
+             "imagen anterior. ¿Cuántas de ellas dejan menos de 8 celdas distintas de cero?",
+    concept: "No podemos mirar todas las partidas, así que juega una bien: en cada turno, toma la jugada " +
+             "que deja menos celdas distintas de cero. Con una matriz funciona, porque la SVD arranca la " +
+             "mejor capa cada vez. Con este cubo no: la cuenta de celdas tiene que subir antes de poder bajar.",
     b: "Cada barra cuenta las jugadas que dejan ese número de celdas. <b>Desliza</b> para jugar antes " +
        "algunas de las siete jugadas de Strassen y deja que el voraz mire desde ahí. Tras la primera " +
        "jugada de Strassen, la respuesta que mejor se ve es deshacerla, y desde ahí el voraz necesita 10 " +
-       "jugadas en total. Las siete jugadas de Strassen, en cualquiera de los 5.040 órdenes, suben a al " +
-       "menos 10 celdas antes de bajar.",
+       "jugadas en total. Las siete jugadas de Strassen, en cualquiera de los 5.040 órdenes, suben por " +
+       "lo menos a 10 celdas antes de bajar.",
     eqcap: "La cuenta que minimiza el voraz: el número de celdas (i, j, k) donde el cubo S no es cero. " +
            "Una jugada resta un bloque, y el voraz se queda con la que deja esta cuenta más baja.",
     claim: (k, lower, raise) => "tras " + k + " de Strassen · " + lower + " la bajan · " + raise + " la suben",
@@ -155,7 +157,8 @@
         " Desde esta posición " + v.same + " la mantienen en " + f.now + " y " + v.raise +
         " la suben, hasta " + f.S.maxRise + " celdas más. ";
       if (f.k === 0) {
-        s += "La primera jugada de Strassen no es de las que ayudan: sube " + f.now + " a " + f.full[1] + ".";
+        s += "La primera jugada de Strassen no es de las que ayudan: lleva la cuenta de " + f.now + " a " +
+             f.full[1] + ".";
       } else if (f.now === 0) {
         s += "El cubo está vacío, así que toda jugada solo puede añadir celdas: el voraz no tiene nada " +
              "que hacer, y las " + f.k + " jugadas de Strassen son la partida entera.";
@@ -164,8 +167,8 @@
              f.best + (f.takesBack ? " (deshace la jugada)" : "") + ", y necesita " + f.gTotal +
              " jugadas en total, frente a las " + R + " de Strassen.";
       }
-      return s + " En los " + v.orders + " órdenes de las siete jugadas de Strassen, la cuenta llega al " +
-        "menos a " + v.low + " antes de bajar.";
+      return s + " En los " + v.orders + " órdenes de las siete jugadas de Strassen, la cuenta llega por " +
+        "lo menos a " + v.low + " antes de bajar.";
     },
     aria: (ctx) => {
       const f = facts(ctx);

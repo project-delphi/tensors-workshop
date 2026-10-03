@@ -713,11 +713,11 @@
       navInteractive: "Interactive",
       navNotebooks: "Notebooks",
       intro: "Multiplying two 2 × 2 matrices takes eight multiplications, and eight looks like a " +
-             "fact about the problem. It is not. The rule itself can be written down as a block of " +
-             "zeros and ones, a 4 × 4 × 4 tensor, and a way of splitting that block into R " +
-             "simple pieces is a way of multiplying with R multiplications. Strassen found seven by " +
+             "fact about the problem. It is not. The rule itself can be written down as a cube of " +
+             "zeros and ones, a 4 × 4 × 4 tensor, and a way of splitting that cube into R " +
+             "simple blocks is a way of multiplying with R multiplications. Strassen found seven by " +
              "hand in 1969. In 2022 AlphaTensor turned the hunt for such splits into a game for one " +
-             "player, and found shorter ones for larger matrices. This page follows the idea in three " +
+             "player, and reported shorter ones for some larger sizes. This page follows the idea in three " +
              "parts: the rule becomes a cube, a split of the cube becomes an algorithm, and finding a " +
              "split becomes a game nobody can brute-force. The strip under the stage is the 2 × 2 " +
              "cube laid flat, all 64 cells, and it shows what each picture is doing to it. Each picture " +
@@ -748,9 +748,11 @@
               "picture asks for them. That file is a port of the model behind three posts on the ML blog, " +
               "which carry the long version of the argument. Strassen’s seven products are his own " +
               "(1969), and the test suite requires them to equal the arrays in the handbook’s section 11 " +
-              "note. The records in the last picture are quoted, not computed: 47 against 49 and 76 against " +
-              "80 are from the AlphaTensor paper (Fawzi et al., Nature 2022), 19 is Bläser’s lower " +
-              "bound (2003) and 23 is Laderman’s algorithm (1976). The ledger in " +
+              "note. The records in the last picture are quoted, not computed: 47 against 49 for 4 × 4 in " +
+              "arithmetic mod 2, and 76 against 80 for 4 × 5 by 5 × 5, are from the AlphaTensor paper " +
+              "(Fawzi et al., Nature 2022); 19 is Bläser’s lower bound (2003) and 23 is Laderman’s " +
+              "algorithm (1976), both for 3 × 3. Records move, and the references page links a " +
+              "catalogue of the best known count for every small size. The ledger in " +
               "alphatensor-scenes/README.md says where each one came from.",
       about2: "This page plays the game; it is not AlphaTensor. No network runs here, and the greedy player " +
               "in the third part is a baseline that loses, not a model of what DeepMind built. What the page " +
@@ -771,13 +773,13 @@
       navInteractive: "Interactivo",
       navNotebooks: "Cuadernos",
       intro: "Multiplicar dos matrices de 2 × 2 cuesta ocho multiplicaciones, y ocho parece un " +
-             "hecho del problema. No lo es. La propia regla se puede escribir como un bloque de ceros " +
-             "y unos, un tensor de 4 × 4 × 4, y una manera de partir ese bloque en R piezas " +
+             "hecho del problema. No lo es. La propia regla se puede escribir como un cubo de ceros " +
+             "y unos, un tensor de 4 × 4 × 4, y una manera de descomponer ese cubo en R bloques " +
              "simples es una manera de multiplicar con R multiplicaciones. Strassen encontró siete " +
-             "a mano en 1969. En 2022 AlphaTensor convirtió la búsqueda de esas particiones " +
-             "en un juego para un jugador, y encontró otras más cortas para matrices más " +
-             "grandes. Esta página sigue la idea en tres partes: la regla se vuelve un cubo, una " +
-             "partición del cubo se vuelve un algoritmo, y encontrar una partición se vuelve " +
+             "a mano en 1969. En 2022 AlphaTensor convirtió la búsqueda de esas descomposiciones " +
+             "en un juego para un jugador, y reportó otras más cortas para algunos tamaños " +
+             "mayores. Esta página sigue la idea en tres partes: la regla se vuelve un cubo, una " +
+             "descomposición del cubo se vuelve un algoritmo, y encontrar una descomposición se vuelve " +
              "un juego que nadie puede resolver por fuerza bruta. La cinta bajo el escenario es el cubo " +
              "de 2 × 2 extendido, sus 64 celdas, y muestra lo que cada imagen le hace. Cada imagen " +
              "te pide predecir primero; el recuadro bajo sus controles responde con los números del propio cubo.",
@@ -808,10 +810,12 @@
               "entradas del blog de ML, que cuentan la versión larga. Los siete productos de Strassen " +
               "son los suyos (1969), y las pruebas exigen que sean iguales a los arreglos de la nota de la " +
               "sección 11 del manual. Los récords de la última imagen están citados, no " +
-              "calculados: 47 frente a 49 y 76 frente a 80 vienen del artículo de AlphaTensor (Fawzi et " +
-              "al., Nature 2022), 19 es la cota inferior de Bläser (2003) y 23 es el algoritmo de " +
-              "Laderman (1976). El registro de procedencia en alphatensor-scenes/README.md dice de dónde " +
-              "sale cada uno.",
+              "calculados: 47 frente a 49 para 4 × 4 en aritmética módulo 2, y 76 frente a 80 para " +
+              "4 × 5 por 5 × 5, vienen del artículo de AlphaTensor (Fawzi et al., Nature 2022); 19 es la " +
+              "cota inferior de Bläser (2003) y 23 es el algoritmo de Laderman (1976), ambos para 3 × 3. " +
+              "Los récords cambian, y la página de referencias enlaza un catálogo con el mejor conteo " +
+              "conocido para cada tamaño pequeño. El registro de procedencia en " +
+              "alphatensor-scenes/README.md dice de dónde sale cada uno.",
       about2: "Esta página juega el juego; no es AlphaTensor. Aquí no corre ninguna red, y el " +
               "jugador voraz de la tercera parte es una referencia que pierde, no un modelo de lo que " +
               "construyó DeepMind. Lo que la página muestra es el problema para el que se hizo " +
@@ -1232,6 +1236,10 @@
         const piece = e.target.closest ? e.target.closest("[data-pick]") : null;
         if (!piece || !active.seek) return;
         const [a, b, c] = piece.getAttribute("data-pick").slice(2).split(",").map(Number);
+        // A hand on the strip takes the picture back from the player, as a
+        // hand on the slider does: left running, its next frame would walk
+        // the control on and undo the press.
+        stopPlay();
         dropDrift();
         active.seek(contextFor(active), AC.cell(4, a, b, c));
       });
@@ -1249,6 +1257,9 @@
     // Two lines on purpose: what has been spent, and how far that is from
     // the cube. One line wrapped wherever a long count happened to break it.
     const cap = owed ? T.stripOwed(count, off) : T.stripBuilt(count, off);
+    // A scene may say its own second line, in its own copy, where the
+    // default one would answer the next picture's question.
+    if (S.note) cap[1] = S.note;
     $("strip-cap").replaceChildren(...cap.map((line, i) => {
       const span = document.createElement("span");
       span.className = i ? "strip-state" : "strip-count";
@@ -1753,6 +1764,7 @@
       // a captured pointer is the stage, not the cell.
       const key = pickAt(e.clientX, e.clientY, target);
       if (!key) return;
+      stopPlay();
       dropDrift();
       active.pick(contextFor(active), key);
     };

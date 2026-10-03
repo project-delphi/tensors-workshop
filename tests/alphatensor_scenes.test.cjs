@@ -213,6 +213,10 @@ function checkShown(env, scene, where, {ctx, readout, lines}) {
   if (strip.tray !== undefined && strip.tray !== null) {
     assert.ok([0, 1, 2, 3].includes(strip.tray), `${where}: strip.tray ${strip.tray}`);
   }
+  if (strip.note !== undefined) {
+    assert.ok(typeof strip.note === 'string' && strip.note.length > 3 && !BAD.test(strip.note),
+      `${where}: strip.note ${strip.note}`);
+  }
   // The frame draws it with the same arithmetic the page uses.
   const P = env.AC.play(env.AC.tensor(2), strip.terms);
   assert.equal(P.trail.length, strip.terms.length + 1, `${where}: the strip's blocks do not play`);
@@ -424,6 +428,30 @@ test('no scene draws a hard-coded English string', () => {
           `${scene.id}: drew "${t}" while the page is in Spanish, so it bypassed the copy table`);
       });
     }
+  }
+});
+
+test('prose that quotes a number quotes the core\'s', {skip: !!ONLY}, () => {
+  // A body paragraph is a static string, and three of them state results
+  // the core computes. Nothing would notice the core moving under them.
+  const env = load(), {AC, K} = env;
+  const T = AC.tensor(2), S = AC.STRASSEN;
+  const copy = (id, lang, key) => String(env.scenes.find((s) => s.id === id).copy[lang][key]);
+  const orders = AC.orderings(T, S);
+  const afterOne = 1 + AC.greedyPeel(AC.play(T, AC.blocksOf(S, 1)).owed, 4).moves.length;
+  for (const lang of ['en', 'es']) {
+    const greedy = copy('greedy', lang, 'b');
+    assert.ok(greedy.includes(K.num(orders.orders, 0, lang)), `greedy ${lang}: the count of orders`);
+    assert.ok(new RegExp(`\\b${orders.lowPeak}\\b`).test(greedy), `greedy ${lang}: the lowest peak`);
+    assert.ok(new RegExp(`\\b${afterOne}\\b`).test(greedy), `greedy ${lang}: greedy's total after one of Strassen's`);
+    assert.equal(afterOne, orders.lowPeak, 'the two happen to be the same number today; if they part, the copy needs both');
+    const space = copy('space', lang, 'b');
+    for (const n of [Number(AC.powString(3, 12)), 80 ** 3, AC.moves(4).count]) {
+      assert.ok(space.includes(K.num(n, 0, lang)), `space ${lang}: ${n} in the chain down to the game's moves`);
+    }
+    assert.equal(80 ** 3 / 4, AC.moves(4).count);
+    assert.ok(copy('game', lang, 'b').includes(K.num(AC.moves(4).count, 0, lang)), `game ${lang}: how many moves there are`);
+    assert.ok(copy('greedy', lang, 'predict').includes(K.num(AC.moves(4).count, 0, lang)), `greedy ${lang}: its question`);
   }
 });
 

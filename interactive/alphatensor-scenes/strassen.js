@@ -6,7 +6,9 @@
 // goes *up*, from 8 to 12 -- and the later blocks cancel the damage: a cell
 // that held something and is back at zero is left as a hollow outline, so the
 // overshoot stays visible after it is gone. Beside the cube, on the stage's
-// inset, are the products themselves and the count after each one. Switching
+// inset, are the products themselves and the count after each one added so
+// far. The scene opens with nothing added, before the answer to its own
+// question, so nothing on the stage may show a count not yet reached. Switching
 // to the schoolbook rule's eight blocks is the contrast: one ringed cell a
 // press, nothing ever hollow. Cells ease in and out by identity; the readout
 // is written from the two controls. This is also the page's embed still.
@@ -29,7 +31,12 @@
     const full = AC.play(T, AC.blocksOf(F));
     const last = k > 0 ? AC.rankOne(F.U[k - 1], F.V[k - 1], F.W[k - 1]) : null;
     const rep = k > 0 ? AC.blockReport(T, F.U[k - 1], F.V[k - 1], F.W[k - 1]) : null;
+    // The two ways a cell is wrong: a ringed cell that is not yet a 1, and a
+    // cell holding something where the rule has a 0. They add up to `off`.
+    let missing = 0, extra = 0;
+    T.forEach((want, i) => { if (P.sum[i] !== want) { if (want) missing++; else extra++; } });
     return {F, R, k, blocks, P, full, last, rep, off: P.trail[k], was: k > 0 ? P.trail[k - 1] : P.trail[0],
+            missing, extra,
             touched: AC.nnz(P.everSum), hollow: AC.nnz(P.everSum) - AC.nnz(P.sum), text: AC.formulas(F, N)};
   }
 
@@ -63,8 +70,8 @@
     tab: "strassen",
     k: "Section 11 · seven blocks",
     h: "Seven blocks that add up to the cube, exactly",
-    predict: "Before you add anything: the cube needs eight cells filled. After the first of Strassen's " +
-             "seven blocks, will fewer than eight cells be wrong, or more?",
+    predict: "The cube needs eight cells filled. Strassen's first block fills two of them, and six cells " +
+             "the rule never asked for. Once it is added, how many cells are wrong: 6, 8 or 12?",
     concept: "A split of the cube into R blocks is a CP factorization with an equals sign: every one of " +
              "the 64 cells has to match. Each block costs one multiplication, so R blocks are an " +
              "algorithm with R multiplications. Strassen's algorithm is a split into seven.",
@@ -73,17 +80,19 @@
        "later block puts the opposite sign on the same cell, and it goes hollow: cancelled back to " +
        "zero. Switch to <b>the schoolbook's eight</b> for the contrast, where every block is a single " +
        "ringed cell and nothing is ever cancelled. Click a product on the right to jump to it.",
-    eqcap: "T is the cube, and each term is one block: three lists of weights, u, v and w, multiplied " +
-           "out into a 4 × 4 × 4. R, the number of terms, is the number of multiplications.",
+    eqcap: "T is the cube. ∘ is the outer product: each term of the sum is one block, u ∘ v ∘ w, a " +
+           "4 × 4 × 4 whose cell (i, j, k) holds u[i] · v[j] · w[k]. R, the number of blocks, is the " +
+           "number of multiplications.",
     splitName: {strassen: "Strassen", school: "schoolbook"},
     head: (k, R) => "blocks added: " + k + " of " + R,
     trail: "cells that differ, after each block",
     claim: (k, R, off) => k + " of " + R + " blocks · " + (off ? off + (off === 1 ? " cell differs" : " cells differ") : "the cube, exactly"),
     caption: (formula, to) => formula + "  →  " + to,
     read: (f, name) => {
-      if (f.k === 0) return "<b>Nothing added yet</b>: all 8 ringed cells are missing, so 8 cells differ from the rule. Add the first block.";
+      if (f.k === 0) return "<b>Nothing added yet</b>: all 8 ringed cells are missing, so 8 cells are wrong. Add the first block.";
       const moved = f.off - f.was;
-      const step = moved > 0 ? "<b>More, not fewer:</b> the count went up, from " + f.was + " to <b>" + f.off + "</b>."
+      const step = moved > 0 ? "<b>" + f.off + ":</b> more, not fewer. Of the 8 ringed cells, " + f.missing +
+          " are still missing, and " + f.extra + " other cells hold something the rule has a 0 for."
         : moved < 0 ? "The count fell from " + f.was + " to <b>" + f.off + "</b>."
         : "The count stayed at <b>" + f.off + "</b>.";
       const did = "Block " + f.k + " covers " + f.rep.cells + (f.rep.cells === 1 ? " cell" : " cells") + ": " +
@@ -100,7 +109,8 @@
       const f = facts(ctx);
       return "The multiplication cube as four stacked trays of sixteen cells, with a ring on each of the " +
              "eight cells the rule fills. " + f.k + " of " + f.R + " blocks have been added, and " + f.off +
-             " cells differ from the rule. Beside it, the list of products and a bar for the count after each one.";
+             " cells differ from the rule. Beside it, the list of products and a bar for the count after " +
+             "each one added so far.";
     },
     controls: {split: "Which split", k: "Blocks added", play: "▶ Add them in turn"},
     options: {split: {strassen: "Strassen's seven", school: "the schoolbook's eight"}},
@@ -115,29 +125,31 @@
     tab: "strassen",
     k: "Sección 11 · siete bloques",
     h: "Siete bloques que suman el cubo, exactamente",
-    predict: "Antes de sumar nada: el cubo necesita ocho celdas llenas. Tras el primero de los siete " +
-             "bloques de Strassen, ¿habrá menos de ocho celdas mal, o más?",
-    concept: "Una partición del cubo en R bloques es una factorización CP con signo igual: cada una de " +
-             "las 64 celdas tiene que coincidir. Cada bloque cuesta una multiplicación, así que R " +
-             "bloques son un algoritmo con R multiplicaciones. El algoritmo de Strassen es una " +
-             "partición en siete.",
+    predict: "El cubo necesita ocho celdas llenas. El primer bloque de Strassen llena dos de ellas, y " +
+             "seis celdas que la regla nunca pidió. Una vez sumado, ¿cuántas celdas están mal: 6, 8 o 12?",
+    concept: "Una descomposición del cubo en R bloques es una factorización CP exacta, con un signo " +
+             "igual: cada una de las 64 celdas tiene que coincidir. Cada bloque cuesta una " +
+             "multiplicación, así que R bloques son un algoritmo con R multiplicaciones. El algoritmo " +
+             "de Strassen es una descomposición en siete.",
     b: "Los anillos son las ocho celdas que la regla quiere. <b>Suma los bloques de uno en uno</b> y " +
        "mira cuántas celdas difieren de la regla. Un bloque cubre celdas que la regla nunca pidió; un " +
        "bloque posterior pone el signo contrario en la misma celda, y queda hueca: cancelada de vuelta " +
        "a cero. Cambia a <b>los ocho de la regla escolar</b> para el contraste, donde cada bloque es " +
        "una sola celda con anillo y nunca se cancela nada. Haz clic en un producto de la derecha para " +
        "ir a él.",
-    eqcap: "T es el cubo, y cada término es un bloque: tres listas de pesos, u, v y w, multiplicadas " +
-           "hasta dar un 4 × 4 × 4. R, el número de términos, es el número de multiplicaciones.",
+    eqcap: "T es el cubo. ∘ es el producto exterior: cada término de la suma es un bloque, u ∘ v ∘ w, " +
+           "un 4 × 4 × 4 cuya celda (i, j, k) vale u[i] · v[j] · w[k]. R, el número de bloques, es el " +
+           "número de multiplicaciones.",
     splitName: {strassen: "de Strassen", school: "de la regla escolar"},
     head: (k, R) => "bloques sumados: " + k + " de " + R,
     trail: "celdas que difieren, tras cada bloque",
     claim: (k, R, off) => k + " de " + R + " bloques · " + (off ? (off === 1 ? "1 celda difiere" : off + " celdas difieren") : "el cubo, exacto"),
     caption: (formula, to) => formula + "  →  " + to,
     read: (f, name) => {
-      if (f.k === 0) return "<b>Aún no se ha sumado nada</b>: faltan las 8 celdas con anillo, así que 8 celdas difieren de la regla. Suma el primer bloque.";
+      if (f.k === 0) return "<b>Aún no se ha sumado nada</b>: faltan las 8 celdas con anillo, así que 8 celdas están mal. Suma el primer bloque.";
       const moved = f.off - f.was;
-      const step = moved > 0 ? "<b>Más, no menos:</b> la cuenta subió, de " + f.was + " a <b>" + f.off + "</b>."
+      const step = moved > 0 ? "<b>" + f.off + ":</b> más, no menos. De las 8 celdas con anillo todavía faltan " +
+          f.missing + ", y otras " + f.extra + " celdas tienen algo donde la regla tiene un 0."
         : moved < 0 ? "La cuenta bajó de " + f.was + " a <b>" + f.off + "</b>."
         : "La cuenta se quedó en <b>" + f.off + "</b>.";
       const did = "El bloque " + f.k + " cubre " + f.rep.cells + (f.rep.cells === 1 ? " celda" : " celdas") + ": " +
@@ -155,9 +167,9 @@
       return "El cubo de la multiplicación como cuatro bandejas apiladas de dieciséis celdas, con un anillo " +
              "en cada una de las ocho celdas que la regla llena. Se han sumado " + f.k + " de " + f.R +
              " bloques, y " + f.off + " celdas difieren de la regla. Al lado, la lista de productos y una " +
-             "barra con la cuenta tras cada uno.";
+             "barra con la cuenta tras cada uno ya sumado.";
     },
-    controls: {split: "Qué partición", k: "Bloques sumados", play: "▶ Sumarlos por turno"},
+    controls: {split: "Qué descomposición", k: "Bloques sumados", play: "▶ Sumarlos por turno"},
     options: {split: {strassen: "los siete de Strassen", school: "los ocho de la regla escolar"}},
     np: {
       rows: (R) => R + " bloques, cuatro pesos cada uno",
@@ -180,11 +192,13 @@
       {id: "play", type: "play", target: "k", rate: 0.9}
     ],
 
-    // One block in: the picture a reader has just been asked to predict. The
-    // hero's still takes three, where a cell holding -1 is on show.
+    // Nothing added yet: the scene opens before its answer, on the eight empty
+    // rings the question starts from, so a reader's first move -- one block
+    // in -- is what answers it. The hero's still takes three, where a cell
+    // holding -1 is on show.
     init(ctx) {
       ctx.state.split = "strassen";
-      ctx.state.k = ctx.embed ? 3 : 1;
+      ctx.state.k = ctx.embed ? 3 : 0;
     },
     // The schoolbook rule has eight blocks and Strassen's has seven, so the
     // slider's top moves with the split.
@@ -253,14 +267,20 @@
       }
       y += rows * rh + 26;
       K.text(svg, x0, y, c.trail, {size: 11.5, colour: "--stage-mute", sans: true});
-      const bars = K.bars(svg, f.full.trail, {
+      // Only the counts already reached are drawn. The scene opens before its
+      // answer, and a bar for a block not yet added would print it: the 12
+      // over block 1 is what the question asks for. A slot not yet reached is
+      // a tick on the baseline, and still a place to click.
+      const trail = f.full.trail.map((v, i) => (i <= f.k ? v : 0));
+      const bars = K.bars(svg, trail, {
         x: x0, y: y + 26, w, h: Math.max(40, Math.min(70, b.h - y - 96)), max: 12, gap: 5,
-        at: (i) => (i <= f.k ? (f.full.trail[i] > 8 ? "--at-bad" : "--at-good") : "--stage-mute"),
+        at: (i) => (i <= f.k ? (trail[i] > 8 ? "--at-bad" : "--at-good") : "--stage-mute"),
         lit: (i) => i === f.k, alpha: 0.6, pick: (i) => "r:" + i
       });
-      f.full.trail.forEach((v, i) => {
+      trail.forEach((v, i) => {
+        if (i > f.k) return;
         K.text(svg, bars.px(i), bars.zero - (v / 12) * bars.h - 6, String(v),
-               {size: 11.5, anchor: "middle", colour: i <= f.k ? "--stage-ink" : "--stage-mute", weight: i === f.k ? 700 : 500});
+               {size: 11.5, anchor: "middle", colour: "--stage-ink", weight: i === f.k ? 700 : 500});
       });
     },
 

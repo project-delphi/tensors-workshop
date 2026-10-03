@@ -190,9 +190,9 @@ async function drive(ctx, page, where, lang) {
   assert.equal(d.scene, 'rule', `${where}: the page opens on the rule`);
   await open('rule');
   d = await data();
-  assert.equal(d.p, '2');
-  assert.deepEqual([d.entrya, d.entryb, d.entryc], ['1', '2', '0'], `${where}: product 2 is a12 * b21 -> c11`);
-  assert.equal(d.value, '14');
+  assert.equal(d.p, '6');
+  assert.deepEqual([d.entrya, d.entryb, d.entryc], ['3', '2', '2'], `${where}: product 6 is a22 * b21 -> c21`);
+  assert.equal(d.value, '28');
   assert.equal(d.mults, '8');
   assert.equal(d.adds, '4');
   assert.equal(d.product, '19,22,43,50');
@@ -252,9 +252,11 @@ async function drive(ctx, page, where, lang) {
   // ---- bigger: n^3 ones in an n^2-sided cube.
   await open('bigger');
   d = await data();
-  assert.deepEqual([d.n, d.side, d.cells, d.ones, d.share], ['3', '9', '729', '27', '3.7']);
-  assert.equal(d.shape, '9,9,9');
-  for (const [n, cells, ones, share] of [[5, '15625', '125', '0.8'], [2, '64', '8', '12.5'], [4, '4096', '64', '1.6']]) {
+  // It opens before its answer: at 2 x 2, with the question about 5 x 5.
+  assert.deepEqual([d.n, d.side, d.cells, d.ones, d.share], ['2', '4', '64', '8', '12.5']);
+  assert.equal(d.shape, '4,4,4');
+  assert.equal(d.stripcount, '8', `${where}: the strip is the 2 x 2 cube, whatever size is above it`);
+  for (const [n, cells, ones, share] of [[5, '15625', '125', '0.8'], [3, '729', '27', '3.7'], [4, '4096', '64', '1.6']]) {
     await set('bigger', 'n', n);
     await stageIs('n', n);
     d = await data();
@@ -286,9 +288,12 @@ async function drive(ctx, page, where, lang) {
   // ---- strassen: seven blocks that overshoot and cancel.
   await open('strassen');
   d = await data();
-  assert.deepEqual([d.split, d.k, d.blocks, d.off], ['strassen', '1', '7', '12'],
-    `${where}: the first block takes eight wrong cells up to twelve`);
+  // It opens before its answer: nothing added, eight cells wrong.
+  assert.deepEqual([d.split, d.k, d.blocks, d.off], ['strassen', '0', '7', '8']);
   assert.equal(d.trail, '8,12,12,12,10,8,4,0');
+  await set('strassen', 'k', 1);
+  await stageIs('off', '12');
+  assert.equal((await data()).stripoff, '12', `${where}: the first block takes eight wrong cells up to twelve`);
   await set('strassen', 'k', 5);
   await press('strassen', 'play');
   await page.waitForFunction(() => {
@@ -329,13 +334,16 @@ async function drive(ctx, page, where, lang) {
   // ---- recurse: the saving is in the exponent.
   await open('recurse');
   d = await data();
-  assert.deepEqual([d.k, d.n, d.school, d.strassen], ['10', '1024', '1073741824', '282475249']);
-  assert.deepEqual([d.saved, d.ratio, d.omega], ['73.7', '3.80', '2.807']);
-  assert.equal(d.stripcount, '282475249');
+  // It opens before its answer: one level, one multiplication in eight saved.
+  assert.deepEqual([d.k, d.n, d.school, d.strassen], ['1', '2', '8', '7']);
+  assert.deepEqual([d.saved, d.omega], ['12.5', '2.807']);
+  assert.equal(d.stripcount, '7', `${where}: the strip is the seven blocks, whatever depth is above it`);
   await set('recurse', 'k', 3);
   await stageIs('saved', '33.0');
-  await set('recurse', 'k', 1);
-  await stageIs('saved', '12.5');
+  await set('recurse', 'k', 10);
+  await stageIs('saved', '73.7');
+  d = await data();
+  assert.deepEqual([d.n, d.school, d.strassen, d.ratio], ['1024', '1073741824', '282475249', '3.80']);
   await corners('recurse');
 
   // ---- game: subtract blocks until nothing is left.

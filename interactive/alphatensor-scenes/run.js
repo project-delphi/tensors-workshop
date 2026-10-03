@@ -7,9 +7,10 @@
 // entries of C assembled from them on the right with every occurrence of the
 // picked product marked, and the tally at the bottom -- seven multiplications
 // plus eighteen additions against the schoolbook rule's eight plus four. On
-// plain numbers it is a bad trade, and the readout says so before it says
-// why it pays. The entrance computes the seven products one at a time, then
-// the four sums. Flat: SVG only.
+// plain numbers it is a bad trade, and the readout says so; why it still
+// pays is the next scene's question, so the readout only points there. The
+// entrance computes the seven products one at a time, then the four sums.
+// Flat: SVG only.
 // See alphatensor-scenes/README.md for the contract this keeps.
 (function () {
   "use strict";
@@ -89,13 +90,13 @@
   const EN = {
     tab: "run",
     k: "Section 11 · the recipe",
-    h: "Seven multiplications turn 1 2 3 4 and 5 6 7 8 into 19 22 43 50",
-    predict: "Seven multiplications where the schoolbook rule uses eight. Count the additions and " +
-             "subtractions too: on plain numbers, does Strassen's recipe do less work in total, or more?",
+    h: "Run on numbers, the seven blocks multiply the example matrices",
+    predict: "Strassen's recipe uses seven multiplications where the schoolbook rule uses eight. Counting " +
+             "every addition and subtraction too, on plain numbers, which does fewer operations in total?",
     concept: "Seven blocks that add up to the cube are an algorithm. Each block is one product of two " +
              "sums, m = (u · a)(v · b): the only multiplications there are. Each entry of C is then a " +
-             "signed sum of the products, read off the rows of W. Rows of U and V say which entries " +
-             "go into the sums; rows of W say where each product goes.",
+             "signed sum of the products, read down a column of W. Rows of U and V say which entries " +
+             "go into the sums; each row of W says where one product goes.",
     b: "Pick a product, or press ▶. The entries of <b>A</b> and <b>B</b> it uses are marked with their " +
        "signs, and every place its number is added into <b>C</b> is marked on the right. Every sign is " +
        "printed: a product can be negative, and a block can be taken away. Switch the matrices to see " +
@@ -114,12 +115,12 @@
     same: (ok) => "same as A @ B: " + (ok ? "yes" : "no"),
     legendM: "multiplication", legendA: "addition",
     read: (f, ops, school, ok) =>
-      "<b>More:</b> " + ops + " operations against " + school + ". " + MULTS + " multiplications and " +
-      ADDS + " additions or subtractions, where the schoolbook rule does " + SCHOOL_MULTS + " and " +
-      SCHOOL_ADDS + ". Product " + f.name + " is <b>" + f.left + " · " + f.right + " = " + f.value +
-      "</b>, and it is added into <b>" + f.goes + "</b>. The four sums come to " + f.c + " — " +
-      (ok ? "exactly A @ B" : "not A @ B") + ". It still pays because the entries can be matrices: " +
-      "multiplying blocks costs far more than adding them, and the next picture applies the recipe to blocks.",
+      "<b>The schoolbook rule:</b> " + school + " operations against the recipe's " + ops + ". The " +
+      "recipe does " + MULTS + " multiplications and " + ADDS + " additions or subtractions, where the " +
+      "schoolbook rule does " + SCHOOL_MULTS + " and " + SCHOOL_ADDS + ". Product " + f.name + " is <b>" +
+      f.left + " · " + f.right + " = " + f.value + "</b>, and it is added into <b>" + f.goes +
+      "</b>. The four sums come to " + f.c + " — " + (ok ? "exactly A @ B" : "not A @ B") +
+      ". The next picture applies the recipe to the quarters of a matrix.",
     aria: (ctx) => {
       const f = facts(ctx);
       return "Strassen's recipe run on two 2 by 2 matrices. The seven products are " + f.m.join(", ") +
@@ -138,13 +139,14 @@
   const ES = {
     tab: "ejecución",
     k: "Sección 11 · la receta",
-    h: "Siete multiplicaciones convierten 1 2 3 4 y 5 6 7 8 en 19 22 43 50",
-    predict: "Siete multiplicaciones donde la regla escolar usa ocho. Cuenta también las sumas y " +
-             "restas: con números corrientes, ¿la receta de Strassen hace menos trabajo en total, o más?",
+    h: "Ejecutados con números, los siete bloques multiplican las matrices del ejemplo",
+    predict: "La receta de Strassen usa siete multiplicaciones donde la regla escolar usa ocho. Contando " +
+             "también cada suma y cada resta, con números corrientes, ¿cuál hace menos operaciones en total?",
     concept: "Siete bloques que suman el cubo son un algoritmo. Cada bloque es un producto de dos " +
              "sumas, m = (u · a)(v · b): las únicas multiplicaciones que hay. Cada entrada de C es " +
-             "entonces una suma con signo de los productos, leída en las filas de W. Las filas de U y V " +
-             "dicen qué entradas entran en las sumas; las filas de W dicen adónde va cada producto.",
+             "entonces una suma con signo de los productos, leída bajando por una columna de W. Las " +
+             "filas de U y V dicen qué entradas entran en las sumas; cada fila de W dice adónde va un " +
+             "producto.",
     b: "Elige un producto, o pulsa ▶. Las entradas de <b>A</b> y <b>B</b> que usa se marcan con su " +
        "signo, y cada lugar donde su número se suma a <b>C</b> se marca a la derecha. Todos los signos " +
        "están escritos: un producto puede ser negativo, y un bloque puede restarse. Cambia las matrices " +
@@ -163,13 +165,12 @@
     same: (ok) => "igual que A @ B: " + (ok ? "sí" : "no"),
     legendM: "multiplicación", legendA: "suma",
     read: (f, ops, school, ok) =>
-      "<b>Más:</b> " + ops + " operaciones frente a " + school + ". " + MULTS + " multiplicaciones y " +
-      ADDS + " sumas o restas, donde la regla escolar hace " + SCHOOL_MULTS + " y " + SCHOOL_ADDS +
-      ". El producto " + f.name + " es <b>" + f.left + " · " + f.right + " = " + f.value +
-      "</b>, y se suma a <b>" + f.goes + "</b>. Las cuatro sumas dan " + f.c + " — " +
-      (ok ? "exactamente A @ B" : "no es A @ B") + ". Aun así compensa porque las entradas pueden ser " +
-      "matrices: multiplicar bloques cuesta mucho más que sumarlos, y la siguiente imagen aplica la " +
-      "receta a bloques.",
+      "<b>La regla escolar:</b> " + school + " operaciones frente a las " + ops + " de la receta. La " +
+      "receta hace " + MULTS + " multiplicaciones y " + ADDS + " sumas o restas, donde la regla escolar " +
+      "hace " + SCHOOL_MULTS + " y " + SCHOOL_ADDS + ". El producto " + f.name + " es <b>" + f.left +
+      " · " + f.right + " = " + f.value + "</b>, y se suma a <b>" + f.goes + "</b>. Las cuatro sumas dan " +
+      f.c + " — " + (ok ? "exactamente A @ B" : "no es A @ B") +
+      ". La siguiente imagen aplica la receta a los cuartos de una matriz.",
     aria: (ctx) => {
       const f = facts(ctx);
       return "La receta de Strassen aplicada a dos matrices de 2 por 2. Los siete productos son " +

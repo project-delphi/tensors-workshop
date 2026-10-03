@@ -1,14 +1,19 @@
 // Scene 8: seven beats eight because the entries can be matrices. The recipe
-// never swaps two factors, so its "entries" may be blocks: cut two matrices
+// never swaps two factors, so its "entries" may be matrices: cut two matrices
 // into quarters, multiply with seven products of quarters instead of eight,
 // and use the recipe again inside each product. On the left a matrix is cut
 // into quarters, one quarter cut again, level by level (the drawing stops at
 // four levels and says so), and each level shows its seven filled tiles and
 // one empty outline. On the right, two bars drawn to scale -- 8^k and 7^k, with
-// their numbers written out -- and under them the share saved against k.
-// The entrance cuts the matrix level by level while the bars grow. Flat: SVG
-// only. This scene has no `seek`: it is about a count, not about the cube's
-// cells. See alphatensor-scenes/README.md for the contract this keeps.
+// their numbers written out -- and under them the share saved against k, drawn
+// as far as the level the slider is on and no further.
+// The entrance cuts the matrix level by level while the bars grow. It opens at
+// one level, where the saving is the 12.5% the question starts from; the ten
+// levels the question asks about are the reader's to slide to. The strip under
+// the stage is the 2 x 2 cube built from Strassen's seven blocks at every
+// depth, so its count is 7, not 7^k. Flat: SVG only. This scene has no `seek`:
+// it is about a count, not about the cube's cells.
+// See alphatensor-scenes/README.md for the contract this keeps.
 (function () {
   "use strict";
   const AC = window.AlphaTensorCore, K = window.AlphaTensorKit;
@@ -37,13 +42,13 @@
   const EN = {
     tab: "recurse",
     k: "Section 11 · seven, again and again",
-    h: "Used again inside each product, seven beats eight by more at every level",
+    h: "Use the recipe inside each product, again and again",
     predict: "At 2 × 2 the recipe saves one multiplication in eight: 12.5%. Apply it to the quarters of a " +
              "1,024 × 1,024 matrix, and again inside each product, ten levels down. How much is saved by " +
              "then: still 12.5%, about a third, or about three quarters?",
     concept: "The recipe never swaps two factors, so its entries do not have to be numbers. They can be " +
-             "blocks of a bigger matrix, and each product of blocks is a smaller matrix product that the " +
-             "recipe can do again. Seven products a level, not eight, compound.",
+             "quarters of a bigger matrix, and each product of quarters is a smaller matrix product that " +
+             "the recipe can do again. Seven products a level, not eight, at every level.",
     b: "Cut two n × n matrices into quarters and multiply them with <b>seven products of quarters</b> " +
        "instead of eight. Each of those is a smaller matrix product, so do it again inside. After k levels " +
        "a matrix of size n = 2<sup>k</sup> costs 7<sup>k</sup> multiplications of numbers where the " +
@@ -65,13 +70,17 @@
     omega: "7ᵏ = n^2.807 · 8ᵏ = n³",
     where: "the saving is in the exponent",
     read: (saved, k, n, sch, str, ratio, w) =>
-      "<b>" + saved + "%</b> saved at " + k + " level" + (k === 1 ? "" : "s") + ", n = " + n + ". The " +
-      "schoolbook rule does <b>" + sch + "</b> multiplications of numbers and the recipe, applied " +
-      "inside every product, <b>" + str + "</b>, so the schoolbook rule does " + ratio + " multiplications for each of the recipe's. " +
-      "The saving is in the exponent: 7<sup>k</sup> is n<sup>" + w + "</sup>, where 8<sup>k</sup> is n³.",
+      // One level is where the question starts, so it says only that and sends the reader on.
+      (k === 1 ? "<b>" + saved + "%</b> saved at 1 level, n = " + n + ": the schoolbook rule does <b>" + sch +
+                 "</b> multiplications of numbers and the recipe <b>" + str + "</b>. Slide to ten levels."
+      : "<b>" + saved + "%</b> saved at " + k + " levels, n = " + n + ". The " +
+        "schoolbook rule does <b>" + sch + "</b> multiplications of numbers and the recipe, applied " +
+        "inside every product, <b>" + str + "</b>, so the schoolbook rule does " + ratio + " multiplications for each of the recipe's. " +
+        "The saving is in the exponent: 7<sup>k</sup> is n<sup>" + w + "</sup>, where 8<sup>k</sup> is n³."),
     aria: (ctx) => {
       const r = AC.recursion(ctx.state.k);
-      return "Recursion with Strassen's recipe, " + ctx.state.k + " levels, matrix size " + r.n + ". A square " +
+      return "Recursion with Strassen's recipe, " + ctx.state.k + (ctx.state.k === 1 ? " level" : " levels") +
+             ", matrix size " + r.n + ". A square " +
              "cut into quarters, one quarter cut again, with seven filled tiles and one empty tile at each " +
              "level. Two bars drawn to scale: " + r.school + " multiplications for the schoolbook rule and " +
              r.strassen + " for the recipe, which saves " + (r.saving * 100).toFixed(1) + " percent.";
@@ -88,14 +97,14 @@
   const ES = {
     tab: "recursión",
     k: "Sección 11 · siete, una y otra vez",
-    h: "Usada otra vez dentro de cada producto, la regla de siete gana más en cada nivel",
+    h: "Usa la receta dentro de cada producto, una y otra vez",
     predict: "En 2 × 2 la receta ahorra una multiplicación de cada ocho: 12,5 %. Aplícala a los cuartos de " +
              "una matriz de 1.024 × 1.024, y otra vez dentro de cada producto, diez niveles más abajo. " +
              "¿Cuánto se ahorra para entonces: todavía 12,5 %, cerca de un tercio o cerca de tres cuartos?",
     concept: "La receta nunca intercambia dos factores, así que sus entradas no tienen que ser números. " +
-             "Pueden ser bloques de una matriz mayor, y cada producto de bloques es un producto de " +
+             "Pueden ser cuartos de una matriz mayor, y cada producto de cuartos es un producto de " +
              "matrices más pequeño que la receta puede volver a hacer. Siete productos por nivel, no " +
-             "ocho, se acumulan.",
+             "ocho, en cada nivel.",
     b: "Corta dos matrices n × n en cuartos y multiplícalas con <b>siete productos de cuartos</b> en " +
        "lugar de ocho. Cada uno es un producto de matrices más pequeño, así que repítelo dentro. Tras k " +
        "niveles, una matriz de tamaño n = 2<sup>k</sup> cuesta 7<sup>k</sup> multiplicaciones de números " +
@@ -117,13 +126,16 @@
     omega: "7ᵏ = n^2,807 · 8ᵏ = n³",
     where: "el ahorro está en el exponente",
     read: (saved, k, n, sch, str, ratio, w) =>
-      "<b>" + saved + " %</b> ahorrado con " + k + " nivel" + (k === 1 ? "" : "es") + ", n = " + n + ". La " +
-      "regla escolar hace <b>" + sch + "</b> multiplicaciones de números y la receta, aplicada dentro " +
-      "de cada producto, <b>" + str + "</b>, así que la regla escolar hace " + ratio + " multiplicaciones por cada una de la receta. " +
-      "El ahorro está en el exponente: 7<sup>k</sup> es n<sup>" + w + "</sup>, donde 8<sup>k</sup> es n³.",
+      (k === 1 ? "<b>" + saved + " %</b> ahorrado con 1 nivel, n = " + n + ": la regla escolar hace <b>" + sch +
+                 "</b> multiplicaciones de números y la receta <b>" + str + "</b>. Mueve k hasta diez niveles."
+      : "<b>" + saved + " %</b> ahorrado con " + k + " niveles, n = " + n + ". La " +
+        "regla escolar hace <b>" + sch + "</b> multiplicaciones de números y la receta, aplicada dentro " +
+        "de cada producto, <b>" + str + "</b>, así que la regla escolar hace " + ratio + " multiplicaciones por cada una de la receta. " +
+        "El ahorro está en el exponente: 7<sup>k</sup> es n<sup>" + w + "</sup>, donde 8<sup>k</sup> es n³."),
     aria: (ctx) => {
       const r = AC.recursion(ctx.state.k);
-      return "Recursión con la receta de Strassen, " + ctx.state.k + " niveles, matriz de tamaño " + r.n + ". " +
+      return "Recursión con la receta de Strassen, " + ctx.state.k + (ctx.state.k === 1 ? " nivel" : " niveles") +
+             ", matriz de tamaño " + r.n + ". " +
              "Un cuadrado cortado en cuartos, un cuarto cortado otra vez, con siete fichas llenas y una " +
              "vacía en cada nivel. Dos barras dibujadas a escala: " + r.school + " multiplicaciones " +
              "para la regla escolar y " + r.strassen + " para la receta, que ahorra " +
@@ -208,7 +220,7 @@
                                      "stroke-dasharray": "3 3", fill: "none"}));
     }
     svg.appendChild(K.el("path", {d: "M " + xt + " 204 H " + xs, stroke: K.css("--stage-ink"), "stroke-width": 2.2, fill: "none"}));
-    K.text(svg, Math.min(xs + 4, BX + BW), 232, "−" + K.num(r.saving * 100, 1, lang) + "% " + c.sav,
+    K.text(svg, Math.min(xs + 4, BX + BW), 232, "−" + K.num(r.saving * 100, 1, lang) + (lang === "es" ? " % " : "% ") + c.sav,
            {size: 17, anchor: "end", colour: "--at-good", weight: 700});
   }
 
@@ -223,13 +235,18 @@
                                      "stroke-width": 0.6, "stroke-dasharray": "2 4", fill: "none"}));
       K.text(svg, CX - 8, y + 4, K.num(g * 100, 0, lang) + "%", {size: 11.5, anchor: "end", colour: "--stage-mute"});
     }
-    const cv = K.curve(svg, vals, {x: CX, y: CY, w: CW, h: CH, min: 0, max: 0.8, token: "--at-good", width: 2.4,
-                                   dots: true, dotR: 2.6});
+    // Only the levels already reached are drawn. The scene opens at one
+    // level, before its answer, and the rest of the curve would be the answer:
+    // its last point sits just under the 80% line. The narrowed width keeps
+    // every point where the whole curve puts it.
+    const at = (i) => CX + (i / (KMAX - 1)) * CW;
+    const cv = K.curve(svg, vals.slice(0, k), {x: CX, y: CY, w: at(k - 1) - CX, h: CH, min: 0, max: 0.8,
+                                               token: "--at-good", width: 2.4, dots: true, dotR: 2.6});
     for (let i = 1; i <= KMAX; i++) {
-      K.text(svg, cv.px(i - 1), CY + CH + 17, String(i), {size: 11.5, anchor: "middle",
+      K.text(svg, at(i - 1), CY + CH + 17, String(i), {size: 11.5, anchor: "middle",
              colour: i === k ? "--stage-ink" : "--stage-mute", weight: i === k ? 700 : 600});
     }
-    const px = cv.px(k - 1), py = cv.py(vals[k - 1]);
+    const px = at(k - 1), py = cv.py(vals[k - 1]);
     svg.appendChild(K.el("path", {d: "M " + px + " " + py + " V " + (CY + CH), stroke: K.css("--stage-ink"),
                                    "stroke-width": 1, "stroke-dasharray": "3 3", fill: "none"}));
     svg.appendChild(K.el("circle", {cx: px, cy: py, r: 6, fill: K.css("--at-good"), stroke: K.css("--stage-ink"), "stroke-width": 2}));
@@ -249,7 +266,8 @@
       {id: "play", type: "play", target: "k", rate: 1.5}
     ],
 
-    init(ctx) { ctx.state.k = KMAX; },
+    // One level: the 12.5% the question starts from. Ten is the reader's move.
+    init(ctx) { ctx.state.k = 1; },
 
     arrive(ctx) { ctx.cache.arrive = ctx.now(); },
     animates(ctx) {
@@ -281,7 +299,7 @@
         html: c.read(saved, k, K.num(r.n, 0, lang), K.num(r.school, 0, lang), K.num(r.strassen, 0, lang),
                      K.num(r.ratio, 2, lang), w),
         claim: c.claim(k, K.num(r.n, 0, lang), saved),
-        strip: {mode: "built", terms: STRASSEN, count: r.strassen},
+        strip: {mode: "built", terms: STRASSEN, count: STRASSEN.length},
         data: {
           saved: (r.saving * 100).toFixed(1), k: String(k), n: String(r.n),
           school: String(r.school), strassen: String(r.strassen),

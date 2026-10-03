@@ -278,6 +278,8 @@ test('the search space: 5¹² at one move, 1,644 digits for 4 × 4 at 49', () =>
   assert.deepEqual([seven.mant.toFixed(1), seven.exp], ['5.2', 58]);
   const years = M.sci(M.log10Years(M.log10Games(2, 5, 7), 1e9));
   assert.deepEqual([years.mant.toFixed(1), years.exp], ['1.6', 42]);
+  // One move's worth of games is written down in a quarter of a second.
+  assert.equal(Math.pow(10, M.log10Seconds(M.log10Moves(2, 5), 1e9)).toFixed(2), '0.24');
   // Cut down as far as it goes: unordered sets of seven of the 128,000.
   const sets = M.sci(M.log10Choose(128000, 7));
   assert.deepEqual([sets.mant.toFixed(1), sets.exp], ['1.1', 32]);
@@ -301,4 +303,12 @@ test("the record board is the handbook's: 19 to 23, and what 21 would buy", () =
   assert.ok(STILL_OPEN.includes(`n^${M.OMEGA.toFixed(3)}`), "Strassen's exponent");
   assert.ok(M.exponent(3, 21) < M.OMEGA && M.OMEGA < M.exponent(3, 22),
     '21 would beat Strassen and 22 would not');
+  // The same fact as the two numbers the last scene prints: a 3 x 3 split
+  // ties Strassen at 21.8 blocks, so 21 is the most that beats it.
+  assert.equal(M.tieBlocks(3).toFixed(1), '21.8');
+  assert.equal(M.needBlocks(3), 21);
+  assert.equal(M.needBlocks(2), 6, 'and for 2 x 2 it would take six, which Winograd ruled out');
+  // 49 is Strassen twice, and the board says so rather than calling it the
+  // record: AlphaEvolve reported 48 for complex-valued matrices in 2025.
+  assert.equal(by['4x4'].complexUpper, 48);
 });

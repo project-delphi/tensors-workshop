@@ -287,15 +287,30 @@
    *  blocks, over and over: n^(log_n R). 2 and 7 give Strassen's 2.807. */
   function exponent(n, R) { return Math.log(R) / Math.log(n); }
   var OMEGA = exponent(2, 7);
+  /** How many blocks a split of the n x n rule would need to tie Strassen's
+   *  exponent exactly: n^OMEGA, which is 21.8 for 3 x 3. */
+  function tieBlocks(n) { return Math.pow(n, OMEGA); }
+  /** The most blocks a split of the n x n rule can have and still beat it. */
+  function needBlocks(n) {
+    var R = Math.floor(tieBlocks(n));
+    return exponent(n, R) < OMEGA ? R : R - 1;
+  }
 
   /** The record board the last scene draws. Every figure is a published one,
    *  and the scenes README says where each comes from: `lower` is the best
-   *  proof that no split is shorter, `upper` the shortest split anyone has
-   *  found, `before` what `upper` replaced when AlphaTensor reported it. */
+   *  proof that no split is shorter; `upper` is the count the board shows for
+   *  that size; `before` is what `upper` was measured against when AlphaTensor
+   *  reported it. For 2 x 2 and 3 x 3 `upper` is the shortest split known.
+   *  For 4 x 4 it is the 49 that Strassen's seven give when applied twice,
+   *  which is what the mod-2 result is measured against and what AlphaTensor
+   *  matched in ordinary arithmetic -- not a claim that nothing shorter has
+   *  been found since: `complexUpper` is the 48 AlphaEvolve reported in 2025
+   *  for complex-valued matrices. Records move; check the catalogue on the
+   *  references page before repeating one. */
   var RECORDS = [
     { id: "2x2", shape: [2, 2, 2], lower: 7, upper: 7 },
     { id: "3x3", shape: [3, 3, 3], lower: 19, upper: 23 },
-    { id: "4x4", shape: [4, 4, 4], upper: 49 },
+    { id: "4x4", shape: [4, 4, 4], upper: 49, complexUpper: 48 },
     { id: "4x4mod2", shape: [4, 4, 4], upper: 47, before: 49, mod2: true, alphatensor: true },
     { id: "4x5", shape: [4, 5, 5], upper: 76, before: 80, alphatensor: true }
   ];
@@ -486,7 +501,8 @@
   }
   /** log10 of the years it takes to write down 10^lg things at `perSecond`. */
   var SECONDS_A_YEAR = 365.25 * 24 * 3600;
-  function log10Years(lg, perSecond) { return lg - log10(perSecond) - log10(SECONDS_A_YEAR); }
+  function log10Seconds(lg, perSecond) { return lg - log10(perSecond); }
+  function log10Years(lg, perSecond) { return log10Seconds(lg, perSecond) - log10(SECONDS_A_YEAR); }
   /** log10 of "n choose k". */
   function log10Choose(n, k) {
     var s = 0, i;
@@ -524,13 +540,13 @@
     applyAlgorithm: applyAlgorithm, matmul: matmul, readOff: readOff,
     combo: combo, formulas: formulas, additions: additions,
     multiplyRecursive: multiplyRecursive, recursion: recursion,
-    exponent: exponent, OMEGA: OMEGA, RECORDS: RECORDS,
+    exponent: exponent, OMEGA: OMEGA, tieBlocks: tieBlocks, needBlocks: needBlocks, RECORDS: RECORDS,
     vectors: vectors, canonical: canonical, moves: moves,
     WEIGHTS: WEIGHTS, ZERO_WEIGHT: ZERO_WEIGHT, weightAt: weightAt, weightIndex: weightIndex,
     score: score, better: better, survey: survey, greedyPeel: greedyPeel,
     trajectory: trajectory, orderings: orderings,
     log10Moves: log10Moves, log10Games: log10Games, digits: digits, sci: sci,
-    powString: powString, log10Years: log10Years, log10Choose: log10Choose,
+    powString: powString, log10Seconds: log10Seconds, log10Years: log10Years, log10Choose: log10Choose,
     mulberry32: mulberry32, randomMatrix: randomMatrix,
     A0: A0, B0: B0
   };

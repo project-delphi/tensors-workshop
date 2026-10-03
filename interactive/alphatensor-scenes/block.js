@@ -66,15 +66,17 @@
              "fills eight cells of the cube. How many of the eight are cells the rule wants?",
     concept: "Three lists of weights, u over the entries of A, v over B and w over C, make a block: the " +
              "cell (i, j, k) holds u[i] · v[j] · w[k]. That is a rank-one tensor. It costs one " +
-             "multiplication, however many cells it covers.",
+             "multiplication, however many cells it covers. A block is one term of a sum: the next " +
+             "picture adds seven of them.",
     b: "The rings are the eight cells the rule wants. The cube shows <b>this block alone</b>. A filled " +
        "cell inside a ring is work the rule asked for; a filled cell with no ring is <b>damage</b>, " +
        "which a later block has to undo. Press the weights on the right to cycle them 0, +1, −1, drag " +
-       "the sliders, or load a block: <b>one cell</b>, Strassen's first product, or his sixth, which " +
-       "carries a −1.",
+       "the sliders, or load a block: <b>one cell</b>; <b>m₁</b>, the product (a₁₁ + a₂₂)(b₁₁ + b₂₂) " +
+       "from the question; or <b>m₆</b>, one with a minus sign in it.",
     eqcap: "X is the block. Its cell (i, j, k) is the product of one weight from each list: u[i] from " +
            "the entries of A, v[j] from B and w[k] from C. It is 0 wherever any of the three is 0.",
-    claim: (r) => (r.empty ? "no block yet" : r.cells + " cells · " + r.wanted + " wanted, " + r.damage + " damage"),
+    claim: (r) => (r.empty ? "no block yet" : r.cells + (r.cells === 1 ? " cell · " : " cells · ") +
+      r.wanted + " wanted, " + r.damage + " damage"),
     head: "the block, as three lists of weights",
     sumA: "add up A", sumB: "add up B", into: "add the product into C",
     mult: (n) => (n ? "1 multiplication" : "0 multiplications"),
@@ -84,12 +86,18 @@
     emptyRead: "<b>No block yet</b>: one of the three lists is all zeros, so every cell is 0 and nothing " +
                "is multiplied. A block needs all three lists to have a weight that is not zero.",
     read: (f, lang) => {
-      const r = f.rep, d = r.damage;
-      return "<b>" + word(lang, r.wanted) + " of the " + r.cells + "</b> " + (r.cells === 1 ? "cell" : "cells") + " " + (r.wanted === 1 ? "is" : "are") + " wanted by the rule. " +
-        (r.cells === 0 ? "" : d === 0 ? "The block has no damage: every cell sits on a ring. "
-          : "The other " + d + (d === 1 ? " is" : " are") + " damage: a cell filled where the rule has " +
-            "a 0, or where its sign is wrong, which a later block has to undo. ") +
-        "The block is " + f.dims.join(" × ") + " cells: one multiplication, however many cells.";
+      const r = f.rep, d = r.damage, n = r.cells;
+      const undo = "a cell filled where the rule has a 0, or where its sign is wrong, which a later block has to undo.";
+      const tail = " The block is " + f.dims.join(" × ") + (n === 1 ? " cell" : " cells") +
+        ": one multiplication, however many cells.";
+      if (n === 1) {
+        return (r.wanted ? "<b>Its one cell is wanted</b> by the rule: it sits on a ring, and the block does no damage."
+          : "<b>Its one cell is damage</b>: " + undo) + tail;
+      }
+      if (r.wanted === 0) return "<b>None of the " + n + "</b> cells is wanted by the rule. All " + n + " are damage: " + undo + tail;
+      if (d === 0) return "<b>All " + n + "</b> cells are wanted by the rule: every one sits on a ring, and the block does no damage." + tail;
+      return "<b>" + word(lang, r.wanted) + " of the " + n + "</b> cells " + (r.wanted === 1 ? "is" : "are") +
+        " wanted by the rule. The other " + d + (d === 1 ? " is" : " are") + " damage: " + undo + tail;
     },
     tip: (a, b, c, v) => "(" + a + ", " + b + ", " + c + ") holds " + v,
     aria: (ctx) => {
@@ -115,31 +123,40 @@
              "ocho celdas del cubo. ¿Cuántas de las ocho son celdas que la regla quiere?",
     concept: "Tres listas de pesos, u sobre las entradas de A, v sobre las de B y w sobre las de C, forman " +
              "un bloque: la celda (i, j, k) vale u[i] · v[j] · w[k]. Es un tensor de rango uno. Cuesta una " +
-             "multiplicación, cubra las celdas que cubra.",
+             "multiplicación, cubra las celdas que cubra. Un bloque es un término de una suma: la " +
+             "siguiente imagen suma siete.",
     b: "Los anillos son las ocho celdas que la regla quiere. El cubo muestra <b>solo este bloque</b>. Una " +
        "celda llena dentro de un anillo es trabajo que la regla pedía; una celda llena sin anillo es " +
        "<b>daño</b>, que un bloque posterior tiene que deshacer. Pulsa los pesos de la derecha para " +
-       "recorrer 0, +1, −1, mueve los deslizadores o carga un bloque: <b>una celda</b>, el primer producto " +
-       "de Strassen o su sexto, que lleva un −1.",
+       "recorrer 0, +1, −1, mueve los deslizadores o carga un bloque: <b>una celda</b>; <b>m₁</b>, el " +
+       "producto (a₁₁ + a₂₂)(b₁₁ + b₂₂) de la pregunta; o <b>m₆</b>, uno con un signo menos.",
     eqcap: "X es el bloque. Su celda (i, j, k) es el producto de un peso de cada lista: u[i] de las " +
            "entradas de A, v[j] de B y w[k] de C. Vale 0 siempre que alguno de los tres sea 0.",
-    claim: (r) => (r.empty ? "aún no hay bloque" : r.cells + " celdas · " + r.wanted + " buenas, " + r.damage + " de daño"),
+    claim: (r) => (r.empty ? "aún no hay bloque" : r.cells + (r.cells === 1 ? " celda · " : " celdas · ") +
+      r.wanted + (r.wanted === 1 ? " pedida, " : " pedidas, ") + r.damage + " de daño"),
     head: "el bloque, como tres listas de pesos",
     sumA: "suma las de A", sumB: "suma las de B", into: "suma el producto en C",
     mult: (n) => (n ? "1 multiplicación" : "0 multiplicaciones"),
     count: (d, r) => d.join(" × ") + " = " + r.cells + " celdas",
-    split: (r) => r.wanted + " buenas, " + r.damage + " de daño",
+    split: (r) => r.wanted + (r.wanted === 1 ? " pedida, " : " pedidas, ") + r.damage + " de daño",
     emptyInset: "un bloque necesita las tres",
     emptyRead: "<b>Aún no hay bloque</b>: una de las tres listas es todo ceros, así que todas las celdas " +
                "valen 0 y no se multiplica nada. Un bloque necesita que las tres listas tengan algún peso " +
                "distinto de cero.",
     read: (f, lang) => {
-      const r = f.rep, d = r.damage;
-      return "<b>" + word(lang, r.wanted) + (r.cells === 1 ? " de la " : " de las ") + r.cells + "</b> " + (r.cells === 1 ? "celda" : "celdas") + " " + (r.wanted === 1 ? "es" : "son") + " de las que la regla quiere. " +
-        (r.cells === 0 ? "" : d === 0 ? "El bloque no hace daño: cada celda está sobre un anillo. "
-          : (d === 1 ? "La otra es daño" : "Las otras " + d + " son daño") + ": celdas llenas donde la regla " +
-            "tiene un 0, o con el signo equivocado, que un bloque posterior tiene que deshacer. ") +
-        "El bloque es de " + f.dims.join(" × ") + " celdas, una multiplicación, cubra las celdas que cubra.";
+      const r = f.rep, d = r.damage, n = r.cells;
+      const undo = "celdas llenas donde la regla tiene un 0, o con el signo equivocado, que un bloque posterior tiene que deshacer.";
+      const tail = " El bloque es de " + f.dims.join(" × ") + (n === 1 ? " celda" : " celdas") +
+        ", una multiplicación, cubra las celdas que cubra.";
+      if (n === 1) {
+        return (r.wanted ? "<b>Su única celda es la que la regla quiere</b>: está sobre un anillo, y el bloque no hace daño."
+          : "<b>Su única celda es daño</b>: una celda llena donde la regla tiene un 0, que un bloque posterior tiene que deshacer.") + tail;
+      }
+      if (r.wanted === 0) return "<b>Ninguna de las " + n + "</b> celdas es de las que la regla quiere. Las " + n + " son daño: " + undo + tail;
+      if (d === 0) return "<b>Las " + n + "</b> celdas son las que la regla quiere: todas están sobre un anillo, y el bloque no hace daño." + tail;
+      return "<b>" + word(lang, r.wanted) + " de las " + n + "</b> celdas " +
+        (r.wanted === 1 ? "es la que la regla quiere" : "son las que la regla quiere") + ". " +
+        (d === 1 ? "La otra es daño" : "Las otras " + d + " son daño") + ": " + undo + tail;
     },
     tip: (a, b, c, v) => "(" + a + ", " + b + ", " + c + ") vale " + v,
     aria: (ctx) => {
@@ -153,7 +170,7 @@
     np: {
       overA: "sobre las entradas de A", overB: "sobre B", overC: "sobre C",
       cells: (n) => n + (n === 1 ? " celda" : " celdas"),
-      wanted: (n) => n + " buenas"
+      wanted: (n) => n + (n === 1 ? " pedida" : " pedidas")
     }
   };
 
@@ -166,7 +183,7 @@
 
   window.AlphaTensorScenes.register({
     id: "block", section: "11", gl: true,
-    part: {en: "Part two · a factorization is an algorithm", es: "Segunda parte · una factorización es un algoritmo"},
+    part: {en: "A factorization is an algorithm", es: "Una factorización es un algoritmo"},
     hl: ["a", "b", "c"],
     copy: {en: EN, es: ES},
 
@@ -264,8 +281,11 @@
       return {
         html: f.empty ? c.emptyRead : c.read({rep: r, dims: f.dims}, ctx.lang),
         claim: c.claim(Object.assign({empty: f.empty}, rep)),
+        // The strip's own second line would count the cells this block leaves
+        // wrong, twelve for the first of Strassen's -- which is the next
+        // picture's question. This picture's is what the block covers.
         strip: {mode: "built", terms: f.empty ? [] : [{u: f.u, v: f.v, w: f.w}], count: f.empty ? 0 : 1,
-                lit: f.empty ? [] : f.lit},
+                lit: f.empty ? [] : f.lit, note: f.empty ? undefined : c.split(rep)},
         data: {
           damage: String(rep.damage), wanted: String(rep.wanted), cells: String(rep.cells),
           mults: f.empty ? "0" : "1",

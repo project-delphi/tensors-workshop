@@ -65,7 +65,7 @@
     tab: "rule",
     k: "Section 06 · the rule",
     h: "The rule for multiplying two matrices is a list of products",
-    predict: "Before you look: c₁₁ is a sum of two products, and one of them is a₁₁ · b₁₁. Which entry " +
+    predict: "Before you look: c₂₁ is a sum of two products, and one of them is a₂₁ · b₁₁. Which entry " +
              "of A and which entry of B make the other?",
     concept: "Every product in the rule names three things: an entry of A, an entry of B, and the entry " +
              "of C it is added to. Write the rule as that list of triples and it mentions no numbers at " +
@@ -73,8 +73,7 @@
     b: "The matrices are the example this page keeps: <code>[[1, 2], [3, 4]]</code> times " +
        "<code>[[5, 6], [7, 8]]</code>. Each tile is one product of the rule, filed under the entry of C " +
        "it goes into. <b>Pick a tile</b>, or press ▶, and the three entries it names light up above. " +
-       "The strip under the stage already shows where this is going: the same eight products, as eight " +
-       "cells.",
+       "The strip under the stage already shows where this is going: the same products, as cells.",
     eqcap: "One entry of the product, written out, and the rule it is an instance of: entry (p, q) of C " +
            "adds up a row of A against a column of B. Every term is one multiplication.",
     claim: (p, a, b, c) => "8 products · product " + p + ": " + a + " · " + b + " → " + c,
@@ -104,7 +103,7 @@
     tab: "regla",
     k: "Sección 06 · la regla",
     h: "La regla para multiplicar dos matrices es una lista de productos",
-    predict: "Antes de mirar: c₁₁ es una suma de dos productos, y uno de ellos es a₁₁ · b₁₁. ¿Qué entrada " +
+    predict: "Antes de mirar: c₂₁ es una suma de dos productos, y uno de ellos es a₂₁ · b₁₁. ¿Qué entrada " +
              "de A y qué entrada de B forman el otro?",
     concept: "Cada producto de la regla nombra tres cosas: una entrada de A, una entrada de B y la " +
              "entrada de C a la que se suma. Escribe la regla como esa lista de ternas y no menciona " +
@@ -112,8 +111,8 @@
     b: "Las matrices son el ejemplo que esta página conserva: <code>[[1, 2], [3, 4]]</code> por " +
        "<code>[[5, 6], [7, 8]]</code>. Cada ficha es un producto de la regla, colocado bajo la entrada " +
        "de C a la que va. <b>Elige una ficha</b>, o pulsa ▶, y las tres entradas que nombra se " +
-       "encienden arriba. La cinta bajo el escenario ya muestra adónde va esto: los mismos ocho " +
-       "productos, como ocho celdas.",
+       "encienden arriba. La cinta bajo el escenario ya muestra adónde va esto: los mismos productos, " +
+       "como celdas.",
     eqcap: "Una entrada del producto, escrita por extenso, y la regla de la que es un caso: la entrada " +
            "(p, q) de C suma una fila de A contra una columna de B. Cada término es una multiplicación.",
     claim: (p, a, b, c) => "8 productos · producto " + p + ": " + a + " · " + b + " → " + c,
@@ -141,7 +140,7 @@
 
   window.AlphaTensorScenes.register({
     id: "rule", section: "06",
-    part: {en: "Part one · the rule is a cube", es: "Primera parte · la regla es un cubo"},
+    part: {en: "The rule is a cube", es: "La regla es un cubo"},
     hl: ["a", "b", "c"],
     copy: {en: EN, es: ES},
 
@@ -151,9 +150,11 @@
       {id: "play", type: "play", target: "p", rate: 1.1}
     ],
 
-    // Product 2 rather than product 1: a12 times b21 is the first one whose
-    // two entries sit in different places, which is the case worth looking at.
-    init(ctx) { ctx.state.p = 2; },
+    // Product 6, a22 times b21 into c21: it is the product the predict-first
+    // line asks for (c21's other one, next to a21 times b11), so the readout
+    // opens on the answer. The equation under the heading writes out c11, so
+    // nothing above the stage gives it away.
+    init(ctx) { ctx.state.p = 6; },
 
     arrive(ctx) { ctx.cache.arrive = ctx.now(); },
     animates(ctx) { return K.arrival(ctx, ENTRANCE) < 1; },
