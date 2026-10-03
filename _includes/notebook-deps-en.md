@@ -21,5 +21,6 @@
 | 17 | `matplotlib`, `ipywidgets`, `torch` | no |
 | 18 | `matplotlib`, `ipywidgets`, `torch` | no |
 | 19 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-image`, `scipy`, `tensorly`†, `torch` | yes — the FB15k-237 knowledge graph (21 MB, once), a ResNet-18 kernel and cached fits |
+| 20 | `matplotlib`, `ipywidgets` | yes — the factorisations AlphaTensor published (under 1 MB, once) |
 
 : Colab already has every one of these installed. {tbl-colwidths="[12,58,30]"}

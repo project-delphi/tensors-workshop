@@ -411,6 +411,21 @@ elección es errónea.
 
 **Compartan:** Un tensor, su trabajo, el modelo elegido y la medida que podría refutarlo.
 
+## 20 · ¿Qué habría que creer para jugar esa jugada?
+
+<span data-language-key="20-uphill-move"></span>
+
+**Cuándo:** Después de la Parte 3 del [Cuaderno 20](../notebooks/20-alphatensor.ipynb). Solo seguimiento.
+**Tiempo:** 10 minutos.
+
+La primera jugada de Strassen sube el número de celdas no nulas de 8 a 12, y un
+jugador codicioso la deshace enseguida. En grupo, propongan otro número que se
+pueda calcular a partir de una posición y que quizá ponga esa jugada por delante
+de una celda suelta. Digan cuánto costaría calcularlo para las 128.000 jugadas y
+cómo lo pondrían a prueba sin conocer la respuesta de antemano.
+
+**Compartan:** Su medida, su coste y la prueba que podría mostrar que no es mejor que contar celdas.
+
 ## Preguntas para facilitar la discusión
 
 <span data-language-key="facilitator-prompts"></span>

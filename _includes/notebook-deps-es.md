@@ -21,5 +21,6 @@
 | 17 | `matplotlib`, `ipywidgets`, `torch` | no |
 | 18 | `matplotlib`, `ipywidgets`, `torch` | no |
 | 19 | `matplotlib`, `ipywidgets`, `pandas`, `scikit-image`, `scipy`, `tensorly`†, `torch` | sí — el grafo de conocimiento FB15k-237 (21 MB, una vez), un kernel de ResNet-18 y ajustes guardados |
+| 20 | `matplotlib`, `ipywidgets` | sí — las factorizaciones que publicó AlphaTensor (menos de 1 MB, una vez) |
 
 : Colab ya tiene instalado todo lo de esta lista. {tbl-colwidths="[12,58,30]"}

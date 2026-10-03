@@ -401,6 +401,21 @@ choice wrong.
 
 **Share:** One tensor, its job, the model you chose and the measurement that could overturn it.
 
+## 20 · What would you have to believe to play that move?
+
+<span data-language-key="20-uphill-move"></span>
+
+**When:** After Part 3 in [Notebook 20](notebooks/20-alphatensor.ipynb). Follow-up only.
+**Time:** 10 minutes.
+
+Strassen's first move takes the count of nonzero cells from 8 to 12, and a
+greedy player takes it straight back. As a group, propose one other number you
+could compute from a position that might rank that move above a single cell.
+Say what it would cost to compute for all 128,000 moves, and how you would test
+it without knowing the answer in advance.
+
+**Share:** Your measure, its cost, and the test that could show it is no better than counting cells.
+
 ## Facilitator prompts
 
 <span data-language-key="facilitator-prompts"></span>

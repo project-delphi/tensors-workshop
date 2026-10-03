@@ -86,6 +86,15 @@ checked against their SHA-256. Its three animations are drawn by
 `scripts/gen_cp_tucker_gifs.py`; every other figure is drawn live from its own
 fits.
 
+20 works through the three *AlphaTensor* posts on the ML blog in NumPy alone:
+the matrix multiplication tensor, Strassen's seven rank-one terms checked
+against it, and the search for such terms played as a game over all 128,000
+moves of the 2 × 2 case. It trains nothing. Part 4 downloads the
+factorisations DeepMind published with the paper, pinned to one commit of
+their repository and checked against their SHA-256, rebuilds every tensor from
+them and runs the 47-multiplication algorithm for 4 × 4 matrices modulo 2. Its
+three animations are drawn by `scripts/gen_alphatensor_gifs.py`.
+
 ## Shape of each notebook
 
 1. **Header** — **Practise today** and **Explore later**, in both languages.
@@ -101,7 +110,7 @@ entirely take-home material.
 Every notebook carries **at least three animations**: small numbered cubes
 performing the moves that section teaches, drawn by `scripts/gen_cube_gifs.py` (16 uses `scripts/gen_pca_gifs.py`;
 17–18 use `scripts/gen_tensor_module_gifs.py`; 19 uses
-`scripts/gen_cp_tucker_gifs.py`)
+`scripts/gen_cp_tucker_gifs.py`; 20 uses `scripts/gen_alphatensor_gifs.py`)
 and served from the published site. The first two draw the moves; the third
 draws the data the section teaches them on — a colour image being split into
 its channels, a clip losing a moment, a count nobody recorded. In every section

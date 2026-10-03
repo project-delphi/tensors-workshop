@@ -547,3 +547,30 @@ assert np.isclose(france_contains_paris, paris_contains_france)
 The score is a sum of products, and multiplication commutes: the two scores are equal for every embedding, so no amount of training separates them. Transfer: in a citation graph, how many pairs would this cost, and what would you measure first?
 
 </details>
+
+## 20 · A shorter win clears more cells with every move
+
+<span data-language-key="20-uphill-first-move"></span>
+
+“Strassen empties the 2 × 2 multiplication tensor in seven moves where the schoolbook rule needs eight, so his first move must lower the count of nonzero cells.”
+
+<details>
+<summary>Test and correction</summary>
+
+```python
+import numpy as np
+rule = np.zeros((4, 4, 4), dtype=int)
+for i in range(2):
+    for j in range(2):
+        for k in range(2):
+            rule[2 * i + k, 2 * k + j, 2 * i + j] = 1
+weights = np.array([1, 0, 0, 1])
+move = np.einsum("a,b,c->abc", weights, weights, weights)
+before = np.count_nonzero(rule)
+after = np.count_nonzero(rule - move)
+assert (before, after) == (8, 12)
+```
+
+The first move, `(a11 + a22)(b11 + b22)` added to `c11` and `c22`, covers eight cells: two that the rule wants go from 1 to 0, and six it never uses go from 0 to −1. The count rises from 8 to 12. Transfer: name another search where the best first step makes the usual measure of progress worse.
+
+</details>

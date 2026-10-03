@@ -97,7 +97,22 @@ os.environ.setdefault("MPLBACKEND", "Agg")
 
 # Routes that fetch remote data or run %pip. --offline skips exactly these.
 # 12 is here for the voice.wav it fetches inside its fallback run.
-NETWORK = {"00", "02", "05", "07", "08", "09", "10", "11", "12", "14", "15", "16", "19"}
+NETWORK = {
+    "00",
+    "02",
+    "05",
+    "07",
+    "08",
+    "09",
+    "10",
+    "11",
+    "12",
+    "14",
+    "15",
+    "16",
+    "19",
+    "20",
+}
 
 # A remote that cannot be reached is not a broken notebook.
 #
@@ -354,6 +369,67 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
         ],
         "c19-img-predict": [
             "Better at predicting hidden pixels / Mejor prediciendo píxeles ocultos: Tucker",
+        ],
+    },
+    # 20 is integer arithmetic on a 64-cell tensor and on two pinned files,
+    # both checked against their SHA-256 before use, so every line here is an
+    # exact count and none is a fit. The game's numbers come from searching all
+    # 128,000 moves with entries in {-1, 0, 1}; the 47 and the 76 are read off
+    # DeepMind's published factorisations after each one has been rebuilt into
+    # its tensor. The 27 fractional entries rebuild exactly in float64 because
+    # their weights are halves and eighths.
+    "20": {
+        "c20-rule-demo": [
+            "Tensor / Tensor: (4, 4, 4) — ones / unos: 8",
+            "Contracted with A and B / Contraído con A y B: [19 22 43 50]",
+            "n = 5: side / lado 25, cells / celdas 15,625, ones / unos 125",
+        ],
+        "c20-ex1-solution": ["3 × 3 multiplications / multiplicaciones: 27"],
+        "c20-strassen": [
+            "Seven blocks rebuild T exactly / Siete bloques reconstruyen T "
+            "exactamente: True",
+            "Cells that differ from T / Celdas que difieren de T: "
+            "[8, 12, 12, 12, 10, 8, 4, 0]",
+        ],
+        "c20-run": [
+            "Seven products / Siete productos: [ 65  35  -2   8  24  22 -30]",
+            "Assembled / Ensamblado: [19 22 43 50]",
+        ],
+        "c20-ex2-ref": ["n = 8: schoolbook / escolar 512, Strassen 343"],
+        "c20-game-moves": [
+            "Moves / Jugadas: 128,000; all different / todas distintas: True",
+            "lower the count / bajan el número: 8",
+            "keep it / lo mantienen: 176",
+            "raise it / lo suben: 127,816, by up to / hasta en 56",
+        ],
+        "c20-game-greedy": [
+            "Greedy wins in / El codicioso gana en: 8 moves / jugadas",
+            "Largest drop in one move, from any such position / Mayor bajada "
+            "en una jugada: 1",
+            "Strassen / Strassen: 8 → 12 → 12 → 12 → 10 → 8 → 4 → 0",
+            "Its reply takes the move back / Su respuesta deshace la jugada: True",
+            "Moves in all / Jugadas en total: 1 + 9 = 10",
+        ],
+        "c20-ex3-solution": [
+            "Lowest and highest peak / Pico más bajo y más alto: 10 14",
+        ],
+        "c20-found-verify": [
+            "reconstruidos exactamente: 93 of 93",
+            "reconstruidos módulo 2: 20 of 20",
+            "4 × 4 modulo 2 / módulo 2: 47 multiplications; Strassen applied "
+            "twice / Strassen aplicado dos veces: 49",
+            "4 × 5 times 5 × 5 / por 5 × 5: 76 multiplications",
+        ],
+        "c20-ex4-solution": ["Multiplications / Multiplicaciones: 76"],
+        "c20-ex4-ref": [
+            "Multiplications used / Multiplicaciones usadas: 47",
+            "Equals (A @ B) % 2 / Igual a (A @ B) % 2: True",
+            "Right modulo 2 / Correcto módulo 2: 1000 of 1000",
+        ],
+        "c20-open": [
+            "publicado, aritmética estándar: 23",
+            "rank / rango 21: n^2.771  beats Strassen / supera a Strassen",
+            "rank / rango 22: n^2.814  does not / no lo supera",
         ],
     },
 }

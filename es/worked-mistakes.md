@@ -554,3 +554,30 @@ assert np.isclose(france_contains_paris, paris_contains_france)
 La puntuación es una suma de productos y la multiplicación conmuta: las dos puntuaciones son iguales para cualquier embedding, así que ningún entrenamiento las separa. Transferencia: en un grafo de citas, ¿cuántos pares costaría esto y qué medirías primero?
 
 </details>
+
+## 20 · Una victoria más corta borra más celdas en cada jugada
+
+<span data-language-key="20-uphill-first-move"></span>
+
+«Strassen vacía el tensor de la multiplicación 2 × 2 en siete jugadas donde la regla escolar necesita ocho, así que su primera jugada tiene que bajar el número de celdas no nulas».
+
+<details>
+<summary>Prueba y corrección</summary>
+
+```python
+import numpy as np
+rule = np.zeros((4, 4, 4), dtype=int)
+for i in range(2):
+    for j in range(2):
+        for k in range(2):
+            rule[2 * i + k, 2 * k + j, 2 * i + j] = 1
+weights = np.array([1, 0, 0, 1])
+move = np.einsum("a,b,c->abc", weights, weights, weights)
+before = np.count_nonzero(rule)
+after = np.count_nonzero(rule - move)
+assert (before, after) == (8, 12)
+```
+
+La primera jugada, `(a11 + a22)(b11 + b22)` sumada a `c11` y `c22`, cubre ocho celdas: dos que la regla quiere pasan de 1 a 0, y seis que nunca usa pasan de 0 a −1. El número sube de 8 a 12. Transferencia: nombra otra búsqueda en la que el mejor primer paso empeore la medida habitual de progreso.
+
+</details>

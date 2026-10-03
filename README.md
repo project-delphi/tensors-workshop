@@ -139,6 +139,7 @@ and no minutes on the workshop clock. Choose one to explore after the session.
 | 17 | 4D multi-head attention: reshape Q, K and V | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) |
 | 18 | Latent feature compression with SVD | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/18-feature-compression.ipynb) |
 | 19 | CP or Tucker in practice | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/19-cp-or-tucker-in-practice.ipynb) |
+| 20 | AlphaTensor: multiplying matrices as a game | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb) |
 <!-- END extras-en -->
 
 ## Run it locally
@@ -354,6 +355,7 @@ explorar después de la sesión.
 | 17 | Atención multicabeza 4D: reorganiza Q, K y V | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) |
 | 18 | Compresión de características latentes con SVD | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/18-feature-compression.ipynb) |
 | 19 | CP o Tucker en la práctica | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/19-cp-or-tucker-in-practice.ipynb) |
+| 20 | AlphaTensor: multiplicar matrices como un juego | [Colab](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb) |
 <!-- END extras-es -->
 
 ## Ejecutarlo en local
