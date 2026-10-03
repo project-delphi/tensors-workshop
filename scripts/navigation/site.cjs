@@ -183,7 +183,7 @@ async function runHero(ctx) {
     ['layout', 'image-tensor'], ['broadcast', 'broadcasting-simulator'],
     ['linalg', 'linalg-stage'], ['voice', 'voice-stage'],
     ['attention', 'attention-stage'], ['factor', 'factor-stage'],
-    ['genome', 'genome-stage']];
+    ['genome', 'genome-stage'], ['alphatensor', 'alphatensor-stage']];
   // Desktop width, set explicitly rather than inherited from whatever the
   // pages loop left it at: at 390px `.hero-demos` is CSS-hidden in favour
   // of `.hero-fallback`, and a shard that runs the pages loop but never the
@@ -240,6 +240,20 @@ async function runHero(ctx) {
       await page.waitForFunction(el => el.complete && el.naturalWidth > 0,
         await img.elementHandle(), {timeout: 10000});
     }
+    // The tabs are a grid, four to a row, and Down moves to the tab
+    // underneath. The script's step and the stylesheet's column count are
+    // two numbers in two files; this is the only thing that ties them.
+    await page.locator('#hero-tab-layout').click();
+    const above = await page.locator('#hero-tab-layout').boundingBox();
+    await page.keyboard.press('ArrowDown');
+    const landed = await page.evaluate(() => document.activeElement && document.activeElement.id);
+    assert(landed && landed.startsWith('hero-tab-') && landed !== 'hero-tab-layout',
+      `${lang}/index: ArrowDown on the first tab went to ${landed}`);
+    const below = await page.locator(`#${landed}`).boundingBox();
+    assert(Math.abs(below.x - above.x) < 2 && below.y > above.y + 5,
+      `${lang}/index: ArrowDown on the first tab landed on ${landed}, which is not the tab under it`);
+    assert.equal(await page.locator(`#${landed}`).getAttribute('aria-selected'), 'true',
+      `${lang}/index: ArrowDown moved focus to ${landed} without selecting it`);
     // The loop above leaves the last tab open, and the panel clicked below
     // is the factorisation stage's -- which stopped being the last one when
     // the genome stage was added, so its panel was hidden and the click went

@@ -484,33 +484,43 @@ test('a flat scene places nothing off its board', () => {
   }
 });
 
-test('an inset is drawn on the board, in type that can be read', () => {
+// The inset's board is the twin's, and the twin's is the shape of the stage:
+// 420 units tall on a short screen, up to 900 on a tall one. An inset laid
+// out for one height runs off the bottom of another, and the browser check
+// only ever sees the height its own viewport gives.
+const INSET_HEIGHTS = [420, 500, 900];
+
+test('an inset is drawn on the board, at every height the board takes, in type that can be read', () => {
   const env = load();
   for (const scene of each(env.scenes)) {
     if (!scene.hud) continue;
     assert.ok(scene.gl, `${scene.id}: an inset is for a three.js scene; a flat one draws on its own board`);
     for (const lang of ['en', 'es']) {
       for (const vals of settings(scene)) {
-        const where = `${scene.id} ${lang} ${JSON.stringify(vals)} inset`;
-        const {ctx} = run(env, scene, lang, vals);
-        const hud = fakeElement('svg');
-        scene.hud(ctx, hud);
-        assert.ok(count(hud) > 5, `${where}: drew only ${count(hud)} nodes`);
-        walk(hud, (node) => {
-          const a = node.attrs || {};
-          for (const [k, v] of Object.entries(a)) {
-            assert.ok(!BAD.test(v), `${where}: <${node.tag} ${k}="${v}"> is not a number`);
-          }
-          if (node.tag === 'text') {
-            assert.ok(Number(a['font-size']) >= TYPE_FLOOR, `${where}: "${node.textContent}" is under the type floor`);
-            assert.ok(Number(a.x) >= -1 && Number(a.x) <= BOARD.w + 1 && Number(a.y) >= 0 && Number(a.y) <= BOARD.h + 1,
-              `${where}: "${node.textContent}" is written off the board`);
-          }
-          if (node.tag === 'rect') {
-            assert.ok(Number(a.x) >= -1 && Number(a.x) + Number(a.width) <= BOARD.w + 1, `${where}: a rect leaves the board sideways`);
-            assert.ok(Number(a.y) >= -1 && Number(a.y) + Number(a.height) <= BOARD.h + 1, `${where}: a rect leaves the board vertically`);
-          }
-        });
+        for (const h of INSET_HEIGHTS) {
+          const where = `${scene.id} ${lang} ${JSON.stringify(vals)} inset on an 820 x ${h} board`;
+          const {ctx} = run(env, scene, lang, vals);
+          ctx.board = () => ({w: BOARD.w, h});
+          const hud = fakeElement('svg');
+          scene.hud(ctx, hud);
+          assert.ok(count(hud) > 5, `${where}: drew only ${count(hud)} nodes`);
+          walk(hud, (node) => {
+            const a = node.attrs || {};
+            for (const [k, v] of Object.entries(a)) {
+              assert.ok(!BAD.test(v), `${where}: <${node.tag} ${k}="${v}"> is not a number`);
+            }
+            if (node.tag === 'text') {
+              assert.ok(Number(a['font-size']) >= TYPE_FLOOR, `${where}: "${node.textContent}" is under the type floor`);
+              // A line of text hangs a few units under its baseline.
+              assert.ok(Number(a.x) >= -1 && Number(a.x) <= BOARD.w + 1 && Number(a.y) >= 0 && Number(a.y) <= h - 3,
+                `${where}: "${node.textContent}" is written at y = ${a.y}, off the board`);
+            }
+            if (node.tag === 'rect') {
+              assert.ok(Number(a.x) >= -1 && Number(a.x) + Number(a.width) <= BOARD.w + 1, `${where}: a rect leaves the board sideways`);
+              assert.ok(Number(a.y) >= -1 && Number(a.y) + Number(a.height) <= h + 1, `${where}: a rect leaves the board vertically`);
+            }
+          });
+        }
       }
     }
   }

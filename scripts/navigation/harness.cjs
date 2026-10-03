@@ -10,20 +10,30 @@ const http = require('node:http');
 const path = require('node:path');
 const fs = require('node:fs/promises');
 
-// The seven widgets, and the order the widgets/*.cjs `drive*` functions are
+// The eight widgets, and the order the widgets/*.cjs `drive*` functions are
 // written in. `check_navigation.cjs`'s own ALL_WIDGETS table keeps the two in
-// step: with seven of them a reader looking for one callback has nothing else
+// step: with eight of them a reader looking for one callback has nothing else
 // to go on. This is the full set regardless of sharding -- WIDGET_FILES is
 // what decides who runs which -- checked against ALL_WIDGETS there, so a
 // widget dropped from every shard's table is still caught rather than
 // quietly never run anywhere.
 const WIDGET_FILES = ['image-tensor', 'broadcasting-simulator', 'attention-stage',
-  'linalg-stage', 'factor-stage', 'voice-stage', 'genome-stage'];
+  'linalg-stage', 'factor-stage', 'voice-stage', 'genome-stage', 'alphatensor-stage'];
 const SHARD_WIDGETS_FOR_3 = [
-  [],                                                          // 0: site + hero only
+  ['alphatensor-stage'],                                       // 0: site + hero, and one stage
   ['linalg-stage', 'attention-stage', 'genome-stage'],           // 1
   ['voice-stage', 'factor-stage', 'image-tensor', 'broadcasting-simulator']  // 2
 ];
+// A widget in WIDGET_FILES and in no shard would pass every sharded run by
+// never being driven in any of them -- and the sharded run is the one CI
+// uses. The table has to cover the list, and name nothing outside it.
+{
+  const sharded = SHARD_WIDGETS_FOR_3.flat().sort();
+  if (sharded.join() !== WIDGET_FILES.slice().sort().join()) {
+    throw new Error('SHARD_WIDGETS_FOR_3 does not cover WIDGET_FILES exactly: ' +
+      `shards have [${sharded}], the list has [${WIDGET_FILES.slice().sort()}]`);
+  }
+}
 
 function parseShard() {
   const i = process.argv.indexOf('--shard');

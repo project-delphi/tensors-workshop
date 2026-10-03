@@ -47,7 +47,7 @@
     const lit = f.last ? f.last.map((v) => (v ? 1 : 0)) : null;
     const m = K.cubeModel({n: N, values: f.P.sum, ever: f.P.everSum, rings: T, slice: null,
                            lit: ctx.hl === "r" ? lit : null},
-                          {zeros: ctx.embed ? "grid" : "cells", hl: ctx.hl});
+                          {zeros: ctx.embed ? "grid" : "cells", hl: ctx.hl, nameSize: ctx.embed ? 17 : 11});
     // The block just added stands a little proud, so the eye finds it.
     if (lit && ctx.hl !== "r") m.items.forEach((it) => { if (it.v && lit[it.idx]) { it.s *= 1.14; it.k = 1.5; } });
     // The entrance: the cells grow into the rings that were waiting for them.
@@ -62,7 +62,7 @@
   const EN = {
     tab: "strassen",
     k: "Section 11 · seven blocks",
-    h: "Seven blocks that overshoot, and then cancel",
+    h: "Seven blocks that add up to the cube, exactly",
     predict: "Before you add anything: the cube needs eight cells filled. After the first of Strassen's " +
              "seven blocks, will fewer than eight cells be wrong, or more?",
     concept: "A split of the cube into R blocks is a CP factorization with an equals sign: every one of " +
@@ -114,7 +114,7 @@
   const ES = {
     tab: "strassen",
     k: "Sección 11 · siete bloques",
-    h: "Siete bloques que se pasan, y luego se cancelan",
+    h: "Siete bloques que suman el cubo, exactamente",
     predict: "Antes de sumar nada: el cubo necesita ocho celdas llenas. Tras el primero de los siete " +
              "bloques de Strassen, ¿habrá menos de ocho celdas mal, o más?",
     concept: "Una partición del cubo en R bloques es una factorización CP con signo igual: cada una de " +

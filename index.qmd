@@ -51,6 +51,7 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
       <button type="button" role="tab" id="hero-tab-attention" aria-selected="false" aria-controls="hero-panel-attention" tabindex="-1">Attention</button>
       <button type="button" role="tab" id="hero-tab-factor" aria-selected="false" aria-controls="hero-panel-factor" tabindex="-1">Tucker &amp; CP</button>
       <button type="button" role="tab" id="hero-tab-genome" aria-selected="false" aria-controls="hero-panel-genome" tabindex="-1">DNA &amp; RNA</button>
+      <button type="button" role="tab" id="hero-tab-alphatensor" aria-selected="false" aria-controls="hero-panel-alphatensor" tabindex="-1">AlphaTensor</button>
     </div>
   </div>
   <div class="hero-panel" id="hero-panel-layout" role="tabpanel" aria-labelledby="hero-tab-layout">
@@ -79,6 +80,10 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
   </div>
   <div class="hero-panel" id="hero-panel-genome" role="tabpanel" aria-labelledby="hero-tab-genome" hidden><a class="hero-still no-external" href="interactive/genome-stage.html?lang=en"><img src="images/hero-genome-stage-en.webp" width="1200" height="960" loading="lazy" alt="Open the widget: the genetic code as a 4 by 4 by 4 cube, each codon coloured by the residue it codes for"><span class="hero-still-cue" aria-hidden="true">Try it live →</span></a>
     <p class="hero-caption">The genetic code as a <code>4 × 4 × 4</code>: six codons for leucine, one for methionine.</p></div>
+  <div class="hero-panel" id="hero-panel-alphatensor" role="tabpanel" aria-labelledby="hero-tab-alphatensor" hidden>
+    <a class="hero-still no-external" href="interactive/alphatensor-stage.html?lang=en"><img src="images/hero-alphatensor-stage-en.webp" width="1200" height="960" loading="lazy" alt="Open the widget: the rule for multiplying 2 by 2 matrices as a 4 by 4 by 4 cube, with three of Strassen's seven blocks added"><span class="hero-still-cue" aria-hidden="true">Try it live →</span></a>
+    <p class="hero-caption">Multiplying 2 × 2 matrices is a <code>4 × 4 × 4</code> cube holding eight 1s, and seven blocks rebuild it.</p>
+  </div>
   <p class="hero-arc">One number → a vector → a matrix → a tensor → a layer. Click a picture to try it live.</p>
 </div>
 <div class="hero-fallback">
@@ -146,7 +151,7 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
   tabs.forEach(function (tab, i) {
     tab.addEventListener("click", function () { show(i); });
     tab.addEventListener("keydown", function (e) {
-      var k = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 3, ArrowUp: -3 }[e.key];
+      var k = { ArrowRight: 1, ArrowLeft: -1, ArrowDown: 4, ArrowUp: -4 }[e.key];
       var n = e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1
         : k ? (i + k + tabs.length) % tabs.length : null;
       if (n === null) return;

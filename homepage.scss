@@ -164,17 +164,15 @@ body { overflow-x: clip; }
   .hero-visual.has-js .hero-fallback { display: block; }
 }
 .hero-bar { margin: 0 0 .6rem; }
-.hero-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .4rem; }
-/* Seven widgets in a three-column grid leave a last row of one, which reads as
-   a mistake rather than a choice. Letting the seventh span the row makes it
-   deliberate. The tab strip's own arrow keys step by 3 and wrap modulo the tab
-   count, so the spanning cell needs no script change -- but an eighth widget
-   would fill the row and this rule should go when that happens. */
-.hero-tabs button:nth-child(7):last-child { grid-column: 1 / -1; }
+/* Eight widgets, four to a row: two full rows, so no tab is left alone on a
+   line of its own. The tab strip's Up and Down arrows step by this column
+   count (index.qmd and es/index.qmd), and the browser check presses Down and
+   requires the tab underneath -- change the three together. */
+.hero-tabs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .4rem; }
 .hero-tabs button {
   min-width: 0;
   width: 100%;
-  padding: .4rem .85rem;
+  padding: .4rem .45rem;
   border: 1px solid #93b6d359;
   border-radius: 999px;
   background: transparent;

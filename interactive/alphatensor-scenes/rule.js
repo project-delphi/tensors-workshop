@@ -65,8 +65,8 @@
     tab: "rule",
     k: "Section 06 · the rule",
     h: "The rule for multiplying two matrices is a list of products",
-    predict: "Before you count: the answer has four entries. How many separate products does the rule " +
-             "need to fill them: four, eight or sixteen?",
+    predict: "Before you look: c₁₁ is a sum of two products, and one of them is a₁₁ · b₁₁. Which entry " +
+             "of A and which entry of B make the other?",
     concept: "Every product in the rule names three things: an entry of A, an entry of B, and the entry " +
              "of C it is added to. Write the rule as that list of triples and it mentions no numbers at " +
              "all. It works for every A and every B.",
@@ -80,10 +80,10 @@
     claim: (p, a, b, c) => "8 products · product " + p + ": " + a + " · " + b + " → " + c,
     caption: (m, s) => m + " multiplications, " + s + " additions",
     read: (p, a, b, c, x, y, v, total) =>
-      "<b>Eight.</b> Every entry of C is a sum of two products, and all eight are different. Product " +
-      p + " is <b>" + a + " · " + b + " = " + x + " · " + y + " = " + v + "</b>, and it is added into <b>" +
-      c + "</b>, which comes to " + total + ". Three facts pin it down: which entry of A, which entry " +
-      "of B, and where it goes.",
+      "<b>" + a + " · " + b + " = " + x + " · " + y + " = " + v + "</b> is product " + p +
+      ", and it is added into <b>" + c + "</b>, which comes to " + total + ". Every entry of C is a sum " +
+      "of two products and all eight are different. Three facts pin each one down: which entry of A, " +
+      "which entry of B, and where it goes.",
     sum: (x, y, t) => x + " + " + y + " = " + t,
     aria: (ctx) => {
       const t = product(ctx);
@@ -104,8 +104,8 @@
     tab: "regla",
     k: "Sección 06 · la regla",
     h: "La regla para multiplicar dos matrices es una lista de productos",
-    predict: "Antes de contar: la respuesta tiene cuatro entradas. ¿Cuántos productos distintos necesita " +
-             "la regla para llenarlas: cuatro, ocho o dieciséis?",
+    predict: "Antes de mirar: c₁₁ es una suma de dos productos, y uno de ellos es a₁₁ · b₁₁. ¿Qué entrada " +
+             "de A y qué entrada de B forman el otro?",
     concept: "Cada producto de la regla nombra tres cosas: una entrada de A, una entrada de B y la " +
              "entrada de C a la que se suma. Escribe la regla como esa lista de ternas y no menciona " +
              "ningún número. Sirve para toda A y toda B.",
@@ -119,10 +119,10 @@
     claim: (p, a, b, c) => "8 productos · producto " + p + ": " + a + " · " + b + " → " + c,
     caption: (m, s) => m + " multiplicaciones, " + s + " sumas",
     read: (p, a, b, c, x, y, v, total) =>
-      "<b>Ocho.</b> Cada entrada de C es una suma de dos productos, y los ocho son distintos. El producto " +
-      p + " es <b>" + a + " · " + b + " = " + x + " · " + y + " = " + v + "</b>, y se suma a <b>" +
-      c + "</b>, que da " + total + ". Tres datos lo fijan: qué entrada de A, qué entrada de B y " +
-      "adónde va.",
+      "<b>" + a + " · " + b + " = " + x + " · " + y + " = " + v + "</b> es el producto " + p +
+      ", y se suma a <b>" + c + "</b>, que da " + total + ". Cada entrada de C es una suma de dos " +
+      "productos y los ocho son distintos. Tres datos fijan cada uno: qué entrada de A, qué entrada " +
+      "de B y adónde va.",
     sum: (x, y, t) => x + " + " + y + " = " + t,
     aria: (ctx) => {
       const t = product(ctx);

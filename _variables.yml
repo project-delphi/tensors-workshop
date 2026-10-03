@@ -118,7 +118,8 @@ repo:
     - interactive/vendor/cmu-serif/cmu-serif-500-italic.woff2
     # The post-processing addons and the CSS2D label renderer, resolved from
     # the bare specifier `three` by an import map in linalg-stage.html,
-    # voice-stage.html, factor-stage.html and genome-stage.html. A map
+    # voice-stage.html, factor-stage.html, genome-stage.html and
+    # alphatensor-stage.html. A map
     # is element content rather than an attribute, so the link harvest cannot
     # see it either -- these lines are the only thing that would notice one of
     # them failing to reach docs/.
@@ -178,6 +179,30 @@ repo:
     - interactive/genome-scenes/fold.js
     - interactive/genome-scenes/search.js
     - interactive/genome-scenes/batch.js
+    # The AlphaTensor stage, from a rule to a game: its page, its arithmetic
+    # (pinned under npm test), its drawing kit, and one file per scene. Five
+    # of its scenes draw in three.js, through the same vendor/linalg-boot.js
+    # and addons above; each has an SVG twin, which is what the hero embed
+    # shows. Like the genome stage it fetches nothing -- and here there is not
+    # even a literal to list: the multiplication tensor is built from the rule,
+    # and every number a picture quotes is computed from it. What the core was
+    # ported from, and the paper behind each record the last scene quotes, is
+    # in interactive/alphatensor-scenes/README.md.
+    - interactive/alphatensor-stage.html
+    - interactive/alphatensor-core.js
+    - interactive/alphatensor-kit.js
+    - interactive/alphatensor-scenes/rule.js
+    - interactive/alphatensor-scenes/cube.js
+    - interactive/alphatensor-scenes/read.js
+    - interactive/alphatensor-scenes/bigger.js
+    - interactive/alphatensor-scenes/block.js
+    - interactive/alphatensor-scenes/strassen.js
+    - interactive/alphatensor-scenes/run.js
+    - interactive/alphatensor-scenes/recurse.js
+    - interactive/alphatensor-scenes/game.js
+    - interactive/alphatensor-scenes/space.js
+    - interactive/alphatensor-scenes/greedy.js
+    - interactive/alphatensor-scenes/learn.js
 
 workshop:
   authors:

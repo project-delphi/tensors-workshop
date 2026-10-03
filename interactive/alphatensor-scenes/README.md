@@ -190,7 +190,9 @@ the tensor to draw; `ever` marks cells drawn hollow once back at zero;
 picked tray (ease it with `K.trayLift` and ask `K.cubeBounds(n, true)`);
 `cell` is a picked `{a, b, c}`; `lit` is a flat mask to brighten. Pick keys
 are `x:a,b,c` for a cell and `t:c` for a tray's name. `K.trays2` draws the
-same state flat, one grid per tray.
+same state flat, one grid per tray. `K.weights2` draws a block's `u`, `v` and
+`w` as three rows of four chips, pickable as `w:<u|v|w>:<entry>`; a scene that
+lets a reader build a block cycles that weight `0 → +1 → −1 → 0` on the pick.
 
 **Colour is never the only carrier.** `+1` is violet and `−1` is amber, and
 every value that is not a plain 1 is printed on its cell; a cancelled cell

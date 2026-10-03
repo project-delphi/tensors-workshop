@@ -999,13 +999,14 @@
   // labels. `o.lift` is trayLift()'s array; `o.zeros` is "cells" (a speck per
   // empty cell) or "grid" (none: past 3 x 3 the specks are thousands, and
   // the tray's own lines carry the shape); `o.hl` is the equation letter
-  // being pointed at, which brightens that axis's names.
+  // being pointed at, which brightens that axis's names; `o.nameSize` sets
+  // the names' type on the twin, for the hero still.
   function cubeModel(st, o) {
     const opt = o || {};
     const n = st.n, N = n * n, h = cubeHalf(n), lift = opt.lift || null;
     const zeros = opt.zeros || (n <= 3 ? "cells" : "grid");
     const picked = st.slice !== null && st.slice !== undefined;
-    const side = n <= 3 ? CELL : 0.74;
+    const side = n <= 3 ? CELL : 0.74, nameSize = opt.nameSize || 11;
     const items = [], ghosts = [], hollows = [], rings = [], trays = [], lines = [], labels = [];
     const box = (pos, s) => ({min: pos.map((q) => q - s / 2), max: pos.map((q) => q + s / 2)});
     for (let c = 0; c < N; c++) {
@@ -1055,14 +1056,14 @@
     for (let c = 0; c < N; c++) {
       if (!(n <= 3 || c === 0 || c === N - 1 || c === st.slice)) continue;
       const y = (h - c) * TRAY_GAP + (lift ? lift[c] : 0);
-      labels.push({text: AC.name("c", n, c), pos: [h + 1.25, y - 0.35, h + 0.2], cls: "c",
+      labels.push({text: AC.name("c", n, c), pos: [h + 1.25, y - 0.35, h + 0.2], cls: "c", size: nameSize,
                    lit: (picked && c === st.slice) || opt.hl === "c", pick: "t:" + c, axis: "c", q: c});
     }
     for (let q = 0; q < N; q++) {
       if (!ends(q)) continue;
-      labels.push({text: AC.name("a", n, q), pos: [-h - 1.25, yRef, q - h], cls: "a",
+      labels.push({text: AC.name("a", n, q), pos: [-h - 1.25, yRef, q - h], cls: "a", size: nameSize,
                    lit: opt.hl === "a" || (!!st.cell && st.cell.a === q), axis: "a", q});
-      labels.push({text: AC.name("b", n, q), pos: [q - h, yRef, h + 1.3], cls: "b",
+      labels.push({text: AC.name("b", n, q), pos: [q - h, yRef, h + 1.3], cls: "b", size: nameSize,
                    lit: opt.hl === "b" || (!!st.cell && st.cell.b === q), axis: "b", q});
     }
     return {n, items, ghosts, hollows, rings, trays, lines, labels};
@@ -1216,13 +1217,43 @@
     return {at, x1: x0 + N * G + (N - 1) * gap, y1: y0 + G, cell: S, tray: G, gap};
   }
 
+  // A block's three lists of weights, as three rows of four chips: u over the
+  // entries of A, v over B, w over C. Each chip names its entry and prints its
+  // weight -- "+1", "−1" or "0" -- so the sign is never left to the tint. A
+  // chip is pickable as `w:<u|v|w>:<entry>`; the two scenes that let a reader
+  // build a block by hand cycle a weight on that pick. `o` is {x, y, w, rowH,
+  // hl}; returns {y1}.
+  const WEIGHT_AXES = [["u", "a", "--at-a"], ["v", "b", "--at-b"], ["w", "c", "--at-c"]];
+  function weights2(parent, vecs, o) {
+    const opt = o || {}, x0 = opt.x || 0, y0 = opt.y || 0, rowH = opt.rowH || 46, lead = 24;
+    const cw = ((opt.w || 260) - lead) / 4;
+    WEIGHT_AXES.forEach(([name, letter, tok], row) => {
+      const y = y0 + row * rowH, vec = vecs[name], on = opt.hl === letter;
+      text(parent, x0, y + rowH / 2 + 3, name, {size: 15, colour: tok, weight: 700});
+      for (let i = 0; i < 4; i++) {
+        const x = x0 + lead + i * cw, v = vec[i];
+        const g = el("g", {"data-pick": "w:" + name + ":" + i});
+        g.appendChild(el("rect", {
+          x: (x + 2).toFixed(1), y: (y + 2).toFixed(1), width: (cw - 4).toFixed(1), height: rowH - 6, rx: 5,
+          fill: v ? css(tok) : css("--stage-chip"), "fill-opacity": v ? 0.24 : 1,
+          stroke: css(v || on ? tok : "--stage-mute"), "stroke-opacity": v || on ? 1 : 0.4, "stroke-width": v ? 1.8 : 1
+        }));
+        text(g, x + cw / 2, y + 15, AC.name(letter, 2, i), {size: 11, anchor: "middle", colour: tok});
+        text(g, x + cw / 2, y + rowH - 11, v > 0 ? "+" + v : fmt(v, 0),
+             {size: 14, anchor: "middle", weight: 700, colour: v ? "--stage-ink" : "--stage-mute"});
+        parent.appendChild(g);
+      }
+    });
+    return {y1: y0 + 3 * rowH};
+  }
+
   const AlphaTensorKit = {
     AlphaTensorScenes, css, CLS_TOKEN, fmt, num, pct, sup, sub, shapeSup, code, idx,
     el, label, numGrid, heat, bars, curve, text, arrival, chase,
     smooth, rotate,
     viewBasis, projector, withLabels, corners, boxes2, edges2, spheres2, segments2,
     colour, light, voxels, spheres, segments, glowBox, frameBox, setBox, label2d, setLabel, labels2, labelPool, palette, ease, follow,
-    TRAY_GAP, TRAY_LIFT, CELL, cubePos, cubeBounds, trayLift, cubeModel, cubeBuild, cubeRender, cubeDraw, trays2
+    TRAY_GAP, TRAY_LIFT, CELL, cubePos, cubeBounds, trayLift, cubeModel, cubeBuild, cubeRender, cubeDraw, trays2, weights2
   };
   if (typeof module !== "undefined" && module.exports) module.exports = AlphaTensorKit;
   else { root.AlphaTensorKit = AlphaTensorKit; root.AlphaTensorScenes = AlphaTensorScenes; }

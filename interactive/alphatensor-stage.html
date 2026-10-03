@@ -77,6 +77,12 @@
     #stage { flex: 1 1 auto; aspect-ratio: auto; max-height: none; min-height: 12rem; }
     .step { min-height: 0; padding: 1.4rem 0; }
     #rail .stop { font-size: 0.72rem; padding: 0.2rem 0.5rem; }
+    /* The strip, on a narrow screen: the trays and what they add up to, side
+       by side, with the name dropped. Its two caption lines may wrap here --
+       held to one line each they push the page wider than the screen. */
+    #strip { grid-template-columns: minmax(0, 13rem) minmax(0, 1fr); }
+    #strip #strip-name { display: none; }
+    #strip .strip-cap span { white-space: normal; }
   }
 
   /* The stage is the shape of the board the flat scenes are laid out on,
@@ -178,6 +184,8 @@
   }
   #strip svg { display: block; width: 100%; height: auto; max-height: 4.2rem; touch-action: manipulation; }
   #strip .strip-cap { color: var(--stage-ink); text-align: right; }
+  #strip .strip-cap span { display: block; white-space: nowrap; }
+  #strip .strip-cap .strip-state { color: var(--stage-mute); }
   html.embed #strip, html.embed #rail, html.embed #hud { display: none; }
 
   /* A new picture fades in rather than cutting. data-easing stays "1" until
@@ -729,10 +737,10 @@
       shape: "Shape", concept: "Concept", code: "In NumPy",
       rail: "The twelve pictures",
       strip: "the 2 × 2 cube, laid flat",
-      stripBuilt: (count, off) => count + (count === "1" ? " multiplication" : " multiplications") + " · " +
-        (off ? off + (off === 1 ? " cell differs" : " cells differ") : "equals the cube"),
-      stripOwed: (count, off) => count + (count === "1" ? " move" : " moves") + " · " +
-        (off ? off + (off === 1 ? " cell left" : " cells left") : "nothing left: won"),
+      stripBuilt: (count, off) => [count + (count === "1" ? " multiplication" : " multiplications"),
+        off ? off + (off === 1 ? " cell differs from the cube" : " cells differ from the cube") : "equals the cube"],
+      stripOwed: (count, off) => [count + (count === "1" ? " move" : " moves"),
+        off ? off + (off === 1 ? " cell left" : " cells left") : "nothing left: won"],
       aboutH: "About this page",
       about1: "Nothing is fetched and nothing is trained. Every number here is computed in your browser by " +
               "one small file of arithmetic, alphatensor-core.js, which builds the multiplication tensor, " +
@@ -757,7 +765,7 @@
       turn: "Drag or use arrow keys to turn; scroll or use plus and minus to move closer. Hover pauses motion."
     },
     es: {
-      eyebrow: "Secciones 06 y 11 · profundización 20",
+      eyebrow: "Secciones 06 y 11 · estudio a fondo 20",
       title: "AlphaTensor: de una regla a un juego",
       navHome: "← Inicio del taller",
       navInteractive: "Interactivo",
@@ -788,10 +796,10 @@
       shape: "Forma", concept: "Concepto", code: "En NumPy",
       rail: "Las doce imágenes",
       strip: "el cubo de 2 × 2, extendido",
-      stripBuilt: (count, off) => count + (count === "1" ? " multiplicación" : " multiplicaciones") + " · " +
-        (off ? off + (off === 1 ? " celda difiere" : " celdas difieren") : "igual al cubo"),
-      stripOwed: (count, off) => count + (count === "1" ? " jugada" : " jugadas") + " · " +
-        (off ? (off === 1 ? "queda 1 celda" : "quedan " + off + " celdas") : "no queda nada: ganado"),
+      stripBuilt: (count, off) => [count + (count === "1" ? " multiplicación" : " multiplicaciones"),
+        off ? (off === 1 ? "1 celda difiere del cubo" : off + " celdas difieren del cubo") : "igual al cubo"],
+      stripOwed: (count, off) => [count + (count === "1" ? " jugada" : " jugadas"),
+        off ? (off === 1 ? "queda 1 celda" : "quedan " + off + " celdas") : "no queda nada: ganado"],
       aboutH: "Sobre esta página",
       about1: "No se descarga nada y no se entrena nada. Cada número de aquí lo calcula tu navegador " +
               "con un archivo pequeño de aritmética, alphatensor-core.js, que construye el tensor " +
@@ -809,7 +817,7 @@
               "construyó DeepMind. Lo que la página muestra es el problema para el que se hizo " +
               "AlphaTensor, y por qué es difícil. Acompaña a la sección 06 (un producto " +
               "de matrices es una contracción) y a la 11 (el menor número de bloques es un rango " +
-              "CP). La " + link(COLAB, "profundización 20") + " hace la misma aritmética en NumPy " +
+              "CP). El " + link(COLAB, "estudio a fondo 20") + " hace la misma aritmética en NumPy " +
               "y comprueba las factorizaciones publicadas por DeepMind. La versión larga son tres " +
               "entradas, en inglés: " +
               link(BLOG + "alphatensor-matmul-cube/", "Matrix multiplication is a cube") + ", " +
@@ -1238,7 +1246,15 @@
                   slice: S.tray === undefined ? null : S.tray},
              {x: 48, y: 19, cell: 11, gap: 40, pick: true, nameSize: 11, values: false});
     const off = AC.nnz(P.owed), count = K.num(S.count || 0, 0, lang);
-    $("strip-cap").textContent = owed ? T.stripOwed(count, off) : T.stripBuilt(count, off);
+    // Two lines on purpose: what has been spent, and how far that is from
+    // the cube. One line wrapped wherever a long count happened to break it.
+    const cap = owed ? T.stripOwed(count, off) : T.stripBuilt(count, off);
+    $("strip-cap").replaceChildren(...cap.map((line, i) => {
+      const span = document.createElement("span");
+      span.className = i ? "strip-state" : "strip-count";
+      span.textContent = line;
+      return span;
+    }));
     stage.dataset.stripmode = owed ? "owed" : "built";
     stage.dataset.stripoff = String(off);
     stage.dataset.stripcount = String(S.count || 0);
