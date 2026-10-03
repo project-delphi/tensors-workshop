@@ -7,8 +7,8 @@ message: "If you use this workshop, please cite it as below."
 title: "Tensors for Machine Learning"
 abstract: >-
   A 210-minute workshop on tensors for machine learning, including quizzes
-  and breaks, in English and Spanish: a handbook, nineteen Colab notebooks,
-  two slide decks, two interactive widgets and three Kahoot quizzes.
+  and breaks, in English and Spanish: a handbook, twenty-one Colab notebooks,
+  two slide decks, eight interactive widgets and three Kahoot quizzes.
 authors:
   - family-names: Kalia
     given-names: Ravi

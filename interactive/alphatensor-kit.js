@@ -1042,7 +1042,11 @@
           rings.push(Object.assign({key, idx, dim, filled: v === st.rings[idx]}, box(pos, side + 0.2)));
         }
         if (st.preview && st.preview[idx]) {
-          ghosts.push({key: "g:" + key, c: pos, s: side * 0.9, token: st.preview[idx] > 0 ? "--at-pos" : "--at-neg",
+          // A ghost in an empty cell is a little smaller than a cell. Over a
+          // filled one it has to be a shell round it: drawn inside, it is
+          // behind the opaque cell on the three.js surface and not seen.
+          ghosts.push({key: "g:" + key, c: pos, s: v ? side + 0.3 : side * 0.9,
+                       token: st.preview[idx] > 0 ? "--at-pos" : "--at-neg",
                        alpha: 0.4, k: 1.1, v: st.preview[idx], idx});
         }
       }
