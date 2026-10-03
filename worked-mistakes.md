@@ -548,11 +548,11 @@ The score is a sum of products, and multiplication commutes: the two scores are 
 
 </details>
 
-## 20 · A shorter win clears more cells with every move
+## 20 · Clearing two cells at once lowers the count faster
 
 <span data-language-key="20-uphill-first-move"></span>
 
-“Strassen empties the 2 × 2 multiplication tensor in seven moves where the schoolbook rule needs eight, so his first move must lower the count of nonzero cells.”
+“Strassen's first move clears two of the multiplication tensor's 1s where a schoolbook move clears one, so it leaves fewer nonzero cells than a schoolbook move would.”
 
 <details>
 <summary>Test and correction</summary>
@@ -571,6 +571,6 @@ after = np.count_nonzero(rule - move)
 assert (before, after) == (8, 12)
 ```
 
-The first move, `(a11 + a22)(b11 + b22)` added to `c11` and `c22`, covers eight cells: two that the rule wants go from 1 to 0, and six it never uses go from 0 to −1. The count rises from 8 to 12. Transfer: name another search where the best first step makes the usual measure of progress worse.
+The first move subtracts 1 from eight cells, those of `a11`, `a22` × `b11`, `b22` × `c11`, `c22`. Two of them held a 1 and go to 0, as the claim says. The other six held 0 and go to −1, which the claim forgets. The count rises from 8 to 12, where a schoolbook move would have left 7. Transfer: name another search where the best first step makes the usual measure of progress worse.
 
 </details>

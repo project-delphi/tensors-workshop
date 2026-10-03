@@ -555,11 +555,11 @@ La puntuación es una suma de productos y la multiplicación conmuta: las dos pu
 
 </details>
 
-## 20 · Una victoria más corta borra más celdas en cada jugada
+## 20 · Borrar dos celdas a la vez baja el número más deprisa
 
 <span data-language-key="20-uphill-first-move"></span>
 
-«Strassen vacía el tensor de la multiplicación 2 × 2 en siete jugadas donde la regla escolar necesita ocho, así que su primera jugada tiene que bajar el número de celdas no nulas».
+«La primera jugada de Strassen borra dos de los unos del tensor de la multiplicación donde una jugada escolar borra uno, así que deja menos celdas no nulas que una jugada escolar».
 
 <details>
 <summary>Prueba y corrección</summary>
@@ -578,6 +578,6 @@ after = np.count_nonzero(rule - move)
 assert (before, after) == (8, 12)
 ```
 
-La primera jugada, `(a11 + a22)(b11 + b22)` sumada a `c11` y `c22`, cubre ocho celdas: dos que la regla quiere pasan de 1 a 0, y seis que nunca usa pasan de 0 a −1. El número sube de 8 a 12. Transferencia: nombra otra búsqueda en la que el mejor primer paso empeore la medida habitual de progreso.
+La primera jugada resta 1 en ocho celdas, las de `a11`, `a22` × `b11`, `b22` × `c11`, `c22`. Dos valían 1 y pasan a 0, como dice la afirmación. Las otras seis valían 0 y pasan a −1, que es lo que la afirmación olvida. El número sube de 8 a 12, donde una jugada escolar habría dejado 7. Transferencia: nombra otra búsqueda en la que el mejor primer paso empeore la medida habitual de progreso.
 
 </details>

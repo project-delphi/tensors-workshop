@@ -382,9 +382,14 @@ EXPECTED: dict[str, dict[str, list[str]]] = {
         "c20-rule-demo": [
             "Tensor / Tensor: (4, 4, 4) — ones / unos: 8",
             "Contracted with A and B / Contraído con A y B: [19 22 43 50]",
-            "n = 5: side / lado 25, cells / celdas 15,625, ones / unos 125",
         ],
         "c20-ex1-solution": ["3 × 3 multiplications / multiplicaciones: 27"],
+        "c20-rule-sizes": [
+            "n = 2: side / lado  4, cells / celdas     64, ones / unos   8",
+            "n = 3: side / lado  9, cells / celdas    729, ones / unos  27",
+            "n = 4: side / lado 16, cells / celdas  4,096, ones / unos  64",
+            "n = 5: side / lado 25, cells / celdas 15,625, ones / unos 125",
+        ],
         "c20-strassen": [
             "Seven blocks rebuild T exactly / Siete bloques reconstruyen T "
             "exactamente: True",

@@ -2148,7 +2148,7 @@ extras:
     network_note_en: "under 1 MB, once"
     network_note_es: "menos de 1 MB, una vez"
     intro_en: |-
-      Multiplying two 2 × 2 matrices the schoolbook way takes 8 multiplications. Volker Strassen did it with 7 in 1969. In 2022 a program called AlphaTensor multiplied 4 × 4 matrices, in arithmetic modulo 2, with 47 where the record had been 49. Both results are the same kind of object, and section 11 already built it:
+      Multiplying two 2 × 2 matrices the schoolbook way takes 8 multiplications. Volker Strassen did it with 7 in 1969. In 2022 a program called AlphaTensor multiplied 4 × 4 matrices, in arithmetic modulo 2, with 47 where the record had been 49. Both results are the same kind of object: the sum of rank-one terms that section 11 fitted to a taxi tensor, here required to be exact.
 
       > **The rule for multiplying matrices is a fixed tensor of 0s and 1s, and every exact CP decomposition of that tensor into R rank-one terms is an algorithm that multiplies with R multiplications.**
 
@@ -2156,7 +2156,7 @@ extras:
 
       It works through the three *AlphaTensor* posts on the ML blog at a first-read pace, in NumPy alone.
     intro_es: |-
-      > 🇪🇸 Multiplicar dos matrices 2 × 2 a la manera escolar cuesta 8 multiplicaciones. Volker Strassen lo hizo con 7 en 1969. En 2022 un programa llamado AlphaTensor multiplicó matrices 4 × 4, en aritmética módulo 2, con 47 donde el récord era 49. Los dos resultados son el mismo tipo de objeto, y la sección 11 ya lo construyó:
+      > 🇪🇸 Multiplicar dos matrices 2 × 2 a la manera escolar cuesta 8 multiplicaciones. Volker Strassen lo hizo con 7 en 1969. En 2022 un programa llamado AlphaTensor multiplicó matrices 4 × 4, en aritmética módulo 2, con 47 donde el récord era 49. Los dos resultados son el mismo tipo de objeto: la suma de términos de rango uno que la sección 11 ajustó a un tensor de taxis, aquí exigida exacta.
       >
       > **La regla para multiplicar matrices es un tensor fijo de ceros y unos, y cada descomposición CP exacta de ese tensor en R términos de rango uno es un algoritmo que multiplica con R multiplicaciones.**
       >
