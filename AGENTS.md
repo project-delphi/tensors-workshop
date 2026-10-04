@@ -37,6 +37,42 @@ mobile support are kept anyway, for reasons that are not phones:
   stills do not move. Dropping the width rule means changing that check in the
   same commit.
 
+## How to work here
+
+**Keep going; stop only where it counts.** When a step needs no decision from
+the user, take it, and put a status note in the same message as the next
+action. Stop and ask only when you cannot continue without an answer, or
+before one of these:
+
+- deleting data, a branch or a worktree, or force-pushing;
+- committing on `main`, or merging a pull request (see
+  [No commits on main](#no-commits-on-main));
+- changing anything outside this repository: the ruleset, the live Kahoots,
+  the NotebookLM notebook, a published page.
+
+**Done means the checks for what you touched ran and passed**, not that the
+edit is written. The commands are under [Commands](#commands); this is which
+of them a change owes:
+
+| You changed | Done means |
+|---|---|
+| `_variables.yml`, or anything a generator reads | both generators rerun, and a second run changes nothing |
+| A notebook body cell | `check_links.py --notebooks-only`, `check_teaching_materials.py`, and `test_notebooks.py --only NN` for that notebook |
+| A page, a handbook, a stylesheet or a deck | `quarto render`, `check_links.py`, `npm run check:navigation`; EN and ES in the same commit |
+| A widget under `interactive/` | `npm test`, then the render and `npm run check:navigation`; and the picture looked at, because a stage's `data-*` can pass while it draws nothing |
+| `scripts/` or `tests/` | `ruff check`, `ruff format`, and the unittest suite |
+| An image generator or its inputs | the generator rerun by hand -- no gate will ask for it |
+
+**End a run with three headings**: *Needs you* (a decision, an approval, a
+check only a person can make), *Changed*, and *Not checked* -- every check
+above that did not run, and anything no check covers: Spanish wording, Colab,
+the frame stepper, a stale image. A check that was skipped and named is
+information; one reported as passed without the run is the only wrong answer.
+
+**On a long run, keep the task list in an uncommitted file** so it survives
+the context being summarised. **When work is split across subagents, verify
+each result** before reporting it as yours.
+
 ## Generated files: the one rule that matters
 
 [CONTRIBUTING.md](CONTRIBUTING.md#where-to-edit) owns the contributor-facing
