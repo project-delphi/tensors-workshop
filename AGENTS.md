@@ -37,6 +37,44 @@ mobile support are kept anyway, for reasons that are not phones:
   stills do not move. Dropping the width rule means changing that check in the
   same commit.
 
+## How to work here
+
+**Keep going; stop only where it counts.** When a step needs no decision from
+the user, take it, and put a status note in the same message as the next
+action. Stop and ask only when you cannot continue without an answer, or
+before one of these:
+
+- deleting data, a branch or a worktree, or force-pushing;
+- committing on `main`, or merging a pull request (see
+  [No commits on main](#no-commits-on-main));
+- changing anything outside this repository: the ruleset, the live Kahoots,
+  the NotebookLM notebook, a published page.
+
+**Done means the checks for what you touched ran and passed**, not that the
+edit is written. The commands are under [Commands](#commands); this is which
+of them a change owes:
+
+| You changed | Done means |
+|---|---|
+| `_variables.yml`, or anything a generator reads | both generators rerun, and a second run changes nothing; then `quarto render` and `check_links.py`, which is where a clock, an anchor or a `companion` entry that no longer adds up fails |
+| A notebook body cell | `gen_notebooks.py` rerun (it sorts the keys the gate compares), and `gen_tables.py` too after a new import; `check_links.py --notebooks-only`, `check_teaching_materials.py`, the unittest suite, and `test_notebooks.py --only NN`; a changed predict-first cell changes its `worked-mistakes.md` entry in both languages |
+| A page, a handbook, a stylesheet or a deck | `quarto render`, `check_links.py`, `npm run check:navigation`; EN and ES in the same commit |
+| A widget under `interactive/` | `npm test`, then the render and `npm run check:navigation`; and the picture looked at, because a stage's `data-*` can pass while it draws nothing |
+| Python under `scripts/` or `tests/` | `ruff check`, `ruff format` before the commit (CI runs `format --check`), and the unittest suite |
+| A `.cjs` under `scripts/` or `tests/` | `npm test`; for the browser check or anything under `scripts/navigation/`, a render and `npm run check:navigation` |
+| An image generator or its inputs | the generator rerun by hand -- no gate will ask for it |
+
+**End a run with three headings**: *Needs you* (a decision, an approval, a
+check only a person can make), *Changed*, and *Not checked* -- every check
+above that did not run, and anything no check covers: Spanish wording, Colab,
+the frame stepper, a stale image. A check that was skipped and named is
+information; one reported as passed without the run is the only wrong answer.
+
+**On a long run, keep the task list in a file outside the tree** -- a
+scratch directory, or the gitignored `.claude/RESUME.md` -- so it survives
+the context being summarised and never reaches a commit. **When work is split across subagents, verify
+each result** before reporting it as yours.
+
 ## Generated files: the one rule that matters
 
 [CONTRIBUTING.md](CONTRIBUTING.md#where-to-edit) owns the contributor-facing
