@@ -8,9 +8,10 @@
 [![Slides EN](https://img.shields.io/badge/slides-EN-informational)](https://project-delphi.github.io/tensors-workshop/slides/en/)
 [![Diapositivas ES](https://img.shields.io/badge/diapositivas-ES-informational)](https://project-delphi.github.io/tensors-workshop/slides/es/)
 
-**A 3.5-hour workshop (210 minutes including three Kahoot knowledge checks)
-that takes you from "I know matrices" to manipulating, solving and factorizing
-matrices and tensors.**
+**A one-day, 6-hour workshop (360 minutes including three Kahoot knowledge
+checks, four live deep dives and short breaks, with lunch on top) that takes
+you from "I know matrices" to manipulating, solving and factorizing matrices
+and tensors.**
 
 📍 **[project-delphi.github.io/tensors-workshop](https://project-delphi.github.io/tensors-workshop)**
  · 🇪🇸 [En español](#tensores-para-aprendizaje-automático)
@@ -121,13 +122,18 @@ Taxi Trips and the Airline Passengers series are downloaded once.
 <!-- END sections-en -->
 
 The 🎯 quizzes run after sections 04, 07 and 10. The thirteen sections come to
-180 minutes; the three quizzes add 15 and three 5-minute breaks another 15, for
-210.
+215 minutes; four deep dives opened live add 90, the three quizzes 15 and four
+10-minute breaks another 40, for 360. Lunch falls after deep dive 17 and is
+not counted: the clock stops for it.
 
 ## Going further
 
-The **deep dives** listed below are take-home material: no slides, no Kahoot,
-and no minutes on the workshop clock. Choose one to explore after the session.
+The **deep dives** listed below have no slides and no Kahoot. Four of them are
+opened live, as a 20- or 25-minute lab each: **17** (multi-head attention)
+before lunch, then **13** (convolution and deconvolution), **14** (CP) and
+**20** (AlphaTensor) in the afternoon. The room works the opening of the
+notebook together and the rest goes home. The other four are take-home
+material from start to finish, with no minutes on the workshop clock.
 
 <!-- BEGIN extras-en -->
 | # | Deep dive | Colab |
@@ -236,8 +242,9 @@ split is in [LICENSE](LICENSE).
 
 # Tensores para Aprendizaje Automático
 
-**Un taller de 3,5 horas (210 minutos con tres controles de conocimiento con
-Kahoot) que te lleva de «sé lo que es una matriz» a manipular, resolver y
+**Un taller de un día, 6 horas (360 minutos con tres controles de conocimiento
+con Kahoot, cuatro estudios a fondo en vivo y pausas cortas; el almuerzo va
+aparte) que te lleva de «sé lo que es una matriz» a manipular, resolver y
 factorizar matrices y tensores.**
 
 📍 **[project-delphi.github.io/tensors-workshop/es](https://project-delphi.github.io/tensors-workshop/es/)**
@@ -336,14 +343,20 @@ construidos para mostrar errores concretos.
 <!-- END sections-es -->
 
 Los cuestionarios 🎯 se ejecutan después de las secciones 04, 07 y 10. Las trece
-secciones suman 180 minutos; los tres cuestionarios añaden 15 y las tres pausas
-de 5 minutos otros 15: en total, 210.
+secciones suman 215 minutos; cuatro estudios a fondo abiertos en vivo añaden
+90, los tres cuestionarios 15 y las cuatro pausas de 10 minutos otros 40: en
+total, 360. El almuerzo va después del estudio a fondo 17 y no cuenta: el
+reloj se detiene.
 
 ## Para seguir
 
-Los **estudios a fondo** de la tabla siguiente son material para casa: sin
-diapositivas, sin Kahoot y sin minutos en el reloj del taller. Elige uno para
-explorar después de la sesión.
+Los **estudios a fondo** de la tabla siguiente no tienen diapositivas ni
+Kahoot. Cuatro se abren en vivo, cada uno como un laboratorio de 20 o 25
+minutos: el **17** (atención multicabeza) antes del almuerzo y, por la tarde,
+el **13** (convolución y deconvolución), el **14** (CP) y el **20**
+(AlphaTensor). La sala trabaja junta el comienzo del cuaderno y el resto queda
+para casa. Los otros cuatro son material para casa de principio a fin, sin
+minutos en el reloj del taller.
 
 <!-- BEGIN extras-es -->
 | # | Estudio a fondo | Colab |

@@ -527,7 +527,10 @@ def agenda_table(lang: str) -> str:
     t = L[lang]
     rows = ["| " + " | ".join(t["agenda_head"]) + " |", "|---|---|---|---|"]
     for r in agenda_rows(lang):
-        rows.append(f"| {r['start']} | {r['minutes']} | {r['part']} | {r['label']} |")
+        # Lunch is the one row with no minutes: it is off the clock.
+        rows.append(
+            f"| {r['start']} | {r['minutes'] or '—'} | {r['part']} | {r['label']} |"
+        )
     return "\n".join(rows) + "\n"
 
 
@@ -549,7 +552,7 @@ def handbook_schedule_table(lang: str = "en") -> str:
     per segment rather than per agenda row, because the handbook's own headings
     are per segment.
     """
-    from timeline import ScheduleError, atoms, clock  # noqa: PLC0415
+    from timeline import LUNCH, ScheduleError, atoms, clock, lab_extra  # noqa: PLC0415
 
     for s in SECTIONS:
         if "block" not in s:
@@ -575,9 +578,23 @@ def handbook_schedule_table(lang: str = "en") -> str:
             )
         elif q := by_q.get(name):
             cells = ("—", "🎯", "—", f"**Kahoot {q['n']} — {q[title_key]}**", "quiz")
+        elif x := lab_extra(name):
+            # A deep dive opened live keeps its own number and no Part or
+            # Block: it is an extra on the clock, not a fourteenth section.
+            cells = (
+                f"**{x['n']}**",
+                "🔬",
+                "—",
+                f"[{x[title_key]}]({colab_url(x)})",
+                HANDBOOK_LAB[lang],
+            )
+        elif name == LUNCH:
+            cells = ("—", "—", "—", HANDBOOK_LUNCH[lang], "—")
         else:
             cells = ("—", "—", "—", HANDBOOK_BREAK[lang], "—")
-        rows.append("| " + " | ".join(cells) + f" | {length} | {clock(minute)} |")
+        rows.append(
+            "| " + " | ".join(cells) + f" | {length or '—'} | {clock(minute)} |"
+        )
         minute += length
     return "\n".join(rows) + "\n"
 
@@ -587,6 +604,13 @@ HANDBOOK_HEAD = {
     "es": ("#", "Parte", "Bloque", "Segmento", "Formato", "Min", "Inicio"),
 }
 HANDBOOK_BREAK = {"en": "Break", "es": "Pausa"}
+HANDBOOK_LAB = {"en": "deep dive, live lab", "es": "estudio a fondo, en vivo"}
+HANDBOOK_LUNCH = {
+    "en": "**Lunch** — off the clock",
+    "es": "**Almuerzo** — fuera del reloj",
+}
+STRIP_LAB = {"en": "deep dive", "es": "estudio a fondo"}
+STRIP_LUNCH = {"en": "Lunch (clock stopped)", "es": "Almuerzo (reloj detenido)"}
 
 STRIP_HEAD = {
     "en": (
@@ -620,9 +644,11 @@ def day_sheet_strip(lang: str) -> str:
     section's own page keeps reading `_variables.yml` directly; a Kahoot or
     break row has no `_variables.yml` entry of its own, so its start comes
     straight off the clock and its minutes off `schedule.quiz_minutes` /
-    `schedule.break_minutes`, which is a `{{< var >}}` already.
+    `schedule.break_minutes`, which is a `{{< var >}}` already. A live lab has
+    an entry under `schedule.labs` and reads all three from it; lunch is off
+    the clock and has only the minute it starts at.
     """
-    from timeline import atoms, clock  # noqa: PLC0415
+    from timeline import LUNCH, atoms, clock, lab_extra  # noqa: PLC0415
 
     by_n = {s["n"]: s for s in SECTIONS}
     by_q = {f"q{q['n']}": q for q in QUIZZES}
@@ -638,6 +664,18 @@ def day_sheet_strip(lang: str) -> str:
             label = f"Kahoot {q['n']}"
             start = clock(minute, "+")
             minutes = "{{< var schedule.quiz_minutes >}}"
+        elif x := lab_extra(name):
+            lab = f"schedule.labs.x{x['n']}"
+            label = (
+                f"{x['n']} · {STRIP_LAB[lang]} · "
+                f"{{{{< var extras.x{x['n']}.title_{lang} >}}}}"
+            )
+            start = f"{{{{< var {lab}.start >}}}}"
+            minutes = f"{{{{< var {lab}.minutes >}}}}"
+        elif name == LUNCH:
+            label = STRIP_LUNCH[lang]
+            start = clock(minute, "+")
+            minutes = "—"
         else:
             label = HANDBOOK_BREAK[lang]
             start = clock(minute, "+")
@@ -1455,7 +1493,7 @@ def inject(
 
 
 def main() -> int:
-    from timeline import ScheduleError, total_minutes  # noqa: PLC0415
+    from timeline import ScheduleError, labs, total_minutes  # noqa: PLC0415
 
     INCLUDES.mkdir(exist_ok=True)
     try:
@@ -1526,12 +1564,13 @@ def main() -> int:
         inject(pyproject, "notebooks-group", pyproject_group(), ("# ", ""))
 
     taught = sum(s["minutes"] for s in SECTIONS)
+    live = sum(lab["minutes"] for lab in labs())
     print(
-        f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, "
-        f"{taught} taught + {total_minutes() - taught} quiz and break "
-        f"= {total_minutes()} min"
+        f"{len(SECTIONS)} sections, {len(QUIZZES)} quizzes, {len(labs())} live labs: "
+        f"{taught} taught + {live} lab + {total_minutes() - taught - live} "
+        f"quiz and break = {total_minutes()} min"
     )
-    print(f"{len(EXTRAS)} extras, off the clock")
+    print(f"{len(EXTRAS)} extras, {len(EXTRAS) - len(labs())} of them off the clock")
     return 0
 
 

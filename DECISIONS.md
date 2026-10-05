@@ -1304,6 +1304,22 @@ that reads notebooks and nothing at all to the ones about the decks, the
 notebooks pages' section list and the clock -- which is why the notebooks-page
 parity check needed no change.
 
+**The day is six hours, and four deep dives are on its clock** (2026-10-05).
+The workshop grew from 210 minutes to 360, with lunch on top. The extra time
+went two ways: the seven exercise blocks went from 15 minutes to 20, and four
+extras -- 17, 13, 14 and 20 -- got a live slot of 20 or 25 minutes each. They
+were not promoted to sections. A section owns a number in 00-12, a Part, a
+deck anchor and a row in tables that check 6 pins at thirteen; renumbering the
+wrap-up to make room would have moved every link to `#sec-12`. So a lab's
+minutes live under `schedule.labs`, not under `extras`, which also keeps
+`is_extra()` -- "has no `minutes`" -- true. Lunch is an atom of zero minutes
+rather than a 60-minute one because the organisers' six hours are session
+time: the clock the decks and the pace guide print is elapsed session minutes,
+and a counted lunch would have made every afternoon start time depend on how
+long the room took to eat. The deck timer gained a Shift-click pause for the
+same reason. The cut plan changed shape with it: lunch absorbs the morning's
+lateness, so Kahoot 2 is no longer the cut a late morning takes.
+
 ## No commits on main
 
 **Three guards, and the ruleset is the boundary.** Deciding which repository a

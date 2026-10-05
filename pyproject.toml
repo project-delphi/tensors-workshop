@@ -17,7 +17,7 @@
 [project]
 name = "tensors-workshop"
 version = "0"
-description = "A 210-minute bilingual workshop on tensors"
+description = "A one-day, 6-hour bilingual workshop on tensors"
 requires-python = ">=3.12"
 dependencies = []
 

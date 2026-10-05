@@ -1,10 +1,11 @@
 ---
 title: "Notebooks"
-subtitle: "One notebook per section, plus take-home deep dives, each runnable cold in Colab"
+subtitle: "One notebook per section, plus deep dives, four of them opened live, each runnable cold in Colab"
 ---
 
 Every section of the workshop has a notebook. Additional notebooks offer
-take-home deep dives. They are **English-primary**, and every heading
+deep dives: four are opened live and finished at home, four are take-home
+from the start. They are **English-primary**, and every heading
 carries a one-line Spanish summary — *cada encabezado lleva un resumen en
 español.*
 
@@ -44,10 +45,12 @@ investigating rather than dismissing.
 
 <span data-language-key="going-further"></span>
 
-These are **not sections**. They are deep dives, handed out as take-home
-material. They have no slides, no Kahoot, and no minutes on the workshop clock:
-the {{< var workshop.minutes >}}-minute agenda is exactly what it was without
-them. Section 11's live core compares CP and Tucker using library calls; its
+These are **not sections**. They are deep dives, and they have no slides and
+no Kahoot. Four are opened live, as a 20- or 25-minute lab each: **17**
+(attention) before lunch, then **13** (convolution), **14** (CP) and **20**
+(AlphaTensor) in the afternoon. The room works the notebook's core route and
+takes the rest home. The other four — 15, 16, 18 and 19 — are take-home
+material with no minutes on the workshop clock. Section 11's live core compares CP and Tucker using library calls; its
 four-model overview is extension material. Notebooks 14 and 15 build on that
 comparison by fitting CP by hand and then changing what "fit" means.
 

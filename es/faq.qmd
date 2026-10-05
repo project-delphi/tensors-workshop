@@ -31,10 +31,12 @@ poder resolverlo a tiempo.
 
 ### ¿Cuánto dura el taller? {#duration}
 
-La agenda en vivo dura **{{< var workshop.minutes >}} minutos**, incluidos los
-cuestionarios y los descansos. La preparación se hace antes; los ejercicios
-opcionales y la profundización en convolución y deconvolución quedan para
-casa. Consulta los tiempos en el
+La agenda en vivo es un día: **{{< var workshop.hours >}} horas
+({{< var workshop.minutes >}} minutos)** de sesiones, incluidos los
+cuestionarios, los descansos cortos y cuatro estudios a fondo abiertos en
+vivo, más una pausa para almorzar que no se cuenta. La preparación se hace
+antes; los ejercicios opcionales y el resto de cada estudio a fondo quedan
+para casa. Consulta los tiempos en el
 [horario](tensors_workshop_plan_with_quizzes.md#agenda).
 
 ### ¿En qué idioma se imparte? {#languages}
@@ -131,8 +133,8 @@ ejercicios y usa las [evaluaciones de entrada y salida](assessments.md) para
 comprobar tu razonamiento. Los [mazos de estudio]({{< var study.url_es >}})
 tienen tarjetas, exámenes de práctica y juegos de preguntas para cada sección
 y para los prerrequisitos. Las [referencias](references.qmd) ofrecen lecturas
-adicionales y la [profundización para casa](notebooks.qmd#para-ir-más-lejos)
-amplía el taller.
+adicionales y los [estudios a fondo](notebooks.qmd#para-ir-más-lejos)
+amplían el taller.
 
 ### ¿Cómo uso los recursos del complemento? {#companion}
 

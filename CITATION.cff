@@ -6,8 +6,8 @@ cff-version: 1.2.0
 message: "If you use this workshop, please cite it as below."
 title: "Tensors for Machine Learning"
 abstract: >-
-  A 210-minute workshop on tensors for machine learning, including quizzes
-  and breaks, in English and Spanish: a handbook, twenty-one Colab notebooks,
+  A one-day, 6-hour workshop on tensors for machine learning, including
+  quizzes, live deep dives and breaks, in English and Spanish: a handbook, twenty-one Colab notebooks,
   two slide decks, eight interactive widgets and three Kahoot quizzes.
 authors:
   - family-names: Kalia

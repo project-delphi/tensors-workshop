@@ -238,8 +238,10 @@ section's.
 | outcomes | `sec-06-contraction-with-einsum` | 06 | Contraction with einsum |
 | 18 | · | 06 | Reading an einsum expression |
 | 19 | · | 06 | NumPy and einsum, side by side |
+| deep dive | · | 17 | Live lab: split heads, predict, explain (opens notebook 17) |
+| lunch | · | — | The clock stops; Shift-click pauses the deck timer |
 | outcomes | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
-| myth or fact | · | 07 | Three claims from the block before the break |
+| myth or fact | · | 07 | Three claims from the block before lunch |
 | computing | · | 07 | Same predictions, different coefficients |
 | predict | · | 07 | How far does the answer move? |
 | 21 | · | 07 | California Housing, 20,433 equations (extension) |
@@ -249,8 +251,9 @@ section's.
 | 24 | · | 08 | Eigenvectors and the dominant direction |
 | outcomes | `sec-09-matrix-factorizations` | 09 | Matrix factorizations |
 | **26a** | · | 09 | Factor once, solve many — three routes to the same least squares |
+| deep dive | · | 13 | Live lab: correlation or convolution, then a photograph deconvolved (opens notebook 13) |
 | outcomes | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
-| myth or fact | · | 10 | Three claims from the block before the break |
+| myth or fact | · | 10 | Three claims from sections 07–09 |
 | 28 | · | 10 | Table → tensor → HOSVD → reconstruction |
 | golf | · | 10 | Compression golf, hole 1 |
 | predict | · | 10 | Which hour does the hour factor pick? |
@@ -259,14 +262,19 @@ section's.
 | **29b** | · | 11 | CP, Tucker, TT and t-SVD — what each stores and what it buys (extension) |
 | golf | · | 11 | Compression golf, hole 2 |
 | predict | · | 11 | Same budget — who wins? |
-| one idea | · | 12 | One idea connects sections 07, 10 and take-home 13 |
+| deep dive | · | 14 | Live lab: one rank-1 term and its `lam` (opens notebook 14) |
+| deep dive | · | 20 | Live lab: the product read off the tensor, then one game (opens notebook 20) |
+| one idea | · | 12 | One idea connects sections 07, 10 and deep dive 13 |
 | outcomes | `sec-12-wrap-up-and-take-homes` | 12 | Wrap-up and take-homes |
 
 A numbered row is background art; a **bold** number has a source in
 `scripts/gen_slide_art.py`. `outcomes` is a section's opening slide, built
 from `_variables.yml` (its minutes, *Practise today* and *Explore later*) rather
 than drawn, so it cannot disagree with the agenda. `predict`, `myth or fact`,
-`golf`, `computing` and `one idea` are HTML slides written in the qmd.
+`golf`, `computing`, `deep dive`, `lunch` and `one idea` are HTML slides
+written in the qmd. A `deep dive` slide reads its minutes from `schedule.labs`
+and carries an `h1.sr-only`, so, like a Kahoot, it names itself in the footer
+and keeps its notebook link to itself.
 
 **Unused art.** `slide-25.webp` and `slide-26.webp` (the old convolution slides)
 and `slide-31.webp` (the old wrap-up, which read `11 ·`) are still in the
@@ -277,14 +285,15 @@ regenerated: the tool that drew them is not here. The section dividers that
 git history before that date if a divider ever comes back.
 
 **What the notebooks teach that no slide does**, and deliberately so — these are
-take-home material, and the room's 210 minutes do not stretch to them:
+take-home material, and the room's 360 minutes do not stretch to them:
 
-- **Take-home 13** in full: correlation against true convolution, the Toeplitz
-  view, transposed convolution as overlap-add, and Richardson-Lucy on a real
-  photograph. Slides 21a, 30 and 31 all name it; none teaches it.
+- **Deep dives 13, 14, 17 and 20** past their core routes. Each has one slide,
+  for the 20 or 25 minutes it is open live, and that slide lists three steps;
+  the notebook is the teaching text. For 13 that leaves the Toeplitz view,
+  transposed convolution as overlap-add, and Richardson-Lucy in full.
 - **Take-homes A–E** in notebook 12 — PCA's scaling trap, attention as two
   contractions, Cholesky, audio denoising. Slide 31 lists them; none is taught.
-- Parts of notebooks 09 and 11 that 15 minutes will not reach: NMF, the fitted
+- Parts of notebooks 09 and 11 that 20 minutes will not reach: NMF, the fitted
   cost exponent, t-SVD's exact-versus-truncated comparison. The slides frame the
   section; the notebook outruns it, which is the intent.
 

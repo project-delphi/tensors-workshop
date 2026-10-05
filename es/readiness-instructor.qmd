@@ -16,7 +16,7 @@ format:
 
 ## Administración opcional
 
-Úsalo solo si lo decide quien organiza el taller. Otro instructor puede administrarlo **3–5 días antes del taller**. No añade tiempo a los 210 minutos del taller ni sustituye sus comprobaciones de entrada/salida.
+Úsalo solo si lo decide quien organiza el taller. Otro instructor puede administrarlo **3–5 días antes del taller**. No añade tiempo a los {{< var workshop.minutes >}} minutos del taller ni sustituye sus comprobaciones de entrada/salida.
 
 Estas páginas no están listadas: se omiten de la navegación y búsqueda del sitio, y se pide a los buscadores que no las indexen. Son archivos públicos, sin contraseña. Comparte solo la hoja del estudiante para el intento cronometrado; conserva esta clave para administrar.
 

@@ -27,10 +27,13 @@ Imprímela, o déjala abierta en una segunda pantalla.
 3. [kahoot.it](https://kahoot.it)
 4. [Simulador de broadcasting](../interactive/broadcasting-simulator.html?lang=es)
 5. [Reshape de una foto](../interactive/image-tensor.html?lang=es#reshape)
-6. [Columnas colineales](../interactive/linalg-stage.html?lang=es#collinear)
-7. [Tucker en el tensor de taxis](../interactive/factor-stage.html?lang=es#tucker)
-8. [Mismo presupuesto, CP y Tucker](../interactive/factor-stage.html?lang=es#budget)
-9. [Cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Colab
+6. [La imagen de las cabezas](../interactive/attention-stage.html?lang=es#heads) (estudio a fondo 17)
+7. [Columnas colineales](../interactive/linalg-stage.html?lang=es#collinear)
+8. [Tucker en el tensor de taxis](../interactive/factor-stage.html?lang=es#tucker)
+9. [Mismo presupuesto, CP y Tucker](../interactive/factor-stage.html?lang=es#budget)
+10. [Un término de rango 1](../interactive/factor-stage.html?lang=es#rank1) (estudio a fondo 14)
+11. [El juego de AlphaTensor](../interactive/alphatensor-stage.html?lang=es#game) (estudio a fondo 20)
+12. [Cuaderno 00]({{< var repo.colab_base >}}/00-setup-and-data.ipynb) en Colab
 
 ## Franja de reloj
 
@@ -42,16 +45,21 @@ Decide los recortes según el reloj, no sobre la marcha. Detalle completo en
 | Comprueba en | Deberías empezar | Si vas con retraso |
 |------|---------|----------------------------------------------|
 | +0:39 | actividad de significado de ejes de 02 | Un grupo informa; se omite el resto (−3). |
-| +1:00 | 04 | Solo la ronda 1 de la caza del error; se omite la reescritura de la ronda 2 (−3). |
-| +1:15 | Kahoot 1 | Hazlo. 6–10 min de retraso: elimina ya el Kahoot 2. 10+: elimina también el Kahoot 1. |
-| +1:25 | 05 | Mito o hecho → pregunta de recuperación (−½); un grupo informa (−4). |
-| +2:00 | 07 | Mito o hecho → pregunta de recuperación (−½); elimina el Kahoot 2 si sigue en pie (−5). |
-| +2:30 | 09 | Omite el error sobre residuos; conserva el puente de SVD a Tucker (−3). |
-| +2:50 | 10 | Conserva enteros el golf y la escena de Tucker, diga lo que diga el reloj. |
-| +3:10 | 11 | Hoyo 2 como demostración (−3); 10+ de retraso: 3 min de intento y luego demuestra (−4). |
-| +3:25 | 12 | Para donde estés y haz la comprobación final. |
+| +1:05 | 04 | Solo la ronda 1 de la caza del error; se omite la reescritura de la ronda 2 (−3). |
+| +1:25 | Kahoot 1 | Hazlo. Más de 10 min de retraso: elimínalo y haz la pausa. |
+| +1:40 | 05 | Mito o hecho → pregunta de recuperación (−½); un grupo informa (−4). |
+| +2:25 | Estudio a fondo 17 | 3 min de intento y luego la solución plegada; conserva la predicción (−8). |
+| +2:50 | 07 | El almuerzo reinició el reloj. Mito o hecho completo. |
+| +3:10 | Kahoot 2 | 5+ min de retraso: elimínalo (−5). |
+| +3:25 | 09 | Omite el error sobre residuos; conserva el puente de SVD a Tucker (−4). |
+| +3:55 | Estudio a fondo 13 | Demuestra el Ejercicio 1; conserva la predicción y el explorador (−8). |
+| +4:20 | 10 | Conserva enteros el golf y la escena de Tucker, diga lo que diga el reloj. |
+| +4:45 | 11 | Hoyo 2 como demostración (−3); 10+ de retraso: 3 min de intento y luego demuestra (−7). |
+| +5:15 | Estudio a fondo 14 | Predicción y, después, demuestra el Ejercicio 1 (−8). |
+| +5:35 | Estudio a fondo 20 | Predicción y, después, la partida en el escenario (−8). |
+| +5:55 | 12 | Para donde estés y haz la comprobación final. |
 
-**Nunca recortes:** las pausas, la sección 10, el Kahoot 3, la comprobación final.
+**Nunca recortes:** las pausas, la sección 10, el Kahoot 3, la comprobación final. Un estudio a fondo se acorta, nunca se salta.
 
 ## PIN de Kahoot
 

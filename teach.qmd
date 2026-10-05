@@ -7,8 +7,9 @@ lang: en
 [Español](es/teach.qmd)
 
 Plan and run the {{< var workshop.minutes >}}-minute workshop with the resources
-below. The agenda includes the quizzes and breaks. Group activities replace
-practice or discussion time; notebook 13 stays take-home work.
+below. The agenda includes the quizzes, the breaks and four deep dives opened
+live (13, 14, 17 and 20); lunch is on top of it. Group activities replace
+practice or discussion time.
 
 ## Prepare your session
 

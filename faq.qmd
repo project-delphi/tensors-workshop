@@ -28,9 +28,11 @@ Report setup or download failures before the session so they can be addressed ea
 
 ### How long does the workshop take? {#duration}
 
-The live agenda lasts **{{< var workshop.minutes >}} minutes**, including
-quizzes and breaks. Preparation happens beforehand; optional exercises and
-the convolution and deconvolution deep dive are take-home material. See the
+The live agenda is one day: **{{< var workshop.hours >}} hours
+({{< var workshop.minutes >}} minutes)** of sessions, including quizzes, short
+breaks and four deep dives opened live, plus a lunch break that is not
+counted. Preparation happens beforehand; optional exercises and the rest of
+each deep dive are take-home material. See the
 [schedule](tensors_workshop_plan_with_quizzes.md#schedule) for the session timings.
 
 ### Which language is used? {#languages}
@@ -123,7 +125,7 @@ Yes. Start with the prerequisites, then read the
 The [study decks]({{< var study.url_en >}}) have flashcards, practice tests
 and quiz games for every section and for the prerequisites.
 The [references](references.qmd) provide further reading, and the
-[take-home deep dive](notebooks.qmd#going-further) extends the workshop.
+[deep dives](notebooks.qmd#going-further) extend the workshop.
 
 ### How should I use the companion resources? {#companion}
 

@@ -1234,7 +1234,7 @@ def widget_taxi() -> Path:
 #
 # The wrap-up slide in both decks puts three approximations side by side: the
 # pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy in
-# take-home 13. Its words are editable slide content; these are its three
+# deep dive 13. Its words are editable slide content; these are its three
 # pictures, and they carry no words at all, so one copy serves both decks.
 #
 # Each is drawn from the workshop's own copy of what its notebook fetches
@@ -1494,7 +1494,7 @@ def og_card(arrays) -> Path:
     fig.text(
         0.055,
         0.680,
-        "A 210-minute workshop  \u00b7  English and Spanish  \u00b7  every notebook runs cold in Colab",
+        "A one-day, 6-hour workshop  \u00b7  English and Spanish  \u00b7  every notebook runs cold in Colab",
         fontfamily="Inter",
         fontsize=19,
         fontweight=400,

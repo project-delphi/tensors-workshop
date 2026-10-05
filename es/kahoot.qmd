@@ -78,7 +78,7 @@ caen en frío.
 |  |  |
 |---|---|
 | **Se lanza después de** | Sección 10 — Descomposición de Tucker, antes de la sección 11 |
-| **Cubre** | Sección 10, más las preguntas de convolución que quedan del extra 13 |
+| **Cubre** | Sección 10, más las preguntas de convolución del estudio a fondo 13, que se abre en vivo justo antes |
 | **Duración** | {{< var kahoot.q3.questions >}} preguntas, ~5 min |
 | **Archivo para importar** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
 | **Enlace de entrada** | [{{< var kahoot.q3.url >}}]({{< var kahoot.q3.url >}}) |
@@ -112,8 +112,9 @@ barajas y en los cuadernos, se lee de ese archivo.
 - **Presupuesta 5 minutos cada uno, con el podio incluido.** A los grupos les
   suele apetecer ver la clasificación, y está bien. Es la recompensa.
 - **No importes en directo.** Ver la nota al comienzo de esta página.
-- **Estos suman 15 minutos.** Con las tres pausas de 5 minutos, llevan los
-  180 minutos de secciones a {{< var workshop.minutes >}}.
+- **Estos suman 15 minutos.** Con cuatro estudios a fondo en vivo (90 minutos)
+  y cuatro pausas de {{< var schedule.break_minutes >}} minutos, llevan los 215
+  minutos de secciones a {{< var workshop.minutes >}}.
 
 ## Si te falta tiempo
 
