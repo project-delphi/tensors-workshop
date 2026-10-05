@@ -288,8 +288,8 @@ kahoot:
     covers: ["06", "07"]
     questions: 6
   # Its six questions are unchanged, so the title still describes them -- but
-  # half of them now ask about convolution, which became take-home 13 when
-  # factorizations took section 09. Retitle it only when the questions change.
+  # half of them ask about convolution, which became extra 13 when
+  # factorizations took section 09, and is opened live just before section 10. Retitle it only when the questions change.
   q3:
     n: 3
     title_en: "Convolution & Tensor Decompositions"

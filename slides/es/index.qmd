@@ -666,7 +666,9 @@ A la vuelta, la sección 07, que abre con **¿Mito o hecho?**: tres afirmaciones
 
 ::: {.notes}
 Pausa el temporizador de la presentación antes de que la sala salga: clic con
-Mayús sobre él, y otra vez con Mayús al reanudar. La sección 07 empieza en
+Mayús sobre él, y otra vez con Mayús al reanudar. El reloj de ritmo de la vista del
+presentador no se pausa, así que guíate por el temporizador de la sala después
+del almuerzo. La sección 07 empieza en
 +02:50 del reloj de sesión cuando la sala vuelva, así que el retraso de la
 mañana termina aquí.
 :::
@@ -901,7 +903,7 @@ Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 Predicción 4, preparación esencial y Ejercicio 1: 13, el explorador de
 deconvolución desde tu propio entorno 6, y 2 para nombrarlo: no hay inversa
 exacta, así que la mejor aproximación estable, que es la idea que conecta el
-día por tercera vez. El Kahoot 3 pregunta por convolución y correlación, así
+día por segunda vez, con Tucker aún por llegar. El Kahoot 3 pregunta por convolución y correlación, así
 que no te saltes la afirmación. Con retraso a +3:55: demuestra el Ejercicio 1
 desde su solución; conserva la afirmación y el explorador.
 :::

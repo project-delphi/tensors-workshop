@@ -750,9 +750,9 @@ k = int(np.argmax(db >= target_db))
 
 <span data-language-key="deep-dive-13-live"></span>
 
-**[13 · Convolution and deconvolution](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb)** is the third place the day's connecting idea happens, after the pseudoinverse in section 07 and before Tucker in section 10: a blurred photograph has no exact inverse, so you look for the best stable approximation of the original.
+**[13 · Convolution and deconvolution](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb)** is the second place the day's connecting idea happens, between the pseudoinverse in section 07 and Tucker in section 10: a blurred photograph has no exact inverse, so you look for the best stable approximation of the original.
 
-Work the notebook's core: its predict-first question — are convolution and correlation the same thing? — and Exercise 1, which runs the two side by side and then writes convolution as one structured matrix product. Then watch one thing rather than type it: Exercise 3's deconvolution explorer on the real photograph, where Richardson-Lucy takes the error from 0.1157 to 0.0815. Transposed convolution and the rest of Exercise 3 go home; [Appendix F](#appendix-f-take-home-convolution-and-deconvolution) has the theory. Kahoot 3, one section from now, asks about what you just did.
+Work the notebook's core: its predict-first question — are convolution and correlation the same thing? — and Exercise 1, which runs the two side by side and then writes convolution as one structured matrix product. Then watch one thing rather than type it: Exercise 3's deconvolution explorer on the real photograph, where 20 iterations of Richardson-Lucy take the error from 18.9% to 13.1%. Transposed convolution and the rest of Exercise 3 go home; [Appendix F](#appendix-f-take-home-convolution-and-deconvolution) has the theory. Kahoot 3, one section from now, asks about what you just did.
 
 ## 10 · Tucker Decomposition on Real Data (Block 6, 20 min)
 

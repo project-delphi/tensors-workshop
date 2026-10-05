@@ -238,9 +238,9 @@ section's.
 | outcomes | `sec-06-contraction-with-einsum` | 06 | Contraction with einsum |
 | 18 | · | 06 | Reading an einsum expression |
 | 19 | · | 06 | NumPy and einsum, side by side |
-| outcomes | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
 | deep dive | · | 17 | Live lab: split heads, predict, explain (opens notebook 17) |
 | lunch | · | — | The clock stops; Shift-click pauses the deck timer |
+| outcomes | `sec-07-inverses-and-pseudoinverse` | 07 | Inverses and the pseudoinverse |
 | myth or fact | · | 07 | Three claims from the block before lunch |
 | computing | · | 07 | Same predictions, different coefficients |
 | predict | · | 07 | How far does the answer move? |
@@ -251,8 +251,8 @@ section's.
 | 24 | · | 08 | Eigenvectors and the dominant direction |
 | outcomes | `sec-09-matrix-factorizations` | 09 | Matrix factorizations |
 | **26a** | · | 09 | Factor once, solve many — three routes to the same least squares |
-| outcomes | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
 | deep dive | · | 13 | Live lab: correlation or convolution, then a photograph deconvolved (opens notebook 13) |
+| outcomes | `sec-10-tucker-decomposition` | 10 | Tucker decomposition |
 | myth or fact | · | 10 | Three claims from sections 07–09 |
 | 28 | · | 10 | Table → tensor → HOSVD → reconstruction |
 | golf | · | 10 | Compression golf, hole 1 |

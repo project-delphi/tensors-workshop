@@ -769,9 +769,9 @@ k = int(np.argmax(db >= target_db))
 
 <span data-language-key="deep-dive-13-live"></span>
 
-**[13 · Convolución y deconvolución](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb)** es el tercer lugar donde ocurre la idea que conecta el día, después de la pseudoinversa de la sección 07 y antes de Tucker en la sección 10: una fotografía desenfocada no tiene inversa exacta, así que se busca la mejor aproximación estable del original.
+**[13 · Convolución y deconvolución](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb)** es el segundo lugar donde ocurre la idea que conecta el día, entre la pseudoinversa de la sección 07 y Tucker en la sección 10: una fotografía desenfocada no tiene inversa exacta, así que se busca la mejor aproximación estable del original.
 
-Trabaja la ruta esencial del cuaderno: su pregunta de predicción —¿son lo mismo la convolución y la correlación?— y el Ejercicio 1, que ejecuta las dos lado a lado y después escribe la convolución como un único producto matricial estructurado. Después, mira una cosa en lugar de escribirla: el explorador de deconvolución del Ejercicio 3 sobre la fotografía real, donde Richardson-Lucy lleva el error de 0.1157 a 0.0815. La convolución transpuesta y el resto del Ejercicio 3 quedan para casa; el [apéndice F](#apendice-f-convolucion-y-deconvolucion) tiene la teoría. El Kahoot 3, dentro de una sección, pregunta por lo que acabas de hacer.
+Trabaja la ruta esencial del cuaderno: su pregunta de predicción —¿son lo mismo la convolución y la correlación?— y el Ejercicio 1, que ejecuta las dos lado a lado y después escribe la convolución como un único producto matricial estructurado. Después, mira una cosa en lugar de escribirla: el explorador de deconvolución del Ejercicio 3 sobre la fotografía real, donde 20 iteraciones de Richardson-Lucy llevan el error del 18,9% al 13,1%. La convolución transpuesta y el resto del Ejercicio 3 quedan para casa; el [apéndice F](#apendice-f-convolucion-y-deconvolucion) tiene la teoría. El Kahoot 3, dentro de una sección, pregunta por lo que acabas de hacer.
 
 ## 10 · Descomposición de Tucker con datos reales (Bloque 6, 20 min)
 

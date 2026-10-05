@@ -1234,7 +1234,7 @@ def widget_taxi() -> Path:
 #
 # The wrap-up slide in both decks puts three approximations side by side: the
 # pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy in
-# take-home 13. Its words are editable slide content; these are its three
+# deep dive 13. Its words are editable slide content; these are its three
 # pictures, and they carry no words at all, so one copy serves both decks.
 #
 # Each is drawn from the workshop's own copy of what its notebook fetches

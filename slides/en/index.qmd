@@ -643,7 +643,8 @@ Back for section 07, which opens on **Myth or fact?**: three claims from section
 
 ::: {.notes}
 Pause the deck timer before the room leaves: Shift-click it, and Shift-click
-again when you restart. Section 07 starts at +02:50 on the session clock
+again when you restart. The speaker view's own pacing clock has no pause, so
+read the room's timer after lunch. Section 07 starts at +02:50 on the session clock
 whenever the room is back, so the morning's lateness ends here.
 :::
 
@@ -876,7 +877,8 @@ If you are short of time, run Exercise 2 and skip Exercise 3.
 ::: {.notes}
 Predict first 4, core prep and Exercise 1: 13, the deconvolution explorer
 from your own runtime 6, and 2 to name it: no exact inverse, so the best stable
-approximation, which is the day's connecting idea for the third time. Kahoot 3
+approximation, which is the day's connecting idea for the second time, with
+Tucker still to come. Kahoot 3
 asks about convolution and correlation, so do not skip the claim. Late at
 +3:55: demonstrate Exercise 1 from its solution; keep the claim and the
 explorer.
