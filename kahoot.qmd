@@ -70,7 +70,7 @@ the last two questions land cold.
 |  |  |
 |---|---|
 | **Runs after** | Section 10 — Tucker decomposition, before section 11 |
-| **Covers** | Section 10, plus leftover convolution questions from extra 13 |
+| **Covers** | Section 10, plus the convolution questions from deep dive 13, which runs live just before it |
 | **Length** | {{< var kahoot.q3.questions >}} questions, ~5 min |
 | **Import file** | [`{{< var kahoot.q3.xlsx >}}`]({{< var repo.url >}}/blob/{{< var repo.branch >}}/{{< var kahoot.q3.xlsx >}}) |
 | **Join link** | [{{< var kahoot.q3.url >}}]({{< var kahoot.q3.url >}}) |
@@ -103,8 +103,9 @@ reads from that one file.
 - **Budget 5 minutes each, including the podium.** Groups want to see the
   leaderboard, and that is fine. It is the payoff.
 - **Do not import live.** See the note at the top of this page.
-- **These add 15 minutes.** With the three 5-minute breaks, they take the
-  180 minutes of sections to {{< var workshop.minutes >}}.
+- **These add 15 minutes.** With four live deep dives (90 minutes) and four
+  {{< var schedule.break_minutes >}}-minute breaks, they take the 215 minutes
+  of sections to {{< var workshop.minutes >}}.
 
 ## If you are running out of time
 

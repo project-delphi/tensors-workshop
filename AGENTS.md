@@ -14,7 +14,7 @@ When a rule here surprises you, look it up there before changing it.
 
 ## What this is
 
-A bilingual (EN/ES) Quarto website for a 210-minute tensors workshop. No application
+A bilingual (EN/ES) Quarto website for a one-day, 360-minute tensors workshop. No application
 code — the deliverables are the rendered site, Colab notebooks for the workshop
 sections and take-home extras, two revealjs decks, the standalone interactive
 widgets listed under `repo.widgets` in `_variables.yml`, and three Kahoot
@@ -85,7 +85,10 @@ sections, extras, quizzes and agenda). Three things read it: `{{< var >}}`
 shortcodes in the `.qmd` pages and both decks, the two generator scripts, and
 the checker. The generators and the checker both take the running clock --
 when each section starts once quizzes and breaks are counted -- from
-`scripts/timeline.py` rather than walking it twice.
+`scripts/timeline.py` rather than walking it twice. That clock is sections,
+quizzes, breaks and the deep dives `schedule.labs` opens live; lunch is in the
+run order with zero minutes, so the agenda has to place it and nothing after it
+moves.
 
 **Never hand-edit generated scaffolding.** For notebooks that means only the
 centrally owned header (cell 0) and footer (final cell). Every cell between
@@ -683,9 +686,18 @@ says so in both languages.
 
 `extras:` in `_variables.yml` declares a take-home notebook. The mapping is
 `sections:` minus `minutes`, `start`, `end` and `part`, and that absence *is*
-the mechanism: `scripts/timeline.py` only walks `sections`, so an extra cannot
-move the clock, the agenda or `workshop.minutes`, and gets no `#sec-NN` slide
-anchor and no Kahoot. Everywhere a **notebook** is handled, extras are
+the mechanism: `gen_notebooks.is_extra()` is "has no `minutes`", so an extra
+never gets one, and gets no `#sec-NN` slide anchor and no Kahoot.
+
+**An extra reaches the clock only through `schedule.labs`.** Four deep dives
+(13, 14, 17, 20) are opened live; each entry there names the extra, the
+section it follows, its minutes and its derived `start`/`end`, which check 8
+recomputes. On the clock a lab is the atom `lab-NN`; it can take a break
+(`break_after`) or lunch (`lunch_after`) by its extra's number. A lab is still
+an extra everywhere else: no Part or Block, no section number, and one
+`.lab-slide` in each deck rather than an outcomes slide. Its notebook header
+says "opened live for N min", composed by `gen_notebooks.py` from the same
+entry. The agenda needs a row for every lab and for `lunch`. Everywhere a **notebook** is handled, extras are
 included: `gen_notebooks.py` and checks 1, 2, 4 and 10. Everywhere a
 **section** is handled, they are not: checks 5, 6 and 8 stay on `SECTIONS`.
 Their tables are `_includes/notebooks-extra-{en,es}.md` and
@@ -791,8 +803,9 @@ new check is appended, never inserted. Thirteen can fail the build:
 6. The EN and ES notebooks pages list the same thirteen sections.
 7. The two references pages cite the same works; every ml-blog URL is declared
    under `reading:`; every `references:` group anchor is on both pages.
-8. Each section's written `start`/`end` matches the running clock, and the
-   `agenda` rows account for every segment exactly once, in order.
+8. Each section's and each live lab's written `start`/`end` matches the
+   running clock, and the `agenda` rows account for every segment exactly
+   once, in order, lunch included.
 9. The deck timer's total matches `workshop.minutes`.
 10. No visible notebook cell depends on a name bound only in a folded solution.
 11. Kahoot join URLs -- **prints a TODO, never fails**: pasted in after the page exists.
@@ -838,7 +851,8 @@ deploys.
 
 `slides/deck-pace.html` is pulled into both decks with `include-after-body`
 and owns `TOTAL_SECONDS` (`total-time:` in a deck header silently does
-nothing). Two traps: Quarto runs its shortcode parser over included HTML, so a
+nothing). Its timer pauses on a Shift-click, which is how lunch stays off the
+clock the room sees. Two traps: Quarto runs its shortcode parser over included HTML, so a
 bare `var` shortcode in a comment there crashes the render; and reveal wraps
 each section into a `.stack` at init, so level-1 slides are not top-level
 children by the time scripts run. A section's part number reaches the

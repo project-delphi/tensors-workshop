@@ -15,7 +15,7 @@ so it reinforces rather than interrupts.
 |---|---|---|---|---|
 | **1 — Tensor Vocabulary & Shapes** | [`kahoot_quiz_1_vocabulary_shapes.xlsx`](kahoot_quiz_1_vocabulary_shapes.xlsx) | Section 04, before the first break | 01, 03, 04 | 6 |
 | **2 — Einsum, Distance & the Pseudoinverse** | [`kahoot_quiz_2_distance_pseudoinverse.xlsx`](kahoot_quiz_2_distance_pseudoinverse.xlsx) | Section 07, before the recursion demo | 06, 07 | 6 |
-| **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, before section 11 | 10, plus leftover convolution from extra 13 | 6 |
+| **3 — Convolution & Tensor Decompositions** | [`kahoot_quiz_3_convolution_decompositions.xlsx`](kahoot_quiz_3_convolution_decompositions.xlsx) | Section 10, before section 11 | 10, plus convolution from extra 13, opened live just before it | 6 |
 
 Sections **00, 02, 05, 08, 09, 11 and 12** have no quiz. Five of those are
 deliberate: the quizzes are checkpoints after exercise stretches, so the setup,
@@ -24,8 +24,9 @@ by one. Sections 09 and 11 are the gap: both are exercises, and no question
 has caught up with either yet.
 
 **09 is not.** Quiz 3 used to cover it, and it no longer does — half that
-quiz still asks about convolution, which left the live agenda when it became
-extra 13, and rewriting those questions is the open job the table above records.
+quiz asks about convolution, which is extra 13: a deep dive the room now opens
+live just before section 10, so those questions check something it has done.
+Giving 09 and 11 questions of their own is the open job the table above records.
 Until that happens, matrix factorizations reach the room without a checkpoint.
 
 ## How to run them
@@ -57,7 +58,7 @@ at that one file, so three edits cover everything.
 - **Budget 5 minutes each, including the podium.** Groups want to see the
   leaderboard, and that is fine — it is the payoff.
 - Students join at **kahoot.it** with the PIN on your screen.
-- The three quizzes add 15 minutes, and three 5-minute breaks another 15, taking the workshop from 180 to **210**.
+- The three quizzes add 15 minutes, four live deep dives 90 and four 10-minute breaks another 40, taking the workshop from 215 to **360**.
 
 ## Two things to watch
 
@@ -80,7 +81,7 @@ The handbook's cutting order, in order:
 2. **Quiz 1.**
 
 Everything past a notebook's **Core complete**, and every appendix, already
-sits outside the 210 minutes, so cutting it saves nothing.
+sits outside the 360 minutes, so cutting it saves nothing.
 
 **Never cut** section 01's *Three Operations That Matter*, section 10, or
 **Quiz 3** — the last checks whether Tucker landed while the taxi result is

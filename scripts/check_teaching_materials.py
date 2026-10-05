@@ -331,7 +331,8 @@ def check_clock_table(path: Path) -> tuple[int, int]:
     """Every hand-written check-at time must match `timeline`'s own clock.
 
     Only a row whose "should be starting" cell names a segment plainly --
-    a bare section number (`03`) or `Kahoot N` -- can be checked this way; a
+    a bare section number (`03`), `Kahoot N`, or a live lab as `Deep dive NN`
+    / `Estudio a fondo NN` -- can be checked this way; a
     row naming something else (an activity partway through a section, like
     02's axis-meaning task) is skipped, and the skip is counted so a summary
     that checks less than usual never reads like a clean one.
@@ -350,10 +351,14 @@ def check_clock_table(path: Path) -> tuple[int, int]:
             continue
         section = re.fullmatch(r"\d{2}", starting)
         kahoot = re.fullmatch(r"Kahoot (\d)", starting)
-        if not (section or kahoot):
+        lab = re.fullmatch(r"(?:Deep dive|Estudio a fondo) (\d{2})", starting)
+        if not (section or kahoot or lab):
             skipped += 1
             continue
-        segment_id = starting if section else f"q{kahoot[1]}"
+        if section:
+            segment_id = starting
+        else:
+            segment_id = f"q{kahoot[1]}" if kahoot else f"lab-{lab[1]}"
         if segment_id not in starts:
             raise ValueError(f"{path}: {starting!r} is not a known segment")
         expected_minute = starts[segment_id]

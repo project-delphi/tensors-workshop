@@ -5,16 +5,22 @@
 | 00:00 | 5 | — | Setup and welcome |
 | 00:05 | 20 | I | What a tensor is |
 | 00:25 | 20 | II | Thinking in N dimensions |
-| 00:45 | 30 | III | Indexing & broadcasting · Reshape & transpose |
-| 01:15 | 10 | 🎯 | **Kahoot 1** + break |
-| 01:25 | 15 | III | Video pipeline design *(group)* |
-| 01:40 | 15 | IV | Contraction with einsum |
-| 01:55 | 5 | — | Break |
-| 02:00 | 15 | IV | Inverses and the pseudoinverse |
-| 02:15 | 5 | 🎯 | **Kahoot 2** |
-| 02:20 | 25 | IV | Recursion · Matrix factorizations |
-| 02:45 | 5 | — | Break |
-| 02:50 | 15 | IV | Tucker decomposition |
-| 03:05 | 5 | 🎯 | **Kahoot 3** |
-| 03:10 | 15 | IV | Tensor factorizations |
-| 03:25 | 5 | — | Wrap-up and take-homes |
+| 00:45 | 40 | III | Indexing & broadcasting · Reshape & transpose |
+| 01:25 | 15 | 🎯 | **Kahoot 1** + break |
+| 01:40 | 15 | III | Video pipeline design *(group)* |
+| 01:55 | 20 | IV | Contraction with einsum |
+| 02:15 | 10 | — | Break |
+| 02:25 | 25 | 🔬 | Deep dive 17 · Multi-head attention *(live lab)* |
+| 02:50 | — | — | **Lunch** — the clock stops |
+| 02:50 | 20 | IV | Inverses and the pseudoinverse |
+| 03:10 | 5 | 🎯 | **Kahoot 2** |
+| 03:15 | 30 | IV | Recursion · Matrix factorizations |
+| 03:45 | 10 | — | Break |
+| 03:55 | 25 | 🔬 | Deep dive 13 · Convolution and deconvolution *(live lab)* |
+| 04:20 | 20 | IV | Tucker decomposition |
+| 04:40 | 5 | 🎯 | **Kahoot 3** |
+| 04:45 | 20 | IV | Tensor factorizations |
+| 05:05 | 10 | — | Break |
+| 05:15 | 20 | 🔬 | Deep dive 14 · CP and the rank-1 view *(live lab)* |
+| 05:35 | 20 | 🔬 | Deep dive 20 · AlphaTensor *(live lab)* |
+| 05:55 | 5 | — | Wrap-up and take-homes |

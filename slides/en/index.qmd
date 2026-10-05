@@ -85,7 +85,7 @@ scripts/gen_thumbnails.py; those are CC0 too, except the histology, which
 skimage documents as having no known copyright restrictions.
 :::
 
-## Agenda — {{< var workshop.minutes >}} minutes {.agenda-slide}
+## Agenda — {{< var workshop.hours >}} hours {.agenda-slide}
 
 {{< include ../../_includes/agenda-en.md >}}
 
@@ -413,7 +413,7 @@ padded batch with its validity mask.
 Model broadcasting for 3 minutes on the smallest example,
 [[2, 10], [4, 14]] − [3, 12], with the simulator on the projector: the room
 predicts the result shape, then one mismatch that errors. Exercise 3 and its
-feedback get 11. Collect the one-minute checkpoint before revealing it, and ask
+feedback get 14, and one group explains its NaN fix (2). Collect the one-minute checkpoint before revealing it, and ask
 what each number in `mean` stands for before anyone divides.
 :::
 
@@ -463,9 +463,9 @@ numbers, reshaped from a row into a column, and the error is gone.
 
 ::: {.notes}
 Open on a tiny image made (3, 2, 2) twice, by a transpose and by a reshape,
-with the image tensor on the projector (2 min). Exercise 1 gets 7. Then the bug
-hunt, 6: match 2, test and score 3, share 1. Name the reshape as the cold open's
-bug.
+with the image tensor on the projector (2 min). Exercise 1 gets 10. Then the bug
+hunt, 6: match 2, test and score 3, share 1. Spend the last 2 naming the
+reshape as the cold open's bug.
 :::
 
 ## {background-image="images/slides-final/slide-13.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -598,7 +598,7 @@ All three are worked mistakes 02, 03 and 04.
 
 ::: {.notes}
 Model one contraction for 4 minutes: a pixel contracted to 21. Exercise 1 and
-its feedback get 10. Collect the one-minute checkpoint before revealing it.
+its feedback get 13, and one pair reads its subscripts aloud (2). Collect the one-minute checkpoint before revealing it.
 Listen for the output letters: whatever is missing right of the arrow is
 summed.
 :::
@@ -611,6 +611,41 @@ summed.
 
 <p class="sr-only">NumPy to einsum: a table maps inner product, outer product, matmul, transpose, trace, diagonal, batched matmul and axis-sum to their einsum equivalents.</p>
 [Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 06 in Google Colab"}
+
+## Deep dive 17 · Multi-head attention {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Deep dive 17 — {{< var extras.x17.title_en >}}</h1>
+
+**{{< var schedule.labs.x17.minutes >}} minutes** on the notebook's core route. The rest goes home.
+
+1. **Do:** write `split_heads`: `(batch, tokens, D)` becomes `(batch, heads, tokens, D / heads)`.
+2. **Predict:** “The result has exactly the right shape, so the heads must be right too.”
+3. **Explain:** which axis did you move, and what would a bare reshape have scrambled?
+
+[Colab ↗]({{< var repo.colab_base >}}/17-multi-head-attention.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 17 in Google Colab"}
+
+::: {.notes}
+The problem and setup 4, `split_heads` and its tests 12, the predict-first
+claim 5, the explanation at Core complete 4. It sits here because it needs
+exactly sections 04 and 06: a reshape, a transpose and a contraction. Show the
+attention stage's heads picture only after the predict-first reveal. Late at
++2:25: three minutes to attempt, then the folded solution; keep the claim.
+Lunch follows, and absorbs whatever is still owed.
+:::
+
+## Lunch {.computing-slide}
+
+<h1 class="sr-only">Lunch</h1>
+
+**The clock stops here.** About {{< var schedule.lunch_minutes >}} minutes.
+
+Back for section 07, which opens on **Myth or fact?**: three claims from sections 05 and 06.
+
+::: {.notes}
+Pause the deck timer before the room leaves: Shift-click it, and Shift-click
+again when you restart. Section 07 starts at +02:50 on the session clock
+whenever the room is back, so the morning's lateness ends here.
+:::
 
 ## {{< var sections.s07.n >}} · {{< var sections.s07.title_en >}} {#sec-07-inverses-and-pseudoinverse .outcomes-slide}
 
@@ -634,14 +669,14 @@ summed.
 
 ::: {.notes}
 Myth or fact first (1 min). Model duplicate columns for 3, with the collinear
-step on the projector, then compare coefficients and norms for 8: the same
+step on the projector, then compare coefficients and norms for 11: the same
 predictions from different coefficients. Close on what the data cannot identify,
-and the checkpoint (3).
+and the checkpoint (5).
 :::
 
 ## Myth or fact? {.computing-slide}
 
-Back from the break: three claims from sections 05–06. Hands up for **myth**.
+Back from lunch: three claims from sections 05–06. Hands up for **myth**.
 
 1. `clip[1]` is the second thing that happened in the video.\
    [**Myth.** `clip` keeps every 45th frame of 720, so `clip[1]` is source frame 45.]{.fragment}
@@ -718,7 +753,7 @@ Explore later
 :::
 
 <p class="sr-only">What about tensors? Three cards. First: no tensor inverse is in common use. That is a fair question with an honest answer, not a gap in your reading. Second: definitions do exist, built on the Einstein product and on the t-product for order-3 tensors, and they are active research. Third: in practice you unfold the tensor into a matrix, apply the matrix pseudoinverse, and fold the result back. A 4 by 3 by 5 tensor unfolds to 4 by 15, whose pseudoinverse is 15 by 4. M A-plus M returns M exactly, because unfolding loses nothing.</p>
-<p class="sr-only">This is also where the second half's through-line starts: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in take-home 13 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.</p>
+<p class="sr-only">This is also where the second half's through-line starts: the pseudoinverse in section 07, Tucker in section 10 and Richardson-Lucy deconvolution in deep dive 13 are three instances of one idea — when a problem has no exact answer and no true inverse, find the best stable approximation instead.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 07 in Google Colab"}
 
 [📖 {{< var reading.inverses_practice.title_en >}} ↗]({{< var reading.inverses_practice.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Further reading on the ML blog"}
@@ -805,8 +840,8 @@ that every training loop is this same recursion, and move on.
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 09 in Google Colab"}
 
 ::: {.notes}
-Exercise 1 gets 9, the residual mistake 3, and the SVD-to-Tucker bridge 3. No
-timing sweeps. Late at +2:30: skip the residual mistake, never the bridge,
+Exercise 1 gets 12, the residual mistake 4, and the SVD-to-Tucker bridge 4. No
+timing sweeps. Late at +3:25: skip the residual mistake, never the bridge,
 which section 10 needs.
 :::
 
@@ -824,6 +859,27 @@ size — a full SVD near 39 times a Cholesky — not the exponent, which comes i
 under 3 because of parallelism and cache.
 
 If you are short of time, run Exercise 2 and skip Exercise 3.
+:::
+
+## Deep dive 13 · Convolution and deconvolution {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Deep dive 13 — {{< var extras.x13.title_en >}}</h1>
+
+**{{< var schedule.labs.x13.minutes >}} minutes** on the notebook's core route. The rest goes home.
+
+1. **Predict:** “Convolution and correlation are the same thing.”
+2. **Do:** Exercise 1: run both, then write convolution as one structured matrix product.
+3. **Watch:** a blurred photograph, deconvolved: better, never exact.
+
+[Colab ↗]({{< var repo.colab_base >}}/13-convolution-and-deconvolution.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 13 in Google Colab"}
+
+::: {.notes}
+Predict first 4, core prep and Exercise 1: 13, the deconvolution explorer
+from your own runtime 6, and 2 to name it: no exact inverse, so the best stable
+approximation, which is the day's connecting idea for the third time. Kahoot 3
+asks about convolution and correlation, so do not skip the claim. Late at
++3:55: demonstrate Exercise 1 from its solution; keep the claim and the
+explorer.
 :::
 
 ## {{< var sections.s10.n >}} · {{< var sections.s10.title_en >}} {#sec-10-tucker-decomposition .outcomes-slide}
@@ -847,16 +903,16 @@ If you are short of time, run Exercise 2 and skip Exercise 3.
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 10 in Google Colab"}
 
 ::: {.notes}
-Myth or fact first (1). Explain core and factors (3), then compression golf
+Myth or fact first (1). Explain core and factors (5), then compression golf
 hole 1 in the rank explorer (8): par is (3, 3, 1) at 60 numbers under 7%.
-Leaderboard and defend the winner (3), then the Tucker stage at the winning
+Leaderboard and defend the winner (6), with the Tucker stage at the winning
 ranks, whose hour pattern peaks at 18. Never before golf, and never cut this
 section.
 :::
 
 ## Myth or fact? {.computing-slide}
 
-Back from the break: three claims from sections 07–09. Hands up for **myth**.
+Before Tucker: three claims from sections 07–09. Hands up for **myth**.
 
 1. If `pinv` returns an answer without complaint, the matrix was invertible.\
    [**Myth.** `pinv` answers for every matrix. With a duplicated column it answers for a rank-2 matrix, and `P @ A` is not the identity.]{.fragment}
@@ -976,9 +1032,9 @@ same tensor to CP.
 [Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open notebook 11 in Google Colab"}
 
 ::: {.notes}
-Exercise 1 in pairs (7): CP and Tucker on one budget. Then golf hole 2 (5):
+Exercise 1 in pairs (10): CP and Tucker on one budget. Then golf hole 2 (5):
 the bar drops to 2%, and CP rank 6 wins with 198 numbers against Tucker's 236.
-Leaderboard and the budget stage (3), never before the pair exercise, which it
+Leaderboard and the budget stage (5), never before the pair exercise, which it
 would answer.
 :::
 
@@ -1050,6 +1106,48 @@ AlphaTensor and AlphaEvolve at the problem. The handbook's *Still open* note
 at the end of section 11 has the code and the papers.
 :::
 
+## Deep dive 14 · CP and the rank-1 view {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Deep dive 14 — {{< var extras.x14.title_en >}}</h1>
+
+**{{< var schedule.labs.x14.minutes >}} minutes** on the notebook's core route. The rest goes home.
+
+1. **Predict:** is `2a ∘ (b/2) ∘ c` the same tensor as `a ∘ b ∘ c`?
+2. **Do:** Exercise 1: build a rank-1 tensor with `einsum`, normalise, and put all the size into `lam`.
+3. **Explain:** what does `lam` measure?
+
+[Colab ↗]({{< var repo.colab_base >}}/14-cp-factorization.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 14 in Google Colab"}
+
+::: {.notes}
+Predict first 3, Exercise 1: 12, explain and check 5. Run the three Core
+prep cells during the break before this slot: they install tensorly and
+download the recording. Section 11 compared CP with Tucker; this is what one CP
+component is. The factor stage's rank-1 scene can sit on the projector while
+the room builds its own. Late at +5:15: the claim, then demonstrate
+Exercise 1.
+:::
+
+## Deep dive 20 · AlphaTensor {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Deep dive 20 — {{< var extras.x20.title_en >}}</h1>
+
+**{{< var schedule.labs.x20.minutes >}} minutes** on the notebook's core route. The rest goes home.
+
+1. **Predict:** does Strassen's first move lower the count of nonzero cells?
+2. **Do:** Exercise 1: read a `2 × 2` product off the `4 × 4 × 4` tensor with one `einsum`.
+3. **Play:** one game on the stage. Seven moves beats the schoolbook eight.
+
+[Colab ↗]({{< var repo.colab_base >}}/20-alphatensor.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Open deep dive 20 in Google Colab"}
+
+::: {.notes}
+Predict first 4, Part 1 and Exercise 1: 10, one game on the AlphaTensor
+stage with the room calling the moves 6. This is section 11's open problem made
+playable: a CP factorization of the rule is an algorithm, and its rank is the
+number of multiplications. Nothing here is AlphaTensor itself; the records are
+quoted from the papers. Late at +5:35: the claim, then the game; Exercise 1
+goes home.
+:::
+
 ## One idea connects the workshop {.computing-slide .recap-slide}
 
 [Approximate useful structure when the exact solution is not enough.]{.recap-lead}
@@ -1075,7 +1173,7 @@ at the end of section 11 has the code and the papers.
 
 ::: {.recap-card}
 <h3>Deconvolution</h3>
-[Take-home 13]{.recap-where}
+[Deep dive 13]{.recap-where}
 
 ![](../images/recap-deconv.webp){fig-alt="The camera-operator photograph, the same crop blurred and noisy, and the Richardson-Lucy recovery, which is sharper but not exact."}
 
@@ -1095,10 +1193,11 @@ lesson rather than four separate blocks. Do not skip it. Section 07's tensor
 inverse slide opens it; this is where it closes.
 
 Every number on the slide is one the room printed: `X.shape` in section 07's
-Exercise 2, hole 1's par in section 10's golf, and take-home 13's Exercise 3.
+Exercise 2, hole 1's par in section 10's golf, and deep dive 13's Exercise 3.
 
-Convolution is the one leg of the three the room no longer runs. Say so, and
-say that take-home 13 is where it happens to a real photograph.
+Convolution is the leg the room watched rather than typed: deep dive 13's
+explorer ran it on a real photograph an hour ago. Say that the whole of
+Exercise 3 is waiting in that notebook.
 
 30-second callback to the cold open, inside this recap: replay the
 transposed voice from the very first slide. Let the room name the bug —

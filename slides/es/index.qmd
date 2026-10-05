@@ -87,7 +87,7 @@ de los propios datos con scripts/gen_thumbnails.py; también son CC0, salvo la
 histología, que skimage documenta sin restricciones de copyright conocidas.
 :::
 
-## Programa — {{< var workshop.minutes >}} minutos {.agenda-slide}
+## Programa — {{< var workshop.hours >}} horas {.agenda-slide}
 
 {{< include ../../_includes/agenda-es.md >}}
 
@@ -423,7 +423,7 @@ validez.
 Modela el broadcasting 3 minutos con el ejemplo más pequeño,
 [[2, 10], [4, 14]] − [3, 12], con el simulador en el proyector: la sala predice
 la forma del resultado y después un desajuste que da error. El Ejercicio 3 y su
-retroalimentación tienen 11. Recoge la comprobación de un minuto antes de
+retroalimentación tienen 14, y un grupo explica cómo corrigió los NaN (2). Recoge la comprobación de un minuto antes de
 revelarla, y pregunta qué representa cada número de `mean` antes de dividir.
 :::
 
@@ -476,9 +476,9 @@ desaparece.
 ::: {.notes}
 Abre con una imagen diminuta que queda (3, 2, 2) dos veces, por una
 transposición y por un reshape, con el tensor de imagen en el proyector (2 min).
-El Ejercicio 1 tiene 7. Después la caza del error, 6: emparejar 2, prueba y
-puntuación 3, compartir 1. Nombra el reshape como el error de la apertura en
-frío.
+El Ejercicio 1 tiene 10. Después la caza del error, 6: emparejar 2, prueba y
+puntuación 3, compartir 1. Dedica los últimos 2 a nombrar el reshape como el
+error de la apertura en frío.
 :::
 
 ## {background-image="images/slides-final/slide-13.webp" background-size="contain" background-repeat="no-repeat" background-position="center" background-color="#ffffff"}
@@ -620,7 +620,7 @@ Las tres son los errores resueltos 02, 03 y 04.
 
 ::: {.notes}
 Modela una contracción durante 4 minutos: un píxel contraído a 21. El
-Ejercicio 1 y su retroalimentación tienen 10. Recoge la comprobación de un
+Ejercicio 1 y su retroalimentación tienen 13, y una pareja lee sus subíndices en voz alta (2). Recoge la comprobación de un
 minuto antes de revelarla. Atento a las letras de salida: lo que falta a la
 derecha de la flecha se suma.
 :::
@@ -633,6 +633,43 @@ derecha de la flecha se suma.
 
 <p class="sr-only">NumPy y einsum: una tabla asocia producto interno, producto externo, matmul, transpose, traza, diagonal, matmul por lotes y suma por eje con su equivalente en einsum.</p>
 [Colab ↗]({{< var repo.colab_base >}}/06-contraction-with-einsum.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 06 en Google Colab"}
+
+## Estudio a fondo 17 · Atención multicabeza {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Estudio a fondo 17 — {{< var extras.x17.title_es >}}</h1>
+
+**{{< var schedule.labs.x17.minutes >}} minutos** en la ruta esencial del cuaderno. El resto queda para casa.
+
+1. **Haz:** escribe `split_heads`: `(batch, tokens, D)` pasa a ser `(batch, heads, tokens, D / heads)`.
+2. **Predice:** «El resultado tiene exactamente la forma correcta, así que las cabezas también lo están».
+3. **Explica:** ¿qué eje moviste, y qué habría desordenado un reshape a secas?
+
+[Colab ↗]({{< var repo.colab_base >}}/17-multi-head-attention.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir el estudio a fondo 17 en Google Colab"}
+
+::: {.notes}
+El problema y la preparación 4, `split_heads` y sus pruebas 12, la
+afirmación de predicción 5, la explicación al final de la ruta esencial 4. Va
+aquí porque necesita justo las secciones 04 y 06: un reshape, una transposición
+y una contracción. Muestra la imagen de las cabezas del escenario de atención
+solo después de revelar la predicción. Con retraso a +2:25: tres minutos de
+intento y luego la solución plegada; conserva la afirmación. Después viene el
+almuerzo, que absorbe lo que aún se deba.
+:::
+
+## Almuerzo {.computing-slide}
+
+<h1 class="sr-only">Almuerzo</h1>
+
+**El reloj se detiene aquí.** Unos {{< var schedule.lunch_minutes >}} minutos.
+
+A la vuelta, la sección 07, que abre con **¿Mito o hecho?**: tres afirmaciones de las secciones 05 y 06.
+
+::: {.notes}
+Pausa el temporizador de la presentación antes de que la sala salga: clic con
+Mayús sobre él, y otra vez con Mayús al reanudar. La sección 07 empieza en
++02:50 del reloj de sesión cuando la sala vuelva, así que el retraso de la
+mañana termina aquí.
+:::
 
 ## {{< var sections.s07.n >}} · {{< var sections.s07.title_es >}} {#sec-07-inverses-and-pseudoinverse .outcomes-slide}
 
@@ -657,13 +694,13 @@ derecha de la flecha se suma.
 ::: {.notes}
 Primero ¿Mito o hecho? (1 min). Modela columnas duplicadas durante 3, con el
 paso de columnas colineales en el proyector, y después compara coeficientes y
-normas durante 8: las mismas predicciones con coeficientes distintos. Cierra
-con lo que los datos no pueden identificar, y la comprobación (3).
+normas durante 11: las mismas predicciones con coeficientes distintos. Cierra
+con lo que los datos no pueden identificar, y la comprobación (5).
 :::
 
 ## ¿Mito o hecho? {.computing-slide}
 
-De vuelta de la pausa: tres afirmaciones de las secciones 05–06. Mano alzada para **mito**.
+De vuelta del almuerzo: tres afirmaciones de las secciones 05–06. Mano alzada para **mito**.
 
 1. `clip[1]` es lo segundo que pasó en el video.\
    [**Mito.** `clip` guarda uno de cada 45 fotogramas de 720, así que `clip[1]` es el fotograma 45.]{.fragment}
@@ -741,7 +778,7 @@ Explora después
 :::
 
 <p class="sr-only">¿Y los tensores? Tres tarjetas. La primera: no hay ninguna inversa tensorial de uso común. Es una pregunta legítima con una respuesta honesta, no un hueco en tu lectura. La segunda: sí existen definiciones, basadas en el producto de Einstein y en el t-producto para tensores de orden 3, y ambas son investigación activa. La tercera: en la práctica se despliega el tensor a matriz, se aplica la pseudoinversa matricial y se vuelve a plegar el resultado. Un tensor de 4 por 3 por 5 se despliega a 4 por 15, cuya pseudoinversa es 15 por 4. Y M A-más M devuelve M exactamente, porque el desplegado no pierde nada.</p>
-<p class="sr-only">Aquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, Tucker en la sección 10 y la deconvolución de Richardson-Lucy en el ejercicio para casa 13 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.</p>
+<p class="sr-only">Aquí empieza también el hilo conductor de la segunda mitad: la pseudoinversa de la sección 07, Tucker en la sección 10 y la deconvolución de Richardson-Lucy en el estudio a fondo 13 son tres casos de una misma idea — cuando un problema no tiene respuesta exacta ni inversa verdadera, se busca la mejor aproximación estable.</p>
 [Colab ↗]({{< var repo.colab_base >}}/07-inverses-and-pseudoinverse.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Abrir notebook 07 en Google Colab"}
 
 [📖 {{< var reading.inverses_practice.title_es >}} ↗]({{< var reading.inverses_practice.url >}}){.reading-tab target="_blank" rel="noopener noreferrer" title="Lectura adicional en el blog de ML (en inglés)"}
@@ -829,8 +866,8 @@ gradiente. Di que todo bucle de entrenamiento es esta misma recursión y sigue.
 [Colab ↗]({{< var repo.colab_base >}}/09-matrix-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 09 in Google Colab"}
 
 ::: {.notes}
-El Ejercicio 1 tiene 9, el error del residuo 3 y el puente de la SVD a Tucker 3.
-Sin barridos de tiempos. Con retraso a +2:30, omite el error del residuo, nunca
+El Ejercicio 1 tiene 12, el error del residuo 4 y el puente de la SVD a Tucker 4.
+Sin barridos de tiempos. Con retraso a +3:25, omite el error del residuo, nunca
 el puente, que la sección 10 necesita.
 :::
 
@@ -846,6 +883,27 @@ La tabla de operaciones y el cronómetro no coinciden, y ese desacuerdo es la
 lección. Lo que sobrevive a la máquina es la razón entre métodos a tamaño fijo: una SVD completa cerca de 39 veces una Cholesky. No el exponente, que queda por debajo de 3 por el paralelismo y la caché.
 
 Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
+:::
+
+## Estudio a fondo 13 · Convolución y deconvolución {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Estudio a fondo 13 — {{< var extras.x13.title_es >}}</h1>
+
+**{{< var schedule.labs.x13.minutes >}} minutos** en la ruta esencial del cuaderno. El resto queda para casa.
+
+1. **Predice:** «La convolución y la correlación son lo mismo».
+2. **Haz:** Ejercicio 1: ejecuta las dos y escribe la convolución como un único producto matricial estructurado.
+3. **Mira:** una fotografía desenfocada, deconvolucionada: mejor, nunca exacta.
+
+[Colab ↗]({{< var repo.colab_base >}}/13-convolution-and-deconvolution.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir el estudio a fondo 13 en Google Colab"}
+
+::: {.notes}
+Predicción 4, preparación esencial y Ejercicio 1: 13, el explorador de
+deconvolución desde tu propio entorno 6, y 2 para nombrarlo: no hay inversa
+exacta, así que la mejor aproximación estable, que es la idea que conecta el
+día por tercera vez. El Kahoot 3 pregunta por convolución y correlación, así
+que no te saltes la afirmación. Con retraso a +3:55: demuestra el Ejercicio 1
+desde su solución; conserva la afirmación y el explorador.
 :::
 
 ## {{< var sections.s10.n >}} · {{< var sections.s10.title_es >}} {#sec-10-tucker-decomposition .outcomes-slide}
@@ -869,16 +927,16 @@ Si vas justo de tiempo, haz el ejercicio 2 y salta el 3.
 [Colab ↗]({{< var repo.colab_base >}}/10-tucker-decomposition.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 10 in Google Colab"}
 
 ::: {.notes}
-Primero ¿Mito o hecho? (1). Explica núcleo y factores (3), y después el golf de
+Primero ¿Mito o hecho? (1). Explica núcleo y factores (5), y después el golf de
 compresión, hoyo 1, en el explorador de rangos (8): el par es (3, 3, 1) con 60
-números por debajo del 7%. Clasificación y defensa del ganador (3), y después
+números por debajo del 7%. Clasificación y defensa del ganador (6), y con ello
 el escenario de Tucker en los rangos ganadores, cuyo patrón horario tiene el
 pico en la hora 18. Nunca antes del golf, y nunca recortes esta sección.
 :::
 
 ## ¿Mito o hecho? {.computing-slide}
 
-De vuelta de la pausa: tres afirmaciones de las secciones 07–09. Mano alzada para **mito**.
+Antes de Tucker: tres afirmaciones de las secciones 07–09. Mano alzada para **mito**.
 
 1. Si `pinv` devuelve una respuesta sin quejarse, la matriz era invertible.\
    [**Mito.** `pinv` responde para cualquier matriz. Con una columna duplicada responde para una matriz de rango 2, y `P @ A` no es la identidad.]{.fragment}
@@ -1003,9 +1061,9 @@ el mismo tensor a CP.
 [Colab ↗]({{< var repo.colab_base >}}/11-tensor-factorizations.ipynb){.colab-tab target="_blank" rel="noopener noreferrer" title="Open cuaderno 11 in Google Colab"}
 
 ::: {.notes}
-Ejercicio 1 en parejas (7): CP y Tucker con un mismo presupuesto. Después el
+Ejercicio 1 en parejas (10): CP y Tucker con un mismo presupuesto. Después el
 hoyo 2 del golf (5): la barra baja al 2%, y CP de rango 6 gana con 198 números
-frente a los 236 de Tucker. Clasificación y el escenario del presupuesto (3),
+frente a los 236 de Tucker. Clasificación y el escenario del presupuesto (5),
 nunca antes del ejercicio en parejas, que respondería.
 :::
 
@@ -1080,6 +1138,48 @@ ha lanzado AlphaTensor y AlphaEvolve contra el problema. La nota *Sigue
 abierto* al final de la sección 11 del manual tiene el código y los artículos.
 :::
 
+## Estudio a fondo 14 · CP y la vista de rango 1 {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Estudio a fondo 14 — {{< var extras.x14.title_es >}}</h1>
+
+**{{< var schedule.labs.x14.minutes >}} minutos** en la ruta esencial del cuaderno. El resto queda para casa.
+
+1. **Predice:** ¿es `2a ∘ (b/2) ∘ c` el mismo tensor que `a ∘ b ∘ c`?
+2. **Haz:** Ejercicio 1: construye un tensor de rango 1 con `einsum`, normaliza y lleva todo el tamaño a `lam`.
+3. **Explica:** ¿qué mide `lam`?
+
+[Colab ↗]({{< var repo.colab_base >}}/14-cp-factorization.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir el estudio a fondo 14 en Google Colab"}
+
+::: {.notes}
+Predicción 3, Ejercicio 1: 12, explicación y comprobación 5. Ejecuta las
+tres celdas de preparación esencial durante la pausa anterior: instalan
+tensorly y descargan la grabación. La sección 11 comparó CP con Tucker; esto es
+lo que es una componente de CP. La escena de rango 1 del escenario de
+factorización puede estar en el proyector mientras la sala construye la suya.
+Con retraso a +5:15: la afirmación y, después, demuestra el Ejercicio 1.
+:::
+
+## Estudio a fondo 20 · AlphaTensor {.computing-slide .lab-slide}
+
+<h1 class="sr-only">Estudio a fondo 20 — {{< var extras.x20.title_es >}}</h1>
+
+**{{< var schedule.labs.x20.minutes >}} minutos** en la ruta esencial del cuaderno. El resto queda para casa.
+
+1. **Predice:** ¿la primera jugada de Strassen reduce el número de celdas no nulas?
+2. **Haz:** Ejercicio 1: lee un producto de `2 × 2` sobre el tensor de `4 × 4 × 4` con un solo `einsum`.
+3. **Juega:** una partida en el escenario. Siete jugadas ganan a las ocho de siempre.
+
+[Colab ↗]({{< var repo.colab_base >}}/20-alphatensor.ipynb){.colab-tab .colab-tab-extra target="_blank" rel="noopener noreferrer" title="Abrir el estudio a fondo 20 en Google Colab"}
+
+::: {.notes}
+Predicción 4, Parte 1 y Ejercicio 1: 10, una partida en el escenario de
+AlphaTensor con la sala dictando las jugadas 6. Es el problema abierto de la
+sección 11 convertido en juego: una factorización CP de la regla es un
+algoritmo, y su rango es el número de multiplicaciones. Nada de esto es
+AlphaTensor en sí; los récords se citan de los artículos. Con retraso a +5:35:
+la afirmación y, después, la partida; el Ejercicio 1 queda para casa.
+:::
+
 ## Una idea conecta el taller {.computing-slide .recap-slide}
 
 [Aproximar estructura útil cuando la solución exacta no basta.]{.recap-lead}
@@ -1105,7 +1205,7 @@ abierto* al final de la sección 11 del manual tiene el código y los artículos
 
 ::: {.recap-card}
 <h3>Deconvolución</h3>
-[Ejercicio para casa 13]{.recap-where}
+[Estudio a fondo 13]{.recap-where}
 
 ![](../images/recap-deconv.webp){fig-alt="La fotografía del camarógrafo, el mismo recorte desenfocado y con ruido, y la recuperación de Richardson-Lucy, más nítida pero no exacta."}
 
@@ -1126,10 +1226,11 @@ La diapositiva de inversas tensoriales de la sección 07 la abre; aquí se cierr
 
 Cada número de la diapositiva es uno que la sala imprimió: `X.shape` en el
 Ejercicio 2 de la sección 07, el par del hoyo 1 en el golf de la sección 10 y el
-Ejercicio 3 del ejercicio para casa 13.
+Ejercicio 3 del estudio a fondo 13.
 
-La convolución es la única de las tres patas que la sala ya no ejecuta. Dilo, y
-di que el ejercicio para casa 13 es donde le ocurre a una fotografía real.
+La convolución es la pata que la sala vio en lugar de escribir: el explorador
+del estudio a fondo 13 la ejecutó sobre una fotografía real hace una hora. Di
+que el Ejercicio 3 completo espera en ese cuaderno.
 
 Callback de 30 segundos al arranque, dentro de este repaso: reproduce otra
 vez la voz transpuesta de la primerísima diapositiva. Deja que la sala nombre

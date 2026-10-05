@@ -101,7 +101,7 @@ stages. Camera settings are optional unless they carry the explanation.
       broadcast, and defend a compression choice.
 - [ ] Supply a rubric and targeted follow-up resources, building on the
       existing entry, exit, and in-session checkpoints.
-- [ ] Schedule it after the workshop, outside the 210-minute agenda, and keep
+- [ ] Schedule it after the workshop, outside the 360-minute agenda, and keep
       responses private using the existing instructor collection approach.
 
 Acceptance: the follow-up checks retained reasoning and transfer, not recall

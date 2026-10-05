@@ -1494,7 +1494,7 @@ def og_card(arrays) -> Path:
     fig.text(
         0.055,
         0.680,
-        "A 210-minute workshop  \u00b7  English and Spanish  \u00b7  every notebook runs cold in Colab",
+        "A one-day, 6-hour workshop  \u00b7  English and Spanish  \u00b7  every notebook runs cold in Colab",
         fontfamily="Inter",
         fontsize=19,
         fontweight=400,

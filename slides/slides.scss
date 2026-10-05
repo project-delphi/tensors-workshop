@@ -72,7 +72,9 @@ $code-block-font-size: 0.62em;
 }
 
 // The generated agenda uses the same navy type and blue/teal accents as the
-// slide artwork. Keep the full schedule readable on the deck's 1920×1080 canvas.
+// slide artwork. Keep the full schedule readable on the deck's 1920×1080 canvas:
+// the six-hour day is 22 rows, and these sizes are what fits them above the
+// footer. A new agenda row means looking at this slide again.
 .reveal .slides section.agenda-slide {
   color: #16233f;
   font-family: $presentation-heading-font;
@@ -82,11 +84,11 @@ $code-block-font-size: 0.62em;
 
   h2 {
     max-width: 1550px;
-    margin: 0 0 24px;
-    padding-bottom: 22px;
+    margin: 0 0 10px;
+    padding-bottom: 12px;
     border-bottom: 4px solid #1a6fd4;
     color: #16233f;
-    font-size: 78px;
+    font-size: 54px;
     font-weight: 750;
     letter-spacing: -.035em;
   }
@@ -96,12 +98,12 @@ $code-block-font-size: 0.62em;
     margin: 0;
     table-layout: fixed;
     border-collapse: collapse;
-    font-size: 32px;
-    line-height: 1.25;
+    font-size: 27px;
+    line-height: 1.2;
   }
 
   th, td {
-    padding: 5px 20px;
+    padding: 2px 20px;
     border: 0;
     border-bottom: 1px solid #e6edf6;
     vertical-align: middle;
@@ -109,12 +111,12 @@ $code-block-font-size: 0.62em;
   }
 
   thead th {
-    padding-top: 12px;
-    padding-bottom: 16px;
+    padding-top: 6px;
+    padding-bottom: 8px;
     border-bottom: 2px solid #1a6fd4;
     background: transparent;
     color: #3a4a5f;
-    font-size: 26px;
+    font-size: 22px;
     font-weight: 600;
   }
 
@@ -310,8 +312,17 @@ $code-block-font-size: 0.62em;
 // These context slides have no notebook action of their own. Hide the inherited
 // section-01 links, which otherwise overlap the right column. The "one idea"
 // wrap-up is the exception: it opens notebook 12, and leaves the corner free.
-.reveal:has(.computing-slide.present:not(.recap-slide)) .deck-colab-panel {
+.reveal:has(.computing-slide.present:not(.recap-slide):not(.lab-slide)) .deck-colab-panel {
   display: none;
+}
+
+// A deep dive opened live: three steps, read from the back of the room, and
+// the one slide that opens an extra's notebook rather than a section's.
+.reveal .slides section.lab-slide {
+  font-size: 38px;
+
+  ol { margin: 36px 0 0 1.2em; }
+  li { margin-bottom: 26px; line-height: 1.35; }
 }
 
 // Keep fixed-size timer chrome clear of the editable titles on smaller screens.

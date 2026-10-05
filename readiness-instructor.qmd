@@ -16,7 +16,7 @@ format:
 
 ## Optional administration
 
-Use only if the workshop organizer chooses it. A different instructor can administer it **3–5 days before the workshop**. It adds no time to the 210-minute workshop and does not replace its entry/exit checks.
+Use only if the workshop organizer chooses it. A different instructor can administer it **3–5 days before the workshop**. It adds no time to the {{< var workshop.minutes >}}-minute workshop and does not replace its entry/exit checks.
 
 These pages are unlisted: omitted from site navigation and search, with a request to search engines not to index them. They are public files, not password-protected. Share only the learner link for the timed attempt; keep this key for administration.
 

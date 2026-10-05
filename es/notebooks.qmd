@@ -1,11 +1,12 @@
 ---
 title: "Cuadernos"
-subtitle: "Un cuaderno por sección, más estudios a fondo para casa, y cada uno se ejecuta en frío en Colab"
+subtitle: "Un cuaderno por sección, más estudios a fondo, cuatro de ellos abiertos en vivo, y cada uno se ejecuta en frío en Colab"
 lang: es
 ---
 
 Cada sección del taller tiene su cuaderno. Otros cuadernos ofrecen
-estudios a fondo para casa. Están **escritos principalmente en inglés**, y cada
+estudios a fondo: cuatro se abren en vivo y se terminan en casa, y cuatro son
+para casa desde el principio. Están **escritos principalmente en inglés**, y cada
 encabezado lleva un resumen de una línea en español.
 
 ## Cómo están construidos
@@ -45,10 +46,12 @@ merece investigarse en lugar de descartarse.
 
 <span data-language-key="going-further"></span>
 
-Estos **no son secciones**. Son estudios a fondo, entregados como material para
-casa. No tienen diapositivas, ni Kahoot, ni minutos en el reloj del taller: la
-agenda de {{< var workshop.minutes >}} minutos es exactamente la misma sin
-ellos. La ruta esencial de la sección 11 compara CP y Tucker mediante llamadas
+Estos **no son secciones**. Son estudios a fondo, sin diapositivas ni Kahoot.
+Cuatro se abren en vivo, cada uno como un laboratorio de 20 o 25 minutos: el
+**17** (atención) antes del almuerzo y, por la tarde, el **13** (convolución),
+el **14** (CP) y el **20** (AlphaTensor). La sala trabaja la ruta esencial del
+cuaderno y el resto queda para casa. Los otros cuatro —15, 16, 18 y 19— son
+material para casa, sin minutos en el reloj del taller. La ruta esencial de la sección 11 compara CP y Tucker mediante llamadas
 a la biblioteca; su panorama de cuatro modelos es material de ampliación.
 Los cuadernos 14 y 15 parten de esa comparación: ajustan CP a mano y después
 cambian qué significa «ajustar».

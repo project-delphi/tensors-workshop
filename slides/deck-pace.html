@@ -18,29 +18,34 @@
 (function () {
   "use strict";
 
-  // The whole workshop, in seconds: 210 minutes. This is the one place it is
+  // The whole workshop, in seconds: 360 minutes. This is the one place it is
   // written — Quarto has no passthrough for reveal's `totalTime`, so setting it
   // in the deck header does nothing (it silently never reaches the config).
   // We hand it to Reveal.configure() below, which drives the speaker view's
   // pacing clock as well as the audience timer here. check_links.py fails if
   // this stops matching workshop.minutes in _variables.yml.
-  var TOTAL_SECONDS = 12600;
+  var TOTAL_SECONDS = 21600;
 
   // Survives a reload — a facilitator who refreshes mid-workshop should not
   // silently get a clock that restarts at zero. sessionStorage rather than
   // localStorage so opening the deck again tomorrow starts fresh.
   var STORAGE_KEY = "tensors-workshop-deck-start";
 
+  // Lunch is off the clock, so the timer has to be able to stop. The moment
+  // it was paused is stored beside the start; resuming moves the start
+  // forward by the length of the pause, which is all a pause is.
+  var PAUSE_KEY = "tensors-workshop-deck-paused";
+
   // sessionStorage lives until the *tab* closes, not until the workshop ends.
   // Open the deck in the morning to check it, leave the tab open, present
   // from it that afternoon, and the room's first sight of the timer would be
   // hours into the amber. Anything this old is a leftover, not a session.
-  var STALE_AFTER_SECONDS = 12600 * 2;
+  var STALE_AFTER_SECONDS = 21600 * 2;
 
   function pad(n) { return (n < 10 ? "0" : "") + n; }
 
   // Always minutes and seconds; hours only once there are any. The remaining
-  // side of a 210-minute workshop is over an hour for most of the room's day,
+  // side of a 360-minute workshop is over an hour for most of the room's day,
   // and "182:26" is harder to read at a glance than "3:02:26".
   function hms(seconds) {
     seconds = Math.max(0, Math.round(seconds));
@@ -78,8 +83,8 @@
     var timer = document.createElement("div");
     timer.className = "deck-timer";
     timer.title = es
-      ? "Tiempo transcurrido y restante · clic para reiniciar"
-      : "Elapsed and remaining time · click to reset";
+      ? "Tiempo transcurrido y restante · clic para reiniciar · Mayús + clic para pausar en el almuerzo"
+      : "Elapsed and remaining time · click to reset · Shift-click to pause for lunch";
 
     var elapsedEl = document.createElement("span");
     elapsedEl.className = "deck-timer-elapsed";
@@ -107,28 +112,68 @@
       catch (e) { /* the timer still works, it just won't survive a reload */ }
     }
 
+    function readPause() {
+      try {
+        var n = parseInt(window.sessionStorage.getItem(PAUSE_KEY), 10);
+        return isNaN(n) ? null : n;
+      } catch (e) { return null; }
+    }
+
+    function writePause(value) {
+      try {
+        if (value === null) { window.sessionStorage.removeItem(PAUSE_KEY); }
+        else { window.sessionStorage.setItem(PAUSE_KEY, String(value)); }
+      } catch (e) { /* the pause still works until a reload */ }
+    }
+
     var startedAt = readStart();
-    if (startedAt === null) { startedAt = Date.now(); writeStart(startedAt); }
+    // A pause belongs to the start it was taken against: a stale or missing
+    // start takes its pause with it.
+    var pausedAt = startedAt === null ? null : readPause();
+    if (startedAt === null) {
+      startedAt = Date.now();
+      writeStart(startedAt);
+      writePause(null);
+    }
 
     function tick() {
-      var elapsed = (Date.now() - startedAt) / 1000;
+      var now = pausedAt === null ? Date.now() : pausedAt;
+      var elapsed = (now - startedAt) / 1000;
       var remaining = total - elapsed;
       var over = remaining < 0;
       elapsedEl.textContent = hms(elapsed);
       remainingEl.textContent =
         (over ? "+" : "") + hms(Math.abs(remaining)) +
-        (es ? (over ? " de más" : " restante") : (over ? " over" : " left"));
+        (es ? (over ? " de más" : " restante") : (over ? " over" : " left")) +
+        (pausedAt === null ? "" : (es ? " · en pausa" : " · paused"));
       timer.classList.toggle("over", over);
+      timer.classList.toggle("paused", pausedAt !== null);
+      timer.dataset.paused = pausedAt === null ? "false" : "true";
     }
 
     // Clicking resets, for the gap between opening the deck and actually
     // starting. A click rather than a key: every unclaimed letter is one
     // reveal might bind later, and a mis-hit there would change slide.
+    // Shift-click pauses and resumes instead, for lunch: the session clock
+    // the agenda prints does not count it, so neither may this.
     timer.addEventListener("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
-      startedAt = Date.now();
-      writeStart(startedAt);
+      if (event.shiftKey) {
+        if (pausedAt === null) {
+          pausedAt = Date.now();
+        } else {
+          startedAt += Date.now() - pausedAt;
+          writeStart(startedAt);
+          pausedAt = null;
+        }
+        writePause(pausedAt);
+      } else {
+        startedAt = Date.now();
+        writeStart(startedAt);
+        pausedAt = null;
+        writePause(null);
+      }
       tick();
     });
 

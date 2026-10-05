@@ -5,8 +5,11 @@ lang: es
 
 [English](../facilitator-guide.md) · [Enseñar este taller](teach.qmd) · [Hoja del día](day-sheet.md)
 
-Mantén la **agenda de 210 minutos**. Estas actividades sustituyen tiempo de
-práctica o discusión; no alargan el taller. El cuaderno 13 queda para después.
+Usa la **agenda de 360 minutos**: trece secciones, tres Kahoot, cuatro
+estudios a fondo abiertos en vivo, cuatro pausas y un almuerzo que el reloj no
+cuenta. Estas actividades sustituyen tiempo de práctica o discusión; no
+alargan el taller. Los estudios a fondo 13, 14, 17 y 20 tienen cada uno un
+tramo en vivo; el 15, el 16, el 18 y el 19 quedan para después.
 
 ## Antes del taller
 
@@ -29,9 +32,9 @@ Abre las soluciones después de un intento. Ejecuta las celdas gráficas elegida
 el código plegado también necesita ejecutarse.
 
 Dedica unos 30 segundos a la pregunta inicial de recuperación dentro de cada
-bloque. Después de cada pausa, en 05, 07 y 10, esa pregunta es la diapositiva
+bloque. Al empezar 05, 07 y 10, esa pregunta es la diapositiva
 **¿Mito o hecho?** de la presentación, y dura un minuto: tres afirmaciones del
-tramo anterior a la pausa, una votación a mano alzada en cada una, un
+tramo anterior, una votación a mano alzada en cada una, un
 contraejemplo para un mito y la revelación. Los momentos de proyector también son de predicción primero: pregunta
 a la sala qué va a pasar antes de pulsar nada, y recoge una respuesta antes de
 revelar el resultado. Cada uno cabe dentro del tiempo de modelado del bloque,
@@ -52,15 +55,20 @@ Conserva cuestionarios y pausas. Distribuye así cada bloque:
 | 00 · 5 min | Apertura en frío 1½; diagnóstico inicial 3; comprobación técnica y bienvenida ½. La preparación era previa. | <a href="../interactive/voice-stage.html?lang=es#scramble">Una voz, transpuesta</a>: reprodúcela tal cual y luego transpuesta. Pregunta por qué los mismos números ahora suenan a ruido; no respondas todavía. Con sonido. |
 | 01 · 20 min | Modelar una forma 4; Ejercicio 1 y revisión en pareja 16. | — |
 | 02 · 20 min | Predicción inicial 2; clave de ejes y Ejercicio 2: 12; [actividad de significado de ejes](group-tasks.md#axis-meaning): 6. | — |
-| 03 · 15 min | Modelar broadcasting 3; Ejercicio 3 y comprobación 11; comprobación individual de broadcasting 1. | <a href="../interactive/broadcasting-simulator.html?lang=es">Simulador de broadcasting</a>, dentro del modelado 3: la sala predice la forma del resultado y luego un desajuste que da error. |
-| 04 · 15 min | Predicción inicial y el proyector 2; Ejercicio 1: 7; [caza del error](group-tasks.md#silent-bugs) 6: emparejar 2, prueba y puntuación 3, compartir 1. | <a href="../interactive/image-tensor.html?lang=es#reshape">Reshape de una foto</a>: el error de la apertura en frío, sobre una imagen. Nómbralo como ese error. |
+| 03 · 20 min | Modelar broadcasting 3; Ejercicio 3 y comprobación 14; un grupo explica cómo corrigió los NaN 2; comprobación individual de broadcasting 1. | <a href="../interactive/broadcasting-simulator.html?lang=es">Simulador de broadcasting</a>, dentro del modelado 3: la sala predice la forma del resultado y luego un desajuste que da error. |
+| 04 · 20 min | Predicción inicial y el proyector 2; Ejercicio 1: 10; [caza del error](group-tasks.md#silent-bugs) 6: emparejar 2, prueba y puntuación 3, compartir 1; nombrar entre todos el error de la voz 2. | <a href="../interactive/image-tensor.html?lang=es#reshape">Reshape de una foto</a>: el error de la apertura en frío, sobre una imagen. Nómbralo como ese error. |
 | 05 · 15 min | Mito o hecho 1; predicción inicial 2, que es el paso de predicción del Ejercicio 1; Ejercicio 1: 4; actividad grupal 05: 8. | — |
-| 06 · 15 min | Modelar una contracción 4; Ejercicio 1 y comprobación 10; comprobación individual de contracción 1. | — |
-| 07 · 15 min | Mito o hecho 1; modelar columnas duplicadas 3; comparar coeficientes y normas 8; explicar qué sigue sin identificarse y comprobar 3. | <a href="../interactive/linalg-stage.html?lang=es#collinear">Columnas colineales</a>, dentro del modelado 3. |
+| 06 · 20 min | Modelar una contracción 4; Ejercicio 1 y comprobación 13; una pareja lee sus subíndices en voz alta 2; comprobación individual de contracción 1. | — |
+| 17 · 25 min · estudio a fondo en vivo | El problema y la preparación 4; actividad esencial, `split_heads` y sus pruebas 12; predicción, *la forma correcta garantiza las cabezas correctas* 5; explicar el eje que cambiaste al final de la ruta esencial 4. El resto queda para casa. | <a href="../interactive/attention-stage.html?lang=es#heads">La imagen de las cabezas</a>, después de revelar la predicción, nunca antes. |
+| Almuerzo | Alrededor de una hora, fuera del reloj. La sección 07 empieza en +02:50 cuando la sala vuelva. | — |
+| 07 · 20 min | Mito o hecho 1; modelar columnas duplicadas 3; comparar coeficientes y normas 11; explicar qué sigue sin identificarse y comprobar 5. | <a href="../interactive/linalg-stage.html?lang=es#collinear">Columnas colineales</a>, dentro del modelado 3. |
 | 08 · 10 min | Modelar una actualización 3; Ejercicio 1 y comprobación 7. | — |
-| 09 · 15 min | Ejercicio 1: 9; error sobre residuos: 3; puente obligatorio de SVD a Tucker: 3. Sin barridos de tiempos. | — |
-| 10 · 15 min | Mito o hecho 1; explicar núcleo y factores 3; [golf de compresión, hoyo 1](group-tasks.md#compression) en el explorador de rangos 8; clasificación y defensa del ganador 3. | <a href="../interactive/factor-stage.html?lang=es#tucker">Tucker en el tensor de taxis</a>, dentro de los últimos 3, después del golf: ponlo en los rangos ganadores, normalmente (3, 3, 1). Su único patrón horario tiene el pico en la hora 18, la que imprimió el cuaderno. Nunca antes del golf. |
-| 11 · 15 min | Ejercicio 1 en parejas: 7; golf de compresión, hoyo 2: 5; clasificación y la escena 3. Sin barridos de modelos. | <a href="../interactive/factor-stage.html?lang=es#budget">Mismo presupuesto, CP y Tucker</a>, durante la clasificación: los dos hoyos en una sola imagen. No antes del ejercicio en parejas, al que daría la respuesta. |
+| 09 · 20 min | Ejercicio 1: 12; error sobre residuos: 4; puente obligatorio de SVD a Tucker: 4. Sin barridos de tiempos. | — |
+| 13 · 25 min · estudio a fondo en vivo | Predicción, *la convolución y la correlación son lo mismo* 4; preparación esencial y Ejercicio 1: 13; demostrar el explorador de deconvolución del Ejercicio 3 sobre la fotografía 6; nombrarlo como la idea que conecta el día 2. Los Ejercicios 2 y 3 quedan para casa. | El explorador de deconvolución del propio cuaderno, desde tu entorno: el error baja de 0.1157 a 0.0815. |
+| 10 · 20 min | Mito o hecho 1; explicar núcleo y factores 5; [golf de compresión, hoyo 1](group-tasks.md#compression) en el explorador de rangos 8; clasificación, defensa del ganador y la escena 6. | <a href="../interactive/factor-stage.html?lang=es#tucker">Tucker en el tensor de taxis</a>, dentro de los últimos 6, después del golf: ponlo en los rangos ganadores, normalmente (3, 3, 1). Su único patrón horario tiene el pico en la hora 18, la que imprimió el cuaderno. Nunca antes del golf. |
+| 11 · 20 min | Ejercicio 1 en parejas: 10; golf de compresión, hoyo 2: 5; clasificación y la escena 5. Sin barridos de modelos. | <a href="../interactive/factor-stage.html?lang=es#budget">Mismo presupuesto, CP y Tucker</a>, durante la clasificación: los dos hoyos en una sola imagen. No antes del ejercicio en parejas, al que daría la respuesta. |
+| 14 · 20 min · estudio a fondo en vivo | Predicción, *reescalar dos vectores factor cambia el tensor* 3; Ejercicio 1, un tensor de rango 1 y su `lam`: 12; explicar qué mide `lam` y comprobar 5. Ejecuta sus tres celdas de preparación esencial durante la pausa: instalan `tensorly` y descargan la grabación. Los Ejercicios 2–5 quedan para casa. | <a href="../interactive/factor-stage.html?lang=es#rank1">Un término de rango 1</a>, mientras la sala construye el suyo. |
+| 20 · 20 min · estudio a fondo en vivo | Predicción, *la primera jugada de Strassen reduce el recuento* 4; Parte 1 y Ejercicio 1, el producto leído sobre el tensor: 10; una partida en el escenario, con la sala dictando las jugadas 6. Las Partes 2–4 quedan para casa. | <a href="../interactive/alphatensor-stage.html?lang=es#game">El juego</a>, durante los últimos 6. |
 | 12 · 5 min | Comprobación individual de salida. Asignar tareas después de recogerla. | Justo antes, en la diapositiva de "una sola idea": vuelve a reproducir la voz transpuesta 30 segundos y deja que la sala nombre el error. |
 
 Busca las [actividades grupales](group-tasks.md) por número de cuaderno.
@@ -81,11 +89,11 @@ con el 2%, lo que responde a «¿qué modelo es mejor?» antes de que nadie lo
 pregunte.
 
 En el cuaderno 11, los ajustes CP y Tucker ya están en la celda TAREA; primero
-predicen el almacenamiento y luego la ejecutan. Reserva los siete minutos en
+predicen el almacenamiento y luego la ejecutan. Reserva los diez minutos en
 pareja para revisar los rangos sugeridos, contar parámetros, calcular ambos errores
 relativos e interpretar la diferencia; ejecuta las instalaciones durante la
 preparación. Si el ajuste tarda mucho, demuestra la
-solución incluida después del intento. Conserva los ocho minutos de golf. Anota tiempos reales de finalización y uso de pistas para comprobar
+solución incluida después del intento. Conserva el golf. Anota tiempos reales de finalización y uso de pistas para comprobar
 si esta distribución funciona con el grupo.
 
 ## Si vas con retraso
@@ -102,24 +110,31 @@ la puesta en común, una segunda ronda o una votación.
 | Comprueba en | Deberías empezar | Si llevas | Recorte, y lo que ahorra |
 |---|---|---|---|
 | +0:39 | actividad de significado de ejes de 02 | 5+ min de retraso | Un grupo informa y los demás omiten la puesta en común (−3). |
-| +1:00 | 04 | 5+ min de retraso | Solo la ronda 1 de la caza del error: emparejar y ejecutar la clave; se omite la reescritura de la ronda 2 (−3). |
-| +1:15 | Kahoot 1 | hasta 5 min de retraso | Hazlo. El Kahoot 2 pasa a ser el recorte previsto. |
-| | | 6–10 min de retraso | Hazlo, y elimina ya el Kahoot 2, para no decidirlo en +2:15 (−5). |
-| | | más de 10 min | Elimina también el Kahoot 1 (−5). Haz la pausa de todos modos. |
-| +1:25 | 05 | 5+ min de retraso | Mito o hecho pasa a ser la pregunta de recuperación de 30 segundos (−½). Actividad 05: informa un grupo (−4). |
-| +2:00 | 07 | 5+ min de retraso | Mito o hecho pasa a ser la pregunta de recuperación (−½). Elimina el Kahoot 2 si sigue en pie (−5). |
-| +2:30 | 09 | 5+ min de retraso | Omite el error sobre residuos; conserva el puente de SVD a Tucker, que la sección 10 necesita (−3). |
-| +2:50 | 10 | cualquiera | Si vas tarde, Mito o hecho pasa a ser la pregunta de recuperación (−½). **Conserva enteros el golf y la escena de Tucker.** |
-| +3:10 | 11 | 5+ min de retraso | Hoyo 2 como demostración: muestra CP de rango 6 con 198 números frente a los 236 de Tucker, y luego la escena (−3). |
-| | | más de 10 min | Ejercicio en parejas: tres minutos de intento y luego demuestra la solución incluida (−4). |
-| +3:25 | 12 | cualquiera | Para donde estés y haz la comprobación final. |
+| +1:05 | 04 | 5+ min de retraso | Solo la ronda 1 de la caza del error: emparejar y ejecutar la clave; se omite la reescritura de la ronda 2 (−3). |
+| +1:25 | Kahoot 1 | hasta 10 min de retraso | Hazlo. |
+| | | más de 10 min | Elimina el Kahoot 1 (−5). Haz la pausa de todos modos. |
+| +1:40 | 05 | 5+ min de retraso | Mito o hecho pasa a ser la pregunta de recuperación de 30 segundos (−½). Actividad 05: informa un grupo (−4). |
+| +2:25 | Estudio a fondo 17 | 5+ min de retraso | Tres minutos para intentar `split_heads`; después muestra la solución plegada y ejecuta sus pruebas; conserva entera la pregunta de predicción (−8). Lo que aún se deba sale del almuerzo, no de 07. |
+| +2:50 | 07 | cualquiera | El almuerzo reinició el reloj: 07 empieza en +2:50 cuando la sala vuelva. Haz Mito o hecho completo. |
+| +3:10 | Kahoot 2 | 5+ min de retraso | Elimínalo (−5). Es el menos novedoso de los tres. |
+| +3:25 | 09 | 5+ min de retraso | Omite el error sobre residuos; conserva el puente de SVD a Tucker, que la sección 10 necesita (−4). |
+| +3:55 | Estudio a fondo 13 | 5+ min de retraso | Demuestra el Ejercicio 1 desde su solución en lugar de que la sala lo escriba; conserva la pregunta de predicción y el explorador de deconvolución, en los que se apoya el Kahoot 3 (−8). |
+| +4:20 | 10 | cualquiera | Si vas tarde, Mito o hecho pasa a ser la pregunta de recuperación (−½). **Conserva enteros el golf y la escena de Tucker.** |
+| +4:45 | 11 | 5+ min de retraso | Hoyo 2 como demostración: muestra CP de rango 6 con 198 números frente a los 236 de Tucker, y luego la escena (−3). |
+| | | más de 10 min | Ejercicio en parejas: tres minutos de intento y luego demuestra la solución incluida (−7). |
+| +5:15 | Estudio a fondo 14 | 5+ min de retraso | Predicción y, después, demuestra el Ejercicio 1 desde su solución (−8). |
+| +5:35 | Estudio a fondo 20 | 5+ min de retraso | Predicción y, después, la partida en el escenario; el Ejercicio 1 queda para casa (−8). |
+| +5:55 | 12 | cualquiera | Para donde estés y haz la comprobación final. |
 
 **Nunca recortes:** las pausas, la sección 10, el Kahoot 3 ni la comprobación
-final. La comprobación final es el único registro de lo que cambió la sesión,
+final. **Un estudio a fondo en vivo se acorta, nunca se salta:** su pregunta
+de predicción son dos minutos y es lo que la sala recuerda. La comprobación final es el único registro de lo que cambió la sesión,
 y la siguiente edición se planifica a partir de ella. El Kahoot 3 comprueba si
 Tucker caló mientras el resultado de los taxis sigue en pantalla.
 
-En conjunto, estos recortes recuperan unos 30 minutos, que es más o menos lo
+En conjunto, estos recortes recuperan unos 20 minutos antes del almuerzo y 40
+después, y el propio almuerzo absorbe lo que la mañana aún deba, que es más o
+menos lo
 que se espera que se desvíe una primera edición: los Kahoot, Mito o hecho y
 las rondas de golf suelen pasarse un minuto o dos cada uno. Anota qué recortes
 hiciste y a qué hora; es la línea más útil del
@@ -150,7 +165,7 @@ anteriores. Hay uno por cuaderno; los cuatro que encajan en un bloque de grupo
 son orden de ejes en 02, reshape en 04, residuos en 09 y presupuestos en 11.
 Muestra la afirmación. Pide un contraejemplo. Revela la corrección al final.
 
-Las tres rondas de **¿Mito o hecho?** después de las pausas son esas mismas
+Las tres rondas de **¿Mito o hecho?**, en 05, 07 y 10, son esas mismas
 entradas en formato rápido: 02–04 antes de la sección 05, 05–06 antes de la 07
 y 07–09 antes de la 10. Cada ronda mezcla mitos con afirmaciones ciertas, así
 que la votación nunca regala la respuesta.

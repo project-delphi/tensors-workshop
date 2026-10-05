@@ -664,9 +664,10 @@ def check_schedule() -> None:
     """Compare the running clock with the written `start`/`end` and the agenda.
 
     timeline.py walks the sections in order, adding each one's `minutes`, plus
-    `schedule.quiz_minutes` after a section a quiz follows and
-    `schedule.break_minutes` after one in `schedule.break_after`. Three things
-    have to agree with that walk: each section's written `start`/`end`; the
+    `schedule.quiz_minutes` after a section a quiz follows,
+    `schedule.break_minutes` after one in `schedule.break_after`, and the
+    minutes of each deep dive `schedule.labs` opens live. Three things have to
+    agree with that walk: each section's and each lab's written `start`/`end`; the
     total, which is what catches a break or a quiz going missing rather than a
     single offset being mistyped; and `agenda`, whose rows have to account for
     every segment exactly once and in order, since the table both decks print
@@ -676,12 +677,26 @@ def check_schedule() -> None:
         ScheduleError,
         agenda_rows,  # noqa: PLC0415
         clock,
+        lab_windows,
         section_windows,
         total_minutes,
     )
 
     step("Section start and end times")
-    windows = section_windows()
+    try:
+        windows = section_windows()
+        live = lab_windows()
+    except ScheduleError as e:
+        fail(str(e))
+        return
+    for lab, start, end in live:
+        want = (clock(start, "+"), clock(end, "+"))
+        got = (lab.get("start"), lab.get("end"))
+        if got != want:
+            fail(
+                f"schedule.labs, deep dive {lab['extra']}: start/end is "
+                f"{got[0]}–{got[1]}, derived {want[0]}–{want[1]}"
+            )
     for s, start, end in windows:
         want = (clock(start, "+"), clock(end, "+"))
         got = (s.get("start"), s.get("end"))
@@ -694,13 +709,13 @@ def check_schedule() -> None:
     minute, total = total_minutes(), V["workshop"]["minutes"]
     if minute != total:
         fail(
-            f"sections + quizzes + breaks come to {minute} min, "
+            f"sections + quizzes + labs + breaks come to {minute} min, "
             f"workshop.minutes says {total}"
         )
     else:
         print(
-            f"      {len(windows)} sections end at {clock(minute, '+')}"
-            f" — {total} min including quizzes and breaks"
+            f"      {len(windows)} sections and {len(live)} live labs end at "
+            f"{clock(minute, '+')} — {total} min including quizzes and breaks"
         )
 
     # gen_tables.py raises rather than writing a wrong agenda, so this fails
@@ -714,8 +729,8 @@ def check_schedule() -> None:
     else:
         print(
             f"      {len(rows)} agenda rows account for all {len(windows)} "
-            f"sections, 3 quizzes and "
-            f"{len(V['schedule']['break_after'])} breaks, in clock order"
+            f"sections, 3 quizzes, {len(live)} live labs, "
+            f"{len(V['schedule']['break_after'])} breaks and lunch, in clock order"
         )
 
 

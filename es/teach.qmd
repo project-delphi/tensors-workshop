@@ -7,8 +7,9 @@ lang: es
 [English](../teach.qmd)
 
 Prepara e imparte el taller de {{< var workshop.minutes >}} minutos con los
-recursos siguientes. La agenda incluye cuestionarios y pausas. Las actividades
-grupales sustituyen tiempo de práctica o discusión; el cuaderno 13 queda para casa.
+recursos siguientes. La agenda incluye cuestionarios, pausas y cuatro estudios
+a fondo abiertos en vivo (13, 14, 17 y 20); el almuerzo va aparte. Las
+actividades grupales sustituyen tiempo de práctica o discusión.
 
 ## Prepara la sesión
 

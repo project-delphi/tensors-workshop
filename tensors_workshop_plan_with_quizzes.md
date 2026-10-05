@@ -1,6 +1,6 @@
 ---
 title: "Tensors for Machine Learning"
-subtitle: "A 210-Minute Workshop with Three Kahoot Checks — Student Handbook"
+subtitle: "A One-Day, 6-Hour Workshop with Three Kahoot Checks and Four Live Deep Dives — Student Handbook"
 title-block-banner: images/hero-band.png
 title-block-banner-color: body
 ---
@@ -38,22 +38,28 @@ label into the other.
 | **00** | — | — | [Setup and welcome](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/00-setup-and-data.ipynb) | setup | 5 | 00:00 |
 | **01** | I | — | [What a tensor is](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/01-what-a-tensor-is.ipynb) | demo | 20 | 00:05 |
 | **02** | II | — | [Thinking in N dimensions](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/02-thinking-in-n-dimensions.ipynb) | demo | 20 | 00:25 |
-| **03** | III | 1 | [Indexing and broadcasting real data](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb) | exercise | 15 | 00:45 |
-| **04** | III | 2 | [Reshape and transpose real images](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb) | exercise | 15 | 01:00 |
-| — | 🎯 | — | **Kahoot 1 — Tensor Vocabulary & Shapes** | quiz | 5 | 01:15 |
-| — | — | — | Break | — | 5 | 01:20 |
-| **05** | III | — | [Video pipeline design](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb) | group | 15 | 01:25 |
-| **06** | IV | 3 | [Contraction with einsum](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | exercise | 15 | 01:40 |
-| — | — | — | Break | — | 5 | 01:55 |
-| **07** | IV | 4 | [Inverses and the pseudoinverse](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | exercise | 15 | 02:00 |
-| — | 🎯 | — | **Kahoot 2 — Einsum, Distance & the Pseudoinverse** | quiz | 5 | 02:15 |
-| **08** | IV | — | [Recursion with matrices and vectors](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | demo | 10 | 02:20 |
-| **09** | IV | 5 | [Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | exercise | 15 | 02:30 |
-| — | — | — | Break | — | 5 | 02:45 |
-| **10** | IV | 6 | [Tucker decomposition on real data](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | exercise | 15 | 02:50 |
-| — | 🎯 | — | **Kahoot 3 — Convolution & Tensor Decompositions** | quiz | 5 | 03:05 |
-| **11** | IV | 7 | [Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | exercise | 15 | 03:10 |
-| **12** | — | — | [Wrap-up and take-homes](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | wrap-up | 5 | 03:25 |
+| **03** | III | 1 | [Indexing and broadcasting real data](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/03-indexing-and-broadcasting.ipynb) | exercise | 20 | 00:45 |
+| **04** | III | 2 | [Reshape and transpose real images](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/04-reshape-and-transpose.ipynb) | exercise | 20 | 01:05 |
+| — | 🎯 | — | **Kahoot 1 — Tensor Vocabulary & Shapes** | quiz | 5 | 01:25 |
+| — | — | — | Break | — | 10 | 01:30 |
+| **05** | III | — | [Video pipeline design](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/05-video-pipeline-design.ipynb) | group | 15 | 01:40 |
+| **06** | IV | 3 | [Contraction with einsum](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/06-contraction-with-einsum.ipynb) | exercise | 20 | 01:55 |
+| — | — | — | Break | — | 10 | 02:15 |
+| **17** | 🔬 | — | [4D multi-head attention: reshape Q, K and V](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb) | deep dive, live lab | 25 | 02:25 |
+| — | — | — | **Lunch** — off the clock | — | — | 02:50 |
+| **07** | IV | 4 | [Inverses and the pseudoinverse](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/07-inverses-and-pseudoinverse.ipynb) | exercise | 20 | 02:50 |
+| — | 🎯 | — | **Kahoot 2 — Einsum, Distance & the Pseudoinverse** | quiz | 5 | 03:10 |
+| **08** | IV | — | [Recursion with matrices and vectors](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/08-recursion-with-matrices.ipynb) | demo | 10 | 03:15 |
+| **09** | IV | 5 | [Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb) | exercise | 20 | 03:25 |
+| — | — | — | Break | — | 10 | 03:45 |
+| **13** | 🔬 | — | [Convolution and deconvolution](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb) | deep dive, live lab | 25 | 03:55 |
+| **10** | IV | 6 | [Tucker decomposition on real data](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/10-tucker-decomposition.ipynb) | exercise | 20 | 04:20 |
+| — | 🎯 | — | **Kahoot 3 — Convolution & Tensor Decompositions** | quiz | 5 | 04:40 |
+| **11** | IV | 7 | [Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb) | exercise | 20 | 04:45 |
+| — | — | — | Break | — | 10 | 05:05 |
+| **14** | 🔬 | — | [CP factorization and the rank-1 view](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb) | deep dive, live lab | 20 | 05:15 |
+| **20** | 🔬 | — | [AlphaTensor: multiplying matrices as a game](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb) | deep dive, live lab | 20 | 05:35 |
+| **12** | — | — | [Wrap-up and take-homes](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb) | wrap-up | 5 | 05:55 |
 <!-- END handbook-schedule -->
 
 **Why the quizzes sit where they do.** Each one follows the sections that
@@ -229,7 +235,7 @@ A **factorization** writes one object as a product of simpler objects. You met t
 | **Cholesky** | Symmetric positive-definite matrix | A "square root" of a covariance matrix, for *building* correlated data | Appendix D |
 | **Tucker / CP** | **Tensor, any order** | PCA generalized to every axis | section 10 |
 
-Today uses each of these where it happens to be needed. [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) puts six factorizations side by side — five from this table, plus NMF — and asks what each one *costs*. This table does not answer that question.
+Today uses each of these where it happens to be needed. [Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-20-min) puts six factorizations side by side — five from this table, plus NMF — and asks what each one *costs*. This table does not answer that question.
 
 ```python
 A = np.array([[4., 3., 2.], [2., 1., 1.], [6., 3., 5.]])
@@ -272,20 +278,20 @@ A live coding demo in the notebook, on real image and video tensors. Open it in 
 
 <span data-language-key="part-iii-working-with-tensor-axes-sections-03-05"></span>
 
-## 03 · Indexing and Broadcasting Real Data (Block 1, 15 min)
+## 03 · Indexing and Broadcasting Real Data (Block 1, 20 min)
 
 **Practise today:** {{< var sections.s03.practice_en >}}
 
 **Explore later:** {{< var sections.s03.explore_en >}}
 
 
-<span data-language-key="03-indexing-and-broadcasting-real-data-block-1-15-min"></span>
+<span data-language-key="03-indexing-and-broadcasting-real-data-block-1-20-min"></span>
 
 **Why this matters.** The `breast_cancer` data holds 30 real measurements of tumour cell nuclei for 569 real patients. Selecting the wrong column produces no error. It returns a *different real measurement*, your analysis continues, and it gives a confident, wrong answer. In research this produces results nobody can reproduce. In a clinical tool it produces a wrong recommendation about a real person.
 
 **In tech**, the identical operation runs on a `(users, items)` matrix to pull one user's history before making a recommendation.
 
-**Exercise (10 min)**
+**Exercise (15 min)**
 ```python
 bc = load_breast_cancer()
 X, y = bc.data, bc.target          # (569, 30); y: 0 = malignant, 1 = benign
@@ -327,18 +333,18 @@ Two real results. **Malignant tumours really do have a larger mean radius** — 
 
 The shape rule has its own page: the [broadcasting simulator](interactive/broadcasting-simulator.html?lang=en) lines two shapes up from the right and steps through the stretch. Try `(4, 5)` against `(4,)`, then against `(4, 1)`.
 
-## 04 · Reshape and Transpose Real Images (Block 2, 15 min)
+## 04 · Reshape and Transpose Real Images (Block 2, 20 min)
 
 **Practise today:** {{< var sections.s04.practice_en >}}
 
 **Explore later:** {{< var sections.s04.explore_en >}}
 
 
-<span data-language-key="04-reshape-and-transpose-real-images-block-2-15-min"></span>
+<span data-language-key="04-reshape-and-transpose-real-images-block-2-20-min"></span>
 
 **Why this matters.** Microscopes and cameras order their axes according to the hardware, not according to what a model expects. Getting this wrong does not crash — the model runs on scrambled data and returns confident, meaningless output. In a drug screen, that is a wrong decision about whether a compound works. The famous version in tech: a model trained in TensorFlow (`NHWC`) deployed into PyTorch (`NCHW`) with no transpose.
 
-**Exercise (10 min)**
+**Exercise (15 min)**
 ```python
 photo = data.immunohistochemistry()   # (512, 512, 3) real histology
 cells = data.cell()                    # (660, 550)    real microscopy, grayscale
@@ -373,9 +379,9 @@ A reshape is not only about pixels. On the [genome stage](interactive/genome-sta
 
 **Run this before the break, right after section 04.** The room has just used order, axis, shape, variance, reshape and transpose. This is the moment those words are freshest. One question asks what fixing every index but one gives you, a fiber, which only section 01's *Explore later* covers. Give the one-line definition as its answer is revealed. Launch `kahoot_quiz_1_vocabulary_shapes.xlsx` (6 questions, ~5 min including the podium). No prep needed beyond having it imported into a kahoot ahead of time.
 
-## Break (5 min)
+## Break (10 min)
 
-<span data-language-key="break-5-min"></span>
+<span data-language-key="break-10-min"></span>
 
 ## 05 · Group Exercise — Video Pipeline Design (15 min)
 
@@ -408,18 +414,18 @@ The live slot is notebook 05's core, not this design exercise: a one-minute Myth
 
 <span data-language-key="part-iv-computing-with-tensors-sections-06-11"></span>
 
-## 06 · Contraction With `einsum` (Block 3, 15 min)
+## 06 · Contraction With `einsum` (Block 3, 20 min)
 
 **Practise today:** {{< var sections.s06.practice_en >}}
 
 **Explore later:** {{< var sections.s06.explore_en >}}
 
 
-<span data-language-key="06-contraction-with-einsum-block-3-15-min"></span>
+<span data-language-key="06-contraction-with-einsum-block-3-20-min"></span>
 
 **Why this matters.** Recommendation and search systems rank items by the dot product between a user vector and every item vector. That is one user against millions of items, many times per second. That contraction *is* the ranking signal. Sum over the wrong axis and every user gets wrong results.
 
-**Exercise (10 min)**
+**Exercise (15 min)**
 ```python
 photo = data.immunohistochemistry().astype(float)        # (512, 512, 3)
 batch = np.stack([photo, data.astronaut().astype(float)]) # (2, 512, 512, 3)
@@ -452,14 +458,28 @@ Two contractions on real sequence data make the same point in a different alphab
 
 Matrix multiplication is itself one of these, with the rule written down as data. The eight products of a `2 × 2` product are eight 1s in a `4 × 4 × 4` tensor, and [contracting that tensor against the two matrices](interactive/alphatensor-stage.html?lang=en#read) is `einsum("abc,a,b->c", T, A.ravel(), B.ravel())`: sixteen terms for each entry of the answer, fourteen of them multiplied by zero. Section 11 comes back to that tensor to ask how few pieces it splits into.
 
-## 07 · Inverses and the Pseudoinverse (Block 4, 15 min)
+## Deep Dive 17, Live — Multi-Head Attention (25 min)
+
+<span data-language-key="deep-dive-17-live"></span>
+
+The first of four deep dives the room opens together. A deep dive is a take-home notebook with no slides and no Kahoot; live, you work its opening route and take the rest home. This one is **[17 · 4D multi-head attention](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/17-multi-head-attention.ipynb)**, and it comes here because it needs exactly the two moves you have just practised: the reshape and transpose of section 04, and the contraction of section 06.
+
+Work the notebook's core: write `split_heads`, which turns `(batch, tokens, D)` into `(batch, heads, tokens, D / heads)`, then answer its predict-first question — does the right shape mean the right heads? It does not, and the failure is the silent reshape from section 04 with a new axis. Stop at **Core complete**. [Appendix B](#appendix-b-take-home-attention-is-two-contractions) is the same computation written as two contractions, and the attention stage's [heads picture](interactive/attention-stage.html?lang=en#heads) shows the axis you just made.
+
+## Lunch
+
+<span data-language-key="lunch"></span>
+
+Lunch falls here, after the first deep dive. **The clock stops for it:** the start times in the schedule are minutes of the session, so section 07 starts at 02:50 whenever the room comes back. Allow about {{< var schedule.lunch_minutes >}} minutes.
+
+## 07 · Inverses and the Pseudoinverse (Block 4, 20 min)
 
 **Practise today:** {{< var sections.s07.practice_en >}}
 
 **Explore later:** {{< var sections.s07.explore_en >}}
 
 
-<span data-language-key="07-inverses-and-the-pseudoinverse-block-4-15-min"></span>
+<span data-language-key="07-inverses-and-the-pseudoinverse-block-4-20-min"></span>
 
 
 ### Live core: what can the coefficients tell us?
@@ -523,7 +543,7 @@ np.allclose(M @ M_plus @ M, M)          # True
 
 This is a general lesson worth remembering: **when a tensor problem is hard, unfold it to a matrix, solve it there, and fold back.**
 
-**Exercise (10 min)** — real California housing data.
+**Exercise (15 min)** — real California housing data.
 ```python
 # Predict house value from district features. 20,640 real districts.
 print(housing.shape)                                   # (20640, 10)
@@ -630,14 +650,14 @@ for t in range(6):
     h = np.tanh(W @ h + U @ xs[t])    # same W and U every step — that is the recursion
 ```
 
-## 09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 15 min)
+## 09 · Matrix Factorizations: Which One, and What It Costs (Block 5, 20 min)
 
 **Practise today:** {{< var sections.s09.practice_en >}}
 
 **Explore later:** {{< var sections.s09.explore_en >}}
 
 
-<span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-15-min"></span>
+<span data-language-key="09-matrix-factorizations-which-one-and-what-it-costs-block-5-20-min"></span>
 
 Part I §1.4 drew the map. Sections 03 to 08 used three of the factorizations on it in passing: LU and QR in §1.4 itself, and the pseudoinverse in section 07. None of them answered the two questions a practitioner actually has: **which one do I reach for on this data, and what does it cost me?** This section answers both. It is also where **eigendecomposition** finally gets named, an hour before section 10 leans on the same machinery. The notebook is **[09 · Matrix factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/09-matrix-factorizations.ipynb)**.
 
@@ -722,18 +742,26 @@ k = int(np.argmax(db >= target_db))
 </details>
 
 
-## Break (5 min)
+## Break (10 min)
 
-<span data-language-key="break-5-min-2"></span>
+<span data-language-key="break-10-min-2"></span>
 
-## 10 · Tucker Decomposition on Real Data (Block 6, 15 min)
+## Deep Dive 13, Live — Convolution and Deconvolution (25 min)
+
+<span data-language-key="deep-dive-13-live"></span>
+
+**[13 · Convolution and deconvolution](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/13-convolution-and-deconvolution.ipynb)** is the third place the day's connecting idea happens, after the pseudoinverse in section 07 and before Tucker in section 10: a blurred photograph has no exact inverse, so you look for the best stable approximation of the original.
+
+Work the notebook's core: its predict-first question — are convolution and correlation the same thing? — and Exercise 1, which runs the two side by side and then writes convolution as one structured matrix product. Then watch one thing rather than type it: Exercise 3's deconvolution explorer on the real photograph, where Richardson-Lucy takes the error from 0.1157 to 0.0815. Transposed convolution and the rest of Exercise 3 go home; [Appendix F](#appendix-f-take-home-convolution-and-deconvolution) has the theory. Kahoot 3, one section from now, asks about what you just did.
+
+## 10 · Tucker Decomposition on Real Data (Block 6, 20 min)
 
 **Practise today:** {{< var sections.s10.practice_en >}}
 
 **Explore later:** {{< var sections.s10.explore_en >}}
 
 
-<span data-language-key="10-tucker-decomposition-on-real-data-block-6-15-min"></span>
+<span data-language-key="10-tucker-decomposition-on-real-data-block-6-20-min"></span>
 
 ### The theory
 
@@ -750,7 +778,7 @@ The related **CP decomposition** instead writes the tensor as a sum of simple ra
 
 **Our real tensor.** From 6,433 real New York taxi trips we build a genuine order-3 tensor: **pickup borough × dropoff borough × hour of day.**
 
-**Exercise (10 min)**
+**Exercise (15 min)**
 ```python
 taxis['hour'] = pd.to_datetime(taxis['pickup']).dt.hour
 sub = taxis.dropna(subset=['pickup_borough', 'dropoff_borough'])
@@ -802,20 +830,20 @@ Look at the einsum strings: `'ijk,ia,jb,kc->abc'` contracts three axes in one ex
 
 <span data-language-key="kahoot-quiz-3-convolution-tensor-decompositions-5-min"></span>
 
-**Run this right after section 10, before section 11.** Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution became take-home 13 when factorizations moved into the day, and the questions have not been rewritten yet. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min), then go straight from the podium into section 11, which takes the same tensor to CP.
+**Run this right after section 10, before section 11.** Its six questions still cover convolution and correlation alongside Tucker and CP. Convolution is deep dive 13, which the room opened live just before section 10, so those questions now check something it has done. Run it while the taxi-tensor rush-hour result is still on screen. Launch `kahoot_quiz_3_convolution_decompositions.xlsx` (6 questions, ~5 min), then go straight from the podium into section 11, which takes the same tensor to CP.
 
 ---
 
-## 11 · Tensor Factorizations: Which One, and What It Costs (Block 7, 15 min)
+## 11 · Tensor Factorizations: Which One, and What It Costs (Block 7, 20 min)
 
 **Practise today:** {{< var sections.s11.practice_en >}}
 
 **Explore later:** {{< var sections.s11.explore_en >}}
 
 
-<span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-15-min"></span>
+<span data-language-key="11-tensor-factorizations-which-one-and-what-it-costs-block-7-20-min"></span>
 
-[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) asked *which factorization, and what does it cost* one order down, on matrices. This section asks it of tensors, straight after section 10 has shown one answer. The notebook is **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
+[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-20-min) asked *which factorization, and what does it cost* one order down, on matrices. This section asks it of tensors, straight after section 10 has shown one answer. The notebook is **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**.
 
 A tensor decomposition is not only a compression technique. Each one makes a different assumption about **which structure in the data should be kept**, and that assumption — not the flop count — is what you choose between.
 
@@ -964,6 +992,26 @@ Kolda, co-author of the survey the references page tells you to start with, has 
 
 > 🇪🇸 Nadie conoce el rango del tensor `9 × 9 × 9` de 27 unos que codifica la multiplicación de matrices 3 × 3: está entre 19 y 23. Un rango 21 daría un algoritmo más rápido que el de Strassen.
 
+## Break (10 min)
+
+<span data-language-key="break-10-min-3"></span>
+
+## Deep Dive 14, Live — CP and the Rank-1 View (20 min)
+
+<span data-language-key="deep-dive-14-live"></span>
+
+Section 11 put CP beside Tucker on the taxi tensor and compared what each one costs. **[14 · CP factorization and the rank-1 view](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/14-cp-factorization.ipynb)** stays with CP for long enough to see what one component *is*: one vector per axis, and nothing else.
+
+Work the notebook's core: its predict-first question — does rescaling two factor vectors change the tensor? — and Exercise 1, which builds a rank-1 tensor from three vectors with `einsum`, normalises them, and moves all of the size into one number, `lam`. Alternating least squares, non-negative CP and the label the method never saw are the take-home half. [Appendix C](#appendix-c-take-home-cp-vs-tucker) is the comparison you made in section 11.
+
+## Deep Dive 20, Live — AlphaTensor (20 min)
+
+<span data-language-key="deep-dive-20-live"></span>
+
+The day ends on the open problem from [section 11](#still-open). **[20 · AlphaTensor: multiplying matrices as a game](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/20-alphatensor.ipynb)** turns it into something you can play: the rule for multiplying two `2 × 2` matrices is a `4 × 4 × 4` tensor of eight 1s, a CP factorization of that tensor is an algorithm, and its rank is the number of multiplications the algorithm needs.
+
+Work the notebook's core: its predict-first question — does Strassen's first move lower the count of nonzero cells? — and Exercise 1, which reads a matrix product off the tensor with one `einsum`. Then play one game on the [AlphaTensor stage](interactive/alphatensor-stage.html?lang=en#game) with the room calling the moves. Strassen's recursion, the search and the published factorizations go home.
+
 ---
 
 
@@ -983,16 +1031,16 @@ What you did today:
 3. **Part III** — standardized 1,797 digits with broadcasting and hit the pixels that never vary and turn into NaN; moved the channel axis of real microscopy images and caught the one reshape that runs without an error and scrambles a photograph; and kept 16 of a real video's 720 frames, each traced back to the frame it came from.
 4. **Part IV** — turned a colour image grey with one `einsum`; watched the pseudoinverse pick the smallest of many equally good answers when two columns are copies of each other; ran Fibonacci as a matrix power; fitted real airline traffic by QR and by the normal equations, and found similar residuals hiding different coefficients; and shrank a real taxi tensor from 480 counts to 60 numbers with Tucker, keeping one daily pattern that peaks at hour 18, before CP won the same game once the error bar dropped to 2%.
 
-**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. Those three sections *state* it. You watch it happen three times: the pseudoinverse on two columns that are copies of each other in section 07, Tucker on the taxi tensor in section 10, and Richardson-Lucy on a blurred photograph in take-home 13.
+**One idea connects sections 07, 09 and 10:** when a problem has no exact answer and no true inverse, you do not give up. You find the best stable approximation instead. Those three sections *state* it. You watch it happen three times: the pseudoinverse on two columns that are copies of each other in section 07, Tucker on the taxi tensor in section 10, and Richardson-Lucy on a blurred photograph in deep dive 13.
 
 **Where to go next**
 - `torch.einsum` / `tf.einsum` / `jnp.einsum` — identical syntax to what you used today.
 - `np.linalg` — the rest of Chapter 2: eigendecomposition, `lstsq`, `pinv`, `qr`, `cholesky`.
 - `scipy.signal` and `skimage.restoration` — convolution and deconvolution beyond today.
 - **The five take-homes**, Appendices A to E — PCA, attention, CP, Cholesky and audio denoising — all of them in [notebook 12](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/12-wrap-up-and-take-homes.ipynb).
-- **A deep dive** beyond them: [convolution and deconvolution](#appendix-f-take-home-convolution-and-deconvolution) (Appendix F, notebook 13) — the third instance of today's connecting idea, and the one the room did not run. See the [notebook index](notebooks.qmd#going-further) for all take-home deep dives.
+- **The rest of the four deep dives** you opened today: 13 (convolution and deconvolution, with [Appendix F](#appendix-f-take-home-convolution-and-deconvolution)), 14 (CP), 17 (attention) and 20 (AlphaTensor). Each one goes well past the route the room worked. See the [notebook index](notebooks.qmd#going-further) for those and the four deep dives that are take-home from the start.
 - **An open problem** at the end of [section 11](#still-open): a `9 × 9 × 9` tensor of 27 ones whose rank nobody knows, and why a cheaper matrix multiplication is worth finding.
-- **[References and further reading](references.qmd)** — books, the seminal Tucker/CP/SVD papers, `tensorly` and the blog posts, for going deeper than today's 210 minutes.
+- **[References and further reading](references.qmd)** — books, the seminal Tucker/CP/SVD papers, `tensorly` and the blog posts, for going deeper than today's six hours.
 
 ---
 
@@ -1098,7 +1146,7 @@ weights_masked = softmax(scores + mask, axis=-1)     # padded positions get weig
 
 <span data-language-key="appendix-c-take-home-cp-vs-tucker"></span>
 
-The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. There CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-15-min) is the written companion to that notebook, and the [Tucker and CP stage](interactive/factor-stage.html?lang=en) runs the whole comparison live in the browser, on the same taxi tensor, with no notebook to launch.
+The CP-versus-Tucker exercise that lived here has moved into the session itself, as **[11 · Tensor factorizations](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**. There CP and Tucker are compared at a **matched parameter budget** rather than rank-for-rank, and the discussion extends to Tensor Train and t-SVD. [Section 11](#tensor-factorizations-which-one-and-what-it-costs-block-7-20-min) is the written companion to that notebook, and the [Tucker and CP stage](interactive/factor-stage.html?lang=en) runs the whole comparison live in the browser, on the same taxi tensor, with no notebook to launch.
 
 > 🇪🇸 El ejercicio de comparación entre CP y Tucker se trasladó al **[cuaderno 11 · Factorizaciones tensoriales](https://colab.research.google.com/github/project-delphi/tensors-workshop/blob/main/notebooks/11-tensor-factorizations.ipynb)**, donde CP y Tucker se comparan con un **presupuesto de parámetros equivalente**, y el análisis se amplía a Tensor Train y t-SVD.
 
@@ -1106,7 +1154,7 @@ The CP-versus-Tucker exercise that lived here has moved into the session itself,
 
 <span data-language-key="appendix-d-take-home-cholesky-builds-correlated-data"></span>
 
-[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-15-min) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise, and it hands back correlated draws with exactly that covariance. That is the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors or scenarios.
+[Section 09](#matrix-factorizations-which-one-and-what-it-costs-block-5-20-min) covers Cholesky as a *solver* — factor once, then solve cheaply many times. This appendix is the other half: Cholesky as a **sampler**. Feed a lower-triangular `L` with `L @ L.T == Sigma` some independent Gaussian noise, and it hands back correlated draws with exactly that covariance. That is the mechanism behind every Monte Carlo simulation that needs correlated assets, sensors or scenarios.
 
 ```python
 vol = np.array([0.012, 0.015, 0.010])
@@ -1327,7 +1375,7 @@ naive = np.real(np.fft.ifft2(np.fft.fft2(noisy) / np.where(abs(K) < 1e-3, 1e-3, 
 
 <span data-language-key="appendix-g-take-home-a-gene-is-already-a-tensor"></span>
 
-[Section 04](#reshape-and-transpose-real-images-block-2-15-min) reshapes pixels and [section 06](#contraction-with-einsum-block-3-15-min) contracts them. This appendix runs both on a different kind of data, where the axes are not space and colour but *position* and *alphabet* — and where the reshape and the contraction each turn out to be the whole of a named biological process.
+[Section 04](#reshape-and-transpose-real-images-block-2-20-min) reshapes pixels and [section 06](#contraction-with-einsum-block-3-20-min) contracts them. This appendix runs both on a different kind of data, where the axes are not space and colour but *position* and *alphabet* — and where the reshape and the contraction each turn out to be the whole of a named biological process.
 
 A gene is a string over four letters, so it one-hot encodes to `(L, 4)`: one row per position, one 1 per row. That single step is what lets arithmetic touch a sequence at all, and everything below is a consequence of it.
 
@@ -1335,7 +1383,7 @@ Three results are worth predicting before you run anything. **Transcription is o
 
 The last one is the payoff. Comparing one guide against every window of a sequence is `einsum('wlb,lb->w')`, because the dot product of two one-hot rows is 1 exactly when the bases agree — so summing over position and alphabet *counts matches*. Search is a contraction. Doing it for many guides at once puts one more index in front and changes nothing else.
 
-The [genome stage](interactive/genome-stage.html?lang=en) is all of this as nine pictures; go straight to [transcription](interactive/genome-stage.html?lang=en#transcribe), [the codon cube](interactive/genome-stage.html?lang=en#codons), [the code table](interactive/genome-stage.html?lang=en#translate) or [the search](interactive/genome-stage.html?lang=en#search). One of the nine goes a step past this appendix: [the fold](interactive/genome-stage.html?lang=en#fold) is the protein this gene encodes as AlphaFold predicts it, a `(1300, 3)` array, and the grid of distances from it is [section 03](#indexing-and-broadcasting-real-data-block-1-15-min)'s broadcasting on real coordinates. It is a page about how sequence data is represented, and deliberately not a tool for designing anything.
+The [genome stage](interactive/genome-stage.html?lang=en) is all of this as nine pictures; go straight to [transcription](interactive/genome-stage.html?lang=en#transcribe), [the codon cube](interactive/genome-stage.html?lang=en#codons), [the code table](interactive/genome-stage.html?lang=en#translate) or [the search](interactive/genome-stage.html?lang=en#search). One of the nine goes a step past this appendix: [the fold](interactive/genome-stage.html?lang=en#fold) is the protein this gene encodes as AlphaFold predicts it, a `(1300, 3)` array, and the grid of distances from it is [section 03](#indexing-and-broadcasting-real-data-block-1-20-min)'s broadcasting on real coordinates. It is a page about how sequence data is represented, and deliberately not a tool for designing anything.
 
 **Exercise (15 min)**
 ```python
@@ -1403,9 +1451,9 @@ Work from the real 180-base sequence in `interactive/genome-core.js` if you want
 
 **The group block needs firmer facilitation than exercise blocks.** If a group is still on the first design question with 5 minutes left, join their channel and tell them to sketch a shape, even the wrong one. The share-back matters more than a correct sketch.
 
-**The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after sections 04, 07 and 10 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes total, taking the workshop from 195 to 210 minutes.
+**The three Kahoot quizzes.** Each is 6 questions in `kahoot_quiz_1_vocabulary_shapes.xlsx`, `kahoot_quiz_2_distance_pseudoinverse.xlsx`, and `kahoot_quiz_3_convolution_decompositions.xlsx`, sitting after sections 04, 07 and 10 respectively. Import each into a kahoot ahead of time (Create → Add question → Import → Import spreadsheet) — don't do this live. Budget 5 minutes per quiz including the podium; groups tend to want to see the leaderboard, and that's fine, it's the payoff. These add 15 minutes in total. With the four live deep dives (90 minutes) and four 10-minute breaks, the thirteen sections' 215 minutes come to 360; lunch is on top of that.
 
-**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — the pseudoinverse comes back on the wrap-up's one-idea slide), then **Kahoot Quiz 1**. Everything past a notebook's **Core complete**, and every appendix, already sits outside the 210 minutes, so cutting it saves nothing. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one checks whether Tucker landed while the taxi result is still on screen. The facilitator run sheet's [*If you are behind*](facilitator-guide.md#if-you-are-behind) turns this into clock-time checkpoints with a cut for each.
+**Cutting for time.** In order: drop **Kahoot Quiz 2** (the least novel of the three — the pseudoinverse comes back on the wrap-up's one-idea slide), then **Kahoot Quiz 1**. Everything past a notebook's **Core complete**, and every appendix, already sits outside the 360 minutes, so cutting it saves nothing. A live deep dive is the next thing to shorten, never to skip: run its predict-first question and demonstrate the core activity. Never cut Part I §1.3, section 10, or Kahoot Quiz 3 — the last one checks whether Tucker landed while the taxi result is still on screen. The facilitator run sheet's [*If you are behind*](facilitator-guide.md#if-you-are-behind) turns this into clock-time checkpoints with a cut for each.
 
 **Known rough edges.** Appendix F TODO 4 is the hardest thing in the workshop.
 A student who skips the border crop will conclude deconvolution failed, so flag

@@ -228,6 +228,11 @@ def quiz_after(n: str) -> dict | None:
     return next((q for q in QUIZZES if q["after"] == n), None)
 
 
+LIVE_MINUTES = {
+    lab["extra"]: lab["minutes"] for lab in V["schedule"].get("labs", {}).values()
+}
+
+
 def is_extra(s: dict) -> bool:
     """An extra is what a section is missing: no `minutes` on the clock."""
     return "minutes" not in s
@@ -251,7 +256,13 @@ def header_cell(s: dict) -> dict:
         f"colab-badge.svg)]({colab_url(s)})"
     )
     if s.get("format_line_en") and s.get("format_line_es"):
-        fmt_line = f"{s['format_line_en']} / {s['format_line_es']}"
+        en, es = s["format_line_en"], s["format_line_es"]
+        # A deep dive `schedule.labs` opens live says so, with the minutes
+        # read from there rather than typed into the line a second time.
+        if live := LIVE_MINUTES.get(s["n"]):
+            en += f" · opened live for {live} min"
+            es += f" · {live} min en vivo en el taller"
+        fmt_line = f"{en} / {es}"
     elif s.get("format_line_en"):
         fmt_line = s["format_line_en"]
     else:

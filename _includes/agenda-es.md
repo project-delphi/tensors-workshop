@@ -5,16 +5,22 @@
 | 00:00 | 5 | — | Preparación y bienvenida |
 | 00:05 | 20 | I | Qué es un tensor |
 | 00:25 | 20 | II | Pensar en N dimensiones |
-| 00:45 | 30 | III | Indexación y broadcasting · Reshape y transposición |
-| 01:15 | 10 | 🎯 | **Kahoot 1** + pausa |
-| 01:25 | 15 | III | Diseño de un pipeline de vídeo *(grupo)* |
-| 01:40 | 15 | IV | Contracción con einsum |
-| 01:55 | 5 | — | Pausa |
-| 02:00 | 15 | IV | Inversas y la pseudoinversa |
-| 02:15 | 5 | 🎯 | **Kahoot 2** |
-| 02:20 | 25 | IV | Recursión · Factorizaciones matriciales |
-| 02:45 | 5 | — | Pausa |
-| 02:50 | 15 | IV | Descomposición de Tucker |
-| 03:05 | 5 | 🎯 | **Kahoot 3** |
-| 03:10 | 15 | IV | Factorizaciones tensoriales |
-| 03:25 | 5 | — | Cierre y ejercicios para casa |
+| 00:45 | 40 | III | Indexación y broadcasting · Reshape y transposición |
+| 01:25 | 15 | 🎯 | **Kahoot 1** + pausa |
+| 01:40 | 15 | III | Diseño de un pipeline de vídeo *(grupo)* |
+| 01:55 | 20 | IV | Contracción con einsum |
+| 02:15 | 10 | — | Pausa |
+| 02:25 | 25 | 🔬 | Estudio a fondo 17 · Atención multicabeza *(en vivo)* |
+| 02:50 | — | — | **Almuerzo** — el reloj se detiene |
+| 02:50 | 20 | IV | Inversas y la pseudoinversa |
+| 03:10 | 5 | 🎯 | **Kahoot 2** |
+| 03:15 | 30 | IV | Recursión · Factorizaciones matriciales |
+| 03:45 | 10 | — | Pausa |
+| 03:55 | 25 | 🔬 | Estudio a fondo 13 · Convolución y deconvolución *(en vivo)* |
+| 04:20 | 20 | IV | Descomposición de Tucker |
+| 04:40 | 5 | 🎯 | **Kahoot 3** |
+| 04:45 | 20 | IV | Factorizaciones tensoriales |
+| 05:05 | 10 | — | Pausa |
+| 05:15 | 20 | 🔬 | Estudio a fondo 14 · CP y la vista de rango 1 *(en vivo)* |
+| 05:35 | 20 | 🔬 | Estudio a fondo 20 · AlphaTensor *(en vivo)* |
+| 05:55 | 5 | — | Cierre y ejercicios para casa |

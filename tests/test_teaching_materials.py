@@ -254,14 +254,16 @@ class ClockTable(unittest.TestCase):
             table = (
                 "| Check at | You should be starting | If you are | Cut |\n"
                 "|---|---|---|---|\n"
-                "| +1:00 | 04 | 5+ min late | Something (−3). |\n"
-                "| +1:15 | Kahoot 1 | up to 5 min late | Run it. |\n"
+                "| +1:05 | 04 | 5+ min late | Something (−3). |\n"
+                "| +1:25 | Kahoot 1 | up to 5 min late | Run it. |\n"
+                "| +2:25 | Deep dive 17 | 5+ min late | Demonstrate (−8). |\n"
+                "| +3:55 | Estudio a fondo 13 | 5+ min | Demuestra (−8). |\n"
                 "| +0:39 | 02's axis-meaning task | 5+ min late | One group reports (−3). |\n"
             )
             page.write_text(table)
-            self.assertEqual(check_clock_table(page), (2, 1))
+            self.assertEqual(check_clock_table(page), (4, 1))
 
-            wrong = table.replace("| +1:00 | 04 |", "| +1:05 | 04 |")
+            wrong = table.replace("| +1:05 | 04 |", "| +1:00 | 04 |")
             page.write_text(wrong)
             with self.assertRaises(ValueError):
                 check_clock_table(page)

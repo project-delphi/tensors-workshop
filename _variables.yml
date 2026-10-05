@@ -214,9 +214,10 @@ workshop:
       url: "https://www.linkedin.com/in/sebastian-analytics/"
   title_en: "Tensors for Machine Learning"
   title_es: "Tensores para Aprendizaje Automático"
-  subtitle_en: "A 3.5-hour workshop, including three Kahoot knowledge checks"
-  subtitle_es: "Un taller de 3,5 horas que incluye tres controles de conocimiento con Kahoot"
-  minutes: 210
+  subtitle_en: "A one-day, 6-hour workshop, including three Kahoot knowledge checks and four live deep dives"
+  subtitle_es: "Un taller de un día, 6 horas, que incluye tres controles de conocimiento con Kahoot y cuatro estudios a fondo en vivo"
+  minutes: 360
+  hours: 6
   book: "[Deep Learning](https://www.deeplearningbook.org/contents/linear_algebra.html) (Goodfellow, Bengio & Courville), Chapter 2 — Linear Algebra"
   prereq_repo_url: "https://github.com/Laverde97/linear-algebra-deep-learning"
   # Recommended, not required: 3Blue1Brown's "Essence of linear algebra",
@@ -300,16 +301,58 @@ kahoot:
     questions: 6
 
 # ── Schedule ─────────────────────────────────────────────────────────────────
-# What sits *between* the sections. The thirteen sections come to 180 minutes;
-# these two fill the remaining 30 and are the whole reason a section's `start`
-# is not just the sum of the `minutes` before it. Each quiz already declares
-# the section it follows (`kahoot.qN.after`), so only the breaks are listed.
+# What sits *between* the sections. The thirteen sections come to 215 minutes;
+# the quizzes (15), the breaks (40) and the four live deep dives (90) fill the
+# remaining 145 and are the whole reason a section's `start` is not just the
+# sum of the `minutes` before it. Each quiz already declares the section it
+# follows (`kahoot.qN.after`), so only the breaks, the labs and lunch are
+# listed.
 schedule:
   quiz_minutes: 5
-  break_minutes: 5
-  # Sections after which the room takes a break. After 04 the break follows
-  # Kahoot 1, which is why the agenda shows a single 10-minute block there.
-  break_after: ["04", "06", "09"]
+  break_minutes: 10
+  # Sections -- or live labs, by their extra's number -- after which the room
+  # takes a break. After 04 the break follows Kahoot 1, which is why the
+  # agenda shows a single 15-minute block there.
+  break_after: ["04", "06", "09", "11"]
+  # Lunch is in the run order and off the clock: the running clock and the
+  # deck timer stop for it, so the 360 minutes are sessions, quizzes and short
+  # breaks, and the day is about seven hours door to door. `lunch_after` takes
+  # a section or a live lab; `lunch_minutes` is only ever printed.
+  lunch_after: "17"
+  lunch_minutes: 60
+  # The deep dives that are opened live. A lab is still an extra -- a take-home
+  # notebook with no section number, no slide anchor and no Kahoot -- and its
+  # minutes live here rather than under `extras`, because an extra having no
+  # `minutes` is how every script tells an extra from a section. The room
+  # works the notebook's opening route together and takes the rest home.
+  # `after` is the section a lab follows; labs run in the order listed.
+  # `start`/`end` are derived and written out, exactly as a section's are, and
+  # check_links.py recomputes them.
+  labs:
+    x17:
+      extra: "17"
+      after: "06"
+      minutes: 25
+      start: "+02:25"
+      end: "+02:50"
+    x13:
+      extra: "13"
+      after: "09"
+      minutes: 25
+      start: "+03:55"
+      end: "+04:20"
+    x14:
+      extra: "14"
+      after: "11"
+      minutes: 20
+      start: "+05:15"
+      end: "+05:35"
+    x20:
+      extra: "20"
+      after: "11"
+      minutes: 20
+      start: "+05:35"
+      end: "+05:55"
 
 # ── The machine-generated companion ──────────────────────────────────────────
 # A NotebookLM notebook built from this workshop's own sources, and the
@@ -669,7 +712,7 @@ brainstorm:
   #
   #   * Where the idea is **stated** — sections 07, 09 and 10. That is the
   #     handbook's wrap-up, and notebook 13's header repeats it.
-  #   * Where you **watch it happen** — 07, 10 and take-home 13. That is this
+  #   * Where you **watch it happen** — 07, 10 and deep dive 13. That is this
   #     list, and it is what both decks' *one idea* slide shows: the
   #     pseudoinverse, Tucker and Richardson-Lucy deconvolution side by side.
   #     That slide was hand-drawn art until 2026-09-28; it is now Quarto
@@ -692,11 +735,12 @@ brainstorm:
   thread_sections: ["07", "10", "13"]
 
   # Where the day lands. These two are not filed under an idea: 12 collects all
-  # four, and 13 is the take-home that sits past the clock. They are listed
+  # four, and 13 is the deep dive that shows the thread on a photograph, opened
+  # live since the day grew to six hours. They are listed
   # here so the "every section placed exactly once" rule has somewhere to put
   # them.
-  closing_en: "12 pulls the four together. 13 is the take-home."
-  closing_es: "12 une las cuatro. 13 es el ejercicio para casa."
+  closing_en: "12 pulls the four together. 13 shows it on a photo."
+  closing_es: "12 une las cuatro. 13 lo muestra en una foto."
   closing_sections: ["12", "13"]
 
 # ── Further reading: the ML blog ─────────────────────────────────────────────
@@ -1241,11 +1285,13 @@ references:
 # "Recursion · Convolution" rather than printing both full titles.
 #
 # `items` says what the row covers, in run order, using the ids the rest of the
-# file already uses: "00".."11" for a section, "q1".."q3" for a quiz, and
-# "break-NN" for the break `schedule.break_after` puts after section NN.
+# file already uses: "00".."12" for a section, "q1".."q3" for a quiz,
+# "lab-NN" for the live slot `schedule.labs` gives deep dive NN, "break-NN" for
+# the break `schedule.break_after` puts after section or lab NN, and "lunch".
 # Together the rows have to spell out the whole running clock — every section,
-# quiz and break exactly once, in order — and timeline.py refuses to build the
-# table otherwise, so a section cannot be added above without being placed here.
+# quiz, lab and break exactly once, in order, and lunch where it falls — and
+# timeline.py refuses to build the table otherwise, so a section cannot be
+# added above without being placed here.
 agenda:
   - items: ["00"]
     label_en: "Setup and welcome"
@@ -1271,6 +1317,12 @@ agenda:
   - items: ["break-06"]
     label_en: "Break"
     label_es: "Pausa"
+  - items: ["lab-17"]
+    label_en: "Deep dive 17 · Multi-head attention *(live lab)*"
+    label_es: "Estudio a fondo 17 · Atención multicabeza *(en vivo)*"
+  - items: ["lunch"]
+    label_en: "**Lunch** — the clock stops"
+    label_es: "**Almuerzo** — el reloj se detiene"
   - items: ["07"]
     label_en: "Inverses and the pseudoinverse"
     label_es: "Inversas y la pseudoinversa"
@@ -1283,6 +1335,9 @@ agenda:
   - items: ["break-09"]
     label_en: "Break"
     label_es: "Pausa"
+  - items: ["lab-13"]
+    label_en: "Deep dive 13 · Convolution and deconvolution *(live lab)*"
+    label_es: "Estudio a fondo 13 · Convolución y deconvolución *(en vivo)*"
   - items: ["10"]
     label_en: "Tucker decomposition"
     label_es: "Descomposición de Tucker"
@@ -1292,12 +1347,21 @@ agenda:
   - items: ["11"]
     label_en: "Tensor factorizations"
     label_es: "Factorizaciones tensoriales"
+  - items: ["break-11"]
+    label_en: "Break"
+    label_es: "Pausa"
+  - items: ["lab-14"]
+    label_en: "Deep dive 14 · CP and the rank-1 view *(live lab)*"
+    label_es: "Estudio a fondo 14 · CP y la vista de rango 1 *(en vivo)*"
+  - items: ["lab-20"]
+    label_en: "Deep dive 20 · AlphaTensor *(live lab)*"
+    label_es: "Estudio a fondo 20 · AlphaTensor *(en vivo)*"
   - items: ["12"]
     label_en: "Wrap-up and take-homes"
     label_es: "Cierre y ejercicios para casa"
 
 # ── Sections ─────────────────────────────────────────────────────────────────
-# The section spine is the handbook's own 210-minute schedule table, breaks
+# The section spine is the handbook's own 360-minute schedule table, breaks
 # excluded. `n` is authoritative: it fixes the notebook filename prefix, the
 # slide anchor (#sec-NN-slug) and the row order in every table on the site.
 #
@@ -1422,9 +1486,9 @@ sections:
     slug: "indexing-and-broadcasting"
     part: "III"
     block: "1"
-    minutes: 15
+    minutes: 20
     start: "+00:45"
-    end: "+01:00"
+    end: "+01:05"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Indexing and broadcasting real data"
@@ -1462,9 +1526,9 @@ sections:
     slug: "reshape-and-transpose"
     part: "III"
     block: "2"
-    minutes: 15
-    start: "+01:00"
-    end: "+01:15"
+    minutes: 20
+    start: "+01:05"
+    end: "+01:25"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Reshape and transpose real images"
@@ -1505,8 +1569,8 @@ sections:
     part: "III"
     block: "—"
     minutes: 15
-    start: "+01:25"
-    end: "+01:40"
+    start: "+01:40"
+    end: "+01:55"
     format_en: "group"
     format_es: "grupo"
     title_en: "Video pipeline design"
@@ -1548,9 +1612,9 @@ sections:
     slug: "contraction-with-einsum"
     part: "IV"
     block: "3"
-    minutes: 15
-    start: "+01:40"
-    end: "+01:55"
+    minutes: 20
+    start: "+01:55"
+    end: "+02:15"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Contraction with einsum"
@@ -1592,9 +1656,9 @@ sections:
     slug: "inverses-and-pseudoinverse"
     part: "IV"
     block: "4"
-    minutes: 15
-    start: "+02:00"
-    end: "+02:15"
+    minutes: 20
+    start: "+02:50"
+    end: "+03:10"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Inverses and the pseudoinverse"
@@ -1633,8 +1697,8 @@ sections:
     part: "IV"
     block: "—"
     minutes: 10
-    start: "+02:20"
-    end: "+02:30"
+    start: "+03:15"
+    end: "+03:25"
     format_en: "demo"
     format_es: "demostración"
     title_en: "Recursion with matrices and vectors"
@@ -1686,9 +1750,9 @@ sections:
     slug: "matrix-factorizations"
     part: "IV"
     block: "5"
-    minutes: 15
-    start: "+02:30"
-    end: "+02:45"
+    minutes: 20
+    start: "+03:25"
+    end: "+03:45"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Matrix factorizations"
@@ -1728,9 +1792,9 @@ sections:
     slug: "tucker-decomposition"
     part: "IV"
     block: "6"
-    minutes: 15
-    start: "+02:50"
-    end: "+03:05"
+    minutes: 20
+    start: "+04:20"
+    end: "+04:40"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Tucker decomposition on real data"
@@ -1782,9 +1846,9 @@ sections:
     slug: "tensor-factorizations"
     part: "IV"
     block: "7"
-    minutes: 15
-    start: "+03:10"
-    end: "+03:25"
+    minutes: 20
+    start: "+04:45"
+    end: "+05:05"
     format_en: "exercise"
     format_es: "ejercicio"
     title_en: "Tensor factorizations"
@@ -1827,8 +1891,8 @@ sections:
     part: "—"
     block: "—"
     minutes: 5
-    start: "+03:25"
-    end: "+03:30"
+    start: "+05:55"
+    end: "+06:00"
     format_en: "wrap-up"
     format_es: "cierre"
     format_line_en: "wrap-up · 5 min + take-homes after the workshop"
@@ -1866,13 +1930,15 @@ sections:
       - "Reducir ruido de una grabación real con `STFT → SVD truncada → ISTFT` y medir el compromiso mediante SNR."
 
 # ── Extras ───────────────────────────────────────────────────────────────────
-# Notebooks that are not sections. Deep dives, handed out as take-home material
-# after the workshop, deliberately outside the 195-minute clock.
+# Notebooks that are not sections. Deep dives, handed out as take-home
+# material. Four of them are also opened live, for the 20 or 25 minutes
+# `schedule.labs` gives each; the other four stay outside the 360-minute clock.
 #
 # The shape is `sections` minus everything that makes a section a section:
 # there is no `minutes`, no `start`/`end` and no `part`, which is exactly what
-# keeps an extra out of the running clock — scripts/timeline.py only ever walks
-# `sections`, so nothing here can move a start time or the agenda. Extras also
+# keeps an extra out of the running clock — scripts/timeline.py walks
+# `sections`, and puts an extra on the clock only when `schedule.labs` names
+# it, so nothing written here can move a start time or the agenda. Extras also
 # get no `#sec-NN` slide anchor and no Kahoot: the decks and the two landing
 # pages stay a list of the thirteen sections.
 #

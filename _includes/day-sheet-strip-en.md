@@ -6,17 +6,23 @@
 | 02 · {{< var sections.s02.title_en >}} | {{< var sections.s02.start >}} | {{< var sections.s02.minutes >}} | | | | |
 | 03 · {{< var sections.s03.title_en >}} | {{< var sections.s03.start >}} | {{< var sections.s03.minutes >}} | | | | |
 | 04 · {{< var sections.s04.title_en >}} | {{< var sections.s04.start >}} | {{< var sections.s04.minutes >}} | | | | |
-| Kahoot 1 | +01:15 | {{< var schedule.quiz_minutes >}} | | | | |
-| Break | +01:20 | {{< var schedule.break_minutes >}} | | | | |
+| Kahoot 1 | +01:25 | {{< var schedule.quiz_minutes >}} | | | | |
+| Break | +01:30 | {{< var schedule.break_minutes >}} | | | | |
 | 05 · {{< var sections.s05.title_en >}} | {{< var sections.s05.start >}} | {{< var sections.s05.minutes >}} | | | | |
 | 06 · {{< var sections.s06.title_en >}} | {{< var sections.s06.start >}} | {{< var sections.s06.minutes >}} | | | | |
-| Break | +01:55 | {{< var schedule.break_minutes >}} | | | | |
+| Break | +02:15 | {{< var schedule.break_minutes >}} | | | | |
+| 17 · deep dive · {{< var extras.x17.title_en >}} | {{< var schedule.labs.x17.start >}} | {{< var schedule.labs.x17.minutes >}} | | | | |
+| Lunch (clock stopped) | +02:50 | — | | | | |
 | 07 · {{< var sections.s07.title_en >}} | {{< var sections.s07.start >}} | {{< var sections.s07.minutes >}} | | | | |
-| Kahoot 2 | +02:15 | {{< var schedule.quiz_minutes >}} | | | | |
+| Kahoot 2 | +03:10 | {{< var schedule.quiz_minutes >}} | | | | |
 | 08 · {{< var sections.s08.title_en >}} | {{< var sections.s08.start >}} | {{< var sections.s08.minutes >}} | | | | |
 | 09 · {{< var sections.s09.title_en >}} | {{< var sections.s09.start >}} | {{< var sections.s09.minutes >}} | | | | |
-| Break | +02:45 | {{< var schedule.break_minutes >}} | | | | |
+| Break | +03:45 | {{< var schedule.break_minutes >}} | | | | |
+| 13 · deep dive · {{< var extras.x13.title_en >}} | {{< var schedule.labs.x13.start >}} | {{< var schedule.labs.x13.minutes >}} | | | | |
 | 10 · {{< var sections.s10.title_en >}} | {{< var sections.s10.start >}} | {{< var sections.s10.minutes >}} | | | | |
-| Kahoot 3 | +03:05 | {{< var schedule.quiz_minutes >}} | | | | |
+| Kahoot 3 | +04:40 | {{< var schedule.quiz_minutes >}} | | | | |
 | 11 · {{< var sections.s11.title_en >}} | {{< var sections.s11.start >}} | {{< var sections.s11.minutes >}} | | | | |
+| Break | +05:05 | {{< var schedule.break_minutes >}} | | | | |
+| 14 · deep dive · {{< var extras.x14.title_en >}} | {{< var schedule.labs.x14.start >}} | {{< var schedule.labs.x14.minutes >}} | | | | |
+| 20 · deep dive · {{< var extras.x20.title_en >}} | {{< var schedule.labs.x20.start >}} | {{< var schedule.labs.x20.minutes >}} | | | | |
 | 12 · {{< var sections.s12.title_en >}} | {{< var sections.s12.start >}} | {{< var sections.s12.minutes >}} | | | | |

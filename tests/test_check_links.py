@@ -763,6 +763,35 @@ class Schedule(unittest.TestCase):
                 any("workshop.minutes says" in f for f in failures), failures
             )
 
+    def test_mistyped_lab_start_fails(self):
+        lab = self.timeline.V["schedule"]["labs"]["x17"]
+        written = lab["start"]
+        lab["start"] = "+99:99"
+        try:
+            with self.patched() as failures:
+                self.assertTrue(any("deep dive 17" in f for f in failures), failures)
+        finally:
+            lab["start"] = written
+
+    def test_lunch_is_in_the_run_order_and_off_the_clock(self):
+        atoms = self.timeline.atoms()
+        self.assertEqual([a for a in atoms if a[0] == "lunch"], [("lunch", 0)])
+        self.assertEqual(self.timeline.total_minutes(), cl.V["workshop"]["minutes"])
+        rows = self.timeline.agenda_rows("en")
+        self.assertEqual([r["minutes"] for r in rows].count(0), 1)
+
+    def test_a_lab_after_no_section_is_refused(self):
+        lab = self.timeline.V["schedule"]["labs"]["x13"]
+        written = lab["after"]
+        lab["after"] = "99"
+        try:
+            with self.assertRaises(self.timeline.ScheduleError):
+                self.timeline.atoms()
+            with self.patched() as failures:
+                self.assertTrue(any("not a section" in f for f in failures), failures)
+        finally:
+            lab["after"] = written
+
     def test_a_section_losing_a_minute_moves_every_later_window(self):
         # The total is what catches a whole quiz or break going missing, as
         # opposed to a single offset being mistyped.

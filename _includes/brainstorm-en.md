@@ -2,7 +2,7 @@
 ::: {.brainstorm}
 <svg xmlns="http://www.w3.org/2000/svg" class="bs-wide" viewBox="0 0 880 756" role="img" aria-labelledby="bs-wide-t bs-wide-d">
 <title id="bs-wide-t">Four ideas, one object</title>
-<desc id="bs-wide-d">Every section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum, 17 4D multi-head attention: reshape Q, K and V; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations, 14 CP factorization and the rank-1 view, 15 Generalized CP for counts and binary data, 16 PCA from a tensors perspective, 18 Latent feature compression with SVD, 19 CP or Tucker in practice, 20 AlphaTensor: multiplying matrices as a game. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home.</desc>
+<desc id="bs-wide-d">Every section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum, 17 4D multi-head attention: reshape Q, K and V; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations, 14 CP factorization and the rank-1 view, 15 Generalized CP for counts and binary data, 16 PCA from a tensors perspective, 18 Latent feature compression with SVD, 19 CP or Tucker in practice, 20 AlphaTensor: multiplying matrices as a game. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 shows it on a photo.</desc>
 <text x="14" y="34" class="bs-title">Four ideas, one object</text>
 <text x="14" y="58" class="bs-lead">Every section serves one of these four ideas.</text>
 <rect x="10" y="76" width="420" height="164" rx="8" class="bs-card"/>
@@ -67,11 +67,11 @@
 <rect x="10" y="652" width="860" height="73" rx="8" class="bs-ribbon"/>
 <text x="440" y="682" class="bs-thread" text-anchor="middle">One thread runs through all four. When there is no exact answer, find the best approximation you can trust.</text>
 <text x="440" y="706" class="bs-where" text-anchor="middle">You watch it happen in sections 07, 10 and 13.</text>
-<text x="440" y="751" class="bs-closing" text-anchor="middle">12 pulls the four together. 13 is the take-home.</text>
+<text x="440" y="751" class="bs-closing" text-anchor="middle">12 pulls the four together. 13 shows it on a photo.</text>
 </svg>
 <svg xmlns="http://www.w3.org/2000/svg" class="bs-narrow" viewBox="0 0 400 1202" role="img" aria-labelledby="bs-narrow-t bs-narrow-d">
 <title id="bs-narrow-t">Four ideas, one object</title>
-<desc id="bs-narrow-d">Every section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum, 17 4D multi-head attention: reshape Q, K and V; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations, 14 CP factorization and the rank-1 view, 15 Generalized CP for counts and binary data, 16 PCA from a tensors perspective, 18 Latent feature compression with SVD, 19 CP or Tucker in practice, 20 AlphaTensor: multiplying matrices as a game. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 is the take-home.</desc>
+<desc id="bs-narrow-d">Every section serves one of these four ideas. It generalizes a matrix — 01 What a tensor is, 02 Thinking in N dimensions; It holds the data — 00 Setup and welcome, 03 Indexing and broadcasting real data, 05 Video pipeline design; Its axes can move — 04 Reshape and transpose real images, 06 Contraction with einsum, 17 4D multi-head attention: reshape Q, K and V; It factors — 07 Inverses and the pseudoinverse, 08 Recursion with matrices and vectors, 09 Matrix factorizations, 10 Tucker decomposition on real data, 11 Tensor factorizations, 14 CP factorization and the rank-1 view, 15 Generalized CP for counts and binary data, 16 PCA from a tensors perspective, 18 Latent feature compression with SVD, 19 CP or Tucker in practice, 20 AlphaTensor: multiplying matrices as a game. One thread runs through all four. When there is no exact answer, find the best approximation you can trust. 12 pulls the four together. 13 shows it on a photo.</desc>
 <text x="14" y="34" class="bs-title">Four ideas, one object</text>
 <text x="14" y="58" class="bs-lead">Every section serves one of these four ideas.</text>
 <rect x="10" y="76" width="380" height="154" rx="8" class="bs-card"/>
@@ -141,6 +141,6 @@
 <text x="200" y="1109" class="bs-thread" text-anchor="middle">is no exact answer, find the best</text>
 <text x="200" y="1128" class="bs-thread" text-anchor="middle">approximation you can trust.</text>
 <text x="200" y="1152" class="bs-where" text-anchor="middle">You watch it happen in sections 07, 10 and 13.</text>
-<text x="200" y="1197" class="bs-closing" text-anchor="middle">12 pulls the four together. 13 is the take-home.</text>
+<text x="200" y="1197" class="bs-closing" text-anchor="middle">12 pulls the four together. 13 shows it on a photo.</text>
 </svg>
 :::
