@@ -34,7 +34,22 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
 
 [No install — every notebook runs in Google Colab.]{.hero-note}
 
-[New here? Review the required preparation.](#prerequisites){.hero-prep}
+```{=html}
+<div class="hero-deck" role="region" aria-labelledby="hero-deck-title">
+  <p class="hero-deck-eyebrow">Pre-course · Start here</p>
+  <h2 id="hero-deck-title">Prerequisites study deck</h2>
+  <p class="hero-deck-lede">Find your gaps before the day, not during it: the linear algebra the workshop builds on, free, in English and Spanish.</p>
+  <ul class="hero-deck-tools" aria-label="In the deck">
+    <li><span aria-hidden="true">🎧</span> Podcast</li>
+    <li><span aria-hidden="true">🎮</span> Quiz game</li>
+    <li><span aria-hidden="true">⚡</span> Live quiz</li>
+    <li><span aria-hidden="true">🃏</span> Flashcards</li>
+    <li><span aria-hidden="true">📝</span> Practice test</li>
+    <li class="hero-deck-more">and more</li>
+  </ul>
+  <p class="hero-deck-actions"><a class="hero-deck-button" href="{{< var study.prereq_en >}}">Open the study deck <span aria-hidden="true">→</span></a> <a class="hero-prep" href="#prerequisites">All preparation steps</a></p>
+</div>
+```
 
 [Taught in English · Questions in English & Spanish]{.hero-language}
 :::
@@ -195,7 +210,7 @@ Vectors and matrices are what you need to begin. Complete the required steps bef
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
-Review vectors and matrices in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}). That chapter's section on SVD is worth a skim if it is new to you — the workshop re-introduces it from scratch, so it is not required reading. Then check yourself with the [prerequisites study deck]({{< var study.prereq_en >}}): flashcards, a practice test and a quiz game on the same chapter.
+Review vectors and matrices in [Goodfellow Ch. 2](https://www.deeplearningbook.org/contents/linear_algebra.html) and complete the [pre-work notebooks]({{< var workshop.prereq_repo_url >}}). That chapter's section on SVD is worth a skim if it is new to you — the workshop re-introduces it from scratch, so it is not required reading. Then check yourself with the [prerequisites study deck]({{< var study.prereq_en >}}): a podcast, a quiz game, a live quiz, flashcards and a practice test on the same chapter.
 :::
 
 ::: {.prerequisite-step}

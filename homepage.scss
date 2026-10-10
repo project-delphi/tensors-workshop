@@ -143,6 +143,70 @@ body { overflow-x: clip; }
 .hero-prep { color: #9cebdc; font-size: .86rem; font-weight: 600; text-underline-offset: 3px; }
 .hero-prep:hover { color: #d6fff5; }
 .hero-language { font-size: .82rem; color: #a3bdd4; }
+/* The pre-course study deck is the one thing to do before the day, so it has
+   a card in the hero itself, not only a link in the prerequisites below. The
+   card took the place of the plain "review the preparation" link, and carries
+   that link as its second one. The hero's rules for `p` and `h2` are written
+   for the copy column, so each is outweighed here rather than reset. It is a
+   `div role="region"`, not an `<aside>`: Quarto lifts an `<aside>` into the
+   page margin, which here emptied the hero's picture column. */
+.hero-deck {
+  max-width: 34rem;
+  margin: 1.1rem 0 .9rem;
+  padding: 1rem 1.15rem 1.1rem;
+  border: 1px solid #6fe0c666;
+  border-left: 4px solid #6fe0c6;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #6fe0c621, #6fe0c608);
+}
+.hero-copy .hero-deck p { margin: 0; }
+.hero-copy .hero-deck .hero-deck-eyebrow {
+  color: #8fd6cd;
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.workshop-landing .workshop-hero .hero-deck h2 {
+  margin: .25rem 0 .4rem;
+  color: #f4f9ff;
+  font-size: 1.2rem;
+  letter-spacing: -.015em;
+}
+.hero-copy .hero-deck .hero-deck-lede { font-size: .9rem; line-height: 1.5; }
+.hero-deck-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+  margin: .8rem 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+.hero-deck-tools li {
+  padding: .15rem .6rem;
+  border: 1px solid #93b6d359;
+  border-radius: 999px;
+  color: #d6e6f3;
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.6;
+}
+.hero-deck-tools .hero-deck-more { padding-inline: .2rem; border-color: transparent; color: #a3bdd4; font-weight: 500; }
+.hero-copy .hero-deck .hero-deck-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem 1.2rem; }
+.hero-deck-button {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  min-height: 44px;
+  padding: .6rem 1.15rem;
+  border-radius: 9px;
+  background: #6fe0c6;
+  color: #06202f;
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+}
+.hero-deck-button:hover { background: #b2f5e5; color: #06202f; }
 /* The page-wide focus ring is a dark orange, unreadable on navy. It is
    declared further down at the same specificity, so this one has to outweigh
    it rather than merely precede it. */
