@@ -1,0 +1,93 @@
+name: mirror
+
+# Pushes this repo's `main` to genial-labs-ai/tensors-workshop, a read-only
+# mirror in the org used for professional work. The mirror is a copy, not a
+# second home: nothing there is rendered, Pages is off, and every Colab badge
+# and `data/` fallback URL inside it still points at project-delphi, which is
+# correct, because project-delphi is what publishes the site. So this workflow
+# changes no content and reruns no generator -- it moves bytes and nothing else.
+#
+# It is deliberately NOT a job in publish.yml. That workflow is the publisher
+# and both its jobs are required checks on every PR; a mirror that fails
+# because a deploy key expired must not read like a failed render.
+#
+# The credential is an SSH deploy key with write access to the mirror and to
+# nothing else -- not a personal access token, which would carry every repo the
+# author can reach. Its private half is `secrets.MIRROR_SSH_KEY` here; its
+# public half is the deploy key on the mirror. Rotating means replacing both.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# A mirror push is not worth racing. Two pushes to main in quick succession
+# should queue, not cancel: the second one carries the commit that matters, and
+# cancelling the first can leave the mirror a commit behind with nothing said.
+concurrency:
+  group: mirror
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # The whole history, not a shallow graft. A push out of a shallow
+          # clone is refused ("shallow update not allowed") once the receiving
+          # end already has the history, which the mirror does from its first
+          # push -- so depth 1 would work exactly once and then fail forever.
+          fetch-depth: 0
+
+      - name: Push main and its tags to the mirror
+        env:
+          MIRROR_SSH_KEY: ${{ secrets.MIRROR_SSH_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${MIRROR_SSH_KEY:-}" ]; then
+            echo "::error::secrets.MIRROR_SSH_KEY is not set, so there is no" \
+                 "credential to push with. Create a write deploy key on" \
+                 "genial-labs-ai/tensors-workshop and store its private half" \
+                 "as MIRROR_SSH_KEY in this repo. See the header of this file."
+            exit 1
+          fi
+
+          key="$RUNNER_TEMP/mirror_key"
+          printf '%s\n' "$MIRROR_SSH_KEY" > "$key"
+          chmod 600 "$key"
+
+          # github.com's ed25519 host key, pinned rather than accepted on
+          # first use, so a runner that is answered by something else fails
+          # instead of trusting it. Fingerprint:
+          #   SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU
+          # which is the value GitHub publishes under "SSH key fingerprints".
+          # If GitHub rotates it, this line is what needs changing.
+          hosts="$RUNNER_TEMP/mirror_known_hosts"
+          printf '%s\n' \
+            'github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl' \
+            > "$hosts"
+
+          export GIT_SSH_COMMAND="ssh -i $key -o IdentitiesOnly=yes -o UserKnownHostsFile=$hosts -o StrictHostKeyChecking=yes"
+
+          # No --force. The mirror is read-only by policy, so a non-fast-forward
+          # means something pushed to it directly, and a failure that gets
+          # emailed is the right answer to that -- not a silent overwrite.
+          git push --follow-tags \
+            git@github.com:genial-labs-ai/tensors-workshop.git \
+            "$GITHUB_SHA:refs/heads/main"
+
+      - name: Say what the mirror now holds
+        if: always()
+        run: |
+          {
+            echo "## Mirror"
+            echo
+            echo "- Target: [genial-labs-ai/tensors-workshop](https://github.com/genial-labs-ai/tensors-workshop)"
+            echo "- Commit pushed: \`$GITHUB_SHA\`"
+          } >> "$GITHUB_STEP_SUMMARY"
