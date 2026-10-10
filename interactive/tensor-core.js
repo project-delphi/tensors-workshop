@@ -195,10 +195,97 @@
     return Object.assign({}, driftPause(s, now), {seeded: false, phase: 0});
   }
 
+  // ─── the size loop ────────────────────────────────────────────────────────
+  //
+  // "Show the original photo" counts the photograph through every size it is
+  // stored at, 4, 8, 16 ... 128, so the one thing that changes is the grid: the
+  // picture stays, the shape grows. Then, if the reader's own size is not the
+  // last rung, one more step returns to it. It is here for the reason the
+  // drift is: which size is on screen, when the next one is due and what an
+  // interruption leaves behind are invisible in a screenshot, and the last one
+  // survives an end-state assertion. The widget owns the clock and the DOM; a
+  // state goes in, a state comes out.
+  //
+  // Every rung is shown. Building a big one can take seconds, so the clock is
+  // not a schedule: a rung's dwell starts when the widget says it was painted
+  // (`loopPainted`), and the next rung is not due before that. A slow machine
+  // gets a slower count, never a shorter one.
+  //
+  // `selected` is the reader's size and is never changed by the loop -- the
+  // widget lends its `state.res` to each rung and an interruption hands it
+  // back (`restore`), which is what stops a drag halfway through leaving the
+  // page on a 4 x 4 the reader never asked for.
+  const LOOP = {
+    dwellMs: 350    // how long a rung stays once it is on screen
+  };
+
+  const loopIdle = () => ({
+    on: false, skipped: false, ladder: [], selected: 0, i: 0,
+    dwellMs: 0, shownAt: null, ret: false
+  });
+
+  // Every stored size, ascending, then `selected` once more if it is not the
+  // last of them: that final entry is the return.
+  function loopLadder(res, selected) {
+    const rungs = res.slice().sort((a, b) => a - b)
+      .filter((r, k, all) => k === 0 || r !== all[k - 1]);
+    return rungs.length && rungs[rungs.length - 1] === selected
+      ? rungs : rungs.concat([selected]);
+  }
+
+  // Starting. Under reduced motion, or with no sizes to count through,
+  // nothing runs: the state is off and its only rung is `selected`;
+  // `skipped` says it was the reader's setting that decided it.
+  function loopBegin(res, selected, reduce) {
+    const ladder = loopLadder(res, selected);
+    const idle = Object.assign(loopIdle(), {ladder: [selected], selected});
+    if (reduce) return Object.assign(idle, {skipped: true});
+    if (ladder.length < 2) return idle;
+    const top = Math.max.apply(null, res);
+    return Object.assign(idle, {
+      on: true, ladder, i: 0, dwellMs: LOOP.dwellMs, ret: selected !== top
+    });
+  }
+
+  // Is the rung on screen the return to the reader's size?
+  const loopReturning = (s) => s.ret && s.i === s.ladder.length - 1;
+
+  // The widget drew rung `i` at `now`: its dwell starts here.
+  const loopPainted = (s, now) => Object.assign({}, s, {shownAt: now});
+
+  // Milliseconds until the next rung is due: the whole dwell if the current
+  // one has not been painted yet, so a slow build never eats into it.
+  const loopDelay = (s, now) => s.shownAt === null ? s.dwellMs
+    : Math.max(0, s.shownAt + s.dwellMs - now);
+
+  // The dwell is over. Moves to the next rung, which has not been painted
+  // yet (`shownAt` back to null), or finishes after the last.
+  function loopAdvance(s) {
+    if (!s.on) return {state: s, size: s.ladder[s.i], done: false};
+    if (s.i >= s.ladder.length - 1) {
+      return {state: Object.assign({}, s, {on: false}), size: s.ladder[s.i], done: true};
+    }
+    const i = s.i + 1;
+    return {state: Object.assign({}, s, {i, shownAt: null}), size: s.ladder[i], done: false};
+  }
+
+  // The reader took hold of something. The loop ends where it is, and if the
+  // rung it was on is not their size, `restore` says to put theirs back.
+  function loopInterrupt(s) {
+    if (!s.on) return {state: s, restore: false, size: s.selected};
+    return {
+      state: Object.assign({}, s, {on: false}),
+      restore: s.ladder[s.i] !== s.selected,
+      size: s.selected
+    };
+  }
+
   const TensorCore = {
     sum, prod, range, same, unravel, POS_ORDERS,
     cstrides, stridesFor, contiguousInOrder, posOrder, reshapeStrides, carryIds,
-    DRIFT, driftIdle, driftPose, driftStart, driftPause, driftRelease
+    DRIFT, driftIdle, driftPose, driftStart, driftPause, driftRelease,
+    LOOP, loopIdle, loopLadder, loopBegin, loopReturning, loopPainted, loopDelay,
+    loopAdvance, loopInterrupt
   };
   if (typeof module !== "undefined" && module.exports) module.exports = TensorCore;
   else root.TensorCore = TensorCore;

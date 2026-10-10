@@ -180,3 +180,79 @@ test('the breath flattens against zoomBy()\'s floor rather than going under it',
   }
   assert.equal(core.driftPose(low, core.DRIFT.zoomMs / 2).scale, core.DRIFT.minScale);
 });
+
+// ─── the size loop ──────────────────────────────────────────────────────────
+const RES = [4, 8, 16, 32, 64, 128];
+
+test('the loop counts through every stored size, then returns to the reader\'s', () => {
+  assert.deepEqual(core.loopLadder(RES, 16), [4, 8, 16, 32, 64, 128, 16]);
+  assert.deepEqual(core.loopLadder(RES, 128), RES);
+  assert.deepEqual(core.loopLadder(RES, 4), [4, 8, 16, 32, 64, 128, 4]);
+  // Unsorted and repeated input still gives an ascending ladder.
+  assert.deepEqual(core.loopLadder([32, 8, 8, 4], 32), [4, 8, 32]);
+});
+
+test('every rung is shown, however slow the machine, and the dwell runs from the paint', () => {
+  let s = core.loopBegin(RES, 16, false);
+  assert.equal(s.on, true);
+  const shown = [s.ladder[s.i]];
+  let now = 0;
+  while (true) {
+    // Painting takes a long time (a big rebuild); the dwell is not eaten by it.
+    assert.equal(core.loopDelay(s, now), core.LOOP.dwellMs, 'before the paint: the full dwell');
+    now += 5000;                       // five seconds to build and paint
+    s = core.loopPainted(s, now);
+    assert.equal(core.loopDelay(s, now), core.LOOP.dwellMs);
+    assert.equal(core.loopDelay(s, now + 100), core.LOOP.dwellMs - 100);
+    assert.equal(core.loopDelay(s, now + 10000), 0);
+    now += core.LOOP.dwellMs;
+    const r = core.loopAdvance(s);
+    s = r.state;
+    if (r.done) break;
+    assert.equal(s.shownAt, null, 'the next rung has not been painted');
+    shown.push(r.size);
+  }
+  assert.deepEqual(shown, [4, 8, 16, 32, 64, 128, 16]);
+  assert.equal(s.on, false);
+  assert.equal(s.ladder[s.i], 16);
+});
+
+test('the last step is a return unless the reader chose the top size', () => {
+  const walk = (sel) => {
+    let s = core.loopBegin(RES, sel, false);
+    let back = [];
+    for (;;) {
+      back.push(core.loopReturning(s));
+      const r = core.loopAdvance(s);
+      if (r.done) return back;
+      s = r.state;
+    }
+  };
+  assert.deepEqual(walk(16), [false, false, false, false, false, false, true]);
+  assert.deepEqual(walk(128), [false, false, false, false, false, false]);
+});
+
+test('an interruption ends the loop and gives the reader\'s size back', () => {
+  let s = core.loopBegin(RES, 32, false);
+  s = core.loopAdvance(core.loopAdvance(s).state).state;   // on 16
+  const cut = core.loopInterrupt(s);
+  assert.equal(cut.state.on, false);
+  assert.equal(cut.restore, true);
+  assert.equal(cut.size, 32);
+  // Cut on a rung that happens to be theirs (32 here): nothing to put back.
+  const same = core.loopInterrupt(core.loopAdvance(s).state);
+  assert.equal(same.restore, false);
+  const atEnd = core.loopBegin(RES, 128, false);
+  atEnd.i = atEnd.ladder.length - 1;
+  assert.equal(core.loopInterrupt(atEnd).restore, false);
+  const idle = core.loopInterrupt(core.loopIdle());
+  assert.equal(idle.restore, false);
+  assert.equal(idle.state.on, false);
+});
+
+test('reduced motion runs no loop and stays on the selected size', () => {
+  const reduced = core.loopBegin(RES, 64, true);
+  assert.equal(reduced.on, false);
+  assert.equal(reduced.skipped, true);
+  assert.equal(reduced.ladder[reduced.i], 64);
+});
