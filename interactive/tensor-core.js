@@ -195,10 +195,81 @@
     return Object.assign({}, driftPause(s, now), {seeded: false, phase: 0});
   }
 
+  // ─── the size loop ────────────────────────────────────────────────────────
+  //
+  // "Show the original photo" counts the photograph up through the sizes it
+  // is stored at, 4, 8, 16 ... as far as the size the reader chose, so the one
+  // thing that changes is the grid: the picture stays, the shape grows. It is
+  // here for the reason the drift is: which size is on screen, when the next
+  // one is due and what an interruption leaves behind are invisible in a
+  // screenshot, and the last one survives an end-state assertion. The widget
+  // owns the clock and the DOM; a state goes in, a state comes out.
+  //
+  // `selected` is the reader's size and is never changed by the loop -- the
+  // widget lends its `state.res` to each step and an interruption hands it
+  // back (`restore`), which is what stops a drag halfway through leaving the
+  // page on a 4 x 4 the reader never asked for.
+  const LOOP = {
+    totalMs: 2000,  // about two seconds, whatever the ladder's length
+    minStepMs: 320, // so a long ladder is still readable ...
+    maxStepMs: 520  // ... and a short one is not a slow crawl
+  };
+
+  const loopIdle = () =>
+    ({on: false, skipped: false, ladder: [], selected: 0, i: 0, stepMs: 0, t0: 0});
+
+  // The sizes below and including `selected`, ascending. A size the photos do
+  // not carry is never invented; `selected` itself is always the last rung.
+  function loopLadder(res, selected) {
+    const rungs = res.filter((r) => r < selected).sort((a, b) => a - b);
+    return rungs.filter((r, k) => k === 0 || r !== rungs[k - 1]).concat([selected]);
+  }
+
+  // Starting. Under reduced motion, or when there is nothing smaller to climb
+  // from, nothing runs: the state is off, on `selected`, and `skipped` says
+  // whether it was the reader's setting that decided it.
+  function loopBegin(res, selected, reduce, now) {
+    const ladder = loopLadder(res, selected);
+    const base = Object.assign(loopIdle(), {ladder, selected, i: ladder.length - 1, t0: now});
+    if (reduce) return Object.assign(base, {skipped: true});
+    if (ladder.length < 2) return base;
+    const stepMs = Math.min(LOOP.maxStepMs,
+      Math.max(LOOP.minStepMs, Math.round(LOOP.totalMs / ladder.length)));
+    return Object.assign(base, {on: true, i: 0, stepMs});
+  }
+
+  // Where the loop is at `now`. `size` is the rung to show, `changed` says it
+  // is not the one `s` was showing, `done` that the last rung has had its
+  // turn. A late frame skips rungs rather than replaying them.
+  function loopAt(s, now) {
+    if (!s.on) return {state: s, size: s.ladder[s.i], changed: false, done: false};
+    const elapsed = Math.max(0, now - s.t0);
+    const i = Math.min(s.ladder.length - 1, Math.floor(elapsed / s.stepMs));
+    const done = elapsed >= s.ladder.length * s.stepMs;
+    const next = Object.assign({}, s, {i, on: !done});
+    return {state: next, size: s.ladder[i], changed: i !== s.i, done};
+  }
+
+  // Milliseconds until the rung after this one is due (never below a frame).
+  const loopDelay = (s, now) =>
+    Math.max(16, (s.i + 1) * s.stepMs - Math.max(0, now - s.t0));
+
+  // The reader took hold of something. The loop ends where it is, and if the
+  // rung on screen is not their size, `restore` says to put theirs back.
+  function loopInterrupt(s) {
+    if (!s.on) return {state: s, restore: false, size: s.selected};
+    return {
+      state: Object.assign({}, s, {on: false, i: s.ladder.length - 1}),
+      restore: s.ladder[s.i] !== s.selected,
+      size: s.selected
+    };
+  }
+
   const TensorCore = {
     sum, prod, range, same, unravel, POS_ORDERS,
     cstrides, stridesFor, contiguousInOrder, posOrder, reshapeStrides, carryIds,
-    DRIFT, driftIdle, driftPose, driftStart, driftPause, driftRelease
+    DRIFT, driftIdle, driftPose, driftStart, driftPause, driftRelease,
+    LOOP, loopIdle, loopLadder, loopBegin, loopAt, loopDelay, loopInterrupt
   };
   if (typeof module !== "undefined" && module.exports) module.exports = TensorCore;
   else root.TensorCore = TensorCore;

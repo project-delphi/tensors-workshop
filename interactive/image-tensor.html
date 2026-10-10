@@ -286,6 +286,28 @@
   .checks { display: grid; gap: 0.25rem; }
   .checks label { display: flex; gap: 0.45rem; align-items: center; font-size: 0.82rem; }
   .checks input, .toggle input { accent-color: var(--accent); width: 1rem; height: 1rem; }
+  /* The choices come first and are compact: the photos in a row (each is one
+     short word and a number), the size beside its label. The one action that
+     is about them -- show the original, counting the size up to this one -- is
+     the primary button, full width, directly under them. */
+  aside .choose .checks { display: flex; flex-wrap: wrap; gap: 0.25rem 0.9rem; }
+  aside .choose .inline-field select { flex: 1 1 auto; min-width: 0; max-width: 9rem; }
+  .more { margin-top: 0.6rem; font-size: 0.8rem; }
+  .more > summary { cursor: pointer; color: var(--ink-mute); font-weight: 600; padding: 0.15rem 0; }
+  .more .tools { margin-top: 0.35rem; }
+  .more .note { margin: 0.35rem 0 0; }
+  .act { margin-top: 0.8rem; }
+  .act .note { margin: 0.35rem 0 0; }
+  .wrap button.primary {
+    display: block; width: 100%; padding: 0.55rem 0.9rem; border-radius: 9px;
+    font: 700 0.9rem/1.3 var(--sans); cursor: pointer;
+    background: var(--accent); color: var(--on-accent); border-color: var(--accent);
+  }
+  .wrap button.primary:hover:not(:disabled) { filter: brightness(1.08); border-color: var(--accent); }
+  #loop-note {
+    margin: 0.5rem 0 0; font: 500 0.74rem/1.45 var(--mono); color: var(--ink);
+    overflow-wrap: anywhere;
+  }
   .toggle { display: flex; gap: 0.5rem; align-items: flex-start; font-size: 0.82rem; margin-top: 0.3rem; }
   .toggle input { margin-top: 0.2rem; flex: none; }
   .readout { font: 700 0.9rem/1.5 var(--mono); margin: 0.35rem 0 0; overflow-wrap: anywhere; }
@@ -357,7 +379,7 @@
     <div class="grid">
       <div>
         <div class="stagewrap">
-          <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp" data-photos="0" data-uploaded="0" data-snapped="0">
+          <div id="stage" role="img" tabindex="0" aria-describedby="stagehelp" data-photos="0" data-uploaded="0" data-snapped="0" data-looping="0">
             <p id="stagenote"></p>
             <div id="overlays" aria-hidden="true"></div>
             <canvas id="view"></canvas>
@@ -390,15 +412,57 @@
         </div>
       </div>
       <aside class="card">
-        <!-- The state first, then the operations that change it, so what a
-             reader reaches for sits beside the stage it changes. The data
-             choices are further down: they are picked once, and each one
-             starts the array over. -->
+        <!-- 1. Choose what x is: the data, the photos in the batch and their
+             size. Each choice starts the array over, so it comes first, and
+             the one action that is about these choices -- show the original,
+             counting the size up to the one picked here -- sits directly under
+             them rather than a screen away. -->
+        <section class="panel choose" aria-labelledby="h-data">
+          <h2 id="h-data">Data</h2>
+          <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
+          <div id="shape-photo">
+            <h3 id="h-size">Shape</h3>
+            <div class="checks" id="photo-checks"></div>
+            <label class="inline-field" for="res"><span id="res-label"></span>
+              <select id="res"></select></label>
+          </div>
+          <div id="shape-numbers" hidden>
+            <h3 id="h-n"></h3>
+            <div class="seg" id="ns" role="radiogroup" aria-labelledby="h-n"></div>
+            <p class="note" id="n-note"></p>
+          </div>
+          <div class="act">
+            <button type="button" id="original" class="primary"></button>
+            <p class="note" id="original-hint"></p>
+          </div>
+          <label class="toggle"><input type="checkbox" id="values" checked><span id="values-label"></span></label>
+          <!-- A photograph of the reader's own, as a fourth slab of the
+               batch. It is decoded, cropped and shrunk by this page; there
+               is no server to send it to and nothing survives the tab. Folded
+               away because it is used once, if at all; a failure opens it. -->
+          <details class="more" id="upload-more">
+            <summary id="upload-summary"></summary>
+            <div class="tools">
+              <input type="file" id="photo-file" accept="image/*" class="sr">
+              <label for="photo-file" id="photo-file-label"></label>
+              <button type="button" id="photo-drop" hidden></button>
+            </div>
+            <p class="note" id="photo-note"></p>
+          </details>
+          <details class="more" id="data-more">
+            <summary id="more-summary"></summary>
+            <p class="note" id="data-note"></p>
+            <p class="note" id="values-note"></p>
+          </details>
+        </section>
+
+        <!-- 2. What x is right now, directly above 3. the operations that change
+             it, so the readout sits where the eye lands after a click. -->
         <section class="panel now" aria-labelledby="h-now">
           <h2 id="h-now"></h2>
           <p class="readout" id="shape-readout"></p>
           <p class="badge" id="contig-badge"></p>
-          <div class="tools"><button type="button" id="original"></button></div>
+          <p class="note" id="loop-note" hidden></p>
         </section>
 
         <!-- One tab per operation. The panel ids are plain words on purpose:
@@ -446,34 +510,6 @@
           <p class="note" id="layout-note"></p>
           <p class="note" id="buffer-note"></p>
         </div>
-
-        <section class="panel" aria-labelledby="h-data">
-          <h2 id="h-data">Data</h2>
-          <div class="seg" id="datas" role="radiogroup" aria-labelledby="h-data"></div>
-          <p class="note" id="data-note"></p>
-          <div id="shape-photo">
-            <h3 id="h-size">Shape</h3>
-            <div class="checks" id="photo-checks"></div>
-            <label class="inline-field" for="res"><span id="res-label"></span>
-              <select id="res"></select></label>
-            <!-- A photograph of the reader's own, as a fourth slab of the
-                 batch. It is decoded, cropped and shrunk by this page; there
-                 is no server to send it to and nothing survives the tab. -->
-            <div class="tools">
-              <input type="file" id="photo-file" accept="image/*" class="sr">
-              <label for="photo-file" id="photo-file-label"></label>
-              <button type="button" id="photo-drop" hidden></button>
-            </div>
-            <p class="note" id="photo-note"></p>
-          </div>
-          <div id="shape-numbers" hidden>
-            <h3 id="h-n"></h3>
-            <div class="seg" id="ns" role="radiogroup" aria-labelledby="h-n"></div>
-            <p class="note" id="n-note"></p>
-          </div>
-          <label class="toggle"><input type="checkbox" id="values" checked><span id="values-label"></span></label>
-          <p class="note" id="values-note"></p>
-        </section>
 
         <section class="panel" aria-labelledby="h-mem">
           <h2 id="h-mem">Strides</h2>
@@ -567,7 +603,7 @@
   const DRIFT_RESUME_MS = 300;   // after the pointer leaves the stage
   // How long "Show the original photo" holds the photograph flat before the
   // view lifts back into 3-D and the drift takes it from there.
-  const ORIGINAL_HOLD_MS = 2400;
+  const ORIGINAL_HOLD_MS = 1400;
 
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
   const ORDER_KEYS = ["NHWC", "NCHW", "swapHW", "reverse"];
@@ -600,6 +636,8 @@
     nNote: (n) => `x = np.arange(${n}). Every factorisation of ${n} is a reshape you can take below.`,
     shapeOf: "shape",
     now: "x right now",
+    uploadSummary: "Add your own photo",
+    moreSummary: "About these choices",
     badge: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last", none: "not contiguous: a view" },
     ops: "Operations",
     tabs: { reshape: "Reshape", transpose: "Transpose", slice: "Slice", memory: "Memory" },
@@ -682,10 +720,21 @@
     reset: "Reset log",
     original: { photos: "Show the original photo", numbers: "Start over" },
     originalTitle: {
-      photos: "Undo every reshape, transpose and copy, and look at the photos face on, the way the camera took them. Then the stage lifts back into 3-D from there.",
+      photos: "Undo every reshape, transpose and copy and look at the photos face on, the way the camera took them, counting the grid up through the sizes to yours so you can watch the shape grow. Then the stage lifts back into 3-D from there. Touching anything stops it.",
       numbers: "Undo every reshape, transpose and copy, back to np.arange as it was built."
     },
+    originalHint: {
+      photos: (ladder) => ladder.length > 1
+        ? `Undoes every operation, then counts the grid up ${ladder.join(" → ")} px: the picture stays, the shape grows.`
+        : "Undoes every operation and shows the photos face on. Pick a larger size to watch the grid grow.",
+      numbers: () => "Undoes every operation, back to np.arange as it was built."
+    },
     saidOriginal: "Back to the array as it was built: every operation undone.",
+    saidLoop: (ladder) => `Counting the photos up through ${ladder.join(", ")} pixels per side. Touch anything to stop.`,
+    saidLoopEnd: (shape) => `Back to the array as it was built, ${shape}: every operation undone.`,
+    saidReduced: (r, shape) => `Reduced motion is on, so the size count is skipped: the photos at ${r} × ${r} pixels, ${shape}, every operation undone.`,
+    loopNote: (trail, done) => `Size count: ${trail}${done ? ". Same photos each time: only H and W grew." : " …"}`,
+    loopStage: (r, shape) => `The same photos at ${r} × ${r} pixels: shape ${shape}. Each pixel is 3 numbers, so one photo is ${r * r * 3} numbers.`,
     copied: "Copied",
     glNoWebgl: "This browser has no WebGL — showing the isometric canvas instead. Everything on the panel is the same.",
     glNoScript: "The 3-D renderer did not load — showing the isometric canvas instead. Everything on the panel is the same.",
@@ -762,7 +811,9 @@
     nHead: "Cuántos elementos",
     nNote: (n) => `x = np.arange(${n}). Cada factorización de ${n} es un reshape que puedes tomar abajo.`,
     shapeOf: "forma",
-    now: "x ahora mismo",
+    now: "x ahora",
+    uploadSummary: "Añade tu propia foto",
+    moreSummary: "Sobre estas opciones",
     badge: { C: "C-contiguous", F: "F-contiguous", CL: "channels_last", none: "no contiguo: una vista" },
     ops: "Operaciones",
     tabs: { reshape: "Reshape", transpose: "Transpose", slice: "Corte", memory: "Memoria" },
@@ -845,10 +896,21 @@
     reset: "Reiniciar registro",
     original: { photos: "Ver la foto original", numbers: "Empezar de nuevo" },
     originalTitle: {
-      photos: "Deshace cada reshape, transpose y copia, y muestra las fotos de frente, tal como las tomó la cámara. Después el escenario vuelve al 3-D desde ahí.",
+      photos: "Deshace cada reshape, transpose y copia y muestra las fotos de frente, tal como las tomó la cámara, subiendo la cuadrícula por los tamaños hasta el tuyo para ver crecer la forma. Después el escenario vuelve al 3-D desde ahí. Tocar cualquier cosa lo detiene.",
       numbers: "Deshace cada reshape, transpose y copia, y vuelve a np.arange tal como se construyó."
     },
+    originalHint: {
+      photos: (ladder) => ladder.length > 1
+        ? `Deshace todas las operaciones y sube la cuadrícula ${ladder.join(" → ")} px: la imagen se queda, la forma crece.`
+        : "Deshace todas las operaciones y muestra las fotos de frente. Elige un tamaño mayor para ver crecer la cuadrícula.",
+      numbers: () => "Deshace todas las operaciones y vuelve a np.arange tal como se construyó."
+    },
     saidOriginal: "De vuelta al array tal como se construyó: todas las operaciones deshechas.",
+    saidLoop: (ladder) => `Subiendo las fotos por ${ladder.join(", ")} píxeles por lado. Toca cualquier cosa para detener.`,
+    saidLoopEnd: (shape) => `De vuelta al array tal como se construyó, ${shape}: todas las operaciones deshechas.`,
+    saidReduced: (r, shape) => `El movimiento reducido está activo, así que se omite la cuenta de tamaños: las fotos a ${r} × ${r} píxeles, ${shape}, todas las operaciones deshechas.`,
+    loopNote: (trail, done) => `Cuenta de tamaños: ${trail}${done ? ". Las mismas fotos cada vez: solo crecieron H y W." : " …"}`,
+    loopStage: (r, shape) => `Las mismas fotos a ${r} × ${r} píxeles: forma ${shape}. Cada píxel son 3 números, así que una foto son ${r * r * 3} números.`,
     copied: "Copiado",
     glNoWebgl: "Este navegador no tiene WebGL: se muestra el canvas isométrico. Todo lo del panel es igual.",
     glNoScript: "El renderizador 3-D no se cargó: se muestra el canvas isométrico. Todo lo del panel es igual.",
@@ -929,6 +991,13 @@
   // photos over one another and the embed read as one pile.
   const HOME = { yaw: -0.6, el: 0.55, scale: 1, panX: 0, panY: 0 };
   const view = { ...HOME };
+  // The size count of "Show the original photo" (Core.loop*): the state, its
+  // timer, and the shapes it has shown so far. `state.res` is lent to each
+  // rung; `loop.selected` is the reader's own and is what an interruption
+  // gives back.
+  let loop = window.TensorCore.loopIdle();
+  let loopTimer = 0;
+  let loopTrail = [];
   let PHOTOS = null;
   let SRC = null;                 // the array as it was built
   let BUF = [];                   // the value at each memory offset
@@ -947,6 +1016,7 @@
   const Core = window.TensorCore;
   const { sum, prod, range, same, unravel, cstrides, reshapeStrides, POS_ORDERS } = Core;
   const { driftIdle, driftPose, driftStart, driftPause, driftRelease } = Core;
+  const { loopIdle, loopBegin, loopAt, loopDelay, loopInterrupt } = Core;
 
   // Resolved once per frame rather than twice per cube. Colouring a full batch
   // called getComputedStyle tens of thousands of times per glide, which made
@@ -1413,6 +1483,8 @@
       b.title = T.arrangeTitles[b.dataset.arrange];
     });
     $("photo-note").textContent = T.photoNote;
+    $("upload-summary").textContent = T.uploadSummary;
+    $("more-summary").textContent = T.moreSummary;
     $("values-label").textContent = T.values;
     $("values-note").textContent = T.valuesNote;
     $("compare-label").textContent = T.reshape;
@@ -1567,6 +1639,10 @@
   // line and the array is contiguous in its natural order. Keeping the old
   // transposes would print a log whose first line already has the wrong shape.
   function restart() {
+    // The reader picked a different array: whatever size the count was lent is
+    // no longer theirs to give back, and the rebuild below is the one that runs.
+    stopLoop({rebuild: false});
+    clearLoopNote();
     // A different array has different cubes; a tween still in flight would
     // interpolate them from positions that belonged to the old one.
     anim = null;
@@ -1682,6 +1758,7 @@
         // looking at the wrong thing.
         const decode = err && (err.message === "decode" || err.message === "empty");
         $("photo-note").textContent = decode ? T.photoFailed : T.photoBroke;
+        $("upload-more").open = true;   // the reason has to be where it can be read
         return;
       }
       buildPhotoChecks();
@@ -1696,6 +1773,7 @@
     $("res").innerHTML = (PHOTOS ? PHOTOS.res : []).map((r) =>
       `<option value="${r}">${T.resLabel(r)}</option>`).join("");
     $("res").addEventListener("change", (e) => {
+      stopLoop({rebuild: false});   // hand back the lent size first; this is the new one
       state.res = Number(e.target.value);
       restart();
     });
@@ -1867,6 +1945,8 @@
     const which = photoMode ? "photos" : "numbers";
     $("original").textContent = T.original[which];
     $("original").title = T.originalTitle[which];
+    $("original-hint").textContent = T.originalHint[which](
+      photoMode ? Core.loopLadder(loopRes(), loop.on ? loop.selected : state.res) : []);
     $("shape-photo").hidden = !photoMode;
     $("shape-numbers").hidden = photoMode;
     $("n-note").textContent = T.nNote(state.n);
@@ -1880,6 +1960,7 @@
     });
     $("data-note").textContent = !PHOTOS ? T.dataNoteFailed
       : (photoMode ? T.dataNotePhotos : T.dataNoteNumbers);
+    if (!PHOTOS) $("data-more").open = true;
     $("res").value = String(state.res);
     document.querySelectorAll("#ns input").forEach((el) => { el.checked = Number(el.value) === state.n; });
     $("values").checked = state.values;
@@ -2053,6 +2134,9 @@
   let raf = 0;
 
   function beginTween() {
+    // Every operation passes through here, so an operation ends the size count.
+    if (loop.on) stopLoop({rebuild: true});
+    clearLoopNote();
     if (reduceMotion || embed || VOX.length > TWEEN_MAX_CELLS) return;
     pending = new Map(VOX.map((v) => [v.src, { x: v.x, y: v.y, z: v.z, color: v.color, off: v.off }]));
   }
@@ -2970,8 +3054,11 @@
     stage.dataset.arrange = byPos() ? "position" : "meaning";
     stage.dataset.reveal = canReveal() ? "1" : "0";
 
-    $("status").textContent = T.status(off, state.idx,
-      state.slice >= 0 ? T.sliceOf(axName(state.slice)) : "");
+    // Not while the size count runs: a polite region would read out every rung.
+    if (!loop.on) {
+      $("status").textContent = T.status(off, state.idx,
+        state.slice >= 0 ? T.sliceOf(axName(state.slice)) : "");
+    }
     const base = isPhotos() ? T.stagePhotos : T.stageNumbers(axTag(fastest));
     const parts = [state.compare ? T.stageReshape : base];
     if (snap.on) parts.push(canReveal() ? T.revealNote : (isPhotos() ? T.revealNo : T.snapNote));
@@ -2981,7 +3068,8 @@
       parts.push(T.stageArranged(...labels));
     }
     parts.push(T.drag);
-    $("stagenote").textContent = embed ? "" : parts.join(" ");
+    $("stagenote").textContent = embed ? "" :
+      (loop.on ? T.loopStage(state.res, shapeText(state.shape)) : parts.join(" "));
 
     if (mode === "gl" && GL.ready) {
       const box = $("stage");
@@ -3088,6 +3176,7 @@
   const dropDrift = () => {
     clearTimeout(drift.timer);
     clearTimeout(originalTimer);
+    stopLoop({rebuild: true});
     Object.assign(drift, driftRelease(drift, performance.now()));
   };
 
@@ -3102,13 +3191,98 @@
   // which disarms the lift. Counting numbers have no photo, so for them this
   // is the same start over, at the view the page opens on.
   let originalTimer = 0;
+  const loopRes = () => PHOTOS ? PHOTOS.res.filter((r) => r <= MAX_RES) : [];
+  const loopShapeAt = (r) => shapeText([photosOn().length, r, r, 3]);
+
+  // What a checker can read while the count runs: whether it is running, which
+  // rung, and the shape on it. Written from `loop` and `state`, never from a
+  // frame, so a poll sees the truth while the cubes are still arriving.
+  function publishLoop() {
+    const d = $("stage").dataset;
+    d.looping = loop.on ? "1" : "0";
+    d.loopSize = loop.on ? String(state.res) : "";
+    d.loopShape = loop.on ? loopShapeAt(state.res) : "";
+    d.loopStep = loop.on ? `${loop.i + 1}/${loop.ladder.length}` : "";
+  }
+  function clearLoopNote() {
+    loopTrail = [];
+    $("loop-note").hidden = true;
+    $("loop-note").textContent = "";
+    $("stage").dataset.loopSkipped = "0";
+  }
+  function showLoopNote(done) {
+    $("loop-note").textContent = T.loopNote(loopTrail.join(" → "), done);
+    $("loop-note").hidden = false;
+  }
+
+  // The reader took hold of something while the grid was being counted up.
+  // The count ends where it is and their size comes back; `rebuild: false` is
+  // for a caller that is about to build the array itself.
+  function stopLoop(opts) {
+    clearTimeout(loopTimer);
+    if (!loop.on) return;
+    const r = loopInterrupt(loop);
+    loop = r.state;
+    state.res = r.size;
+    publishLoop();
+    clearLoopNote();
+    if (opts && opts.rebuild) {
+      anim = null;
+      if (r.restore) rebuildSource();
+      render();
+    }
+  }
+
+  function loopTick() {
+    if (!loop.on) return;
+    const r = loopAt(loop, performance.now());
+    loop = r.state;
+    if (r.changed) {
+      state.res = r.size;
+      rebuildSource();
+      loopTrail.push(loopShapeAt(r.size));
+    }
+    publishLoop();
+    if (r.done) {
+      // The last rung is the reader's own size, so the array on screen is
+      // already the one they chose; what is left is the beat, and the lift.
+      showLoopNote(true);
+      render();
+      $("status").textContent = T.saidLoopEnd(shapeText(state.shape));
+      scheduleLift();
+      return;
+    }
+    if (r.changed) { showLoopNote(false); render(); }
+    loopTimer = setTimeout(loopTick, loopDelay(loop, performance.now()));
+  }
+
+  // After its beat the view lifts back into 3-D, and once that glide is over
+  // the drift takes the pose it left.
+  function scheduleLift() {
+    if (reduceMotion) return;
+    originalTimer = setTimeout(() => {
+      setSnap(false);
+      originalTimer = setTimeout(refreshDrift, SNAP_MS + 40);
+    }, ORIGINAL_HOLD_MS);
+  }
+
   function showOriginal() {
+    stopLoop({rebuild: false});
     dropDrift();
     // The same source array as before, so every cube can be followed from
     // wherever the operations left it back to where it was built.
     anim = null;
     peeking = false;
     beginTween();
+    // The photos are counted up through their sizes to the reader's own; the
+    // numbers have no size, and a reader who asked not to be moved is told the
+    // count was skipped rather than shown a jump with no explanation.
+    const plan = isPhotos()
+      ? loopBegin(loopRes(), state.res, reduceMotion, performance.now()) : loopIdle();
+    if (plan.on) {
+      loop = plan;
+      state.res = plan.ladder[0];
+    }
     rebuildSource();
     view.scale = HOME.scale;
     view.panX = HOME.panX;
@@ -3138,11 +3312,22 @@
     render();
     glideTo(front, 0);
     tick();
-    if (reduceMotion) return;
-    originalTimer = setTimeout(() => {
-      setSnap(false);
-      originalTimer = setTimeout(refreshDrift, SNAP_MS + 40);
-    }, SNAP_MS + ORIGINAL_HOLD_MS);
+    if (plan.on) {
+      loopTrail = [loopShapeAt(state.res)];
+      publishLoop();
+      showLoopNote(false);
+      $("status").textContent = T.saidLoop(plan.ladder);
+      loopTimer = setTimeout(loopTick, loopDelay(loop, performance.now()));
+      return;
+    }
+    if (plan.skipped) {
+      const note = T.saidReduced(state.res, shapeText(state.shape));
+      $("loop-note").textContent = note;
+      $("loop-note").hidden = false;
+      $("stage").dataset.loopSkipped = "1";
+      $("status").textContent = note;
+    }
+    scheduleLift();
   }
 
   function bindPointer() {
@@ -3267,6 +3452,7 @@
       // however the focus arrived: hold the drift until the stage is left.
       drift.focus = true;
       clearTimeout(originalTimer);
+      stopLoop({rebuild: true});
       move();
     });
     $("snap").addEventListener("click", () => { dropDrift(); setSnap(!snap.on); });
