@@ -9,6 +9,11 @@ name: Publish
 # Nothing rendered is committed. docs/ is gitignored build output, so a content
 # PR carries only source and there is no staleness gate to keep honest — the
 # only copy of the site that exists is the one this workflow just made.
+#
+# Every job is fenced to this repository. The mirror (mirror.yml) receives this
+# file with the rest of main and a push there runs it, but it has no Pages to
+# deploy to and nothing to check, so there `render` and `notebooks` are skipped
+# and `deploy`, which needs `render`, is skipped with it.
 
 on:
   push:
@@ -22,6 +27,7 @@ permissions:
 
 jobs:
   render:
+    if: github.repository == 'project-delphi/tensors-workshop'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -234,6 +240,7 @@ jobs:
   # remote datasets are fetched for real, because Colab is the runtime this
   # defends and parity with it is the point.
   notebooks:
+    if: github.repository == 'project-delphi/tensors-workshop'
     runs-on: ubuntu-latest
     # Each notebook has a 300s cell ceiling, plus pip and dataset fetches.
     # A healthy run is minutes; without this a stalled kernel would sit on a
