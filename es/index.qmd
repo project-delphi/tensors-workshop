@@ -34,7 +34,22 @@ Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrit
 
 [Sin instalación — cada cuaderno funciona en Google Colab.]{.hero-note}
 
-[¿Es tu primera vez? Revisa la preparación obligatoria.](#requisitos-previos){.hero-prep}
+```{=html}
+<div class="hero-deck" role="region" aria-labelledby="hero-deck-title">
+  <p class="hero-deck-eyebrow">Antes del taller · Empieza aquí</p>
+  <h2 id="hero-deck-title">Mazo de estudio de prerrequisitos</h2>
+  <p class="hero-deck-lede">Descubre lo que te falta antes del día, no durante: el álgebra lineal sobre la que se construye el taller, gratis, en español e inglés.</p>
+  <ul class="hero-deck-tools" aria-label="En el mazo">
+    <li><span aria-hidden="true">🎧</span> Pódcast</li>
+    <li><span aria-hidden="true">🎮</span> Juego de preguntas</li>
+    <li><span aria-hidden="true">⚡</span> Quiz en vivo</li>
+    <li><span aria-hidden="true">🃏</span> Tarjetas</li>
+    <li><span aria-hidden="true">📝</span> Examen de práctica</li>
+    <li class="hero-deck-more">y más</li>
+  </ul>
+  <p class="hero-deck-actions"><a class="hero-deck-button" href="{{< var study.prereq_es >}}">Abre el mazo de estudio <span aria-hidden="true">→</span></a> <a class="hero-prep" href="#requisitos-previos">Toda la preparación</a></p>
+</div>
+```
 
 [Taller en inglés · Preguntas en español e inglés]{.hero-language}
 :::
@@ -195,7 +210,7 @@ Con vectores y matrices basta para empezar. Completa los pasos obligatorios ante
 
 <span data-language-key="step-1-core-concepts-required"></span>
 
-Repasa vectores y matrices en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}). La sección de ese capítulo sobre la SVD vale la pena hojearla si es nueva para ti —el taller la reintroduce desde cero, así que no es lectura obligatoria. Después ponte a prueba con el [mazo de estudio de prerrequisitos]({{< var study.prereq_es >}}): tarjetas, un examen de práctica y un juego de preguntas sobre ese mismo capítulo.
+Repasa vectores y matrices en el [capítulo 2 de Goodfellow](https://www.deeplearningbook.org/contents/linear_algebra.html) y completa los [cuadernos de trabajo previo]({{< var workshop.prereq_repo_url >}}). La sección de ese capítulo sobre la SVD vale la pena hojearla si es nueva para ti —el taller la reintroduce desde cero, así que no es lectura obligatoria. Después ponte a prueba con el [mazo de estudio de prerrequisitos]({{< var study.prereq_es >}}): un pódcast, un juego de preguntas, un quiz en vivo, tarjetas y un examen de práctica sobre ese mismo capítulo.
 :::
 
 ::: {.prerequisite-step}

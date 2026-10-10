@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-10-10
+
+- **The prerequisites study deck is in the homepage's opening band.** A card under the two buttons names it as the place to start before the day, lists what is in it (a podcast, a quiz game, a live quiz, flashcards and a practice test), and opens it in the reader's language. It takes the place of the plain link to the preparation steps, which it carries as its second link. Step 1 of the preparation lists the same tools, in English and Spanish.
+
 ## 2026-10-05
 
 - **The workshop is a full day: six hours.** The session grows from 210 minutes to 360, with a lunch break that the clock does not count. Sections 03, 04, 06, 07, 09, 10 and 11 each go from 15 minutes to 20, and breaks from 5 minutes to 10, with a fourth after section 11.
