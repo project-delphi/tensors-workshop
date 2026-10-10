@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-10-10
+
+- **"Show the original photo" now counts the image up through every size.** The image tensor visualizer undoes every operation, lays the photos flat, and redraws them at 4, 8, 16, 32, 64 and 128 pixels a side, with the shape beside each one: `(3, 4, 4, 3)`, `(3, 8, 8, 3)`, up to `(3, 128, 128, 3)`. Then it goes back to the size the reader picked and lifts into 3-D to drift as before. Only H and W change; the picture stays the same photograph. Each size stays on screen for its full beat however long it takes to draw, so a slow machine sees a slower count, never a shorter one. The largest size says it is building 147,456 cubes while it does. Touching anything ends the count. With reduced motion it is skipped, and the page says so.
+- **The visualizer's controls are in the order you use them.** Choose the photos and the size, with *Show the original photo* right under them as the main button. Then the shape of `x` right now, then the operations. The upload and the notes on the choices are folded, so the operations stay in view on a laptop screen.
+
 ## 2026-10-05
 
 - **The workshop is a full day: six hours.** The session grows from 210 minutes to 360, with a lunch break that the clock does not count. Sections 03, 04, 06, 07, 09, 10 and 11 each go from 15 minutes to 20, and breaks from 5 minutes to 10, with a fourth after section 11.
