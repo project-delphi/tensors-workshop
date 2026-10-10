@@ -1760,6 +1760,27 @@ table of contents open that grid is asymmetric, so on a laptop every figure
 sat off to the right of the text it illustrates. The 46rem box costs label
 size on the widest figures, which is what their `.lightbox` is for.
 
+**The mirror pushes with a GitHub App, and every workflow job is fenced to
+this repository** (2026-10-10). `mirror.yml` went in (#224) pushing over SSH
+with a write deploy key, and failed on every push to `main` with `Permission
+denied (publickey)`: the private half was stored here, but the public half
+could never be added to the mirror, because genial-labs-ai has
+`deploy_keys_enabled_for_repositories` off for every repo it owns and the
+mirror answers "Deploy keys are disabled for this repository". The app is the
+credential that policy leaves: installed on the mirror alone, minted per run
+into an installation token that lasts an hour, owned by the org rather than a
+person, and with no expiry to forget. It needs Workflows (write) as well as
+Contents, because a push that touches `.github/workflows/` is refused without
+it. The same investigation found this repo's workflows running *on the
+mirror*: Actions is on there, `health` ran every route against the dataset
+hosts daily, and `Publish` ran, and failed, on the mirror's first push. A push
+by an app token triggers workflows where `GITHUB_TOKEN`'s would not, so a
+working mirror would have run `Publish` and a keyless `mirror.yml` there on
+every push. A job-level `if:` on the repository name fences each job and
+travels with the file, so the mirror stays inert whatever its settings say;
+turning Actions off there would have depended on a setting nobody here can
+see.
+
 ## Working on WSL2 (Windows)
 
 **`.gitattributes` pins `eol=lf`** (2026-08-21, `7585e13`). The CI gate diffs

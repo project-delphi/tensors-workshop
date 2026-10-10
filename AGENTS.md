@@ -874,17 +874,22 @@ of it was on Pages until 2026-09-28. `upload-pages-artifact` has left dotfiles
 out since v4, which is a second wall, not the first.
 
 **There is a public mirror**, `genial-labs-ai/tensors-workshop`, which
-`.github/workflows/mirror.yml` brings up to date on every push to `main` using
-a write deploy key held as `secrets.MIRROR_SSH_KEY`. It is a copy and not a
-second home: Pages is off there, nothing is rendered, and every Colab badge and
-`data/` fallback URL inside it still points at `project-delphi`, which is
-correct, because `project-delphi` is what publishes. So **do not point `repo:`
+`.github/workflows/mirror.yml` brings up to date on every push to `main` with
+a token from a GitHub App installed on the mirror alone -- the org does not
+allow deploy keys, and the header of `mirror.yml` says what the app needs. It
+is a copy and not a second home: Pages is off there, nothing is rendered, and
+every Colab badge and `data/` fallback URL inside it still points at
+`project-delphi`, which is correct, because `project-delphi` is what
+publishes. So **do not point `repo:`
 in `_variables.yml` at the org** to make the mirror look self-consistent -- both
 generators read that key, so the CI gate would then hold the two repos
 permanently apart in every generated path, which is a migration and not a
 mirror. Nothing is pushed to the mirror by hand either: the workflow pushes
 without `--force`, so a non-fast-forward there is the signal that something
-did.
+did. **Every workflow job is fenced** with
+`if: github.repository == 'project-delphi/tensors-workshop'`: the mirror gets
+`.github/workflows/` with the rest of `main`, and a push there runs it. A new
+job carries the same line.
 
 ## Working on WSL2 (Windows)
 

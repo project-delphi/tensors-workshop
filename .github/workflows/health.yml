@@ -9,6 +9,9 @@ name: health
 #
 # Written for the run-up to the first live session. Keep it if it earns its
 # minutes, or delete this file afterwards.
+#
+# Fenced to this repository: the mirror (mirror.yml) receives this file with
+# the rest of main, and would otherwise run every route there once a day too.
 
 on:
   schedule:
@@ -21,6 +24,7 @@ permissions:
 
 jobs:
   notebooks:
+    if: github.repository == 'project-delphi/tensors-workshop'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
