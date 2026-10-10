@@ -118,7 +118,37 @@ async function drive(ctx, page, where, lang) {
   // "Show the original photo" undoes the transpose and the copy above,
   // back to the buffer as it was stacked, and shows the batch as
   // photographs: by meaning, flat on the front face, composited.
+  // The size count: the click starts a loop that climbs 4, 8, 16 px (the
+  // reader's size is 16) and publishes each rung's shape on the stage. A
+  // MutationObserver collects every shape the stage publishes, so a slow
+  // runner that polls late still sees the whole ladder.
+  await page.evaluate(() => {
+    const st = document.querySelector('#stage');
+    window.__loopShapes = [];
+    new MutationObserver(() => {
+      const shape = st.dataset.loopShape;
+      const seen = window.__loopShapes;
+      if (shape && seen[seen.length - 1] !== shape) seen.push(shape);
+    }).observe(st, {attributes: true, attributeFilter: ['data-loop-shape']});
+  });
   await page.locator('#original').click();
+  await page.waitForFunction(() =>
+    document.querySelector('#stage').dataset.looping === '1',
+    null, {timeout: 5000})
+    .catch(() => assert.fail(`${where}: the original photo never started the size count`));
+  assert(await page.locator('#loop-note').isVisible(),
+    `${where}: the size count should say what it is showing`);
+  await page.waitForFunction(() =>
+    document.querySelector('#stage').dataset.looping === '0',
+    null, {timeout: 10000})
+    .catch(() => assert.fail(`${where}: the size count never finished`));
+  assert.deepEqual(await page.evaluate(() => window.__loopShapes),
+    ['(3, 4, 4, 3)', '(3, 8, 8, 3)', '(3, 16, 16, 3)'],
+    `${where}: the size count should publish every rung's shape, up to the reader's`);
+  assert.equal(await page.locator('#res').inputValue(), '16',
+    `${where}: the size count must end on the size the reader chose`);
+  assert((await page.locator('#loop-note').innerText()).includes('(3, 4, 4, 3)'),
+    `${where}: the trail of shapes should stay once the count is over`);
   assert.equal(await data('shape'), '3,16,16,3',
     `${where}: the original photo should be NHWC again`);
   assert.equal(await data('strides'), '768,48,3,1',
@@ -134,14 +164,55 @@ async function drive(ctx, page, where, lang) {
     .catch(() => assert.fail(`${where}: the original photo did not composite face on`));
   assert(!(await page.locator('#code').innerText()).includes('transpose'),
     `${where}: the code log should start over with the original photo`);
-  // After its beat the photo lifts back into 3-D on its own. Once, in
-  // one language: it costs the hold's real seconds.
+  // After its beat the photo lifts back into 3-D on its own, and the drift
+  // takes over from there. Once, in one language: it costs the hold's real
+  // seconds.
   if (lang === 'en') {
     await page.waitForFunction(() =>
       document.querySelector('#stage').dataset.snapped === '0',
       null, {timeout: 10000})
       .catch(() => assert.fail(`${where}: the original photo never lifted back into 3-D`));
+    await page.mouse.move(2, 2);
+    const overlays = () => page.evaluate(() =>
+      [...document.getElementById('overlays').children]
+        .map(e => e.getAttribute('style')).join('|'));
+    const settled = await overlays();
+    await page.waitForFunction(prev =>
+      [...document.getElementById('overlays').children]
+        .map(e => e.getAttribute('style')).join('|') !== prev,
+      settled, {timeout: 10000})
+      .catch(() => assert.fail(`${where}: the drift did not resume after the size count`));
   }
+
+  // Taking hold of anything mid-count ends it and hands the reader's size
+  // back: here a click on the snap button, with the stage on 8 px.
+  await page.locator('#original').click();
+  await page.waitForFunction(() =>
+    document.querySelector('#stage').dataset.loopShape === '(3, 8, 8, 3)',
+    null, {timeout: 5000})
+    .catch(() => assert.fail(`${where}: the size count never reached 8 px`));
+  await page.locator('#snap').click();
+  await page.waitForFunction(() => {
+    const s = document.querySelector('#stage').dataset;
+    return s.looping === '0' && s.shape === '3,16,16,3';
+  }, null, {timeout: 5000})
+    .catch(() => assert.fail(`${where}: an interrupted size count did not give 16 px back`));
+  assert.equal(await page.locator('#res').inputValue(), '16',
+    `${where}: an interrupted size count left the size picker on a rung`);
+  // Picking a size mid-count is the reader's choice, not something to undo.
+  await page.locator('#original').click();
+  await page.waitForFunction(() =>
+    document.querySelector('#stage').dataset.looping === '1', null, {timeout: 5000});
+  await page.locator('#res').selectOption('8');
+  await page.waitForFunction(() => {
+    const s = document.querySelector('#stage').dataset;
+    return s.looping === '0' && s.shape === '3,8,8,3';
+  }, null, {timeout: 5000})
+    .catch(() => assert.fail(`${where}: choosing a size mid-count should keep that size`));
+  await page.waitForTimeout(700);
+  assert.equal(await data('shape'), '3,8,8,3',
+    `${where}: a stopped size count must not rebuild the array again`);
+  await page.locator('#res').selectOption('16');
   // The numbers below open following the shape; put the pill back.
   await page.locator('#arrange [data-arrange="position"]').click();
 
@@ -234,6 +305,27 @@ async function drive(ctx, page, where, lang) {
     assert(await moves(6000),
       `${where_}: the drift should come back after a snap click`);
   }
+
+  // Reduced motion: no count, and the page says so. matchMedia is read at
+  // load, so the emulation needs a reload.
+  await page.emulateMedia({reducedMotion: 'reduce'});
+  await page.goto(
+    `${origin}${prefix}interactive/image-tensor.html?lang=${lang}`);
+  await page.waitForFunction(() =>
+    document.querySelector('#stage').dataset.photos === '3',
+    null, {timeout: 10000});
+  await page.locator('#res').selectOption('32');
+  await page.locator('#original').click();
+  await page.waitForFunction(() =>
+    document.querySelector('#stage').dataset.loopSkipped === '1',
+    null, {timeout: 5000})
+    .catch(() => assert.fail(`${where}: reduced motion should skip the size count and say so`));
+  assert.equal(await data('looping'), '0', `${where}: no size count under reduced motion`);
+  assert.equal(await data('shape'), '3,32,32,3',
+    `${where}: reduced motion should go straight to the selected size`);
+  assert(/reduced motion|movimiento reducido/i.test(await page.locator('#loop-note').innerText()),
+    `${where}: the readout should say the count was skipped`);
+  await page.emulateMedia({reducedMotion: 'no-preference'});
 
   // `#transpose` in the URL opens the page on that tab.
   await page.goto(
