@@ -118,8 +118,10 @@ async function drive(ctx, page, where, lang) {
   // "Show the original photo" undoes the transpose and the copy above,
   // back to the buffer as it was stacked, and shows the batch as
   // photographs: by meaning, flat on the front face, composited.
-  // The size count: the click starts a loop that climbs 4, 8, 16 px (the
-  // reader's size is 16) and publishes each rung's shape on the stage. A
+  // The size count: the click starts a loop through every stored size, 4 to
+  // 128 px, then back to the reader's (16), publishing each rung's shape on
+  // the stage. 128 px is seconds of work on a slow runner, so the ceilings
+  // are generous and the ladder is never shortened to fit them. A
   // MutationObserver collects every shape the stage publishes, so a slow
   // runner that polls late still sees the whole ladder.
   await page.evaluate(() => {
@@ -134,21 +136,22 @@ async function drive(ctx, page, where, lang) {
   await page.locator('#original').click();
   await page.waitForFunction(() =>
     document.querySelector('#stage').dataset.looping === '1',
-    null, {timeout: 5000})
+    null, {timeout: 30000})
     .catch(() => assert.fail(`${where}: the original photo never started the size count`));
   assert(await page.locator('#loop-note').isVisible(),
     `${where}: the size count should say what it is showing`);
   await page.waitForFunction(() =>
     document.querySelector('#stage').dataset.looping === '0',
-    null, {timeout: 10000})
+    null, {timeout: 90000})
     .catch(() => assert.fail(`${where}: the size count never finished`));
   assert.deepEqual(await page.evaluate(() => window.__loopShapes),
-    ['(3, 4, 4, 3)', '(3, 8, 8, 3)', '(3, 16, 16, 3)'],
-    `${where}: the size count should publish every rung's shape, up to the reader's`);
+    ['(3, 4, 4, 3)', '(3, 8, 8, 3)', '(3, 16, 16, 3)', '(3, 32, 32, 3)',
+     '(3, 64, 64, 3)', '(3, 128, 128, 3)', '(3, 16, 16, 3)'],
+    `${where}: the size count should show every rung, then return to the reader's size`);
   assert.equal(await page.locator('#res').inputValue(), '16',
     `${where}: the size count must end on the size the reader chose`);
-  assert((await page.locator('#loop-note').innerText()).includes('(3, 4, 4, 3)'),
-    `${where}: the trail of shapes should stay once the count is over`);
+  assert(/→ (back to|de vuelta a) \(3, 16, 16, 3\)/.test(await page.locator('#loop-note').innerText()),
+    `${where}: the trail should end by saying it went back to the reader's size`);
   assert.equal(await data('shape'), '3,16,16,3',
     `${where}: the original photo should be NHWC again`);
   assert.equal(await data('strides'), '768,48,3,1',
@@ -160,7 +163,7 @@ async function drive(ctx, page, where, lang) {
   await page.waitForFunction(() => {
     const s = document.querySelector('#stage').dataset;
     return s.snapped === '1' && s.reveal === '1';
-  }, null, {timeout: 5000})
+  }, null, {timeout: 30000})
     .catch(() => assert.fail(`${where}: the original photo did not composite face on`));
   assert(!(await page.locator('#code').innerText()).includes('transpose'),
     `${where}: the code log should start over with the original photo`);
@@ -170,7 +173,7 @@ async function drive(ctx, page, where, lang) {
   if (lang === 'en') {
     await page.waitForFunction(() =>
       document.querySelector('#stage').dataset.snapped === '0',
-      null, {timeout: 10000})
+      null, {timeout: 20000})
       .catch(() => assert.fail(`${where}: the original photo never lifted back into 3-D`));
     await page.mouse.move(2, 2);
     const overlays = () => page.evaluate(() =>
@@ -180,7 +183,7 @@ async function drive(ctx, page, where, lang) {
     await page.waitForFunction(prev =>
       [...document.getElementById('overlays').children]
         .map(e => e.getAttribute('style')).join('|') !== prev,
-      settled, {timeout: 10000})
+      settled, {timeout: 20000})
       .catch(() => assert.fail(`${where}: the drift did not resume after the size count`));
   }
 
@@ -189,25 +192,25 @@ async function drive(ctx, page, where, lang) {
   await page.locator('#original').click();
   await page.waitForFunction(() =>
     document.querySelector('#stage').dataset.loopShape === '(3, 8, 8, 3)',
-    null, {timeout: 5000})
+    null, {timeout: 30000})
     .catch(() => assert.fail(`${where}: the size count never reached 8 px`));
   await page.locator('#snap').click();
   await page.waitForFunction(() => {
     const s = document.querySelector('#stage').dataset;
     return s.looping === '0' && s.shape === '3,16,16,3';
-  }, null, {timeout: 5000})
+  }, null, {timeout: 30000})
     .catch(() => assert.fail(`${where}: an interrupted size count did not give 16 px back`));
   assert.equal(await page.locator('#res').inputValue(), '16',
     `${where}: an interrupted size count left the size picker on a rung`);
   // Picking a size mid-count is the reader's choice, not something to undo.
   await page.locator('#original').click();
   await page.waitForFunction(() =>
-    document.querySelector('#stage').dataset.looping === '1', null, {timeout: 5000});
+    document.querySelector('#stage').dataset.looping === '1', null, {timeout: 30000});
   await page.locator('#res').selectOption('8');
   await page.waitForFunction(() => {
     const s = document.querySelector('#stage').dataset;
     return s.looping === '0' && s.shape === '3,8,8,3';
-  }, null, {timeout: 5000})
+  }, null, {timeout: 30000})
     .catch(() => assert.fail(`${where}: choosing a size mid-count should keep that size`));
   await page.waitForTimeout(700);
   assert.equal(await data('shape'), '3,8,8,3',

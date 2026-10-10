@@ -197,69 +197,84 @@
 
   // ─── the size loop ────────────────────────────────────────────────────────
   //
-  // "Show the original photo" counts the photograph up through the sizes it
-  // is stored at, 4, 8, 16 ... as far as the size the reader chose, so the one
-  // thing that changes is the grid: the picture stays, the shape grows. It is
-  // here for the reason the drift is: which size is on screen, when the next
-  // one is due and what an interruption leaves behind are invisible in a
-  // screenshot, and the last one survives an end-state assertion. The widget
-  // owns the clock and the DOM; a state goes in, a state comes out.
+  // "Show the original photo" counts the photograph through every size it is
+  // stored at, 4, 8, 16 ... 128, so the one thing that changes is the grid: the
+  // picture stays, the shape grows. Then, if the reader's own size is not the
+  // last rung, one more step returns to it. It is here for the reason the
+  // drift is: which size is on screen, when the next one is due and what an
+  // interruption leaves behind are invisible in a screenshot, and the last one
+  // survives an end-state assertion. The widget owns the clock and the DOM; a
+  // state goes in, a state comes out.
+  //
+  // Every rung is shown. Building a big one can take seconds, so the clock is
+  // not a schedule: a rung's dwell starts when the widget says it was painted
+  // (`loopPainted`), and the next rung is not due before that. A slow machine
+  // gets a slower count, never a shorter one.
   //
   // `selected` is the reader's size and is never changed by the loop -- the
-  // widget lends its `state.res` to each step and an interruption hands it
+  // widget lends its `state.res` to each rung and an interruption hands it
   // back (`restore`), which is what stops a drag halfway through leaving the
   // page on a 4 x 4 the reader never asked for.
   const LOOP = {
-    totalMs: 2000,  // about two seconds, whatever the ladder's length
-    minStepMs: 320, // so a long ladder is still readable ...
-    maxStepMs: 520  // ... and a short one is not a slow crawl
+    dwellMs: 350    // how long a rung stays once it is on screen
   };
 
-  const loopIdle = () =>
-    ({on: false, skipped: false, ladder: [], selected: 0, i: 0, stepMs: 0, t0: 0});
+  const loopIdle = () => ({
+    on: false, skipped: false, ladder: [], selected: 0, i: 0,
+    dwellMs: 0, shownAt: null, ret: false
+  });
 
-  // The sizes below and including `selected`, ascending. A size the photos do
-  // not carry is never invented; `selected` itself is always the last rung.
+  // Every stored size, ascending, then `selected` once more if it is not the
+  // last of them: that final entry is the return.
   function loopLadder(res, selected) {
-    const rungs = res.filter((r) => r < selected).sort((a, b) => a - b);
-    return rungs.filter((r, k) => k === 0 || r !== rungs[k - 1]).concat([selected]);
+    const rungs = res.slice().sort((a, b) => a - b)
+      .filter((r, k, all) => k === 0 || r !== all[k - 1]);
+    return rungs.length && rungs[rungs.length - 1] === selected
+      ? rungs : rungs.concat([selected]);
   }
 
-  // Starting. Under reduced motion, or when there is nothing smaller to climb
-  // from, nothing runs: the state is off, on `selected`, and `skipped` says
-  // whether it was the reader's setting that decided it.
-  function loopBegin(res, selected, reduce, now) {
+  // Starting. Under reduced motion, or with no sizes to count through,
+  // nothing runs: the state is off and its only rung is `selected`;
+  // `skipped` says it was the reader's setting that decided it.
+  function loopBegin(res, selected, reduce) {
     const ladder = loopLadder(res, selected);
-    const base = Object.assign(loopIdle(), {ladder, selected, i: ladder.length - 1, t0: now});
-    if (reduce) return Object.assign(base, {skipped: true});
-    if (ladder.length < 2) return base;
-    const stepMs = Math.min(LOOP.maxStepMs,
-      Math.max(LOOP.minStepMs, Math.round(LOOP.totalMs / ladder.length)));
-    return Object.assign(base, {on: true, i: 0, stepMs});
+    const idle = Object.assign(loopIdle(), {ladder: [selected], selected});
+    if (reduce) return Object.assign(idle, {skipped: true});
+    if (ladder.length < 2) return idle;
+    const top = Math.max.apply(null, res);
+    return Object.assign(idle, {
+      on: true, ladder, i: 0, dwellMs: LOOP.dwellMs, ret: selected !== top
+    });
   }
 
-  // Where the loop is at `now`. `size` is the rung to show, `changed` says it
-  // is not the one `s` was showing, `done` that the last rung has had its
-  // turn. A late frame skips rungs rather than replaying them.
-  function loopAt(s, now) {
-    if (!s.on) return {state: s, size: s.ladder[s.i], changed: false, done: false};
-    const elapsed = Math.max(0, now - s.t0);
-    const i = Math.min(s.ladder.length - 1, Math.floor(elapsed / s.stepMs));
-    const done = elapsed >= s.ladder.length * s.stepMs;
-    const next = Object.assign({}, s, {i, on: !done});
-    return {state: next, size: s.ladder[i], changed: i !== s.i, done};
-  }
+  // Is the rung on screen the return to the reader's size?
+  const loopReturning = (s) => s.ret && s.i === s.ladder.length - 1;
 
-  // Milliseconds until the rung after this one is due (never below a frame).
-  const loopDelay = (s, now) =>
-    Math.max(16, (s.i + 1) * s.stepMs - Math.max(0, now - s.t0));
+  // The widget drew rung `i` at `now`: its dwell starts here.
+  const loopPainted = (s, now) => Object.assign({}, s, {shownAt: now});
+
+  // Milliseconds until the next rung is due: the whole dwell if the current
+  // one has not been painted yet, so a slow build never eats into it.
+  const loopDelay = (s, now) => s.shownAt === null ? s.dwellMs
+    : Math.max(0, s.shownAt + s.dwellMs - now);
+
+  // The dwell is over. Moves to the next rung, which has not been painted
+  // yet (`shownAt` back to null), or finishes after the last.
+  function loopAdvance(s) {
+    if (!s.on) return {state: s, size: s.ladder[s.i], done: false};
+    if (s.i >= s.ladder.length - 1) {
+      return {state: Object.assign({}, s, {on: false}), size: s.ladder[s.i], done: true};
+    }
+    const i = s.i + 1;
+    return {state: Object.assign({}, s, {i, shownAt: null}), size: s.ladder[i], done: false};
+  }
 
   // The reader took hold of something. The loop ends where it is, and if the
-  // rung on screen is not their size, `restore` says to put theirs back.
+  // rung it was on is not their size, `restore` says to put theirs back.
   function loopInterrupt(s) {
     if (!s.on) return {state: s, restore: false, size: s.selected};
     return {
-      state: Object.assign({}, s, {on: false, i: s.ladder.length - 1}),
+      state: Object.assign({}, s, {on: false}),
       restore: s.ladder[s.i] !== s.selected,
       size: s.selected
     };
@@ -269,7 +284,8 @@
     sum, prod, range, same, unravel, POS_ORDERS,
     cstrides, stridesFor, contiguousInOrder, posOrder, reshapeStrides, carryIds,
     DRIFT, driftIdle, driftPose, driftStart, driftPause, driftRelease,
-    LOOP, loopIdle, loopLadder, loopBegin, loopAt, loopDelay, loopInterrupt
+    LOOP, loopIdle, loopLadder, loopBegin, loopReturning, loopPainted, loopDelay,
+    loopAdvance, loopInterrupt
   };
   if (typeof module !== "undefined" && module.exports) module.exports = TensorCore;
   else root.TensorCore = TensorCore;

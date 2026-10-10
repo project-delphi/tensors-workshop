@@ -184,73 +184,75 @@ test('the breath flattens against zoomBy()\'s floor rather than going under it',
 // ─── the size loop ──────────────────────────────────────────────────────────
 const RES = [4, 8, 16, 32, 64, 128];
 
-test('the loop climbs the stored sizes and ends on the reader\'s', () => {
-  assert.deepEqual(core.loopLadder(RES, 16), [4, 8, 16]);
+test('the loop counts through every stored size, then returns to the reader\'s', () => {
+  assert.deepEqual(core.loopLadder(RES, 16), [4, 8, 16, 32, 64, 128, 16]);
   assert.deepEqual(core.loopLadder(RES, 128), RES);
-  assert.deepEqual(core.loopLadder(RES, 4), [4]);
+  assert.deepEqual(core.loopLadder(RES, 4), [4, 8, 16, 32, 64, 128, 4]);
   // Unsorted and repeated input still gives an ascending ladder.
   assert.deepEqual(core.loopLadder([32, 8, 8, 4], 32), [4, 8, 32]);
 });
 
-test('the loop lasts about two seconds at any length, and each rung is readable', () => {
-  for (const sel of [8, 16, 32, 64, 128]) {
-    const s = core.loopBegin(RES, sel, false, 1000);
-    assert.ok(s.on);
-    assert.ok(s.stepMs >= core.LOOP.minStepMs && s.stepMs <= core.LOOP.maxStepMs);
-    const total = s.stepMs * s.ladder.length;
-    assert.ok(total >= 1000 && total <= 3100, `${sel}: ${total} ms`);
-  }
-});
-
-test('the loop shows each rung in turn, then finishes on the selected size', () => {
-  let s = core.loopBegin(RES, 32, false, 1000);   // 4, 8, 16, 32
-  const seen = [];
-  for (let t = 1000; t < 1000 + 4 * s.stepMs; t += 20) {
-    const r = core.loopAt(s, t);
+test('every rung is shown, however slow the machine, and the dwell runs from the paint', () => {
+  let s = core.loopBegin(RES, 16, false);
+  assert.equal(s.on, true);
+  const shown = [s.ladder[s.i]];
+  let now = 0;
+  while (true) {
+    // Painting takes a long time (a big rebuild); the dwell is not eaten by it.
+    assert.equal(core.loopDelay(s, now), core.LOOP.dwellMs, 'before the paint: the full dwell');
+    now += 5000;                       // five seconds to build and paint
+    s = core.loopPainted(s, now);
+    assert.equal(core.loopDelay(s, now), core.LOOP.dwellMs);
+    assert.equal(core.loopDelay(s, now + 100), core.LOOP.dwellMs - 100);
+    assert.equal(core.loopDelay(s, now + 10000), 0);
+    now += core.LOOP.dwellMs;
+    const r = core.loopAdvance(s);
     s = r.state;
-    if (r.changed || !seen.length) seen.push(r.size);
-    assert.equal(r.done, false);
+    if (r.done) break;
+    assert.equal(s.shownAt, null, 'the next rung has not been painted');
+    shown.push(r.size);
   }
-  assert.deepEqual(seen, [4, 8, 16, 32]);
-  const end = core.loopAt(s, 1000 + 4 * s.stepMs);
-  assert.equal(end.done, true);
-  assert.equal(end.state.on, false);
-  assert.equal(end.size, 32);
-  assert.equal(end.state.selected, 32);
+  assert.deepEqual(shown, [4, 8, 16, 32, 64, 128, 16]);
+  assert.equal(s.on, false);
+  assert.equal(s.ladder[s.i], 16);
 });
 
-test('a late frame skips rungs instead of replaying them', () => {
-  const s = core.loopBegin(RES, 64, false, 0);
-  const r = core.loopAt(s, s.stepMs * 3 + 1);
-  assert.equal(r.size, 32);
-  assert.equal(r.changed, true);
-  assert.equal(core.loopAt(r.state, s.stepMs * 3 + 2).changed, false);
-  // The next timer is due when the following rung is.
-  assert.equal(core.loopDelay(r.state, s.stepMs * 3 + 1), s.stepMs - 1);
+test('the last step is a return unless the reader chose the top size', () => {
+  const walk = (sel) => {
+    let s = core.loopBegin(RES, sel, false);
+    let back = [];
+    for (;;) {
+      back.push(core.loopReturning(s));
+      const r = core.loopAdvance(s);
+      if (r.done) return back;
+      s = r.state;
+    }
+  };
+  assert.deepEqual(walk(16), [false, false, false, false, false, false, true]);
+  assert.deepEqual(walk(128), [false, false, false, false, false, false]);
 });
 
 test('an interruption ends the loop and gives the reader\'s size back', () => {
-  const s = core.loopBegin(RES, 32, false, 0);
-  const mid = core.loopAt(s, s.stepMs * 1.5).state;      // showing 8
-  const cut = core.loopInterrupt(mid);
+  let s = core.loopBegin(RES, 32, false);
+  s = core.loopAdvance(core.loopAdvance(s).state).state;   // on 16
+  const cut = core.loopInterrupt(s);
   assert.equal(cut.state.on, false);
   assert.equal(cut.restore, true);
   assert.equal(cut.size, 32);
-  // On the last rung there is nothing to restore; and an idle loop is inert.
-  const last = core.loopAt(s, s.stepMs * 3.5).state;
-  assert.equal(core.loopInterrupt(last).restore, false);
+  // Cut on a rung that happens to be theirs (32 here): nothing to put back.
+  const same = core.loopInterrupt(core.loopAdvance(s).state);
+  assert.equal(same.restore, false);
+  const atEnd = core.loopBegin(RES, 128, false);
+  atEnd.i = atEnd.ladder.length - 1;
+  assert.equal(core.loopInterrupt(atEnd).restore, false);
   const idle = core.loopInterrupt(core.loopIdle());
   assert.equal(idle.restore, false);
   assert.equal(idle.state.on, false);
 });
 
-test('reduced motion, or nothing smaller to climb from, runs no loop', () => {
-  const reduced = core.loopBegin(RES, 64, true, 0);
+test('reduced motion runs no loop and stays on the selected size', () => {
+  const reduced = core.loopBegin(RES, 64, true);
   assert.equal(reduced.on, false);
   assert.equal(reduced.skipped, true);
   assert.equal(reduced.ladder[reduced.i], 64);
-  const smallest = core.loopBegin(RES, 4, false, 0);
-  assert.equal(smallest.on, false);
-  assert.equal(smallest.skipped, false);
-  assert.equal(smallest.ladder[smallest.i], 4);
 });

@@ -604,6 +604,7 @@
   // How long "Show the original photo" holds the photograph flat before the
   // view lifts back into 3-D and the drift takes it from there.
   const ORIGINAL_HOLD_MS = 1400;
+  const LOOP_BIG_CUBES = 20000;   // from here a rung says it is being built
 
   const ORDER_PRESETS = { NHWC: [0, 2, 3, 1], NCHW: [0, 1, 2, 3] };
   const ORDER_KEYS = ["NHWC", "NCHW", "swapHW", "reverse"];
@@ -720,20 +721,22 @@
     reset: "Reset log",
     original: { photos: "Show the original photo", numbers: "Start over" },
     originalTitle: {
-      photos: "Undo every reshape, transpose and copy and look at the photos face on, the way the camera took them, counting the grid up through the sizes to yours so you can watch the shape grow. Then the stage lifts back into 3-D from there. Touching anything stops it.",
+      photos: "Undo every reshape, transpose and copy and look at the photos face on, the way the camera took them, counting the grid through every size, 4 to 128 px, and back to yours so you can watch the shape change. Then the stage lifts back into 3-D from there. Touching anything stops it.",
       numbers: "Undo every reshape, transpose and copy, back to np.arange as it was built."
     },
     originalHint: {
-      photos: (ladder) => ladder.length > 1
-        ? `Undoes every operation, then counts the grid up ${ladder.join(" → ")} px: the picture stays, the shape grows.`
-        : "Undoes every operation and shows the photos face on. Pick a larger size to watch the grid grow.",
+      photos: (res, sel) => res.length > 1
+        ? `Undoes every operation, then counts the grid ${res.join(" → ")} px${sel === Math.max(...res) ? "" : `, and back to ${sel}`}: the picture stays, the shape changes.`
+        : "Undoes every operation and shows the photos face on.",
       numbers: () => "Undoes every operation, back to np.arange as it was built."
     },
     saidOriginal: "Back to the array as it was built: every operation undone.",
-    saidLoop: (ladder) => `Counting the photos up through ${ladder.join(", ")} pixels per side. Touch anything to stop.`,
+    saidLoop: (ladder) => `Counting the photos through ${ladder.join(", ")} pixels per side. Touch anything to stop.`,
+    loopBack: "back to",
+    loopBuilding: (n) => `Building ${n} cubes…`,
     saidLoopEnd: (shape) => `Back to the array as it was built, ${shape}: every operation undone.`,
     saidReduced: (r, shape) => `Reduced motion is on, so the size count is skipped: the photos at ${r} × ${r} pixels, ${shape}, every operation undone.`,
-    loopNote: (trail, done) => `Size count: ${trail}${done ? ". Same photos each time: only H and W grew." : " …"}`,
+    loopNote: (trail, done) => `Size count: ${trail}${done ? ". Same photos each time: only H and W changed." : " …"}`,
     loopStage: (r, shape) => `The same photos at ${r} × ${r} pixels: shape ${shape}. Each pixel is 3 numbers, so one photo is ${r * r * 3} numbers.`,
     copied: "Copied",
     glNoWebgl: "This browser has no WebGL — showing the isometric canvas instead. Everything on the panel is the same.",
@@ -896,20 +899,22 @@
     reset: "Reiniciar registro",
     original: { photos: "Ver la foto original", numbers: "Empezar de nuevo" },
     originalTitle: {
-      photos: "Deshace cada reshape, transpose y copia y muestra las fotos de frente, tal como las tomó la cámara, subiendo la cuadrícula por los tamaños hasta el tuyo para ver crecer la forma. Después el escenario vuelve al 3-D desde ahí. Tocar cualquier cosa lo detiene.",
+      photos: "Deshace cada reshape, transpose y copia y muestra las fotos de frente, tal como las tomó la cámara, recorriendo la cuadrícula por cada tamaño, de 4 a 128 px, y volviendo al tuyo para ver cambiar la forma. Después el escenario vuelve al 3-D desde ahí. Tocar cualquier cosa lo detiene.",
       numbers: "Deshace cada reshape, transpose y copia, y vuelve a np.arange tal como se construyó."
     },
     originalHint: {
-      photos: (ladder) => ladder.length > 1
-        ? `Deshace todas las operaciones y sube la cuadrícula ${ladder.join(" → ")} px: la imagen se queda, la forma crece.`
-        : "Deshace todas las operaciones y muestra las fotos de frente. Elige un tamaño mayor para ver crecer la cuadrícula.",
+      photos: (res, sel) => res.length > 1
+        ? `Deshace todas las operaciones y cuenta la cuadrícula ${res.join(" → ")} px${sel === Math.max(...res) ? "" : `, y vuelve a ${sel}`}: la imagen se queda, la forma cambia.`
+        : "Deshace todas las operaciones y muestra las fotos de frente.",
       numbers: () => "Deshace todas las operaciones y vuelve a np.arange tal como se construyó."
     },
     saidOriginal: "De vuelta al array tal como se construyó: todas las operaciones deshechas.",
-    saidLoop: (ladder) => `Subiendo las fotos por ${ladder.join(", ")} píxeles por lado. Toca cualquier cosa para detener.`,
+    saidLoop: (ladder) => `Recorriendo las fotos por ${ladder.join(", ")} píxeles por lado. Toca cualquier cosa para detener.`,
+    loopBack: "de vuelta a",
+    loopBuilding: (n) => `Construyendo ${n} cubos…`,
     saidLoopEnd: (shape) => `De vuelta al array tal como se construyó, ${shape}: todas las operaciones deshechas.`,
     saidReduced: (r, shape) => `El movimiento reducido está activo, así que se omite la cuenta de tamaños: las fotos a ${r} × ${r} píxeles, ${shape}, todas las operaciones deshechas.`,
-    loopNote: (trail, done) => `Cuenta de tamaños: ${trail}${done ? ". Las mismas fotos cada vez: solo crecieron H y W." : " …"}`,
+    loopNote: (trail, done) => `Cuenta de tamaños: ${trail}${done ? ". Las mismas fotos cada vez: solo cambiaron H y W." : " …"}`,
     loopStage: (r, shape) => `Las mismas fotos a ${r} × ${r} píxeles: forma ${shape}. Cada píxel son 3 números, así que una foto son ${r * r * 3} números.`,
     copied: "Copiado",
     glNoWebgl: "Este navegador no tiene WebGL: se muestra el canvas isométrico. Todo lo del panel es igual.",
@@ -997,6 +1002,8 @@
   // gives back.
   let loop = window.TensorCore.loopIdle();
   let loopTimer = 0;
+  let loopRaf = 0;
+  let loopShown = 0;              // the size actually built, which can trail loop.i
   let loopTrail = [];
   let PHOTOS = null;
   let SRC = null;                 // the array as it was built
@@ -1016,7 +1023,7 @@
   const Core = window.TensorCore;
   const { sum, prod, range, same, unravel, cstrides, reshapeStrides, POS_ORDERS } = Core;
   const { driftIdle, driftPose, driftStart, driftPause, driftRelease } = Core;
-  const { loopIdle, loopBegin, loopAt, loopDelay, loopInterrupt } = Core;
+  const { loopIdle, loopBegin, loopReturning, loopPainted, loopDelay, loopAdvance, loopInterrupt } = Core;
 
   // Resolved once per frame rather than twice per cube. Colouring a full batch
   // called getComputedStyle tens of thousands of times per glide, which made
@@ -1946,7 +1953,7 @@
     $("original").textContent = T.original[which];
     $("original").title = T.originalTitle[which];
     $("original-hint").textContent = T.originalHint[which](
-      photoMode ? Core.loopLadder(loopRes(), loop.on ? loop.selected : state.res) : []);
+      photoMode ? loopRes() : [], loop.on ? loop.selected : state.res);
     $("shape-photo").hidden = !photoMode;
     $("shape-numbers").hidden = photoMode;
     $("n-note").textContent = T.nNote(state.n);
@@ -3195,14 +3202,17 @@
   const loopShapeAt = (r) => shapeText([photosOn().length, r, r, 3]);
 
   // What a checker can read while the count runs: whether it is running, which
-  // rung, and the shape on it. Written from `loop` and `state`, never from a
-  // frame, so a poll sees the truth while the cubes are still arriving.
+  // rung, the shape on it, and -- while a big rung is being built -- how many
+  // cubes that is. Written from `loop` and `state`, never from a frame, so a
+  // poll sees the truth while the cubes are still arriving.
   function publishLoop() {
     const d = $("stage").dataset;
     d.looping = loop.on ? "1" : "0";
     d.loopSize = loop.on ? String(state.res) : "";
     d.loopShape = loop.on ? loopShapeAt(state.res) : "";
     d.loopStep = loop.on ? `${loop.i + 1}/${loop.ladder.length}` : "";
+    d.loopReturn = loop.on && loopReturning(loop) ? "1" : "0";
+    if (!loop.on) d.loopBuilding = "";
   }
   function clearLoopNote() {
     loopTrail = [];
@@ -3215,11 +3225,12 @@
     $("loop-note").hidden = false;
   }
 
-  // The reader took hold of something while the grid was being counted up.
+  // The reader took hold of something while the grid was being counted.
   // The count ends where it is and their size comes back; `rebuild: false` is
   // for a caller that is about to build the array itself.
   function stopLoop(opts) {
     clearTimeout(loopTimer);
+    cancelAnimationFrame(loopRaf);
     if (!loop.on) return;
     const r = loopInterrupt(loop);
     loop = r.state;
@@ -3228,32 +3239,68 @@
     clearLoopNote();
     if (opts && opts.rebuild) {
       anim = null;
-      if (r.restore) rebuildSource();
+      // `loopShown`, not `r.restore`: an interruption between a rung being
+      // chosen and being built leaves the previous one on screen.
+      if (loopShown !== r.size) rebuildSource();
       render();
     }
   }
 
-  function loopTick() {
-    if (!loop.on) return;
-    const r = loopAt(loop, performance.now());
-    loop = r.state;
-    if (r.changed) {
-      state.res = r.size;
+  // Two animation frames from now, so whatever was just drawn has been
+  // painted and whatever the caller wrote to the page has been seen.
+  function afterPaint(fn) {
+    loopRaf = requestAnimationFrame(() => { loopRaf = requestAnimationFrame(fn); });
+  }
+  // The rung is on screen: its dwell starts now, not when it was scheduled.
+  function loopSettle() {
+    afterPaint(() => {
+      if (!loop.on) return;
+      loop = loopPainted(loop, performance.now());
+      loopTimer = setTimeout(loopNext, loopDelay(loop, performance.now()));
+    });
+  }
+
+  // Show the rung `loop.i` points at. A big one blocks the page for as long as
+  // the build takes, so the page is told what is coming and given a frame to
+  // say so before the work starts.
+  function loopBuild() {
+    const size = loop.ladder[loop.i];
+    const cubes = photosOn().length * size * size * 3;
+    const d = $("stage").dataset;
+    d.loopBuilding = String(cubes);
+    if (cubes >= LOOP_BIG_CUBES) {
+      const msg = T.loopBuilding(cubes.toLocaleString(lang));
+      $("stagenote").textContent = msg;
+      $("loop-note").textContent = msg;
+      $("loop-note").hidden = false;
+    }
+    afterPaint(() => {
+      if (!loop.on) return;
+      state.res = size;
       rebuildSource();
-      loopTrail.push(loopShapeAt(r.size));
-    }
-    publishLoop();
-    if (r.done) {
-      // The last rung is the reader's own size, so the array on screen is
-      // already the one they chose; what is left is the beat, and the lift.
-      showLoopNote(true);
+      loopShown = size;
+      const shape = loopShapeAt(size);
+      loopTrail.push(loopReturning(loop) ? `${T.loopBack} ${shape}` : shape);
+      d.loopBuilding = "";
+      publishLoop();
+      showLoopNote(false);
       render();
-      $("status").textContent = T.saidLoopEnd(shapeText(state.shape));
-      scheduleLift();
-      return;
-    }
-    if (r.changed) { showLoopNote(false); render(); }
-    loopTimer = setTimeout(loopTick, loopDelay(loop, performance.now()));
+      loopSettle();
+    });
+  }
+
+  function loopNext() {
+    if (!loop.on) return;
+    const r = loopAdvance(loop);
+    loop = r.state;
+    if (!r.done) { loopBuild(); return; }
+    // The last rung is the reader's own size, so the array on screen is the
+    // one they chose; what is left is the beat, and the lift.
+    publishLoop();
+    showLoopNote(true);
+    render();
+    $("status").textContent = T.saidLoopEnd(shapeText(state.shape));
+    scheduleLift();
   }
 
   // After its beat the view lifts back into 3-D, and once that glide is over
@@ -3278,8 +3325,10 @@
     // numbers have no size, and a reader who asked not to be moved is told the
     // count was skipped rather than shown a jump with no explanation.
     const plan = isPhotos()
-      ? loopBegin(loopRes(), state.res, reduceMotion, performance.now()) : loopIdle();
+      ? loopBegin(loopRes(), state.res, reduceMotion) : loopIdle();
     if (plan.on) {
+      // Straight into the first rung: building the reader's size first and
+      // then throwing it away is seconds of work at 128 px for nothing.
       loop = plan;
       state.res = plan.ladder[0];
     }
@@ -3313,11 +3362,12 @@
     glideTo(front, 0);
     tick();
     if (plan.on) {
+      loopShown = state.res;
       loopTrail = [loopShapeAt(state.res)];
       publishLoop();
       showLoopNote(false);
       $("status").textContent = T.saidLoop(plan.ladder);
-      loopTimer = setTimeout(loopTick, loopDelay(loop, performance.now()));
+      loopSettle();
       return;
     }
     if (plan.skipped) {
