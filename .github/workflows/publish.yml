@@ -38,7 +38,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v10.2.0
+      - uses: astral-sh/setup-uv@v10.3.3
         # An exact tag: since v8 setup-uv publishes no floating `v10`, so
         # `@v10` does not resolve. Dependabot bumps it like any other.
         #
@@ -246,7 +246,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - uses: astral-sh/setup-uv@v10.2.0
+      - uses: astral-sh/setup-uv@v10.3.3
         with:
           enable-cache: false
 
