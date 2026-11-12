@@ -33,6 +33,7 @@ Outputs (all overwritten, none hand-edited):
     _includes/companion-map-en.md            _includes/companion-map-es.md
     _includes/notebook-deps-en.md  _includes/notebook-deps-es.md
     _includes/brainstorm-en.md    _includes/brainstorm-es.md
+    _includes/site-qr-en.md       _includes/site-qr-es.md
     _includes/references-en.md    _includes/references-es.md
     _includes/day-sheet-strip-en.md  _includes/day-sheet-strip-es.md
 """
@@ -45,6 +46,7 @@ import pathlib
 import re
 import sys
 
+import segno
 import yaml
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
@@ -1374,6 +1376,91 @@ def brainstorm_svg(lang: str) -> str:
     return "\n".join(out) + "\n"
 
 
+# ── the QR code to the site ──────────────────────────────────────────────────
+# One code per language, on the deck's title slide and in the homepage hero,
+# so a room looking at a projector can open the site without typing it. It
+# encodes that language's homepage, read off `repo.site`, which is why it is
+# generated here and gated: a hand-pasted image would go on pointing at the
+# old address after a move, and a QR code cannot be proof-read by eye.
+#
+# segno computes the module matrix; the SVG is written here. Every input
+# that chooses the matrix is fixed -- byte mode, level M, no error boost, so
+# the version is the smallest that holds the URL -- and the standard then
+# fixes every module, so a segno release cannot move a byte of the output
+# unless it changes how a mask is scored. The black-on-white square carries
+# its own four-module quiet zone, so it scans on the hero's navy and on a
+# dark theme without the page having to supply one.
+QR_BORDER = 4
+QR_L = {
+    "en": dict(
+        aria="QR code for the workshop site",
+        label="Scan to open the workshop site",
+    ),
+    "es": dict(
+        aria="Código QR del sitio del taller",
+        label="Escanea para abrir el sitio del taller",
+    ),
+}
+
+
+def site_url(lang: str) -> str:
+    """The homepage in one language: what the QR code says."""
+    return REPO["site"].rstrip("/") + ("/es/" if lang == "es" else "/")
+
+
+def qr_path(url: str) -> tuple[str, int]:
+    """The dark modules as one SVG path, a rectangle per horizontal run."""
+    qr = segno.make_qr(url, error="m", mode="byte", boost_error=False)
+    runs = []
+    for y, row in enumerate(qr.matrix):
+        x = 0
+        while x < len(row):
+            if not row[x]:
+                x += 1
+                continue
+            start = x
+            while x < len(row) and row[x]:
+                x += 1
+            runs.append(
+                f"M{start + QR_BORDER} {y + QR_BORDER}h{x - start}v1h-{x - start}z"
+            )
+    return "".join(runs), len(qr.matrix) + 2 * QR_BORDER
+
+
+def site_qr(lang: str) -> str:
+    """A `<figure>` with the code, a line saying what it is, and the address.
+
+    The address is printed under the code because a laptop has no camera
+    pointed at the screen: the same figure has to work for the reader who
+    types it.
+    """
+    url = site_url(lang)
+    shown = url.removeprefix("https://").rstrip("/")
+    # A break is allowed after each slash and nowhere else: each segment is
+    # a span the stylesheets keep on one line, because a browser will
+    # otherwise break `tensors-workshop` at its hyphen.
+    parts = shown.split("/")
+    shown_html = "<wbr>".join(
+        f"<span>{html.escape(p)}{'/' if i < len(parts) - 1 else ''}</span>"
+        for i, p in enumerate(parts)
+    )
+    path, size = qr_path(url)
+    words = QR_L[lang]
+    return (
+        "```{=html}\n"
+        f'<figure class="site-qr" data-qr-url="{html.escape(url)}">'
+        f'<svg class="site-qr-code" xmlns="http://www.w3.org/2000/svg" '
+        f'viewBox="0 0 {size} {size}" shape-rendering="crispEdges" role="img" '
+        f'aria-label="{html.escape(words["aria"])}">'
+        f'<rect width="{size}" height="{size}" fill="#fff"/>'
+        f'<path fill="#000" d="{path}"/></svg>'
+        f'<figcaption><span class="site-qr-label">{html.escape(words["label"])}'
+        f'</span> <span class="site-qr-url">{shown_html}</span>'
+        "</figcaption></figure>\n"
+        "```\n"
+    )
+
+
 REF_L = {
     "en": dict(
         also="Author pages",
@@ -1530,6 +1617,8 @@ def main() -> int:
             "notebook-deps-es.md": BANNER + notebook_deps_table("es"),
             "brainstorm-en.md": BANNER + brainstorm_svg("en"),
             "brainstorm-es.md": BANNER + brainstorm_svg("es"),
+            "site-qr-en.md": BANNER + site_qr("en"),
+            "site-qr-es.md": BANNER + site_qr("es"),
             "references-en.md": BANNER + references_list("en"),
             "references-es.md": BANNER + references_list("es"),
             "day-sheet-strip-en.md": BANNER + day_sheet_strip("en"),

@@ -26,6 +26,8 @@ Una sesión práctica sobre remodelar, resolver y factorizar tensores — escrit
 
 [{{< var event.date >}} · {{< var event.time >}} · {{< var event.venue >}}]{.hero-event}
 
+{{< include ../_includes/site-qr-es.md >}}
+
 ::: {.hero-actions}
 [Lee el manual →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 

@@ -26,6 +26,8 @@ A hands-on session on reshaping, solving and factorizing tensors — written in 
 
 [{{< var event.date >}} · {{< var event.time >}} · {{< var event.venue >}}]{.hero-event}
 
+{{< include _includes/site-qr-en.md >}}
+
 ::: {.hero-actions}
 [Read the handbook →](./tensors_workshop_plan_with_quizzes.html){.hero-button}
 

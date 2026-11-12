@@ -52,6 +52,9 @@ notebooks = [
 site = [
   "pyyaml>=6.0",
   "nbformat>=5.10",
+  # The QR code to the site (`site_qr()` in gen_tables.py). Pure Python, no
+  # dependencies; it computes the module matrix and nothing else of it is used.
+  "segno>=1.6",
 ]
 
 # The test suite. NumPy drives the tiny worked counterexamples and feedback
