@@ -169,7 +169,8 @@ forget it.
 ## Structure of each deck
 
 The title and the cold open → three opening slides → the agenda (generated into
-`_includes/agenda-{en,es}.md` by `scripts/gen_tables.py`) → then per section an
+`_includes/agenda-{en,es}.md` by `scripts/gen_tables.py`) → the AI use slide
+(`#ai-use`, a summary of `ai-policy.qmd`) → then per section an
 `.outcomes-slide` carrying the `{#sec-NN-slug}` anchor, built from
 `_variables.yml`, and its follow-on slides, with a full-bleed **Kahoot pause**
 slide after sections 04, 07 and 10. The slide map below lists every one.
@@ -218,6 +219,7 @@ section's.
 | **02a** | — | — | Four ideas, one object — the whole day in four cards |
 | 03 | — | — | The four datasets |
 | agenda | — | — | The running clock, from `_includes/agenda-{en,es}.md` |
+| ai-use | `ai-use` | — | AI use policy: the three exceptions, and how AI made the materials; links to `ai-policy.qmd` |
 | outcomes | `sec-00-setup-and-data` | 00 | Setup and welcome |
 | outcomes | `sec-01-what-a-tensor-is` | 01 | What a tensor is |
 | 06 | · | 01 | Map of factorizations — the map section 09 walks |

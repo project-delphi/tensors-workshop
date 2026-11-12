@@ -1,0 +1,82 @@
+---
+title: "AI use policy"
+subtitle: "How AI helped make this workshop, and how you can use it during the day"
+description: "Where AI tools are welcome in the tensors workshop, the three things that stay yours alone, and how AI was used to build the materials."
+lang: en
+toc-depth: 2
+---
+
+[Español](es/ai-policy.qmd)
+
+## In short {#summary}
+
+AI assistants are welcome during the workshop, with three exceptions: your
+first prediction, the Kahoot quizzes, and the entry and exit checks are yours
+alone. Whatever an assistant tells you, run the code and look at the shape:
+the notebook's own check decides, not the assistant.
+
+## Using AI during the workshop {#during-the-workshop}
+
+You may use any AI assistant, including Gemini inside Colab, to explain an
+error message, a NumPy function or a term, and to review code you have
+already written. Try each exercise yourself first, the same way you try it
+before opening its folded solution, and then ask for help.
+
+### Three things are yours alone {#yours-alone}
+
+- **Your first prediction.** Sections open on a predict-first question, and
+  some on a *Myth or fact?* claim. Make your own guess before you run
+  anything or ask anyone. A wrong guess you made yourself teaches you more
+  than a right one you were given.
+- **The Kahoot quizzes.** Play them on your own, from memory.
+- **The entry and exit checks.** They measure what you understand, so the
+  instructors can see where the room is. An assistant's answer tells them
+  nothing about that.
+
+### Check what it tells you {#check}
+
+An assistant can sound sure and still be wrong, and it is wrong most often
+about what this workshop is about: which axis is which, and what shape comes
+out. Before you trust an answer:
+
+- run it, and print `.shape`;
+- compare it with the notebook's expected result and with the
+  [handbook](tensors_workshop_plan_with_quizzes.md);
+- if the two disagree, trust the notebook's check and ask in
+  [Discord]({{< var community.discord >}}).
+
+The [worked mistakes](worked-mistakes.md) are good practice: each one is code
+that runs, prints something plausible, and is wrong.
+
+### Say when it helped {#disclose}
+
+When your group posts its three-line share-back in Discord, or you share work
+from the workshop anywhere else, say whether an AI assistant helped, and how.
+This page does the same for the materials.
+
+### Keep private data out {#privacy}
+
+Code and output from the workshop's notebooks are fine to paste into an
+assistant. Do not paste anything that is not yours to share: data from your job,
+other people's personal information, passwords or API keys.
+
+## How AI was used to make this workshop {#how-we-used-ai}
+
+- **Code and site.** The notebooks, the interactive widgets, this site and
+  the scripts that build and check them were written with AI coding
+  assistants (Claude, from Anthropic), working under the instructors'
+  direction. Most commits in the [repository]({{< var repo.url >}}) name an
+  AI co-author.
+- **The Spanish handbook** is a machine translation of the English one, which
+  remains the source of truth.
+- **The [companion](companion.qmd)'s** summaries, audio, videos and
+  self-checks were generated with NotebookLM and have not been checked by a
+  person.
+- **What is checked automatically.** Before a change reaches the site, an
+  automated run executes the notebooks' code and checks the numbers it
+  prints. Nothing checks prose that way, in either language.
+- **Who is responsible.** The instructors chose what is taught and in what
+  order, and they are responsible for every error, whoever or whatever wrote
+  it first. If you find one, say so in
+  [Discord]({{< var community.discord >}}) or write to
+  [{{< var event.contact >}}](mailto:{{< var event.contact >}}).

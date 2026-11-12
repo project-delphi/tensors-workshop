@@ -377,4 +377,7 @@ fondo abiertos en vivo —atención, convolución, CP y AlphaTensor—, con paus
 cortas y un almuerzo que el reloj no cuenta. El [horario del manual](./tensors_workshop_plan_with_quizzes.html#agenda)
 tiene todas las horas de inicio.
 
+¿Vas a usar un asistente de IA durante el día? Lee antes la
+[política de uso de IA](ai-policy.qmd).
+
 :::::

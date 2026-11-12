@@ -1,0 +1,81 @@
+---
+title: "Política de uso de IA"
+subtitle: "Cómo ayudó la IA a hacer este taller y cómo puedes usarla durante el día"
+description: "Dónde son bienvenidas las herramientas de IA en el taller de tensores, las tres cosas que siguen siendo solo tuyas y cómo se usó la IA para construir los materiales."
+lang: es
+toc-depth: 2
+---
+
+[English](../ai-policy.qmd)
+
+## En resumen {#summary}
+
+Los asistentes de IA son bienvenidos durante el taller, con tres excepciones:
+tu primera predicción, los Kahoot y las evaluaciones de entrada y salida son
+solo tuyos. Diga lo que diga un asistente, ejecuta el código y mira la forma:
+decide la comprobación del propio cuaderno, no el asistente.
+
+## Usar IA durante el taller {#during-the-workshop}
+
+Puedes usar cualquier asistente de IA, incluido Gemini dentro de Colab, para
+que te explique un mensaje de error, una función de NumPy o un término, y para
+revisar código que ya escribiste. Intenta primero cada ejercicio por tu cuenta,
+igual que antes de abrir su solución plegada, y después pide ayuda.
+
+### Tres cosas son solo tuyas {#yours-alone}
+
+- **Tu primera predicción.** Las secciones empiezan con una pregunta de
+  predicción, y algunas con una afirmación de *¿Mito o hecho?*. Haz tu propia
+  apuesta antes de ejecutar nada o de preguntar a nadie. Una apuesta
+  equivocada que hiciste tú te enseña más que una correcta que te dieron.
+- **Los Kahoot.** Juégalos por tu cuenta, de memoria.
+- **Las evaluaciones de entrada y salida.** Miden lo que entiendes, para que
+  los instructores vean dónde está la sala. La respuesta de un asistente no
+  les dice nada de eso.
+
+### Comprueba lo que te dice {#check}
+
+Un asistente puede sonar seguro y aun así equivocarse, y se equivoca sobre
+todo en aquello de lo que trata este taller: qué eje es cuál y qué forma sale.
+Antes de fiarte de una respuesta:
+
+- ejecútala e imprime `.shape`;
+- compárala con el resultado esperado del cuaderno y con el
+  [manual](tensors_workshop_plan_with_quizzes.md);
+- si no coinciden, fíate de la comprobación del cuaderno y pregunta en
+  [Discord]({{< var community.discord >}}).
+
+Los [errores resueltos](worked-mistakes.md) son buena práctica: cada uno es
+código que se ejecuta, imprime algo verosímil y está mal.
+
+### Di cuándo te ayudó {#disclose}
+
+Cuando tu grupo publique en Discord su puesta en común de tres líneas, o
+compartas en cualquier otro sitio trabajo del taller, di si te ayudó un
+asistente de IA y cómo. Esta página hace lo mismo con los materiales.
+
+### Deja fuera los datos privados {#privacy}
+
+Puedes pegar en un asistente el código y las salidas de los cuadernos del
+taller. No pegues nada que no te corresponda compartir: datos de tu
+trabajo, información personal de otras personas, contraseñas ni claves de API.
+
+## Cómo se usó la IA para hacer este taller {#how-we-used-ai}
+
+- **Código y sitio.** Los cuadernos, los widgets interactivos, este sitio y
+  los scripts que los construyen y comprueban se escribieron con asistentes de
+  programación de IA (Claude, de Anthropic), bajo la dirección de los
+  instructores. La mayoría de los commits del
+  [repositorio]({{< var repo.url >}}) nombran a un coautor de IA.
+- **El manual en español** es una traducción automática del inglés, que sigue
+  siendo la fuente de referencia.
+- **Los resúmenes, el audio, los vídeos y las autoevaluaciones del
+  [complemento](companion.qmd)** se generaron con NotebookLM y ninguna persona
+  los ha revisado.
+- **Lo que se comprueba automáticamente.** Antes de que un cambio llegue al
+  sitio, una ejecución automática corre el código de los cuadernos y comprueba
+  los números que imprime. Nada comprueba así la prosa, en ningún idioma.
+- **Quién responde.** Los instructores eligieron qué se enseña y en qué orden,
+  y responden de cada error, sin importar quién o qué lo escribió primero. Si
+  encuentras uno, dilo en [Discord]({{< var community.discord >}}) o escribe a
+  [{{< var event.contact >}}](mailto:{{< var event.contact >}}).

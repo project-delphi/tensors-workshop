@@ -25,7 +25,7 @@ Abre las [diapositivas](../slides/es/index.qmd), los [cuadernos](notebooks.qmd),
 
 | Inicio | Tramo | Indicación / punto de cierre |
 |---|-------|----------------------|
-| {{< var sections.s00.start >}} | 00 · Bienvenida | Voz inicial 1½ min; evaluación individual de entrada 3; bienvenida/entorno ½. |
+| {{< var sections.s00.start >}} | 00 · Bienvenida | Voz inicial 1½ min; evaluación individual de entrada 3; bienvenida, política de IA, entorno ½. |
 | {{< var sections.s01.start >}} | 01 · Tensores | Modela una forma 4 min; ejercicio y revisión en parejas 16. Repasa brevemente las diapositivas de computación. |
 | {{< var sections.s02.start >}} | 02 · Ejes | Predicción 2; clave de ejes y ejercicio 12; tarea sobre significado de ejes 6. |
 | {{< var sections.s03.start >}} | 03 · Broadcasting | Modelo/simulador 3; ejercicio y retroalimentación 14; un grupo comparte 2; comprobación 1. |

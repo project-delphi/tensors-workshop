@@ -124,6 +124,12 @@ manual contiene soluciones desarrolladas. Intenta resolver el ejercicio
 antes de abrir la respuesta. Los cuadernos se guardan sin salidas: al ejecutar
 las celdas produces los resultados que comparas con la explicación.
 
+### ¿Puedo usar herramientas de IA durante el taller? {#ai-tools}
+
+Sí, con tres excepciones. La [política de uso de IA](ai-policy.qmd) las
+enumera, explica cómo comprobar lo que te dice un asistente y cómo se usó la
+IA para hacer estos materiales.
+
 ### ¿Puedo estudiar por mi cuenta con estos materiales? {#self-study}
 
 Sí. Empieza por los requisitos y luego lee el

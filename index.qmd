@@ -377,4 +377,7 @@ live — attention, convolution, CP and AlphaTensor — with short breaks and a
 lunch the clock does not count. The [handbook's schedule](./tensors_workshop_plan_with_quizzes.html#schedule)
 has every start time.
 
+Using an AI assistant during the day? Read the [AI use policy](ai-policy.qmd)
+first.
+
 :::::
