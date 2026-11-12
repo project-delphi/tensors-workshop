@@ -173,12 +173,19 @@ async function runDaySheetPrint(ctx) {
 
 // What a QR code from `site_qr()` in gen_tables.py must encode: the
 // homepage in that language, built from `repo.site` the way the generator
-// builds it, so the check follows the site wherever it moves.
+// builds it, so the check follows the site wherever it moves. There is no
+// YAML parser here, so the match is held to `repo:`'s own two-space indent
+// -- a `site:` nested deeper is not it -- and takes a quoted value or one
+// followed by a comment. Read once and kept.
+let repoSite;
 async function siteQrUrl(lang) {
-  const vars = await fs.readFile(path.resolve(__dirname, '../../_variables.yml'), 'utf8');
-  const site = vars.match(/^repo:\n(?:[ \t].*\n|\n)*?[ \t]+site:[ \t]*(\S+)/m);
-  assert(site, '_variables.yml: no repo.site for the QR code check');
-  return site[1].replace(/\/+$/, '') + (lang === 'es' ? '/es/' : '/');
+  if (repoSite === undefined) {
+    const vars = await fs.readFile(path.resolve(__dirname, '../../_variables.yml'), 'utf8');
+    const m = vars.match(/^repo:\n(?:(?: {2}.*|[ \t]*)\n)*? {2}site:[ \t]*(["']?)([^"'\s#]+)\1/m);
+    assert(m, '_variables.yml: no repo.site for the QR code check');
+    repoSite = m[2].replace(/\/+$/, '');
+  }
+  return repoSite + (lang === 'es' ? '/es/' : '/');
 }
 
 // The hero carries a still of every widget, behind one tab each, in the

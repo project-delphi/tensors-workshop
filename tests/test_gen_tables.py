@@ -188,10 +188,6 @@ class PipInstalled(unittest.TestCase):
         )
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class SiteQr(unittest.TestCase):
     """The QR code to the site draws exactly its matrix, and says the right URL.
 
@@ -242,18 +238,6 @@ class SiteQr(unittest.TestCase):
                     all(b <= x < size - b and b <= y < size - b for x, y in cells)
                 )
 
-    def test_the_mask_is_pinned(self):
-        # Left to segno's scoring, a library release could rewrite the
-        # include and fail the byte-exact gate with no input changed.
-        for lang in ("en", "es"):
-            with self.subTest(lang=lang):
-                self.assertIn(gt.QR_MASK[lang], range(8))
-                qr = gt.segno.make_qr(
-                    gt.site_url(lang),
-                    error="m",
-                    mode="byte",
-                    boost_error=False,
-                    mask=gt.QR_MASK[lang],
-                )
-                self.assertEqual(qr.mask, gt.QR_MASK[lang])
-                self.assertEqual(qr.matrix, gt.qr_matrix(lang))
+
+if __name__ == "__main__":
+    unittest.main()

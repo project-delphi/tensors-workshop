@@ -1383,7 +1383,9 @@ def brainstorm_svg(lang: str) -> str:
 # generated here and gated: a hand-pasted image would go on pointing at the
 # old address after a move, and a QR code cannot be proof-read by eye.
 #
-# segno computes the module matrix; the SVG is written here. Every input
+# segno computes the module matrix; the SVG is written here, not by segno's
+# own `svg_inline`, so the bytes the gate compares do not depend on how a
+# library release chooses to serialise a path. Every input
 # that chooses the matrix is fixed -- byte mode, level M, no error boost, so
 # the version is the smallest that holds the URL, and the mask -- and the
 # standard then fixes every module, so a segno release cannot move a byte of
