@@ -517,3 +517,31 @@ body { overflow-x: clip; }
     transform: translateX(-50%);
   }
 }
+/* The QR code to this page (`site_qr()` in gen_tables.py), for a room looking
+   at it on a projector. White, because the code carries its own quiet zone
+   and a phone needs black on white; the caption sits beside it in the hero's
+   own type. Not on a phone: a reader there is already on the page. */
+.hero-copy .site-qr {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  max-width: 34rem;
+  margin: .4rem 0 .2rem;
+}
+.hero-copy .site-qr-code {
+  flex: none;
+  width: 128px;
+  height: 128px;
+  border-radius: 6px;
+}
+.hero-copy .site-qr figcaption { display: grid; gap: .2rem; }
+.hero-copy .site-qr-label { color: #d6e6f3; font-size: .9rem; font-weight: 650; text-wrap: balance; }
+.hero-copy .site-qr-url {
+  color: #9cebdc;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: .82rem;
+}
+.hero-copy .site-qr-url > span { white-space: nowrap; }
+@media (max-width: 540px) {
+  .hero-copy .site-qr { display: none; }
+}

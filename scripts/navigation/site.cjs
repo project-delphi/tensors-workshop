@@ -171,6 +171,23 @@ async function runDaySheetPrint(ctx) {
   }
 }
 
+// What a QR code from `site_qr()` in gen_tables.py must encode: the
+// homepage in that language, built from `repo.site` the way the generator
+// builds it, so the check follows the site wherever it moves. There is no
+// YAML parser here, so the match is held to `repo:`'s own two-space indent
+// -- a `site:` nested deeper is not it -- and takes a quoted value or one
+// followed by a comment. Read once and kept.
+let repoSite;
+async function siteQrUrl(lang) {
+  if (repoSite === undefined) {
+    const vars = await fs.readFile(path.resolve(__dirname, '../../_variables.yml'), 'utf8');
+    const m = vars.match(/^repo:\n(?:(?: {2}.*|[ \t]*)\n)*? {2}site:[ \t]*(["']?)([^"'\s#]+)\1/m);
+    assert(m, '_variables.yml: no repo.site for the QR code check');
+    repoSite = m[2].replace(/\/+$/, '');
+  }
+  return repoSite + (lang === 'es' ? '/es/' : '/');
+}
+
 // The hero carries a still of every widget, behind one tab each, in the
 // page's own language, and each still is a link to its widget. The static
 // diagram is the fallback and must still be in the document for phones. The
@@ -274,9 +291,16 @@ async function runHero(ctx) {
     // was sometimes already detached ("Not attached to an active page").
     await page.goto(`${origin}${prefix}${lang === 'es' ? 'es/' : ''}index.html`);
     assert.equal(await page.locator('.hero-fallback svg.hero-diagram').count(), 1);
+    // The QR code to this page, for a room looking at the hero on a
+    // projector, and gone on a phone, where the reader is already here.
+    const qr = page.locator('.hero-copy .site-qr');
+    await qr.waitFor({state: 'visible', timeout: 5000});
+    assert.equal(await qr.getAttribute('data-qr-url'), await siteQrUrl(lang),
+      `${lang}/index: the QR code is not this language's homepage`);
     await page.setViewportSize({width: 390, height: 1000});
     assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
     assert(await page.locator('.hero-demos').isHidden(), `${lang}/index: stills hidden on a phone`);
+    await qr.waitFor({state: 'hidden', timeout: 5000});
     await page.setViewportSize({width: 1440, height: 1000});
   }
 }
@@ -404,6 +428,20 @@ async function runSlides(ctx) {
     const other = lang === 'en' ? 'es' : 'en';
     await page.goto(`${origin}${prefix}slides/${lang}/`);
     await page.waitForFunction(() => typeof Reveal !== 'undefined' && Reveal.isReady());
+    // The title slide's QR code (`site_qr()` in gen_tables.py) is what the
+    // room scans while it arrives: on the first slide, for this deck's
+    // language, and wholly inside the frame, since a code with a corner
+    // cut off by the slide's edge does not scan.
+    const qr = page.locator('section.site-qr-slide .site-qr');
+    await qr.waitFor({state: 'visible', timeout: 10000});
+    assert.equal(await page.evaluate(() => Reveal.getIndices(
+      document.querySelector('section.site-qr-slide')).h), 0, `${lang}: the QR code is not on the first slide`);
+    assert.equal(await qr.getAttribute('data-qr-url'), await siteQrUrl(lang),
+      `${lang}: the deck's QR code is not this language's homepage`);
+    assert(await qr.evaluate(f => {
+      const s = f.closest('section').getBoundingClientRect(), r = f.getBoundingClientRect();
+      return r.left >= s.left && r.top >= s.top && r.right <= s.right + 1 && r.bottom <= s.bottom + 1;
+    }), `${lang}: the deck's QR code runs off the slide`);
     const outcomes = await page.locator('section.outcomes-slide').evaluateAll(slides => slides.map(s => s.id));
     assert.equal(outcomes.length, 13, `${lang}: every section needs visible outcomes`);
     for (const id of outcomes) {

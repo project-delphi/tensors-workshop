@@ -768,3 +768,45 @@ html[lang="es"] .reveal .reading-tab::after {
 .reveal.overview .deck-colab-panel {
   display: none !important;
 }
+
+// The title slide's QR code to the site (`site_qr()` in gen_tables.py), so the
+// room can open the site off the projector while people arrive. It sits on the
+// art's decorative charts, bottom right: the top right is the timer's, and the
+// bottom edge below it is reveal's. Sized to scan from the back of a room --
+// a QR code reads from about ten times its own width -- and on white whatever
+// the art behind it, because the code carries its own quiet zone and a
+// phone needs the contrast.
+.reveal .slides section.site-qr-slide .site-qr {
+  position: absolute;
+  right: 40px;
+  bottom: 84px;
+  z-index: 10;
+  width: 380px;
+  margin: 0;
+  padding: 14px 14px 18px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 14px 40px rgba(6, 47, 92, .28);
+  text-align: center;
+  line-height: 1.25;
+
+  .site-qr-code { display: block; width: 100%; height: auto; }
+
+  figcaption { margin-top: 4px; }
+  .site-qr-label {
+    display: block;
+    color: $presentation-heading-color;
+    font-size: 24px;
+    font-weight: 700;
+    text-wrap: balance;
+  }
+  .site-qr-url {
+    display: block;
+    margin-top: 6px;
+    color: #3d5566;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 22px;
+
+    > span { white-space: nowrap; }
+  }
+}

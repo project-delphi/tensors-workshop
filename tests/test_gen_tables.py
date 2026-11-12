@@ -15,6 +15,7 @@ notebook installs for itself.
 
 from __future__ import annotations
 
+import re
 import sys
 import unittest
 from pathlib import Path
@@ -185,6 +186,57 @@ class PipInstalled(unittest.TestCase):
         self.assertEqual(
             seen, {"imageio", "imageio-ffmpeg", "tensorly", "pyttb", "torch"}
         )
+
+
+class SiteQr(unittest.TestCase):
+    """The QR code to the site draws exactly its matrix, and says the right URL.
+
+    The browser check reads `data-qr-url`, which is the same string the code
+    encodes, so it cannot see the drawing. A run builder that dropped the last
+    run of a row, or put the border on one side only, would ship a code that
+    does not scan with every other check green -- and nobody can proof-read a
+    QR code by eye. So the SVG path is read back here, module by module.
+    """
+
+    RUN = r"M(\d+) (\d+)h(\d+)v1h-(\d+)z"
+
+    def drawn(self, lang: str) -> tuple[str, int, set[tuple[int, int]]]:
+        fig = gt.site_qr(lang)
+        url = re.search(r'data-qr-url="([^"]+)"', fig).group(1)
+        size = int(re.search(r'viewBox="0 0 (\d+) \1"', fig).group(1))
+        d = re.search(r'<path fill="#000" d="([^"]+)"', fig).group(1)
+        self.assertRegex(d, rf"^(?:{self.RUN})+$", "a subpath the reader skips")
+        cells = set()
+        for x, y, width, back in re.findall(self.RUN, d):
+            self.assertEqual(width, back, "a run that does not close on itself")
+            cells |= {(int(x) + i, int(y)) for i in range(int(width))}
+        return url, size, cells
+
+    def test_each_language_encodes_its_own_homepage(self):
+        self.assertEqual(gt.site_url("en"), gt.REPO["site"].rstrip("/") + "/")
+        self.assertEqual(gt.site_url("es"), gt.REPO["site"].rstrip("/") + "/es/")
+        for lang in ("en", "es"):
+            with self.subTest(lang=lang):
+                self.assertEqual(self.drawn(lang)[0], gt.site_url(lang))
+
+    def test_the_path_is_the_matrix_inside_a_quiet_zone(self):
+        b = gt.QR_BORDER
+        for lang in ("en", "es"):
+            with self.subTest(lang=lang):
+                _, size, cells = self.drawn(lang)
+                matrix = gt.qr_matrix(lang)
+                self.assertEqual(size, len(matrix) + 2 * b)
+                want = {
+                    (x + b, y + b)
+                    for y, row in enumerate(matrix)
+                    for x, dark in enumerate(row)
+                    if dark
+                }
+                self.assertEqual(cells, want)
+                # The quiet zone is what lets it scan on the hero's navy.
+                self.assertTrue(
+                    all(b <= x < size - b and b <= y < size - b for x, y in cells)
+                )
 
 
 if __name__ == "__main__":

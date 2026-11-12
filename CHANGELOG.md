@@ -2,6 +2,7 @@
 
 ## 2026-11-12
 
+- **A QR code to the site, for a room looking at a projector.** The first slide of both decks carries one, large enough to scan from the back of the room, and so does the homepage's opening band, under the date and place. Each opens the homepage in its own language, and the address is printed under it for anyone who would rather type it. The codes are generated from the site's address, so they follow it if it ever moves.
 - **An AI use policy**, as a page in English and Spanish and as a slide in both decks, straight after the agenda. AI assistants are welcome during the day, including Gemini in Colab, with three exceptions that stay the student's own: the first prediction, the Kahoot quizzes, and the entry and exit checks. It asks students to check an assistant's answer by running it and printing `.shape`, to say when one helped a group's share-back, and to keep work and personal data out. It also says how AI was used to make the workshop: the code and site with AI coding assistants, the Spanish handbook by machine translation, and the companion by NotebookLM, unchecked. The homepage and the FAQ link to it.
 
 ## 2026-10-10
