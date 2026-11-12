@@ -1385,12 +1385,17 @@ def brainstorm_svg(lang: str) -> str:
 #
 # segno computes the module matrix; the SVG is written here. Every input
 # that chooses the matrix is fixed -- byte mode, level M, no error boost, so
-# the version is the smallest that holds the URL -- and the standard then
-# fixes every module, so a segno release cannot move a byte of the output
-# unless it changes how a mask is scored. The black-on-white square carries
-# its own four-module quiet zone, so it scans on the hero's navy and on a
-# dark theme without the page having to supply one.
+# the version is the smallest that holds the URL, and the mask -- and the
+# standard then fixes every module, so a segno release cannot move a byte of
+# the output. segno is a floor, not a pin, like everything in pyproject.toml,
+# which is why the mask is written down rather than left to its scoring:
+# that scoring is the one part of the encoding a library may change. The two
+# are what segno's scoring chose for these URLs. Any mask makes a valid code;
+# if `repo.site` changes, pass mask=None once and pin what it picks. The
+# black-on-white square carries its own four-module quiet zone, so it scans
+# on the hero's navy and on a dark theme without the page supplying one.
 QR_BORDER = 4
+QR_MASK = {"en": 0, "es": 2}
 QR_L = {
     "en": dict(
         aria="QR code for the workshop site",
@@ -1408,11 +1413,18 @@ def site_url(lang: str) -> str:
     return REPO["site"].rstrip("/") + ("/es/" if lang == "es" else "/")
 
 
-def qr_path(url: str) -> tuple[str, int]:
+def qr_matrix(lang: str) -> tuple[bytearray, ...]:
+    """The QR code's modules for one language's homepage, without the border."""
+    return segno.make_qr(
+        site_url(lang), error="m", mode="byte", boost_error=False, mask=QR_MASK[lang]
+    ).matrix
+
+
+def qr_path(lang: str) -> tuple[str, int]:
     """The dark modules as one SVG path, a rectangle per horizontal run."""
-    qr = segno.make_qr(url, error="m", mode="byte", boost_error=False)
+    matrix = qr_matrix(lang)
     runs = []
-    for y, row in enumerate(qr.matrix):
+    for y, row in enumerate(matrix):
         x = 0
         while x < len(row):
             if not row[x]:
@@ -1424,7 +1436,7 @@ def qr_path(url: str) -> tuple[str, int]:
             runs.append(
                 f"M{start + QR_BORDER} {y + QR_BORDER}h{x - start}v1h-{x - start}z"
             )
-    return "".join(runs), len(qr.matrix) + 2 * QR_BORDER
+    return "".join(runs), len(matrix) + 2 * QR_BORDER
 
 
 def site_qr(lang: str) -> str:
@@ -1444,7 +1456,7 @@ def site_qr(lang: str) -> str:
         f"<span>{html.escape(p)}{'/' if i < len(parts) - 1 else ''}</span>"
         for i, p in enumerate(parts)
     )
-    path, size = qr_path(url)
+    path, size = qr_path(lang)
     words = QR_L[lang]
     return (
         "```{=html}\n"

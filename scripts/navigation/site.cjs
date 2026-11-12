@@ -171,19 +171,22 @@ async function runDaySheetPrint(ctx) {
   }
 }
 
+// What a QR code from `site_qr()` in gen_tables.py must encode: the
+// homepage in that language, built from `repo.site` the way the generator
+// builds it, so the check follows the site wherever it moves.
+async function siteQrUrl(lang) {
+  const vars = await fs.readFile(path.resolve(__dirname, '../../_variables.yml'), 'utf8');
+  const site = vars.match(/^repo:\n(?:[ \t].*\n|\n)*?[ \t]+site:[ \t]*(\S+)/m);
+  assert(site, '_variables.yml: no repo.site for the QR code check');
+  return site[1].replace(/\/+$/, '') + (lang === 'es' ? '/es/' : '/');
+}
+
 // The hero carries a still of every widget, behind one tab each, in the
 // page's own language, and each still is a link to its widget. The static
 // diagram is the fallback and must still be in the document for phones. The
 // count is pinned because a widget added to `repo.widgets` and not to the
 // hero is the failure this catches -- the attention stage shipped invisible
 // from the front door for exactly that reason.
-// What a QR code from `site_qr()` in gen_tables.py must encode: the site's
-// homepage in that language, so `/es/` on the Spanish one and nothing after
-// the site's own path on the English one.
-function siteQrUrl(lang) {
-  return lang === 'es' ? /^https:\/\/[^/]+\/[^/]+\/es\/$/ : /^https:\/\/[^/]+\/[^/]+\/$/;
-}
-
 async function runHero(ctx) {
   const {page, origin, prefix} = ctx;
   const heroTabs = [
@@ -285,7 +288,7 @@ async function runHero(ctx) {
     // projector, and gone on a phone, where the reader is already here.
     const qr = page.locator('.hero-copy .site-qr');
     await qr.waitFor({state: 'visible', timeout: 5000});
-    assert(siteQrUrl(lang).test(await qr.getAttribute('data-qr-url')),
+    assert.equal(await qr.getAttribute('data-qr-url'), await siteQrUrl(lang),
       `${lang}/index: the QR code is not this language's homepage`);
     await page.setViewportSize({width: 390, height: 1000});
     assert(await page.locator('.hero-fallback').isVisible(), `${lang}/index: diagram fallback on a phone`);
@@ -426,7 +429,7 @@ async function runSlides(ctx) {
     await qr.waitFor({state: 'visible', timeout: 10000});
     assert.equal(await page.evaluate(() => Reveal.getIndices(
       document.querySelector('section.site-qr-slide')).h), 0, `${lang}: the QR code is not on the first slide`);
-    assert(siteQrUrl(lang).test(await qr.getAttribute('data-qr-url')),
+    assert.equal(await qr.getAttribute('data-qr-url'), await siteQrUrl(lang),
       `${lang}: the deck's QR code is not this language's homepage`);
     assert(await qr.evaluate(f => {
       const s = f.closest('section').getBoundingClientRect(), r = f.getBoundingClientRect();
