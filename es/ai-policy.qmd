@@ -56,8 +56,8 @@ asistente de IA y cómo. Esta página hace lo mismo con los materiales.
 
 ### Deja fuera los datos privados {#privacy}
 
-Los conjuntos de datos del taller son públicos, así que puedes pegarlos en un
-asistente. No pegues nada que no te corresponda compartir: datos de tu
+Puedes pegar en un asistente el código y las salidas de los cuadernos del
+taller. No pegues nada que no te corresponda compartir: datos de tu
 trabajo, información personal de otras personas, contraseñas ni claves de API.
 
 ## Cómo se usó la IA para hacer este taller {#how-we-used-ai}
@@ -72,10 +72,10 @@ trabajo, información personal de otras personas, contraseñas ni claves de API.
 - **Los resúmenes, el audio, los vídeos y las autoevaluaciones del
   [complemento](companion.qmd)** se generaron con NotebookLM y ninguna persona
   los ha revisado.
-- **Lo que se comprueba automáticamente.** Cada cambio en el sitio vuelve a
-  ejecutar la ruta esencial de cada cuaderno con los datos reales y comprueba
+- **Lo que se comprueba automáticamente.** Antes de que un cambio llegue al
+  sitio, una ejecución automática corre el código de los cuadernos y comprueba
   los números que imprime. Nada comprueba así la prosa, en ningún idioma.
 - **Quién responde.** Los instructores eligieron qué se enseña y en qué orden,
-  y responden de cada error, lo haya escrito primero quien o lo que sea. Si
+  y responden de cada error, sin importar quién o qué lo escribió primero. Si
   encuentras uno, dilo en [Discord]({{< var community.discord >}}) o escribe a
   [{{< var event.contact >}}](mailto:{{< var event.contact >}}).

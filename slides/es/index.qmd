@@ -103,7 +103,7 @@ de cada sección. Cada sección recorre solo la ruta esencial de su cuaderno;
 *Explora después* queda para después.
 :::
 
-## Política de uso de IA {#ai-use .computing-slide .ai-use-slide}
+## Política de uso de IA {#ai-use .computing-slide}
 
 <p class="computing-lead">Los asistentes de IA son bienvenidos hoy, con tres excepciones.</p>
 
@@ -130,8 +130,9 @@ de cada sección. Cada sección recorre solo la ruta esencial de su cuaderno;
 <a href="../../es/ai-policy.html" class="widget-tab" target="_blank" rel="noopener noreferrer">Leer la política completa ↗</a>
 
 ::: {.notes}
-Treinta segundos. Lee en voz alta las tres excepciones; todo lo demás está en
-la página de la política, que también enlazan las preguntas frecuentes y la
+Forma parte del medio minuto de bienvenida de la sección 00, no es tiempo
+extra: lee en voz alta las tres excepciones y sigue. Todo lo demás está en la
+página de la política, que también enlazan las preguntas frecuentes y la
 portada.
 
 Insiste en la primera. Gemini está a un clic dentro de Colab, y una predicción

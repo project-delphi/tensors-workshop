@@ -52,7 +52,7 @@ Conserva cuestionarios y pausas. Distribuye así cada bloque:
 
 | Cuaderno | Uso del tiempo | En pantalla |
 |---|---|---|
-| 00 · 5 min | Apertura en frío 1½; diagnóstico inicial 3; comprobación técnica y bienvenida ½. La preparación era previa. | <a href="../interactive/voice-stage.html?lang=es#scramble">Una voz, transpuesta</a>: reprodúcela tal cual y luego transpuesta. Pregunta por qué los mismos números ahora suenan a ruido; no respondas todavía. Con sonido. |
+| 00 · 5 min | Apertura en frío 1½; diagnóstico inicial 3; bienvenida, la diapositiva de uso de IA y comprobación técnica ½. La preparación era previa. | <a href="../interactive/voice-stage.html?lang=es#scramble">Una voz, transpuesta</a>: reprodúcela tal cual y luego transpuesta. Pregunta por qué los mismos números ahora suenan a ruido; no respondas todavía. Con sonido. |
 | 01 · 20 min | Modelar una forma 4; Ejercicio 1 y revisión en pareja 16. | — |
 | 02 · 20 min | Predicción inicial 2; clave de ejes y Ejercicio 2: 12; [actividad de significado de ejes](group-tasks.md#axis-meaning): 6. | — |
 | 03 · 20 min | Modelar broadcasting 3; Ejercicio 3 y comprobación 14; un grupo explica cómo corrigió los NaN 2; comprobación individual de broadcasting 1. | <a href="../interactive/broadcasting-simulator.html?lang=es">Simulador de broadcasting</a>, dentro del modelado 3: la sala predice la forma del resultado y luego un desajuste que da error. |

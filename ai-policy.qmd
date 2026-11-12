@@ -56,8 +56,8 @@ This page does the same for the materials.
 
 ### Keep private data out {#privacy}
 
-The workshop's datasets are public, so pasting them into an assistant is
-fine. Do not paste anything that is not yours to share: data from your job,
+Code and output from the workshop's notebooks are fine to paste into an
+assistant. Do not paste anything that is not yours to share: data from your job,
 other people's personal information, passwords or API keys.
 
 ## How AI was used to make this workshop {#how-we-used-ai}
@@ -72,8 +72,8 @@ other people's personal information, passwords or API keys.
 - **The [companion](companion.qmd)'s** summaries, audio, videos and
   self-checks were generated with NotebookLM and have not been checked by a
   person.
-- **What is checked automatically.** Every change to the site reruns each
-  notebook's core route against the real datasets and checks the numbers it
+- **What is checked automatically.** Before a change reaches the site, an
+  automated run executes the notebooks' code and checks the numbers it
   prints. Nothing checks prose that way, in either language.
 - **Who is responsible.** The instructors chose what is taught and in what
   order, and they are responsible for every error, whoever or whatever wrote

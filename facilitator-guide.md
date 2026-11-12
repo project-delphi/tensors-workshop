@@ -53,7 +53,7 @@ Keep its quizzes and breaks. Within the selected notebook slots:
 
 | Notebook | Use the slot this way | On the projector |
 |---|---|---|
-| 00 · 5 min | Cold open 1½; entry check 3; runtime check and welcome ½. Setup was pre-work. | [A voice, transposed](interactive/voice-stage.html?lang=en#scramble): play it as built, then transposed. Ask why the same numbers now sound like noise; do not answer yet. Sound on. |
+| 00 · 5 min | Cold open 1½; entry check 3; welcome, the AI use slide and runtime check ½. Setup was pre-work. | [A voice, transposed](interactive/voice-stage.html?lang=en#scramble): play it as built, then transposed. Ask why the same numbers now sound like noise; do not answer yet. Sound on. |
 | 01 · 20 min | Model one shape 4; Exercise 1 and partner check 16. | — |
 | 02 · 20 min | Opening prediction 2; axis key and Exercise 2: 12; [axis-meaning task](group-tasks.md#axis-meaning): 6. | — |
 | 03 · 20 min | Model broadcasting 3; Exercise 3 and feedback 14; one group explains its NaN fix 2; independent broadcasting checkpoint 1. | [Broadcasting simulator](interactive/broadcasting-simulator.html?lang=en), inside the modelling 3: the room predicts the result shape, then one mismatch that errors. |

@@ -425,6 +425,27 @@ async function runSlides(ctx) {
       assert.deepEqual(overflow, [], `${lang}/${id}: outcome text overflows`);
       await page.screenshot({path: path.join(screenshots, `outcomes-${lang}-${id}.png`)});
     }
+    // The AI use slide is the one text slide between the agenda and section
+    // 00, and its Spanish copy runs longer: nothing on it may fall off the
+    // frame, and its button opens the policy page in the deck's language.
+    await page.evaluate(() => {
+      const index = Reveal.getIndices(document.getElementById('ai-use'));
+      Reveal.slide(index.h, index.v);
+      Reveal.layout();
+    });
+    await page.waitForFunction(() => Reveal.getCurrentSlide()?.id === 'ai-use');
+    const aiUse = page.locator('section#ai-use');
+    const aiOverflow = await aiUse.evaluate(s => {
+      const rect = s.getBoundingClientRect();
+      return [...s.querySelectorAll('h2, h3, p, li, a')].filter(e => !e.closest('.notes'))
+        .filter(e => {const r = e.getBoundingClientRect();
+          return r.bottom > rect.bottom + 2 || r.right > rect.right + 2;})
+        .map(e => e.textContent);
+    });
+    assert.deepEqual(aiOverflow, [], `${lang}/ai-use: slide text overflows`);
+    assert.equal(await aiUse.locator('a.widget-tab').getAttribute('href'),
+      `../../${lang === 'es' ? 'es/' : ''}ai-policy.html`);
+    await page.screenshot({path: path.join(screenshots, `ai-use-${lang}.png`)});
     await page.evaluate(() => {
       const indices = Reveal.getIndices(document.getElementById('sec-07-inverses-and-pseudoinverse'));
       Reveal.slide(indices.h, indices.v);

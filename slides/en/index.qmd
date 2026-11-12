@@ -100,7 +100,7 @@ facilitator guide has every section's split. Every section runs its notebook's
 core route only; *Explore later* is for afterwards.
 :::
 
-## AI use policy {#ai-use .computing-slide .ai-use-slide}
+## AI use policy {#ai-use .computing-slide}
 
 <p class="computing-lead">AI assistants are welcome today, with three exceptions.</p>
 
@@ -127,8 +127,9 @@ core route only; *Explore later* is for afterwards.
 <a href="../../ai-policy.html" class="widget-tab" target="_blank" rel="noopener noreferrer">Read the full policy ↗</a>
 
 ::: {.notes}
-Thirty seconds. Read the three exceptions out loud; everything else is on the
-policy page, which the FAQ and the homepage also link.
+Part of section 00's welcome half-minute, not extra time: read the three
+exceptions out loud and move on. Everything else is on the policy page, which
+the FAQ and the homepage also link.
 
 Stress the first one. Gemini is one click away inside Colab, and a prediction
 is worth something only if it is the student's own: a wrong guess they made

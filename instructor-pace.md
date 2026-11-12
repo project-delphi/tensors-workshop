@@ -25,7 +25,7 @@ Open [slides](slides/en/index.qmd), [notebooks](notebooks.qmd), [Kahoot](kahoot.
 
 | Start | Slot | Your cue / stopping point |
 |---|-------|----------------------|
-| {{< var sections.s00.start >}} | 00 · Welcome | Voice cold open 1½ min; individual entry check 3; welcome/runtime ½. |
+| {{< var sections.s00.start >}} | 00 · Welcome | Voice cold open 1½ min; individual entry check 3; welcome, AI policy, runtime ½. |
 | {{< var sections.s01.start >}} | 01 · Tensors | Model one shape 4 min; exercise and partner check 16. Skim computing slides. |
 | {{< var sections.s02.start >}} | 02 · Axes | Prediction 2; axis key and exercise 12; axis-meaning task 6. |
 | {{< var sections.s03.start >}} | 03 · Broadcasting | Model/simulator 3; exercise and feedback 14; one group shares 2; checkpoint 1. |
