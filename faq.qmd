@@ -116,6 +116,12 @@ contains worked solutions. Try the exercise before opening the answer.
 The notebooks are saved without outputs, so running the cells produces the
 results you compare with the explanation.
 
+### Can I use AI tools during the workshop? {#ai-tools}
+
+Yes, with three exceptions. The [AI use policy](ai-policy.qmd) lists them,
+says how to check what an assistant tells you, and says how AI was used to
+make these materials.
+
 ### Can I use the material for self-study? {#self-study}
 
 Yes. Start with the prerequisites, then read the

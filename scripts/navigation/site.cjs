@@ -9,7 +9,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 
 const pages = ['index', 'notebooks', 'interactive', 'kahoot', 'references', 'companion', 'teach',
-  'faq', 'facilitator-guide', 'day-sheet', 'instructor-pace', 'assessments', 'worked-mistakes', 'group-tasks',
+  'faq', 'ai-policy', 'facilitator-guide', 'day-sheet', 'instructor-pace', 'assessments', 'worked-mistakes', 'group-tasks',
   'workshop-feedback', 'tensors_workshop_plan_with_quizzes'];
 // The readiness pages are unlisted diagnostics with no navbar, so they get a
 // block of their own rather than the `pages` loop; so do the decks.

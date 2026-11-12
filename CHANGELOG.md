@@ -1,5 +1,9 @@
 # Changelog
 
+## 2026-11-12
+
+- **An AI use policy**, as a page in English and Spanish and as a slide in both decks, straight after the agenda. AI assistants are welcome during the day, including Gemini in Colab, with three exceptions that stay the student's own: the first prediction, the Kahoot quizzes, and the entry and exit checks. It asks students to check an assistant's answer by running it and printing `.shape`, to say when one helped a group's share-back, and to keep work and personal data out. It also says how AI was used to make the workshop: the code and site with AI coding assistants, the Spanish handbook by machine translation, and the companion by NotebookLM, unchecked. The homepage and the FAQ link to it.
+
 ## 2026-10-10
 
 - **The prerequisites study deck is in the homepage's opening band.** A card under the two buttons names it as the place to start before the day, lists what is in it (a podcast, a quiz game, a live quiz, flashcards and a practice test), and opens it in the reader's language. It takes the place of the plain link to the preparation steps, which it carries as its second link. Step 1 of the preparation lists the same tools, in English and Spanish.

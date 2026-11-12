@@ -103,6 +103,44 @@ de cada sección. Cada sección recorre solo la ruta esencial de su cuaderno;
 *Explora después* queda para después.
 :::
 
+## Política de uso de IA {#ai-use .computing-slide .ai-use-slide}
+
+<p class="computing-lead">Los asistentes de IA son bienvenidos hoy, con tres excepciones.</p>
+
+:::: {.computing-layout}
+::: {.ai-use-col}
+<h3>Solo tuyo</h3>
+
+- Tu primera predicción, antes de ejecutar nada
+- Los Kahoot
+- Las evaluaciones de entrada y salida
+:::
+::: {.ai-use-col}
+<h3>Úsalo y compruébalo</h3>
+
+- Intenta primero; después pídele que te explique un error o una función
+- Imprime `.shape`: decide la comprobación del cuaderno
+- Di si ayudó en la puesta en común de tu grupo
+- Deja fuera los datos de tu trabajo y los personales
+:::
+::::
+
+<div class="computing-takeaway"><strong>Cómo usamos la IA.</strong><span>El código y este sitio se escribieron con asistentes de programación de IA. El manual en español es una traducción automática. El complemento es material de NotebookLM que ninguna persona ha revisado. Los instructores responden de cada error.</span></div>
+
+<a href="../../es/ai-policy.html" class="widget-tab" target="_blank" rel="noopener noreferrer">Leer la política completa ↗</a>
+
+::: {.notes}
+Treinta segundos. Lee en voz alta las tres excepciones; todo lo demás está en
+la página de la política, que también enlazan las preguntas frecuentes y la
+portada.
+
+Insiste en la primera. Gemini está a un clic dentro de Colab, y una predicción
+solo vale algo si es del propio estudiante: una apuesta equivocada que hizo
+enseña más que una correcta que le dieron.
+
+La última línea aplica a nosotros la regla de la sala: decir cuándo ayudó la IA.
+:::
+
 ## {{< var sections.s00.n >}} · {{< var sections.s00.title_es >}} {#sec-00-setup-and-data .outcomes-slide}
 
 ::: {.sec-part}

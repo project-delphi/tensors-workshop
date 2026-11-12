@@ -100,6 +100,43 @@ facilitator guide has every section's split. Every section runs its notebook's
 core route only; *Explore later* is for afterwards.
 :::
 
+## AI use policy {#ai-use .computing-slide .ai-use-slide}
+
+<p class="computing-lead">AI assistants are welcome today, with three exceptions.</p>
+
+:::: {.computing-layout}
+::: {.ai-use-col}
+<h3>Yours alone</h3>
+
+- Your first prediction, before you run anything
+- The Kahoot quizzes
+- The entry and exit checks
+:::
+::: {.ai-use-col}
+<h3>Use it, then check it</h3>
+
+- Try first, then ask it to explain an error or a function
+- Print `.shape`: the notebook's check decides
+- Say when it helped your group's share-back
+- Keep work data and personal data out
+:::
+::::
+
+<div class="computing-takeaway"><strong>How we used AI.</strong><span>The code and this site were written with AI coding assistants. The Spanish handbook is a machine translation. The companion is NotebookLM output that no person has checked. The instructors answer for every error.</span></div>
+
+<a href="../../ai-policy.html" class="widget-tab" target="_blank" rel="noopener noreferrer">Read the full policy ↗</a>
+
+::: {.notes}
+Thirty seconds. Read the three exceptions out loud; everything else is on the
+policy page, which the FAQ and the homepage also link.
+
+Stress the first one. Gemini is one click away inside Colab, and a prediction
+is worth something only if it is the student's own: a wrong guess they made
+teaches more than a right one they were handed.
+
+The bottom line turns the room's rule on ourselves: say when AI helped.
+:::
+
 ## {{< var sections.s00.n >}} · {{< var sections.s00.title_en >}} {#sec-00-setup-and-data .outcomes-slide}
 
 ::: {.sec-part}

@@ -13,6 +13,7 @@ project:
     - companion.qmd
     - teach.qmd
     - faq.qmd
+    - ai-policy.qmd
     # Optional diagnostics: rendered for direct sharing, absent from navigation/search.
     - readiness-check.qmd
     - readiness-instructor.qmd
@@ -35,6 +36,7 @@ project:
     - es/companion.qmd
     - es/teach.qmd
     - es/faq.qmd
+    - es/ai-policy.qmd
     - es/facilitator-guide.md
     - es/day-sheet.md
     - es/instructor-pace.md

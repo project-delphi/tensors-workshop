@@ -533,6 +533,7 @@ exactly one home; before adding a paragraph, find whose job it is:
 | `kahoot.qmd` / `es/kahoot.qmd` | The three quizzes and how to run them. The live questions on kahoot.it stay in English; this page is the how-to. | — |
 | `references.qmd` / `es/references.qmd` | Every citation, with DOIs and author pages. | Prerequisites — it links to the homepage. Teaching content: it says what a work is *for*, never what it says. |
 | `companion.qmd` / `es/companion.qmd` | The machine-generated companion: the NotebookLM notebook and every artifact out of it, and the standing note that none of it was written or checked by a person. It owns those links, so nothing else carries one. It also carries the brainstorm diagram, the one thing on the page a person drew, and says so. | The workshop's own content. It explains material, it never defines it. |
+| `ai-policy.qmd` / `es/ai-policy.qmd` | The AI use policy: where AI assistants are welcome during the session, the three things that stay the student's own, and how AI was used to make the materials. The deck's `#ai-use` slide is its summary: change the two together. | A claim about how a material was made that the repository does not show. A navbar item: the navbar is full at laptop widths, so the homepage's *how we work*, the FAQ and the deck link to it. |
 | `README.md` | The GitHub shopfront: what this is, who it is for, prerequisites **in brief**, and links out. | Anything the site already owns. |
 
 **The Spanish handbook is machine-translated** from the English one, which is
