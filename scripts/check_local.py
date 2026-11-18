@@ -1,4 +1,4 @@
-"""Run the offline checks before a render, in the order CI runs them.
+"""Run the offline checks from AGENTS.md's table before a render.
 
 `AGENTS.md` maps each kind of change to the checks it owes. Most of those
 checks need neither a rendered site nor a browser; this script runs that
@@ -7,10 +7,11 @@ offline set in one command:
     ruff check / ruff format --check / teaching materials / unittest /
     npm test / check_links.py --notebooks-only
 
-It is a shortcut, not a second gate: CI runs every one of these commands
-itself, and nothing here replaces the checks a rendered page owes
-(`quarto render`, `check_links.py`, `npm run check:navigation`). Run `npm ci`
-once before the first invocation so `npm test` has its dependencies.
+It is a shortcut, not a second gate: CI runs these checks in its own order,
+with `check_links.py` only after rendering and in its full form, and nothing
+here replaces the checks a rendered page owes (`quarto render`,
+`check_links.py`, `npm run check:navigation`). Install `uv` and run `npm ci`
+once before the first invocation.
 """
 
 from __future__ import annotations
@@ -32,7 +33,8 @@ def uv(group: str, *args: str) -> tuple[str, ...]:
     return ("uv", "run", "--group", group, *args)
 
 
-# The offline checks from `publish.yml`'s `render` job, in CI's order.
+# The offline checks from AGENTS.md's "Done means" table. CI runs each in its
+# own job and order; `--notebooks-only` is the offline form of its link check.
 CHECKS: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("ruff check", uv("lint", "ruff", "check", "scripts", "tests")),
     (

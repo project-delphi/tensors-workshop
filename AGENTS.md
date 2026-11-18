@@ -64,10 +64,11 @@ of them a change owes:
 | A `.cjs` under `scripts/` or `tests/` | `npm test`; for the browser check or anything under `scripts/navigation/`, a render and `npm run check:navigation` |
 | An image generator or its inputs | the generator rerun by hand -- no gate will ask for it |
 
-`python3 scripts/check_local.py` runs the six offline checks from that table in
-CI's order -- ruff, the teaching-material checker, the unittest suite, `npm
-test` and the notebook-only link check. It is a shortcut for the offline rows,
-not a replacement for the checks a change owes after a render.
+`python3 scripts/check_local.py` runs the offline checks from that table --
+ruff, the teaching-material checker, the unittest suite, `npm test` and the
+notebook-only link check (the offline form of CI's post-render one). CI runs
+each in its own job and order; this is a shortcut for the offline rows, not a
+replacement for the checks a change owes after a render.
 
 **End a run with three headings**: *Needs you* (a decision, an approval, a
 check only a person can make), *Changed*, and *Not checked* -- every check
@@ -746,7 +747,7 @@ boundary.
 ```bash
 quarto preview          # live site at http://localhost:4200
 quarto render           # writes docs/
-python3 scripts/check_local.py          # the six offline checks below, in CI's order
+python3 scripts/check_local.py          # the offline checks from the table above
 
 uv run --group site python scripts/gen_tables.py
 uv run --group site python scripts/gen_notebooks.py

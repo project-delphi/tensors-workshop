@@ -23,7 +23,7 @@ commitment.
 
 | # | Priority | Status | Evidence | Next step |
 |---|---|---|---|---|
-| 1 | Predictions before answers | Partly shipped | The leakage sweep shipped in `fe511a3` (DECISIONS, 2026-10-03); `interactive/factor-scenes/budget.js` still gives the numbers in `h` and `concept` before `predict` | Rewrite the budget copy so the question comes first, then sweep the other stages |
+| 1 | Predictions before answers | Open | The AlphaTensor leakage review shipped in `fe511a3` (DECISIONS, 2026-10-03); the general audit has not run. `budget.js:43-44` gives 99/126 in `concept` and 99/93 in `claim` before the question at `:45` | Rewrite the budget copy so the question comes first, then sweep the other stages |
 | 2 | Widget challenges | Open | No `challenge`/`hint`/`feedback` in `broadcasting-simulator.html`; `assessments.md:90` has a related closed-solution checkpoint | Pilot one broadcasting challenge in the simulator, reusing the core arithmetic |
 | 3 | Scannable interactive directory | Open | All eight cards in `interactive.qmd:27-200` (and the ES page) are long; no disclosure blocks | Shorten each card to a question, sections, one named scene and an action; move the tours into details |
 | 4 | Next action between resources | Open | `interactive.qmd:23` links only to the handbook generally; the one contextual link is deep dive 20 at `:191` | Add per-widget "Practise this in Notebook NN" links, sourced from `_variables.yml` |
@@ -154,9 +154,10 @@ it does not introduce a separate wholesale slide rewrite.
 Start with prediction leakage, the interactive directory, and one broadcasting
 challenge. The homepage rhythm correction is a small related copy change.
 
-Triage note: none of the three has been carried out *as a plan item*. The
-general leakage fix shipped in `fe511a3`; `interactive/factor-scenes/budget.js`
-is the remaining scene for item 1.
+Triage note: none of the three has been carried out *as a plan item*. An
+AlphaTensor-specific leakage review shipped in `fe511a3`, but the general
+audit is item 1 itself; `interactive/factor-scenes/budget.js` is where it
+starts.
 
 Observe whether learners can find the activity, explain their mistake, and
 solve a fresh example unaided. Record where they needed help and use those

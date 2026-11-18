@@ -22,24 +22,82 @@ import scripts.check_local as gate  # noqa: E402
 
 class CheckLocal(unittest.TestCase):
     def test_the_offline_set_is_whole_and_stays_offline(self) -> None:
-        names = tuple(name for name, _ in gate.CHECKS)
         self.assertEqual(
-            names,
+            gate.CHECKS,
             (
-                "ruff check",
-                "ruff format --check",
-                "teaching materials",
-                "unittest",
-                "npm test",
-                "notebook links",
+                (
+                    "ruff check",
+                    (
+                        "uv",
+                        "run",
+                        "--group",
+                        "lint",
+                        "ruff",
+                        "check",
+                        "scripts",
+                        "tests",
+                    ),
+                ),
+                (
+                    "ruff format --check",
+                    (
+                        "uv",
+                        "run",
+                        "--group",
+                        "lint",
+                        "ruff",
+                        "format",
+                        "--check",
+                        "scripts",
+                        "tests",
+                    ),
+                ),
+                (
+                    "teaching materials",
+                    (
+                        "uv",
+                        "run",
+                        "--group",
+                        "test",
+                        "python",
+                        "scripts/check_teaching_materials.py",
+                    ),
+                ),
+                (
+                    "unittest",
+                    (
+                        "uv",
+                        "run",
+                        "--group",
+                        "test",
+                        "python",
+                        "-m",
+                        "unittest",
+                        "discover",
+                        "-s",
+                        "tests",
+                        "-q",
+                    ),
+                ),
+                ("npm test", ("npm", "test")),
+                (
+                    "notebook links",
+                    (
+                        "uv",
+                        "run",
+                        "--group",
+                        "site",
+                        "python",
+                        "scripts/check_links.py",
+                        "--notebooks-only",
+                    ),
+                ),
             ),
         )
         for name, argv in gate.CHECKS:
             self.assertTrue(argv, name)
             for word in ("render", "check:navigation", "test_notebooks.py"):
                 self.assertFalse(any(word in arg for arg in argv), (name, word))
-        links = dict(gate.CHECKS)["notebook links"]
-        self.assertEqual(links[-1], "--notebooks-only")
 
     def test_summary_counts_only_zero_exits(self) -> None:
         ok = ("npm test", 0, 0.1, "")
@@ -63,6 +121,15 @@ class CheckLocal(unittest.TestCase):
         code, output = gate.system(("definitely-not-a-workshop-tool",), ROOT)
         self.assertEqual(code, 127)
         self.assertIn("cannot run definitely-not-a-workshop-tool", output)
+
+    def test_main_succeeds_when_every_check_passes(self) -> None:
+        def ok(argv: tuple[str, ...], cwd: Path) -> tuple[int, str]:
+            return 0, ""
+
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            code = gate.main([], runner=ok)
+        self.assertEqual(code, 0)
+        self.assertIn("All 6 offline checks passed.", out.getvalue())
 
     def test_main_exits_nonzero_but_runs_every_check(self) -> None:
         seen: list[tuple[str, ...]] = []
