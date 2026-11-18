@@ -14,6 +14,24 @@ access failed during that review, so the UI findings concern information
 structure, not a verified visual walkthrough. Recheck each finding against the
 current source before implementation, especially where newer work overlaps it.
 
+## Triage · 2026-11-18
+
+Status was read against `ab62d50`, not from the checkboxes below, which stay
+unchecked until each item is done. This pass changes no runtime or rendered-page
+behavior. Open items have no owner yet: the table is the queue, not a
+commitment.
+
+| # | Priority | Status | Evidence | Next step |
+|---|---|---|---|---|
+| 1 | Predictions before answers | Open | The AlphaTensor leakage review shipped in `fe511a3` (DECISIONS, 2026-10-03); the general audit has not run. `budget.js:43-44` gives 99/126 in `concept` and 99/93 in `claim` before the question at `:45` | Rewrite the budget copy so the question comes first, then sweep the other stages |
+| 2 | Widget challenges | Open | No `challenge`/`hint`/`feedback` in `broadcasting-simulator.html`; `assessments.md:90` has a related closed-solution checkpoint | Pilot one broadcasting challenge in the simulator, reusing the core arithmetic |
+| 3 | Scannable interactive directory | Open | All eight cards in `interactive.qmd:27-200` (and the ES page) are long; no disclosure blocks | Shorten each card to a question, sections, one named scene and an action; move the tours into details |
+| 4 | Next action between resources | Open | `interactive.qmd:23` links only to the handbook generally; the one contextual link is deep dive 20 at `:191` | Add per-widget "Practise this in Notebook NN" links, sourced from `_variables.yml` |
+| 5 | Copy this experiment | Open | All eight stages read only `lang`, `embed`, `theme` (e.g. `factor-stage.html:638-640`) | Pilot bounded control-state query params on one stage, with safe defaults and a copy-link fallback |
+| 6 | Delayed transfer check | Partly shipped | Exit question 4 has a transfer score and rubric (`assessments.md:32-35`, `:49-73`); no delayed follow-up on unfamiliar data | Add the post-workshop follow-up to both languages, outside the 360-minute agenda |
+| 7 | Homepage rhythm | Open | `index.qmd:369-375` and `es/index.qmd:370-374` still show the fixed 10m / 5m / 10m pipeline | Replace with Predict → Run → Explain → Check in both languages; keep timing in the agenda (a rendered-page change) |
+| 8 | Slide migration | Ongoing | `slides/README.md:21-51` records the rule and the editable examples; the stale EN slide-21 headline is still listed at `:62` | Migrate slide 21 in both decks, checking its numbers against notebook 07 |
+
 ## Priorities
 
 ### 1. Make predictions precede answers
@@ -135,6 +153,11 @@ it does not introduce a separate wholesale slide rewrite.
 
 Start with prediction leakage, the interactive directory, and one broadcasting
 challenge. The homepage rhythm correction is a small related copy change.
+
+Triage note: none of the three has been carried out *as a plan item*. An
+AlphaTensor-specific leakage review shipped in `fe511a3`, but the general
+audit is item 1 itself; `interactive/factor-scenes/budget.js` is where it
+starts.
 
 Observe whether learners can find the activity, explain their mistake, and
 solve a fresh example unaided. Record where they needed help and use those
