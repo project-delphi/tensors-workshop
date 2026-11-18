@@ -30,6 +30,10 @@ npm test
 git diff --check
 ```
 
+For a quick pass over the offline checks, `python3 scripts/check_local.py`
+runs the ruff, teaching-material, unittest, Node and notebook-only link checks
+in one command. It does not replace the render and browser checks above.
+
 Use the Quarto version pinned in the workflow. Regenerating a second time must
 not change files. `test_notebooks.py` executes each notebook's core route and
 the solution that answers it, in a fresh kernel — but not the cells outside

@@ -56,6 +56,12 @@ Python under `scripts/` and `tests/` is linted and formatted by
 `ruff check` and `ruff format --check`, so run `uv run --group lint ruff format
 scripts tests` before you push.
 
+For the checks that need neither a render nor a browser, run
+`python3 scripts/check_local.py` once after `npm ci`. It runs ruff, the
+teaching-material checker, the unittest suite, the Node core tests and the
+notebook-only link check in CI's order, and exits non-zero if any fails. It is
+a shortcut, not a substitute for the render, site and browser checks below.
+
 The [notebook guide](notebooks/README.md#colab-to-github-workflow) describes
 editing through Colab. [AGENTS.md](AGENTS.md) documents the site internals and
 asset generators.
@@ -107,6 +113,12 @@ la solución también debe llamar a la función.
 Sigue la [lista de publicación](RELEASE_CHECKLIST.md) para regenerar, comprobar
 y enviar los cambios. Incluye los archivos generados en el PR; `docs/` no, que
 lo construye y lo publica Actions.
+
+Antes de renderizar, `python3 scripts/check_local.py` ejecuta en el orden de CI
+las comprobaciones que no necesitan render ni navegador: ruff, materiales de
+enseñanza, pruebas unitarias, pruebas de Node y enlaces de cuadernos. Es un
+atajo; después de renderizar siguen siendo necesarias las comprobaciones del
+sitio y del navegador.
 
 Si usas Claude Code, `.claude/agents/` define ocho subagentes del proyecto
 —revisión pedagógica, scripts de Python, diseño en Quarto, revisión de
